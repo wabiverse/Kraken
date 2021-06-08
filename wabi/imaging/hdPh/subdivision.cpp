@@ -142,11 +142,16 @@ bool HdPh_OsdIndexComputation::_CheckValid() const
 /// OpenSubdiv GPU Refinement
 ///
 ///
-HdPh_OsdRefineComputationGPU::HdPh_OsdRefineComputationGPU(HdPh_MeshTopology *topology,
-                                                           TfToken const &name,
-                                                           HdType type)
+HdPh_OsdRefineComputationGPU::HdPh_OsdRefineComputationGPU(
+    HdPh_MeshTopology *topology,
+    TfToken const &name,
+    HdType type,
+    HdPh_MeshTopology::Interpolation interpolation,
+    int fvarChannel)
     : _topology(topology),
-      _name(name)
+      _name(name),
+      _interpolation(interpolation),
+      _fvarChannel(fvarChannel)
 {}
 
 void HdPh_OsdRefineComputationGPU::GetBufferSpecs(HdBufferSpecVector *specs) const
@@ -167,7 +172,7 @@ void HdPh_OsdRefineComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &ra
   if (!TF_VERIFY(subdivision))
     return;
 
-  subdivision->RefineGPU(range, _name);
+  subdivision->RefineGPU(range, _name, _interpolation, _fvarChannel);
 
   HD_PERF_COUNTER_INCR(HdPerfTokens->subdivisionRefineGPU);
 }
@@ -178,7 +183,20 @@ int HdPh_OsdRefineComputationGPU::GetNumOutputElements() const
   HdPh_Subdivision const *subdivision = _topology->GetSubdivision();
   if (!TF_VERIFY(subdivision))
     return 0;
-  return subdivision->GetNumVertices();
+  if (_interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX) {
+    return subdivision->GetNumVertices();
+  }
+  else if (_interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING) {
+    return subdivision->GetNumVarying();
+  }
+  else {
+    return subdivision->GetMaxNumFaceVarying();
+  }
+}
+
+HdPh_MeshTopology::Interpolation HdPh_OsdRefineComputationGPU::GetInterpolation() const
+{
+  return _interpolation;
 }
 
 WABI_NAMESPACE_END

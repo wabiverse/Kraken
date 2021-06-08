@@ -508,15 +508,7 @@ PxOsdTopologyRefinerSharedPtr PxOsdRefinerFactory::Create(PxOsdMeshTopology cons
 {
 
   std::vector<VtIntArray> fvarTopologies;
-  Converter converter(topology, fvarTopologies, name);
-
-  OpenSubdiv::Far::TopologyRefinerFactory<Converter>::Options options(converter.GetType(),
-                                                                      converter.GetOptions());
-
-  OpenSubdiv::Far::TopologyRefiner *refiner =
-      OpenSubdiv::Far::TopologyRefinerFactory<Converter>::Create(converter, options);
-
-  return PxOsdTopologyRefinerSharedPtr(refiner);
+  return Create(topology, fvarTopologies, name);
 }
 
 PxOsdTopologyRefinerSharedPtr PxOsdRefinerFactory::Create(

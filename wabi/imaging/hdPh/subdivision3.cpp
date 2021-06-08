@@ -110,10 +110,21 @@ class HdPh_Osd3Subdivision : public HdPh_Subdivision {
   ~HdPh_Osd3Subdivision() override;
 
   int GetNumVertices() const override;
+  int GetNumVarying() const override;
+  int GetNumFaceVarying(int channel) const override;
+  int GetMaxNumFaceVarying() const override;
 
-  void RefineCPU(HdBufferSourceSharedPtr const &source, bool varying, void *vertexBuffer) override;
+  VtIntArray GetRefinedFvarIndices(int channel) const override;
 
-  void RefineGPU(HdBufferArrayRangeSharedPtr const &range, TfToken const &name) override;
+  void RefineCPU(HdBufferSourceSharedPtr const &source,
+                 void *vertexBuffer,
+                 HdPh_MeshTopology::Interpolation interpolation,
+                 int fvarChannel = 0) override;
+
+  void RefineGPU(HdBufferArrayRangeSharedPtr const &range,
+                 TfToken const &name,
+                 HdPh_MeshTopology::Interpolation interpolation,
+                 int fvarChannel = 0) override;
 
   // computation factory methods
   HdBufferSourceSharedPtr CreateTopologyComputation(HdPh_MeshTopology *topology,
@@ -125,18 +136,21 @@ class HdPh_Osd3Subdivision : public HdPh_Subdivision {
       HdPh_MeshTopology *topology,
       HdBufferSourceSharedPtr const &osdTopology) override;
 
-  HdBufferSourceSharedPtr CreateRefineComputation(
-      HdPh_MeshTopology *topology,
-      HdBufferSourceSharedPtr const &source,
-      bool varying,
-      HdBufferSourceSharedPtr const &osdTopology) override;
+  HdBufferSourceSharedPtr CreateRefineComputation(HdPh_MeshTopology *topology,
+                                                  HdBufferSourceSharedPtr const &source,
+                                                  HdBufferSourceSharedPtr const &osdTopology,
+                                                  HdPh_MeshTopology::Interpolation interpolation,
+                                                  int fvarChannel = 0) override;
 
   HdComputationSharedPtr CreateRefineComputationGPU(HdPh_MeshTopology *topology,
                                                     TfToken const &name,
-                                                    HdType dataType) override;
+                                                    HdType dataType,
+                                                    HdPh_MeshTopology::Interpolation interpolation,
+                                                    int fvarChannel = 0) override;
 
   void SetRefinementTables(OpenSubdiv::Far::StencilTable const *vertexStencils,
                            OpenSubdiv::Far::StencilTable const *varyingStencils,
+                           std::vector<OpenSubdiv::Far::StencilTable const *> faceVaryingStencils,
                            OpenSubdiv::Far::PatchTable const *patchTable,
                            bool adaptive);
 
@@ -153,14 +167,20 @@ class HdPh_Osd3Subdivision : public HdPh_Subdivision {
  private:
   OpenSubdiv::Far::StencilTable const *_vertexStencils;
   OpenSubdiv::Far::StencilTable const *_varyingStencils;
+  std::vector<OpenSubdiv::Far::StencilTable const *> _faceVaryingStencils;
   OpenSubdiv::Far::PatchTable const *_patchTable;
   bool _adaptive;
+  int _maxNumFaceVarying;  // calculated during SetRefinementTables()
 
 #if HDPH_ENABLE_GPU_SUBDIVISION
   /// Returns GPU stencil table. Creates it if not existed.
   /// A valid GL context has to be made to current before calling this method.
-  HdPh_OsdGpuStencilTable *_GetGpuStencilTable();
-  HdPh_OsdGpuStencilTable *_gpuStencilTable;
+  HdPh_OsdGpuStencilTable *_GetGpuVertexStencilTable();
+  HdPh_OsdGpuStencilTable *_GetGpuVaryingStencilTable();
+  HdPh_OsdGpuStencilTable *_GetGpuFaceVaryingStencilTable(int channel);
+  HdPh_OsdGpuStencilTable *_gpuVertexStencilTable;
+  HdPh_OsdGpuStencilTable *_gpuVaryingStencilTable;
+  std::vector<HdPh_OsdGpuStencilTable *> _gpuFaceVaryingStencilTables;
 #endif
 };
 
@@ -210,10 +230,12 @@ HdPh_Osd3Subdivision::HdPh_Osd3Subdivision()
     : _vertexStencils(NULL),
       _varyingStencils(NULL),
       _patchTable(NULL),
-      _adaptive(false)
+      _adaptive(false),
+      _maxNumFaceVarying(0)
 {
 #if HDPH_ENABLE_GPU_SUBDIVISION
-  _gpuStencilTable = NULL;
+  _gpuVertexStencilTable  = nullptr;
+  _gpuVaryingStencilTable = nullptr;
 #endif
 }
 
@@ -221,29 +243,55 @@ HdPh_Osd3Subdivision::~HdPh_Osd3Subdivision()
 {
   delete _vertexStencils;
   delete _varyingStencils;
+  for (size_t i = 0; i < _faceVaryingStencils.size(); ++i) {
+    delete _faceVaryingStencils[i];
+  }
+  _faceVaryingStencils.clear();
   delete _patchTable;
 #if HDPH_ENABLE_GPU_SUBDIVISION
-  delete _gpuStencilTable;
+  delete _gpuVertexStencilTable;
+  delete _gpuVaryingStencilTable;
+  for (size_t i = 0; i < _gpuFaceVaryingStencilTables.size(); ++i) {
+    delete _gpuFaceVaryingStencilTables[i];
+  }
+  _gpuFaceVaryingStencilTables.clear();
 #endif
 }
 
 void HdPh_Osd3Subdivision::SetRefinementTables(
     OpenSubdiv::Far::StencilTable const *vertexStencils,
     OpenSubdiv::Far::StencilTable const *varyingStencils,
+    std::vector<OpenSubdiv::Far::StencilTable const *> faceVaryingStencils,
     OpenSubdiv::Far::PatchTable const *patchTable,
     bool adaptive)
 {
-  if (_vertexStencils)
+
+  if (_vertexStencils) {
     delete _vertexStencils;
-  if (_varyingStencils)
+  }
+  if (_varyingStencils) {
     delete _varyingStencils;
+  }
+  for (size_t i = 0; i < _faceVaryingStencils.size(); i++) {
+    if (_faceVaryingStencils[i]) {
+      delete _faceVaryingStencils[i];
+    }
+  }
+  _faceVaryingStencils.clear();
+
   if (_patchTable)
     delete _patchTable;
 
-  _vertexStencils  = vertexStencils;
-  _varyingStencils = varyingStencils;
-  _patchTable      = patchTable;
-  _adaptive        = adaptive;
+  _vertexStencils      = vertexStencils;
+  _varyingStencils     = varyingStencils;
+  _faceVaryingStencils = faceVaryingStencils;
+  _patchTable          = patchTable;
+  _adaptive            = adaptive;
+
+  _maxNumFaceVarying = 0;
+  for (size_t i = 0; i < _faceVaryingStencils.size(); ++i) {
+    _maxNumFaceVarying = std::max(_maxNumFaceVarying, GetNumFaceVarying(i));
+  }
 }
 
 /*virtual*/
@@ -257,11 +305,69 @@ int HdPh_Osd3Subdivision::GetNumVertices() const
 }
 
 /*virtual*/
-void HdPh_Osd3Subdivision::RefineCPU(HdBufferSourceSharedPtr const &source,
-                                     bool varying,
-                                     void *vertexBuffer)
+int HdPh_Osd3Subdivision::GetNumVarying() const
 {
-  OpenSubdiv::Far::StencilTable const *stencilTable = varying ? _varyingStencils : _vertexStencils;
+  // returns the total number of vertices, including coarse and refined ones.
+  if (!TF_VERIFY(_varyingStencils))
+    return 0;
+
+  return _varyingStencils->GetNumStencils() + _varyingStencils->GetNumControlVertices();
+}
+
+/*virtual*/
+int HdPh_Osd3Subdivision::GetNumFaceVarying(int channel) const
+{
+  // returns the total number of vertices, including coarse and refined ones.
+  if (!TF_VERIFY(_faceVaryingStencils[channel]))
+    return 0;
+
+  return _faceVaryingStencils[channel]->GetNumStencils() +
+         _faceVaryingStencils[channel]->GetNumControlVertices();
+}
+
+/*virtual*/
+int HdPh_Osd3Subdivision::GetMaxNumFaceVarying() const
+{
+  // returns the largest total number of face-varying values (coarse and
+  // refined) for all the face-varying channels
+  return _maxNumFaceVarying;
+}
+
+/*virtual*/
+VtIntArray HdPh_Osd3Subdivision::GetRefinedFvarIndices(int channel) const
+{
+  VtIntArray fvarIndices;
+  if (_patchTable && _patchTable->GetNumFVarChannels() > channel) {
+    OpenSubdiv::Far::ConstIndexArray indices = _patchTable->GetFVarValues(channel);
+    for (int i = 0; i < indices.size(); ++i) {
+      fvarIndices.push_back(indices[i]);
+    }
+  }
+  return fvarIndices;
+}
+
+/*virtual*/
+void HdPh_Osd3Subdivision::RefineCPU(HdBufferSourceSharedPtr const &source,
+                                     void *vertexBuffer,
+                                     HdPh_MeshTopology::Interpolation interpolation,
+                                     int fvarChannel)
+{
+
+  if (interpolation == HdPh_MeshTopology::INTERPOLATE_FACEVARYING) {
+    if (!TF_VERIFY(fvarChannel >= 0)) {
+      return;
+    }
+
+    if (!TF_VERIFY(fvarChannel < (int)_faceVaryingStencils.size())) {
+      return;
+    }
+  }
+
+  OpenSubdiv::Far::StencilTable const *stencilTable =
+      (interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX) ? _vertexStencils :
+      (interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING) ?
+                                                                 _varyingStencils :
+                                                                 _faceVaryingStencils[fvarChannel];
 
   if (!TF_VERIFY(stencilTable))
     return;
@@ -311,11 +417,31 @@ void HdPh_Osd3Subdivision::RefineCPU(HdBufferSourceSharedPtr const &source,
 }
 
 /*virtual*/
-void HdPh_Osd3Subdivision::RefineGPU(HdBufferArrayRangeSharedPtr const &range, TfToken const &name)
+void HdPh_Osd3Subdivision::RefineGPU(HdBufferArrayRangeSharedPtr const &range,
+                                     TfToken const &name,
+                                     HdPh_MeshTopology::Interpolation interpolation,
+                                     int fvarChannel)
 {
 #if HDPH_ENABLE_GPU_SUBDIVISION
-  if (!TF_VERIFY(_vertexStencils))
+  if (interpolation == HdPh_MeshTopology::INTERPOLATE_FACEVARYING) {
+    if (!TF_VERIFY(fvarChannel >= 0)) {
+      return;
+    }
+
+    if (!TF_VERIFY(fvarChannel < (int)_faceVaryingStencils.size())) {
+      return;
+    }
+  }
+
+  OpenSubdiv::Far::StencilTable const *stencilTable =
+      (interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX) ? _vertexStencils :
+      (interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING) ?
+                                                                 _varyingStencils :
+                                                                 _faceVaryingStencils[fvarChannel];
+
+  if (!TF_VERIFY(stencilTable)) {
     return;
+  }
 
   // filling coarse vertices has been done at resource registry.
 
@@ -327,7 +453,7 @@ void HdPh_Osd3Subdivision::RefineGPU(HdBufferArrayRangeSharedPtr const &range, T
   // vertex buffer is not interleaved, but aggregated.
   // we need an offset to locate the current range.
   size_t stride         = vertexBuffer.GetNumElements();
-  int numCoarseVertices = _vertexStencils->GetNumControlVertices();
+  int numCoarseVertices = stencilTable->GetNumControlVertices();
 
   OpenSubdiv::Osd::BufferDescriptor srcDesc(
       /*offset=*/range->GetElementOffset() * stride,
@@ -344,7 +470,15 @@ void HdPh_Osd3Subdivision::RefineGPU(HdBufferArrayRangeSharedPtr const &range, T
   HdPh_OsdGpuEvaluator const *instance = OpenSubdiv::Osd::GetEvaluator<HdPh_OsdGpuEvaluator>(
       &evaluatorCache, srcDesc, dstDesc, (void *)NULL /*deviceContext*/);
 
-  instance->EvalStencils(&vertexBuffer, srcDesc, &vertexBuffer, dstDesc, _GetGpuStencilTable());
+  HdPh_OsdGpuStencilTable const *gpuStencilTable = (interpolation ==
+                                                    HdPh_MeshTopology::INTERPOLATE_VERTEX) ?
+                                                       _GetGpuVertexStencilTable() :
+                                                   (interpolation ==
+                                                    HdPh_MeshTopology::INTERPOLATE_VARYING) ?
+                                                       _GetGpuVaryingStencilTable() :
+                                                       _GetGpuFaceVaryingStencilTable(fvarChannel);
+
+  instance->EvalStencils(&vertexBuffer, srcDesc, &vertexBuffer, dstDesc, gpuStencilTable);
 #else
   TF_CODING_ERROR("No GPU kernel available.\n");
 #endif
@@ -373,33 +507,66 @@ HdBufferSourceSharedPtr HdPh_Osd3Subdivision::CreateIndexComputation(
 HdBufferSourceSharedPtr HdPh_Osd3Subdivision::CreateRefineComputation(
     HdPh_MeshTopology *topology,
     HdBufferSourceSharedPtr const &source,
-    bool varying,
-    HdBufferSourceSharedPtr const &osdTopology)
+    HdBufferSourceSharedPtr const &osdTopology,
+    HdPh_MeshTopology::Interpolation interpolation,
+    int fvarChannel)
 {
   return HdBufferSourceSharedPtr(new HdPh_OsdRefineComputation<HdPh_OsdCpuVertexBuffer>(
-      topology, source, varying, osdTopology));
+      topology, source, osdTopology, interpolation, fvarChannel));
 }
 
 /*virtual*/
 HdComputationSharedPtr HdPh_Osd3Subdivision::CreateRefineComputationGPU(
     HdPh_MeshTopology *topology,
     TfToken const &name,
-    HdType dataType)
+    HdType dataType,
+    HdPh_MeshTopology::Interpolation interpolation,
+    int fvarChannel)
 {
-  return HdComputationSharedPtr(new HdPh_OsdRefineComputationGPU(topology, name, dataType));
+  return HdComputationSharedPtr(
+      new HdPh_OsdRefineComputationGPU(topology, name, dataType, interpolation, fvarChannel));
 }
 
 #if HDPH_ENABLE_GPU_SUBDIVISION
-HdPh_OsdGpuStencilTable *HdPh_Osd3Subdivision::_GetGpuStencilTable()
+HdPh_OsdGpuStencilTable *HdPh_Osd3Subdivision::_GetGpuVertexStencilTable()
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (!_gpuStencilTable) {
-    _gpuStencilTable = HdPh_OsdGpuStencilTable::Create(_vertexStencils, NULL);
+  if (!_gpuVertexStencilTable) {
+    _gpuVertexStencilTable = HdPh_OsdGpuStencilTable::Create(_vertexStencils, NULL);
   }
 
-  return _gpuStencilTable;
+  return _gpuVertexStencilTable;
+}
+
+HdPh_OsdGpuStencilTable *HdPh_Osd3Subdivision::_GetGpuVaryingStencilTable()
+{
+  HD_TRACE_FUNCTION();
+  HF_MALLOC_TAG_FUNCTION();
+
+  if (!_gpuVaryingStencilTable) {
+    _gpuVaryingStencilTable = HdPh_OsdGpuStencilTable::Create(_varyingStencils, NULL);
+  }
+
+  return _gpuVaryingStencilTable;
+}
+
+HdPh_OsdGpuStencilTable *HdPh_Osd3Subdivision::_GetGpuFaceVaryingStencilTable(int channel)
+{
+  HD_TRACE_FUNCTION();
+  HF_MALLOC_TAG_FUNCTION();
+
+  if (_gpuFaceVaryingStencilTables.empty()) {
+    _gpuFaceVaryingStencilTables.resize(_faceVaryingStencils.size(), nullptr);
+  }
+
+  if (!_gpuFaceVaryingStencilTables[channel]) {
+    _gpuFaceVaryingStencilTables[channel] = HdPh_OsdGpuStencilTable::Create(
+        _faceVaryingStencils[channel], NULL);
+  }
+
+  return _gpuFaceVaryingStencilTables[channel];
 }
 #endif
 
@@ -437,12 +604,14 @@ bool HdPh_Osd3TopologyComputation::Resolve()
 
   // for empty topology, we don't need to refine anything.
   // but still need to return the typed buffer for codegen
+  int numFvarChannels = 0;
   if (_topology->GetFaceVertexCounts().size() == 0) {
     // leave refiner empty
   }
   else {
-    refiner = PxOsdRefinerFactory::Create(_topology->GetPxOsdMeshTopology(),
-                                          TfToken(_id.GetText()));
+    refiner = PxOsdRefinerFactory::Create(
+        _topology->GetPxOsdMeshTopology(), _topology->GetFvarTopologies(), TfToken(_id.GetText()));
+    numFvarChannels = refiner->GetNumFVarChannels();
   }
 
   if (!TF_VERIFY(_subdivision)) {
@@ -453,12 +622,18 @@ bool HdPh_Osd3TopologyComputation::Resolve()
   // refine
   //  and
   // create stencil/patch table
-  Far::StencilTable const *vertexStencils  = NULL;
-  Far::StencilTable const *varyingStencils = NULL;
-  Far::PatchTable const *patchTable        = NULL;
+  Far::StencilTable const *vertexStencils  = nullptr;
+  Far::StencilTable const *varyingStencils = nullptr;
+  std::vector<Far::StencilTable const *> faceVaryingStencils(numFvarChannels);
+  Far::PatchTable const *patchTable = nullptr;
 
   if (refiner) {
     Far::PatchTableFactory::Options patchOptions(_level);
+    if (numFvarChannels > 0) {
+      patchOptions.generateFVarTables              = true;
+      patchOptions.includeFVarBaseLevelIndices     = true;
+      patchOptions.generateFVarLegacyLinearPatches = !_adaptive;
+    }
     if (_adaptive) {
       patchOptions.endCapType = Far::PatchTableFactory::Options::ENDCAP_BSPLINE_BASIS;
 #if OPENSUBDIV_VERSION_NUMBER >= 30400
@@ -493,6 +668,11 @@ bool HdPh_Osd3TopologyComputation::Resolve()
 
       options.interpolationMode = Far::StencilTableFactory::INTERPOLATE_VARYING;
       varyingStencils           = Far::StencilTableFactory::Create(*refiner, options);
+      options.interpolationMode = Far::StencilTableFactory::INTERPOLATE_FACE_VARYING;
+      for (int i = 0; i < numFvarChannels; ++i) {
+        options.fvarChannel    = i;
+        faceVaryingStencils[i] = Far::StencilTableFactory::Create(*refiner, options);
+      }
     }
     {
       HD_TRACE_SCOPE("patch factory");
@@ -509,17 +689,35 @@ bool HdPh_Osd3TopologyComputation::Resolve()
       delete vertexStencils;
       vertexStencils = vertexStencilsWithLocalPoints;
     }
+  }
+  if (patchTable && patchTable->GetLocalPointVaryingStencilTable()) {
+    // append stencils
     if (Far::StencilTable const *varyingStencilsWithLocalPoints =
-            Far::StencilTableFactory::AppendLocalPointStencilTable(
-                *refiner, varyingStencils, patchTable->GetLocalPointStencilTable())) {
+            Far::StencilTableFactory::AppendLocalPointStencilTableVarying(
+                *refiner, varyingStencils, patchTable->GetLocalPointVaryingStencilTable())) {
       delete varyingStencils;
       varyingStencils = varyingStencilsWithLocalPoints;
     }
   }
+  for (int i = 0; i < numFvarChannels; ++i) {
+    if (patchTable && patchTable->GetLocalPointFaceVaryingStencilTable(i)) {
+      // append stencils
+      if (Far::StencilTable const *faceVaryingStencilsWithLocalPoints =
+              Far::StencilTableFactory::AppendLocalPointStencilTableFaceVarying(
+                  *refiner,
+                  faceVaryingStencils[i],
+                  patchTable->GetLocalPointFaceVaryingStencilTable(i),
+                  i)) {
+        delete faceVaryingStencils[i];
+        faceVaryingStencils[i] = faceVaryingStencilsWithLocalPoints;
+      }
+    }
+  }
 
   // set tables to topology
-  // HdPh_Subdivision takes an ownership of stencilTable and patchTable.
-  _subdivision->SetRefinementTables(vertexStencils, varyingStencils, patchTable, _adaptive);
+  // HdPh_Subdivision takes an ownership of stencilTables and patchTable.
+  _subdivision->SetRefinementTables(
+      vertexStencils, varyingStencils, faceVaryingStencils, patchTable, _adaptive);
 
   _SetResolved();
   return true;

@@ -69,6 +69,13 @@ class HdPh_MeshTopology final : public HdMeshTopology {
   /// Specifies how subdivision mesh topology is refined.
   enum RefineMode { RefineModeUniform = 0, RefineModePatches };
 
+  /// Specifies type of interpolation to use in refinement
+  enum Interpolation {
+    INTERPOLATE_VERTEX,
+    INTERPOLATE_VARYING,
+    INTERPOLATE_FACEVARYING,
+  };
+
   static HdPh_MeshTopologySharedPtr New(const HdMeshTopology &src,
                                         int refineLevel,
                                         RefineMode refineMode = RefineModeUniform);
@@ -192,10 +199,26 @@ class HdPh_MeshTopology final : public HdMeshTopology {
 
   /// Returns the subdivision primvar refine computation on CPU.
   HdBufferSourceSharedPtr GetOsdRefineComputation(HdBufferSourceSharedPtr const &source,
-                                                  bool varying);
+                                                  Interpolation interpolation,
+                                                  int fvarChannel = 0);
 
   /// Returns the subdivision primvar refine computation on GPU.
-  HdComputationSharedPtr GetOsdRefineComputationGPU(TfToken const &name, HdType dataType);
+  HdComputationSharedPtr GetOsdRefineComputationGPU(TfToken const &name,
+                                                    HdType dataType,
+                                                    Interpolation interpolation,
+                                                    int fvarChannel = 0);
+
+  /// Sets the face-varying topologies.
+  void SetFvarTopologies(std::vector<VtIntArray> const &fvarTopologies)
+  {
+    _fvarTopologies = fvarTopologies;
+  }
+
+  /// Returns the face-varying topologies.
+  std::vector<VtIntArray> const &GetFvarTopologies()
+  {
+    return _fvarTopologies;
+  }
 
   /// @}
 
@@ -212,6 +235,8 @@ class HdPh_MeshTopology final : public HdMeshTopology {
   RefineMode _refineMode;
   HdPh_Subdivision *_subdivision;
   HdBufferSourceWeakPtr _osdTopologyBuilder;
+
+  std::vector<VtIntArray> _fvarTopologies;
 
   // Must be created through factory
   explicit HdPh_MeshTopology(const HdMeshTopology &src, int refineLevel, RefineMode refineMode);

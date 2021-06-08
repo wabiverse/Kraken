@@ -558,35 +558,36 @@ static HdBufferSourceSharedPtr _TriangulateFaceVaryingPrimvar(
 // in 'source',
 static void _RefinePrimvar(HdBufferSourceSharedPtr const &source,
                            HdPh_MeshTopologySharedPtr const &topology,
-                           HdPhComputationSharedPtrVector *computations)
+                           HdPhComputationSharedPtrVector *computations,
+                           HdPh_MeshTopology::Interpolation interpolation,
+                           int channel = 0)
 {
   if (!TF_VERIFY(computations)) {
     return;
   }
   // GPU subdivision
   HdComputationSharedPtr computation = topology->GetOsdRefineComputationGPU(
-      source->GetName(), source->GetTupleType().type);
+      source->GetName(), source->GetTupleType().type, interpolation, channel);
   // computation can be null for empty mesh
   if (computation) {
     computations->emplace_back(computation, _RefinePrimvarCompQueue);
   }
 }
 
-static void _RefineOrQuadrangulateVertexAndVaryingPrimvars(
-    HdBufferSourceSharedPtrVector const &sources,
+static void _RefineOrQuadrangulateVertexAndVaryingPrimvar(
+    HdBufferSourceSharedPtr const &source,
     HdPh_MeshTopologySharedPtr const &topology,
     SdfPath const &id,
     bool doRefine,
     bool doQuadrangulate,
-    HdPhComputationSharedPtrVector *computations)
+    HdPhComputationSharedPtrVector *computations,
+    HdPh_MeshTopology::Interpolation interpolation)
 {
-  for (HdBufferSourceSharedPtr const &source : sources) {
-    if (doRefine) {
-      _RefinePrimvar(source, topology, computations);
-    }
-    else if (doQuadrangulate) {
-      _QuadrangulatePrimvar(source, topology, id, computations);
-    }
+  if (doRefine) {
+    _RefinePrimvar(source, topology, computations, interpolation);
+  }
+  else if (doQuadrangulate) {
+    _QuadrangulatePrimvar(source, topology, id, computations);
   }
 }
 
@@ -686,6 +687,31 @@ void HdPhMesh::_PopulateVertexPrimvars(HdSceneDelegate *sceneDelegate,
     }
   }
 
+  const bool doRefine        = (refineLevel > 0);
+  const bool doQuadrangulate = _UseQuadIndices(renderIndex, _topology);
+
+  {
+    for (HdBufferSourceSharedPtr const &source : reserveOnlySources) {
+      _RefineOrQuadrangulateVertexAndVaryingPrimvar(source,
+                                                    _topology,
+                                                    id,
+                                                    doRefine,
+                                                    doQuadrangulate,
+                                                    &computations,
+                                                    HdPh_MeshTopology::INTERPOLATE_VERTEX);
+    }
+
+    for (HdBufferSourceSharedPtr const &source : sources) {
+      _RefineOrQuadrangulateVertexAndVaryingPrimvar(source,
+                                                    _topology,
+                                                    id,
+                                                    doRefine,
+                                                    doQuadrangulate,
+                                                    &computations,
+                                                    HdPh_MeshTopology::INTERPOLATE_VERTEX);
+    }
+  }
+
   // Track index to identify varying primvars.
   int i = 0;
   for (HdPrimvarDescriptor const &primvar : primvars) {
@@ -765,20 +791,18 @@ void HdPhMesh::_PopulateVertexPrimvars(HdSceneDelegate *sceneDelegate,
         _pointsDataType = source->GetTupleType().type;
       }
 
+      _RefineOrQuadrangulateVertexAndVaryingPrimvar(source,
+                                                    _topology,
+                                                    id,
+                                                    doRefine,
+                                                    doQuadrangulate,
+                                                    &computations,
+                                                    isVarying ?
+                                                        HdPh_MeshTopology::INTERPOLATE_VARYING :
+                                                        HdPh_MeshTopology::INTERPOLATE_VERTEX);
+
       sources.push_back(source);
     }
-  }
-
-  const bool doRefine        = (refineLevel > 0);
-  const bool doQuadrangulate = _UseQuadIndices(renderIndex, _topology);
-  {
-    // Refinement or quadrangulation ...
-    // .. of GPU-computed primvar soruces ...
-    _RefineOrQuadrangulateVertexAndVaryingPrimvars(
-        reserveOnlySources, _topology, id, doRefine, doQuadrangulate, &computations);
-    // .. and authored / CPU-computed primvar sources.
-    _RefineOrQuadrangulateVertexAndVaryingPrimvars(
-        sources, _topology, id, doRefine, doQuadrangulate, &computations);
   }
 
   TfToken generatedNormalsName;
@@ -820,7 +844,7 @@ void HdPhMesh::_PopulateVertexPrimvars(HdSceneDelegate *sceneDelegate,
       // forced unpacked normals.
       if (doRefine) {
         HdComputationSharedPtr computation = _topology->GetOsdRefineComputationGPU(
-            HdPhTokens->smoothNormals, _pointsDataType);
+            HdPhTokens->smoothNormals, _pointsDataType, HdPh_MeshTopology::INTERPOLATE_VERTEX);
 
         // computation can be null for empty mesh
         if (computation) {

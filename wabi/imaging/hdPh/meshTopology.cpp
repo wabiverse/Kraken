@@ -244,7 +244,8 @@ HdBufferSourceSharedPtr HdPh_MeshTopology::GetOsdIndexBuilderComputation()
 
 HdBufferSourceSharedPtr HdPh_MeshTopology::GetOsdRefineComputation(
     HdBufferSourceSharedPtr const &source,
-    bool varying)
+    Interpolation interpolation,
+    int fvarChannel)
 {
   // Make a dependency to far mesh.
   // (see comment on GetQuadrangulateComputation)
@@ -267,11 +268,13 @@ HdBufferSourceSharedPtr HdPh_MeshTopology::GetOsdRefineComputation(
 
   HdBufferSourceSharedPtr topologyBuilder = _osdTopologyBuilder.lock();
 
-  return _subdivision->CreateRefineComputation(this, source, varying, topologyBuilder);
+  return _subdivision->CreateRefineComputation(this, source, topologyBuilder, interpolation);
 }
 
 HdComputationSharedPtr HdPh_MeshTopology::GetOsdRefineComputationGPU(TfToken const &name,
-                                                                     HdType dataType)
+                                                                     HdType dataType,
+                                                                     Interpolation interpolation,
+                                                                     int fvarChannel)
 {
   // for empty topology, we don't need to refine anything.
   if (_topology.GetFaceVertexCounts().size() == 0) {
@@ -281,7 +284,7 @@ HdComputationSharedPtr HdPh_MeshTopology::GetOsdRefineComputationGPU(TfToken con
   if (!TF_VERIFY(_subdivision))
     return HdComputationSharedPtr();
 
-  return _subdivision->CreateRefineComputationGPU(this, name, dataType);
+  return _subdivision->CreateRefineComputationGPU(this, name, dataType, interpolation);
 }
 
 WABI_NAMESPACE_END

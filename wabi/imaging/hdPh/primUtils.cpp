@@ -39,6 +39,7 @@
 #include "wabi/imaging/hdPh/renderParam.h"
 #include "wabi/imaging/hdPh/resourceRegistry.h"
 #include "wabi/imaging/hdPh/shaderCode.h"
+#include "wabi/imaging/hdPh/subdivision.h"
 #include "wabi/imaging/hdPh/tokens.h"
 
 #include "wabi/imaging/hd/bufferArrayRange.h"
@@ -957,6 +958,12 @@ uint64_t HdPhComputeSharedPrimvarId(uint64_t baseId,
     }
   }
 
+  for (const auto &computation : computations) {
+    if (std::shared_ptr<HdPh_OsdRefineComputationGPU> refinedComputation =
+            std::dynamic_pointer_cast<HdPh_OsdRefineComputationGPU>(computation.first)) {
+      primvarId = TfHash::Combine(primvarId, refinedComputation->GetInterpolation());
+    }
+  }
   HdBufferSpecVector bufferSpecs;
   HdPhGetBufferSpecsFromCompuations(computations, &bufferSpecs);
 
