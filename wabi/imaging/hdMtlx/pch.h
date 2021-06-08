@@ -151,5 +151,5 @@
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/spin_mutex.h>
 #ifdef WABI_PYTHON_SUPPORT_ENABLED
-#  include "pxr/base/tf/pySafePython.h"
+#  include "wabi/base/tf/pySafePython.h"
 #endif /* WABI_PYTHON_SUPPORT_ENABLED */
