@@ -243,7 +243,19 @@ static const std::string &_GetResolvedDomeLightEnvironmentFilePath(
   const GlfSimpleLightVector &lights = ctx->GetLights();
   for (auto it = lights.rbegin(); it != lights.rend(); ++it) {
     if (it->IsDomeLight()) {
-      return it->GetDomeLightTextureFile().GetResolvedPath();
+      const SdfAssetPath &path     = it->GetDomeLightTextureFile();
+      const std::string &assetPath = path.GetAssetPath();
+      if (assetPath.empty()) {
+        TF_WARN("Dome light has no texture asset path.");
+        return empty;
+      }
+
+      const std::string &resolvedPath = path.GetResolvedPath();
+      if (resolvedPath.empty()) {
+        TF_WARN("Texture asset path '%s' for dome light could not be resolved.",
+                assetPath.c_str());
+      }
+      return resolvedPath;
     }
   }
 
@@ -388,7 +400,9 @@ void HdPhSimpleLightingShader::AddResourcesFromTextures(ResourceContext &ctx) co
     return;
   }
   const HgiTexture *const srcTexture = srcTextureObject->GetTexture().Get();
-  if (!TF_VERIFY(srcTexture)) {
+  if (!srcTexture) {
+    TF_WARN("Invalid texture for dome light environment map at %s",
+            srcTextureObject->GetTextureIdentifier().GetFilePath().GetText());
     return;
   }
   const GfVec3i srcDim = srcTexture->GetDescriptor().dimensions;
