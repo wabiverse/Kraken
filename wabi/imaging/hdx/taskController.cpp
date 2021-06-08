@@ -1531,6 +1531,10 @@ void HdxTaskController::SetColorCorrectionParams(HdxColorCorrectionTaskParams co
 
 void HdxTaskController::SetEnablePresentation(bool enabled)
 {
+  if (_presentTaskId.IsEmpty()) {
+    return;
+  }
+
   HdxPresentTaskParams params = _delegate.GetParameter<HdxPresentTaskParams>(_presentTaskId,
                                                                              HdTokens->params);
 
@@ -1544,6 +1548,10 @@ void HdxTaskController::SetEnablePresentation(bool enabled)
 
 void HdxTaskController::SetPresentationOutput(TfToken const &api, VtValue const &framebuffer)
 {
+  if (_presentTaskId.IsEmpty()) {
+    return;
+  }
+
   HdxPresentTaskParams params = _delegate.GetParameter<HdxPresentTaskParams>(_presentTaskId,
                                                                              HdTokens->params);
 
