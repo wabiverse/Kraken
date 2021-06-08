@@ -40,7 +40,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-#define HD_FIELD_TOKENS (filePath)
+/* clang-format off */
+#define HD_FIELD_TOKENS \
+  (filePath)            \
+  (fieldName)
+/* clang-format on */
 
 TF_DECLARE_PUBLIC_TOKENS(HdFieldTokens, HD_API, HD_FIELD_TOKENS);
 

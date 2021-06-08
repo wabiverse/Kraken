@@ -37,10 +37,15 @@
 
 WABI_NAMESPACE_BEGIN
 
+/* clang-format off */
 TF_DEFINE_PRIVATE_TOKENS(_tokens,
-                         (fieldName)(fieldIndex)(fieldPurpose)(textureMemory)
-
-                             (openvdbAsset)(field3dAsset));
+  (fieldIndex)
+  (fieldPurpose)
+  (textureMemory)
+  (openvdbAsset)
+  (field3dAsset)
+);
+/* clang-format on */
 
 HdPhField::HdPhField(SdfPath const &id, TfToken const &fieldType)
     : HdField(id),
@@ -68,7 +73,7 @@ void HdPhField::Sync(HdSceneDelegate *sceneDelegate,
     // called.
     const TfToken resolvedFilePath = TfToken(filePath.GetResolvedPath());
 
-    const VtValue fieldNameValue = sceneDelegate->Get(GetId(), _tokens->fieldName);
+    const VtValue fieldNameValue = sceneDelegate->Get(GetId(), HdFieldTokens->fieldName);
     const TfToken &fieldName     = fieldNameValue.Get<TfToken>();
 
     const VtValue fieldIndexValue = sceneDelegate->Get(GetId(), _tokens->fieldIndex);
