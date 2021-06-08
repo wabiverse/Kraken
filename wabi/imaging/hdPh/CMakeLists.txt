@@ -21,7 +21,7 @@ set(optionalPublicClasses "")
 set(optionalPrivateClasses "")
 if (${WITH_MATERIALX})
     add_definitions(-DWABI_MATERIALX_STDLIB_DIR="${MATERIALX_STDLIB_DIR}")
-    add_definitions(-DWABI_MATERIALX_RESOURCE_DIR="${MATERIALX_RESOURCE_DIR}")
+    add_definitions(-DWABI_MATERIALX_BASE_DIR="${MATERIALX_BASE_DIR}")
 
     list(APPEND optionalLibs ${MATERIALX_LIBRARIES} hdMtlx)
     list(APPEND optionalIncludeDirs ${MATERIALX_INCLUDE_DIRS})

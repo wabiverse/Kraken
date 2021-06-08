@@ -618,7 +618,7 @@ void HdPh_ApplyMaterialXFilter(HdMaterialNetwork2 *hdNetwork,
     };
     mx::FileSearchPath searchPath;
     searchPath.append(mx::FilePath(WABI_MATERIALX_STDLIB_DIR));
-    searchPath.append(mx::FilePath(WABI_MATERIALX_RESOURCE_DIR));
+    searchPath.append(mx::FilePath(WABI_MATERIALX_BASE_DIR));
     mx::DocumentPtr stdLibraries = mx::createDocument();
     mx::loadLibraries(libraryFolders, searchPath, stdLibraries);
 

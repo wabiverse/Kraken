@@ -60,11 +60,50 @@
 
 WABI_NAMESPACE_BEGIN
 
+/* clang-format off */
 TF_DEFINE_PRIVATE_TOKENS(
-    _tokens,
-    ((_double, "double"))((_float, "float"))((_int,
-                                              "int"))(hd_vec3)(hd_vec3_get)(hd_vec3_set)(hd_ivec3)(hd_ivec3_get)(hd_ivec3_set)(hd_dvec3)(hd_dvec3_get)(hd_dvec3_set)(hd_mat3)(hd_mat3_get)(hd_mat3_set)(hd_dmat3)(hd_dmat3_get)(hd_dmat3_set)(hd_vec4_2_10_10_10_get)(hd_vec4_2_10_10_10_set)(inPrimvars)(ivec2)(ivec3)(ivec4)(outPrimvars)(vec2)(vec3)(vec4)(dvec2)(dvec3)(dvec4)(mat3)(mat4)(dmat3)(dmat4)(packed_2_10_10_10)((ptexTextureSampler,
-                                                                                                                                                                                                                                                                                                                                                                                                                                 "ptexTextureSampler"))(isamplerBuffer)(samplerBuffer));
+  _tokens,
+  ((_double, "double"))
+  ((_float, "float"))
+  ((_int, "int"))
+  (hd_vec3)
+  (hd_vec3_get)
+  (hd_vec3_set)
+  (hd_ivec3)
+  (hd_ivec3_get)
+  (hd_ivec3_set)
+  (hd_dvec3)
+  (hd_dvec3_get)
+  (hd_dvec3_set)
+  (hd_mat3)
+  (hd_mat3_get)
+  (hd_mat3_set)
+  (hd_dmat3)
+  (hd_dmat3_get)
+  (hd_dmat3_set)
+  (hd_vec4_2_10_10_10_get)
+  (hd_vec4_2_10_10_10_set)
+  (inPrimvars)
+  (ivec2)
+  (ivec3)
+  (ivec4)
+  (outPrimvars)
+  (vec2)
+  (vec3)
+  (vec4)
+  (dvec2)
+  (dvec3)
+  (dvec4)
+  (mat3)
+  (mat4)
+  (dmat3)
+  (dmat4)
+  (packed_2_10_10_10)
+  ((ptexTextureSampler, "ptexTextureSampler"))
+  (isamplerBuffer)
+  (samplerBuffer)
+);
+/* clang-format on */
 
 HdPh_CodeGen::HdPh_CodeGen(HdPh_GeometricShaderPtr const &geometricShader,
                            HdPhShaderCodeSharedPtrVector const &shaders,
@@ -168,10 +207,10 @@ static void _EmitAccessor(std::stringstream &str,
   struct instead of vec3/dvec3 to avoid this undesirable padding.
 
   struct instanceData0 {
-    float x, y, z;
+  float x, y, z;
   }
   buffer buffer0 {
-    instanceData0 data[];
+  instanceData0 data[];
   };
 */
 
@@ -1007,16 +1046,16 @@ static void _EmitDeclaration(std::stringstream &str,
                              int arraySize)
 {
   /*
-    [vertex attribute]
-       layout (location = <location>) in <type> <name>;
-    [uniform]
-       layout (location = <location>) uniform <type> <name>;
-    [SSBO]
-       layout (std430, binding = <location>) buffer buffer_<location> {
-          <type> <name>[];
-       };
-    [Bindless Uniform]
-       layout (location = <location>) uniform <type> *<name>;
+  [vertex attribute]
+     layout (location = <location>) in <type> <name>;
+  [uniform]
+     layout (location = <location>) uniform <type> <name>;
+  [SSBO]
+     layout (std430, binding = <location>) buffer buffer_<location> {
+      <type> <name>[];
+     };
+  [Bindless Uniform]
+     layout (location = <location>) uniform <type> *<name>;
 
    */
   HdBinding::Type bindingType = binding.GetType();
@@ -1574,97 +1613,97 @@ void HdPh_CodeGen::_GenerateDrawingCoord()
   TF_VERIFY(_metaData.drawingCoord2Binding.binding.IsValid());
 
   /*
-     hd_drawingCoord is a struct of integer offsets to locate the primvars
-     in buffer arrays at the current rendering location.
+   hd_drawingCoord is a struct of integer offsets to locate the primvars
+   in buffer arrays at the current rendering location.
 
-     struct hd_drawingCoord {
-         int modelCoord;             // (reserved) model parameters
-         int constantCoord;          // constant primvars (per object)
-         int vertexCoord;            // vertex primvars   (per vertex)
-         int elementCoord;           // element primvars  (per face/curve)
-         int primitiveCoord;         // primitive ids     (per tri/quad/line)
-         int fvarCoord;              // fvar primvars     (per face-vertex)
-         int shaderCoord;            // shader parameters (per shader/object)
-         int topologyVisibilityCoord // topological visibility data (per face/point)
-         int varyingCoord;           // varying primvars  (per vertex)
-         int instanceIndex[];        // (see below)
-         int instanceCoords[];       // (see below)
-     };
+   struct hd_drawingCoord {
+     int modelCoord;             // (reserved) model parameters
+     int constantCoord;          // constant primvars (per object)
+     int vertexCoord;            // vertex primvars   (per vertex)
+     int elementCoord;           // element primvars  (per face/curve)
+     int primitiveCoord;         // primitive ids     (per tri/quad/line)
+     int fvarCoord;              // fvar primvars     (per face-vertex)
+     int shaderCoord;            // shader parameters (per shader/object)
+     int topologyVisibilityCoord // topological visibility data (per face/point)
+     int varyingCoord;           // varying primvars  (per vertex)
+     int instanceIndex[];        // (see below)
+     int instanceCoords[];       // (see below)
+   };
 
-        instanceIndex[0]  : global instance ID (used for ID rendering)
-                     [1]  : instance index for level = 0
-                     [2]  : instance index for level = 1
-                     ...
-        instanceCoords[0] : instanceDC for level = 0
-        instanceCoords[1] : instanceDC for level = 1
-                     ...
+    instanceIndex[0]  : global instance ID (used for ID rendering)
+           [1]  : instance index for level = 0
+           [2]  : instance index for level = 1
+           ...
+    instanceCoords[0] : instanceDC for level = 0
+    instanceCoords[1] : instanceDC for level = 1
+           ...
 
-     We also have a drawingcoord for vertex primvars. Currently it's not
-     being passed into shader since the vertex shader takes pre-offsetted
-     vertex arrays and no needs to apply offset in shader (except gregory
-     patch drawing etc. In that case gl_BaseVertexARB can be used under
-     GL_ARB_shader_draw_parameters extention)
+   We also have a drawingcoord for vertex primvars. Currently it's not
+   being passed into shader since the vertex shader takes pre-offsetted
+   vertex arrays and no needs to apply offset in shader (except gregory
+   patch drawing etc. In that case gl_BaseVertexARB can be used under
+   GL_ARB_shader_draw_parameters extention)
 
-     gl_InstanceID is available only in vertex shader, so codegen
-     takes care of applying an offset for each instance for the later
-     stage. On the other hand, gl_PrimitiveID is available in all stages
-     except vertex shader, and since tess/geometry shaders may or may not
-     exist, we don't apply an offset of primitiveID during interstage
-     plumbing to avoid overlap. Instead, GetDrawingCoord() applies
-     primitiveID if necessary.
+   gl_InstanceID is available only in vertex shader, so codegen
+   takes care of applying an offset for each instance for the later
+   stage. On the other hand, gl_PrimitiveID is available in all stages
+   except vertex shader, and since tess/geometry shaders may or may not
+   exist, we don't apply an offset of primitiveID during interstage
+   plumbing to avoid overlap. Instead, GetDrawingCoord() applies
+   primitiveID if necessary.
 
-     XXX:
-     Ideally we should use an interface block like:
+   XXX:
+   Ideally we should use an interface block like:
 
-       in DrawingCoord {
-           flat hd_drawingCoord drawingCoord;
-       } inDrawingCoord;
-       out DrawingCoord {
-           flat hd_drawingCoord drawingCoord;
-       } outDrawingCoord;
+     in DrawingCoord {
+       flat hd_drawingCoord drawingCoord;
+     } inDrawingCoord;
+     out DrawingCoord {
+       flat hd_drawingCoord drawingCoord;
+     } outDrawingCoord;
 
-    then the fragment shader can take the same input regardless the
-    existence of tess/geometry shaders. However it seems the current
-    driver (331.79) doesn't handle multiple interface blocks
-    appropriately, it fails matching and ends up undefined results at
-    consuming shader.
+  then the fragment shader can take the same input regardless the
+  existence of tess/geometry shaders. However it seems the current
+  driver (331.79) doesn't handle multiple interface blocks
+  appropriately, it fails matching and ends up undefined results at
+  consuming shader.
 
-    > OpenGL 4.4 Core profile
-    > 7.4.1 Shader Interface Matching
-    >
-    > When multiple shader stages are active, the outputs of one stage form
-    > an interface with the inputs of the next stage. At each such
-    > interface, shader inputs are matched up against outputs from the
-    > previous stage:
-    >
-    > An output block is considered to match an input block in the
-    > subsequent shader if the two blocks have the same block name, and
-    > the members of the block match exactly in name, type, qualification,
-    > and declaration order.
-    >
-    > An output variable is considered to match an input variable in the
-    > subsequent shader if:
-    >  - the two variables match in name, type, and qualification; or
-    >  - the two variables are declared with the same location and
-    >     component layout qualifiers and match in type and qualification.
+  > OpenGL 4.4 Core profile
+  > 7.4.1 Shader Interface Matching
+  >
+  > When multiple shader stages are active, the outputs of one stage form
+  > an interface with the inputs of the next stage. At each such
+  > interface, shader inputs are matched up against outputs from the
+  > previous stage:
+  >
+  > An output block is considered to match an input block in the
+  > subsequent shader if the two blocks have the same block name, and
+  > the members of the block match exactly in name, type, qualification,
+  > and declaration order.
+  >
+  > An output variable is considered to match an input variable in the
+  > subsequent shader if:
+  >  - the two variables match in name, type, and qualification; or
+  >  - the two variables are declared with the same location and
+  >     component layout qualifiers and match in type and qualification.
 
-    We use non-block variable for drawingCoord as a workaround of this
-    problem for now. There is a caveat we can't use the same name for input
-    and output, the subsequent shader has to be aware which stage writes
-    the drawingCoord.
+  We use non-block variable for drawingCoord as a workaround of this
+  problem for now. There is a caveat we can't use the same name for input
+  and output, the subsequent shader has to be aware which stage writes
+  the drawingCoord.
 
-    for example:
-      drawingCoord--(VS)--vsDrawingCoord--(GS)--gsDrawingCoord--(FS)
-      drawingCoord--(VS)------------------------vsDrawingCoord--(FS)
+  for example:
+    drawingCoord--(VS)--vsDrawingCoord--(GS)--gsDrawingCoord--(FS)
+    drawingCoord--(VS)------------------------vsDrawingCoord--(FS)
 
-    Fortunately the compiler is smart enough to optimize out unused
-    attributes. If the VS writes the same value into two attributes:
+  Fortunately the compiler is smart enough to optimize out unused
+  attributes. If the VS writes the same value into two attributes:
 
-      drawingCoord--(VS)--vsDrawingCoord--(GS)--gsDrawingCoord--(FS)
-                    (VS)--gsDrawingCoord--------gsDrawingCoord--(FS)
+    drawingCoord--(VS)--vsDrawingCoord--(GS)--gsDrawingCoord--(FS)
+          (VS)--gsDrawingCoord--------gsDrawingCoord--(FS)
 
-    The fragment shader can always take gsDrawingCoord. The following code
-    does such a plumbing work.
+  The fragment shader can always take gsDrawingCoord. The following code
+  does such a plumbing work.
 
    */
 
@@ -1849,28 +1888,28 @@ void HdPh_CodeGen::_GenerateDrawingCoord()
 void HdPh_CodeGen::_GenerateConstantPrimvar()
 {
   /*
-    // --------- constant data declaration ----------
-    struct ConstantData0 {
-        mat4 transform;
-        mat4 transformInverse;
-        mat4 instancerTransform[2];
-        vec3 displayColor;
-        vec4 primID;
-    };
-    // bindless
-    layout (location=0) uniform ConstantData0 *constantData0;
-    // not bindless
-    layout (std430, binding=0) buffer {
-        constantData0 constantData0[];
-    };
+  // --------- constant data declaration ----------
+  struct ConstantData0 {
+    mat4 transform;
+    mat4 transformInverse;
+    mat4 instancerTransform[2];
+    vec3 displayColor;
+    vec4 primID;
+  };
+  // bindless
+  layout (location=0) uniform ConstantData0 *constantData0;
+  // not bindless
+  layout (std430, binding=0) buffer {
+    constantData0 constantData0[];
+  };
 
-    // --------- constant data accessors ----------
-    mat4 HdGet_transform(int localIndex) {
-        return constantData0[GetConstantCoord()].transform;
-    }
-    vec3 HdGet_displayColor(int localIndex) {
-        return constantData0[GetConstantCoord()].displayColor;
-    }
+  // --------- constant data accessors ----------
+  mat4 HdGet_transform(int localIndex) {
+    return constantData0[GetConstantCoord()].transform;
+  }
+  vec3 HdGet_displayColor(int localIndex) {
+    return constantData0[GetConstantCoord()].displayColor;
+  }
 
   */
 
@@ -1921,18 +1960,18 @@ void HdPh_CodeGen::_GenerateConstantPrimvar()
 void HdPh_CodeGen::_GenerateInstancePrimvar()
 {
   /*
-    // --------- instance data declaration ----------
-    // bindless
-    layout (location=X) uniform vec4 *data;
-    // not bindless
-    layout (std430, binding=X) buffer buffer_X {
-        vec4 data[];
-    };
+  // --------- instance data declaration ----------
+  // bindless
+  layout (location=X) uniform vec4 *data;
+  // not bindless
+  layout (std430, binding=X) buffer buffer_X {
+    vec4 data[];
+  };
 
-    // --------- instance data accessors ----------
-    vec3 HdGet_translate(int localIndex=0) {
-        return instanceData0[GetInstanceCoord()].translate;
-    }
+  // --------- instance data accessors ----------
+  vec3 HdGet_translate(int localIndex=0) {
+    return instanceData0[GetInstanceCoord()].translate;
+  }
   */
 
   std::stringstream declarations;
@@ -1965,17 +2004,17 @@ void HdPh_CodeGen::_GenerateInstancePrimvar()
   }
 
   /*
-    accessor taking level as a parameter.
-    note that instance primvar may or may not be defined for each level.
-    we expect level is an unrollable constant to optimize out branching.
+  accessor taking level as a parameter.
+  note that instance primvar may or may not be defined for each level.
+  we expect level is an unrollable constant to optimize out branching.
 
-    vec3 HdGetInstance_translate(int level, vec3 defaultValue) {
-        if (level == 0) return HdGet_translate_0();
-        // level==1 is not defined. use default
-        if (level == 2) return HdGet_translate_2();
-        if (level == 3) return HdGet_translate_3();
-        return defaultValue;
-    }
+  vec3 HdGetInstance_translate(int level, vec3 defaultValue) {
+    if (level == 0) return HdGet_translate_0();
+    // level==1 is not defined. use default
+    if (level == 2) return HdGet_translate_2();
+    if (level == 3) return HdGet_translate_3();
+    return defaultValue;
+  }
   */
   TF_FOR_ALL(it, nameAndLevels)
   {
@@ -1992,19 +2031,19 @@ void HdPh_CodeGen::_GenerateInstancePrimvar()
               << "}\n";
   }
   /*
-    common accessor, if the primvar is defined on the instancer but not
-    the rprim.
+  common accessor, if the primvar is defined on the instancer but not
+  the rprim.
 
-    #if !defined(HD_HAS_translate)
-    #define HD_HAS_translate 1
-    vec3 HdGet_translate(int localIndex) {
-        // 0 is the lowest level for which this is defined
-        return HdGet_translate_0();
-    }
-    vec3 HdGet_translate() {
-        return HdGet_translate(0);
-    }
-    #endif
+  #if !defined(HD_HAS_translate)
+  #define HD_HAS_translate 1
+  vec3 HdGet_translate(int localIndex) {
+    // 0 is the lowest level for which this is defined
+    return HdGet_translate_0();
+  }
+  vec3 HdGet_translate() {
+    return HdGet_translate(0);
+  }
+  #endif
   */
   TF_FOR_ALL(it, nameAndLevels)
   {
@@ -2031,9 +2070,9 @@ void HdPh_CodeGen::_GenerateElementPrimvar()
   face below) granularity.
   To access uniform primvar data (say color), there are two indirections in
   the lookup because of aggregation in the buffer layout.
-        ----------------------------------------------------
+    ----------------------------------------------------
   color | prim0 colors | prim1 colors | .... | primN colors|
-        ----------------------------------------------------
+    ----------------------------------------------------
   For each prim, GetDrawingCoord().elementCoord holds the start index into
   this buffer.
 
@@ -2052,35 +2091,35 @@ void HdPh_CodeGen::_GenerateElementPrimvar()
 
   The code generated looks something like:
 
-    // --------- primitive param declaration ----------
-    struct PrimitiveData { int elementID; }
-    layout (std430, binding=?) buffer PrimitiveBuffer {
-        PrimitiveData primitiveData[];
-    };
+  // --------- primitive param declaration ----------
+  struct PrimitiveData { int elementID; }
+  layout (std430, binding=?) buffer PrimitiveBuffer {
+    PrimitiveData primitiveData[];
+  };
 
-    // --------- indirection accessors ---------
-    // Gives us the "coarse" element ID
-    int GetElementID() {
-        return primitiveData[GetPrimitiveCoord()].elementID;
-    }
+  // --------- indirection accessors ---------
+  // Gives us the "coarse" element ID
+  int GetElementID() {
+    return primitiveData[GetPrimitiveCoord()].elementID;
+  }
 
-    // Adds the offset to the start of the uniform primvar data for the prim
-    int GetAggregatedElementID() {
-        return GetElementID() + GetDrawingCoord().elementCoord;\n"
-    }
+  // Adds the offset to the start of the uniform primvar data for the prim
+  int GetAggregatedElementID() {
+    return GetElementID() + GetDrawingCoord().elementCoord;\n"
+  }
 
-    // --------- uniform primvar declaration ---------
-    struct ElementData0 {
-        vec3 displayColor;
-    };
-    layout (std430, binding=?) buffer buffer0 {
-        ElementData0 elementData0[];
-    };
+  // --------- uniform primvar declaration ---------
+  struct ElementData0 {
+    vec3 displayColor;
+  };
+  layout (std430, binding=?) buffer buffer0 {
+    ElementData0 elementData0[];
+  };
 
-    // ---------uniform primvar data accessor ---------
-    vec3 HdGet_displayColor(int localIndex) {
-        return elementData0[GetAggregatedElementID()].displayColor;
-    }
+  // ---------uniform primvar data accessor ---------
+  vec3 HdGet_displayColor(int localIndex) {
+    return elementData0[GetAggregatedElementID()].displayColor;
+  }
 
   */
 
@@ -2451,42 +2490,42 @@ void HdPh_CodeGen::_GenerateVertexAndFaceVaryingPrimvar(bool hasGS)
   // Varying primvar are bound in the VS via buffer array but are processed as
   // vertex data for the rest of the stages.
   /*
-    // --------- vertex data declaration (VS) ----------
-    layout (location = 0) in vec3 normals;
-    layout (location = 1) in vec3 points;
+  // --------- vertex data declaration (VS) ----------
+  layout (location = 0) in vec3 normals;
+  layout (location = 1) in vec3 points;
 
-    out Primvars {
-        vec3 normals;
-        vec3 points;
-    } outPrimvars;
+  out Primvars {
+    vec3 normals;
+    vec3 points;
+  } outPrimvars;
 
-    void ProcessPrimvars() {
-        outPrimvars.normals = normals;
-        outPrimvars.points = points;
-    }
+  void ProcessPrimvars() {
+    outPrimvars.normals = normals;
+    outPrimvars.points = points;
+  }
 
-    // --------- geometry stage plumbing -------
-    in Primvars {
-        vec3 normals;
-        vec3 points;
-    } inPrimvars[];
-    out Primvars {
-        vec3 normals;
-        vec3 points;
-    } outPrimvars;
+  // --------- geometry stage plumbing -------
+  in Primvars {
+    vec3 normals;
+    vec3 points;
+  } inPrimvars[];
+  out Primvars {
+    vec3 normals;
+    vec3 points;
+  } outPrimvars;
 
-    void ProcessPrimvars(int index) {
-        outPrimvars = inPrimvars[index];
-    }
+  void ProcessPrimvars(int index) {
+    outPrimvars = inPrimvars[index];
+  }
 
-    // --------- vertex/varying data accessors (used in GS/FS) ---
-    in Primvars {
-        vec3 normals;
-        vec3 points;
-    } inPrimvars;
-    vec3 HdGet_normals(int localIndex=0) {
-        return inPrimvars.normals;
-    }
+  // --------- vertex/varying data accessors (used in GS/FS) ---
+  in Primvars {
+    vec3 normals;
+    vec3 points;
+  } inPrimvars;
+  vec3 HdGet_normals(int localIndex=0) {
+    return inPrimvars.normals;
+  }
   */
 
   std::stringstream vertexInputs;
@@ -2530,30 +2569,30 @@ void HdPh_CodeGen::_GenerateVertexAndFaceVaryingPrimvar(bool hasGS)
   }
 
   /*
-    // --------- varying data declaration (VS) ----------------
-    layout (std430, binding=?) buffer buffer0 {
-        vec3 displayColor[];
-    };
+  // --------- varying data declaration (VS) ----------------
+  layout (std430, binding=?) buffer buffer0 {
+    vec3 displayColor[];
+  };
 
-    vec3 HdGet_displayColor(int localIndex) {
-      int index =  GetDrawingCoord().varyingCoord + gl_VertexID -
-          GetBaseVertexOffset();
-      return vec3(displayColor[index]);
-    }
-    vec3 HdGet_displayColor() { return HdGet_displayColor(0); }
+  vec3 HdGet_displayColor(int localIndex) {
+    int index =  GetDrawingCoord().varyingCoord + gl_VertexID -
+      GetBaseVertexOffset();
+    return vec3(displayColor[index]);
+  }
+  vec3 HdGet_displayColor() { return HdGet_displayColor(0); }
 
-    out Primvars {
-        vec3 displayColor;
-    } outPrimvars;
+  out Primvars {
+    vec3 displayColor;
+  } outPrimvars;
 
-    void ProcessPrimvars() {
-        outPrimvars.displayColor = HdGet_displayColor();
-    }
+  void ProcessPrimvars() {
+    outPrimvars.displayColor = HdGet_displayColor();
+  }
 
-    // --------- fragment stage plumbing -------
-    in Primvars {
-        vec3 displayColor;
-    } inPrimvars;
+  // --------- fragment stage plumbing -------
+  in Primvars {
+    vec3 displayColor;
+  } inPrimvars;
   */
 
   std::stringstream varyingDeclarations;
@@ -2593,48 +2632,48 @@ void HdPh_CodeGen::_GenerateVertexAndFaceVaryingPrimvar(bool hasGS)
   }
 
   /*
-    // --------- facevarying data declaration ----------------
-    layout (std430, binding=?) buffer buffer0 {
-        vec2 map1[];
-    };
-    layout (std430, binding=?) buffer buffer1 {
-        float map2_u[];
-    };
+  // --------- facevarying data declaration ----------------
+  layout (std430, binding=?) buffer buffer0 {
+    vec2 map1[];
+  };
+  layout (std430, binding=?) buffer buffer1 {
+    float map2_u[];
+  };
 
-    // --------- geometry stage plumbing -------
-    out Primvars {
-        ...
-        vec2 map1;
-        float map2_u;
-    } outPrimvars;
+  // --------- geometry stage plumbing -------
+  out Primvars {
+    ...
+    vec2 map1;
+    float map2_u;
+  } outPrimvars;
 
-    void ProcessPrimvars(int index) {
-        outPrimvars.map1 = HdGet_map1(index);
-        outPrimvars.map2_u = HdGet_map2_u(index);
-    }
+  void ProcessPrimvars(int index) {
+    outPrimvars.map1 = HdGet_map1(index);
+    outPrimvars.map2_u = HdGet_map2_u(index);
+  }
 
-    // --------- fragment stage plumbing -------
-    in Primvars {
-        ...
-        vec2 map1;
-        float map2_u;
-    } inPrimvars;
+  // --------- fragment stage plumbing -------
+  in Primvars {
+    ...
+    vec2 map1;
+    float map2_u;
+  } inPrimvars;
 
-    // --------- facevarying data accessors ----------
-    // in geometry shader (internal accessor)
-    vec2 HdGet_map1_Coarse(int localIndex) {
-        int fvarIndex = GetFVarIndex(localIndex);
-        return vec2(map1[fvarIndex]);
-    }
-    // in geometry shader (public accessor)
-    vec2 HdGet_map1(int localIndex) {
-        int fvarIndex = GetFVarIndex(localIndex);
-        return (HdGet_map1_Coarse(0) * ...);
-    }
-    // in fragment shader
-    vec2 HdGet_map1() {
-        return inPrimvars.map1;
-    }
+  // --------- facevarying data accessors ----------
+  // in geometry shader (internal accessor)
+  vec2 HdGet_map1_Coarse(int localIndex) {
+    int fvarIndex = GetFVarIndex(localIndex);
+    return vec2(map1[fvarIndex]);
+  }
+  // in geometry shader (public accessor)
+  vec2 HdGet_map1(int localIndex) {
+    int fvarIndex = GetFVarIndex(localIndex);
+    return (HdGet_map1_Coarse(0) * ...);
+  }
+  // in fragment shader
+  vec2 HdGet_map1() {
+    return inPrimvars.map1;
+  }
 
   */
 
@@ -2707,92 +2746,92 @@ void HdPh_CodeGen::_GenerateVertexAndFaceVaryingPrimvar(bool hasGS)
 void HdPh_CodeGen::_GenerateShaderParameters()
 {
   /*
-    ------------- Declarations -------------
+  ------------- Declarations -------------
 
-    // shader parameter buffer
-    struct ShaderData {
-        <type>          <name>;
-        vec4            diffuseColor;     // fallback uniform
-        sampler2D       kdTexture;        // uv texture    (bindless texture)
-        sampler2DArray  ptexTexels;       // ptex texels   (bindless texture)
-        isamplerBuffer  ptexLayouts;      // ptex layouts  (bindless texture)
-    };
+  // shader parameter buffer
+  struct ShaderData {
+    <type>          <name>;
+    vec4            diffuseColor;     // fallback uniform
+    sampler2D       kdTexture;        // uv texture    (bindless texture)
+    sampler2DArray  ptexTexels;       // ptex texels   (bindless texture)
+    usamplerBuffer  ptexLayouts;      // ptex layouts  (bindless texture)
+  };
 
-    // bindless buffer
-    layout (location=0) uniform ShaderData *shaderData;
-    // not bindless buffer
-    layout (std430, binding=0) buffer {
-        ShaderData shaderData[];
-    };
+  // bindless buffer
+  layout (location=0) uniform ShaderData *shaderData;
+  // not bindless buffer
+  layout (std430, binding=0) buffer {
+    ShaderData shaderData[];
+  };
 
-    // non bindless textures
-    uniform sampler2D      samplers_2d[N];
-    uniform sampler2DArray samplers_2darray[N];
-    uniform isamplerBuffer isamplerBuffers[N];
+  // non bindless textures
+  uniform sampler2D      samplers_2d[N];
+  uniform sampler2DArray samplers_2darray[N];
+  uniform isamplerBuffer isamplerBuffers[N];
 
-    ------------- Accessors -------------
+  ------------- Accessors -------------
 
-    * fallback value
-    <type> HdGet_<name>(int localIndex=0) {
-        return shaderData[GetDrawingCoord().shaderCoord].<name>
-    }
+  * fallback value
+  <type> HdGet_<name>(int localIndex=0) {
+    return shaderData[GetDrawingCoord().shaderCoord].<name>
+  }
 
-    * primvar redirect
-    <type> HdGet_<name>(int localIndex=0) {
-        return HdGet_<inPrimvars>().xxx;
-    }
+  * primvar redirect
+  <type> HdGet_<name>(int localIndex=0) {
+    return HdGet_<inPrimvars>().xxx;
+  }
 
-    * bindless 2D texture
-    <type> HdGet_<name>(int localIndex=0) {
-        return texture(sampler2D(shaderData[GetDrawingCoord().shaderCoord].<name>),
-    <inPrimvars>).xxx;
-    }
+  * bindless 2D texture
+  <type> HdGet_<name>(int localIndex=0) {
+    return texture(sampler2D(shaderData[GetDrawingCoord().shaderCoord].<name>),
+  <inPrimvars>).xxx;
+  }
 
-    * non-bindless 2D texture
-    <type> HdGet_<name>(int localIndex=0) {
-        return texture(samplers_2d[<offset> + drawIndex * <stride>], <inPrimvars>).xxx;
-    }
+  * non-bindless 2D texture
+  <type> HdGet_<name>(int localIndex=0) {
+    return texture(samplers_2d[<offset> + drawIndex * <stride>], <inPrimvars>).xxx;
+  }
 
-    * bindless Ptex texture
-    <type> HdGet_<name>(int localIndex=0) {
-        return GlopPtexTextureLookup(<name>_Data, <name>_Packing, GetPatchCoord()).xxx;
-    }
+  * bindless Ptex texture
+  <type> HdGet_<name>(int localIndex=0) {
+    return GlopPtexTextureLookup(<name>_Data, <name>_Packing, GetPatchCoord()).xxx;
+  }
 
-    * non-bindless Ptex texture
-    <type> HdGet_<name>(int localIndex=0) {
-        return GlopPtexTextureLookup(
-            samplers_2darray[<offset_ptex_texels> + drawIndex * <stride>],
-            isamplerBuffers[<offset_ptex_layouts> + drawIndex * <stride>],
-            GetPatchCoord()).xxx;
-    }
+  * non-bindless Ptex texture
+  <type> HdGet_<name>(int localIndex=0) {
+    return GlopPtexTextureLookup(
+      samplers_2darray[<offset_ptex_texels> + drawIndex * <stride>],
+      usamplerBuffers[<offset_ptex_layouts> + drawIndex * <stride>],
+      GetPatchCoord()).xxx;
+  }
 
-    * bindless Ptex texture with patchcoord
-    <type> HdGet_<name>(vec4 patchCoord) {
-        return GlopPtexTextureLookup(<name>_Data, <name>_Packing, patchCoord).xxx;
-    }
+  * bindless Ptex texture with patchcoord
+  <type> HdGet_<name>(vec4 patchCoord) {
+    return GlopPtexTextureLookup(<name>_Data, <name>_Packing, patchCoord).xxx;
+  }
 
-    * non-bindless Ptex texture
-    <type> HdGet_<name>(vec4 patchCoord) {
-        return GlopPtexTextureLookup(
-            samplers_2darray[<offset_ptex_texels> + drawIndex * <stride>],
-            isamplerBuffers[<offset_ptex_layouts> + drawIndex * <stride>],
-            patchCoord).xxx;
-    }
+  * non-bindless Ptex texture
+  <type> HdGet_<name>(vec4 patchCoord) {
+    return GlopPtexTextureLookup(
+      samplers_2darray[<offset_ptex_texels> + drawIndex * <stride>],
+      usamplerBuffers[<offset_ptex_layouts> + drawIndex * <stride>],
+      patchCoord).xxx;
+  }
 
-    * transform2d
-    vec2 HdGet_<name>(int localIndex=0) {
-        float angleRad = HdGet_<name>_rotation() * 3.1415926f / 180.f;
-        mat2 rotMat = mat2(cos(angleRad), sin(angleRad),
-                           -sin(angleRad), cos(angleRad));
-    #if defined(HD_HAS_<primvarName>)
-        return vec2(HdGet_<name>_translation() + rotMat *
-          (HdGet_<name>_scale() * HdGet_<primvarName>(localIndex)));
-    #else
-        int shaderCoord = GetDrawingCoord().shaderCoord;
-        return vec2(HdGet_<name>_translation() + rotMat *
-         (HdGet_<name>_scale() * shaderData[shaderCoord].<name>_fallback.xy));
-    #endif
-    }
+  * transform2d
+  vec2 HdGet_<name>(int localIndex=0) {
+    float angleRad = HdGet_<name>_rotation() * 3.1415926f / 180.f;
+    mat2 rotMat = mat2(cos(angleRad), sin(angleRad),
+               -sin(angleRad), cos(angleRad));
+  #if defined(HD_HAS_<primvarName>)
+    return vec2(HdGet_<name>_translation() + rotMat *
+      (HdGet_<name>_scale() * HdGet_<primvarName>(localIndex)));
+  #else
+    int shaderCoord = GetDrawingCoord().shaderCoord;
+    return vec2(HdGet_<name>_translation() + rotMat *
+     (HdGet_<name>_scale() * shaderData[shaderCoord].<name>_fallback.xy));
+  #endif
+  }
 
   */
 
@@ -3049,7 +3088,7 @@ void HdPh_CodeGen::_GenerateShaderParameters()
                 << "  return " << _GetPackedTypeAccessor(it->second.dataType, false)
                 << "(PtexTextureLookup("
                 << "sampler2DArray(shaderData[shaderCoord]." << it->second.name << "),"
-                << "isampler1DArray(shaderData[shaderCoord]." << it->second.name
+                << "usampler1DArray(shaderData[shaderCoord]." << it->second.name
                 << HdPh_ResourceBindingSuffixTokens->layout << "), "
                 << "GetPatchCoord(localIndex))" << swizzle << ");\n"
                 << "}\n"
@@ -3062,7 +3101,7 @@ void HdPh_CodeGen::_GenerateShaderParameters()
                 << "  return " << _GetPackedTypeAccessor(it->second.dataType, false)
                 << "(PtexTextureLookup("
                 << "sampler2DArray(shaderData[shaderCoord]." << it->second.name << "),"
-                << "isampler1DArray(shaderData[shaderCoord]." << it->second.name
+                << "usampler1DArray(shaderData[shaderCoord]." << it->second.name
                 << HdPh_ResourceBindingSuffixTokens->layout << "), "
                 << "patchCoord)" << swizzle << ");\n"
                 << "}\n";
@@ -3080,7 +3119,7 @@ void HdPh_CodeGen::_GenerateShaderParameters()
                 << "  return " << _GetPackedTypeAccessor(it->second.dataType, false)
                 << "(PtexTextureLookup("
                 << "sampler2darray_" << it->second.name << ", "
-                << "isampler1darray_" << it->second.name
+                << "usampler1darray_" << it->second.name
                 << HdPh_ResourceBindingSuffixTokens->layout << ", "
                 << "GetPatchCoord(localIndex))" << swizzle << ");\n"
                 << "}\n"
@@ -3092,7 +3131,7 @@ void HdPh_CodeGen::_GenerateShaderParameters()
                 << "  return " << _GetPackedTypeAccessor(it->second.dataType, false)
                 << "(PtexTextureLookup("
                 << "sampler2darray_" << it->second.name << ", "
-                << "isampler1darray_" << it->second.name
+                << "usampler1darray_" << it->second.name
                 << HdPh_ResourceBindingSuffixTokens->layout << ", "
                 << "patchCoord)" << swizzle << ");\n"
                 << "}\n";
@@ -3109,7 +3148,7 @@ void HdPh_CodeGen::_GenerateShaderParameters()
       declarations << LayoutQualifier(HdBinding(it->first.GetType(),
                                                 it->first.GetLocation(),
                                                 it->first.GetTextureUnit()))
-                   << "uniform isampler1DArray isampler1darray_" << it->second.name << ";\n";
+                   << "uniform isampler1DArray usampler1darray_" << it->second.name << ";\n";
     }
     else if (bindingType == HdBinding::PRIMVAR_REDIRECT) {
       // Create an HdGet_INPUTNAME for the shader to access a primvar
