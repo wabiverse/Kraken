@@ -110,6 +110,7 @@ Hd_TestDriver::Hd_TestDriver()
       _renderDelegate(),
       _renderIndex(nullptr),
       _sceneDelegate(nullptr),
+      _cameraId(SdfPath("/__camera")),
       _renderPass(),
       _renderPassState(_renderDelegate.CreateRenderPassState()),
       _collection(_tokens->testCollection, HdReprSelector())
@@ -127,6 +128,7 @@ Hd_TestDriver::Hd_TestDriver(HdReprSelector const &reprSelector)
       _renderDelegate(),
       _renderIndex(nullptr),
       _sceneDelegate(nullptr),
+      _cameraId(SdfPath("/__camera")),
       _renderPass(),
       _renderPassState(_renderDelegate.CreateRenderPassState()),
       _collection(_tokens->testCollection, HdReprSelector())

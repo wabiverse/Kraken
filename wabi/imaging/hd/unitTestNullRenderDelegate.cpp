@@ -32,6 +32,7 @@
 #include "wabi/imaging/hd/basisCurves.h"
 #include "wabi/imaging/hd/bprim.h"
 #include "wabi/imaging/hd/bufferArray.h"
+#include "wabi/imaging/hd/camera.h"
 #include "wabi/imaging/hd/coordSys.h"
 #include "wabi/imaging/hd/material.h"
 #include "wabi/imaging/hd/mesh.h"
@@ -244,12 +245,38 @@ class Hd_NullCoordSys final : public HdCoordSys {
   Hd_NullCoordSys &operator=(const Hd_NullCoordSys &) = delete;
 };
 
+class Hd_NullCamera final : public HdCamera {
+ public:
+  Hd_NullCamera(SdfPath const &id) : HdCamera(id)
+  {}
+
+  virtual ~Hd_NullCamera() override = default;
+
+  virtual void Sync(HdSceneDelegate *sceneDelegate,
+                    HdRenderParam *renderParam,
+                    HdDirtyBits *dirtyBits) override
+  {
+    *dirtyBits = HdCamera::Clean;
+  };
+
+  virtual HdDirtyBits GetInitialDirtyBitsMask() const override
+  {
+    return HdCamera::AllDirty;
+  }
+
+ private:
+  Hd_NullCamera()                      = delete;
+  Hd_NullCamera(const Hd_NullCamera &) = delete;
+  Hd_NullCamera &operator=(const Hd_NullCamera &) = delete;
+};
+
 const TfTokenVector Hd_UnitTestNullRenderDelegate::SUPPORTED_RPRIM_TYPES = {
     HdPrimTypeTokens->mesh,
     HdPrimTypeTokens->basisCurves,
     HdPrimTypeTokens->points};
 
 const TfTokenVector Hd_UnitTestNullRenderDelegate::SUPPORTED_SPRIM_TYPES = {
+    HdPrimTypeTokens->camera,
     HdPrimTypeTokens->coordSys,
     HdPrimTypeTokens->material};
 
@@ -317,6 +344,9 @@ HdSprim *Hd_UnitTestNullRenderDelegate::CreateSprim(TfToken const &typeId, SdfPa
   else if (typeId == HdPrimTypeTokens->coordSys) {
     return new Hd_NullCoordSys(sprimId);
   }
+  else if (typeId == HdPrimTypeTokens->camera) {
+    return new Hd_NullCamera(sprimId);
+  }
   else {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
@@ -331,6 +361,9 @@ HdSprim *Hd_UnitTestNullRenderDelegate::CreateFallbackSprim(TfToken const &typeI
   }
   else if (typeId == HdPrimTypeTokens->coordSys) {
     return new Hd_NullCoordSys(SdfPath::EmptyPath());
+  }
+  else if (typeId == HdPrimTypeTokens->camera) {
+    return new Hd_NullCamera(SdfPath::EmptyPath());
   }
   else {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
