@@ -67,6 +67,9 @@ WABI_NAMESPACE_BEGIN
   (translation)         \
   (sRGB)                \
   (raw)                 \
+  ((_double, "double")) \
+  ((_float, "float"))   \
+  ((_int, "int"))       \
   ((colorSpaceAuto, "auto"))
 /* clang-format on */
 
