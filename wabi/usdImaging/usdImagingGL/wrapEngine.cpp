@@ -151,6 +151,12 @@ void wrapEngine()
             .def("SetColorCorrectionSettings", &UsdImagingGLEngine::SetColorCorrectionSettings)
             .def("IsColorCorrectionCapable", &UsdImagingGLEngine::IsColorCorrectionCapable)
             .staticmethod("IsColorCorrectionCapable")
+            .def("GetRendererCommandDescriptors",
+                 &UsdImagingGLEngine::GetRendererCommandDescriptors,
+                 return_value_policy<TfPySequenceToList>())
+            .def("InvokeRendererCommand",
+                 &UsdImagingGLEngine::InvokeRendererCommand,
+                 (boost::python::arg("command"), boost::python::arg("args") = HdCommandArgs()))
             .def("IsPauseRendererSupported", &UsdImagingGLEngine::IsPauseRendererSupported)
             .def("PauseRenderer", &UsdImagingGLEngine::PauseRenderer)
             .def("ResumeRenderer", &UsdImagingGLEngine::ResumeRenderer)

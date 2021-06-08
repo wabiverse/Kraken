@@ -96,6 +96,16 @@ class Hd_UnitTestNullRenderDelegate final : public HdRenderDelegate {
 
   virtual void CommitResources(HdChangeTracker *tracker) override;
 
+  ////////////////////////////////////////////////////////////////////////////
+  ///
+  /// Commands API
+  ///
+  ////////////////////////////////////////////////////////////////////////////
+
+  virtual HdCommandDescriptors GetCommandDescriptors() const;
+
+  virtual bool InvokeCommand(const TfToken &command, const HdCommandArgs &args = HdCommandArgs());
+
  private:
   static const TfTokenVector SUPPORTED_RPRIM_TYPES;
   static const TfTokenVector SUPPORTED_SPRIM_TYPES;

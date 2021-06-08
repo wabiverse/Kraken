@@ -835,6 +835,30 @@ void UsdApolloEngine::SetPresentationOutput(TfToken const &api, VtValue const &f
 
 /**
  * ----------------------------------------------------------------------------
+ *  Command API
+ * ---------------------------------------------------------------------------- */
+
+HdCommandDescriptors UsdApolloEngine::GetRendererCommandDescriptors() const
+{
+  if (ARCH_UNLIKELY(!m_renderDelegate)) {
+    return HdCommandDescriptors();
+  }
+
+  return m_renderDelegate->GetCommandDescriptors();
+}
+
+bool UsdApolloEngine::InvokeRendererCommand(const TfToken &command,
+                                            const HdCommandArgs &args) const
+{
+  if (ARCH_UNLIKELY(!m_renderDelegate)) {
+    return false;
+  }
+
+  return m_renderDelegate->InvokeCommand(command, args);
+}
+
+/**
+ * ----------------------------------------------------------------------------
  *  Control of Background Rendering Threads
  * ---------------------------------------------------------------------------- */
 

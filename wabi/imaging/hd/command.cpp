@@ -28,15 +28,13 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#include "wabi/base/tf/pyModule.h"
-#include "wabi/wabi.h"
 
-WABI_NAMESPACE_USING
+#include "wabi/imaging/hd/command.h"
 
-TF_WRAP_MODULE
-{
-  TF_WRAP(Engine);
-  TF_WRAP(RenderParams);
-  TF_WRAP(RendererCommands);
-  TF_WRAP(RendererSettings);
-}
+WABI_NAMESPACE_BEGIN
+
+HdCommandArgDescriptor::HdCommandArgDescriptor() = default;
+
+HdCommandDescriptor::HdCommandDescriptor() = default;
+
+WABI_NAMESPACE_END

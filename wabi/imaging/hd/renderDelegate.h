@@ -36,6 +36,7 @@
 #include "wabi/imaging/hd/aov.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/changeTracker.h"
+#include "wabi/imaging/hd/command.h"
 #include "wabi/wabi.h"
 
 #include <memory>
@@ -424,6 +425,29 @@ class HdRenderDelegate {
   ///
   HD_API
   virtual HdAovDescriptor GetDefaultAovDescriptor(TfToken const &name) const;
+
+  ////////////////////////////////////////////////////////////////////////////
+  ///
+  /// Commands API
+  ///
+  ////////////////////////////////////////////////////////////////////////////
+
+  ///
+  /// Get the descriptors for the commands supported by this render delegate.
+  ///
+  HD_API
+  virtual HdCommandDescriptors GetCommandDescriptors() const;
+
+  ///
+  /// Invokes the command described by the token \p command with optional
+  /// \p args.
+  ///
+  /// If the command succeeds, returns \c true, otherwise returns \c false.
+  /// A command will generally fail if it is not among those returned by
+  /// GetCommandDescriptors().
+  ///
+  HD_API
+  virtual bool InvokeCommand(const TfToken &command, const HdCommandArgs &args = HdCommandArgs());
 
  protected:
   /// This class must be derived from.

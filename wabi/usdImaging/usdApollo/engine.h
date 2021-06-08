@@ -440,6 +440,27 @@ class UsdApolloEngine {
 
   /**
    * ---------------------------------------------------------------------
+   *  @name Renderer Command API
+   *  @{
+   * --------------------------------------------------------------------- */
+
+  /**
+   * Return command deescriptors for commands supported by the active
+   * render delegate. */
+  USDAPOLLO_API
+  HdCommandDescriptors GetRendererCommandDescriptors() const;
+
+  /**
+   * Invokes command on the active render delegate. If successful, returns
+   * @c true, returns @c false otherwise. Note that the command will not
+   * succeeed if it is not among those returned by
+   * GetRendererCommandDescriptors() for the same active render delegate. */
+  USDAPOLLO_API
+  bool InvokeRendererCommand(const TfToken &command,
+                             const HdCommandArgs &args = HdCommandArgs()) const;
+
+  /**
+   * ---------------------------------------------------------------------
    *  @name Control of Background Rendering Threads
    *  @{
    * --------------------------------------------------------------------- */

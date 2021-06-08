@@ -1404,9 +1404,10 @@ class AppController(QtCore.QObject):
                         action.setDisabled(True)
                         break
             else:
-                # Refresh the AOV menu, settings menu, and pause menu item
+                # Refresh the AOV menu, settings menu, and pause menu item, etc.
                 self._configureRendererAovs()
                 self._configureRendererSettings()
+                self._configureRendererCommands()
                 self._configurePauseAction()
                 self._configureStopAction()
 
@@ -1444,6 +1445,7 @@ class AppController(QtCore.QObject):
             # Refresh the AOV menu, settings menu, and pause menu item
             self._configureRendererAovs()
             self._configureRendererSettings()
+            self._configureRendererCommands()
             self._configurePauseAction()
             self._configureStopAction()
 
@@ -1629,6 +1631,26 @@ class AppController(QtCore.QObject):
                 widget.setValue(widget.defValue)
             if isinstance(widget, QtWidgets.QLineEdit):
                 widget.setText(widget.defValue)
+
+    # Renderer Command Support
+    def _invokeRendererCommand(self, cmd):
+        if self._stageView:
+            self._stageView.InvokeRendererCommand(cmd)
+            self._stageView.updateView()
+
+    def _configureRendererCommands(self):
+        if self._stageView:
+            self._ui.menuRendererCommands.clear()
+
+            cmds = self._stageView.GetRendererCommands()
+            for cmd in cmds:
+                action = self._ui.menuRendererCommands.addAction(
+                    cmd.commandDescription)
+                action.commandName = cmd.commandName
+                action.triggered[bool].connect(lambda _, cmd=cmd:
+                        self._invokeRendererCommand(cmd))
+
+            self._ui.menuRendererCommands.setEnabled(len(cmds) != 0)
 
     def _configurePauseAction(self):
         if self._stageView:

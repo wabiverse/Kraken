@@ -64,6 +64,7 @@ wabi_library(usdImagingGL
         module.cpp
         wrapEngine.cpp
         wrapRenderParams.cpp
+        wrapRendererCommands.cpp
         wrapRendererSettings.cpp
 
     PYMODULE_FILES

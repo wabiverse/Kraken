@@ -43,7 +43,17 @@
 #include "wabi/imaging/hd/tokens.h"
 #include "wabi/imaging/hd/unitTestNullRenderPass.h"
 
+#include <iostream>
+
 WABI_NAMESPACE_BEGIN
+
+/* clang-format off */
+TF_DEFINE_PRIVATE_TOKENS(
+  _tokens,
+  (print)
+  (message)
+);
+/* clang-format on */
 
 ////////////////////////////////////////////////////////////////
 // Null Prims
@@ -398,5 +408,33 @@ void Hd_UnitTestNullRenderDelegate::DestroyBprim(HdBprim *bPrim)
 
 void Hd_UnitTestNullRenderDelegate::CommitResources(HdChangeTracker *tracker)
 {}
+
+HdCommandDescriptors Hd_UnitTestNullRenderDelegate::GetCommandDescriptors() const
+{
+  HdCommandArgDescriptor printArgDesc{_tokens->message, VtValue("")};
+  HdCommandArgDescriptors argDescs{printArgDesc};
+
+  HdCommandDescriptor commandDesc(_tokens->print, "Print command", argDescs);
+
+  return {commandDesc};
+}
+
+bool Hd_UnitTestNullRenderDelegate::InvokeCommand(const TfToken &command,
+                                                  const HdCommandArgs &args)
+{
+  if (command == _tokens->print) {
+    HdCommandArgs::const_iterator it = args.find(_tokens->message);
+    if (it == args.end()) {
+      TF_WARN("No argument 'message' argument found.");
+      return false;
+    }
+    VtValue message = it->second;
+    std::cout << "Printing the message: " << message << std::endl;
+    return true;
+  }
+
+  TF_WARN("Unknown command '%s'", command.GetText());
+  return false;
+}
 
 WABI_NAMESPACE_END
