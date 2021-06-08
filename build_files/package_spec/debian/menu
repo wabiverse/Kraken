@@ -1,0 +1,4 @@
+?package(covah-snapshot):needs="X11" section="Applications/Graphics"\
+  longtitle="COVAH digital content creation"\
+  icon="/usr/share/icons/hicolor/scalable/apps/covah.svg"\
+  title="covah" command="/usr/bin/covah"

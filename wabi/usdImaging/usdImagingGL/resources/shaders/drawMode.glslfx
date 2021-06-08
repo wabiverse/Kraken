@@ -1,0 +1,113 @@
+-- glslfx version 0.1
+
+//
+// Copyright 2020 Wabi.  All rights reserved.
+//
+// Distributed under the terms of the Wabi End-User License Agreement.
+// The full license is in the file LICENSE, distributed with this software.
+//
+
+-- configuration
+{
+    "metadata": {
+        "materialTag": "masked"
+    },
+    "techniques": {
+        "default": {
+            "surfaceShader": {
+                "source": ["Surface.Fallback"]
+            }
+        }
+    },
+    "parameters": {
+        "textureXPosColor" : {
+            "default": [0.18, 0.18, 0.18]
+        },
+        "textureXPosOpacity" : {
+            "default": [1.0]
+        },
+        "textureXNegColor" : {
+            "default": [0.18, 0.18, 0.18]
+        },
+        "textureXNegOpacity" : {
+            "default": [1.0]
+        },
+        "textureYPosColor" : {
+            "default": [0.18, 0.18, 0.18]
+        },
+        "textureYPosOpacity" : {
+            "default": [1.0]
+        },
+        "textureYNegColor" : {
+            "default": [0.18, 0.18, 0.18]
+        },
+        "textureYNegOpacity" : {
+            "default": [1.0]
+        },
+        "textureZPosColor" : {
+            "default": [0.18, 0.18, 0.18]
+        },
+        "textureZPosOpacity" : {
+            "default": [1.0]
+        },
+        "textureZNegColor" : {
+            "default": [0.18, 0.18, 0.18]
+        },
+        "textureZNegOpacity" : {
+            "default": [1.0]
+        },
+        "activeTexCard" : {
+            "default": 0
+        }
+    }
+}
+
+--- --------------------------------------------------------------------------
+-- glsl Surface.Fallback
+
+vec4 surfaceShader(vec4 Peye, vec3 Neye, vec4 color, vec4 patchCoord)
+{
+    // Texture assignment values, from drawModeAdapter.cpp's AxesMask.
+    const int X_POS = 1;
+    const int Y_POS = 2;
+    const int Z_POS = 4;
+    const int X_NEG = 8;
+    const int Y_NEG = 16;
+    const int Z_NEG = 32;
+
+    vec4 diffuse = color;
+    const int texAssign = HdGet_activeTexCard();
+
+    if (texAssign == X_POS) {
+#if defined(HD_HAS_textureXPosColor) && defined(HD_HAS_textureXPosOpacity)
+        diffuse = vec4(HdGet_textureXPosColor(), HdGet_textureXPosOpacity());
+#endif
+    } else if (texAssign == X_NEG) {
+#if defined(HD_HAS_textureXNegColor) && defined(HD_HAS_textureXNegOpacity)
+        diffuse = vec4(HdGet_textureXNegColor(), HdGet_textureXNegOpacity());
+#endif
+    } else if (texAssign == Y_POS) {
+#if defined(HD_HAS_textureYPosColor) && defined(HD_HAS_textureYPosOpacity)
+        diffuse = vec4(HdGet_textureYPosColor(), HdGet_textureYPosOpacity());
+#endif
+    } else if (texAssign == Y_NEG) {
+#if defined(HD_HAS_textureYNegColor) && defined(HD_HAS_textureYNegOpacity)
+        diffuse = vec4(HdGet_textureYNegColor(), HdGet_textureYNegOpacity());
+#endif
+    } else if (texAssign == Z_POS) {
+#if defined(HD_HAS_textureZPosColor) && defined(HD_HAS_textureZPosOpacity)
+        diffuse = vec4(HdGet_textureZPosColor(), HdGet_textureZPosOpacity());
+#endif
+    } else if (texAssign == Z_NEG) {
+#if defined(HD_HAS_textureZNegColor) && defined(HD_HAS_textureZNegOpacity)
+        diffuse = vec4(HdGet_textureZNegColor(), HdGet_textureZNegOpacity());
+#endif
+    }
+
+    // Apply selection pre-lighting
+    diffuse.rgb = ApplyColorOverrides(diffuse.rgbb).rgb;
+
+    color.rgb = FallbackLighting(Peye.xyz, Neye, diffuse.rgb);
+    color.a = diffuse.a;
+    return color;
+}

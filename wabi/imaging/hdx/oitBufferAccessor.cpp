@@ -1,0 +1,181 @@
+/*
+ * Copyright 2021 Pixar. All Rights Reserved.
+ *
+ * Portions of this file are derived from original work by Pixar
+ * distributed with Universal Scene Description, a project of the
+ * Academy Software Foundation (ASWF). https://www.aswf.io/
+ *
+ * Licensed under the Apache License, Version 2.0 (the "Apache License")
+ * with the following modification; you may not use this file except in
+ * compliance with the Apache License and the following modification:
+ * Section 6. Trademarks. is deleted and replaced with:
+ *
+ * 6. Trademarks. This License does not grant permission to use the trade
+ *    names, trademarks, service marks, or product names of the Licensor
+ *    and its affiliates, except as required to comply with Section 4(c)
+ *    of the License and to reproduce the content of the NOTICE file.
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the Apache License with the above modification is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ * ANY KIND, either express or implied. See the Apache License for the
+ * specific language governing permissions and limitations under the
+ * Apache License.
+ *
+ * Modifications copyright (C) 2020-2021 Wabi.
+ */
+#include "wabi/imaging/garch/glApi.h"
+
+#include "wabi/imaging/hdx/oitBufferAccessor.h"
+
+#include "wabi/imaging/glf/contextCaps.h"
+
+#include "wabi/imaging/hdPh/bufferArrayRange.h"
+#include "wabi/imaging/hdPh/bufferResource.h"
+#include "wabi/imaging/hdPh/renderPassShader.h"
+
+// XXX todo tmp needed until we remove direct gl calls below.
+#include "wabi/imaging/hgiGL/buffer.h"
+
+#include "wabi/imaging/hdx/tokens.h"
+
+#include "wabi/base/tf/envSetting.h"
+
+WABI_NAMESPACE_BEGIN
+
+TF_DEFINE_ENV_SETTING(HDX_ENABLE_OIT, true, "Enable order independent translucency");
+
+/* static */
+bool HdxOitBufferAccessor::IsOitEnabled()
+{
+  if (!bool(TfGetEnvSetting(HDX_ENABLE_OIT)))
+    return false;
+
+  // GlfContextCaps const &caps = GlfContextCaps::GetInstance();
+  // if (!caps.shaderStorageBufferEnabled)
+  //   return false;
+
+  return true;
+}
+
+HdxOitBufferAccessor::HdxOitBufferAccessor(HdTaskContext *ctx) : _ctx(ctx)
+{}
+
+void HdxOitBufferAccessor::RequestOitBuffers()
+{
+  (*_ctx)[HdxTokens->oitRequestFlag] = VtValue(true);
+}
+
+HdBufferArrayRangeSharedPtr const &HdxOitBufferAccessor::_GetBar(const TfToken &name)
+{
+  const auto it = _ctx->find(name);
+  if (it == _ctx->end()) {
+    static HdBufferArrayRangeSharedPtr n;
+    return n;
+  }
+
+  const VtValue &v = it->second;
+  return v.Get<HdBufferArrayRangeSharedPtr>();
+}
+
+bool HdxOitBufferAccessor::AddOitBufferBindings(const HdPhRenderPassShaderSharedPtr &shader)
+{
+  HdBufferArrayRangeSharedPtr const &counterBar = _GetBar(HdxTokens->oitCounterBufferBar);
+  HdBufferArrayRangeSharedPtr const &dataBar    = _GetBar(HdxTokens->oitDataBufferBar);
+  HdBufferArrayRangeSharedPtr const &depthBar   = _GetBar(HdxTokens->oitDepthBufferBar);
+  HdBufferArrayRangeSharedPtr const &indexBar   = _GetBar(HdxTokens->oitIndexBufferBar);
+  HdBufferArrayRangeSharedPtr const &uniformBar = _GetBar(HdxTokens->oitUniformBar);
+
+  if (counterBar && dataBar && depthBar && indexBar && uniformBar) {
+    shader->AddBufferBinding(HdBindingRequest(HdBinding::SSBO,
+                                              HdxTokens->oitCounterBufferBar,
+                                              counterBar,
+                                              /*interleave = */ false));
+
+    shader->AddBufferBinding(HdBindingRequest(HdBinding::SSBO,
+                                              HdxTokens->oitDataBufferBar,
+                                              dataBar,
+                                              /*interleave = */ false));
+
+    shader->AddBufferBinding(HdBindingRequest(HdBinding::SSBO,
+                                              HdxTokens->oitDepthBufferBar,
+                                              depthBar,
+                                              /*interleave = */ false));
+
+    shader->AddBufferBinding(HdBindingRequest(HdBinding::SSBO,
+                                              HdxTokens->oitIndexBufferBar,
+                                              indexBar,
+                                              /*interleave = */ false));
+
+    shader->AddBufferBinding(HdBindingRequest(HdBinding::UBO,
+                                              HdxTokens->oitUniformBar,
+                                              uniformBar,
+                                              /*interleave = */ true));
+    return true;
+  }
+  else {
+    shader->RemoveBufferBinding(HdxTokens->oitCounterBufferBar);
+    shader->RemoveBufferBinding(HdxTokens->oitDataBufferBar);
+    shader->RemoveBufferBinding(HdxTokens->oitDepthBufferBar);
+    shader->RemoveBufferBinding(HdxTokens->oitIndexBufferBar);
+    shader->RemoveBufferBinding(HdxTokens->oitUniformBar);
+    return false;
+  }
+}
+
+void HdxOitBufferAccessor::InitializeOitBuffersIfNecessary()
+{
+  // If the OIT buffers were already cleared earlier, skip and do not
+  // clear them again.
+  VtValue &clearFlag = (*_ctx)[HdxTokens->oitClearedFlag];
+  if (!clearFlag.IsEmpty()) {
+    return;
+  }
+
+  // Mark OIT buffers as cleared.
+  clearFlag = true;
+
+  // Clear counter buffer.
+
+  // The shader determines what elements in each buffer are used based on
+  // finding -1 in the counter buffer. We can skip clearing the other buffers.
+
+  HdPhBufferArrayRangeSharedPtr phCounterBar = std::dynamic_pointer_cast<HdPhBufferArrayRange>(
+      _GetBar(HdxTokens->oitCounterBufferBar));
+
+  if (!phCounterBar) {
+    TF_CODING_ERROR("No OIT counter buffer allocateed when trying to clear it");
+    return;
+  }
+
+  HdPhBufferResourceSharedPtr phCounterResource = phCounterBar->GetResource(
+      HdxTokens->hdxOitCounterBuffer);
+
+  GlfContextCaps const &caps = GlfContextCaps::GetInstance();
+  const GLint clearCounter   = -1;
+
+  // XXX todo add a Clear() fn on HdPhBufferResource so that we do not have
+  // to use direct gl calls. below.
+  HgiBufferHandle &buffer = phCounterResource->GetHandle();
+  HgiGLBuffer *glBuffer   = dynamic_cast<HgiGLBuffer *>(buffer.Get());
+  if (!glBuffer) {
+    TF_CODING_ERROR("Todo: Add HdPhBufferResource::Clear");
+    return;
+  }
+
+  if (ARCH_LIKELY(caps.directStateAccessEnabled)) {
+    glClearNamedBufferData(
+        glBuffer->GetBufferId(), GL_R32I, GL_RED_INTEGER, GL_INT, &clearCounter);
+  }
+  else {
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, glBuffer->GetBufferId());
+    glClearBufferData(GL_SHADER_STORAGE_BUFFER, GL_R32I, GL_RED_INTEGER, GL_INT, &clearCounter);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+  }
+}
+
+WABI_NAMESPACE_END

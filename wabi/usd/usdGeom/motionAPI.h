@@ -1,0 +1,222 @@
+/*
+ * Copyright 2021 Pixar. All Rights Reserved.
+ *
+ * Portions of this file are derived from original work by Pixar
+ * distributed with Universal Scene Description, a project of the
+ * Academy Software Foundation (ASWF). https://www.aswf.io/
+ *
+ * Licensed under the Apache License, Version 2.0 (the "Apache License")
+ * with the following modification; you may not use this file except in
+ * compliance with the Apache License and the following modification:
+ * Section 6. Trademarks. is deleted and replaced with:
+ *
+ * 6. Trademarks. This License does not grant permission to use the trade
+ *    names, trademarks, service marks, or product names of the Licensor
+ *    and its affiliates, except as required to comply with Section 4(c)
+ *    of the License and to reproduce the content of the NOTICE file.
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the Apache License with the above modification is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ * ANY KIND, either express or implied. See the Apache License for the
+ * specific language governing permissions and limitations under the
+ * Apache License.
+ *
+ * Modifications copyright (C) 2020-2021 Wabi.
+ */
+#ifndef USDGEOM_GENERATED_MOTIONAPI_H
+#define USDGEOM_GENERATED_MOTIONAPI_H
+
+/// \file usdGeom/motionAPI.h
+
+#include "wabi/usd/usd/apiSchemaBase.h"
+#include "wabi/usd/usd/prim.h"
+#include "wabi/usd/usd/stage.h"
+#include "wabi/usd/usdGeom/api.h"
+#include "wabi/usd/usdGeom/tokens.h"
+#include "wabi/wabi.h"
+
+#include "wabi/base/vt/value.h"
+
+#include "wabi/base/gf/matrix4d.h"
+#include "wabi/base/gf/vec3d.h"
+#include "wabi/base/gf/vec3f.h"
+
+#include "wabi/base/tf/token.h"
+#include "wabi/base/tf/type.h"
+
+WABI_NAMESPACE_BEGIN
+
+class SdfAssetPath;
+
+// -------------------------------------------------------------------------- //
+// MOTIONAPI                                                                  //
+// -------------------------------------------------------------------------- //
+
+/// \class UsdGeomMotionAPI
+///
+/// UsdGeomMotionAPI encodes data that can live on any prim that
+/// may affect computations involving:
+/// - computed motion for motion blur
+/// - sampling for motion blur
+///
+/// For example, UsdGeomMotionAPI provides *velocityScale*
+/// (GetVelocityScaleAttr()) for controlling how motion-blur samples should
+/// be computed by velocity-consuming schemas.
+///
+class UsdGeomMotionAPI : public UsdAPISchemaBase {
+ public:
+  /// Compile time constant representing what kind of schema this class is.
+  ///
+  /// \sa UsdSchemaKind
+  static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
+
+  /// \deprecated
+  /// Same as schemaKind, provided to maintain temporary backward
+  /// compatibility with older generated schemas.
+  static const UsdSchemaKind schemaType = UsdSchemaKind::SingleApplyAPI;
+
+  /// Construct a UsdGeomMotionAPI on UsdPrim \p prim .
+  /// Equivalent to UsdGeomMotionAPI::Get(prim.GetStage(), prim.GetPath())
+  /// for a \em valid \p prim, but will not immediately throw an error for
+  /// an invalid \p prim
+  explicit UsdGeomMotionAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  {}
+
+  /// Construct a UsdGeomMotionAPI on the prim held by \p schemaObj .
+  /// Should be preferred over UsdGeomMotionAPI(schemaObj.GetPrim()),
+  /// as it preserves SchemaBase state.
+  explicit UsdGeomMotionAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  {}
+
+  /// Destructor.
+  USDGEOM_API
+  virtual ~UsdGeomMotionAPI();
+
+  /// Return a vector of names of all pre-declared attributes for this schema
+  /// class and all its ancestor classes.  Does not include attributes that
+  /// may be authored by custom/extended methods of the schemas involved.
+  USDGEOM_API
+  static const TfTokenVector &GetSchemaAttributeNames(bool includeInherited = true);
+
+  /// Return a UsdGeomMotionAPI holding the prim adhering to this
+  /// schema at \p path on \p stage.  If no prim exists at \p path on
+  /// \p stage, or if the prim at that path does not adhere to this schema,
+  /// return an invalid schema object.  This is shorthand for the following:
+  ///
+  /// \code
+  /// UsdGeomMotionAPI(stage->GetPrimAtPath(path));
+  /// \endcode
+  ///
+  USDGEOM_API
+  static UsdGeomMotionAPI Get(const UsdStagePtr &stage, const SdfPath &path);
+
+  /// Applies this <b>single-apply</b> API schema to the given \p prim.
+  /// This information is stored by adding "MotionAPI" to the
+  /// token-valued, listOp metadata \em apiSchemas on the prim.
+  ///
+  /// \return A valid UsdGeomMotionAPI object is returned upon success.
+  /// An invalid (or empty) UsdGeomMotionAPI object is returned upon
+  /// failure. See \ref UsdPrim::ApplyAPI() for conditions
+  /// resulting in failure.
+  ///
+  /// \sa UsdPrim::GetAppliedSchemas()
+  /// \sa UsdPrim::HasAPI()
+  /// \sa UsdPrim::ApplyAPI()
+  /// \sa UsdPrim::RemoveAPI()
+  ///
+  USDGEOM_API
+  static UsdGeomMotionAPI Apply(const UsdPrim &prim);
+
+ protected:
+  /// Returns the kind of schema this class belongs to.
+  ///
+  /// \sa UsdSchemaKind
+  USDGEOM_API
+  UsdSchemaKind _GetSchemaKind() const override;
+
+  /// \deprecated
+  /// Same as _GetSchemaKind, provided to maintain temporary backward
+  /// compatibility with older generated schemas.
+  USDGEOM_API
+  UsdSchemaKind _GetSchemaType() const override;
+
+ private:
+  // needs to invoke _GetStaticTfType.
+  friend class UsdSchemaRegistry;
+  USDGEOM_API
+  static const TfType &_GetStaticTfType();
+
+  static bool _IsTypedSchema();
+
+  // override SchemaBase virtuals.
+  USDGEOM_API
+  const TfType &_GetTfType() const override;
+
+ public:
+  // --------------------------------------------------------------------- //
+  // VELOCITYSCALE
+  // --------------------------------------------------------------------- //
+  /// VelocityScale is an **inherited** float attribute that
+  /// velocity-based schemas (e.g. PointBased, PointInstancer) can consume
+  /// to compute interpolated positions and orientations by applying
+  /// velocity and angularVelocity, which is required for interpolating
+  /// between samples when topology is varying over time.  Although these
+  /// quantities are generally physically computed by a simulator, sometimes
+  /// we require more or less motion-blur to achieve the desired look.
+  /// VelocityScale allows artists to dial-in, as a post-sim correction,
+  /// a scale factor to be applied to the velocity prior to computing
+  /// interpolated positions from it.
+  ///
+  /// See also ComputeVelocityScale()
+  ///
+  /// | ||
+  /// | -- | -- |
+  /// | Declaration | `float motion:velocityScale = 1` |
+  /// | C++ Type | float |
+  /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float |
+  USDGEOM_API
+  UsdAttribute GetVelocityScaleAttr() const;
+
+  /// See GetVelocityScaleAttr(), and also
+  /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
+  /// If specified, author \p defaultValue as the attribute's default,
+  /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
+  /// the default for \p writeSparsely is \c false.
+  USDGEOM_API
+  UsdAttribute CreateVelocityScaleAttr(VtValue const &defaultValue = VtValue(),
+                                       bool writeSparsely          = false) const;
+
+ public:
+  // ===================================================================== //
+  // Feel free to add custom code below this line, it will be preserved by
+  // the code generator.
+  //
+  // Just remember to:
+  //  - Close the class declaration with };
+  //  - Close the namespace with WABI_NAMESPACE_END
+  //  - Close the include guard with #endif
+  // ===================================================================== //
+  // --(BEGIN CUSTOM CODE)--
+
+  /// Compute the inherited value of *velocityScale* at \p time, i.e. the
+  /// authored value on the prim closest to this prim in namespace, resolved
+  /// upwards through its ancestors in namespace.
+  ///
+  /// \return the inherited value, or 1.0 if neither the prim nor any
+  /// of its ancestors possesses an authored value.
+  ///
+  /// \note this is a reference implementation that is not particularly
+  /// efficient if evaluating over many prims, because it does not share
+  /// inherited results.
+  USDGEOM_API
+  float ComputeVelocityScale(UsdTimeCode time = UsdTimeCode::Default()) const;
+};
+
+WABI_NAMESPACE_END
+
+#endif

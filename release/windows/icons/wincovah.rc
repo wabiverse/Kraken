@@ -1,0 +1,38 @@
+#define COVAHFILE 1
+#define IDR_VERSION1 1
+
+#ifdef WINDRES
+	#include "winresrc.h"
+	#define IDC_STATIC (-1)
+	#define STRINGIFY_(x) #x
+	#define STRINGIFY(x) STRINGIFY_(x)
+	#define WIN_VER_RC_STR STRINGIFY(WIN_VER_RC_STR_M)
+#endif
+
+APPICON ICON DISCARDABLE "wincovah.ico"
+COVAHFILE ICON DISCARDABLE "wincovahfile.ico"
+
+IDR_VERSION1 VERSIONINFO
+FILEVERSION WIN_VER_RC_1, WIN_VER_RC_2, WIN_VER_RC_3, WIN_VER_RC_4
+PRODUCTVERSION WIN_VER_RC_1, WIN_VER_RC_2, WIN_VER_RC_3, WIN_VER_RC_4
+FILEOS 0x00000004
+FILETYPE 0x00000001
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "04090000"
+    BEGIN
+      VALUE "FileVersion", WIN_VER_RC_STR
+      VALUE "ProductVersion", WIN_VER_RC_STR
+      VALUE "CompanyName", "Wabi"
+      VALUE "FileDescription", "COVAH"
+      VALUE "LegalCopyright", "LGPLv3 (Wabi)"
+      VALUE "OriginalFilename", "covah.exe"
+      VALUE "ProductName", "COVAH"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0409, 0x0000
+  END
+END

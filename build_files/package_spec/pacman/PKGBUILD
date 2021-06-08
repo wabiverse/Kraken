@@ -1,0 +1,67 @@
+# custom covah vars
+covah_srcdir=$(dirname $startdir)"/../.."
+# value may be formatted: 35042:35051M
+covah_revision=$(svnversion $covah_srcdir | cut -d: -f2 | awk '{print $3}')
+covah_version=$(grep "COVAH_VERSION\s" $covah_srcdir/source/covah/covakernel/CKE_version.h | awk '{print $3}')
+covah_version=$(expr $covah_version / 100).$(expr $covah_version % 100)  # 256 -> 2.56
+covah_version_char=$(sed -ne 's/.*COVAH_VERSION.*\([a-z]\)$/\1/p' $covah_srcdir/source/covah/covakernel/CKE_version.h)
+# covah_subversion=$(grep COVAH_SUBVERSION $covah_srcdir/source/covah/covakernel/CKE_version.h | awk '{print $3}')
+
+# map the version a -> 1
+# not to be confused with covah's internal subversions
+if [ "$covah_version_char" ]; then
+    covah_version_full=${covah_version}.$(expr index abcdefghijklmnopqrstuvwxyz $covah_version_char)
+else
+	covah_version_full=${covah_version}
+fi
+
+covah_ver_string=$covah_version+svn$covah_version_full
+
+pkgname=covah-snapshot
+pkgver=$covah_ver_string
+pkgrel=1
+pkgdesc="A fully integrated 3D graphics creation suite"
+arch=('i686' 'x86_64')
+url="www.covah.org"
+license=('GPL')
+groups=()
+depends=('libjpeg' 'libpng' 'openjpeg' 'libtiff' 'openexr'  'python>=3.2' 'gettext' 'libxi' 'libxmu' 'mesa' 'freetype2' 'openal' 'sdl' 'libsndfile' 'ffmpeg')
+makedepends=('cmake' 'svn')
+optdepends=()
+provides=()
+conflicts=('covah')
+replaces=('covah')
+backup=()
+options=()
+install=covah.install
+# use current svn to make the package.
+# source=(http://download.covah.org/source/$pkgname-$pkgver.tar.gz)
+# md5sums=('27edb80c82c25252d43d6a01980d953a') #generate with 'makepkg -g'
+source=()
+md5sums=()
+noextract=()
+
+build() {
+  mkdir -p $srcdir/build
+  cd $srcdir/build
+  cmake $covah_srcdir \
+    -DCMAKE_INSTALL_PREFIX:PATH=/usr \
+    -DCMAKE_BUILD_TYPE:STRING=Release \
+    -DWITH_INSTALL_PORTABLE:BOOL=OFF \
+    -DWITH_PYTHON_INSTALL:BOOL=OFF \
+	-DPYTHON_VERSION:STRING=3.9 \
+	-DPYTHON_LIBPATH:STRING=/usr/lib \
+	-DPYTHON_LIBRARY:STRING=python3.2mu \
+	-DPYTHON_INCLUDE_DIRS:STRING=/usr/include/python3.2mu
+
+  make $MAKEFLAGS
+}
+
+package() {
+  cd $srcdir/build
+  make DESTDIR="$pkgdir" install
+  python -m compileall \
+	$pkgdir/usr/share/covah/$covah_version/scripts/startup \
+	$pkgdir/usr/share/covah/$covah_version/scripts/modules \
+	$pkgdir/usr/share/covah/$covah_version/scripts/addons
+}

@@ -1,0 +1,49 @@
+-- glslfx version 0.1
+
+//
+// Copyright 2020 Wabi.  All rights reserved.
+//
+// Distributed under the terms of the Wabi End-User License Agreement.
+// The full license is in the file LICENSE, distributed with this software.
+//
+
+-- configuration
+{
+    "techniques": {
+        "default": {
+            "FullscreenVertex": {
+                "source": [ "Fullscreen.Vertex" ]
+            },
+            "CompositeFragmentNoDepth": {
+                "source": [ "Composite.FragmentNoDepth" ]
+            },
+            "CompositeFragmentWithDepth": {
+                "source": [ "Composite.FragmentWithDepth" ]
+            }
+        }
+    }
+}
+
+-- glsl Fullscreen.Vertex
+
+void main(void)
+{
+    gl_Position = position;
+    uvOut = uvIn;
+}
+
+-- glsl Composite.FragmentNoDepth
+
+void main(void)
+{
+    hd_FragColor = vec4(HdGet_colorIn(hd_Position));
+}
+
+-- glsl Composite.FragmentWithDepth
+
+void main(void)
+{
+    float depth = HdGet_depth(hd_Position);
+    hd_FragColor = vec4(HdGet_colorIn(hd_Position));
+    hd_FragDepth = depth;
+}

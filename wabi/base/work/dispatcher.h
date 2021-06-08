@@ -1,0 +1,215 @@
+/*
+ * Copyright 2021 Pixar. All Rights Reserved.
+ *
+ * Portions of this file are derived from original work by Pixar
+ * distributed with Universal Scene Description, a project of the
+ * Academy Software Foundation (ASWF). https://www.aswf.io/
+ *
+ * Licensed under the Apache License, Version 2.0 (the "Apache License")
+ * with the following modification; you may not use this file except in
+ * compliance with the Apache License and the following modification:
+ * Section 6. Trademarks. is deleted and replaced with:
+ *
+ * 6. Trademarks. This License does not grant permission to use the trade
+ *    names, trademarks, service marks, or product names of the Licensor
+ *    and its affiliates, except as required to comply with Section 4(c)
+ *    of the License and to reproduce the content of the NOTICE file.
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the Apache License with the above modification is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ * ANY KIND, either express or implied. See the Apache License for the
+ * specific language governing permissions and limitations under the
+ * Apache License.
+ *
+ * Modifications copyright (C) 2020-2021 Wabi.
+ */
+
+#ifndef WABI_BASE_WORK_DISPATCHER_H
+#define WABI_BASE_WORK_DISPATCHER_H
+
+/// \file work/dispatcher.h
+
+#include "wabi/base/work/api.h"
+#include "wabi/base/work/threadLimits.h"
+#include "wabi/wabi.h"
+
+#include "wabi/base/tf/errorMark.h"
+#include "wabi/base/tf/errorTransport.h"
+
+#include <tbb/concurrent_vector.h>
+#include <tbb/task_group.h>
+
+#include <functional>
+#include <type_traits>
+#include <utility>
+
+WABI_NAMESPACE_BEGIN
+
+/// \class WorkDispatcher
+///
+/// A work dispatcher runs concurrent tasks.  The dispatcher supports adding
+/// new tasks from within running tasks.  This suits problems that exhibit
+/// hierarchical structured parallelism: tasks that discover additional tasks
+/// during their execution.
+///
+/// Typical use is to create a dispatcher and invoke Run() to begin doing
+/// work, then Wait() for the work to complete.  Tasks may invoke Run() during
+/// their execution as they discover additional tasks to perform.
+///
+/// For example,
+///
+/// \code
+/// WorkDispatcher dispatcher;
+/// for (i = 0; i != N; ++i) {
+///     dispatcher.Run(DoSomeWork, workItem[i]);
+/// }
+/// dispatcher.Wait();
+/// \endcode
+///
+/// Calls to Run() and Cancel() may be made concurrently.  However, once Wait()
+/// is called, calls to Run() and Cancel() must only be made by tasks already
+/// added by Run().  Additionally, Wait() must never be called by a task added by
+/// Run(), since that task could never complete.
+///
+class WorkDispatcher {
+ public:
+  /// Construct a new dispatcher.
+  WORK_API WorkDispatcher();
+
+  /// Wait() for any pending tasks to complete, then destroy the dispatcher.
+  WORK_API ~WorkDispatcher();
+
+  WorkDispatcher(WorkDispatcher const &) = delete;
+  WorkDispatcher &operator=(WorkDispatcher const &) = delete;
+
+#ifdef doxygen
+
+  /// Add work for the dispatcher to run.
+  ///
+  /// Before a call to Wait() is made it is safe for any client to invoke
+  /// Run().  Once Wait() is invoked, it is \b only safe to invoke Run() from
+  /// within the execution of tasks already added via Run().
+  ///
+  /// This function does not block, in general.  It may block if concurrency
+  /// is limited to 1.  The added work may be not yet started, may be started
+  /// but not completed, or may be completed upon return.  No guarantee is
+  /// made.
+  template<class Callable, class A1, class A2, ... class AN>
+  void Run(Callable &&c, A1 &&a1, A2 &&a2, ... AN &&aN);
+
+#else  // doxygen
+
+  template<class Callable> inline void Run(Callable &&c)
+  {
+    _dispatch.run_and_transport_errors(std::forward<Callable>(c), &_errors);
+  }
+
+  template<class Callable, class A0, class... Args>
+  inline void Run(Callable &&c, A0 &&a0, Args &&...args)
+  {
+    Run(std::bind(std::forward<Callable>(c), std::forward<A0>(a0), std::forward<Args>(args)...));
+  }
+
+#endif  // doxygen
+
+  /// Block until the work started by Run() completes.
+  WORK_API void Wait();
+
+  /// Cancel remaining work and return immediately.
+  ///
+  /// Calling this function affects task that are being run directly
+  /// by this dispatcher. If any of these tasks are using their own
+  /// dispatchers to run tasks, these dispatchers will not be affected
+  /// and these tasks will run to completion, unless they are also
+  /// explicitly cancelled.
+  ///
+  /// This call does not block.  Call Wait() after Cancel() to wait for
+  /// pending tasks to complete.
+  WORK_API void Cancel();
+
+ private:
+  typedef tbb::concurrent_vector<TfErrorTransport> _ErrorTransports;
+
+  // Function invoker helper that wraps the invocation with an ErrorMark so we
+  // can transmit errors that occur back to the thread that Wait() s for tasks
+  // to complete.
+  struct _Dispatch : public tbb::task_group {
+
+    _Dispatch()
+        : task_group(),
+          m_ctx(tbb::task_group_context::bound, tbb::task_group_context::concurrent_wait)
+    {}
+
+    ~_Dispatch()
+    {
+      wait();
+    }
+
+    template<class Fn> void run_and_transport_errors(Fn &&fn, _ErrorTransports *err)
+    {
+      TfErrorMark m;
+      run([&] { /** GODSPEED. ---> */fn(); });
+      if (!m.IsClean()) {
+        WorkDispatcher::_TransportErrors(m, err);
+      }
+    }
+
+    template<class Fn> void run(Fn &&fn)
+    {
+      spawn(*prepare_task(std::forward<Fn>(fn)), m_ctx);
+    }
+
+    void ctx_wait()
+    {
+      wait();
+    }
+
+    void ctx_reset()
+    {
+      if (m_ctx.is_group_execution_cancelled()) {
+        m_ctx.reset();
+      }
+    }
+
+    void ctx_cancel()
+    {
+      if (!m_ctx.is_group_execution_cancelled()) {
+        m_ctx.cancel_group_execution();
+        cancel();
+      }
+      wait();
+    }
+
+   private:
+    tbb::task_group_context m_ctx;
+  };
+
+ public:
+  /// Retrieve Runner, which can invoke a series of tasks
+  /// concurrently directly to this dispatcher.
+  WORK_API _Dispatch &GetRunner();
+
+ private:
+  // Helper function that removes errors from \p m and stores them in a new
+  // entry in \p errors.
+  WORK_API static void _TransportErrors(const TfErrorMark &m, _ErrorTransports *errors);
+
+  // Task group context and associated root task that allows us to cancel
+  // tasks invoked directly by this dispatcher.
+  _Dispatch _dispatch;
+
+  // The error transports we use to transmit errors in other threads back to
+  // this thread.
+  _ErrorTransports _errors;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+WABI_NAMESPACE_END
+
+#endif  // WABI_BASE_WORK_DISPATCHER_H

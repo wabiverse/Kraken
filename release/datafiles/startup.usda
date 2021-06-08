@@ -1,0 +1,115 @@
+#usda 1.0
+(
+    doc = "COVAH v1.0"
+)
+
+def "Objects" (
+    prepend apiSchemas = ["GeomModelAPI", "MotionAPI"]
+)
+{
+    def Cube "DefaultCube"
+    {
+        uniform bool doubleSided = 0
+        float3[] extent = [(-1, -1, -1), (1, 1, 1)]
+        uniform token orientation = "rightHanded"
+        color3f[] primvars:displayColor
+        float[] primvars:displayOpacity
+        custom string primvars:name
+        uniform token purpose = "default"
+        double size = 2
+        token visibility = "inherited"
+        custom float3 xformOp:rotateXYZ
+        custom float3 xformOp:scale
+        custom double3 xformOp:translate
+        uniform token[] xformOpOrder
+    }
+}
+
+def "Lights" (
+    prepend apiSchemas = ["ListAPI", "ShapingAPI", "ShadowAPI"]
+)
+{
+    def DomeLight "DomeLight"
+    {
+        uniform token collection:lightLink:expansionRule = "expandPrims"
+        uniform bool collection:lightLink:includeRoot = 1
+        uniform token collection:shadowLink:expansionRule = "expandPrims"
+        uniform bool collection:shadowLink:includeRoot = 1
+        color3f inputs:color = (1, 1, 1)
+        float inputs:colorTemperature = 6500
+        float inputs:diffuse = 1
+        bool inputs:enableColorTemperature = 0
+        float inputs:exposure = 0
+        float inputs:intensity = 1
+        bool inputs:normalize = 0
+        float inputs:specular = 1
+        asset inputs:texture:file
+        token inputs:texture:format = "automatic"
+        uniform token purpose = "default"
+        token visibility = "inherited"
+        uniform token[] xformOpOrder
+    }
+}
+
+def "Cameras" (
+    prepend apiSchemas = ["GeomModelAPI", "MotionAPI"]
+)
+{
+    def Camera "PerspCamera"
+    {
+        float4[] clippingPlanes = []
+        float2 clippingRange = (1, 1000000)
+        float exposure = 0
+        float focalLength = 50
+        float focusDistance = 0
+        float fStop = 0
+        float horizontalAperture = 20.955
+        float horizontalApertureOffset = 0
+        token projection = "perspective"
+        uniform token purpose = "default"
+        double shutter:close = 0
+        double shutter:open = 0
+        uniform token stereoRole = "mono"
+        float verticalAperture = 15.2908
+        float verticalApertureOffset = 0
+        token visibility = "inherited"
+        uniform token[] xformOpOrder
+    }
+}
+
+def "Materials" (
+    prepend apiSchemas = ["NodeDefAPI", "MaterialBindingAPI"]
+)
+{
+}
+
+def "Skeletons" (
+    prepend apiSchemas = ["SkelBindingAPI"]
+)
+{
+}
+
+def "Volumes"
+{
+}
+
+def "Media"
+{
+}
+
+def "Render" (
+    prepend apiSchemas = ["RenderSettingsAPI"]
+)
+{
+    def RenderSettings "Render"
+    {
+        uniform token aspectRatioConformPolicy = "expandAperture"
+        uniform float4 dataWindowNDC = (0, 0, 1, 1)
+        uniform token[] includedPurposes = ["default", "render"]
+        uniform bool instantaneousShutter = 0
+        uniform token[] materialBindingPurposes = ["full", ""]
+        uniform float pixelAspectRatio = 1
+        uniform int2 resolution = (2048, 1080)
+    }
+}
+

@@ -1,0 +1,84 @@
+-- glslfx version 0.1
+
+//
+// Copyright 2020 Wabi.  All rights reserved.
+//
+// Distributed under the terms of the Wabi End-User License Agreement.
+// The full license is in the file LICENSE, distributed with this software.
+//
+
+--- This is what an import might look like.
+--- #import $TOOLS/hdPh/shaders/pointId.glslfx
+
+#import $TOOLS/hdx/shaders/selection.glslfx
+
+--- --------------------------------------------------------------------------
+-- glsl PointId.Vertex.None
+
+int GetPointId()
+{
+    return -1;
+}
+
+float GetPointRasterSize(int pointId)
+{
+    return GetPointSize();
+}
+
+void ProcessPointId(int pointId)
+{
+    // do nothing
+}
+
+--- --------------------------------------------------------------------------
+-- glsl PointId.Vertex.PointParam
+
+// Fwd declare accessor method defined via code gen
+int GetBaseVertexOffset();
+int GetPointId()
+{
+    return gl_VertexID - GetBaseVertexOffset();
+}
+
+// Fwd declare selection decoder method defined in hdx/shaders/selection.glslfx
+bool IsPointSelected(int);
+float GetPointRasterSize(int pointId)
+{
+    return IsPointSelected(pointId)?
+                        GetPointSelectedSize() : GetPointSize();
+}
+
+// Plumb the pointId, for use in the FS.
+// XXX: This works only because the TES and GS stages are disabled when
+// rendering as points. If they are enabled, we need to add the plumbing.
+flat out int vsPointId;
+void ProcessPointId(int pointId)
+{
+    vsPointId = pointId;
+}
+
+--- --------------------------------------------------------------------------
+-- glsl PointId.Fragment.Fallback
+
+int GetPointId()
+{
+    return -1;
+}
+
+bool IsFragmentOnPoint() {
+    return false;
+}
+
+--- --------------------------------------------------------------------------
+-- glsl PointId.Fragment.PointParam
+
+flat in int vsPointId;
+
+int GetPointId()
+{
+    return vsPointId;
+}
+
+bool IsFragmentOnPoint() {
+    return true;
+}

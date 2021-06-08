@@ -1,0 +1,34 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+REV := 1.00
+VER := 1.00
+REL := 1.00
+TARBALL = covah_$(VER).orig.tar.gz
+BLDDIR = debian/cmake
+
+%:
+	dh $@ -Scmake -B$(BLDDIR) --parallel
+
+override_dh_auto_configure:
+	# covah spesific CMake options
+	dh_auto_configure -- \
+		-DCMAKE_BUILD_TYPE:STRING=Release \
+		-DWITH_INSTALL_PORTABLE:BOOL=ON \
+		-DWITH_PYTHON_INSTALL:BOOL=ON
+
+override_dh_auto_test:
+	# don't run CTest
+
+override_dh_install:
+	dh_install
+
+override_dh_python3:
+	dh_python3 -V 3.8 /usr/share/covah/$(REL)/scripts
+
+get-orig-source:
+	rm -rf get-orig-source $(TARBALL)
+	mkdir get-orig-source
+	GZIP='--best --no-name' tar czf $(TARBALL) -C get-orig-source covah-$(VER)
+	rm -rf get-orig-source
+	@echo "$(TARBALL) created; move it to the right destination to build the package"

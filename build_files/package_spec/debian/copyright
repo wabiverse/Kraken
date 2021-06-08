@@ -1,0 +1,33 @@
+This work was packaged for Debian by:
+
+    Furby <company@covah.xyz> on Fri, 18 Dec 2020 21:59:32 -0700
+
+It was downloaded from:
+
+    https://www.covah.xyz
+
+Copyright: 
+
+    Copyright (C) 2018-2020 Wabi
+
+License:
+
+    This package is paid software; you cannot redistribute it and/or modify
+    it. COVAH is subject to the terms of the Forge End-User License Agreement
+    (EULA) as included in this distribution.
+
+    This package is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the Forge End-User License Agreement
+    along with this program. If not, see <http://www.covah.xyz/licenses/>
+
+
+The Debian packaging is:
+
+    Copyright (C) 2020 Wabi <company@covah.xyz>
+
+You may not redistribute it and/or modify it under the terms of the
+Forge End-User License Agreement as published by Wabi

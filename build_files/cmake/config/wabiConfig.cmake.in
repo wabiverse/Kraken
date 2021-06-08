@@ -1,0 +1,27 @@
+# - Configuration file for the wabi covahverse project
+# Defines the following variables:
+# WABI_INCLUDE_DIRS  - Root include directory for the installed project.
+# WABI_LIBRARIES     - List of all libraries, by target name.
+# WABI_foo_LIBRARY   - Absolute path to individual libraries.
+# The preprocessor definition WABI_STATIC will be defined if appropriate
+
+get_filename_component(WABI_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+# include("${WABI_CMAKE_DIR}/cmake/wabiTargets.cmake")
+# set(libs "@WABI_ALL_LIBS@")
+# set(libs ${})
+set(WABI_LIBRARIES "${WABI_CMAKE_DIR}/lib/Release/covahverse.lib")
+set(WABI_INCLUDE_DIRS "${WABI_CMAKE_DIR}/include")
+# string(REPLACE " " ";" libs "${libs}")
+# foreach(lib ${libs})
+#     get_target_property(location ${lib} LOCATION)
+#     set(WABI_${lib}_LIBRARY ${location})
+#     list(APPEND WABI_LIBRARIES ${lib})
+# endforeach()
+if(NOT @BUILD_SHARED_LIBS@)
+    if(WIN32)
+        list(APPEND WABI_LIBRARIES Shlwapi.lib)
+        list(APPEND WABI_LIBRARIES Dbghelp.lib)
+    endif()
+    add_definitions(-DWABI_STATIC)
+endif()
