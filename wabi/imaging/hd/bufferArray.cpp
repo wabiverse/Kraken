@@ -114,7 +114,7 @@ void HdBufferArray::RemoveUnusedRanges()
       --numRanges;
 
       HD_PERF_COUNTER_INCR(_garbageCollectionPerfToken);
-      // Don't increament idx as we need to check the value we just moved into the slot.
+      // Don't increment idx as we need to check the value we just moved into the slot.
     }
     else {
       ++idx;
@@ -128,7 +128,7 @@ void HdBufferArray::RemoveUnusedRanges()
 HdBufferArrayRangePtr HdBufferArray::GetRange(size_t idx) const
 {
   // XXX: This would need a lock on range list
-  // if run in parrelel to TryAssignRange
+  //      if run in parallel to TryAssignRange
 
   TF_VERIFY(idx < _rangeCount);  // Note this maybe lower than the actual array
   return _rangeList[idx];

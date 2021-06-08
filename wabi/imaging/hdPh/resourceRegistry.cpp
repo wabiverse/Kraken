@@ -364,8 +364,8 @@ void HdPhResourceRegistry::AddSources(HdBufferArrayRangeSharedPtr const &range,
       sources[srcNum] = sources.back();
       sources.pop_back();
 
-      // Don't increament srcNum as it now points
-      // to the new item or is off the end of the vector
+      // Don't increment srcNum as it now points to
+      // the new item or is off the end of the vector.
     }
   }
 
@@ -727,7 +727,7 @@ void HdPhResourceRegistry::_Commit()
             // the reallocation happens only once per BufferArray.
             //
             // if the range is already larger than the current one,
-            // leave it as it is (there is a possibilty that GPU
+            // leave it as it is (there is a possibility that GPU
             // computation generates less data than it was).
             int currentNumElements = dstRange->GetNumElements();
             if (currentNumElements < numElements) {

@@ -348,8 +348,8 @@ class HdSceneDelegate {
   HD_API
   virtual void Sync(HdSyncRequestVector *request);
 
-  /// Opportunity for the delegate to clean itself up after
-  /// performing parrellel work during sync phase
+  /// Opportunity for the delegate to clean itself up
+  /// after performing parallel work during sync phase
   HD_API
   virtual void PostSyncCleanup();
 

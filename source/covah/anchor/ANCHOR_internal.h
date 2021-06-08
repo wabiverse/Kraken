@@ -3414,7 +3414,7 @@ struct ANCHOR_Table {
                             // InstanceInteracted).
   bool IsSettingsRequestLoad;
   bool IsSettingsDirty;  // Set when table settings have changed and needs to be reported into
-                         // ANCHOR_TableSetttings data.
+                         // ANCHOR_TableSettings data.
   bool IsDefaultDisplayOrder;  // Set when display order is unchanged from default (DisplayOrder
                                // contains 0...Count-1)
   bool IsResetAllRequest;

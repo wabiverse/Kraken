@@ -113,7 +113,7 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase {
   void SyncAll(bool includeUnvarying);
 
   /// Opportunity for the delegate to clean itself up after
-  /// performing parrellel work during sync phase
+  /// performing parallel work during sync phase
   USDIMAGING_API
   virtual void PostSyncCleanup() override;
 
@@ -216,7 +216,7 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase {
   void SetCullStyleFallback(HdCullStyle cullStyle);
 
   /// Sets the root transform for the entire delegate, which is applied to all
-  /// render prims generated. Settting this value will immediately invalidate
+  /// render prims generated. Setting this value will immediately invalidate
   /// existing rprim transforms.
   USDIMAGING_API
   void SetRootTransform(GfMatrix4d const &xf);
@@ -228,7 +228,7 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase {
   }
 
   /// Sets the root visibility for the entire delegate, which is applied to
-  /// all render prims generated. Settting this value will immediately
+  /// all render prims generated. Setting this value will immediately
   /// invalidate existing rprim visibility.
   USDIMAGING_API
   void SetRootVisibility(bool isVisible);

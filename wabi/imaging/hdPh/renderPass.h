@@ -74,7 +74,7 @@ class HdPh_RenderPass : public HdRenderPass {
   void _PrepareCommandBuffer(TfTokenVector const &renderTags);
 
   // XXX: This should really be in HdPh_DrawBatch::PrepareDraw.
-  void _FrustumCullCPU(HdPhRenderPassStateSharedPtr const &renderPasssState);
+  void _FrustumCullCPU(HdPhRenderPassStateSharedPtr const &renderPassState);
 
   // -----------------------------------------------------------------------
   // Drawing state

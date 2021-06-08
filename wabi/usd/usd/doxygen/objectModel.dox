@@ -177,7 +177,7 @@ def "Effects"
 
 \subsection Usd_OM_UsdTimeCode Time and Timing in USD
 
-\section Usd_OM_UsdRelationship UsdRelationship: Targetting Namespace Objects
+\section Usd_OM_UsdRelationship UsdRelationship: targeting Namespace Objects
 
 \section Usd_OM_Metadata General Metadata in USD
 
