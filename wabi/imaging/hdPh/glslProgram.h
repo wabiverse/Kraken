@@ -96,6 +96,13 @@ class HdPhGLSLProgram final {
                                                     TfToken const &shaderToken,
                                                     HdPhResourceRegistry *resourceRegistry);
 
+  using PopulateDescriptorCallback = std::function<void(HgiShaderFunctionDesc &computeDesc)>;
+
+  HDPH_API
+  static HdPhGLSLProgramSharedPtr GetComputeProgram(TfToken const &shaderToken,
+                                                    HdPhResourceRegistry *resourceRegistry,
+                                                    PopulateDescriptorCallback populateDescriptor);
+
   /// Returns the role of the GPU data in this resource.
   TfToken const &GetRole() const
   {
