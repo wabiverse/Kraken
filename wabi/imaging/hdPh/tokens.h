@@ -56,21 +56,23 @@ WABI_NAMESPACE_BEGIN
 /* clang-format on */
 
 /* clang-format off */
-#define HDPH_TOKENS     \
-  (packedSmoothNormals) \
-  (smoothNormals)       \
-  (packedFlatNormals)   \
-  (flatNormals)         \
-  (scale)               \
-  (bias)                \
-  (rotation)            \
-  (translation)         \
-  (sRGB)                \
-  (raw)                 \
-  ((_double, "double")) \
-  ((_float, "float"))   \
-  ((_int, "int"))       \
-  ((colorSpaceAuto, "auto"))
+#define HDPH_TOKENS          \
+  (packedSmoothNormals)      \
+  (smoothNormals)            \
+  (packedFlatNormals)        \
+  (flatNormals)              \
+  (scale)                    \
+  (bias)                     \
+  (rotation)                 \
+  (translation)              \
+  (sRGB)                     \
+  (raw)                      \
+  ((_double, "double"))      \
+  ((_float, "float"))        \
+  ((_int, "int"))            \
+  ((colorSpaceAuto, "auto")) \
+  (fvarIndices)              \
+  (fvarPatchParam)
 /* clang-format on */
 
 /* clang-format off */

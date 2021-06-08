@@ -197,6 +197,11 @@ class HdPh_MeshTopology final : public HdMeshTopology {
   /// topology computation.
   HdBufferSourceSharedPtr GetOsdIndexBuilderComputation();
 
+  /// Returns the refined face-varying indices builder computation.
+  /// This just returns the index and patch param buffer for a face-varying
+  /// channel, and should be preceded by topology computation.
+  HdBufferSourceSharedPtr GetOsdFvarIndexBuilderComputation(int channel);
+
   /// Returns the subdivision primvar refine computation on CPU.
   HdBufferSourceSharedPtr GetOsdRefineComputation(HdBufferSourceSharedPtr const &source,
                                                   Interpolation interpolation,

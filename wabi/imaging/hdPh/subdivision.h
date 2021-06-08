@@ -80,6 +80,11 @@ class HdPh_Subdivision {
       HdPh_MeshTopology *topology,
       HdBufferSourceSharedPtr const &osdTopology) = 0;
 
+  virtual HdBufferSourceSharedPtr CreateFvarIndexComputation(
+      HdPh_MeshTopology *topology,
+      HdBufferSourceSharedPtr const &osdTopology,
+      int channel) = 0;
+
   virtual HdBufferSourceSharedPtr CreateRefineComputation(
       HdPh_MeshTopology *topology,
       HdBufferSourceSharedPtr const &source,
