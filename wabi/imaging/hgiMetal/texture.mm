@@ -121,6 +121,9 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
   else if (desc.type == HgiTextureType1D) {
     texDesc.textureType = MTLTextureType1D;
   }
+  else if (desc.type == HgiTextureType1DArray) {
+    texDesc.textureType = MTLTextureType1DArray;
+  }
 
   if (desc.sampleCount > 1) {
     texDesc.sampleCount = desc.sampleCount;
@@ -177,6 +180,20 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
                                   imageBytes * slice;
 
           [_textureId replaceRegion:MTLRegionMake2D(0, 0, width, height)
+                        mipmapLevel:mip
+                              slice:slice
+                          withBytes:sliceBase
+                        bytesPerRow:bytesPerRow
+                      bytesPerImage:0];
+        }
+      }
+      else if (desc.type == HgiTextureType1DArray) {
+        const size_t imageBytes = bytesPerRow;
+        for (int slice = 0; slice < desc.layerCount; slice++) {
+          char const *sliceBase = static_cast<char const *>(initialData) + mipInfo.byteOffset +
+                                  imageBytes * slice;
+
+          [_textureId replaceRegion:MTLRegionMake1D(0, width)
                         mipmapLevel:mip
                               slice:slice
                           withBytes:sliceBase
