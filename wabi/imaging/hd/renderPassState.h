@@ -242,6 +242,13 @@ class HdRenderPassState {
     return _lightingEnabled;
   }
 
+  HD_API
+  void SetClippingEnabled(bool enabled);
+  bool GetClippingEnabled() const
+  {
+    return _clippingEnabled;
+  }
+
   // ---------------------------------------------------------------------- //
   /// \name Render pipeline state
   // ---------------------------------------------------------------------- //
@@ -467,6 +474,7 @@ class HdRenderPassState {
   GfVec4f _pointColor;
   float _pointSize;
   bool _lightingEnabled;
+  bool _clippingEnabled;
 
   GfVec4f _maskColor;
   GfVec4f _indicatorColor;

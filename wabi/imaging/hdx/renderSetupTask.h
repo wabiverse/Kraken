@@ -140,14 +140,13 @@ struct HdxRenderTaskParams {
         enableIdRender(false),
         alphaThreshold(0.0),
         enableSceneMaterials(true),
-        enableSceneLights(true)
+        enableSceneLights(true),
+        enableClipping(true),
         // Selection/Masking params
-        ,
         maskColor(1.0f, 0.0f, 0.0f, 1.0f),
         indicatorColor(0.0f, 1.0f, 0.0f, 1.0f),
-        pointSelectedSize(3.0)
+        pointSelectedSize(3.0),
         // Phoenix render pipeline state
-        ,
         depthBiasUseDefault(true),
         depthBiasEnable(false),
         depthBiasConstantFactor(0.0f),
@@ -194,6 +193,7 @@ struct HdxRenderTaskParams {
   float alphaThreshold;
   bool enableSceneMaterials;
   bool enableSceneLights;
+  bool enableClipping;
 
   // Selection/Masking params
   GfVec4f maskColor;
