@@ -67,6 +67,10 @@ static const uint32_t _FormatTable[HgiFormatCount][2] = {
     {HgiFormatFloat32Vec2, VK_FORMAT_R32G32_SFLOAT},
     {HgiFormatFloat32Vec3, VK_FORMAT_R32G32B32_SFLOAT},
     {HgiFormatFloat32Vec4, VK_FORMAT_R32G32B32A32_SFLOAT},
+    {HgiFormatInt16, VK_FORMAT_R16_SINT},
+    {HgiFormatInt16Vec2, VK_FORMAT_R16G16_SINT},
+    {HgiFormatInt16Vec3, VK_FORMAT_R16G16B16_SINT},
+    {HgiFormatInt16Vec4, VK_FORMAT_R16G16B16A16_SINT},
     {HgiFormatUInt16, VK_FORMAT_R16_UINT},
     {HgiFormatUInt16Vec2, VK_FORMAT_R16G16_UINT},
     {HgiFormatUInt16Vec3, VK_FORMAT_R16G16B16_UINT},
@@ -88,9 +92,9 @@ static const uint32_t _FormatTable[HgiFormatCount][2] = {
 // with the HgiFormat table.
 constexpr bool _CompileTimeValidateHgiFormatTable()
 {
-  return (HgiFormatCount == 30 && HgiFormatUNorm8 == 0 && HgiFormatFloat16Vec4 == 9 &&
-          HgiFormatFloat32Vec4 == 13 && HgiFormatUInt16Vec4 == 17 &&
-          HgiFormatUNorm8Vec4srgb == 22 && HgiFormatBC3UNorm8Vec4 == 28) ?
+  return (HgiFormatCount == 34 && HgiFormatUNorm8 == 0 && HgiFormatFloat16Vec4 == 9 &&
+          HgiFormatFloat32Vec4 == 13 && HgiFormatUInt16Vec4 == 21 &&
+          HgiFormatUNorm8Vec4srgb == 26 && HgiFormatBC3UNorm8Vec4 == 32) ?
              true :
              false;
 }

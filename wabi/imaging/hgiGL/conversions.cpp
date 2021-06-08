@@ -67,6 +67,11 @@ static const _FormatDesc FORMAT_DESC[] = {
     {GL_RGB, GL_FLOAT, GL_RGB32F},    // Float32Vec3
     {GL_RGBA, GL_FLOAT, GL_RGBA32F},  // Float32Vec4
 
+    {GL_RED_INTEGER, GL_SHORT, GL_R16I},      // Int16
+    {GL_RG_INTEGER, GL_SHORT, GL_RG16I},      // Int16Vec2
+    {GL_RGB_INTEGER, GL_SHORT, GL_RGB16I},    // Int16Vec3
+    {GL_RGBA_INTEGER, GL_SHORT, GL_RGBA16I},  // Int16Vec4
+
     {GL_RED_INTEGER, GL_UNSIGNED_SHORT, GL_R16UI},      // UInt16
     {GL_RG_INTEGER, GL_UNSIGNED_SHORT, GL_RG16UI},      // UInt16Vec2
     {GL_RGB_INTEGER, GL_UNSIGNED_SHORT, GL_RGB16UI},    // UInt16Vec3
@@ -96,8 +101,8 @@ static const _FormatDesc FORMAT_DESC[] = {
 constexpr bool _CompileTimeValidateHgiFormatTable()
 {
   return (TfArraySize(FORMAT_DESC) == HgiFormatCount && HgiFormatUNorm8 == 0 &&
-          HgiFormatFloat16Vec4 == 9 && HgiFormatFloat32Vec4 == 13 && HgiFormatUInt16Vec4 == 17 &&
-          HgiFormatUNorm8Vec4srgb == 22 && HgiFormatBC3UNorm8Vec4 == 28) ?
+          HgiFormatFloat16Vec4 == 9 && HgiFormatFloat32Vec4 == 13 && HgiFormatUInt16Vec4 == 21 &&
+          HgiFormatUNorm8Vec4srgb == 26 && HgiFormatBC3UNorm8Vec4 == 32) ?
              true :
              false;
 }
