@@ -40,6 +40,8 @@
 
 #include "wabi/imaging/hdPh/renderPassShader.h"
 
+#include "wabi/imaging/glf/diagnostic.h"
+
 WABI_NAMESPACE_BEGIN
 
 HdxOitVolumeRenderTask::HdxOitVolumeRenderTask(HdSceneDelegate *delegate, SdfPath const &id)
@@ -88,6 +90,8 @@ void HdxOitVolumeRenderTask::Execute(HdTaskContext *ctx)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
+
+  GLF_GROUP_FUNCTION();
 
   if (!_isOitEnabled)
     return;

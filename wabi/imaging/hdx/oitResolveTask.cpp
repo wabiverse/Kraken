@@ -51,6 +51,7 @@
 #include "wabi/imaging/hdx/oitBufferAccessor.h"
 
 #include "wabi/imaging/glf/contextCaps.h"
+#include "wabi/imaging/glf/diagnostic.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -342,6 +343,8 @@ void HdxOitResolveTask::Execute(HdTaskContext *ctx)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
+
+  GLF_GROUP_FUNCTION();
 
   // Check whether the request flag was set and delete it so that for the
   // next iteration the request flag is not set unless an OIT render task

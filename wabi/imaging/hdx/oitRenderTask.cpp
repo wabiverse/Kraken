@@ -41,6 +41,8 @@
 
 #include "wabi/imaging/hdPh/renderPassShader.h"
 
+#include "wabi/imaging/glf/diagnostic.h"
+
 WABI_NAMESPACE_BEGIN
 
 HdxOitRenderTask::HdxOitRenderTask(HdSceneDelegate *delegate, SdfPath const &id)
@@ -84,6 +86,8 @@ void HdxOitRenderTask::Execute(HdTaskContext *ctx)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
+
+  GLF_GROUP_FUNCTION();
 
   if (!_isOitEnabled)
     return;
