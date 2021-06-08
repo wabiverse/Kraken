@@ -15,6 +15,11 @@ endif()
 add_subdirectory(hgiVulkan)
 add_subdirectory(hgiInterop)
 add_subdirectory(hd)
+
+if(WITH_MATERIALX)
+  add_subdirectory(hdMtlx)
+endif()
+
 add_subdirectory(hdPh)
 add_subdirectory(hdx)
 
