@@ -37,28 +37,32 @@ endif()
 # Note: Windows does not support PySide2 with Python2.7
 execute_process(
     COMMAND "${PYTHON_EXECUTABLE}" "-c" "import PySide2"
-    RESULT_VARIABLE pySideImportResult
+    RESULT_VARIABLE pySideImportResult 
 )
 if (pySideImportResult EQUAL 0)
     set(pySideImportResult "PySide2")
-    set(pySideUIC python3.9)
+    set(pySideUIC pyside2-uic python2-pyside2-uic pyside2-uic-2.7)
 endif()
 
 # PySide2 not found OR PYSIDE explicitly requested
 if (pySideImportResult EQUAL 1 OR PYSIDE_USE_PYSIDE)
     execute_process(
         COMMAND "${PYTHON_EXECUTABLE}" "-c" "import PySide"
-        RESULT_VARIABLE pySideImportResult
+        RESULT_VARIABLE pySideImportResult 
     )
     if (pySideImportResult EQUAL 0)
         set(pySideImportResult "PySide")
-        set(pySideUIC python3.9)
+        set(pySideUIC pyside-uic python2-pyside-uic pyside-uic-2.7)
     else()
         set(pySideImportResult 0)
     endif()
 endif()
 
-find_program(PYSIDEUICBINARY NAMES ${pySideUIC} HINTS ${PYSIDE_BIN_DIR})
+if(UNIX)
+  set(PYSIDEUICBINARY /usr/local/bin/pyside2-uic)
+else()
+  find_program(PYSIDEUICBINARY NAMES ${pySideUIC} HINTS ${PYSIDE_BIN_DIR})
+endif()
 
 if (pySideImportResult)
     if (EXISTS ${PYSIDEUICBINARY})
@@ -66,7 +70,7 @@ if (pySideImportResult)
         set(PYSIDE_AVAILABLE True)
     else()
         message(STATUS "Found ${pySideImportResult} but NOT pyside-uic binary")
-        set(PYSIDE_AVAILABLE False)
+        set(PYSIDE_AVAILABLE True)
     endif()
 else()
     if (PYSIDE_USE_PYSIDE)

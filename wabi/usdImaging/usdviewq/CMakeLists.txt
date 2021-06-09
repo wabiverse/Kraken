@@ -70,27 +70,38 @@ wabi_library(usdviewq
         python/debugFlagsWidget.py
         resources/ui/usdviewstyle.qss
 
-    # TODO: Fixme
-    # PYSIDE_UI_FILES
-        # resources/ui/mainWindowUI.ui
-        # resources/ui/adjustClippingUI.ui
-        # resources/ui/adjustDefaultMaterialUI.ui
-        # resources/ui/attributeValueEditorUI.ui
-        # resources/ui/preferencesUI.ui
-        # resources/ui/primLegendUI.ui
-        # resources/ui/propertyLegendUI.ui
+    PYSIDE_UI_FILES
+        resources/ui/mainWindowUI.ui
+        resources/ui/adjustClippingUI.ui
+        resources/ui/adjustDefaultMaterialUI.ui
+        resources/ui/attributeValueEditorUI.ui
+        resources/ui/preferencesUI.ui
+        resources/ui/primLegendUI.ui
+        resources/ui/propertyLegendUI.ui
 
     DOXYGEN_FILES
         docs/README.md
         docs/blackBoxTesting.md
 )
 
-install(DIRECTORY
-    resources/icons
-    DESTINATION /usr/local/share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Usdviewq
-)
+if(UNIX)
+    install(DIRECTORY
+        resources/icons
+        DESTINATION /usr/local/share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Usdviewq
+    )
 
-install(DIRECTORY
-    resources/fonts
-    DESTINATION /usr/local/share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Usdviewq
-)
+    install(DIRECTORY
+        resources/fonts
+        DESTINATION /usr/local/share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Usdviewq
+    )
+elseif(WIN32)
+    install(DIRECTORY
+        resources/icons
+        DESTINATION ${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Usdviewq
+    )
+
+    install(DIRECTORY
+        resources/fonts
+        DESTINATION ${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Usdviewq
+    )
+endif()
