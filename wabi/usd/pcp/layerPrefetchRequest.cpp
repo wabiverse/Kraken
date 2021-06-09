@@ -30,8 +30,9 @@
  */
 
 #include "wabi/usd/pcp/layerPrefetchRequest.h"
-#include "wabi/base/work/arenaDispatcher.h"
+#include "wabi/base/work/dispatcher.h"
 #include "wabi/base/work/threadLimits.h"
+#include "wabi/base/work/withScopedParallelism.h"
 #include "wabi/usd/pcp/layerStackRegistry.h"
 #include "wabi/wabi.h"
 
@@ -87,7 +88,7 @@ struct _Opener {
     }
   }
 
-  WorkArenaDispatcher _dispatcher;
+  WorkDispatcher _dispatcher;
   const Pcp_MutedLayers &_mutedLayers;
   std::set<SdfLayerRefPtr> *_retainedLayers;
   mutable tbb::spin_mutex _retainedLayersMutex;
@@ -103,7 +104,7 @@ void PcpLayerPrefetchRequest::RequestSublayerStack(const SdfLayerRefPtr &layer,
 
 void PcpLayerPrefetchRequest::Run(const Pcp_MutedLayers &mutedLayers)
 {
-  if (WorkGetConcurrencyLimit() <= 1) {
+  if (!WorkHasConcurrency()) {
     // Do not bother pre-fetching if we do not have extra threads
     // available.
     return;
@@ -118,9 +119,11 @@ void PcpLayerPrefetchRequest::Run(const Pcp_MutedLayers &mutedLayers)
   requests.swap(_sublayerRequests);
 
   // Open all the sublayers in the request.
-  _Opener opener(mutedLayers, &_retainedLayers);
-  TF_FOR_ALL(req, requests)
-  opener.OpenSublayers(req->first, req->second);
+  WorkWithScopedParallelism([&]() {
+    _Opener opener(mutedLayers, &_retainedLayers);
+    TF_FOR_ALL(req, requests)
+    opener.OpenSublayers(req->first, req->second);
+  });
 }
 
 WABI_NAMESPACE_END

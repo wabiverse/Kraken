@@ -97,6 +97,7 @@ wabi_library(tf
         pyFunction
         pyIdentity
         pyInterpreter
+        pyInvoke
         pyModule
         pyModuleNotice
         pyNoticeWrapper

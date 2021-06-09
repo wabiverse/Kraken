@@ -39,9 +39,12 @@
 #include "wabi/usd/usdGeom/pointBased.h"
 #include "wabi/usd/usdGeom/xform.h"
 
-#include "wabi/base/trace/trace.h"
 #include "wabi/usd/usd/modelAPI.h"
 #include "wabi/usd/usd/primRange.h"
+
+#include "wabi/base/trace/trace.h"
+
+#include "wabi/base/work/withScopedParallelism.h"
 
 #include "wabi/base/tf/pyLock.h"
 #include "wabi/base/tf/stringUtils.h"
@@ -54,13 +57,12 @@ WABI_NAMESPACE_BEGIN
 
 // Thread-local Xform cache.
 // This should be replaced with (TBD) multi-threaded XformCache::Prepopulate
-using _ThreadXformCache = tbb::enumerable_thread_specific<UsdGeomXformCache>;
+typedef tbb::enumerable_thread_specific<UsdGeomXformCache> _ThreadXformCache;
 
 // -------------------------------------------------------------------------- //
 // _BBoxTask
 // -------------------------------------------------------------------------- //
 class UsdGeomBBoxCache::_BBoxTask {
-
   UsdGeomBBoxCache::_PrimContext _primContext;
   GfMatrix4d _inverseComponentCtm;
   UsdGeomBBoxCache *_owner;
@@ -69,7 +71,6 @@ class UsdGeomBBoxCache::_BBoxTask {
  public:
   _BBoxTask() : _owner(nullptr), _xfCaches(nullptr)
   {}
-
   _BBoxTask(const _PrimContext &primContext,
             const GfMatrix4d &inverseComponentCtm,
             UsdGeomBBoxCache *owner,
@@ -79,18 +80,15 @@ class UsdGeomBBoxCache::_BBoxTask {
         _owner(owner),
         _xfCaches(xfCaches)
   {}
-
   explicit operator bool() const
   {
     return _owner;
   }
-
   void operator()()
   {
     // Do not save state here; all state should be accumulated externally.
     _owner->_ResolvePrim(this, _primContext, _inverseComponentCtm);
   }
-
   _ThreadXformCache *GetXformCaches()
   {
     return _xfCaches;
@@ -114,9 +112,7 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver {
 
   struct _PrototypeTask {
     _PrototypeTask()
-    {
-      numDependencies = {0};
-    }
+    {}
 
     // Number of dependencies -- prototype prims that must be resolved
     // before this prototype can be resolved.
@@ -165,7 +161,6 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver {
   {
     std::pair<_PrototypeTaskMap::iterator, bool> prototypeTaskStatus = prototypeTasks->insert(
         std::make_pair(prototypePrim, _PrototypeTask()));
-
     if (!prototypeTaskStatus.second) {
       return;
     }
@@ -192,7 +187,7 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver {
   void _ExecuteTaskForPrototype(const _PrimContext &prototype,
                                 _PrototypeTaskMap *prototypeTasks,
                                 _ThreadXformCache *xfCaches,
-                                WorkArenaDispatcher *dispatcher)
+                                WorkDispatcher *dispatcher)
   {
     UsdGeomBBoxCache::_BBoxTask(prototype, GfMatrix4d(1.0), _owner, xfCaches)();
 
@@ -988,30 +983,32 @@ bool UsdGeomBBoxCache::_Resolve(const UsdPrim &prim, UsdGeomBBoxCache::_PurposeT
     return (!bboxes->empty());
   }
 
-  // Resolve all prototype prims first to avoid having to synchronize
-  // tasks that depend on the same prototype.
-  if (!prototypePrimContexts.empty()) {
-    _PrototypeBBoxResolver bboxesForPrototypes(this);
-    bboxesForPrototypes.Resolve(prototypePrimContexts);
-  }
+  WorkWithScopedParallelism([&]() {
+    // Resolve all prototype prims first to avoid having to synchronize
+    // tasks that depend on the same prototype.
+    if (!prototypePrimContexts.empty()) {
+      _PrototypeBBoxResolver bboxesForPrototypes(this);
+      bboxesForPrototypes.Resolve(prototypePrimContexts);
+    }
 
-  // XXX: This swapping out is dubious... see XXX below.
-  _ThreadXformCache xfCaches;
-  xfCaches.local().Swap(_ctmCache);
+    // XXX: This swapping out is dubious... see XXX below.
+    _ThreadXformCache xfCaches;
+    xfCaches.local().Swap(_ctmCache);
 
-  // Find the nearest ancestor prim that's a model or a subcomponent.
-  UsdPrim modelPrim              = _GetNearestComponent(prim);
-  GfMatrix4d inverseComponentCtm = _ctmCache.GetLocalToWorldTransform(modelPrim).GetInverse();
+    // Find the nearest ancestor prim that's a model or a subcomponent.
+    UsdPrim modelPrim              = _GetNearestComponent(prim);
+    GfMatrix4d inverseComponentCtm = _ctmCache.GetLocalToWorldTransform(modelPrim).GetInverse();
 
-  _dispatcher.Run(_BBoxTask(primContext, inverseComponentCtm, this, &xfCaches));
-  _dispatcher.Wait();
+    _dispatcher.Run(_BBoxTask(primContext, inverseComponentCtm, this, &xfCaches));
+    _dispatcher.Wait();
 
-  // We save the result of one of the caches, but it might be interesting to
-  // merge them all here at some point.
-  // XXX: Is this valid?  This only makes sense if we're *100% certain* that
-  // rootTask above runs in this thread.  If it's picked up by another worker
-  // it won't populate the local xfCaches we're swapping with.
-  xfCaches.local().Swap(_ctmCache);
+    // We save the result of one of the caches, but it might be
+    // interesting to merge them all here at some point.  XXX: Is this
+    // valid?  This only makes sense if we're *100% certain* that
+    // rootTask above runs in this thread.  If it's picked up by another
+    // worker it won't populate the local xfCaches we're swapping with.
+    xfCaches.local().Swap(_ctmCache);
+  });
 
   // Note: the map may contain unresolved entries, but future queries will
   // populate them.
@@ -1375,13 +1372,14 @@ void UsdGeomBBoxCache::_ResolvePrim(_BBoxTask *task,
     // All the child bboxTasks will be NULL if the prim is an instance.
     //
     if (!primIsInstance) {
-      WorkArenaDispatcher wd;
-      for (const auto &childAndTask : included) {
-        if (childAndTask.second) {
-          wd.Run(childAndTask.second);
+      WorkWithScopedParallelism([&]() {
+        WorkDispatcher wd;
+        for (auto &childAndTask : included) {
+          if (childAndTask.second) {
+            wd.Run(childAndTask.second);
+          }
         }
-      }
-      wd.Wait();
+      });
 
       // We may have switched threads, grab the thread-local xfCache
       // again.

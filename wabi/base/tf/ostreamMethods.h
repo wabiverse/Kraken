@@ -45,8 +45,10 @@
 /// human-readable display; the formats described herein are subject to change
 /// without notice.
 
-#include "wabi/base/tf/hashmap.h"
 #include "wabi/wabi.h"
+
+#include "wabi/base/tf/hashmap.h"
+#include "wabi/base/tf/smallVector.h"
 
 #include <list>
 #include <map>
@@ -62,6 +64,21 @@ WABI_NAMESPACE_BEGIN
 template<class T> constexpr bool Tf_IsOstreamable()
 {
   return boost::has_left_shift<std::ostream &, /* << */ T, /* -> */ std::ostream &>::value;
+}
+
+/// Output a TfSmallVector using [ ] as delimiters.
+/// \ingroup group_tf_DebuggingOutput
+template<class T, uint32_t N>
+typename std::enable_if<WABI_NS::Tf_IsOstreamable<T>(), std::ostream &>::type operator<<(
+    std::ostream &out,
+    const TfSmallVector<T, N> &v)
+{
+  out << "[ ";
+  for (auto const &obj : v)
+    out << obj << " ";
+  out << "]";
+
+  return out;
 }
 
 WABI_NAMESPACE_END

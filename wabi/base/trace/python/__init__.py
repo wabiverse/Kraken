@@ -32,16 +32,15 @@
 Trace -- Utilities for counting and recording events.
 """
 
-from . import _trace
 from wabi import Tf
-Tf.PrepareModule(_trace, locals())
-del _trace, Tf
+Tf.PreparePythonModule()
+del Tf
 
 import contextlib
 
 @contextlib.contextmanager
 def TraceScope(label):
-    """A context manager that calls BeginEvent on the global collector on enter
+    """A context manager that calls BeginEvent on the global collector on enter 
     and EndEvent on exit."""
     try:
         collector = Collector()
@@ -56,9 +55,9 @@ def TraceFunction(obj):
     """A decorator that enables tracing the function that it decorates.
     If you decorate with 'TraceFunction' the function will be traced in the
     global collector."""
-
+    
     collector = Collector()
-
+    
     def decorate(func):
         import inspect
 
@@ -95,14 +94,3 @@ def TraceMethod(obj):
     """A convenience.  Same as TraceFunction but changes the recorded
     label to use the term 'method' rather than 'function'."""
     return TraceFunction(obj)
-
-
-# Remove any private stuff, like test classes, if we are not being
-# imported from a test.
-
-try:
-    from . import __DOC
-    __DOC.Execute(locals())
-    del __DOC
-except Exception:
-    pass

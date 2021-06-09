@@ -33,7 +33,7 @@
 
 #include "wabi/base/gf/bbox3d.h"
 #include "wabi/base/tf/hashmap.h"
-#include "wabi/base/work/arenaDispatcher.h"
+#include "wabi/base/work/dispatcher.h"
 #include "wabi/usd/usd/attributeQuery.h"
 #include "wabi/usd/usdGeom/api.h"
 #include "wabi/usd/usdGeom/pointInstancer.h"
@@ -532,7 +532,7 @@ class UsdGeomBBoxCache {
     return &(_bboxCache[primContext]);
   }
 
-  WorkArenaDispatcher _dispatcher;
+  WorkDispatcher _dispatcher;
   UsdTimeCode _time;
   boost::optional<UsdTimeCode> _baseTime;
   TfTokenVector _includedPurposes;

@@ -30,17 +30,52 @@
  */
 
 #include "wabi/base/work/detachedTask.h"
+#include "wabi/base/work/dispatcher.h"
+#include "wabi/base/work/threadLimits.h"
 #include "wabi/wabi.h"
+
+#include <atomic>
+#include <chrono>
+#include <thread>
 
 WABI_NAMESPACE_BEGIN
 
-tbb::task_group_context &Work_GetDetachedTaskGroupContext()
+WorkDispatcher &Work_GetDetachedDispatcher()
 {
-  // Deliberately leak this in case there are tasks still using it after
-  // we exit from main().
-  static tbb::task_group_context *ctx = new tbb::task_group_context(
-      tbb::task_group_context::isolated);
-  return *ctx;
+  // Deliberately leak this in case there are tasks still using it after we
+  // exit from main().
+  static WorkDispatcher *theDispatcher = new WorkDispatcher;
+  return *theDispatcher;
+}
+
+static std::atomic<std::thread *> detachedWaiter{nullptr};
+
+void Work_EnsureDetachedTaskProgress()
+{
+  // Check to see if there's a waiter thread already.  If not, try to create
+  // one.
+  std::thread *c = detachedWaiter.load();
+  if (ARCH_UNLIKELY(!c)) {
+    std::thread *newThread = new std::thread;
+    if (detachedWaiter.compare_exchange_strong(c, newThread)) {
+      // We won the race, so start the waiter thread.
+      WorkDispatcher &dispatcher = Work_GetDetachedDispatcher();
+      *newThread                 = std::move(std::thread([&dispatcher]() {
+        while (true) {
+          // Process detached tasks.
+          dispatcher.Wait();
+          // Now sleep for a bit, and try again.
+          using namespace std::chrono_literals;
+          std::this_thread::sleep_for(50ms);
+        }
+      }));
+      newThread->detach();
+    }
+    else {
+      // We lost the race, so delete our temporary thread.
+      delete newThread;
+    }
+  }
 }
 
 WABI_NAMESPACE_END

@@ -32,12 +32,63 @@
 Tf -- Tools Foundation
 """
 
+import os
+import ctypes
+
+from sys import platform
+
+if platform == "linux" or platform == "linux2":
+    # Fix libai.so from crashing python, Linux problem only.
+    currentFile = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__))))
+    aiSO = os.path.abspath(os.path.join(currentFile, "../../../../../../bin/libai.so"))
+    ctypes.CDLL(aiSO, mode=os.RTLD_GLOBAL)
+
+def PreparePythonModule(moduleName=None):
+    """Prepare an extension module at import time.  This will import the
+    Python module associated with the caller's module (e.g. '_tf' for 'wabi.Tf')
+    or the module with the specified moduleName and copy its contents into
+    the caller's local namespace.
+    Generally, this should only be called by the __init__.py script for a module
+    upon loading a boost python module (generally '_libName.so')."""
+    import importlib
+    import inspect
+    frame = inspect.currentframe().f_back
+    try:
+        f_locals = frame.f_locals
+
+        # If an explicit moduleName is not supplied, construct it from the
+        # caller's module name, like "wabi.Tf", and our naming conventions,
+        # which results in "_tf".
+        if moduleName is None:
+            moduleName = f_locals["__name__"].split(".")[-1]
+            moduleName = "_" + moduleName[0].lower() + moduleName[1:]
+
+        module = importlib.import_module("." + moduleName, f_locals["__name__"])
+        PrepareModule(module, f_locals)
+        try:
+            del f_locals[moduleName]
+        except KeyError:
+            pass
+
+        try:
+            module = importlib.import_module(".__DOC", f_locals["__name__"])
+            module.Execute(f_locals)
+            try:
+                del f_locals["__DOC"]
+            except KeyError:
+                pass
+        except Exception:
+            pass
+
+    finally:
+        del frame
+
 def PrepareModule(module, result):
     """PrepareModule(module, result) -- Prepare an extension module at import
     time.  Generally, this should only be called by the __init__.py script for a
-    module upon loading a boost python module (generally '_LibName.so')."""
+    module upon loading a boost python module (generally '_libName.so')."""
     # inject into result.
-    ignore = frozenset(['__name__', '__builtins__',
+    ignore = frozenset(['__name__', '__package__', '__builtins__',
                         '__doc__', '__file__', '__path__'])
     newModuleName = result.get('__name__')
 
@@ -59,40 +110,26 @@ def PrepareModule(module, result):
 
 def GetCodeLocation(framesUp):
     """Returns a tuple (moduleName, functionName, fileName, lineNo).
-
     To trace the current location of python execution, use GetCodeLocation().
     By default, the information is returned at the current stack-frame; thus
-
         info = GetCodeLocation()
-
-    will return information about the line that GetCodeLocation() was called
+    will return information about the line that GetCodeLocation() was called 
     from. One can write:
-
         def genericDebugFacility():
             info = GetCodeLocation(1)
             # print out data
-
-
         def someCode():
             ...
             if bad:
                 genericDebugFacility()
-
-    and genericDebugFacility() will get information associated with its caller,
+    and genericDebugFacility() will get information associated with its caller, 
     i.e. the function someCode()."""
     import sys
     f_back = sys._getframe(framesUp).f_back
     return (f_back.f_globals['__name__'], f_back.f_code.co_name,
             f_back.f_code.co_filename, f_back.f_lineno)
 
-# for some strange reason, this errors out when we try to reload it,
-# which is odd since _tf is a DSO and can't be reloaded anyway:
-import sys
-if "wabi.Tf._tf" not in sys.modules:
-    from . import _tf
-    PrepareModule(_tf, locals())
-    del _tf
-del sys
+PreparePythonModule()
 
 # Need to provide an exception type that tf errors will show up as.
 class ErrorException(RuntimeError):
@@ -104,24 +141,15 @@ class ErrorException(RuntimeError):
         return '\n\t' + '\n\t'.join([str(e) for e in self.args])
 __SetErrorExceptionClass(ErrorException)
 
-try:
-    from . import __DOC
-    __DOC.Execute(locals())
-    del __DOC
-except Exception:
-    pass
-
 def Warn(msg, template=""):
     """Issue a warning via the TfDiagnostic system.
-
     At this time, template is ignored.
     """
     codeInfo = GetCodeLocation(framesUp=1)
     _Warn(msg, codeInfo[0], codeInfo[1], codeInfo[2], codeInfo[3])
-
+    
 def Status(msg, verbose=True):
     """Issues a status update to the Tf diagnostic system.
-
     If verbose is True (the default) then information about where in the code
     the status update was issued from is included.
     """
@@ -148,16 +176,16 @@ def Fatal(msg):
 
 
 class NamedTemporaryFile(object):
-    """A named temporary file which keeps the internal file handle closed.
+    """A named temporary file which keeps the internal file handle closed. 
        A class which constructs a temporary file(that isn't open) on __enter__,
-       provides its name as an attribute, and deletes it on __exit__.
-
-       Note: The constructor args for this object match those of
+       provides its name as an attribute, and deletes it on __exit__. 
+       
+       Note: The constructor args for this object match those of 
        python's tempfile.mkstemp() function, and will have the same effect on
        the underlying file created."""
 
     def __init__(self, suffix='', prefix='', dir=None, text=False):
-        # Note that we defer creation until the enter block to
+        # Note that we defer creation until the enter block to 
         # prevent users from unintentionally creating a bunch of
         # temp files that don't get cleaned up.
         self._args = (suffix,  prefix, dir, text)
@@ -165,9 +193,9 @@ class NamedTemporaryFile(object):
     def __enter__(self):
         from tempfile import mkstemp
         from os import close
-
+        
         fd, path = mkstemp(*self._args)
-        close(fd)
+        close(fd) 
 
         # XXX: We currently only expose the name attribute
         # more can be added based on client needs in the future.
@@ -181,5 +209,5 @@ class NamedTemporaryFile(object):
 
     @property
     def name(self):
-        """The path for the temporary file created."""
+        """The path for the temporary file created.""" 
         return self._name

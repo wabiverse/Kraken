@@ -37,50 +37,48 @@
 #include "wabi/base/work/api.h"
 #include "wabi/wabi.h"
 
-#include <tbb/task_group.h>
+#include "wabi/base/work/dispatcher.h"
 
 #include <type_traits>
 #include <utility>
 
 WABI_NAMESPACE_BEGIN
 
-struct Work_DetachedInvoker : public tbb::task_group {
-
-  Work_DetachedInvoker()
-      : task_group(),
-        m_ctx(tbb::task_group_context::bound, tbb::task_group_context::concurrent_wait)
+template<class Fn> struct Work_DetachedTask {
+  explicit Work_DetachedTask(Fn &&fn) : _fn(std::move(fn))
   {}
-
-  ~Work_DetachedInvoker()
-  {
-    wait();
-  }
-
-  template<class Fn> void execute(Fn &&fn)
+  explicit Work_DetachedTask(Fn const &fn) : _fn(fn)
+  {}
+  void operator()()
   {
     TfErrorMark m;
-    run([&] { /** GODSPEED. ---> */fn(); });
+    _fn();
     m.Clear();
   }
 
-  template<class Fn> void run(Fn &&fn)
-  {
-    spawn(*prepare_task(std::forward<Fn>(fn)), m_ctx);
-  }
-
  private:
-  tbb::task_group_context m_ctx;
+  Fn _fn;
 };
 
 WORK_API
-tbb::task_group_context &Work_GetDetachedTaskGroupContext();
+WorkDispatcher &Work_GetDetachedDispatcher();
+
+WORK_API
+void Work_EnsureDetachedTaskProgress();
 
 /// Invoke \p fn asynchronously, discard any errors it produces, and provide
 /// no way to wait for it to complete.
 template<class Fn> void WorkRunDetachedTask(Fn &&fn)
 {
-  Work_DetachedInvoker invoker;
-  invoker.execute(std::forward<Fn>(fn));
+  using FnType = typename std::remove_reference<Fn>::type;
+  Work_DetachedTask<FnType> task(std::forward<Fn>(fn));
+  if (WorkHasConcurrency()) {
+    Work_GetDetachedDispatcher().Run(std::move(task));
+    Work_EnsureDetachedTaskProgress();
+  }
+  else {
+    task();
+  }
 }
 
 WABI_NAMESPACE_END

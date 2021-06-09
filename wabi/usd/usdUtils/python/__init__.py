@@ -28,18 +28,9 @@
 #
 #  Modifications copyright (C) 2020-2021 Wabi.
 #
-from . import _usdUtils
 from wabi import Tf
-Tf.PrepareModule(_usdUtils, locals())
-del _usdUtils, Tf
-
-try:
-    from . import __DOC
-    __DOC.Execute(locals())
-    del __DOC
-except Exception:
-    pass
-
+Tf.PreparePythonModule()
+del Tf
 
 from .complianceChecker import ComplianceChecker
 from .updateSchemaWithSdrNode import UpdateSchemaWithSdrNode, \

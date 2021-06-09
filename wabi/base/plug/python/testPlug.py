@@ -38,7 +38,7 @@ from wabi import Plug, Tf, Gf
 # Test plugins are installed relative to this script
 testRoot = os.path.join(os.path.dirname(__file__), 'PlugPlugins')
 testPluginsDso = testRoot
-testPluginsPython = testRoot + 'python/lib/site-packages'
+testPluginsPython = testRoot + 'python/lib/python3.9/site-packages'
 testPluginsDsoSearch = testPluginsDso + '/*/Resources/'
 testPluginsPythonSearch = testPluginsPython + '/**/'
 

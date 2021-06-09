@@ -31,14 +31,6 @@
 
 """Python bindings for libGdr"""
 
-from . import _gdr
 from wabi import Tf
-Tf.PrepareModule(_gdr, locals())
-del _gdr, Tf
-
-try:
-    from . import __DOC
-    __DOC.Execute(locals())
-    del __DOC
-except Exception:
-    pass
+Tf.PreparePythonModule()
+del Tf

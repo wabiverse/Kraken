@@ -11,7 +11,6 @@ wabi_library(work
         ${TBB_INCLUDE_DIRS}
 
     PUBLIC_CLASSES
-        arenaDispatcher
         detachedTask
         dispatcher
         loops
@@ -22,6 +21,7 @@ wabi_library(work
 
     PUBLIC_HEADERS
         api.h
+        withScopedParallelism.h
 
     PYTHON_CPPFILES
         moduleDeps.cpp

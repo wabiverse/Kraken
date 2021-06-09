@@ -30,14 +30,6 @@
 #
 """Python bindings for libKind"""
 
-from . import _kind
 from wabi import Tf
-Tf.PrepareModule(_kind, locals())
-del _kind, Tf
-
-try:
-    from . import __DOC
-    __DOC.Execute(locals())
-    del __DOC
-except Exception:
-    pass
+Tf.PreparePythonModule()
+del Tf

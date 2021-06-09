@@ -28,19 +28,7 @@
 #
 #  Modifications copyright (C) 2020-2021 Wabi.
 #
-from . import _usdRender
-from wabi import Tf
-Tf.PrepareModule(_usdRender, locals())
-del Tf
 
-try:
-    import __DOC
-    __DOC.Execute(locals())
-    del __DOC
-except Exception:
-    try:
-        import __tmpDoc
-        __tmpDoc.Execute(locals())
-        del __tmpDoc
-    except:
-        pass
+from wabi import Tf
+Tf.PreparePythonModule()
+del Tf

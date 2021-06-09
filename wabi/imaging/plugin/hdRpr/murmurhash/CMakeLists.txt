@@ -30,7 +30,7 @@ if(UNIX)
     TARGETS
       murmurhash
     DESTINATION
-      "/usr/local/${TARGETDIR_VER}/lib/."
+      "/usr/local/share/covah/${TARGETDIR_VER}/lib/."
   )
 else()
   install(

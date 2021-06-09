@@ -108,7 +108,7 @@ function(_plugInfo_subst libTarget pluginToLibraryPath plugInfoPath)
 endfunction() # _plugInfo_subst
 
 # Install compiled python files alongside the python object,
-# e.g. ${TARGETDIR_VER}/python/lib/site-packages/wabi/Ar/__init__.pyc
+# e.g. ${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Ar/__init__.pyc
 function(_install_python LIBRARY_NAME)
     set(options  "")
     set(oneValueArgs "")
@@ -121,9 +121,9 @@ function(_install_python LIBRARY_NAME)
     )
 
     if(WIN32)
-        set(libPythonPrefix ${TARGETDIR_VER}/python/lib/site-packages)
+        set(libPythonPrefix ${TARGETDIR_VER}/python/lib/python3.9/site-packages)
     else()
-        set(libPythonPrefix ./share/covah/${TARGETDIR_VER}/python/lib/site-packages)
+        set(libPythonPrefix ./share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages)
     endif()
     _get_python_module_name(${LIBRARY_NAME} LIBRARY_INSTALLNAME)
 
@@ -170,7 +170,7 @@ function(_install_python LIBRARY_NAME)
             message(FATAL_ERROR "Cannot have non-Python file ${file} in PYTHON_FILES.")
         endif()
 
-        # Note that we always install under ${TARGETDIR_VER}/python/lib/site-packages,
+        # Note that we always install under ${TARGETDIR_VER}/python/lib/python3.9/site-packages,
         # even if we are in the third_party project. This means the import will always
         # look like 'from wabi import X'. We need to do this per-loop iteration because
         # the installDest may be different due to the presence of subdirs.
@@ -300,7 +300,7 @@ function(_install_pyside_ui_files LIBRARY_NAME)
     )
 
     if(WIN32)
-        set(libPythonPrefix ${TARGETDIR_VER}/python/lib/site-packages)
+        set(libPythonPrefix ${TARGETDIR_VER}/python/lib/python3.9/site-packages)
     else()
         set(libPythonPrefix ./share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages)
     endif()
@@ -959,7 +959,7 @@ function(_wabi_python_module NAME)
     # into the default lib install, not into the third_party subdirectory
     # or similar.
     if(WIN32)
-        set(libInstallPrefix "${TARGETDIR_VER}/python/lib/site-packages/wabi/${pyModuleName}")
+        set(libInstallPrefix "${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${pyModuleName}")
     else()
         set(libInstallPrefix "/usr/local/share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${pyModuleName}")
     endif()

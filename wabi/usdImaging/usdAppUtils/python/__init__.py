@@ -29,18 +29,9 @@
 #  Modifications copyright (C) 2020-2021 Wabi.
 #
 
-from . import _usdAppUtils
 from wabi import Tf
-Tf.PrepareModule(_usdAppUtils, locals())
-del _usdAppUtils, Tf
-
-try:
-    from . import __DOC
-    __DOC.Execute(locals())
-    del __DOC
-except Exception:
-    pass
-
+Tf.PreparePythonModule()
+del Tf
 
 from . import cameraArgs
 from . import colorArgs

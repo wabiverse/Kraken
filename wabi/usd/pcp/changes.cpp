@@ -1108,7 +1108,8 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches,
       _DidChangeLayerStackRelocations(caches, layerStack, debugSummary);
     }
 
-    _DidChangeLayerStack(layerStack,
+    _DidChangeLayerStack(caches,
+                         layerStack,
                          layerStackChanges & LayerStackLayersChange,
                          layerStackChanges & LayerStackOffsetsChange,
                          layerStackChanges & LayerStackSignificantChange);
@@ -1213,7 +1214,8 @@ void PcpChanges::_DidChangeSublayerAndLayerStacks(const PcpCache *cache,
     // Layer was loaded.  The layer stacks are changed.
     TF_FOR_ALL(layerStack, layerStacks)
     {
-      _DidChangeLayerStack(*layerStack,
+      _DidChangeLayerStack(TfSpan<const PcpCache *>(&cache, 1),
+                           *layerStack,
                            requiresLayerStackChange,
                            requiresLayerStackOffsetsChange,
                            requiresSignificantChange);
@@ -1735,7 +1737,8 @@ void PcpChanges::_DidChangeSublayer(const PcpCache *cache,
   }
 }
 
-void PcpChanges::_DidChangeLayerStack(const PcpLayerStackPtr &layerStack,
+void PcpChanges::_DidChangeLayerStack(const TfSpan<const PcpCache *> &caches,
+                                      const PcpLayerStackPtr &layerStack,
                                       bool requiresLayerStackChange,
                                       bool requiresLayerStackOffsetsChange,
                                       bool requiresSignificantChange)
@@ -1748,6 +1751,14 @@ void PcpChanges::_DidChangeLayerStack(const PcpLayerStackPtr &layerStack,
   // didChangeLayers subsumes didChangeLayerOffsets.
   if (changes.didChangeLayers) {
     changes.didChangeLayerOffsets = false;
+  }
+
+  if (requiresLayerStackChange || requiresSignificantChange) {
+    for (const PcpCache *cache : caches) {
+      if (cache->UsesLayerStack(layerStack)) {
+        _GetCacheChanges(cache).didMaybeChangeLayers = true;
+      }
+    }
   }
 }
 

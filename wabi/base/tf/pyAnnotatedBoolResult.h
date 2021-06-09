@@ -142,13 +142,13 @@ struct TfPyAnnotatedBoolResult
 /// Returns \c true if the result of \p lhs is the same as \p rhs.
 template<class Annotation> bool operator==(bool lhs, TfPyAnnotatedBoolResult<Annotation> &rhs)
 {
-  return rhs.operator==(lhs);
+  return rhs == lhs;
 }
 
 /// Returns \c false if the result of \p lhs is the same as \p rhs.
 template<class Annotation> bool operator!=(bool lhs, TfPyAnnotatedBoolResult<Annotation> &rhs)
 {
-  return !(rhs == lhs);
+  return rhs != lhs;
 }
 
 WABI_NAMESPACE_END

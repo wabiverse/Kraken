@@ -33,14 +33,6 @@ glf
 
 """
 
-from . import _glf
 from wabi import Tf
-Tf.PrepareModule(_glf, locals())
-del _glf, Tf
-
-try:
-    from . import __DOC
-    __DOC.Execute(locals())
-    del __DOC
-except Exception:
-    pass
+Tf.PreparePythonModule()
+del Tf

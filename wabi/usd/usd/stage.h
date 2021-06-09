@@ -48,7 +48,7 @@
 #include "wabi/base/tf/weakBase.h"
 
 #include "wabi/base/vt/value.h"
-#include "wabi/base/work/arenaDispatcher.h"
+#include "wabi/base/work/dispatcher.h"
 #include "wabi/usd/ar/ar.h"
 #include "wabi/usd/pcp/cache.h"
 #include "wabi/usd/sdf/declareHandles.h"
@@ -1557,11 +1557,6 @@ class UsdStage : public TfRefBase, public TfWeakBase {
   // --------------------------------------------------------------------- //
 
   /// Returns all native instancing prototype prims.
-  /// \deprecated Use UsdStage::GetPrototypes instead.
-  USD_API
-  std::vector<UsdPrim> GetMasters() const;
-
-  /// Returns all native instancing prototype prims.
   USD_API
   std::vector<UsdPrim> GetPrototypes() const;
 
@@ -2153,6 +2148,8 @@ class UsdStage : public TfRefBase, public TfWeakBase {
 
   TfHashMap<TfToken, TfToken, TfHash> _invalidPrimTypeToFallbackMap;
 
+  size_t _usedLayersRevision;
+
   // A map from Path to Prim, for fast random access.
   typedef TfHashMap<SdfPath, Usd_PrimDataIPtr, SdfPath::Hash> PathToNodeMap;
   PathToNodeMap _primMap;
@@ -2165,7 +2162,7 @@ class UsdStage : public TfRefBase, public TfWeakBase {
   _LayerAndNoticeKeyVec _layersAndNoticeKeys;
   size_t _lastChangeSerialNumber;
 
-  boost::optional<WorkArenaDispatcher> _dispatcher;
+  boost::optional<WorkDispatcher> _dispatcher;
 
   // To provide useful aggregation of malloc stats, we bill everything
   // for this stage - from all access points - to this tag.

@@ -381,7 +381,7 @@ function(wabi_setup_python)
     string(REPLACE ";" ", " pyModulesStr "${converted}")
 
     # Install a wabi __init__.py with an appropriate __all__
-    _get_install_dir("/usr/local/share/covah/${TARGETDIR_VER}/python/lib/site-packages/wabi" installPrefix)
+    _get_install_dir("/usr/local/share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi" installPrefix)
 
     if(WIN32)
         install(
@@ -437,7 +437,7 @@ function (wabi_create_test_module MODULE_NAME)
             RENAME
                 __init__.py
             DESTINATION
-                tests/${tm_INSTALL_PREFIX}/${TARGETDIR_VER}/python/lib/site-packages/wabi/${MODULE_NAME}
+                tests/${tm_INSTALL_PREFIX}/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${MODULE_NAME}
         )
     endif()
     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${plugInfoFile}")
@@ -447,7 +447,7 @@ function (wabi_create_test_module MODULE_NAME)
             RENAME
                 plugInfo.json
             DESTINATION
-                tests/${tm_INSTALL_PREFIX}/${TARGETDIR_VER}/python/lib/site-packages/wabi/${MODULE_NAME}
+                tests/${tm_INSTALL_PREFIX}/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${MODULE_NAME}
         )
     endif()
 endfunction() # wabi_create_test_module
@@ -786,7 +786,7 @@ function(wabi_register_test TEST_NAME)
     # Ensure that Python imports the Python files built by this build.
     # On Windows convert backslash to slash and don't change semicolons
     # to colons.
-    set(_testPythonPath "${CMAKE_INSTALL_PREFIX}/${TARGETDIR_VER}/python/lib/site-packages;$ENV{PYTHONPATH}")
+    set(_testPythonPath "${CMAKE_INSTALL_PREFIX}/${TARGETDIR_VER}/python/lib/python3.9/site-packages;$ENV{PYTHONPATH}")
     if(WIN32)
         string(REGEX REPLACE "\\\\" "/" _testPythonPath "${_testPythonPath}")
     else()

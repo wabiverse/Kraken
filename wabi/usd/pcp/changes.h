@@ -53,7 +53,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(PcpLayerStack);
 class PcpCache;
 class PcpSite;
 
-/// \class PcpLayerStackChanges
+// \class PcpLayerStackChanges
 ///
 /// Types of changes per layer stack.
 ///
@@ -125,6 +125,9 @@ class PcpCacheChanges {
   /// second path is the new path. The order of the vector matters and
   /// indicates the order in which the namespace edits occur.
   std::vector<std::pair<SdfPath, SdfPath>> didChangePath;
+
+  /// Layers used in the composition may have changed.
+  bool didMaybeChangeLayers = false;
 
  private:
   friend class PcpCache;
@@ -368,7 +371,8 @@ class PcpChanges {
                           bool *significant);
 
   // Mark the layer stack as having changed.
-  void _DidChangeLayerStack(const PcpLayerStackPtr &layerStack,
+  void _DidChangeLayerStack(const TfSpan<const PcpCache *> &caches,
+                            const PcpLayerStackPtr &layerStack,
                             bool requiresLayerStackChange,
                             bool requiresLayerStackOffsetsChange,
                             bool requiresSignificantChange);

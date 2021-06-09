@@ -28,14 +28,6 @@
 #
 #  Modifications copyright (C) 2020-2021 Wabi.
 #
-from . import _usdMedia
 from wabi import Tf
-Tf.PrepareModule(_usdMedia, locals())
+Tf.PreparePythonModule()
 del Tf
-
-try:
-    from . import __DOC
-    __DOC.Execute(locals())
-    del __DOC
-except Exception:
-    pass

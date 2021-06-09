@@ -29,23 +29,14 @@
 #  Modifications copyright (C) 2020-2021 Wabi.
 #
 """Vt Value Types library
-
 This package defines classes for creating objects that behave like value
 types.  It contains facilities for creating simple copy-on-write
 implicitly shared types.
 """
 
-from . import _vt
 from wabi import Tf
-Tf.PrepareModule(_vt, locals())
-del _vt, Tf
-
-try:
-    from . import __DOC
-    __DOC.Execute(locals())
-    del __DOC
-except Exception:
-    pass
+Tf.PreparePythonModule()
+del Tf
 
 # For ease-of-use, put each XXXArrayFromBuffer method on its corresponding array
 # wrapper class, also alias it as 'FromNumpy' for compatibility.

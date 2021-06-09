@@ -42,9 +42,10 @@
 #include "wabi/base/tf/typeInfoMap.h"
 #include "wabi/base/trace/trace.h"
 
-#include "wabi/base/work/arenaDispatcher.h"
+#include "wabi/base/work/dispatcher.h"
 #include "wabi/base/work/loops.h"
 #include "wabi/base/work/utils.h"
+#include "wabi/base/work/withScopedParallelism.h"
 
 #include "wabi/usd/sdf/payload.h"
 #include "wabi/usd/sdf/schema.h"
@@ -858,125 +859,130 @@ class Usd_CrateDataImpl {
     // Ensure we start from a clean slate.
     _ClearSpecData();
 
-    WorkArenaDispatcher dispatcher;
+    WorkWithScopedParallelism([this]() {
+      WorkDispatcher dispatcher;
 
-    // Pull all the data out of the crate file structure that we'll consume.
-    vector<CrateFile::Spec> specs;
-    vector<CrateFile::Field> fields;
-    vector<Usd_CrateFile::FieldIndex> fieldSets;
-    _crateFile->RemoveStructuralData(specs, fields, fieldSets);
+      // Pull all the data out of the crate file structure that we'll
+      // consume.
+      vector<CrateFile::Spec> specs;
+      vector<CrateFile::Field> fields;
+      vector<Usd_CrateFile::FieldIndex> fieldSets;
+      _crateFile->RemoveStructuralData(specs, fields, fieldSets);
 
-    // Remove any target specs, we do not store target specs in Usd, but old
-    // files could contain them.
-    specs.erase(remove_if(specs.begin(),
-                          specs.end(),
-                          [this](CrateFile::Spec const &spec) {
-                            return _crateFile->GetPath(spec.pathIndex).IsTargetPath();
-                          }),
-                specs.end());
+      // Remove any target specs, we do not store target specs in Usd,
+      // but old files could contain them.
+      specs.erase(remove_if(specs.begin(),
+                            specs.end(),
+                            [this](CrateFile::Spec const &spec) {
+                              return _crateFile->GetPath(spec.pathIndex).IsTargetPath();
+                            }),
+                  specs.end());
 
-    // Sort by path fast-less-than, need same order that _Table will
-    // store.
-    dispatcher.Run([this, &specs]() {
-      tbb::parallel_sort(
-          specs.begin(), specs.end(), [this](CrateFile::Spec const &l, CrateFile::Spec const &r) {
-            SdfPath::FastLessThan flt;
-            return flt(_crateFile->GetPath(l.pathIndex), _crateFile->GetPath(r.pathIndex));
-          });
-    });
-    dispatcher.Wait();
+      // Sort by path fast-less-than, need same order that _Table will
+      // store.
+      dispatcher.Run([this, &specs]() {
+        tbb::parallel_sort(specs.begin(),
+                           specs.end(),
+                           [this](CrateFile::Spec const &l, CrateFile::Spec const &r) {
+                             SdfPath::FastLessThan flt;
+                             return flt(_crateFile->GetPath(l.pathIndex),
+                                        _crateFile->GetPath(r.pathIndex));
+                           });
+      });
+      dispatcher.Wait();
 
-    // This function object just turns a CrateFile::Spec into the spec data
-    // type that we want to store in _flatData.  It has to be a function
-    // object instead of a lambda because boost::transform_iterator requires
-    // the function object be copy/assignable.
-    struct _SpecToPair {
-      using result_type = _FlatMap::value_type;
-      explicit _SpecToPair(CrateFile *crateFile) : crateFile(crateFile)
-      {}
-      result_type operator()(CrateFile::Spec const &spec) const
+      // This function object just turns a CrateFile::Spec into the
+      // spec data type that we want to store in _flatData.  It has to
+      // be a function object instead of a lambda because
+      // boost::transform_iterator requires the function object be
+      // copy/assignable.
+      struct _SpecToPair {
+        using result_type = _FlatMap::value_type;
+        explicit _SpecToPair(CrateFile *crateFile) : crateFile(crateFile)
+        {}
+        result_type operator()(CrateFile::Spec const &spec) const
+        {
+          result_type r(crateFile->GetPath(spec.pathIndex), _FlatSpecData(Usd_EmptySharedTag));
+          TF_AXIOM(!r.first.IsTargetPath());
+          return r;
+        }
+        CrateFile *crateFile;
+      };
+
       {
-        result_type r(crateFile->GetPath(spec.pathIndex), _FlatSpecData(Usd_EmptySharedTag));
-        TF_AXIOM(!r.first.IsTargetPath());
-        return r;
+        TfAutoMallocTag tag2("Usd_CrateDataImpl main hash table");
+        _SpecToPair s2p(_crateFile.get());
+        decltype(_flatData)(boost::container::ordered_unique_range,
+                            boost::make_transform_iterator(specs.begin(), s2p),
+                            boost::make_transform_iterator(specs.end(), s2p))
+            .swap(_flatData);
       }
-      CrateFile *crateFile;
-    };
 
-    {
-      TfAutoMallocTag tag2("Usd_CrateDataImpl main hash table");
-      _SpecToPair s2p(_crateFile.get());
-      decltype(_flatData)(boost::container::ordered_unique_range,
-                          boost::make_transform_iterator(specs.begin(), s2p),
-                          boost::make_transform_iterator(specs.end(), s2p))
-          .swap(_flatData);
-    }
+      // Allocate all the spec data structures in the hashtable first,
+      // so we can populate fields in parallel without locking.
+      vector<_FlatSpecData *> specDataPtrs;
 
-    // Allocate all the spec data structures in the hashtable first, so we
-    // can populate fields in parallel without locking.
-    vector<_FlatSpecData *> specDataPtrs;
-
-    // Create all the specData entries and store pointers to them.
-    dispatcher.Run([this, &specs, &specDataPtrs]() {
-      // XXX Won't need first two tags when bug #132031 is addressed
-      TfAutoMallocTag2 tag("Usd", "Usd_CrateDataImpl::Open");
-      TfAutoMallocTag tag2("Usd_CrateDataImpl main hash table");
-      specDataPtrs.resize(specs.size());
-      for (size_t i = 0; i != specs.size(); ++i) {
-        specDataPtrs[i] = &(_flatData.begin()[i].second);
-      }
-    });
-
-    // Create the specType array.
-    dispatcher.Run([this, &specs]() {
-      // XXX Won't need first two tags when bug #132031 is addressed
-      TfAutoMallocTag2 tag("Usd", "Usd_CrateDataImpl::Open");
-      TfAutoMallocTag tag2("Usd_CrateDataImpl main hash table");
-      _flatTypes.resize(specs.size());
-    });
-
-    typedef Usd_Shared<_FieldValuePairVector> SharedFieldValuePairVector;
-
-    unordered_map<FieldSetIndex, SharedFieldValuePairVector, _Hasher> liveFieldSets;
-
-    for (auto fsBegin = fieldSets.begin(), fsEnd = find(fsBegin, fieldSets.end(), FieldIndex());
-         fsBegin != fieldSets.end();
-         fsBegin = fsEnd + 1, fsEnd = find(fsBegin, fieldSets.end(), FieldIndex())) {
-
-      // Add this range to liveFieldSets.
-      TfAutoMallocTag tag2("field data");
-      auto &fieldValuePairs = liveFieldSets[FieldSetIndex(fsBegin - fieldSets.begin())];
-
-      dispatcher.Run([this, fsBegin, fsEnd, &fields, &fieldValuePairs]() mutable {
-        // XXX Won't need first two tags when bug #132031 is
-        // addressed
+      // Create all the specData entries and store pointers to them.
+      dispatcher.Run([this, &specs, &specDataPtrs]() {
+        // XXX Won't need first two tags when bug #132031 is addressed
         TfAutoMallocTag2 tag("Usd", "Usd_CrateDataImpl::Open");
-        TfAutoMallocTag tag2("field data");
-        auto &pairs = fieldValuePairs.GetMutable();
-        pairs.resize(fsEnd - fsBegin);
-        for (size_t i = 0; fsBegin != fsEnd; ++fsBegin, ++i) {
-          auto const &field = fields[fsBegin->value];
-          pairs[i].first    = _crateFile->GetToken(field.tokenIndex);
-          pairs[i].second   = _UnpackForField(field.valueRep);
+        TfAutoMallocTag tag2("Usd_CrateDataImpl main hash table");
+        specDataPtrs.resize(specs.size());
+        for (size_t i = 0; i != specs.size(); ++i) {
+          specDataPtrs[i] = &(_flatData.begin()[i].second);
         }
       });
-    }
 
-    dispatcher.Wait();
+      // Create the specType array.
+      dispatcher.Run([this, &specs]() {
+        // XXX Won't need first two tags when bug #132031 is addressed
+        TfAutoMallocTag2 tag("Usd", "Usd_CrateDataImpl::Open");
+        TfAutoMallocTag tag2("Usd_CrateDataImpl main hash table");
+        _flatTypes.resize(specs.size());
+      });
 
-    dispatcher.Run([this, &specs, &specDataPtrs, &liveFieldSets]() {
-      tbb::parallel_for(static_cast<size_t>(0),
-                        static_cast<size_t>(specs.size()),
-                        [this, &specs, &specDataPtrs, &liveFieldSets](size_t specIdx) {
-                          auto const &s            = specs[specIdx];
-                          auto *specData           = specDataPtrs[specIdx];
-                          _flatTypes[specIdx].type = s.specType;
-                          specData->fields         = liveFieldSets.find(s.fieldSetIndex)->second;
-                        });
+      typedef Usd_Shared<_FieldValuePairVector> SharedFieldValuePairVector;
+
+      unordered_map<FieldSetIndex, SharedFieldValuePairVector, _Hasher> liveFieldSets;
+
+      for (auto fsBegin = fieldSets.begin(), fsEnd = find(fsBegin, fieldSets.end(), FieldIndex());
+           fsBegin != fieldSets.end();
+           fsBegin = fsEnd + 1, fsEnd = find(fsBegin, fieldSets.end(), FieldIndex())) {
+
+        // Add this range to liveFieldSets.
+        TfAutoMallocTag tag2("field data");
+        auto &fieldValuePairs = liveFieldSets[FieldSetIndex(fsBegin - fieldSets.begin())];
+
+        dispatcher.Run([this, fsBegin, fsEnd, &fields, &fieldValuePairs]() mutable {
+          // XXX Won't need first two tags when bug #132031 is
+          // addressed
+          TfAutoMallocTag2 tag("Usd", "Usd_CrateDataImpl::Open");
+          TfAutoMallocTag tag2("field data");
+          auto &pairs = fieldValuePairs.GetMutable();
+          pairs.resize(fsEnd - fsBegin);
+          for (size_t i = 0; fsBegin != fsEnd; ++fsBegin, ++i) {
+            auto const &field = fields[fsBegin->value];
+            pairs[i].first    = _crateFile->GetToken(field.tokenIndex);
+            pairs[i].second   = _UnpackForField(field.valueRep);
+          }
+        });
+      }
+
+      dispatcher.Wait();
+
+      dispatcher.Run([this, &specs, &specDataPtrs, &liveFieldSets]() {
+        tbb::parallel_for(static_cast<size_t>(0),
+                          static_cast<size_t>(specs.size()),
+                          [this, &specs, &specDataPtrs, &liveFieldSets](size_t specIdx) {
+                            auto const &s            = specs[specIdx];
+                            auto *specData           = specDataPtrs[specIdx];
+                            _flatTypes[specIdx].type = s.specType;
+                            specData->fields         = liveFieldSets.find(s.fieldSetIndex)->second;
+                          });
+      });
+
+      dispatcher.Wait();
     });
-
-    dispatcher.Wait();
-
     return true;
   }
 

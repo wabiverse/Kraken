@@ -28,14 +28,7 @@
 #
 #  Modifications copyright (C) 2020-2021 Wabi.
 #
-from . import _ar
-from wabi import Tf
-Tf.PrepareModule(_ar, locals())
-del _ar, Tf
 
-try:
-    from . import __DOC
-    __DOC.Execute(locals())
-    del __DOC
-except Exception:
-    pass
+from wabi import Tf
+Tf.PreparePythonModule()
+del Tf

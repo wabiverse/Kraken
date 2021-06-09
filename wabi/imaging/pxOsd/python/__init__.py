@@ -32,14 +32,6 @@
 Pixar OSD implementation.
 """
 
-from . import _pxOsd
 from wabi import Tf
-Tf.PrepareModule(_pxOsd, locals())
-del _pxOsd, Tf
-
-try:
-    import __DOC
-    __DOC.Execute(locals())
-    del __DOC
-except Exception:
-    pass
+Tf.PreparePythonModule()
+del Tf

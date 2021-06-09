@@ -41,7 +41,7 @@
 #include "wabi/base/tf/token.h"
 #include "wabi/base/vt/array.h"
 #include "wabi/base/vt/value.h"
-#include "wabi/base/work/arenaDispatcher.h"
+#include "wabi/base/work/dispatcher.h"
 #include "wabi/usd/ar/asset.h"
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/path.h"
@@ -76,6 +76,9 @@ using std::unordered_map;
 using std::vector;
 
 using ArAssetSharedPtr = std::shared_ptr<ArAsset>;
+#if AR_VERSION > 1
+using ArWritableAssetSharedPtr = std::shared_ptr<ArWritableAsset>;
+#endif
 
 // Trait indicating trivially copyable types, a hack since gcc doesn't yet
 // implement is_trivially_copyable correctly.
@@ -416,12 +419,12 @@ class CrateFile {
       // Hack for tbb bug -- types in tbb::concurrent_unordered_set
       // must be copy constructible until version 2017 update 1.  Remove
       // this once we're on or past that version of tbb.
-      // ZeroCopySource(ZeroCopySource const &other)
-      //     : Vt_ArrayForeignDataSource(other._detachedFn, other._refCount)
-      //     , _mapping(other._mapping)
-      //     , _addr(other._addr)
-      //     , _numBytes(other._numBytes)
-      //     {}
+      ZeroCopySource(ZeroCopySource const &other)
+          : Vt_ArrayForeignDataSource(other._detachedFn, other._refCount),
+            _mapping(other._mapping),
+            _addr(other._addr),
+            _numBytes(other._numBytes)
+      {}
       // XXX --------------------------------
 
       bool operator==(ZeroCopySource const &other) const;
@@ -470,26 +473,19 @@ class CrateFile {
     };
     friend struct ZeroCopySource;
 
-    _FileMapping()
-    {
-      _refCount = {0};
-    };
+    _FileMapping() : _refCount(0){};
 
     explicit _FileMapping(ArchMutableFileMapping mapping, int64_t offset = 0, int64_t length = -1)
-        : _mapping(std::move(mapping)),
+        : _refCount(0),
+          _mapping(std::move(mapping)),
           _start(_mapping.get() + offset),
           _length(length == -1 ? ArchGetFileMappingLength(_mapping) : length)
-    {
-      _refCount = {0};
-    }
+    {}
+
+    ~_FileMapping();
 
     // Add an an externally referenced page range.
     ZeroCopySource *AddRangeReference(void *addr, size_t numBytes);
-
-    // "Silent-store" to touch outstanding page ranges to detach them in the
-    // copy-on-write sense from their file backing and make them
-    // swap-backed.  No new page ranges can be added once this is invoked.
-    void DetachReferencedRanges();
 
     // Return the start address of the mapped file content.  Note that due
     // to having usdc files embedded into other files (like usdz files) the
@@ -507,6 +503,11 @@ class CrateFile {
 
    private:
     friend class CrateFile;
+
+    // "Silent-store" to touch outstanding page ranges to detach them in the
+    // copy-on-write sense from their file backing and make them
+    // swap-backed.  No new page ranges can be added once this is invoked.
+    void _DetachReferencedRanges();
 
     // This class is managed by a combination of boost::intrusive_ptr and
     // manual reference counting -- see explicit calls to
@@ -527,7 +528,6 @@ class CrateFile {
     ArchMutableFileMapping _mapping;
     char *_start;
     int64_t _length;
-
     tbb::concurrent_unordered_set<ZeroCopySource, boost::hash<ZeroCopySource>> _outstandingRanges;
   };
   using _FileMappingIPtr = boost::intrusive_ptr<_FileMapping>;
@@ -736,7 +736,7 @@ class CrateFile {
 
   inline Field const &GetField(FieldIndex i) const
   {
-#ifdef WITH_SAFETY_OVER_SPEED
+#ifdef PXR_PREFER_SAFETY_OVER_SPEED
     if (ARCH_LIKELY(i.value < _fields.size())) {
       return _fields[i.value];
     }
@@ -764,7 +764,7 @@ class CrateFile {
 
   inline SdfPath const &GetPath(PathIndex i) const
   {
-#ifdef WITH_SAFETY_OVER_SPEED
+#ifdef PXR_PREFER_SAFETY_OVER_SPEED
     if (ARCH_LIKELY(i.value < _paths.size())) {
       return _paths[i.value];
     }
@@ -810,7 +810,7 @@ class CrateFile {
 
   inline TfToken const &GetToken(TokenIndex i) const
   {
-#ifdef WITH_SAFETY_OVER_SPEED
+#ifdef PXR_PREFER_SAFETY_OVER_SPEED
     if (ARCH_LIKELY(i.value < _tokens.size())) {
       return _tokens[i.value];
     }
@@ -827,7 +827,7 @@ class CrateFile {
 
   inline std::string const &GetString(StringIndex i) const
   {
-#ifdef WITH_SAFETY_OVER_SPEED
+#ifdef PXR_PREFER_SAFETY_OVER_SPEED
     if (ARCH_LIKELY(i.value < _strings.size())) {
       return GetToken(_strings[i.value]).GetString();
     }
@@ -949,16 +949,14 @@ class CrateFile {
   template<class Reader> void _ReadTokens(Reader src);
   template<class Reader> void _ReadPaths(Reader src);
   template<class Header, class Reader>
-  void _ReadPathsImpl(Reader reader,
-                      WorkArenaDispatcher &dispatcher,
-                      SdfPath parentPath = SdfPath());
-  template<class Reader> void _ReadCompressedPaths(Reader reader, WorkArenaDispatcher &dispatcher);
+  void _ReadPathsImpl(Reader reader, WorkDispatcher &dispatcher, SdfPath parentPath = SdfPath());
+  template<class Reader> void _ReadCompressedPaths(Reader reader, WorkDispatcher &dispatcher);
   void _BuildDecompressedPathsImpl(std::vector<uint32_t> const &pathIndexes,
                                    std::vector<int32_t> const &elementTokenIndexes,
                                    std::vector<int32_t> const &jumps,
                                    size_t curIndex,
                                    SdfPath parentPath,
-                                   WorkArenaDispatcher &dispatcher);
+                                   WorkDispatcher &dispatcher);
 
   void _ReadRawBytes(int64_t start, int64_t size, char *buf) const;
 
@@ -1001,12 +999,12 @@ class CrateFile {
 
   static bool _IsKnownSection(char const *name);
 
-#ifdef WITH_SAFETY_OVER_SPEED
+#ifdef PXR_PREFER_SAFETY_OVER_SPEED
   // Helpers for error cases.
   Field const &_GetEmptyField() const;
   std::string const &_GetEmptyString() const;
   TfToken const &_GetEmptyToken() const;
-#endif  // WITH_SAFETY_OVER_SPEED
+#endif  // PXR_PREFER_SAFETY_OVER_SPEED
 
   struct _PackingContext;
 

@@ -30,7 +30,8 @@
  */
 #include "wabi/imaging/hd/primGather.h"
 #include "wabi/base/tf/diagnostic.h"
-#include "wabi/base/work/arenaDispatcher.h"
+#include "wabi/base/work/dispatcher.h"
+#include "wabi/base/work/withScopedParallelism.h"
 #include "wabi/imaging/hd/perfLog.h"
 #include "wabi/wabi.h"
 #include <tbb/parallel_for.h>
@@ -74,20 +75,21 @@ void HdPrimGather::PredicatedFilter(const SdfPathVector &paths,
 
     size_t numRanges = _gatheredRanges.size();
     if (numRanges > MIN_RANGES_FOR_PARALLEL) {
-      WorkArenaDispatcher rangeDispatcher;
 
-      for (size_t rangeNum = 0; rangeNum < numRanges; ++rangeNum) {
-        const _Range &range = _gatheredRanges[rangeNum];
+      WorkWithScopedParallelism([&]() {
+        WorkDispatcher rangeDispatcher;
 
-        rangeDispatcher.Run(&HdPrimGather::_DoPredicateTestOnRange,
-                            this,
-                            std::cref(paths),
-                            range,
-                            predicateFn,
-                            predicateParam);
-      }
+        for (size_t rangeNum = 0; rangeNum < numRanges; ++rangeNum) {
+          const _Range &range = _gatheredRanges[rangeNum];
 
-      rangeDispatcher.Wait();
+          rangeDispatcher.Run(&HdPrimGather::_DoPredicateTestOnRange,
+                              this,
+                              std::cref(paths),
+                              range,
+                              predicateFn,
+                              predicateParam);
+        }
+      });
     }
     else {
       size_t numRanges = _gatheredRanges.size();

@@ -12,6 +12,7 @@ wabi_plugin(hioOpenVDB
         gf
         hio
         tf
+        usd
         ${TBB_LIBRARIES}
         ${OPENEXR_LIBRARIES}
         ${OPENVDB_LIBRARY}

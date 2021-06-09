@@ -33,17 +33,6 @@ Graphics Foundation
 This package defines classes for fundamental graphics types and operations.
 """
 
-import sys
-if 'wabi.Gf._gf' not in sys.modules:
-    from wabi import Tf
-    from . import _gf
-    Tf.PrepareModule(_gf, locals())
-    del _gf, Tf
-del sys
-
-try:
-    from . import __DOC
-    __DOC.Execute(locals())
-    del __DOC
-except Exception:
-    pass
+from wabi import Tf
+Tf.PreparePythonModule()
+del Tf

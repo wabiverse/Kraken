@@ -73,7 +73,7 @@ void TfPyInitialize()
 
   if (!Py_IsInitialized()) {
 
-    if (!ArchIsMainThread()) {
+    if (!ArchIsMainThread() && !PyEval_ThreadsInitialized()) {
       // Python claims that PyEval_InitThreads "should be called in the
       // main thread before creating a second thread or engaging in any
       // other thread operations."  So we'll issue a warning here.
@@ -82,8 +82,7 @@ void TfPyInitialize()
           "the 'main thread'.  Python doc says not to do this.");
     }
 
-    const std::string sys_paths = TfStringCatPaths(ArchGetExecutablePath(), "1.10/python/lib");
-    const std::string s         = ArchGetExecutablePath();
+    const std::string s = ArchGetExecutablePath();
 
 #if PY_MAJOR_VERSION == 2
     // In Python 2 it is safe to call this before Py_Initialize(), but this
@@ -97,17 +96,9 @@ void TfPyInitialize()
     // Setting the program name is necessary in order for python to
     // find the correct built-in modules.
 #if PY_MAJOR_VERSION == 2
-    // if(sys_paths.length() >= 2) {
-    //   static std::string sysPaths(sys_paths.begin(), sys_paths.end());
-    //   PySys_SetPath(const_cast<char*>(sysPaths.c_str()));
-    // }
     static std::string programName(s.begin(), s.end());
     Py_SetProgramName(const_cast<char *>(programName.c_str()));
 #else
-    // if(sys_paths.length() >= 2) {
-    //   static std::wstring sysPaths(sys_paths.begin(), sys_paths.end());
-    //   PySys_SetPath(const_cast<wchar_t*>(sysPaths.c_str()));
-    // }
     static std::wstring programName(s.begin(), s.end());
     Py_SetProgramName(const_cast<wchar_t *>(programName.c_str()));
 #endif
@@ -129,7 +120,7 @@ void TfPyInitialize()
     sigaction(SIGINT, &origSigintHandler, NULL);
 #endif
 
-#if PY_MAJOR_VERSION > 2 && PY_MINOR_VERSION <= 7
+#if PY_MAJOR_VERSION > 2
     // In python 3 PyEval_InitThreads must be called after Py_Initialize()
     // see https://docs.python.org/3/c-api/init.html
     //

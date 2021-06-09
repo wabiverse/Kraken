@@ -188,4 +188,9 @@ unsigned WorkGetConcurrencyLimit()
   return _threadLimit;
 }
 
+bool WorkHasConcurrency()
+{
+  return _threadLimit > 1 && WorkGetPhysicalConcurrencyLimit() > 1;
+}
+
 WABI_NAMESPACE_END

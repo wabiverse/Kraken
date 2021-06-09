@@ -11,22 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import _ndrArnold
-from pxr import Tf
 
-Tf.PrepareModule(_ndrArnold, locals())
+from wabi import Tf
+Tf.PreparePythonModule()
 del Tf
-
-try:
-    import __DOC
-
-    __DOC.Execute(locals())
-    del __DOC
-except Exception:
-    try:
-        import __tmpDoc
-
-        __tmpDoc.Execute(locals())
-        del __tmpDoc
-    except:
-        pass

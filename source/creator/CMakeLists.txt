@@ -1087,6 +1087,15 @@ endif()
 # -----------------------------------------------------------------------------
 # Generic Install, for all targets
 
+if(UNIX AND WITH_ARNOLD)
+  install(
+    DIRECTORY
+      ${LIBDIR}/python/arnold
+    DESTINATION
+      ${TARGETDIR_VER}/python/lib/python3.9/site-packages
+  )
+endif()
+
 if(DEFINED COVAH_TEXT_FILES_DESTINATION)
 
   install(

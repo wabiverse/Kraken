@@ -51,8 +51,6 @@
 
 WABI_NAMESPACE_BEGIN
 
-/// \class UsdImaging_ResolvedAttributeCache
-///
 /// A general caching mechanism for attributes that are nontrivial to resolve,
 /// such as attributes inherited up or down the ancestor chain or attributes
 /// with significant load-time processing involved.
@@ -78,7 +76,6 @@ WABI_NAMESPACE_BEGIN
 template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedAttributeCache {
   friend Strategy;
   struct _Entry;
-
   typedef tbb::concurrent_unordered_map<UsdPrim, _Entry, boost::hash<UsdPrim>> _CacheMap;
 
  public:
@@ -94,19 +91,17 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
       const ValueOverridesMap valueOverrides = ValueOverridesMap())
       : _time(time),
         _rootPath(SdfPath::AbsoluteRootPath()),
+        _cacheVersion(_GetInitialCacheVersion()),
         _valueOverrides(valueOverrides),
         _implData(implData)
-  {
-    _cacheVersion = {_GetInitialCacheVersion()};
-  }
+  {}
 
   /// Construct a new cache for UsdTimeCode::Default().
   UsdImaging_ResolvedAttributeCache()
       : _time(UsdTimeCode::Default()),
-        _rootPath(SdfPath::AbsoluteRootPath())
-  {
-    _cacheVersion = {1};
-  }
+        _rootPath(SdfPath::AbsoluteRootPath()),
+        _cacheVersion(1)
+  {}
 
   ~UsdImaging_ResolvedAttributeCache()
   {
@@ -366,7 +361,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
 
   // A serial number indicating the valid state of entries in the cache. When
   // an entry has an equal or greater value, the entry is valid.
-  inline static std::atomic<unsigned> _cacheVersion = {_GetInitialCacheVersion()};
+  std::atomic<unsigned> _cacheVersion;
 
   // Value overrides for a set of descendents.
   ValueOverridesMap _valueOverrides;
@@ -382,9 +377,8 @@ void UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_SetCacheEntryForPri
     _Entry *entry) const
 {
   // Note: _cacheVersion is not allowed to change during cache access.
-  unsigned cv = _cacheVersion;
-  unsigned v  = entry->version;
-  if (entry->version < _cacheVersion && entry->version.compare_exchange_weak(cv, v)) {
+  unsigned v = entry->version;
+  if (v < _cacheVersion && entry->version.compare_exchange_strong(v, _cacheVersion) == v) {
     entry->value   = value;
     entry->version = _GetValidVersion();
   }
@@ -409,12 +403,11 @@ UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_GetCacheEntryForPrim(
     return &_cache.at(prim);
   }
 
-  _Entry entry;
-  entry.query   = Strategy::MakeQuery(prim, _implData);
-  entry.value   = Strategy::MakeDefault();
-  entry.version = _GetInvalidVersion();
-
-  return &(_cache.insert(typename _CacheMap::value_type(prim, entry)).first->second);
+  _Entry e;
+  e.query   = Strategy::MakeQuery(prim, _implData);
+  e.value   = Strategy::MakeDefault();
+  e.version = _GetInvalidVersion();
+  return &(_cache.insert(typename _CacheMap::value_type(prim, e)).first->second);
 }
 
 template<typename Strategy, typename ImplData>
@@ -477,7 +470,7 @@ struct UsdImaging_XfStrategy {
     return GfMatrix4d(1);
   }
 
-  static query_type MakeQuery(UsdPrim prim, bool *)
+  static query_type MakeQuery(UsdPrim const &prim, bool *)
   {
     if (UsdGeomXformable xf = UsdGeomXformable(prim))
       return query_type(xf);
@@ -485,7 +478,7 @@ struct UsdImaging_XfStrategy {
   }
 
   static value_type Compute(UsdImaging_XformCache const *owner,
-                            UsdPrim prim,
+                            UsdPrim const &prim,
                             query_type const *query)
   {
     value_type xform = MakeDefault();
@@ -540,8 +533,11 @@ WABI_NAMESPACE_END
 WABI_NAMESPACE_BEGIN
 
 struct UsdImaging_VisStrategy;
-typedef UsdImaging_ResolvedAttributeCache<UsdImaging_VisStrategy> UsdImaging_VisCache;
+using UsdImaging_VisCache = UsdImaging_ResolvedAttributeCache<UsdImaging_VisStrategy>;
 
+/// Strategy used to cache inherited 'visibility' values, implementing pruning
+/// visibility semantics.
+///
 struct UsdImaging_VisStrategy {
   typedef TfToken value_type;  // invisible, inherited
   typedef UsdAttributeQuery query_type;
@@ -550,27 +546,36 @@ struct UsdImaging_VisStrategy {
   {
     return true;
   }
+
   static value_type MakeDefault()
   {
     return UsdGeomTokens->inherited;
   }
 
-  static query_type MakeQuery(UsdPrim prim, bool *)
+  static query_type MakeQuery(UsdPrim const &prim, bool *)
   {
-    if (UsdGeomImageable xf = UsdGeomImageable(prim))
+    if (const UsdGeomImageable xf = UsdGeomImageable(prim)) {
       return query_type(xf.GetVisibilityAttr());
+    }
     return query_type();
   }
 
   static value_type Compute(UsdImaging_VisCache const *owner,
-                            UsdPrim prim,
+                            UsdPrim const &prim,
                             query_type const *query)
   {
     value_type v = *owner->_GetValue(prim.GetParent());
-    if (v == UsdGeomTokens->invisible)
+
+    // If prim inherits 'invisible', then it's invisible, due to pruning
+    // visibility.
+    if (v == UsdGeomTokens->invisible) {
       return v;
-    if (*query)
+    }
+
+    // Otherwise, prim's value, if it has one, determines its visibility.
+    if (*query) {
       query->Get(&v, owner->GetTime());
+    }
     return v;
   }
 
@@ -600,14 +605,14 @@ struct UsdImaging_PurposeStrategy {
     return value_type(UsdGeomTokens->default_, false);
   }
 
-  static query_type MakeQuery(UsdPrim prim, bool *)
+  static query_type MakeQuery(UsdPrim const &prim, bool *)
   {
     UsdGeomImageable im = UsdGeomImageable(prim);
     return im ? query_type(im.GetPurposeAttr()) : query_type();
   }
 
   static value_type Compute(UsdImaging_PurposeCache const *owner,
-                            UsdPrim prim,
+                            UsdPrim const &prim,
                             query_type const *query)
   {
     // Fallback to parent if the prim isn't imageable or doesn't have a
@@ -720,7 +725,7 @@ struct UsdImaging_MaterialStrategy {
     return SdfPath();
   }
 
-  static query_type MakeQuery(UsdPrim prim, ImplData *implData)
+  static query_type MakeQuery(UsdPrim const &prim, ImplData *implData)
   {
     return UsdShadeMaterialBindingAPI(prim).ComputeBoundMaterial(
         &implData->GetBindingsCache(),
@@ -729,7 +734,7 @@ struct UsdImaging_MaterialStrategy {
   }
 
   static value_type Compute(UsdImaging_MaterialBindingCache const *owner,
-                            UsdPrim prim,
+                            UsdPrim const &prim,
                             query_type const *query)
   {
     TF_DEBUG(USDIMAGING_SHADERS)
@@ -790,7 +795,7 @@ struct UsdImaging_DrawModeStrategy {
     return UsdGeomTokens->default_;
   }
 
-  static query_type MakeQuery(UsdPrim prim, bool *)
+  static query_type MakeQuery(UsdPrim const &prim, bool *)
   {
     if (UsdAttribute a = UsdGeomModelAPI(prim).GetModelDrawModeAttr())
       return query_type(a);
@@ -798,7 +803,7 @@ struct UsdImaging_DrawModeStrategy {
   }
 
   static value_type Compute(UsdImaging_DrawModeCache const *owner,
-                            UsdPrim prim,
+                            UsdPrim const &prim,
                             query_type const *query)
   {
     // No attribute defined means inherited, means refer to the parent.
@@ -864,13 +869,13 @@ struct UsdImaging_PointInstancerIndicesStrategy {
     return value_type();
   }
 
-  static query_type MakeQuery(UsdPrim prim, bool *)
+  static query_type MakeQuery(UsdPrim const &prim, bool *)
   {
     return 0;
   }
 
   static value_type Compute(UsdImaging_PointInstancerIndicesCache const *owner,
-                            UsdPrim prim,
+                            UsdPrim const &prim,
                             query_type const *query)
   {
     return ComputePerPrototypeIndices(prim, owner->GetTime());
@@ -960,13 +965,13 @@ struct UsdImaging_CoordSysBindingStrategy {
     return value_type();
   }
 
-  static query_type MakeQuery(UsdPrim prim, ImplData *implData)
+  static query_type MakeQuery(UsdPrim const &prim, ImplData *implData)
   {
     return query_type({UsdShadeCoordSysAPI(prim), implData});
   }
 
   static value_type Compute(UsdImaging_CoordSysBindingCache const *owner,
-                            UsdPrim prim,
+                            UsdPrim const &prim,
                             query_type const *query)
   {
     value_type v;
@@ -1053,13 +1058,13 @@ struct UsdImaging_InheritedPrimvarStrategy {
     return value_type();
   }
 
-  static query_type MakeQuery(UsdPrim prim, bool *)
+  static query_type MakeQuery(UsdPrim const &prim, bool *)
   {
     return query_type(UsdGeomPrimvarsAPI(prim));
   }
 
   static value_type Compute(UsdImaging_InheritedPrimvarCache const *owner,
-                            UsdPrim prim,
+                            UsdPrim const &prim,
                             query_type const *query)
   {
     value_type v;

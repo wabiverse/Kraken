@@ -50,9 +50,10 @@
 #include "wabi/base/tf/envSetting.h"
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/base/trace/trace.h"
-#include "wabi/base/work/arenaDispatcher.h"
+#include "wabi/base/work/dispatcher.h"
 #include "wabi/base/work/loops.h"
 #include "wabi/base/work/utils.h"
+#include "wabi/base/work/withScopedParallelism.h"
 #include "wabi/usd/ar/resolver.h"
 #include "wabi/usd/ar/resolverContextBinder.h"
 #include "wabi/usd/ar/resolverScopedCache.h"
@@ -64,6 +65,7 @@
 #include <tbb/spin_rw_mutex.h>
 
 #include <algorithm>
+#include <atomic>
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -139,20 +141,19 @@ PcpCache::~PcpCache()
 
   // Tear down some of our datastructures in parallel, since it can take quite
   // a bit of time.
-  WorkArenaDispatcher wd;
-
-  wd.Run([this]() { _rootLayer.Reset(); });
-  wd.Run([this]() { _sessionLayer.Reset(); });
-  wd.Run([this]() { TfReset(_includedPayloads); });
-  wd.Run([this]() { TfReset(_variantFallbackMap); });
-  wd.Run([this]() { _primIndexCache.ClearInParallel(); });
-  wd.Run([this]() { TfReset(_propertyIndexCache); });
-
-  // Wait, since _primDependencies cannot be destroyed concurrently
-  // with the prim indexes, since they both hold references to
-  // layer stacks and the layer stack registry is not currently
-  // prepared to handle concurrent expiry of layer stacks.
-  wd.Wait();
+  WorkWithScopedParallelism([this]() {
+    WorkDispatcher wd;
+    wd.Run([this]() { _rootLayer.Reset(); });
+    wd.Run([this]() { _sessionLayer.Reset(); });
+    wd.Run([this]() { TfReset(_includedPayloads); });
+    wd.Run([this]() { TfReset(_variantFallbackMap); });
+    wd.Run([this]() { _primIndexCache.ClearInParallel(); });
+    wd.Run([this]() { TfReset(_propertyIndexCache); });
+    // Wait, since _primDependencies cannot be destroyed concurrently
+    // with the prim indexes, since they both hold references to
+    // layer stacks and the layer stack registry is not currently
+    // prepared to handle concurrent expiry of layer stacks.
+  });
 
   _primDependencies.reset();
   _layerStackCache.Reset();
@@ -174,6 +175,11 @@ PcpLayerStackPtr PcpCache::GetLayerStack() const
 PcpLayerStackPtr PcpCache::FindLayerStack(const PcpLayerStackIdentifier &id) const
 {
   return _layerStackCache->Find(id);
+}
+
+bool PcpCache::UsesLayerStack(const PcpLayerStackPtr &layerStack) const
+{
+  return _layerStackCache->Contains(layerStack);
 }
 
 const PcpLayerStackPtrVector &PcpCache::FindAllLayerStacksUsingLayer(
@@ -463,6 +469,11 @@ SdfLayerHandleSet PcpCache::GetUsedLayers() const
     rval.insert(localLayers.begin(), localLayers.end());
   }
   return rval;
+}
+
+size_t PcpCache::GetUsedLayersRevision() const
+{
+  return _primDependencies->GetLayerStacksRevision();
 }
 
 SdfLayerHandleSet PcpCache::GetUsedRootLayers() const
@@ -840,6 +851,11 @@ void PcpCache::Apply(const PcpCacheChanges &changes, PcpLifeboat *lifeboat)
     _primDependencies->RemoveAll(lifeboat);
   }
   else {
+    // If layers may have changed, inform _primDependencies.
+    if (changes.didMaybeChangeLayers) {
+      _primDependencies->LayerStacksChanged();
+    }
+
     // Blow prim and property indexes due to prim graph changes.
     TF_FOR_ALL(i, changes.didChangeSignificantly)
     {
@@ -1062,7 +1078,7 @@ void PcpCache::ReloadReferences(PcpChanges *changes, const SdfPath &primPath)
   // local layers.
   SdfLayerHandleSet layersToReload;
   for (const PcpLayerStackPtr &layerStack : layerStacksAtOrUnderPrim) {
-    for (const SdfLayerHandle layer : layerStack->GetLayers()) {
+    for (const SdfLayerHandle &layer : layerStack->GetLayers()) {
       if (!_layerStack->HasLayer(layer)) {
         layersToReload.insert(layer);
       }
@@ -1175,7 +1191,7 @@ struct PcpCache::_ParallelIndexer {
   // Run the added work and wait for it to complete.
   void RunAndWait()
   {
-    {
+    WorkWithScopedParallelism([this]() {
       Pcp_Dependencies::ConcurrentPopulationContext populationContext(*_cache->_primDependencies);
       TF_FOR_ALL(i, _toCompute)
       {
@@ -1186,7 +1202,7 @@ struct PcpCache::_ParallelIndexer {
                         /*checkCache=*/true);
       }
       _dispatcher.Wait();
-    }
+    });
 
     // Clear out results & working space.  If stuff is huge, dump it
     // asynchronously, otherwise clear in place to possibly reuse heap for
@@ -1318,7 +1334,7 @@ struct PcpCache::_ParallelIndexer {
   // Utils.
   tbb::spin_rw_mutex _primIndexCacheMutex;
   tbb::spin_rw_mutex _includedPayloadsMutex;
-  WorkArenaDispatcher _dispatcher;
+  WorkDispatcher _dispatcher;
 
   // Varying inputs.
   _UntypedIndexingChildrenPredicate _childrenPredicate;

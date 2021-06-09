@@ -41,6 +41,7 @@ WABI_NAMESPACE_USING
 void wrapThreadLimits()
 {
   def("GetConcurrencyLimit", &WorkGetConcurrencyLimit);
+  def("HasConcurrency", &WorkHasConcurrency);
   def("GetPhysicalConcurrencyLimit", &WorkGetPhysicalConcurrencyLimit);
 
   def("SetConcurrencyLimit", &WorkSetConcurrencyLimit);
