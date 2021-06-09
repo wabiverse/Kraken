@@ -31,7 +31,7 @@ WABI_NAMESPACE_USING
 PYBIND11_MODULE(wpy, m)
 {
   m.attr("__name__") = "wpy";
-  m.doc() = "COVAH python module";
+  m.doc() = "Covah python module";
 }
 
 PYBIND11_MODULE(context, m)

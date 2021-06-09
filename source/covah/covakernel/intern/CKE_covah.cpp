@@ -77,7 +77,7 @@ static void covah_version_init()
                                         COVAH_VERSION % 100,
                                         COVAH_VERSION_PATCH,
                                         STRINGIFY(COVAH_VERSION_CYCLE));
-  printf("COVAH v%s\n\n", covah_version_string.c_str());
+  printf("Covah v%s\n\n", covah_version_string.c_str());
 }
 
 static std::string covah_get_version_decimal()

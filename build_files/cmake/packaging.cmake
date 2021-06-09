@@ -1,6 +1,6 @@
 string(TIMESTAMP CURRENT_YEAR "%Y")
 
-set(PROJECT_DESCRIPTION  "COVAH is the 3D creation software suite.")
+set(PROJECT_DESCRIPTION  "Covah is the 3D creation software suite.")
 set(PROJECT_COPYRIGHT    "Copyright (C) 2018-${CURRENT_YEAR} Wabi")
 set(PROJECT_CONTACT      "dev@covah.xyz")
 set(PROJECT_VENDOR       "Wabi Animation")

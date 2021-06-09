@@ -425,7 +425,7 @@ static void gui_diagnostics()
   UsdUIBackdrop backdrop = UsdUIBackdrop::Define(UNI.stage, SdfPath("/Backdrop"));
 
   UsdUIWindow window = UsdUIWindow::Define(UNI.stage, SdfPath("/Window"));
-  window.CreateTitleAttr(VtValue(TfToken("COVAH")));
+  window.CreateTitleAttr(VtValue(TfToken("Covah")));
 
   printf("\n");
 }

@@ -27,7 +27,7 @@ from . import (
 )
 
 wg_info = {
-    "name": "COVAH Python",
+    "name": "Covah Python",
     "author": "Wabi",
     "covah": (@COVAH_VERSION_MAJOR@, @COVAH_VERSION_MINOR@, @COVAH_VERSION_PATCH@),
     "description": "Gives access to COVAH data and utility functions.",

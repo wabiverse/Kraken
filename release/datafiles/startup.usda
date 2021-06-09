@@ -1,6 +1,6 @@
 #usda 1.0
 (
-    doc = "COVAH v1.0"
+    doc = "Covah v1.0"
 )
 
 def "Objects" (

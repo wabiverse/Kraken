@@ -25,10 +25,10 @@ BEGIN
       VALUE "FileVersion", WIN_VER_RC_STR
       VALUE "ProductVersion", WIN_VER_RC_STR
       VALUE "CompanyName", "Wabi"
-      VALUE "FileDescription", "COVAH"
+      VALUE "FileDescription", "Covah"
       VALUE "LegalCopyright", "LGPLv3 (Wabi)"
       VALUE "OriginalFilename", "covah.exe"
-      VALUE "ProductName", "COVAH"
+      VALUE "ProductName", "Covah"
     END
   END
   BLOCK "VarFileInfo"

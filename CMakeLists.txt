@@ -128,9 +128,9 @@ endif()
 # and we need to ensure we are able to check Release v. Debug modes
 # to link and install with the proper Release v. Debug libraries.
 if(CMAKE_BINARY_DIR MATCHES ".*Release")
-  option(COVAH_RELEASE_MODE "COVAH build type detection" ON)
+  option(COVAH_RELEASE_MODE "Covah build type detection" ON)
 elseif(CMAKE_BINARY_DIR MATCHES ".*Debug")
-  option(COVAH_RELEASE_MODE "COVAH build type detection" OFF)
+  option(COVAH_RELEASE_MODE "Covah build type detection" OFF)
 endif()
 
 if(CMAKE_BUILD_TYPE_INIT STREQUAL "Debug")

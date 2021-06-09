@@ -48,7 +48,7 @@ endif()
 
 # ! Important
 # Convert the relative path to an absolute path.
-string(REPLACE "COVAH/../" "" LIBDIR "${LIBPATH}")
+string(REPLACE "covah/../" "" LIBDIR "${LIBPATH}")
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}")
 

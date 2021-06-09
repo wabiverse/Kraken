@@ -43,7 +43,7 @@ Universe UNI;
 void UNI_create_stage(std::string project_file)
 {
   UNI.stage = UsdStage::CreateNew(project_file);
-  UNI.stage->GetRootLayer()->SetDocumentation(std::string("COVAH v") +
+  UNI.stage->GetRootLayer()->SetDocumentation(std::string("Covah v") +
                                               UNI.system.version.covah_version);
   strcpy(UNI.system.paths.stage_path, project_file.c_str());
 }
@@ -71,14 +71,17 @@ const SdfPath &UNI_stage_root()
     return path;
   }
 
+  /**
+   * Create startup stage if user's stage is invalid. */
   TF_CODING_ERROR("Attempted to access invalid UsdStage.");
-  exit(COVAH_ERROR);
+  UNI_create_stage(TfStringCatPaths(G.main->temp_dir, "startup.usda"));
+  return UNI.stage->GetPseudoRoot().GetPath();
 }
 
 void UNI_author_gui()
 {
   // UsdUIWindow window = UsdUIWindow::Define(UNI.stage, SdfPath("/Window"));
-  // window.CreateTitleAttr(VtValue(TfToken("COVAH")));
+  // window.CreateTitleAttr(VtValue(TfToken("Covah")));
 }
 
 void UNI_author_default_scene()
