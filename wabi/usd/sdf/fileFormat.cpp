@@ -145,6 +145,11 @@ bool SdfFileFormat::LayersAreFileBased() const
   return _LayersAreFileBased();
 }
 
+bool SdfFileFormat::ShouldReadAnonymousLayers() const
+{
+  return _ShouldReadAnonymousLayers();
+}
+
 const SdfSchemaBase &SdfFileFormat::GetSchema() const
 {
   return _schema;
@@ -297,6 +302,11 @@ bool SdfFileFormat::_ShouldSkipAnonymousReload() const
 bool SdfFileFormat::_LayersAreFileBased() const
 {
   return true;
+}
+
+bool SdfFileFormat::_ShouldReadAnonymousLayers() const
+{
+  return false;
 }
 
 void SdfFileFormat::_SetLayerData(SdfLayer *layer, SdfAbstractDataRefPtr &data)
