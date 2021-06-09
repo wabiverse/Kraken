@@ -119,6 +119,9 @@ class UsdGeomBBoxCache {
   USDGEOM_API
   UsdGeomBBoxCache(UsdGeomBBoxCache const &other);
 
+  USDGEOM_API
+  ~UsdGeomBBoxCache() noexcept;
+
   /// Copy assignment.
   USDGEOM_API
   UsdGeomBBoxCache &operator=(UsdGeomBBoxCache const &other);

@@ -82,10 +82,8 @@ UsdSkel_SkelDefinitionRefPtr UsdSkel_SkelDefinition::New(const UsdSkelSkeleton &
   return nullptr;
 }
 
-UsdSkel_SkelDefinition::UsdSkel_SkelDefinition()
-{
-  _flags = {0};
-}
+UsdSkel_SkelDefinition::UsdSkel_SkelDefinition() : _flags(0)
+{}
 
 bool UsdSkel_SkelDefinition::_Init(const UsdSkelSkeleton &skel)
 {

@@ -53,6 +53,8 @@
 #include <algorithm>
 #include <tbb/enumerable_thread_specific.h>
 
+#include <boost/atomic/atomic.hpp>
+
 WABI_NAMESPACE_BEGIN
 
 // Thread-local Xform cache.
@@ -111,12 +113,12 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver {
   UsdGeomBBoxCache *_owner;
 
   struct _PrototypeTask {
-    _PrototypeTask()
+    _PrototypeTask() noexcept : numDependencies(std::make_shared<std::atomic_size_t>(0))
     {}
 
     // Number of dependencies -- prototype prims that must be resolved
     // before this prototype can be resolved.
-    inline static std::atomic<size_t> numDependencies{0};
+    std::shared_ptr<std::atomic_size_t> numDependencies;
 
     // List of prototype prims that depend on this prototype.
     std::vector<_PrimContext> dependentPrototypes;
@@ -173,7 +175,7 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver {
       // to compute the bounding boxes for all prototypes for nested
       // instances.
       _PrototypeTask &prototypeTaskData = prototypeTaskStatus.first->second;
-      prototypeTaskData.numDependencies = requiredPrototypes.size();
+      prototypeTaskData.numDependencies->store(requiredPrototypes.size());
     }
 
     // Recursively populate the task map for the prototypes needed for
@@ -199,7 +201,7 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver {
     const _PrototypeTask &prototypeData = prototypeTasks->find(prototype)->second;
     for (const auto &dependentPrototype : prototypeData.dependentPrototypes) {
       _PrototypeTask &dependentPrototypeData = prototypeTasks->find(dependentPrototype)->second;
-      if (dependentPrototypeData.numDependencies.fetch_sub(1) == 1) {
+      if (dependentPrototypeData.numDependencies->fetch_sub(1) == 1) {
         dispatcher->Run(&_PrototypeBBoxResolver::_ExecuteTaskForPrototype,
                         this,
                         dependentPrototype,
@@ -286,6 +288,9 @@ UsdGeomBBoxCache::UsdGeomBBoxCache(UsdGeomBBoxCache const &other)
       _ctmCache(other._ctmCache),
       _bboxCache(other._bboxCache),
       _useExtentsHint(other._useExtentsHint)
+{}
+
+UsdGeomBBoxCache::~UsdGeomBBoxCache() noexcept
 {}
 
 UsdGeomBBoxCache &UsdGeomBBoxCache::operator=(UsdGeomBBoxCache const &other)

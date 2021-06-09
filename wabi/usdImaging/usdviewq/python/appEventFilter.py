@@ -1,32 +1,25 @@
-# 
-#  Copyright 2021 Pixar. All Rights Reserved.
-# 
-#  Portions of this file are derived from original work by Pixar
-#  distributed with Universal Scene Description, a project of the
-#  Academy Software Foundation (ASWF). https://www.aswf.io/
-# 
-#  Licensed under the Apache License, Version 2.0 (the "Apache License")
-#  with the following modification; you may not use this file except in
-#  compliance with the Apache License and the following modification:
-#  Section 6. Trademarks. is deleted and replaced with:
-# 
-#  6. Trademarks. This License does not grant permission to use the trade
-#     names, trademarks, service marks, or product names of the Licensor
-#     and its affiliates, except as required to comply with Section 4(c)
-#     of the License and to reproduce the content of the NOTICE file.
 #
-#  You may obtain a copy of the Apache License at:
+# Copyright 2016 Pixar
 #
-#       http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "Apache License")
+# with the following modification; you may not use this file except in
+# compliance with the Apache License and the following modification to it:
+# Section 6. Trademarks. is deleted and replaced with:
 #
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the Apache License with the above modification is
-#  distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-#  ANY KIND, either express or implied. See the Apache License for the
-#  specific language governing permissions and limitations under the
-#  Apache License.
+# 6. Trademarks. This License does not grant permission to use the trade
+#    names, trademarks, service marks, or product names of the Licensor
+#    and its affiliates, except as required to comply with Section 4(c) of
+#    the License and to reproduce the content of the NOTICE file.
 #
-#  Modifications copyright (C) 2020-2021 Wabi.
+# You may obtain a copy of the Apache License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the Apache License with the above modification is
+# distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the Apache License for the specific
+# language governing permissions and limitations under the Apache License.
 #
 # Qt Components
 from .qt import QtCore, QtGui, QtWidgets
@@ -35,14 +28,14 @@ from .common import KeyboardShortcuts
 class AppEventFilter(QtCore.QObject):
     '''This class's primary responsibility is delivering key events to
     "the right place".  Given usdview's simplistic approach to shortcuts
-    (i.e. just uses the native Qt mechanism that does not allow for
+    (i.e. just uses the native Qt mechanism that does not allow for 
     context-sensitive keypress dispatching), we take a simplistic approach
-    to routing: use Qt's preferred mechanism of processing keyPresses
+    to routing: use Qt's preferred mechanism of processing keyPresses 
     only in widgets that have focus; therefore, the primary behavior of this
     filter is to track mouse-position in order to set widget focus, so that
     widgets with keyboard navigation behaviors operate when the mouse is over
     them.
-
+    
     We add one special behaviors on top of that, which is to turn unaccepted
     left/right events into up/down events for TreeView widgets, because we
     do not have a specialized class on which to provide this nice navigation
@@ -53,23 +46,23 @@ class AppEventFilter(QtCore.QObject):
     def __init__(self, appController):
         QtCore.QObject.__init__(self)
         self._appController = appController
-
+        
     def IsNavKey(self, key, modifiers):
         # Note that the arrow keys are considered part of the keypad on macOS.
         return (key in (QtCore.Qt.Key_Left, QtCore.Qt.Key_Right,
                         QtCore.Qt.Key_Up, QtCore.Qt.Key_Down,
                         QtCore.Qt.Key_PageUp, QtCore.Qt.Key_PageDown,
-                        QtCore.Qt.Key_Home, QtCore.Qt.Key_End,
+                        QtCore.Qt.Key_Home, QtCore.Qt.Key_End, 
                         KeyboardShortcuts.FramingKey)
                 and modifiers in (QtCore.Qt.NoModifier,
                                   QtCore.Qt.KeypadModifier))
-
+        
     def _IsWindow(self, obj):
         if isinstance(obj, QtWidgets.QWidget):
             return obj.isWindow()
         else:
             return isinstance(obj, QtGui.QWindow)
-
+            
     def TopLevelWindow(self, obj):
         parent = obj.parent()
         return obj if (self._IsWindow(obj) or not parent) else self.TopLevelWindow(parent)
@@ -88,24 +81,24 @@ class AppEventFilter(QtCore.QObject):
             return self.WantsNavKeys(w.parent())
 
     def NavigableOrTopLevelObject(self, w):
-        if (not w or
-            self._IsWindow(w) or
+        if (not w or 
+            self._IsWindow(w) or 
             isinstance(w, QtWidgets.QTreeView) or
             isinstance(w, QtWidgets.QDialog)):
             return w
         else:
             parent = w.parent()
             return w if not parent else self.NavigableOrTopLevelObject(parent)
-
+        
     def JealousFocus(self, w):
-        return (isinstance(w, QtWidgets.QLineEdit) or
+        return (isinstance(w, QtWidgets.QLineEdit) or 
                 isinstance(w, QtWidgets.QComboBox) or
                 isinstance(w, QtWidgets.QTextEdit) or
                 isinstance(w, QtWidgets.QAbstractSlider) or
                 isinstance(w, QtWidgets.QAbstractSpinBox) or
                 isinstance(w, QtWidgets.QWidget) and w.windowModality() in [QtCore.Qt.WindowModal,
                                                                             QtCore.Qt.ApplicationModal])
-
+            
     def SetFocusFromMousePos(self, backupWidget):
         # It's possible the mouse isn't over any of our windows at the time,
         # in which case use the top-level window of backupWidget.
@@ -121,7 +114,7 @@ class AppEventFilter(QtCore.QObject):
         if (QtWidgets.QApplication.activeModalWidget() or
             QtWidgets.QApplication.activePopupWidget()):
             return False
-
+        
         currFocusWidget = QtWidgets.QApplication.focusWidget()
 
         if event.type() == QtCore.QEvent.KeyPress:
@@ -138,18 +131,18 @@ class AppEventFilter(QtCore.QObject):
                 return False
             elif (isNavKey and self.WantsNavKeys(currFocusWidget)):
                 # Special handling for navigation keys:
-                # 1. When a "navigable" widget is focussed (a TreeView),
+                # 1. When a "navigable" widget is focussed (a TreeView), 
                 #    route arrow keys to the widget and consume them
                 # 2. To make for snappier navigation, when the TreeView
                 #    won't accept a left/right because an item is already
                 #    opened or closed, turn it into an up/down event.  It
-                #    WBN if this behavior could be part of the widgets
+                #    WBN if this behavior could be part of the widgets 
                 #    themselves, but currently, usdview does not specialize
                 #    a class for its TreeView widgets.
                 event.setAccepted(False)
                 currFocusWidget.event(event)
                 accepted = event.isAccepted()
-                if (not accepted  and
+                if (not accepted  and 
                     key in (QtCore.Qt.Key_Left, QtCore.Qt.Key_Right)):
                     advance = (key == QtCore.Qt.Key_Right)
                     altNavKey = QtCore.Qt.Key_Down if advance else QtCore.Qt.Key_Up
@@ -163,15 +156,15 @@ class AppEventFilter(QtCore.QObject):
                 if self._appController.processNavKeyEvent(event):
                     return True
 
-        elif (event.type() == QtCore.QEvent.MouseMove and
+        elif (event.type() == QtCore.QEvent.MouseMove and 
               not self.JealousFocus(currFocusWidget)):
             self.SetFocusFromMousePos(widget)
             # Note we do not consume the event!
-
+            
         # During startup, Qt seems to queue up events on objects that may
         # have disappeared by the time the eventFilter is called upon.  This
         # is true regardless of how late we install the eventFilter, and
-        # whether we process pending events before installing.  So we
+        # whether we process pending events before installing.  So we 
         # silently ignore Runtime errors that occur as a result.
         try:
             return QtCore.QObject.eventFilter(self, widget, event)

@@ -62,7 +62,6 @@ wabi_library(usdviewq
         python/overridableLineEdit.py
         python/variantComboBox.py
         python/qt.py
-        python/constantGroup.py
         python/rootDataModel.py
         python/selectionDataModel.py
         python/viewSettingsDataModel.py

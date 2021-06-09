@@ -1,32 +1,25 @@
-# 
-#  Copyright 2021 Pixar. All Rights Reserved.
-# 
-#  Portions of this file are derived from original work by Pixar
-#  distributed with Universal Scene Description, a project of the
-#  Academy Software Foundation (ASWF). https://www.aswf.io/
-# 
-#  Licensed under the Apache License, Version 2.0 (the "Apache License")
-#  with the following modification; you may not use this file except in
-#  compliance with the Apache License and the following modification:
-#  Section 6. Trademarks. is deleted and replaced with:
-# 
-#  6. Trademarks. This License does not grant permission to use the trade
-#     names, trademarks, service marks, or product names of the Licensor
-#     and its affiliates, except as required to comply with Section 4(c)
-#     of the License and to reproduce the content of the NOTICE file.
 #
-#  You may obtain a copy of the Apache License at:
+# Copyright 2016 Pixar
 #
-#       http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "Apache License")
+# with the following modification; you may not use this file except in
+# compliance with the Apache License and the following modification to it:
+# Section 6. Trademarks. is deleted and replaced with:
 #
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the Apache License with the above modification is
-#  distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-#  ANY KIND, either express or implied. See the Apache License for the
-#  specific language governing permissions and limitations under the
-#  Apache License.
+# 6. Trademarks. This License does not grant permission to use the trade
+#    names, trademarks, service marks, or product names of the Licensor
+#    and its affiliates, except as required to comply with Section 4(c) of
+#    the License and to reproduce the content of the NOTICE file.
 #
-#  Modifications copyright (C) 2020-2021 Wabi.
+# You may obtain a copy of the Apache License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the Apache License with the above modification is
+# distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the Apache License for the specific
+# language governing permissions and limitations under the Apache License.
 #
 '''
 Module that provides the StageView class.
@@ -496,7 +489,7 @@ class HUD():
     def __init__(self):
         self._pixelRatio = QtWidgets.QApplication.instance().devicePixelRatio()
         self._HUDLineSpacing = 15
-        self._HUDFont = QtGui.QFont(DefaultFontFamily.MONOSPACE_FONT_FAMILY,
+        self._HUDFont = QtGui.QFont(DefaultFontFamily.MONOSPACE_FONT_FAMILY, 
                 9*self._pixelRatio)
         self._groups = {}
         self._glslProgram = None
@@ -863,7 +856,7 @@ class StageView(QtOpenGL.QGLWidget):
         if msaa == "1":
             glFormat.setSampleBuffers(True)
             glFormat.setSamples(4)
-        # XXX: for OSX (QT6 required)
+        # XXX: for OSX (QT5 required)
         # glFormat.setProfile(QtOpenGL.QGLFormat.CoreProfile)
         super(StageView, self).__init__(glFormat, parent)
 
@@ -914,7 +907,7 @@ class StageView(QtOpenGL.QGLWidget):
         self._reportedContextError = False
         self._renderModeDict = {
             RenderModes.WIREFRAME: UsdImagingGL.DrawMode.DRAW_WIREFRAME,
-            RenderModes.WIREFRAME_ON_SURFACE:
+            RenderModes.WIREFRAME_ON_SURFACE: 
                 UsdImagingGL.DrawMode.DRAW_WIREFRAME_ON_SURFACE,
             RenderModes.SMOOTH_SHADED: UsdImagingGL.DrawMode.DRAW_SHADED_SMOOTH,
             RenderModes.POINTS: UsdImagingGL.DrawMode.DRAW_POINTS,
@@ -934,7 +927,7 @@ class StageView(QtOpenGL.QGLWidget):
         if ocioLutSize > 0:
             self._renderParams.lut3dSizeOCIO = ocioLutSize
 
-        self._dist = 50
+        self._dist = 50 
         self._bbox = Gf.BBox3d()
         self._selectionBBox = Gf.BBox3d()
         self._selectionBrange = Gf.Range3d()
@@ -986,7 +979,7 @@ class StageView(QtOpenGL.QGLWidget):
         self._rendererAovName = "color"
         self._renderPauseState = False
         self._renderStopState = False
-        # XXX For HdPh we explicitely enable AOV via SetRendererAov
+        # XXX For HdSt we explicitely enable AOV via SetRendererAov
         # This is because ImagingGL / TaskController are spawned via prims in
         # Presto, so we default AOVs OFF until everything is AOV ready.
         self.SetRendererAov(self.rendererAovName)
@@ -1198,9 +1191,9 @@ class StageView(QtOpenGL.QGLWidget):
         color = Gf.Vec3f(col[0]-.6 if col[0]>0.5 else col[0]+.6,
                          col[1]-.6 if col[1]>0.5 else col[1]+.6,
                          col[2]-.6 if col[2]>0.5 else col[2]+.6)
-        color[0] = Gf.Clamp(color[0], 0, 1);
-        color[1] = Gf.Clamp(color[1], 0, 1);
-        color[2] = Gf.Clamp(color[2], 0, 1);
+        color[0] = Gf.Clamp(color[0], 0, 1); 
+        color[1] = Gf.Clamp(color[1], 0, 1); 
+        color[2] = Gf.Clamp(color[2], 0, 1);                 
 
         # Draw axis-aligned bounding box
         if self._dataModel.viewSettings.showAABBox:
@@ -1398,7 +1391,7 @@ class StageView(QtOpenGL.QGLWidget):
                     renderer.AddSelected(
                         prim.GetPath(), UsdImagingGL.ALL_INSTANCES)
         except Tf.ErrorException as e:
-            # If we encounter an error, we want to continue running. Just log
+            # If we encounter an error, we want to continue running. Just log 
             # the error and continue.
             sys.stderr.write(
                 "ERROR: Usdview encountered an error while updating selection."
@@ -1502,7 +1495,7 @@ class StageView(QtOpenGL.QGLWidget):
         if cameraPrim and cameraPrim.IsActive():
             return cameraPrim
         return None
-
+    
     # XXX: Consolidate window/frustum conformance code that is littered in
     # several places.
     def computeWindowPolicy(self, cameraAspectRatio):
@@ -1510,7 +1503,7 @@ class StageView(QtOpenGL.QGLWidget):
         # When using a scene cam, we factor in the masking setting and window
         # size to compute it.
         windowPolicy = CameraUtil.MatchVertically
-
+        
         if self.getActiveSceneCamera():
             if self._cropImageToCameraViewport:
                 targetAspect = (
@@ -1521,9 +1514,9 @@ class StageView(QtOpenGL.QGLWidget):
             else:
                 if self._fitCameraInViewport:
                     windowPolicy =  CameraUtil.Fit
-
+        
         return windowPolicy
-
+    
     def computeWindowSize(self):
         size = self.size() * self.devicePixelRatioF()
         return (int(size.width()), int(size.height()))
@@ -1794,12 +1787,12 @@ class StageView(QtOpenGL.QGLWidget):
                     GL.glPolygonOffset( 1.0, 1.0 )
                     GL.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL )
 
-                    self.renderSinglePass(
+                    self.renderSinglePass( 
                         UsdImagingGL.DrawMode.DRAW_GEOM_ONLY, False)
 
                     GL.glDisable( GL.GL_POLYGON_OFFSET_FILL )
 
-                    # Use display space for the second clear when color
+                    # Use display space for the second clear when color 
                     # correction is performed by the engine because we
                     # composite the framebuffer contents with the
                     # color-corrected (i.e., display space) aov contents.
@@ -1888,9 +1881,9 @@ class StageView(QtOpenGL.QGLWidget):
 
             if (not self._dataModel.playing) & (not renderer.IsConverged()):
                 QtCore.QTimer.singleShot(5, self.update)
-
+        
         except Exception as e:
-            # If we encounter an error during a render, we want to continue
+            # If we encounter an error during a render, we want to continue 
             # running. Just log the error and continue.
             sys.stderr.write(
                 "ERROR: Usdview encountered an error while rendering."
@@ -1955,7 +1948,7 @@ class StageView(QtOpenGL.QGLWidget):
             toPrint = {"Hydra": "(stopped)"}
         else:
             toPrint = {"Hydra": hydraMode}
-
+            
         if self._rendererAovName != "color":
             toPrint["  AOV"] = self._rendererAovName
         self._hud.updateGroup("TopRight", self.width()-160, 14, col,
@@ -1982,7 +1975,7 @@ class StageView(QtOpenGL.QGLWidget):
             _addSizeMetric(toPrint, rStats, " topology", "topology")
             _addSizeMetric(toPrint, rStats, " shader  ", "drawingShader")
             _addSizeMetric(toPrint, rStats, " texture ", "textureMemory")
-
+            
             if "numCompletedSamples" in rStats:
                 toPrint["Samples done "] = rStats["numCompletedSamples"]
 
@@ -2102,7 +2095,7 @@ class StageView(QtOpenGL.QGLWidget):
                 pixelsToWorld = freeCam.ComputePixelsToWorldFactor(height)
 
                 self._dataModel.viewSettings.freeCamera.Truck(
-                        -dx * pixelsToWorld,
+                        -dx * pixelsToWorld, 
                          dy * pixelsToWorld)
 
             self._lastX = x
@@ -2265,7 +2258,7 @@ class StageView(QtOpenGL.QGLWidget):
                 selectedPoint, selectedNormal, selectedPrimPath, \
                 selectedInstanceIndex, selectedTLPath, selectedTLIndex = \
                     [-1,-1], None, Sdf.Path.emptyPath, -1, Sdf.Path.emptyPath, -1
-
+        
             # Correct for high DPI displays
             # Cast to int explicitly as some versions of PySide/Shiboken throw
             # when converting extremely small doubles held in selectedPoint
@@ -2283,7 +2276,7 @@ class StageView(QtOpenGL.QGLWidget):
                     selectedPrimPath, selectedInstanceIndex, selectedTLPath,
                     selectedTLIndex, selectedPoint, modifiers)
         except Tf.ErrorException as e:
-            # If we encounter an error, we want to continue running. Just log
+            # If we encounter an error, we want to continue running. Just log 
             # the error and continue.
             sys.stderr.write(
                 "ERROR: Usdview encountered an error while picking."
@@ -2305,7 +2298,7 @@ class StageView(QtOpenGL.QGLWidget):
         #
         # So instead check that the render has been created after the fact.
         # The point is to avoid reporting an invalid first image time.
-
+        
         if not self._renderer:
             # error has already been issued
             return

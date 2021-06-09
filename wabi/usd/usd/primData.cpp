@@ -64,10 +64,9 @@ Usd_PrimData::Usd_PrimData(UsdStage *stage, const SdfPath &path)
       _primIndex(nullptr),
       _path(path),
       _primTypeInfo(_GetEmptyPrimTypeInfo()),
-      _firstChild(nullptr)
+      _firstChild(nullptr),
+      _refCount(0)
 {
-  _refCount = {0};
-
   if (!stage)
     TF_FATAL_ERROR("Attempted to construct with null stage");
 

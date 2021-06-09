@@ -120,7 +120,7 @@ struct SharedState : boost::noncopyable {
   }
 
   PlugPluginPtrVector plugins;
-  std::atomic<size_t> nextAvailable{0};
+  std::atomic<size_t> nextAvailable;
 };
 
 template<class Range> string PluginNames(Range const &range)
@@ -176,7 +176,7 @@ void _LoadPluginsConcurrently(PluginPredicateFn pred, size_t numThreads, bool ve
   // Establish shared state.
   SharedState state;
   state.plugins.swap(plugins);
-  state.nextAvailable = {0};
+  state.nextAvailable = 0;
 
   // Load in multiple threads.
   std::vector<std::thread> threads;

@@ -89,8 +89,8 @@ class HdPhRenderParam final : public HdRenderParam {
   }
 
  private:
-  std::atomic_uint _drawBatchesVersion{1};
-  std::atomic_uint _materialTagsVersion{1};
+  std::atomic_uint _drawBatchesVersion;
+  std::atomic_uint _materialTagsVersion;
   bool _needsGarbageCollection;  // Doesn't need to be atomic since parallel
                                  // sync might only set it (and not clear).
 };

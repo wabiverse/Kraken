@@ -79,7 +79,7 @@ class Sdf_Identity : public boost::noncopyable {
 
   void _Forget();
 
-  mutable std::atomic_int _refCount{0};
+  mutable std::atomic_int _refCount;
   Sdf_IdentityRegistry *_registry;
   SdfPath _path;
 };

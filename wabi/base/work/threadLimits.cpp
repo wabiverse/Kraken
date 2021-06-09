@@ -63,14 +63,6 @@ TF_DEFINE_ENV_SETTING(WABI_WORK_THREAD_LIMIT,
 
 WABI_NAMESPACE_BEGIN
 
-// This is Work's notion of the currently requested thread limit.  Due to TBB's
-// behavior, the first client to create a tbb::task_arena will establish TBB's
-// global default limit.  We only do this as eagerly as possible if
-// WABI_WORK_THREAD_LIMIT is set to some nonzero value, otherwise we leave it
-// up to others.  So there's no guarantee that calling WorkSetConcurrencyLimit(n)
-// will actually limit Work to n threads.
-static std::atomic<unsigned> _threadLimit{0};
-
 // We create a task_arena instance at static initialization time if
 // WABI_WORK_THREAD_LIMIT is set to a nonzero value. Otherwise this
 // stays NULL.
@@ -123,7 +115,7 @@ static void Work_InitializeThreading()
   // environment setting. The environment setting always wins over the initial
   // limit, unless it has been set to 0 (default). Semantically, 0 means
   // "no change".
-  _threadLimit = Work_OverrideConcurrencyLimit(physicalLimit, settingVal);
+  unsigned threadLimit = Work_OverrideConcurrencyLimit(physicalLimit, settingVal);
 
   // Only eagerly grab TBB if the WABI_WORK_THREAD_LIMIT setting was set to
   // some non-zero value. Otherwise, the scheduler will be default initialized
@@ -131,7 +123,7 @@ static void Work_InitializeThreading()
   // previously initialized by the hosting environment (e.g. if we are running
   // as a plugin to another application.)
   if (settingVal)
-    _tbbTaskArena = std::make_unique<tbb::task_arena>(_threadLimit);
+    _tbbTaskArena = std::make_unique<tbb::task_arena>(threadLimit);
 }
 static int _forceInitialization = (Work_InitializeThreading(), 0);
 
@@ -142,6 +134,7 @@ void WorkSetConcurrencyLimit(unsigned n)
   // in either case, because if the client explicitly requests a concurrency limit
   // through this library, we need to attempt to take control of the TBB scheduler
   // if we can, i.e. if the host environment has not already done so.
+  unsigned threadLimit = 0;
   if (n) {
     // Get the thread limit from the environment setting. Note this value
     // may be 0 (default).
@@ -150,7 +143,11 @@ void WorkSetConcurrencyLimit(unsigned n)
     // Override n with the environment setting. This will make sure that the
     // setting always wins over the specified value n, but only if the
     // setting has been set to a non-zero value.
-    _threadLimit = Work_OverrideConcurrencyLimit(n, settingVal);
+    threadLimit = Work_OverrideConcurrencyLimit(n, settingVal);
+  }
+  else {
+    // Use the current thread limit.
+    threadLimit = WorkGetConcurrencyLimit();
   }
 
   // Note that we need to do some performance testing and decide if it's
@@ -165,11 +162,11 @@ void WorkSetConcurrencyLimit(unsigned n)
   if (_tbbTaskArena) {
     if (_tbbTaskArena->is_active()) {
       _tbbTaskArena->terminate();
-      _tbbTaskArena->initialize(_threadLimit);
+      _tbbTaskArena->initialize(threadLimit);
     }
   }
   else {
-    _tbbTaskArena = std::make_unique<tbb::task_arena>(_threadLimit);
+    _tbbTaskArena = std::make_unique<tbb::task_arena>(threadLimit);
   }
 }
 
@@ -185,12 +182,12 @@ void WorkSetConcurrencyLimitArgument(int n)
 
 unsigned WorkGetConcurrencyLimit()
 {
-  return _threadLimit;
+  return tbb::this_task_arena::max_concurrency();
 }
 
 bool WorkHasConcurrency()
 {
-  return _threadLimit > 1 && WorkGetPhysicalConcurrencyLimit() > 1;
+  return WorkGetConcurrencyLimit() > 1;
 }
 
 WABI_NAMESPACE_END

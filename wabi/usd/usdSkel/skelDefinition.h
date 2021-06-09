@@ -156,7 +156,7 @@ class UsdSkel_SkelDefinition : public TfRefBase, public TfWeakBase {
   _XformHolder _jointWorldInverseBindXforms;
   _XformHolder _jointLocalInverseRestXforms;
 
-  std::atomic<int> _flags{0};
+  std::atomic<int> _flags;
   std::mutex _mutex;
 };
 

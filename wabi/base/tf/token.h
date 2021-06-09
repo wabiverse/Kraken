@@ -454,7 +454,7 @@ class TfToken {
     std::string _str;
     char const *_cstr;
     mutable uint64_t _compareCode;
-    mutable std::atomic_int _refCount{0};
+    mutable std::atomic_int _refCount;
     mutable bool _isCounted;
     mutable unsigned char _setNum;
   };

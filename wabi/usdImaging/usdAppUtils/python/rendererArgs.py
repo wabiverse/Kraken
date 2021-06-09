@@ -1,94 +1,54 @@
-# 
-#  Copyright 2021 Pixar. All Rights Reserved.
-# 
-#  Portions of this file are derived from original work by Pixar
-#  distributed with Universal Scene Description, a project of the
-#  Academy Software Foundation (ASWF). https://www.aswf.io/
-# 
-#  Licensed under the Apache License, Version 2.0 (the "Apache License")
-#  with the following modification; you may not use this file except in
-#  compliance with the Apache License and the following modification:
-#  Section 6. Trademarks. is deleted and replaced with:
-# 
-#  6. Trademarks. This License does not grant permission to use the trade
-#     names, trademarks, service marks, or product names of the Licensor
-#     and its affiliates, except as required to comply with Section 4(c)
-#     of the License and to reproduce the content of the NOTICE file.
 #
-#  You may obtain a copy of the Apache License at:
+# Copyright 2019 Pixar
 #
-#       http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "Apache License")
+# with the following modification; you may not use this file except in
+# compliance with the Apache License and the following modification to it:
+# Section 6. Trademarks. is deleted and replaced with:
 #
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the Apache License with the above modification is
-#  distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-#  ANY KIND, either express or implied. See the Apache License for the
-#  specific language governing permissions and limitations under the
-#  Apache License.
+# 6. Trademarks. This License does not grant permission to use the trade
+#    names, trademarks, service marks, or product names of the Licensor
+#    and its affiliates, except as required to comply with Section 4(c) of
+#    the License and to reproduce the content of the NOTICE file.
 #
-#  Modifications copyright (C) 2020-2021 Wabi.
+# You may obtain a copy of the Apache License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the Apache License with the above modification is
+# distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the Apache License for the specific
+# language governing permissions and limitations under the Apache License.
 #
 
-class RendererPlugins(object):
+HYDRA_DISABLED_OPTION_STRING = "HydraDisabled"
+
+def GetAllPluginArguments():
     """
-    An enum-like container of the available Hydra renderer plugins.
+    Returns argument strings for all the renderer plugins available.
     """
 
-    class _RendererPlugin(object):
-        """
-        Class which represents a Hydra renderer plugin. Each one has a plugin
-        identifier and a display name.
-        """
+    from wabi import UsdImagingGL
+    return [ UsdImagingGL.Engine.GetRendererDisplayName(pluginId) for
+                pluginId in UsdImagingGL.Engine.GetRendererPlugins() ]
 
-        def __init__(self, pluginId, displayName):
-            self._pluginId = pluginId
-            self._displayName = displayName
 
-        def __repr__(self):
-            return self.displayName
+def GetPluginIdFromArgument(argumentString):
+    """
+    Returns plugin id, if found, for the passed in argument string.
 
-        @property
-        def id(self):
-            return self._pluginId
+    Valid argument strings are returned by GetAllPluginArguments().
+    """
 
-        @property
-        def displayName(self):
-            return self._displayName
+    from wabi import UsdImagingGL
+    for p in UsdImagingGL.Engine.GetRendererPlugins():
+        if argumentString == UsdImagingGL.Engine.GetRendererDisplayName(p):
+            return p
+    return None
 
-    @classmethod
-    def allPlugins(cls):
-        """
-        Get a tuple of all available renderer plugins.
-        """
-        if not hasattr(cls, '_allPlugins'):
-            from wabi import UsdImagingGL
-            cls._allPlugins = tuple(cls._RendererPlugin(pluginId,
-                    UsdImagingGL.Engine.GetRendererDisplayName(pluginId))
-                for pluginId in UsdImagingGL.Engine.GetRendererPlugins())
 
-        return cls._allPlugins
-
-    @classmethod
-    def fromId(cls, pluginId):
-        """
-        Get a renderer plugin from its identifier.
-        """
-        matches = [plugin for plugin in cls.allPlugins() if plugin.id == pluginId]
-        if len(matches) == 0:
-            raise ValueError("No renderer plugin with id '{}'".format(pluginId))
-        return matches[0]
-
-    @classmethod
-    def fromDisplayName(cls, displayName):
-        """
-        Get a renderer plugin from its display name.
-        """
-        matches = [plugin for plugin in cls.allPlugins() if plugin.displayName == displayName]
-        if len(matches) == 0:
-            raise ValueError("No renderer plugin with display name '{}'".format(displayName))
-        return matches[0]
-
-def AddCmdlineArgs(argsParser, altHelpText=''):
+def AddCmdlineArgs(argsParser, altHelpText='', allowHydraDisabled=False):
     """
     Adds Hydra renderer-related command line arguments to argsParser.
 
@@ -102,8 +62,11 @@ def AddCmdlineArgs(argsParser, altHelpText=''):
         helpText = (
             'Hydra renderer plugin to use when generating images')
 
+    renderers = GetAllPluginArguments()
+    if allowHydraDisabled:
+        renderers.append(HYDRA_DISABLED_OPTION_STRING)
+
     argsParser.add_argument('--renderer', '-r', action='store',
-        type=RendererPlugins.fromDisplayName,
         dest='rendererPlugin',
-        choices=[p for p in RendererPlugins.allPlugins()],
+        choices=renderers,
         help=helpText)

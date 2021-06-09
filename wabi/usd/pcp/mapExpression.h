@@ -270,12 +270,12 @@ class PcpMapExpression {
     struct _NodeMap;
     static TfStaticData<_NodeMap> _nodeRegistry;
 
-    mutable std::atomic<int> _refCount{0};
+    mutable std::atomic<int> _refCount;
     mutable Value _cachedValue;
     mutable std::set<_Node *> _dependentExpressions;
     Value _valueForVariable;
     mutable tbb::spin_mutex _mutex;
-    mutable std::atomic<bool> _hasCachedValue{false};
+    mutable std::atomic<bool> _hasCachedValue;
   };
 
   // Need to friend them here to have visibility to private class _Node.

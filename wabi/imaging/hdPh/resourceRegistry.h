@@ -545,7 +545,7 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
 
   typedef tbb::concurrent_vector<_PendingSource> _PendingSourceList;
   _PendingSourceList _pendingSources;
-  std::atomic_size_t _numBufferSourcesToResolve{0};
+  std::atomic_size_t _numBufferSourcesToResolve;
 
   struct _PendingComputation {
     _PendingComputation(HdBufferArrayRangeSharedPtr const &range,

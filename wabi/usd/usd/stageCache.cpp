@@ -201,10 +201,8 @@ struct DebugHelper {
 }  // namespace
 
 struct UsdStageCacheRequest::_Mailbox {
-  _Mailbox()
-  {
-    state = {0};
-  }
+  _Mailbox() : state(0)
+  {}
 
   UsdStageRefPtr Wait()
   {
@@ -219,7 +217,7 @@ struct UsdStageCacheRequest::_Mailbox {
     return state > 0;
   }
 
-  std::atomic_int state{0};  // 0: unsubscribed, 1: subscribed, 2: delivered.
+  std::atomic_int state;  // 0: unsubscribed, 1: subscribed, 2: delivered.
   UsdStageRefPtr stage;
 };
 

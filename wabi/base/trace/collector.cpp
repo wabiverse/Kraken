@@ -62,7 +62,7 @@ WABI_NAMESPACE_BEGIN
 
 TF_INSTANTIATE_SINGLETON(TraceCollector);
 
-std::atomic<int> TraceCollector::_isEnabled{0};
+std::atomic<int> TraceCollector::_isEnabled(0);
 
 TraceCollector::_PerThreadData *TraceCollector::_GetThreadData()
 {

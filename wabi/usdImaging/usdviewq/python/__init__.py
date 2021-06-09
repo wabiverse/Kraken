@@ -1,35 +1,31 @@
-# 
-#  Copyright 2021 Pixar. All Rights Reserved.
-# 
-#  Portions of this file are derived from original work by Pixar
-#  distributed with Universal Scene Description, a project of the
-#  Academy Software Foundation (ASWF). https://www.aswf.io/
-# 
-#  Licensed under the Apache License, Version 2.0 (the "Apache License")
-#  with the following modification; you may not use this file except in
-#  compliance with the Apache License and the following modification:
-#  Section 6. Trademarks. is deleted and replaced with:
-# 
-#  6. Trademarks. This License does not grant permission to use the trade
-#     names, trademarks, service marks, or product names of the Licensor
-#     and its affiliates, except as required to comply with Section 4(c)
-#     of the License and to reproduce the content of the NOTICE file.
 #
-#  You may obtain a copy of the Apache License at:
+# Copyright 2016 Pixar
 #
-#       http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "Apache License")
+# with the following modification; you may not use this file except in
+# compliance with the Apache License and the following modification to it:
+# Section 6. Trademarks. is deleted and replaced with:
 #
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the Apache License with the above modification is
-#  distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-#  ANY KIND, either express or implied. See the Apache License for the
-#  specific language governing permissions and limitations under the
-#  Apache License.
+# 6. Trademarks. This License does not grant permission to use the trade
+#    names, trademarks, service marks, or product names of the Licensor
+#    and its affiliates, except as required to comply with Section 4(c) of
+#    the License and to reproduce the content of the NOTICE file.
 #
-#  Modifications copyright (C) 2020-2021 Wabi.
+# You may obtain a copy of the Apache License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the Apache License with the above modification is
+# distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the Apache License for the specific
+# language governing permissions and limitations under the Apache License.
 #
 
 from __future__ import print_function
+
+from wabi import Tf
+Tf.PreparePythonModule()
 
 import sys, argparse, os
 
@@ -37,7 +33,7 @@ from .qt import QtWidgets, QtCore
 from .common import Timer
 from .appController import AppController
 
-from wabi import UsdAppUtils, Tf
+from wabi import UsdAppUtils
 
 
 class InvalidUsdviewOption(Exception):
@@ -65,6 +61,8 @@ class Launcher(object):
         '''
         The main entry point to launch a process using UsdView.
         '''
+        # Add some test args.
+        sys.argv.append("/home/furby/Documents/test_scene.usda")
 
         parser = argparse.ArgumentParser(prog=sys.argv[0],
                                          description=self.GetHelpDescription())
@@ -80,7 +78,10 @@ class Launcher(object):
             if arg_parse_result.traceToFile:
                 from wabi import Trace
                 traceCollector = Trace.Collector()
-                traceCollector.pythonTracingEnabled = True
+            
+                if arg_parse_result.tracePython:
+                    traceCollector.pythonTracingEnabled = True
+
                 traceCollector.enabled = True
 
             self.__LaunchProcess(arg_parse_result)
@@ -122,15 +123,14 @@ class Launcher(object):
         '''
         from wabi import UsdUtils
 
-        parser.add_argument('--renderer', action='store',
-                            type=str, dest='renderer',
-                            choices=AppController.GetRendererOptionChoices(),
-                            help="Which render backend to use (named as it "
+        UsdAppUtils.rendererArgs.AddCmdlineArgs(parser,
+                altHelpText=("Which render backend to use (named as it "
                             "appears in the menu).  Use '%s' to "
                             "turn off Hydra renderers." %
-                            AppController.HYDRA_DISABLED_OPTION_STRING,
-                            default='')
-
+                        UsdAppUtils.rendererArgs.HYDRA_DISABLED_OPTION_STRING
+                            ),
+                allowHydraDisabled=True)
+        
         parser.add_argument('--select', action='store', default='/',
                             dest='primPath', type=str,
                             help='A prim path to initially select and frame')
@@ -175,7 +175,7 @@ class Launcher(object):
 
         parser.add_argument('--timing', action='store_true',
                             dest='timing',
-                            help='Echo timing stats to console. NOTE: timings will be unreliable when the --mallocTagStats option is also in use')
+                            help='Echo timing stats to console. NOTE: timings will be unreliable when the --memstats option is also in use')
 
         parser.add_argument('--traceToFile', action='store',
                             type=str,
@@ -194,6 +194,11 @@ class Launcher(object):
                             '--traceToFile. \'chrome\' files can be read in '
                             'chrome, \'trace\' files are simple text reports. '
                             '(default=%(default)s)')
+
+        parser.add_argument('--tracePython', action='store_true',
+                            dest='tracePython',
+                            help='Enable python trace collection, '
+                            'requires --traceToFile to be set.')
 
         parser.add_argument('--memstats', action='store', default='none',
                             dest='mallocTagStats', type=str,
@@ -224,7 +229,7 @@ class Launcher(object):
         parser.add_argument('--quitAfterStartup', action='store_true',
                             dest='quitAfterStartup',
                             help='quit immediately after start up')
-
+                            
         parser.add_argument('--sessionLayer', default=None, type=str,
                             help= "If specified, the stage will be opened "
                             "with the 'sessionLayer' in place of the default "
@@ -242,11 +247,11 @@ class Launcher(object):
 
     def ValidateOptions(self, arg_parse_result):
         '''
-        Called by Run(), after ParseOptions() is called. Validates and
-        potentially modifies the parsed arguments. Raises InvalidUsdviewOption
-        if an invalid option is found. If a derived class has overridden
+        Called by Run(), after ParseOptions() is called. Validates and 
+        potentially modifies the parsed arguments. Raises InvalidUsdviewOption 
+        if an invalid option is found. If a derived class has overridden 
         ParseOptions(), ValidateOptions() is an opportunity to process the
-        options and transmute other "core" options in response.  If
+        options and transmute other "core" options in response.  If 
         overridden, derived classes should likely first call the base method.
         '''
 
@@ -289,17 +294,17 @@ class Launcher(object):
         the Stage for the given usdFile.  Base implementation
         creates a default asset context for the usdFile asset, but derived
         classes can do more sophisticated resolver and context configuration.
-
+        
         Will be called each time a new stage is opened.
 
         It is not necessary to create an ArResolverContext for every UsdStage
         one opens, as the Stage will use reasonable fallback behavior if no
         context is provided.  For usdview, configuring an asset context by
-        default is reasonable, and allows clients that embed usdview to
+        default is reasonable, and allows clients that embed usdview to 
         achieve different behavior when needed.
         """
         from wabi import Ar
-
+        
         r = Ar.GetResolver()
         r.ConfigureResolverForAsset(usdFile)
         return r.CreateDefaultContextForAsset(usdFile)
@@ -329,7 +334,7 @@ class Launcher(object):
         # Initialize concurrency limit as early as possible so that it is
         # respected by subsequent imports.
         (app, appController) = self.LaunchPreamble(arg_parse_result)
-
+        
         if arg_parse_result.quitAfterStartup:
             # Enqueue event to shutdown application. We don't use quit() because
             # it doesn't trigger the closeEvent() on the main window which is
@@ -337,3 +342,4 @@ class Launcher(object):
             QtCore.QTimer.singleShot(0, app.instance().closeAllWindows)
 
         app.exec_()
+

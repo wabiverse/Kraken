@@ -65,10 +65,9 @@ class Vt_ArrayForeignDataSource {
  public:
   explicit Vt_ArrayForeignDataSource(void (*detachedFn)(Vt_ArrayForeignDataSource *self) = nullptr,
                                      size_t initRefCount                                 = 0)
-      : _detachedFn(detachedFn)
-  {
-    _refCount = initRefCount;
-  }
+      : _refCount(initRefCount),
+        _detachedFn(detachedFn)
+  {}
 
  private:
   template<class T> friend class VtArray;
@@ -81,7 +80,7 @@ class Vt_ArrayForeignDataSource {
   }
 
  protected:
-  std::atomic<size_t> _refCount{0};
+  std::atomic<size_t> _refCount;
   void (*_detachedFn)(Vt_ArrayForeignDataSource *self);
 };
 
@@ -119,17 +118,13 @@ class Vt_ArrayBase {
   // _GetControlBlock() for details.
   struct _ControlBlock {
 
-    _ControlBlock() : capacity(0)
-    {
-      nativeRefCount = 0;
-    }
+    _ControlBlock() : nativeRefCount(0), capacity(0)
+    {}
 
-    _ControlBlock(size_t initCount, size_t initCap) : capacity(initCap)
-    {
-      nativeRefCount = initCount;
-    }
+    _ControlBlock(size_t initCount, size_t initCap) : nativeRefCount(initCount), capacity(initCap)
+    {}
 
-    mutable std::atomic<size_t> nativeRefCount{0};
+    mutable std::atomic<size_t> nativeRefCount;
     size_t capacity;
   };
 

@@ -386,7 +386,7 @@ class Usd_PrimData {
   const UsdPrimTypeInfo *_primTypeInfo;
   Usd_PrimData *_firstChild;
   TfPointerAndBits<Usd_PrimData> _nextSiblingOrParent;
-  mutable std::atomic<int64_t> _refCount{0};
+  mutable std::atomic<int64_t> _refCount;
   Usd_PrimFlagBits _flags;
 
   // intrusive_ptr core primitives implementation.

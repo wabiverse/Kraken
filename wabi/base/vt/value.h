@@ -202,7 +202,7 @@ class VtValue {
 
    private:
     T _obj;
-    mutable std::atomic<int> _refCount{0};
+    mutable std::atomic<int> _refCount;
 
     friend inline void intrusive_ptr_add_ref(_Counted const *d)
     {

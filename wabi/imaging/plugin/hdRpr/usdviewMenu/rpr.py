@@ -9,10 +9,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # 
-from pxr import Tf
-from pxr.Plug import Registry
-from pxr.Usdviewq.plugin import PluginContainer
-from pxr.Usdviewq.qt import QtWidgets
+from wabi import Tf
+from wabi.Plug import Registry
+from wabi.Usdviewq.plugin import PluginContainer
+from wabi.Usdviewq.qt import QtWidgets
 
 from ctypes import cdll, c_void_p, c_char_p, cast
 from ctypes.util import find_library

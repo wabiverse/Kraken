@@ -1,35 +1,28 @@
-# 
-#  Copyright 2021 Pixar. All Rights Reserved.
-# 
-#  Portions of this file are derived from original work by Pixar
-#  distributed with Universal Scene Description, a project of the
-#  Academy Software Foundation (ASWF). https://www.aswf.io/
-# 
-#  Licensed under the Apache License, Version 2.0 (the "Apache License")
-#  with the following modification; you may not use this file except in
-#  compliance with the Apache License and the following modification:
-#  Section 6. Trademarks. is deleted and replaced with:
-# 
-#  6. Trademarks. This License does not grant permission to use the trade
-#     names, trademarks, service marks, or product names of the Licensor
-#     and its affiliates, except as required to comply with Section 4(c)
-#     of the License and to reproduce the content of the NOTICE file.
 #
-#  You may obtain a copy of the Apache License at:
+# Copyright 2018 Pixar
 #
-#       http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "Apache License")
+# with the following modification; you may not use this file except in
+# compliance with the Apache License and the following modification to it:
+# Section 6. Trademarks. is deleted and replaced with:
 #
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the Apache License with the above modification is
-#  distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-#  ANY KIND, either express or implied. See the Apache License for the
-#  specific language governing permissions and limitations under the
-#  Apache License.
+# 6. Trademarks. This License does not grant permission to use the trade
+#    names, trademarks, service marks, or product names of the Licensor
+#    and its affiliates, except as required to comply with Section 4(c) of
+#    the License and to reproduce the content of the NOTICE file.
 #
-#  Modifications copyright (C) 2020-2021 Wabi.
+# You may obtain a copy of the Apache License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the Apache License with the above modification is
+# distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the Apache License for the specific
+# language governing permissions and limitations under the Apache License.
 #
 from .qt import QtCore, QtGui, QtWidgets
-from .constantGroup import ConstantGroup
+from wabi.UsdUtils.constantsGroup import ConstantsGroup
 from wabi import Sdf, Usd, UsdGeom
 from .primViewItem import PrimViewItem
 from .common import PrintWarning, Timer, UIPrimTreeColors, KeyboardShortcuts
@@ -42,7 +35,7 @@ def _GetPropertySpecInSessionLayer(usdAttribute):
     return None
 
 # Function for getting the background color of the item for the delegates.
-# Returns none if we only want the default paint method.
+# Returns none if we only want the default paint method. 
 def _GetBackgroundColor(item, option):
     mouseOver = option.state & QtWidgets.QStyle.State_MouseOver
     selected = option.state & QtWidgets.QStyle.State_Selected
@@ -70,10 +63,10 @@ def _GetBackgroundColor(item, option):
 
     return background
 
-class PrimViewColumnIndex(ConstantGroup):
+class PrimViewColumnIndex(ConstantsGroup):
     NAME, TYPE, VIS, DRAWMODE = range(4)
 
-class DrawModes(ConstantGroup):
+class DrawModes(ConstantsGroup):
     DEFAULT = "default"
     CARDS = "cards"
     BOUNDS = "bounds"
@@ -93,11 +86,11 @@ class DrawModeComboBox(QtWidgets.QComboBox):
         self.signalPopupHidden.emit()
 
 class DrawModeWidget(QtWidgets.QWidget):
-    """ This widget contains a combobox for selecting the draw mode and a
-        clear ('x') button for clearing an authored drawMode override in the
-        session layer.
+    """ This widget contains a combobox for selecting the draw mode and a 
+        clear ('x') button for clearing an authored drawMode override in the 
+        session layer. 
     """
-    def __init__(self, primViewItem, refreshFunc, printTiming=False,
+    def __init__(self, primViewItem, refreshFunc, printTiming=False, 
                  parent=None):
         QtWidgets.QWidget.__init__(self, parent)
 
@@ -106,10 +99,10 @@ class DrawModeWidget(QtWidgets.QWidget):
         self._layout.setSpacing(0)
         self._layout.setContentsMargins(0,0,0,0)
         self.setLayout(self._layout)
-
+        
         self._comboBox = DrawModeComboBox(self)
         self._modelAPI = UsdGeom.ModelAPI(self._primViewItem.prim)
-        # Reducing the width further causes the pop-up dialog to be trimmed
+        # Reducing the width further causes the pop-up dialog to be trimmed 
         # and option text to be pruned.
         self._comboBox.setFixedWidth(100)
         self._comboBox.addItem(DrawModes.DEFAULT)
@@ -124,8 +117,8 @@ class DrawModeWidget(QtWidgets.QWidget):
         retainSizePolicy = self._clearButton.sizePolicy()
         retainSizePolicy.setRetainSizeWhenHidden(True)
         self._clearButton.setSizePolicy(retainSizePolicy)
-        self._layout.addWidget(self._clearButton)
-
+        self._layout.addWidget(self._clearButton)            
+        
         self._currentDrawMode = None
         self.RefreshDrawMode()
         self._firstPaint = True
@@ -139,24 +132,24 @@ class DrawModeWidget(QtWidgets.QWidget):
 
     def paintEvent(self, event):
         # Virtual override of the paintEvent method on QWidget.
-        # Popup the combo box the first time the widget is drawn, since
+        # Popup the combo box the first time the widget is drawn, since 
         # mouse-down in the column makes the widget appear.
-        #
-        # An alternative approach would be to set a timer in a constructor to
-        # pop open the combo box at the end of the event loop, but it causes a
+        # 
+        # An alternative approach would be to set a timer in a constructor to 
+        # pop open the combo box at the end of the event loop, but it causes a 
         # noticeable flicker in the UI.
         if self._firstPaint:
             self._comboBox.showPopup()
             self._firstPaint = False
 
-        # Invoke paintEvent on super class to do the actual painting of the
+        # Invoke paintEvent on super class to do the actual painting of the 
         # widget.
         super(DrawModeWidget, self).paintEvent(event)
 
     def _ShouldHideClearButton(self):
         # Check if there's an authored value in the session layer.
         drawModeAttr = self._modelAPI.GetModelDrawModeAttr()
-
+        
         if drawModeAttr:
             sessionSpec = _GetPropertySpecInSessionLayer(drawModeAttr)
             if sessionSpec and sessionSpec.HasDefaultValue():
@@ -191,7 +184,7 @@ class DrawModeWidget(QtWidgets.QWidget):
                 # We need to redraw the scene to pick up updates to draw mode.
                 self._refreshFunc(self._primViewItem)
             if self._printTiming:
-                t.PrintTime("change model:drawMode on <%s> to %s" %
+                t.PrintTime("change model:drawMode on <%s> to %s" % 
                         (self._modelAPI.GetPath(), newDrawModeSelection))
         self._CloseEditorIfNoEdit()
 
@@ -217,8 +210,8 @@ class DrawModeWidget(QtWidgets.QWidget):
                     "model:drawMode attribute")
                 return
         if self._printTiming:
-            t.PrintTime("clear model:drawMode on <%s> to %s" %
-                        (self._modelAPI.GetPath(),
+            t.PrintTime("clear model:drawMode on <%s> to %s" % 
+                        (self._modelAPI.GetPath(), 
                          self._comboBox.currentText()))
 
     def _CloseEditorIfNoEdit(self):
@@ -240,7 +233,7 @@ class DrawModeItemDelegate(QtWidgets.QStyledItemDelegate):
 
     # We need to override paint in this delegate as well so that the
     # Draw Mode column will match with the behavior of the other
-    # items in the treeview.
+    # items in the treeview. 
     def paint(self, painter, option, index):
         primViewItem = self._treeWidget.itemFromIndex(index)
         background = _GetBackgroundColor(primViewItem, option)
@@ -255,11 +248,11 @@ class DrawModeItemDelegate(QtWidgets.QStyledItemDelegate):
         if not primViewItem.supportsDrawMode:
             return None
 
-        drawModeWidget = DrawModeWidget(primViewItem,
+        drawModeWidget = DrawModeWidget(primViewItem, 
             refreshFunc=self._treeWidget.UpdatePrimViewDrawMode,
             printTiming=self._printTiming,
             parent=parent)
-        # Store a copy of the widget in the primViewItem, for use when
+        # Store a copy of the widget in the primViewItem, for use when 
         # propagating changes to draw mode down a prim hierarchy.
         primViewItem.drawModeWidget = drawModeWidget
         return drawModeWidget
@@ -272,19 +265,19 @@ class SelectedAncestorItemDelegate(QtWidgets.QStyledItemDelegate):
     # In order to highlight the ancestors of selected prims, we require
     # a new delegate to be created to override the paint function.
     # Because the stylesheet will override styling when items are hovered
-    # over, the hovering styling logic is moved to this delegate, and
+    # over, the hovering styling logic is moved to this delegate, and 
     # primTreeWidget is excluded from the selectors for hovering
-    # in the stylesheet.
+    # in the stylesheet. 
     def paint(self, painter, option, index):
         primViewItem = self._treeWidget.itemFromIndex(index)
 
         originalPosition = option.rect.left()
         offsetPosition = self._treeWidget.header().offset()
 
-        # In order to fill in the entire cell for Prim Name, we must update the
+        # In order to fill in the entire cell for Prim Name, we must update the 
         # dimensions of the rectangle painted. If the column is for Prim Name,
         # we set the left side of the rectangle to be equal to the offset of the
-        # tree widget's header.
+        # tree widget's header. 
         background = _GetBackgroundColor(primViewItem, option)
 
         if primViewItem.ancestorOfSelected:
@@ -306,7 +299,7 @@ class PrimItemSelectionModel(QtCore.QItemSelectionModel):
     selection.  Since that's exactly the behavior we want, we derive our
     own class that we can force to ignore selection requests except when we
     really want it to."""
-
+    
     def __init__(self, model):
         super(PrimItemSelectionModel, self).__init__(model)
         self._processSelections = True
@@ -347,9 +340,9 @@ class SelectionEnabler(object):
     def __exit__(self, *args):
         self._selectionModel.processSelections = self._selectionWasEnabled
 
-# This class extends QTreeWidget and is used to draw the prim tree view in
-# usdview.
-# More of the prim browser specific behavior needs to be migrated from
+# This class extends QTreeWidget and is used to draw the prim tree view in 
+# usdview. 
+# More of the prim browser specific behavior needs to be migrated from 
 # appController into this class.
 class PrimTreeWidget(QtWidgets.QTreeWidget):
     def __init__(self, parent):
@@ -364,9 +357,9 @@ class PrimTreeWidget(QtWidgets.QTreeWidget):
         self._appController = appController
         selectedAncestorItemDelegate = SelectedAncestorItemDelegate(parent=self)
         self.setItemDelegate(selectedAncestorItemDelegate)
-        drawModeItemDelegate = DrawModeItemDelegate(appController._printTiming,
+        drawModeItemDelegate = DrawModeItemDelegate(appController._printTiming, 
                                                     parent=self)
-        self.setItemDelegateForColumn(PrimViewColumnIndex.DRAWMODE,
+        self.setItemDelegateForColumn(PrimViewColumnIndex.DRAWMODE, 
                                       drawModeItemDelegate)
 
     def ShowDrawModeWidgetForItem(self, primViewItem):
@@ -382,7 +375,7 @@ class PrimTreeWidget(QtWidgets.QTreeWidget):
                 rootItem = self.invisibleRootItem().child(0)
             if rootItem.childCount() == 0:
                 self._appController._populateChildren(rootItem)
-            rootsToProcess = [rootItem.child(i) for i in
+            rootsToProcess = [rootItem.child(i) for i in 
                     range(rootItem.childCount())]
             for item in rootsToProcess:
                 PrimViewItem.propagateDrawMode(item, self)
@@ -456,7 +449,7 @@ class PrimTreeWidget(QtWidgets.QTreeWidget):
             # the current item is visible, we must set the current item
             # only when we know it'll be needed for arrow navigation.
             # We call this here before the selection data model clears
-            # the selection.
+            # the selection. 
 
             if ev.key() == QtCore.Qt.Key_Down \
             or ev.key() == QtCore.Qt.Key_Up \
@@ -472,7 +465,7 @@ class PrimTreeWidget(QtWidgets.QTreeWidget):
             # since the default behavior in the super class's keyPressEvent function
             # is to set the current item to the first item found that alphabetically
             # matches the key entered. Since we want to override this behavior for
-            # the F hotkey, we must handle it after the super class's keyPressEvent.
+            # the F hotkey, we must handle it after the super class's keyPressEvent. 
             if ev.key() == KeyboardShortcuts.FramingKey:
                 self.FrameSelection()
 

@@ -313,7 +313,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
 
     query_type query;
     value_type value;
-    inline static std::atomic<unsigned> version{0};
+    inline static std::atomic<unsigned> version = {0};
   };
 
   // Returns the version number for a valid cache entry

@@ -503,7 +503,7 @@ string ArchMakeTmpFileName(const string &prefix, const string &suffix)
 {
   string tmpDir = ArchGetTmpDir();
 
-  static std::atomic<int> nCalls{1};
+  static std::atomic<int> nCalls(1);
   const int n = nCalls++;
 #if defined(ARCH_OS_WINDOWS)
   int pid = _getpid();

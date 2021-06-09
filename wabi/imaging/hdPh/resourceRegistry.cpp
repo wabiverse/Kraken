@@ -98,6 +98,8 @@ HdInstance<T> _Register(ID id, HdInstanceRegistry<T> &registry, TfToken const &p
 
 HdPhResourceRegistry::HdPhResourceRegistry(Hgi *const hgi)
     : _hgi(hgi),
+      _numBufferSourcesToResolve(0),
+      // default aggregation strategies for varying (vertex, varying) primvars
       _nonUniformAggregationStrategy(std::make_unique<HdPhVBOMemoryManager>(this)),
       _nonUniformImmutableAggregationStrategy(std::make_unique<HdPhVBOMemoryManager>(this))
       // default aggregation strategy for uniform on UBO (for globals)
@@ -110,10 +112,7 @@ HdPhResourceRegistry::HdPhResourceRegistry(Hgi *const hgi)
       ,
       _singleAggregationStrategy(std::make_unique<HdPhVBOSimpleMemoryManager>(this)),
       _textureHandleRegistry(std::make_unique<HdPh_TextureHandleRegistry>(this))
-{
-  _numBufferSourcesToResolve = {0};
-  // default aggregation strategies for varying (vertex, varying) primvars
-}
+{}
 
 HdPhResourceRegistry::~HdPhResourceRegistry()
 {

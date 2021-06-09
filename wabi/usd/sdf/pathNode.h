@@ -248,6 +248,7 @@ class Sdf_PathNode {
  protected:
   Sdf_PathNode(Sdf_PathNode const *parent, NodeType nodeType)
       : _parent(parent),
+        _refCount(1),
         _elementCount(parent ? parent->_elementCount + 1 : 1),
         _nodeType(nodeType),
         _isAbsolute(parent && parent->IsAbsolutePath()),
@@ -256,9 +257,7 @@ class Sdf_PathNode {
         _containsTargetPath(nodeType == TargetNode || nodeType == MapperNode ||
                             (parent && parent->_containsTargetPath)),
         _hasToken(false)
-  {
-    _refCount = {1};
-  }
+  {}
 
   // This constructor is used only to create the two special root nodes.
   explicit Sdf_PathNode(bool isAbsolute);
@@ -309,7 +308,7 @@ class Sdf_PathNode {
   // Instance variables.  PathNode's size is important to keep small.  Please
   // be mindful of that when making any changes here.
   const Sdf_PathNodeConstRefPtr _parent;
-  mutable std::atomic<unsigned int> _refCount{1};
+  mutable std::atomic<unsigned int> _refCount;
 
   const short _elementCount;
   const unsigned char _nodeType;
@@ -749,7 +748,7 @@ SDF_API void Sdf_DumpPathStats();
 
 inline void intrusive_ptr_add_ref(const WABI_NS::Sdf_PathNode *p)
 {
-  ++(p->_refCount);
+  ++p->_refCount;
 }
 inline void intrusive_ptr_release(const WABI_NS::Sdf_PathNode *p)
 {

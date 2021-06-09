@@ -42,18 +42,12 @@ WABI_NAMESPACE_BEGIN
 
 // Implementation storage + refcount for Usd_Shared.
 template<class T> struct Usd_Counted {
-  constexpr Usd_Counted()
-  {
-    count = {0};
-  }
-  explicit Usd_Counted(T const &data) : data(data)
-  {
-    count = {0};
-  }
-  explicit Usd_Counted(T &&data) : data(std::move(data))
-  {
-    count = {0};
-  }
+  constexpr Usd_Counted() : count(0)
+  {}
+  explicit Usd_Counted(T const &data) : data(data), count(0)
+  {}
+  explicit Usd_Counted(T &&data) : data(std::move(data)), count(0)
+  {}
 
   friend inline void intrusive_ptr_add_ref(Usd_Counted const *c)
   {
@@ -68,7 +62,7 @@ template<class T> struct Usd_Counted {
   }
 
   T data;
-  mutable std::atomic_int count{0};
+  mutable std::atomic_int count;
 };
 
 struct Usd_EmptySharedTagType {

@@ -270,8 +270,8 @@ PcpMapExpression::_Node::_Node(const Key &key_)
     : key(key_),
       expressionTreeAlwaysHasIdentity(_ExpressionTreeAlwaysHasIdentity(key))
 {
-  _refCount       = 0;
   _hasCachedValue = false;
+  _refCount       = 0;
   if (key.arg1) {
     tbb::spin_mutex::scoped_lock lock(key.arg1->_mutex);
     key.arg1->_dependentExpressions.insert(this);

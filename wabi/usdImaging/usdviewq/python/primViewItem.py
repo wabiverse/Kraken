@@ -1,32 +1,25 @@
-# 
-#  Copyright 2021 Pixar. All Rights Reserved.
-# 
-#  Portions of this file are derived from original work by Pixar
-#  distributed with Universal Scene Description, a project of the
-#  Academy Software Foundation (ASWF). https://www.aswf.io/
-# 
-#  Licensed under the Apache License, Version 2.0 (the "Apache License")
-#  with the following modification; you may not use this file except in
-#  compliance with the Apache License and the following modification:
-#  Section 6. Trademarks. is deleted and replaced with:
-# 
-#  6. Trademarks. This License does not grant permission to use the trade
-#     names, trademarks, service marks, or product names of the Licensor
-#     and its affiliates, except as required to comply with Section 4(c)
-#     of the License and to reproduce the content of the NOTICE file.
 #
-#  You may obtain a copy of the Apache License at:
+# Copyright 2016 Pixar
 #
-#       http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "Apache License")
+# with the following modification; you may not use this file except in
+# compliance with the Apache License and the following modification to it:
+# Section 6. Trademarks. is deleted and replaced with:
 #
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the Apache License with the above modification is
-#  distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-#  ANY KIND, either express or implied. See the Apache License for the
-#  specific language governing permissions and limitations under the
-#  Apache License.
+# 6. Trademarks. This License does not grant permission to use the trade
+#    names, trademarks, service marks, or product names of the Licensor
+#    and its affiliates, except as required to comply with Section 4(c) of
+#    the License and to reproduce the content of the NOTICE file.
 #
-#  Modifications copyright (C) 2020-2021 Wabi.
+# You may obtain a copy of the Apache License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the Apache License with the above modification is
+# distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the Apache License for the specific
+# language governing permissions and limitations under the Apache License.
 #
 from __future__ import print_function
 
@@ -76,7 +69,7 @@ class PrimViewItem(QtWidgets.QTreeWidgetItem):
 
         # If this item includes a persistent drawMode widget, it is stored here.
         self.drawModeWidget = None
-
+        
     def push(self):
         """Pushes prim data to the UI."""
         # Push to UI.
@@ -110,7 +103,7 @@ class PrimViewItem(QtWidgets.QTreeWidgetItem):
         return drawModeAttr and drawModeAttr.HasAuthoredValue()
 
     def _isComputedDrawModeInherited(self, parentDrawModeIsInherited=None):
-        """Returns true if the computed draw mode for this item is inherited
+        """Returns true if the computed draw mode for this item is inherited 
            from an authored "model:drawMode" value on an ancestor prim.
         """
         if PrimViewItem._HasAuthoredDrawMode(self.prim):
@@ -121,11 +114,11 @@ class PrimViewItem(QtWidgets.QTreeWidgetItem):
             if PrimViewItem._HasAuthoredDrawMode(parent):
                 return True
 
-            # Stop the upward traversal if we know whether the parent's draw
+            # Stop the upward traversal if we know whether the parent's draw 
             # mode is inherited.
             if parentDrawModeIsInherited is not None:
                 return parentDrawModeIsInherited
-
+            
             parent = parent.GetParent()
         return False
 
@@ -153,7 +146,7 @@ class PrimViewItem(QtWidgets.QTreeWidgetItem):
             else:
                 self.vis = self.computedVis = UsdGeom.Tokens.invisible
 
-        # If this is the invisible root item, initialize fallback values for
+        # If this is the invisible root item, initialize fallback values for 
         # the drawMode related parameters.
         if not parentIsPrimViewItem:
             self.computedDrawMode = ''
@@ -164,17 +157,17 @@ class PrimViewItem(QtWidgets.QTreeWidgetItem):
         # that don't support draw mode.
         if not self.supportsDrawMode:
             return
-
+        
         self.computedDrawMode = UsdGeom.ModelAPI(self.prim).ComputeModelDrawMode(
             parent.computedDrawMode) if parentIsPrimViewItem else ''
 
 
         parentDrawModeIsInherited = parent.isDrawModeInherited if \
                 parentIsPrimViewItem else None
-
+        
         self.isDrawModeInherited = self._isComputedDrawModeInherited(
                     parentDrawModeIsInherited)
-
+        
 
     def addChildren(self, children):
         """Adds children to the end of this item.  This is the only
@@ -208,7 +201,7 @@ class PrimViewItem(QtWidgets.QTreeWidgetItem):
 
     def _GetForegroundColor(self):
         self.push()
-
+        
         if self.isInstance:
             color = UIPrimTypeColors.INSTANCE
         elif self.hasArcs:
@@ -272,7 +265,7 @@ class PrimViewItem(QtWidgets.QTreeWidgetItem):
             return self.typeName
         else:
             return self._nameData(role)
-
+            
     def _isVisInherited(self):
         return self.imageable and self.active and \
                self.vis != UsdGeom.Tokens.invisible and \
@@ -336,11 +329,11 @@ class PrimViewItem(QtWidgets.QTreeWidgetItem):
         return self.computedVis
 
     @staticmethod
-    def propagateDrawMode(item, primView, parentDrawMode='',
+    def propagateDrawMode(item, primView, parentDrawMode='', 
                           parentDrawModeIsInherited=None):
-        # If this item does not support draw mode, none of its descendants
+        # If this item does not support draw mode, none of its descendants 
         # can support it. Hence, stop recursion here.
-        #
+        # 
         # Call push() here to ensure that supportsDrawMode has been populated
         # for the item.
         item.push()
@@ -360,7 +353,7 @@ class PrimViewItem(QtWidgets.QTreeWidgetItem):
 
         # Traverse down to children to update their drawMode.
         for child in [item.child(i) for i in range(item.childCount())]:
-            PrimViewItem.propagateDrawMode(child, primView,
+            PrimViewItem.propagateDrawMode(child, primView, 
                     parentDrawMode=item.computedDrawMode,
                     parentDrawModeIsInherited=item.isDrawModeInherited)
 
