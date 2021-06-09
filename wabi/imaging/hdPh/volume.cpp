@@ -361,8 +361,7 @@ HdPh_VolumeShaderSharedPtr _ComputeMaterialShader(HdSceneDelegate *const sceneDe
     namedTextureHandles.push_back({textureName, textureType, nullptr, desc->fieldId.GetHash()});
   }
 
-  // const bool bindlessTextureEnabled = GlfContextCaps::GetInstance().bindlessTextureEnabled;
-  const bool bindlessTextureEnabled = true;
+  const bool bindlessTextureEnabled = GlfContextCaps::GetInstance().bindlessTextureEnabled;
 
   // Get buffer specs for textures (i.e., for
   // field sampling transforms and bindless texture handles).

@@ -323,11 +323,11 @@ bool HdPhSurfaceShader::CanAggregate(HdPhShaderCodeSharedPtr const &shaderA,
     return false;
   }
 
-  // if (!GlfContextCaps::GetInstance().bindlessTextureEnabled) {
-  // if (shaderA->ComputeTextureSourceHash() != shaderB->ComputeTextureSourceHash()) {
-  // return false;
-  // }
-  // }
+  if (!GlfContextCaps::GetInstance().bindlessTextureEnabled) {
+    if (shaderA->ComputeTextureSourceHash() != shaderB->ComputeTextureSourceHash()) {
+      return false;
+    }
+  }
 
   return true;
 }

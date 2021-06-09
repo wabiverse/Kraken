@@ -331,8 +331,7 @@ void HdPh_VolumeShader::UpdateTextureHandles(HdSceneDelegate *const sceneDelegat
     return;
   }
 
-  // const bool bindlessTextureEnabled = GlfContextCaps::GetInstance().bindlessTextureEnabled;
-  const bool bindlessTextureEnabled = true;
+  const bool bindlessTextureEnabled = GlfContextCaps::GetInstance().bindlessTextureEnabled;
 
   // Walk through the vector of named texture handles and field descriptors
   // simultaneously.

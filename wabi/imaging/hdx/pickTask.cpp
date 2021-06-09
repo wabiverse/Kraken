@@ -229,10 +229,10 @@ void HdxPickTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBit
   }
 
   // Make sure the GL context is at least OpenGL 2.0.
-  // if (GlfContextCaps::GetInstance().glVersion < 200) {
-  //     TF_RUNTIME_ERROR("framebuffer object not supported");
-  //     return;
-  // }
+  if (GlfContextCaps::GetInstance().glVersion < 200) {
+    TF_RUNTIME_ERROR("framebuffer object not supported");
+    return;
+  }
 
   // Uses _drawTarget and _drawTarget->GetSize() to determine whether
   // initialization is necessary.

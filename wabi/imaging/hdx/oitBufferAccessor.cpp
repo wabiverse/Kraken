@@ -55,9 +55,9 @@ bool HdxOitBufferAccessor::IsOitEnabled()
   if (!bool(TfGetEnvSetting(HDX_ENABLE_OIT)))
     return false;
 
-  // GlfContextCaps const &caps = GlfContextCaps::GetInstance();
-  // if (!caps.shaderStorageBufferEnabled)
-  //   return false;
+  GlfContextCaps const &caps = GlfContextCaps::GetInstance();
+  if (!caps.shaderStorageBufferEnabled)
+    return false;
 
   return true;
 }
