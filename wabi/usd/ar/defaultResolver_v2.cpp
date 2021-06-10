@@ -78,7 +78,7 @@ ArDefaultResolver::ArDefaultResolver()
 {
   std::vector<std::string> searchPath = *_SearchPath;
 
-  const std::string envPath = TfGetenv("PXR_AR_DEFAULT_SEARCH_PATH");
+  const std::string envPath = TfGetenv("WABI_AR_DEFAULT_SEARCH_PATH");
   if (!envPath.empty()) {
     const std::vector<std::string> envSearchPath = _ParseSearchPaths(envPath);
     searchPath.insert(searchPath.end(), envSearchPath.begin(), envSearchPath.end());

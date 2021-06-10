@@ -69,7 +69,7 @@ TF_REGISTRY_FUNCTION(TfType)
 
 TF_DEFINE_PRIVATE_TOKENS(_tokens, (extensions));
 
-TF_DEFINE_ENV_SETTING(PXR_AR_DISABLE_PLUGIN_RESOLVER,
+TF_DEFINE_ENV_SETTING(WABI_AR_DISABLE_PLUGIN_RESOLVER,
                       false,
                       "Disables plugin resolver implementation, falling back to default "
                       "supplied by Ar.");
@@ -113,7 +113,7 @@ std::vector<TfType> _GetAvailableResolvers()
 
   std::vector<TfType> sortedResolverTypes;
 
-  if (!TfGetEnvSetting(PXR_AR_DISABLE_PLUGIN_RESOLVER)) {
+  if (!TfGetEnvSetting(WABI_AR_DISABLE_PLUGIN_RESOLVER)) {
     std::set<TfType> resolverTypes;
     PlugRegistry::GetAllDerivedTypes(TfType::Find<ArResolver>(), &resolverTypes);
 
@@ -516,11 +516,11 @@ class _Resolver final : public ArResolver {
     const TfType defaultResolverType = TfType::Find<ArDefaultResolver>();
 
     std::vector<TfType> resolverTypes;
-    if (TfGetEnvSetting(PXR_AR_DISABLE_PLUGIN_RESOLVER)) {
+    if (TfGetEnvSetting(WABI_AR_DISABLE_PLUGIN_RESOLVER)) {
       TF_DEBUG(AR_RESOLVER_INIT)
           .Msg(
               "ArGetResolver(): Plugin asset resolver disabled via "
-              "PXR_AR_DISABLE_PLUGIN_RESOLVER.\n");
+              "WABI_AR_DISABLE_PLUGIN_RESOLVER.\n");
     }
     else if (!_preferredResolver->empty()) {
       const TfType resolverType = PlugRegistry::FindTypeByName(*_preferredResolver);

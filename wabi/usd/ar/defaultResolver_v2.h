@@ -68,7 +68,7 @@ WABI_NAMESPACE_BEGIN
 ///
 ///    - The currently-bound ArDefaultResolverContext for the calling thread
 ///    - ArDefaultResolver::SetDefaultSearchPath
-///    - The environment variable PXR_AR_DEFAULT_SEARCH_PATH. This is
+///    - The environment variable WABI_AR_DEFAULT_SEARCH_PATH. This is
 ///      expected to be a list of directories delimited by the platform's
 ///      standard path separator.
 ///
@@ -87,7 +87,7 @@ class ArDefaultResolver : public ArResolver {
   /// resolution. This must be called before the first call
   /// to \ref ArGetResolver.
   /// The specified paths will be searched *in addition to, and before*
-  /// paths specified via the environment variable PXR_AR_DEFAULT_SEARCH_PATH
+  /// paths specified via the environment variable WABI_AR_DEFAULT_SEARCH_PATH
   AR_API
   static void SetDefaultSearchPath(const std::vector<std::string> &searchPath);
 
