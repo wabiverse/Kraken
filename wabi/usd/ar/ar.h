@@ -31,7 +31,7 @@
 #ifndef WABI_USD_AR_AR_H
 #define WABI_USD_AR_AR_H
 
-#if WITH_PIXAR_AR_BETA
+#if defined(WITH_PIXAR_AR_BETA)
 #  define AR_VERSION 2
 #else
 #  define AR_VERSION 1
