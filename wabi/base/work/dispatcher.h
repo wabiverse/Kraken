@@ -160,10 +160,10 @@ class WorkDispatcher {
       }
     }
 
-    template<class Fn> void run(Fn &&fn)
-    {
-      spawn(*prepare_task(std::forward<Fn>(fn)), m_ctx);
-    }
+    // template<class Fn> void run(Fn &&fn)
+    // {
+    //   spawn(*prepare_task(std::forward<Fn>(fn)), m_ctx);
+    // }
 
     void ctx_wait()
     {

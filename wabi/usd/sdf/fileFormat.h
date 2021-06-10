@@ -58,7 +58,10 @@ SDF_DECLARE_HANDLES(SdfSpec);
 TF_DECLARE_WEAK_AND_REF_PTRS(SdfAbstractData);
 TF_DECLARE_WEAK_AND_REF_PTRS(SdfFileFormat);
 
-#define SDF_FILE_FORMAT_TOKENS ((TargetArg, "target"))
+/* clang-format off */
+#define SDF_FILE_FORMAT_TOKENS \
+  ((TargetArg, "target"))
+/* clang-format on */
 
 TF_DECLARE_PUBLIC_TOKENS(SdfFileFormatTokens, SDF_API, SDF_FILE_FORMAT_TOKENS);
 
@@ -144,6 +147,7 @@ class SdfFileFormat : public TfRefBase, public TfWeakBase {
   /// layers.
   SDF_API bool ShouldSkipAnonymousReload() const;
 
+#if AR_VERSION == 1
   /// Return true if layers produced by this file format are based
   /// on physical files on disk. If so, this file format requires
   /// layers to be serialized to and read from files on disk.
@@ -159,6 +163,7 @@ class SdfFileFormat : public TfRefBase, public TfWeakBase {
   /// \sa ArResolver::Resolve
   /// \sa ArResolver::FetchToLocalResolvedPath
   SDF_API bool LayersAreFileBased() const;
+#endif
 
   /// Returns true if anonymous layer identifiers should be passed to Read
   /// when a layer is opened or reloaded.
@@ -354,11 +359,13 @@ class SdfFileFormat : public TfRefBase, public TfWeakBase {
   SDF_API
   virtual bool _ShouldSkipAnonymousReload() const;
 
+#if AR_VERSION == 1
   /// File format subclasses may override this to specify whether
   /// their layers are backed by physical files on disk.
   /// Default implementation returns true.
   SDF_API
   virtual bool _LayersAreFileBased() const;
+#endif
 
   /// File format subclasses may override this to specify whether
   /// Read should be called when creating, opening, or reloading an anonymous

@@ -44,7 +44,12 @@
 
 WABI_NAMESPACE_BEGIN
 
-#define SDF_TEXT_FILE_FORMAT_TOKENS ((Id, "sdf"))((Version, "1.4.32"))((Target, "sdf"))
+/* clang-format off */
+#define SDF_TEXT_FILE_FORMAT_TOKENS \
+  ((Id, "sdf"))                     \
+  ((Version, "1.4.32"))             \
+  ((Target, "sdf"))
+/* clang-format on */
 
 TF_DECLARE_PUBLIC_TOKENS(SdfTextFileFormatTokens, SDF_API, SDF_TEXT_FILE_FORMAT_TOKENS);
 

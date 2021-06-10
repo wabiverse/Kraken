@@ -134,7 +134,7 @@ struct Sdf_PathNodeHandleImpl {
 
   Sdf_PathNodeHandleImpl &operator=(Sdf_PathNodeHandleImpl &&rhs) noexcept
   {
-    this_type(std::forward<Sdf_PathNodeHandleImpl>(rhs)).swap(*this);
+    this_type(std::move(rhs)).swap(*this);
     return *this;
   }
 

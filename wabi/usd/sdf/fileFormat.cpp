@@ -140,10 +140,12 @@ bool SdfFileFormat::ShouldSkipAnonymousReload() const
   return _ShouldSkipAnonymousReload();
 }
 
+#if AR_VERSION == 1
 bool SdfFileFormat::LayersAreFileBased() const
 {
   return _LayersAreFileBased();
 }
+#endif
 
 bool SdfFileFormat::ShouldReadAnonymousLayers() const
 {
@@ -299,10 +301,12 @@ bool SdfFileFormat::_ShouldSkipAnonymousReload() const
   return true;
 }
 
+#if AR_VERSION == 1
 bool SdfFileFormat::_LayersAreFileBased() const
 {
   return true;
 }
+#endif
 
 bool SdfFileFormat::_ShouldReadAnonymousLayers() const
 {
