@@ -416,48 +416,6 @@ class ArResolver {
   AR_API
   bool IsRepositoryPath(const std::string &path);
 
-  /// Fetch the asset identified by \p path to the filesystem location
-  /// specified by \p resolvedPath. \p resolvedPath is the resolved path
-  /// that results from calling Resolve or ResolveWithAssetInfo on
-  /// \p path.
-  ///
-  /// This method provides a way for consumers that expect assets
-  /// to exist as physical files on disk to retrieve data from
-  /// systems that store data in external data stores, e.g. databases,
-  /// etc.
-  ///
-  /// Returns true if the asset was successfully fetched to the specified
-  /// \p resolvedPath or if no fetching was required. If \p resolvedPath
-  /// is not a local path or the asset could not be fetched to that path,
-  /// returns false.
-  ///
-  /// The default implementation assumes no fetching is required and returns
-  /// true.
-  ///
-  /// \deprecated Planned for removal in favor or using OpenAsset to read
-  /// data instead of requiring assets to be fetched to disk.
-  AR_API
-  virtual bool FetchToLocalResolvedPath(const std::string &path, const std::string &resolvedPath);
-
-  /// Create path needed to write a file to the given \p path.
-  ///
-  /// For example:
-  /// - A filesystem-based resolver might create the directories specified
-  ///   in \p path.
-  /// - A database-based resolver might create a new table, or it might
-  ///   ignore this altogether.
-  ///
-  /// In practice, when writing a layer, CanWriteLayerToPath will be called
-  /// first to check if writing is permitted. If this returns true, then
-  /// CreatePathForLayer will be called before writing the layer out.
-  ///
-  /// Returns true on success, false otherwise.
-  ///
-  /// \deprecated Planned for removal in favor of making OpenAssetForWrite
-  /// responsible for creating any intemediate path that might be needed.
-  AR_API
-  virtual bool CreatePathForLayer(const std::string &path) = 0;
-
   /// Returns true if a file may be written to the given \p path, false
   /// otherwise.
   ///

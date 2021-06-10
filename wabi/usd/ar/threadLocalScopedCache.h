@@ -37,9 +37,8 @@
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/vt/value.h"
 
-#include <tbb/enumerable_thread_specific.h>
-
 #include <memory>
+#include <tbb/enumerable_thread_specific.h>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN

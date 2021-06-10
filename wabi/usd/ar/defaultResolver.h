@@ -46,6 +46,6 @@
 #  error Unhandled AR_VERSION
 #endif
 
-#undef WABI_INCLUDED_FROM_AR_DEFAULT_RESOLVER_H
+#undef PXR_INCLUDED_FROM_AR_DEFAULT_RESOLVER_H
 
 #endif

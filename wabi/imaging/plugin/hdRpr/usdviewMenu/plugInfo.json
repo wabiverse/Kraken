@@ -6,7 +6,7 @@
             "Info": {
                 "Types": {
                     "rprUsdviewMenu.RprPluginContainer": {
-                        "bases": ["pxr.Usdviewq.plugin.PluginContainer"],
+                        "bases": ["wabi.Usdviewq.plugin.PluginContainer"],
                         "displayName": "Usdview Radeon ProRender Plugin Menu"
                     }
                 }

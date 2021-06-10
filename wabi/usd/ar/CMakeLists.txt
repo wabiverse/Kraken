@@ -19,7 +19,7 @@ set(versionedPymoduleCPPFiles "")
 
 if (WITH_PIXAR_AR_BETA)
     add_definitions(-DWITH_PIXAR_AR_BETA)
-    list(APPEND versionedHeaders
+    list(APPEND versionedHeaders 
          defaultResolver_v2.h
          filesystemWritableAsset.h
          resolver_v2.h
@@ -48,7 +48,7 @@ if (WITH_PIXAR_AR_BETA)
          wrapResolverContext_v2.cpp
     )
 else()
-    list(APPEND versionedHeaders
+    list(APPEND versionedHeaders 
          defaultResolver_v1.h
          resolver_v1.h
          resolverContext_v1.h

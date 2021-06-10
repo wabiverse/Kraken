@@ -78,7 +78,7 @@ ArDefaultResolver::ArDefaultResolver()
 {
   std::vector<std::string> searchPath = *_SearchPath;
 
-  const std::string envPath = TfGetenv("wabi_AR_DEFAULT_SEARCH_PATH");
+  const std::string envPath = TfGetenv("PXR_AR_DEFAULT_SEARCH_PATH");
   if (!envPath.empty()) {
     const std::vector<std::string> envSearchPath = _ParseSearchPaths(envPath);
     searchPath.insert(searchPath.end(), envSearchPath.begin(), envSearchPath.end());
@@ -293,12 +293,6 @@ std::shared_ptr<ArWritableAsset> ArDefaultResolver::_OpenAssetForWrite(
 bool ArDefaultResolver::_IsContextDependentPath(const std::string &assetPath)
 {
   return IsSearchPath(assetPath);
-}
-
-bool ArDefaultResolver::CreatePathForLayer(const std::string &path)
-{
-  const std::string layerDir = TfGetPathName(path);
-  return layerDir.empty() || TfIsDir(layerDir) || TfMakeDirs(layerDir);
 }
 
 ArResolverContext ArDefaultResolver::_CreateDefaultContext()
