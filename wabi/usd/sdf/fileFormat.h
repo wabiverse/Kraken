@@ -33,6 +33,8 @@
 
 /// \file sdf/fileFormat.h
 
+#include "wabi/usd/ar/ar.h"
+
 #include "wabi/base/tf/declarePtrs.h"
 #include "wabi/base/tf/refBase.h"
 #include "wabi/base/tf/staticTokens.h"

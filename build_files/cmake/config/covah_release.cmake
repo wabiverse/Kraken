@@ -7,6 +7,7 @@ set(WITH_LICENSING           ON  CACHE BOOL "" FORCE)
 ########################################################################################### USD ######
 
 set(WITH_USD                 ON  CACHE BOOL "" FORCE)
+set(WITH_PIXAR_AR_BETA       OFF CACHE BOOL "" FORCE)
 
 ######################################################################################### HYDRA ######
 
