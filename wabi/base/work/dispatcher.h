@@ -142,7 +142,8 @@ class WorkDispatcher {
 
     _Dispatch()
         : task_group(),
-          m_ctx(tbb::task_group_context::bound, tbb::task_group_context::concurrent_wait)
+          m_ctx(tbb::task_group_context::isolated,
+                tbb::task_group_context::concurrent_wait | tbb::task_group_context::default_traits)
     {}
 
     ~_Dispatch()
