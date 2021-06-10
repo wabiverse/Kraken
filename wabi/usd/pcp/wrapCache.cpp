@@ -225,6 +225,7 @@ void wrapCache()
            &PcpCache::GetVariantFallbacks,
            return_value_policy<TfPyMapToDictionary>())
       .def("GetUsedLayers", &PcpCache::GetUsedLayers, return_value_policy<TfPySequenceToList>())
+      .def("GetUsedLayersRevision", &PcpCache::GetUsedLayersRevision)
       .def("IsPayloadIncluded", &PcpCache::IsPayloadIncluded)
       .def("RequestPayloads", &_RequestPayloads)
       .def("RequestLayerMuting",
@@ -241,6 +242,7 @@ void wrapCache()
           make_function(&PcpCache::GetFileFormatTarget, return_value_policy<return_by_value>()))
 
       .def("ComputeLayerStack", &_ComputeLayerStack)
+      .def("UsesLayerStack", &PcpCache::UsesLayerStack)
       .def("ComputePrimIndex", &_ComputePrimIndex)
       .def("FindPrimIndex", &_FindPrimIndex)
       .def("ComputePropertyIndex", &_ComputePropertyIndex)
