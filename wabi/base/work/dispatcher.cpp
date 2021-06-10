@@ -46,11 +46,6 @@ WorkDispatcher::~WorkDispatcher()
   Wait();
 }
 
-WorkDispatcher::_Dispatch &WorkDispatcher::GetRunner()
-{
-  return _dispatch;
-}
-
 void WorkDispatcher::Wait()
 {
   _dispatch.wait();

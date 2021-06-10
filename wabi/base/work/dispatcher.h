@@ -179,21 +179,12 @@ class WorkDispatcher {
 
     void ctx_cancel()
     {
-      if (!m_ctx.is_group_execution_cancelled()) {
-        m_ctx.cancel_group_execution();
-        cancel();
-      }
-      wait();
+      m_ctx.cancel_group_execution();
     }
 
    private:
     tbb::task_group_context m_ctx;
   };
-
- public:
-  /// Retrieve Runner, which can invoke a series of tasks
-  /// concurrently directly to this dispatcher.
-  WORK_API _Dispatch &GetRunner();
 
  private:
   // Helper function that removes errors from \p m and stores them in a new
