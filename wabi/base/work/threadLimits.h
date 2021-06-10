@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_BASE_WORK_THREAD_LIMITS_H
 #define WABI_BASE_WORK_THREAD_LIMITS_H
 
@@ -40,10 +33,13 @@ WABI_NAMESPACE_BEGIN
 
 /// Return the current concurrency limit, always >= 1.
 ///
-/// The initial value is determined by the WABI_WORK_THREAD_LIMIT env setting,
-/// which defaults to WorkGetPhysicalConcurrencyLimit(). If the env setting
-/// has been explicitly set to a non-zero value, it will always override any
-/// concurrency limit set via the API calls below.
+/// This value is determined by the underlying concurrency subsystem.  It may
+/// have been set by a third party, by a call to Work API below, or by Work
+/// itself if the WABI_WORK_THREAD_LIMIT env setting was set.  If the
+/// WABI_WORK_THREAD_LIMIT env setting has been explicitly set to a non-zero
+/// value, Work will attempt to configure the underlying concurrency subsystem
+/// to use the specified limit and will ignore concurrency limits set via the
+/// API calls below.
 ///
 /// Note that this can return a value larger than
 /// WorkGetPhysicalConcurrencyLimit() if WorkSetConcurrencyLimit() was called

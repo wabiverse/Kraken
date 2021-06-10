@@ -1,43 +1,36 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_BASE_VT_VALUE_H
 #define WABI_BASE_VT_VALUE_H
 
 #include "wabi/wabi.h"
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 // XXX: Include pyLock.h after pyObjWrapper.h to work around
 // Python include ordering issues.
 #  include "wabi/base/tf/pyObjWrapper.h"
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 #include "wabi/base/tf/pyLock.h"
 
@@ -130,9 +123,9 @@ template<class T> struct Vt_ValueStoredType {
 VT_VALUE_SET_STORED_TYPE(char const *, std::string);
 VT_VALUE_SET_STORED_TYPE(char *, std::string);
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 VT_VALUE_SET_STORED_TYPE(boost::python::object, TfPyObjWrapper);
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 #undef VT_VALUE_SET_STORED_TYPE
 
@@ -251,9 +244,9 @@ class VtValue {
     using _EqualFunc       = bool (*)(_Storage const &, _Storage const &);
     using _EqualPtrFunc    = bool (*)(_Storage const &, void const *);
     using _MakeMutableFunc = void (*)(_Storage &);
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     using _GetPyObjFunc = TfPyObjWrapper (*)(_Storage const &);
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
     using _StreamOutFunc           = std::ostream &(*)(_Storage const &, std::ostream &);
     using _GetTypeidFunc           = std::type_info const &(*)(_Storage const &);
     using _IsArrayValuedFunc       = bool (*)(_Storage const &);
@@ -280,9 +273,9 @@ class VtValue {
                         _EqualFunc equal,
                         _EqualPtrFunc equalPtr,
                         _MakeMutableFunc makeMutable,
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
                         _GetPyObjFunc getPyObj,
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
                         _StreamOutFunc streamOut,
                         _GetTypeidFunc getTypeid,
                         _IsArrayValuedFunc isArrayValued,
@@ -309,10 +302,10 @@ class VtValue {
           _equal(equal),
           _equalPtr(equalPtr),
           _makeMutable(makeMutable)
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
           ,
           _getPyObj(getPyObj)
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
           ,
           _streamOut(streamOut),
           _getTypeid(getTypeid),
@@ -360,12 +353,12 @@ class VtValue {
     {
       _makeMutable(storage);
     }
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     TfPyObjWrapper GetPyObj(_Storage const &storage) const
     {
       return _getPyObj(storage);
     }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
     std::ostream &StreamOut(_Storage const &storage, std::ostream &out) const
     {
       return _streamOut(storage, out);
@@ -426,9 +419,9 @@ class VtValue {
     _EqualFunc _equal;
     _EqualPtrFunc _equalPtr;
     _MakeMutableFunc _makeMutable;
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     _GetPyObjFunc _getPyObj;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
     _StreamOutFunc _streamOut;
     _GetTypeidFunc _getTypeid;
     _IsArrayValuedFunc _isArrayValued;
@@ -520,14 +513,14 @@ class VtValue {
       // comparison on the *proxied* type instead.
       return _TypedProxyEqualityImpl(a, b, 0);
     }
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     static TfPyObjWrapper GetPyObj(T const &obj)
     {
       ProxiedType const &p = VtGetProxiedObject(obj);
       TfPyLock lock;
       return boost::python::api::object(p);
     }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
     static std::ostream &StreamOut(T const &obj, std::ostream &out)
     {
       return VtStreamOut(VtGetProxiedObject(obj), out);
@@ -589,14 +582,14 @@ class VtValue {
       // comparison on the VtValue containing the *proxied* type instead.
       return _ErasedProxyEqualityImpl(a, b, 0);
     }
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     static TfPyObjWrapper GetPyObj(ErasedProxy const &obj)
     {
       VtValue const *val = VtGetErasedProxiedVtValue(obj);
       TfPyLock lock;
       return boost::python::api::object(*val);
     }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
     static std::ostream &StreamOut(ErasedProxy const &obj, std::ostream &out)
     {
@@ -667,9 +660,9 @@ class VtValue {
                     &This::_Equal,
                     &This::_EqualPtr,
                     &This::_MakeMutable,
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
                     &This::_GetPyObj,
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
                     &This::_StreamOut,
 
                     &This::_GetTypeid,
@@ -758,12 +751,12 @@ class VtValue {
       GetMutableObj(storage);
     }
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     static TfPyObjWrapper _GetPyObj(_Storage const &storage)
     {
       return ProxyHelper::GetPyObj(GetObj(storage));
     }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
     static std::ostream &_StreamOut(_Storage const &storage, std::ostream &out)
     {
@@ -1528,7 +1521,7 @@ class VtValue {
     return VtValue(To(val.UncheckedGet<From>()));
   }
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   // This grants friend access to a function in the wrapper file for this
   // class.  This lets the wrapper reach down into a value to get a
   // boost::python wrapped object corresponding to the held type.  This
@@ -1536,7 +1529,7 @@ class VtValue {
   friend TfPyObjWrapper Vt_GetPythonObjectFromHeldValue(VtValue const &self);
 
   VT_API TfPyObjWrapper _GetPythonObject() const;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
   _Storage _storage;
   TfPointerAndBits<const _TypeInfo> _info;

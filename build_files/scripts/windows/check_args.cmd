@@ -31,7 +31,7 @@ if NOT "%1" == "" (
 	) else if "%1" == "headless" (
 		set TARGET=Headless
 		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%COVAH_DIR%\build_files\cmake\config\covah_headless.cmake"
-	) else if "%1" == "pxr" (
+	) else if "%1" == "wabi" (
 		set TARGET=Pxr
 		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%COVAH_DIR%\build_files\cmake\config\wabi_module.cmake"
 	) else if "%1" == "clang" (

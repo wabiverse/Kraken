@@ -1,33 +1,26 @@
 #!/wabipythonsubst
-# 
-#  Copyright 2021 Pixar. All Rights Reserved.
-# 
-#  Portions of this file are derived from original work by Pixar
-#  distributed with Universal Scene Description, a project of the
-#  Academy Software Foundation (ASWF). https://www.aswf.io/
-# 
-#  Licensed under the Apache License, Version 2.0 (the "Apache License")
-#  with the following modification; you may not use this file except in
-#  compliance with the Apache License and the following modification:
-#  Section 6. Trademarks. is deleted and replaced with:
-# 
-#  6. Trademarks. This License does not grant permission to use the trade
-#     names, trademarks, service marks, or product names of the Licensor
-#     and its affiliates, except as required to comply with Section 4(c)
-#     of the License and to reproduce the content of the NOTICE file.
 #
-#  You may obtain a copy of the Apache License at:
+# Copyright 2021 Pixar
 #
-#       http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "Apache License")
+# with the following modification; you may not use this file except in
+# compliance with the Apache License and the following modification to it:
+# Section 6. Trademarks. is deleted and replaced with:
 #
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the Apache License with the above modification is
-#  distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-#  ANY KIND, either express or implied. See the Apache License for the
-#  specific language governing permissions and limitations under the
-#  Apache License.
+# 6. Trademarks. This License does not grant permission to use the trade
+#    names, trademarks, service marks, or product names of the Licensor
+#    and its affiliates, except as required to comply with Section 4(c) of
+#    the License and to reproduce the content of the NOTICE file.
 #
-#  Modifications copyright (C) 2020-2021 Wabi.
+# You may obtain a copy of the Apache License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the Apache License with the above modification is
+# distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the Apache License for the specific
+# language governing permissions and limitations under the Apache License.
 #
 
 from wabi import Tf, Sdf, Sdr, Usd, UsdShade, Vt
@@ -47,12 +40,13 @@ class SchemaDefiningMiscConstants(ConstantsGroup):
     SINGLE_APPLY_SCHEMA = "singleApply"
     TYPED_SCHEMA = "Typed"
     USD_SOURCE_TYPE = "USD"
+    NodeDefAPI = "NodeDefAPI"
 
 class PropertyDefiningKeys(ConstantsGroup):
     USD_VARIABILITY = "usdVariability"
+    USD_SUPPRESS_PROPERTY = "usdSuppressProperty"
     SDF_VARIABILITY_UNIFORM_STRING = "Uniform"
     CONNECTABILITY = "connectability"
-
 
 def _CreateAttrSpecFromNodeAttribute(primSpec, prop, usdSchemaNode, 
         isInput=True):
@@ -74,6 +68,12 @@ def _CreateAttrSpecFromNodeAttribute(primSpec, prop, usdSchemaNode,
             return
 
     propMetadata = prop.GetMetadata()
+    
+    # Early out if the property should be suppressed from being translated to
+    # propertySpec
+    if (propMetadata.has_key(PropertyDefiningKeys.USD_SUPPRESS_PROPERTY) and
+            propMetadata[PropertyDefiningKeys.USD_SUPPRESS_PROPERTY] == "True"):
+        return
 
     if not Sdf.Path.IsValidNamespacedIdentifier(propName):
         Tf.RaiseRuntimeError("Property name (%s) for schema (%s) is an " \
@@ -148,8 +148,12 @@ def UpdateSchemaWithSdrNode(schemaLayer, sdrNode):
           system. This gets appended to the domain name to register with TfType.
 
     Property Level Metadata:
-        USD_VARIABILITY = A property level metadata, which specified a specific
-        sdrNodeProperty should its usd variability set to Uniform or Varying.
+        - USD_VARIABILITY:  A property level metadata, which specified a 
+          specific sdrNodeProperty should its usd variability set to Uniform or 
+          Varying.
+        - USD_SUPPRESS_PROPERTY: A property level metadata, which determines if the
+          property should be suppressed from translation from args to property
+          spec.
     """
     # Early exit on invalid parameters
     if not schemaLayer:
@@ -261,7 +265,7 @@ def UpdateSchemaWithSdrNode(schemaLayer, sdrNode):
         reg = Sdr.Registry()
         usdSchemaNode = reg.GetNodeByIdentifierAndType(usdSchemaClass, 
                 SchemaDefiningMiscConstants.USD_SOURCE_TYPE)
-    
+
     # Create attrSpecs from input parameters
     for propName in sdrNode.GetInputNames():
         _CreateAttrSpecFromNodeAttribute(primSpec, sdrNode.GetInput(propName), 
@@ -271,5 +275,16 @@ def UpdateSchemaWithSdrNode(schemaLayer, sdrNode):
     for propName in sdrNode.GetOutputNames():
         _CreateAttrSpecFromNodeAttribute(primSpec, sdrNode.GetOutput(propName), 
                 usdSchemaNode, False)
+
+    # Extra attrSpec
+    schemaBasePrimDefinition = \
+        Usd.SchemaRegistry().FindConcretePrimDefinition(schemaBase)
+    if schemaBasePrimDefinition and \
+        SchemaDefiningMiscConstants.NodeDefAPI in \
+        schemaBasePrimDefinition.GetAppliedAPISchemas():
+            infoIdAttrSpec = Sdf.AttributeSpec(primSpec, \
+                    UsdShade.Tokens.infoId, Sdf.ValueTypeNames.Token, \
+                    Sdf.VariabilityUniform)
+            infoIdAttrSpec.default = sdrNode.GetIdentifier()
 
     schemaLayer.Save()

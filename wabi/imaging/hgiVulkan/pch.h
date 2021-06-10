@@ -123,6 +123,6 @@
 #include <unordered_set>
 #include <utility>
 #include <vector>
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include "wabi/base/tf/pySafePython.h"
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON

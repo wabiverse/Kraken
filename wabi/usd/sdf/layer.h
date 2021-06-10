@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_USD_SDF_LAYER_H
 #define WABI_USD_SDF_LAYER_H
 
@@ -1107,6 +1100,10 @@ class SdfLayer : public TfRefBase, public TfWeakBase {
   ///
   /// Edits through the proxy changes the sublayers.  If this layer does
   /// not have any sublayers the proxy is empty.
+  ///
+  /// Sub-layer paths are asset paths, and thus must contain valid asset path
+  /// characters (UTF-8 without C0 and C1 controls).  See SdfAssetPath for
+  /// more details.
   SDF_API
   SdfSubLayerProxy GetSubLayerPaths() const;
 
@@ -1467,6 +1464,17 @@ class SdfLayer : public TfRefBase, public TfWeakBase {
   static SdfLayerRefPtr _OpenLayerAndUnlockRegistry(Lock &lock,
                                                     const _FindOrOpenLayerInfo &info,
                                                     bool metadataOnly);
+
+  // Helper function for finding a layer with \p identifier and \p args.
+  // \p lock must be unlocked initially and will be locked by this
+  // function when needed. See docs for \p retryAsWriter argument on
+  // _TryToFindLayer for details on the final state of the lock when
+  // this function returns.
+  template<class ScopedLock>
+  static SdfLayerRefPtr _Find(const std::string &identifier,
+                              const FileFormatArguments &args,
+                              ScopedLock &lock,
+                              bool retryAsWriter);
 
   // Helper function to try to find the layer with \p identifier and
   // pre-resolved path \p resolvedPath in the registry.  Caller must hold

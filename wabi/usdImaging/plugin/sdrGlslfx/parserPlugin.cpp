@@ -28,28 +28,40 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
+
 #include "wabi/usdImaging/plugin/sdrGlslfx/parserPlugin.h"
+
+#include "wabi/base/vt/array.h"
 
 #include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/matrix4f.h"
 #include "wabi/base/gf/vec2f.h"
 #include "wabi/base/gf/vec3f.h"
+
 #include "wabi/base/tf/staticTokens.h"
-#include "wabi/base/vt/array.h"
-#include "wabi/imaging/hio/glslfx.h"
+
 #include "wabi/usd/ar/resolver.h"
+
 #include "wabi/usd/ndr/nodeDiscoveryResult.h"
+
 #include "wabi/usd/sdr/shaderNode.h"
 #include "wabi/usd/sdr/shaderProperty.h"
+
+#include "wabi/imaging/hio/glslfx.h"
 
 WABI_NAMESPACE_BEGIN
 
 NDR_REGISTER_PARSER_PLUGIN(SdrGlslfxParserPlugin);
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
+/* clang-format off */
+TF_DEFINE_PRIVATE_TOKENS(
+  _tokens,
 
-                         // Discovery and source type
-                         ((discoveryType, "glslfx"))((sourceType, "glslfx")));
+  // Discovery and source type
+  ((discoveryType, "glslfx"))
+  ((sourceType, "glslfx"))
+);
+/* clang-format on */
 
 const NdrTokenVec &SdrGlslfxParserPlugin::GetDiscoveryTypes() const
 {
@@ -107,6 +119,8 @@ static VtValue ConvertToSdrCompatibleValueAndType(VtValue any, size_t *arraySize
     else if (anyVec.size() == 1) {
       if (anyVec[0].IsHolding<double>()) {
         // Sdr has no doubles, converting them to floats
+        *sdrType = SdrPropertyTypes->Float;
+        *sdrType = SdrPropertyTypes->Float;
         *sdrType = SdrPropertyTypes->Float;
         return VtValue((float)anyVec[0].UncheckedGet<double>());
       }
@@ -177,6 +191,8 @@ static VtValue ConvertToSdrCompatibleValueAndType(VtValue any, size_t *arraySize
   else if (any.IsHolding<double>()) {
     // Sdr has no doubles, converting them to floats
     *sdrType = SdrPropertyTypes->Float;
+    *sdrType = SdrPropertyTypes->Float;
+    *sdrType = SdrPropertyTypes->Float;
     return VtValue((float)any.UncheckedGet<double>());
   }
   else if (any.IsHolding<float>()) {
@@ -201,6 +217,9 @@ NdrNodeUniquePtr SdrGlslfxParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
   std::unique_ptr<HioGlslfx> glslfx;
 
   if (!discoveryResult.uri.empty()) {
+#if AR_VERSION == 1
+    // Get the resolved URI to a location that can be read
+    // Get the resolved URI to a location that can be read
     // Get the resolved URI to a location that can be read
     // by the glslfx parser.
     bool localFetchSuccessful = ArGetResolver().FetchToLocalResolvedPath(
@@ -214,12 +233,13 @@ NdrNodeUniquePtr SdrGlslfxParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
           discoveryResult.uri.c_str());
       return NdrParserPlugin::GetInvalidNode(discoveryResult);
     }
+#endif
 
-    glslfx.reset(new HioGlslfx(discoveryResult.resolvedUri));
+    glslfx = std::make_unique<HioGlslfx>(discoveryResult.resolvedUri);
   }
   else if (!discoveryResult.sourceCode.empty()) {
     std::istringstream sourceCodeStream(discoveryResult.sourceCode);
-    glslfx.reset(new HioGlslfx(sourceCodeStream));
+    glslfx = std::make_unique<HioGlslfx>(sourceCodeStream);
   }
   else {
     TF_WARN(
@@ -250,28 +270,29 @@ NdrNodeUniquePtr SdrGlslfxParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
     NdrTokenMap hints;
     NdrOptionVec options;
     NdrTokenMap localMetadata;
-    nodeProperties.emplace_back(SdrShaderPropertyUniquePtr(new SdrShaderProperty(
-        TfToken(p.name), sdrType, defaultValue, false, arraySize, localMetadata, hints, options)));
+    nodeProperties.push_back(std::make_unique<SdrShaderProperty>(
+        TfToken(p.name), sdrType, defaultValue, false, arraySize, localMetadata, hints, options));
   }
 
   HioGlslfxConfig::Textures textures = glslfx->GetTextures();
   for (HioGlslfxConfig::Texture const &t : textures) {
 
-    size_t arraySize     = 0;
-    TfToken sdrType      = SdrPropertyTypes->Color;
+    size_t arraySize = 0;
+    TfToken sdrType;
     VtValue defaultValue = ConvertToSdrCompatibleValueAndType(
         t.defaultValue, &arraySize, &sdrType);
 
     // Check for a default value, or fallback to all black.
     if (defaultValue.IsEmpty()) {
+      sdrType      = SdrPropertyTypes->Color;
       defaultValue = VtValue(GfVec3f(0.0, 0.0, 0.0));
     }
 
     NdrTokenMap hints;
     NdrOptionVec options;
     NdrTokenMap localMetadata;
-    nodeProperties.emplace_back(SdrShaderPropertyUniquePtr(new SdrShaderProperty(
-        TfToken(t.name), sdrType, defaultValue, false, arraySize, localMetadata, hints, options)));
+    nodeProperties.push_back(std::make_unique<SdrShaderProperty>(
+        TfToken(t.name), sdrType, defaultValue, false, arraySize, localMetadata, hints, options));
   }
 
   NdrTokenMap metadata = discoveryResult.metadata;
@@ -290,17 +311,17 @@ NdrNodeUniquePtr SdrGlslfxParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
   // XXX: Add support for reading metadata from glslfx and converting
   //      to node metadata
 
-  return NdrNodeUniquePtr(new SdrShaderNode(discoveryResult.identifier,
-                                            discoveryResult.version,
-                                            discoveryResult.name,
-                                            discoveryResult.family,
-                                            _tokens->sourceType,
-                                            _tokens->sourceType,
-                                            discoveryResult.resolvedUri,
-                                            discoveryResult.resolvedUri,
-                                            std::move(nodeProperties),
-                                            metadata,
-                                            discoveryResult.sourceCode));
+  return std::make_unique<SdrShaderNode>(discoveryResult.identifier,
+                                         discoveryResult.version,
+                                         discoveryResult.name,
+                                         discoveryResult.family,
+                                         _tokens->sourceType,
+                                         _tokens->sourceType,
+                                         discoveryResult.resolvedUri,
+                                         discoveryResult.resolvedUri,
+                                         std::move(nodeProperties),
+                                         metadata,
+                                         discoveryResult.sourceCode);
 }
 
 WABI_NAMESPACE_END

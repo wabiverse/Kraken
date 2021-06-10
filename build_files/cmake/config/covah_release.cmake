@@ -8,6 +8,7 @@ set(WITH_LICENSING           ON  CACHE BOOL "" FORCE)
 
 set(WITH_USD                 ON  CACHE BOOL "" FORCE)
 set(WITH_PIXAR_AR_BETA       ON  CACHE BOOL "" FORCE)
+set(WITH_SAFETY_OVER_SPEED   ON  CACHE BOOL "" FORCE)
 
 ######################################################################################### HYDRA ######
 
@@ -35,6 +36,7 @@ set(WITH_IMAGE_TIFF          ON  CACHE BOOL "" FORCE)
 
 ######################################################################################## PYTHON ######
 
+set(WITH_PYTHON              ON  CACHE BOOL "" FORCE)
 set(WITH_PYTHON_PIXAR        OFF CACHE BOOL "" FORCE)
 set(WITH_PYTHON_INSTALL      ON  CACHE BOOL "" FORCE)
 

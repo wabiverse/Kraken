@@ -50,9 +50,9 @@ class Plug_RegistrationMetadata {
   enum Type {
     UnknownType,
     LibraryType,
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     PythonType,
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
     ResourceType
   };
 

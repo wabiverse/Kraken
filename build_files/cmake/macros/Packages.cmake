@@ -352,7 +352,11 @@ if(WIN32)
     "${LIBDIR}/tbb/lib/tbbmalloc_proxy.lib"
   )
 elseif(UNIX)
+  # Enable TBBs Ability to wait for the completion
+  # of worker threads.
   find_package(TBB REQUIRED COMPONENTS tbb)
+  add_definitions(-DTBB_PREVIEW_WAITING_FOR_WORKERS=1)
+  add_definitions(-DTBB_PREVIEW_ISOLATED_TASK_GROUP=1)
 endif()
 
 # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx math xxxxx

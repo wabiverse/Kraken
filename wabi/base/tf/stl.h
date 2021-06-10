@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_BASE_TF_STL_H
 #define WABI_BASE_TF_STL_H
 
@@ -392,20 +385,22 @@ static inline ForwardIterator TfFindBoundary(ForwardIterator first,
 /// \ingroup group_tf_Stl
 template<size_t N> class TfGet {
  public:
-  // template <class PairOrTuple>
-  // using return_type = typename std::tuple_element<N, PairOrTuple>::type;
+  template<class PairOrTuple>
+  using return_type = typename std::tuple_element<N, PairOrTuple>::type;
 
-  template<class PairOrTuple> constexpr auto &operator()(PairOrTuple &p) const
+  template<class PairOrTuple> constexpr return_type<PairOrTuple> &operator()(PairOrTuple &p) const
   {
     return std::get<N>(p);
   }
 
-  template<class PairOrTuple> constexpr const auto &operator()(const PairOrTuple &p) const
+  template<class PairOrTuple>
+  constexpr const return_type<PairOrTuple> &operator()(const PairOrTuple &p) const
   {
     return std::get<N>(p);
   }
 
-  template<class PairOrTuple> constexpr auto &&operator()(PairOrTuple &&p) const
+  template<class PairOrTuple>
+  constexpr return_type<PairOrTuple> &&operator()(PairOrTuple &&p) const
   {
     return std::get<N>(std::move(p));
   }

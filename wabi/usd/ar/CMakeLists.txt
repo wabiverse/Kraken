@@ -18,7 +18,6 @@ set(versionedPymoduleCPPFiles "")
 
 
 if (WITH_PIXAR_AR_BETA)
-    add_definitions(-DWITH_PIXAR_AR_BETA)
     list(APPEND versionedHeaders 
          defaultResolver_v2.h
          filesystemWritableAsset.h
@@ -32,9 +31,6 @@ if (WITH_PIXAR_AR_BETA)
          resolver_v2.cpp
          resolverContext_v2.cpp
          writableAsset.cpp
-    )
-    list(APPEND versionedPrivateHeaders
-         testenv/TestArURIResolver_plugin.h
     )
     list(APPEND versionedPythonHeaders
          pyResolverContext_v2.h

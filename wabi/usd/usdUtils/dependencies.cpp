@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 ///
 /// \file usdUtils/dependencies.cpp
 #include "wabi/usd/usdUtils/dependencies.h"
@@ -569,12 +562,17 @@ class _AssetLocalizer {
 
     std::string rootFilePath = resolver.Resolve(assetPath.GetAssetPath());
 
-    // Ensure that the resolved path is not empty and can be localized to
-    // a physical location on disk.
-    if (rootFilePath.empty() ||
-        !ArGetResolver().FetchToLocalResolvedPath(assetPath.GetAssetPath(), rootFilePath)) {
+    // Ensure that the resolved path is not empty.
+    if (rootFilePath.empty()) {
       return;
     }
+
+#if AR_VERSION == 1
+    // ... and can be localized to a physical location on disk.
+    if (!ArGetResolver().FetchToLocalResolvedPath(assetPath.GetAssetPath(), rootFilePath)) {
+      return;
+    }
+#endif
 
     const auto remapAssetPathFunc = [&layerDependenciesMap,
                                      &dirRemapper,
@@ -667,6 +665,7 @@ class _AssetLocalizer {
           continue;
         }
 
+#if AR_VERSION == 1
         // Ensure that the resolved path can be fetched to a physical
         // location on disk.
         if (!ArGetResolver().FetchToLocalResolvedPath(refAssetPath, resolvedRefFilePath)) {
@@ -677,6 +676,7 @@ class _AssetLocalizer {
               resolvedRefFilePath.c_str());
           continue;
         }
+#endif
 
         // Check if this dependency must skipped.
         if (std::find(dependenciesToSkip.begin(), dependenciesToSkip.end(), resolvedRefFilePath) !=
@@ -857,15 +857,18 @@ std::string _AssetLocalizer::_RemapAssetPath(const std::string &refPath,
     const std::string refAssetPath = SdfComputeAssetPathRelativeToLayer(layer, refPath);
     const std::string refFilePath  = resolver.Resolve(refAssetPath);
 
+    bool resolveOk = !refFilePath.empty();
+#if AR_VERSION == 1
     // Ensure that the resolved path can be fetched to a physical
     // location on disk.
-    if (!refFilePath.empty() &&
-        ArGetResolver().FetchToLocalResolvedPath(refAssetPath, refFilePath)) {
+    resolveOk = resolveOk && resolver.FetchToLocalResolvedPath(refAssetPath, refFilePath);
+#endif
+
+    if (resolveOk) {
       result = refFilePath;
     }
     else {
-      // Failed to resolve or fetch-to-local asset path, hence retain the
-      // reference as is.
+      // Failed to resolve, hence retain the reference as is.
       result = refAssetPath;
     }
   }

@@ -43,9 +43,9 @@
 #include "wabi/base/tf/getenv.h"
 #include "wabi/base/tf/instantiateSingleton.h"
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include "wabi/base/tf/pyUtils.h"
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 #include "wabi/base/tf/staticData.h"
 #include "wabi/base/tf/stringUtils.h"
@@ -82,26 +82,26 @@ static void _OutputGlobalReport()
 
 TraceCollector::TraceCollector()
     : _label("TraceRegistry global collector")
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
       ,
       _isPythonTracingEnabled(false)
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 {
   const bool globalTracing = TfGetenvBool("WABI_ENABLE_GLOBAL_TRACE", false);
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   const bool globalPyTracing = TfGetenvBool("WABI_ENABLE_GLOBAL_PY_TRACE", false);
   if (globalPyTracing || globalTracing) {
 #else
   if (globalTracing) {
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
     atexit(_OutputGlobalReport);
     SetEnabled(true);
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     if (globalPyTracing)
       SetPythonTracingEnabled(true);
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
   }
 }
 
@@ -213,7 +213,7 @@ void TraceCollector::CreateCollection()
 ////////////////////////////////////////////////////////////////////////
 // Python tracing support.
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 
 static inline TraceCollector::Key _MakePythonScopeKey(const TfPyTraceInfo &info)
 {
@@ -262,7 +262,7 @@ void TraceCollector::SetPythonTracingEnabled(bool enabled)
   }
 }
 
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 ////////////////////////////////////////////////////////////////////////
 // _PerThreadData methods
@@ -362,7 +362,7 @@ void TraceCollector::_PerThreadData::CounterValue(const Key &key,
   events->EmplaceBack(TraceEvent::CounterValue, events->CacheKey(key), value, cat);
 }
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 
 void TraceCollector::_PerThreadData::PushPyScope(const Key &key, bool enabled)
 {
@@ -389,7 +389,7 @@ void TraceCollector::_PerThreadData::PopPyScope(bool enabled)
   }
 }
 
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 std::unique_ptr<TraceCollection::EventList> TraceCollector::_PerThreadData::GetCollectionData()
 {

@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
 #include "wabi/base/tf/envSetting.h"
 #include "wabi/base/arch/env.h"
@@ -43,9 +36,9 @@
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/wabi.h"
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include "wabi/base/tf/pyUtils.h"
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 #include <boost/variant/get.hpp>
 #include <boost/variant/variant.hpp>
@@ -67,13 +60,13 @@ class Tf_EnvSettingRegistry {
 
   Tf_EnvSettingRegistry()
   {
-    string fileName = TfGetenv("PIXAR_TF_ENV_SETTING_FILE", "");
+    string fileName = TfGetenv("WABI_TF_ENV_SETTING_FILE", "");
     if (FILE *fp = ArchOpenFile(fileName.c_str(), "r")) {
       char buffer[1024];
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
       bool syncPython = TfPyIsInitialized();
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
       int lineNo     = 0;
       auto emitError = [&fileName, &lineNo](char const *fmt, ...)
@@ -81,7 +74,7 @@ class Tf_EnvSettingRegistry {
         va_list ap;
         va_start(ap, fmt);
         fprintf(stderr,
-                "File '%s' (From PIXAR_TF_ENV_SETTING_FILE) "
+                "File '%s' (From WABI_TF_ENV_SETTING_FILE) "
                 "line %d: %s.\n",
                 fileName.c_str(),
                 lineNo,
@@ -116,11 +109,11 @@ class Tf_EnvSettingRegistry {
         }
 
         ArchSetEnv(key, value, /*overwrite=*/false);
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
         if (syncPython && ArchGetEnv(key) == value) {
           TfPySetenv(key, value);
         }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
       }
 
       fclose(fp);

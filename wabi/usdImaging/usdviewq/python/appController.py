@@ -2219,7 +2219,7 @@ class AppController(QtCore.QObject):
 
     @classmethod
     def _outputBaseDirectory(cls):
-        if os.getenv('PXR_USDVIEW_SUPPRESS_STATE_SAVING', "0") == "1":
+        if os.getenv('WABI_USDVIEW_SUPPRESS_STATE_SAVING', "0") == "1":
             return None
 
         homeDirRoot = os.getenv('HOME') or os.path.expanduser('~')

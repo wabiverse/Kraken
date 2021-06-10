@@ -234,7 +234,7 @@ static list __getslice__(const GfVec4f &self, slice indices)
     //
     bounds = indices.get_indicies<>(begin, end);
   }
-  catch (std::invalid_argument) {
+  catch (std::invalid_argument &) {
     return result;
   }
 
@@ -299,7 +299,7 @@ static void __setslice__(GfVec4f &self, slice indices, object values)
     //
     bounds = indices.get_indicies<>(begin, end);
   }
-  catch (std::invalid_argument) {
+  catch (std::invalid_argument &) {
     sliceLength = 0;
   }
 

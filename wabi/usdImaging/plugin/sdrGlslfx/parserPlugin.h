@@ -31,9 +31,10 @@
 #ifndef SDRGLSLFX_PARSER_PLUGIN_H
 #define SDRGLSLFX_PARSER_PLUGIN_H
 
+#include "wabi/wabi.h"
+
 #include "wabi/usd/ndr/declare.h"
 #include "wabi/usd/ndr/parserPlugin.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

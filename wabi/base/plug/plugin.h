@@ -74,10 +74,10 @@ class PlugPlugin : public TfRefBase, public TfWeakBase {
   /// plugins always report as loaded.
   PLUG_API bool IsLoaded() const;
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   /// Returns \c true if the plugin is a python module.
   PLUG_API bool IsPythonModule() const;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
   /// Returns \c true if the plugin is resource-only.
   PLUG_API bool IsResource() const;
@@ -127,9 +127,9 @@ class PlugPlugin : public TfRefBase, public TfWeakBase {
  private:
   enum _Type {
     LibraryType,
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     PythonType,
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
     ResourceType
   };
 
@@ -162,11 +162,11 @@ class PlugPlugin : public TfRefBase, public TfWeakBase {
   static std::pair<PlugPluginPtr, bool> _NewDynamicLibraryPlugin(
       const Plug_RegistrationMetadata &metadata);
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   PLUG_LOCAL
   static std::pair<PlugPluginPtr, bool> _NewPythonModulePlugin(
       const Plug_RegistrationMetadata &metadata);
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
   PLUG_LOCAL
   static std::pair<PlugPluginPtr, bool> _NewResourcePlugin(

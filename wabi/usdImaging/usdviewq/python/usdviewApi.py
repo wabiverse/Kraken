@@ -1,4 +1,4 @@
-#!/pxrpythonsubst
+#!/wabipythonsubst
 #
 # Copyright 2016 Pixar
 #

@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
 #include "wabi/wabi.h"
 
@@ -46,7 +39,7 @@
 #include "wabi/base/tf/typeInfoMap.h"
 #include "wabi/base/tf/typeNotice.h"
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 // XXX: This include is a hack to avoid build errors due to
 // incompatible macro definitions in pyport.h on macOS.
 #  include "wabi/base/tf/cxxCast.h"
@@ -55,7 +48,7 @@
 #  include "wabi/base/tf/pyObjectFinder.h"
 #  include "wabi/base/tf/pyUtils.h"
 #  include <locale>
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
@@ -87,10 +80,10 @@ using ScopedLock = tbb::spin_rw_mutex::scoped_lock;
 TfType::FactoryBase::~FactoryBase()
 {}
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 TfType::PyPolymorphicBase::~PyPolymorphicBase()
 {}
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 // Stored data for a TfType.
 // A unique instance of _TypeInfo is allocated for every type declared.
@@ -115,12 +108,12 @@ struct TfType::_TypeInfo : boost::noncopyable {
   // The size returned by sizeof(type).
   size_t sizeofType;
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   // Python class handle.
   // We use handle<> rather than boost::python::object in case Python
   // has not yet been initialized.
   boost::python::handle<> pyClass;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
   // Direct base types.
   TypeVector baseTypes;
@@ -160,11 +153,11 @@ struct TfType::_TypeInfo : boost::noncopyable {
   // Python class object.
   inline bool IsDefined()
   {
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     return typeInfo.load() != nullptr || pyClass.get();
 #else
     return typeInfo.load() != nullptr;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
   }
 
   // Caller must hold a write lock on mutex.
@@ -213,7 +206,7 @@ struct TfType::_TypeInfo : boost::noncopyable {
   {}
 };
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 // Comparison for boost::python::handle.
 struct Tf_PyHandleLess {
   bool operator()(const boost::python::handle<> &lhs, const boost::python::handle<> &rhs) const
@@ -221,7 +214,7 @@ struct Tf_PyHandleLess {
     return lhs.get() < rhs.get();
   }
 };
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 // Registry for _TypeInfos.
 //
@@ -322,7 +315,7 @@ class Tf_TypeRegistry : boost::noncopyable {
     _typeInfoMap.Set(typeInfo, info);
   }
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   void SetPythonClass(TfType::_TypeInfo *info, const boost::python::object &classObj)
   {
     // Hold a reference to this PyObject in our map.
@@ -336,7 +329,7 @@ class Tf_TypeRegistry : boost::noncopyable {
       info->sizeofType = TfSizeofType<boost::python::object>::value;
     }
   }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
   TfType::_TypeInfo *GetUnknownType() const
   {
@@ -361,14 +354,14 @@ class Tf_TypeRegistry : boost::noncopyable {
     return info ? *info : nullptr;
   }
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   TfType::_TypeInfo *FindByPythonClass(const boost::python::object &classObj) const
   {
     boost::python::handle<> handle(boost::python::borrowed(classObj.ptr()));
     auto it = _pyClassMap.find(handle);
     return it != _pyClassMap.end() ? it->second : nullptr;
   }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
  private:
   Tf_TypeRegistry();
@@ -388,11 +381,11 @@ class Tf_TypeRegistry : boost::noncopyable {
   // XXX: change this to regular hash table?
   TfTypeInfoMap<TfType::_TypeInfo *> _typeInfoMap;
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   // Map of python class handles to _TypeInfo*.
   typedef map<boost::python::handle<>, TfType::_TypeInfo *, Tf_PyHandleLess> PyClassMap;
   PyClassMap _pyClassMap;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
   // _TypeInfo for Unknown type
   TfType::_TypeInfo *_unknownTypeInfo;
@@ -566,7 +559,7 @@ TfType const &TfType::_FindByTypeid(const std::type_info &typeInfo)
   return FindByName(GetCanonicalTypeName(typeInfo));
 }
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 TfType const &TfType::FindByPythonClass(const TfPyObjWrapper &classObj)
 {
   const auto &r = Tf_TypeRegistry::GetInstance();
@@ -577,7 +570,7 @@ TfType const &TfType::FindByPythonClass(const TfPyObjWrapper &classObj)
 
   return info ? info->canonicalTfType : GetUnknownType();
 }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 const string &TfType::GetTypeName() const
 {
@@ -590,7 +583,7 @@ const std::type_info &TfType::GetTypeid() const
   return typeInfo ? *typeInfo : typeid(void);
 }
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 TfPyObjWrapper TfType::GetPythonClass() const
 {
   if (!TfPyIsInitialized())
@@ -601,7 +594,7 @@ TfPyObjWrapper TfType::GetPythonClass() const
     return TfPyObjWrapper(boost::python::object(_info->pyClass));
   return TfPyObjWrapper();
 }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 vector<string> TfType::GetAliases(TfType derivedType) const
 {
@@ -756,7 +749,7 @@ void TfType::GetAllAncestorTypes(vector<TfType> *result) const
   }
 }
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 TfType const &TfType::_FindImplPyPolymorphic(PyPolymorphicBase const *ptr)
 {
   using namespace boost::python;
@@ -770,7 +763,7 @@ TfType const &TfType::_FindImplPyPolymorphic(PyPolymorphicBase const *ptr)
   }
   return !ret.IsUnknown() ? ret.GetCanonicalType() : Find(typeid(*ptr));
 }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 bool TfType::_IsAImpl(TfType queryType) const
 {
@@ -932,7 +925,7 @@ errorOut:
   return t;
 }
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 void TfType::DefinePythonClass(const TfPyObjWrapper &classObj) const
 {
   if (IsUnknown() || IsRoot()) {
@@ -953,7 +946,7 @@ void TfType::DefinePythonClass(const TfPyObjWrapper &classObj) const
   }
   r.SetPythonClass(_info, classObj.Get());
 }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 void TfType::_DefineCppType(const std::type_info &typeInfo,
                             size_t sizeofType,

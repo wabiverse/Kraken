@@ -95,11 +95,11 @@ void PlugRegistry::_RegisterPlugin(const Plug_RegistrationMetadata &metadata,
     case Plug_RegistrationMetadata::LibraryType:
       newPlugin = PlugPlugin::_NewDynamicLibraryPlugin(metadata);
       break;
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     case Plug_RegistrationMetadata::PythonType:
       newPlugin = PlugPlugin::_NewPythonModulePlugin(metadata);
       break;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
     case Plug_RegistrationMetadata::ResourceType:
       newPlugin = PlugPlugin::_NewResourcePlugin(metadata);
       break;

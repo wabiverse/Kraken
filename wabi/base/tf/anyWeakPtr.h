@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_BASE_TF_ANY_WEAK_PTR_H
 #define WABI_BASE_TF_ANY_WEAK_PTR_H
 
@@ -41,10 +34,10 @@
 #include "wabi/base/tf/weakPtr.h"
 #include "wabi/wabi.h"
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include "wabi/base/tf/pyUtils.h"
 #  include <boost/python/object.hpp>
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 #include <boost/operators.hpp>
 
@@ -147,7 +140,7 @@ class TfAnyWeakPtr : boost::totally_ordered<TfAnyWeakPtr> {
   }
 
  private:
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   // This grants friend access to a function in the wrapper file for this
   // class.  This lets the wrapper reach down into an AnyWeakPtr to get a
   // boost::python wrapped object corresponding to the held type.  This
@@ -156,7 +149,7 @@ class TfAnyWeakPtr : boost::totally_ordered<TfAnyWeakPtr> {
 
   TF_API
   boost::python::api::object _GetPythonObject() const;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
   template<class WeakPtr>
   friend WeakPtr TfAnyWeakPtrDynamicCast(const TfAnyWeakPtr &anyWeak, WeakPtr *);
@@ -170,9 +163,9 @@ class TfAnyWeakPtr : boost::totally_ordered<TfAnyWeakPtr> {
     virtual TfWeakBase const *GetWeakBase() const   = 0;
     virtual operator bool() const                   = 0;
     virtual bool _IsConst() const                   = 0;
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     virtual boost::python::api::object GetPythonObject() const = 0;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
     virtual const std::type_info &GetTypeInfo() const = 0;
     virtual TfType const &GetType() const             = 0;
     virtual const void *_GetMostDerivedPtr() const    = 0;
@@ -187,9 +180,9 @@ class TfAnyWeakPtr : boost::totally_ordered<TfAnyWeakPtr> {
     TF_API virtual TfWeakBase const *GetWeakBase() const;
     TF_API virtual operator bool() const;
     TF_API virtual bool _IsConst() const;
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     TF_API virtual boost::python::api::object GetPythonObject() const;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
     TF_API virtual const std::type_info &GetTypeInfo() const;
     TF_API virtual TfType const &GetType() const;
     TF_API virtual const void *_GetMostDerivedPtr() const;
@@ -207,9 +200,9 @@ class TfAnyWeakPtr : boost::totally_ordered<TfAnyWeakPtr> {
     virtual TfWeakBase const *GetWeakBase() const;
     virtual operator bool() const;
     virtual bool _IsConst() const;
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     virtual boost::python::api::object GetPythonObject() const;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
     virtual const std::type_info &GetTypeInfo() const;
     virtual TfType const &GetType() const;
     virtual const void *_GetMostDerivedPtr() const;
@@ -267,13 +260,13 @@ template<class Ptr> TfAnyWeakPtr::_PointerHolder<Ptr>::operator bool() const
   return bool(_ptr);
 }
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 template<class Ptr>
 boost::python::api::object TfAnyWeakPtr::_PointerHolder<Ptr>::GetPythonObject() const
 {
   return TfPyObject(_ptr);
 }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 template<class Ptr> const std::type_info &TfAnyWeakPtr::_PointerHolder<Ptr>::GetTypeInfo() const
 {

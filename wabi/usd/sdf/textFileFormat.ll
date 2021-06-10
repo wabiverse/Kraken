@@ -1,37 +1,31 @@
 %{
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- * 
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
 #include "wabi/wabi.h"
 #include "wabi/base/arch/fileSystem.h"
+#include "wabi/base/tf/errorMark.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/usd/sdf/textParserContext.h"
 #include "wabi/usd/sdf/parserHelpers.h"
@@ -166,17 +160,19 @@ WABI_NAMESPACE_USING
     }
 
     /* Single '@'-delimited asset references */
-@([^[:cntrl:]@]+)?@ {
-        (*yylval_param) =
+@[^@\n]*@ {
+        TfErrorMark m;
+        (*yylval_param) = 
             Sdf_EvalAssetPath(yytext, yyleng, /* tripleDelimited = */ false);
-        return TOK_ASSETREF;
+        return m.IsClean() ? TOK_ASSETREF : TOK_SYNTAX_ERROR;
     }
 
     /* Triple '@'-delimited asset references. */
-@@@(([^[:cntrl:]@]|@{1,2}[^@]|\\@@@)+)?(@{0,2})@@@ {
-        (*yylval_param) =
+@@@([^@\n]|@{1,2}[^@\n]|\\@@@)*@{0,2}@@@ {
+        TfErrorMark m;
+        (*yylval_param) = 
             Sdf_EvalAssetPath(yytext, yyleng, /* tripleDelimited = */ true);
-        return TOK_ASSETREF;
+        return m.IsClean() ? TOK_ASSETREF : TOK_SYNTAX_ERROR;
     }
 
     /* Singly quoted, single line strings with escapes.

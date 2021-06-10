@@ -52,9 +52,9 @@
 #include "wabi/base/tf/type.h"
 #include "wabi/base/trace/trace.h"
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include "wabi/base/tf/pyInterpreter.h"
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 #include <mutex>
 #include <string>
@@ -84,9 +84,9 @@ static std::mutex _classMapMutex;
 constexpr char const *PlugPlugin::_GetPluginTypeDisplayName(_Type type)
 {
   return type == LibraryType ? "shared library" :
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
          type == PythonType ? "python module" :
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
          type == ResourceType ? "resource" :
                                 "<invalid enum value>";
 }
@@ -164,13 +164,13 @@ pair<PlugPluginPtr, bool> PlugPlugin::_NewDynamicLibraryPlugin(
       metadata, LibraryType, metadata.libraryPath, _allPluginsByDynamicLibraryName.Get());
 }
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 pair<PlugPluginPtr, bool> PlugPlugin::_NewPythonModulePlugin(
     const Plug_RegistrationMetadata &metadata)
 {
   return _NewPlugin(metadata, PythonType, metadata.pluginPath, _allPluginsByModuleName.Get());
 }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 std::pair<PlugPluginPtr, bool> PlugPlugin::_NewResourcePlugin(
     const Plug_RegistrationMetadata &metadata)
@@ -227,7 +227,7 @@ bool PlugPlugin::_Load()
 
   bool isLoaded = true;
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   if (IsPythonModule()) {
     TRACE_FUNCTION_SCOPE("python import");
     string cmd = TfStringPrintf("import %s\n", _name.c_str());
@@ -237,7 +237,7 @@ bool PlugPlugin::_Load()
     }
 #else
   if (false) {
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
   }
   else if (!IsResource()) {
     // This plugin's library path may be empty if the plugin isn't
@@ -369,12 +369,12 @@ bool PlugPlugin::IsLoaded() const
   return _isLoaded;
 }
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 bool PlugPlugin::IsPythonModule() const
 {
   return _type == PythonType;
 }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 bool PlugPlugin::IsResource() const
 {

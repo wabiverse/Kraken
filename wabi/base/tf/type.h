@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_BASE_TF_TYPE_H
 #define WABI_BASE_TF_TYPE_H
 
@@ -47,9 +40,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 class TfPyObjWrapper;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 /// \class TfType
 ///
@@ -88,14 +81,14 @@ class TfType {
     MANUFACTURABLE = 0x08,  ///< Manufacturable type (implies concrete)
   };
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   // This is a non-templated base class for the templated
   // polymorphic-to-Python infrastructure.
   struct PyPolymorphicBase {
    protected:
     TF_API virtual ~PyPolymorphicBase();
   };
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
  public:
   /// A type-list of C++ base types.
@@ -259,13 +252,13 @@ class TfType {
     return TfType::Find<BASE>().FindDerivedByName(name);
   }
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   /// Retrieve the \c TfType corresponding to an obj with the
   /// given Python class \c classObj.
   ///
   TF_API
   static TfType const &FindByPythonClass(const TfPyObjWrapper &classObj);
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
   /// @}
 
@@ -315,7 +308,7 @@ class TfType {
   TF_API
   std::vector<std::string> GetAliases(TfType derivedType) const;
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   /// Return the Python class object for this type.
   ///
   /// If this type is unknown or has not yet had a Python class
@@ -326,7 +319,7 @@ class TfType {
   ///
   TF_API
   TfPyObjWrapper GetPythonClass() const;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
   /// Return a vector of types from which this type was derived.
   ///
@@ -516,12 +509,12 @@ class TfType {
   ///
   template<typename T> static TfType const &Define();
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   /// Define the Python class object corresponding to this TfType.
   /// \see TfTypePythonClass
   TF_API
   void DefinePythonClass(const TfPyObjWrapper &classObj) const;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
   /// Add an alias for DERIVED beneath BASE.
   ///
@@ -673,7 +666,7 @@ class TfType {
   TF_API
   FactoryBase *_GetFactory() const;
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   TF_API
   static TfType const &_FindImplPyPolymorphic(PyPolymorphicBase const *ptr);
 
@@ -720,7 +713,7 @@ class TfType {
     return Find(typeid(T));
   }
 
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
   bool _IsAImpl(TfType queryType) const;
 

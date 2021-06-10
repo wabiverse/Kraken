@@ -143,7 +143,7 @@
 #include <unordered_set>
 #include <utility>
 #include <vector>
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include <boost/python.hpp>
 #  include <boost/python/class.hpp>
 #  include <boost/python/converter/from_python.hpp>
@@ -168,7 +168,7 @@
 #    undef tolower
 #    undef toupper
 #  endif
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 #include <boost/range/iterator.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -203,6 +203,6 @@
 #include <tbb/spin_rw_mutex.h>
 #include <tbb/task.h>
 #include <tbb/task_arena.h>
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include "wabi/base/tf/pySafePython.h"
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON

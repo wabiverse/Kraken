@@ -1,7 +1,7 @@
 /*!
 
 \page usd_page_front Usd : Universal Scene Description (Core)
-\if ( PIXAR_MFB_BUILD )
+\if ( WABI_MFB_BUILD )
 \mainpage Usd : Universal Scene Description
 \publicLib
 \endif

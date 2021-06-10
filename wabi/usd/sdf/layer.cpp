@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 ///
 /// \file Sdf/layer.cpp
 
@@ -368,14 +361,6 @@ SdfLayerRefPtr SdfLayer::_CreateNew(SdfFileFormatConstPtr fileFormat,
                                     const string &identifier,
                                     const FileFormatArguments &args)
 {
-  if (Sdf_IsAnonLayerIdentifier(identifier)) {
-    TF_CODING_ERROR(
-        "Cannot create a new layer with anonymous "
-        "layer identifier '%s'.",
-        identifier.c_str());
-    return TfNullPtr;
-  }
-
   string whyNot;
   if (!Sdf_CanCreateNewLayerWithIdentifier(identifier, &whyNot)) {
     TF_CODING_ERROR("Cannot create new layer '%s': %s", identifier.c_str(), whyNot.c_str());
@@ -1017,6 +1002,7 @@ bool SdfLayer::_Read(const string &identifier, const string &resolvedPath, bool 
                           TfStringify(metadataOnly).c_str());
 
   SdfFileFormatConstPtr format = GetFileFormat();
+#if AR_VERSION == 1
   if (format->LayersAreFileBased()) {
     if (!ArGetResolver().FetchToLocalResolvedPath(identifier, resolvedPath)) {
       TF_DEBUG(SDF_LAYER).Msg(
@@ -1031,7 +1017,7 @@ bool SdfLayer::_Read(const string &identifier, const string &resolvedPath, bool 
                             identifier.c_str(),
                             resolvedPath.c_str());
   }
-
+#endif
   return format->Read(this, resolvedPath, metadataOnly);
 }
 
@@ -1040,6 +1026,16 @@ SdfLayerHandle SdfLayer::Find(const string &identifier, const FileFormatArgument
 {
   TRACE_FUNCTION();
 
+  tbb::queuing_rw_mutex::scoped_lock lock;
+  return _Find(identifier, args, lock, /* retryAsWriter = */ false);
+}
+
+template<class ScopedLock>
+SdfLayerRefPtr SdfLayer::_Find(const string &identifier,
+                               const FileFormatArguments &args,
+                               ScopedLock &lock,
+                               bool retryAsWriter)
+{
   // We don't need to drop the GIL here, since _TryToFindLayer() doesn't
   // invoke any plugin code, and if we do wind up calling
   // _WaitForInitializationAndCheckIfSuccessful() then we'll drop the GIL in
@@ -1051,9 +1047,9 @@ SdfLayerHandle SdfLayer::Find(const string &identifier, const FileFormatArgument
   }
 
   // First see if this layer is already present.
-  tbb::queuing_rw_mutex::scoped_lock lock(_GetLayerRegistryMutex(), /*write=*/false);
+  lock.acquire(_GetLayerRegistryMutex(), /*write=*/false);
   if (SdfLayerRefPtr layer = _TryToFindLayer(
-          layerInfo.identifier, layerInfo.resolvedLayerPath, lock, /*retryAsWriter=*/false)) {
+          layerInfo.identifier, layerInfo.resolvedLayerPath, lock, retryAsWriter)) {
     return layer->_WaitForInitializationAndCheckIfSuccessful() ? layer : TfNullPtr;
   }
   return TfNullPtr;
@@ -2169,12 +2165,14 @@ void SdfLayer::SetIdentifier(const string &identifier)
   TRACE_FUNCTION();
   TF_DEBUG(SDF_LAYER).Msg("SdfLayer::SetIdentifier('%s')\n", identifier.c_str());
 
-  string oldLayerPath, oldArguments;
+  string oldLayerPath;
+  SdfLayer::FileFormatArguments oldArguments;
   if (!TF_VERIFY(Sdf_SplitIdentifier(GetIdentifier(), &oldLayerPath, &oldArguments))) {
     return;
   }
 
-  string newLayerPath, newArguments;
+  string newLayerPath;
+  SdfLayer::FileFormatArguments newArguments;
   if (!Sdf_SplitIdentifier(identifier, &newLayerPath, &newArguments)) {
     TF_CODING_ERROR("Invalid identifier '%s'", identifier.c_str());
     return;
@@ -2189,6 +2187,12 @@ void SdfLayer::SetIdentifier(const string &identifier)
     return;
   }
 
+  string whyNot;
+  if (!Sdf_CanCreateNewLayerWithIdentifier(newLayerPath, &whyNot)) {
+    TF_CODING_ERROR("Cannot change identifier to '%s': %s", identifier.c_str(), whyNot.c_str());
+    return;
+  }
+
 #if AR_VERSION == 1
   // When changing a layer's identifier, assume that relative identifiers are
   // relative to the current working directory.
@@ -2198,16 +2202,41 @@ void SdfLayer::SetIdentifier(const string &identifier)
   // Create an identifier for the layer based on the desired identifier
   // that was passed in. Since this may identifier may point to an asset
   // that doesn't exist yet, use CreateIdentifierForNewAsset.
-  const string absIdentifier = ArGetResolver().CreateIdentifierForNewAsset(identifier);
+  const string absIdentifier = Sdf_CreateIdentifier(
+      ArGetResolver().CreateIdentifierForNewAsset(newLayerPath), newArguments);
 #endif
-
   const ArResolvedPath oldResolvedPath = GetResolvedPath();
 
   // Hold open a change block to defer identifier-did-change
   // notification until the mutex is unlocked.
   SdfChangeBlock block;
+
   {
-    tbb::queuing_rw_mutex::scoped_lock lock(_GetLayerRegistryMutex());
+    tbb::queuing_rw_mutex::scoped_lock lock;
+
+    // See if another layer with the same identifier exists in the registry.
+    // If it doesn't, we will be updating the registry so we need to ensure
+    // our lock is upgraded to a write lock by setting retryAsWriter = true.
+    //
+    // It is possible that the call to _Find returns the same layer we're
+    // modifying. For example, if a layer was originally opened using some
+    // path and we're now trying to set its identifier to something that
+    // resolves to that same path. In this case, we don't want to error
+    // out.
+    const bool retryAsWriter     = true;
+    SdfLayerRefPtr existingLayer = _Find(
+        absIdentifier, FileFormatArguments(), lock, retryAsWriter);
+    if (existingLayer) {
+      if (get_pointer(existingLayer) != this) {
+        TF_CODING_ERROR("Layer with identifier '%s' and resolved path '%s' exists.",
+                        existingLayer->GetIdentifier().c_str(),
+                        existingLayer->GetResolvedPath().GetPathString().c_str());
+        return;
+      }
+    }
+
+    // We should have acquired a write lock on the layer registry by this
+    // point, so it's safe to call _InitializeFromIdentifier.
     _InitializeFromIdentifier(absIdentifier);
   }
 
@@ -3571,7 +3600,7 @@ void SdfLayer::_SetData(const SdfAbstractDataPtr &newData, const SdfSchemaBase *
     if (!updater.unrecognizedFields.empty()) {
       vector<string> fieldDescrs;
       fieldDescrs.reserve(updater.unrecognizedFields.size());
-      for (const auto &tokenPath : updater.unrecognizedFields) {
+      for (std::pair<TfToken, SdfPath> const &tokenPath : updater.unrecognizedFields) {
         fieldDescrs.push_back(TfStringPrintf("'%s' first seen at <%s>",
                                              tokenPath.first.GetText(),
                                              tokenPath.second.GetAsString().c_str()));
@@ -4174,10 +4203,12 @@ bool SdfLayer::_WriteToFile(const string &newFileName,
     return false;
   }
 
+#if AR_VERSION == 1
   if (!ArGetResolver().CreatePathForLayer(newFileName)) {
     TF_RUNTIME_ERROR("Cannot create path to write '%s'", newFileName.c_str());
     return false;
   }
+#endif
 
   // XXX Check for schema compatibility here...
 

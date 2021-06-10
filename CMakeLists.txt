@@ -340,9 +340,10 @@ if(FIRST_RUN)
   message(STATUS "C++ Compiler: \"${CMAKE_CXX_COMPILER_ID}\"")
 
   info_cfg_text("System Options:")
-  info_cfg_option(WITH_PIXAR_AR_BETA)
-  info_cfg_option(WITH_LICENSING)
   info_cfg_option(WITH_BUILDINFO)
+  info_cfg_option(WITH_LICENSING)
+  info_cfg_option(WITH_PIXAR_AR_BETA)
+  info_cfg_option(WITH_SAFETY_OVER_SPEED)
 
   info_cfg_text("Hydra Graphics:")
   info_cfg_option(WITH_VULKAN)

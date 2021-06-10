@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 // threadLimits.cpp
 //
 
@@ -36,9 +29,11 @@
 
 #include "wabi/base/tf/envSetting.h"
 
+#include <tbb/global_control.h>
 #include <tbb/task_arena.h>
 
 #include <algorithm>
+#include <atomic>
 
 WABI_NAMESPACE_USING
 
@@ -63,10 +58,11 @@ TF_DEFINE_ENV_SETTING(WABI_WORK_THREAD_LIMIT,
 
 WABI_NAMESPACE_BEGIN
 
-// We create a task_arena instance at static initialization time if
-// WABI_WORK_THREAD_LIMIT is set to a nonzero value. Otherwise this
-// stays NULL.
-static std::unique_ptr<tbb::task_arena> _tbbTaskArena;
+// We create a task_scheduler_init instance at static initialization time if
+// WABI_WORK_THREAD_LIMIT is set to a nonzero value.  Otherwise this stays NULL.
+static std::unique_ptr<tbb::task_arena> _tbbArena;
+static std::unique_ptr<tbb::task_scheduler_handle> _tbbTaskSchedHandle;
+// static bool _tbbTaskSchedIsInitialized = false;
 
 unsigned WorkGetPhysicalConcurrencyLimit()
 {
@@ -122,18 +118,25 @@ static void Work_InitializeThreading()
   // with maximum physical concurrency, or will be left untouched if
   // previously initialized by the hosting environment (e.g. if we are running
   // as a plugin to another application.)
-  if (settingVal)
-    _tbbTaskArena = std::make_unique<tbb::task_arena>(threadLimit);
+  if (settingVal) {
+    _tbbArena           = std::make_unique<tbb::task_arena>(threadLimit);
+    _tbbTaskSchedHandle = std::make_unique<tbb::task_scheduler_handle>(
+        tbb::task_scheduler_handle::get());
+    // tbb::global_control(tbb::global_control::max_allowed_parallelism, threadLimit);
+    // _tbbTaskSchedHandle = tbb::task_scheduler_handle::get();
+    // _tbbTaskSchedIsInitialized = true;
+  }
 }
 static int _forceInitialization = (Work_InitializeThreading(), 0);
 
 void WorkSetConcurrencyLimit(unsigned n)
 {
   // We only assign a new concurrency limit if n is non-zero, since 0 means
-  // "no change". Note that we need to re-initialize the TBB task_arena instance
-  // in either case, because if the client explicitly requests a concurrency limit
-  // through this library, we need to attempt to take control of the TBB scheduler
-  // if we can, i.e. if the host environment has not already done so.
+  // "no change". Note that we need to re-initialize the TBB
+  // task_scheduler_init instance in either case, because if the client
+  // explicitly requests a concurrency limit through this library, we need to
+  // attempt to take control of the TBB scheduler if we can, i.e. if the host
+  // environment has not already done so.
   unsigned threadLimit = 0;
   if (n) {
     // Get the thread limit from the environment setting. Note this value
@@ -151,22 +154,43 @@ void WorkSetConcurrencyLimit(unsigned n)
   }
 
   // Note that we need to do some performance testing and decide if it's
-  // better here to simply delete the task_arena object instead of
-  // re-initializing it.  If we decide that it's better to re-initialize
+  // better here to simply delete the task_scheduler_init object instead
+  // of re-initializing it.  If we decide that it's better to re-initialize
   // it, then we have to make sure that when this library is opened in
   // an application (e.g., Maya) that already has initialized its own
-  // task_arena object, that the limits of those are respected. According
-  // to the documentation that should be the case, but we should make sure.
-  // If we do decide to delete it, we have to make sure to note that it has
-  // already been initialized.
-  if (_tbbTaskArena) {
-    if (_tbbTaskArena->is_active()) {
-      _tbbTaskArena->terminate();
-      _tbbTaskArena->initialize(threadLimit);
+  // task_scheduler_init object, that the limits of those are respected.
+  // According to the documentation that should be the case, but we should
+  // make sure.  If we do decide to delete it, we have to make sure to
+  // note that it has already been initialized.
+  if (_tbbArena) {
+
+    if (_tbbArena->is_active()) {
+      if (tbb::finalize(*_tbbTaskSchedHandle.get(), std::nothrow)) {
+        _tbbArena->terminate();
+        _tbbArena->initialize(threadLimit);
+        _tbbTaskSchedHandle = std::make_unique<tbb::task_scheduler_handle>(
+            tbb::task_scheduler_handle::get());
+      }
     }
+
+    // if(_tbbTaskSchedIsInitialized) {
+    //     if(tbb::finalize(_tbbTaskSchedHandle, std::nothrow))
+    //     {
+    //         _tbbTaskSchedIsInitialized = false;
+    //         tbb::global_control(tbb::global_control::max_allowed_parallelism, threadLimit);
+    //         _tbbTaskSchedHandle = tbb::task_scheduler_handle::get();
+    //     }
+
+    //     _tbbTaskSchedIsInitialized = true;
+    // }
   }
   else {
-    _tbbTaskArena = std::make_unique<tbb::task_arena>(threadLimit);
+    _tbbArena           = std::make_unique<tbb::task_arena>(tbb::task_arena(threadLimit));
+    _tbbTaskSchedHandle = std::make_unique<tbb::task_scheduler_handle>(
+        tbb::task_scheduler_handle::get());
+    // tbb::global_control(tbb::global_control::max_allowed_parallelism, threadLimit);
+    // _tbbTaskSchedHandle = tbb::task_scheduler_handle::get();
+    // _tbbTaskSchedIsInitialized = true;
   }
 }
 

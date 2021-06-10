@@ -109,12 +109,4 @@ using namespace WABI_INTERNAL_NS;
 
 #endif  // WABI_USE_NAMESPACES
 
-#if 1
-#  define WABI_PYTHON_SUPPORT_ENABLED
-#endif
-
-#if 1
-#  define WITH_SAFETY_OVER_SPEED
-#endif
-
 #endif  // WABI_H

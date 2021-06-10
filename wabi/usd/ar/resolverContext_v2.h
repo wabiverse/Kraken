@@ -43,7 +43,7 @@
 #  include "wabi/base/tf/hash.h"
 #  include "wabi/base/tf/safeTypeCompare.h"
 
-#  ifdef WABI_PYTHON_SUPPORT_ENABLED
+#  ifdef WITH_PYTHON
 // XXX: This include is a hack to avoid build errors due to
 // incompatible macro definitions in pyport.h on macOS.
 #    include "wabi/base/tf/pyLock.h"
@@ -254,7 +254,7 @@ class ArResolverContext {
     virtual size_t Hash() const                      = 0;
     virtual std::string GetDebugString() const       = 0;
 
-#  ifdef WABI_PYTHON_SUPPORT_ENABLED
+#  ifdef WITH_PYTHON
     virtual TfPyObjWrapper GetPythonObj() const = 0;
 #  endif
   };
@@ -296,7 +296,7 @@ class ArResolverContext {
       return ArGetDebugString(_context);
     }
 
-#  ifdef WABI_PYTHON_SUPPORT_ENABLED
+#  ifdef WITH_PYTHON
     virtual TfPyObjWrapper GetPythonObj() const
     {
       TfPyLock lock;
@@ -313,7 +313,7 @@ class ArResolverContext {
     h.Append(context->Hash());
   }
 
-#  ifdef WABI_PYTHON_SUPPORT_ENABLED
+#  ifdef WITH_PYTHON
   friend class Ar_ResolverContextPythonAccess;
 #  endif
 

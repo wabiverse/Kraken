@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
 #line 3 "<stdout>"
 
@@ -439,36 +432,29 @@ static yyconst flex_int16_t yy_chk[121] = {
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "wabi/usd/sdf/path.ll"
 #line 2 "wabi/usd/sdf/path.ll"
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
 #include "path.tab.h"
 #include "wabi/base/arch/fileSystem.h"
@@ -717,9 +703,9 @@ extern int pathYylex(YYSTYPE *yylval_param, yyscan_t yyscanner);
  */
 YY_DECL
 {
-  yy_state_type yy_current_state;
-  char *yy_cp, *yy_bp;
-  int yy_act;
+  register yy_state_type yy_current_state;
+  register char *yy_cp, *yy_bp;
+  register int yy_act;
   struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
 
   yylval = yylval_param;
@@ -768,7 +754,7 @@ YY_DECL
       yy_current_state = yyg->yy_start;
     yy_match:
       do {
-        YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
+        register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
         if (yy_accept[yy_current_state]) {
           yyg->yy_last_accepting_state = yy_current_state;
           yyg->yy_last_accepting_cpos  = yy_cp;
@@ -1027,10 +1013,10 @@ YY_DECL
  */
 static int yy_get_next_buffer(yyscan_t yyscanner)
 {
-  struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
-  char *dest           = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
-  char *source         = yyg->yytext_ptr;
-  int number_to_move, i;
+  struct yyguts_t *yyg  = (struct yyguts_t *)yyscanner;
+  register char *dest   = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
+  register char *source = yyg->yytext_ptr;
+  register int number_to_move, i;
   int ret_val;
 
   if (yyg->yy_c_buf_p > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[yyg->yy_n_chars + 1])
@@ -1147,14 +1133,14 @@ static int yy_get_next_buffer(yyscan_t yyscanner)
 
 static yy_state_type yy_get_previous_state(yyscan_t yyscanner)
 {
-  yy_state_type yy_current_state;
-  char *yy_cp;
+  register yy_state_type yy_current_state;
+  register char *yy_cp;
   struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
 
   yy_current_state = yyg->yy_start;
 
   for (yy_cp = yyg->yytext_ptr + YY_MORE_ADJ; yy_cp < yyg->yy_c_buf_p; ++yy_cp) {
-    YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
+    register YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
     if (yy_accept[yy_current_state]) {
       yyg->yy_last_accepting_state = yy_current_state;
       yyg->yy_last_accepting_cpos  = yy_cp;
@@ -1177,12 +1163,12 @@ static yy_state_type yy_get_previous_state(yyscan_t yyscanner)
  */
 static yy_state_type yy_try_NUL_trans(yy_state_type yy_current_state, yyscan_t yyscanner)
 {
-  int yy_is_jam;
+  register int yy_is_jam;
   struct yyguts_t *yyg = (struct yyguts_t *)
       yyscanner; /* This var may be unused depending upon options. */
-  char *yy_cp = yyg->yy_c_buf_p;
+  register char *yy_cp = yyg->yy_c_buf_p;
 
-  YY_CHAR yy_c = 1;
+  register YY_CHAR yy_c = 1;
   if (yy_accept[yy_current_state]) {
     yyg->yy_last_accepting_state = yy_current_state;
     yyg->yy_last_accepting_cpos  = yy_cp;
@@ -1942,7 +1928,7 @@ int pathYylex_destroy(yyscan_t yyscanner)
 #ifndef yytext_ptr
 static void yy_flex_strncpy(char *s1, yyconst char *s2, int n, yyscan_t yyscanner)
 {
-  int i;
+  register int i;
   for (i = 0; i < n; ++i)
     s1[i] = s2[i];
 }
@@ -1951,7 +1937,7 @@ static void yy_flex_strncpy(char *s1, yyconst char *s2, int n, yyscan_t yyscanne
 #ifdef YY_NEED_STRLEN
 static int yy_flex_strlen(yyconst char *s, yyscan_t yyscanner)
 {
-  int n;
+  register int n;
   for (n = 0; s[n]; ++n)
     ;
 

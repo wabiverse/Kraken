@@ -138,7 +138,7 @@
 #include <unordered_set>
 #include <utility>
 #include <vector>
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include <boost/python/class.hpp>
 #  include <boost/python/converter/from_python.hpp>
 #  include <boost/python/converter/registered.hpp>
@@ -173,7 +173,7 @@
 #    undef tolower
 #    undef toupper
 #  endif
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 #include <boost/type_traits/add_reference.hpp>
 #include <boost/type_traits/is_abstract.hpp>
 #include <boost/type_traits/is_base_of.hpp>
@@ -191,6 +191,6 @@
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/spin_mutex.h>
 #include <tbb/spin_rw_mutex.h>
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include "wabi/base/tf/pySafePython.h"
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON

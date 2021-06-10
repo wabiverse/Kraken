@@ -41,7 +41,6 @@ option(WABI_BUILD_USD_IMAGING                   "Build USD imaging components"  
 option(WABI_BUILD_USDVIEW                       "Build usdview"                                                            ON)
 option(WABI_BUILD_DOCUMENTATION                 "Generate doxygen documentation"                                          OFF)
 option(WABI_ENABLE_PYTHON_SUPPORT               "Enable Python based components for USD"                                   ON)
-option(WABI_USE_PYTHON_3                        "Build Python bindings for Python 3"                                       ON)
 option(WABI_ENABLE_NAMESPACES                   "Enable C++ namespaces."                                                   ON)
 # -----------------------------------------------------------------------------------------------------------------------------
 
@@ -145,4 +144,16 @@ endif()
 # Make sure the MaterialX Plugin is built when enabling MaterialX Imaging
 if(${WITH_MATERIALX})
   set(WITH_MATERIALX "ON" CACHE BOOL "" FORCE)
+endif()
+
+if(WITH_PYTHON)
+  add_definitions(-DWITH_PYTHON)
+endif()
+
+if(WITH_SAFETY_OVER_SPEED)
+  add_definitions(-DWITH_SAFETY_OVER_SPEED)
+endif()
+
+if(WITH_PIXAR_AR_BETA)
+  add_definitions(-DWITH_PIXAR_AR_BETA)
 endif()

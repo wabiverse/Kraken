@@ -44,9 +44,9 @@
 #include "wabi/base/tf/declarePtrs.h"
 #include "wabi/base/tf/mallocTag.h"
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include "wabi/base/tf/pyTracing.h"
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 #include "wabi/base/tf/refBase.h"
 #include "wabi/base/tf/refPtr.h"
@@ -117,7 +117,7 @@ class TraceCollector : public TfWeakBase {
     }
   };
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   /// Returns whether automatic tracing of all python scopes is enabled.
   bool IsPythonTracingEnabled() const
   {
@@ -126,7 +126,7 @@ class TraceCollector : public TfWeakBase {
 
   /// Set whether automatic tracing of all python scopes is enabled.
   TRACE_API void SetPythonTracingEnabled(bool enabled);
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
   /// Clear all pending events from the collector. No TraceCollection will be
   /// made for these events.
@@ -437,10 +437,10 @@ class TraceCollector : public TfWeakBase {
   // and TRACE_SCOPE macros
   TRACE_API void _EndScope(const TraceKey &key, TraceCategoryId cat);
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   // Callback function registered as a python tracing function.
   void _PyTracingCallback(const TfPyTraceInfo &info);
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
   // Implementation for small data that can stored inlined with the event.
   template<typename T,
@@ -559,10 +559,10 @@ class TraceCollector : public TfWeakBase {
       _events.load(std::memory_order_acquire)->EmplaceBack(std::forward<Args>(args)...);
     }
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     void PushPyScope(const Key &key, bool enabled);
     void PopPyScope(bool enabled);
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
     // These methods can be called from threads at the same time as the
     // other methods.
@@ -602,13 +602,13 @@ class TraceCollector : public TfWeakBase {
     //
     TraceThreadId _threadIndex;
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
     // When auto-tracing python frames, this stores the stack of scopes.
     struct PyScope {
       Key key;
     };
     std::vector<PyScope> _pyScopes;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
   };
 
   TRACE_API static std::atomic<int> _isEnabled;
@@ -618,10 +618,10 @@ class TraceCollector : public TfWeakBase {
 
   std::string _label;
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   std::atomic<int> _isPythonTracingEnabled;
   TfPyTraceFnId _pyTraceFnId;
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 };
 
 TRACE_API_TEMPLATE_CLASS(TfSingleton<TraceCollector>);

@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
 #include "wabi/base/tf/fileUtils.h"
 #include "wabi/base/arch/defines.h"
@@ -353,7 +346,9 @@ bool TfReadDir(const string &dirPath,
   }
 #else
   DIR *dir;
+  struct dirent entry;
   struct dirent *result;
+  int rc;
 
   if ((dir = opendir(dirPath.c_str())) == NULL) {
     if (errMsg) {
@@ -362,9 +357,10 @@ bool TfReadDir(const string &dirPath,
     return false;
   }
 
-  while ((result = readdir(dir)) != NULL) {
+  for (rc = readdir_r(dir, &entry, &result); result && rc == 0;
+       rc = readdir_r(dir, &entry, &result)) {
 
-    if (!strcmp(result->d_name, ".") || !strcmp(result->d_name, ".."))
+    if (strcmp(entry.d_name, ".") == 0 || strcmp(entry.d_name, "..") == 0)
       continue;
 
     bool entryIsDir = false;
@@ -372,18 +368,18 @@ bool TfReadDir(const string &dirPath,
 #  if defined(_DIRENT_HAVE_D_TYPE)
     // If we are on a BSD-like system, and the underlying filesystem has
     // support for it, we can use dirent.d_type to avoid lstat.
-    if (result->d_type == DT_DIR) {
+    if (entry.d_type == DT_DIR) {
       entryIsDir = true;
     }
-    else if (result->d_type == DT_LNK) {
+    else if (entry.d_type == DT_LNK) {
       entryIsLnk = true;
     }
-    else if (result->d_type == DT_UNKNOWN) {
+    else if (entry.d_type == DT_UNKNOWN) {
 #  endif
       // If d_type is not available, or the filesystem has no support
       // for d_type, fall back to lstat.
       ArchStatType st;
-      if (fstatat(dirfd(dir), result->d_name, &st, AT_SYMLINK_NOFOLLOW) != 0)
+      if (fstatat(dirfd(dir), entry.d_name, &st, AT_SYMLINK_NOFOLLOW) != 0)
         continue;
 
       if (S_ISDIR(st.st_mode)) {
@@ -398,14 +394,14 @@ bool TfReadDir(const string &dirPath,
 
     if (entryIsDir) {
       if (dirnames)
-        dirnames->push_back(result->d_name);
+        dirnames->push_back(entry.d_name);
     }
     else if (entryIsLnk) {
       if (symlinknames)
-        symlinknames->push_back(result->d_name);
+        symlinknames->push_back(entry.d_name);
     }
     else if (filenames) {
-      filenames->push_back(result->d_name);
+      filenames->push_back(entry.d_name);
     }
   }
 

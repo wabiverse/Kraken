@@ -540,11 +540,11 @@ Plug_RegistrationMetadata::Plug_RegistrationMetadata(const JsValue &value,
       if (typeName == "library") {
         type = LibraryType;
       }
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
       else if (typeName == "python") {
         type = PythonType;
       }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
       else if (typeName == "resource") {
         type = ResourceType;
       }

@@ -89,9 +89,9 @@ endif()
 
 # Set Python configuration
 if (WABI_ENABLE_PYTHON_SUPPORT)
-    set(WABI_PYTHON_SUPPORT_ENABLED "1")
+    set(WITH_PYTHON "1")
 else()
-    set(WABI_PYTHON_SUPPORT_ENABLED "0")
+    set(WITH_PYTHON "0")
 endif()
 
 # Set safety/performance configuration

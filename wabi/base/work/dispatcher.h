@@ -42,6 +42,7 @@
 #include "wabi/base/tf/errorTransport.h"
 
 #include <tbb/concurrent_vector.h>
+#include <tbb/task.h>
 #include <tbb/task_group.h>
 
 #include <functional>
@@ -138,10 +139,10 @@ class WorkDispatcher {
   // Function invoker helper that wraps the invocation with an ErrorMark so we
   // can transmit errors that occur back to the thread that Wait() s for tasks
   // to complete.
-  struct _Dispatch : public tbb::task_group {
+  struct _Dispatch : public tbb::isolated_task_group {
 
     _Dispatch()
-        : task_group(),
+        : isolated_task_group(),
           m_ctx(tbb::task_group_context::isolated,
                 tbb::task_group_context::concurrent_wait | tbb::task_group_context::default_traits)
     {}
@@ -151,10 +152,20 @@ class WorkDispatcher {
       wait();
     }
 
+    // template<class Fn>
+    // void run_and_transport_errors(Fn &&fn, _ErrorTransports *err)
+    // {
+    //   TfErrorMark m;
+    //   run(std::forward<Fn>(fn));
+    //   if (!m.IsClean()) {
+    //     WorkDispatcher::_TransportErrors(m, err);
+    //   }
+    // }
+
     template<class Fn> void run_and_transport_errors(Fn &&fn, _ErrorTransports *err)
     {
       TfErrorMark m;
-      run([&] { /** GODSPEED. ---> */fn(); });
+      run([&] { fn(); });
       if (!m.IsClean()) {
         WorkDispatcher::_TransportErrors(m, err);
       }
@@ -162,7 +173,7 @@ class WorkDispatcher {
 
     // template<class Fn> void run(Fn &&fn)
     // {
-    //   spawn(*prepare_task(std::forward<Fn>(fn)), m_ctx);
+    // spawn(*prepare_task(std::forward<Fn>(fn)), m_ctx);
     // }
 
     void ctx_wait()

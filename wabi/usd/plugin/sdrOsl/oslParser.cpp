@@ -29,22 +29,33 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
-#include "wabi/usd/plugin/sdrOsl/oslParser.h"
 #include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec2f.h"
 #include "wabi/base/gf/vec3f.h"
 #include "wabi/base/gf/vec4f.h"
+
+#include "wabi/base/tf/fileUtils.h"
 #include "wabi/base/tf/staticTokens.h"
 #include "wabi/base/tf/weakPtr.h"
+
 #include "wabi/base/vt/array.h"
 #include "wabi/base/vt/types.h"
+
+#include "wabi/usd/ar/ar.h"
+#include "wabi/usd/ar/asset.h"
+#include "wabi/usd/ar/resolvedPath.h"
 #include "wabi/usd/ar/resolver.h"
+
 #include "wabi/usd/ndr/debugCodes.h"
 #include "wabi/usd/ndr/nodeDiscoveryResult.h"
+
 #include "wabi/usd/sdf/assetPath.h"
+
 #include "wabi/usd/sdr/shaderMetadataHelpers.h"
 #include "wabi/usd/sdr/shaderNode.h"
 #include "wabi/usd/sdr/shaderProperty.h"
+
+#include "wabi/usd/plugin/sdrOsl/oslParser.h"
 
 #include <tuple>
 
@@ -57,13 +68,19 @@ using ShaderMetadataHelpers::OptionVecVal;
 
 NDR_REGISTER_PARSER_PLUGIN(SdrOslParserPlugin)
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
+/* clang-format off */
+TF_DEFINE_PRIVATE_TOKENS(
+  _tokens,
 
-                         ((arraySize, "arraySize"))((vstructMember,
-                                                     "vstructmember"))(sdrDefinitionName)
+  ((arraySize, "arraySize"))
+  ((vstructMember, "vstructmember"))
+  (sdrDefinitionName)
 
-                         // Discovery and source type
-                         ((discoveryType, "oso"))((sourceType, "OSL")));
+  // Discovery and source type
+  ((discoveryType, "oso"))
+  ((sourceType, "OSL"))
+);
+/* clang-format on */
 
 const NdrTokenVec &SdrOslParserPlugin::GetDiscoveryTypes() const
 {
@@ -86,6 +103,19 @@ SdrOslParserPlugin::~SdrOslParserPlugin()
   // Nothing yet
 }
 
+template<class String>
+static bool _ParseFromSourceCode(OSL::OSLQuery *query, const String &sourceCode)
+{
+#if OSL_LIBRARY_VERSION_CODE < 10701
+  TF_WARN(
+      "Support for parsing OSL from an in-memory string is only "
+      "available in OSL version 1.7.1 or newer.");
+  return false;
+#else
+  return query->open_bytecode(sourceCode);
+#endif
+}
+
 NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discoveryResult)
 {
   // Each call to `Parse` should have its own reference to an OSL query to
@@ -95,6 +125,7 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
   bool parseSuccessful = true;
 
   if (!discoveryResult.uri.empty()) {
+#if AR_VERSION == 1
     // Get the resolved URI to a location that it can be read by the OSL parser
     bool localFetchSuccessful = ArGetResolver().FetchToLocalResolvedPath(
         discoveryResult.uri, discoveryResult.resolvedUri);
@@ -107,18 +138,38 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
 
       return NdrParserPlugin::GetInvalidNode(discoveryResult);
     }
-
+#endif
     // Attempt to parse the node
-    parseSuccessful = oslQuery.open(discoveryResult.resolvedUri);
+    // Since parsing from buffers is only available with OSL > 1.7.1,
+    // we explicitly check if we're reading from a file on disk and
+    // use the regular open function so that this case still works with
+    // older versions.
+    if (TfIsFile(discoveryResult.resolvedUri)) {
+      parseSuccessful = oslQuery.open(discoveryResult.resolvedUri);
+    }
+    else {
+      std::shared_ptr<const char> buffer;
+      std::shared_ptr<ArAsset> asset = ArGetResolver().OpenAsset(
+          ArResolvedPath(discoveryResult.resolvedUri));
+      if (asset) {
+        buffer = asset->GetBuffer();
+      }
+
+      if (!buffer) {
+        TF_WARN(
+            "Could not open the OSL at URI [%s] (%s). An invalid Sdr "
+            "node definition will be created.",
+            discoveryResult.uri.c_str(),
+            discoveryResult.resolvedUri.c_str());
+        return NdrParserPlugin::GetInvalidNode(discoveryResult);
+      }
+
+      parseSuccessful = _ParseFromSourceCode(&oslQuery,
+                                             OSL::string_view(buffer.get(), asset->GetSize()));
+    }
   }
   else if (!discoveryResult.sourceCode.empty()) {
-#if OSL_LIBRARY_VERSION_CODE < 10701
-    TF_WARN(
-        "Support for parsing OSL from an in-memory string is only "
-        "available in OSL version 1.7.1 or newer.");
-#else
-    parseSuccessful = oslQuery.open_bytecode(discoveryResult.sourceCode);
-#endif
+    parseSuccessful = _ParseFromSourceCode(&oslQuery, discoveryResult.sourceCode);
   }
   else {
     TF_WARN(
