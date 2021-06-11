@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hdPh/smoothNormals.h"
 #include "wabi/imaging/hdPh/bufferArrayRange.h"
 #include "wabi/imaging/hdPh/bufferResource.h"
@@ -118,7 +111,7 @@ HgiComputePipelineSharedPtr _CreatePipeline(Hgi *hgi,
   return std::make_shared<HgiComputePipelineHandle>(hgi->CreateComputePipeline(desc));
 }
 
-}  // namespace
+}  // Anonymous namespace
 
 HdPh_SmoothNormalsComputationGPU::HdPh_SmoothNormalsComputationGPU(
     Hd_VertexAdjacency const *adjacency,
@@ -231,6 +224,7 @@ void HdPh_SmoothNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const
                                        "uvec3",
                                        HgiShaderKeywordTokens->hdGlobalInvocationID);
       });
+
   if (!computeProgram)
     return;
 
@@ -241,6 +235,7 @@ void HdPh_SmoothNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const
   HdPhBufferResourceSharedPtr normals   = range->GetResource(_dstName);
   HdPhBufferResourceSharedPtr adjacency = adjacencyRange->GetResource();
 
+  // prepare uniform buffer for GPU computation
   // coherent vertex offset in aggregated buffer array
   uniform.vertexOffset = range->GetElementOffset();
   // adjacency offset/stride in aggregated adjacency table

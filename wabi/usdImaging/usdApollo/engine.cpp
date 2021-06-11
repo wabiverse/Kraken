@@ -282,7 +282,7 @@ void UsdApolloEngine::SetFraming(CameraUtilFraming const &framing)
 }
 
 void UsdApolloEngine::SetOverrideWindowPolicy(
-    const std::optional<CameraUtilConformWindowPolicy> &policy)
+    const std::pair<bool, CameraUtilConformWindowPolicy> &policy)
 {
   if (TF_VERIFY(m_taskController)) {
     m_taskController->SetOverrideWindowPolicy(policy);

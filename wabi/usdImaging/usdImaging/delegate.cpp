@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/usdImaging/usdImaging/delegate.h"
 
 #include "wabi/usdImaging/usdImaging/adapterRegistry.h"
@@ -115,8 +108,8 @@ UsdImagingDelegate::UsdImagingDelegate(HdRenderIndex *parentIndex, SdfPath const
       _materialBindingCache(GetTime(), &_materialBindingImplData),
       _coordSysBindingCache(GetTime(), &_coordSysBindingImplData),
       _visCache(GetTime()),
-      // note that purpose is uniform, so no GetTime()
-      _purposeCache(),
+      _purposeCache()  // note that purpose is uniform, so no GetTime()
+      ,
       _drawModeCache(GetTime()),
       _inheritedPrimvarCache(),
       _pointInstancerIndicesCache(GetTime()),
@@ -279,6 +272,14 @@ Usd_PrimFlagsConjunction UsdImagingDelegate::_GetDisplayPredicate() const
   return _displayUnloadedPrimsWithBounds ?
              UsdPrimIsActive && UsdPrimIsDefined && !UsdPrimIsAbstract :
              UsdPrimDefaultPredicate;
+}
+
+Usd_PrimFlagsConjunction UsdImagingDelegate::_GetDisplayPredicateForPrototypes() const
+{
+  return _displayUnloadedPrimsWithBounds ?
+             UsdPrimIsActive && UsdPrimHasDefiningSpecifier && !UsdPrimIsAbstract :
+             UsdPrimIsActive && UsdPrimHasDefiningSpecifier && !UsdPrimIsAbstract &&
+                 UsdPrimIsLoaded;
 }
 
 // -------------------------------------------------------------------------- //
@@ -1086,6 +1087,16 @@ void UsdImagingDelegate::_OnUsdObjectsChanged(UsdNotice::ObjectsChanged const &n
   }
 }
 
+/// XXX: We explicitly check if a prim adapter is a coord sys adapter for some
+/// of the behavior exceptions in _ResyncUsdPrim. While it may be nice to use a
+/// more extensible adapter function to determine behaviors in _ResynceUsdPrim,
+/// it's expected that this code will be replaced soon so specifically checking
+/// for coord system adapters makes more sense in the interim.
+static bool _IsCoordSysAdapter(const UsdImagingPrimAdapterSharedPtr &adapter)
+{
+  return dynamic_cast<UsdImagingCoordSysAdapter *>(adapter.get());
+}
+
 void UsdImagingDelegate::_ResyncUsdPrim(SdfPath const &usdPath,
                                         UsdImagingIndexProxy *proxy,
                                         bool repopulateFromRoot)
@@ -1111,23 +1122,34 @@ void UsdImagingDelegate::_ResyncUsdPrim(SdfPath const &usdPath,
   // populated by reference, they can be populated below a point instancer
   // even though the point instancer is supposed to be a leaf node in hydra.
   //
+  // There's an additional exception with regards to the targets of coord
+  // system bindings. Coord systems target and are dependent on Xform prims
+  // that can be anywhere within the hierarchy of the tree. The hydra prims
+  // for coordinate systems that are denpendant on the resynced path or any
+  // of its descendants are always individually resynced.
+  //
   // The resync function has three phases, with each phase dropping through
   // to the next:
   //
   // (1a) If the resync path points to a hydra prim, forward the Resync call.
-  // (1b) If an ancestor of the resync path points to a hydra prim, the
-  //      resync path must be one of the cases mentioned above: subset,
-  //      shader, point instancer prototype/etc.  In all of these cases,
-  //      the appropriate thing is to resync the ancestor.
+  // (1b) If an ancestor of the resync path points to a hydra prim that is not
+  //      a coordinate system, the resync path must be one of the cases
+  //      mentioned above: subset, shader, point instancer prototype/etc.
+  //      In all of these cases, the appropriate thing is to resync the
+  //      ancestor.
   //
-  //  -- If case (1) doesn't apply, proceed --
+  //  -- If case (1) applies, proceed to (2a), otherwise (2b) --
   //
-  //  (2) Since the resync target isn't a child of a hydra prim, check if
-  //      it's a parent of any hydra prims.  If so, we need to remove the
-  //      old prims and repopulate them and any new prims.  We do this by
-  //      finding all existing hydra prims below "usdPath", and calling
-  //      ProcessPrimResync().  This will either re-add them or remove them,
-  //      based on whether the USD prim still exists.  Also: traverse
+  // (2a) If the resync target is a child of a "leaf" hydra prim, check
+  //      if it's a parent of any coordinate system prims. If so, we need to
+  //      resync the coordinate system prims as they're independent from their
+  //      parents. From here, we're done so return.
+  // (2b) Otherwise, since the resync target isn't a child of a "leaf" hydra
+  //      prim, check if it's a parent of any hydra prims.  If so, we need to
+  //      remove the old prims and repopulate them and any new prims.  We do
+  //      this by finding all existing hydra prims below "usdPath", and
+  //      calling ProcessPrimResync().  This will either re-add them or remove
+  //      them, based on whether the USD prim still exists.  Also: traverse
   //      "usdPath" looking for imageable prims that *have not* been
   //      populated; add them.
   //
@@ -1143,12 +1165,15 @@ void UsdImagingDelegate::_ResyncUsdPrim(SdfPath const &usdPath,
   //  (3) The resync path has no hydra prims populated above or below it,
   //  meaning it's a totally new subtree.  Populate it from the root.
 
-  // If the resync target is below a currently populated prim, forward the
-  // resync notice to that prim.  In general, prims can't be populated below
-  // other prims, and in the exceptional cases (instancer prototypes,
-  // geom subsets, etc) we handle things in the parent prim adapter.
-  for (SdfPath currentPath = usdPath; currentPath != SdfPath::AbsoluteRootPath();
-       currentPath         = currentPath.GetParentPath()) {
+  // If the resync target is below a currently populated prim that is not a
+  // coordinate system, forward the resync notice to that prim.
+  // In general, prims can't be populated below other prims, and in the
+  // exceptional cases (instancer prototypes, geom subsets, etc) we handle
+  // things in the parent prim adapter.
+  bool foundPruningPrim = false;
+  for (SdfPath currentPath = usdPath;
+       !foundPruningPrim && currentPath != SdfPath::AbsoluteRootPath();
+       currentPath = currentPath.GetParentPath()) {
     auto const &range = _dependencyInfo.equal_range(currentPath);
     for (auto it = range.first; it != range.second; ++it) {
       SdfPath const &cachePath = it->second;
@@ -1161,19 +1186,31 @@ void UsdImagingDelegate::_ResyncUsdPrim(SdfPath const &usdPath,
       }
       _HdPrimInfo *primInfo = _GetHdPrimInfo(cachePath);
       if (primInfo != nullptr && TF_VERIFY(primInfo->adapter != nullptr)) {
-        primInfo->adapter->ProcessPrimResync(cachePath, proxy);
+        // Skip any coord system prims as they're synced independently
+        // from prims it their hierarchy.
+        if (!_IsCoordSysAdapter(primInfo->adapter)) {
+          // Process the prim and mark that we found a prim that
+          // "prunes" the need to process any non coordinate system
+          // prims below it.
+          primInfo->adapter->ProcessPrimResync(cachePath, proxy);
+          foundPruningPrim = true;
+        }
       }
-    }
-    if (range.first != range.second) {
-      return;
     }
   }
 
-  // If the resync target isn't below a populated prim, search the resync
-  // subtree for affected prims.  If there are any affected dependent prims,
-  // this subtree has been populated and we can resync affected prims
-  // individually.  If we do this, we also need to walk the subtree and
-  // check for new prims.
+  // Whether the resync target is below a populated prim or not, we still
+  // search the resync subtree for affected prims. In the case where the
+  // target is below a populated prim, we're only looking for affected
+  // dependent prims that are related to coordinate systems. Coordinate
+  // systems are independent of their parent prims so we resync each
+  // coordinate system in the subtree individually
+  //
+  // It the case where the resync target is not below a populated prim, we
+  // search the resync subtree for all affected prims. If there are any
+  // affected dependent prims, this subtree has been populated and we can
+  // resync affected prims individually. If we do this, we also need to walk
+  // the subtree and check for new prims.
   SdfPathVector affectedCachePaths;
   _GatherDependencies(usdPath, &affectedCachePaths);
   if (affectedCachePaths.size() > 0) {
@@ -1184,16 +1221,23 @@ void UsdImagingDelegate::_ResyncUsdPrim(SdfPath const &usdPath,
       _HdPrimInfo *primInfo = _GetHdPrimInfo(affectedCachePath);
       if (primInfo != nullptr && TF_VERIFY(primInfo->adapter != nullptr)) {
 
-        // Note: ProcessPrimResync will remove the prim from the index,
-        // similar to ProcessPrimRemoval, but then additionally
+        // Note: ProcessPrimResync will remove the prim from the
+        // index, similar to ProcessPrimRemoval, but then additionally
         // call proxy->Repopulate() on itself. In the case of
         // "repopulateFromRoot", this is redundant with us repopulating
         // the whole subtree below, but change processing will
         // remove the redundancy.  It's important to call
         // ProcessPrimResync to add Repopulate calls for objects not
         // under "usdPath" (such as sibling native instances).
-        primInfo->adapter->ProcessPrimResync(affectedCachePath, proxy);
+        if (!foundPruningPrim || _IsCoordSysAdapter(primInfo->adapter)) {
+          primInfo->adapter->ProcessPrimResync(affectedCachePath, proxy);
+        }
       }
+    }
+    if (foundPruningPrim) {
+      // Because we resynced a prim that handles its descendants we don't
+      // need to walk the subtree for new prims.
+      return;
     }
     if (repopulateFromRoot) {
       TF_DEBUG(USDIMAGING_CHANGES).Msg("  (repopulating from root)\n");

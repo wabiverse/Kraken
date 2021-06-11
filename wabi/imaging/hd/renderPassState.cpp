@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hd/renderPassState.h"
 
 #include "wabi/imaging/hd/camera.h"
@@ -44,22 +37,30 @@ WABI_NAMESPACE_BEGIN
 HdRenderPassState::HdRenderPassState()
     : _camera(nullptr),
       _viewport(0, 0, 1, 1),
-      _overrideWindowPolicy{CameraUtilFit},
+      _overrideWindowPolicy{false, CameraUtilFit},
       _cullMatrix(1),
       _worldToViewMatrix(1),
-      _projectionMatrix(1),
+      _projectionMatrix(1)
+
+      ,
       _overrideColor(0.0f, 0.0f, 0.0f, 0.0f),
       _wireframeColor(0.0f, 0.0f, 0.0f, 0.0f),
       _pointColor(0.0f, 0.0f, 0.0f, 1.0f),
       _pointSize(3.0),
       _lightingEnabled(true),
-      _clippingEnabled(true),
+      _clippingEnabled(true)
+
+      ,
       _maskColor(1.0f, 0.0f, 0.0f, 1.0f),
       _indicatorColor(0.0f, 1.0f, 0.0f, 1.0f),
-      _pointSelectedSize(3.0),
+      _pointSelectedSize(3.0)
+
+      ,
       _alphaThreshold(0.5f),
       _tessLevel(32.0),
-      _drawRange(0.9, -1.0),
+      _drawRange(0.9, -1.0)
+
+      ,
       _depthBiasUseDefault(true),
       _depthBiasEnabled(false),
       _depthBiasConstantFactor(0.0f),
@@ -116,7 +117,7 @@ void HdRenderPassState::SetCameraAndViewport(HdCamera const *camera, GfVec4d con
 void HdRenderPassState::SetCameraAndFraming(
     HdCamera const *camera,
     const CameraUtilFraming &framing,
-    const std::optional<CameraUtilConformWindowPolicy> &overrideWindowPolicy)
+    const std::pair<bool, CameraUtilConformWindowPolicy> &overrideWindowPolicy)
 {
   if (!camera) {
     TF_CODING_ERROR("Received null camera\n");
@@ -137,8 +138,8 @@ GfMatrix4d HdRenderPassState::GetWorldToViewMatrix() const
 
 CameraUtilConformWindowPolicy HdRenderPassState::GetWindowPolicy() const
 {
-  if (_overrideWindowPolicy.has_value()) {
-    return _overrideWindowPolicy.value();
+  if (_overrideWindowPolicy.first) {
+    return _overrideWindowPolicy.second;
   }
   if (_camera) {
     return _camera->GetWindowPolicy();

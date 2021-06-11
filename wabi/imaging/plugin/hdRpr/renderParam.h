@@ -57,7 +57,7 @@ class HdRprRenderParam final : public HdRenderParam {
   void NotifyVolumesAboutFieldChange(HdSceneDelegate *sceneDelegate, SdfPath const &fieldId);
 
   // Hydra does not always mark HdRprim as changed if HdMaterial used by it has been changed.
-  // HdStorm marks all existing rprims as dirty when a material is changed.
+  // HdPhoenix marks all existing rprims as dirty when a material is changed.
   // We instead mark only those rprims that use the changed material.
   void SubscribeForMaterialUpdates(SdfPath const &materialId, SdfPath const &rPrimId);
   void UnsubscribeFromMaterialUpdates(SdfPath const &materialId, SdfPath const &rPrimId);

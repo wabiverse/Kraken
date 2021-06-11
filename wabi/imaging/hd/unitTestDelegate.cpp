@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hd/unitTestDelegate.h"
 
 #include "wabi/imaging/hd/basisCurves.h"
@@ -37,8 +30,16 @@
 #include "wabi/imaging/hd/renderDelegate.h"
 #include "wabi/imaging/hd/sprim.h"
 
-#include "wabi/base/gf/matrix4f.h"
+#include "wabi/base/gf/matrix3d.h"
 #include "wabi/base/gf/rotation.h"
+#include "wabi/base/gf/vec2d.h"
+#include "wabi/base/gf/vec2f.h"
+#include "wabi/base/gf/vec2h.h"
+#include "wabi/base/gf/vec2i.h"
+#include "wabi/base/gf/vec3h.h"
+#include "wabi/base/gf/vec3i.h"
+#include "wabi/base/gf/vec4h.h"
+#include "wabi/base/gf/vec4i.h"
 #include "wabi/base/tf/staticTokens.h"
 
 WABI_NAMESPACE_BEGIN
@@ -195,6 +196,58 @@ void HdUnitTestDelegate::AddMesh(SdfPath const &id,
   }
 }
 
+void HdUnitTestDelegate::AddMesh(SdfPath const &id,
+                                 GfMatrix4f const &transform,
+                                 VtVec3fArray const &points,
+                                 VtIntArray const &numVerts,
+                                 VtIntArray const &verts,
+                                 VtIntArray const &holes,
+                                 PxOsdSubdivTags const &subdivTags,
+                                 VtValue const &color,
+                                 VtIntArray const &colorIndices,
+                                 HdInterpolation colorInterpolation,
+                                 VtValue const &opacity,
+                                 VtIntArray const &opacityIndices,
+                                 HdInterpolation opacityInterpolation,
+                                 bool guide,
+                                 SdfPath const &instancerId,
+                                 TfToken const &scheme,
+                                 TfToken const &orientation,
+                                 bool doubleSided)
+{
+  HD_TRACE_FUNCTION();
+
+  HdRenderIndex &index = GetRenderIndex();
+  index.InsertRprim(HdPrimTypeTokens->mesh, this, id);
+
+  _meshes[id] = _Mesh(scheme,
+                      orientation,
+                      transform,
+                      points,
+                      numVerts,
+                      verts,
+                      holes,
+                      subdivTags,
+                      guide,
+                      doubleSided);
+
+  _primvars[id] = {_Primvar(HdTokens->displayColor,
+                            color,
+                            colorInterpolation,
+                            HdPrimvarRoleTokens->color,
+                            colorIndices),
+                   _Primvar(HdTokens->displayOpacity,
+                            opacity,
+                            opacityInterpolation,
+                            HdPrimvarRoleTokens->color,
+                            opacityIndices)};
+
+  if (!instancerId.IsEmpty()) {
+    _instancerBindings[id] = instancerId;
+    _instancers[instancerId].prototypes.push_back(id);
+  }
+}
+
 void HdUnitTestDelegate::AddBasisCurves(SdfPath const &id,
                                         VtVec3fArray const &points,
                                         VtIntArray const &curveVertexCounts,
@@ -327,7 +380,8 @@ void HdUnitTestDelegate::AddPrimvar(SdfPath const &id,
                                     TfToken const &name,
                                     VtValue const &value,
                                     HdInterpolation const &interp,
-                                    TfToken const &role)
+                                    TfToken const &role,
+                                    VtIntArray const &indices)
 {
   _Primvars::iterator pvIt;
   if (_FindPrimvar(id, name, &pvIt)) {
@@ -335,7 +389,7 @@ void HdUnitTestDelegate::AddPrimvar(SdfPath const &id,
     return;
   }
 
-  _primvars[id].emplace_back(name, value, interp, role);
+  _primvars[id].emplace_back(name, value, interp, role, indices);
   HdChangeTracker &tracker = GetRenderIndex().GetChangeTracker();
   // XXX: Using DirtyPrimvar even though this is a descriptor change.
   tracker.MarkRprimDirty(id, HdChangeTracker::DirtyPrimvar);
@@ -343,11 +397,13 @@ void HdUnitTestDelegate::AddPrimvar(SdfPath const &id,
 
 void HdUnitTestDelegate::UpdatePrimvarValue(SdfPath const &id,
                                             TfToken const &name,
-                                            VtValue const &value)
+                                            VtValue const &value,
+                                            VtIntArray const &indices)
 {
   _Primvars::iterator pvIt;
   if (_FindPrimvar(id, name, &pvIt)) {
-    pvIt->value = value;
+    pvIt->value   = value;
+    pvIt->indices = indices;
 
     HdChangeTracker &tracker = GetRenderIndex().GetChangeTracker();
     tracker.MarkRprimDirty(id, HdChangeTracker::DirtyPrimvar);
@@ -792,6 +848,96 @@ bool HdUnitTestDelegate::GetVisible(SdfPath const &id)
   return _visibility;
 }
 
+namespace {
+
+template<typename T> VtValue _ComputeFlattened(VtValue const &value, VtIntArray const &indices)
+{
+  VtArray<T> array  = value.Get<VtArray<T>>();
+  VtArray<T> result = VtArray<T>(indices.size());
+
+  for (size_t i = 0; i < indices.size(); ++i) {
+    int index = indices[i];
+    if (index >= 0 && (size_t)index < array.size()) {
+      result[i] = array[index];
+    }
+    else {
+      TF_CODING_ERROR("Invalid indices");
+    }
+  }
+
+  return VtValue(result);
+}
+
+VtValue _ComputeFlattenedValue(VtValue const &value, VtIntArray const &indices)
+{
+  if (value.IsHolding<VtVec2fArray>()) {
+    return _ComputeFlattened<GfVec2f>(value, indices);
+  }
+  else if (value.IsHolding<VtVec2dArray>()) {
+    return _ComputeFlattened<GfVec2d>(value, indices);
+  }
+  else if (value.IsHolding<VtVec2iArray>()) {
+    return _ComputeFlattened<GfVec2i>(value, indices);
+  }
+  else if (value.IsHolding<VtVec2hArray>()) {
+    return _ComputeFlattened<GfVec2h>(value, indices);
+  }
+  else if (value.IsHolding<VtVec3fArray>()) {
+    return _ComputeFlattened<GfVec3f>(value, indices);
+  }
+  else if (value.IsHolding<VtVec3dArray>()) {
+    return _ComputeFlattened<GfVec3d>(value, indices);
+  }
+  else if (value.IsHolding<VtVec3iArray>()) {
+    return _ComputeFlattened<GfVec3i>(value, indices);
+  }
+  else if (value.IsHolding<VtVec3hArray>()) {
+    return _ComputeFlattened<GfVec3h>(value, indices);
+  }
+  else if (value.IsHolding<VtVec4fArray>()) {
+    return _ComputeFlattened<GfVec4f>(value, indices);
+  }
+  else if (value.IsHolding<VtVec4dArray>()) {
+    return _ComputeFlattened<GfVec4d>(value, indices);
+  }
+  else if (value.IsHolding<VtVec4iArray>()) {
+    return _ComputeFlattened<GfVec4i>(value, indices);
+  }
+  else if (value.IsHolding<VtVec4hArray>()) {
+    return _ComputeFlattened<GfVec4h>(value, indices);
+  }
+  else if (value.IsHolding<VtMatrix3dArray>()) {
+    return _ComputeFlattened<GfMatrix3d>(value, indices);
+  }
+  else if (value.IsHolding<VtMatrix4dArray>()) {
+    return _ComputeFlattened<GfMatrix4d>(value, indices);
+  }
+  else if (value.IsHolding<VtStringArray>()) {
+    return _ComputeFlattened<std::string>(value, indices);
+  }
+  else if (value.IsHolding<VtDoubleArray>()) {
+    return _ComputeFlattened<double>(value, indices);
+  }
+  else if (value.IsHolding<VtIntArray>()) {
+    return _ComputeFlattened<int>(value, indices);
+  }
+  else if (value.IsHolding<VtUIntArray>()) {
+    return _ComputeFlattened<unsigned int>(value, indices);
+  }
+  else if (value.IsHolding<VtFloatArray>()) {
+    return _ComputeFlattened<float>(value, indices);
+  }
+  else if (value.IsHolding<VtHalfArray>()) {
+    return _ComputeFlattened<GfHalf>(value, indices);
+  }
+  else {
+    TF_WARN("Type of primvar not yet fully supported");
+  }
+  return value;
+}
+
+}  // namespace
+
 /*virtual*/
 VtValue HdUnitTestDelegate::Get(SdfPath const &id, TfToken const &key)
 {
@@ -837,7 +983,61 @@ VtValue HdUnitTestDelegate::Get(SdfPath const &id, TfToken const &key)
     // Check if key is a primvar
     _Primvars::iterator pvIt;
     if (_FindPrimvar(id, key, &pvIt)) {
+      if (pvIt->indices.empty()) {
+        value = pvIt->value;
+      }
+      else {
+        // Flatten primvar
+        value = pvIt->value;
+        if (value.IsArrayValued()) {
+          value = _ComputeFlattenedValue(value, pvIt->indices);
+        }
+      }
+    }
+  }
+  return value;
+}
+
+VtValue HdUnitTestDelegate::GetIndexedPrimvar(SdfPath const &id,
+                                              TfToken const &key,
+                                              VtIntArray *outIndices)
+{
+  VtValue value;
+  if (key == HdTokens->points) {
+    // Each of the prim types hold onto their points
+    if (_meshes.find(id) != _meshes.end()) {
+      return VtValue(_meshes[id].points);
+    }
+    else if (_curves.find(id) != _curves.end()) {
+      return VtValue(_curves[id].points);
+    }
+    else if (_points.find(id) != _points.end()) {
+      return VtValue(_points[id].points);
+    }
+  }
+  else if (key == HdInstancerTokens->scale) {
+    if (_instancers.find(id) != _instancers.end()) {
+      return VtValue(_instancers[id].scale);
+    }
+  }
+  else if (key == HdInstancerTokens->rotate) {
+    if (_instancers.find(id) != _instancers.end()) {
+      return VtValue(_instancers[id].rotate);
+    }
+  }
+  else if (key == HdInstancerTokens->translate) {
+    if (_instancers.find(id) != _instancers.end()) {
+      return VtValue(_instancers[id].translate);
+    }
+  }
+  else {
+    // Check if key is a primvar
+    _Primvars::iterator pvIt;
+    if (_FindPrimvar(id, key, &pvIt)) {
       value = pvIt->value;
+      if (outIndices) {
+        *outIndices = pvIt->indices;
+      }
     }
   }
   return value;
@@ -877,7 +1077,7 @@ HdPrimvarDescriptorVector HdUnitTestDelegate::GetPrimvarDescriptors(SdfPath cons
     _Primvars const &pvs = cit->second;
     for (auto const &pv : pvs) {
       if (pv.interp == interpolation) {
-        primvars.emplace_back(pv.name, pv.interp, pv.role);
+        primvars.emplace_back(pv.name, pv.interp, pv.role, !pv.indices.empty());
       }
     }
   }
@@ -992,6 +1192,60 @@ void HdUnitTestDelegate::AddPolygons(SdfPath const &id,
           colorInterp,
           opacity,
           HdInterpolationConstant,
+          false,
+          instancerId);
+}
+
+void HdUnitTestDelegate::AddFaceVaryingPolygons(SdfPath const &id,
+                                                GfMatrix4f const &transform,
+                                                SdfPath const &instancerId)
+{
+  int numVerts[]   = {3, 4, 5};
+  int verts[]      = {0, 1, 2, 1, 3, 4, 2, 3, 5, 6, 7, 4};
+  GfVec3f points[] = {
+      GfVec3f(-2.0f, 0.0f, -0.5f),
+      GfVec3f(-1.0f, -1.0f, 0.0f),
+      GfVec3f(-1.0f, 1.0f, 0.0f),
+      GfVec3f(0.0f, -1.0f, 0.2f),
+      GfVec3f(0.0f, 1.0f, 0.2f),
+      GfVec3f(1.0f, -1.0f, 0.0f),
+      GfVec3f(2.0f, 0.0f, -0.5f),
+      GfVec3f(1.0f, 1.0f, 0.0f),
+  };
+
+  PxOsdSubdivTags subdivTags;
+  VtIntArray holes;
+
+  VtVec3fArray colorArray = {GfVec3f(1, 0, 0),
+                             GfVec3f(1, 0.3, 0),
+                             GfVec3f(1, 1, 0),
+                             GfVec3f(0, 1, 0),
+                             GfVec3f(0, 1, 1),
+                             GfVec3f(0, 0, 1),
+                             GfVec3f(0.5, 0, 0.5),
+                             GfVec3f(1, 0.4, 0.7),
+                             GfVec3f(1, 1, 1),
+                             GfVec3f(1, 0, 0),
+                             GfVec3f(1, 0.3, 0),
+                             GfVec3f(1, 1, 0)};
+
+  VtFloatArray opacityArray = {
+      1.0f, 1.0f, 1.0f, 0.6f, 0.6f, 0.6f, 0.6f, 0.75f, 0.75f, 0.75f, 0.75f, 0.75f};
+  VtIntArray indices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+
+  AddMesh(id,
+          transform,
+          _BuildArray(points, sizeof(points) / sizeof(points[0])),
+          _BuildArray(numVerts, sizeof(numVerts) / sizeof(numVerts[0])),
+          _BuildArray(verts, sizeof(verts) / sizeof(verts[0])),
+          holes,
+          subdivTags,
+          VtValue(colorArray),
+          indices,
+          HdInterpolationFaceVarying,
+          VtValue(opacityArray),
+          indices,
+          HdInterpolationFaceVarying,
           false,
           instancerId);
 }

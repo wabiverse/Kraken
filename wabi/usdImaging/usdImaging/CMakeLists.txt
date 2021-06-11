@@ -44,6 +44,7 @@ wabi_library(usdImaging
         distantLightAdapter
         domeLightAdapter
         fieldAdapter
+        geometryLightAdapter
         gprimAdapter
         hermiteCurvesAdapter
         implicitSurfaceMeshUtils
@@ -54,8 +55,11 @@ wabi_library(usdImaging
         meshAdapter
         nurbsCurvesAdapter
         nurbsPatchAdapter
+        pluginLightAdapter
+        pluginLightFilterAdapter
         pointsAdapter
         pointInstancerAdapter
+        portalLightAdapter
         primAdapter
         primvarDescCache
         rectLightAdapter

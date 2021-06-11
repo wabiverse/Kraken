@@ -315,13 +315,13 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
   // Returns the version number for a valid cache entry
   unsigned _GetValidVersion() const
   {
-    return _cacheVersion->fetch_add(1);
+    return *_cacheVersion.get() + 1;
   }
 
   // Returns the version number for an invalid cache entry
   unsigned _GetInvalidVersion() const
   {
-    return _cacheVersion->fetch_sub(1);
+    return *_cacheVersion.get() - 1;
   }
 
   // Initial version numbers
@@ -373,9 +373,10 @@ void UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_SetCacheEntryForPri
     _Entry *entry) const
 {
   // Note: _cacheVersion is not allowed to change during cache access.
-  unsigned v      = *entry->version.get();
-  unsigned cached = *_cacheVersion.get();
-  if (v < cached && entry->version->compare_exchange_weak(cached, v)) {
+  unsigned v = entry->version->load(std::memory_order_relaxed);
+  if (v < *_cacheVersion.get() &&
+      entry->version->compare_exchange_weak(
+          v, v + 1, std::memory_order_release, std::memory_order_relaxed)) {
     entry->value = value;
     entry->version->store(_GetValidVersion());
   }

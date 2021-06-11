@@ -1,34 +1,27 @@
 
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/wabi.h"
 
 #include "wabi/imaging/hdPh/bufferArrayRange.h"
@@ -190,9 +183,9 @@ class HdPh_Osd3Subdivision : public HdPh_Subdivision {
 };
 
 class HdPh_Osd3IndexComputation : public HdPh_OsdIndexComputation {
-  struct PtexFaceInfo {
-    int coarseFaceId;
-    GfVec4i coarseEdgeIds;
+  struct BaseFaceInfo {
+    int baseFaceParam;
+    GfVec2i baseFaceEdgeIndices;
   };
 
  public:
@@ -205,12 +198,13 @@ class HdPh_Osd3IndexComputation : public HdPh_OsdIndexComputation {
  private:
   void _PopulateUniformPrimitiveBuffer(OpenSubdiv::Far::PatchTable const *patchTable);
   void _PopulatePatchPrimitiveBuffer(OpenSubdiv::Far::PatchTable const *patchTable);
-  void _CreatePtexFaceToCoarseFaceInfoMapping(std::vector<PtexFaceInfo> *result);
+  void _CreateBaseFaceMapping(std::vector<BaseFaceInfo> *result);
 
   HdPh_Osd3Subdivision *_subdivision;
 };
 
 class HdPh_Osd3FvarIndexComputation : public HdComputedBufferSource {
+
  public:
   HdPh_Osd3FvarIndexComputation(HdPh_Osd3Subdivision *subdivision,
                                 HdPh_MeshTopology *topology,
@@ -259,9 +253,9 @@ class HdPh_Osd3TopologyComputation : public HdPh_OsdTopologyComputation {
 // ---------------------------------------------------------------------------
 
 HdPh_Osd3Subdivision::HdPh_Osd3Subdivision()
-    : _vertexStencils(NULL),
-      _varyingStencils(NULL),
-      _patchTable(NULL),
+    : _vertexStencils(nullptr),
+      _varyingStencils(nullptr),
+      _patchTable(nullptr),
       _adaptive(false),
       _maxNumFaceVarying(0)
 {
@@ -297,7 +291,6 @@ void HdPh_Osd3Subdivision::SetRefinementTables(
     OpenSubdiv::Far::PatchTable const *patchTable,
     bool adaptive)
 {
-
   if (_vertexStencils) {
     delete _vertexStencils;
   }
@@ -310,7 +303,6 @@ void HdPh_Osd3Subdivision::SetRefinementTables(
     }
   }
   _faceVaryingStencils.clear();
-
   if (_patchTable)
     delete _patchTable;
 
@@ -384,7 +376,6 @@ void HdPh_Osd3Subdivision::RefineCPU(HdBufferSourceSharedPtr const &source,
                                      HdPh_MeshTopology::Interpolation interpolation,
                                      int fvarChannel)
 {
-
   if (interpolation == HdPh_MeshTopology::INTERPOLATE_FACEVARYING) {
     if (!TF_VERIFY(fvarChannel >= 0)) {
       return;
@@ -523,8 +514,7 @@ HdBufferSourceSharedPtr HdPh_Osd3Subdivision::CreateTopologyComputation(
     int level,
     SdfPath const &id)
 {
-  return HdBufferSourceSharedPtr(
-      new HdPh_Osd3TopologyComputation(this, topology, adaptive, level, id));
+  return std::make_shared<HdPh_Osd3TopologyComputation>(this, topology, adaptive, level, id);
 }
 
 /*virtual*/
@@ -532,7 +522,7 @@ HdBufferSourceSharedPtr HdPh_Osd3Subdivision::CreateIndexComputation(
     HdPh_MeshTopology *topology,
     HdBufferSourceSharedPtr const &osdTopology)
 {
-  return HdBufferSourceSharedPtr(new HdPh_Osd3IndexComputation(this, topology, osdTopology));
+  return std::make_shared<HdPh_Osd3IndexComputation>(this, topology, osdTopology);
 }
 
 /*virtual*/
@@ -541,8 +531,7 @@ HdBufferSourceSharedPtr HdPh_Osd3Subdivision::CreateFvarIndexComputation(
     HdBufferSourceSharedPtr const &osdTopology,
     int channel)
 {
-  return HdBufferSourceSharedPtr(
-      new HdPh_Osd3FvarIndexComputation(this, topology, osdTopology, channel));
+  return std::make_shared<HdPh_Osd3FvarIndexComputation>(this, topology, osdTopology, channel);
 }
 
 /*virtual*/
@@ -553,8 +542,8 @@ HdBufferSourceSharedPtr HdPh_Osd3Subdivision::CreateRefineComputation(
     HdPh_MeshTopology::Interpolation interpolation,
     int fvarChannel)
 {
-  return HdBufferSourceSharedPtr(new HdPh_OsdRefineComputation<HdPh_OsdCpuVertexBuffer>(
-      topology, source, osdTopology, interpolation, fvarChannel));
+  return std::make_shared<HdPh_OsdRefineComputation<HdPh_OsdCpuVertexBuffer>>(
+      topology, source, osdTopology, interpolation, fvarChannel);
 }
 
 /*virtual*/
@@ -565,11 +554,12 @@ HdComputationSharedPtr HdPh_Osd3Subdivision::CreateRefineComputationGPU(
     HdPh_MeshTopology::Interpolation interpolation,
     int fvarChannel)
 {
-  return HdComputationSharedPtr(
-      new HdPh_OsdRefineComputationGPU(topology, name, dataType, interpolation, fvarChannel));
+  return std::make_shared<HdPh_OsdRefineComputationGPU>(
+      topology, name, dataType, interpolation, fvarChannel);
 }
 
 #if HDPH_ENABLE_GPU_SUBDIVISION
+
 HdPh_OsdGpuStencilTable *HdPh_Osd3Subdivision::_GetGpuVertexStencilTable()
 {
   HD_TRACE_FUNCTION();
@@ -710,6 +700,7 @@ bool HdPh_Osd3TopologyComputation::Resolve()
 
       options.interpolationMode = Far::StencilTableFactory::INTERPOLATE_VARYING;
       varyingStencils           = Far::StencilTableFactory::Create(*refiner, options);
+
       options.interpolationMode = Far::StencilTableFactory::INTERPOLATE_FACE_VARYING;
       for (int i = 0; i < numFvarChannels; ++i) {
         options.fvarChannel    = i;
@@ -819,8 +810,8 @@ bool HdPh_Osd3IndexComputation::Resolve()
     VtArray<int> indices(ptableSize);
     memcpy(indices.data(), firstIndex, ptableSize * sizeof(int));
 
-    HdBufferSourceSharedPtr patchIndices(
-        new HdVtBufferSource(HdTokens->indices, VtValue(indices), arraySize));
+    HdBufferSourceSharedPtr patchIndices = std::make_shared<HdVtBufferSource>(
+        HdTokens->indices, VtValue(indices), arraySize);
 
     _SetResult(patchIndices);
 
@@ -831,7 +822,8 @@ bool HdPh_Osd3IndexComputation::Resolve()
     VtArray<GfVec3i> indices(ptableSize / 3);
     memcpy(indices.data(), firstIndex, ptableSize * sizeof(int));
 
-    HdBufferSourceSharedPtr triIndices(new HdVtBufferSource(HdTokens->indices, VtValue(indices)));
+    HdBufferSourceSharedPtr triIndices = std::make_shared<HdVtBufferSource>(HdTokens->indices,
+                                                                            VtValue(indices));
     _SetResult(triIndices);
 
     _PopulateUniformPrimitiveBuffer(patchTable);
@@ -842,7 +834,8 @@ bool HdPh_Osd3IndexComputation::Resolve()
     memcpy(indices.data(), firstIndex, ptableSize * sizeof(int));
 
     // refined quads index buffer
-    HdBufferSourceSharedPtr quadIndices(new HdVtBufferSource(HdTokens->indices, VtValue(indices)));
+    HdBufferSourceSharedPtr quadIndices = std::make_shared<HdVtBufferSource>(HdTokens->indices,
+                                                                             VtValue(indices));
     _SetResult(quadIndices);
 
     _PopulateUniformPrimitiveBuffer(patchTable);
@@ -852,8 +845,8 @@ bool HdPh_Osd3IndexComputation::Resolve()
   return true;
 }
 
-void HdPh_Osd3IndexComputation::_CreatePtexFaceToCoarseFaceInfoMapping(
-    std::vector<HdPh_Osd3IndexComputation::PtexFaceInfo> *result)
+void HdPh_Osd3IndexComputation::_CreateBaseFaceMapping(
+    std::vector<HdPh_Osd3IndexComputation::BaseFaceInfo> *result)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -861,104 +854,61 @@ void HdPh_Osd3IndexComputation::_CreatePtexFaceToCoarseFaceInfoMapping(
   if (!TF_VERIFY(result))
     return;
 
-  int const *numVertsPtr = _topology->GetFaceVertexCounts().cdata();
-  int numAuthoredFaces   = _topology->GetFaceVertexCounts().size();
-  int const *vertsPtr    = _topology->GetFaceVertexIndices().cdata();
-  int numVertIndices     = _topology->GetFaceVertexIndices().size();
-  result->clear();
-  result->reserve(numAuthoredFaces);  // first guess at possible size
+  int const *numVertsPtr   = _topology->GetFaceVertexCounts().cdata();
+  int const numFaces       = _topology->GetFaceVertexCounts().size();
+  int const numVertIndices = _topology->GetFaceVertexIndices().size();
 
-  // enumerate edges of the coarse topology to help compute the ptexFace's
-  // coarse edge id's
-  HdMeshUtil::EdgeMap authoredEdgeMap = HdMeshUtil::ComputeAuthoredEdgeMap(_topology);
+  result->clear();
+  result->reserve(numFaces);
 
   int regFaceSize = 4;
   if (HdPh_Subdivision::RefinesToTriangles(_topology->GetScheme())) {
     regFaceSize = 3;
   }
 
-  // XXX: see comment below regarding flip
-  // bool flip = (_topology->GetOrientation() != HdTokens->rightHanded);
-
-  for (int faceId = 0, v = 0; faceId < numAuthoredFaces; ++faceId) {
-    int nv = numVertsPtr[faceId];
-
-    // hole faces shouldn't affect ptex id, i.e., ptex face id's are
-    // assigned for hole faces.
-    // note: this is inconsistent with quadrangulation
-    // (HdMeshUtil::ComputeQuadIndices), but consistent with OpenSubdiv 3.x
-    // (see ptexIndices.cpp)
+  for (int i = 0, v = 0, ev = 0; i < numFaces; ++i) {
+    int const nv = numVertsPtr[i];
 
     if (v + nv > numVertIndices)
       break;
 
     if (nv == regFaceSize) {
-      // regular face => 1:1 mapping to a ptex face
-      PtexFaceInfo info;
-      info.coarseFaceId = faceId;
-
-      GfVec4i coarseEdgeIds(-1, -1, -1, -1);
-
-      // all edges of the regular face must exist in the authored edge map
-      for (int e = 0; e < nv; ++e) {
-        // XXX: don't we need to flip a face's vertex indices, like
-        // we do in HdMeshUtil::Compute{Triangle,Quad}Indices?
-        GfVec2i edge(vertsPtr[v + e], vertsPtr[v + (e + 1) % nv]);
-        auto it = authoredEdgeMap.find(edge);
-        TF_VERIFY(it != authoredEdgeMap.end());
-        coarseEdgeIds[e] = it->second;
-      }
-
-      info.coarseEdgeIds = coarseEdgeIds;
+      BaseFaceInfo info;
+      info.baseFaceParam       = HdMeshUtil::EncodeCoarseFaceParam(i, /*edgeFlag=*/0);
+      info.baseFaceEdgeIndices = GfVec2i(ev, 0);
       result->push_back(info);
     }
-    else if (nv <= 2) {
-      // Handling degenerated faces
-      int numPtexFaces = (regFaceSize == 4) ? nv : nv - 2;
-      for (int f = 0; f < numPtexFaces; ++f) {
-        PtexFaceInfo info;
-        info.coarseFaceId  = faceId;
-        info.coarseEdgeIds = GfVec4i(-1, -1, -1, -1);
+    else if (nv < 3) {
+      int const numBaseFaces = (regFaceSize == 4) ? nv : nv - 2;
+      for (int f = 0; f < numBaseFaces; ++f) {
+        BaseFaceInfo info;
+        info.baseFaceParam       = HdMeshUtil::EncodeCoarseFaceParam(i, /*edgeFlag=*/0);
+        info.baseFaceEdgeIndices = GfVec2i(-1, -1);
         result->push_back(info);
       }
     }
     else {
-      // if we expect quad faces, non-quad n-gons are quadrangulated into
-      // n-quads
-      // if we expect tri faces, non-tri n-gons are triangulated into
-      // n-2-tris. note: we don't currently support non-tri faces when
-      // using loop (see pxOsd/refinerFactory.cpp)
-      int numPtexFaces = (regFaceSize == 4) ? nv : nv - 2;
-      for (int f = 0; f < numPtexFaces; ++f) {
-        PtexFaceInfo info;
-        info.coarseFaceId = faceId;
-
-        GfVec4i coarseEdgeIds(-1, -1, -1, -1);
-
-        if (regFaceSize == 4) {  // quadrangulation
-          // only the first (index 0) and last (index 3) edges of the
-          // quad are from the authored edges; the other 2 are the
-          // result of quadrangulation.
-          GfVec2i e0 = GfVec2i(vertsPtr[v + f], vertsPtr[v + (f + 1) % nv]);
-          GfVec2i e3 = GfVec2i(vertsPtr[v + (f + nv - 1) % nv], vertsPtr[v + f]);
-          auto it    = authoredEdgeMap.find(e0);
-          TF_VERIFY(it != authoredEdgeMap.end());
-          coarseEdgeIds[0] = it->second;
-
-          it = authoredEdgeMap.find(e3);
-          TF_VERIFY(it != authoredEdgeMap.end());
-          coarseEdgeIds[3] = it->second;
+      for (int j = 0; j < nv; ++j) {
+        int edgeFlag = 0;
+        if (j == 0) {
+          edgeFlag = 1;
         }
-        else {  // triangular ptex
-                // XXX: Add support
+        else if (j == nv - 1) {
+          edgeFlag = 2;
+        }
+        else {
+          edgeFlag = 3;
         }
 
-        info.coarseEdgeIds = coarseEdgeIds;
+        BaseFaceInfo info;
+        info.baseFaceParam       = HdMeshUtil::EncodeCoarseFaceParam(i, edgeFlag);
+        info.baseFaceEdgeIndices = GfVec2i(ev + j, ev + (j + nv - 1) % nv);
         result->push_back(info);
       }
-    }  // irregular face
+    }
 
     v += nv;
+    ev += nv;
   }
 
   result->shrink_to_fit();
@@ -970,32 +920,26 @@ void HdPh_Osd3IndexComputation::_PopulateUniformPrimitiveBuffer(
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  // primitiveParam from patchtable contains a map of
-  // gl_PrimitiveID to PtexIndex. It should be reinterpreted
-  // to face index if necessary.
-  std::vector<PtexFaceInfo> ptexIndexToCoarseFaceInfoMapping;
-  _CreatePtexFaceToCoarseFaceInfoMapping(&ptexIndexToCoarseFaceInfoMapping);
+  std::vector<BaseFaceInfo> patchFaceToBaseFaceMapping;
+  _CreateBaseFaceMapping(&patchFaceToBaseFaceMapping);
 
-  // store faceIndex, ptexIndex and edgeFlag(=0)
   size_t numPatches = patchTable ? patchTable->GetPatchParamTable().size() : 0;
   VtVec3iArray primitiveParam(numPatches);
-  VtVec4iArray edgeIndices(numPatches);
+  VtVec2iArray edgeIndices(numPatches);
 
-  // ivec3
   for (size_t i = 0; i < numPatches; ++i) {
     OpenSubdiv::Far::PatchParam const &patchParam = patchTable->GetPatchParamTable()[i];
 
-    int ptexIndex            = patchParam.GetFaceId();
-    PtexFaceInfo const &info = ptexIndexToCoarseFaceInfoMapping[ptexIndex];
-    int faceIndex            = info.coarseFaceId;
+    int patchFaceIndex       = patchParam.GetFaceId();
+    BaseFaceInfo const &info = patchFaceToBaseFaceMapping[patchFaceIndex];
 
     unsigned int field0  = patchParam.field0;
     unsigned int field1  = patchParam.field1;
-    primitiveParam[i][0] = HdMeshUtil::EncodeCoarseFaceParam(faceIndex, 0);
+    primitiveParam[i][0] = info.baseFaceParam;
     primitiveParam[i][1] = *((int *)&field0);
     primitiveParam[i][2] = *((int *)&field1);
 
-    edgeIndices[i] = info.coarseEdgeIds;
+    edgeIndices[i] = info.baseFaceEdgeIndices;
   }
 
   _primitiveBuffer.reset(new HdVtBufferSource(HdTokens->primitiveParam, VtValue(primitiveParam)));
@@ -1009,15 +953,13 @@ void HdPh_Osd3IndexComputation::_PopulatePatchPrimitiveBuffer(
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  std::vector<PtexFaceInfo> ptexIndexToCoarseFaceInfoMapping;
-  _CreatePtexFaceToCoarseFaceInfoMapping(&ptexIndexToCoarseFaceInfoMapping);
+  std::vector<BaseFaceInfo> patchFaceToBaseFaceMapping;
+  _CreateBaseFaceMapping(&patchFaceToBaseFaceMapping);
 
-  // BSPLINES
   size_t numPatches = patchTable ? patchTable->GetPatchParamTable().size() : 0;
   VtVec4iArray primitiveParam(numPatches);
-  VtVec4iArray edgeIndices(numPatches);
+  VtVec2iArray edgeIndices(numPatches);
 
-  // ivec4
   for (size_t i = 0; i < numPatches; ++i) {
     OpenSubdiv::Far::PatchParam const &patchParam = patchTable->GetPatchParamTable()[i];
 
@@ -1028,19 +970,19 @@ void HdPh_Osd3IndexComputation::_PopulatePatchPrimitiveBuffer(
         sharpness = patchTable->GetSharpnessValues()[sharpnessIndex];
     }
 
-    int ptexIndex            = patchParam.GetFaceId();
-    PtexFaceInfo const &info = ptexIndexToCoarseFaceInfoMapping[ptexIndex];
-    int faceIndex            = info.coarseFaceId;
-    unsigned int field0      = patchParam.field0;
-    unsigned int field1      = patchParam.field1;
-    primitiveParam[i][0]     = HdMeshUtil::EncodeCoarseFaceParam(faceIndex, 0);
-    primitiveParam[i][1]     = *((int *)&field0);
-    primitiveParam[i][2]     = *((int *)&field1);
+    int patchFaceIndex       = patchParam.GetFaceId();
+    BaseFaceInfo const &info = patchFaceToBaseFaceMapping[patchFaceIndex];
+
+    unsigned int field0  = patchParam.field0;
+    unsigned int field1  = patchParam.field1;
+    primitiveParam[i][0] = info.baseFaceParam;
+    primitiveParam[i][1] = *((int *)&field0);
+    primitiveParam[i][2] = *((int *)&field1);
 
     int sharpnessAsInt   = static_cast<int>(sharpness);
     primitiveParam[i][3] = sharpnessAsInt;
 
-    edgeIndices[i] = info.coarseEdgeIds;
+    edgeIndices[i] = info.baseFaceEdgeIndices;
   }
   _primitiveBuffer.reset(new HdVtBufferSource(HdTokens->primitiveParam, VtValue(primitiveParam)));
 
@@ -1102,8 +1044,8 @@ bool HdPh_Osd3FvarIndexComputation::Resolve()
     VtIntArray indices(arraySize * numPatches);
     memcpy(indices.data(), firstIndex, arraySize * numPatches * sizeof(int));
 
-    HdBufferSourceSharedPtr patchIndices(
-        new HdVtBufferSource(_indicesName, VtValue(indices), arraySize));
+    HdBufferSourceSharedPtr patchIndices = std::make_shared<HdVtBufferSource>(
+        _indicesName, VtValue(indices), arraySize);
 
     _SetResult(patchIndices);
     _PopulateFvarPatchParamBuffer(patchTable);
@@ -1113,7 +1055,8 @@ bool HdPh_Osd3FvarIndexComputation::Resolve()
     VtArray<GfVec3i> indices(numPatches);
     memcpy(indices.data(), firstIndex, 3 * numPatches * sizeof(int));
 
-    HdBufferSourceSharedPtr triIndices(new HdVtBufferSource(_indicesName, VtValue(indices)));
+    HdBufferSourceSharedPtr triIndices = std::make_shared<HdVtBufferSource>(_indicesName,
+                                                                            VtValue(indices));
     _SetResult(triIndices);
   }
   else {
@@ -1121,7 +1064,8 @@ bool HdPh_Osd3FvarIndexComputation::Resolve()
     VtArray<GfVec4i> indices(numPatches);
     memcpy(indices.data(), firstIndex, 4 * numPatches * sizeof(int));
 
-    HdBufferSourceSharedPtr quadIndices(new HdVtBufferSource(_indicesName, VtValue(indices)));
+    HdBufferSourceSharedPtr quadIndices = std::make_shared<HdVtBufferSource>(_indicesName,
+                                                                             VtValue(indices));
     _SetResult(quadIndices);
   }
 
@@ -1196,7 +1140,6 @@ bool HdPh_Osd3FvarIndexComputation::_CheckValid() const
 }
 
 // ---------------------------------------------------------------------------
-
 HdPh_Subdivision *HdPh_Osd3Factory::CreateSubdivision()
 {
   return new HdPh_Osd3Subdivision();

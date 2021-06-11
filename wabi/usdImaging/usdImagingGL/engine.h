@@ -186,7 +186,7 @@ class UsdImagingGLEngine {
   /// If set to {false, ...}, the window policy of the specified camera
   /// will be used.
   USDIMAGINGGL_API
-  void SetOverrideWindowPolicy(const std::optional<CameraUtilConformWindowPolicy> &policy);
+  void SetOverrideWindowPolicy(const std::pair<bool, CameraUtilConformWindowPolicy> &policy);
 
   /// Set the size of the render buffers baking the AOVs.
   /// GUI applications should set this to the size of the window.

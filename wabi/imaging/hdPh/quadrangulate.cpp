@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/wabi.h"
 
 #include "wabi/imaging/hdPh/bufferArrayRange.h"
@@ -107,7 +100,7 @@ HgiComputePipelineSharedPtr _CreatePipeline(Hgi *hgi,
   return std::make_shared<HgiComputePipelineHandle>(hgi->CreateComputePipeline(desc));
 }
 
-}  // namespace
+}  // Anonymous namespace
 
 HdPh_QuadInfoBuilderComputation::HdPh_QuadInfoBuilderComputation(HdPh_MeshTopology *topology,
                                                                  SdfPath const &id)
@@ -152,9 +145,9 @@ void HdPh_QuadIndexBuilderComputation::GetBufferSpecs(HdBufferSpecVector *specs)
 {
   specs->emplace_back(HdTokens->indices, HdTupleType{HdTypeInt32Vec4, 1});
   // coarse-quads uses int2 as primitive param.
-  specs->emplace_back(HdTokens->primitiveParam, HdTupleType{HdTypeInt32Vec2, 1});
-  // 4 edge indices per quad
-  specs->emplace_back(HdTokens->edgeIndices, HdTupleType{HdTypeInt32Vec4, 1});
+  specs->emplace_back(HdTokens->primitiveParam, HdTupleType{HdTypeInt32, 1});
+  // 2 edge indices per quad
+  specs->emplace_back(HdTokens->edgeIndices, HdTupleType{HdTypeInt32Vec2, 1});
 }
 
 bool HdPh_QuadIndexBuilderComputation::Resolve()
@@ -171,13 +164,13 @@ bool HdPh_QuadIndexBuilderComputation::Resolve()
 
   // generate quad index buffer
   VtVec4iArray quadsFaceVertexIndices;
-  VtVec2iArray primitiveParam;
-  VtVec4iArray quadsEdgeIndices;
+  VtIntArray primitiveParam;
+  VtVec2iArray quadsEdgeIndices;
   HdMeshUtil meshUtil(_topology, _id);
   meshUtil.ComputeQuadIndices(&quadsFaceVertexIndices, &primitiveParam, &quadsEdgeIndices);
 
-  _SetResult(HdBufferSourceSharedPtr(
-      new HdVtBufferSource(HdTokens->indices, VtValue(quadsFaceVertexIndices))));
+  _SetResult(
+      std::make_shared<HdVtBufferSource>(HdTokens->indices, VtValue(quadsFaceVertexIndices)));
 
   _primitiveParam.reset(new HdVtBufferSource(HdTokens->primitiveParam, VtValue(primitiveParam)));
 
@@ -263,7 +256,8 @@ bool HdPh_QuadrangulateTableComputation::Resolve()
     TF_VERIFY(dstOffset == quadInfo->pointsOffset + quadInfo->numAdditionalPoints);
 
     // GPU quadrangulate table
-    HdBufferSourceSharedPtr table(new HdVtBufferSource(HdTokens->quadInfo, VtValue(array)));
+    HdBufferSourceSharedPtr table = std::make_shared<HdVtBufferSource>(HdTokens->quadInfo,
+                                                                       VtValue(array));
 
     _SetResult(table);
   }
@@ -340,7 +334,7 @@ bool HdPh_QuadrangulateComputation::Resolve()
                                             &result)) {
     HD_PERF_COUNTER_ADD(HdPerfTokens->quadrangulatedVerts, quadInfo->numAdditionalPoints);
 
-    _SetResult(HdBufferSourceSharedPtr(new HdVtBufferSource(_source->GetName(), result)));
+    _SetResult(std::make_shared<HdVtBufferSource>(_source->GetName(), result));
   }
   else {
     _SetResult(_source);
@@ -407,7 +401,7 @@ bool HdPh_QuadrangulateFaceVaryingComputation::Resolve()
   HdMeshUtil meshUtil(_topology, _id);
   if (meshUtil.ComputeQuadrangulatedFaceVaryingPrimvar(
           _source->GetData(), _source->GetNumElements(), _source->GetTupleType().type, &result)) {
-    _SetResult(HdBufferSourceSharedPtr(new HdVtBufferSource(_source->GetName(), result)));
+    _SetResult(std::make_shared<HdVtBufferSource>(_source->GetName(), result));
   }
   else {
     _SetResult(_source);
@@ -534,6 +528,7 @@ void HdPh_QuadrangulateComputationGPU::Execute(HdBufferArrayRangeSharedPtr const
   HdPhBufferResourceSharedPtr quadrangulateTable = std::static_pointer_cast<HdPhBufferResource>(
       quadrangulateTable_);
 
+  // prepare uniform buffer for GPU computation
   int quadInfoStride = quadInfo->maxNumVert + 2;
 
   // coherent vertex offset in aggregated buffer array

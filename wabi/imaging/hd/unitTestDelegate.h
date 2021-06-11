@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_IMAGING_HD_UNIT_TEST_DELEGATE_H
 #define WABI_IMAGING_HD_UNIT_TEST_DELEGATE_H
 
@@ -105,6 +98,26 @@ class HdUnitTestDelegate : public HdSceneDelegate {
                TfToken const &orientation = HdTokens->rightHanded,
                bool doubleSided           = false);
 
+  HD_API
+  void AddMesh(SdfPath const &id,
+               GfMatrix4f const &transform,
+               VtVec3fArray const &points,
+               VtIntArray const &numVerts,
+               VtIntArray const &verts,
+               VtIntArray const &holes,
+               PxOsdSubdivTags const &subdivTags,
+               VtValue const &color,
+               VtIntArray const &colorIndices,
+               HdInterpolation colorInterpolation,
+               VtValue const &opacity,
+               VtIntArray const &opacityIndices,
+               HdInterpolation opacityInterpolation,
+               bool guide                 = false,
+               SdfPath const &instancerId = SdfPath(),
+               TfToken const &scheme      = PxOsdOpenSubdivTokens->catmullClark,
+               TfToken const &orientation = HdTokens->rightHanded,
+               bool doubleSided           = false);
+
   /// Add a cube
   HD_API
   void AddCube(SdfPath const &id,
@@ -171,6 +184,13 @@ class HdUnitTestDelegate : public HdSceneDelegate {
                    GfMatrix4f const &transform,
                    HdInterpolation colorInterp,
                    SdfPath const &instancerId = SdfPath());
+
+  /// Add a triangle, quad and pentagon with face-varying displayColor and
+  /// displayOpacity
+  HD_API
+  void AddFaceVaryingPolygons(SdfPath const &id,
+                              GfMatrix4f const &transform,
+                              SdfPath const &instancerId = SdfPath());
 
   /// Add a subdiv with various tags
   HD_API
@@ -247,10 +267,14 @@ class HdUnitTestDelegate : public HdSceneDelegate {
                   TfToken const &name,
                   VtValue const &value,
                   HdInterpolation const &interp,
-                  TfToken const &role);
+                  TfToken const &role,
+                  VtIntArray const &indices = VtIntArray(0));
 
   HD_API
-  void UpdatePrimvarValue(SdfPath const &id, TfToken const &name, VtValue const &value);
+  void UpdatePrimvarValue(SdfPath const &id,
+                          TfToken const &name,
+                          VtValue const &value,
+                          VtIntArray const &indices = VtIntArray(0));
 
   HD_API
   void RemovePrimvar(SdfPath const &id, TfToken const &name);
@@ -367,6 +391,10 @@ class HdUnitTestDelegate : public HdSceneDelegate {
   virtual HdDisplayStyle GetDisplayStyle(SdfPath const &id) override;
   HD_API
   virtual VtValue Get(SdfPath const &id, TfToken const &key) override;
+  HD_API
+  virtual VtValue GetIndexedPrimvar(SdfPath const &id,
+                                    TfToken const &key,
+                                    VtIntArray *outIndices) override;
   HD_API
   virtual HdReprSelector GetReprSelector(SdfPath const &id) override;
   HD_API
@@ -493,17 +521,20 @@ class HdUnitTestDelegate : public HdSceneDelegate {
     _Primvar(TfToken const &_name,
              VtValue const &_value,
              HdInterpolation const &_interp,
-             TfToken const &_role)
+             TfToken const &_role,
+             VtIntArray const &_indices = VtIntArray(0))
         : name(_name),
           value(_value),
           interp(_interp),
-          role(_role)
+          role(_role),
+          indices(_indices)
     {}
 
     TfToken name;
     VtValue value;
     HdInterpolation interp;
     TfToken role;
+    VtIntArray indices;
   };
   using _Primvars = std::vector<_Primvar>;
   // Given an rprim id and primvar name, looks up the primvars map (see below)

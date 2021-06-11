@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2018 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hdx/colorCorrectionTask.h"
 #include "wabi/base/tf/getenv.h"
 #include "wabi/imaging/hd/aov.h"
@@ -45,7 +38,7 @@
 
 #include <iostream>
 
-#ifdef WITH_OPENCOLORIO
+#ifdef WABI_OCIO_PLUGIN_ENABLED
 #  include <OpenColorIO/OpenColorIO.h>
 namespace OCIO = OCIO_NAMESPACE;
 #endif
@@ -112,7 +105,7 @@ bool HdxColorCorrectionTask::_GetUseOcio() const
 {
 // Client can choose to use Hydra's build-in sRGB color correction or use
 // OpenColorIO for color correction in which case we insert extra OCIO code.
-#ifdef WITH_OPENCOLORIO
+#ifdef WABI_OCIO_PLUGIN_ENABLED
   // Only use if $OCIO environment variable is set.
   // (Otherwise this option should be disabled.)
   if (TfGetenv("OCIO") == "") {
@@ -127,12 +120,13 @@ bool HdxColorCorrectionTask::_GetUseOcio() const
 
 std::string HdxColorCorrectionTask::_CreateOpenColorIOResources()
 {
-#ifdef WITH_OPENCOLORIO
-  /** Use client provided OCIO values, or use default fallback values. */
+#ifdef WABI_OCIO_PLUGIN_ENABLED
+  // Use client provided OCIO values, or use default fallback values
   OCIO::ConstConfigRcPtr config = OCIO::GetCurrentConfig();
 
   const char *display = _displayOCIO.empty() ? config->getDefaultDisplay() : _displayOCIO.c_str();
-  const char *view    = _viewOCIO.empty() ? config->getDefaultView(display) : _viewOCIO.c_str();
+
+  const char *view = _viewOCIO.empty() ? config->getDefaultView(display) : _viewOCIO.c_str();
 
   std::string inputColorSpace = _colorspaceOCIO;
   if (inputColorSpace.empty()) {
@@ -145,44 +139,33 @@ std::string HdxColorCorrectionTask::_CreateOpenColorIOResources()
     }
   }
 
-  /** Setup the transformation we need to apply. */
-  OCIO::DisplayViewTransformRcPtr transform = OCIO::DisplayViewTransform::Create();
-
-  /** Specify the incoming color space. */
-  transform->setSrc(inputColorSpace.c_str());
-
-  /** Specify which display to use. */
+  // Setup the transformation we need to apply
+  OCIO::DisplayTransformRcPtr transform = OCIO::DisplayTransform::Create();
   transform->setDisplay(display);
-
-  /** Specify which view transform to use. */
   transform->setView(view);
-
+  transform->setInputColorSpaceName(inputColorSpace.c_str());
   if (!_looksOCIO.empty()) {
-    /** Specify whether to use client provided OCIO looks. */
-    transform->setLooksBypass(false);
-    OCIO::LookTransformRcPtr looks = OCIO::LookTransform::Create();
-    looks->setSrc(inputColorSpace.c_str());
-    looks->setLooks(_looksOCIO.c_str());
+    transform->setLooksOverride(_looksOCIO.c_str());
+    transform->setLooksOverrideEnabled(true);
   }
   else {
-    /** Defaults to ignore OCIO looks if none are provided. */
-    transform->setLooksBypass(true);
+    transform->setLooksOverrideEnabled(false);
   }
 
-  /** Create a GPU Shader Description. */
-  OCIO::GpuShaderDescRcPtr shaderDesc = OCIO::GpuShaderDesc::CreateShaderDesc();
-  shaderDesc->setLanguage(OCIO::GPU_LANGUAGE_GLSL_1_3);
-  shaderDesc->setFunctionName("OCIODisplay");
-  shaderDesc->setTextureMaxWidth(_lut3dSizeOCIO);
+  OCIO::ConstProcessorRcPtr processor = config->getProcessor(transform);
 
-  /** Compute the OCIO 3D LUT. */
+  // Create a GPU Shader Description
+  OCIO::GpuShaderDesc shaderDesc;
+  shaderDesc.setLanguage(OCIO::GPU_LANGUAGE_GLSL_1_3);
+  shaderDesc.setFunctionName("OCIODisplay");
+  shaderDesc.setLut3DEdgeLen(_lut3dSizeOCIO);
+
+  // Compute and the 3D LUT
   const int num3Dentries = 3 * _lut3dSizeOCIO * _lut3dSizeOCIO * _lut3dSizeOCIO;
-  std::vector<const float *> lut3d(num3Dentries);
-  shaderDesc->get3DTextureValues(0, lut3d.data()[0]);
-  shaderDesc->get3DTextureValues(1, lut3d.data()[1]);
-  shaderDesc->get3DTextureValues(2, lut3d.data()[2]);
+  std::vector<float> lut3d(num3Dentries);
+  processor->getGpuLut3D(lut3d.data(), shaderDesc);
 
-  /** Load the data into an OpenGL 3D Texture. */
+  // Load the data into an OpenGL 3D Texture
   if (_texture3dLUT) {
     _GetHgi()->DestroyTexture(&_texture3dLUT);
   }
@@ -200,7 +183,7 @@ std::string HdxColorCorrectionTask::_CreateOpenColorIOResources()
   lutDesc.usage          = HgiTextureUsageBitsShaderRead;
   _texture3dLUT          = _GetHgi()->CreateTexture(lutDesc);
 
-  const char *gpuShaderText = shaderDesc->getShaderText();
+  const char *gpuShaderText = processor->getGpuShaderText(shaderDesc);
 
   return std::string(gpuShaderText);
 #else

@@ -1,10 +1,27 @@
 -- glslfx version 0.1
 
 //
-// Copyright 2020 Wabi.  All rights reserved.
+// Copyright 2017 Pixar
 //
-// Distributed under the terms of the Wabi End-User License Agreement.
-// The full license is in the file LICENSE, distributed with this software.
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
 //
 
 --- This is what an import might look like.
@@ -55,12 +72,12 @@ vec4 postSurfaceShader(vec4 Peye, vec3 Neye, vec4 color);
 vec4 ShadingTerminal(vec4 Peye, vec3 Neye, vec4 color, vec4 patchCoord)
 {
     ReprStyle reprStyle = GetReprStyle();
-
+    
     // Apply scalar override.
     ScalarOverride scalarOverride = GetScalarOverride();
     if (scalarOverride.enabled) {
         vec4 result;
-
+        
         result.rgb = scalarOverride.color;
         result.a   = reprStyle.usePrimvarAlpha ? color.a: reprStyle.color.a;
 
@@ -72,14 +89,14 @@ vec4 ShadingTerminal(vec4 Peye, vec3 Neye, vec4 color, vec4 patchCoord)
 
     // Draw mode can override face color
     vec4 reprColor;
-
+    
     reprColor.rgb = reprStyle.usePrimvarColor ? color.rgb : reprStyle.color.rgb;
-    reprColor.a   = reprStyle.usePrimvarAlpha ? color.a   : reprStyle.color.a;
+    reprColor.a   = reprStyle.usePrimvarAlpha ? color.a   : reprStyle.color.a; 
 
     // Compute color overrides
     vec4 colorOverride = ApplyColorOverrides(reprColor);
     reprColor = reprStyle.applyColorOverride ? colorOverride : reprColor;
-
+    
 
     // Surface shading can be expensive and also can contain undesirable
     // side effects (like discards).  So only run it for reprs that require it.
@@ -98,26 +115,26 @@ vec4 ShadingTerminal(vec4 Peye, vec3 Neye, vec4 color, vec4 patchCoord)
                                          Neye,
                                          shadingColor);
 #endif
-
-        reprColor.rgb = reprStyle.useSurfaceShaderColor ?
+    
+        reprColor.rgb = reprStyle.useSurfaceShaderColor ? 
                         shadingColor.rgb :
                         reprColor.rgb;
-
-        reprColor.a   = reprStyle.useSurfaceShaderAlpha ?
+                        
+        reprColor.a   = reprStyle.useSurfaceShaderAlpha ? 
                         shadingColor.a :
                         reprColor.a;
     }
 
     vec4 baseColor = color;
     baseColor = ApplyColorOverrides(baseColor);
-
+    
     vec4 litColor = mix(baseColor,
                         reprColor,
                         GetLightingBlendAmount());
 
     // Final overrides.
 
-    return ApplyColorOverridesPostLighting(litColor);
+    return ApplyColorOverridesPostLighting(litColor); 
 }
 
 --- --------------------------------------------------------------------------
@@ -139,15 +156,15 @@ integrateLights(vec4 Peye, vec3 Neye, LightingInterfaceProperties props)
 ReprStyle GetReprStyle()
 {
     ReprStyle reprStyle;
-
+    
     reprStyle.color                    = vec4(0.0, 0.0, 0.0, 1.0);
     reprStyle.usePrimvarColor          = true;
     reprStyle.usePrimvarAlpha          = true;
     reprStyle.applyColorOverride       = true;
     reprStyle.useSurfaceShaderColor    = true;
     reprStyle.useSurfaceShaderAlpha    = true;
-
-    return reprStyle;
+    
+    return reprStyle; 
 }
 
 --- --------------------------------------------------------------------------
@@ -169,15 +186,15 @@ integrateLights(vec4 Peye, vec3 Neye, LightingInterfaceProperties props)
 ReprStyle GetReprStyle()
 {
     ReprStyle reprStyle;
-
+    
     reprStyle.color                    = vec4(0.0, 0.0, 0.0, 1.0);
     reprStyle.usePrimvarColor          = true;
     reprStyle.usePrimvarAlpha          = true;
     reprStyle.applyColorOverride       = true;
     reprStyle.useSurfaceShaderColor    = true;
     reprStyle.useSurfaceShaderAlpha    = true;
-
-    return reprStyle;
+    
+    return reprStyle; 
 }
 
 --- --------------------------------------------------------------------------
@@ -199,25 +216,25 @@ integrateLights(vec4 Peye, vec3 Neye, LightingInterfaceProperties props)
 ReprStyle GetReprStyle()
 {
     // shade only every 2nd pixel in x and y
-    // creating a thin stippled mesh grid
+    // creating a thin stippled mesh grid 
     float factor = step(0.5, fract((gl_FragCoord.x + 1.0) * 0.5))
                  * step(0.5, fract((gl_FragCoord.y + 0.0) * 0.5));
-
+    
     // make the surface translucent so that the lines of
     // the mesh edges are visible even from the back faces.
     float alpha = 0.2 * (1.0 - factor);
 
 
     ReprStyle reprStyle;
-
+    
     reprStyle.color                    = vec4(0.0, 0.0, 0.0, alpha);
     reprStyle.usePrimvarColor          = true;
     reprStyle.usePrimvarAlpha          = false;
     reprStyle.applyColorOverride       = true;
     reprStyle.useSurfaceShaderColor    = true;
     reprStyle.useSurfaceShaderAlpha    = false;
-
-    return reprStyle;
+    
+    return reprStyle; 
 }
 
 --- --------------------------------------------------------------------------
@@ -239,15 +256,15 @@ integrateLights(vec4 Peye, vec3 Neye, LightingInterfaceProperties props)
 ReprStyle GetReprStyle()
 {
     ReprStyle reprStyle;
-
+    
     reprStyle.color                    = vec4(0.0, 0.0, 0.0, 1.0);
     reprStyle.usePrimvarColor          = false;
     reprStyle.usePrimvarAlpha          = false;
     reprStyle.applyColorOverride       = false;
     reprStyle.useSurfaceShaderColor    = false;
     reprStyle.useSurfaceShaderAlpha    = false;
-
-    return reprStyle;
+    
+    return reprStyle; 
 }
 
 --- --------------------------------------------------------------------------
@@ -269,7 +286,7 @@ integrateLights(vec4 Peye, vec3 Neye, LightingInterfaceProperties props)
 ReprStyle GetReprStyle()
 {
     ReprStyle reprStyle;
-
+    
     reprStyle.color                    = vec4(0.0, 0.0, 0.0, 1.0);
     reprStyle.usePrimvarColor          = true;
     reprStyle.usePrimvarAlpha          = true;
@@ -277,7 +294,7 @@ ReprStyle GetReprStyle()
     reprStyle.useSurfaceShaderColor    = false;
     reprStyle.useSurfaceShaderAlpha    = false;
 
-    return reprStyle;
+    return reprStyle; 
 }
 
 --- --------------------------------------------------------------------------
@@ -315,10 +332,10 @@ ReprStyle GetReprStyle()
     vec3 c0 = vec3(0.0, 0.0, 0.0); // 1.0 * Black
     vec3 c1 = vec3(2.0, 0.0, 0.0); // 2.0 * Red
     vec3 c2 = vec3(1.0, 1.0, 0.0); // 1.0 * Yellow
-
+    
     // de Casteljau quadratic curve interpolation
     // A recursive application of lerp ('mix' in glsl) reducing the order each
-    // step of the recursion.
+    // step of the recursion. 
     //  at weight = 0.0  we get c0
     //  at weight = 0.5  we get c0 * .25 + c1 * 0.5 + c2 *.25
     //  at weight = 1.0  we get c2
@@ -336,14 +353,14 @@ ReprStyle GetReprStyle()
 #endif
 
     ReprStyle reprStyle;
-
+    
     reprStyle.color                    = hullColor;
     reprStyle.usePrimvarColor          = false;
     reprStyle.usePrimvarAlpha          = false;
     reprStyle.applyColorOverride       = true;
     reprStyle.useSurfaceShaderColor    = false;
     reprStyle.useSurfaceShaderAlpha    = false;
-
+    
     return reprStyle;
 }
 
@@ -371,15 +388,15 @@ ReprStyle GetReprStyle()
 #endif
 
     ReprStyle reprStyle;
-
+    
     reprStyle.color                    = pointColor;
     reprStyle.usePrimvarColor          = false;
     reprStyle.usePrimvarAlpha          = false;
     reprStyle.applyColorOverride       = true;
     reprStyle.useSurfaceShaderColor    = false;
     reprStyle.useSurfaceShaderAlpha    = false;
-
-    return reprStyle;
+    
+    return reprStyle; 
 }
 
 --- --------------------------------------------------------------------------
@@ -411,7 +428,7 @@ ScalarOverride GetScalarOverride()
 
 #else // HD_HAS_scalarOverride
     result.enabled = false;
-    result.color   = vec3(0.0, 0.0, 0.0);
+    result.color   = vec3(0.0, 0.0, 0.0); 
 #endif
 
     return result;
@@ -423,9 +440,9 @@ ScalarOverride GetScalarOverride()
 ScalarOverride GetScalarOverride()
 {
     ScalarOverride result;
-
+    
     result.enabled = false;
-    result.color   = vec3(0.0, 0.0, 0.0);
+    result.color   = vec3(0.0, 0.0, 0.0); 
 
-    return result;
+    return result;    
 }

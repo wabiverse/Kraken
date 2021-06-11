@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/wabi.h"
 
 #include "wabi/base/tf/staticTokens.h"
@@ -41,9 +34,9 @@ TF_DEFINE_PRIVATE_TOKENS(
     ((baseGLSLFX, "mesh.glslfx"))
 
     // normal mixins
-    ((normalsScene, "MeshNormal.Scene"))((normalsSmooth, "MeshNormal.Smooth"))((
-        normalsFlat,
-        "MeshNormal.Flat"))((normalsPass, "MeshNormal.Pass"))
+    ((normalsScene, "MeshNormal.Scene"))((normalsScenePatches, "MeshNormal.Scene.Patches"))((
+        normalsSmooth,
+        "MeshNormal.Smooth"))((normalsFlat, "MeshNormal.Flat"))((normalsPass, "MeshNormal.Pass"))
 
         ((normalsGeometryFlat, "MeshNormal.Geometry.Flat"))((normalsGeometryNoFlat,
                                                              "MeshNormal.Geometry.NoFlat"))
@@ -60,22 +53,35 @@ TF_DEFINE_PRIVATE_TOKENS(
     // wireframe mixins
     ((edgeNoneGS, "MeshWire.Geometry.NoEdge"))((edgeNoneFS, "MeshWire.Fragment.NoEdge"))
 
-        ((edgeCommonFS, "MeshWire.Fragment.EdgeCommon"))
+        ((edgeMaskTriangleFS,
+          "MeshWire.Fragment.EdgeMaskTriangle"))((edgeMaskQuadFS,
+                                                  "MeshWire.Fragment.EdgeMaskQuad"))((
+            edgeMaskRefinedQuadFS,
+            "MeshWire.Fragment.EdgeMaskRefinedQuad"))((edgeMaskNoneFS,
+                                                       "MeshWire.Fragment.EdgeMaskNone"))
 
-            ((edgeOnlyGS, "MeshWire.Geometry.Edge"))((edgeOnlyBlendFS,
-                                                      "MeshWire.Fragment.EdgeOnlyBlendColor"))((
-                edgeOnlyNoBlendFS,
-                "MeshWire.Fragment.EdgeOnlyNoBlend"))
+            ((edgeCommonFS, "MeshWire.Fragment.EdgeCommon"))
 
-                ((edgeOnSurfGS, "MeshWire.Geometry.Edge"))((edgeOnSurfFS,
-                                                            "MeshWire.Fragment.EdgeOnSurface"))((
-                    patchEdgeOnlyFS,
-                    "MeshPatchWire.Fragment.EdgeOnly"))((patchEdgeOnSurfFS,
-                                                         "MeshPatchWire.Fragment.EdgeOnSurface"))
+                ((edgeOnlyGS, "MeshWire.Geometry.Edge"))((
+                    edgeOnlyBlendFS,
+                    "MeshWire.Fragment.EdgeOnlyBlendColor"))((edgeOnlyNoBlendFS,
+                                                              "MeshWire.Fragment.EdgeOnlyNoBlend"))
 
-                    ((selWireOffsetGS,
-                      "Selection.Geometry.WireSelOffset"))((selWireNoOffsetGS,
-                                                            "Selection.Geometry.WireSelNoOffset"))
+                    ((edgeOnSurfGS,
+                      "MeshWire.Geometry.Edge"))((edgeOnSurfFS,
+                                                  "MeshWire.Fragment.EdgeOnSurface"))((
+                        patchEdgeTriangleFS,
+                        "MeshPatchWire.Fragment.PatchEdgeTriangle"))((
+                        patchEdgeQuadFS,
+                        "MeshPatchWire.Fragment.PatchEdgeQuad"))((
+                        patchEdgeOnlyFS,
+                        "MeshPatchWire.Fragment.EdgeOnly"))((
+                        patchEdgeOnSurfFS,
+                        "MeshPatchWire.Fragment.EdgeOnSurface"))
+
+                        ((selWireOffsetGS, "Selection.Geometry.WireSelOffset"))((
+                            selWireNoOffsetGS,
+                            "Selection.Geometry.WireSelNoOffset"))
 
     // selection decoding
     ((selDecodeUtils,
@@ -87,9 +93,13 @@ TF_DEFINE_PRIVATE_TOKENS(
     ((edgeIdNoneGS, "EdgeId.Geometry.None"))((edgeIdEdgeParamGS, "EdgeId.Geometry.EdgeParam"))((
         edgeIdFallbackFS,
         "EdgeId.Fragment.Fallback"))((edgeIdCommonFS, "EdgeId.Fragment.Common"))((
+        edgeIdTriangleSurfFS,
+        "EdgeId.Fragment.TriangleSurface"))((edgeIdTriangleLineFS,
+                                             "EdgeId.Fragment.TriangleLines"))((
         edgeIdTriangleParamFS,
-        "EdgeId.Fragment.TriangleParam"))((edgeIdRectangleParamFS,
-                                           "EdgeId.Fragment.RectangleParam"))
+        "EdgeId.Fragment.TriangleParam"))((edgeIdQuadSurfFS, "EdgeId.Fragment.QuadSurface"))((
+        edgeIdQuadLineFS,
+        "EdgeId.Fragment.QuadLines"))((edgeIdQuadParamFS, "EdgeId.Fragment.QuadParam"))
 
     // point id mixins (for point picking & selection)
     ((pointIdNoneVS, "PointId.Vertex.None"))((pointIdVS, "PointId.Vertex.PointParam"))((
@@ -144,13 +154,15 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
                                        float lineWidth,
                                        bool hasMirroredTransform,
                                        bool hasInstancer,
-                                       bool enableScalarOverride)
+                                       bool enableScalarOverride,
+                                       HdPh_GeometricShader::FvarPatchType fvarPatchType)
     : primType(primitiveType),
       cullStyle(cullStyle),
       hasMirroredTransform(hasMirroredTransform),
       doubleSided(doubleSided),
       polygonMode(HdPolygonModeFill),
       lineWidth(lineWidth),
+      fvarPatchType(fvarPatchType),
       glslfx(_tokens->baseGLSLFX)
 {
   if (geomStyle == HdMeshGeomStyleEdgeOnly || geomStyle == HdMeshGeomStyleHullEdgeOnly) {
@@ -164,9 +176,12 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
   bool isPrimTypePoints               = HdPh_GeometricShader::IsPrimTypePoints(primType);
   bool isPrimTypeQuads                = HdPh_GeometricShader::IsPrimTypeQuads(primType);
   bool isPrimTypeTris                 = HdPh_GeometricShader::IsPrimTypeTriangles(primType);
+  bool isPrimTypeRefinedMesh          = HdPh_GeometricShader::IsPrimTypeRefinedMesh(primType);
   const bool isPrimTypePatches        = HdPh_GeometricShader::IsPrimTypePatches(primType);
   const bool isPrimTypePatchesBSpline = primType ==
                                         HdPh_GeometricShader::PrimitiveType::PRIM_MESH_BSPLINE;
+  const bool isPrimTypePatchesBoxSplineTriangle =
+      primType == HdPh_GeometricShader::PrimitiveType::PRIM_MESH_BOXSPLINETRIANGLE;
 
   /* Normals configurations:
    * Smooth normals:
@@ -230,7 +245,9 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
 
   GS[gsIndex++] = (normalsSource == NormalSourceFlat) ?
                       _tokens->normalsFlat :
-                      (gsSceneNormals ? _tokens->normalsScene : _tokens->normalsPass);
+                      (gsSceneNormals ? (isPrimTypePatches ? _tokens->normalsScenePatches :
+                                                             _tokens->normalsScene) :
+                                        _tokens->normalsPass);
 
   GS[gsIndex++] = (normalsSource == NormalSourceGeometryShader) ? _tokens->normalsGeometryFlat :
                                                                   _tokens->normalsGeometryNoFlat;
@@ -304,6 +321,20 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
   // Wire (edge) related mixins
   if ((geomStyle == HdMeshGeomStyleEdgeOnly || geomStyle == HdMeshGeomStyleHullEdgeOnly)) {
 
+    if (isPrimTypeRefinedMesh) {
+      if (isPrimTypeQuads) {
+        FS[fsIndex++] = _tokens->edgeMaskRefinedQuadFS;
+      }
+      else {
+        FS[fsIndex++] = _tokens->edgeMaskNoneFS;
+      }
+    }
+    else if (isPrimTypeTris) {
+      FS[fsIndex++] = _tokens->edgeMaskTriangleFS;
+    }
+    else {
+      FS[fsIndex++] = _tokens->edgeMaskQuadFS;
+    }
     FS[fsIndex++] = _tokens->edgeCommonFS;
     if (isPrimTypePatches) {
       FS[fsIndex++] = _tokens->patchEdgeOnlyFS;
@@ -315,7 +346,27 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
   else if ((geomStyle == HdMeshGeomStyleEdgeOnSurf ||
             geomStyle == HdMeshGeomStyleHullEdgeOnSurf)) {
 
+    if (isPrimTypeRefinedMesh) {
+      if (isPrimTypeQuads) {
+        FS[fsIndex++] = _tokens->edgeMaskRefinedQuadFS;
+      }
+      else {
+        FS[fsIndex++] = _tokens->edgeMaskNoneFS;
+      }
+    }
+    else if (isPrimTypeTris) {
+      FS[fsIndex++] = _tokens->edgeMaskTriangleFS;
+    }
+    else {
+      FS[fsIndex++] = _tokens->edgeMaskQuadFS;
+    }
     FS[fsIndex++] = _tokens->edgeCommonFS;
+    if (isPrimTypeTris || isPrimTypePatchesBoxSplineTriangle) {
+      FS[fsIndex++] = _tokens->patchEdgeTriangleFS;
+    }
+    else {
+      FS[fsIndex++] = _tokens->patchEdgeQuadFS;
+    }
     if (isPrimTypePatches) {
       FS[fsIndex++] = _tokens->patchEdgeOnSurfFS;
     }
@@ -367,13 +418,23 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
   if (gsStageEnabled) {
     TF_VERIFY(gsEdgeIdMixin == _tokens->edgeIdEdgeParamGS);
     FS[fsIndex++] = _tokens->edgeIdCommonFS;
-    if (isPrimTypeTris) {
-      // coarse and refined triangles and triangular parametric patches
+    if (isPrimTypeTris || isPrimTypePatchesBoxSplineTriangle) {
+      if (polygonMode == HdPolygonModeLine) {
+        FS[fsIndex++] = _tokens->edgeIdTriangleLineFS;
+      }
+      else {
+        FS[fsIndex++] = _tokens->edgeIdTriangleSurfFS;
+      }
       FS[fsIndex++] = _tokens->edgeIdTriangleParamFS;
     }
     else {
-      // coarse and refined quads and rectangular parametric patches
-      FS[fsIndex++] = _tokens->edgeIdRectangleParamFS;
+      if (polygonMode == HdPolygonModeLine) {
+        FS[fsIndex++] = _tokens->edgeIdQuadLineFS;
+      }
+      else {
+        FS[fsIndex++] = _tokens->edgeIdQuadSurfFS;
+      }
+      FS[fsIndex++] = _tokens->edgeIdQuadParamFS;
     }
   }
   else {

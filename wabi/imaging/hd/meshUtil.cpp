@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2017 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hd/meshUtil.h"
 
 #include "wabi/imaging/hd/perfLog.h"
@@ -41,6 +34,8 @@
 #include "wabi/base/gf/vec3i.h"
 #include "wabi/base/gf/vec4d.h"
 #include "wabi/base/gf/vec4f.h"
+
+#include <unordered_set>
 
 WABI_NAMESPACE_BEGIN
 
@@ -84,7 +79,7 @@ static bool _FanTriangulate(GfVec3i *dst,
 
 void HdMeshUtil::ComputeTriangleIndices(VtVec3iArray *indices,
                                         VtIntArray *primitiveParams,
-                                        VtVec3iArray *edgeIndices /*=nullptr*/)
+                                        VtIntArray *edgeIndices /*=nullptr*/) const
 {
   HD_TRACE_FUNCTION();
 
@@ -130,7 +125,7 @@ void HdMeshUtil::ComputeTriangleIndices(VtVec3iArray *indices,
   indices->resize(numTris);          // vec3 per face
   primitiveParams->resize(numTris);  // int per face
   if (edgeIndices) {
-    edgeIndices->resize(numTris);  // vec3 per face
+    edgeIndices->resize(numTris);  // int per face
   }
 
   bool flip = (_topology->GetOrientation() != HdTokens->rightHanded);
@@ -138,15 +133,11 @@ void HdMeshUtil::ComputeTriangleIndices(VtVec3iArray *indices,
   // reset holeIndex
   holeIndex = 0;
 
-  EdgeMap edges;
-  if (edgeIndices) {
-    edges = ComputeAuthoredEdgeMap(_topology);
-  }
-
   // i  -> authored face index [0, numFaces)
   // tv -> triangulated face index [0, numTris)
   // v  -> index to the first vertex (index) for face i
-  for (int i = 0, tv = 0, v = 0; i < numFaces; ++i) {
+  // ev -> edges visited
+  for (int i = 0, tv = 0, v = 0, ev = 0; i < numFaces; ++i) {
     int nv = numVertsPtr[i];
     if (nv < 3) {
       // Skip degenerate faces.
@@ -171,7 +162,8 @@ void HdMeshUtil::ComputeTriangleIndices(VtVec3iArray *indices,
       //    B       2        hide [0-1]
       //    C       3        hide [0-1] and [2-0]
       //
-      int edgeFlag = 0;
+      int edgeFlag  = 0;
+      int edgeIndex = ev;
       for (int j = 0; j < nv - 2; ++j) {
         if (!_FanTriangulate(&(*indices)[tv], vertsPtr, v, j, numVertIndices, flip)) {
           invalidTopology = true;
@@ -203,34 +195,21 @@ void HdMeshUtil::ComputeTriangleIndices(VtVec3iArray *indices,
           else {
             edgeFlag = 3;
           }
+          ++edgeIndex;
         }
 
-        if (edgeIndices) {
-          GfVec3i const &triIndices = (*indices)[tv];
-          for (int e = 0; e < 3; e++) {
-            int ev0 = e;
-            int ev1 = (e == 2) ? 0 : e + 1;
-            GfVec2i edge(triIndices[ev0], triIndices[ev1]);
-
-            // look up the triangle edge in the authored edge map
-            int eId = -1;  // non-authored edge
-            auto it = edges.find(edge);
-            if (it != edges.end()) {
-              eId = it->second;
-            }
-            (*edgeIndices)[tv][e] = eId;
-          }
-        }
-
-        // note that ptex indexing isn't available along with
-        // triangulation.
         (*primitiveParams)[tv] = EncodeCoarseFaceParam(i, edgeFlag);
+        if (edgeIndices) {
+          (*edgeIndices)[tv] = edgeIndex;
+        }
+
         ++tv;
       }
     }
     // When the face is degenerate and nv > 0, we need to increment the v
     // pointer to walk past the degenerate verts.
     v += nv;
+    ev += nv;
   }
   if (invalidTopology) {
     TF_WARN("numVerts and verts are incosistent [%s]", _id.GetText());
@@ -323,7 +302,7 @@ static void _TriangulateFaceVarying(SdfPath const &id,
 bool HdMeshUtil::ComputeTriangulatedFaceVaryingPrimvar(void const *source,
                                                        int numElements,
                                                        HdType dataType,
-                                                       VtValue *triangulated)
+                                                       VtValue *triangulated) const
 {
   HD_TRACE_FUNCTION();
 
@@ -388,9 +367,9 @@ bool HdMeshUtil::ComputeTriangulatedFaceVaryingPrimvar(void const *source,
 //-------------------------------------------------------------------------
 // Quadrangulation
 
-/*static*/ int HdMeshUtil::ComputeNumQuads(VtIntArray const &numVerts,
-                                           VtIntArray const &holeFaces,
-                                           bool *invalidFaceFound)
+int HdMeshUtil::_ComputeNumQuads(VtIntArray const &numVerts,
+                                 VtIntArray const &holeFaces,
+                                 bool *invalidFaceFound) const
 {
   HD_TRACE_FUNCTION();
 
@@ -420,7 +399,7 @@ bool HdMeshUtil::ComputeTriangulatedFaceVaryingPrimvar(void const *source,
   return numQuads;
 }
 
-void HdMeshUtil::ComputeQuadInfo(HdQuadInfo *quadInfo)
+void HdMeshUtil::ComputeQuadInfo(HdQuadInfo *quadInfo) const
 {
   HD_TRACE_FUNCTION();
 
@@ -497,8 +476,8 @@ void HdMeshUtil::ComputeQuadInfo(HdQuadInfo *quadInfo)
 }
 
 void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
-                                    VtVec2iArray *primitiveParams,
-                                    VtVec4iArray *quadsEdgeIndices /*=nullptr*/)
+                                    VtIntArray *primitiveParams,
+                                    VtVec2iArray *edgeIndices /*=nullptr*/) const
 {
   HD_TRACE_FUNCTION();
 
@@ -511,8 +490,6 @@ void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
     return;
   }
 
-  // TODO: create ptex id remapping buffer here.
-
   int const *numVertsPtr  = _topology->GetFaceVertexCounts().cdata();
   int const *vertsPtr     = _topology->GetFaceVertexIndices().cdata();
   int const *holeFacesPtr = _topology->GetHoleIndices().cdata();
@@ -523,7 +500,7 @@ void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
 
   // count num quads
   bool invalidTopology = false;
-  int numQuads         = HdMeshUtil::ComputeNumQuads(
+  int numQuads         = _ComputeNumQuads(
       _topology->GetFaceVertexCounts(), _topology->GetHoleIndices(), &invalidTopology);
   if (invalidTopology) {
     TF_WARN("degenerated face found [%s]", _id.GetText());
@@ -534,37 +511,32 @@ void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
 
   indices->resize(numQuads);
   primitiveParams->resize(numQuads);
-  if (quadsEdgeIndices) {
-    quadsEdgeIndices->resize(numQuads);
+  if (edgeIndices) {
+    edgeIndices->resize(numQuads);
   }
 
   // quadrangulated verts is added to the end.
   bool flip     = (_topology->GetOrientation() != HdTokens->rightHanded);
   int vertIndex = numPoints;
 
-  EdgeMap edges;
-  if (quadsEdgeIndices) {
-    edges = ComputeAuthoredEdgeMap(_topology);
-  }
-
-  // TODO: We need to support ptex index in addition to coarse indices.
-  // int ptexIndex = 0;
-
   // i  -> authored face index [0, numFaces)
   // qv -> quadrangulated face index [0, numQuads)
   // v  -> index to the first vertex (index) for face i
+  // ev -> edges visited
   // vertIndex -> index to the start of the additional verts (edge, center)
   //              for face i
-  for (int i = 0, qv = 0, v = 0; i < numFaces; ++i) {
+  for (int i = 0, qv = 0, v = 0, ev = 0; i < numFaces; ++i) {
     int nv = numVertsPtr[i];
     if (nv < 3) {
       v += nv;
+      ev += nv;
       continue;  // skip degenerated face
     }
     if (holeIndex < numHoleFaces && holeFacesPtr[holeIndex] == i) {
       // skip hole faces.
       ++holeIndex;
       v += nv;
+      ev += nv;
       continue;
     }
 
@@ -579,9 +551,11 @@ void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
         }
       }
       v += nv;
+      ev += nv;
       continue;
     }
 
+    int edgeIndex = ev;
     if (nv == 4) {
       if (flip) {
         (*indices)[qv][0] = (vertsPtr[v + 0]);
@@ -604,18 +578,11 @@ void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
       //  The first quad of a non-quad face is marked 1; the last as 2; and
       //  intermediate quads as 3.
 
-      (*primitiveParams)[qv] = GfVec2i(EncodeCoarseFaceParam(i, /*edgeFlag=*/0), qv);
+      (*primitiveParams)[qv] = EncodeCoarseFaceParam(i, /*edgeFlag=*/0);
 
-      if (quadsEdgeIndices) {
-        GfVec4i const &quadIndices = (*indices)[qv];
-        for (int e = 0; e < nv; ++e) {
-          GfVec2i edge(quadIndices[e], quadIndices[(e + 1) % nv]);
-          // since this is an authored quad, all edges are guaranteed
-          // to exist in the authored edge map
-          auto it = edges.find(edge);
-          TF_VERIFY(it != edges.end());
-          (*quadsEdgeIndices)[qv][e] = it->second;  // authored edge id
-        }
+      if (edgeIndices) {
+        (*edgeIndices)[qv][0] = edgeIndex;
+        (*edgeIndices)[qv][1] = edgeIndex + 3;
       }
 
       ++qv;
@@ -666,22 +633,17 @@ void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
         else {
           edgeFlag = 3;
         }
-        (*primitiveParams)[qv] = GfVec2i(EncodeCoarseFaceParam(i, edgeFlag), qv);
+        (*primitiveParams)[qv] = EncodeCoarseFaceParam(i, edgeFlag);
 
-        if (quadsEdgeIndices) {
-          // only the first (index 0) and last (index 3) edges of the
-          // quad are from the authored edges; the other 2 are the
-          // result of quadrangulation.
-          GfVec2i e0 = GfVec2i(vertsPtr[v + j], vertsPtr[v + (j + 1) % nv]);
-          GfVec2i e3 = GfVec2i(vertsPtr[v + (j + nv - 1) % nv], vertsPtr[v + j]);
-          auto it    = edges.find(e0);
-          TF_VERIFY(it != edges.end());
-          (*quadsEdgeIndices)[qv][0] = it->second;
-          (*quadsEdgeIndices)[qv][1] = -1;
-          (*quadsEdgeIndices)[qv][2] = -1;
-          it                         = edges.find(e3);
-          TF_VERIFY(it != edges.end());
-          (*quadsEdgeIndices)[qv][3] = it->second;
+        if (edgeIndices) {
+          if (flip) {
+            (*edgeIndices)[qv][0] = edgeIndex + (j + nv - 1) % nv;
+            (*edgeIndices)[qv][1] = edgeIndex + j;
+          }
+          else {
+            (*edgeIndices)[qv][0] = edgeIndex + j;
+            (*edgeIndices)[qv][1] = edgeIndex + (j + nv - 1) % nv;
+          }
         }
 
         ++qv;
@@ -689,6 +651,7 @@ void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
       vertIndex += nv + 1;
     }
     v += nv;
+    ev += nv;
   }
   if (invalidTopology) {
     TF_WARN("numVerts and verts are incosistent [%s]", _id.GetText());
@@ -725,13 +688,11 @@ static void _Quadrangulate(SdfPath const &id,
   // store quadrangulated points at end
   int dstIndex = qi->pointsOffset;
 
-  TF_FOR_ALL(numVertsIt, qi->numVerts)
-  {
-    int nv = *numVertsIt;
+  for (const int nv : qi->numVerts) {
     T center(0);
     for (int i = 0; i < nv; ++i) {
-      int i0 = qi->verts[index + i];
-      int i1 = qi->verts[index + (i + 1) % nv];
+      const int i0 = qi->verts[index + i];
+      const int i1 = qi->verts[index + (i + 1) % nv];
 
       // midpoint
       T edge              = (results[i0] + results[i1]) * 0.5;
@@ -754,7 +715,7 @@ bool HdMeshUtil::ComputeQuadrangulatedPrimvar(HdQuadInfo const *qi,
                                               void const *source,
                                               int numElements,
                                               HdType dataType,
-                                              VtValue *quadrangulated)
+                                              VtValue *quadrangulated) const
 {
   HD_TRACE_FUNCTION();
 
@@ -945,7 +906,7 @@ static void _QuadrangulateFaceVarying(SdfPath const &id,
 bool HdMeshUtil::ComputeQuadrangulatedFaceVaryingPrimvar(void const *source,
                                                          int numElements,
                                                          HdType dataType,
-                                                         VtValue *quadrangulated)
+                                                         VtValue *quadrangulated) const
 {
   HD_TRACE_FUNCTION();
 
@@ -1007,86 +968,119 @@ bool HdMeshUtil::ComputeQuadrangulatedFaceVaryingPrimvar(void const *source,
   return true;
 }
 
-//-------------------------------------------------------------------------
-// Authored edge id enumeration
-/*static*/ HdMeshUtil::EdgeMap HdMeshUtil::ComputeAuthoredEdgeMap(HdMeshTopology const *topology,
-                                                                  bool skipHoles /*=false*/)
+void HdMeshUtil::EnumerateEdges(std::vector<GfVec2i> *edgeVerticesOut) const
 {
   HD_TRACE_FUNCTION();
-  int const *numVertsPtr  = topology->GetFaceVertexCounts().cdata();
-  int const *vertsPtr     = topology->GetFaceVertexIndices().cdata();
-  int const *holeFacesPtr = topology->GetHoleIndices().cdata();
-  int numFaces            = topology->GetFaceVertexCounts().size();
-  int numHoleFaces        = topology->GetHoleIndices().size();
 
-  EdgeMap edges;
-  int edgeId    = 0;
-  int holeIndex = 0;
-  // i  -> authored face index [0, numFaces)
-  // v  -> index to the first vertex (index) for face i
-  for (int i = 0, v = 0; i < numFaces; ++i) {
+  if (_topology == nullptr) {
+    TF_CODING_ERROR("No topology provided for edge vertices");
+    return;
+  }
+  if (edgeVerticesOut == nullptr) {
+    TF_CODING_ERROR("No output buffer provided for edge vertices");
+    return;
+  }
+
+  int const *numVertsPtr = _topology->GetFaceVertexCounts().cdata();
+  int const *vertsPtr    = _topology->GetFaceVertexIndices().cdata();
+  int const numFaces     = _topology->GetFaceVertexCounts().size();
+
+  int numEdges = 0;
+  for (int i = 0; i < numFaces; ++i) {
     int nv = numVertsPtr[i];
-    if (nv < 3) {
-      // Skip degenerate faces.
-    }
-    else if (skipHoles && holeIndex < numHoleFaces && holeFacesPtr[holeIndex] == i) {
-      // Skip hole faces.
-      ++holeIndex;
-    }
-    else {
-      // insert any new edges of the authored face into the edge map
-      for (int e = 0; e < nv; ++e) {
-        int ev0 = vertsPtr[v + e];
-        int ev1 = (e == nv - 1) ? vertsPtr[v] : vertsPtr[v + e + 1];
-        GfVec2i edge(ev0, ev1);
-        auto result = edges.insert(std::make_pair(edge, edgeId));
+    numEdges += nv;
+  }
+  edgeVerticesOut->resize(numEdges);
 
-        if (result.second) {  // edge 'edgeId' inserted
-          edgeId++;           // next enumerated edge
+  bool const flip = (_topology->GetOrientation() != HdTokens->rightHanded);
+
+  for (int i = 0, v = 0, ev = 0; i < numFaces; ++i) {
+    int nv = numVertsPtr[i];
+    if (flip) {
+      for (int j = nv; j > 0; --j) {
+        int v0 = vertsPtr[v + j % nv];
+        int v1 = vertsPtr[v + (j + nv - 1) % nv];
+        if (v0 < v1) {
+          std::swap(v0, v1);
         }
+        (*edgeVerticesOut)[ev++] = GfVec2i(v0, v1);
       }
     }
-
+    else {
+      for (int j = 0; j < nv; ++j) {
+        int v0 = vertsPtr[v + j];
+        int v1 = vertsPtr[v + (j + 1) % nv];
+        if (v0 < v1) {
+          std::swap(v0, v1);
+        }
+        (*edgeVerticesOut)[ev++] = GfVec2i(v0, v1);
+      }
+    }
     v += nv;
   }
-
-  return edges;
 }
 
-/*static*/ HdMeshUtil::ReverseEdgeMap HdMeshUtil::ComputeReverseEdgeMap(const EdgeMap &edgeMap)
+HdMeshEdgeIndexTable::HdMeshEdgeIndexTable(HdMeshTopology const *topology)
 {
-  HD_TRACE_FUNCTION();
-  ReverseEdgeMap res;
-  for (const auto &pair : edgeMap) {
-    res.insert(std::make_pair(pair.second, pair.first));
+  HdMeshUtil meshUtil(topology, SdfPath());
+  meshUtil.EnumerateEdges(&_edgeVertices);
+
+  _edgesByIndex.resize(_edgeVertices.size());
+  for (size_t i = 0; i < _edgeVertices.size(); ++i) {
+    _edgesByIndex[i] = _Edge(_edgeVertices[i], i);
   }
-  return res;
+
+  std::sort(_edgesByIndex.begin(), _edgesByIndex.end(), _CompareEdgeVertices());
 }
 
-/*static*/ std::pair<bool, GfVec2i> HdMeshUtil::GetVertexIndicesForEdge(
-    const ReverseEdgeMap &rEdgeMap,
-    int authoredEdgeId)
-{
-  const auto &it = rEdgeMap.find(authoredEdgeId);
+HdMeshEdgeIndexTable::~HdMeshEdgeIndexTable() = default;
 
-  if (it != rEdgeMap.end()) {
-    return std::make_pair(true, it->second);
+bool HdMeshEdgeIndexTable::GetVerticesForEdgeIndex(int edgeIndex, GfVec2i *edgeVerticesOut) const
+{
+  if (edgeIndex < 0 || edgeIndex >= (int)_edgeVertices.size()) {
+    return false;
   }
 
-  return std::make_pair(false, GfVec2i(0, 0));
+  *edgeVerticesOut = _edgeVertices[edgeIndex];
+
+  return true;
 }
 
-/*static*/ std::pair<bool, int> HdMeshUtil::GetAuthoredEdgeID(HdMeshTopology const *topology,
-                                                              GfVec2i edge)
+bool HdMeshEdgeIndexTable::GetVerticesForEdgeIndices(std::vector<int> const &edgeIndices,
+                                                     std::vector<GfVec2i> *edgeVerticesOut) const
 {
-  // XXX: we should cache this in HdMeshTopology
-  EdgeMap authoredEdgeMap = ComputeAuthoredEdgeMap(topology);
-
-  auto it = authoredEdgeMap.find(edge);
-  if (it != authoredEdgeMap.end()) {
-    return std::make_pair(true, it->second);
+  std::unordered_set<GfVec2i, _EdgeVerticesHash> result;
+  for (int edgeIndex : edgeIndices) {
+    GfVec2i edgeVertices;
+    if (GetVerticesForEdgeIndex(edgeIndex, &edgeVertices)) {
+      result.insert(edgeVertices);
+    }
   }
-  return std::make_pair(false, -1);
+  edgeVerticesOut->assign(result.begin(), result.end());
+
+  return !edgeVerticesOut->empty();
+}
+
+bool HdMeshEdgeIndexTable::GetEdgeIndices(GfVec2i const &edgeVertices,
+                                          std::vector<int> *edgeIndicesOut) const
+{
+  const _Edge edge(edgeVertices);
+  auto matchingEdges = std::equal_range(
+      _edgesByIndex.begin(), _edgesByIndex.end(), edge, _CompareEdgeVertices());
+
+  if (matchingEdges.first == matchingEdges.second) {
+    return false;
+  }
+
+  const size_t numIndices = std::distance(matchingEdges.first, matchingEdges.second);
+  edgeIndicesOut->resize(numIndices);
+
+  int e = 0;
+  for (auto i = matchingEdges.first; i != matchingEdges.second; ++i) {
+    (*edgeIndicesOut)[e++] = i->index;
+  }
+
+  return !edgeIndicesOut->empty();
 }
 
 WABI_NAMESPACE_END

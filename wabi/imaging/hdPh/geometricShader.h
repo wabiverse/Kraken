@@ -1,35 +1,28 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
-#ifndef WABI_IMAGING_HD_PH_GEOMETRIC_SHADER_H
-#define WABI_IMAGING_HD_PH_GEOMETRIC_SHADER_H
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
+#ifndef WABI_IMAGING_HD_ST_GEOMETRIC_SHADER_H
+#define WABI_IMAGING_HD_ST_GEOMETRIC_SHADER_H
 
 #include "wabi/imaging/garch/glApi.h"
 #include "wabi/imaging/hd/enums.h"
@@ -116,6 +109,14 @@ class HdPh_GeometricShader : public HdPhShaderCode {
             primType == PrimitiveType::PRIM_MESH_REFINED_QUADS);
   }
 
+  static inline bool IsPrimTypeRefinedMesh(PrimitiveType primType)
+  {
+    return (primType == PrimitiveType::PRIM_MESH_REFINED_TRIANGLES ||
+            primType == PrimitiveType::PRIM_MESH_REFINED_QUADS ||
+            primType == PrimitiveType::PRIM_MESH_BSPLINE ||
+            primType == PrimitiveType::PRIM_MESH_BOXSPLINETRIANGLE);
+  }
+
   static inline bool IsPrimTypePatches(PrimitiveType primType)
   {
     return primType == PrimitiveType::PRIM_MESH_BSPLINE ||
@@ -123,6 +124,17 @@ class HdPh_GeometricShader : public HdPhShaderCode {
            primType == PrimitiveType::PRIM_BASIS_CURVES_CUBIC_PATCHES ||
            primType == PrimitiveType::PRIM_BASIS_CURVES_LINEAR_PATCHES;
   }
+
+  // Face-varying patch type
+  enum class FvarPatchType {
+    PATCH_COARSE_TRIANGLES,
+    PATCH_REFINED_TRIANGLES,
+    PATCH_COARSE_QUADS,
+    PATCH_REFINED_QUADS,
+    PATCH_BSPLINE,
+    PATCH_BOXSPLINETRIANGLE,
+    PATCH_NONE
+  };
 
   HDPH_API
   HdPh_GeometricShader(std::string const &glslfxString,
@@ -133,6 +145,7 @@ class HdPh_GeometricShader : public HdPhShaderCode {
                        bool doubleSided,
                        HdPolygonMode polygonMode,
                        bool cullingPass,
+                       FvarPatchType fvarPatchType,
                        SdfPath const &debugId = SdfPath(),
                        float lineWidth        = 0);
 
@@ -198,6 +211,11 @@ class HdPh_GeometricShader : public HdPhShaderCode {
     return IsPrimTypePatches(_primType);
   }
 
+  FvarPatchType GetFvarPatchType() const
+  {
+    return _fvarPatchType;
+  }
+
   /// Return the GL primitive type of the draw item based on _primType
   HDPH_API
   GLenum GetPrimitiveMode() const;
@@ -206,6 +224,11 @@ class HdPh_GeometricShader : public HdPhShaderCode {
   // 3 for triangles, 4 for quads, 16 for regular b-spline patches etc.
   HDPH_API
   int GetPrimitiveIndexSize() const;
+
+  // Returns the number of vertices output for patch evaluation,
+  // i.e. the number of tessellation control shader invocations.
+  HDPH_API
+  int GetNumPatchEvalVerts() const;
 
   // Returns the primitive index size for the geometry shader shade
   // 1 for points, 2 for lines, 3 for triangles, 4 for lines_adjacency
@@ -228,6 +251,7 @@ class HdPh_GeometricShader : public HdPhShaderCode {
 
   std::unique_ptr<HioGlslfx> _glslfx;
   bool _frustumCullingPass;
+  FvarPatchType _fvarPatchType;
   ID _hash;
 
   // No copying
@@ -237,4 +261,4 @@ class HdPh_GeometricShader : public HdPhShaderCode {
 
 WABI_NAMESPACE_END
 
-#endif  // WABI_IMAGING_HD_PH_GEOMETRIC_SHADER_H
+#endif  // WABI_IMAGING_HD_ST_GEOMETRIC_SHADER_H

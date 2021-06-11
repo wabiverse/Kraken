@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hdx/renderSetupTask.h"
 #include "wabi/imaging/hdx/debugCodes.h"
 #include "wabi/imaging/hdx/package.h"
@@ -54,7 +47,7 @@ HdxRenderSetupTask::HdxRenderSetupTask(HdSceneDelegate *delegate, SdfPath const 
       _colorRenderPassShader(
           std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassColorShader())),
       _idRenderPassShader(std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassIdShader())),
-      _overrideWindowPolicy{CameraUtilFit},
+      _overrideWindowPolicy{false, CameraUtilFit},
       _viewport(0)
 {}
 
@@ -180,6 +173,10 @@ void HdxRenderSetupTask::_PrepareAovBindings(HdTaskContext *ctx, HdRenderIndex *
 {
   // Walk the aov bindings, resolving the render index references as they're
   // encountered.
+  //
+  // This is somewhat fragile. One of the clients is _BindTexture in
+  // hdPh/renderPassShader.cpp.
+  //
   for (size_t i = 0; i < _aovBindings.size(); ++i) {
     if (_aovBindings[i].renderBuffer == nullptr) {
       _aovBindings[i].renderBuffer = static_cast<HdRenderBuffer *>(
@@ -190,14 +187,6 @@ void HdxRenderSetupTask::_PrepareAovBindings(HdTaskContext *ctx, HdRenderIndex *
   HdRenderPassStateSharedPtr &renderPassState = _GetRenderPassState(renderIndex);
   renderPassState->SetAovBindings(_aovBindings);
   renderPassState->SetAovInputBindings(_aovInputBindings);
-
-  if (!_aovBindings.empty()) {
-    // XXX Tasks that are not RenderTasks (OIT, ColorCorrection etc) also
-    // need access to AOVs, but cannot access SetupTask or RenderPassState.
-    // One option is to let them know about the aovs directly (as task
-    // parameters), but instead we do so via the task context.
-    (*ctx)[HdxTokens->aovBindings] = VtValue(_aovBindings);
-  }
 }
 
 void HdxRenderSetupTask::PrepareCamera(HdRenderIndex *renderIndex)
@@ -210,7 +199,12 @@ void HdxRenderSetupTask::PrepareCamera(HdRenderIndex *renderIndex)
 
   const HdCamera *camera = static_cast<const HdCamera *>(
       renderIndex->GetSprim(HdPrimTypeTokens->camera, _cameraId));
-  TF_VERIFY(camera);
+  if (!camera) {
+    // We don't require a valid camera to accommodate setup tasks used
+    // solely for specifying the AOV bindings for clearing or resolving the
+    // AOVs. The viewport transform is irrelevant in this scenario as well.
+    return;
+  }
 
   HdRenderPassStateSharedPtr const &renderPassState = _GetRenderPassState(renderIndex);
 

@@ -1,43 +1,39 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hdx/unitTestDelegate.h"
 
 #include "wabi/base/gf/frustum.h"
-
-#include "wabi/imaging/hd/engine.h"
-#include "wabi/imaging/hd/mesh.h"
-#include "wabi/imaging/hd/sprim.h"
+#include "wabi/base/tf/scoped.h"
 
 #include "wabi/imaging/hd/camera.h"
+#include "wabi/imaging/hd/engine.h"
+#include "wabi/imaging/hd/mesh.h"
+#include "wabi/imaging/hd/renderBuffer.h"
+#include "wabi/imaging/hd/sprim.h"
+
 #include "wabi/imaging/hdPh/drawTarget.h"
+#include "wabi/imaging/hdPh/hioConversions.h"
 #include "wabi/imaging/hdPh/light.h"
 
 #include "wabi/imaging/hdx/drawTargetTask.h"
@@ -47,6 +43,8 @@
 #include "wabi/imaging/hdx/shadowMatrixComputation.h"
 #include "wabi/imaging/hdx/shadowTask.h"
 #include "wabi/imaging/hdx/simpleLightTask.h"
+
+#include "wabi/imaging/hio/image.h"
 
 #include "wabi/imaging/pxOsd/tokens.h"
 
@@ -212,6 +210,14 @@ void Hdx_UnitTestDelegate::SetLight(SdfPath const &id, TfToken const &key, VtVal
   }
 }
 
+void Hdx_UnitTestDelegate::AddRenderBuffer(SdfPath const &id, const HdRenderBufferDescriptor &desc)
+{
+  GetRenderIndex().InsertBprim(HdPrimTypeTokens->renderBuffer, this, id);
+
+  _ValueCache &cache                     = _valueCacheMap[id];
+  cache[_tokens->renderBufferDescriptor] = desc;
+}
+
 void Hdx_UnitTestDelegate::AddDrawTarget(SdfPath const &id)
 {
   GetRenderIndex().InsertSprim(HdPrimTypeTokens->drawTarget, this, id);
@@ -223,15 +229,13 @@ void Hdx_UnitTestDelegate::AddDrawTarget(SdfPath const &id)
     const TfToken attachmentName("color");
 
     const SdfPath path = id.AppendProperty(attachmentName);
-    GetRenderIndex().InsertBprim(HdPrimTypeTokens->renderBuffer, this, path);
 
     HdRenderBufferDescriptor desc;
     desc.dimensions   = GfVec3i(256, 256, 1);
     desc.format       = HdFormatUNorm8Vec4;
     desc.multiSampled = true;
 
-    _ValueCache &cache                     = _valueCacheMap[path];
-    cache[_tokens->renderBufferDescriptor] = desc;
+    AddRenderBuffer(path, desc);
 
     HdRenderPassAovBinding aovBinding;
     aovBinding.aovName        = attachmentName;
@@ -244,15 +248,13 @@ void Hdx_UnitTestDelegate::AddDrawTarget(SdfPath const &id)
     const TfToken attachmentName("depth");
 
     const SdfPath path = id.AppendProperty(attachmentName);
-    GetRenderIndex().InsertBprim(HdPrimTypeTokens->renderBuffer, this, path);
 
     HdRenderBufferDescriptor desc;
     desc.dimensions   = GfVec3i(256, 256, 1);
     desc.format       = HdFormatFloat32;
     desc.multiSampled = true;
 
-    _ValueCache &cache                     = _valueCacheMap[path];
-    cache[_tokens->renderBufferDescriptor] = desc;
+    AddRenderBuffer(path, desc);
 
     HdRenderPassAovBinding aovBinding;
     aovBinding.aovName        = attachmentName;
@@ -876,6 +878,50 @@ TfTokenVector Hdx_UnitTestDelegate::GetTaskRenderTags(SdfPath const &taskId)
   }
 
   return it2->second.Get<TfTokenVector>();
+}
+
+bool Hdx_UnitTestDelegate::WriteRenderBufferToFile(SdfPath const &id, std::string const &filePath)
+{
+  HdBprim *const prim = GetRenderIndex().GetBprim(HdPrimTypeTokens->renderBuffer, id);
+  HdRenderBuffer *const renderBuffer = dynamic_cast<HdRenderBuffer *>(prim);
+  if (!renderBuffer) {
+    TF_CODING_ERROR("No HdRenderBuffer prim at path %s", id.GetText());
+    return false;
+  }
+
+  HioImage::StorageSpec storage;
+  storage.width   = renderBuffer->GetWidth();
+  storage.height  = renderBuffer->GetHeight();
+  storage.format  = HdPhHioConversions::GetHioFormat(renderBuffer->GetFormat());
+  storage.flipped = true;
+  storage.data    = renderBuffer->Map();
+  TfScoped<> scopedUnmap([renderBuffer]() { renderBuffer->Unmap(); });
+
+  if (storage.format == HioFormatInvalid) {
+    TF_CODING_ERROR(
+        "Render buffer %s has format not corresponding to a"
+        "HioFormat",
+        id.GetText());
+    return false;
+  }
+
+  if (!storage.data) {
+    TF_CODING_ERROR("No data for render buffer %s", id.GetText());
+    return false;
+  }
+
+  HioImageSharedPtr const image = HioImage::OpenForWriting(filePath);
+  if (!image) {
+    TF_RUNTIME_ERROR("Failed toopen image for writing %s", filePath.c_str());
+    return false;
+  }
+
+  if (!image->Write(storage)) {
+    TF_RUNTIME_ERROR("Failed to write image to %s", filePath.c_str());
+    return false;
+  }
+
+  return true;
 }
 
 WABI_NAMESPACE_END

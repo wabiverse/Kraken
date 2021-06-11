@@ -38,7 +38,7 @@
 WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_ENV_SETTING(HGI_ENABLE_VULKAN,
-                      true,
+                      false,
                       "Enable Vulkan as platform default Hgi backend (WIP)");
 
 TF_REGISTRY_FUNCTION(TfType)

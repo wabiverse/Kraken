@@ -857,7 +857,7 @@ EXCLUDE_SYMBOLS        = Usd_* \
                          Hd_* \
                          Hdx_* \
                          HdPh_* \
-                         HdSt_* \
+                         HdPh_* \
                          Glf_* \
                          UsdImaging_* \
                          UsdImagingGL_*

@@ -1,34 +1,29 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2020 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hdPh/materialXShaderGen.h"
+#include "wabi/base/tf/stringUtils.h"
+#include "wabi/imaging/hdPh/materialXFilter.h"
 
 #include <MaterialXCore/Value.h>
 #include <MaterialXGenShader/Shader.h>
@@ -39,9 +34,8 @@ namespace mx = MaterialX;
 
 WABI_NAMESPACE_BEGIN
 
-/* clang-format off */
 static const std::string MxHdTangentString =
-R"(
+    R"(
     // Calculate a worldspace tangent vector
     vec3 normalWorld = vec3(HdGet_worldToViewInverseMatrix() * vec4(Neye, 0.0));
     vec3 tangentWorld = cross(normalWorld, vec3(0, 1, 0));
@@ -49,11 +43,9 @@ R"(
         tangentWorld = cross(normalWorld, vec3(1, 0, 0));
     }
 )";
-/* clang-format on */
 
-/* clang-format off */
 static const std::string MxHdLightString =
-R"(#if NUM_LIGHTS > 0
+    R"(#if NUM_LIGHTS > 0
     for (int i = 0; i < NUM_LIGHTS; ++i) {
 
         // Save the indirect light transformation
@@ -95,12 +87,17 @@ R"(#if NUM_LIGHTS > 0
     }
 #endif
 )";
-/* clang-format on */
 
-HdPhMaterialXShaderGen::HdPhMaterialXShaderGen(MaterialX::StringMap const &mxHdTextureMap)
+HdPhMaterialXShaderGen::HdPhMaterialXShaderGen(MxHdInfo const &mxHdInfo)
     : GlslShaderGenerator(),
-      _mxHdTextureMap(mxHdTextureMap)
-{}
+      _mxHdTextureMap(mxHdInfo.textureMap),
+      _mxHdPrimvarMap(mxHdInfo.primvarMap),
+      _materialTag(mxHdInfo.materialTag)
+{
+  _defaultTexcoordName = (mxHdInfo.defaultTexcoordName == mx::EMPTY_STRING) ?
+                             "st" :
+                             mxHdInfo.defaultTexcoordName;
+}
 
 // Based on GlslShaderGenerator::generate()
 // Generates a glslfx shader and stores that in the pixel shader stage where it
@@ -134,43 +131,86 @@ void HdPhMaterialXShaderGen::_EmitGlslfxShader(const mx::ShaderGraph &mxGraph,
 
 void HdPhMaterialXShaderGen::_EmitGlslfxHeader(mx::ShaderStage &mxStage) const
 {
-  /* clang-format off */
+  // Glslfx version and configuration
+  emitLine("-- glslfx version 0.1", mxStage, false);
+  emitLineBreak(mxStage);
+  emitComment("File Generated with HdPhMaterialXShaderGen.", mxStage);
+  emitLineBreak(mxStage);
+  emitString(R"(-- configuration)"
+             "\n"
+             R"({)"
+             "\n",
+             mxStage);
 
-    // Glslfx version and configuration
-    emitLine("-- glslfx version 0.1", mxStage, false);
-    emitLineBreak(mxStage);
-    emitComment("File Generated with HdStMaterialXShaderGen.", mxStage);
-    emitLineBreak(mxStage);
-    emitString(
-        R"(-- configuration)" "\n"
-        R"({)" "\n", mxStage);
+  // insert materialTag metadata
+  {
+    emitString(R"(    "metadata": {)"
+               "\n",
+               mxStage);
+    std::string line;
+    line += "        \"materialTag\": \"" + _materialTag + "\"\n";
+    emitString(line, mxStage);
+    emitString(R"(    }, )"
+               "\n",
+               mxStage);
+  }
 
-    // insert texture information if needed
-    if (!_mxHdTextureMap.empty()) {
-        emitString(R"(    "textures": {)" "\n", mxStage);
-        std::string line; unsigned int i = 0;
-        for (auto texturePair : _mxHdTextureMap) {
-            line += "        \"" + texturePair.second + "\": {\n        }";
-            line += (i < _mxHdTextureMap.size() - 1) ? ",\n" : "\n";
-            i++;
-        }
-        emitString(line, mxStage);
-        emitString(R"(    }, )""\n", mxStage);
+  // insert primvar information if needed
+  if (!_mxHdPrimvarMap.empty()) {
+    emitString(R"(    "attributes": {)"
+               "\n",
+               mxStage);
+    std::string line;
+    unsigned int i = 0;
+    for (auto primvarPair : _mxHdPrimvarMap) {
+      line += "        \"" + primvarPair.first + "\": {\n";
+      line += "            \"type\": \"" + primvarPair.second + "\"\n";
+      line += "        }";
+      line += (i < _mxHdPrimvarMap.size() - 1) ? ",\n" : "\n";
+      i++;
     }
-    emitString(
-        R"(    "techniques": {)" "\n"
-        R"(        "default": {)" "\n"
-        R"(            "surfaceShader": { )""\n"
-        R"(                "source": [ "MaterialX.Surface" ])""\n"
-        R"(            })""\n"
-        R"(        })""\n"
-        R"(    })""\n"
-        R"(})" "\n\n", mxStage);
-    emitLine("-- glsl MaterialX.Surface", mxStage, false);
-    emitLineBreak(mxStage);
-    emitLineBreak(mxStage);
-
-  /* clang-format on */
+    emitString(line, mxStage);
+    emitString(R"(    }, )"
+               "\n",
+               mxStage);
+  }
+  // insert texture information if needed
+  if (!_mxHdTextureMap.empty()) {
+    emitString(R"(    "textures": {)"
+               "\n",
+               mxStage);
+    std::string line;
+    unsigned int i = 0;
+    for (auto texturePair : _mxHdTextureMap) {
+      line += "        \"" + texturePair.second + "\": {\n        }";
+      line += (i < _mxHdTextureMap.size() - 1) ? ",\n" : "\n";
+      i++;
+    }
+    emitString(line, mxStage);
+    emitString(R"(    }, )"
+               "\n",
+               mxStage);
+  }
+  emitString(R"(    "techniques": {)"
+             "\n"
+             R"(        "default": {)"
+             "\n"
+             R"(            "surfaceShader": { )"
+             "\n"
+             R"(                "source": [ "MaterialX.Surface" ])"
+             "\n"
+             R"(            })"
+             "\n"
+             R"(        })"
+             "\n"
+             R"(    })"
+             "\n"
+             R"(})"
+             "\n\n",
+             mxStage);
+  emitLine("-- glsl MaterialX.Surface", mxStage, false);
+  emitLineBreak(mxStage);
+  emitLineBreak(mxStage);
 }
 
 // Similar to GlslShaderGenerator::emitPixelStage() with alterations and
@@ -481,7 +521,7 @@ void HdPhMaterialXShaderGen::_EmitMxVertexDataDeclarations(mx::VariableBlock con
 std::string HdPhMaterialXShaderGen::_EmitMxVertexDataLine(const mx::ShaderPort *variable,
                                                           std::string const &separator) const
 {
-  // Connect the mxVertexData variable with the appropriate wabi variable
+  // Connect the mxVertexData variable with the appropriate pxr variable
   // making sure to convert the Hd data (viewSpace) to Mx data (worldSpace)
   std::string hdVariableDef;
   const std::string mxVariableName = variable->getVariable();
@@ -508,20 +548,37 @@ std::string HdPhMaterialXShaderGen::_EmitMxVertexDataLine(const mx::ShaderPort *
 
     // Wrap initialization inside #ifdef in case the object does not have
     // the st primvar
-    hdVariableDef =
+    hdVariableDef = TfStringPrintf(
         "\n"
-        "    #ifdef HD_HAS_st\n"
-        "        HdGet_st(),\n"
+        "    #ifdef HD_HAS_%s\n"
+        "        HdGet_%s(),\n"
         "    #else\n"
         "        vec2(0.0),\n"
-        "    #endif\n        ";
+        "    #endif\n        ",
+        _defaultTexcoordName.c_str(),
+        _defaultTexcoordName.c_str());
+  }
+  else if (mxVariableName.compare(0, mx::HW::T_IN_GEOMPROP.size(), mx::HW::T_IN_GEOMPROP) == 0) {
+    // Wrap initialization inside #ifdef in case the object does not have
+    // the geomprop primvar
+    // Note: variable name format: 'T_IN_GEOMPROP_geomPropName';
+    const std::string geompropName = mxVariableName.substr(mx::HW::T_IN_GEOMPROP.size());
+    hdVariableDef                  = TfStringPrintf(
+        "\n"
+        "    #ifdef HD_HAS%s\n"
+        "        HdGet%s(),\n"
+        "    #else\n"
+        "        vec2(0.0),\n"
+        "    #endif\n        ",
+        geompropName.c_str(),
+        geompropName.c_str());
   }
   else {
     const std::string valueStr = variable->getValue() ?
                                      _syntax->getValue(
                                          variable->getType(), *variable->getValue(), true) :
                                      _syntax->getDefaultValue(variable->getType(), true);
-    hdVariableDef += valueStr.empty() ? mx::EMPTY_STRING : valueStr;
+    hdVariableDef              = valueStr.empty() ? mx::EMPTY_STRING : valueStr + separator;
   }
 
   return hdVariableDef.empty() ? mx::EMPTY_STRING : hdVariableDef;

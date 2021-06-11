@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2017 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hdPh/extCompGpuComputation.h"
 #include "wabi/base/tf/hash.h"
 #include "wabi/imaging/glf/diagnostic.h"
@@ -330,15 +323,15 @@ HdPhExtCompGpuComputationSharedPtr HdPhExtCompGpuComputation::CreateGpuComputati
 
   // There is a companion resource that requires allocation
   // and resolution.
-  HdPhExtCompGpuComputationResourceSharedPtr resource(
-      new HdPhExtCompGpuComputationResource(outputBufferSpecs, shader, inputs, resourceRegistry));
+  HdPhExtCompGpuComputationResourceSharedPtr resource =
+      std::make_shared<HdPhExtCompGpuComputationResource>(
+          outputBufferSpecs, shader, inputs, resourceRegistry);
 
-  return HdPhExtCompGpuComputationSharedPtr(
-      new HdPhExtCompGpuComputation(sourceComp->GetId(),
-                                    resource,
-                                    compPrimvars,
-                                    sourceComp->GetDispatchCount(),
-                                    sourceComp->GetElementCount()));
+  return std::make_shared<HdPhExtCompGpuComputation>(sourceComp->GetId(),
+                                                     resource,
+                                                     compPrimvars,
+                                                     sourceComp->GetDispatchCount(),
+                                                     sourceComp->GetElementCount());
 }
 
 void HdPh_GetExtComputationPrimvarsComputations(
@@ -389,8 +382,9 @@ void HdPh_GetExtComputationPrimvarsComputations(
             gpuComputation = HdPhExtCompGpuComputation::CreateGpuComputation(
                 sceneDelegate, sourceComp, compPrimvars);
 
-            HdBufferSourceSharedPtr gpuComputationSource(new HdPhExtCompGpuComputationBufferSource(
-                HdBufferSourceSharedPtrVector(), gpuComputation->GetResource()));
+            HdBufferSourceSharedPtr gpuComputationSource =
+                std::make_shared<HdPhExtCompGpuComputationBufferSource>(
+                    HdBufferSourceSharedPtrVector(), gpuComputation->GetResource());
 
             separateComputationSources->push_back(gpuComputationSource);
             // Assume there are no dependencies between ExtComp so
@@ -399,11 +393,11 @@ void HdPh_GetExtComputationPrimvarsComputations(
           }
 
           // Create a primvar buffer source for the computation
-          HdBufferSourceSharedPtr primvarBufferSource(
-              new HdPhExtCompGpuPrimvarBufferSource(compPrimvar.name,
-                                                    compPrimvar.valueType,
-                                                    sourceComp->GetElementCount(),
-                                                    sourceComp->GetId()));
+          HdBufferSourceSharedPtr primvarBufferSource =
+              std::make_shared<HdPhExtCompGpuPrimvarBufferSource>(compPrimvar.name,
+                                                                  compPrimvar.valueType,
+                                                                  sourceComp->GetElementCount(),
+                                                                  sourceComp->GetId());
 
           // Gpu primvar sources only need to reserve space
           reserveOnlySources->push_back(primvarBufferSource);
@@ -424,11 +418,12 @@ void HdPh_GetExtComputationPrimvarsComputations(
           }
 
           // Create a primvar buffer source for the computation
-          HdBufferSourceSharedPtr primvarBufferSource(
-              new HdExtCompPrimvarBufferSource(compPrimvar.name,
-                                               cpuComputation,
-                                               compPrimvar.sourceComputationOutputName,
-                                               compPrimvar.valueType));
+          HdBufferSourceSharedPtr primvarBufferSource =
+              std::make_shared<HdExtCompPrimvarBufferSource>(
+                  compPrimvar.name,
+                  cpuComputation,
+                  compPrimvar.sourceComputationOutputName,
+                  compPrimvar.valueType);
 
           // Cpu primvar sources need to allocate and commit data
           sources->push_back(primvarBufferSource);

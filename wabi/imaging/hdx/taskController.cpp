@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2017 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hdx/taskController.h"
 
 #include "wabi/imaging/hd/camera.h"
@@ -60,34 +53,20 @@
 
 WABI_NAMESPACE_BEGIN
 
-/* clang-format off */
 TF_DEFINE_PRIVATE_TOKENS(
-  _tokens,
+    _tokens,
 
-  // tasks
-  (simpleLightTask)
-  (shadowTask)
-  (aovInputTask)
-  (selectionTask)
-  (colorizeSelectionTask)
-  (oitResolveTask)
-  (colorCorrectionTask)
-  (pickTask)
-  (pickFromRenderBufferTask)
-  (presentTask)
-  (visualizeAovTask)
+    // tasks
+    (simpleLightTask)(shadowTask)(aovInputTask)(selectionTask)(colorizeSelectionTask)(oitResolveTask)(colorCorrectionTask)(pickTask)(pickFromRenderBufferTask)(presentTask)(visualizeAovTask)
 
-  // global camera
-  (camera)
+    // global camera
+    (camera)
 
-  // For the internal delegate...
-  (renderBufferDescriptor)
-  (renderTags)
+    // For the internal delegate...
+    (renderBufferDescriptor)(renderTags)
 
-  // for the stage orientation
-  (StageOrientation)
-);
-/* clang-format on */
+    // for the stage orientation
+    (StageOrientation));
 
 // XXX: WBN to expose this to the application.
 static const uint32_t MSAA_SAMPLE_COUNT = 4;
@@ -183,7 +162,7 @@ HdxTaskController::HdxTaskController(HdRenderIndex *renderIndex, SdfPath const &
       _freeCameraSceneDelegate(
           std::make_unique<HdxFreeCameraSceneDelegate>(renderIndex, controllerId)),
       _renderBufferSize(0, 0),
-      _overrideWindowPolicy{CameraUtilFit},
+      _overrideWindowPolicy{false, CameraUtilFit},
       _viewport(0, 0, 1, 1)
 {
   _CreateRenderGraph();
@@ -232,10 +211,10 @@ void HdxTaskController::_CreateRenderGraph()
   if (_IsPhoenixRenderingBackend(GetRenderIndex())) {
     _CreateLightingTask();
     _CreateShadowTask();
-    _renderTaskIds.push_back(_CreateRenderTask(HdMaterialTagTokens->defaultMaterialTag));
+    _renderTaskIds.push_back(_CreateRenderTask(HdPhMaterialTagTokens->defaultMaterialTag));
     _renderTaskIds.push_back(_CreateRenderTask(HdPhMaterialTagTokens->masked));
-    _renderTaskIds.push_back(_CreateRenderTask(HdxMaterialTagTokens->additive));
-    _renderTaskIds.push_back(_CreateRenderTask(HdxMaterialTagTokens->translucent));
+    _renderTaskIds.push_back(_CreateRenderTask(HdPhMaterialTagTokens->additive));
+    _renderTaskIds.push_back(_CreateRenderTask(HdPhMaterialTagTokens->translucent));
     _renderTaskIds.push_back(_CreateRenderTask(HdPhMaterialTagTokens->volume));
 
     if (_AovsSupported()) {
@@ -302,12 +281,12 @@ SdfPath HdxTaskController::_CreateRenderTask(TfToken const &materialTag)
                                materialTag);
   collection.SetRootPath(SdfPath::AbsoluteRootPath());
 
-  if (materialTag == HdMaterialTagTokens->defaultMaterialTag ||
-      materialTag == HdxMaterialTagTokens->additive ||
+  if (materialTag == HdPhMaterialTagTokens->defaultMaterialTag ||
+      materialTag == HdPhMaterialTagTokens->additive ||
       materialTag == HdPhMaterialTagTokens->masked || materialTag.IsEmpty()) {
     GetRenderIndex()->InsertTask<HdxRenderTask>(&_delegate, taskId);
   }
-  else if (materialTag == HdxMaterialTagTokens->translucent) {
+  else if (materialTag == HdPhMaterialTagTokens->translucent) {
     GetRenderIndex()->InsertTask<HdxOitRenderTask>(&_delegate, taskId);
     // OIT is using its own buffers which are only per pixel and not per
     // sample. Thus, we resolve the AOVs before starting to render any
@@ -337,7 +316,7 @@ void HdxTaskController::_SetBlendStateForMaterialTag(TfToken const &materialTag,
     return;
   }
 
-  if (materialTag == HdxMaterialTagTokens->additive) {
+  if (materialTag == HdPhMaterialTagTokens->additive) {
     // Additive blend -- so no sorting of drawItems is needed
     renderParams->blendEnable = true;
     // For color, we are setting all factors to ONE.
@@ -368,19 +347,12 @@ void HdxTaskController::_SetBlendStateForMaterialTag(TfToken const &materialTag,
     // transparency for this renderpass.
     renderParams->enableAlphaToCoverage = false;
   }
-  else if (materialTag == HdxMaterialTagTokens->translucent ||
-           materialTag == HdPhMaterialTagTokens->volume) {
-    // Order Independent Transparency blend state or its first render pass.
-    renderParams->blendEnable           = false;
-    renderParams->enableAlphaToCoverage = false;
-    renderParams->depthMaskEnable       = false;
-  }
-  else {
-    /**
-     * The default and masked material tags share the same blend state, but
-     * we classify them as separate because in the general case, masked
-     * materials use fragment shader discards while the defaultMaterialTag
-     * should not. */
+  else if (materialTag == HdPhMaterialTagTokens->defaultMaterialTag ||
+           materialTag == HdPhMaterialTagTokens->masked) {
+    // The default and masked material tags share the same blend state, but
+    // we classify them as separate because in the general case, masked
+    // materials use fragment shader discards while the defaultMaterialTag
+    // should not.
     renderParams->blendEnable           = false;
     renderParams->depthMaskEnable       = true;
     renderParams->enableAlphaToCoverage = true;
@@ -1463,7 +1435,7 @@ void HdxTaskController::SetFraming(const CameraUtilFraming &framing)
 }
 
 void HdxTaskController::SetOverrideWindowPolicy(
-    const std::optional<CameraUtilConformWindowPolicy> &policy)
+    const std::pair<bool, CameraUtilConformWindowPolicy> &policy)
 {
   _overrideWindowPolicy = policy;
   _SetCameraFramingForTasks();

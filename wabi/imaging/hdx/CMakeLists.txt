@@ -22,7 +22,6 @@ wabi_library(hdx
         gf
         work
         garch
-        vkf
         glf
         pxOsd
         hd
@@ -82,18 +81,20 @@ wabi_library(hdx
         resources/shaders/colorChannel.glslfx
         resources/shaders/colorCorrection.glslfx
         resources/shaders/fullscreen.glslfx
+        resources/shaders/oitResolveImageShader.glslfx
+        resources/shaders/outline.glslfx
         resources/shaders/renderPass.glslfx
-        resources/shaders/renderPassShader.glslfx
-        resources/shaders/renderPassDiscardUnselectedShader.glslfx
+        resources/shaders/renderPassColorShader.glslfx
+        resources/shaders/renderPassColorAndSelectionShader.glslfx
+        resources/shaders/renderPassColorWithOccludedSelectionShader.glslfx
         resources/shaders/renderPassIdShader.glslfx
         resources/shaders/renderPassPickingShader.glslfx
-        resources/shaders/renderPassShadowShader.glslfx
-        resources/shaders/selection.glslfx
         resources/shaders/renderPassOitShader.glslfx
         resources/shaders/renderPassOitOpaqueShader.glslfx
         resources/shaders/renderPassOitVolumeShader.glslfx
-        resources/shaders/oitResolveImageShader.glslfx
-        resources/shaders/outline.glslfx
+        resources/shaders/renderPassShadowShader.glslfx
+        resources/shaders/selection.glslfx
+        resources/shaders/visualize.glslfx
         resources/textures/StinsonBeach.exr
 
     DOXYGEN_FILES

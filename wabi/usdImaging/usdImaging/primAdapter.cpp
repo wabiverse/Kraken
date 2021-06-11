@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/usdImaging/usdImaging/primAdapter.h"
 
 #include "wabi/usdImaging/usdImaging/debugCodes.h"
@@ -162,6 +155,33 @@ void UsdImagingPrimAdapter::ProcessPrimResync(SdfPath const &cachePath,
   if (_GetPrim(usdPath)) {
     // The prim still exists, so repopulate it.
     index->Repopulate(/*cachePath*/ usdPath);
+  }
+}
+
+/*virtual*/
+void UsdImagingPrimAdapter::_ResyncDependents(SdfPath const &usdPath, UsdImagingIndexProxy *index)
+{
+  auto const range = _delegate->_dependencyInfo.equal_range(usdPath);
+  for (auto it = range.first; it != range.second; ++it) {
+    SdfPath const &depCachePath = it->second;
+    // If _ResyncDependents is called by the resync method of hydra prim
+    // /Foo, there's a strong chance the hydra prim has a declared
+    // dependency on USD prim /Foo.  (This is true pretty much except for
+    // instancing cases that aren't expected to call this function).
+    //
+    // In order to avoid infinite loops, if the hydra dependency we get has
+    // the same path as the passed in usdPath, skip resyncing it.
+    if (depCachePath == usdPath) {
+      continue;
+    }
+
+    TF_DEBUG(USDIMAGING_CHANGES)
+        .Msg("<%s> Resyncing dependent %s\n", usdPath.GetText(), depCachePath.GetText());
+
+    UsdImagingDelegate::_HdPrimInfo *primInfo = _delegate->_GetHdPrimInfo(depCachePath);
+    if (primInfo != nullptr && TF_VERIFY(primInfo->adapter != nullptr)) {
+      primInfo->adapter->ProcessPrimResync(depCachePath, index);
+    }
   }
 }
 
@@ -997,6 +1017,11 @@ GfInterval UsdImagingPrimAdapter::_GetCurrentTimeSamplingInterval()
 Usd_PrimFlagsConjunction UsdImagingPrimAdapter::_GetDisplayPredicate() const
 {
   return _delegate->_GetDisplayPredicate();
+}
+
+Usd_PrimFlagsConjunction UsdImagingPrimAdapter::_GetDisplayPredicateForPrototypes() const
+{
+  return _delegate->_GetDisplayPredicateForPrototypes();
 }
 
 size_t UsdImagingPrimAdapter::SampleTransform(UsdPrim const &prim,

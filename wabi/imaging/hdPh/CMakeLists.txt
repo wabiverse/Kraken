@@ -40,9 +40,9 @@ wabi_library(hdPh
     LIBRARIES
         hio
         garch
-        vkf
         glf
         hd
+        hgiVulkan
         hgiGL
         sdr
         tf
@@ -87,12 +87,11 @@ wabi_library(hdPh
         imageShaderRenderPass
         instancer
         interleavedMemoryManager
-        light
+        light      
         lightingShader
         material
         materialNetwork
         mesh
-        mixinShader
         package
         points
         primUtils
@@ -146,7 +145,7 @@ wabi_library(hdPh
         indirectDrawBatch
         materialParam
         meshShaderKey
-        meshTopology
+        meshTopology 
         pointsShaderKey
         quadrangulate
         resourceBinder
@@ -172,8 +171,6 @@ wabi_library(hdPh
         resources/shaders/frustumCull.glslfx
         resources/shaders/imageShader.glslfx
         resources/shaders/instancing.glslfx
-        resources/shaders/lighting.glslfx
-        resources/shaders/lightingIntegrationShader.glslfx
         resources/shaders/mesh.glslfx
         resources/shaders/meshFaceCull.glslfx
         resources/shaders/meshNormal.glslfx

@@ -165,7 +165,7 @@ UsdImagingGLEngine::UsdImagingGLEngine(const SdfPath &rootPath,
 
     // _renderIndex, _taskController, and _sceneDelegate are initialized
     // by the plugin system.
-    if (!SetRendererPlugin(_GetDefaultRendererPluginId())) {
+    if (!SetRendererPlugin(TfToken("HdCyclesRendererPlugin"))) {
       TF_CODING_ERROR(
           "No renderer plugins found! "
           "Check before creation.");
@@ -355,7 +355,7 @@ void UsdImagingGLEngine::SetFraming(CameraUtilFraming const &framing)
 }
 
 void UsdImagingGLEngine::SetOverrideWindowPolicy(
-    const std::optional<CameraUtilConformWindowPolicy> &policy)
+    const std::pair<bool, CameraUtilConformWindowPolicy> &policy)
 {
   if (ARCH_UNLIKELY(_legacyImpl)) {
     // legacy implementation does not support camera framing.

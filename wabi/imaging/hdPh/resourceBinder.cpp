@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/garch/glApi.h"
 
 #include "wabi/imaging/glf/contextCaps.h"
@@ -44,6 +37,7 @@
 #include "wabi/imaging/hdPh/resourceBinder.h"
 #include "wabi/imaging/hdPh/shaderCode.h"
 #include "wabi/imaging/hdPh/textureBinder.h"
+#include "wabi/imaging/hdPh/tokens.h"
 
 #include "wabi/base/tf/staticTokens.h"
 
@@ -169,6 +163,11 @@ static TfTokenVector _GetInstancerFilterNames(HdPhDrawItem const *drawItem)
   }
 
   return filterNames;
+}
+
+static bool _TokenContainsString(const TfToken &token, const std::string &string)
+{
+  return (token.GetString().find(string) != std::string::npos);
 }
 
 void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
@@ -359,8 +358,13 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
       }
       else {
         // We expect the following additional topology based info:
-        // - primitive parameter (for all tris, quads and patches) OR
+        // - primitive parameter (for all tris, quads and patches)
         // - edge indices (for all tris, quads and patches)
+        // - fvar indices (for refined tris, quads, and patches with
+        //   face-varying primvars)
+        // - fvar patch params (for refined tris, quads, and patches
+        //   with face-varying primvars)
+
         HdBinding binding = locator.GetBinding(arrayBufferBindingType, name);
         _bindingMap[name] = binding;
 
@@ -377,6 +381,12 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
         }
         else if (name == HdTokens->edgeIndices) {
           metaDataOut->edgeIndexBinding = bindingDecl;
+        }
+        else if (_TokenContainsString(name, HdPhTokens->fvarIndices.GetString())) {
+          metaDataOut->fvarIndicesBindings.push_back(bindingDecl);
+        }
+        else if (_TokenContainsString(name, HdPhTokens->fvarPatchParam.GetString())) {
+          metaDataOut->fvarPatchParamBindings.push_back(bindingDecl);
         }
         else {
           TF_WARN("Unexpected topological resource '%s'\n", name.GetText());
@@ -440,16 +450,30 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
     HdPhBufferArrayRangeSharedPtr fvarBar = std::static_pointer_cast<HdPhBufferArrayRange>(
         fvarBar_);
 
+    TopologyToPrimvarVector const &fvarTopoToPvMap = drawItem->GetFvarTopologyToPrimvarVector();
+
     TF_FOR_ALL(it, fvarBar->GetResources())
     {
-      TfToken const &name          = it->first;
-      TfToken glName               = HdPhGLConversions::GetGLSLIdentifier(name);
+      TfToken const &name = it->first;
+      TfToken glName      = HdPhGLConversions::GetGLSLIdentifier(name);
+
       HdBinding fvarPrimvarBinding = locator.GetBinding(arrayBufferBindingType, name);
       _bindingMap[name]            = fvarPrimvarBinding;
       HdTupleType valueType        = it->second->GetTupleType();
       TfToken glType               = HdPhGLConversions::GetGLSLTypename(valueType.type);
-      metaDataOut->fvarData[fvarPrimvarBinding] = MetaData::Primvar(/*name=*/glName,
-                                                                    /*type=*/glType);
+
+      // Fine if no channel is found, might be unrefined primvar
+      int fvarChannel = 0;
+      for (size_t i = 0; i < fvarTopoToPvMap.size(); ++i) {
+        if (std::find(fvarTopoToPvMap[i].second.begin(), fvarTopoToPvMap[i].second.end(), name) !=
+            fvarTopoToPvMap[i].second.end()) {
+          fvarChannel = i;
+        }
+      }
+
+      metaDataOut->fvarData[fvarPrimvarBinding] = MetaData::FvarPrimvar(/*name=*/glName,
+                                                                        /*type=*/glType,
+                                                                        /*channel=*/fvarChannel);
     }
   }
 
@@ -1375,6 +1399,17 @@ HdPh_ResourceBinder::MetaData::ID HdPh_ResourceBinder::MetaData::ComputeHash() c
   boost::hash_combine(hash, edgeIndexBinding.binding.GetValue());
   boost::hash_combine(hash, edgeIndexBinding.dataType);
 
+  TF_FOR_ALL(binDecl, fvarIndicesBindings)
+  {
+    boost::hash_combine(hash, binDecl->binding.GetValue());
+    boost::hash_combine(hash, binDecl->dataType);
+  }
+  TF_FOR_ALL(binDecl, fvarPatchParamBindings)
+  {
+    boost::hash_combine(hash, binDecl->binding.GetValue());
+    boost::hash_combine(hash, binDecl->dataType);
+  }
+
   // separators are inserted to distinguish primvars have a same layout
   // but different interpolation.
   boost::hash_combine(hash, 0);  // separator
@@ -1465,9 +1500,10 @@ HdPh_ResourceBinder::MetaData::ID HdPh_ResourceBinder::MetaData::ComputeHash() c
   TF_FOR_ALL(it, fvarData)
   {
     boost::hash_combine(hash, (int)it->first.GetType());  // binding
-    Primvar const &primvar = it->second;
+    FvarPrimvar const &primvar = it->second;
     boost::hash_combine(hash, primvar.name.Hash());
     boost::hash_combine(hash, primvar.dataType);
+    boost::hash_combine(hash, primvar.channel);
   }
   boost::hash_combine(hash, 0);  // separator
   TF_FOR_ALL(blockIt, shaderData)

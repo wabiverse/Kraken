@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2019 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hdPh/primUtils.h"
 #include "wabi/wabi.h"
 
@@ -35,7 +28,6 @@
 #include "wabi/imaging/hdPh/drawItem.h"
 #include "wabi/imaging/hdPh/instancer.h"
 #include "wabi/imaging/hdPh/material.h"
-#include "wabi/imaging/hdPh/mixinShader.h"
 #include "wabi/imaging/hdPh/renderParam.h"
 #include "wabi/imaging/hdPh/resourceRegistry.h"
 #include "wabi/imaging/hdPh/shaderCode.h"
@@ -212,9 +204,7 @@ void HdPhSetMaterialTag(HdSceneDelegate *delegate,
   }
 }
 
-HdPhShaderCodeSharedPtr HdPhGetMaterialShader(HdRprim const *prim,
-                                              HdSceneDelegate *delegate,
-                                              std::string const &mixinSource)
+HdPhShaderCodeSharedPtr HdPhGetMaterialShader(HdRprim const *prim, HdSceneDelegate *delegate)
 {
   SdfPath const &materialId = prim->GetMaterialId();
 
@@ -229,13 +219,7 @@ HdPhShaderCodeSharedPtr HdPhGetMaterialShader(HdRprim const *prim,
         renderIndex.GetFallbackSprim(HdPrimTypeTokens->material));
   }
 
-  // Augment the shader source if mixinSource is provided.
-  HdPhShaderCodeSharedPtr shaderCode = material->GetShaderCode();
-  if (!mixinSource.empty()) {
-    shaderCode.reset(new HdPhMixinShader(mixinSource, shaderCode));
-  }
-
-  return shaderCode;
+  return material->GetShaderCode();
 }
 
 // -----------------------------------------------------------------------------
@@ -523,13 +507,13 @@ void HdPhPopulateConstantPrimvars(HdRprim *prim,
   // Update uniforms
   HdBufferSourceSharedPtrVector sources;
   if (HdChangeTracker::IsTransformDirty(*dirtyBits, id)) {
-    GfMatrix4d transform = delegate->GetTransform(id);
+    const GfMatrix4d transform = delegate->GetTransform(id);
     sharedData->bounds.SetMatrix(transform);  // for CPU frustum culling
 
-    HdBufferSourceSharedPtr source(new HdVtBufferSource(HdTokens->transform, transform));
-    sources.push_back(source);
-    source.reset(new HdVtBufferSource(HdTokens->transformInverse, transform.GetInverse()));
-    sources.push_back(source);
+    sources.push_back(std::make_shared<HdVtBufferSource>(HdTokens->transform, transform));
+
+    sources.push_back(
+        std::make_shared<HdVtBufferSource>(HdTokens->transformInverse, transform.GetInverse()));
 
     bool leftHanded = transform.IsLeftHanded();
 
@@ -537,7 +521,7 @@ void HdPhPopulateConstantPrimvars(HdRprim *prim,
     // also push the instancer transform separately.
     if (!instancerId.IsEmpty()) {
       // Gather all instancer transforms in the instancing hierarchy
-      VtMatrix4dArray rootTransforms = prim->GetInstancerTransforms(delegate);
+      const VtMatrix4dArray rootTransforms = prim->GetInstancerTransforms(delegate);
       VtMatrix4dArray rootInverseTransforms(rootTransforms.size());
       for (size_t i = 0; i < rootTransforms.size(); ++i) {
         rootInverseTransforms[i] = rootTransforms[i].GetInverse();
@@ -545,13 +529,12 @@ void HdPhPopulateConstantPrimvars(HdRprim *prim,
         leftHanded ^= rootTransforms[i].IsLeftHanded();
       }
 
-      source.reset(new HdVtBufferSource(
+      sources.push_back(std::make_shared<HdVtBufferSource>(
           HdInstancerTokens->instancerTransform, rootTransforms, rootTransforms.size()));
-      sources.push_back(source);
-      source.reset(new HdVtBufferSource(HdInstancerTokens->instancerTransformInverse,
-                                        rootInverseTransforms,
-                                        rootInverseTransforms.size()));
-      sources.push_back(source);
+      sources.push_back(
+          std::make_shared<HdVtBufferSource>(HdInstancerTokens->instancerTransformInverse,
+                                             rootInverseTransforms,
+                                             rootInverseTransforms.size()));
 
       // XXX: It might be worth to consider to have isFlipped
       // for non-instanced prims as well. It can improve
@@ -559,8 +542,8 @@ void HdPhPopulateConstantPrimvars(HdRprim *prim,
       // fragment shader cost, although it needs more GPU memory.
 
       // Set as int (GLSL needs 32-bit align for bool)
-      source.reset(new HdVtBufferSource(HdTokens->isFlipped, VtValue(int(leftHanded))));
-      sources.push_back(source);
+      sources.push_back(
+          std::make_shared<HdVtBufferSource>(HdTokens->isFlipped, VtValue(int(leftHanded))));
     }
 
     if (hasMirroredTransform) {
@@ -573,20 +556,21 @@ void HdPhPopulateConstantPrimvars(HdRprim *prim,
     // which disables frustum culling for the prim.
     sharedData->bounds.SetRange(prim->GetExtent(delegate));
 
-    GfVec3d const &localMin = drawItem->GetBounds().GetBox().GetMin();
-    HdBufferSourceSharedPtr sourceMin(new HdVtBufferSource(
-        HdTokens->bboxLocalMin, VtValue(GfVec4f(localMin[0], localMin[1], localMin[2], 1.0f))));
+    GfVec3d const &localMin           = drawItem->GetBounds().GetBox().GetMin();
+    HdBufferSourceSharedPtr sourceMin = std::make_shared<HdVtBufferSource>(
+        HdTokens->bboxLocalMin, VtValue(GfVec4f(localMin[0], localMin[1], localMin[2], 1.0f)));
     sources.push_back(sourceMin);
 
-    GfVec3d const &localMax = drawItem->GetBounds().GetBox().GetMax();
-    HdBufferSourceSharedPtr sourceMax(new HdVtBufferSource(
-        HdTokens->bboxLocalMax, VtValue(GfVec4f(localMax[0], localMax[1], localMax[2], 1.0f))));
+    GfVec3d const &localMax           = drawItem->GetBounds().GetBox().GetMax();
+    HdBufferSourceSharedPtr sourceMax = std::make_shared<HdVtBufferSource>(
+        HdTokens->bboxLocalMax, VtValue(GfVec4f(localMax[0], localMax[1], localMax[2], 1.0f)));
     sources.push_back(sourceMax);
   }
 
   if (HdChangeTracker::IsPrimIdDirty(*dirtyBits, id)) {
-    int32_t primId = prim->GetPrimId();
-    HdBufferSourceSharedPtr source(new HdVtBufferSource(HdTokens->primID, VtValue(primId)));
+    int32_t primId                 = prim->GetPrimId();
+    HdBufferSourceSharedPtr source = std::make_shared<HdVtBufferSource>(HdTokens->primID,
+                                                                        VtValue(primId));
     sources.push_back(source);
   }
 
@@ -611,8 +595,8 @@ void HdPhPopulateConstantPrimvars(HdRprim *prim,
           // Given that this is a constant primvar, if it is
           // holding VtArray then use that as a single array
           // value rather than as one value per element.
-          HdBufferSourceSharedPtr source(new HdVtBufferSource(
-              pv.name, value, value.IsArrayValued() ? value.GetArraySize() : 1));
+          HdBufferSourceSharedPtr source = std::make_shared<HdVtBufferSource>(
+              pv.name, value, value.IsArrayValued() ? value.GetArraySize() : 1);
 
           TF_VERIFY(source->GetTupleType().type != HdTypeInvalid);
           TF_VERIFY(source->GetTupleType().count > 0);
@@ -710,12 +694,12 @@ void HdPhUpdateInstancerData(HdRenderIndex &renderIndex,
   int level        = 0;
   SdfPath parentId = prim->GetInstancerId();
   while (!parentId.IsEmpty()) {
-    HdInstancer *instancer = renderIndex.GetInstancer(parentId);
+    HdInstancer *const instancer = renderIndex.GetInstancer(parentId);
     if (!TF_VERIFY(instancer)) {
       return;
     }
-    int drawCoordIndex = drawingCoord->GetInstancePrimvarIndex(level);
-    HdBufferArrayRangeSharedPtr instancerRange =
+    const int drawCoordIndex = drawingCoord->GetInstancePrimvarIndex(level);
+    HdBufferArrayRangeSharedPtr const instancerRange =
         static_cast<HdPhInstancer *>(instancer)->GetInstancePrimvarRange();
 
     // If we need to update the BAR, that indicates an instancing topology
@@ -742,7 +726,7 @@ void HdPhUpdateInstancerData(HdRenderIndex &renderIndex,
   if (HdChangeTracker::IsInstanceIndexDirty(rprimDirtyBits, prim->GetId()) || forceIndexRebuild) {
     parentId = prim->GetInstancerId();
     if (!parentId.IsEmpty()) {
-      HdInstancer *instancer = renderIndex.GetInstancer(parentId);
+      HdInstancer *const instancer = renderIndex.GetInstancer(parentId);
       if (!TF_VERIFY(instancer)) {
         return;
       }
@@ -751,8 +735,8 @@ void HdPhUpdateInstancerData(HdRenderIndex &renderIndex,
       VtIntArray instanceIndices = static_cast<HdPhInstancer *>(instancer)->GetInstanceIndices(
           prim->GetId());
 
-      HdPhResourceRegistrySharedPtr const &resourceRegistry =
-          std::static_pointer_cast<HdPhResourceRegistry>(renderIndex.GetResourceRegistry());
+      HdPhResourceRegistry *const resourceRegistry = static_cast<HdPhResourceRegistry *>(
+          renderIndex.GetResourceRegistry().get());
 
       // Create the bar if needed.
       if (!drawItem->GetInstanceIndexRange()) {
@@ -765,8 +749,9 @@ void HdPhUpdateInstancerData(HdRenderIndex &renderIndex,
         bufferSpecs.emplace_back(HdInstancerTokens->culledInstanceIndices,
                                  HdTupleType{HdTypeInt32, 1});
 
-        HdBufferArrayRangeSharedPtr range = resourceRegistry->AllocateNonUniformBufferArrayRange(
-            HdTokens->topology, bufferSpecs, HdBufferArrayUsageHint());
+        HdBufferArrayRangeSharedPtr const range =
+            resourceRegistry->AllocateNonUniformBufferArrayRange(
+                HdTokens->topology, bufferSpecs, HdBufferArrayUsageHint());
 
         HdPhUpdateDrawItemBAR(
             range, drawingCoord->GetInstanceIndexIndex(), sharedData, renderParam, &changeTracker);
@@ -784,12 +769,10 @@ void HdPhUpdateInstancerData(HdRenderIndex &renderIndex,
       }
 
       HdBufferSourceSharedPtrVector sources;
-      HdBufferSourceSharedPtr source(
-          new HdVtBufferSource(HdInstancerTokens->instanceIndices, VtValue(instanceIndices)));
-      sources.push_back(source);
-      source.reset(new HdVtBufferSource(HdInstancerTokens->culledInstanceIndices,
-                                        VtValue(instanceIndices)));
-      sources.push_back(source);
+      sources.push_back(std::make_shared<HdVtBufferSource>(HdInstancerTokens->instanceIndices,
+                                                           VtValue(instanceIndices)));
+      sources.push_back(std::make_shared<HdVtBufferSource>(
+          HdInstancerTokens->culledInstanceIndices, VtValue(instanceIndices)));
 
       resourceRegistry->AddSources(drawItem->GetInstanceIndexRange(), std::move(sources));
     }
@@ -802,12 +785,12 @@ bool HdPhIsInstancePrimvarExistentAndValid(HdRenderIndex &renderIndex,
 {
   SdfPath parentId = rprim->GetInstancerId();
   while (!parentId.IsEmpty()) {
-    HdInstancer *instancer = renderIndex.GetInstancer(parentId);
+    HdInstancer *const instancer = renderIndex.GetInstancer(parentId);
     if (!TF_VERIFY(instancer)) {
       return false;
     }
 
-    HdPrimvarDescriptorVector primvars = instancer->GetDelegate()->GetPrimvarDescriptors(
+    HdPrimvarDescriptorVector const primvars = instancer->GetDelegate()->GetPrimvarDescriptors(
         instancer->GetId(), HdInterpolationInstance);
 
     for (const HdPrimvarDescriptor &pv : primvars) {
@@ -815,7 +798,7 @@ bool HdPhIsInstancePrimvarExistentAndValid(HdRenderIndex &renderIndex,
       // (since instance primvars aggregate).  Note: the value check here
       // must match HdPhIsPrimvarExistentAndValid.
       if (pv.name == primvarName) {
-        VtValue value = instancer->GetDelegate()->Get(instancer->GetId(), pv.name);
+        const VtValue value = instancer->GetDelegate()->Get(instancer->GetId(), pv.name);
         if (value.IsHolding<std::string>() || value.IsHolding<VtStringArray>()) {
           return false;
         }
@@ -860,13 +843,12 @@ static HdBufferSourceSharedPtr _GetBitmaskEncodedVisibilityBuffer(VtIntArray inv
                          numTotalIndices);
       continue;
     }
-    size_t arrayIndex = *i / numBitsPerUInt;
-    size_t bitIndex   = *i % numBitsPerUInt;
+    const size_t arrayIndex = *i / numBitsPerUInt;
+    const size_t bitIndex   = *i % numBitsPerUInt;
     visibility[arrayIndex] &= ~(1 << bitIndex);  // set bit to 0
   }
 
-  return HdBufferSourceSharedPtr(
-      new HdVtBufferSource(bufferName, VtValue(visibility), numUIntsNeeded));
+  return std::make_shared<HdVtBufferSource>(bufferName, VtValue(visibility), numUIntsNeeded);
 }
 
 void HdPhProcessTopologyVisibility(VtIntArray invisibleElements,

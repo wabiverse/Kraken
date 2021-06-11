@@ -83,11 +83,10 @@ wabi_library(hd
         sceneExtCompInputSource
         selection
         smoothNormals
-        sortedIds
+        sortedIds                   
         sprim
         strategyBase
         task
-        texture
         timeSampleArray
         tokens
         topology
@@ -97,7 +96,7 @@ wabi_library(hd
         unitTestNullRenderDelegate
         unitTestNullRenderPass
         vertexAdjacency
-	volume
+        volume
         vtBufferSource
 
     PUBLIC_HEADERS

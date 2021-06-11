@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/garch/glApi.h"
 
 #include "wabi/imaging/hd/aov.h"
@@ -71,10 +64,9 @@ TfToken _GetInputName(const TfToken &aovName)
   return TfToken(aovName.GetString() + "Readback");
 }
 
-/**
- * An AOV is backed by a render buffer. And Phoenix backs
- * a render buffer by a texture. The identifier for this
- * texture can be obtained from the HdPhRenderBuffer. */
+// An AOV is backed by a render buffer. And Phoenix backs a render buffer
+// by a texture. The identifier for this texture can be obtained from
+// the HdPhRenderBuffer.
 _NamedTextureIdentifiers _GetNamedTextureIdentifiers(
     HdRenderPassAovBindingVector const &aovInputBindings,
     HdRenderIndex *const renderIndex)
@@ -94,9 +86,8 @@ _NamedTextureIdentifiers _GetNamedTextureIdentifiers(
   return result;
 }
 
-/**
- * Check whether the given named texture handles match the given
- * named texture identifiers. */
+// Check whether the given named texture handles match the given
+// named texture identifiers.
 bool _AreHandlesValid(const HdPhShaderCode::NamedTextureHandleVector &namedTextureHandles,
                       const _NamedTextureIdentifiers &namedTextureIdentifiers)
 {
@@ -130,7 +121,7 @@ HdPhRenderPassShader::HdPhRenderPassShader(TfToken const &glslfxFile)
     : HdPhShaderCode(),
       _glslfxFile(glslfxFile)  // user-defined
       ,
-      _glslfx(new HioGlslfx(glslfxFile)),
+      _glslfx(std::make_unique<HioGlslfx>(glslfxFile)),
       _hash(0),
       _hashValid(false),
       _cullStyle(HdCullStyleNothing)
@@ -159,9 +150,8 @@ HdPhRenderPassShader::ID HdPhRenderPassShader::ComputeHash() const
 
   for (const HdPhShaderCode::NamedTextureHandle &namedHandle : _namedTextureHandles) {
 
-    /**
-     * Use name and hash only - not the texture itself as
-     * this does not affect the generated shader source. */
+    // Use name and hash only - not the texture itself as this
+    // does not affect the generated shader source.
     boost::hash_combine(_hash, namedHandle.name);
     boost::hash_combine(_hash, namedHandle.hash);
   }
@@ -292,22 +282,19 @@ void HdPhRenderPassShader::UpdateAovInputTextures(
 {
   TRACE_FUNCTION();
 
-  /**
-   * Compute the identifiers for the textures backing the requested
-   * (resolved) AOVs. */
+  // Compute the identifiers for the textures backing the requested
+  // (resolved) AOVs.
   const _NamedTextureIdentifiers namedTextureIdentifiers = _GetNamedTextureIdentifiers(
       aovInputBindings, renderIndex);
-  /**
-   * If the (named) texture handles are up-to-date, there is nothing to do. */
+  // If the (named) texture handles are up-to-date, there is nothing to do.
   if (_AreHandlesValid(_namedTextureHandles, namedTextureIdentifiers)) {
     return;
   }
 
   _hashValid = false;
 
-  /**
-   * Otherwise, we need to (re-)allocate texture handles for the
-   * given texture identifiers. */
+  // Otherwise, we need to (re-)allocate texture handles for the
+  // given texture identifiers.
   _namedTextureHandles.clear();
   _params.clear();
 
@@ -321,8 +308,7 @@ void HdPhRenderPassShader::UpdateAovInputTextures(
     static const HdSamplerParameters samplerParameters{
         HdWrapClamp, HdWrapClamp, HdWrapClamp, HdMinFilterNearest, HdMagFilterNearest};
 
-    /**
-     * Allocate texture handle for given identifier. */
+    // Allocate texture handle for given identifier.
     HdPhTextureHandleSharedPtr textureHandle = resourceRegistry->AllocateTextureHandle(
         namedTextureIdentifier.id,
         HdTextureType::Uv,
@@ -330,18 +316,15 @@ void HdPhRenderPassShader::UpdateAovInputTextures(
         /* memoryRequest = */ 0,
         /* createBindlessHandle = */ false,
         shared_from_this());
-
-    /**
-     * Add to _namedTextureHandles so that the texture
-     * will be bound to the shader in BindResources. */
+    // Add to _namedTextureHandles so that the texture will
+    // be bound to the shader in BindResources.
     _namedTextureHandles.push_back(HdPhShaderCode::NamedTextureHandle{namedTextureIdentifier.name,
                                                                       HdTextureType::Uv,
                                                                       std::move(textureHandle),
                                                                       /* hash = */ 0});
 
-    /**
-     * Add a corresponding param so that codegen is
-     * generating the accessor HdGet_AOVNAMEReadback(). */
+    // Add a corresponding param so that codegen is
+    // generating the accessor HdGet_AOVNAMEReadback().
     _params.emplace_back(HdPh_MaterialParam::ParamTypeTexture,
                          namedTextureIdentifier.name,
                          VtValue(GfVec4f(0, 0, 0, 0)));

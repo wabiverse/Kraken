@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2019 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/garch/glApi.h"
 
 #include "wabi/imaging/hdx/oitResolveTask.h"
@@ -154,6 +147,42 @@ void HdxOitResolveTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDi
   *dirtyBits = HdChangeTracker::Clean;
 }
 
+const HdRenderPassAovBindingVector &HdxOitResolveTask::_GetAovBindings(
+    HdTaskContext *const ctx) const
+{
+  static HdRenderPassAovBindingVector empty;
+
+  if (!_HasTaskContextData(ctx, HdxTokens->renderPassState)) {
+    return empty;
+  }
+
+  HdRenderPassStateSharedPtr renderPassState;
+  _GetTaskContextData(ctx, HdxTokens->renderPassState, &renderPassState);
+  if (!renderPassState) {
+    return empty;
+  }
+
+  return renderPassState->GetAovBindings();
+}
+
+GfVec2i HdxOitResolveTask::_ComputeScreenSize(HdTaskContext *ctx, HdRenderIndex *renderIndex) const
+{
+  const HdRenderPassAovBindingVector &aovBindings = _GetAovBindings(ctx);
+  if (aovBindings.empty()) {
+    return _GetScreenSize();
+  }
+
+  const SdfPath &bufferId      = aovBindings.front().renderBufferId;
+  HdRenderBuffer *const buffer = static_cast<HdRenderBuffer *>(
+      renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, bufferId));
+  if (!buffer) {
+    TF_CODING_ERROR("No render buffer at path %s specified in AOV bindings", bufferId.GetText());
+    return _GetScreenSize();
+  }
+
+  return GfVec2i(buffer->GetWidth(), buffer->GetHeight());
+}
+
 void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
                                            HdRenderIndex *renderIndex,
                                            GfVec2i const &screenSize)
@@ -244,25 +273,6 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
   }
 }
 
-void HdxOitResolveTask::_PrepareAovBindings(HdTaskContext *ctx, HdRenderIndex *renderIndex)
-{
-  HdRenderPassAovBindingVector aovBindings;
-  auto aovIt = ctx->find(HdxTokens->aovBindings);
-  if (aovIt != ctx->end()) {
-    const VtValue &vtAov = aovIt->second;
-    if (vtAov.IsHolding<HdRenderPassAovBindingVector>()) {
-      aovBindings = vtAov.UncheckedGet<HdRenderPassAovBindingVector>();
-    }
-  }
-
-  // OIT should not clear the AOVs.
-  for (size_t i = 0; i < aovBindings.size(); ++i) {
-    aovBindings[i].clearValue = VtValue();
-  }
-
-  _renderPassState->SetAovBindings(aovBindings);
-}
-
 void HdxOitResolveTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
 {
   // Only allocate/resize buffer if a render task requested it.
@@ -293,6 +303,8 @@ void HdxOitResolveTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
     _renderPassState = std::make_shared<HdPhRenderPassState>();
     _renderPassState->SetEnableDepthTest(false);
     _renderPassState->SetEnableDepthMask(false);
+    _renderPassState->SetAlphaThreshold(0.0f);
+    _renderPassState->SetAlphaToCoverageEnabled(false);
     _renderPassState->SetColorMasks({HdRenderPassState::ColorMaskRGBA});
     _renderPassState->SetBlendEnabled(true);
     // We expect pre-multiplied color as input into the OIT resolve shader
@@ -317,26 +329,7 @@ void HdxOitResolveTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
     _renderPass->Prepare(GetRenderTags());
   }
 
-  // XXX Fragile AOVs dependency. We expect RenderSetupTask::Prepare
-  // to have resolved aob.renderBuffers and then push the AOV bindings onto
-  // the SharedContext before we attempt to use those AOVs.
-  _PrepareAovBindings(ctx, renderIndex);
-
-  // If we have Aov buffers, resize Oit based on its dimensions.
-  GfVec2i screenSize;
-  const HdRenderPassAovBindingVector &aovBindings = _renderPassState->GetAovBindings();
-
-  if (!aovBindings.empty()) {
-    unsigned int w = aovBindings.front().renderBuffer->GetWidth();
-    unsigned int h = aovBindings.front().renderBuffer->GetHeight();
-    screenSize     = GfVec2i(w, h);
-  }
-  else {
-    // Without AOVs, try to use OpenGL state to get the screen size.
-    screenSize = _GetScreenSize();
-  }
-
-  _PrepareOitBuffers(ctx, renderIndex, screenSize);
+  _PrepareOitBuffers(ctx, renderIndex, _ComputeScreenSize(ctx, renderIndex));
 }
 
 void HdxOitResolveTask::Execute(HdTaskContext *ctx)
@@ -361,6 +354,8 @@ void HdxOitResolveTask::Execute(HdTaskContext *ctx)
     return;
   if (!TF_VERIFY(_renderPassShader))
     return;
+
+  _renderPassState->SetAovBindings(_GetAovBindings(ctx));
 
   HdxOitBufferAccessor oitBufferAccessor(ctx);
   if (!oitBufferAccessor.AddOitBufferBindings(_renderPassShader)) {

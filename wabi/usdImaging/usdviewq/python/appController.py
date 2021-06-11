@@ -858,7 +858,7 @@ class AppController(QtCore.QObject):
             # to handle cleanup. However, with PySide2, stageView's GL context
             # is destroyed by then, making it too late in the shutdown process
             # to release any GL resources used by the renderer (relevant for 
-            # Storm's GL renderer).
+            # Phoenix's GL renderer).
             # To work around this, orchestrate shutdown via the main window's
             # closeEvent() handler.
             self._ui.actionQuit.triggered.connect(QtWidgets.QApplication.instance().closeAllWindows)

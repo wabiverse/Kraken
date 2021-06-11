@@ -830,7 +830,7 @@ void HgiInteropMetal::CompositeToInterop(HgiTextureHandle const &color,
 
   // XXX We need to flip all renderers (Embree, Prman, ...) for now as we
   // assume they all output gl coords. That may not always be the case if
-  // Phoenix renders with Metal directly.
+  // Storm renders with Metal directly.
   constexpr bool flipImage = true;
 
   const int width = color ? color->GetDescriptor().dimensions[0] :

@@ -1,35 +1,28 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
-#ifndef WABI_IMAGING_HD_PH_MESH_H
-#define WABI_IMAGING_HD_PH_MESH_H
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
+#ifndef WABI_IMAGING_HD_ST_MESH_H
+#define WABI_IMAGING_HD_ST_MESH_H
 
 #include "wabi/imaging/hd/changeTracker.h"
 #include "wabi/imaging/hd/drawingCoord.h"
@@ -142,6 +135,12 @@ class HdPhMesh final : public HdMesh {
 
   void _PopulateAdjacency(HdPhResourceRegistrySharedPtr const &resourceRegistry);
 
+  void _GatherFaceVaryingTopologies(HdSceneDelegate *sceneDelegate,
+                                    HdPhDrawItem *drawItem,
+                                    HdDirtyBits *dirtyBits,
+                                    const SdfPath &id,
+                                    HdPh_MeshTopologySharedPtr topology);
+
   void _PopulateVertexPrimvars(HdSceneDelegate *sceneDelegate,
                                HdRenderParam *renderParam,
                                HdPhDrawItem *drawItem,
@@ -161,6 +160,97 @@ class HdPhMesh final : public HdMesh {
                                 bool requireFlatNormals);
 
   int _GetRefineLevelForDesc(const HdMeshReprDesc &desc) const;
+
+  // Helper class for meshes to keep track of the topologies of their
+  // face-varying primvars. The face-varying topologies are later passed to
+  // the OSD refiner in an order that will correspond to their face-varying
+  // channel number. We keep a vector of only the topologies in use, paired
+  // with their associated primvar names.
+  class _FvarTopologyTracker {
+   public:
+    const TopologyToPrimvarVector &GetTopologyToPrimvarVector() const
+    {
+      return _topologies;
+    }
+
+    // Add a primvar and its corresponding toplogy to the tracker
+    void AddOrUpdateTopology(const TfToken &primvar, const VtIntArray &topology)
+    {
+      for (size_t i = 0; i < _topologies.size(); ++i) {
+        // Found existing topology
+        if (_topologies[i].first == topology) {
+
+          if (std::find(_topologies[i].second.begin(), _topologies[i].second.end(), primvar) ==
+              _topologies[i].second.end()) {
+            // Topology does not have that primvar assigned
+            RemovePrimvar(primvar);
+            _topologies[i].second.push_back(primvar);
+          }
+          return;
+        }
+      }
+
+      // Found new topology
+      RemovePrimvar(primvar);
+      _topologies.push_back(std::pair<VtIntArray, std::vector<TfToken>>(topology, {primvar}));
+    }
+
+    // Remove a primvar from the tracker.
+    void RemovePrimvar(const TfToken &primvar)
+    {
+      for (size_t i = 0; i < _topologies.size(); ++i) {
+        _topologies[i].second.erase(
+            std::find(_topologies[i].second.begin(), _topologies[i].second.end(), primvar),
+            _topologies[i].second.end());
+      }
+    }
+
+    // Remove unused topologies (topologies with no associated primvars), as
+    // we do not want to build stencil tables for them.
+    void RemoveUnusedTopologies()
+    {
+      _topologies.erase(std::remove_if(_topologies.begin(), _topologies.end(), NoPrimvars),
+                        _topologies.end());
+    }
+
+    // Get the face-varying channel given a primvar name. If the primvar is
+    // not in the tracker, returns -1.
+    int GetChannelFromPrimvar(const TfToken &primvar) const
+    {
+      for (size_t i = 0; i < _topologies.size(); ++i) {
+        if (std::find(_topologies[i].second.begin(), _topologies[i].second.end(), primvar) !=
+            _topologies[i].second.end()) {
+          return i;
+        }
+      }
+      return -1;
+    }
+
+    // Return a vector of all the face-varying topologies.
+    std::vector<VtIntArray> GetFvarTopologies() const
+    {
+      std::vector<VtIntArray> fvarTopologies;
+      for (const auto &it : _topologies) {
+        fvarTopologies.push_back(it.first);
+      }
+      return fvarTopologies;
+    }
+
+    size_t GetNumTopologies() const
+    {
+      return _topologies.size();
+    }
+
+   private:
+    // Helper function that returns true if a <topology, primvar vector> has
+    // no primvars.
+    static bool NoPrimvars(const std::pair<VtIntArray, std::vector<TfToken>> &topology)
+    {
+      return topology.second.empty();
+    }
+
+    TopologyToPrimvarVector _topologies;
+  };
 
  private:
   enum DrawingCoord {
@@ -197,8 +287,10 @@ class HdPhMesh final : public HdMesh {
                                    // the prim was created
   bool _displayOpacity                : 1;
   bool _occludedSelectionShowsThrough : 1;
+
+  std::unique_ptr<_FvarTopologyTracker> _fvarTopologyTracker;
 };
 
 WABI_NAMESPACE_END
 
-#endif  // WABI_IMAGING_HD_PH_MESH_H
+#endif  // WABI_IMAGING_HD_ST_MESH_H

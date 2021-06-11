@@ -208,7 +208,7 @@ class UsdApolloEngine {
    * Note: std::pair<bool, ...> is used instead of std::optional<...>
    * because the latter is only available in C++17 or later. */
   USDAPOLLO_API
-  void SetOverrideWindowPolicy(const std::optional<CameraUtilConformWindowPolicy> &policy);
+  void SetOverrideWindowPolicy(const std::pair<bool, CameraUtilConformWindowPolicy> &policy);
 
   /**
    * Set the size of the render buffers baking the AOVs.

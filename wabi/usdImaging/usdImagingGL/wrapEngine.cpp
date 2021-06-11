@@ -98,10 +98,10 @@ void _SetOverrideWindowPolicy(UsdImagingGLEngine &self, const object &pyObj)
 {
   extract<CameraUtilConformWindowPolicy> extractor(pyObj);
   if (extractor.check()) {
-    self.SetOverrideWindowPolicy({extractor()});
+    self.SetOverrideWindowPolicy({true, extractor()});
   }
   else {
-    self.SetOverrideWindowPolicy({CameraUtilFit});
+    self.SetOverrideWindowPolicy({false, CameraUtilFit});
   }
 }
 

@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/wabi.h"
 
 #include "wabi/imaging/hdPh/basisCurves.h"
@@ -56,6 +49,7 @@
 #include "wabi/imaging/hd/computation.h"
 #include "wabi/imaging/hd/repr.h"
 #include "wabi/imaging/hd/vertexAdjacency.h"
+#include "wabi/imaging/hf/diagnostic.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -625,14 +619,13 @@ void AddVertexOrVaryingPrimvarSource(const TfToken &name,
   VtArray<T> array = value.Get<VtArray<T>>();
   // Empty primvar arrays are ignored, except for points
   if (!array.empty() || name == HdTokens->points) {
-    sources->push_back(HdBufferSourceSharedPtr(
-        std::make_shared<HdPh_BasisCurvesPrimvarInterpolaterComputation<T>>(
-            topology,
-            array,
-            name,
-            interpolation,
-            fallbackValue,
-            HdGetValueTupleType(VtValue(array)).type)));
+    sources->push_back(std::make_shared<HdPh_BasisCurvesPrimvarInterpolaterComputation<T>>(
+        topology,
+        array,
+        name,
+        interpolation,
+        fallbackValue,
+        HdGetValueTupleType(VtValue(array)).type));
   }
 }
 
@@ -712,7 +705,7 @@ void ProcessVertexOrVaryingPrimvar(const TfToken &name,
   }
   else {
     TF_WARN("Type of vertex or varying primvar %s not yet fully supported", name.GetText());
-    sources->push_back(HdBufferSourceSharedPtr(std::make_shared<HdVtBufferSource>(name, value)));
+    sources->push_back(std::make_shared<HdVtBufferSource>(name, value));
   }
 }
 }  // anonymous namespace
@@ -950,13 +943,27 @@ void HdPhBasisCurves::_PopulateElementPrimvars(HdSceneDelegate *sceneDelegate,
   HdBufferSourceSharedPtrVector sources;
   sources.reserve(uniformPrimvars.size());
 
+  const size_t numCurves = _topology ? _topology->GetNumCurves() : 0;
+
   for (HdPrimvarDescriptor const &primvar : uniformPrimvars) {
     if (!HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, primvar.name))
       continue;
 
     VtValue value = GetPrimvar(sceneDelegate, primvar.name);
     if (!value.IsEmpty()) {
-      sources.push_back(HdBufferSourceSharedPtr(new HdVtBufferSource(primvar.name, value)));
+      HdBufferSourceSharedPtr source = std::make_shared<HdVtBufferSource>(primvar.name, value);
+
+      // verify primvar length
+      if (source->GetNumElements() != numCurves) {
+        HF_VALIDATION_WARN(id,
+                           "# of curves mismatch (%d != %d) for uniform primvar %s",
+                           (int)source->GetNumElements(),
+                           (int)numCurves,
+                           primvar.name.GetText());
+        continue;
+      }
+
+      sources.push_back(source);
 
       if (primvar.name == HdTokens->displayOpacity) {
         _displayOpacity = true;
