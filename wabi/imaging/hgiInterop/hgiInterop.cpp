@@ -55,8 +55,7 @@ void HgiInterop::TransferToApp(Hgi *srcHgi,
   TfToken const &srcApi = srcHgi->GetAPIName();
 
 /**
- * -------------------------------------------------------------- Check Metal -> OpenGL first.
- * ----- */
+ * ----------------------------------------- Check Metal -> OpenGL first. ----- */
 #if defined(WITH_METAL)
   if (srcApi == HgiTokens->Metal && dstApi == HgiTokens->OpenGL) {
     /**
@@ -70,8 +69,7 @@ void HgiInterop::TransferToApp(Hgi *srcHgi,
 #endif /* WITH_METAL */
 
 /**
- * -------------------------------------------------------- Otherwise check Vulkan -> OpenGL. -----
- */
+ * ------------------------------------ Otherwise check Vulkan -> OpenGL. ----- */
 #if defined(WITH_VULKAN)
   if (srcApi == HgiTokens->Vulkan && dstApi == HgiTokens->OpenGL) {
     /**
@@ -85,8 +83,7 @@ void HgiInterop::TransferToApp(Hgi *srcHgi,
 #endif /* WITH_VULKAN */
 
   /**
-   * ------------------------------------------------------ Otherwise, just fallback to OpenGL.
-   * ----- */
+   * ---------------------------------------- Otherwise fallback to OpenGL. ----- */
   if (srcApi == HgiTokens->OpenGL && dstApi == HgiTokens->OpenGL) {
     /**
      * Transfer OpenGL textures to OpenGL application. */
@@ -98,8 +95,7 @@ void HgiInterop::TransferToApp(Hgi *srcHgi,
   }
 
   /**
-   * ----------------------------------------- No backend outside of OpenGL, Vulkan, and Metal.
-   * ----- */
+   * --------------------- No backend outside of OpenGL, Vulkan, and Metal. ----- */
   TF_CODING_ERROR("Unsupported Hgi backend: %s", srcApi.GetText());
 }
 
