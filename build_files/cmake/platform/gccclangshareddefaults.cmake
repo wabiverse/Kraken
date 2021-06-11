@@ -63,8 +63,11 @@ if(CMAKE_USE_PTHREADS_INIT)
     set(WABI_THREAD_LIBS "")
 endif()
 
-# Enable CXX 17 features.
+# Enable CXX 20 features.
 set(_WABI_GCC_CLANG_SHARED_CXX_FLAGS "${_WABI_GCC_CLANG_SHARED_CXX_FLAGS} -std=c++20")
 
 # Enable position independent code.
 set(_WABI_GCC_CLANG_SHARED_CXX_FLAGS "${_WABI_GCC_CLANG_SHARED_CXX_FLAGS} -fPIC")
+
+# Enable debugging symbols.
+set(_WABI_GCC_CLANG_SHARED_CXX_FLAGS "${_WABI_GCC_CLANG_SHARED_CXX_FLAGS} -g")

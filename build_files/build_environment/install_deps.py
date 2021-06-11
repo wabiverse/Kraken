@@ -354,7 +354,7 @@ def RunCMake(context, force, extraArgs = None):
     # (Ninja, make), and --config for multi-configuration generators
     # (Visual Studio); technically we don't need BOTH at the same
     # time, but specifying both is simpler than branching
-    config=("Debug" if context.buildDebug else "Release")
+    config= "Debug"
 
     with CurrentWorkingDirectory(buildDir):
         Run('cmake '
@@ -872,7 +872,8 @@ def InstallBoost_Helper(context, force, buildArgs):
             'link=shared',
             'runtime-link=shared',
             'threading=multi',
-            'variant={variant}'.format(variant="debug" if context.buildDebug else "release"),
+            'variant={variant}'.format(variant="debug"),
+            'debug-symbols=on',
             '--with-atomic',
             '--with-program_options',
             '--with-regex',
@@ -925,8 +926,8 @@ def InstallBoost_Helper(context, force, buildArgs):
             boost_build_options.append("--user-config=python-config.jam")
 
 
-        if force:
-            boost_build_options.append("-a")
+        # if force:
+        boost_build_options.append("-a")
 
         if Windows():
             # toolset parameter for Visual Studio documented here:

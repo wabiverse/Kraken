@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef USDGEOM_TOKENS_H
 #define USDGEOM_TOKENS_H
 
@@ -278,20 +271,6 @@ struct UsdGeomTokensType {
   ///
   /// UsdGeomCamera
   const TfToken fStop;
-  /// \brief "full"
-  ///
-  /// Possible value for 'connectability' metadata on a UsdShadeInput. When connectability of an
-  /// input is set to "full", it implies that it can be connected to any input or output. ,
-  /// Possible value for the 'materialPurpose' parameter in UsdShadeMaterialBindingAPI, to be used
-  /// when the purpose of the render is entirely about visualizing the truest representation of a
-  /// scene, considering all lighting and material information, at highest fidelity.
-  const TfToken full;
-  /// \brief "gdrMetadata"
-  ///
-  /// Dictionary valued metadata key authored on Geom prims with implementationSource value of
-  /// sourceAsset or  sourceCode to pass along metadata to the geometric parser or compiler. It is
-  /// also used to author metadata on geom properties in a UsdGeom-based geom definition file.
-  const TfToken gdrMetadata;
   /// \brief "guide"
   ///
   /// Possible value for UsdGeomImageable::GetPurposeAttr()
@@ -305,19 +284,6 @@ struct UsdGeomTokensType {
   /// A deprecated basis token for UsdGeomBasisCurves. Consumers of USD should transition to using
   /// the UsdGeomHermiteCurves schema.
   const TfToken hermite;
-  /// \brief "id"
-  ///
-  /// Possible value for UsdGeomNodeDefAPI::GetImplementationSourceAttr(), Default value for
-  /// UsdGeomNodeDefAPI::GetImplementationSourceAttr()
-  const TfToken id;
-  /// \brief "info:id"
-  ///
-  /// UsdGeomNodeDefAPI
-  const TfToken infoId;
-  /// \brief "info:implementationSource"
-  ///
-  /// UsdGeomNodeDefAPI
-  const TfToken infoImplementationSource;
   /// \brief "holeIndices"
   ///
   /// UsdGeomMesh
@@ -350,17 +316,6 @@ struct UsdGeomTokensType {
   /// UsdGeomImageable::GetVisibilityAttr(), Default value for
   /// UsdGeomImageable::GetVisibilityAttr()
   const TfToken inherited;
-  /// \brief "inputs:"
-  ///
-  /// The prefix on shading attributes denoting an input.
-  const TfToken inputs;
-  /// \brief "interfaceOnly"
-  ///
-  /// Possible value for 'connectability' metadata on  a UsdShadeInput. It implies that the input
-  /// can only connect to  a NodeGraph Input (which represents an interface override, not  a
-  /// render-time dataflow connection), or another Input whose  connectability is also
-  /// 'interfaceOnly'.
-  const TfToken interfaceOnly;
   /// \brief "interpolateBoundary"
   ///
   /// UsdGeomMesh
@@ -499,10 +454,6 @@ struct UsdGeomTokensType {
   ///
   /// Possible value for UsdGeomCamera::GetProjectionAttr()
   const TfToken orthographic;
-  /// \brief "outputs:"
-  ///
-  /// The prefix on shading attributes denoting an output.
-  const TfToken outputs;
   /// \brief "partition"
   ///
   /// A type of family of GeomSubsets. It implies  that every element appears exacly once in only
@@ -615,14 +566,6 @@ struct UsdGeomTokensType {
   ///
   /// Possible value for UsdGeomMesh::GetTriangleSubdivisionRuleAttr()
   const TfToken smooth;
-  /// \brief "sourceAsset"
-  ///
-  /// Possible value for UsdGeomNodeDefAPI::GetImplementationSourceAttr()
-  const TfToken sourceAsset;
-  /// \brief "sourceCode"
-  ///
-  /// Possible value for UsdGeomNodeDefAPI::GetImplementationSourceAttr()
-  const TfToken sourceCode;
   /// \brief "stereoRole"
   ///
   /// UsdGeomCamera
@@ -631,12 +574,6 @@ struct UsdGeomTokensType {
   ///
   /// UsdGeomMesh
   const TfToken subdivisionScheme;
-  /// \brief "subIdentifier"
-  ///
-  /// This identifier is used in conjunction with a specific source asset to indicate a particular
-  /// definition within the source asset, if the source asset specifies more than one geom node
-  /// definition.
-  const TfToken subIdentifier;
   /// \brief "tangents"
   ///
   /// UsdGeomHermiteCurves
@@ -691,11 +628,6 @@ struct UsdGeomTokensType {
   /// Possible value for UsdGeomPrimvar::SetInterpolation. One value remains constant for each uv
   /// patch segment of the surface primitive (which is a \em face for meshes).
   const TfToken uniform;
-  /// \brief ""
-  ///
-  /// Possible value for the "sourceType" parameter  in \ref UsdGeomNodeDefAPI_ImplementationSource
-  /// API. Represents  the universal or fallback source type.
-  const TfToken universalSourceType;
   /// \brief "unrestricted"
   ///
   /// A type of family of GeomSubsets. It implies that there are no restrictions w.r.t. the

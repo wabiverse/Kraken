@@ -13,33 +13,6 @@ over "GLOBAL" (
         # string libraryPrefix       = "UsdGeom"
         # string tokensPrefix        = "UsdGeom"
         dictionary libraryTokens = {
-            dictionary full = {
-                string doc= """Possible value for 'connectability' metadata on
-                a UsdGeomInput. When connectability of an input is set to
-                "full", it implies that it can be connected to any input or
-                output.
-                """
-            }
-            dictionary interfaceOnly = {
-                string doc= """Possible value for 'connectability' metadata on
-                a UsdGeomInput. It implies that the input can only connect to
-                a GeomNodeGraph Input (which represents an interface override,
-                not a render-time dataflow connection), or another Input whose
-                connectability is also 'interfaceOnly'.
-                """
-            }
-            dictionary outputs = {
-                string value = "outputs:"
-                string doc = """The prefix on geom attributes
-                denoting an output.
-                """
-            }
-            dictionary inputs = {
-                string value = "inputs:"
-                string doc = """The prefix on geom attributes
-                denoting an input.
-                """
-            }
             dictionary interpolation = {
                 string doc = """UsdGeomPrimvar - How a Primvar interpolates
                 across a primitive; equivalent to RenderMan's \\ref Usd_InterpolationVals "class specifier" """
@@ -122,72 +95,22 @@ over "GLOBAL" (
 {
 }
 
-class GeomNodeGraph "GeomNodeGraph" (
-    inherits = </Typed>
-    doc = """A node-graph is a container for geometric nodes, as well as other
-    node-graphs. It has a public input interface and provides a list of public
-    outputs.
-
-    <b>Node Graph Interfaces</b>
-
-    One of the most important functions of a node-graph is to host the "interface"
-    with which clients of already-built geometric networks will interact.  Please
-    see "Interface Inputs" for a detailed explanation of what the interface provides,
-    and how to construct and use it, to effectively share/instance geom networks.
-
-    <b>Node Graph Outputs</b>
-
-    These behave like outputs on a geom and are typically connected to an 
-    output on a geom inside the node-graph.
-    """
-    customData = {
-        dictionary extraPlugInfo = {
-            bool implementsUsdGeomConnectableAPIBehavior = 1
-        }
-        string extraIncludes = '''
-#include <utility>
-#include "wabi/usd/usd/editTarget.h"
-#include "wabi/usd/usd/relationship.h"
-#include "wabi/usd/usdGeom/input.h"
-#include "wabi/usd/usdGeom/output.h"
-#include "wabi/usd/usdGeom/imageable.h"
-#include "wabi/usd/usdGeom/gprim.h"
-#include "wabi/usd/usdGeom/connectableAPIBehavior.h"'''
-    }
-) {
-
-}
-
 class "Imageable" (
     inherits = </Typed>
-    prepend apiSchemas = ["GeomNodeDefAPI"]
     doc = """Base class for all prims that may require rendering or 
     visualization of some sort. The primary attributes of Imageable 
     are \\em visibility and \\em purpose, which each provide instructions for
     what geometry should be included for processing by rendering and other
     computations.
 
-    The UsdGeomNodeDefAPI provides attributes to uniquely identify the
-    type of this node.  The id resolution into a renderable geom target
-    type of this node.  The id resolution into a renderable geom target
-    is deferred to the consuming application.
-
     \\deprecated Imageable also provides API for accessing primvars, which
     has been moved to the UsdGeomPrimvarsAPI schema, because primvars can now
     be applied on non-Imageable prim types.  This API is planned
     to be removed, UsdGeomPrimvarsAPI should be used directly instead."""
     customData = {
-        dictionary extraPlugInfo = {
-            bool implementsUsdGeomConnectableAPIBehavior = 1
-        }
         string extraIncludes = """
-#include "wabi/usd/usdGeom/input.h"
-#include "wabi/usd/usdGeom/output.h"
-#include "wabi/usd/usdGeom/tokens.h"
 #include "wabi/base/gf/bbox3d.h"
-#include "wabi/usd/usdGeom/primvar.h"
-#include "wabi/usd/ndr/declare.h"
-#include "wabi/usd/gdr/geomNode.h" """
+#include "wabi/usd/usdGeom/primvar.h" """
     }
 ) {
     token visibility = "inherited" (
@@ -230,98 +153,6 @@ class "Imageable" (
 
         \\note It is only valid to author the proxyPrim relationship on
         prims whose purpose is "render"."""
-    )
-}
-
-class "GeomNodeDefAPI"
-(
-    inherits = </APISchemaBase>
-    doc = """UsdGeomNodeDefAPI is an API schema that provides attributes
-    for a prim to select a corresponding Geom Node Definition ("Gdr Node"),
-    as well as to look up a runtime entry for that geom node in the
-    form of an GdrGeomNode.
-
-    UsdGeomNodeDefAPI is intended to be a pre-applied API schema for any
-    prim type that wants to refer to the GdrRegistry for further implementation
-    details about the behavior of that prim.  The primary use in UsdGeom
-    itself is as UsdGeomImageable, which is a basis for geometric networks,
-    but this is intended to be used in other domains that also use the Gdr node
-    mechanism.
-
-    This schema provides properties that allow a prim to identify an external
-    node definition, either by a direct identifier key into the GdrRegistry
-    (info:id), an asset to be parsed by a suitable NdrParserPlugin
-    (info:sourceAsset), or an inline source code that must also be parsed
-    (info:sourceCode); as well as a selector attribute to determine which
-    specifier is active (info:implementationSource).
-    """
-    customData = {
-        token apiSchemaType = "singleApply"
-        string extraIncludes = """
-#include "wabi/usd/ndr/declare.h"
-#include "wabi/usd/gdr/geomNode.h"
-    """
-        dictionary schemaTokens = {
-            dictionary universalSourceType = {
-                string value = ""
-                string doc = """Possible value for the "sourceType" parameter
-                in \\ref UsdGeomNodeDefAPI_ImplementationSource API. Represents
-                the universal or fallback source type.
-                """
-            }
-            dictionary gdrMetadata = {
-                string doc = """Dictionary valued metadata key authored on
-                Geom prims with implementationSource value of sourceAsset or
-                sourceCode to pass along metadata to the geom parser or
-                compiler. It is also used to author metadata on geometric
-                properties in a UsdGeom-based geom definition file.
-                """
-            }
-            dictionary subIdentifier = {
-                string doc = """This identifier is used in conjunction with a
-                specific source asset to indicate a particular definition within
-                the source asset, if the source asset specifies more than one
-                geom node definition.
-                """
-            }
-        }
-    }
-)
-{
-    uniform token info:implementationSource = "id" (
-        allowedTokens = ["id", "sourceAsset", "sourceCode"]
-        doc = """Specifies the attribute that should be consulted to get the
-        geom's implementation or its source code.
-
-        * If set to "id", the "info:id" attribute's value is used to
-        determine the geometric source from the geom registry.
-        * If set to "sourceAsset", the resolved value of the "info:sourceAsset"
-        attribute corresponding to the desired implementation (or source-type)
-        is used to locate the geometric source.  A source asset file may also
-        specify multiple geom definitions, so there is an optional attribute
-        "info:sourceAsset:subIdentifier" whose value should be used to indicate
-        a particular geometric definition from a source asset file.
-        * If set to "sourceCode", the value of "info:sourceCode" attribute
-        corresponding to the desired implementation (or source type) is used as
-        the geometric source.
-        """
-        customData = {
-            string apiName = "implementationSource"
-        }
-    )
-
-    uniform token info:id (
-        doc = """The id is an identifier for the type or purpose of the
-        geom. E.g.: Mesh, Fluid, Fur, Physics, and so fourth.
-        The use of this id will depend on the primitive target: some will turn
-        it into an actual geom path, some will use it to generate geometric
-        source code dynamically.
-
-        \\sa SetGeomId()
-        """
-        customData = {
-            string apiName = "id"
-        }
     )
 }
 
@@ -1594,7 +1425,7 @@ class BasisCurves "BasisCurves" (
     wabi/extras/examples/usdGeomExamples/basisCurves.usda.  It's provided
     as a reference on how to properly image both tubes and ribbons. The first
     row of curves are linear; the second are cubic bezier. (We aim in future
-    releases of HdPh to fix the discontinuity seen with broken tangents to
+    releases of HdSt to fix the discontinuity seen with broken tangents to
     better match offline renderers like RenderMan.) The yellow and violet
     cubic curves represent cubic vertex width interpolation for which there is
     no equivalent for linear curves.
@@ -2409,18 +2240,4 @@ class HermiteCurves "HermiteCurves" (
     vector3f[] tangents = [] (
         doc = """Defines the outgoing trajectory tangent for each point. 
                  Tangents should be the same size as the points attribute.""")
-}
-
-class Grid "Grid" (
-    inherits = </Mesh>
-    doc="""Encodes a planar grid mesh."""
-)
-{
-}
-
-class Suzanne "Suzanne" (
-    inherits = </Mesh>
-    doc="""Encodes a suzanne monkey mesh."""
-)
-{
 }

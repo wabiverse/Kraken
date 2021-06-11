@@ -48,7 +48,7 @@ WorkDispatcher::~WorkDispatcher()
 
 void WorkDispatcher::Wait()
 {
-  _dispatch.wait();
+  _dispatch.ctx_wait();
 
   _dispatch.ctx_reset();
 

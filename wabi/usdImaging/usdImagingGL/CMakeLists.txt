@@ -23,7 +23,6 @@ wabi_library(usdImagingGL
         hdx
         pxOsd
         sdf
-        gdr
         sdr
         usd
         usdGeom

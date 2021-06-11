@@ -46,7 +46,6 @@
 #include <wabi/usd/usdGeom/curves.h>
 #include <wabi/usd/usdGeom/cylinder.h>
 #include <wabi/usd/usdGeom/gprim.h>
-#include <wabi/usd/usdGeom/grid.h>
 #include <wabi/usd/usdGeom/imageable.h>
 #include <wabi/usd/usdGeom/mesh.h>
 #include <wabi/usd/usdGeom/modelAPI.h>
@@ -55,7 +54,6 @@
 #include <wabi/usd/usdGeom/pointBased.h>
 #include <wabi/usd/usdGeom/primvarsAPI.h>
 #include <wabi/usd/usdGeom/sphere.h>
-#include <wabi/usd/usdGeom/suzanne.h>
 #include <wabi/usd/usdGeom/xform.h>
 #include <wabi/usd/usdGeom/xformCommonAPI.h>
 #include <wabi/usd/usdGeom/xformOp.h>
@@ -449,15 +447,6 @@ static void geometry_diagnostics()
   rotation.Set(VtValue(GfVec3f(0.0f, 0.0f, 0.0f)));
   UsdGeomXformOp scale = cube.AddScaleOp();
   scale.Set(VtValue(GfVec3f(1.0f, 1.0f, 1.0f)));
-
-  /** AUTHOR A SUZANNE */
-  UsdGeomSuzanne suzanne = UsdGeomSuzanne::Define(UNI.stage, SdfPath("/Suzanne"));
-  suzanne.CreateSubdivisionSchemeAttr(VtValue(UsdGeomTokens->catmullClark));
-
-  /** AUTHOR A GRID */
-  UsdGeomGrid grid      = UsdGeomGrid::Define(UNI.stage, SdfPath("/Grid"));
-  UsdGeomXformOp gScale = grid.AddScaleOp();
-  gScale.Set(VtValue(GfVec3f(1.0f, 1.0f, 1.0f)));
 
   /** AUTHOR A CAMERA */
   UsdGeomCamera camera = UsdGeomCamera::Define(UNI.stage, SdfPath("/Camera"));

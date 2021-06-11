@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/usd/usdGeom/tokens.h"
 
 WABI_NAMESPACE_BEGIN
@@ -81,23 +74,16 @@ UsdGeomTokensType::UsdGeomTokensType()
       focusDistance("focusDistance", TfToken::Immortal),
       fromTexture("fromTexture", TfToken::Immortal),
       fStop("fStop", TfToken::Immortal),
-      full("full", TfToken::Immortal),
-      gdrMetadata("gdrMetaData", TfToken::Immortal),
       guide("guide", TfToken::Immortal),
       height("height", TfToken::Immortal),
       hermite("hermite", TfToken::Immortal),
       holeIndices("holeIndices", TfToken::Immortal),
       horizontalAperture("horizontalAperture", TfToken::Immortal),
       horizontalApertureOffset("horizontalApertureOffset", TfToken::Immortal),
-      id("id", TfToken::Immortal),
       ids("ids", TfToken::Immortal),
       inactiveIds("inactiveIds", TfToken::Immortal),
       indices("indices", TfToken::Immortal),
-      infoId("infoId", TfToken::Immortal),
-      infoImplementationSource("infoImplementationSource", TfToken::Immortal),
       inherited("inherited", TfToken::Immortal),
-      inputs("inputs", TfToken::Immortal),
-      interfaceOnly("interfaceOnly", TfToken::Immortal),
       interpolateBoundary("interpolateBoundary", TfToken::Immortal),
       interpolation("interpolation", TfToken::Immortal),
       invisible("invisible", TfToken::Immortal),
@@ -130,7 +116,6 @@ UsdGeomTokensType::UsdGeomTokensType()
       orientations("orientations", TfToken::Immortal),
       origin("origin", TfToken::Immortal),
       orthographic("orthographic", TfToken::Immortal),
-      outputs("outputs", TfToken::Immortal),
       partition("partition", TfToken::Immortal),
       periodic("periodic", TfToken::Immortal),
       perspective("perspective", TfToken::Immortal),
@@ -158,11 +143,8 @@ UsdGeomTokensType::UsdGeomTokensType()
       shutterOpen("shutter:open", TfToken::Immortal),
       size("size", TfToken::Immortal),
       smooth("smooth", TfToken::Immortal),
-      sourceAsset("sourceAsset", TfToken::Immortal),
-      sourceCode("sourceCode", TfToken::Immortal),
       stereoRole("stereoRole", TfToken::Immortal),
       subdivisionScheme("subdivisionScheme", TfToken::Immortal),
-      subIdentifier("subIdentifier", TfToken::Immortal),
       tangents("tangents", TfToken::Immortal),
       triangleSubdivisionRule("triangleSubdivisionRule", TfToken::Immortal),
       trimCurveCounts("trimCurve:counts", TfToken::Immortal),
@@ -176,7 +158,6 @@ UsdGeomTokensType::UsdGeomTokensType()
       uKnots("uKnots", TfToken::Immortal),
       unauthoredValuesIndex("unauthoredValuesIndex", TfToken::Immortal),
       uniform("uniform", TfToken::Immortal),
-      universalSourceType("universalSourceType", TfToken::Immortal),
       unrestricted("unrestricted", TfToken::Immortal),
       uOrder("uOrder", TfToken::Immortal),
       upAxis("upAxis", TfToken::Immortal),
@@ -247,23 +228,16 @@ UsdGeomTokensType::UsdGeomTokensType()
                  focusDistance,
                  fromTexture,
                  fStop,
-                 full,
-                 gdrMetadata,
                  guide,
                  height,
                  hermite,
                  holeIndices,
                  horizontalAperture,
                  horizontalApertureOffset,
-                 id,
                  ids,
                  inactiveIds,
                  indices,
-                 infoId,
-                 infoImplementationSource,
                  inherited,
-                 inputs,
-                 interfaceOnly,
                  interpolateBoundary,
                  interpolation,
                  invisible,
@@ -296,7 +270,6 @@ UsdGeomTokensType::UsdGeomTokensType()
                  orientations,
                  origin,
                  orthographic,
-                 outputs,
                  partition,
                  periodic,
                  perspective,
@@ -324,11 +297,8 @@ UsdGeomTokensType::UsdGeomTokensType()
                  shutterOpen,
                  size,
                  smooth,
-                 sourceAsset,
-                 sourceCode,
                  stereoRole,
                  subdivisionScheme,
-                 subIdentifier,
                  tangents,
                  triangleSubdivisionRule,
                  trimCurveCounts,
@@ -342,7 +312,6 @@ UsdGeomTokensType::UsdGeomTokensType()
                  uKnots,
                  unauthoredValuesIndex,
                  uniform,
-                 universalSourceType,
                  unrestricted,
                  uOrder,
                  upAxis,

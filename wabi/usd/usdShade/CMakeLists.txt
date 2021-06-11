@@ -7,7 +7,6 @@ wabi_library(usdShade
         vt
         sdf
         ndr
-        gdr
         sdr
         usd
         usdGeom

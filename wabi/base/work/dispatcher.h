@@ -152,16 +152,6 @@ class WorkDispatcher {
       wait();
     }
 
-    // template<class Fn>
-    // void run_and_transport_errors(Fn &&fn, _ErrorTransports *err)
-    // {
-    //   TfErrorMark m;
-    //   run(std::forward<Fn>(fn));
-    //   if (!m.IsClean()) {
-    //     WorkDispatcher::_TransportErrors(m, err);
-    //   }
-    // }
-
     template<class Fn> void run_and_transport_errors(Fn &&fn, _ErrorTransports *err)
     {
       TfErrorMark m;
@@ -170,11 +160,6 @@ class WorkDispatcher {
         WorkDispatcher::_TransportErrors(m, err);
       }
     }
-
-    // template<class Fn> void run(Fn &&fn)
-    // {
-    // spawn(*prepare_task(std::forward<Fn>(fn)), m_ctx);
-    // }
 
     void ctx_wait()
     {

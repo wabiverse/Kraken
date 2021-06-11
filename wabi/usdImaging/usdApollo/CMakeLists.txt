@@ -23,7 +23,6 @@ wabi_library(usdApollo
     hdx
     pxOsd
     sdf
-    gdr
     sdr
     usd
     usdGeom

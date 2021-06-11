@@ -339,7 +339,7 @@ deps: .FORCE
 	@echo sudo apt install "^libxcb.*"
 
 #	#@python3.9 $(DEPS_INSTALL_SCRIPT) --build clean
-	@python3.9 $(DEPS_INSTALL_SCRIPT) --build all
+	@python3.9 $(DEPS_INSTALL_SCRIPT) --build boost
 
 	@echo
 	@echo Dependencies successfully built and installed to $(DEPS_INSTALL_DIR).

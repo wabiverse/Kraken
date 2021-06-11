@@ -44,7 +44,6 @@ wabi_library(hdPh
         glf
         hd
         hgiGL
-        gdr
         sdr
         tf
         trace

@@ -8,8 +8,6 @@ wabi_library(usdGeom
         plug
         vt
         sdf
-        ndr
-        gdr
         trace
         usd
         work
@@ -22,8 +20,6 @@ wabi_library(usdGeom
         ${TBB_INCLUDE_DIRS}
 
     PUBLIC_CLASSES
-        connectableAPI
-        connectableAPIBehavior
         debugCodes
         tokens
         bboxCache
@@ -38,20 +34,15 @@ wabi_library(usdGeom
         cube
         curves
         cylinder
-        grid
         hermiteCurves
         imageable
-        input
         gprim
         mesh
         metrics
         modelAPI
         motionAPI
-        nodeDefAPI
-        nodeGraph
         nurbsCurves
         nurbsPatch
-        output
         pointBased
         pointInstancer
         points
@@ -60,8 +51,6 @@ wabi_library(usdGeom
         scope
         sphere
         subset
-        suzanne
-        utils
         xform
         xformable
         xformOp
@@ -69,7 +58,6 @@ wabi_library(usdGeom
 
     PUBLIC_HEADERS
         api.h
-        types.h
 
     PYTHON_CPPFILES
         moduleDeps.cpp
