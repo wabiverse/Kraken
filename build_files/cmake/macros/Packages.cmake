@@ -430,7 +430,7 @@ if(WABI_BUILD_IMAGING)
   endif()
 endif()
 
-if(WABI_BUILD_USDVIEW)
+if(WITH_PIXAR_USDVIEW)
   # --PySide
 
   find_package(PySide)

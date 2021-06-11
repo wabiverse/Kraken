@@ -1,19 +1,13 @@
-set(DIRS
-    usdcat
-    usdchecker
-    usdcompress
-    usddiff
-    usddumpcrate
-    usdedit
-    usdresolve
-    usdstitch
-    usdstitchclips
-    usdzip
-    sdfdump
-    sdffilter
-    usdtree
-)
-
-foreach(d ${DIRS})
-    add_subdirectory(${d})
-endforeach()
+# add_subdirectory(usdcat)
+# add_subdirectory(usdchecker)
+# add_subdirectory(usdcompress)
+# add_subdirectory(usddiff)
+# add_subdirectory(usddumpcrate)
+# add_subdirectory(usdedit)
+# add_subdirectory(usdresolve)
+# add_subdirectory(usdstitch)
+# add_subdirectory(usdstitchclips)
+# add_subdirectory(usdzip)
+# add_subdirectory(sdfdump)
+# add_subdirectory(sdffilter)
+# add_subdirectory(usdtree)

@@ -61,8 +61,6 @@ class Launcher(object):
         '''
         The main entry point to launch a process using UsdView.
         '''
-        # Add some test args.
-        sys.argv.append("/home/furby/Documents/test_scene.usda")
 
         parser = argparse.ArgumentParser(prog=sys.argv[0],
                                          description=self.GetHelpDescription())

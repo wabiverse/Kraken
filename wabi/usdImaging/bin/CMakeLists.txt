@@ -1,9 +1,10 @@
-set(DIRS
-    usdrecord
-    usdview
-    testusdview
-)
+# add_subdirectory(usdrecord)
+# add_subdirectory(testusdview)
 
-foreach(d ${DIRS})
-    add_subdirectory(${d})
-endforeach()
+if(WITH_PIXAR_USDVIEW)
+  install(
+    FILES
+      usdview.py
+    DESTINATION
+      /usr/local/share/covah/${TARGETDIR_VER}/bin/toolkit)
+endif()

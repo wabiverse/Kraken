@@ -18,6 +18,6 @@ add_subdirectory(usdUI)
 add_subdirectory(usdUtils)
 add_subdirectory(plugin)
 
-if(WITH_USD_TOOLKIT)
+if(WITH_PIXAR_TOOLKIT)
   add_subdirectory(bin)
 endif()

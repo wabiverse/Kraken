@@ -99,7 +99,7 @@ function(wabi_python_bin BIN_NAME)
     endif()
 
     # Destination file.
-    set(outfile ${CMAKE_CURRENT_BINARY_DIR}/python/${BIN_NAME})
+    set(outfile /usr/local/share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${BIN_NAME})
 
     # /wabipythonsubst will be replaced with the full path to the configured
     # python executable. This doesn't use the CMake ${...} or @...@ syntax

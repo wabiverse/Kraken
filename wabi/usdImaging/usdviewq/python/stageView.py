@@ -2041,14 +2041,12 @@ class StageView(QtOpenGL.QGLWidget):
 
         # Allow for middle mouse click.
         if (event.button() & QtCore.Qt.MiddleButton):
-            if event.button() == QtCore.Qt.LeftButton:
-                self.switchToFreeCamera()
-                ctrlModifier = event.modifiers() & QtCore.Qt.ControlModifier
-                self._cameraMode = "truck" if ctrlModifier else "tumble"
-            if event.button() == QtCore.Qt.MidButton:
+            self.switchToFreeCamera()
+            self._cameraMode = "tumble"
+            if event.modifiers() & QtCore.Qt.ShiftModifier:
                 self.switchToFreeCamera()
                 self._cameraMode = "truck"
-            if event.button() == QtCore.Qt.RightButton:
+            if event.modifiers() & QtCore.Qt.ControlModifier:
                 self.switchToFreeCamera()
                 self._cameraMode = "zoom"
         else:

@@ -158,6 +158,8 @@ option(WITH_LICENSING                "Save my investments god damnit"           
 option(WITH_TESTS                    "Build covah test executables"                                                               ON)
 option(WITH_USD                      "Enable Universal Scene Description (USD) Support"                                           ON)
 option(WITH_PIXAR_AR_BETA            "Enable developmental preview of Pixar Asset Resolution v2.0"                                ON)
+option(WITH_PIXAR_USDVIEW            "Build the Pixar UsdView Python Application"                                                 ON)
+option(WITH_PIXAR_TOOLKIT            "Build the Pixar USD tools"                                                                  ON)
 option(WITH_TBB                      "Enable Threading Building Blocks Support"                                                   ON)
 option(WITH_VULKAN                   "Enable Vulkan graphics support"                                                             ON)
 option(WITH_OPENSUBDIV               "Enable OpenSubdiv for surface subdivision"                                                  ON)
