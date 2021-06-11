@@ -28,19 +28,19 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#include "wabi/usd/usd/schemaRegistry.h"
-#include "wabi/usd/usd/typed.h"
+#include "pxr/usd/usd/schemaRegistry.h"
+#include "pxr/usd/usd/typed.h"
 #include "{{ libraryPath }}/{{ cls.GetHeaderFile() }}"
 {
   % if cls.isApi %
 }
-#include "wabi/usd/usd/tokens.h"
+#include "pxr/usd/usd/tokens.h"
 {
   % endif %
 }
 
-#include "wabi/usd/sdf/assetPath.h"
-#include "wabi/usd/sdf/types.h"
+#include "pxr/usd/sdf/assetPath.h"
+#include "pxr/usd/sdf/types.h"
 
 {
   % if useExportAPI %
@@ -55,11 +55,12 @@ TF_REGISTRY_FUNCTION(TfType)
   {
     % if cls.isConcrete %
   }
-  // Register the usd prim typename as an alias under UsdSchemaBase. This
-  // enables one to call
-  // TfType::Find<UsdSchemaBase>().FindDerivedByName("{{ cls.usdPrimTypeName }}")
-  // to find TfType<{{ cls.cppClassName }}>, which is how IsA queries are
-  // answered.
+  /**
+   * Register the usd prim typename as an alias under UsdSchemaBase. This
+   * enables one to call
+   * TfType::Find<UsdSchemaBase>().FindDerivedByName("{{ cls.usdPrimTypeName }}")
+   * to find TfType<{{ cls.cppClassName }}>, which is how IsA queries are
+   * answered. */
   TfType::AddAlias<UsdSchemaBase, {{cls.cppClassName}}>("{{ cls.usdPrimTypeName }}");
   {
     % endif %
@@ -200,9 +201,10 @@ Path(const SdfPath &path, TfToken *name)
   std::string propertyName = path.GetName();
   TfTokenVector tokens     = SdfPath::TokenizeIdentifierAsTokens(propertyName);
 
-  // The baseName of the {{ cls.usdPrimTypename }} path can't be one of the
-  // schema properties. We should validate this in the creation (or apply)
-  // API.
+  /**
+   * The baseName of the {{ cls.usdPrimTypename }} path can't be one of the
+   * schema properties. We should validate this in the creation (or apply)
+   * API. */
   TfToken baseName = *tokens.rbegin();
   if (IsSchemaPropertyBaseName(baseName)) {
     return false;
@@ -277,7 +279,8 @@ UsdSchemaKind
   {
     % if cls.isMultipleApply %
   }
-  // Ensure that the instance name is valid.
+  /**
+   * Ensure that the instance name is valid. */
   TfTokenVector tokens = SdfPath::TokenizeIdentifierAsTokens(name);
 
   if (tokens.empty()) {
@@ -354,9 +357,10 @@ const TfType &
   % if cls.isMultipleApply and cls.propertyNamespacePrefix %
 }
 
-/// Returns the property name prefixed with the correct namespace prefix, which
-/// is composed of the the API's propertyNamespacePrefix metadata and the
-/// instance name of the API.
+/**
+ * Returns the property name prefixed with the correct namespace prefix, which
+ * is composed of the the API's propertyNamespacePrefix metadata and the
+ * instance name of the API. */
 static inline TfToken _GetNamespacedPropertyName(const TfToken instanceName,
                                                  const TfToken propName)
 {
@@ -369,7 +373,7 @@ static inline TfToken _GetNamespacedPropertyName(const TfToken instanceName,
 {% for attrName in cls.attrOrder %
 }
 { % set attr = cls.attrs[attrName] % } {
-#Only emit Create / Get API and doxygen if apiName is not empty string.#
+#  Only emit Create / Get API and doxygen if apiName is not empty string.#
 }
 {
   % if attr.apiName != '' %
@@ -454,7 +458,7 @@ Attr(VtValue const &defaultValue, bool writeSparsely) const
 { % endif % } { % endfor % } {% for relName in cls.relOrder %
 }
 { % set rel = cls.rels[relName] % } {
-#Only emit Create / Get API and doxygen if apiName is not empty string.#
+#  Only emit Create / Get API and doxygen if apiName is not empty string.#
 }
 {
   % if rel.apiName != '' %
@@ -597,7 +601,7 @@ const TfTokenVector &
     static TfTokenVector allNames = _ConcatenateAttributeNames(
         instanceName,
         {#The schema generator has already validated whether our parent is #} {
-#a multiple apply schema or UsdSchemaBaseAPI,
+            #a multiple apply schema or UsdSchemaBaseAPI,
             choose the correct function #} {#depending on the situation #} {
           % if cls.parentCppClassName == "UsdAPISchemaBase" %
         } {
@@ -614,7 +618,7 @@ const TfTokenVector &
     {
       % else %
     }
-    static TfTokenVectorallNames = _ConcatenateAttributeNames(
+    static TfTokenVector allNames = _ConcatenateAttributeNames(
         {
           {
             cls.parentCppClassName
@@ -624,8 +628,8 @@ const TfTokenVector &
     { % endif % } {
       % else %
     }
-    static TfTokenVectorlocalNames;
-    static TfTokenVectorallNames = { {cls.parentCppClassName} } ::GetSchemaAttributeNames(true);
+    static TfTokenVector localNames;
+    static TfTokenVector allNames = { {cls.parentCppClassName} } ::GetSchemaAttributeNames(true);
     {
       % endif %
     }
@@ -641,17 +645,19 @@ const TfTokenVector &
 }
 {{namespaceClose}}
 
-{ % endif % }  // ===================================================================== //
-               // Feel free to add custom code below this line. It will be preserved by
-               // the code generator.
+{ % endif % } /**
+               * =====================================================================
+               * Feel free to add custom code below this line. It will be preserved by
+               * the code generator. */
 {
   % if useExportAPI %
 }
-//
-// Just remember to wrap code in the appropriate delimiters:
-// '{{ namespaceOpen }}', '{{ namespaceClose }}'.
+/**
+ * Just remember to wrap code in the appropriate delimiters:
+ * '{{ namespaceOpen }}', '{{ namespaceClose }}'. */
 {
   % endif %
 }
-// ===================================================================== //
-// --(BEGIN CUSTOM CODE)--
+/**
+ * =====================================================================
+ * --(BEGIN CUSTOM CODE)--                                               */

@@ -28,7 +28,6 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-// GENERATED FILE.  DO NOT EDIT.
 #include "{{ libraryPath }}/tokens.h"
 #include <boost/python/class.hpp>
 
@@ -42,10 +41,12 @@
 }
 namespace {
 
-// Helper to return a static token as a string.  We wrap tokens as Python
-// strings and for some reason simply wrapping the token using def_readonly
-// bypasses to-Python conversion, leading to the error that there's no
-// Python type for the C++ TfToken type.  So we wrap this functor instead.
+/**
+ * Helper to return a static token as a string. We wrap tokens
+ * as Python strings and for some reason simply wrapping the
+ * token using def_readonly bypasses  to-Python   conversion,
+ * leading to the error that there's no Python type for the
+ * C++ TfToken type.  So we wrap this functor instead. */
 class _WrapStaticToken {
  public:
   _WrapStaticToken(const TfToken *token) : _token(token)

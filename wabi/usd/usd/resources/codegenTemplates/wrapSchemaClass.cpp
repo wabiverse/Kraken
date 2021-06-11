@@ -28,16 +28,16 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#include "wabi/usd/usd/schemaBase.h"
+#include "pxr/usd/usd/schemaBase.h"
 #include "{{ libraryPath }}/{{ cls.GetHeaderFile() }}"
 
-#include "wabi/usd/sdf/primSpec.h"
+#include "pxr/usd/sdf/primSpec.h"
 
-#include "wabi/base/tf/pyContainerConversions.h"
-#include "wabi/base/tf/pyResultConversions.h"
-#include "wabi/base/tf/pyUtils.h"
-#include "wabi/base/tf/wrapTypeHelpers.h"
-#include "wabi/usd/usd/pyConversions.h"
+#include "pxr/base/tf/pyContainerConversions.h"
+#include "pxr/base/tf/pyResultConversions.h"
+#include "pxr/base/tf/pyUtils.h"
+#include "pxr/base/tf/wrapTypeHelpers.h"
+#include "pxr/usd/usd/pyConversions.h"
 
 #include <boost/python.hpp>
 
@@ -61,13 +61,14 @@ namespace {
 }
 #define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
+/**
+ * fwds ->. */
 WRAP_CUSTOM;
 
 {% for attrName in cls.attrOrder -%
 }
 { % set attr = cls.attrs[attrName] % } {
-#Only emit Create / Get API if apiName is not empty string.#
+#  Only emit Create / Get API if apiName is not empty string.#
 }
 {
   % if attr.apiName != '' %
@@ -144,7 +145,7 @@ static std::string _Repr(const {{cls.cppClassName}} & self)
   % if useExportAPI %
 }
 
-}  // anonymous namespace
+}  // namespace
 {
   % endif %
 }
@@ -228,7 +229,7 @@ void wrap{{cls.cppClassName}}()
   {% for attrName in cls.attrOrder -%
   }
   { % set attr = cls.attrs[attrName] % } {
-#Only emit Create / Get API if apiName is not empty string.#
+#    Only emit Create / Get API if apiName is not empty string.#
   }
   {
     % if attr.apiName != '' %
@@ -254,7 +255,7 @@ void wrap{{cls.cppClassName}}()
   {% for relName in cls.relOrder -%
   }
   {
-#Only emit Create / Get API and doxygen if apiName is not empty string.#
+#    Only emit Create / Get API and doxygen if apiName is not empty string.#
   }
   { % set rel = cls.rels[relName] % } {
     % if rel.apiName != '' %
@@ -292,27 +293,28 @@ void wrap{{cls.cppClassName}}()
   _CustomWrapCode(cls);
 }
 
-// ===================================================================== //
-// Feel free to add custom code below this line, it will be preserved by
-// the code generator.  The entry point for your custom code should look
-// minimally like the following:
-//
-// WRAP_CUSTOM {
-//     _class
-//         .def("MyCustomMethod", ...)
-//     ;
-// }
-//
-// Of course any other ancillary or support code may be provided.
+/**
+ * ======================================================================
+ *   Feel free to add custom code below this line, it will be preserved
+ *   by the code generator. The entry point for your custom code should
+ *   look minimally like the following:
+ *
+ *       WRAP_CUSTOM {
+ *         _class
+ *           .def("MyCustomMethod", ...)
+ *         ;
+ *       }
+ *
+ *   Of course any other ancillary or support code may be provided. */
 {
   % if useExportAPI %
 }
-//
-// Just remember to wrap code in the appropriate delimiters:
-// 'namespace {', '}'.
-//
+/**
+ *   Just remember to wrap code in the appropriate delimiters:
+ *   'namespace {', '}'. */
 {
   % endif %
 }
-// ===================================================================== //
-// --(BEGIN CUSTOM CODE)--
+/**
+ * ======================================================================
+ * --(BEGIN CUSTOM CODE)-- */

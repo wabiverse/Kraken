@@ -31,9 +31,9 @@
 #ifndef{{Upper(libraryName) } } _API_H
 #  define{{Upper(libraryName) } } _API_H
 
-#  include "wabi/base/arch/export.h"
+#  include "pxr/base/arch/export.h"
 
-#  if defined(WABI_STATIC)
+#  if defined(PXR_STATIC)
 #    define{{Upper(libraryName) } } _API
 #    define{{Upper(libraryName) } } _API_TEMPLATE_CLASS(...)
 #    define{{Upper(libraryName) } } _API_TEMPLATE_STRUCT(...)
