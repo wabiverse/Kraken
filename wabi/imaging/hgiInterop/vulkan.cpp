@@ -21,13 +21,16 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+
+/* clang-format off */
 #include "wabi/imaging/garch/glApi.h"
 
-#include "wabi/base/vt/value.h"
-#include "wabi/imaging/hgi/blitCmdsOps.h"
-#include "wabi/imaging/hgiInterop/vulkan.h"
-#include "wabi/imaging/hgiVulkan/hgi.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hgi/blitCmdsOps.h"
+#include "wabi/imaging/hgiVulkan/hgi.h"
+#include "wabi/imaging/hgiInterop/vulkan.h"
+#include "wabi/base/vt/value.h"
+/* clang-format on */
 
 WABI_NAMESPACE_BEGIN
 

@@ -24,10 +24,12 @@
 #ifndef PXR_IMAGING_HGIINTEROP_HGIINTEROPVULKAN_H
 #define PXR_IMAGING_HGIINTEROP_HGIINTEROPVULKAN_H
 
+/* clang-format off */
+#include "wabi/wabi.h"
 #include "wabi/base/gf/vec4i.h"
 #include "wabi/imaging/hgi/texture.h"
 #include "wabi/imaging/hgiInterop/api.h"
-#include "wabi/wabi.h"
+/* clang-format on */
 
 WABI_NAMESPACE_BEGIN
 

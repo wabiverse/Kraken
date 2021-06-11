@@ -21,17 +21,20 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/imaging/hdPh/glslProgram.h"
-#include "wabi/base/arch/hash.h"
-#include "wabi/base/tf/diagnostic.h"
+
+/* clang-format off */
+#include "wabi/imaging/hio/glslfx.h"
 #include "wabi/imaging/hd/perfLog.h"
 #include "wabi/imaging/hd/tokens.h"
-#include "wabi/imaging/hdPh/debugCodes.h"
-#include "wabi/imaging/hdPh/glUtils.h"
-#include "wabi/imaging/hdPh/package.h"
-#include "wabi/imaging/hdPh/resourceRegistry.h"
 #include "wabi/imaging/hgi/tokens.h"
-#include "wabi/imaging/hio/glslfx.h"
+#include "wabi/imaging/hdPh/debugCodes.h"
+#include "wabi/imaging/hdPh/package.h"
+#include "wabi/imaging/hdPh/glslProgram.h"
+#include "wabi/imaging/hdPh/glUtils.h"
+#include "wabi/imaging/hdPh/resourceRegistry.h"
+#include "wabi/base/arch/hash.h"
+#include "wabi/base/tf/diagnostic.h"
+/* clang-format on */
 
 #include <climits>
 #include <cstdlib>

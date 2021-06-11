@@ -100,11 +100,13 @@ class HgiInterop final {
 
 #if defined(WITH_METAL)
   std::unique_ptr<HgiInteropMetal> _metalToOpenGL;
-// #elif defined(WITH_VULKAN)
-//     std::unique_ptr<HgiInteropVulkan> _vulkanToOpenGL;
-#else
+#endif /* WITH_METAL */
+
+#if defined(WITH_VULKAN)
+  std::unique_ptr<HgiInteropVulkan> _vulkanToOpenGL;
+#endif /* WITH_VULKAN */
+
   std::unique_ptr<HgiInteropOpenGL> _openGLToOpenGL;
-#endif
 };
 
 WABI_NAMESPACE_END

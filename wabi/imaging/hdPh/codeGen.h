@@ -24,11 +24,13 @@
 #ifndef WABI_IMAGING_HD_ST_CODE_GEN_H
 #define WABI_IMAGING_HD_ST_CODE_GEN_H
 
-#include "wabi/imaging/hd/version.h"
-#include "wabi/imaging/hdPh/api.h"
-#include "wabi/imaging/hdPh/glslProgram.h"
-#include "wabi/imaging/hdPh/resourceBinder.h"
+/* clang-format off */
 #include "wabi/wabi.h"
+#include "wabi/imaging/hdPh/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hdPh/resourceBinder.h"
+#include "wabi/imaging/hdPh/glslProgram.h"
+/* clang-format on */
 
 #include <map>
 #include <sstream>

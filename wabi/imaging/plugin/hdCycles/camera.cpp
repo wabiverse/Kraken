@@ -170,15 +170,24 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate,
 
   HdCyclesRenderParam *param = static_cast<HdCyclesRenderParam *>(renderParam);
 
+  /* ----- Cycles setup clipping range. ------ */
+  const auto clippingRange = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->clippingRange);
   if (*dirtyBits & HdCamera::DirtyClipPlanes) {
-    bool has_clippingRange = EvalCameraParam(&m_clippingRange,
-                                             HdCameraTokens->clippingRange,
-                                             sceneDelegate,
-                                             id,
-                                             GfRange1f(0.1f, 100000.0f));
-
-    // TODO: has_clippingRange
-    (void)has_clippingRange;
+    if (clippingRange.IsHolding<GfRange1f>()) {
+      const auto &range = clippingRange.UncheckedGet<GfRange1f>();
+      EvalCameraParam(&m_clippingRange,
+                      HdCameraTokens->clippingRange,
+                      sceneDelegate,
+                      id,
+                      GfRange1f(range.GetMin(), range.GetMax()));
+    }
+    else {
+      EvalCameraParam(&m_clippingRange,
+                      HdCameraTokens->clippingRange,
+                      sceneDelegate,
+                      id,
+                      GfRange1f(0.1f, 100000.0f));
+    }
   }
 
   if (*dirtyBits & HdCamera::DirtyParams) {
