@@ -45,13 +45,13 @@
 {
   % if useExportAPI %
 }
-#  include "pxr/pxr.h"
+#  include "wabi/wabi.h"
 #  include "{{ libraryPath }}/api.h"
 {
   % endif %
 }
-#  include "pxr/base/tf/staticData.h"
-#  include "pxr/base/tf/token.h"
+#  include "wabi/base/tf/staticData.h"
+#  include "wabi/base/tf/token.h"
 #  include <vector>
 
 {

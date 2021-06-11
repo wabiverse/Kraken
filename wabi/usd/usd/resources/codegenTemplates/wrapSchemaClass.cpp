@@ -28,16 +28,16 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#include "pxr/usd/usd/schemaBase.h"
+#include "wabi/usd/usd/schemaBase.h"
 #include "{{ libraryPath }}/{{ cls.GetHeaderFile() }}"
 
-#include "pxr/usd/sdf/primSpec.h"
+#include "wabi/usd/sdf/primSpec.h"
 
-#include "pxr/base/tf/pyContainerConversions.h"
-#include "pxr/base/tf/pyResultConversions.h"
-#include "pxr/base/tf/pyUtils.h"
-#include "pxr/base/tf/wrapTypeHelpers.h"
-#include "pxr/usd/usd/pyConversions.h"
+#include "wabi/base/tf/pyContainerConversions.h"
+#include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/base/tf/pyUtils.h"
+#include "wabi/base/tf/wrapTypeHelpers.h"
+#include "wabi/usd/usd/pyConversions.h"
 
 #include <boost/python.hpp>
 
@@ -68,7 +68,7 @@ WRAP_CUSTOM;
 {% for attrName in cls.attrOrder -%
 }
 { % set attr = cls.attrs[attrName] % } {
-#  Only emit Create / Get API if apiName is not empty string.#
+#Only emit Create / Get API if apiName is not empty string.#
 }
 {
   % if attr.apiName != '' %
@@ -229,7 +229,7 @@ void wrap{{cls.cppClassName}}()
   {% for attrName in cls.attrOrder -%
   }
   { % set attr = cls.attrs[attrName] % } {
-#    Only emit Create / Get API if apiName is not empty string.#
+#Only emit Create / Get API if apiName is not empty string.#
   }
   {
     % if attr.apiName != '' %
@@ -255,7 +255,7 @@ void wrap{{cls.cppClassName}}()
   {% for relName in cls.relOrder -%
   }
   {
-#    Only emit Create / Get API and doxygen if apiName is not empty string.#
+#Only emit Create / Get API and doxygen if apiName is not empty string.#
   }
   { % set rel = cls.rels[relName] % } {
     % if rel.apiName != '' %

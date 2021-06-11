@@ -37,13 +37,13 @@
 {
   % if useExportAPI %
 }
-#  include "pxr/pxr.h"
+#  include "wabi/wabi.h"
 #  include "{{ libraryPath }}/api.h"
 {
   % endif %
 }
-#  include "pxr/usd/usd/prim.h"
-#  include "pxr/usd/usd/stage.h"
+#  include "wabi/usd/usd/prim.h"
+#  include "wabi/usd/usd/stage.h"
 #  include "{{ cls.parentLibPath }}/{{ cls.GetParentHeaderFile() }}"
 {
   % if cls.tokens - %
@@ -56,14 +56,14 @@
   % endif %
 }
 
-#  include "pxr/base/vt/value.h"
+#  include "wabi/base/vt/value.h"
 
-#  include "pxr/base/gf/matrix4d.h"
-#  include "pxr/base/gf/vec3d.h"
-#  include "pxr/base/gf/vec3f.h"
+#  include "wabi/base/gf/matrix4d.h"
+#  include "wabi/base/gf/vec3d.h"
+#  include "wabi/base/gf/vec3f.h"
 
-#  include "pxr/base/tf/token.h"
-#  include "pxr/base/tf/type.h"
+#  include "wabi/base/tf/token.h"
+#  include "wabi/base/tf/type.h"
 
 {
   % if useExportAPI %
@@ -541,7 +541,7 @@ class {
   {% for attrName in cls.attrOrder %
   }
   { % set attr = cls.attrs[attrName] % } {
-#    Only emit Create / Get API and doxygen if apiName is not empty string.#
+#  Only emit Create / Get API and doxygen if apiName is not empty string.#
   }
   {
     % if attr.apiName != '' %
@@ -606,7 +606,7 @@ class {
   { % endif % } { % endfor % } {% for relName in cls.relOrder %
   }
   { % set rel = cls.rels[relName] % } {
-#    Only emit Create / Get API and doxygen if apiName is not empty string.#
+#  Only emit Create / Get API and doxygen if apiName is not empty string.#
   }
   {
     % if rel.apiName != '' %

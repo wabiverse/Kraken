@@ -28,19 +28,19 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#include "pxr/usd/usd/schemaRegistry.h"
-#include "pxr/usd/usd/typed.h"
+#include "wabi/usd/usd/schemaRegistry.h"
+#include "wabi/usd/usd/typed.h"
 #include "{{ libraryPath }}/{{ cls.GetHeaderFile() }}"
 {
   % if cls.isApi %
 }
-#include "pxr/usd/usd/tokens.h"
+#include "wabi/usd/usd/tokens.h"
 {
   % endif %
 }
 
-#include "pxr/usd/sdf/assetPath.h"
-#include "pxr/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
+#include "wabi/usd/sdf/types.h"
 
 {
   % if useExportAPI %
@@ -373,7 +373,7 @@ static inline TfToken _GetNamespacedPropertyName(const TfToken instanceName,
 {% for attrName in cls.attrOrder %
 }
 { % set attr = cls.attrs[attrName] % } {
-#  Only emit Create / Get API and doxygen if apiName is not empty string.#
+#Only emit Create / Get API and doxygen if apiName is not empty string.#
 }
 {
   % if attr.apiName != '' %
@@ -458,7 +458,7 @@ Attr(VtValue const &defaultValue, bool writeSparsely) const
 { % endif % } { % endfor % } {% for relName in cls.relOrder %
 }
 { % set rel = cls.rels[relName] % } {
-#  Only emit Create / Get API and doxygen if apiName is not empty string.#
+#Only emit Create / Get API and doxygen if apiName is not empty string.#
 }
 {
   % if rel.apiName != '' %
@@ -601,7 +601,7 @@ const TfTokenVector &
     static TfTokenVector allNames = _ConcatenateAttributeNames(
         instanceName,
         {#The schema generator has already validated whether our parent is #} {
-            #a multiple apply schema or UsdSchemaBaseAPI,
+#a multiple apply schema or UsdSchemaBaseAPI,
             choose the correct function #} {#depending on the situation #} {
           % if cls.parentCppClassName == "UsdAPISchemaBase" %
         } {
