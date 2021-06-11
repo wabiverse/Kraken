@@ -7,7 +7,7 @@
                         "bases": [
                             "HdRendererPlugin"
                         ],
-                        "displayName": "RPR",
+                        "displayName": "ProRender",
                         "priority": 99
                     },
                     "HdRprNdrDiscoveryPlugin": {

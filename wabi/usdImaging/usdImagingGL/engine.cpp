@@ -165,7 +165,7 @@ UsdImagingGLEngine::UsdImagingGLEngine(const SdfPath &rootPath,
 
     // _renderIndex, _taskController, and _sceneDelegate are initialized
     // by the plugin system.
-    if (!SetRendererPlugin(TfToken("HdCyclesRendererPlugin"))) {
+    if (!SetRendererPlugin(_GetDefaultRendererPluginId())) {
       TF_CODING_ERROR(
           "No renderer plugins found! "
           "Check before creation.");

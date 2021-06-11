@@ -2039,10 +2039,8 @@ class StageView(QtOpenGL.QGLWidget):
         x = event.x() * self.devicePixelRatioF()
         y = event.y() * self.devicePixelRatioF()
 
-        # Allow for either meta or alt key, since meta maps to Windows and Apple
-        # keys on various hardware/os combos, and some windowing systems consume
-        # one or the other by default, but hopefully not both.
-        if (event.modifiers() & (QtCore.Qt.AltModifier | QtCore.Qt.MetaModifier)):
+        # Allow for middle mouse click.
+        if (event.button() & QtCore.Qt.MiddleButton):
             if event.button() == QtCore.Qt.LeftButton:
                 self.switchToFreeCamera()
                 ctrlModifier = event.modifiers() & QtCore.Qt.ControlModifier

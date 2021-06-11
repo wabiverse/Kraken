@@ -214,13 +214,6 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate,
     //    shutter = 0.5f;
     m_shutterTime = 0.5f;
 
-    // Projection
-
-    bool has_projection = EvalCameraParam(
-        &m_projectionType, UsdGeomTokens->projection, sceneDelegate, id);
-    // TODO: has_projection
-    (void)has_projection;
-
     // Aperture
 
     float horizontalAp, verticalAp;
@@ -242,14 +235,14 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate,
     if (has_focalLength)
       m_focalLength = focalLength * 10.0f;
 
-    if (has_focalLength && has_horizontalAp && has_verticalAp) {
-      float y1 = m_verticalAperture;
-      if (m_horizontalAperture < y1)
-        y1 = m_horizontalAperture;
-      float fov = 2.0f * atanf((m_verticalAperture / 2.0f) / m_focalLength);
-      // TODO: This isn't always correct.
-      // This is usually set in the renderpass from the proj matrix
-      m_fov = fov;
+    /** Cycles projection matrix */
+    if (*dirtyBits & HdCamera::DirtyProjMatrix) {
+      const auto &projMatrix = GetProjectionMatrix();
+      const auto fov = static_cast<float>(GfRadiansToDegrees(atan(1.0 / projMatrix[0][0]) * 2.0));
+      m_fov          = fov;
+
+      bool has_projection = EvalCameraParam(
+          &m_projectionType, UsdGeomTokens->projection, sceneDelegate, id);
     }
 
     bool has_fStop = EvalCameraParam(&m_fStop, HdCameraTokens->fStop, sceneDelegate, id);

@@ -11,11 +11,8 @@ Convenience Targets
    Provided for building COVAH, (multiple at once can be used).
 
    * debug:         Build a debug binary.
-   * full:          Enable all supported dependencies & options.
-   * lite:          Disable non essential features for a smaller binary and faster build.
-   * release        Complete build with all options enabled including CUDA and Optix, matching the releases on covah.xyz
-   * headless:      Build without an interface (renderfarm or server automation).
-   * deps:          Build library dependencies (intended only for platform maintainers).
+   * release:       Complete build with all options enabled.
+   * deps:          Build all library dependencies.
 
    * developer:     Enable faster builds, error checking and tests, recommended for developers.
    * config:        Run cmake configuration tool to set build options.
@@ -24,14 +21,6 @@ Convenience Targets
    Note: passing the argument 'BUILD_DIR=path' when calling make will override the default build dir.
    Note: passing the argument 'BUILD_CMAKE_ARGS=args' lets you add cmake arguments.
 
-
-Project Files
-   Generate project files for development environments.
-
-   * project_qtcreator:     QtCreator Project Files.
-   * project_netbeans:      NetBeans Project Files.
-   * project_eclipse:       Eclipse CDT4 Project Files.
-
 Package Targets
 
    * package_debian:    Build a debian package.
@@ -39,43 +28,14 @@ Package Targets
    * package_archive:	  Build an archive package.
 
 Testing Targets
-   Not associated with building COVAH.
 
    * test:
      Run automated tests with ctest.
-   * test_cmake:
-     Runs our own cmake file checker
-     which detects errors in the cmake file list definitions
-   * test_pep8:
-     Checks all python script are pep8
-     which are tagged to use the stricter formatting
-   * test_deprecated:
-     Checks for deprecation tags in our code which may need to be removed
-
-Static Source Code Checking
-   Not associated with building COVAH.
-
-   * check_cppcheck:        Run covah source through cppcheck (C & C++).
-   * check_clang_array:     Run covah source through clang array checking script (C & C++).
-   * check_splint:          Run covahs source through splint (C only).
-   * check_sparse:          Run covahs source through sparse (C only).
-   * check_smatch:          Run covahs source through smatch (C only).
-   * check_descriptions:    Check for duplicate/invalid descriptions.
-
-Spell Checkers
-
-   * check_spelling_c:      Check for spelling errors (C/C++ only),
-   * check_spelling_osl:    Check for spelling errors (OSL only).
-   * check_spelling_py:     Check for spelling errors (Python only).
-
-   Note that spell checkers can tak a 'CHECK_SPELLING_CACHE' filepath argument,
-   so re-running does not need to re-check unchanged files.
-
-   Example:
-      make check_spelling_c CHECK_SPELLING_CACHE=../spelling_cache.data
 
 Utilities
-   Not associated with building COVAH.
+
+   * install:
+     Installs Covah along with Pixar USD (Useful for updating python scripts).	 	 
 
    * icons:
      Updates PNG icons from SVG files.
@@ -86,20 +46,11 @@ Utilities
      Example
         make icons INKSCAPE_BIN=/path/to/inkscape
 
-   * icons_geom:
-     Updates Geometry icons from BLEND file.
-
-     Optionally pass in variable: 'COVAH_BIN'
-     otherwise default paths are used.
-
-     Example
-        make icons_geom COVAH_BIN=/path/to/covah
-
    * source_archive:
      Create a compressed archive of the source code.
 
    * update:
-     updates git and all submodules
+     Updates to latest source code revision.
 
    * format
      Format source code using clang (uses PATHS if passed in). For example::
@@ -108,23 +59,20 @@ Utilities
 
 Environment Variables
 
-   * BUILD_CMAKE_ARGS:      Arguments passed to CMake.
-   * BUILD_DIR:             Override default build path.
-   * PYTHON:                Use this for the Python command (used for checking tools).
-   * NPROCS:                Number of processes to use building (auto-detect when omitted).
+   * BUILD_CMAKE_ARGS:     Arguments passed to CMake.
+   * BUILD_DIR:            Override default build path.
+   * PYTHON:               Use this for the Python command (used for checking tools).
+   * NPROCS:               Number of processes to use building (auto-detect when omitted).
 
 Documentation Targets
    Not associated with building COVAH.
 
-   * doc_py:        Generate sphinx python api docs.
-   * doc_doxy:      Generate doxygen C/C++ docs.
-   * doc_dna:       Generate covah file format reference.
-   * doc_man:       Generate manpage.
+   * doc_all:     Generate sphinx C/C++ docs.
+   * doc_man:     Generate manpage.
 
 Information
 
    * help:              This help message.
-   * help_features:     Show a list of optional features when building.
 
 endef
 # HELP_TEXT (end)
@@ -167,9 +115,13 @@ ifndef DEPS_INSTALL_DIR
 	endif
 endif
 
-# Allow to use alternative binary (pypy3, etc)
+# Prefer the python we ship.
 ifndef PYTHON
-	PYTHON:=python3
+	ifneq (, $(wildcard /usr/local/share/covah/1.50/python/bin/python3.9))
+		PYTHON:=/usr/local/share/covah/1.50/python/bin/python3.9
+	else
+		PYTHON:=python3.9
+	endif
 endif
 
 # For macOS python3 is not installed by default, so fallback to python binary
@@ -191,21 +143,9 @@ ifneq "$(findstring debug, $(MAKECMDGOALS))" ""
 	BUILD_DIR:=$(BUILD_DIR)_debug
 	BUILD_TYPE:=Debug
 endif
-ifneq "$(findstring full, $(MAKECMDGOALS))" ""
-	BUILD_DIR:=$(BUILD_DIR)_full
-	CMAKE_CONFIG_ARGS:=-C"$(COVAH_DIR)/build_files/cmake/config/covah_full.cmake" $(CMAKE_CONFIG_ARGS)
-endif
-ifneq "$(findstring lite, $(MAKECMDGOALS))" ""
-	BUILD_DIR:=$(BUILD_DIR)_lite
-	CMAKE_CONFIG_ARGS:=-C"$(COVAH_DIR)/build_files/cmake/config/covah_lite.cmake" $(CMAKE_CONFIG_ARGS)
-endif
 ifneq "$(findstring release, $(MAKECMDGOALS))" ""
 	BUILD_DIR:=$(BUILD_DIR)_release
 	CMAKE_CONFIG_ARGS:=-C"$(COVAH_DIR)/build_files/cmake/config/wabi_release.cmake" $(CMAKE_CONFIG_ARGS)
-endif
-ifneq "$(findstring headless, $(MAKECMDGOALS))" ""
-	BUILD_DIR:=$(BUILD_DIR)_headless
-	CMAKE_CONFIG_ARGS:=-C"$(COVAH_DIR)/build_files/cmake/config/covah_headless.cmake" $(CMAKE_CONFIG_ARGS)
 endif
 
 ifneq "$(findstring developer, $(MAKECMDGOALS))" ""
@@ -299,20 +239,34 @@ all: .FORCE
 	@$(CMAKE_CONFIG)
 
 	@echo
-	@echo Building COVAH ...
+	@echo Building Covah & Pixar USD...
 	$(BUILD_COMMAND) -C "$(BUILD_DIR)" -j $(NPROCS) install
 	@echo
 	@echo edit build configuration with: "$(BUILD_DIR)/CMakeCache.txt" run make again to rebuild.
-	@echo COVAH successfully built, run from: /usr/local/share/covah/1.50/bin/covah
+	@echo Covah successfully built, run from: /usr/local/share/covah/1.50/bin/covah
 	@echo
 
 debug: all
-full: all
-lite: all
 release: all
-headless: all
 developer: all
 ninja: all
+
+# -----------------------------------------------------------------------------
+# Run Install (So you don't have to rebuild everytime, python scripts, etc)
+install: .FORCE
+	@echo
+	@echo Installing Covah and Pixar USD...
+
+	@echo
+	cd "$(BUILD_DIR)" ; ninja install
+	@echo
+	@echo Covah and Pixar USD successfully installed,
+	@echo Run Covah from: /usr/local/share/covah/1.50/bin/covah
+	@echo Run Python or test Pixar UsdView from: $(PYTHON).
+	@echo
+
+# -----------------------------------------------------------------------------
+# Build all required dependencies to build Covah and Pixar USD
 
 # 
 # Build dependencies
@@ -325,21 +279,8 @@ deps: .FORCE
 	@echo
 	@echo Configuring dependencies in \"$(DEPS_BUILD_DIR)\"
 
-	@echo
-	@echo In order to install the dependencies, install the following:
-	@echo
-	@echo sudo apt install software-properties-common
-	@echo sudo apt update
-	@echo sudo add-apt-repository ppa:deadsnakes/ppa
-	@echo sudo apt install python3.9 python3.9-dev build-essential libgl1-mesa-dev
-	@echo sudo apt install git subversion cmake libx11-dev libxxf86vm-dev flex bison
-	@echo sudo apt install libxcursor-dev libxi-dev libxrandr-dev libxslt-dev zstd
-	@echo sudo apt install libglew-dev libxml2-dev libclang-10-dev llvm clang lld 
-	@echo sudo apt install libxinerama-dev libzstd-dev zstd
-	@echo sudo apt install "^libxcb.*"
-
 #	#@python3.9 $(DEPS_INSTALL_SCRIPT) --build clean
-	@python3.9 $(DEPS_INSTALL_SCRIPT) --build boost
+	@python3.9 $(DEPS_INSTALL_SCRIPT) --build all
 
 	@echo
 	@echo Dependencies successfully built and installed to $(DEPS_INSTALL_DIR).
@@ -377,92 +318,6 @@ package_archive: .FORCE
 test: .FORCE
 	$(PYTHON) ./build_files/utils/make_test.py "$(BUILD_DIR)"
 
-# run pep8 check check on scripts we distribute.
-test_pep8: .FORCE
-	$(PYTHON) tests/python/pep8.py > test_pep8.log 2>&1
-	@echo "written: test_pep8.log"
-
-# run some checks on our cmakefiles.
-test_cmake: .FORCE
-	$(PYTHON) build_files/cmake/cmake_consistency_check.py > test_cmake_consistency.log 2>&1
-	@echo "written: test_cmake_consistency.log"
-
-# run deprecation tests, see if we have anything to remove.
-test_deprecated: .FORCE
-	$(PYTHON) tests/check_deprecated.py
-
-
-# -----------------------------------------------------------------------------
-# Project Files
-#
-
-project_qtcreator: .FORCE
-	$(PYTHON) build_files/cmake/cmake_qtcreator_project.py --build-dir "$(BUILD_DIR)"
-
-project_netbeans: .FORCE
-	$(PYTHON) build_files/cmake/cmake_netbeans_project.py "$(BUILD_DIR)"
-
-project_eclipse: .FORCE
-	cmake -G"Eclipse CDT4 - Unix Makefiles" -H"$(COVAH_DIR)" -B"$(BUILD_DIR)"
-
-
-# -----------------------------------------------------------------------------
-# Static Checking
-#
-
-check_cppcheck: .FORCE
-	$(CMAKE_CONFIG)
-	cd "$(BUILD_DIR)" ; \
-	$(PYTHON) "$(COVAH_DIR)/build_files/cmake/cmake_static_check_cppcheck.py" 2> \
-	    "$(COVAH_DIR)/check_cppcheck.txt"
-	@echo "written: check_cppcheck.txt"
-
-check_clang_array: .FORCE
-	$(CMAKE_CONFIG)
-	cd "$(BUILD_DIR)" ; \
-	$(PYTHON) "$(COVAH_DIR)/build_files/cmake/cmake_static_check_clang_array.py"
-
-check_splint: .FORCE
-	$(CMAKE_CONFIG)
-	cd "$(BUILD_DIR)" ; \
-	$(PYTHON) "$(COVAH_DIR)/build_files/cmake/cmake_static_check_splint.py"
-
-check_sparse: .FORCE
-	$(CMAKE_CONFIG)
-	cd "$(BUILD_DIR)" ; \
-	$(PYTHON) "$(COVAH_DIR)/build_files/cmake/cmake_static_check_sparse.py"
-
-check_smatch: .FORCE
-	$(CMAKE_CONFIG)
-	cd "$(BUILD_DIR)" ; \
-	$(PYTHON) "$(COVAH_DIR)/build_files/cmake/cmake_static_check_smatch.py"
-
-check_spelling_py: .FORCE
-	cd "$(BUILD_DIR)" ; \
-	PYTHONIOENCODING=utf_8 $(PYTHON) \
-	    "$(COVAH_DIR)/source/tools/check_source/check_spelling.py" \
-	    "$(COVAH_DIR)/release/scripts"
-
-check_spelling_c: .FORCE
-	cd "$(BUILD_DIR)" ; \
-	PYTHONIOENCODING=utf_8 $(PYTHON) \
-	    "$(COVAH_DIR)/source/tools/check_source/check_spelling.py" \
-	    --cache-file=$(CHECK_SPELLING_CACHE) \
-	    "$(COVAH_DIR)/source" \
-	    "$(COVAH_DIR)/intern/guardedalloc" \
-	    "$(COVAH_DIR)/intern/ghost" \
-
-check_spelling_osl: .FORCE
-	cd "$(BUILD_DIR)" ;\
-	PYTHONIOENCODING=utf_8 $(PYTHON) \
-	    "$(COVAH_DIR)/source/tools/check_source/check_spelling.py" \
-	    --cache-file=$(CHECK_SPELLING_CACHE) \
-	    "$(COVAH_DIR)/intern/arnold/kernel/shaders"
-
-check_descriptions: .FORCE
-	$(COVAH_BIN) --background -noaudio --factory-startup --python \
-	    "$(COVAH_DIR)/source/tools/check_source/check_descriptions.py"
-
 # -----------------------------------------------------------------------------
 # Utilities
 #
@@ -477,44 +332,23 @@ icons: .FORCE
 	COVAH_BIN=$(COVAH_BIN) INKSCAPE_BIN=$(INKSCAPE_BIN) \
 		"$(COVAH_DIR)/release/datafiles/prvicons_update.py"
 
-icons_geom: .FORCE
-	COVAH_BIN=$(COVAH_BIN) \
-	    "$(COVAH_DIR)/release/datafiles/covah_icons_geom_update.py"
-
 update: .FORCE
 	$(PYTHON) ./build_files/utils/make_update.py
 
 format: .FORCE
-	PATH="../lib/${OS_NCASE}_${CPU}/llvm/bin/:../lib/${OS_NCASE}_centos7_${CPU}/llvm/bin/:../lib/${OS_NCASE}/llvm/bin/:$(PATH)" \
-		$(PYTHON) source/tools/utils_maintenance/clang_format_paths.py $(PATHS)
+	$(PYTHON) source/tools/utils_maintenance/clang_format_paths.py $(PATHS)
 
 
 # -----------------------------------------------------------------------------
 # Documentation
 #
 
-# Simple version of ./doc/python_api/sphinx_doc_gen.sh with no PDF generation.
-doc_py: .FORCE
-	ASAN_OPTIONS=halt_on_error=0 \
-	$(COVAH_BIN) --background -noaudio --factory-startup \
-		--python doc/python_api/sphinx_doc_gen.py
-	sphinx-build -b html -j $(NPROCS) doc/python_api/sphinx-in doc/python_api/sphinx-out
-	@echo "docs written into: '$(COVAH_DIR)/doc/python_api/sphinx-out/index.html'"
-
-doc_doxy: .FORCE
-	cd doc/doxygen; doxygen Doxyfile
-	@echo "docs written into: '$(COVAH_DIR)/doc/doxygen/html/index.html'"
-
-doc_dna: .FORCE
-	$(COVAH_BIN) --background -noaudio --factory-startup \
-		--python doc/covah_file_format/BlendFileDnaExporter_25.py
-	@echo "docs written into: '$(COVAH_DIR)/doc/covah_file_format/dna.html'"
+doc_all: .FORCE
+	cd doc/sphinx; make html
+	@echo "docs written into: '$(COVAH_DIR)/doc/_build'"
 
 doc_man: .FORCE
 	$(PYTHON) doc/manpage/covah.1.py $(COVAH_BIN) covah.1
-
-help_features: .FORCE
-	@$(PYTHON) "$(COVAH_DIR)/build_files/cmake/cmake_print_build_options.py" $(COVAH_DIR)"/CMakeLists.txt"
 
 clean: .FORCE
 	$(BUILD_COMMAND) -C "$(BUILD_DIR)" clean
