@@ -72,6 +72,11 @@ wmWindowManager *CTX_wm_manager(const cContext *C)
   return C->wm.manager;
 }
 
+void CTX_wm_manager_set(cContext *C, wmWindowManager *wm)
+{
+  C->wm.manager = wm;
+}
+
 Main *CTX_data_main(const cContext *C)
 {
   return C->data.main;

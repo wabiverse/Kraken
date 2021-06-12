@@ -32,6 +32,7 @@
 """
 This script generates C++ classes and supporting Python code for USD Schemata.
 It is driven by a USD layer (schema.usda) that defines the schema classes.
+
 This USD layer must meet the following preconditions in order for code to be
 generated that will compile and work with USD Core successfully:
     
