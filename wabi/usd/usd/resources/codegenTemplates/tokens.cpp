@@ -28,6 +28,9 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
+
+/* clang-format off */
+
 #include "{{ libraryPath }}/tokens.h"
 
 {% if useExportAPI %}
@@ -54,3 +57,5 @@ TfStaticData <{{ tokensPrefix }}TokensType >{{ tokensPrefix}}
 
 {{namespaceClose}}
 {% endif %}
+
+  /* clang-format on */

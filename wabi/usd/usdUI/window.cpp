@@ -117,6 +117,22 @@ UsdAttribute UsdUIWindow::CreateTitleAttr(VtValue const &defaultValue, bool writ
                                     writeSparsely);
 }
 
+UsdAttribute UsdUIWindow::GetWindowCoordsAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiWindowCoords);
+}
+
+UsdAttribute UsdUIWindow::CreateWindowCoordsAttr(VtValue const &defaultValue,
+                                                 bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(UsdUITokens->uiWindowCoords,
+                                    SdfValueTypeNames->Float4,
+                                    /* custom = */ false,
+                                    SdfVariabilityUniform,
+                                    defaultValue,
+                                    writeSparsely);
+}
+
 namespace {
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
                                                        const TfTokenVector &right)

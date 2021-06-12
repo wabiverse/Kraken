@@ -72,6 +72,7 @@ void wrapUsdUITokens()
   _AddToken(cls, "minimized", UsdUITokens->minimized);
   _AddToken(cls, "open", UsdUITokens->open);
   _AddToken(cls, "uiTitle", UsdUITokens->uiTitle);
+  _AddToken(cls, "uiWindowCoords", UsdUITokens->uiWindowCoords);
   _AddToken(cls, "uiDescription", UsdUITokens->uiDescription);
   _AddToken(cls, "uiDisplayGroup", UsdUITokens->uiDisplayGroup);
   _AddToken(cls, "uiDisplayName", UsdUITokens->uiDisplayName);

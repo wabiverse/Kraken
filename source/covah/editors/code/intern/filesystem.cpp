@@ -8,16 +8,8 @@
 
 #undef ERROR
 
-#if defined(ZEP_FEATURE_CPP_FILE_SYSTEM)
-
-// Unix/Clang is behind
-#  ifdef __unix__
-#    include <experimental/filesystem>
-namespace cpp_fs = std::experimental::filesystem::v1;
-#  else
-#    include <filesystem>
+#include <filesystem>
 namespace cpp_fs = std::filesystem;
-#  endif
 
 namespace Zep {
 ZepFileSystemCPP::ZepFileSystemCPP(const ZepPath &configPath)
@@ -156,13 +148,13 @@ bool ZepFileSystemCPP::Equivalent(const ZepPath &path1, const ZepPath &path2) co
 ZepPath ZepFileSystemCPP::Canonical(const ZepPath &path) const
 {
   try {
-#  ifdef __unix__
+#ifdef __unix__
     // TODO: Remove when unix doesn't need <experimental/filesystem>
     // I can't remember why weakly_connical is used....
     return ZepPath(cpp_fs::canonical(path.string()).string());
-#  else
+#else
     return ZepPath(cpp_fs::weakly_canonical(path.string()).string());
-#  endif
+#endif
   }
   catch (cpp_fs::filesystem_error &err) {
     ZEP_UNUSED(err);
@@ -226,5 +218,3 @@ ZepPath ZepFileSystemCPP::GetSearchRoot(const ZepPath &start, bool &foundGit) co
   return startPath;
 }
 }  // namespace Zep
-
-#endif  // CPP_FILESYSTEM

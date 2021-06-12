@@ -303,7 +303,7 @@ class Sdf_PathNode {
   // Instance variables.  PathNode's size is important to keep small.  Please
   // be mindful of that when making any changes here.
   const Sdf_PathNodeConstRefPtr _parent;
-  mutable std::atomic<unsigned int> _refCount;
+  mutable tbb::atomic<unsigned int> _refCount;
 
   const short _elementCount;
   const unsigned char _nodeType;
@@ -747,7 +747,7 @@ inline void intrusive_ptr_add_ref(const WABI_NS::Sdf_PathNode *p)
 }
 inline void intrusive_ptr_release(const WABI_NS::Sdf_PathNode *p)
 {
-  if (p->_refCount.fetch_sub(1) == 1)
+  if (p->_refCount.fetch_and_decrement() == 1)
     p->_Destroy();
 }
 

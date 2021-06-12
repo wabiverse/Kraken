@@ -41,16 +41,9 @@ ZepEditor::ZepEditor(ZepDisplay *pDisplay,
       m_flags(flags)
 {
 
-#if defined(ZEP_FEATURE_CPP_FILE_SYSTEM)
   if (m_pFileSystem == nullptr) {
     m_pFileSystem = new ZepFileSystemCPP(configRoot);
   }
-#else
-  if (m_pFileSystem == nullptr) {
-    assert(!"Must supply a file system - no default available on this platform!");
-    throw std::invalid_argument("pFileSystem");
-  }
-#endif
 
   if (m_flags & ZepEditorFlags::DisableThreads) {
     m_threadPool = std::make_unique<ThreadPool>(1);

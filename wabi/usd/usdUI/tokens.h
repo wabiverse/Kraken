@@ -84,6 +84,10 @@ struct UsdUITokensType {
   ///
   /// UsdUIWindow
   const TfToken uiTitle;
+  /// \brief "ui:windowCoords"
+  ///
+  /// UsdUIWindow
+  const TfToken uiWindowCoords;
   /// \brief "ui:description"
   ///
   /// UsdUIBackdrop

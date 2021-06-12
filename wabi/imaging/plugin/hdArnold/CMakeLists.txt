@@ -8,24 +8,14 @@ endif()
 
 wabi_plugin(hdArnold
     LIBRARIES
+        arch
         plug
         tf
-        vt
-        gf
-        work
-        sdf
-        hf
         hd
-        hdx
-        usdLux
-        pxOsd
-        cameraUtil
-        ${TBB_LIBRARIES}
         ${ARNOLD_LIBRARIES}
  
     INCLUDE_DIRS
         common
-        ${TBB_INCLUDE_DIRS}
         ${ARNOLD_INCLUDE_DIRS}
 
     CPPFILES

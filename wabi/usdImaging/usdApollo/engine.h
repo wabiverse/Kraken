@@ -551,7 +551,7 @@ class UsdApolloEngine {
   /**
    * Returns the HGI interface. */
   USDAPOLLO_API
-  HgiVulkan *GetHgi();
+  Hgi *GetHgi();
 
   /**
    * @} */
@@ -622,7 +622,7 @@ class UsdApolloEngine {
   HdSelectionSharedPtr APOLLO_GetSelection() const;
 
  protected:
-  HgiVulkan *m_hgi;
+  HgiUniquePtr m_hgi;
   HdDriver m_hgiDriver;
   VtValue m_userFramebuffer;
 

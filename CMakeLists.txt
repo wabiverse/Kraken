@@ -165,7 +165,7 @@ option(WITH_VULKAN                   "Enable Vulkan graphics support"           
 option(WITH_OPENSUBDIV               "Enable OpenSubdiv for surface subdivision"                                                  ON)
 option(WITH_OPENCOLORIO              "Enable OpenColorIO color management"                                                        ON)
 option(WITH_ARNOLD                   "Enable Arnold Renderer support"                                                             ON)
-option(WITH_PRORENDER                "Enable AMD ProRender support"                                                               ON)
+option(WITH_PRORENDER                "Enable AMD ProRender support"                                                              OFF)
 option(WITH_CYCLES                   "Enable Cycles Renderer support"                                                             ON)
 option(WITH_RENDERMAN                "Enable RenderMan, Pixar's Render Engine"                                                    ON)
 option(WITH_PHOENIX                  "Enable Phoenix, real-time render engine support"                                            ON)

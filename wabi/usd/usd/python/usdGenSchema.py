@@ -290,7 +290,7 @@ class PropInfo(object):
         if self.apiGet not in [self.CodeGen.Generated, self.CodeGen.Custom]:
             Print.Err("Token '%s' is not valid." % self.apiGet)
         self.rawName    = sdfProp.name
-        self.doc        = _SanitizeDoc(sdfProp.documentation, '\n    /// ')
+        self.doc        = _SanitizeDoc(sdfProp.documentation, '\n   * ')
         self.custom     = sdfProp.custom
 
 class RelInfo(PropInfo):
@@ -338,16 +338,16 @@ class AttrInfo(PropInfo):
         self.details = [
             ('Declaration', '`%s`' % _GetAttrDeclaration(sdfProp)),
             ('C++ Type', self.typeName.cppTypeName),
-            ('\\ref Usd_Datatypes "Usd Type"', self.usdType),
+            ('@ref Usd_Datatypes "Usd Type"', self.usdType),
         ]
 
         if self.variability == "SdfVariabilityUniform":
-            self.details.append(('\\ref SdfVariability "Variability"', self.variability))
+            self.details.append(('@ref SdfVariability "Variability"', self.variability))
 
         if self.allowedTokens:
             tokenListStr = ', '.join(
                 [x if x else '""' for x in self.allowedTokens])
-            self.details.append(('\\ref ' + \
+            self.details.append(('@ref ' + \
                 _GetTokensPrefix(sdfProp.layer) + \
                 'Tokens "Allowed Values"', tokenListStr))
 
@@ -452,7 +452,7 @@ class ClassInfo(object):
             self.parentBaseFileName = "schemaBase"
 
         # Extra Class Metadata
-        self.doc = _SanitizeDoc(sdfPrim.documentation, '\n/// ')
+        self.doc = _SanitizeDoc(sdfPrim.documentation, '\n * ')
         self.typeName = sdfPrim.typeName
         self.extraIncludes = self.customData.get('extraIncludes', None)
 
@@ -1231,10 +1231,10 @@ def GenerateRegistry(codeGenPath, filePath, classes, validate, env):
 
     # Remove doxygen tags from schema registry docs.
     # ExportToString escapes '\' again, so take that into account.
-    layerSource = layerSource.replace(r'\\em ', '')
-    layerSource = layerSource.replace(r'\\li', '-')
-    layerSource = re.sub(r'\\+ref [^\s]+ ', '', layerSource)
-    layerSource = re.sub(r'\\+section [^\s]+ ', '', layerSource)
+    layerSource = layerSource.replace(r'@em ', '')
+    layerSource = layerSource.replace(r'@li', '-')
+    layerSource = re.sub(r'@+ref [^\s]+ ', '', layerSource)
+    layerSource = re.sub(r'@+section [^\s]+ ', '', layerSource)
 
     _WriteFile(os.path.join(codeGenPath, 'generatedSchema.usda'), layerSource,
                validate)

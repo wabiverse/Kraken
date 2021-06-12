@@ -28,6 +28,9 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
+
+/* clang-format off */
+
 #include "{{ libraryPath }}/tokens.h"
 #include <boost/python/class.hpp>
 
@@ -76,3 +79,5 @@ void wrap {{ tokensPrefix }}Tokens()
       _AddToken(cls, "{{ token.id }}", {{ tokensPrefix }}Tokens->{{token.id}});
 {% endfor %}
 }
+
+/* clang-format on */

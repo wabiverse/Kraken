@@ -113,12 +113,12 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver {
   UsdGeomBBoxCache *_owner;
 
   struct _PrototypeTask {
-    _PrototypeTask() noexcept : numDependencies(std::make_shared<std::atomic_size_t>(0))
+    _PrototypeTask() : numDependencies(0)
     {}
 
     // Number of dependencies -- prototype prims that must be resolved
     // before this prototype can be resolved.
-    std::shared_ptr<std::atomic_size_t> numDependencies;
+    tbb::atomic<size_t> numDependencies;
 
     // List of prototype prims that depend on this prototype.
     std::vector<_PrimContext> dependentPrototypes;
@@ -175,7 +175,7 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver {
       // to compute the bounding boxes for all prototypes for nested
       // instances.
       _PrototypeTask &prototypeTaskData = prototypeTaskStatus.first->second;
-      prototypeTaskData.numDependencies->store(requiredPrototypes.size());
+      prototypeTaskData.numDependencies = requiredPrototypes.size();
     }
 
     // Recursively populate the task map for the prototypes needed for
@@ -201,7 +201,7 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver {
     const _PrototypeTask &prototypeData = prototypeTasks->find(prototype)->second;
     for (const auto &dependentPrototype : prototypeData.dependentPrototypes) {
       _PrototypeTask &dependentPrototypeData = prototypeTasks->find(dependentPrototype)->second;
-      if (dependentPrototypeData.numDependencies->fetch_sub(1) == 1) {
+      if (dependentPrototypeData.numDependencies.fetch_and_decrement() == 1) {
         dispatcher->Run(&_PrototypeBBoxResolver::_ExecuteTaskForPrototype,
                         this,
                         dependentPrototype,

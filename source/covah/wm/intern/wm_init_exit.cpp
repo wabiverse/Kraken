@@ -68,7 +68,7 @@ static void ShowFileMenu()
     if (ANCHOR::MenuItem("Save As...", "Shift+Ctrl+S")) {
     }
     if (ANCHOR::MenuItem("Quit", "Ctrl+Q")) {
-      CKE_has_kill_signal(COVAH_SUCCESS);
+      // CKE_has_kill_signal(COVAH_SUCCESS);
     }
     ANCHOR::EndMenu();
   }

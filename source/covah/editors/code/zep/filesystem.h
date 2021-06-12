@@ -48,9 +48,6 @@ class IZepFileSystem {
   virtual ZepPath Canonical(const ZepPath &path) const                      = 0;
 };
 
-// CPP File system - part of the standard C++ libraries
-#if defined(ZEP_FEATURE_CPP_FILE_SYSTEM)
-
 // A generic file system using cross platform fs:: and tinydir for searches
 // This is typically the only one that is used for normal desktop usage.
 // But you could make your own if your files were stored in a compressed folder, or the target
@@ -79,6 +76,5 @@ class ZepFileSystemCPP : public IZepFileSystem {
   ZepPath m_workingDirectory;
   ZepPath m_configPath;
 };
-#endif  // CPP File system
 
 }  // namespace Zep

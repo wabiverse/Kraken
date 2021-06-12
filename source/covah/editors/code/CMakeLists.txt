@@ -137,7 +137,6 @@ set(LIB
   ${OPENGL_LIBRARIES}
 )
 
-add_definitions(-DZEP_FEATURE_CPP_FILE_SYSTEM)
 add_definitions(-DZEP_USE_SDL)
 add_definitions(-DCODE_EDITOR_EXPORTS)
 

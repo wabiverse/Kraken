@@ -28,6 +28,9 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
+
+/* clang-format off */
+
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 #include "{{ libraryPath }}/{{ cls.GetHeaderFile() }}"
@@ -392,3 +395,5 @@ localNames);
 {% endif %}
  * ======================================================================
  * --(BEGIN CUSTOM CODE)-- */
+
+/* clang-format on */

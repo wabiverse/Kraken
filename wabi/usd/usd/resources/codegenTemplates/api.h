@@ -28,6 +28,9 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
+
+/* clang-format off */
+
 #ifndef {{ Upper(libraryName) }}_API_H
 #define {{ Upper(libraryName) }}_API_H
 
@@ -52,3 +55,5 @@
 #endif
 
 #endif
+
+/* clang-format on */

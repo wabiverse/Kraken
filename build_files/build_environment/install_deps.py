@@ -354,7 +354,7 @@ def RunCMake(context, force, extraArgs = None):
     # (Ninja, make), and --config for multi-configuration generators
     # (Visual Studio); technically we don't need BOTH at the same
     # time, but specifying both is simpler than branching
-    config= "Debug"
+    config= "Release"
 
     with CurrentWorkingDirectory(buildDir):
         Run('cmake '
@@ -721,19 +721,17 @@ ARNOLD = Dependency("arnold", InstallArnold, "include/ai_version.h")
 CYCLES_URL = "https://storage.googleapis.com/dependency_links/Cycles-1.10-COVAH.tar.gz"
 
 def InstallCycles(context, force, buildArgs):
-    # OPENJPEG
-    with CurrentWorkingDirectory(DownloadURL("https://github.com/uclouvain/openjpeg/archive/refs/tags/v2.4.0.tar.gz", context, force)):
-        RunCMake(context, force, buildArgs)
-
     # OPENIMAGEDENOISE
     with CurrentWorkingDirectory(DownloadURL("https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.0/oidn-1.4.0.src.tar.gz", context, force)):
         RunCMake(context, force, buildArgs)        
 
     # CYCLES RENDERER
-    with CurrentWorkingDirectory(DownloadURL(CYCLES_URL, context, force)):
+    with CurrentWorkingDirectory(context.buildDir + "/../source/Cycles-1.10-COVAH"):
         
         if Linux():
-            buildArgs.append("-DOPENEXR_ILMIMF_LIBRARY={}".format(context.libInstDir + "/lib/libImath.so"))
+            buildArgs.append("-DUSE_OPENGL=ON")
+            buildArgs.append("-DOPENEXR_HALF_LIBRARY={}".format(context.libInstDir + "/lib64/libImath.so"))
+            buildArgs.append("-DOPENEXR_ILMIMF_LIBRARY={}".format(context.libInstDir + "/lib64/libImath.so"))
 
         RunCMake(context, force, buildArgs)
 
@@ -872,7 +870,7 @@ def InstallBoost_Helper(context, force, buildArgs):
             'link=shared',
             'runtime-link=shared',
             'threading=multi',
-            'variant={variant}'.format(variant="debug"),
+            'variant={variant}'.format(variant="release"),
             'debug-symbols=on',
             '--with-atomic',
             '--with-program_options',
@@ -976,9 +974,9 @@ BOOST = Dependency("boost", InstallBoost, BOOST_VERSION_FILE)
 # Intel TBB
 
 if Windows():
-    TBB_URL = "https://github.com/oneapi-src/oneTBB/releases/download/v2021.2.0/oneapi-tbb-2021.2.0-win.zip"
+    TBB_URL = "https://github.com/oneapi-src/oneTBB/releases/download/2019_U9/tbb2019_20191006oss_win.zip"
 else:
-    TBB_URL = "https://github.com/oneapi-src/oneTBB/releases/download/v2021.2.0/oneapi-tbb-2021.2.0-lin.tgz"
+    TBB_URL = "https://github.com/oneapi-src/oneTBB/releases/download/2019_U9/tbb2019_20191006oss_lin.tgz"
 
 def InstallTBB(context, force, buildArgs):
     if Windows():
@@ -1018,10 +1016,10 @@ def InstallTBB_LinuxOrMacOS(context, force, buildArgs):
         # makes it easier for users to install dependencies in some
         # location that can be shared by both release and debug USD
         # builds. Plus, the TBB build system builds both versions anyway.
-        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/oneapi-tbb-2021.2.0/lib/intel64/gcc4.8", context.libInstDir + "/lib")
+        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_lin/tbb2019_20191006oss/lib/intel64/gcc4.8", context.libInstDir + "/lib")
         # CopyFiles(context, "lib/intel64/gcc4.8/*.*", )
-        CopyDirectory(context, "include/oneapi", "include/oneapi")
-        CopyDirectory(context, "include/tbb", "include/tbb")
+        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_lin/tbb2019_20191006oss/include/serial", context.libInstDir + "/include/serial")
+        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_lin/tbb2019_20191006oss/include/tbb", context.libInstDir + "/include/tbb")
 
 TBB = Dependency("TBB", InstallTBB, "include/tbb/tbb.h")
 
@@ -1031,7 +1029,7 @@ TBB = Dependency("TBB", InstallTBB, "include/tbb/tbb.h")
 if Windows():
     JPEG_URL = "https://github.com/libjpeg-turbo/libjpeg-turbo/archive/refs/tags/2.1.0.zip"
 else:
-    JPEG_URL = "https://storage.googleapis.com/dependency_links/libjpeg-turbo-2.0.90.zip"
+    JPEG_URL = "https://github.com/libjpeg-turbo/libjpeg-turbo/archive/refs/tags/2.1.0.tar.gz"
 
 def InstallJPEG(context, force, buildArgs):
     if Windows():
@@ -1284,7 +1282,7 @@ BLOSC = Dependency("Blosc", InstallBLOSC, "include/blosc.h")
 # not require additional dependencies such as GLFW. Note that version
 # 6.1.0 does require CMake 3.3 though.
 
-OPENVDB_URL = "https://storage.googleapis.com/dependency_links/OpenVDB-8.1.0.tar.gz"
+OPENVDB_URL = "https://github.com/AcademySoftwareFoundation/openvdb/archive/refs/tags/v8.1.0.tar.gz"
 
 def InstallOpenVDB(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(OPENVDB_URL, context, force)):
@@ -1334,6 +1332,11 @@ OPENVDB = Dependency("OpenVDB", InstallOpenVDB, "include/openvdb/openvdb.h")
 OIIO_URL = "https://github.com/OpenImageIO/oiio/archive/Release-2.2.12.0.zip"
 
 def InstallOpenImageIO(context, force, buildArgs):
+    if Linux():
+        # OPENJPEG
+        with CurrentWorkingDirectory(DownloadURL("https://github.com/uclouvain/openjpeg/archive/refs/tags/v2.4.0.tar.gz", context, force)):
+            RunCMake(context, force, buildArgs)
+
     with CurrentWorkingDirectory(DownloadURL(OIIO_URL, context, force)):
         extraArgs = ['-DOIIO_BUILD_TOOLS=OFF',
                      '-DOIIO_BUILD_TESTS=OFF',
@@ -1370,9 +1373,9 @@ def InstallOpenImageIO(context, force, buildArgs):
         PatchFile("CMakeLists.txt", [("oiio_add_all_tests()", "# oiio_add_all_tests()")])
 
         # Fix FindTBB module to point to TBB v2020
-        PatchFile("src/cmake/modules/FindTBB.cmake", [
-            ('    file(READ "${TBB_INCLUDE_DIRS}/tbb/tbb_stddef.h" _tbb_version_file)',   '    file(READ "${TBB_INCLUDE_DIRS}/oneapi/tbb/version.h" _tbb_version_file)'),
-        ])
+        # PatchFile("src/cmake/modules/FindTBB.cmake", [
+        #     ('    file(READ "${TBB_INCLUDE_DIRS}/tbb/tbb_stddef.h" _tbb_version_file)',   '    file(READ "${TBB_INCLUDE_DIRS}/oneapi/tbb/version.h" _tbb_version_file)'),
+        # ])
 
         # Fix deprecated Int64 type to uint64_t & missing includes
         PatchFile("src/openexr.imageio/exroutput.cpp", [
@@ -1419,7 +1422,8 @@ def InstallOpenColorIO(context, force, buildArgs):
                      '-DOCIO_BUILD_TESTS=OFF',
                      '-DOCIO_BUILD_PYGLUE=OFF',
                      '-DOCIO_BUILD_JNIGLUE=OFF',
-                     '-DOCIO_STATIC_JNIGLUE=OFF']
+                     '-DOCIO_STATIC_JNIGLUE=OFF',
+                     '-DOCIO_BUILD_GPU_TESTS=OFF']
 
         # The OCIO build treats all warnings as errors but several come up
         # on various platforms, including:
@@ -1858,14 +1862,14 @@ EMBREE = Dependency("Embree", InstallEmbree, "include/embree3/rtcore.h")
 # SDL
 
 def InstallSDL(context, force, buildArgs):
-    # SDL
+#     # SDL
     sdlSrc = context.libInstDir + '/build_env/source/sdl'
-    if not os.path.exists(sdlSrc):
-        os.makedirs(sdlSrc)
-    with CurrentWorkingDirectory(sdlSrc):
-        if len(os.listdir(sdlSrc)) == 0:
-            subprocess.call("git clone https://github.com/libsdl-org/SDL.git .", stdout=subprocess.DEVNULL, shell=True)
-        RunCMake(context, force, buildArgs)
+#     if not os.path.exists(sdlSrc):
+#         os.makedirs(sdlSrc)
+#     with CurrentWorkingDirectory(sdlSrc):
+#         if len(os.listdir(sdlSrc)) == 0:
+#             subprocess.call("git clone https://github.com/libsdl-org/SDL.git .", stdout=subprocess.DEVNULL, shell=True)
+#         RunCMake(context, force, buildArgs)
 
     # SDL IMAGE
     # sdlImgSrc = context.libInstDir + '/build_env/source/sdl_image'

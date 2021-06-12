@@ -102,6 +102,11 @@ class Window "Window" (
         window title gives context for what this window is used for.
         """
     )
+    uniform float4 ui:windowCoords (
+        doc = """The window coordinates as positioned on screen, storing both
+        location as well as window size.
+        """
+    )
 }
 
 class Backdrop "Backdrop" (

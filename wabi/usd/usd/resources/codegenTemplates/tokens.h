@@ -28,6 +28,9 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
+
+/* clang-format off */
+
 #ifndef {{ Upper(tokensPrefix) }}_TOKENS_H
 #define {{ Upper(tokensPrefix) }}_TOKENS_H
 
@@ -111,3 +114,5 @@ extern {% if useExportAPI %}{{ Upper(libraryName) }}_API {% endif %} TfStaticDat
 {% endif %}
 
 #endif
+
+/* clang-format on */

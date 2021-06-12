@@ -429,7 +429,7 @@ class CrateFile {
       {
         return !(*this == other);
       }
-      friend size_t hash_value(ZeroCopySource const &z)
+      friend size_t tbb_hasher(ZeroCopySource const &z)
       {
         size_t seed = reinterpret_cast<uintptr_t>(z._addr);
         boost::hash_combine(seed, z._numBytes);
@@ -525,7 +525,7 @@ class CrateFile {
     ArchMutableFileMapping _mapping;
     char *_start;
     int64_t _length;
-    tbb::concurrent_unordered_set<ZeroCopySource, boost::hash<ZeroCopySource>> _outstandingRanges;
+    tbb::concurrent_unordered_set<ZeroCopySource> _outstandingRanges;
   };
   using _FileMappingIPtr = boost::intrusive_ptr<_FileMapping>;
 

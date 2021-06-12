@@ -60,6 +60,14 @@ static UsdAttribute _CreateTitleAttr(UsdUIWindow &self, object defaultVal, bool 
                               writeSparsely);
 }
 
+static UsdAttribute _CreateWindowCoordsAttr(UsdUIWindow &self,
+                                            object defaultVal,
+                                            bool writeSparsely)
+{
+  return self.CreateTitleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float4),
+                              writeSparsely);
+}
+
 static std::string _Repr(const UsdUIWindow &self)
 {
   std::string primRepr = TfPyRepr(self.GetPrim());
@@ -100,6 +108,11 @@ void wrapUsdUIWindow()
       .def("GetTitleAttr", &This::GetTitleAttr)
       .def("CreateTitleAttr",
            &_CreateTitleAttr,
+           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+
+      .def("GetWindowCoordsAttr", &This::GetWindowCoordsAttr)
+      .def("CreateWindowCoordsAttr",
+           &_CreateWindowCoordsAttr,
            (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
       .def("__repr__", ::_Repr);

@@ -194,3 +194,11 @@ else()
     #         usd
     # )
 endif()
+
+if(WITH_PIXAR_TOOLKIT)
+  install(
+    FILES
+      python/usdGenSchema.py
+    DESTINATION
+      /usr/local/share/covah/${TARGETDIR_VER}/bin/toolkit)
+endif()

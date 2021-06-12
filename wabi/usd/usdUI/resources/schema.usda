@@ -137,16 +137,27 @@ class "SceneGraphPrimAPI"(
 
 class Window "Window" (
     inherits = </Typed>
-    doc = """Provides a window for the purpose of displaying an application's GUI.
+    doc = """
+    Provides a window for the purpose of displaying an application's GUI.
     """
 )
 {
     uniform token ui:title (
-        doc = """The window title that is displayed on the top of the window. This
+        doc = """
+        The window title that is displayed on the top of the window. This
         window title gives context for what this window is used for.
         """
         customData = {
             string apiName = "title"
+        }
+    )
+    uniform float4 ui:windowCoords (
+        doc = """
+        The window coordinates as positioned on screen, storing both
+        location as well as window size.
+        """
+        customData = {
+            string apiName = "windowCoords"
         }
     )
 }

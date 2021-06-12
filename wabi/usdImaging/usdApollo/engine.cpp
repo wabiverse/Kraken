@@ -610,10 +610,9 @@ void UsdApolloEngine::APOLLO_InitializeHgiIfNecessary()
    * that ideally all use the same HdDriver and Hgi to share
    * GPU resources. */
   if (m_hgiDriver.driver.IsEmpty()) {
-    // m_hgi = Hgi::CreatePlatformDefaultHgi();
-    m_hgi              = new HgiVulkan();
+    m_hgi              = Hgi::CreatePlatformDefaultHgi();
     m_hgiDriver.name   = HgiTokens->renderDriver;
-    m_hgiDriver.driver = VtValue(m_hgi);
+    m_hgiDriver.driver = VtValue(m_hgi.get());
   }
 }
 
@@ -940,9 +939,9 @@ VtDictionary UsdApolloEngine::GetRenderStats() const
   return m_renderDelegate->GetRenderStats();
 }
 
-HgiVulkan *UsdApolloEngine::GetHgi()
+Hgi *UsdApolloEngine::GetHgi()
 {
-  return m_hgi;
+  return m_hgi.get();
 }
 
 /**

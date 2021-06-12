@@ -61,8 +61,6 @@ WABI_NAMESPACE_BEGIN
 // We create a task_scheduler_init instance at static initialization time if
 // WABI_WORK_THREAD_LIMIT is set to a nonzero value.  Otherwise this stays NULL.
 static std::unique_ptr<tbb::task_arena> _tbbArena;
-static std::unique_ptr<tbb::task_scheduler_handle> _tbbTaskSchedHandle;
-// static bool _tbbTaskSchedIsInitialized = false;
 
 unsigned WorkGetPhysicalConcurrencyLimit()
 {
@@ -119,12 +117,7 @@ static void Work_InitializeThreading()
   // previously initialized by the hosting environment (e.g. if we are running
   // as a plugin to another application.)
   if (settingVal) {
-    _tbbArena           = std::make_unique<tbb::task_arena>(threadLimit);
-    _tbbTaskSchedHandle = std::make_unique<tbb::task_scheduler_handle>(
-        tbb::task_scheduler_handle::get());
-    // tbb::global_control(tbb::global_control::max_allowed_parallelism, threadLimit);
-    // _tbbTaskSchedHandle = tbb::task_scheduler_handle::get();
-    // _tbbTaskSchedIsInitialized = true;
+    _tbbArena = std::make_unique<tbb::task_arena>(threadLimit);
   }
 }
 static int _forceInitialization = (Work_InitializeThreading(), 0);
@@ -163,34 +156,13 @@ void WorkSetConcurrencyLimit(unsigned n)
   // make sure.  If we do decide to delete it, we have to make sure to
   // note that it has already been initialized.
   if (_tbbArena) {
-
     if (_tbbArena->is_active()) {
-      if (tbb::finalize(*_tbbTaskSchedHandle.get(), std::nothrow)) {
-        _tbbArena->terminate();
-        _tbbArena->initialize(threadLimit);
-        _tbbTaskSchedHandle = std::make_unique<tbb::task_scheduler_handle>(
-            tbb::task_scheduler_handle::get());
-      }
+      _tbbArena->terminate();
+      _tbbArena->initialize(threadLimit);
     }
-
-    // if(_tbbTaskSchedIsInitialized) {
-    //     if(tbb::finalize(_tbbTaskSchedHandle, std::nothrow))
-    //     {
-    //         _tbbTaskSchedIsInitialized = false;
-    //         tbb::global_control(tbb::global_control::max_allowed_parallelism, threadLimit);
-    //         _tbbTaskSchedHandle = tbb::task_scheduler_handle::get();
-    //     }
-
-    //     _tbbTaskSchedIsInitialized = true;
-    // }
   }
   else {
-    _tbbArena           = std::make_unique<tbb::task_arena>(tbb::task_arena(threadLimit));
-    _tbbTaskSchedHandle = std::make_unique<tbb::task_scheduler_handle>(
-        tbb::task_scheduler_handle::get());
-    // tbb::global_control(tbb::global_control::max_allowed_parallelism, threadLimit);
-    // _tbbTaskSchedHandle = tbb::task_scheduler_handle::get();
-    // _tbbTaskSchedIsInitialized = true;
+    _tbbArena = std::make_unique<tbb::task_arena>(threadLimit);
   }
 }
 

@@ -30,6 +30,8 @@
 #include "wabi/usd/usd/clip.h"
 #include "wabi/usd/usd/clipSet.h"
 
+#include <tbb/mutex.h>
+
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/thread.hpp>
 
@@ -63,7 +65,7 @@ class Usd_ClipCache {
     explicit ConcurrentPopulationContext(Usd_ClipCache &cache);
     ~ConcurrentPopulationContext();
     Usd_ClipCache &_cache;
-    boost::mutex _mutex;
+    tbb::mutex _mutex;
   };
 
   /// Populate the cache with clips for \p prim. Returns true if clips

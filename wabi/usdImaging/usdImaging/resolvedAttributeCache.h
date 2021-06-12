@@ -88,7 +88,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
       const ValueOverridesMap valueOverrides = ValueOverridesMap())
       : _time(time),
         _rootPath(SdfPath::AbsoluteRootPath()),
-        _cacheVersion(std::make_shared<std::atomic<unsigned>>(_GetInitialCacheVersion())),
+        _cacheVersion(_GetInitialCacheVersion()),
         _valueOverrides(valueOverrides),
         _implData(implData)
   {}
@@ -97,7 +97,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
   UsdImaging_ResolvedAttributeCache()
       : _time(UsdTimeCode::Default()),
         _rootPath(SdfPath::AbsoluteRootPath()),
-        _cacheVersion(std::make_shared<std::atomic<unsigned>>(1))
+        _cacheVersion(1)
   {}
 
   ~UsdImaging_ResolvedAttributeCache()
@@ -134,7 +134,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
   void Clear()
   {
     WorkSwapDestroyAsync(_cache);
-    _cacheVersion->store(_GetInitialCacheVersion());
+    _cacheVersion = _GetInitialCacheVersion();
   }
 
   /// Use the new \p time when computing values and may clear any existing
@@ -149,7 +149,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
       // Mark all cached entries as invalid, but leave the queries behind.
       // We increment by 2 here and always keep the version an odd number,
       // this enables the use of even versions as a per-entry spin lock.
-      _cacheVersion->fetch_add(2);
+      _cacheVersion += 2;
     }
 
     // Update to correct time.
@@ -248,7 +248,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
       if (!isDescendantOfProcessedOverride) {
         for (UsdPrim descendant : UsdPrimRange(prim)) {
           if (_Entry *entry = _GetCacheEntryForPrim(descendant)) {
-            entry->version->store(_GetInvalidVersion());
+            entry->version = _GetInvalidVersion();
           }
         }
         processedOverridePaths.push_back(prim.GetPath());
@@ -282,7 +282,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
       if (!isDescendantOfProcessedOverride) {
         for (UsdPrim descendant : UsdPrimRange(prim)) {
           if (_Entry *entry = _GetCacheEntryForPrim(descendant)) {
-            entry->version->store(_GetInvalidVersion());
+            entry->version = _GetInvalidVersion();
           }
         }
         dirtySubtreeRoots->push_back(prim.GetPath());
@@ -296,32 +296,30 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
   // non-time varying data, entries may exist in the cache with invalid
   // values. The version is used to determine validity.
   struct _Entry {
-    _Entry()
-        : value(Strategy::MakeDefault()),
-          version(std::make_shared<std::atomic<unsigned>>(_GetInitialEntryVersion()))
+    _Entry() : value(Strategy::MakeDefault()), version(_GetInitialEntryVersion())
     {}
 
     _Entry(const query_type &query_, const value_type &value_, unsigned version_)
         : query(query_),
           value(value_),
-          version(std::make_shared<std::atomic<unsigned>>(version_))
+          version(version_)
     {}
 
     query_type query;
     value_type value;
-    std::shared_ptr<std::atomic<unsigned>> version;
+    tbb::atomic<unsigned> version;
   };
 
   // Returns the version number for a valid cache entry
   unsigned _GetValidVersion() const
   {
-    return *_cacheVersion.get() + 1;
+    return _cacheVersion + 1;
   }
 
   // Returns the version number for an invalid cache entry
   unsigned _GetInvalidVersion() const
   {
-    return *_cacheVersion.get() - 1;
+    return _cacheVersion - 1;
   }
 
   // Initial version numbers
@@ -357,7 +355,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
 
   // A serial number indicating the valid state of entries in the cache. When
   // an entry has an equal or greater value, the entry is valid.
-  std::shared_ptr<std::atomic<unsigned>> _cacheVersion;
+  tbb::atomic<unsigned> _cacheVersion;
 
   // Value overrides for a set of descendents.
   ValueOverridesMap _valueOverrides;
@@ -373,15 +371,13 @@ void UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_SetCacheEntryForPri
     _Entry *entry) const
 {
   // Note: _cacheVersion is not allowed to change during cache access.
-  unsigned v = entry->version->load(std::memory_order_relaxed);
-  if (v < *_cacheVersion.get() &&
-      entry->version->compare_exchange_weak(
-          v, _GetValidVersion(), std::memory_order_release, std::memory_order_relaxed)) {
-    entry->value = value;
-    entry->version->store(_GetValidVersion());
+  unsigned v = entry->version;
+  if (v < _cacheVersion && entry->version.compare_and_swap(_cacheVersion, v) == v) {
+    entry->value   = value;
+    entry->version = _GetValidVersion();
   }
   else {
-    while (*entry->version.get() != _GetValidVersion()) {
+    while (entry->version != _GetValidVersion()) {
       // Future work: A suggestion is that rather than literally spinning
       // here, we should use the pause instruction, which sleeps for one
       // cycle while allowing hyper threads to continue. Folly has a nice
@@ -396,15 +392,15 @@ typename UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_Entry *
 UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_GetCacheEntryForPrim(
     const UsdPrim &prim) const
 {
-  auto it = _cache.find(prim);
+  typename _CacheMap::const_iterator it = _cache.find(prim);
   if (it != _cache.end()) {
     return &it->second;
   }
 
   _Entry e;
-  e.query = Strategy::MakeQuery(prim, _implData);
-  e.value = Strategy::MakeDefault();
-  e.version->store(_GetInvalidVersion());
+  e.query   = Strategy::MakeQuery(prim, _implData);
+  e.value   = Strategy::MakeDefault();
+  e.version = _GetInvalidVersion();
   return &(_cache.insert(typename _CacheMap::value_type(prim, e)).first->second);
 }
 
@@ -419,7 +415,7 @@ UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_GetValue(const UsdPrim &
     return &default_;
 
   _Entry *entry = _GetCacheEntryForPrim(prim);
-  if (*entry->version.get() == _GetValidVersion()) {
+  if (entry->version == _GetValidVersion()) {
     // Cache hit
     return &entry->value;
   }

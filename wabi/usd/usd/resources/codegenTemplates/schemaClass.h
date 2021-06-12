@@ -28,6 +28,9 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
+
+/* clang-format off */
+
 #ifndef {{ Upper(libraryName) }}_GENERATED_{{ Upper(cls.className) }}_H
 #define {{ Upper(libraryName) }}_GENERATED_{{ Upper(cls.className) }}_H
 
@@ -446,3 +449,4 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
    * ======================================================================
    * --(BEGIN CUSTOM CODE)-- */
 
+/* clang-format on */

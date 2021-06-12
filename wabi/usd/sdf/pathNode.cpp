@@ -37,6 +37,7 @@
 #include "wabi/base/trace/trace.h"
 
 #include <boost/functional/hash.hpp>
+#include <tbb/atomic.h>
 #include <tbb/concurrent_hash_map.h>
 #include <tbb/spin_mutex.h>
 
@@ -59,7 +60,7 @@ static_assert(sizeof(Sdf_PrimPathNode) == 3 * sizeof(void *), "");
 static_assert(sizeof(Sdf_PrimPropertyPathNode) == 3 * sizeof(void *), "");
 
 struct Sdf_PathNodePrivateAccess {
-  template<class Handle> static inline std::atomic<unsigned int> &GetRefCount(Handle h)
+  template<class Handle> static inline tbb::atomic<unsigned int> &GetRefCount(Handle h)
   {
     Sdf_PathNode const *p = reinterpret_cast<Sdf_PathNode const *>(h.GetPtr());
     return p->_refCount;
@@ -167,7 +168,7 @@ inline typename Table::NodeHandle _FindOrCreate(Table &table,
 {
   typename Table::Type::accessor accessor;
   if (table.map.insert(accessor, _MakeParentAnd(parent, args...)) ||
-      Access::GetRefCount(accessor->second).fetch_add(1) == 0) {
+      Access::GetRefCount(accessor->second).fetch_and_increment() == 0) {
     // Either there was no entry in the table, or there was but it had begun
     // dying (another client dropped its refcount to 0).  We have to create
     // a new entry in the table.  When the client that is killing the other

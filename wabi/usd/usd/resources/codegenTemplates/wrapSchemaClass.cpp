@@ -28,6 +28,9 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
+
+/* clang-format off */
+
 #include "wabi/usd/usd/schemaBase.h"
 #include "{{ libraryPath }}/{{ cls.GetHeaderFile() }}"
 
@@ -212,3 +215,4 @@ void wrap{{cls.cppClassName}}()
  * ======================================================================
  * --(BEGIN CUSTOM CODE)-- */
 
+/* clang-format on */

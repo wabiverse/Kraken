@@ -621,8 +621,9 @@ HANDLE_sdl_vk_win ANCHOR_init_vulkan(VkResult &err)
   /**
    * Create Pixar Hydra Graphics Interface. */
   HdDriver driver;
-  driver.name   = HgiTokens->renderDriver;
-  driver.driver = VtValue{g_PixarHydra};
+  HgiUniquePtr hgi = HgiUniquePtr(g_PixarHydra);
+  driver.name      = HgiTokens->renderDriver;
+  driver.driver    = VtValue(hgi.get());
 
   /**
    * Setup Pixar Driver & Engine. */
