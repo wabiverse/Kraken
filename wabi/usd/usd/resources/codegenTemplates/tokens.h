@@ -28,8 +28,8 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#ifndef{{ Upper(tokensPrefix) }}_TOKENS_H
-#define{{ Upper(tokensPrefix) }}_TOKENS_H
+#ifndef {{ Upper(tokensPrefix) }}_TOKENS_H
+#define {{ Upper(tokensPrefix) }}_TOKENS_H
 
 /**
  * @file {{ libraryName }}/tokens.h */
@@ -68,27 +68,29 @@
  * correctly.
  *
  * {{ tokensPrefix }}Tokens also contains all of the @em allowedTokens values
- * declared for schema builtin attributes of 'token' scene description type. */
+ * declared for schema builtin attributes of 'token' scene description type.
 {% if tokens %}
-/**
+ *
  * Use {{ tokensPrefix }}Tokens like so:
  *
  * @code
  *   gprim.GetMyTokenValuedAttr().Set({{ tokensPrefix }}Tokens->{{ tokens[0].id }});
- * @endcode */
-{% endif %}
-struct {{ tokensPrefix }} TokensType {
+ * @endcode
+{% endif %} */
+struct {{ tokensPrefix }}TokensType {
+
 {% if useExportAPI %}
 {{ Upper(libraryName) }}_API
 {% endif %}
-{{ tokensPrefix }}
-  TokensType();
+{{ tokensPrefix }}TokensType();
+
 {% for token in tokens %}
   /**
    * @brief "{{ token.value }}"
    *
    * {{ token.desc }} */
-  const TfToken{{token.id}};
+  const TfToken {{token.id}};
+
 {% endfor %}
   /**
    * A vector of all of the tokens listed above. */
@@ -98,14 +100,11 @@ struct {{ tokensPrefix }} TokensType {
 /**
  * @var {{ tokensPrefix }}Tokens
  *
- * A global variable with static, efficient @link TfToken TfTokens\endlink
- * for use in all public USD API. @sa {{ tokensPrefix }}TokensType */
-extern
-{% if useExportAPI %}
-{{ Upper(libraryName) }}_API
-{% endif %} TfStaticData <{{ tokensPrefix }}TokensType >
-{{ tokensPrefix }}Tokens;
-*/
+ * A global variable with static, efficient @link TfToken
+ * TfTokens\endlink for use in all public USD API.
+ * 
+ * @sa {{ tokensPrefix }}TokensType */
+extern {% if useExportAPI %}{{ Upper(libraryName) }}_API {% endif %} TfStaticData <{{ tokensPrefix }}TokensType > {{ tokensPrefix }}Tokens;
 {% if useExportAPI %}
 
 {{namespaceClose}}

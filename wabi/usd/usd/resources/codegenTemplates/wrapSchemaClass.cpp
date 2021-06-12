@@ -84,10 +84,9 @@ static std::string _Repr(const {{cls.cppClassName}} & self)
   std::string primRepr = TfPyRepr(self.GetPrim());
 {% if cls.isMultipleApply %}
   std::string instanceName = self.GetName();
-  return TfStringPrintf(
-      "{{ libraryName[0]|upper }}{{ libraryName[1:] }}.{{ cls.className }}(%s, '%s')",
-      primRepr.c_str(),
-      instanceName.c_str());
+  return TfStringPrintf("{{ libraryName[0]|upper }}{{ libraryName[1:] }}.{{ cls.className }}(%s, '%s')",
+                        primRepr.c_str(),
+                        instanceName.c_str());
 {% else %}
   return TfStringPrintf("{{ libraryName[0]|upper }}{{ libraryName[1:] }}.{{ cls.className }}(%s)",
                         primRepr.c_str());
@@ -103,67 +102,72 @@ void wrap{{cls.cppClassName}}()
 {
   typedef {{ cls.cppClassName }} This;
 
-  {% if cls.isAPISchemaBase %}
+{% if cls.isAPISchemaBase %}
   class_<This, bases<{{ cls.parentCppClassName }}>, boost::noncopyable> cls("APISchemaBase", "", no_init);
-  { % else % }
+{% else %}
   class_<This, bases<{{ cls.parentCppClassName }}>> cls("{{ cls.className }}");
 {% endif %}
 
   cls
-{% if not cls.isAPISchemaBase %}
-{% if cls.isMultipleApply %}
-  .def(init<UsdPrim, TfToken>())
-      .def(init<UsdSchemaBase const &, TfToken>()){ % else % }
-      .def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj"))){% endif %} {% endif %}
-      .def(TfTypePythonClass())
+{% if not cls.isAPISchemaBase %}{% if cls.isMultipleApply %}
+    .def(init<UsdPrim, TfToken>())
+    .def(init<UsdSchemaBase const &, TfToken>())
+{% else %}
+    .def(init<UsdPrim>
+        (arg("prim")))
+    .def(init<UsdSchemaBase const &>
+        (arg("schemaObj")))
+{% endif %}
+{% endif %}
+    .def(TfTypePythonClass())
 
 {% if not cls.isAPISchemaBase %}
 {% if cls.isMultipleApply %}
-  .def("Get",
-       ({{ cls.cppClassName }}(*)(const UsdStagePtr &stage, const SdfPath &path)) & This::Get,
-       (arg("stage"), arg("path")))
-      .def("Get",
-           ({{ cls.cppClassName }}(*)(const UsdPrim &prim, const TfToken &name)) & This::Get,
-           (arg("prim"), arg("name"))){ % else % }
-      .def("Get", &This::Get, (arg("stage"), arg("path"))){% endif %}
-      .staticmethod("Get")
+    .def("Get",
+        ({{ cls.cppClassName }}(*)(const UsdStagePtr &stage, const SdfPath &path)) & This::Get,
+        (arg("stage"), arg("path")))
+    .def("Get",
+        ({{ cls.cppClassName }}(*)(const UsdPrim &prim, const TfToken &name)) & This::Get,
+        (arg("prim"), arg("name"))){ % else % }
+    .def("Get", &This::Get,
+        (arg("stage"), arg("path"))){% endif %}
+        .staticmethod("Get")
 {% endif %}
 {% if cls.isConcrete %}
 
-  .def("Define", &This::Define, (arg("stage"), arg("path"))).staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path"))).staticmethod("Define")
 {% endif %}
 {% if cls.isAppliedAPISchema and not cls.isMultipleApply %}
 
-  .def("Apply", &This::Apply, (arg("prim"))).staticmethod("Apply")
+    .def("Apply", &This::Apply, (arg("prim"))).staticmethod("Apply")
 {% endif %}
 {% if cls.isAppliedAPISchema and cls.isMultipleApply %}
 
-  .def("Apply", &This::Apply, (arg("prim"), arg("name")))
-    .staticmethod("Apply")
+    .def("Apply", &This::Apply, (arg("prim"), arg("name")))
+        .staticmethod("Apply")
 {% endif %}
 
-  .def("GetSchemaAttributeNames", &This::GetSchemaAttributeNames,
-    arg("includeInherited") = true,
+    .def("GetSchemaAttributeNames", &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
 {% if cls.isMultipleApply %}
-  arg("instanceName") = TfToken(),
+         arg("instanceName") = TfToken(),
 {% endif %}
-    return_value_policy<TfPySequenceToList>()).staticmethod("GetSchemaAttributeNames")
+         return_value_policy<TfPySequenceToList>()).staticmethod("GetSchemaAttributeNames")
 
-  .def("_GetStaticTfType",
-    (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
-    .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType",
+        (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+        .staticmethod("_GetStaticTfType")
 
-  .def(!self)
+    .def(!self)
 
 {% for attrName in cls.attrOrder -%}
 {% set attr = cls.attrs[attrName]%}
 {# Only emit Create / Get API if apiName is not empty string. #}
 {% if attr.apiName != '' %}
 
-  .def("Get{{ Proper(attr.apiName) }}Attr", &This::Get{{ Proper(attr.apiName) }}Attr)
+    .def("Get{{ Proper(attr.apiName) }}Attr", &This::Get{{ Proper(attr.apiName) }}Attr)
     .def("Create{{ Proper(attr.apiName) }}Attr", &_Create{{ Proper(attr.apiName) }}Attr,
-          (arg("defaultValue") = object(), arg("writeSparsely") = false))
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
 {% endif %}
 {% endfor %}
 
@@ -172,16 +176,16 @@ void wrap{{cls.cppClassName}}()
 {% set rel = cls.rels[relName]%}
 {% if rel.apiName != '' %}
 
-  .def("Get{{ Proper(rel.apiName) }}Rel", &This::Get {{ Proper(rel.apiName) }} Rel)
+    .def("Get{{ Proper(rel.apiName) }}Rel", &This::Get {{ Proper(rel.apiName) }} Rel)
     .def("Create{{ Proper(rel.apiName) }}Rel", &This::Create{{ Proper(rel.apiName) }}Rel)
 {% endif %}
 {% endfor %}
 {% if cls.isMultipleApply and cls.propertyNamespacePrefix %}
-  .def("Is{{ cls.usdPrimTypeName }}Path", _WrapIs{{ cls.usdPrimTypeName }}Path)
-      .staticmethod("Is{{ cls.usdPrimTypeName }}Path")
+    .def("Is{{ cls.usdPrimTypeName }}Path", _WrapIs{{ cls.usdPrimTypeName }}Path)
+        .staticmethod("Is{{ cls.usdPrimTypeName }}Path")
 {% endif %}
 {% if not cls.isAPISchemaBase %}
-  .def("__repr__", ::_Repr)
+    .def("__repr__", ::_Repr)
 {% endif %}
 
   ;
@@ -200,12 +204,11 @@ void wrap{{cls.cppClassName}}()
  *         ;
  *       }
  *
- *   Of course any other ancillary or support code may be provided. */
+ *   Of course any other ancillary or support code may be provided.
 {% if useExportAPI %}
-/**
  *   Just remember to wrap code in the appropriate delimiters:
- *   'namespace {', '}'. */
+ *   'namespace {', '}'.
 {% endif %}
-/**
  * ======================================================================
  * --(BEGIN CUSTOM CODE)-- */
+

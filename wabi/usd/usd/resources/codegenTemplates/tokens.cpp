@@ -44,7 +44,6 @@ TokensType() :
 {% for token in tokens %}
   {{ token.id }}{% if not loop.last %},
 {% endif %}
-
 {% endfor %}
   })
 {}

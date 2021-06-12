@@ -28,8 +28,8 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#ifndef{{ Upper(libraryName) }}_GENERATED_{{ Upper(cls.className) }}_H
-#define{{ Upper(libraryName) }}_GENERATED_{{ Upper(cls.className) }}_H
+#ifndef {{ Upper(libraryName) }}_GENERATED_{{ Upper(cls.className) }}_H
+#define {{ Upper(libraryName) }}_GENERATED_{{ Upper(cls.className) }}_H
 
 /**
  * @file {{ libraryName }}/{{ cls.GetHeaderFile() }} */
@@ -69,17 +69,13 @@ class SdfAssetPath;
  * -------------------------------------------------------------------------- */
 
 /**
- * @class {{ cls.cppClassName }} */
-{% if cls.doc -%}
-/**
- * {{ cls.doc }} */
-{% endif %}
+ * @class {{ cls.cppClassName }}
+ *{% if cls.doc -%}
+{{ cls.doc }}
+ {% endif %}
 {% if cls.doc and hasTokenAttrs -%}
-/**
- * */
 {% endif %}
 {% if hasTokenAttrs -%}
-/**
  * For any described attribute @em Fallback @em Value or @em Allowed
  * @em Values below that are text/tokens, the actual token is published
  * and defined in @ref {{ tokensPrefix }}Tokens. So to set an attribute
@@ -347,6 +343,7 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
  private:
   /* needs to invoke _GetStaticTfType. */
   friend class UsdSchemaRegistry;
+
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
@@ -370,16 +367,16 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
    * {{ Upper(attr.apiName) }}
    * ---------------------------------------------------------------------
    * {{ attr.doc }}
-   *                                                                       */
+   *
 {% if attr.details %}
-  /**
+   *
    * | ||
-   * | -- | -- | */
+   * | -- | -- |
 {% for detail in attr.details %}
-  /**
-   * | {{ detail[0] }} | {{ detail[1] }} | */
+   *
+   * | {{ detail[0] }} | {{ detail[1] }} |
 {% endfor %}
-{% endif %}
+{% endif %}   */
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
@@ -411,9 +408,9 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
    * {{ Upper(rel.apiName) }}
    * ---------------------------------------------------------------------
    * {{ rel.doc }}
-   *                                                                       */
+   *
 {% for detail in rel.details %}
-  /**
+   *
    * @n  {{ detail[0] }}: {{ detail[1] }} */
 {% endfor %}
   {% if useExportAPI -%}
@@ -434,17 +431,18 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
 {% endfor %}
  public:
   /**
-   * =====================================================================
-   * Feel free to add custom code below this line. It will be preserved by
-   * the code generator.
+   * ======================================================================
+   *   Feel free to add custom code below this line. It will be preserved
+   *   by the code generator.
    *
-   * Just remember to:
-   *  - Close the class declaration with }; */
+   *   Just remember to:
+   *     - Close the class declaration with };
 {% if useExportAPI %}
-  /**
-   *  - Close the namespace with {{ namespaceClose }} */
+   *
+   *     - Close the namespace with {{ namespaceClose }}
 {% endif %}
-  /**
-   *  - Close the include guard with #endif
-   * =====================================================================
+   *
+   *     - Close the include guard with #endif
+   * ======================================================================
    * --(BEGIN CUSTOM CODE)-- */
+
