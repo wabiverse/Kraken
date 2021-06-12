@@ -30,52 +30,28 @@
  */
 #include "{{ libraryPath }}/tokens.h"
 
-{
-  % if useExportAPI %
-}
-{{namespaceOpen}}
+{% if useExportAPI %}
+{{ namespaceOpen }}
 
-{ % endif % } {
-  {
-    tokensPrefix
-  }
-}
-TokensType::
-{
-  {
-    tokensPrefix
-  }
-}
+{% endif %}
+{{ tokensPrefix }}
+TokensType::{{ tokensPrefix}}
 TokensType() :
-{% for token in tokens %
-}
-    {{ token.id }}("{{ token.value }}", TfToken::Immortal),
-{% endfor %}
-    allTokens({
 {% for token in tokens %}
-        {{ token.id }}{% if not loop.last %},{% endif %}
+  {{ token.id }}("{{ token.value }}", TfToken::Immortal),
+{% endfor %}
+  allTokens({
+{% for token in tokens %}
+  {{ token.id }}{% if not loop.last %},
+{% endif %}
 
 {% endfor %}
-    })
-    {}
+  })
+{}
 
-    TfStaticData <
-    {
-      {
-        tokensPrefix
-      }
-    }
-    TokensType >
-    {
-      {
-        tokensPrefix
-      }
-    }
+TfStaticData <{{ tokensPrefix }}TokensType >{{ tokensPrefix}}
     Tokens;
-    {
-      % if useExportAPI %
-    }
+{% if useExportAPI %}
 
-    {{namespaceClose}} {
-      % endif %
-    }
+{{namespaceClose}}
+{% endif %}

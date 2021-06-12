@@ -31,14 +31,10 @@
 #include "{{ libraryPath }}/tokens.h"
 #include <boost/python/class.hpp>
 
-{
-  % if useExportAPI %
-}
+{% if useExportAPI %}
 {{namespaceUsing}}
 
-{
-  % endif %
-}
+{% endif %}
 namespace {
 
 /**
@@ -70,31 +66,14 @@ template<typename T> void _AddToken(T &cls, const char *name, const TfToken &tok
                               boost::mpl::vector1<std::string>()));
 }
 
-}  // namespace
+}  /* anonymous */
 
-void wrap
-{
-  {
-    tokensPrefix
-  }
-}
+void wrap {{ tokensPrefix }}
 Tokens()
 {
-  boost::python::class_ <
-  {
-    {
-      tokensPrefix
-    }
-  }
+  boost::python::class_ < {{ tokensPrefix }}
   TokensType, boost::noncopyable > cls("Tokens", boost::python::no_init);
-  {% for token in tokens %
-  }
-  _AddToken(cls, "{{ token.id }}", {
-    {
-      tokensPrefix
-    }
-  } Tokens->{{token.id}});
-  {
-    % endfor %
-  }
+{% for token in tokens %}
+  _AddToken(cls, "{{ token.id }}", {{ tokensPrefix }}Tokens->{{token.id}});
+{% endfor %}
 }
