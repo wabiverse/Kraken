@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#ifndef PXR_IMAGING_HGIINTEROP_HGIINTEROPVULKAN_H
-#define PXR_IMAGING_HGIINTEROP_HGIINTEROPVULKAN_H
+#ifndef WABI_IMAGING_HGIINTEROP_HGIINTEROPVULKAN_H
+#define WABI_IMAGING_HGIINTEROP_HGIINTEROPVULKAN_H
 
 /* clang-format off */
 #include "wabi/wabi.h"

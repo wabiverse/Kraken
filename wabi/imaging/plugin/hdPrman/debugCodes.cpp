@@ -1,5 +1,5 @@
 //
-// Copyright 2020 Pixar
+// Copyright 2019 Pixar
 //
 // Licensed under the Apache License, Version 2.0 (the "Apache License")
 // with the following modification; you may not use this file except in
@@ -21,47 +21,22 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#ifndef WABI_IMAGING_HGIINTEROP_HGIINTEROPOPENGL_H
-#define WABI_IMAGING_HGIINTEROP_HGIINTEROPOPENGL_H
+#include "wabi/imaging/plugin/hdPrman/debugCodes.h"
 
-#include "wabi/base/gf/vec4i.h"
-#include "wabi/imaging/hgi/texture.h"
-#include "wabi/imaging/hgiInterop/api.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/registryManager.h"
 
 WABI_NAMESPACE_BEGIN
 
-class VtValue;
-
-/// \class HgiInteropOpenGL
-///
-/// Provides GL/GL interop.
-///
-class HgiInteropOpenGL final {
- public:
-  HGIINTEROP_API
-  HgiInteropOpenGL();
-
-  HGIINTEROP_API
-  ~HgiInteropOpenGL();
-
-  /// Composite provided color (and optional depth) textures over app's
-  /// framebuffer contents.
-  HGIINTEROP_API
-  void CompositeToInterop(HgiTextureHandle const &color,
-                          HgiTextureHandle const &depth,
-                          VtValue const &framebuffer,
-                          GfVec4i const &viewport);
-
- private:
-  uint32_t _vs;
-  uint32_t _fsNoDepth;
-  uint32_t _fsDepth;
-  uint32_t _prgNoDepth;
-  uint32_t _prgDepth;
-  uint32_t _vertexBuffer;
-};
+TF_REGISTRY_FUNCTION(TfDebug)
+{
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HDPRMAN_PRIMVARS, "Primvars");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HDPRMAN_MATERIALS, "Materials");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HDPRMAN_DUMP_MATERIALX_OSL_SHADER,
+                              "Print MaterialX Generated Osl Shaders");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HDPRMAN_LIGHT_LINKING, "Light linking");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HDPRMAN_LIGHT_LIST, "Light list");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HDPRMAN_VSTRUCTS, "Vstruct expansion");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HDPRMAN_LIGHT_FILTER_LINKING, "Light filter linking");
+}
 
 WABI_NAMESPACE_END
-
-#endif

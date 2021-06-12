@@ -1,5 +1,5 @@
 //
-// Copyright 2020 Pixar
+// Copyright 2019 Pixar
 //
 // Licensed under the Apache License, Version 2.0 (the "Apache License")
 // with the following modification; you may not use this file except in
@@ -21,47 +21,35 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#ifndef WABI_IMAGING_HGIINTEROP_HGIINTEROPOPENGL_H
-#define WABI_IMAGING_HGIINTEROP_HGIINTEROPOPENGL_H
+#ifndef EXT_RMANPKG_23_0_PLUGIN_RENDERMAN_PLUGIN_HD_PRMAN_MESH_H
+#define EXT_RMANPKG_23_0_PLUGIN_RENDERMAN_PLUGIN_HD_PRMAN_MESH_H
 
-#include "wabi/base/gf/vec4i.h"
-#include "wabi/imaging/hgi/texture.h"
-#include "wabi/imaging/hgiInterop/api.h"
+#include "wabi/base/gf/matrix4f.h"
+#include "wabi/imaging/hd/enums.h"
+#include "wabi/imaging/hd/mesh.h"
+#include "wabi/imaging/hd/vertexAdjacency.h"
+#include "wabi/imaging/plugin/hdPrman/gprim.h"
 #include "wabi/wabi.h"
+
+#include "Riley.h"
 
 WABI_NAMESPACE_BEGIN
 
-class VtValue;
-
-/// \class HgiInteropOpenGL
-///
-/// Provides GL/GL interop.
-///
-class HgiInteropOpenGL final {
+class HdPrman_Mesh final : public HdPrman_Gprim<HdMesh> {
  public:
-  HGIINTEROP_API
-  HgiInteropOpenGL();
+  typedef HdPrman_Gprim<HdMesh> BASE;
+  HF_MALLOC_TAG_NEW("new HdPrman_Mesh");
+  HdPrman_Mesh(SdfPath const &id);
+  virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
 
-  HGIINTEROP_API
-  ~HgiInteropOpenGL();
-
-  /// Composite provided color (and optional depth) textures over app's
-  /// framebuffer contents.
-  HGIINTEROP_API
-  void CompositeToInterop(HgiTextureHandle const &color,
-                          HgiTextureHandle const &depth,
-                          VtValue const &framebuffer,
-                          GfVec4i const &viewport);
-
- private:
-  uint32_t _vs;
-  uint32_t _fsNoDepth;
-  uint32_t _fsDepth;
-  uint32_t _prgNoDepth;
-  uint32_t _prgDepth;
-  uint32_t _vertexBuffer;
+ protected:
+  virtual RtParamList _ConvertGeometry(HdPrman_Context *context,
+                                       HdSceneDelegate *sceneDelegate,
+                                       const SdfPath &id,
+                                       RtUString *primType,
+                                       std::vector<HdGeomSubset> *geomSubsets) override;
 };
 
 WABI_NAMESPACE_END
 
-#endif
+#endif  // EXT_RMANPKG_23_0_PLUGIN_RENDERMAN_PLUGIN_HD_PRMAN_MESH_H

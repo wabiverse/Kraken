@@ -21,45 +21,32 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#ifndef WABI_IMAGING_HGIINTEROP_HGIINTEROPOPENGL_H
-#define WABI_IMAGING_HGIINTEROP_HGIINTEROPOPENGL_H
+#ifndef EXT_RMANPKG_23_0_PLUGIN_RENDERMAN_PLUGIN_HDX_PRMAN_RESOURCE_REGISTRY_H
+#define EXT_RMANPKG_23_0_PLUGIN_RENDERMAN_PLUGIN_HDX_PRMAN_RESOURCE_REGISTRY_H
 
-#include "wabi/base/gf/vec4i.h"
-#include "wabi/imaging/hgi/texture.h"
-#include "wabi/imaging/hgiInterop/api.h"
+#include "context.h"
+#include "wabi/imaging/hd/resourceRegistry.h"
+#include "wabi/imaging/plugin/hdPrman/api.h"
 #include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 
-class VtValue;
-
-/// \class HgiInteropOpenGL
-///
-/// Provides GL/GL interop.
-///
-class HgiInteropOpenGL final {
+/// HdxPrman's implementation of the hydra resource registry.
+/// Renderman manages its resources internally, but uses the HdResourceRegistry
+/// to respond to certain resource changes, such as texture reloading.
+class HdxPrman_ResourceRegistry final : public HdResourceRegistry {
  public:
-  HGIINTEROP_API
-  HgiInteropOpenGL();
+  HDPRMAN_API
+  HdxPrman_ResourceRegistry(std::shared_ptr<HdxPrman_InteractiveContext> const &context);
 
-  HGIINTEROP_API
-  ~HgiInteropOpenGL();
+  HDPRMAN_API
+  virtual ~HdxPrman_ResourceRegistry();
 
-  /// Composite provided color (and optional depth) textures over app's
-  /// framebuffer contents.
-  HGIINTEROP_API
-  void CompositeToInterop(HgiTextureHandle const &color,
-                          HgiTextureHandle const &depth,
-                          VtValue const &framebuffer,
-                          GfVec4i const &viewport);
+  HDPRMAN_API
+  void ReloadResource(TfToken const &resourceType, std::string const &path) override;
 
  private:
-  uint32_t _vs;
-  uint32_t _fsNoDepth;
-  uint32_t _fsDepth;
-  uint32_t _prgNoDepth;
-  uint32_t _prgDepth;
-  uint32_t _vertexBuffer;
+  std::shared_ptr<HdxPrman_InteractiveContext> _context;
 };
 
 WABI_NAMESPACE_END

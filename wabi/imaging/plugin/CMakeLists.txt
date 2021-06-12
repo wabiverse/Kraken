@@ -1,6 +1,5 @@
 add_subdirectory(hdPhoenix)
 add_subdirectory(hdEmbree)
-add_subdirectory(hdPrmanLoader)
 add_subdirectory(hioOiio)
 add_subdirectory(hioOpenVDB)
 
@@ -10,6 +9,16 @@ endif()
 
 if(WITH_CYCLES)
   add_subdirectory(hdCycles)
+endif()
+
+if(WITH_RENDERMAN)
+  add_subdirectory(hdPrmanLoader)
+  add_subdirectory(hdPrman)
+  add_subdirectory(hdxPrman)
+  add_subdirectory(rmanArgsParser)
+  add_subdirectory(rmanDiscovery)
+  add_subdirectory(rmanOslParser)
+  add_subdirectory(rtx_glfImage)
 endif()
 
 if(WITH_PRORENDER)

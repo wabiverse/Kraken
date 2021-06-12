@@ -1,5 +1,5 @@
 //
-// Copyright 2020 Pixar
+// Copyright 2019 Pixar
 //
 // Licensed under the Apache License, Version 2.0 (the "Apache License")
 // with the following modification; you may not use this file except in
@@ -21,47 +21,27 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#ifndef WABI_IMAGING_HGIINTEROP_HGIINTEROPOPENGL_H
-#define WABI_IMAGING_HGIINTEROP_HGIINTEROPOPENGL_H
+#ifndef EXT_RMANPKG_23_0_PLUGIN_RENDERMAN_PLUGIN_HD_PRMAN_API_H
+#define EXT_RMANPKG_23_0_PLUGIN_RENDERMAN_PLUGIN_HD_PRMAN_API_H
 
-#include "wabi/base/gf/vec4i.h"
-#include "wabi/imaging/hgi/texture.h"
-#include "wabi/imaging/hgiInterop/api.h"
-#include "wabi/wabi.h"
+#include "wabi/base/arch/export.h"
 
-WABI_NAMESPACE_BEGIN
-
-class VtValue;
-
-/// \class HgiInteropOpenGL
-///
-/// Provides GL/GL interop.
-///
-class HgiInteropOpenGL final {
- public:
-  HGIINTEROP_API
-  HgiInteropOpenGL();
-
-  HGIINTEROP_API
-  ~HgiInteropOpenGL();
-
-  /// Composite provided color (and optional depth) textures over app's
-  /// framebuffer contents.
-  HGIINTEROP_API
-  void CompositeToInterop(HgiTextureHandle const &color,
-                          HgiTextureHandle const &depth,
-                          VtValue const &framebuffer,
-                          GfVec4i const &viewport);
-
- private:
-  uint32_t _vs;
-  uint32_t _fsNoDepth;
-  uint32_t _fsDepth;
-  uint32_t _prgNoDepth;
-  uint32_t _prgDepth;
-  uint32_t _vertexBuffer;
-};
-
-WABI_NAMESPACE_END
+#if defined(WABI_STATIC)
+#  define HDPRMAN_API
+#  define HDPRMAN_API_TEMPLATE_CLASS(...)
+#  define HDPRMAN_API_TEMPLATE_STRUCT(...)
+#  define HDPRMAN_LOCAL
+#else
+#  if defined(HDPRMAN_EXPORTS)
+#    define HDPRMAN_API ARCH_EXPORT
+#    define HDPRMAN_API_TEMPLATE_CLASS(...) ARCH_EXPORT_TEMPLATE(class, __VA_ARGS__)
+#    define HDPRMAN_API_TEMPLATE_STRUCT(...) ARCH_EXPORT_TEMPLATE(struct, __VA_ARGS__)
+#  else
+#    define HDPRMAN_API ARCH_IMPORT
+#    define HDPRMAN_API_TEMPLATE_CLASS(...) ARCH_IMPORT_TEMPLATE(class, __VA_ARGS__)
+#    define HDPRMAN_API_TEMPLATE_STRUCT(...) ARCH_IMPORT_TEMPLATE(struct, __VA_ARGS__)
+#  endif
+#  define HDPRMAN_LOCAL ARCH_HIDDEN
+#endif
 
 #endif

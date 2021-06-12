@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#ifndef PXR_IMAGING_HGIINTEROP_HGIINTEROP_H
-#define PXR_IMAGING_HGIINTEROP_HGIINTEROP_H
+#ifndef WABI_IMAGING_HGIINTEROP_HGIINTEROP_H
+#define WABI_IMAGING_HGIINTEROP_HGIINTEROP_H
 
 #include "wabi/base/gf/vec4i.h"
 #include "wabi/base/tf/token.h"

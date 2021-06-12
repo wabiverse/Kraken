@@ -21,47 +21,30 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#ifndef WABI_IMAGING_HGIINTEROP_HGIINTEROPOPENGL_H
-#define WABI_IMAGING_HGIINTEROP_HGIINTEROPOPENGL_H
-
-#include "wabi/base/gf/vec4i.h"
-#include "wabi/imaging/hgi/texture.h"
-#include "wabi/imaging/hgiInterop/api.h"
-#include "wabi/wabi.h"
+#include "resourceRegistry.h"
+#include "RixRiCtl.h"
+#include "context.h"
+#include "wabi/imaging/hd/tokens.h"
 
 WABI_NAMESPACE_BEGIN
 
-class VtValue;
+HdxPrman_ResourceRegistry::HdxPrman_ResourceRegistry(
+    std::shared_ptr<HdxPrman_InteractiveContext> const &context)
+    : _context(context)
+{}
 
-/// \class HgiInteropOpenGL
-///
-/// Provides GL/GL interop.
-///
-class HgiInteropOpenGL final {
- public:
-  HGIINTEROP_API
-  HgiInteropOpenGL();
+HdxPrman_ResourceRegistry::~HdxPrman_ResourceRegistry()
+{}
 
-  HGIINTEROP_API
-  ~HgiInteropOpenGL();
+void HdxPrman_ResourceRegistry::ReloadResource(TfToken const &resourceType,
+                                               std::string const &path)
+{
+  if (resourceType == HdResourceTypeTokens->texture) {
+    _context->ri->InvalidateTexture(RtUString(path.c_str()));
+  }
 
-  /// Composite provided color (and optional depth) textures over app's
-  /// framebuffer contents.
-  HGIINTEROP_API
-  void CompositeToInterop(HgiTextureHandle const &color,
-                          HgiTextureHandle const &depth,
-                          VtValue const &framebuffer,
-                          GfVec4i const &viewport);
-
- private:
-  uint32_t _vs;
-  uint32_t _fsNoDepth;
-  uint32_t _fsDepth;
-  uint32_t _prgNoDepth;
-  uint32_t _prgDepth;
-  uint32_t _vertexBuffer;
-};
+  _context->StopRender();
+  _context->sceneVersion.fetch_add(1);
+}
 
 WABI_NAMESPACE_END
-
-#endif
