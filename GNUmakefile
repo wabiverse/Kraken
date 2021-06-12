@@ -191,7 +191,7 @@ endif
 # to reduce the number of cores.
 ifndef NPROCS
 	NPROCS:=1
-	RESPONSIVENESS:=12
+	RESPONSIVENESS:=19
 	ifeq ($(OS), Linux)
 		NPROCS:=$(shell nproc)
 	endif

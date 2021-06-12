@@ -18,33 +18,21 @@
 
 /**
  * @file
- * Creator.
- * Creating Chaos.
+ * Window Manager.
+ * Making GUI Fly.
  */
 
-#ifdef _WIN32
-#  include <Windows.h>
-#endif
+#include "WM_windowmanager.h"
 
-#include "CKE_context.h"
+#include "ANCHOR_api.h"
+
+#include "UNI_context.h"
+
 #include "CKE_main.h"
 
-#include "environment.h"
+#include <wabi/base/tf/stringUtils.h>
 
-int main(int argc, char *argv[])
-{
-  cContext *C;
+WABI_NAMESPACE_USING
 
-#ifdef _WIN32
-  HWND hwnd = GetConsoleWindow();
-  ShowWindow(hwnd, 0);
-#endif
-
-  CREATOR_covah_env_init();
-
-  C = CTX_create();
-
-  CKE_covah_globals_init();
-  CKE_covah_main_init(argc, argv);
-  return 0;
-}
+static int wm_handler_fileselect()
+{}

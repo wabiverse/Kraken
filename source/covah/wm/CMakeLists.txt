@@ -18,6 +18,7 @@ set(INC_SYS
 )
 
 set(SRC
+  intern/wm_event_system.cpp
   intern/wm_init_exit.cpp
   intern/wm_styles.cpp
   intern/wm_windowmanager.cpp

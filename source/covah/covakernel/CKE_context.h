@@ -28,28 +28,7 @@
 
 class wmWindowManager;
 
+struct cContext;
 struct Scene;
-struct wScreen;
-struct ScrRegion;
-struct wmGizmoGroup;
 
-struct wContext {
-  int thread;
-
-  /* windowmanager context */
-  struct {
-    wmWindowManager *manager;
-    wScreen *screen;
-    ScrRegion *area;
-    wmGizmoGroup *gizmo_group;
-    const char *operator_poll_msg; /* reason for poll failing */
-  } wm;
-
-  /* data context */
-  struct {
-    struct Main *main;
-    struct Scene *scene;
-
-    int recursion;
-  } data;
-};
+cContext *CTX_create(void);
