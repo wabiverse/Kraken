@@ -136,7 +136,7 @@ UsdApolloEngine::UsdApolloEngine(const SdfPath &rootPath,
       m_invisedPrimPaths(invisedPaths),
       m_isPopulated(false)
 {
-  if (!SetRendererPlugin(APOLLO_GetDefaultRendererPluginId())) {
+  if (!SetRendererPlugin(TfToken("HdPhoenixRendererPlugin"))) {
     TF_CODING_ERROR("No renderer plugins found! Check before creation.");
   }
 }

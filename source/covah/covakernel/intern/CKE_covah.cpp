@@ -269,6 +269,17 @@ void CKE_covah_main_init(int argc, char *argv[])
   CKE_main_runtime(ANCHOR_SDL | ANCHOR_VULKAN);
 }
 
+bool CKE_has_kill_signal(ckeStatusCode signal)
+{
+  static ckeStatusCode kill_signal = COVAH_RUN;
+
+  if (ARCH_UNLIKELY(signal != COVAH_RUN)) {
+    kill_signal = signal;
+  }
+
+  return ARCH_UNLIKELY(kill_signal != COVAH_RUN);
+}
+
 /**
  * Where it all begins.
  * - Vulkan (and other backends to come)
@@ -292,6 +303,9 @@ ckeStatusCode CKE_main_runtime(int backend)
         status = ANCHOR_run_vulkan(instance.first, instance.second);
         WM_covah_runtime(manager);
         ANCHOR_render_vulkan(instance.second);
+        if (ARCH_UNLIKELY(CKE_has_kill_signal())) {
+          break;
+        }
       }
       ANCHOR_clean_vulkan(instance.first, vk_err);
       break;

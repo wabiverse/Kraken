@@ -376,7 +376,7 @@ void UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_SetCacheEntryForPri
   unsigned v = entry->version->load(std::memory_order_relaxed);
   if (v < *_cacheVersion.get() &&
       entry->version->compare_exchange_weak(
-          v, v + 1, std::memory_order_release, std::memory_order_relaxed)) {
+          v, _GetValidVersion(), std::memory_order_release, std::memory_order_relaxed)) {
     entry->value = value;
     entry->version->store(_GetValidVersion());
   }

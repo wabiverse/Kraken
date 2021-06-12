@@ -77,6 +77,9 @@ COVAH_KERNEL_API
 void CKE_covah_python_init(void);
 
 COVAH_KERNEL_API
+bool CKE_has_kill_signal(ckeStatusCode signal = COVAH_RUN);
+
+COVAH_KERNEL_API
 ckeStatusCode CKE_main_runtime(int backend);
 
 /* Setup in CKE_covah. */
