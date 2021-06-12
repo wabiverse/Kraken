@@ -34,7 +34,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-WorkDispatcher::WorkDispatcher() : _dispatch()
+WorkDispatcher::WorkDispatcher()
+    : _context(tbb::task_group_context::isolated,
+               tbb::task_group_context::concurrent_wait | tbb::task_group_context::default_traits),
+      _rootTask()
 {
   // The concurrent_wait flag used with the task_group_context ensures
   // the ref count will remain at 1 after all predecessor tasks are
@@ -48,9 +51,11 @@ WorkDispatcher::~WorkDispatcher()
 
 void WorkDispatcher::Wait()
 {
-  _dispatch.ctx_wait();
+  _rootTask.wait();
 
-  _dispatch.ctx_reset();
+  if (_context.is_group_execution_cancelled()) {
+    _context.reset();
+  }
 
   // Post all diagnostics to this thread's list.
   for (auto &et : _errors)
@@ -61,7 +66,7 @@ void WorkDispatcher::Wait()
 
 void WorkDispatcher::Cancel()
 {
-  _dispatch.ctx_cancel();
+  _rootTask.cancel();
 }
 
 /* static */

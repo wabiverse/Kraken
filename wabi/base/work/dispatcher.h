@@ -107,7 +107,12 @@ class WorkDispatcher {
 
   template<class Callable> inline void Run(Callable &&c)
   {
-    _dispatch.run_and_transport_errors(std::forward<Callable>(c), &_errors);
+    _rootTask.run([&] {
+      TfErrorMark m;
+      c();
+      if (!m.IsClean())
+        WorkDispatcher::_TransportErrors(m, &_errors);
+    });
   }
 
   template<class Callable, class A0, class... Args>
@@ -136,52 +141,6 @@ class WorkDispatcher {
  private:
   typedef tbb::concurrent_vector<TfErrorTransport> _ErrorTransports;
 
-  // Function invoker helper that wraps the invocation with an ErrorMark so we
-  // can transmit errors that occur back to the thread that Wait() s for tasks
-  // to complete.
-  struct _Dispatch : public tbb::isolated_task_group {
-
-    _Dispatch()
-        : isolated_task_group(),
-          m_ctx(tbb::task_group_context::isolated,
-                tbb::task_group_context::concurrent_wait | tbb::task_group_context::default_traits)
-    {}
-
-    ~_Dispatch()
-    {
-      wait();
-    }
-
-    template<class Fn> void run_and_transport_errors(Fn &&fn, _ErrorTransports *err)
-    {
-      TfErrorMark m;
-      run([&] { fn(); });
-      if (!m.IsClean()) {
-        WorkDispatcher::_TransportErrors(m, err);
-      }
-    }
-
-    void ctx_wait()
-    {
-      wait();
-    }
-
-    void ctx_reset()
-    {
-      if (m_ctx.is_group_execution_cancelled()) {
-        m_ctx.reset();
-      }
-    }
-
-    void ctx_cancel()
-    {
-      m_ctx.cancel_group_execution();
-    }
-
-   private:
-    tbb::task_group_context m_ctx;
-  };
-
  private:
   // Helper function that removes errors from \p m and stores them in a new
   // entry in \p errors.
@@ -189,7 +148,8 @@ class WorkDispatcher {
 
   // Task group context and associated root task that allows us to cancel
   // tasks invoked directly by this dispatcher.
-  _Dispatch _dispatch;
+  tbb::task_group_context _context;
+  tbb::task_group _rootTask;
 
   // The error transports we use to transmit errors in other threads back to
   // this thread.
