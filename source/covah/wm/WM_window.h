@@ -25,6 +25,9 @@
 #pragma once
 
 struct cContext;
+struct wmWindow;
 
 void WM_anchor_init(cContext *C);
 void WM_anchor_exit(void);
+void WM_window_process_events(const cContext *C);
+void WM_window_swap_buffers(wmWindow *win);

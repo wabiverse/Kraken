@@ -18,31 +18,36 @@
 
 /**
  * @file
- * Universe.
- * Set the Stage.
+ * Anchor.
+ * Bare Metal.
  */
 
-#include <wabi/wabi.h>
+#include "ANCHOR_api.h"
+#include "ANCHOR_system.h"
 
-#include <wabi/base/tf/hashmap.h>
+/* todo: more backends */
+#include "ANCHOR_vulkan.h"
 
-#include <wabi/usd/sdf/path.h>
-#include <wabi/usd/usdUI/window.h>
+#include <wabi/base/tf/error.h>
 
-struct Scene;
+WABI_NAMESPACE_USING
 
-struct wmWindow : public wabi::UsdUIWindow {
-  /** Anchor system backend pointer. */
-  void *anchorwin;
+HANDLE_sdl_vk_win ANCHOR_CreateSystem(int backend)
+{
+  switch (backend) {
+    case (ANCHOR_SDL | ANCHOR_VULKAN): {
+      VkResult vk_err;
+      auto instance = ANCHOR_init_vulkan(vk_err);
+      return instance;
+    }
 
-  /** Active scene for this window. */
-  Scene *scene;
+    default:
+      TF_CODING_ERROR("Specified a backend which is not implemented.");
+      return;
+  }
+}
 
-  /** Active session layer display name. */
-  char view_layer_name[64];
-};
-
-struct wmWindowManager {
-  /** All windows this manager controls. */
-  wabi::TfHashMap<wabi::TfToken, wmWindow *, wabi::TfHash> windows;
-};
+void ANCHOR_DestroySystem(ANCHOR_System *system)
+{
+  ANCHOR_clean_vulkan(system);
+}

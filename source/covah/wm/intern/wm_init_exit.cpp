@@ -23,7 +23,6 @@
  */
 
 #include "WM_init_exit.h" /* Own include. */
-#include "WM_windowmanager.h"
 
 #include "ANCHOR_api.h"
 
@@ -80,13 +79,4 @@ static void ShowMainMenuBar()
     ShowFileMenu();
     ANCHOR::EndMainMenuBar();
   }
-}
-
-void WM_covah_runtime(wmWindowManager *manager)
-{
-  static std::once_flag setupStyles;
-  std::call_once(setupStyles, []() { WM_init_default_styles(); });
-
-  ShowMainMenuBar();
-  manager->DisplaySpaceWindows();
 }

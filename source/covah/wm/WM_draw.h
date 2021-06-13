@@ -22,27 +22,6 @@
  * Set the Stage.
  */
 
-#include <wabi/wabi.h>
+#pragma once
 
-#include <wabi/base/tf/hashmap.h>
-
-#include <wabi/usd/sdf/path.h>
-#include <wabi/usd/usdUI/window.h>
-
-struct Scene;
-
-struct wmWindow : public wabi::UsdUIWindow {
-  /** Anchor system backend pointer. */
-  void *anchorwin;
-
-  /** Active scene for this window. */
-  Scene *scene;
-
-  /** Active session layer display name. */
-  char view_layer_name[64];
-};
-
-struct wmWindowManager {
-  /** All windows this manager controls. */
-  wabi::TfHashMap<wabi::TfToken, wmWindow *, wabi::TfHash> windows;
-};
+void WM_draw_update(cContext *C);

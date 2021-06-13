@@ -18,6 +18,8 @@ set(SRC
   intern/debug_codes.cpp
   intern/demo.cpp
   intern/draw.cpp
+  intern/event_consumer.cpp
+  intern/system.cpp
   intern/tables.cpp
   intern/vulkan.cpp
   intern/widgets.cpp
@@ -29,10 +31,15 @@ set(SRC
 
   ANCHOR_api.h
   ANCHOR_debug_codes.h
+  ANCHOR_event_consumer.h
+  ANCHOR_event_manager.h
+  ANCHOR_event.h
   ANCHOR_internal.h
   ANCHOR_rectpack.h
+  ANCHOR_system.h
   ANCHOR_textedit.h
   ANCHOR_truetype.h
+  ANCHOR_types.h
   ANCHOR_vulkan.h
 )
 

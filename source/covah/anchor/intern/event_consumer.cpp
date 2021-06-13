@@ -18,52 +18,30 @@
 
 /**
  * @file
- * Window Manager.
- * Making GUI Fly.
+ * Anchor.
+ * Bare Metal.
  */
 
+#pragma once
+
 #include "ANCHOR_api.h"
+#include "ANCHOR_event_consumer.h"
 
-#include "WM_init_exit.h"
-#include "WM_windowmanager.h"
-
-#include "CKE_main.h"
-#include "CKE_space.h"
-
-#include "CLI_icons.h"
-
-#include "UNI_context.h"
-
-#include "ED_code.h"
-#include "ED_view3d.h"
-
-WABI_NAMESPACE_USING
-
-wmWindowManager::wmWindowManager()
-{}
-
-wmWindowManager::~wmWindowManager()
-{}
-
-void wmWindowManager::DisplaySpaceWindows()
+ANCHOR_CallbackEventConsumer::ANCHOR_CallbackEventConsumer(
+    ANCHOR_EventCallbackProcPtr eventCallback,
+    ANCHOR_UserPtr userData)
 {
-  static wmWindowFlags flags;
+  m_eventCallback = eventCallback;
+  m_userData      = userData;
+}
 
-  flags |= SPACE_WINDOW_VIEW3D;
-  flags |= SPACE_WINDOW_CODE;
-  flags |= SPACE_WINDOW_SPLASH;
+bool ANCHOR_CallbackEventConsumer::processEvent(ANCHOR_IEvent *event)
+{
+  return m_eventCallback((ANCHOR_EventHandle)event, m_userData) != 0;
+}
 
-  if (flags & SPACE_WINDOW_VIEW3D) {
-    static bool reset = true;
-
-    ED_view3d_init_engine(UNI_stage_root(), reset);
-    ED_view3d_run();
-  }
-
-  if (flags & SPACE_WINDOW_CODE) {
-    ED_code_run();
-  }
-
-  if (flags & SPACE_WINDOW_SPLASH) {
-  }
+ANCHOR_EventConsumerHandle ANCHOR_CreateEventConsumer(ANCHOR_EventCallbackProcPtr eventCallback,
+                                                      ANCHOR_UserPtr userdata)
+{
+  return (ANCHOR_EventConsumerHandle) new ANCHOR_CallbackEventConsumer(eventCallback, userdata);
 }

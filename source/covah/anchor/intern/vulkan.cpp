@@ -667,11 +667,14 @@ HANDLE_sdl_vk_win ANCHOR_init_vulkan(VkResult &err)
   return std::make_pair(window, wd);
 }
 
-eAnchorStatus ANCHOR_run_vulkan(SDL_Window *window, ANCHOR_ImplVulkanH_Window *wd)
+eAnchorStatus ANCHOR_run_vulkan(ANCHOR_System *window, ANCHOR_SystemGPU *wd)
 {
+  eAnchorStatus status = ANCHOR_RUN;
+
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
     ANCHOR_ImplSDL2_ProcessEvent(&event);
+    status = ANCHOR_EVENT;
     if (event.type == SDL_QUIT)
       return ANCHOR_SUCCESS;
     if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
@@ -709,10 +712,10 @@ eAnchorStatus ANCHOR_run_vulkan(SDL_Window *window, ANCHOR_ImplVulkanH_Window *w
   /**
    * *** The Covah Runtime --> To Infinity. *** */
 
-  return ANCHOR_RUN;
+  return status;
 }
 
-void ANCHOR_render_vulkan(ANCHOR_ImplVulkanH_Window *wd)
+void ANCHOR_render_vulkan(ANCHOR_SystemGPU *wd)
 {
   ANCHOR::Render();
   ImDrawData *draw_data   = ANCHOR::GetDrawData();
@@ -728,10 +731,11 @@ void ANCHOR_render_vulkan(ANCHOR_ImplVulkanH_Window *wd)
   }
 }
 
-void ANCHOR_clean_vulkan(SDL_Window *window, VkResult &err)
+void ANCHOR_clean_vulkan(ANCHOR_System *window /**Todo::VkResult &err*/)
 {
-  err = vkDeviceWaitIdle(g_Device);
-  check_vk_result(err);
+  // err = vkDeviceWaitIdle(g_Device);
+  // check_vk_result(err);
+  vkDeviceWaitIdle(g_Device);
   ANCHOR_ImplVulkan_Shutdown();
   ANCHOR_ImplSDL2_Shutdown();
   ANCHOR::DestroyContext();

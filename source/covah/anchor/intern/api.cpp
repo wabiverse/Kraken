@@ -353,6 +353,9 @@ CODE
 #endif
 
 #include "ANCHOR_api.h"
+#include "ANCHOR_callback.h"
+#include "ANCHOR_system.h"
+#include "ANCHOR_vulkan.h"
 
 #ifndef ANCHOR_DISABLE
 
@@ -3538,12 +3541,29 @@ ANCHOR_Context *ANCHOR::GetCurrentContext()
 
 void ANCHOR::SetCurrentContext(ANCHOR_Context *ctx)
 {
-#  ifdef ANCHOR_SET_CURRENT_CONTEXT_FUNC
-  ANCHOR_SET_CURRENT_CONTEXT_FUNC(
-      ctx);  // For custom thread-based hackery you may want to have control over this.
-#  else
   G_CTX = ctx;
-#  endif
+}
+
+bool ANCHOR::ProcessEvents(ANCHOR_System *system, ANCHOR_SystemGPU *gpu)
+{
+  return (ANCHOR_run_vulkan(system, gpu) == ANCHOR_EVENT);
+}
+
+void ANCHOR::SwapChain(ANCHOR_SystemGPU *gpu)
+{
+  ANCHOR_render_vulkan(gpu);
+}
+
+eAnchorStatus AddEventConsumer(ANCHOR_EventConsumerHandle consumer)
+{
+  eAnchorStatus success;
+  if (G_CTX->EventManager) {
+    success = G_CTX->EventManager->addConsumer((ANCHOR_CallbackEventConsumer *)consumer);
+  }
+  else {
+    success = ANCHOR_ERROR;
+  }
+  return success;
 }
 
 void ANCHOR::SetAllocatorFunctions(ANCHORMemAllocFunc alloc_func,
@@ -4396,6 +4416,9 @@ void ANCHOR::Initialize(ANCHOR_Context *context)
 {
   ANCHOR_Context &g = *context;
   ANCHOR_ASSERT(!g.Initialized && !g.SettingsLoaded);
+
+  /** Create the Event Manager. */
+  g.EventManager = IM_NEW(ANCHOR_EventManager)();
 
   // Add .ini handle for ANCHOR_Window type
   {

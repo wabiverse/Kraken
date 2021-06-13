@@ -18,31 +18,24 @@
 
 /**
  * @file
- * Universe.
- * Set the Stage.
+ * Window Manager.
+ * Making GUI Fly.
  */
 
-#include <wabi/wabi.h>
+#include "CKE_context.h"
 
-#include <wabi/base/tf/hashmap.h>
+#include "UNI_window.h"
 
-#include <wabi/usd/sdf/path.h>
-#include <wabi/usd/usdUI/window.h>
+#include "WM_draw.h"
+#include "WM_window.h"
 
-struct Scene;
+void WM_draw_update(cContext *C)
+{
+  Main *cmain         = CTX_data_main(C);
+  wmWindowManager *wm = CTX_wm_manager(C);
 
-struct wmWindow : public wabi::UsdUIWindow {
-  /** Anchor system backend pointer. */
-  void *anchorwin;
-
-  /** Active scene for this window. */
-  Scene *scene;
-
-  /** Active session layer display name. */
-  char view_layer_name[64];
-};
-
-struct wmWindowManager {
-  /** All windows this manager controls. */
-  wabi::TfHashMap<wabi::TfToken, wmWindow *, wabi::TfHash> windows;
-};
+  TF_FOR_ALL(win, wm->windows)
+  {
+    WM_window_swap_buffers(win->second);
+  }
+}

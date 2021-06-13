@@ -295,35 +295,35 @@ bool CKE_has_kill_signal(ckeStatusCode signal)
  *   and immediate graphics API for the
  *   life of the application. */
 
-ckeStatusCode CKE_main_runtime(int backend)
-{
-  eAnchorStatus status     = ANCHOR_RUN;
-  wmWindowManager *manager = new wmWindowManager();
-  /** RUNTIMES ::: */
-  switch (backend) {
-    case (ANCHOR_SDL | ANCHOR_VULKAN): {
-      VkResult vk_err;
+// ckeStatusCode CKE_main_runtime(int backend)
+// {
 
-      auto instance = ANCHOR_init_vulkan(vk_err);
-      while (ARCH_LIKELY(status != ANCHOR_SUCCESS)) {
-        status = ANCHOR_run_vulkan(instance.first, instance.second);
-        WM_covah_runtime(manager);
-        ANCHOR_render_vulkan(instance.second);
-        if (ARCH_UNLIKELY(CKE_has_kill_signal())) {
-          break;
-        }
-      }
-      ANCHOR_clean_vulkan(instance.first, vk_err);
-      break;
-    }
+//   wmWindowManager *manager = new wmWindowManager();
+//   /** RUNTIMES ::: */
+//   switch (backend) {
+//     case (ANCHOR_SDL | ANCHOR_VULKAN): {
+//       VkResult vk_err;
 
-    default:
-      TF_CODING_ERROR("Specified a backend which is not implemented.");
-      return COVAH_ERROR;
-  }
+//       auto instance = ANCHOR_init_vulkan(vk_err);
+//       while (ARCH_LIKELY(status != ANCHOR_SUCCESS)) {
+//         status = ANCHOR_run_vulkan(instance.first, instance.second);
+//         WM_covah_runtime(manager);
+//         ANCHOR_render_vulkan(instance.second);
+//         if (ARCH_UNLIKELY(CKE_has_kill_signal())) {
+//           break;
+//         }
+//       }
+//       ANCHOR_clean_vulkan(instance.first, vk_err);
+//       break;
+//     }
 
-  return COVAH_SUCCESS;
-}
+//     default:
+//       TF_CODING_ERROR("Specified a backend which is not implemented.");
+//       return COVAH_ERROR;
+//   }
+
+//   return COVAH_SUCCESS;
+// }
 
 void CKE_main_free()
 {

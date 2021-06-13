@@ -18,35 +18,40 @@
 
 /**
  * @file
- * Window Manager.
- * Making GUI Fly.
+ * Anchor.
+ * Bare Metal.
  */
 
 #pragma once
 
-#include "WM_api.h"
+#include "ANCHOR_api.h"
+#include "ANCHOR_types.h"
 
-#include "CLI_icons.h"
-
-#include "CKE_space.h"
-
-#include <wabi/base/tf/hashmap.h>
-
-class wmWindowManager {
-
+class ANCHOR_IEvent {
  public:
-  COVAH_WM_API
-  explicit wmWindowManager();
+  /**
+   * Destructor. */
+  virtual ~ANCHOR_IEvent()
+  {}
 
-  COVAH_WM_API
-  ~wmWindowManager();
+  /**
+   * Returns the event type.
+   * @return The event type. */
+  virtual ANCHOR_EventType getType() = 0;
 
-  /*
-   * ---------------------------------------------------------------------
-   *  DISPLAY WINDOWS
-   * ---------------------------------------------------------------------
-   */
+  /**
+   * Returns the time this event was generated.
+   * @return The event generation time. */
+  virtual ANCHOR_Time getTime() = 0;
 
-  COVAH_WM_API
-  void DisplaySpaceWindows();
+  /**
+   * Returns the window this event was generated on,
+   * or NULL if it is a 'system' event.
+   * @return The generating window. */
+  virtual ANCHOR_Window *getWindow() = 0;
+
+  /**
+   * Returns the event data.
+   * @return The event data. */
+  virtual ANCHOR_EventPtr getData() = 0;
 };

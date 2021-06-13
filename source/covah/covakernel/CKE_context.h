@@ -29,8 +29,7 @@
 struct cContext;
 struct Main;
 struct Scene;
-
-class wmWindowManager;
+struct wmWindowManager;
 
 /**
  * Covah Context:

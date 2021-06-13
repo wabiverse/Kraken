@@ -84,7 +84,10 @@ AnchorFontAtlasFlags, AnchorFontAtlas, AnchorFont)
 #  include <stddef.h>  // ptrdiff_t, NULL
 #  include <string.h>  // memset, memmove, memcpy, strlen, strchr, strcpy, strcmp
 
+#  include "ANCHOR_event_consumer.h"
+#  include "ANCHOR_event_manager.h"
 #  include "ANCHOR_types.h"
+#  include "ANCHOR_vulkan.h"
 
 #  include <wabi/base/gf/vec2f.h>
 #  include <wabi/base/gf/vec2h.h>
@@ -189,7 +192,7 @@ AnchorFontAtlasFlags, AnchorFontAtlas, AnchorFont)
                              // value-initialization instead
 #  endif
 
-enum eAnchorStatus { ANCHOR_ERROR = -1, ANCHOR_SUCCESS, ANCHOR_RUN };
+enum eAnchorStatus { ANCHOR_ERROR = -1, ANCHOR_SUCCESS, ANCHOR_RUN, ANCHOR_EVENT };
 
 enum eAnchorBackendType {
   ANCHOR_ALLEGRO,
@@ -261,88 +264,74 @@ struct ANCHORTextFilter;  // Helper to parse and apply text filters (e.g. "aaaaa
 struct ANCHORViewport;    // A Platform Window (always only one in 'master' branch), in the future
                           // may represent Platform Monitor
 
-// Enums/Flags (declared as int for compatibility with old C++, to allow using as flags and to not
-// pollute the top of this file)
-// - Tip: Use your programming IDE navigation facilities on the names in the _central column_ below
-// to find the actual flags/enum lists!
-//   In Visual Studio IDE: CTRL+comma ("Edit.NavigateTo") can follow symbols in comments, whereas
-//   CTRL+F12 ("Edit.GoToImplementation") cannot. With Visual Assist installed: ALT+G
-//   ("VAssistX.GoToImplementation") can also follow symbols in comments.
-typedef int ANCHOR_Col;  // -> enum ANCHOR_Col_             // Enum: A color identifier for styling
-typedef int
-    ANCHOR_Cond;  // -> enum ANCHOR_Cond_            // Enum: A condition for many Set*() functions
-typedef int ANCHOR_DataType;  // -> enum ANCHOR_DataType_        // Enum: A primary data type
-typedef int ANCHOR_Dir;       // -> enum ANCHOR_Dir_             // Enum: A cardinal direction
-typedef int
-    ANCHOR_Key;  // -> enum ANCHOR_Key_             // Enum: A key identifier (ANCHOR-side enum)
-typedef int ANCHOR_NavInput;  // -> enum ANCHOR_NavInput_        // Enum: An input identifier for
-                              // navigation
-typedef int ANCHOR_MouseButton;  // -> enum ANCHOR_MouseButton_     // Enum: A mouse button
-                                 // identifier (0=left, 1=right, 2=middle)
-typedef int
-    ANCHOR_MouseCursor;  // -> enum ANCHOR_MouseCursor_     // Enum: A mouse cursor identifier
-typedef int ANCHOR_SortDirection;  // -> enum ANCHOR_SortDirection_   // Enum: A sorting direction
-                                   // (ascending or descending)
-typedef int
-    ANCHOR_StyleVar;  // -> enum ANCHOR_StyleVar_        // Enum: A variable identifier for styling
-typedef int ANCHOR_TableBgTarget;  // -> enum ANCHOR_TableBgTarget_   // Enum: A color target for
-                                   // TableSetBgColor()
-typedef int ImDrawFlags;      // -> enum ImDrawFlags_          // Flags: for ImDrawList functions
-typedef int ImDrawListFlags;  // -> enum ImDrawListFlags_      // Flags: for ImDrawList instance
-typedef int
-    AnchorFontAtlasFlags;  // -> enum AnchorFontAtlasFlags_     // Flags: for AnchorFontAtlas build
-typedef int ANCHORBackendFlags;  // -> enum ANCHORBackendFlags_    // Flags: for io.BackendFlags
-typedef int ANCHOR_ButtonFlags;  // -> enum ANCHOR_ButtonFlags_     // Flags: for InvisibleButton()
-typedef int ANCHOR_ColorEditFlags;  // -> enum ANCHOR_ColorEditFlags_  // Flags: for ColorEdit4(),
-                                    // ColorPicker4() etc.
-typedef int ANCHORConfigFlags;      // -> enum ANCHORConfigFlags_     // Flags: for io.ConfigFlags
-typedef int ANCHORComboFlags;       // -> enum ANCHORComboFlags_      // Flags: for BeginCombo()
-typedef int ANCHORDragDropFlags;    // -> enum ANCHORDragDropFlags_   // Flags: for
-                                    // BeginDragDropSource(), AcceptDragDropPayload()
-typedef int ANCHORFocusedFlags;  // -> enum ANCHORFocusedFlags_    // Flags: for IsWindowFocused()
-typedef int ANCHORHoveredFlags;  // -> enum ANCHORHoveredFlags_    // Flags: for IsItemHovered(),
-                                 // IsWindowHovered() etc.
-typedef int ANCHORInputTextFlags;   // -> enum ANCHORInputTextFlags_  // Flags: for InputText(),
-                                    // InputTextMultiline()
-typedef int ANCHOR_KeyModFlags;     // -> enum ANCHOR_KeyModFlags_     // Flags: for io.KeyMods
-                                    // (Ctrl/Shift/Alt/Super)
-typedef int ANCHORPopupFlags;       // -> enum ANCHORPopupFlags_      // Flags: for OpenPopup*(),
-                                    // BeginPopupContext*(), IsPopupOpen()
-typedef int ANCHORSelectableFlags;  // -> enum ANCHORSelectableFlags_ // Flags: for Selectable()
-typedef int ANCHOR_SliderFlags;     // -> enum ANCHOR_SliderFlags_     // Flags: for DragFloat(),
-                                    // DragInt(), SliderFloat(), SliderInt() etc.
-typedef int ANCHOR_TabBarFlags;     // -> enum ANCHOR_TabBarFlags_     // Flags: for BeginTabBar()
-typedef int ANCHOR_TabItemFlags;    // -> enum ANCHOR_TabItemFlags_    // Flags: for BeginTabItem()
-typedef int ANCHOR_TableFlags;      // -> enum ANCHOR_TableFlags_      // Flags: For BeginTable()
-typedef int
-    ANCHOR_TableColumnFlags;  // -> enum ANCHOR_TableColumnFlags_// Flags: For TableSetupColumn()
-typedef int ANCHOR_TableRowFlags;  // -> enum ANCHOR_TableRowFlags_   // Flags: For TableNextRow()
-typedef int ANCHOR_TreeNodeFlags;  // -> enum ANCHOR_TreeNodeFlags_   // Flags: for TreeNode(),
-                                   // TreeNodeEx(), CollapsingHeader()
-typedef int ANCHORViewportFlags;   // -> enum ANCHORViewportFlags_   // Flags: for ANCHORViewport
-typedef int
-    ANCHOR_WindowFlags;  // -> enum ANCHOR_WindowFlags_     // Flags: for Begin(), BeginChild()
+/**
+ * Event Types ----------- */
 
-// Other types
-#  ifndef AnchorTextureID  // AnchorTextureID [configurable type: override in ANCHOR_config.h with
-                           // '#define AnchorTextureID xxx']
-typedef void
-    *AnchorTextureID;  // User data for rendering backend to identify a texture. This is whatever
-                       // to you want it to be! read the FAQ about AnchorTextureID for details.
+typedef int ANCHOR_EventType;         /// Enum: For all the different event types
+typedef int ANCHOR_Col;               /// Enum: A color identifier for styling
+typedef int ANCHOR_Cond;              /// Enum: A condition for many Set*() functions
+typedef int ANCHOR_DataType;          /// Enum: A primary data type
+typedef int ANCHOR_Dir;               /// Enum: A cardinal direction
+typedef int ANCHOR_Key;               /// Enum: A key identifier (ANCHOR-side enum)
+typedef int ANCHOR_NavInput;          /// Enum: An input identifier for navigation
+typedef int ANCHOR_MouseButton;       /// Enum: A mouse button
+typedef int ANCHOR_MouseCursor;       /// Enum: A mouse cursor identifier
+typedef int ANCHOR_SortDirection;     /// Enum: A sorting direction (ascending or descending)
+typedef int ANCHOR_StyleVar;          /// Enum: A variable identifier for styling
+typedef int ANCHOR_TableBgTarget;     /// Enum: A color target for TableSetBgColor()
+typedef int ImDrawFlags;              /// Flags: For ImDrawList functions
+typedef int ImDrawListFlags;          /// Flags: For ImDrawList instance
+typedef int AnchorFontAtlasFlags;     /// Flags: For AnchorFontAtlas build
+typedef int ANCHORBackendFlags;       /// Flags: For io.BackendFlags
+typedef int ANCHOR_ButtonFlags;       /// Flags: For InvisibleButton()
+typedef int ANCHOR_ColorEditFlags;    /// Flags: For ColorEdit4(), ColorPicker4() etc.
+typedef int ANCHORConfigFlags;        /// Flags: For io.ConfigFlags
+typedef int ANCHORComboFlags;         /// Flags: For BeginCombo()
+typedef int ANCHORDragDropFlags;      /// Flags: For BeginDragDropSource(), AcceptDragDropPayload()
+typedef int ANCHORFocusedFlags;       /// Flags: For IsWindowFocused()
+typedef int ANCHORHoveredFlags;       /// Flags: For IsItemHovered(), IsWindowHovered() etc.
+typedef int ANCHORInputTextFlags;     /// Flags: For InputText(), InputTextMultiline()
+typedef int ANCHOR_KeyModFlags;       /// Flags: For io.KeyMods (Ctrl/Shift/Alt/Super)
+typedef int ANCHORPopupFlags;         /// Flags: For OpenPopup(), IsPopupOpen()
+typedef int ANCHORSelectableFlags;    /// Flags: For Selectable()
+typedef int ANCHOR_SliderFlags;       /// Flags: For DragFloat(), DragInt(), SliderFloat()
+typedef int ANCHOR_TabBarFlags;       /// Flags: For BeginTabBar()
+typedef int ANCHOR_TabItemFlags;      /// Flags: For BeginTabItem()
+typedef int ANCHOR_TableFlags;        /// Flags: For BeginTable()
+typedef int ANCHOR_TableColumnFlags;  /// Flags: For TableSetupColumn()
+typedef int ANCHOR_TableRowFlags;     /// Flags: For TableNextRow()
+typedef int ANCHOR_TreeNodeFlags;     /// Flags: for TreeNode(), TreeNodeEx(), CollapsingHeader()
+typedef int ANCHORViewportFlags;      /// Flags: for ANCHORViewport
+typedef int ANCHOR_WindowFlags;       /// Flags: for Begin(), BeginChild()
+
+/**
+ * Other types ----------- */
+
+/**
+ * AnchorTextureID
+ * [configurable type: #define AnchorTextureID xxx'] */
+#  ifndef AnchorTextureID
+/**
+ * User data for rendering backend to identify a texture.
+ * This is whatever you want it to be!*/
+typedef void *AnchorTextureID;
 #  endif
-typedef unsigned int
-    ANCHOR_ID;  // A unique ID used by widgets, typically hashed from a stack of string.
-typedef int (*ANCHORInputTextCallback)(
-    ANCHORInputTextCallbackData *data);  // Callback function for ANCHOR::InputText()
-typedef void (*ANCHORSizeCallback)(
-    ANCHOR_SizeCallbackData
-        *data);  // Callback function for ANCHOR::SetNextWindowSizeConstraints()
-typedef void *(*ANCHORMemAllocFunc)(
-    size_t sz,
-    void *user_data);  // Function signature for ANCHOR::SetAllocatorFunctions()
-typedef void (*ANCHORMemFreeFunc)(
-    void *ptr,
-    void *user_data);  // Function signature for ANCHOR::SetAllocatorFunctions()
+
+/**
+ * A unique ID used by widgets, hashed from a stack of string. */
+typedef unsigned int ANCHOR_ID;
+/**
+ * Callback function for ANCHOR::InputText() */
+typedef int (*ANCHORInputTextCallback)(ANCHORInputTextCallbackData *data);
+/**
+ * Callback function for ANCHOR::SetNextWindowSizeConstraints() */
+typedef void (*ANCHORSizeCallback)(ANCHOR_SizeCallbackData *data);
+/**
+ * Function signature for ANCHOR::SetAllocatorFunctions() */
+typedef void *(*ANCHORMemAllocFunc)(size_t sz, void *user_data);
+/**
+ * Function signature for ANCHOR::SetAllocatorFunctions() */
+typedef void (*ANCHORMemFreeFunc)(void *ptr, void *user_data);
 
 // Character types
 // (we generally use UTF-8 encoded string in the API. This is storage specifically for a decoded
@@ -402,8 +391,27 @@ ANCHOR_Context *GetCurrentContext();
 ANCHOR_API
 void SetCurrentContext(ANCHOR_Context *ctx);
 
+ANCHOR_API
+bool ProcessEvents(ANCHOR_System *sys, ANCHOR_SystemGPU *gpu);
+
+ANCHOR_API
+void SwapChain(ANCHOR_SystemGPU *gpu);
+
 /**
  * ⚓︎ Anchor :: Main -------------------- */
+
+/**
+ * Adds a given event consumer to anchor.
+ *
+ * An event consumer is a client who
+ * recieves Anchor events on the stack
+ * usually in the form of a callback
+ * function.
+ *
+ * @param consumer: The event consumer to add.
+ * @return Indication of success. */
+ANCHOR_API
+eAnchorStatus AddEventConsumer(ANCHOR_EventConsumerHandle consumer);
 
 /**
  * Access the Pixar Hydra Driver.

@@ -22,8 +22,6 @@
  * Making GUI Fly.
  */
 
-#include "WM_windowmanager.h"
-
 #include "ANCHOR_api.h"
 
 #include "UNI_context.h"

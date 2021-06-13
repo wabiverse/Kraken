@@ -18,15 +18,17 @@ set(INC_SYS
 )
 
 set(SRC
+  intern/wm_draw.cpp
   intern/wm_event_system.cpp
   intern/wm_init_exit.cpp
   intern/wm_styles.cpp
   intern/wm_window.cpp
-  intern/wm_windowmanager.cpp
+  intern/wm.cpp
 
   WM_api.h
+  WM_draw.h
   WM_init_exit.h
-  WM_windowmanager.h
+  WM_window.h
 )
 
 set(LIB

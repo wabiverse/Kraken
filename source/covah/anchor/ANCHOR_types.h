@@ -29,4 +29,9 @@
     int unused; \
   } * name
 
-ANCHOR_DECLARE_HANDLE(ANCHOR_SystemHandle);
+ANCHOR_DECLARE_HANDLE(ANCHOR_EventHandle);
+ANCHOR_DECLARE_HANDLE(ANCHOR_EventConsumerHandle);
+
+typedef void *ANCHOR_UserPtr;
+typedef void *ANCHOR_EventPtr;
+typedef double ANCHOR_Time;

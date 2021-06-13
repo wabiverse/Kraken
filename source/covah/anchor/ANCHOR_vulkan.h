@@ -27,11 +27,16 @@
 #include "ANCHOR_api.h"
 #include "ANCHOR_impl_vulkan.h"
 
-#include <SDL.h>
+#include <SDL_vulkan.h>
+
+typedef SDL_Window ANCHOR_System;
+
+/** todo: move to GPU */
+typedef ANCHOR_ImplVulkanH_Window ANCHOR_SystemGPU;
 
 typedef std::pair<SDL_Window *, ANCHOR_ImplVulkanH_Window *> HANDLE_sdl_vk_win;
 
-ANCHOR_API HANDLE_sdl_vk_win ANCHOR_init_vulkan(VkResult &err);
-ANCHOR_API eAnchorStatus ANCHOR_run_vulkan(SDL_Window *window, ANCHOR_ImplVulkanH_Window *wd);
-ANCHOR_API void ANCHOR_render_vulkan(ANCHOR_ImplVulkanH_Window *wd);
-ANCHOR_API void ANCHOR_clean_vulkan(SDL_Window *window, VkResult &err);
+HANDLE_sdl_vk_win ANCHOR_init_vulkan(VkResult &err);
+eAnchorStatus ANCHOR_run_vulkan(ANCHOR_System *window, ANCHOR_SystemGPU *wd);
+void ANCHOR_render_vulkan(ANCHOR_SystemGPU *wd);
+void ANCHOR_clean_vulkan(ANCHOR_System *window /**Todo::VkResult &err*/);

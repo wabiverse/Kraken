@@ -26,9 +26,6 @@
 #include "CKE_main.h"
 #include "CKE_version.h"
 
-#include "WM_window.h"
-#include "WM_windowmanager.h"
-
 #include <wabi/base/tf/mallocTag.h>
 
 WABI_NAMESPACE_USING
@@ -41,7 +38,7 @@ struct cContext {
 
   /* windowmanager context */
   struct {
-    wmWindowManager *manager;
+    struct wmWindowManager *manager;
     const char *operator_poll_msg;
   } wm;
 

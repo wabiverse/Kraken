@@ -25,10 +25,6 @@
 #pragma once
 
 #include "WM_api.h"
-#include "WM_windowmanager.h"
-
-COVAH_WM_API
-void WM_covah_runtime(wmWindowManager *manager);
 
 COVAH_WM_API
 void WM_init_default_styles();

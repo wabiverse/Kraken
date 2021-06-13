@@ -2272,6 +2272,9 @@ struct ANCHOR_Context {
   bool Initialized;
   bool FontAtlasOwnedByContext;  // IO.Fonts-> is owned by the ANCHOR_Context and will be
                                  // destructed along with it.
+
+  ANCHOR_EventManager *EventManager;
+
   /**
    * Pixar Hydra Driver.
    * Points to the Rendering Device and is
@@ -2619,6 +2622,8 @@ struct ANCHOR_Context {
   {
     Initialized             = false;
     FontAtlasOwnedByContext = shared_font_atlas ? false : true;
+
+    EventManager = NULL;
 
     HydraDriver.name   = wabi::HgiTokens->renderDriver;
     HydraDriver.driver = wabi::VtValue();
