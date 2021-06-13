@@ -45,6 +45,6 @@ int main(int argc, char *argv[])
   C = CTX_create();
 
   CKE_covah_globals_init();
-  CKE_covah_main_init(argc, argv);
+  CKE_covah_main_init(argc, argv, C);
   return 0;
 }

@@ -187,9 +187,9 @@ AnchorFontAtlasFlags, AnchorFontAtlas, AnchorFont)
                              // value-initialization instead
 #  endif
 
-enum ANCHOR_Status { ANCHOR_ERROR = -1, ANCHOR_SUCCESS, ANCHOR_RUN };
+enum eAnchorStatus { ANCHOR_ERROR = -1, ANCHOR_SUCCESS, ANCHOR_RUN };
 
-enum ANCHOR_BackendType {
+enum eAnchorBackendType {
   ANCHOR_ALLEGRO,
   ANCHOR_ANDROID,
   ANCHOR_DIRECTX9,
@@ -3450,7 +3450,7 @@ struct ANCHOR_Style {
 // Access via ANCHOR::GetIO(). Read 'Programmer guide' section in .cpp file for general usage.
 //-----------------------------------------------------------------------------
 
-enum COVAH_FONTS { FONT_FALLBACK, FONT_GOTHAM, FONT_DANKMONO, FONT_SANFRANCISCO };
+enum eCovahFonts { FONT_FALLBACK, FONT_GOTHAM, FONT_DANKMONO, FONT_SANFRANCISCO };
 
 struct ANCHOR_IO {
   //------------------------------------------------------------------

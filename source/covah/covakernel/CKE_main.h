@@ -26,6 +26,7 @@
 #define COVAH_KERNEL_MAIN_H
 
 #include "CKE_api.h"
+#include "CKE_context.h"
 
 struct Main {
   Main *next, *prev;
@@ -65,7 +66,7 @@ COVAH_KERNEL_API
 void CKE_main_free(void);
 
 COVAH_KERNEL_API
-void CKE_covah_main_init(int argc, char *argv[]);
+void CKE_covah_main_init(int argc, char *argv[], cContext *C);
 
 COVAH_KERNEL_API
 void CKE_covah_globals_init();

@@ -51,6 +51,8 @@ struct cContext {
   } data;
 };
 
+/**
+ * Main CTX Creation. */
 cContext *CTX_create(void)
 {
   TfAutoMallocTag2 tag("cContext", "CTX_create");
@@ -60,6 +62,8 @@ cContext *CTX_create(void)
   return C;
 }
 
+/**
+ * Main CTX Deletion. */
 void CTX_free(cContext *C)
 {
   TfAutoMallocTag2 tag("cContext", "CTX_free");
@@ -67,9 +71,30 @@ void CTX_free(cContext *C)
   delete C;
 }
 
+/**
+ * Getters. */
+
+Main *CTX_data_main(const cContext *C)
+{
+  return C->data.main;
+}
+
 wmWindowManager *CTX_wm_manager(const cContext *C)
 {
   return C->wm.manager;
+}
+
+Scene *CTX_data_scene(const cContext *C)
+{
+  return C->data.scene;
+}
+
+/**
+ * Setters. */
+
+void CTX_data_main_set(cContext *C, Main *cmain)
+{
+  C->data.main = cmain;
 }
 
 void CTX_wm_manager_set(cContext *C, wmWindowManager *wm)
@@ -77,12 +102,7 @@ void CTX_wm_manager_set(cContext *C, wmWindowManager *wm)
   C->wm.manager = wm;
 }
 
-Main *CTX_data_main(const cContext *C)
+void CTX_data_scene_set(cContext *C, Scene *cscene)
 {
-  return C->data.main;
-}
-
-Scene *CTX_data_scene(const cContext *C)
-{
-  return C->data.scene;
+  C->data.scene = cscene;
 }

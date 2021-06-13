@@ -32,6 +32,6 @@
 typedef std::pair<SDL_Window *, ANCHOR_ImplVulkanH_Window *> HANDLE_sdl_vk_win;
 
 ANCHOR_API HANDLE_sdl_vk_win ANCHOR_init_vulkan(VkResult &err);
-ANCHOR_API ANCHOR_Status ANCHOR_run_vulkan(SDL_Window *window, ANCHOR_ImplVulkanH_Window *wd);
+ANCHOR_API eAnchorStatus ANCHOR_run_vulkan(SDL_Window *window, ANCHOR_ImplVulkanH_Window *wd);
 ANCHOR_API void ANCHOR_render_vulkan(ANCHOR_ImplVulkanH_Window *wd);
 ANCHOR_API void ANCHOR_clean_vulkan(SDL_Window *window, VkResult &err);

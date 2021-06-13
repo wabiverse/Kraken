@@ -30,7 +30,7 @@
 
 #include <wabi/base/gf/vec2i.h>
 
-enum SpaceWindowType {
+enum eSpaceWindowType {
   SPACE_WINDOW_DEFAULT = 0,
   SPACE_WINDOW_VIEW3D,
   SPACE_WINDOW_CODE,
@@ -46,7 +46,7 @@ enum SpaceWindowType {
   SPACE_KEYMAP_CUSTOM3
 };
 
-enum class SpaceKeymapType {
+enum class eSpaceKeymapType {
   SPACE_KEYMAP_VIEW3D,
   SPACE_KEYMAP_NODES,
   SPACE_KEYMAP_TIMELINE,
@@ -79,7 +79,7 @@ struct SpaceWindow {
   /** Window identifier, for which to subclass this window from. */
   int spaceid;
   /** Keymap identifier, to add keymaps to this window. */
-  SpaceKeymapType keymap_id;
+  eSpaceKeymapType keymap_id;
 
   /** Name of Window, displayed in menus and up-top. */
   char name[64];

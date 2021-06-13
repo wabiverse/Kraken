@@ -26,9 +26,36 @@
 
 #include "CKE_api.h"
 
-class wmWindowManager;
-
 struct cContext;
+struct Main;
 struct Scene;
 
+class wmWindowManager;
+
+/**
+ * Covah Context:
+ *  - Creation.
+ *  - Destruction. */
+
 cContext *CTX_create(void);
+void CTX_free(cContext *C);
+
+/**
+ * Covah Context Getters:
+ *  - System Main.
+ *  - WindowManager.
+ *  - Scene data. */
+
+Main *CTX_data_main(const cContext *C);
+wmWindowManager *CTX_wm_manager(const cContext *C);
+Scene *CTX_data_scene(const cContext *C);
+
+/**
+ * Covah Context Setters:
+ *  - System Main.
+ *  - WindowManager.
+ *  - Scene data. */
+
+void CTX_data_main_set(cContext *C, Main *cmain);
+void CTX_wm_manager_set(cContext *C, wmWindowManager *wm);
+void CTX_data_scene_set(cContext *C, Scene *cscene);

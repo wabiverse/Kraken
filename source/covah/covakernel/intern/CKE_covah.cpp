@@ -31,6 +31,7 @@
 #endif /*__GNUC__ */
 
 /* KERNEL */
+#include "CKE_context.h"
 #include "CKE_main.h"
 #include "CKE_version.h"
 
@@ -223,7 +224,7 @@ static ckeStatusCode covah_parse_args(int argc, char *argv[])
   return COVAH_SUCCESS;
 }
 
-void CKE_covah_main_init(int argc, char *argv[])
+void CKE_covah_main_init(int argc, char *argv[], cContext *C)
 {
   /* Init plugins. */
   CKE_covah_plugins_init();
@@ -266,6 +267,7 @@ void CKE_covah_main_init(int argc, char *argv[])
     UNI_open_stage(G.main->stage_id.string());
   }
 
+  CTX_data_main_set(C, G.main);
   CKE_main_runtime(ANCHOR_SDL | ANCHOR_VULKAN);
 }
 
@@ -291,7 +293,7 @@ bool CKE_has_kill_signal(ckeStatusCode signal)
 
 ckeStatusCode CKE_main_runtime(int backend)
 {
-  ANCHOR_Status status     = ANCHOR_RUN;
+  eAnchorStatus status     = ANCHOR_RUN;
   wmWindowManager *manager = new wmWindowManager();
   /** RUNTIMES ::: */
   switch (backend) {

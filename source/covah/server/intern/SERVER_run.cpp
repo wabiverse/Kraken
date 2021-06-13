@@ -40,7 +40,7 @@
 
 WABI_NAMESPACE_USING
 
-ServerNetworkPort ServerAttachNetworkPort()
+eServerNetworkPort ServerAttachNetworkPort()
 {
   return COVAH_COMM_PORT_ALPHA;
 }
@@ -80,7 +80,7 @@ static void ServerRun(socket_t &sock)
   }
 }
 
-ServerErrorCode ServerStart(int argc, char *argv[])
+eServerErrorCode ServerStart(int argc, char *argv[])
 {
   TF_UNUSED(argc);
   TF_UNUSED(argv);
@@ -104,7 +104,7 @@ ServerErrorCode ServerStart(int argc, char *argv[])
   return SERVER_SUCCESS;
 }
 
-ServerErrorCode ServerClose()
+eServerErrorCode ServerClose()
 {
   return SERVER_SUCCESS;
 }

@@ -33,9 +33,9 @@ void WM_covah_runtime(wmWindowManager *manager);
 COVAH_WM_API
 void WM_init_default_styles();
 
-enum WM_MODES { COVAH_NORMAL_MODE = 0, COVAH_DEBUG_MODE };
+enum eWmModes { COVAH_NORMAL_MODE = 0, COVAH_DEBUG_MODE };
 
-enum KERNEL_PATHS {
+enum eWmKernelPaths {
   EXE_PATH = 0,
   DATAFILES_PATH,
   STYLES_PATH,

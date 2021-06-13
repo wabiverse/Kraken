@@ -129,7 +129,7 @@ struct Scene {
   SceneEtcher etcher;
 };
 
-enum SceneDrawMode {
+enum eSceneDrawMode {
   DRAW_POINTS,
   DRAW_WIREFRAME,
   DRAW_WIREFRAME_ON_SURFACE,
@@ -140,7 +140,7 @@ enum SceneDrawMode {
   DRAW_GEOM_SMOOTH
 };
 
-enum SceneCullStyle {
+enum eSceneCullStyle {
   CULL_STYLE_NO_OPINION,
   CULL_STYLE_NOTHING,
   CULL_STYLE_BACK,
@@ -158,7 +158,7 @@ enum SceneCullStyle {
  * shift+a.
  */
 
-enum COVAH_PRIMITIVES {
+enum eScenePrimitives {
   MESH_CUBE = 0,
   MESH_SPHERE,
   MESH_GRID,
@@ -176,7 +176,7 @@ enum COVAH_PRIMITIVES {
  * from the plugins directory.
  */
 
-enum ENGINE_SELECTION {
+enum eSceneRenderEngine {
   ENGINE_PHOENIX = 0,
   ENGINE_ARNOLD,
   ENGINE_EMBREE,

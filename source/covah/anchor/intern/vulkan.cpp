@@ -667,7 +667,7 @@ HANDLE_sdl_vk_win ANCHOR_init_vulkan(VkResult &err)
   return std::make_pair(window, wd);
 }
 
-ANCHOR_Status ANCHOR_run_vulkan(SDL_Window *window, ANCHOR_ImplVulkanH_Window *wd)
+eAnchorStatus ANCHOR_run_vulkan(SDL_Window *window, ANCHOR_ImplVulkanH_Window *wd)
 {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
