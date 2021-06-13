@@ -55,7 +55,6 @@
 
 {% if useExportAPI %}
 {{namespaceOpen}}
-
 {% endif %}
 
 /**
@@ -82,10 +81,10 @@
 {% endif %} */
 struct {{ tokensPrefix }}TokensType {
 
-{% if useExportAPI %}
-{{ Upper(libraryName) }}_API
-{% endif %}
-{{ tokensPrefix }}TokensType();
+ {% if useExportAPI %}
+ {{ Upper(libraryName) }}_API
+ {% endif %}
+ {{ tokensPrefix }}TokensType();
 
 {% for token in tokens %}
   /**
@@ -107,7 +106,7 @@ struct {{ tokensPrefix }}TokensType {
  * TfTokens\endlink for use in all public USD API.
  * 
  * @sa {{ tokensPrefix }}TokensType */
-extern {% if useExportAPI %}{{ Upper(libraryName) }}_API {% endif %} TfStaticData <{{ tokensPrefix }}TokensType > {{ tokensPrefix }}Tokens;
+extern {% if useExportAPI %}{{ Upper(libraryName) }}_API {% endif %}TfStaticData<{{ tokensPrefix }}TokensType> {{ tokensPrefix }}Tokens;
 {% if useExportAPI %}
 
 {{namespaceClose}}
@@ -115,4 +114,3 @@ extern {% if useExportAPI %}{{ Upper(libraryName) }}_API {% endif %} TfStaticDat
 
 #endif
 
-/* clang-format on */

@@ -39,6 +39,7 @@
 
 {% if useExportAPI %}
 #include "wabi/wabi.h"
+
 #include "{{ libraryPath }}/api.h"
 {% endif %}
 #include "wabi/usd/usd/prim.h"
@@ -50,7 +51,6 @@
 {% if cls.extraIncludes -%}
 {{ cls.extraIncludes }}
 {% endif %}
-
 #include "wabi/base/vt/value.h"
 
 #include "wabi/base/gf/matrix4d.h"
@@ -69,12 +69,11 @@ class SdfAssetPath;
 /**
  * --------------------------------------------------------------------------
  * {{ Upper(cls.usdPrimTypeName) }}{{' ' * (74 - cls.usdPrimTypeName|count)}}
- * -------------------------------------------------------------------------- */
-
-/**
+ * --------------------------------------------------------------------------
+ * 
  * @class {{ cls.cppClassName }}
- *{% if cls.doc -%}
-{{ cls.doc }}
+ * {% if cls.doc -%}
+ {{ cls.doc }}
  {% endif %}
 {% if cls.doc and hasTokenAttrs -%}
 {% endif %}
@@ -83,11 +82,10 @@ class SdfAssetPath;
  * @em Values below that are text/tokens, the actual token is published
  * and defined in @ref {{ tokensPrefix }}Tokens. So to set an attribute
  * to the value "rightHanded", use {{ tokensPrefix }}Tokens->rightHanded
- * as the value. */
-{% endif %}
+ * as the value.
+{% endif %} */
 
-class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
-{
+class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }} {
  public:
   /**
    * Compile time constant representing what kind of schema this class is.
@@ -121,7 +119,7 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
    * @p schemaObj with name @p name. Should be preferred over
    * {{ cls.cppClassName }}(schemaObj.GetPrim(), name), as it
    * preserves SchemaBase state. */
-  explicit { cls.cppClassName }}(const UsdSchemaBase &schemaObj, const TfToken &name)
+  explicit {{ cls.cppClassName }}(const UsdSchemaBase &schemaObj, const TfToken &name)
       : {{ cls.parentCppClassName }}(schemaObj, /*instanceName*/ name)
   {}
 {% else %}
@@ -149,7 +147,6 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
   {{ Upper(libraryName) }}_API
   {% endif -%}
   virtual ~{{ cls.cppClassName }}() {%-if cls.isAPISchemaBase %} = 0{% endif %};
-
 {% if cls.isMultipleApply %}
   /**
    * Return a vector of names of all pre-declared attributes for this schema
@@ -166,11 +163,9 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
-  static const TfTokenVector &
-{% if cls.isMultipleApply %}
-  GetSchemaAttributeNames(bool includeInherited = true, const TfToken instanceName = TfToken());
+  static const TfTokenVector &{% if cls.isMultipleApply %}GetSchemaAttributeNames(bool includeInherited = true, const TfToken instanceName = TfToken());
 {% else %}
-  GetSchemaAttributeNames(bool includeInherited = true);
+GetSchemaAttributeNames(bool includeInherited = true);
 {% endif %}
 {% if cls.isMultipleApply %}
 
@@ -186,9 +181,8 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
   /**
    * Return a {{ cls.cppClassName }} holding the prim adhering to this
    * schema at @p path on @p stage. If no prim exists at @p path on @p
-   * stage, or if the prim at that path does not adhere to this schema, */
+   * stage, or if the prim at that path does not adhere to this schema
 {% if cls.isMultipleApply and cls.propertyNamespacePrefix %}
-  /**
    * return an invalid schema object. @p path must be of the format
    * <path>.{{ cls.propertyNamespacePrefix }}:name .
    *
@@ -200,19 +194,16 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
    *     stage->GetPrimAtPath(path.GetPrimPath()), name);
    * @endcode */
 {% else %} 
-  /**
    * return an invalid schema object.  This is shorthand for the following:
    *
    * @code
    * {{ cls.cppClassName }}(stage->GetPrimAtPath(path));
    * @endcode */
 {% endif %}
-
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
-  static {{ cls.cppClassName }}
-  Get(const UsdStagePtr &stage, const SdfPath &path);
+  static {{ cls.cppClassName }} Get(const UsdStagePtr &stage, const SdfPath &path);
 {% if cls.isMultipleApply %}
 
   /**
@@ -221,8 +212,7 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
-  static {{ cls.cppClassName }}
-  Get(const UsdPrim &prim, const TfToken &name);
+  static {{ cls.cppClassName }} Get(const UsdPrim &prim, const TfToken &name);
 {% endif %}
 {% endif %}
 
@@ -294,8 +284,7 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
-  static {{cls.cppClassName}}
-  Apply(const UsdPrim &prim);
+  static {{cls.cppClassName}} Apply(const UsdPrim &prim);
 {% endif %}
 {% if cls.isAppliedAPISchema and cls.isMultipleApply %}
 
@@ -320,10 +309,9 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
-  static {{ cls.cppClassName }}
-  Apply(const UsdPrim &prim, const TfToken &name);
-{% endif %}
+  static {{ cls.cppClassName }} Apply(const UsdPrim &prim, const TfToken &name);
 
+{% endif %}
  protected:
   /**
    * Returns the kind of schema this class belongs to.
@@ -359,11 +347,11 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
   {{ Upper(libraryName) }}_API
   {% endif -%}
   const TfType &_GetTfType() const override;
-
 {% for attrName in cls.attrOrder %}
 {% set attr = cls.attrs[attrName]%}
 {# Only emit Create / Get API and doxygen if apiName is not empty string. #}
 {% if attr.apiName != '' %}
+
  public:
   /**
    * ---------------------------------------------------------------------
@@ -383,7 +371,7 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
-  UsdAttribute Get{{ Proper(attr.apiName) }} Attr() const;
+  UsdAttribute Get{{ Proper(attr.apiName) }}Attr() const;
 
   /**
    * See Get{{ Proper(attr.apiName) }}Attr(), and also @ref
@@ -395,14 +383,12 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
-  UsdAttribute Create{{ Proper(attr.apiName) }}
-  Attr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
-
+  UsdAttribute Create{{ Proper(attr.apiName) }}Attr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 {% endif %}
 {% endfor %}
 {% for relName in cls.relOrder %}
 {% set rel = cls.rels[relName]%}
-{#  Only emit Create / Get API and doxygen if apiName is not empty string.#}
+{#  Only emit Create / Get API and doxygen if apiName is not empty string. #}
 {% if rel.apiName != '' %}
 
  public:
@@ -411,11 +397,10 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
    * {{ Upper(rel.apiName) }}
    * ---------------------------------------------------------------------
    * {{ rel.doc }}
-   *
 {% for detail in rel.details %}
    *
-   * @n  {{ detail[0] }}: {{ detail[1] }} */
-{% endfor %}
+   * @n  {{ detail[0] }}: {{ detail[1] }}
+{% endfor %}   */
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
@@ -430,8 +415,8 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
   {% endif -%}
   UsdRelationship Create{{ Proper(rel.apiName) }}Rel() const;
 {% endif %}
-
 {% endfor %}
+
  public:
   /**
    * ======================================================================
@@ -449,4 +434,3 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }}
    * ======================================================================
    * --(BEGIN CUSTOM CODE)-- */
 
-/* clang-format on */

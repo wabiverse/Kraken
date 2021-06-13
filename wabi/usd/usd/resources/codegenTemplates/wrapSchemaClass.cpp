@@ -101,6 +101,7 @@ static std::string _Repr(const {{cls.cppClassName}} & self)
 }  /* anonymous */
 {% endif %}
 
+/* clang-format off */
 void wrap{{cls.cppClassName}}()
 {
   typedef {{ cls.cppClassName }} This;
@@ -123,7 +124,6 @@ void wrap{{cls.cppClassName}}()
 {% endif %}
 {% endif %}
     .def(TfTypePythonClass())
-
 {% if not cls.isAPISchemaBase %}
 {% if cls.isMultipleApply %}
     .def("Get",
@@ -134,85 +134,79 @@ void wrap{{cls.cppClassName}}()
         (arg("prim"), arg("name"))){ % else % }
     .def("Get", &This::Get,
         (arg("stage"), arg("path"))){% endif %}
-        .staticmethod("Get")
+    .staticmethod("Get")
 {% endif %}
 {% if cls.isConcrete %}
-
-    .def("Define", &This::Define, (arg("stage"), arg("path"))).staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 {% endif %}
 {% if cls.isAppliedAPISchema and not cls.isMultipleApply %}
-
-    .def("Apply", &This::Apply, (arg("prim"))).staticmethod("Apply")
+    .def("Apply", &This::Apply, (arg("prim")))
+    .staticmethod("Apply")
 {% endif %}
 {% if cls.isAppliedAPISchema and cls.isMultipleApply %}
-
     .def("Apply", &This::Apply, (arg("prim"), arg("name")))
-        .staticmethod("Apply")
+    .staticmethod("Apply")
 {% endif %}
-
     .def("GetSchemaAttributeNames", &This::GetSchemaAttributeNames,
-         arg("includeInherited") = true,
+        arg("includeInherited") = true,
 {% if cls.isMultipleApply %}
-         arg("instanceName") = TfToken(),
+        arg("instanceName") = TfToken(),
 {% endif %}
-         return_value_policy<TfPySequenceToList>()).staticmethod("GetSchemaAttributeNames")
-
+        return_value_policy<TfPySequenceToList>())
+        .staticmethod("GetSchemaAttributeNames")
     .def("_GetStaticTfType",
-        (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
-        .staticmethod("_GetStaticTfType")
-
+        (TfType const &(*)())TfType::Find<This>,
+        return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
     .def(!self)
-
 {% for attrName in cls.attrOrder -%}
 {% set attr = cls.attrs[attrName]%}
 {# Only emit Create / Get API if apiName is not empty string. #}
 {% if attr.apiName != '' %}
-
     .def("Get{{ Proper(attr.apiName) }}Attr", &This::Get{{ Proper(attr.apiName) }}Attr)
     .def("Create{{ Proper(attr.apiName) }}Attr", &_Create{{ Proper(attr.apiName) }}Attr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 {% endif %}
 {% endfor %}
-
 {% for relName in cls.relOrder -%}
 {# Only emit Create / Get API and doxygen if apiName is not empty string. #}
 {% set rel = cls.rels[relName]%}
 {% if rel.apiName != '' %}
-
     .def("Get{{ Proper(rel.apiName) }}Rel", &This::Get {{ Proper(rel.apiName) }} Rel)
     .def("Create{{ Proper(rel.apiName) }}Rel", &This::Create{{ Proper(rel.apiName) }}Rel)
 {% endif %}
 {% endfor %}
 {% if cls.isMultipleApply and cls.propertyNamespacePrefix %}
     .def("Is{{ cls.usdPrimTypeName }}Path", _WrapIs{{ cls.usdPrimTypeName }}Path)
-        .staticmethod("Is{{ cls.usdPrimTypeName }}Path")
+    .staticmethod("Is{{ cls.usdPrimTypeName }}Path")
 {% endif %}
 {% if not cls.isAPISchemaBase %}
     .def("__repr__", ::_Repr)
 {% endif %}
-
   ;
+
   _CustomWrapCode(cls);
 }
 
-/**
- * ======================================================================
- *   Feel free to add custom code below this line, it will be preserved
- *   by the code generator. The entry point for your custom code should
- *   look minimally like the following:
- *
- *       WRAP_CUSTOM {
- *         _class
- *           .def("MyCustomMethod", ...)
- *         ;
- *       }
- *
- *   Of course any other ancillary or support code may be provided.
+  /**
+   * ======================================================================
+   *   Feel free to add custom code below this line, it will be preserved
+   *   by the code generator. The entry point for your custom code should
+   *   look minimally like the following:
+   *
+   *       WRAP_CUSTOM {
+   *         _class
+   *           .def("MyCustomMethod", ...)
+   *         ;
+   *       }
+   *
+   *   Of course any other ancillary or support code may be provided.
 {% if useExportAPI %}
- *   Just remember to wrap code in the appropriate delimiters:
- *   'namespace {', '}'.
+   *   Just remember to wrap code in the appropriate delimiters:
+   *   'namespace {', '}'.
 {% endif %}
- * ======================================================================
- * --(BEGIN CUSTOM CODE)-- */
+   * ======================================================================
+   * --(BEGIN CUSTOM CODE)-- */
 
-/* clang-format on */
+

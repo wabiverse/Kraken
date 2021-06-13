@@ -71,13 +71,11 @@ template<typename T> void _AddToken(T &cls, const char *name, const TfToken &tok
 
 }  /* anonymous */
 
-void wrap {{ tokensPrefix }}Tokens()
+void wrap{{ tokensPrefix }}Tokens()
 {
   boost::python::class_ < {{ tokensPrefix }}TokensType, boost::noncopyable >
     cls("Tokens", boost::python::no_init);
 {% for token in tokens %}
-      _AddToken(cls, "{{ token.id }}", {{ tokensPrefix }}Tokens->{{token.id}});
+      _AddToken(cls, "{{ token.id }}", {{ tokensPrefix }}Tokens->{{ token.id }});
 {% endfor %}
 }
-
-/* clang-format on */

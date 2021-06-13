@@ -86,24 +86,19 @@ void wrapUsdClipsAPI()
   _CustomWrapCode(cls);
 }
 
-// ===================================================================== //
-// Feel free to add custom code below this line, it will be preserved by
-// the code generator.  The entry point for your custom code should look
-// minimally like the following:
-//
-// WRAP_CUSTOM {
-//     _class
-//         .def("MyCustomMethod", ...)
-//     ;
-// }
-//
-// Of course any other ancillary or support code may be provided.
-//
-// Just remember to wrap code in the appropriate delimiters:
-// 'namespace {', '}'.
-//
-// ===================================================================== //
-// --(BEGIN CUSTOM CODE)--
+/* clang-format off */
+
+  /**
+   * ======================================================================
+   *   Feel free to add custom code below this line. It will be preserved
+   *   by the code generator.
+   *
+   *   Just remember to wrap code in the appropriate delimiters:
+   *     - 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
+   * ======================================================================
+   * --(BEGIN CUSTOM CODE)-- */
+
+/* clang-format on */
 
 #include "wabi/base/tf/makePyConstructor.h"
 

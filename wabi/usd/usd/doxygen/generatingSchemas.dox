@@ -697,7 +697,7 @@ See \ref Usd_Page_Datatypes for the list of all data types provided by Sdf.
 
 \section Usd_GeneratedSchemaCustomCode Adding Custom Code To Generated Schemas
 
-Custom code written after the "// --(BEGIN CUSTOM CODE)--" delimiter in the
+Custom code written after the "   * --(BEGIN CUSTOM CODE)-- */" delimiter in the
 generated schema files will be preserved between successive usdGenSchema runs.
 Typically, this will include additional API you may want to provide on your
 schema classes.

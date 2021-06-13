@@ -33,6 +33,7 @@
 
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
+
 #include "{{ libraryPath }}/{{ cls.GetHeaderFile() }}"
 {% if cls.isApi %}
 #include "wabi/usd/usd/tokens.h"
@@ -42,14 +43,12 @@
 
 {% if useExportAPI %}
 {{namespaceOpen}}
-
 {% endif %} 
 /**
  * Register the schema with the TfType system. */
 TF_REGISTRY_FUNCTION(TfType)
 {
   TfType::Define<{{ cls.cppClassName }}, TfType::Bases<{{ cls.parentCppClassName }}>>();
-
 {% if cls.isConcrete %}
   /**
    * Register the usd prim typename as an alias under UsdSchemaBase.
@@ -62,6 +61,7 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 {% if cls.isApi %}
+/* clang-format off */
 TF_DEFINE_PRIVATE_TOKENS(
   _schemaTokens,
   ({{ cls.primName }})
@@ -162,7 +162,6 @@ bool {{ cls.cppClassName }}::Is{{ cls.usdPrimTypeName }}Path(const SdfPath &path
   return false;
 }
 {% endif %}
-
 /* virtual */
 UsdSchemaKind {{ cls.cppClassName }}::_GetSchemaKind() const
 {
@@ -342,9 +341,9 @@ _ConcatenateAttributeNames(const TfTokenVector& left,
 
 {% endif %}
 /*static*/
-const TfTokenVector& {% if cls.isMultipleApply %} {{ cls.cppClassName }}::GetSchemaAttributeNames(bool includeInherited,
-                                                                                                  const TfToken instanceName)
-{ % else % }
+const TfTokenVector& {% if cls.isMultipleApply %}{{ cls.cppClassName }}::GetSchemaAttributeNames(bool includeInherited,
+                                                                                                 const TfToken instanceName)
+{% else %}
 {{ cls.cppClassName }}::GetSchemaAttributeNames(bool includeInherited)
 {% endif %}
 {
@@ -383,17 +382,19 @@ localNames);
 
 {% if useExportAPI %}
 {{ namespaceClose }}
-
 {% endif %}
-/**
- * ======================================================================
- *  Feel free to add custom code below this line. It will be preserved
- *  by the code generator.
+
+/* clang-format off */
+
+  /**
+   * ======================================================================
+   *   Feel free to add custom code below this line. It will be preserved
+   *   by the code generator.
+   *
+   *   Just remember to wrap code in the appropriate delimiters:
 {% if useExportAPI %}
- *  Just remember to wrap code in the appropriate delimiters:
- *  '{{ namespaceOpen }}', '{{ namespaceClose }}'.
+   *     - '{{ namespaceOpen }}', '{{ namespaceClose }}'.
 {% endif %}
- * ======================================================================
- * --(BEGIN CUSTOM CODE)-- */
+   * ======================================================================
+   * --(BEGIN CUSTOM CODE)-- */
 
-/* clang-format on */

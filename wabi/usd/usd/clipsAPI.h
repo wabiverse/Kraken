@@ -175,17 +175,15 @@ class UsdClipsAPI : public UsdAPISchemaBase {
   const TfType &_GetTfType() const override;
 
  public:
-  // ===================================================================== //
-  // Feel free to add custom code below this line, it will be preserved by
-  // the code generator.
-  //
-  // Just remember to:
-  //  - Close the class declaration with };
-  //  - Close the namespace with WABI_NAMESPACE_END
-  //  - Close the include guard with #endif
-  // ===================================================================== //
-  // --(BEGIN CUSTOM CODE)--
-  //
+  /**
+   * ======================================================================
+   *   Feel free to add custom code below this line. It will be preserved
+   *   by the code generator.
+   *
+   *   Just remember to wrap code in the appropriate delimiters:
+   *     - 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
+   * ======================================================================
+   * --(BEGIN CUSTOM CODE)-- */
 
   // --------------------------------------------------------------------- //
   /// \anchor Usd_ClipInfo_API

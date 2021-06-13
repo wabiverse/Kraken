@@ -99,14 +99,19 @@ const TfTokenVector &UsdClipsAPI::GetSchemaAttributeNames(bool includeInherited)
 
 WABI_NAMESPACE_END
 
-// ===================================================================== //
-// Feel free to add custom code below this line. It will be preserved by
-// the code generator.
-//
-// Just remember to wrap code in the appropriate delimiters:
-// 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
-// ===================================================================== //
-// --(BEGIN CUSTOM CODE)--
+/* clang-format off */
+
+  /**
+   * ======================================================================
+   *   Feel free to add custom code below this line. It will be preserved
+   *   by the code generator.
+   *
+   *   Just remember to wrap code in the appropriate delimiters:
+   *     - 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
+   * ======================================================================
+   * --(BEGIN CUSTOM CODE)-- */
+
+/* clang-format on */
 
 #include "wabi/usd/usd/clipSet.h"
 #include "wabi/usd/usd/clipSetDefinition.h"

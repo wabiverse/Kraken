@@ -781,7 +781,7 @@ def _ExtractCustomCode(filePath, default=None):
     try:
         with open(filePath, 'r') as src:
             existing = src.read()
-            parts = existing.split('// --(BEGIN CUSTOM CODE)--\n')
+            parts = existing.split('   * --(BEGIN CUSTOM CODE)-- */\n')
             if len(parts) != 2 or not parts[1].strip():
                 return defaultTxt
             return parts[1]
