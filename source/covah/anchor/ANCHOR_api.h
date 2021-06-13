@@ -84,6 +84,8 @@ AnchorFontAtlasFlags, AnchorFontAtlas, AnchorFont)
 #  include <stddef.h>  // ptrdiff_t, NULL
 #  include <string.h>  // memset, memmove, memcpy, strlen, strchr, strcpy, strcmp
 
+#  include "ANCHOR_types.h"
+
 #  include <wabi/base/gf/vec2f.h>
 #  include <wabi/base/gf/vec2h.h>
 #  include <wabi/base/gf/vec4f.h>
@@ -375,99 +377,267 @@ typedef signed long long ImS64;    // 64-bit signed integer (post C++11)
 typedef unsigned long long ImU64;  // 64-bit unsigned integer (post C++11)
 #  endif
 
-//-----------------------------------------------------------------------------
-// [SECTION] ANCHOR end-user API functions
-// (Note that ANCHOR:: being a namespace, you can add extra ANCHOR:: functions in your own separate
-// file. Please don't modify ANCHOR source files!)
-//-----------------------------------------------------------------------------
-
 namespace ANCHOR {
-// Context creation and access
-// - Each context create its own AnchorFontAtlas by default. You may instance one yourself and pass
-// it to CreateContext() to share a font atlas between contexts.
-// - DLL users: heaps and globals are not shared across DLL boundaries! You will need to call
-// SetCurrentContext() + SetAllocatorFunctions()
-//   for each static/DLL boundary you are calling from. Read "Context and Memory Allocators"
-//   section of ANCHOR.cpp for details.
-ANCHOR_API ANCHOR_Context *CreateContext(AnchorFontAtlas *shared_font_atlas = NULL);
-ANCHOR_API void DestroyContext(ANCHOR_Context *ctx = NULL);  // NULL = destroy current context
-ANCHOR_API ANCHOR_Context *GetCurrentContext();
-ANCHOR_API void SetCurrentContext(ANCHOR_Context *ctx);
+/**
+ * Context creation and access.
+ *  - Each context create its own AnchorFontAtlas by default.
+ *    you may instance one yourself and pass it to CreateContext()
+ *    to share a font atlas between contexts.
+ *  - DLL users: heaps and globals are not shared across DLL boundaries!
+ *    you will need to call SetCurrentContext() + SetAllocatorFunctions()
+ *    for each static/DLL boundary you are calling from. Read "Context and
+ *    Memory Allocators" section of ANCHOR.cpp for details. */
 
-ANCHOR_API wabi::HdDriver &GetPixarDriver();
-ANCHOR_API APOLLO_EnginePtr GetEngineApollo();
+ANCHOR_API
+ANCHOR_Context *CreateContext(AnchorFontAtlas *shared_font_atlas = NULL);
 
-// Main
-ANCHOR_API ANCHOR_IO &GetIO();  // access the IO structure (mouse/keyboard/gamepad inputs, time,
-                                // various configuration options/flags)
-ANCHOR_API ANCHOR_Style &GetStyle();  // access the Style structure (colors, sizes). Always use
-                                      // PushStyleCol(), PushStyleVar() to modify style mid-frame!
-ANCHOR_API void NewFrame();  // start a new ANCHOR frame, you can submit any command from this
-                             // point until Render()/EndFrame().
-ANCHOR_API void EndFrame();  // ends the ANCHOR frame. automatically called by Render(). If you
-                             // don't need to render data (skipping rendering) you may call
-                             // EndFrame() without Render()... but you'll have wasted CPU already!
-                             // If you don't need to render, better to not create any windows and
-                             // not call NewFrame() at all!
-ANCHOR_API void Render();  // ends the ANCHOR frame, finalize the draw data. You can then get call
-                           // GetDrawData().
-ANCHOR_API ImDrawData *GetDrawData();  // valid after Render() and until the next call to
-                                       // NewFrame(). this is what you have to render.
+/**
+ * NULL = destroy current context */
+ANCHOR_API
+void DestroyContext(ANCHOR_Context *ctx = NULL);
 
-// Demo, Debug, Information
-ANCHOR_API void ShowDemoWindow(
-    bool *p_open =
-        NULL);  // create Demo window. demonstrate most ANCHOR features. call this to learn about
-                // the library! try to make it always available in your application!
-ANCHOR_API void ShowMetricsWindow(
-    bool *p_open = NULL);  // create Metrics/Debugger window. display ANCHOR internals: windows,
-                           // draw commands, various internal state, etc.
-ANCHOR_API void ShowAboutWindow(
-    bool *p_open = NULL);  // create About window. display ANCHOR version, credits and build/system
-                           // information.
-ANCHOR_API void ShowStyleEditor(
-    ANCHOR_Style *ref =
-        NULL);  // add style editor block (not a window). you can pass in a reference ANCHOR_Style
-                // structure to compare to, revert to and save to (else it uses the default style)
-ANCHOR_API bool ShowStyleSelector(
-    const char *label);  // add style selector block (not a window), essentially a combo listing
-                         // the default styles.
-ANCHOR_API void ShowFontSelector(
-    const char *label);  // add font selector block (not a window), essentially a combo listing the
-                         // loaded fonts.
-ANCHOR_API void ShowUserGuide();  // add basic help/info block (not a window): how to manipulate
-                                  // ANCHOR as a end-user (mouse/keyboard controls).
-ANCHOR_API const char *GetVersion();  // get the compiled version string e.g. "1.80 WIP"
-                                      // (essentially the value for ANCHOR_VERSION from the
-                                      // compiled version of ANCHOR.cpp)
+ANCHOR_API
+ANCHOR_Context *GetCurrentContext();
 
-// Styles
-ANCHOR_API void StyleColorsDark(ANCHOR_Style *dst = NULL);  // new, recommended style (default)
-ANCHOR_API void StyleColorsLight(
-    ANCHOR_Style *dst = NULL);  // best used with borders and a custom, thicker font
-ANCHOR_API void StyleColorsClassic(ANCHOR_Style *dst = NULL);  // classic ANCHOR style
+ANCHOR_API
+void SetCurrentContext(ANCHOR_Context *ctx);
 
-// Windows
-// - Begin() = push window to the stack and start appending to it. End() = pop window from the
-// stack.
-// - Passing 'bool* p_open != NULL' shows a window-closing widget in the upper-right corner of the
-// window,
-//   which clicking will set the boolean to false when clicked.
-// - You may append multiple times to the same window during the same frame by calling
-// Begin()/End() pairs multiple times.
-//   Some information such as 'flags' or 'p_open' will only be considered by the first call to
-//   Begin().
-// - Begin() return false to indicate the window is collapsed or fully clipped, so you may early
-// out and omit submitting
-//   anything to the window. Always call a matching End() for each Begin() call, regardless of its
-//   return value! [Important: due to legacy reason, this is inconsistent with most other functions
-//   such as BeginMenu/EndMenu,
-//    BeginPopup/EndPopup, etc. where the EndXXX call should only be called if the corresponding
-//    BeginXXX function returned true. Begin and BeginChild are the only odd ones out. Will be
-//    fixed in a future update.]
-// - Note that the bottom of window stack always contains a window called "Debug".
-ANCHOR_API bool Begin(const char *name, bool *p_open = NULL, ANCHOR_WindowFlags flags = 0);
-ANCHOR_API void End();
+/**
+ * ⚓︎ Anchor :: Main -------------------- */
+
+/**
+ * Access the Pixar Hydra Driver.
+ *
+ *  - Central Shared GPU resources in which
+ *    Covah (and plugins) share. Because they
+ *    are all shared, and because you can
+ *    activate any number of rendering engines
+ *    at once ↓
+ *  → This is the basis for Hybrid Rendering:
+ *      - Arnold     →  Human
+ *      - Cycles     →  House
+ *      - Renderman  →  Glass
+ *      - Phoenix    →  Sky
+ *  → Each individual engine rendering their
+ *    own respective Prims in a single scene.
+ *  → All within the same active viewport.
+ *  → All within @em Real-Time. */
+ANCHOR_API
+wabi::HdDriver &GetPixarDriver();
+
+/**
+ * Access the Hydra Engine.
+ *
+ *  - The Hydra Engine is responsible
+ *    for locating Render Engine Plugins
+ *    such as Arnold, Renderman, Cycles,
+ *    Phoenix, etc. And allowing you to
+ *    interface with all of them using
+ *    the same underlying agnostic API.
+ *  - Hydra Engines can be specialized,
+ *    Apollo is a General Purpose engine
+ *    for general scene layout and
+ *    animation purposes.
+ *  - @em Specialization-Engines created
+ *    & optimized for:
+ *      - VFX (pyro, physics)
+ *      - Rigging (AAA animation)
+ *      - Hair & Fur
+ *      - Game Engine (RTX)
+ *      - Misc. */
+ANCHOR_API
+APOLLO_EnginePtr GetEngineApollo();
+
+/**
+ * Access the IO structure.
+ *
+ *  - mouse
+ *  - keyboard
+ *  - gamepad inputs
+ *  - time
+ *  - config options/flags */
+ANCHOR_API
+ANCHOR_IO &GetIO();
+
+/**
+ * Access the Style structure (colors, sizes).
+ *
+ * Always use:
+ *  - PushStyleCol()
+ *  - PushStyleVar()
+ * to modify style mid-frame! */
+ANCHOR_API
+ANCHOR_Style &GetStyle();
+
+/**
+ * Start a new ANCHOR frame.
+ *
+ * You can submit any command
+ * from this point until
+ * Render() / EndFrame(). */
+ANCHOR_API
+void NewFrame();
+
+/**
+ * Ends the ANCHOR frame.
+ *
+ * Automatically called by Render().
+ * If you don't need to render data
+ * (skipping rendering) you may call
+ * EndFrame() without Render()... but
+ * you'll have wasted CPU already! If
+ * you don't need to render, better to
+ * not create any windows and not call
+ * NewFrame() at all! */
+ANCHOR_API
+void EndFrame();
+
+/**
+ * Ends the ANCHOR frame,
+ *
+ * finalize the draw data.
+ * You can then get call
+ * GetDrawData(). */
+ANCHOR_API
+void Render();
+
+/**
+ * Draw Data.
+ *
+ * Valid after Render() and
+ * until the next call to
+ * NewFrame(). This is what
+ * you have to render. */
+ANCHOR_API
+ImDrawData *GetDrawData();
+
+/**
+ * Diagnostic, Debug Window.
+ *
+ * Demonstrate most ANCHOR
+ * features. Call this to
+ * learn about the library! */
+ANCHOR_API
+void ShowDemoWindow(bool *p_open = NULL);
+
+/**
+ * Create Metrics/Debugger window.
+ *
+ * Display ANCHOR internals: windows,
+ * draw commands, various internal
+ * state, etc. */
+ANCHOR_API
+void ShowMetricsWindow(bool *p_open = NULL);
+
+/**
+ * Create About window.
+ *
+ * Display ANCHOR version,
+ * credits and build/system
+ * information. */
+ANCHOR_API
+void ShowAboutWindow(bool *p_open = NULL);
+
+/**
+ * Add style editor block (not a window).
+ *
+ * You can pass in a reference ANCHOR_Style
+ * structure to compare to, revert to and
+ * save to (else it uses the default style) */
+ANCHOR_API
+void ShowStyleEditor(ANCHOR_Style *ref = NULL);
+
+/**
+ * Add style selector block (not a window)
+ *
+ * Essentially a combo listing the default
+ * styles. */
+ANCHOR_API
+bool ShowStyleSelector(const char *label);
+
+/**
+ * Add font selector block (not a window)
+ *
+ * Essentially a combo listing the loaded
+ * system fonts. */
+ANCHOR_API
+void ShowFontSelector(const char *label);
+
+/**
+ * Add basic help/info block (not a window)
+ *
+ * How to manipulate ANCHOR as a end-user
+ * (mouse/keyboard controls). */
+ANCHOR_API
+void ShowUserGuide();
+
+/**
+ * Get the compiled version string
+ *
+ *  - e.g. "1.80 WIP"
+ *  - (The value for ANCHOR_VERSION) */
+ANCHOR_API
+const char *GetVersion();
+
+/**
+ * ⚓︎ Anchor :: Styles -------------------- */
+
+/**
+ * Covah Default (Recommended).
+ *
+ * Covah default color theme.
+ * For all your digital content
+ * creation needs. */
+ANCHOR_API
+void StyleColorsDefault(ANCHOR_Style *dst = NULL);
+
+/**
+ * Dark Side.
+ *
+ * It's 2021 and everyone
+ * needs a dark mode. */
+ANCHOR_API
+void StyleColorsDark(ANCHOR_Style *dst = NULL);
+
+/**
+ * Jedi.
+ *
+ * Best used with borders
+ * and a custom, thicker
+ * font */
+ANCHOR_API
+void StyleColorsLight(ANCHOR_Style *dst = NULL);
+
+/**
+ * ⚓︎ Anchor :: Windowing -------------------- */
+
+/**
+ * Windows
+ *  - Begin() = push window to the stack and start appending to it.
+ *  - End() = pop window from the stack.
+ *  - Passing 'bool* p_open != NULL' shows a window-closing widget
+ *    in the upper-right corner of the window, which clicking will
+ *    set the boolean to false when clicked.
+ *  - You may append multiple times to the same window during the
+ *    same frame by calling Begin() / End() pairs multiple times.
+ *  - Some information such as 'flags' or 'p_open' will only be
+ *    considered by the first call to Begin().
+ *  - Begin() return false to indicate the window is collapsed or
+ *    fully clipped, so you  may early out  and omit  submitting
+ *    anything to the window. Always call a matching End() for each
+ *    Begin() call, regardless of its return value! [Important: due
+ *    to legacy reason, this is inconsistent with most other functions
+ *    such as BeginMenu / EndMenu, BeginPopup/EndPopup, etc. where the
+ *    EndXXX call should only be called if the corresponding BeginXXX
+ *    function returned true. Begin and BeginChild are the only odd
+ *    ones out. Will be fixed in a future update.]
+ *  - Note that the bottom of window stack always contains a window
+ *    called "Debug". */
+ANCHOR_API
+bool Begin(const char *name, bool *p_open = NULL, ANCHOR_WindowFlags flags = 0);
+
+ANCHOR_API
+void End();
 
 // Child Windows
 // - Use child windows to begin into a self-contained independent scrolling/clipping regions within

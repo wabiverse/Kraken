@@ -21,3 +21,10 @@
  * Window Manager.
  * Making GUI Fly.
  */
+
+#pragma once
+
+struct cContext;
+
+void WM_anchor_init(cContext *C);
+void WM_anchor_exit(void);

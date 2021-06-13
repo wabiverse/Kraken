@@ -26,6 +26,7 @@
 #include "CKE_main.h"
 #include "CKE_version.h"
 
+#include "WM_window.h"
 #include "WM_windowmanager.h"
 
 #include <wabi/base/tf/mallocTag.h>

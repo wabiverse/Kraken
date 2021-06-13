@@ -18,19 +18,15 @@
 
 /**
  * @file
- * Window Manager.
- * Making GUI Fly.
+ * Anchor.
+ * Bare Metal.
  */
 
-#include "WM_window.h"
-#include "WM_windowmanager.h"
+#pragma once
 
-#include "ANCHOR_api.h"
+#define ANCHOR_DECLARE_HANDLE(name) \
+  typedef struct name##__ { \
+    int unused; \
+  } * name
 
-#include "CKE_context.h"
-
-/* global handle to anchor system. */
-static ANCHOR_SystemHandle anchor_system = NULL;
-
-void WM_anchor_init(cContext *C)
-{}
+ANCHOR_DECLARE_HANDLE(ANCHOR_SystemHandle);

@@ -596,10 +596,10 @@ HANDLE_sdl_vk_win ANCHOR_init_vulkan(VkResult &err)
   /**
    * Setup Default Covah theme.
    *   Themes::
-   *     - ANCHOR::StyleColorsClassic()
+   *     - ANCHOR::StyleColorsDefault()
    *     - ANCHOR::StyleColorsLight()
    *     - ANCHOR::StyleColorsDark() */
-  ANCHOR::StyleColorsClassic();
+  ANCHOR::StyleColorsDefault();
 
   /**
    * Setup Platform/Renderer backends. */

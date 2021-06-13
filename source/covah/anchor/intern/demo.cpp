@@ -6833,16 +6833,16 @@ void ANCHOR::ShowFontSelector(const char *label)
 bool ANCHOR::ShowStyleSelector(const char *label)
 {
   static int style_idx = -1;
-  if (ANCHOR::Combo(label, &style_idx, "Dark\0Light\0Classic\0")) {
+  if (ANCHOR::Combo(label, &style_idx, "Default\0Dark\0Light\0")) {
     switch (style_idx) {
       case 0:
-        ANCHOR::StyleColorsDark();
+        ANCHOR::StyleColorsDefault();
         break;
       case 1:
-        ANCHOR::StyleColorsLight();
+        ANCHOR::StyleColorsDark();
         break;
       case 2:
-        ANCHOR::StyleColorsClassic();
+        ANCHOR::StyleColorsLight();
         break;
     }
     return true;

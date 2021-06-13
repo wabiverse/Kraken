@@ -257,13 +257,17 @@ void CKE_covah_main_init(int argc, char *argv[], cContext *C)
     UNI_enable_all_debug_codes();
   }
 
-  if (G.factory_startup) { /* Create default Pixar stage. */
+  if (G.factory_startup) {
+    /**
+     * Create default Pixar stage. */
     UNI_create_stage(TfStringCatPaths(G.main->temp_dir, "startup.usda"));
     UNI_author_gui();
     UNI_author_default_scene();
     UNI_save_stage();
   }
-  else { /* Open user's stage. */
+  else {
+    /**
+     * Open user's stage. */
     UNI_open_stage(G.main->stage_id.string());
   }
 

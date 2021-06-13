@@ -332,7 +332,7 @@ void ANCHOR::StyleColorsDark(ANCHOR_Style *dst)
   colors[ANCHOR_Col_ModalWindowDimBg]      = GfVec4f(0.80f, 0.80f, 0.80f, 0.35f);
 }
 
-void ANCHOR::StyleColorsClassic(ANCHOR_Style *dst)
+void ANCHOR::StyleColorsDefault(ANCHOR_Style *dst)
 {
   ANCHOR_Style *style = dst ? dst : &ANCHOR::GetStyle();
   GfVec4f *colors     = style->Colors;
