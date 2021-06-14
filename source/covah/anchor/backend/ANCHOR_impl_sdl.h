@@ -49,11 +49,12 @@
 #include "ANCHOR_system.h"
 #include "ANCHOR_window.h"
 
+struct ANCHOR_ImplVulkanH_Window;
 struct SDL_Window;
 typedef union SDL_Event SDL_Event;
 
 class ANCHOR_SystemSDL : public ANCHOR_System {
-
+ public:
   ANCHOR_SystemSDL();
   ~ANCHOR_SystemSDL();
 
@@ -102,6 +103,8 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow {
   SDL_Window *m_sdl_win;
   SDL_Cursor *m_sdl_custom_cursor;
 
+  ANCHOR_ImplVulkanH_Window *m_vulkan_context;
+
  public:
   ANCHOR_WindowSDL(ANCHOR_SystemSDL *system,
                    const char *title,
@@ -125,6 +128,11 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow {
   }
 
  protected:
+  /**
+   * @param type: The type of rendering context create.
+   * @return Indication of success. */
+  ANCHOR_Context *newDrawingContext(eAnchorDrawingContextType type);
+
   void setTitle(const char *title);
   void setIcon(const char *icon);
 };

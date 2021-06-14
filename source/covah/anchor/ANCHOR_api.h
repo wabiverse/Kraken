@@ -250,6 +250,65 @@ enum eAnchorWindowState {
   ANCHOR_WindowStateEmbedded,
 };
 
+enum eAnchorGrabCursorMode {
+  /** Grab not set. */
+  ANCHOR_GrabDisable = 0,
+  /** No cursor adjustments. */
+  ANCHOR_GrabNormal,
+  /** Wrap the mouse location to prevent limiting screen bounds. */
+  ANCHOR_GrabWrap,
+  /**
+   * Hide the mouse while grabbing and restore the original location on release
+   * (used for number buttons and some other draggable UI elements).
+   */
+  ANCHOR_GrabHide,
+};
+
+typedef enum eAnchorStandardCursor {
+  ANCHOR_StandardCursorFirstCursor = 0,
+  ANCHOR_StandardCursorDefault     = 0,
+  ANCHOR_StandardCursorRightArrow,
+  ANCHOR_StandardCursorLeftArrow,
+  ANCHOR_StandardCursorInfo,
+  ANCHOR_StandardCursorDestroy,
+  ANCHOR_StandardCursorHelp,
+  ANCHOR_StandardCursorWait,
+  ANCHOR_StandardCursorText,
+  ANCHOR_StandardCursorCrosshair,
+  ANCHOR_StandardCursorCrosshairA,
+  ANCHOR_StandardCursorCrosshairB,
+  ANCHOR_StandardCursorCrosshairC,
+  ANCHOR_StandardCursorPencil,
+  ANCHOR_StandardCursorUpArrow,
+  ANCHOR_StandardCursorDownArrow,
+  ANCHOR_StandardCursorVerticalSplit,
+  ANCHOR_StandardCursorHorizontalSplit,
+  ANCHOR_StandardCursorEraser,
+  ANCHOR_StandardCursorKnife,
+  ANCHOR_StandardCursorEyedropper,
+  ANCHOR_StandardCursorZoomIn,
+  ANCHOR_StandardCursorZoomOut,
+  ANCHOR_StandardCursorMove,
+  ANCHOR_StandardCursorNSEWScroll,
+  ANCHOR_StandardCursorNSScroll,
+  ANCHOR_StandardCursorEWScroll,
+  ANCHOR_StandardCursorStop,
+  ANCHOR_StandardCursorUpDown,
+  ANCHOR_StandardCursorLeftRight,
+  ANCHOR_StandardCursorTopSide,
+  ANCHOR_StandardCursorBottomSide,
+  ANCHOR_StandardCursorLeftSide,
+  ANCHOR_StandardCursorRightSide,
+  ANCHOR_StandardCursorTopLeftCorner,
+  ANCHOR_StandardCursorTopRightCorner,
+  ANCHOR_StandardCursorBottomRightCorner,
+  ANCHOR_StandardCursorBottomLeftCorner,
+  ANCHOR_StandardCursorCopy,
+  ANCHOR_StandardCursorCustom,
+
+  ANCHOR_StandardCursorNumCursors
+};
+
 //-----------------------------------------------------------------------------
 // [SECTION] Forward declarations and basic types
 //-----------------------------------------------------------------------------

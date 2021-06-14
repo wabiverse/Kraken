@@ -183,7 +183,7 @@ struct ANCHOR_ImplVulkanH_FrameSemaphores {
 // Helper structure to hold the data needed by one rendering context into one OS window
 // (Used by example's main.cpp. Used by multi-viewport features. Probably NOT used by your own
 // engine/app.)
-struct ANCHOR_ImplVulkanH_Window : public ANCHOR_Surface {
+struct ANCHOR_ImplVulkanH_Window {
   int Width;
   int Height;
   VkSwapchainKHR Swapchain;

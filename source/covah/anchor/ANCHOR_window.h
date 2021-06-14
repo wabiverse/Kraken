@@ -94,9 +94,51 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow {
   eAnchorStatus setDrawingContextType(eAnchorDrawingContextType type);
 
  protected:
+  /**
+   * Tries to install a rendering context in this window.
+   * @param type: The type of rendering context installed.
+   * @return Indication as to whether installation has succeeded. */
+  virtual ANCHOR_Context *newDrawingContext(eAnchorDrawingContextType type) = 0;
+
+ protected:
   /** The drawing context installed in this window. */
   eAnchorDrawingContextType m_drawingContextType;
 
   /** The window user data */
   ANCHOR_UserPtr m_userData;
+
+  /** The current visibility of the cursor */
+  bool m_cursorVisible;
+
+  /** The current grabbed state of the cursor */
+  eAnchorGrabCursorMode m_cursorGrab;
+
+  /** Accumulated offset from m_cursorGrabInitPos. */
+  AnchorS32 m_cursorGrabAccumPos[2];
+
+  /** The current shape of the cursor */
+  eAnchorStandardCursor m_cursorShape;
+
+  /** The presence of progress indicator with the application icon */
+  bool m_progressBarVisible;
+
+  /** The acceptance of the "drop candidate" of the current drag'n'drop operation */
+  bool m_canAcceptDragOperation;
+
+  /** Modified state : are there unsaved changes */
+  bool m_isUnsavedChanges;
+
+  /** Stores whether this is a full screen window. */
+  bool m_fullScreen;
+
+  /** Whether to attempt to initialize a context with a stereo frame-buffer. */
+  bool m_wantStereoVisual;
+
+  /** Full-screen width */
+  AnchorU32 m_fullScreenWidth;
+  /** Full-screen height */
+  AnchorU32 m_fullScreenHeight;
+
+  /* macOS only, retina screens */
+  float m_nativePixelSize;
 };
