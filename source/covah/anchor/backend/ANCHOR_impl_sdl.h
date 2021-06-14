@@ -44,15 +44,87 @@
 // https://github.com/ocornut/anchor/tree/master/docs
 
 #pragma once
+
 #include "ANCHOR_api.h"  // ANCHOR_IMPL_API
+#include "ANCHOR_system.h"
+#include "ANCHOR_window.h"
 
 struct SDL_Window;
 typedef union SDL_Event SDL_Event;
 
-ANCHOR_IMPL_API bool ANCHOR_ImplSDL2_InitForOpenGL(SDL_Window *window, void *sdl_gl_context);
-ANCHOR_IMPL_API bool ANCHOR_ImplSDL2_InitForVulkan(SDL_Window *window);
-ANCHOR_IMPL_API bool ANCHOR_ImplSDL2_InitForD3D(SDL_Window *window);
-ANCHOR_IMPL_API bool ANCHOR_ImplSDL2_InitForMetal(SDL_Window *window);
-ANCHOR_IMPL_API void ANCHOR_ImplSDL2_Shutdown();
-ANCHOR_IMPL_API void ANCHOR_ImplSDL2_NewFrame(SDL_Window *window);
-ANCHOR_IMPL_API bool ANCHOR_ImplSDL2_ProcessEvent(const SDL_Event *event);
+class ANCHOR_SystemSDL : public ANCHOR_System {
+
+  ANCHOR_SystemSDL();
+  ~ANCHOR_SystemSDL();
+
+  ANCHOR_IMPL_API
+  static bool ANCHOR_ImplSDL2_InitForOpenGL(SDL_Window *window, void *sdl_gl_context);
+
+  ANCHOR_IMPL_API
+  static bool ANCHOR_ImplSDL2_InitForVulkan(SDL_Window *window);
+
+  ANCHOR_IMPL_API
+  static bool ANCHOR_ImplSDL2_InitForD3D(SDL_Window *window);
+
+  ANCHOR_IMPL_API
+  static bool ANCHOR_ImplSDL2_InitForMetal(SDL_Window *window);
+
+  ANCHOR_IMPL_API
+  static void ANCHOR_ImplSDL2_Shutdown();
+
+  ANCHOR_IMPL_API
+  static void ANCHOR_ImplSDL2_NewFrame(SDL_Window *window);
+
+  ANCHOR_IMPL_API
+  static bool ANCHOR_ImplSDL2_ProcessEvent(const SDL_Event *event);
+
+ private:
+  ANCHOR_ISystemWindow *createWindow(const char *title,
+                                     AnchorS32 left,
+                                     AnchorS32 top,
+                                     AnchorU32 width,
+                                     AnchorU32 height,
+                                     eAnchorWindowState state,
+                                     eAnchorDrawingContextType type,
+                                     int vkSettings,
+                                     const bool exclusive                     = false,
+                                     const bool is_dialog                     = false,
+                                     const ANCHOR_ISystemWindow *parentWindow = NULL);
+};
+
+class ANCHOR_WindowSDL : public ANCHOR_SystemWindow {
+ private:
+  ANCHOR_SystemSDL *m_system;
+  SDL_Window *m_sdl_win;
+  bool m_valid_setup;
+  bool m_invalid_window;
+
+  SDL_Window *m_sdl_win;
+  SDL_Cursor *m_sdl_custom_cursor;
+
+ public:
+  ANCHOR_WindowSDL(ANCHOR_SystemSDL *system,
+                   const char *title,
+                   const char *icon,
+                   AnchorS32 left,
+                   AnchorS32 top,
+                   AnchorU32 width,
+                   AnchorU32 height,
+                   eAnchorWindowState state,
+                   eAnchorDrawingContextType type           = 0,
+                   const bool stereoVisual                  = false,
+                   const bool exclusive                     = false,
+                   const ANCHOR_ISystemWindow *parentWindow = NULL);
+
+  ~ANCHOR_WindowSDL();
+
+  /* SDL specific */
+  SDL_Window *getSDLWindow()
+  {
+    return m_sdl_win;
+  }
+
+ protected:
+  void setTitle(const char *title);
+  void setIcon(const char *icon);
+};

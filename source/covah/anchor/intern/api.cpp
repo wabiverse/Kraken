@@ -353,7 +353,6 @@ CODE
 #endif
 
 #include "ANCHOR_api.h"
-#include "ANCHOR_callback.h"
 #include "ANCHOR_system.h"
 #include "ANCHOR_vulkan.h"
 
@@ -3544,12 +3543,12 @@ void ANCHOR::SetCurrentContext(ANCHOR_Context *ctx)
   G_CTX = ctx;
 }
 
-bool ANCHOR::ProcessEvents(ANCHOR_System *system, ANCHOR_SystemGPU *gpu)
+bool ANCHOR::ProcessEvents(ANCHOR_SystemHandle *system, ANCHOR_SurfaceHandle *gpu)
 {
   return (ANCHOR_run_vulkan(system, gpu) == ANCHOR_EVENT);
 }
 
-void ANCHOR::SwapChain(ANCHOR_SystemGPU *gpu)
+void ANCHOR::SwapChain(ANCHOR_SurfaceHandle *gpu)
 {
   ANCHOR_render_vulkan(gpu);
 }

@@ -84,10 +84,13 @@
 
 // SDL
 #include <SDL.h>
+#include <SDL_image.h>
 #include <SDL_syswm.h>
 #if defined(__APPLE__)
 #  include "TargetConditionals.h"
 #endif
+
+#include <wabi/base/arch/systemInfo.h>
 
 #define SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE SDL_VERSION_ATLEAST(2, 0, 4)
 #define SDL_HAS_VULKAN SDL_VERSION_ATLEAST(2, 0, 6)
@@ -122,7 +125,7 @@ static void ANCHOR_ImplSDL2_SetClipboardText(void *, const char *text)
 // application. Generally you may always pass all inputs to ANCHOR, and hide them from your
 // application based on those two flags. If you have multiple SDL events and some of them are not
 // meant to be used by ANCHOR, you may need to filter events based on their windowID field.
-bool ANCHOR_ImplSDL2_ProcessEvent(const SDL_Event *event)
+bool ANCHOR_SystemSDL::ANCHOR_ImplSDL2_ProcessEvent(const SDL_Event *event)
 {
   ANCHOR_IO &io = ANCHOR::GetIO();
   switch (event->type) {
@@ -244,13 +247,13 @@ static bool ANCHOR_ImplSDL2_Init(SDL_Window *window)
   return true;
 }
 
-bool ANCHOR_ImplSDL2_InitForOpenGL(SDL_Window *window, void *sdl_gl_context)
+bool ANCHOR_SystemSDL::ANCHOR_ImplSDL2_InitForOpenGL(SDL_Window *window, void *sdl_gl_context)
 {
   (void)sdl_gl_context;  // Viewport branch will need this.
   return ANCHOR_ImplSDL2_Init(window);
 }
 
-bool ANCHOR_ImplSDL2_InitForVulkan(SDL_Window *window)
+bool ANCHOR_SystemSDL::ANCHOR_ImplSDL2_InitForVulkan(SDL_Window *window)
 {
 #if !SDL_HAS_VULKAN
   ANCHOR_ASSERT(0 && "Unsupported");
@@ -258,7 +261,7 @@ bool ANCHOR_ImplSDL2_InitForVulkan(SDL_Window *window)
   return ANCHOR_ImplSDL2_Init(window);
 }
 
-bool ANCHOR_ImplSDL2_InitForD3D(SDL_Window *window)
+bool ANCHOR_SystemSDL::ANCHOR_ImplSDL2_InitForD3D(SDL_Window *window)
 {
 #if !defined(_WIN32)
   ANCHOR_ASSERT(0 && "Unsupported");
@@ -266,12 +269,12 @@ bool ANCHOR_ImplSDL2_InitForD3D(SDL_Window *window)
   return ANCHOR_ImplSDL2_Init(window);
 }
 
-bool ANCHOR_ImplSDL2_InitForMetal(SDL_Window *window)
+bool ANCHOR_SystemSDL::ANCHOR_ImplSDL2_InitForMetal(SDL_Window *window)
 {
   return ANCHOR_ImplSDL2_Init(window);
 }
 
-void ANCHOR_ImplSDL2_Shutdown()
+void ANCHOR_SystemSDL::ANCHOR_ImplSDL2_Shutdown()
 {
   g_Window = NULL;
 
@@ -409,7 +412,7 @@ static void ANCHOR_ImplSDL2_UpdateGamepads()
 #undef MAP_ANALOG
 }
 
-void ANCHOR_ImplSDL2_NewFrame(SDL_Window *window)
+void ANCHOR_SystemSDL::ANCHOR_ImplSDL2_NewFrame(SDL_Window *window)
 {
   ANCHOR_IO &io = ANCHOR::GetIO();
   ANCHOR_ASSERT(io.Fonts->IsBuilt() &&
@@ -439,4 +442,105 @@ void ANCHOR_ImplSDL2_NewFrame(SDL_Window *window)
 
   // Update game controllers (if enabled and available)
   ANCHOR_ImplSDL2_UpdateGamepads();
+}
+
+ANCHOR_WindowSDL::ANCHOR_WindowSDL(ANCHOR_SystemSDL *system,
+                                   const char *title,
+                                   const char *icon,
+                                   AnchorS32 left,
+                                   AnchorS32 top,
+                                   AnchorU32 width,
+                                   AnchorU32 height,
+                                   eAnchorWindowState state,
+                                   eAnchorDrawingContextType type,
+                                   const bool stereoVisual,
+                                   const bool exclusive,
+                                   const ANCHOR_ISystemWindow *parentWindow)
+    : ANCHOR_SystemWindow(width, height, state, stereoVisual, exclusive),
+      m_system(system),
+      m_valid_setup(false),
+      m_invalid_window(false),
+      m_sdl_custom_cursor(NULL)
+{
+  /* creating the window _must_ come after setting attributes */
+  m_sdl_win = SDL_CreateWindow(title,
+                               left,
+                               top,
+                               width,
+                               height,
+                               SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN |
+                                   SDL_WINDOW_ALLOW_HIGHDPI);
+
+  /* now set up the rendering context. */
+  if (setDrawingContextType(type) == ANCHOR_SUCCESS) {
+    m_valid_setup = true;
+  }
+
+  if (exclusive) {
+    SDL_RaiseWindow(m_sdl_win);
+  }
+
+  setTitle(title);
+  setIcon(icon);
+}
+
+void ANCHOR_WindowSDL::setTitle(const char *title)
+{
+  SDL_SetWindowTitle(m_sdl_win, title);
+}
+
+void ANCHOR_WindowSDL::setIcon(const char *icon)
+{
+  SDL_SetWindowIcon(m_sdl_win, IMG_Load(icon));
+}
+
+ANCHOR_SystemSDL::ANCHOR_SystemSDL() : ANCHOR_System()
+{
+  /**
+   * Setup SDL. */
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0) {
+    TF_CODING_ERROR("Error: %s\n", SDL_GetError());
+    exit(ANCHOR_ERROR);
+  }
+}
+
+ANCHOR_ISystemWindow *ANCHOR_SystemSDL::createWindow(
+    const char *title,
+    AnchorS32 left,
+    AnchorS32 top,
+    AnchorU32 width,
+    AnchorU32 height,
+    eAnchorWindowState state,
+    eAnchorDrawingContextType type = ANCHOR_DrawingContextTypeNone,
+    int vkSettings,
+    const bool exclusive,
+    const bool /* is_dialog */,
+    const ANCHOR_ISystemWindow *parentWindow)
+{
+  ANCHOR_WindowSDL *window = NULL;
+
+  window = new ANCHOR_WindowSDL(
+      this, title, left, top, width, height, state, type, vkSettings, exclusive, parentWindow);
+
+  if (window) {
+    if (ANCHOR_WindowStateFullScreen == state) {
+      SDL_Window *sdl_win = window->getSDLWindow();
+
+      SDL_DisplayMode mode;
+      SDL_SetWindowDisplayMode(sdl_win, &mode);
+      SDL_ShowWindow(sdl_win);
+      SDL_SetWindowFullscreen(sdl_win, SDL_TRUE);
+    }
+
+    ANCHOR::CreateContext();
+
+    if (window->getValid()) {
+      m_windowManager->addWindow(window);
+      pushEvent(new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowSize, window));
+    }
+    else {
+      delete window;
+      window = NULL;
+    }
+  }
 }

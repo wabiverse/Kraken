@@ -19,6 +19,7 @@ set(SRC
   intern/demo.cpp
   intern/draw.cpp
   intern/event_consumer.cpp
+  intern/event_manager.cpp
   intern/system.cpp
   intern/tables.cpp
   intern/vulkan.cpp
@@ -36,10 +37,10 @@ set(SRC
   ANCHOR_event.h
   ANCHOR_internal.h
   ANCHOR_rectpack.h
+  ANCHOR_surface.h
   ANCHOR_system.h
   ANCHOR_textedit.h
   ANCHOR_truetype.h
-  ANCHOR_types.h
   ANCHOR_vulkan.h
 )
 

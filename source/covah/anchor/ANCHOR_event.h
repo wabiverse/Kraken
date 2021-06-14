@@ -25,7 +25,6 @@
 #pragma once
 
 #include "ANCHOR_api.h"
-#include "ANCHOR_types.h"
 
 class ANCHOR_IEvent {
  public:

@@ -533,31 +533,8 @@ static void SetFont()
   io.FontDefault             = io.Fonts->AddFontFromFileTTF(sf_path, 14.0f);
 }
 
-static void SetWindowIcon(SDL_Window *window)
+ANCHOR_SystemSurface ANCHOR_init_vulkan(VkResult &err)
 {
-  const static std::string exe  = TfGetPathName(ArchGetExecutablePath());
-  const static std::string icon = "../datafiles/icons/covah-desktop.png";
-
-  SDL_SetWindowIcon(window, IMG_Load(TfStringCatPaths(exe, icon).c_str()));
-}
-
-HANDLE_sdl_vk_win ANCHOR_init_vulkan(VkResult &err)
-{
-  /**
-   * Setup SDL. */
-  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0) {
-    TF_CODING_ERROR("Error: %s\n", SDL_GetError());
-    exit(ANCHOR_ERROR);
-  }
-
-  /**
-   * Setup Window. */
-  SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE |
-                                                   SDL_WINDOW_ALLOW_HIGHDPI);
-  SDL_Window *window           = SDL_CreateWindow(
-      "Covah", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
-  SetWindowIcon(window);
-
   /**
    * Setup Vulkan. */
   uint32_t extensions_count = 0;
@@ -664,10 +641,10 @@ HANDLE_sdl_vk_win ANCHOR_init_vulkan(VkResult &err)
     ANCHOR_ImplVulkan_DestroyFontUploadObjects();
   }
 
-  return std::make_pair(window, wd);
+  return std::make_pair((ANCHOR_System)window), (ANCHOR_Surface)wd));
 }
 
-eAnchorStatus ANCHOR_run_vulkan(ANCHOR_System *window, ANCHOR_SystemGPU *wd)
+eAnchorStatus ANCHOR_run_vulkan(ANCHOR_SystemHandle *window, ANCHOR_SurfaceHandle *wd)
 {
   eAnchorStatus status = ANCHOR_RUN;
 
@@ -715,7 +692,7 @@ eAnchorStatus ANCHOR_run_vulkan(ANCHOR_System *window, ANCHOR_SystemGPU *wd)
   return status;
 }
 
-void ANCHOR_render_vulkan(ANCHOR_SystemGPU *wd)
+void ANCHOR_render_vulkan(ANCHOR_SurfaceHandle *wd)
 {
   ANCHOR::Render();
   ImDrawData *draw_data   = ANCHOR::GetDrawData();
@@ -731,7 +708,7 @@ void ANCHOR_render_vulkan(ANCHOR_SystemGPU *wd)
   }
 }
 
-void ANCHOR_clean_vulkan(ANCHOR_System *window /**Todo::VkResult &err*/)
+void ANCHOR_clean_vulkan(ANCHOR_SystemHandle *window /**Todo::VkResult &err*/)
 {
   // err = vkDeviceWaitIdle(g_Device);
   // check_vk_result(err);

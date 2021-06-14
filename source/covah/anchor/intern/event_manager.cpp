@@ -22,8 +22,6 @@
  * Bare Metal.
  */
 
-#pragma once
-
 #include "ANCHOR_event_manager.h"
 
 #include <algorithm>

@@ -24,14 +24,27 @@
 
 #pragma once
 
-#define ANCHOR_DECLARE_HANDLE(name) \
-  typedef struct name##__ { \
-    int unused; \
-  } * name
+#include "ANCHOR_api.h"
 
-ANCHOR_DECLARE_HANDLE(ANCHOR_EventHandle);
-ANCHOR_DECLARE_HANDLE(ANCHOR_EventConsumerHandle);
+class ANCHOR_ISurface {
+ public:
+  /**
+   * Destructor. */
+  virtual ~ANCHOR_ISurface()
+  {}
+};
 
-typedef void *ANCHOR_UserPtr;
-typedef void *ANCHOR_EventPtr;
-typedef double ANCHOR_Time;
+class ANCHOR_Surface : public ANCHOR_ISurface {
+ protected:
+  /**
+   * Constructor.
+   * Protected default constructor to force use of static createSystem member.
+   */
+  ANCHOR_Surface();
+
+  /**
+   * Destructor.
+   * Protected default constructor to force use of static dispose member.
+   */
+  virtual ~ANCHOR_Surface();
+};

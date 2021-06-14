@@ -22,8 +22,6 @@
  * Bare Metal.
  */
 
-#pragma once
-
 #include "ANCHOR_api.h"
 #include "ANCHOR_event_consumer.h"
 

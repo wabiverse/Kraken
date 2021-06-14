@@ -27,11 +27,10 @@
 #include "UNI_window.h"
 
 #include "ANCHOR_api.h"
-#include "ANCHOR_system.h"
 
 #include "CKE_context.h"
 
-typedef std::pair<ANCHOR_System *, ANCHOR_SystemGPU *> AnchorSysGPU;
+typedef std::pair<ANCHOR_SystemHandle *, ANCHOR_SurfaceHandle *> AnchorSysGPU;
 
 /* handle to anchor system. */
 static AnchorSysGPU anchor_backend;

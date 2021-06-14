@@ -84,11 +84,6 @@ AnchorFontAtlasFlags, AnchorFontAtlas, AnchorFont)
 #  include <stddef.h>  // ptrdiff_t, NULL
 #  include <string.h>  // memset, memmove, memcpy, strlen, strchr, strcpy, strcmp
 
-#  include "ANCHOR_event_consumer.h"
-#  include "ANCHOR_event_manager.h"
-#  include "ANCHOR_types.h"
-#  include "ANCHOR_vulkan.h"
-
 #  include <wabi/base/gf/vec2f.h>
 #  include <wabi/base/gf/vec2h.h>
 #  include <wabi/base/gf/vec4f.h>
@@ -192,27 +187,67 @@ AnchorFontAtlasFlags, AnchorFontAtlas, AnchorFont)
                              // value-initialization instead
 #  endif
 
+/** Cross-platform compatible handles to backends. */
+#  define ANCHOR_DECLARE_HANDLE(name) \
+    typedef struct name##__ { \
+      int unused; \
+    } * name
+
+ANCHOR_DECLARE_HANDLE(ANCHOR_EventHandle);
+ANCHOR_DECLARE_HANDLE(ANCHOR_EventConsumerHandle);
+ANCHOR_DECLARE_HANDLE(ANCHOR_SystemHandle);
+ANCHOR_DECLARE_HANDLE(ANCHOR_SurfaceHandle);
+
+/** For event handling with client applications. */
+typedef void *ANCHOR_UserPtr;
+typedef void *ANCHOR_EventPtr;
+typedef double ANCHOR_Time;
+
+/** Interfaces. */
+class ANCHOR_IEvent;
+class ANCHOR_ISurface;
+class ANCHOR_ISystem;
+class ANCHOR_ISystemWindow;
+
+/** Classes. */
+class ANCHOR_Event;
+class ANCHOR_EventManager;
+class ANCHOR_Surface;
+class ANCHOR_System;
+class ANCHOR_SystemWindow;
+class ANCHOR_WindowManager;
+
+typedef std::pair<ANCHOR_System, ANCHOR_Surface> ANCHOR_SystemSurface;
+
 enum eAnchorStatus { ANCHOR_ERROR = -1, ANCHOR_SUCCESS, ANCHOR_RUN, ANCHOR_EVENT };
 
-enum eAnchorBackendType {
-  ANCHOR_ALLEGRO,
-  ANCHOR_ANDROID,
-  ANCHOR_DIRECTX9,
-  ANCHOR_DIRECTX10,
-  ANCHOR_DIRECTX11,
-  ANCHOR_DIRECTX12,
-  ANCHOR_GLFW,
-  ANCHOR_GLUT,
-  ANCHOR_MARMALADE,
-  ANCHOR_METAL,
-  ANCHOR_OPENGL2,
-  ANCHOR_OPENGL3,
-  ANCHOR_OPENXR,
-  ANCHOR_OSX,
-  ANCHOR_SDL,
-  ANCHOR_VULKAN,
-  ANCHOR_WGPU,
-  ANCHOR_WIN32
+enum eAnchorDrawingContextType {
+  ANCHOR_DrawingContextTypeNone = 0,
+  ANCHOR_DrawingContextTypeAllegro,
+  ANCHOR_DrawingContextTypeAndroid,
+  ANCHOR_DrawingContextTypeDX9,
+  ANCHOR_DrawingContextTypeDX10,
+  ANCHOR_DrawingContextTypeDX11,
+  ANCHOR_DrawingContextTypeDX12,
+  ANCHOR_DrawingContextTypeGLFW,
+  ANCHOR_DrawingContextTypeGLUT,
+  ANCHOR_DrawingContextTypeMarmalade,
+  ANCHOR_DrawingContextTypeMetal,
+  ANCHOR_DrawingContextTypeOpenGL,
+  ANCHOR_DrawingContextTypeOpenXR,
+  ANCHOR_DrawingContextTypeOSX,
+  ANCHOR_DrawingContextTypeSDL,
+  ANCHOR_DrawingContextTypeVulkan,
+  ANCHOR_DrawingContextTypeWGPU,
+  ANCHOR_DrawingContextTypeWIN32
+};
+
+enum eAnchorWindowState {
+  ANCHOR_WindowStateNormal = 0,
+  ANCHOR_WindowStateMaximized,
+  ANCHOR_WindowStateMinimized,
+  ANCHOR_WindowStateFullScreen,
+  ANCHOR_WindowStateEmbedded,
 };
 
 //-----------------------------------------------------------------------------
@@ -267,7 +302,45 @@ struct ANCHORViewport;    // A Platform Window (always only one in 'master' bran
 /**
  * Event Types ----------- */
 
-typedef int ANCHOR_EventType;         /// Enum: For all the different event types
+enum ANCHOR_EventType {
+  ANCHOR_EventUnknown = 0,
+
+  ANCHOR_EventCursorMove,  /// Mouse move event
+  ANCHOR_EventButtonDown,  /// Mouse button event
+  ANCHOR_EventButtonUp,    /// Mouse button event
+  ANCHOR_EventWheel,       /// Mouse wheel event
+  ANCHOR_EventTrackpad,    /// Trackpad event
+
+  ANCHOR_EventKeyDown,
+  ANCHOR_EventKeyUp,
+
+  ANCHOR_EventQuitRequest,
+
+  ANCHOR_EventWindowClose,
+  ANCHOR_EventWindowActivate,
+  ANCHOR_EventWindowDeactivate,
+  ANCHOR_EventWindowUpdate,
+  ANCHOR_EventWindowSize,
+  ANCHOR_EventWindowMove,
+  ANCHOR_EventWindowDPIHintChanged,
+
+  ANCHOR_EventDraggingEntered,
+  ANCHOR_EventDraggingUpdated,
+  ANCHOR_EventDraggingExited,
+  ANCHOR_EventDraggingDropDone,
+
+  ANCHOR_EventOpenMainFile,  // Needed for Cocoa to open double-clicked .blend file at startup
+  ANCHOR_EventNativeResolutionChange,  // Needed for Cocoa when window moves to other display
+
+  ANCHOR_EventTimer,
+
+  ANCHOR_EventImeCompositionStart,
+  ANCHOR_EventImeComposition,
+  ANCHOR_EventImeCompositionEnd,
+
+  ANCHOR_NumEventTypes
+};
+
 typedef int ANCHOR_Col;               /// Enum: A color identifier for styling
 typedef int ANCHOR_Cond;              /// Enum: A condition for many Set*() functions
 typedef int ANCHOR_DataType;          /// Enum: A primary data type
@@ -352,7 +425,7 @@ typedef signed char ImS8;        // 8-bit signed integer
 typedef unsigned char ImU8;      // 8-bit unsigned integer
 typedef signed short ImS16;      // 16-bit signed integer
 typedef unsigned short ImU16;    // 16-bit unsigned integer
-typedef signed int ImS32;        // 32-bit signed integer == int
+typedef signed int AnchorS32;    // 32-bit signed integer == int
 typedef unsigned int AnchorU32;  // 32-bit unsigned integer (often used to store packed colors)
 #  if defined(_MSC_VER) && !defined(__clang__)
 typedef signed __int64 ImS64;    // 64-bit signed integer (pre and post C++11 with Visual Studio)
@@ -392,10 +465,10 @@ ANCHOR_API
 void SetCurrentContext(ANCHOR_Context *ctx);
 
 ANCHOR_API
-bool ProcessEvents(ANCHOR_System *sys, ANCHOR_SystemGPU *gpu);
+bool ProcessEvents(ANCHOR_SystemHandle *sys, ANCHOR_SurfaceHandle *gpu);
 
 ANCHOR_API
-void SwapChain(ANCHOR_SystemGPU *gpu);
+void SwapChain(ANCHOR_SurfaceHandle *gpu);
 
 /**
  * ⚓︎ Anchor :: Main -------------------- */

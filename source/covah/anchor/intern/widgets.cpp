@@ -135,8 +135,8 @@ static const signed short IM_S16_MIN   = -32768;
 static const signed short IM_S16_MAX   = 32767;
 static const unsigned short IM_U16_MIN = 0;
 static const unsigned short IM_U16_MAX = 0xFFFF;
-static const ImS32 IM_S32_MIN          = INT_MIN;  // (-2147483647 - 1), (0x80000000);
-static const ImS32 IM_S32_MAX          = INT_MAX;  // (2147483647), (0x7FFFFFFF)
+static const AnchorS32 IM_S32_MIN      = INT_MIN;  // (-2147483647 - 1), (0x80000000);
+static const AnchorS32 IM_S32_MAX      = INT_MAX;  // (2147483647), (0x7FFFFFFF)
 static const AnchorU32 IM_U32_MIN      = 0;
 static const AnchorU32 IM_U32_MAX      = UINT_MAX;  // (0xFFFFFFFF)
 #  ifdef LLONG_MIN
@@ -2286,12 +2286,12 @@ void ANCHOR::DataTypeApplyOp(ANCHOR_DataType data_type,
       return;
     case ANCHOR_DataType_S32:
       if (op == '+') {
-        *(ImS32 *)output = ImAddClampOverflow(
-            *(const ImS32 *)arg1, *(const ImS32 *)arg2, IM_S32_MIN, IM_S32_MAX);
+        *(AnchorS32 *)output = ImAddClampOverflow(
+            *(const AnchorS32 *)arg1, *(const AnchorS32 *)arg2, IM_S32_MIN, IM_S32_MAX);
       }
       if (op == '-') {
-        *(ImS32 *)output = ImSubClampOverflow(
-            *(const ImS32 *)arg1, *(const ImS32 *)arg2, IM_S32_MIN, IM_S32_MAX);
+        *(AnchorS32 *)output = ImSubClampOverflow(
+            *(const AnchorS32 *)arg1, *(const AnchorS32 *)arg2, IM_S32_MIN, IM_S32_MAX);
       }
       return;
     case ANCHOR_DataType_U32:
@@ -2505,7 +2505,7 @@ int ANCHOR::DataTypeCompare(ANCHOR_DataType data_type, const void *arg_1, const 
     case ANCHOR_DataType_U16:
       return DataTypeCompareT<ImU16>((const ImU16 *)arg_1, (const ImU16 *)arg_2);
     case ANCHOR_DataType_S32:
-      return DataTypeCompareT<ImS32>((const ImS32 *)arg_1, (const ImS32 *)arg_2);
+      return DataTypeCompareT<AnchorS32>((const AnchorS32 *)arg_1, (const AnchorS32 *)arg_2);
     case ANCHOR_DataType_U32:
       return DataTypeCompareT<AnchorU32>((const AnchorU32 *)arg_1, (const AnchorU32 *)arg_2);
     case ANCHOR_DataType_S64:
@@ -2552,7 +2552,8 @@ bool ANCHOR::DataTypeClamp(ANCHOR_DataType data_type,
     case ANCHOR_DataType_U16:
       return DataTypeClampT<ImU16>((ImU16 *)p_data, (const ImU16 *)p_min, (const ImU16 *)p_max);
     case ANCHOR_DataType_S32:
-      return DataTypeClampT<ImS32>((ImS32 *)p_data, (const ImS32 *)p_min, (const ImS32 *)p_max);
+      return DataTypeClampT<AnchorS32>(
+          (AnchorS32 *)p_data, (const AnchorS32 *)p_min, (const AnchorS32 *)p_max);
     case ANCHOR_DataType_U32:
       return DataTypeClampT<AnchorU32>(
           (AnchorU32 *)p_data, (const AnchorU32 *)p_min, (const AnchorU32 *)p_max);
@@ -2852,73 +2853,77 @@ bool ANCHOR::DragBehavior(ANCHOR_ID id,
 
   switch (data_type) {
     case ANCHOR_DataType_S8: {
-      ImS32 v32 = (ImS32) * (ImS8 *)p_v;
-      bool r    = DragBehaviorT<ImS32, ImS32, float>(ANCHOR_DataType_S32,
-                                                  &v32,
-                                                  v_speed,
-                                                  p_min ? *(const ImS8 *)p_min : IM_S8_MIN,
-                                                  p_max ? *(const ImS8 *)p_max : IM_S8_MAX,
-                                                  format,
-                                                  flags);
+      AnchorS32 v32 = (AnchorS32) * (ImS8 *)p_v;
+      bool r        = DragBehaviorT<AnchorS32, AnchorS32, float>(ANCHOR_DataType_S32,
+                                                          &v32,
+                                                          v_speed,
+                                                          p_min ? *(const ImS8 *)p_min : IM_S8_MIN,
+                                                          p_max ? *(const ImS8 *)p_max : IM_S8_MAX,
+                                                          format,
+                                                          flags);
       if (r)
         *(ImS8 *)p_v = (ImS8)v32;
       return r;
     }
     case ANCHOR_DataType_U8: {
       AnchorU32 v32 = (AnchorU32) * (ImU8 *)p_v;
-      bool r        = DragBehaviorT<AnchorU32, ImS32, float>(ANCHOR_DataType_U32,
-                                                      &v32,
-                                                      v_speed,
-                                                      p_min ? *(const ImU8 *)p_min : IM_U8_MIN,
-                                                      p_max ? *(const ImU8 *)p_max : IM_U8_MAX,
-                                                      format,
-                                                      flags);
+      bool r        = DragBehaviorT<AnchorU32, AnchorS32, float>(ANCHOR_DataType_U32,
+                                                          &v32,
+                                                          v_speed,
+                                                          p_min ? *(const ImU8 *)p_min : IM_U8_MIN,
+                                                          p_max ? *(const ImU8 *)p_max : IM_U8_MAX,
+                                                          format,
+                                                          flags);
       if (r)
         *(ImU8 *)p_v = (ImU8)v32;
       return r;
     }
     case ANCHOR_DataType_S16: {
-      ImS32 v32 = (ImS32) * (ImS16 *)p_v;
-      bool r    = DragBehaviorT<ImS32, ImS32, float>(ANCHOR_DataType_S32,
-                                                  &v32,
-                                                  v_speed,
-                                                  p_min ? *(const ImS16 *)p_min : IM_S16_MIN,
-                                                  p_max ? *(const ImS16 *)p_max : IM_S16_MAX,
-                                                  format,
-                                                  flags);
+      AnchorS32 v32 = (AnchorS32) * (ImS16 *)p_v;
+      bool r        = DragBehaviorT<AnchorS32, AnchorS32, float>(
+          ANCHOR_DataType_S32,
+          &v32,
+          v_speed,
+          p_min ? *(const ImS16 *)p_min : IM_S16_MIN,
+          p_max ? *(const ImS16 *)p_max : IM_S16_MAX,
+          format,
+          flags);
       if (r)
         *(ImS16 *)p_v = (ImS16)v32;
       return r;
     }
     case ANCHOR_DataType_U16: {
       AnchorU32 v32 = (AnchorU32) * (ImU16 *)p_v;
-      bool r        = DragBehaviorT<AnchorU32, ImS32, float>(ANCHOR_DataType_U32,
-                                                      &v32,
-                                                      v_speed,
-                                                      p_min ? *(const ImU16 *)p_min : IM_U16_MIN,
-                                                      p_max ? *(const ImU16 *)p_max : IM_U16_MAX,
-                                                      format,
-                                                      flags);
+      bool r        = DragBehaviorT<AnchorU32, AnchorS32, float>(
+          ANCHOR_DataType_U32,
+          &v32,
+          v_speed,
+          p_min ? *(const ImU16 *)p_min : IM_U16_MIN,
+          p_max ? *(const ImU16 *)p_max : IM_U16_MAX,
+          format,
+          flags);
       if (r)
         *(ImU16 *)p_v = (ImU16)v32;
       return r;
     }
     case ANCHOR_DataType_S32:
-      return DragBehaviorT<ImS32, ImS32, float>(data_type,
-                                                (ImS32 *)p_v,
-                                                v_speed,
-                                                p_min ? *(const ImS32 *)p_min : IM_S32_MIN,
-                                                p_max ? *(const ImS32 *)p_max : IM_S32_MAX,
-                                                format,
-                                                flags);
+      return DragBehaviorT<AnchorS32, AnchorS32, float>(
+          data_type,
+          (AnchorS32 *)p_v,
+          v_speed,
+          p_min ? *(const AnchorS32 *)p_min : IM_S32_MIN,
+          p_max ? *(const AnchorS32 *)p_max : IM_S32_MAX,
+          format,
+          flags);
     case ANCHOR_DataType_U32:
-      return DragBehaviorT<AnchorU32, ImS32, float>(data_type,
-                                                    (AnchorU32 *)p_v,
-                                                    v_speed,
-                                                    p_min ? *(const AnchorU32 *)p_min : IM_U32_MIN,
-                                                    p_max ? *(const AnchorU32 *)p_max : IM_U32_MAX,
-                                                    format,
-                                                    flags);
+      return DragBehaviorT<AnchorU32, AnchorS32, float>(
+          data_type,
+          (AnchorU32 *)p_v,
+          v_speed,
+          p_min ? *(const AnchorU32 *)p_min : IM_U32_MIN,
+          p_max ? *(const AnchorU32 *)p_max : IM_U32_MAX,
+          format,
+          flags);
     case ANCHOR_DataType_S64:
       return DragBehaviorT<ImS64, ImS64, double>(data_type,
                                                  (ImS64 *)p_v,
@@ -3805,88 +3810,88 @@ bool ANCHOR::SliderBehavior(const ImRect &bb,
 
   switch (data_type) {
     case ANCHOR_DataType_S8: {
-      ImS32 v32 = (ImS32) * (ImS8 *)p_v;
-      bool r    = SliderBehaviorT<ImS32, ImS32, float>(bb,
-                                                    id,
-                                                    ANCHOR_DataType_S32,
-                                                    &v32,
-                                                    *(const ImS8 *)p_min,
-                                                    *(const ImS8 *)p_max,
-                                                    format,
-                                                    flags,
-                                                    out_grab_bb);
+      AnchorS32 v32 = (AnchorS32) * (ImS8 *)p_v;
+      bool r        = SliderBehaviorT<AnchorS32, AnchorS32, float>(bb,
+                                                            id,
+                                                            ANCHOR_DataType_S32,
+                                                            &v32,
+                                                            *(const ImS8 *)p_min,
+                                                            *(const ImS8 *)p_max,
+                                                            format,
+                                                            flags,
+                                                            out_grab_bb);
       if (r)
         *(ImS8 *)p_v = (ImS8)v32;
       return r;
     }
     case ANCHOR_DataType_U8: {
       AnchorU32 v32 = (AnchorU32) * (ImU8 *)p_v;
-      bool r        = SliderBehaviorT<AnchorU32, ImS32, float>(bb,
-                                                        id,
-                                                        ANCHOR_DataType_U32,
-                                                        &v32,
-                                                        *(const ImU8 *)p_min,
-                                                        *(const ImU8 *)p_max,
-                                                        format,
-                                                        flags,
-                                                        out_grab_bb);
+      bool r        = SliderBehaviorT<AnchorU32, AnchorS32, float>(bb,
+                                                            id,
+                                                            ANCHOR_DataType_U32,
+                                                            &v32,
+                                                            *(const ImU8 *)p_min,
+                                                            *(const ImU8 *)p_max,
+                                                            format,
+                                                            flags,
+                                                            out_grab_bb);
       if (r)
         *(ImU8 *)p_v = (ImU8)v32;
       return r;
     }
     case ANCHOR_DataType_S16: {
-      ImS32 v32 = (ImS32) * (ImS16 *)p_v;
-      bool r    = SliderBehaviorT<ImS32, ImS32, float>(bb,
-                                                    id,
-                                                    ANCHOR_DataType_S32,
-                                                    &v32,
-                                                    *(const ImS16 *)p_min,
-                                                    *(const ImS16 *)p_max,
-                                                    format,
-                                                    flags,
-                                                    out_grab_bb);
+      AnchorS32 v32 = (AnchorS32) * (ImS16 *)p_v;
+      bool r        = SliderBehaviorT<AnchorS32, AnchorS32, float>(bb,
+                                                            id,
+                                                            ANCHOR_DataType_S32,
+                                                            &v32,
+                                                            *(const ImS16 *)p_min,
+                                                            *(const ImS16 *)p_max,
+                                                            format,
+                                                            flags,
+                                                            out_grab_bb);
       if (r)
         *(ImS16 *)p_v = (ImS16)v32;
       return r;
     }
     case ANCHOR_DataType_U16: {
       AnchorU32 v32 = (AnchorU32) * (ImU16 *)p_v;
-      bool r        = SliderBehaviorT<AnchorU32, ImS32, float>(bb,
-                                                        id,
-                                                        ANCHOR_DataType_U32,
-                                                        &v32,
-                                                        *(const ImU16 *)p_min,
-                                                        *(const ImU16 *)p_max,
-                                                        format,
-                                                        flags,
-                                                        out_grab_bb);
+      bool r        = SliderBehaviorT<AnchorU32, AnchorS32, float>(bb,
+                                                            id,
+                                                            ANCHOR_DataType_U32,
+                                                            &v32,
+                                                            *(const ImU16 *)p_min,
+                                                            *(const ImU16 *)p_max,
+                                                            format,
+                                                            flags,
+                                                            out_grab_bb);
       if (r)
         *(ImU16 *)p_v = (ImU16)v32;
       return r;
     }
     case ANCHOR_DataType_S32:
-      ANCHOR_ASSERT(*(const ImS32 *)p_min >= IM_S32_MIN / 2 &&
-                    *(const ImS32 *)p_max <= IM_S32_MAX / 2);
-      return SliderBehaviorT<ImS32, ImS32, float>(bb,
-                                                  id,
-                                                  data_type,
-                                                  (ImS32 *)p_v,
-                                                  *(const ImS32 *)p_min,
-                                                  *(const ImS32 *)p_max,
-                                                  format,
-                                                  flags,
-                                                  out_grab_bb);
+      ANCHOR_ASSERT(*(const AnchorS32 *)p_min >= IM_S32_MIN / 2 &&
+                    *(const AnchorS32 *)p_max <= IM_S32_MAX / 2);
+      return SliderBehaviorT<AnchorS32, AnchorS32, float>(bb,
+                                                          id,
+                                                          data_type,
+                                                          (AnchorS32 *)p_v,
+                                                          *(const AnchorS32 *)p_min,
+                                                          *(const AnchorS32 *)p_max,
+                                                          format,
+                                                          flags,
+                                                          out_grab_bb);
     case ANCHOR_DataType_U32:
       ANCHOR_ASSERT(*(const AnchorU32 *)p_max <= IM_U32_MAX / 2);
-      return SliderBehaviorT<AnchorU32, ImS32, float>(bb,
-                                                      id,
-                                                      data_type,
-                                                      (AnchorU32 *)p_v,
-                                                      *(const AnchorU32 *)p_min,
-                                                      *(const AnchorU32 *)p_max,
-                                                      format,
-                                                      flags,
-                                                      out_grab_bb);
+      return SliderBehaviorT<AnchorU32, AnchorS32, float>(bb,
+                                                          id,
+                                                          data_type,
+                                                          (AnchorU32 *)p_v,
+                                                          *(const AnchorU32 *)p_min,
+                                                          *(const AnchorU32 *)p_max,
+                                                          format,
+                                                          flags,
+                                                          out_grab_bb);
     case ANCHOR_DataType_S64:
       ANCHOR_ASSERT(*(const ImS64 *)p_min >= IM_S64_MIN / 2 &&
                     *(const ImS64 *)p_max <= IM_S64_MAX / 2);
@@ -9970,7 +9975,7 @@ bool ANCHOR::TabItemEx(ANCHOR_TabBar *tab_bar,
   tab->Flags                   = flags;
 
   // Append name with zero-terminator
-  tab->NameOffset = (ImS32)tab_bar->TabsNames.size();
+  tab->NameOffset = (AnchorS32)tab_bar->TabsNames.size();
   tab_bar->TabsNames.append(label, label + strlen(label) + 1);
 
   // Update selected tab

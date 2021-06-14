@@ -25,18 +25,8 @@
 #pragma once
 
 #include "ANCHOR_api.h"
-#include "ANCHOR_impl_vulkan.h"
 
-#include <SDL_vulkan.h>
-
-typedef SDL_Window ANCHOR_System;
-
-/** todo: move to GPU */
-typedef ANCHOR_ImplVulkanH_Window ANCHOR_SystemGPU;
-
-typedef std::pair<SDL_Window *, ANCHOR_ImplVulkanH_Window *> HANDLE_sdl_vk_win;
-
-HANDLE_sdl_vk_win ANCHOR_init_vulkan(VkResult &err);
-eAnchorStatus ANCHOR_run_vulkan(ANCHOR_System *window, ANCHOR_SystemGPU *wd);
-void ANCHOR_render_vulkan(ANCHOR_SystemGPU *wd);
-void ANCHOR_clean_vulkan(ANCHOR_System *window /**Todo::VkResult &err*/);
+ANCHOR_SystemSurface ANCHOR_init_vulkan(VkResult &err);
+eAnchorStatus ANCHOR_run_vulkan(ANCHOR_SystemHandle *window, ANCHOR_SurfaceHandle *wd);
+void ANCHOR_render_vulkan(ANCHOR_SurfaceHandle *wd);
+void ANCHOR_clean_vulkan(ANCHOR_SystemHandle *window /**Todo::VkResult &err*/);

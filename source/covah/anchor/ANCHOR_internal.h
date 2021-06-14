@@ -3117,7 +3117,8 @@ struct ANCHOR_TabItem {
   float Offset;           // Position relative to beginning of tab
   float Width;            // Width currently displayed
   float ContentWidth;     // Width of label, stored during BeginTabItem() call
-  ImS32 NameOffset;  // When Window==NULL, offset to name within parent ANCHOR_TabBar::TabsNames
+  AnchorS32
+      NameOffset;    // When Window==NULL, offset to name within parent ANCHOR_TabBar::TabsNames
   ImS16 BeginOrder;  // BeginTabItem() order, used to re-order tabs after toggling
                      // ANCHOR_TabBarFlags_Reorderable
   ImS16 IndexDuringLayout;  // Index only used during TabBarLayout()
