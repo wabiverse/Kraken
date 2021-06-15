@@ -154,6 +154,40 @@ class ANCHOR_System : public ANCHOR_ISystem {
 
  public:
   /**
+   * Begins full screen mode.
+   * @param setting: The new setting of the display.
+   * @param window: Window displayed in full screen.
+   * @param stereoVisual: Stereo visual for quad buffered stereo.
+   * This window is invalid after full screen has been ended.
+   * @return Indication of success. */
+  eAnchorStatus beginFullScreen(const ANCHOR_DisplaySetting &setting,
+                                ANCHOR_ISystemWindow **window,
+                                const bool stereoVisual,
+                                const bool alphaBackground);
+
+  /**
+   * Ends full screen mode.
+   * @return Indication of success. */
+  eAnchorStatus endFullScreen(void);
+
+  /**
+   * Dispatches all the events on the stack.
+   * The event stack will be empty afterwards. */
+  void dispatchEvents();
+
+  /**
+   * Adds the given event consumer to our list.
+   * @param consumer: The event consumer to add.
+   * @return Indication of success. */
+  eAnchorStatus addEventConsumer(ANCHOR_IEventConsumer *consumer);
+
+  /**
+   * Remove the given event consumer to our list.
+   * @param consumer: The event consumer to remove.
+   * @return Indication of success. */
+  eAnchorStatus removeEventConsumer(ANCHOR_IEventConsumer *consumer);
+
+  /**
    * Pushes an event on the stack.
    * To dispatch it, call dispatchEvent()
    * or dispatchEvents().

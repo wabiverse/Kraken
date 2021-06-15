@@ -91,7 +91,7 @@ eAnchorStatus ANCHOR_SystemWindow::setDrawingContextType(eAnchorDrawingContextTy
 
 eAnchorStatus ANCHOR_SystemWindow::swapBuffers()
 {
-  ANCHOR::SwapChain(this);
+  ANCHOR::SwapChain((ANCHOR_SystemWindowHandle)this);
   return ANCHOR_SUCCESS;
 }
 

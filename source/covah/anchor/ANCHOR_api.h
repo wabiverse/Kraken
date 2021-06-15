@@ -184,37 +184,62 @@ AnchorFontAtlasFlags, AnchorFontAtlas, AnchorFont)
                            // value-initialization instead
 #  endif
 
+/**
+ * -----------------------------------------------------------------------------
+ * [SECTION] Forward declarations and basic types
+ * ----------------------------------------------------------------------------- */
+
 /** Cross-platform compatible handles to backends. */
 #  define ANCHOR_DECLARE_HANDLE(name) \
     typedef struct name##__ { \
       int unused; \
     } * name
 
+/**
+ * Anchor System :: Handles
+ *
+ * - These are the handles which a client
+ *   application is safe to hold reference
+ *   pointers to -- as the client application
+ *   maintains the lifetime of their own unique
+ *   Anchor handles. */
 ANCHOR_DECLARE_HANDLE(ANCHOR_EventHandle);
 ANCHOR_DECLARE_HANDLE(ANCHOR_EventConsumerHandle);
 ANCHOR_DECLARE_HANDLE(ANCHOR_SystemHandle);
 ANCHOR_DECLARE_HANDLE(ANCHOR_SystemWindowHandle);
 
-/** For event handling with client applications. */
-typedef void *ANCHOR_UserPtr;
-typedef void *ANCHOR_EventPtr;
-typedef double ANCHOR_Time;
+/**
+ * Anchor System :: Interfaces
+ *
+ * - Provides the main abstract API
+ *   schema for the platform agnostic
+ *   Anchor backend system.                                           */
+class ANCHOR_IEvent;         /** <- Anchor Events Interface.          */
+class ANCHOR_IEventConsumer; /** <- Anchor Event Consumers Interface. */
+class ANCHOR_ISystem;        /** <- Anchor System Backends Interface. */
+class ANCHOR_ISystemWindow;  /** <- Anchor System Windows Interface.  */
 
-/** Interfaces. */
-class ANCHOR_IEvent;         /** <- Anchor Events. */
-class ANCHOR_IEventConsumer; /** <- Anchor Event Consumers. */
-class ANCHOR_ISystem;
-class ANCHOR_ISystemWindow;
+/**
+ * Anchor System :: Platform Agnostic Implementation
+ *
+ * - Provides the concrete classes which
+ *   are to be inherited by the various
+ *   platform specific backends.                           */
+class ANCHOR_Event;         /** <- Anchor Events.          */
+class ANCHOR_EventConsumer; /** <- Anchor Event Consumers. */
+class ANCHOR_System;        /** <- Anchor System Backends. */
+class ANCHOR_SystemWindow;  /** <- Anchor System Windows.  */
 
-/** Classes. */
-class ANCHOR_Event;
-class ANCHOR_EventConsumer;
-class ANCHOR_System;
-class ANCHOR_SystemWindow;
-
-/** Managers. */
-class ANCHOR_EventManager;
-class ANCHOR_WindowManager;
+/**
+ * Anchor System :: Managers
+ *
+ * - Provides the concrete classes which
+ *   define the event, display, as well
+ *   as  the  window  management system.
+ *   All, which power Anchor's backend.                        */
+class ANCHOR_DisplayManager; /** <- Anchor Display Management. */
+class ANCHOR_EventManager;   /** <- Anchor Event Management.   */
+class ANCHOR_WindowManager;  /** <- Anchor Window Management.  */
 
 enum eAnchorStatus { ANCHOR_ERROR = -1, ANCHOR_SUCCESS, ANCHOR_RUN, ANCHOR_EVENT };
 
@@ -305,10 +330,6 @@ enum eAnchorStandardCursor {
 
   ANCHOR_StandardCursorNumCursors
 };
-
-//-----------------------------------------------------------------------------
-// [SECTION] Forward declarations and basic types
-//-----------------------------------------------------------------------------
 
 // Forward declarations
 struct ImDrawChannel;         // Temporary storage to output draw commands out of order, used by
@@ -447,6 +468,18 @@ typedef void *AnchorTextureID;
 #  endif
 
 /**
+ * For event handling with client applications,
+ * in the case of covah  --  ANCHOR_UserPtr is
+ * assigned to the #cContext data structure. */
+typedef void *ANCHOR_UserPtr;
+typedef void *ANCHOR_EventPtr;
+
+/**
+ * The Anchor backend measures time with
+ * 64-bit unsigned integer precision. */
+typedef AnchorU64 ANCHOR_Time;
+
+/**
  * A unique ID used by widgets, hashed from a stack of string. */
 typedef unsigned int ANCHOR_ID;
 /**
@@ -531,14 +564,40 @@ ANCHOR_Context *GetCurrentContext();
 ANCHOR_API
 void SetCurrentContext(ANCHOR_Context *ctx);
 
+/**
+ * ⚓︎ Anchor :: Main -------------------- */
+
+/**
+ * Process Events (User Actions).
+ *
+ *  - mouse
+ *  - keyboard
+ *  - gamepad inputs
+ *  - time
+ *
+ * @param systemhandle: Handle to backend system.
+ * @param waitForEvent: To indicate that this call
+ * should wait (block) until the next event before
+ * returning.
+ * @return Indication of the presence of events. */
+
 ANCHOR_API
 bool ProcessEvents(ANCHOR_SystemHandle systemhandle, bool waitForEvent);
 
+/**
+ * Preforms a swap on the swapchain.
+ *
+ * This is what one may refer to as
+ * the "display update" which takes
+ * all old 'cache', and swaps it to
+ * the new 'cache'. This is intended
+ * to be called at a bare minium of
+ * a monitor's refresh rate. Any bit
+ * slower than that and a user will
+ * experience graphics 'lag'.
+ * @return Indication of success. */
 ANCHOR_API
 eAnchorStatus SwapChain(ANCHOR_SystemWindowHandle windowhandle);
-
-/**
- * ⚓︎ Anchor :: Main -------------------- */
 
 /**
  * Adds a given event consumer to anchor.
