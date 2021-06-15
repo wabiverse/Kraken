@@ -38,10 +38,10 @@
 WABI_NAMESPACE_BEGIN
 
 class HdBufferSource;
-using HdBufferSourceSharedPtr       = std::shared_ptr<HdBufferSource>;
-using HdBufferSourceConstSharedPtr  = std::shared_ptr<HdBufferSource const>;
+using HdBufferSourceSharedPtr = std::shared_ptr<HdBufferSource>;
+using HdBufferSourceConstSharedPtr = std::shared_ptr<HdBufferSource const>;
 using HdBufferSourceSharedPtrVector = std::vector<HdBufferSourceSharedPtr>;
-using HdBufferSourceWeakPtr         = std::weak_ptr<HdBufferSource>;
+using HdBufferSourceWeakPtr = std::weak_ptr<HdBufferSource>;
 
 /// \class HdBufferSource
 ///

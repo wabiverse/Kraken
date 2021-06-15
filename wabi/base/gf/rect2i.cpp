@@ -74,8 +74,7 @@ GfRect2i GfRect2i::GetNormalized() const
 
 std::ostream &operator<<(std::ostream &out, const GfRect2i &r)
 {
-  return out << '[' << Gf_OstreamHelperP(r.GetMin()) << ":" << Gf_OstreamHelperP(r.GetMax())
-             << ']';
+  return out << '[' << Gf_OstreamHelperP(r.GetMin()) << ":" << Gf_OstreamHelperP(r.GetMax()) << ']';
 }
 
 WABI_NAMESPACE_END

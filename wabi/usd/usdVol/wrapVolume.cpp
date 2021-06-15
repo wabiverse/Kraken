@@ -69,29 +69,27 @@ void wrapUsdVolVolume()
   class_<This, bases<UsdGeomGprim>> cls("Volume");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -119,16 +117,11 @@ namespace {
 
 WRAP_CUSTOM
 {
-  _class
-      .def("GetFieldPaths",
-           &UsdVolVolume::GetFieldPaths,
-           return_value_policy<TfPyMapToDictionary>())
-      .def("GetFieldPath", &UsdVolVolume::GetFieldPath, arg("name"))
-      .def("HasFieldRelationship", &UsdVolVolume::HasFieldRelationship, arg("name"))
-      .def("CreateFieldRelationship",
-           &UsdVolVolume::CreateFieldRelationship,
-           (arg("name"), arg("fieldPath")))
-      .def("BlockFieldRelationship", &UsdVolVolume::BlockFieldRelationship, arg("name"));
+  _class.def("GetFieldPaths", &UsdVolVolume::GetFieldPaths, return_value_policy<TfPyMapToDictionary>())
+    .def("GetFieldPath", &UsdVolVolume::GetFieldPath, arg("name"))
+    .def("HasFieldRelationship", &UsdVolVolume::HasFieldRelationship, arg("name"))
+    .def("CreateFieldRelationship", &UsdVolVolume::CreateFieldRelationship, (arg("name"), arg("fieldPath")))
+    .def("BlockFieldRelationship", &UsdVolVolume::BlockFieldRelationship, arg("name"));
 }
 
 }  // namespace

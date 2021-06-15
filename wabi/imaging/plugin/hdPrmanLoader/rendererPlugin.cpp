@@ -54,10 +54,10 @@ static struct HdPrmanLoader {
 #if defined(ARCH_OS_LINUX) || defined(ARCH_OS_DARWIN)
   void *libprman = nullptr;
 #endif
-  void *hdxPrman                = nullptr;
+  void *hdxPrman = nullptr;
   CreateDelegateFunc createFunc = nullptr;
   DeleteDelegateFunc deleteFunc = nullptr;
-  bool valid                    = false;
+  bool valid = false;
 } _hdPrman;
 
 void HdPrmanLoader::Load()
@@ -101,9 +101,9 @@ void HdPrmanLoader::Load()
   }
 
   _hdPrman.createFunc = reinterpret_cast<CreateDelegateFunc>(
-      ArchLibraryGetSymbolAddress(_hdPrman.hdxPrman, "HdPrmanLoaderCreateDelegate"));
+    ArchLibraryGetSymbolAddress(_hdPrman.hdxPrman, "HdPrmanLoaderCreateDelegate"));
   _hdPrman.deleteFunc = reinterpret_cast<DeleteDelegateFunc>(
-      ArchLibraryGetSymbolAddress(_hdPrman.hdxPrman, "HdPrmanLoaderDeleteDelegate"));
+    ArchLibraryGetSymbolAddress(_hdPrman.hdxPrman, "HdPrmanLoaderDeleteDelegate"));
   if (!_hdPrman.createFunc || !_hdPrman.deleteFunc) {
     TF_WARN("hdPrmanLoader factory methods could not be found.");
     return;
@@ -150,8 +150,7 @@ HdRenderDelegate *HdPrmanLoaderRendererPlugin::CreateRenderDelegate()
   return nullptr;
 }
 
-HdRenderDelegate *HdPrmanLoaderRendererPlugin::CreateRenderDelegate(
-    HdRenderSettingsMap const &settingsMap)
+HdRenderDelegate *HdPrmanLoaderRendererPlugin::CreateRenderDelegate(HdRenderSettingsMap const &settingsMap)
 {
   if (_hdPrman.valid) {
     return _hdPrman.createFunc(settingsMap);

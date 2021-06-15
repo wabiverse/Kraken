@@ -109,67 +109,64 @@ void wrapCamera()
   TfPyWrapEnum<GfCamera::FOVDirection>();
 
   c.def(init<const This &>())
-      .def(init<const GfMatrix4d &,
-                GfCamera::Projection,
-                float,
-                float,
-                float,
-                float,
-                float,
-                const GfRange1f &,
-                const std::vector<GfVec4f> &,
-                float,
-                float>((args("transform")                = GfMatrix4d(1.0),
-                        args("projection")               = GfCamera::Perspective,
-                        args("horizontalAperture")       = GfCamera::DEFAULT_HORIZONTAL_APERTURE,
-                        args("verticalAperture")         = GfCamera::DEFAULT_VERTICAL_APERTURE,
-                        args("horizontalApertureOffset") = 0.0,
-                        args("verticalApertureOffset")   = 0.0,
-                        args("focalLength")              = 50.0,
-                        args("clippingRange")            = GfRange1f(1, 1000000),
-                        args("clippingPlanes")           = std::vector<GfVec4f>(),
-                        args("fStop")                    = 0.0,
-                        args("focusDistance")            = 0.0)))
-      .add_property("transform", &This::GetTransform, &This::SetTransform)
-      .add_property("projection", &This::GetProjection, &This::SetProjection)
-      .add_property(
-          "horizontalAperture", &This::GetHorizontalAperture, &This::SetHorizontalAperture)
-      .add_property("verticalAperture", &This::GetVerticalAperture, &This::SetVerticalAperture)
-      .add_property("horizontalApertureOffset",
-                    &This::GetHorizontalApertureOffset,
-                    &This::SetHorizontalApertureOffset)
-      .add_property("verticalApertureOffset",
-                    &This::GetVerticalApertureOffset,
-                    &This::SetVerticalApertureOffset)
-      .add_property("aspectRatio", &This::GetAspectRatio)
-      .add_property("focalLength", &This::GetFocalLength, &This::SetFocalLength)
-      .add_property("clippingRange", &This::GetClippingRange, &This::SetClippingRange)
-      .add_property("clippingPlanes", &_GetClippingPlanes, &This::SetClippingPlanes)
-      .add_property("frustum", &This::GetFrustum)
-      .add_property("fStop", &This::GetFStop, &This::SetFStop)
-      .add_property("focusDistance", &This::GetFocusDistance, &This::SetFocusDistance)
-      .add_property("horizontalFieldOfView", &_GetHorizontalFieldOfView)
-      .add_property("verticalFieldOfView", &_GetVerticalFieldOfView)
-      .def("GetFieldOfView", &This::GetFieldOfView)
-      .def("SetPerspectiveFromAspectRatioAndFieldOfView",
-           &This::SetPerspectiveFromAspectRatioAndFieldOfView,
-           (arg("aspectRatio"),
-            arg("fieldOfView"),
-            arg("direction"),
-            arg("horizontalAperture") = This::DEFAULT_HORIZONTAL_APERTURE))
-      .def("SetOrthographicFromAspectRatioAndSize",
-           &This::SetOrthographicFromAspectRatioAndSize,
-           (arg("aspectRatio"), arg("orthographicSize"), arg("direction")))
-      .def("SetFromViewAndProjectionMatrix",
-           &This::SetFromViewAndProjectionMatrix,
-           (arg("viewMatrix"), arg("projMatrix"), arg("focalLength") = 50))
-      .setattr("APERTURE_UNIT", This::APERTURE_UNIT)
-      .setattr("FOCAL_LENGTH_UNIT", This::FOCAL_LENGTH_UNIT)
-      .setattr("DEFAULT_HORIZONTAL_APERTURE", This::DEFAULT_HORIZONTAL_APERTURE)
-      .setattr("DEFAULT_VERTICAL_APERTURE", This::DEFAULT_VERTICAL_APERTURE)
+    .def(init<const GfMatrix4d &,
+              GfCamera::Projection,
+              float,
+              float,
+              float,
+              float,
+              float,
+              const GfRange1f &,
+              const std::vector<GfVec4f> &,
+              float,
+              float>((args("transform") = GfMatrix4d(1.0),
+                      args("projection") = GfCamera::Perspective,
+                      args("horizontalAperture") = GfCamera::DEFAULT_HORIZONTAL_APERTURE,
+                      args("verticalAperture") = GfCamera::DEFAULT_VERTICAL_APERTURE,
+                      args("horizontalApertureOffset") = 0.0,
+                      args("verticalApertureOffset") = 0.0,
+                      args("focalLength") = 50.0,
+                      args("clippingRange") = GfRange1f(1, 1000000),
+                      args("clippingPlanes") = std::vector<GfVec4f>(),
+                      args("fStop") = 0.0,
+                      args("focusDistance") = 0.0)))
+    .add_property("transform", &This::GetTransform, &This::SetTransform)
+    .add_property("projection", &This::GetProjection, &This::SetProjection)
+    .add_property("horizontalAperture", &This::GetHorizontalAperture, &This::SetHorizontalAperture)
+    .add_property("verticalAperture", &This::GetVerticalAperture, &This::SetVerticalAperture)
+    .add_property(
+      "horizontalApertureOffset", &This::GetHorizontalApertureOffset, &This::SetHorizontalApertureOffset)
+    .add_property(
+      "verticalApertureOffset", &This::GetVerticalApertureOffset, &This::SetVerticalApertureOffset)
+    .add_property("aspectRatio", &This::GetAspectRatio)
+    .add_property("focalLength", &This::GetFocalLength, &This::SetFocalLength)
+    .add_property("clippingRange", &This::GetClippingRange, &This::SetClippingRange)
+    .add_property("clippingPlanes", &_GetClippingPlanes, &This::SetClippingPlanes)
+    .add_property("frustum", &This::GetFrustum)
+    .add_property("fStop", &This::GetFStop, &This::SetFStop)
+    .add_property("focusDistance", &This::GetFocusDistance, &This::SetFocusDistance)
+    .add_property("horizontalFieldOfView", &_GetHorizontalFieldOfView)
+    .add_property("verticalFieldOfView", &_GetVerticalFieldOfView)
+    .def("GetFieldOfView", &This::GetFieldOfView)
+    .def("SetPerspectiveFromAspectRatioAndFieldOfView",
+         &This::SetPerspectiveFromAspectRatioAndFieldOfView,
+         (arg("aspectRatio"),
+          arg("fieldOfView"),
+          arg("direction"),
+          arg("horizontalAperture") = This::DEFAULT_HORIZONTAL_APERTURE))
+    .def("SetOrthographicFromAspectRatioAndSize",
+         &This::SetOrthographicFromAspectRatioAndSize,
+         (arg("aspectRatio"), arg("orthographicSize"), arg("direction")))
+    .def("SetFromViewAndProjectionMatrix",
+         &This::SetFromViewAndProjectionMatrix,
+         (arg("viewMatrix"), arg("projMatrix"), arg("focalLength") = 50))
+    .setattr("APERTURE_UNIT", This::APERTURE_UNIT)
+    .setattr("FOCAL_LENGTH_UNIT", This::FOCAL_LENGTH_UNIT)
+    .setattr("DEFAULT_HORIZONTAL_APERTURE", This::DEFAULT_HORIZONTAL_APERTURE)
+    .setattr("DEFAULT_VERTICAL_APERTURE", This::DEFAULT_VERTICAL_APERTURE)
 
-      .def(self == self)
-      .def(self != self)
+    .def(self == self)
+    .def(self != self)
 
-      .def("__repr__", _Repr);
+    .def("__repr__", _Repr);
 }

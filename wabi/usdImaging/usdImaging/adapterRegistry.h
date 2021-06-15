@@ -43,9 +43,7 @@ using UsdImagingPrimAdapterSharedPtr = std::shared_ptr<UsdImagingPrimAdapter>;
 #define USD_IMAGING_ADAPTER_KEY_TOKENS \
   ((instanceAdapterKey, "__instanceAdapter"))((drawModeAdapterKey, "__drawModeAdapter"))
 
-TF_DECLARE_PUBLIC_TOKENS(UsdImagingAdapterKeyTokens,
-                         USDIMAGING_API,
-                         USD_IMAGING_ADAPTER_KEY_TOKENS);
+TF_DECLARE_PUBLIC_TOKENS(UsdImagingAdapterKeyTokens, USDIMAGING_API, USD_IMAGING_ADAPTER_KEY_TOKENS);
 
 /// \class UsdImagingAdapterRegistry
 ///

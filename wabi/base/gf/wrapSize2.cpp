@@ -68,7 +68,7 @@ static size_t __getitem__(const GfSize2 &self, int index)
 
 static void __setitem__(GfSize2 &self, int index, size_t value)
 {
-  index       = normalizeIndex(index);
+  index = normalizeIndex(index);
   self[index] = value;
 }
 
@@ -105,45 +105,45 @@ void wrapSize2()
   static const int dimension = 2;
 
   class_<This>("Size2", "A 2D size class", init<>())
-      .def(init<const This &>())
-      .def(init<const GfVec2i &>())
-      .def(init<size_t, size_t>())
+    .def(init<const This &>())
+    .def(init<const GfVec2i &>())
+    .def(init<size_t, size_t>())
 
-      .def(TfTypePythonClass())
+    .def(TfTypePythonClass())
 
-      .def("Set", (GfSize2 & (This::*)(size_t, size_t)) & This::Set, return_self<>())
+    .def("Set", (GfSize2 & (This::*)(size_t, size_t)) & This::Set, return_self<>())
 
-      .def_readonly("dimension", dimension)
+    .def_readonly("dimension", dimension)
 
-      .def("__len__", __len__)
-      .def("__getitem__", __getitem__)
-      .def("__setitem__", __setitem__)
-      .def("__contains__", __contains__)
+    .def("__len__", __len__)
+    .def("__getitem__", __getitem__)
+    .def("__setitem__", __setitem__)
+    .def("__contains__", __contains__)
 
-      .def(str(self))
-      .def(self == self)
-      .def(self != self)
-      .def(self += self)
-      .def(self -= self)
-      .def(self *= int())
-      .def(self /= int())
-      .def(self + self)
-      .def(self - self)
-      .def(self * self)
-      .def(int() * self)
-      .def(self * int())
-      .def(self / int())
+    .def(str(self))
+    .def(self == self)
+    .def(self != self)
+    .def(self += self)
+    .def(self -= self)
+    .def(self *= int())
+    .def(self /= int())
+    .def(self + self)
+    .def(self - self)
+    .def(self * self)
+    .def(int() * self)
+    .def(self * int())
+    .def(self / int())
 
 #if PY_MAJOR_VERSION == 2
-      // Needed only to support "from __future__ import division" in
-      // python 2. In python 3 builds boost::python adds this for us.
-      .def("__truediv__", __truediv__)
-      .def("__itruediv__", __itruediv__)
+    // Needed only to support "from __future__ import division" in
+    // python 2. In python 3 builds boost::python adds this for us.
+    .def("__truediv__", __truediv__)
+    .def("__itruediv__", __itruediv__)
 #endif
 
-      .def("__repr__", _Repr)
+    .def("__repr__", _Repr)
 
-      ;
+    ;
   to_python_converter<std::vector<This>, TfPySequenceToPython<std::vector<This>>>();
 
   // conversion operator

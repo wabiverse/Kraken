@@ -33,9 +33,9 @@
 WABI_NAMESPACE_BEGIN
 
 HgiVertexAttributeDesc::HgiVertexAttributeDesc()
-    : format(HgiFormatFloat32Vec4),
-      offset(0),
-      shaderBindLocation(0)
+  : format(HgiFormatFloat32Vec4),
+    offset(0),
+    shaderBindLocation(0)
 {}
 
 bool operator==(const HgiVertexAttributeDesc &lhs, const HgiVertexAttributeDesc &rhs)
@@ -63,15 +63,12 @@ bool operator!=(const HgiVertexBufferDesc &lhs, const HgiVertexBufferDesc &rhs)
   return !(lhs == rhs);
 }
 
-HgiMultiSampleState::HgiMultiSampleState()
-    : alphaToCoverageEnable(false),
-      sampleCount(HgiSampleCount1)
+HgiMultiSampleState::HgiMultiSampleState() : alphaToCoverageEnable(false), sampleCount(HgiSampleCount1)
 {}
 
 bool operator==(const HgiMultiSampleState &lhs, const HgiMultiSampleState &rhs)
 {
-  return lhs.alphaToCoverageEnable == rhs.alphaToCoverageEnable &&
-         lhs.sampleCount == rhs.sampleCount;
+  return lhs.alphaToCoverageEnable == rhs.alphaToCoverageEnable && lhs.sampleCount == rhs.sampleCount;
 }
 
 bool operator!=(const HgiMultiSampleState &lhs, const HgiMultiSampleState &rhs)
@@ -80,11 +77,11 @@ bool operator!=(const HgiMultiSampleState &lhs, const HgiMultiSampleState &rhs)
 }
 
 HgiRasterizationState::HgiRasterizationState()
-    : polygonMode(HgiPolygonModeFill),
-      lineWidth(1.0f),
-      cullMode(HgiCullModeBack),
-      winding(HgiWindingCounterClockwise),
-      rasterizerEnabled(true)
+  : polygonMode(HgiPolygonModeFill),
+    lineWidth(1.0f),
+    cullMode(HgiCullModeBack),
+    winding(HgiWindingCounterClockwise),
+    rasterizerEnabled(true)
 {}
 
 bool operator==(const HgiRasterizationState &lhs, const HgiRasterizationState &rhs)
@@ -100,18 +97,16 @@ bool operator!=(const HgiRasterizationState &lhs, const HgiRasterizationState &r
 }
 
 HgiDepthStencilState::HgiDepthStencilState()
-    : depthTestEnabled(true),
-      depthWriteEnabled(true),
-      depthCompareFn(HgiCompareFunctionLess),
-      stencilTestEnabled(false)
+  : depthTestEnabled(true),
+    depthWriteEnabled(true),
+    depthCompareFn(HgiCompareFunctionLess),
+    stencilTestEnabled(false)
 {}
 
 bool operator==(const HgiDepthStencilState &lhs, const HgiDepthStencilState &rhs)
 {
-  return lhs.depthTestEnabled == rhs.depthTestEnabled &&
-         lhs.depthWriteEnabled == rhs.depthWriteEnabled &&
-         lhs.depthCompareFn == rhs.depthCompareFn &&
-         lhs.stencilTestEnabled == rhs.stencilTestEnabled;
+  return lhs.depthTestEnabled == rhs.depthTestEnabled && lhs.depthWriteEnabled == rhs.depthWriteEnabled &&
+         lhs.depthCompareFn == rhs.depthCompareFn && lhs.stencilTestEnabled == rhs.stencilTestEnabled;
 }
 
 bool operator!=(const HgiDepthStencilState &lhs, const HgiDepthStencilState &rhs)
@@ -120,18 +115,16 @@ bool operator!=(const HgiDepthStencilState &lhs, const HgiDepthStencilState &rhs
 }
 
 HgiGraphicsShaderConstantsDesc::HgiGraphicsShaderConstantsDesc()
-    : byteSize(0),
-      stageUsage(HgiShaderStageFragment)
+  : byteSize(0),
+    stageUsage(HgiShaderStageFragment)
 {}
 
-bool operator==(const HgiGraphicsShaderConstantsDesc &lhs,
-                const HgiGraphicsShaderConstantsDesc &rhs)
+bool operator==(const HgiGraphicsShaderConstantsDesc &lhs, const HgiGraphicsShaderConstantsDesc &rhs)
 {
   return lhs.byteSize == rhs.byteSize && lhs.stageUsage == rhs.stageUsage;
 }
 
-bool operator!=(const HgiGraphicsShaderConstantsDesc &lhs,
-                const HgiGraphicsShaderConstantsDesc &rhs)
+bool operator!=(const HgiGraphicsShaderConstantsDesc &lhs, const HgiGraphicsShaderConstantsDesc &rhs)
 {
   return !(lhs == rhs);
 }
@@ -148,10 +141,8 @@ bool operator==(const HgiGraphicsPipelineDesc &lhs, const HgiGraphicsPipelineDes
 {
   return lhs.debugName == rhs.debugName && lhs.primitiveType == rhs.primitiveType &&
          lhs.shaderProgram == rhs.shaderProgram && lhs.depthState == rhs.depthState &&
-         lhs.multiSampleState == rhs.multiSampleState &&
-         lhs.rasterizationState == rhs.rasterizationState &&
-         lhs.vertexBuffers == rhs.vertexBuffers &&
-         lhs.colorAttachmentDescs == rhs.colorAttachmentDescs &&
+         lhs.multiSampleState == rhs.multiSampleState && lhs.rasterizationState == rhs.rasterizationState &&
+         lhs.vertexBuffers == rhs.vertexBuffers && lhs.colorAttachmentDescs == rhs.colorAttachmentDescs &&
          lhs.colorResolveAttachmentDescs == rhs.colorResolveAttachmentDescs &&
          lhs.depthAttachmentDesc == rhs.depthAttachmentDesc &&
          lhs.depthResolveAttachmentDesc == rhs.depthResolveAttachmentDesc &&

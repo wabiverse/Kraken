@@ -98,9 +98,7 @@ class UsdGeomXformCache {
   /// Intermediate transforms are cached, but the result of this call itself
   /// is not cached.
   USDGEOM_API
-  GfMatrix4d ComputeRelativeTransform(const UsdPrim &prim,
-                                      const UsdPrim &ancestor,
-                                      bool *resetXformStack);
+  GfMatrix4d ComputeRelativeTransform(const UsdPrim &prim, const UsdPrim &ancestor, bool *resetXformStack);
 
   /// Whether the attribute named \p attrName, belonging to the
   /// given \p prim affects the local transform value at the prim.
@@ -153,9 +151,9 @@ class UsdGeomXformCache {
   struct _Entry {
     _Entry() = default;
     _Entry(const UsdGeomXformable::XformQuery &query_, const GfMatrix4d &ctm_, bool ctmIsValid_)
-        : query(query_),
-          ctm(ctm_),
-          ctmIsValid(ctmIsValid_)
+      : query(query_),
+        ctm(ctm_),
+        ctmIsValid(ctmIsValid_)
     {}
 
     UsdGeomXformable::XformQuery query;

@@ -54,10 +54,10 @@ class HdField : public HdBprim {
 
   // Change tracking for HdField
   enum DirtyBits : HdDirtyBits {
-    Clean          = 0,
+    Clean = 0,
     DirtyTransform = 1 << 0,
-    DirtyParams    = 1 << 1,
-    AllDirty       = (DirtyTransform | DirtyParams)
+    DirtyParams = 1 << 1,
+    AllDirty = (DirtyTransform | DirtyParams)
   };
 };
 

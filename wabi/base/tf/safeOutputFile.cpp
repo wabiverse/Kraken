@@ -55,12 +55,12 @@ FILE *TfSafeOutputFile::ReleaseUpdatedFile()
 {
   if (!IsOpenForUpdate()) {
     TF_CODING_ERROR(
-        "Invalid output file (failed to open, or opened for "
-        "replace)");
+      "Invalid output file (failed to open, or opened for "
+      "replace)");
     return nullptr;
   }
   FILE *ret = _file;
-  _file     = nullptr;
+  _file = nullptr;
   _tempFileName.clear();
   _targetFileName.clear();
   return ret;
@@ -92,8 +92,8 @@ void TfSafeOutputFile::Discard()
 {
   if (IsOpenForUpdate()) {
     TF_CODING_ERROR(
-        "Invalid output file (failed to open, or opened for "
-        "update)");
+      "Invalid output file (failed to open, or opened for "
+      "update)");
     return;
   }
 
@@ -112,7 +112,7 @@ TfSafeOutputFile TfSafeOutputFile::Update(std::string const &fileName)
 {
   TfSafeOutputFile result;
   result._targetFileName = fileName;
-  FILE *file             = ArchOpenFile(fileName.c_str(), "rb+");
+  FILE *file = ArchOpenFile(fileName.c_str(), "rb+");
   if (!file) {
     TF_RUNTIME_ERROR("Unable to open file '%s' for writing", fileName.c_str());
     return result;
@@ -125,8 +125,7 @@ TfSafeOutputFile TfSafeOutputFile::Replace(std::string const &fileName)
 {
   TfSafeOutputFile result;
   std::string error;
-  int tmpFd = Tf_CreateSiblingTempFile(
-      fileName, &result._targetFileName, &result._tempFileName, &error);
+  int tmpFd = Tf_CreateSiblingTempFile(fileName, &result._targetFileName, &result._tempFileName, &error);
   if (tmpFd == -1) {
     TF_RUNTIME_ERROR(error);
     return result;

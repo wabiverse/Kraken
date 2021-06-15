@@ -119,8 +119,7 @@ template<typename Ret, typename... Args> struct TfPyFunctionFromPython<Ret(Args.
   }
 
   template<typename FuncType>
-  static void construct(PyObject *src,
-                        boost::python::converter::rvalue_from_python_stage1_data *data)
+  static void construct(PyObject *src, boost::python::converter::rvalue_from_python_stage1_data *data)
   {
     using std::string;
     using namespace boost::python;
@@ -153,7 +152,7 @@ template<typename Ret, typename... Args> struct TfPyFunctionFromPython<Ret(Args.
 
       object callable(handle<>(borrowed(src)));
       PyObject *pyCallable = callable.ptr();
-      PyObject *self       = PyMethod_Check(pyCallable) ? PyMethod_GET_SELF(pyCallable) : NULL;
+      PyObject *self = PyMethod_Check(pyCallable) ? PyMethod_GET_SELF(pyCallable) : NULL;
 
       if (self) {
         // Deconstruct the method and attempt to get a weak reference to
@@ -166,8 +165,8 @@ template<typename Ret, typename... Args> struct TfPyFunctionFromPython<Ret(Args.
         new (storage) FuncType(CallMethod {
           TfPyObjWrapper(func), TfPyObjWrapper(weakSelf)
 #if PY_MAJOR_VERSION == 2
-                                    ,
-              TfPyObjWrapper(cls)
+                                  ,
+            TfPyObjWrapper(cls)
 #endif
         });
       }

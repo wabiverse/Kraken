@@ -39,7 +39,7 @@ class HdPrimGather final {
  public:
   typedef bool (*FilterPredicateFn)(const SdfPath &path, const void *param);
 
-  HdPrimGather()  = default;
+  HdPrimGather() = default;
   ~HdPrimGather() = default;
 
   ///
@@ -130,10 +130,7 @@ class HdPrimGather final {
   /// If the rootPath wasn't found or an error occurred, that
   /// otherwise produces an invalid range. The method returns false.
   HD_API
-  bool SubtreeAsRange(const SdfPathVector &paths,
-                      const SdfPath &rootPath,
-                      size_t *start,
-                      size_t *end);
+  bool SubtreeAsRange(const SdfPathVector &paths, const SdfPath &rootPath, size_t *start, size_t *end);
 
  private:
   struct _PathFilter {
@@ -169,14 +166,8 @@ class HdPrimGather final {
   _RangeArray _gatheredRanges;
   _ConcurrentRangeArray _resultRanges;
 
-  size_t _FindLowerBound(const SdfPathVector &paths,
-                         size_t start,
-                         size_t end,
-                         const SdfPath &path) const;
-  size_t _FindUpperBound(const SdfPathVector &paths,
-                         size_t start,
-                         size_t end,
-                         const SdfPath &path) const;
+  size_t _FindLowerBound(const SdfPathVector &paths, size_t start, size_t end, const SdfPath &path) const;
+  size_t _FindUpperBound(const SdfPathVector &paths, size_t start, size_t end, const SdfPath &path) const;
 
   void _FilterRange(const SdfPathVector &paths, size_t start, size_t end, bool include);
 

@@ -61,7 +61,7 @@ std::ostream &operator<<(std::ostream &os, const SdfChangeList &cl)
 {
   TF_FOR_ALL(entryIter, cl.GetEntryList())
   {
-    const SdfPath &path               = entryIter->first;
+    const SdfPath &path = entryIter->first;
     const SdfChangeList::Entry &entry = entryIter->second;
 
     os << "  <" << path << ">\n";
@@ -134,8 +134,8 @@ std::ostream &operator<<(std::ostream &os, const SdfChangeList &cl)
 // CODE_COVERAGE_ON
 
 SdfChangeList::SdfChangeList(SdfChangeList const &o)
-    : _entries(o._entries),
-      _entriesAccel(o._entriesAccel ? new _AccelTable(*o._entriesAccel) : nullptr)
+  : _entries(o._entries),
+    _entriesAccel(o._entriesAccel ? new _AccelTable(*o._entriesAccel) : nullptr)
 {}
 
 SdfChangeList &SdfChangeList::operator=(SdfChangeList const &o)
@@ -173,7 +173,7 @@ SdfChangeList::Entry &SdfChangeList::_MoveEntry(SdfPath const &oldPath, SdfPath 
   if (constIter != _entries.end()) {
     // Move the old entry to the tmp space, then erase.
     auto iter = _MakeNonConstIterator(constIter);
-    tmp       = std::move(iter->second);
+    tmp = std::move(iter->second);
     // Erase the element and rebuild the accelerator if needed.
     _entries.erase(iter);
     _RebuildAccel();
@@ -182,12 +182,12 @@ SdfChangeList::Entry &SdfChangeList::_MoveEntry(SdfPath const &oldPath, SdfPath 
   // populates the new entry with the old entry (if one existed) or it clears
   // out the new entry.
   Entry &newEntry = _GetEntry(newPath);
-  newEntry        = std::move(tmp);
+  newEntry = std::move(tmp);
   return newEntry;
 }
 
 SdfChangeList::EntryList::iterator SdfChangeList::_MakeNonConstIterator(
-    SdfChangeList::EntryList::const_iterator i)
+  SdfChangeList::EntryList::const_iterator i)
 {
   // Invoking erase(i, i) is a noop, but returns i as non-const iterator.
   return _entries.erase(i, i);
@@ -215,9 +215,8 @@ SdfChangeList::EntryList::const_iterator SdfChangeList::FindEntry(const SdfPath 
   }
   else {
     // Linear search the unsorted range.
-    iter = std::find_if(_entries.begin(), _entries.end(), [&path](EntryList::value_type const &e) {
-      return e.first == path;
-    });
+    iter = std::find_if(
+      _entries.begin(), _entries.end(), [&path](EntryList::value_type const &e) { return e.first == path; });
   }
   return iter;
 }
@@ -278,7 +277,7 @@ void SdfChangeList::DidChangeLayerIdentifier(const std::string &oldIdentifier)
 
   if (!entry.flags.didChangeIdentifier) {
     entry.flags.didChangeIdentifier = true;
-    entry.oldIdentifier             = oldIdentifier;
+    entry.oldIdentifier = oldIdentifier;
   }
 }
 
@@ -287,11 +286,9 @@ void SdfChangeList::DidChangeLayerResolvedPath()
   _GetEntry(SdfPath::AbsoluteRootPath()).flags.didChangeResolvedPath = true;
 }
 
-void SdfChangeList::DidChangeSublayerPaths(const std::string &subLayerPath,
-                                           SubLayerChangeType changeType)
+void SdfChangeList::DidChangeSublayerPaths(const std::string &subLayerPath, SubLayerChangeType changeType)
 {
-  _GetEntry(SdfPath::AbsoluteRootPath())
-      .subLayerChanges.push_back(std::make_pair(subLayerPath, changeType));
+  _GetEntry(SdfPath::AbsoluteRootPath()).subLayerChanges.push_back(std::make_pair(subLayerPath, changeType));
 }
 
 void SdfChangeList::DidChangeInfo(const SdfPath &path,
@@ -303,13 +300,12 @@ void SdfChangeList::DidChangeInfo(const SdfPath &path,
 
   auto iter = entry.FindInfoChange(key);
   if (iter == entry.infoChanged.end()) {
-    entry.infoChanged.emplace_back(key,
-                                   std::pair<VtValue const &, VtValue const &>(oldVal, newVal));
+    entry.infoChanged.emplace_back(key, std::pair<VtValue const &, VtValue const &>(oldVal, newVal));
   }
   else {
     // Update new val, but retain old val from previous change.
     // Produce a non-const iterator using the erase(i, i) trick.
-    auto nonConstIter           = entry.infoChanged.erase(iter, iter);
+    auto nonConstIter = entry.infoChanged.erase(iter, iter);
     nonConstIter->second.second = newVal;
   }
 }
@@ -325,14 +321,14 @@ void SdfChangeList::DidChangePrimName(const SdfPath &oldPath, const SdfPath &new
     // the didRename hints. Instead, we simply fall back to treating
     // this case as though newPath and oldPath were both removed,
     // and a new spec added at newPath.
-    newEntry                             = Entry();
+    newEntry = Entry();
     newEntry.flags.didRemoveNonInertPrim = true;
-    newEntry.flags.didAddNonInertPrim    = true;
+    newEntry.flags.didAddNonInertPrim = true;
 
     // Fetch oldEntry -- note that this can invalidate 'newEntry'!
     Entry &oldEntry = _GetEntry(oldPath);
     // Clear out existing edits.
-    oldEntry                             = Entry();
+    oldEntry = Entry();
     oldEntry.flags.didRemoveNonInertPrim = true;
   }
   else {
@@ -401,14 +397,14 @@ void SdfChangeList::DidChangePropertyName(const SdfPath &oldPath, const SdfPath 
     // the didRename hints. Instead, we simply fall back to treating
     // this case as though newPath and oldPath were both removed,
     // and a new spec added at newPath.
-    newEntry                         = Entry();
+    newEntry = Entry();
     newEntry.flags.didRemoveProperty = true;
-    newEntry.flags.didAddProperty    = true;
+    newEntry.flags.didAddProperty = true;
 
     // Note that fetching oldEntry may create its entry and invalidate
     // 'newEntry'!
-    Entry &oldEntry                            = _GetEntry(oldPath);
-    oldEntry                                   = Entry();
+    Entry &oldEntry = _GetEntry(oldPath);
+    oldEntry = Entry();
     _GetEntry(oldPath).flags.didRemoveProperty = true;
   }
   else {

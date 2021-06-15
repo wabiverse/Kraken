@@ -32,11 +32,11 @@ HdPhExtCompGpuPrimvarBufferSource::HdPhExtCompGpuPrimvarBufferSource(TfToken con
                                                                      HdTupleType const &valueType,
                                                                      int numElements,
                                                                      SdfPath const &compId)
-    : HdNullBufferSource(),
-      _name(name),
-      _tupleType(valueType),
-      _numElements(numElements),
-      _compId(compId)
+  : HdNullBufferSource(),
+    _name(name),
+    _tupleType(valueType),
+    _numElements(numElements),
+    _compId(compId)
 {}
 
 /* virtual */

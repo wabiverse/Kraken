@@ -196,8 +196,8 @@ class UsdImagingIndexProxy {
  private:
   friend class UsdImagingDelegate;
   UsdImagingIndexProxy(UsdImagingDelegate *delegate, UsdImagingDelegate::_Worker *worker)
-      : _delegate(delegate),
-        _worker(worker)
+    : _delegate(delegate),
+      _worker(worker)
   {}
 
   // Sort and de-duplicate "repopulate" paths to prevent double-inserts.

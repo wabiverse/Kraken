@@ -46,9 +46,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(GLF_ENABLE_DIAGNOSTIC_TRACE,
-                      0,
-                      "Enable glDebug* diagnostic tracing in Glf.");
+TF_DEFINE_ENV_SETTING(GLF_ENABLE_DIAGNOSTIC_TRACE, 0, "Enable glDebug* diagnostic tracing in Glf.");
 
 static bool GlfTraceEnabled()
 {
@@ -99,10 +97,8 @@ void GlfRegisterDefaultDebugOutputMessageCallback()
   if (glDebugMessageCallbackARB) {
     glDebugMessageCallbackARB((GLDEBUGPROCARB)GlfDefaultDebugOutputMessageCallback, 0);
     // Disable push/pop group messages; we don't want to print these.
-    glDebugMessageControlARB(
-        GL_DONT_CARE, GL_DEBUG_TYPE_PUSH_GROUP, GL_DONT_CARE, 0, nullptr, GL_FALSE);
-    glDebugMessageControlARB(
-        GL_DONT_CARE, GL_DEBUG_TYPE_POP_GROUP, GL_DONT_CARE, 0, nullptr, GL_FALSE);
+    glDebugMessageControlARB(GL_DONT_CARE, GL_DEBUG_TYPE_PUSH_GROUP, GL_DONT_CARE, 0, nullptr, GL_FALSE);
+    glDebugMessageControlARB(GL_DONT_CARE, GL_DEBUG_TYPE_POP_GROUP, GL_DONT_CARE, 0, nullptr, GL_FALSE);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
   }
 #endif
@@ -119,16 +115,16 @@ void GlfDefaultDebugOutputMessageCallback(GLenum source,
 #if defined(GL_ARB_debug_output) || defined(GL_VERSION_4_3)
   if (type == GL_DEBUG_TYPE_ERROR_ARB) {
     TF_RUNTIME_ERROR(
-        "GL debug output: "
-        "source: %s type: %s id: %d severity: %s message: %s",
-        GlfDebugEnumToString(source),
-        GlfDebugEnumToString(type),
-        id,
-        GlfDebugEnumToString(severity),
-        message);
+      "GL debug output: "
+      "source: %s type: %s id: %d severity: %s message: %s",
+      GlfDebugEnumToString(source),
+      GlfDebugEnumToString(type),
+      id,
+      GlfDebugEnumToString(severity),
+      message);
 
     TF_DEBUG(GLF_DEBUG_ERROR_STACKTRACE)
-        .Msg(TfStringPrintf("==== GL Error Stack ====\n%s\n", TfGetStackTrace().c_str()));
+      .Msg(TfStringPrintf("==== GL Error Stack ====\n%s\n", TfGetStackTrace().c_str()));
   }
   else {
     TF_WARN("GL debug output: %s", message);

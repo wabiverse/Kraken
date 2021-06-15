@@ -105,9 +105,7 @@ class HdPrman_Volume final : public HdPrman_Gprim<HdVolume> {
   };
 
   /// Helper method for emitter functions to declare a primvar for a field
-  static void DeclareFieldPrimvar(RtParamList *primvars,
-                                  RtUString const &fieldName,
-                                  FieldType type);
+  static void DeclareFieldPrimvar(RtParamList *primvars, RtUString const &fieldName, FieldType type);
 
  protected:
   virtual RtParamList _ConvertGeometry(HdPrman_Context *context,

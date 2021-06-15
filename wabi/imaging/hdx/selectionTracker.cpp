@@ -57,8 +57,7 @@ void HdxSelectionTracker::_IncrementVersion()
 }
 
 namespace {
-template<class T>
-void _DebugPrintArray(std::string const &name, T const &array, bool withIndex = true)
+template<class T> void _DebugPrintArray(std::string const &name, T const &array, bool withIndex = true)
 {
   if (ARCH_UNLIKELY(TfDebug::IsEnabled(HDX_SELECTION_SETUP))) {
     std::stringstream out;
@@ -115,11 +114,11 @@ bool HdxSelectionTracker::GetSelectionOffsetBuffer(HdRenderIndex const *index,
   //  See hdx/shaders/renderPass.glslfx (ApplySelectionColor) for the
   //  shader readback of this buffer
 
-  bool hasSelection              = false;
+  bool hasSelection = false;
   const size_t numHighlightModes = static_cast<size_t>(HdSelection::HighlightModeCount);
   // 1 for num modes, plus one per each mode for mode offset.
   const size_t headerSize = numHighlightModes + 1;
-  const int SELECT_NONE   = 0;
+  const int SELECT_NONE = 0;
 
   if (ARCH_UNLIKELY(numHighlightModes >= minSize)) {
     // allocate enough to hold the header
@@ -132,8 +131,7 @@ bool HdxSelectionTracker::GetSelectionOffsetBuffer(HdRenderIndex const *index,
   // set via SetSelection. Exit early if the tracker doesn't have one set,
   // or it's empty. Likewise if enableSelection is false.
   if (!_selection || !enableSelection || _selection->IsEmpty()) {
-    for (int mode = HdSelection::HighlightModeSelect; mode < HdSelection::HighlightModeCount;
-         mode++) {
+    for (int mode = HdSelection::HighlightModeSelect; mode < HdSelection::HighlightModeCount; mode++) {
       (*offsets)[mode + 1] = SELECT_NONE;
     }
     _DebugPrintArray("nothing selected", *offsets);
@@ -142,12 +140,11 @@ bool HdxSelectionTracker::GetSelectionOffsetBuffer(HdRenderIndex const *index,
 
   size_t copyOffset = headerSize;
 
-  for (int mode = HdSelection::HighlightModeSelect; mode < HdSelection::HighlightModeCount;
-       mode++) {
+  for (int mode = HdSelection::HighlightModeSelect; mode < HdSelection::HighlightModeCount; mode++) {
 
     std::vector<int> output;
     bool modeHasSelection = _GetSelectionOffsets(
-        static_cast<HdSelection::HighlightMode>(mode), index, copyOffset, &output);
+      static_cast<HdSelection::HighlightMode>(mode), index, copyOffset, &output);
     hasSelection = hasSelection || modeHasSelection;
 
     (*offsets)[mode + 1] = modeHasSelection ? copyOffset : SELECT_NONE;
@@ -163,11 +160,11 @@ bool HdxSelectionTracker::GetSelectionOffsetBuffer(HdRenderIndex const *index,
       copyOffset += output.size();
 
       TF_DEBUG(HDX_SELECTION_SETUP)
-          .Msg(
-              "Highlight mode %d has %lu "
-              "entries\n",
-              mode,
-              output.size());
+        .Msg(
+          "Highlight mode %d has %lu "
+          "entries\n",
+          mode,
+          output.size());
     }
   }
 
@@ -236,24 +233,23 @@ static bool _FillSubprimSelOffsets(int type,
     return false;
 
   std::pair<int, int> minmax = _GetMinMax(vecIndices);
-  int const &min             = minmax.first;
-  int const &max             = minmax.second;
+  int const &min = minmax.first;
+  int const &max = minmax.second;
 
   // Each subprims offsets' buffer encoding is:
   // [subprim-type][min][max][     selOffsets     ]
   // <----------3 ----------><--- max - min + 1 -->
   int const SUBPRIM_SELOFFSETS_HEADER_SIZE = 3;
-  bool const SELECT_ALL                    = 1;
-  bool const SELECT_NONE                   = 0;
-  int numOffsetsToInsert                   = SUBPRIM_SELOFFSETS_HEADER_SIZE + (max - min + 1);
-  size_t startOutputSize                   = output->size();
+  bool const SELECT_ALL = 1;
+  bool const SELECT_NONE = 0;
+  int numOffsetsToInsert = SUBPRIM_SELOFFSETS_HEADER_SIZE + (max - min + 1);
+  size_t startOutputSize = output->size();
 
   // Grow by the total size and then fill the header (to avoid an additional
   // insert operation)
-  output->insert(
-      output->end(), numOffsetsToInsert, _EncodeSelOffset(nextSubprimOffset, SELECT_NONE));
+  output->insert(output->end(), numOffsetsToInsert, _EncodeSelOffset(nextSubprimOffset, SELECT_NONE));
 
-  (*output)[startOutputSize]     = type;
+  (*output)[startOutputSize] = type;
   (*output)[startOutputSize + 1] = min;
   (*output)[startOutputSize + 2] = max + 1;
 
@@ -288,15 +284,15 @@ static bool _FillPointSelOffsets(int type,
     // Update the 'offset' part of selOffset for each of the selected
     // points to represent the point color index for customized point
     // selection highlighting.
-    std::pair<int, int> minmax               = _GetMinMax(pointIndices);
-    int const &min                           = minmax.first;
+    std::pair<int, int> minmax = _GetMinMax(pointIndices);
+    int const &min = minmax.first;
     int const SUBPRIM_SELOFFSETS_HEADER_SIZE = 3;
-    bool const SELECT_ALL                    = 1;
-    size_t selOffsetsStart                   = startOutputSize + SUBPRIM_SELOFFSETS_HEADER_SIZE;
-    size_t vtIndex                           = 0;
+    bool const SELECT_ALL = 1;
+    size_t selOffsetsStart = startOutputSize + SUBPRIM_SELOFFSETS_HEADER_SIZE;
+    size_t vtIndex = 0;
     for (VtIntArray const &indices : pointIndices) {
       int pointColorId = pointColorIndices[vtIndex++];
-      int selOffset    = (pointColorId << 1) | SELECT_ALL;
+      int selOffset = (pointColorId << 1) | SELECT_ALL;
       for (int const &id : indices) {
         (*output)[selOffsetsStart + (id - min)] = selOffset;
       }
@@ -320,7 +316,7 @@ bool HdxSelectionTracker::_GetSelectionOffsets(HdSelection::HighlightMode const 
 {
 
   const SdfPathVector selectedPrims = _selection->GetSelectedPrimPaths(mode);
-  const size_t numPrims             = _selection ? selectedPrims.size() : 0;
+  const size_t numPrims = _selection ? selectedPrims.size() : 0;
   if (numPrims == 0) {
     TF_DEBUG(HDX_SELECTION_SETUP).Msg("No selected prims for mode %d\n", mode);
     return false;
@@ -330,20 +326,19 @@ bool HdxSelectionTracker::_GetSelectionOffsets(HdSelection::HighlightMode const 
   ids.resize(numPrims);
 
   size_t const N = 1000;
-  WorkParallelForN(numPrims / N + 1,
-                   [&ids, index, N, &selectedPrims](size_t begin, size_t end) mutable {
-                     end   = std::min(end * N, ids.size());
-                     begin = begin * N;
-                     for (size_t i = begin; i < end; i++) {
-                       if (auto const &rprim = index->GetRprim(selectedPrims[i])) {
-                         ids[i] = rprim->GetPrimId();
-                       }
-                       else {
-                         // silently ignore non-existing prim
-                         ids[i] = INVALID;
-                       }
-                     }
-                   });
+  WorkParallelForN(numPrims / N + 1, [&ids, index, N, &selectedPrims](size_t begin, size_t end) mutable {
+    end = std::min(end * N, ids.size());
+    begin = begin * N;
+    for (size_t i = begin; i < end; i++) {
+      if (auto const &rprim = index->GetRprim(selectedPrims[i])) {
+        ids[i] = rprim->GetPrimId();
+      }
+      else {
+        // silently ignore non-existing prim
+        ids[i] = INVALID;
+      }
+    }
+  });
 
   // Note that numeric_limits<float>::min for is surprising, so using lowest()
   // here instead. Doing this for <int> here to avoid copy and paste bugs.
@@ -409,7 +404,7 @@ bool HdxSelectionTracker::_GetSelectionOffsets(HdSelection::HighlightMode const 
 
   // Start with individual arrays. Splice arrays once finished.
   int const PRIM_SELOFFSETS_HEADER_SIZE = 2;
-  bool const SELECT_NONE                = 0;
+  bool const SELECT_NONE = 0;
 
   enum SubPrimType { ELEMENT = 0, EDGE = 1, POINT = 2, INSTANCE = 3 };
 
@@ -433,8 +428,7 @@ bool HdxSelectionTracker::_GetSelectionOffsets(HdSelection::HighlightMode const 
     SdfPath const &objPath = selectedPrims[primIndex];
     TF_DEBUG(HDX_SELECTION_SETUP).Msg("Processing: %d - %s\n", id, objPath.GetText());
 
-    HdSelection::PrimSelectionState const *primSelState = _selection->GetPrimSelectionState(
-        mode, objPath);
+    HdSelection::PrimSelectionState const *primSelState = _selection->GetPrimSelectionState(mode, objPath);
     if (!primSelState)
       continue;
 
@@ -449,8 +443,7 @@ bool HdxSelectionTracker::_GetSelectionOffsets(HdSelection::HighlightMode const 
     // Subprimitives: Points
     // ------------------------------------------------------------------ //
     size_t curOffset = output->size();
-    if (_FillPointSelOffsets(
-            POINT, primSelState->pointIndices, primSelState->pointColorIndices, output)) {
+    if (_FillPointSelOffsets(POINT, primSelState->pointIndices, primSelState->pointColorIndices, output)) {
       netSubprimOffset = curOffset + modeOffset;
       _DebugPrintArray("points", *output);
     }
@@ -478,8 +471,7 @@ bool HdxSelectionTracker::_GetSelectionOffsets(HdSelection::HighlightMode const 
     // Instances
     // ------------------------------------------------------------------ //
     curOffset = output->size();
-    if (_FillSubprimSelOffsets(
-            INSTANCE, primSelState->instanceIndices, netSubprimOffset, output)) {
+    if (_FillSubprimSelOffsets(INSTANCE, primSelState->instanceIndices, netSubprimOffset, output)) {
       netSubprimOffset = curOffset + modeOffset;
       _DebugPrintArray("instances", *output);
     }

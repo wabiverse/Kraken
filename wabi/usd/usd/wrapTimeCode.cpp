@@ -72,37 +72,35 @@ static string __repr__(const UsdTimeCode &self)
 void wrapUsdTimeCode()
 {
   scope s = class_<UsdTimeCode>("TimeCode")
-                .def(init<double>())
-                .def(init<SdfTimeCode>())
-                .def(init<UsdTimeCode>())
+              .def(init<double>())
+              .def(init<SdfTimeCode>())
+              .def(init<UsdTimeCode>())
 
-                .def("EarliestTime", &UsdTimeCode::EarliestTime)
-                .staticmethod("EarliestTime")
+              .def("EarliestTime", &UsdTimeCode::EarliestTime)
+              .staticmethod("EarliestTime")
 
-                .def("Default", &UsdTimeCode::Default)
-                .staticmethod("Default")
+              .def("Default", &UsdTimeCode::Default)
+              .staticmethod("Default")
 
-                .def("SafeStep",
-                     &UsdTimeCode::SafeStep,
-                     (arg("maxValue") = 1e6, arg("maxCompression") = 10.0))
-                .staticmethod("SafeStep")
+              .def("SafeStep", &UsdTimeCode::SafeStep, (arg("maxValue") = 1e6, arg("maxCompression") = 10.0))
+              .staticmethod("SafeStep")
 
-                .def("IsEarliestTime", &UsdTimeCode::IsEarliestTime)
-                .def("IsDefault", &UsdTimeCode::IsDefault)
-                .def("IsNumeric", &UsdTimeCode::IsNumeric)
-                .def("GetValue", &UsdTimeCode::GetValue)
+              .def("IsEarliestTime", &UsdTimeCode::IsEarliestTime)
+              .def("IsDefault", &UsdTimeCode::IsDefault)
+              .def("IsNumeric", &UsdTimeCode::IsNumeric)
+              .def("GetValue", &UsdTimeCode::GetValue)
 
-                .def(self == self)
-                .def(self != self)
-                .def(self < self)
-                .def(self <= self)
-                .def(self > self)
-                .def(self >= self)
+              .def(self == self)
+              .def(self != self)
+              .def(self < self)
+              .def(self <= self)
+              .def(self > self)
+              .def(self >= self)
 
-                .def("__hash__", __hash__)
-                .def("__repr__", __repr__)
-                //        .def(str(self))
-                .def("__str__", _Str);
+              .def("__hash__", __hash__)
+              .def("__repr__", __repr__)
+              //        .def(str(self))
+              .def("__str__", _Str);
 
   TF_PY_WRAP_PUBLIC_TOKENS("Tokens", UsdTimeCodeTokens, USD_TIME_CODE_TOKENS);
 

@@ -101,7 +101,7 @@ class HgiVulkanTexture final : public HgiTexture {
   void CopyBufferToTexture(HgiVulkanCommandBuffer *cb,
                            HgiVulkanBuffer *srcBuffer,
                            GfVec3i const &dstTexelOffset = GfVec3i(0),
-                           int mipLevel                  = -1);
+                           int mipLevel = -1);
 
   /// Transition image from its current layout to newLayout.
   /// `producerAccess` of 0 means:
@@ -138,9 +138,9 @@ class HgiVulkanTexture final : public HgiTexture {
   HgiVulkanTexture(HgiVulkan *hgi, HgiVulkanDevice *device, HgiTextureViewDesc const &desc);
 
  private:
-  HgiVulkanTexture()        = delete;
+  HgiVulkanTexture() = delete;
   HgiVulkanTexture &operator=(const HgiVulkanTexture &) = delete;
-  HgiVulkanTexture(const HgiVulkanTexture &)            = delete;
+  HgiVulkanTexture(const HgiVulkanTexture &) = delete;
 
   bool _isTextureView;
   VkImage _vkImage;

@@ -51,7 +51,7 @@ template<class T> struct Sdf_FastThreadLocalBase {
       return *theTPtr;
     }
     static thread_local T theT;
-    T *p    = &theT;
+    T *p = &theT;
     theTPtr = p;
     return *p;
   }
@@ -71,8 +71,7 @@ template<class T> struct Sdf_FastThreadLocalBase {
 // individual allocations.  When freed, allocations are placed on a thread-local
 // free list, and eventually shared back for use by other threads when the free
 // list gets large.
-template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpan = 16384>
-class Sdf_Pool {
+template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpan = 16384> class Sdf_Pool {
   static_assert(ElemSize >= sizeof(uint32_t), "ElemSize must be at least sizeof(uint32_t)");
 
  public:
@@ -95,7 +94,7 @@ class Sdf_Pool {
     Handle(unsigned region, uint32_t index) : value((index << RegionBits) | region)
     {}
     Handle &operator=(Handle const &) = default;
-    Handle &operator                  =(std::nullptr_t)
+    Handle &operator=(std::nullptr_t)
     {
       return *this = Handle();
     }
@@ -138,18 +137,18 @@ class Sdf_Pool {
   struct _FreeList {
     inline void Pop()
     {
-      char *p    = head.GetPtr();
+      char *p = head.GetPtr();
       Handle *hp = reinterpret_cast<Handle *>(p);
-      head       = *hp;
+      head = *hp;
       --size;
     }
     inline void Push(Handle h)
     {
       ++size;
-      char *p    = h.GetPtr();
+      char *p = h.GetPtr();
       Handle *hp = reinterpret_cast<Handle *>(p);
-      *hp        = head;
-      head       = h;
+      *hp = head;
+      head = h;
     }
     Handle head;
     size_t size = 0;
@@ -192,8 +191,7 @@ class Sdf_Pool {
     static constexpr uint32_t LockedState = ~0;
 
     _RegionState() = default;
-    constexpr _RegionState(unsigned region, uint32_t index)
-        : _state((index << RegionBits) | region)
+    constexpr _RegionState(unsigned region, uint32_t index) : _state((index << RegionBits) | region)
     {}
 
     // Make a new state that reserves up to \p num elements.  There must be
@@ -258,12 +256,11 @@ class Sdf_Pool {
     if (ptr) {
       for (unsigned region = 1; region != NumRegions + 1; ++region) {
         char const *start = _regionStarts[region];
-        ptrdiff_t diff    = ptr - start;
+        ptrdiff_t diff = ptr - start;
         // Indexes start at 1 to avoid hash collisions when combining
         // multiple pool indexes in a single hash, so strictly greater
         // than 0 rather than greater-equal is appropriate here.
-        if (ARCH_LIKELY(start && (diff > 0) &&
-                        (diff < static_cast<ptrdiff_t>(ElemsPerRegion * ElemSize)))) {
+        if (ARCH_LIKELY(start && (diff > 0) && (diff < static_cast<ptrdiff_t>(ElemsPerRegion * ElemSize)))) {
           return Handle(region, static_cast<uint32_t>(diff / ElemSize));
         }
       }

@@ -29,7 +29,7 @@ void HdRprInstancer::Sync()
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  auto &instancerId   = GetId();
+  auto &instancerId = GetId();
   auto &changeTracker = GetDelegate()->GetRenderIndex().GetChangeTracker();
 
   // Use the double-checked locking pattern to check if this instancer's
@@ -87,7 +87,7 @@ VtMatrix4dArray HdRprInstancer::ComputeTransforms(SdfPath const &prototypeId)
   Sync();
 
   GfMatrix4d instancerTransform = GetDelegate()->GetInstancerTransform(GetId());
-  VtIntArray instanceIndices    = GetDelegate()->GetInstanceIndices(GetId(), prototypeId);
+  VtIntArray instanceIndices = GetDelegate()->GetInstanceIndices(GetId(), prototypeId);
 
   VtMatrix4dArray transforms;
   transforms.reserve(instanceIndices.size());
@@ -118,7 +118,7 @@ VtMatrix4dArray HdRprInstancer::ComputeTransforms(SdfPath const &prototypeId)
   }
 
   auto parentInstancer = static_cast<HdRprInstancer *>(
-      GetDelegate()->GetRenderIndex().GetInstancer(GetParentId()));
+    GetDelegate()->GetRenderIndex().GetInstancer(GetParentId()));
   if (!parentInstancer) {
     return transforms;
   }
@@ -180,7 +180,7 @@ void ApplyTransform(float alpha,
 
   for (size_t i = 0; i < instanceIndices.size(); ++i) {
     auto transform = HdResampleNeighbors(
-        alpha, allTransforms0[instanceIndices[i]], allTransforms1[instanceIndices[i]]);
+      alpha, allTransforms0[instanceIndices[i]], allTransforms1[instanceIndices[i]]);
     transforms[i] = Op{}(transform)*transforms[i];
   }
 }
@@ -221,7 +221,7 @@ void ApplyTransform(HdTimeSampleArray<VtValue, 2> const &samples,
     // Linear blend of neighboring samples.
     float alpha = (samples.times[i] - time) / (samples.times[i] - samples.times[i - 1]);
     return ApplyTransform<Op, T>(
-        alpha, samples.values[i - 1], samples.values[i], instanceIndices, transforms);
+      alpha, samples.values[i - 1], samples.values[i], instanceIndices, transforms);
   }
 }
 
@@ -260,10 +260,9 @@ struct TransformOp {
 
 }  // namespace
 
-HdTimeSampleArray<VtMatrix4dArray, 2> HdRprInstancer::SampleInstanceTransforms(
-    SdfPath const &prototypeId)
+HdTimeSampleArray<VtMatrix4dArray, 2> HdRprInstancer::SampleInstanceTransforms(SdfPath const &prototypeId)
 {
-  HdSceneDelegate *delegate  = GetDelegate();
+  HdSceneDelegate *delegate = GetDelegate();
   const SdfPath &instancerId = GetId();
 
   VtIntArray instanceIndices = delegate->GetInstanceIndices(instancerId, prototypeId);
@@ -315,7 +314,7 @@ HdTimeSampleArray<VtMatrix4dArray, 2> HdRprInstancer::SampleInstanceTransforms(
     }
 
     auto &transforms = sa.values[i];
-    transforms       = VtMatrix4dArray(instanceIndices.size(), xf);
+    transforms = VtMatrix4dArray(instanceIndices.size(), xf);
 
     if (translates.count > 0 && translates.values[0].IsArrayValued()) {
       auto &type = translates.values[0].GetElementTypeid();
@@ -359,12 +358,10 @@ HdTimeSampleArray<VtMatrix4dArray, 2> HdRprInstancer::SampleInstanceTransforms(
     if (instanceXforms.count > 0 && instanceXforms.values[0].IsArrayValued()) {
       auto &type = instanceXforms.values[0].GetElementTypeid();
       if (type == typeid(GfMatrix4d)) {
-        ApplyTransform<TransformOp, GfMatrix4d>(
-            instanceXforms, instanceIndices, t, transforms.data());
+        ApplyTransform<TransformOp, GfMatrix4d>(instanceXforms, instanceIndices, t, transforms.data());
       }
       else if (type == typeid(GfMatrix4f)) {
-        ApplyTransform<TransformOp, GfMatrix4f>(
-            instanceXforms, instanceIndices, t, transforms.data());
+        ApplyTransform<TransformOp, GfMatrix4f>(instanceXforms, instanceIndices, t, transforms.data());
       }
     }
   }
@@ -396,7 +393,7 @@ HdTimeSampleArray<VtMatrix4dArray, 2> HdRprInstancer::SampleInstanceTransforms(
     const float t = sa.times[i];
     // Resample transforms at the same time.
     VtMatrix4dArray curParentXf = parentXf.Resample(t);
-    VtMatrix4dArray curChildXf  = childXf.Resample(t);
+    VtMatrix4dArray curChildXf = childXf.Resample(t);
     // Multiply out each combination.
     VtMatrix4dArray &result = sa.values[i];
     result.resize(curParentXf.size() * curChildXf.size());

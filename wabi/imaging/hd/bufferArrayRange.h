@@ -35,9 +35,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-using HdBufferSpecVector          = std::vector<struct HdBufferSpec>;
+using HdBufferSpecVector = std::vector<struct HdBufferSpec>;
 using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
-using HdBufferSourceSharedPtr     = std::shared_ptr<class HdBufferSource>;
+using HdBufferSourceSharedPtr = std::shared_ptr<class HdBufferSource>;
 
 /// \class HdBufferArrayRange
 ///

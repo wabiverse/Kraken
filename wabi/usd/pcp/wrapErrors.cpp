@@ -54,52 +54,46 @@ void wrapErrors()
   //       ensure that we don't create error objects in Python.
 
   class_<PcpErrorBase, boost::noncopyable, PcpErrorBasePtr>("ErrorBase", "", no_init)
-      .add_property("errorType", _GetErrorType)
-      .def("__str__", &PcpErrorBase::ToString);
+    .add_property("errorType", _GetErrorType)
+    .def("__str__", &PcpErrorBase::ToString);
 
-  class_<PcpErrorTargetPathBase,
-         boost::noncopyable,
-         bases<PcpErrorBase>,
-         PcpErrorTargetPathBasePtr>("ErrorTargetPathBase", "", no_init);
+  class_<PcpErrorTargetPathBase, boost::noncopyable, bases<PcpErrorBase>, PcpErrorTargetPathBasePtr>(
+    "ErrorTargetPathBase", "", no_init);
 
   class_<PcpErrorArcCycle, bases<PcpErrorBase>, PcpErrorArcCyclePtr>("ErrorArcCycle", "", no_init);
 
   class_<PcpErrorArcPermissionDenied, bases<PcpErrorBase>, PcpErrorArcPermissionDeniedPtr>(
-      "ErrorArcPermissionDenied", "", no_init);
+    "ErrorArcPermissionDenied", "", no_init);
 
   class_<PcpErrorCapacityExceeded, bases<PcpErrorBase>, PcpErrorCapacityExceededPtr>(
-      "ErrorCapacityExceeded", "", no_init);
+    "ErrorCapacityExceeded", "", no_init);
 
-  class_<PcpErrorInconsistentPropertyType,
-         bases<PcpErrorBase>,
-         PcpErrorInconsistentPropertyTypePtr>("ErrorInconsistentPropertyType", "", no_init);
+  class_<PcpErrorInconsistentPropertyType, bases<PcpErrorBase>, PcpErrorInconsistentPropertyTypePtr>(
+    "ErrorInconsistentPropertyType", "", no_init);
 
-  class_<PcpErrorInconsistentAttributeType,
-         bases<PcpErrorBase>,
-         PcpErrorInconsistentAttributeTypePtr>("ErrorInconsistentAttributeType", "", no_init);
+  class_<PcpErrorInconsistentAttributeType, bases<PcpErrorBase>, PcpErrorInconsistentAttributeTypePtr>(
+    "ErrorInconsistentAttributeType", "", no_init);
 
   class_<PcpErrorInconsistentAttributeVariability,
          bases<PcpErrorBase>,
-         PcpErrorInconsistentAttributeVariabilityPtr>(
-      "ErrorInconsistentAttributeVariability", "", no_init);
+         PcpErrorInconsistentAttributeVariabilityPtr>("ErrorInconsistentAttributeVariability", "", no_init);
 
   class_<PcpErrorInternalAssetPath, bases<PcpErrorBase>, PcpErrorInternalAssetPathPtr>(
-      "ErrorInternalAssetPath", "", no_init);
+    "ErrorInternalAssetPath", "", no_init);
 
   class_<PcpErrorInvalidPrimPath, bases<PcpErrorBase>, PcpErrorInvalidPrimPathPtr>(
-      "ErrorInvalidPrimPath", "", no_init);
+    "ErrorInvalidPrimPath", "", no_init);
 
   class_<PcpErrorInvalidAssetPathBase,
          boost::noncopyable,
          bases<PcpErrorBase>,
          PcpErrorInvalidAssetPathBasePtr>("ErrorInvalidAssetPathBase", "", no_init);
 
-  class_<PcpErrorInvalidAssetPath,
-         bases<PcpErrorInvalidAssetPathBase>,
-         PcpErrorInvalidAssetPathPtr>("ErrorInvalidAssetPath", "", no_init);
+  class_<PcpErrorInvalidAssetPath, bases<PcpErrorInvalidAssetPathBase>, PcpErrorInvalidAssetPathPtr>(
+    "ErrorInvalidAssetPath", "", no_init);
 
   class_<PcpErrorMutedAssetPath, bases<PcpErrorInvalidAssetPathBase>, PcpErrorMutedAssetPathPtr>(
-      "ErrorMutedAssetPath", "", no_init);
+    "ErrorMutedAssetPath", "", no_init);
 
   class_<PcpErrorInvalidInstanceTargetPath,
          bases<PcpErrorTargetPathBase>,
@@ -110,49 +104,45 @@ void wrapErrors()
          PcpErrorInvalidExternalTargetPathPtr>("ErrorInvalidExternalTargetPath", "", no_init);
 
   class_<PcpErrorInvalidTargetPath, bases<PcpErrorTargetPathBase>, PcpErrorInvalidTargetPathPtr>(
-      "ErrorInvalidTargetPath", "", no_init);
+    "ErrorInvalidTargetPath", "", no_init);
 
   class_<PcpErrorInvalidSublayerOffset, bases<PcpErrorBase>, PcpErrorInvalidSublayerOffsetPtr>(
-      "ErrorInvalidSublayerOffset", "", no_init);
+    "ErrorInvalidSublayerOffset", "", no_init);
 
   class_<PcpErrorInvalidReferenceOffset, bases<PcpErrorBase>, PcpErrorInvalidReferenceOffsetPtr>(
-      "ErrorInvalidReferenceOffset", "", no_init);
+    "ErrorInvalidReferenceOffset", "", no_init);
 
-  class_<PcpErrorInvalidSublayerOwnership,
-         bases<PcpErrorBase>,
-         PcpErrorInvalidSublayerOwnershipPtr>("ErrorInvalidSublayerOwnership", "", no_init);
+  class_<PcpErrorInvalidSublayerOwnership, bases<PcpErrorBase>, PcpErrorInvalidSublayerOwnershipPtr>(
+    "ErrorInvalidSublayerOwnership", "", no_init);
 
   class_<PcpErrorInvalidSublayerPath, bases<PcpErrorBase>, PcpErrorInvalidSublayerPathPtr>(
-      "ErrorInvalidSublayerPath", "", no_init);
+    "ErrorInvalidSublayerPath", "", no_init);
 
   class_<PcpErrorInvalidVariantSelection, bases<PcpErrorBase>, PcpErrorInvalidVariantSelectionPtr>(
-      "ErrorInvalidVariantSelection", "", no_init);
+    "ErrorInvalidVariantSelection", "", no_init);
 
-  class_<PcpErrorOpinionAtRelocationSource,
-         bases<PcpErrorBase>,
-         PcpErrorOpinionAtRelocationSourcePtr>("ErrorOpinionAtRelocationSource", "", no_init);
+  class_<PcpErrorOpinionAtRelocationSource, bases<PcpErrorBase>, PcpErrorOpinionAtRelocationSourcePtr>(
+    "ErrorOpinionAtRelocationSource", "", no_init);
 
   class_<PcpErrorPrimPermissionDenied, bases<PcpErrorBase>, PcpErrorPrimPermissionDeniedPtr>(
-      "ErrorPrimPermissionDenied", "", no_init);
+    "ErrorPrimPermissionDenied", "", no_init);
 
-  class_<PcpErrorPropertyPermissionDenied,
-         bases<PcpErrorBase>,
-         PcpErrorPropertyPermissionDeniedPtr>("ErrorPropertyPermissionDenied", "", no_init);
+  class_<PcpErrorPropertyPermissionDenied, bases<PcpErrorBase>, PcpErrorPropertyPermissionDeniedPtr>(
+    "ErrorPropertyPermissionDenied", "", no_init);
 
   class_<PcpErrorSublayerCycle, bases<PcpErrorBase>, PcpErrorSublayerCyclePtr>(
-      "ErrorSublayerCycle", "", no_init);
+    "ErrorSublayerCycle", "", no_init);
 
-  class_<PcpErrorTargetPermissionDenied,
-         bases<PcpErrorTargetPathBase>,
-         PcpErrorTargetPermissionDeniedPtr>("ErrorTargetPermissionDenied", "", no_init);
+  class_<PcpErrorTargetPermissionDenied, bases<PcpErrorTargetPathBase>, PcpErrorTargetPermissionDeniedPtr>(
+    "ErrorTargetPermissionDenied", "", no_init);
 
   class_<PcpErrorUnresolvedPrimPath, bases<PcpErrorBase>, PcpErrorUnresolvedPrimPathPtr>(
-      "ErrorUnresolvedPrimPath", "", no_init);
+    "ErrorUnresolvedPrimPath", "", no_init);
 
   // Register conversion for python list <-> vector<PcpErrorBasePtr>
   to_python_converter<PcpErrorVector, TfPySequenceToPython<PcpErrorVector>>();
-  TfPyContainerConversions::
-      from_python_sequence<PcpErrorVector, TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<PcpErrorVector,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 }
 
 TF_REFPTR_CONST_VOLATILE_GET(PcpErrorInvalidVariantSelection)

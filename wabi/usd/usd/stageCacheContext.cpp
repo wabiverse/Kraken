@@ -91,8 +91,7 @@ std::vector<UsdStageCache *> UsdStageCacheContext::_GetWritableCaches()
   caches.reserve(stack.size());
   for (auto ctxIter = stack.rbegin(); ctxIter != stack.rend(); ++ctxIter) {
     const auto &ctx = *ctxIter;
-    if (ctx->_blockType == UsdBlockStageCaches ||
-        ctx->_blockType == UsdBlockStageCachePopulation) {
+    if (ctx->_blockType == UsdBlockStageCaches || ctx->_blockType == UsdBlockStageCachePopulation) {
       break;
     }
     else if (!ctx->_isReadOnlyCache) {

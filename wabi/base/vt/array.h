@@ -57,9 +57,9 @@ WABI_NAMESPACE_BEGIN
 class Vt_ArrayForeignDataSource {
  public:
   explicit Vt_ArrayForeignDataSource(void (*detachedFn)(Vt_ArrayForeignDataSource *self) = nullptr,
-                                     size_t initRefCount                                 = 0)
-      : _refCount(initRefCount),
-        _detachedFn(detachedFn)
+                                     size_t initRefCount = 0)
+    : _refCount(initRefCount),
+      _detachedFn(detachedFn)
   {}
 
  private:
@@ -94,7 +94,7 @@ class Vt_ArrayBase {
   }
 
   Vt_ArrayBase &operator=(Vt_ArrayBase const &other) = default;
-  Vt_ArrayBase &operator                             =(Vt_ArrayBase &&other)
+  Vt_ArrayBase &operator=(Vt_ArrayBase &&other)
   {
     if (this == &other)
       return *this;
@@ -254,7 +254,7 @@ template<typename ELEM> class VtArray : public Vt_ArrayBase {
     template<typename OtherValue>
     PointerIterator(PointerIterator<OtherValue> const &other,
                     typename boost::enable_if_convertible<OtherValue *, Value *>::type * = 0)
-        : PointerIterator::iterator_adaptor_(other.base())
+      : PointerIterator::iterator_adaptor_(other.base())
     {}
 
    private:
@@ -303,20 +303,16 @@ template<typename ELEM> class VtArray : public Vt_ArrayBase {
   template<typename LegacyInputIterator>
   VtArray(LegacyInputIterator first,
           LegacyInputIterator last,
-          typename std::enable_if<!std::is_integral<LegacyInputIterator>::value, void>::type * =
-              nullptr)
-      : VtArray()
+          typename std::enable_if<!std::is_integral<LegacyInputIterator>::value, void>::type * = nullptr)
+    : VtArray()
   {
     assign(first, last);
   }
 
   /// Create an array with foreign source.
-  VtArray(Vt_ArrayForeignDataSource *foreignSrc,
-          ElementType *data,
-          size_t size,
-          bool addRef = true)
-      : Vt_ArrayBase(foreignSrc),
-        _data(data)
+  VtArray(Vt_ArrayForeignDataSource *foreignSrc, ElementType *data, size_t size, bool addRef = true)
+    : Vt_ArrayBase(foreignSrc),
+      _data(data)
   {
     if (addRef) {
       foreignSrc->_refCount.fetch_add(1, std::memory_order_relaxed);
@@ -382,8 +378,8 @@ template<typename ELEM> class VtArray : public Vt_ArrayBase {
       return *this;
     _DecRef();
     static_cast<Vt_ArrayBase &>(*this) = std::move(other);
-    _data                              = other._data;
-    other._data                        = nullptr;
+    _data = other._data;
+    other._data = nullptr;
     return *this;
   }
 
@@ -675,7 +671,7 @@ template<typename ELEM> class VtArray : public Vt_ArrayBase {
       return;
     }
 
-    const bool growing  = newSize > oldSize;
+    const bool growing = newSize > oldSize;
     value_type *newData = _data;
 
     if (!_data) {
@@ -779,9 +775,9 @@ template<typename ELEM> class VtArray : public Vt_ArrayBase {
     // at least one element and the result array will contain at least one
     // element.
     value_type *removeStart = std::next(_data, std::distance(cbegin(), first));
-    value_type *removeEnd   = std::next(_data, std::distance(cbegin(), last));
-    value_type *endIt       = std::next(_data, size());
-    size_t newSize          = size() - std::distance(first, last);
+    value_type *removeEnd = std::next(_data, std::distance(cbegin(), last));
+    value_type *endIt = std::next(_data, size());
+    size_t newSize = size() - std::distance(first, last);
     if (_IsUnique()) {
       // If the array is unique, we can simply move the tail elements
       // and free to the end of the array.
@@ -797,13 +793,13 @@ template<typename ELEM> class VtArray : public Vt_ArrayBase {
       // elements in the range we are erasing. We allocate a
       // new buffer and copy the head and tail ranges, omitting
       // [first, last)
-      value_type *newData   = _AllocateNew(newSize);
+      value_type *newData = _AllocateNew(newSize);
       value_type *newMiddle = std::uninitialized_copy(_data, removeStart, newData);
-      value_type *newEnd    = std::uninitialized_copy(removeEnd, endIt, newMiddle);
+      value_type *newEnd = std::uninitialized_copy(removeEnd, endIt, newMiddle);
       TF_DEV_AXIOM(newEnd == std::next(newData, newSize));
       TF_DEV_AXIOM(std::distance(newData, newMiddle) == std::distance(_data, removeStart));
       _DecRef();
-      _data                = newData;
+      _data = newData;
       _shapeData.totalSize = newSize;
       return iterator(newMiddle);
     }
@@ -885,15 +881,14 @@ template<typename ELEM> class VtArray : public Vt_ArrayBase {
   /// the same underlying copy-on-write data.  See also operator==().
   bool IsIdentical(VtArray const &other) const
   {
-    return _data == other._data && _shapeData == other._shapeData &&
-           _foreignSource == other._foreignSource;
+    return _data == other._data && _shapeData == other._shapeData && _foreignSource == other._foreignSource;
   }
 
   /// Tests two arrays for equality.  See also IsIdentical().
   bool operator==(VtArray const &other) const
   {
-    return IsIdentical(other) || (*_GetShapeData() == *other._GetShapeData() &&
-                                  std::equal(cbegin(), cend(), other.cbegin()));
+    return IsIdentical(other) ||
+           (*_GetShapeData() == *other._GetShapeData() && std::equal(cbegin(), cend(), other.cbegin()));
   }
 
   /// Tests two arrays for inequality.
@@ -1023,7 +1018,7 @@ template<typename ELEM> class VtArray : public Vt_ArrayBase {
       }
     }
     _foreignSource = nullptr;
-    _data          = nullptr;
+    _data = nullptr;
   }
 
   value_type *_data;

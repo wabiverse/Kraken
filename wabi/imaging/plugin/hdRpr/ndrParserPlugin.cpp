@@ -30,19 +30,19 @@ class HdRprNdrParserPlugin final : public NdrParserPlugin {
   NdrNodeUniquePtr Parse(const NdrNodeDiscoveryResult &discoveryResult) override
   {
     return std::make_unique<NdrNode>(
-        /* identifier  = */ discoveryResult.identifier,
-        /* version     = */ discoveryResult.version,
-        /* name        = */ discoveryResult.name,
-        /* family      = */ discoveryResult.family,
-        /* context     = */ _tokens->rpr,
-        /* sourceType  = */ _tokens->rpr,
-        /* uri         = */ discoveryResult.uri,
+      /* identifier  = */ discoveryResult.identifier,
+      /* version     = */ discoveryResult.version,
+      /* name        = */ discoveryResult.name,
+      /* family      = */ discoveryResult.family,
+      /* context     = */ _tokens->rpr,
+      /* sourceType  = */ _tokens->rpr,
+      /* uri         = */ discoveryResult.uri,
 #if WABI_VERSION > 1911
-        /* resolvedUri = */ discoveryResult.resolvedUri,
+      /* resolvedUri = */ discoveryResult.resolvedUri,
 #endif
-        /* properties  = */ NdrPropertyUniquePtrVec{},
-        /* metadata    = */ discoveryResult.metadata,
-        /* sourceCode  = */ discoveryResult.sourceCode);
+      /* properties  = */ NdrPropertyUniquePtrVec{},
+      /* metadata    = */ discoveryResult.metadata,
+      /* sourceCode  = */ discoveryResult.sourceCode);
   }
 
   const NdrTokenVec &GetDiscoveryTypes() const override

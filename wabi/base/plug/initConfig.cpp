@@ -45,8 +45,8 @@ WABI_NAMESPACE_BEGIN
 
 namespace {
 
-const char *pathEnvVarName      = TF_PP_STRINGIZE(WABI_PLUGINPATH_NAME);
-const char *buildLocation       = TF_PP_STRINGIZE(WABI_BUILD_LOCATION);
+const char *pathEnvVarName = TF_PP_STRINGIZE(WABI_PLUGINPATH_NAME);
+const char *buildLocation = TF_PP_STRINGIZE(WABI_BUILD_LOCATION);
 const char *pluginBuildLocation = TF_PP_STRINGIZE(WABI_PLUGIN_BUILD_LOCATION);
 
 #ifdef WABI_INSTALL_LOCATION
@@ -87,24 +87,24 @@ ARCH_CONSTRUCTOR(Plug_InitConfig, 2, void)
   // PLUG_INFO_SEARCH debug flag is enabled.
   std::string binaryPath;
   if (!ArchGetAddressInfo(
-          reinterpret_cast<void *>(&Plug_InitConfig), &binaryPath, nullptr, nullptr, nullptr)) {
+        reinterpret_cast<void *>(&Plug_InitConfig), &binaryPath, nullptr, nullptr, nullptr)) {
     debugMessages.emplace_back(
-        "Failed to determine absolute path for Plug search "
-        "using using ArchGetAddressInfo().  This is expected "
-        "if wabi is linked as a static library.\n");
+      "Failed to determine absolute path for Plug search "
+      "using using ArchGetAddressInfo().  This is expected "
+      "if wabi is linked as a static library.\n");
   }
 
   if (binaryPath.empty()) {
     debugMessages.emplace_back(
-        "Using ArchGetExecutablePath() to determine absolute "
-        "path for Plug search location.\n");
+      "Using ArchGetExecutablePath() to determine absolute "
+      "path for Plug search location.\n");
     binaryPath = ArchGetExecutablePath();
   }
 
   binaryPath = TfGetPathName(binaryPath);
 
   debugMessages.emplace_back(
-      TfStringPrintf("Plug will search for plug infos under '%s'\n", binaryPath.c_str()));
+    TfStringPrintf("Plug will search for plug infos under '%s'\n", binaryPath.c_str()));
 
   // Environment locations.
   _AppendPathList(&result, TfGetenv(pathEnvVarName), binaryPath);

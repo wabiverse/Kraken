@@ -64,9 +64,7 @@ class HdArnoldMaterial : public HdMaterial {
   /// @param renderPaaram Pointer to a HdArnoldRenderParam instance.
   /// @param dirtyBits Dirty Bits to sync.
   HDARNOLD_API
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   /// Returns the initial Dirty Bits for the Primitive.
   HDARNOLD_API
@@ -170,9 +168,9 @@ class HdArnoldMaterial : public HdMaterial {
   /// @param entryPoint Point to the entry to the shader network.
   /// @return True if entry point was translated, false otherwise.
   HDARNOLD_API
-  bool ClearUnusedNodes(const AtNode *surfaceEntryPoint      = nullptr,
+  bool ClearUnusedNodes(const AtNode *surfaceEntryPoint = nullptr,
                         const AtNode *displacementEntryPoint = nullptr,
-                        const AtNode *volumeEntryPoint       = nullptr);
+                        const AtNode *volumeEntryPoint = nullptr);
 
   /// Sets all shader nodes unused.
   HDARNOLD_API
@@ -186,7 +184,7 @@ class HdArnoldMaterial : public HdMaterial {
   /// Pointer to the entry point to the Displacement Shader Network.
   AtNode *_displacement = nullptr;
   /// Pointer to the entry point to the Volume Shader Network.
-  AtNode *_volume     = nullptr;
+  AtNode *_volume = nullptr;
   bool _wasSyncedOnce = false;  ///< Whether or not the material has been synced at least once.
 };
 

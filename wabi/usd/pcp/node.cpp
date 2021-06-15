@@ -57,9 +57,7 @@ PcpNodeRef PcpNodeRef::InsertChildSubgraph(const PcpPrimIndex_GraphPtr &subgraph
   return _graph->InsertChildSubgraph(*this, subgraph, arc, error);
 }
 
-PcpNodeRef PcpNodeRef::InsertChild(const PcpLayerStackSite &site,
-                                   const PcpArc &arc,
-                                   PcpErrorBasePtr *error)
+PcpNodeRef PcpNodeRef::InsertChild(const PcpLayerStackSite &site, const PcpArc &arc, PcpErrorBasePtr *error)
 {
   return _graph->InsertChildNode(*this, site, arc, error);
 }
@@ -104,7 +102,7 @@ PcpNodeRef PcpNodeRef::GetOriginRootNode() const
     const PcpPrimIndex_Graph::_Node &graphNode = _graph->_GetNode(_nodeIdx); \
     if (graphNode.varName != val) { \
       PcpPrimIndex_Graph::_Node &writeableGraphNode = _graph->_GetWriteableNode(_nodeIdx); \
-      writeableGraphNode.varName                    = val; \
+      writeableGraphNode.varName = val; \
     } \
   }
 
@@ -259,15 +257,15 @@ PcpNodeRef PcpNodeRef::GetOriginNode() const
 ////////////////////////////////////////////////////////////
 
 PcpNodeRef_ChildrenIterator::PcpNodeRef_ChildrenIterator()
-    : _index(PcpPrimIndex_Graph::_Node::_invalidNodeIndex)
+  : _index(PcpPrimIndex_Graph::_Node::_invalidNodeIndex)
 {
   // Do nothing
 }
 
 PcpNodeRef_ChildrenIterator::PcpNodeRef_ChildrenIterator(const PcpNodeRef &node, bool end)
-    : _node(node),
-      _index(!end ? _node._graph->_GetNode(_node).smallInts.firstChildIndex :
-                    PcpPrimIndex_Graph::_Node::_invalidNodeIndex)
+  : _node(node),
+    _index(!end ? _node._graph->_GetNode(_node).smallInts.firstChildIndex :
+                  PcpPrimIndex_Graph::_Node::_invalidNodeIndex)
 {
   // Do nothing
 }
@@ -278,15 +276,14 @@ void PcpNodeRef_ChildrenIterator::increment()
 }
 
 PcpNodeRef_ChildrenReverseIterator::PcpNodeRef_ChildrenReverseIterator()
-    : _index(PcpPrimIndex_Graph::_Node::_invalidNodeIndex)
+  : _index(PcpPrimIndex_Graph::_Node::_invalidNodeIndex)
 {
   // Do nothing
 }
 
-PcpNodeRef_ChildrenReverseIterator::PcpNodeRef_ChildrenReverseIterator(
-    const PcpNodeRef_ChildrenIterator &i)
-    : _node(i._node),
-      _index(i._index)
+PcpNodeRef_ChildrenReverseIterator::PcpNodeRef_ChildrenReverseIterator(const PcpNodeRef_ChildrenIterator &i)
+  : _node(i._node),
+    _index(i._index)
 {
   if (_index == PcpPrimIndex_Graph::_Node::_invalidNodeIndex) {
     _index = _node._graph->_GetNode(_node).smallInts.lastChildIndex;
@@ -296,11 +293,10 @@ PcpNodeRef_ChildrenReverseIterator::PcpNodeRef_ChildrenReverseIterator(
   }
 }
 
-PcpNodeRef_ChildrenReverseIterator::PcpNodeRef_ChildrenReverseIterator(const PcpNodeRef &node,
-                                                                       bool end)
-    : _node(node),
-      _index(!end ? _node._graph->_GetNode(_node).smallInts.lastChildIndex :
-                    PcpPrimIndex_Graph::_Node::_invalidNodeIndex)
+PcpNodeRef_ChildrenReverseIterator::PcpNodeRef_ChildrenReverseIterator(const PcpNodeRef &node, bool end)
+  : _node(node),
+    _index(!end ? _node._graph->_GetNode(_node).smallInts.lastChildIndex :
+                  PcpPrimIndex_Graph::_Node::_invalidNodeIndex)
 {
   // Do nothing
 }
@@ -321,7 +317,7 @@ static inline int _GetNonVariantPathElementCount(const SdfPath &path)
   if (ARCH_UNLIKELY(path.ContainsPrimVariantSelection())) {
     SdfPath cur(path);
     int result = (!cur.IsPrimVariantSelectionPath());
-    cur        = cur.GetParentPath();
+    cur = cur.GetParentPath();
     for (; cur.ContainsPrimVariantSelection(); cur = cur.GetParentPath())
       result += (!cur.IsPrimVariantSelectionPath());
     return result + static_cast<int>(cur.GetPathElementCount());

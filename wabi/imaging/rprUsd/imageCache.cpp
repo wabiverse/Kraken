@@ -36,21 +36,21 @@ RprUsdImageCache::RprUsdImageCache(rpr::Context *context) : m_context(context)
 {}
 
 std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::GetImage(
-    std::string const &path,
-    std::string const &colorspace,
-    rpr::ImageWrapType wrapType,
-    std::vector<RprUsdCoreImage::UDIMTile> const &tiles,
-    uint32_t numComponentsRequired)
+  std::string const &path,
+  std::string const &colorspace,
+  rpr::ImageWrapType wrapType,
+  std::vector<RprUsdCoreImage::UDIMTile> const &tiles,
+  uint32_t numComponentsRequired)
 {
   if (!wrapType) {
     wrapType = RPR_IMAGE_WRAP_TYPE_REPEAT;
   }
 
-  CacheKey key   = {};
-  key.path       = path;
+  CacheKey key = {};
+  key.path = path;
   key.colorspace = colorspace;
-  key.wrapType   = wrapType;
-  key.hash       = GetHash(path) ^ GetHash(colorspace) ^ GetHash(wrapType);
+  key.wrapType = wrapType;
+  key.hash = GetHash(path) ^ GetHash(colorspace) ^ GetHash(wrapType);
 
   auto it = m_cache.find(key);
   if (it != m_cache.end()) {
@@ -81,10 +81,10 @@ std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::GetImage(
     // Figure out gamma from the internal format.
     // Assume that all tiles have the same colorspace
     //
-    auto data             = tiles[0].textureData;
+    auto data = tiles[0].textureData;
     GLenum internalFormat = data->GetGLMetadata().internalFormat;
-    if (internalFormat == GL_SRGB || internalFormat == GL_SRGB8 ||
-        internalFormat == GL_SRGB_ALPHA || internalFormat == GL_SRGB8_ALPHA8) {
+    if (internalFormat == GL_SRGB || internalFormat == GL_SRGB8 || internalFormat == GL_SRGB_ALPHA ||
+        internalFormat == GL_SRGB8_ALPHA8) {
       // XXX(RPR): sRGB formula is different from straight pow decoding, but it's the best we can
       // do without OCIO
       gamma = 2.2f;
@@ -157,7 +157,7 @@ std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::CacheValue::Lock(CacheKey con
         RprUsdGetUDIMFormatString(key.path, &udimFormatString);
       }
 
-      auto tilePath           = TfStringPrintf(udimFormatString.c_str(), tileId);
+      auto tilePath = TfStringPrintf(udimFormatString.c_str(), tileId);
       currentModificationTime = GetModificationTime(tilePath);
     }
 

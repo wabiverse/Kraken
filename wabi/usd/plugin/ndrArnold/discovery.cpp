@@ -67,15 +67,14 @@ NdrNodeDiscoveryResultVec NdrArnoldDiscoveryPlugin::DiscoverNodes(const Context 
     const auto shaderName = prim.GetName();
     TfToken filename("<built-in>");
     prim.GetMetadata(_tokens->filename, &filename);
-    ret.emplace_back(
-        NdrIdentifier(TfStringPrintf("arnold:%s", shaderName.GetText())),  // identifier
-        NdrVersion(AI_VERSION_ARCH_NUM, AI_VERSION_MAJOR_NUM),             // version
-        shaderName,                                                        // name
-        _tokens->shader,                                                   // family
-        _tokens->arnold,                                                   // discoveryType
-        _tokens->arnold,                                                   // sourceType
-        filename,                                                          // uri
-        filename                                                           // resolvedUri
+    ret.emplace_back(NdrIdentifier(TfStringPrintf("arnold:%s", shaderName.GetText())),  // identifier
+                     NdrVersion(AI_VERSION_ARCH_NUM, AI_VERSION_MAJOR_NUM),             // version
+                     shaderName,                                                        // name
+                     _tokens->shader,                                                   // family
+                     _tokens->arnold,                                                   // discoveryType
+                     _tokens->arnold,                                                   // sourceType
+                     filename,                                                          // uri
+                     filename                                                           // resolvedUri
     );
   }
   return ret;

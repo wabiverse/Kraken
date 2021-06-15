@@ -37,7 +37,7 @@ static size_t __hash__(Tf_PyEnumWrapper const &self)
 
 static boost::python::object _GetValueFromFullName(const std::string &fullName)
 {
-  bool found         = false;
+  bool found = false;
   const TfEnum value = TfEnum::GetValueFromFullName(fullName, &found);
   if (found) {
     return boost::python::object(value);
@@ -50,30 +50,30 @@ static boost::python::object _GetValueFromFullName(const std::string &fullName)
 void wrapEnum()
 {
   class_<Tf_PyEnum>("Enum", no_init)
-      .def("GetValueFromFullName", _GetValueFromFullName)
-      .staticmethod("GetValueFromFullName");
+    .def("GetValueFromFullName", _GetValueFromFullName)
+    .staticmethod("GetValueFromFullName");
 
   class_<Tf_PyEnumWrapper, bases<Tf_PyEnum>>("Tf_PyEnumWrapper", no_init)
-      .add_property("value", &Tf_PyEnumWrapper::GetValue)
-      .add_property("name", &Tf_PyEnumWrapper::GetName)
-      .add_property("fullName", &Tf_PyEnumWrapper::GetFullName)
-      .add_property("displayName", &Tf_PyEnumWrapper::GetDisplayName)
-      .def("__repr__", Tf_PyEnumRepr)
-      .def("__hash__", __hash__)
-      .def(self == long())
-      .def(self == self)
-      .def(self < self)
-      .def(self <= self)
-      .def(self > self)
-      .def(self >= self)
-      .def(long() | self)
-      .def(self | long())
-      .def(self | self)
-      .def(long() & self)
-      .def(self & long())
-      .def(self & self)
-      .def(long() ^ self)
-      .def(self ^ long())
-      .def(self ^ self)
-      .def(~self);
+    .add_property("value", &Tf_PyEnumWrapper::GetValue)
+    .add_property("name", &Tf_PyEnumWrapper::GetName)
+    .add_property("fullName", &Tf_PyEnumWrapper::GetFullName)
+    .add_property("displayName", &Tf_PyEnumWrapper::GetDisplayName)
+    .def("__repr__", Tf_PyEnumRepr)
+    .def("__hash__", __hash__)
+    .def(self == long())
+    .def(self == self)
+    .def(self < self)
+    .def(self <= self)
+    .def(self > self)
+    .def(self >= self)
+    .def(long() | self)
+    .def(self | long())
+    .def(self | self)
+    .def(long() & self)
+    .def(self & long())
+    .def(self & self)
+    .def(long() ^ self)
+    .def(self ^ long())
+    .def(self ^ self)
+    .def(~self);
 }

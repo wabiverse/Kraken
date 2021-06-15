@@ -290,7 +290,7 @@ vector<string> TfPyGetTraceback()
   try {
     object tbModule(handle<>(PyImport_ImportModule("traceback")));
     object stack = tbModule.attr("format_stack")();
-    size_t size  = len(stack);
+    size_t size = len(stack);
     result.reserve(size);
     for (size_t i = 0; i < size; ++i) {
       string s = extract<string>(stack[i]);
@@ -312,7 +312,7 @@ void TfPyGetStackFrames(vector<uintptr_t> *frames)
   try {
     object tbModule(handle<>(PyImport_ImportModule("traceback")));
     object stack = tbModule.attr("format_stack")();
-    size_t size  = len(stack);
+    size_t size = len(stack);
     frames->reserve(size);
     // Reverse the order of stack frames so that the stack is ordered
     // like the output of ArchGetStackFrames() (deepest function call at
@@ -412,8 +412,7 @@ void TfPyPrintError()
 void Tf_PyObjectError(bool printError)
 {
   // Silently pass these exceptions through.
-  if (PyErr_ExceptionMatches(PyExc_SystemExit) ||
-      PyErr_ExceptionMatches(PyExc_KeyboardInterrupt)) {
+  if (PyErr_ExceptionMatches(PyExc_SystemExit) || PyErr_ExceptionMatches(PyExc_KeyboardInterrupt)) {
     return;
   }
 

@@ -104,7 +104,7 @@ class HgiComputeCmds : public HgiCmds {
 
  private:
   HgiComputeCmds &operator=(const HgiComputeCmds &) = delete;
-  HgiComputeCmds(const HgiComputeCmds &)            = delete;
+  HgiComputeCmds(const HgiComputeCmds &) = delete;
 };
 
 WABI_NAMESPACE_END

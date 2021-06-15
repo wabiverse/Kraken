@@ -36,8 +36,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPh_ExtCompComputeShader::HdPh_ExtCompComputeShader(HdExtComputation const *extComp)
-    : _extComp(extComp)
+HdPh_ExtCompComputeShader::HdPh_ExtCompComputeShader(HdExtComputation const *extComp) : _extComp(extComp)
 {}
 
 HdPh_ExtCompComputeShader::~HdPh_ExtCompComputeShader() = default;
@@ -90,7 +89,7 @@ HdPhShaderCode::ID HdPh_ExtCompComputeShader::ComputeHash() const
     return 0;
   }
 
-  size_t hash               = 0;
+  size_t hash = 0;
   std::string const &kernel = _extComp->GetGpuKernelSource();
   boost::hash_combine(hash, ArchHash(kernel.c_str(), kernel.size()));
   return hash;

@@ -208,9 +208,7 @@ SDF_API bool Sdf_CanCastToTypeCheckSchema(const SdfSpec &srcSpec, const std::typ
 
 template<class DST, class SRC>
 struct Sdf_SpecTypesAreDirectlyRelated
-    : std::integral_constant<bool,
-                             std::is_base_of<DST, SRC>::value ||
-                                 std::is_base_of<SRC, DST>::value> {
+  : std::integral_constant<bool, std::is_base_of<DST, SRC>::value || std::is_base_of<SRC, DST>::value> {
 };
 
 /// Convert SdfHandle<SRC> \p x to an SdfHandle<DST>. This function
@@ -251,8 +249,7 @@ inline SdfHandle<typename DST::SpecType> TfStatic_cast(const SdfHandle<SRC> &x)
 {
   typedef typename DST::SpecType Spec;
   typedef SdfHandle<Spec> Handle;
-  static_assert(Sdf_SpecTypesAreDirectlyRelated<Spec, SRC>::value,
-                "Spec and SRC must be directly related.");
+  static_assert(Sdf_SpecTypesAreDirectlyRelated<Spec, SRC>::value, "Spec and SRC must be directly related.");
 
   return Handle(Sdf_CastAccess::CastSpec<Spec, SRC>(x.GetSpec()));
 }
@@ -292,8 +289,7 @@ inline SdfHandle<typename DST::SpecType> SdfSpecStatic_cast(const SdfHandle<SRC>
 }
 
 /// Convert SRC_SPEC to a DST_SPEC.
-template<typename DST_SPEC, typename SRC_SPEC>
-inline DST_SPEC SdfSpecStatic_cast(const SRC_SPEC &x)
+template<typename DST_SPEC, typename SRC_SPEC> inline DST_SPEC SdfSpecStatic_cast(const SRC_SPEC &x)
 {
   return Sdf_CastAccess::CastSpec<DST_SPEC, SRC_SPEC>(x);
 }

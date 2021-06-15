@@ -120,7 +120,7 @@ class TfToken {
   {
     if (&rhs != this) {
       _RemoveRef();
-      _rep     = rhs._rep;
+      _rep = rhs._rep;
       rhs._rep = TfPointerAndBits<const _Rep>();
     }
     return *this;
@@ -417,21 +417,21 @@ class TfToken {
     // over. This is to support lightweight _Rep objects used for
     // internal lookups.
     _Rep(_Rep const &rhs)
-        : _str(rhs._str),
-          _cstr(rhs._str.c_str() != rhs._cstr ? rhs._cstr : _str.c_str()),
-          _compareCode(rhs._compareCode),
-          _refCount(rhs._refCount.load()),
-          _isCounted(rhs._isCounted),
-          _setNum(rhs._setNum)
+      : _str(rhs._str),
+        _cstr(rhs._str.c_str() != rhs._cstr ? rhs._cstr : _str.c_str()),
+        _compareCode(rhs._compareCode),
+        _refCount(rhs._refCount.load()),
+        _isCounted(rhs._isCounted),
+        _setNum(rhs._setNum)
     {}
     _Rep &operator=(_Rep const &rhs)
     {
-      _str         = rhs._str;
-      _cstr        = (rhs._str.c_str() != rhs._cstr ? rhs._cstr : _str.c_str());
+      _str = rhs._str;
+      _cstr = (rhs._str.c_str() != rhs._cstr ? rhs._cstr : _str.c_str());
       _compareCode = rhs._compareCode;
-      _refCount    = rhs._refCount.load();
-      _isCounted   = rhs._isCounted;
-      _setNum      = rhs._setNum;
+      _refCount = rhs._refCount.load();
+      _isCounted = rhs._isCounted;
+      _setNum = rhs._setNum;
       return *this;
     }
 

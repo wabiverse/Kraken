@@ -53,8 +53,7 @@ void HdArnoldShape::Sync(HdRprim *rprim,
     param.Interrupt();
     renderDelegate->ApplyLightLinking(_shape, sceneDelegate->GetCategories(id));
   }
-  _SyncInstances(
-      dirtyBits, renderDelegate, sceneDelegate, param, id, rprim->GetInstancerId(), force);
+  _SyncInstances(dirtyBits, renderDelegate, sceneDelegate, param, id, rprim->GetInstancerId(), force);
 }
 
 void HdArnoldShape::SetVisibility(uint8_t visibility)
@@ -106,7 +105,7 @@ void HdArnoldShape::_SyncInstances(HdDirtyBits dirtyBits,
   // We need to hide the source mesh.
   AiNodeSetByte(_shape, str::visibility, 0);
   auto &renderIndex = sceneDelegate->GetRenderIndex();
-  auto *instancer   = static_cast<HdArnoldInstancer *>(renderIndex.GetInstancer(instancerId));
+  auto *instancer = static_cast<HdArnoldInstancer *>(renderIndex.GetInstancer(instancerId));
   HdArnoldSampledMatrixArrayType instanceMatrices;
   instancer->CalculateInstanceMatrices(id, instanceMatrices);
   if (_instancer == nullptr) {
@@ -124,12 +123,12 @@ void HdArnoldShape::_SyncInstances(HdDirtyBits dirtyBits,
     AiNodeResetParameter(_instancer, str::instance_visibility);
   }
   else {
-    const auto sampleCount   = instanceMatrices.count;
+    const auto sampleCount = instanceMatrices.count;
     const auto instanceCount = instanceMatrices.values.front().size();
-    auto *matrixArray        = AiArrayAllocate(instanceCount, sampleCount, AI_TYPE_MATRIX);
-    auto *nodeIdxsArray      = AiArrayAllocate(instanceCount, sampleCount, AI_TYPE_UINT);
-    auto *matrices           = static_cast<AtMatrix *>(AiArrayMap(matrixArray));
-    auto *nodeIdxs           = static_cast<uint32_t *>(AiArrayMap(nodeIdxsArray));
+    auto *matrixArray = AiArrayAllocate(instanceCount, sampleCount, AI_TYPE_MATRIX);
+    auto *nodeIdxsArray = AiArrayAllocate(instanceCount, sampleCount, AI_TYPE_UINT);
+    auto *matrices = static_cast<AtMatrix *>(AiArrayMap(matrixArray));
+    auto *nodeIdxs = static_cast<uint32_t *>(AiArrayMap(nodeIdxsArray));
     std::fill(nodeIdxs, nodeIdxs + instanceCount, 0);
     AiArrayUnmap(nodeIdxsArray);
     auto convertMatrices = [&](size_t sample) {
@@ -173,11 +172,11 @@ void HdArnoldShape::_SyncInstances(HdDirtyBits dirtyBits,
 
 void HdArnoldShape::_UpdateInstanceVisibility(HdArnoldRenderParamInterrupt &param)
 {
-  auto *instanceVisibility     = AiNodeGetArray(_instancer, str::instance_visibility);
+  auto *instanceVisibility = AiNodeGetArray(_instancer, str::instance_visibility);
   const auto currentVisibility = (instanceVisibility != nullptr &&
                                   AiArrayGetNumElements(instanceVisibility) == 1) ?
-                                     AiArrayGetByte(instanceVisibility, 0) :
-                                     ~_visibility;
+                                   AiArrayGetByte(instanceVisibility, 0) :
+                                   ~_visibility;
   if (currentVisibility == _visibility) {
     return;
   }

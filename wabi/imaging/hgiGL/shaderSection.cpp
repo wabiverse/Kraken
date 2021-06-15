@@ -37,8 +37,8 @@ HgiGLShaderSection::HgiGLShaderSection(const std::string &identifier,
                                        const HgiShaderSectionAttributeVector &attributes,
                                        const std::string &storageQualifier,
                                        const std::string &defaultValue)
-    : HgiShaderSection(identifier, attributes, defaultValue),
-      _storageQualifier(storageQualifier)
+  : HgiShaderSection(identifier, attributes, defaultValue),
+    _storageQualifier(storageQualifier)
 {}
 
 HgiGLShaderSection::~HgiGLShaderSection() = default;
@@ -108,8 +108,8 @@ bool HgiGLShaderSection::VisitGlobalFunctionDefinitions(std::ostream &ss)
 
 HgiGLMacroShaderSection::HgiGLMacroShaderSection(const std::string &macroDeclaration,
                                                  const std::string &macroComment)
-    : HgiGLShaderSection(macroDeclaration),
-      _macroComment(macroComment)
+  : HgiGLShaderSection(macroDeclaration),
+    _macroComment(macroComment)
 {}
 
 HgiGLMacroShaderSection::~HgiGLMacroShaderSection() = default;
@@ -120,14 +120,13 @@ bool HgiGLMacroShaderSection::VisitGlobalMacros(std::ostream &ss)
   return true;
 }
 
-HgiGLMemberShaderSection::HgiGLMemberShaderSection(
-    const std::string &identifier,
-    const std::string &typeName,
-    const HgiShaderSectionAttributeVector &attributes,
-    const std::string &storageQualifier,
-    const std::string &defaultValue)
-    : HgiGLShaderSection(identifier, attributes, storageQualifier, defaultValue),
-      _typeName(typeName)
+HgiGLMemberShaderSection::HgiGLMemberShaderSection(const std::string &identifier,
+                                                   const std::string &typeName,
+                                                   const HgiShaderSectionAttributeVector &attributes,
+                                                   const std::string &storageQualifier,
+                                                   const std::string &defaultValue)
+  : HgiGLShaderSection(identifier, attributes, storageQualifier, defaultValue),
+    _typeName(typeName)
 {}
 
 HgiGLMemberShaderSection::~HgiGLMemberShaderSection() = default;
@@ -143,13 +142,12 @@ void HgiGLMemberShaderSection::WriteType(std::ostream &ss) const
   ss << _typeName;
 }
 
-HgiGLBlockShaderSection::HgiGLBlockShaderSection(
-    const std::string &identifier,
-    const HgiShaderFunctionParamDescVector &parameters,
-    const unsigned int bindingNo)
-    : HgiGLShaderSection(identifier),
-      _parameters(parameters),
-      _bindingNo(bindingNo)
+HgiGLBlockShaderSection::HgiGLBlockShaderSection(const std::string &identifier,
+                                                 const HgiShaderFunctionParamDescVector &parameters,
+                                                 const unsigned int bindingNo)
+  : HgiGLShaderSection(identifier),
+    _parameters(parameters),
+    _bindingNo(bindingNo)
 {}
 
 HgiGLBlockShaderSection::~HgiGLBlockShaderSection() = default;
@@ -171,16 +169,15 @@ bool HgiGLBlockShaderSection::VisitGlobalMemberDeclarations(std::ostream &ss)
 
 const std::string HgiGLTextureShaderSection::_storageQualifier = "uniform";
 
-HgiGLTextureShaderSection::HgiGLTextureShaderSection(
-    const std::string &identifier,
-    const unsigned int layoutIndex,
-    const unsigned int dimensions,
-    const HgiFormat format,
-    const HgiShaderSectionAttributeVector &attributes,
-    const std::string &defaultValue)
-    : HgiGLShaderSection(identifier, attributes, _storageQualifier, defaultValue),
-      _dimensions(dimensions),
-      _format(format)
+HgiGLTextureShaderSection::HgiGLTextureShaderSection(const std::string &identifier,
+                                                     const unsigned int layoutIndex,
+                                                     const unsigned int dimensions,
+                                                     const HgiFormat format,
+                                                     const HgiShaderSectionAttributeVector &attributes,
+                                                     const std::string &defaultValue)
+  : HgiGLShaderSection(identifier, attributes, _storageQualifier, defaultValue),
+    _dimensions(dimensions),
+    _format(format)
 {}
 
 HgiGLTextureShaderSection::~HgiGLTextureShaderSection() = default;
@@ -257,13 +254,12 @@ bool HgiGLTextureShaderSection::VisitGlobalFunctionDefinitions(std::ostream &ss)
   return true;
 }
 
-HgiGLBufferShaderSection::HgiGLBufferShaderSection(
-    const std::string &identifier,
-    const uint32_t layoutIndex,
-    const std::string &type,
-    const HgiShaderSectionAttributeVector &attributes)
-    : HgiGLShaderSection(identifier, attributes, "buffer", ""),
-      _type(type)
+HgiGLBufferShaderSection::HgiGLBufferShaderSection(const std::string &identifier,
+                                                   const uint32_t layoutIndex,
+                                                   const std::string &type,
+                                                   const HgiShaderSectionAttributeVector &attributes)
+  : HgiGLShaderSection(identifier, attributes, "buffer", ""),
+    _type(type)
 {}
 
 HgiGLBufferShaderSection::~HgiGLBufferShaderSection() = default;
@@ -308,9 +304,9 @@ bool HgiGLBufferShaderSection::VisitGlobalMemberDeclarations(std::ostream &ss)
 HgiGLKeywordShaderSection::HgiGLKeywordShaderSection(const std::string &identifier,
                                                      const std::string &type,
                                                      const std::string &keyword)
-    : HgiGLShaderSection(identifier),
-      _type(type),
-      _keyword(keyword)
+  : HgiGLShaderSection(identifier),
+    _type(type),
+    _keyword(keyword)
 {}
 
 HgiGLKeywordShaderSection::~HgiGLKeywordShaderSection() = default;

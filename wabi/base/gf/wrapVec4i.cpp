@@ -76,7 +76,7 @@ static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
     return -1;
   }
   GfVec4i &vec = extract<GfVec4i &>(self);
-  *ptrptr      = static_cast<void *>(vec.data());
+  *ptrptr = static_cast<void *>(vec.data());
   // Return size in bytes.
   return sizeof(GfVec4i);
 }
@@ -122,9 +122,9 @@ static int getbuffer(PyObject *self, Py_buffer *view, int flags)
 
   GfVec4i &vec = extract<GfVec4i &>(self);
 
-  view->obj      = self;
-  view->buf      = static_cast<void *>(vec.data());
-  view->len      = sizeof(GfVec4i);
+  view->obj = self;
+  view->buf = static_cast<void *>(vec.data());
+  view->len = sizeof(GfVec4i);
   view->readonly = 0;
   view->itemsize = sizeof(int);
   if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT) {
@@ -134,23 +134,23 @@ static int getbuffer(PyObject *self, Py_buffer *view, int flags)
     view->format = NULL;
   }
   if ((flags & PyBUF_ND) == PyBUF_ND) {
-    view->ndim              = 1;
+    view->ndim = 1;
     static Py_ssize_t shape = 4;
-    view->shape             = &shape;
+    view->shape = &shape;
   }
   else {
-    view->ndim  = 0;
+    view->ndim = 0;
     view->shape = NULL;
   }
   if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES) {
     static Py_ssize_t strides = sizeof(int);
-    view->strides             = &strides;
+    view->strides = &strides;
   }
   else {
     view->strides = NULL;
   }
   view->suboffsets = NULL;
-  view->internal   = NULL;
+  view->internal = NULL;
 
   Py_INCREF(self);  // need to retain a reference to self.
   return 0;
@@ -160,13 +160,13 @@ static int getbuffer(PyObject *self, Py_buffer *view, int flags)
 // to the right buffer protocol functions.
 static PyBufferProcs bufferProcs = {
 #if PY_MAJOR_VERSION == 2
-    (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
-    (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
-    (segcountproc)getsegcount,    /*bf_getsegcount*/
-    (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
+  (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
+  (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
+  (segcountproc)getsegcount,    /*bf_getsegcount*/
+  (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
 #endif
-    (getbufferproc)getbuffer,
-    (releasebufferproc)0,
+  (getbufferproc)getbuffer,
+  (releasebufferproc)0,
 };
 
 // End python buffer protocol support.
@@ -208,7 +208,7 @@ static list __getslice__(const GfVec4i &self, slice indices)
   list result;
 
   const int *begin = self.data();
-  const int *end   = begin + 4;
+  const int *end = begin + 4;
 
   slice::range<const int *> bounds;
   try {
@@ -264,7 +264,7 @@ static void __setslice__(GfVec4i &self, slice indices, object values)
   }
 
   int *begin = self.data();
-  int *end   = begin + 4;
+  int *end = begin + 4;
 
   Py_ssize_t sliceLength = -1;
 
@@ -273,8 +273,8 @@ static void __setslice__(GfVec4i &self, slice indices, object values)
   // Convince g++ that we're not using uninitialized values.
   //
   bounds.start = 0;
-  bounds.stop  = 0;
-  bounds.step  = 0;
+  bounds.stop = 0;
+  bounds.step = 0;
 
   try {
     // This appears to be a typo in the boost headers.  The method
@@ -294,10 +294,9 @@ static void __setslice__(GfVec4i &self, slice indices, object values)
   }
 
   if (PySequence_Length(valuesObj) != sliceLength) {
-    TfPyThrowValueError(
-        TfStringPrintf("attempt to assign sequence of size %zd to slice of size %zd",
-                       PySequence_Length(valuesObj),
-                       sliceLength));
+    TfPyThrowValueError(TfStringPrintf("attempt to assign sequence of size %zd to slice of size %zd",
+                                       PySequence_Length(valuesObj),
+                                       sliceLength));
   }
 
   // Short circuit for empty slices
@@ -364,8 +363,8 @@ struct FromPythonTuple {
     // XXX: Would like to allow general sequences, but currently clients
     // depend on this behavior.
     if ((PyTuple_Check(obj_ptr) || PyList_Check(obj_ptr)) && PySequence_Size(obj_ptr) == 4 &&
-        _SequenceCheckItem(obj_ptr, 0) && _SequenceCheckItem(obj_ptr, 1) &&
-        _SequenceCheckItem(obj_ptr, 2) && _SequenceCheckItem(obj_ptr, 3)) {
+        _SequenceCheckItem(obj_ptr, 0) && _SequenceCheckItem(obj_ptr, 1) && _SequenceCheckItem(obj_ptr, 2) &&
+        _SequenceCheckItem(obj_ptr, 3)) {
       return obj_ptr;
     }
     return 0;
@@ -401,78 +400,79 @@ void wrapVec4i()
   typedef int Scalar;
 
   static const size_t _dimension = 4;
-  static const bool _true        = true;
+  static const bool _true = true;
 
   def("Dot", (Scalar(*)(const Vec &, const Vec &))GfDot);
 
   class_<GfVec4i> cls("Vec4i", no_init);
-  cls.def("__init__", make_constructor(__init__<Vec>))
+  cls
+    .def("__init__", make_constructor(__init__<Vec>))
 
-      // A tag indicating that this is a GfVec class, for internal use.
-      .def_readonly("__isGfVec", _true)
+    // A tag indicating that this is a GfVec class, for internal use.
+    .def_readonly("__isGfVec", _true)
 
-      .def_pickle(PickleSuite())
+    .def_pickle(PickleSuite())
 
-      .def(init<Vec>())
-      .def(init<Scalar>())
-      .def(init<Scalar, Scalar, Scalar, Scalar>())
+    .def(init<Vec>())
+    .def(init<Scalar>())
+    .def(init<Scalar, Scalar, Scalar, Scalar>())
 
-      .def(TfTypePythonClass())
+    .def(TfTypePythonClass())
 
-      .def("__len__", __len__)
-      .def("__getitem__", __getitem__)
-      .def("__getitem__", __getslice__)
-      .def("__setitem__", __setitem__)
-      .def("__setitem__", __setslice__)
-      .def("__contains__", __contains__)
+    .def("__len__", __len__)
+    .def("__getitem__", __getitem__)
+    .def("__getitem__", __getslice__)
+    .def("__setitem__", __setitem__)
+    .def("__setitem__", __setslice__)
+    .def("__contains__", __contains__)
 
-      .def_readonly("dimension", _dimension)
+    .def_readonly("dimension", _dimension)
 
-      .def(self == self)
-      .def(self != self)
-      .def(self += self)
-      .def(self -= self)
-      .def(self *= double())
-      .def(self * double())
-      .def(double() * self)
-      .def(self /= int())
-      .def(self / int())
-      .def(-self)
-      .def(self + self)
-      .def(self - self)
-      .def(self * self)
-      .def(str(self))
+    .def(self == self)
+    .def(self != self)
+    .def(self += self)
+    .def(self -= self)
+    .def(self *= double())
+    .def(self * double())
+    .def(double() * self)
+    .def(self /= int())
+    .def(self / int())
+    .def(-self)
+    .def(self + self)
+    .def(self - self)
+    .def(self * self)
+    .def(str(self))
 
 #if PY_MAJOR_VERSION == 2
-      // Needed only to support "from __future__ import division" in
-      // python 2. In python 3 builds boost::python adds this for us.
-      .def("__truediv__", __truediv__)
-      .def("__itruediv__", __itruediv__)
+    // Needed only to support "from __future__ import division" in
+    // python 2. In python 3 builds boost::python adds this for us.
+    .def("__truediv__", __truediv__)
+    .def("__itruediv__", __itruediv__)
 #endif
 
-      .def("Axis", &Vec::Axis)
-      .staticmethod("Axis")
+    .def("Axis", &Vec::Axis)
+    .staticmethod("Axis")
 
-      .def("XAxis", &Vec::XAxis)
-      .staticmethod("XAxis")
-      .def("YAxis", &Vec::YAxis)
-      .staticmethod("YAxis")
-      .def("ZAxis", &Vec::ZAxis)
-      .staticmethod("ZAxis")
-      .def("WAxis", &Vec::WAxis)
-      .staticmethod("WAxis")
+    .def("XAxis", &Vec::XAxis)
+    .staticmethod("XAxis")
+    .def("YAxis", &Vec::YAxis)
+    .staticmethod("YAxis")
+    .def("ZAxis", &Vec::ZAxis)
+    .staticmethod("ZAxis")
+    .def("WAxis", &Vec::WAxis)
+    .staticmethod("WAxis")
 
-      .def("GetDot", (Scalar(*)(const Vec &, const Vec &))GfDot)
+    .def("GetDot", (Scalar(*)(const Vec &, const Vec &))GfDot)
 
-      .def("__repr__", __repr__)
-      .def("__hash__", __hash__);
+    .def("__repr__", __repr__)
+    .def("__hash__", __hash__);
   to_python_converter<std::vector<GfVec4i>, TfPySequenceToPython<std::vector<GfVec4i>>>();
 
   // Install buffer protocol: set the tp_as_buffer slot to point to a
   // structure of function pointers that implement the buffer protocol for
   // this type, and set the type flags to indicate that this type supports the
   // buffer protocol.
-  auto *typeObj         = reinterpret_cast<PyTypeObject *>(cls.ptr());
+  auto *typeObj = reinterpret_cast<PyTypeObject *>(cls.ptr());
   typeObj->tp_as_buffer = &bufferProcs;
   typeObj->tp_flags |= (TfPy_TPFLAGS_HAVE_NEWBUFFER | TfPy_TPFLAGS_HAVE_GETCHARBUFFER);
 
@@ -480,7 +480,6 @@ void wrapVec4i()
   FromPythonTuple();
 
   // Allow conversion of lists of GfVec4i to std::vector<GfVec4i>
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<GfVec4i>,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<GfVec4i>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 }

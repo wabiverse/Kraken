@@ -84,14 +84,14 @@ size_t HdPhGLConversions::GetComponentSize(int glDataType)
 GLenum HdPhGLConversions::GetGlDepthFunc(HdCompareFunction func)
 {
   static GLenum HD_2_GL_DEPTH_FUNC[] = {
-      GL_NEVER,     // HdCmpFuncNever
-      GL_LESS,      // HdCmpFuncLess
-      GL_EQUAL,     // HdCmpFuncEqual
-      GL_LEQUAL,    // HdCmpFuncLEqual
-      GL_GREATER,   // HdCmpFuncGreater
-      GL_NOTEQUAL,  // HdCmpFuncNotEqual
-      GL_GEQUAL,    // HdCmpFuncGEqual
-      GL_ALWAYS,    // HdCmpFuncAlways
+    GL_NEVER,     // HdCmpFuncNever
+    GL_LESS,      // HdCmpFuncLess
+    GL_EQUAL,     // HdCmpFuncEqual
+    GL_LEQUAL,    // HdCmpFuncLEqual
+    GL_GREATER,   // HdCmpFuncGreater
+    GL_NOTEQUAL,  // HdCmpFuncNotEqual
+    GL_GEQUAL,    // HdCmpFuncGEqual
+    GL_ALWAYS,    // HdCmpFuncAlways
   };
   static_assert((sizeof(HD_2_GL_DEPTH_FUNC) / sizeof(HD_2_GL_DEPTH_FUNC[0])) == HdCmpFuncLast,
                 "Mismatch enum sizes in convert function");
@@ -102,14 +102,14 @@ GLenum HdPhGLConversions::GetGlDepthFunc(HdCompareFunction func)
 GLenum HdPhGLConversions::GetGlStencilFunc(HdCompareFunction func)
 {
   static GLenum HD_2_GL_STENCIL_FUNC[] = {
-      GL_NEVER,     // HdCmpFuncNever
-      GL_LESS,      // HdCmpFuncLess
-      GL_EQUAL,     // HdCmpFuncEqual
-      GL_LEQUAL,    // HdCmpFuncLEqual
-      GL_GREATER,   // HdCmpFuncGreater
-      GL_NOTEQUAL,  // HdCmpFuncNotEqual
-      GL_GEQUAL,    // HdCmpFuncGEqual
-      GL_ALWAYS,    // HdCmpFuncAlways
+    GL_NEVER,     // HdCmpFuncNever
+    GL_LESS,      // HdCmpFuncLess
+    GL_EQUAL,     // HdCmpFuncEqual
+    GL_LEQUAL,    // HdCmpFuncLEqual
+    GL_GREATER,   // HdCmpFuncGreater
+    GL_NOTEQUAL,  // HdCmpFuncNotEqual
+    GL_GEQUAL,    // HdCmpFuncGEqual
+    GL_ALWAYS,    // HdCmpFuncAlways
   };
   static_assert((sizeof(HD_2_GL_STENCIL_FUNC) / sizeof(HD_2_GL_STENCIL_FUNC[0])) == HdCmpFuncLast,
                 "Mismatch enum sizes in convert function");
@@ -120,14 +120,14 @@ GLenum HdPhGLConversions::GetGlStencilFunc(HdCompareFunction func)
 GLenum HdPhGLConversions::GetGlStencilOp(HdStencilOp op)
 {
   static GLenum HD_2_GL_STENCIL_OP[] = {
-      GL_KEEP,       // HdStencilOpKeep
-      GL_ZERO,       // HdStencilOpZero
-      GL_REPLACE,    // HdStencilOpReplace
-      GL_INCR,       // HdStencilOpIncrement
-      GL_INCR_WRAP,  // HdStencilOpIncrementWrap
-      GL_DECR,       // HdStencilOpDecrement
-      GL_DECR_WRAP,  // HdStencilOpDecrementWrap
-      GL_INVERT,     // HdStencilOpInvert
+    GL_KEEP,       // HdStencilOpKeep
+    GL_ZERO,       // HdStencilOpZero
+    GL_REPLACE,    // HdStencilOpReplace
+    GL_INCR,       // HdStencilOpIncrement
+    GL_INCR_WRAP,  // HdStencilOpIncrementWrap
+    GL_DECR,       // HdStencilOpDecrement
+    GL_DECR_WRAP,  // HdStencilOpDecrementWrap
+    GL_INVERT,     // HdStencilOpInvert
   };
   static_assert((sizeof(HD_2_GL_STENCIL_OP) / sizeof(HD_2_GL_STENCIL_OP[0])) == HdStencilOpLast,
                 "Mismatch enum sizes in convert function");
@@ -138,11 +138,11 @@ GLenum HdPhGLConversions::GetGlStencilOp(HdStencilOp op)
 GLenum HdPhGLConversions::GetGlBlendOp(HdBlendOp op)
 {
   static GLenum HD_2_GL_BLEND_OP[] = {
-      GL_FUNC_ADD,               // HdBlendOpAdd
-      GL_FUNC_SUBTRACT,          // HdBlendOpSubtract
-      GL_FUNC_REVERSE_SUBTRACT,  // HdBlendOpReverseSubtract
-      GL_MIN,                    // HdBlendOpMin
-      GL_MAX,                    // HdBlendOpMax
+    GL_FUNC_ADD,               // HdBlendOpAdd
+    GL_FUNC_SUBTRACT,          // HdBlendOpSubtract
+    GL_FUNC_REVERSE_SUBTRACT,  // HdBlendOpReverseSubtract
+    GL_MIN,                    // HdBlendOpMin
+    GL_MAX,                    // HdBlendOpMax
   };
   static_assert((sizeof(HD_2_GL_BLEND_OP) / sizeof(HD_2_GL_BLEND_OP[0])) == HdBlendOpLast,
                 "Mismatch enum sizes in convert function");
@@ -153,28 +153,27 @@ GLenum HdPhGLConversions::GetGlBlendOp(HdBlendOp op)
 GLenum HdPhGLConversions::GetGlBlendFactor(HdBlendFactor factor)
 {
   static GLenum HD_2_GL_BLEND_FACTOR[] = {
-      GL_ZERO,                      // HdBlendFactorZero,
-      GL_ONE,                       // HdBlendFactorOne,
-      GL_SRC_COLOR,                 // HdBlendFactorSrcColor,
-      GL_ONE_MINUS_SRC_COLOR,       // HdBlendFactorOneMinusSrcColor,
-      GL_DST_COLOR,                 // HdBlendFactorDstColor,
-      GL_ONE_MINUS_DST_COLOR,       // HdBlendFactorOneMinusDstColor,
-      GL_SRC_ALPHA,                 // HdBlendFactorSrcAlpha,
-      GL_ONE_MINUS_SRC_ALPHA,       // HdBlendFactorOneMinusSrcAlpha,
-      GL_DST_ALPHA,                 // HdBlendFactorDstAlpha,
-      GL_ONE_MINUS_DST_ALPHA,       // HdBlendFactorOneMinusDstAlpha,
-      GL_CONSTANT_COLOR,            // HdBlendFactorConstantColor,
-      GL_ONE_MINUS_CONSTANT_COLOR,  // HdBlendFactorOneMinusConstantColor,
-      GL_CONSTANT_ALPHA,            // HdBlendFactorConstantAlpha,
-      GL_ONE_MINUS_CONSTANT_ALPHA,  // HdBlendFactorOneMinusConstantAlpha,
-      GL_SRC_ALPHA_SATURATE,        // HdBlendFactorSrcAlphaSaturate,
-      GL_SRC1_COLOR,                // HdBlendFactorSrc1Color,
-      GL_ONE_MINUS_SRC1_COLOR,      // HdBlendFactorOneMinusSrc1Color,
-      GL_SRC1_ALPHA,                // HdBlendFactorSrc1Alpha,
-      GL_ONE_MINUS_SRC1_COLOR,      // HdBlendFactorOneMinusSrc1Alpha,
+    GL_ZERO,                      // HdBlendFactorZero,
+    GL_ONE,                       // HdBlendFactorOne,
+    GL_SRC_COLOR,                 // HdBlendFactorSrcColor,
+    GL_ONE_MINUS_SRC_COLOR,       // HdBlendFactorOneMinusSrcColor,
+    GL_DST_COLOR,                 // HdBlendFactorDstColor,
+    GL_ONE_MINUS_DST_COLOR,       // HdBlendFactorOneMinusDstColor,
+    GL_SRC_ALPHA,                 // HdBlendFactorSrcAlpha,
+    GL_ONE_MINUS_SRC_ALPHA,       // HdBlendFactorOneMinusSrcAlpha,
+    GL_DST_ALPHA,                 // HdBlendFactorDstAlpha,
+    GL_ONE_MINUS_DST_ALPHA,       // HdBlendFactorOneMinusDstAlpha,
+    GL_CONSTANT_COLOR,            // HdBlendFactorConstantColor,
+    GL_ONE_MINUS_CONSTANT_COLOR,  // HdBlendFactorOneMinusConstantColor,
+    GL_CONSTANT_ALPHA,            // HdBlendFactorConstantAlpha,
+    GL_ONE_MINUS_CONSTANT_ALPHA,  // HdBlendFactorOneMinusConstantAlpha,
+    GL_SRC_ALPHA_SATURATE,        // HdBlendFactorSrcAlphaSaturate,
+    GL_SRC1_COLOR,                // HdBlendFactorSrc1Color,
+    GL_ONE_MINUS_SRC1_COLOR,      // HdBlendFactorOneMinusSrc1Color,
+    GL_SRC1_ALPHA,                // HdBlendFactorSrc1Alpha,
+    GL_ONE_MINUS_SRC1_COLOR,      // HdBlendFactorOneMinusSrc1Alpha,
   };
-  static_assert((sizeof(HD_2_GL_BLEND_FACTOR) / sizeof(HD_2_GL_BLEND_FACTOR[0])) ==
-                    HdBlendFactorLast,
+  static_assert((sizeof(HD_2_GL_BLEND_FACTOR) / sizeof(HD_2_GL_BLEND_FACTOR[0])) == HdBlendFactorLast,
                 "Mismatch enum sizes in convert function");
 
   return HD_2_GL_BLEND_FACTOR[factor];
@@ -218,15 +217,15 @@ int HdPhGLConversions::GetGLAttribType(HdType type)
 TF_DEFINE_PRIVATE_TOKENS(_glTypeNames,
                          ((_bool, "bool"))
 
-                             ((_float, "float"))(vec2)(vec3)(vec4)(mat3)(mat4)
+                           ((_float, "float"))(vec2)(vec3)(vec4)(mat3)(mat4)
 
-                                 ((_double, "double"))(dvec2)(dvec3)(dvec4)(dmat3)(dmat4)
+                             ((_double, "double"))(dvec2)(dvec3)(dvec4)(dmat3)(dmat4)
 
-                                     ((_int, "int"))(ivec2)(ivec3)(ivec4)
+                               ((_int, "int"))(ivec2)(ivec3)(ivec4)
 
-                                         ((_uint, "uint"))(uvec2)(uvec3)(uvec4)
+                                 ((_uint, "uint"))(uvec2)(uvec3)(uvec4)
 
-                                             (packed_2_10_10_10));
+                                   (packed_2_10_10_10));
 
 TfToken HdPhGLConversions::GetGLSLTypename(HdType type)
 {

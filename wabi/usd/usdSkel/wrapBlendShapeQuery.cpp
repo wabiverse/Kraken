@@ -42,8 +42,7 @@ WABI_NAMESPACE_USING;
 
 namespace {
 
-boost::python::tuple _ComputeSubShapeWeights(const UsdSkelBlendShapeQuery &self,
-                                             const VtFloatArray &weights)
+boost::python::tuple _ComputeSubShapeWeights(const UsdSkelBlendShapeQuery &self, const VtFloatArray &weights)
 {
   VtFloatArray subShapeWeights;
   VtUIntArray blendShapeIndices;
@@ -86,33 +85,33 @@ void wrapUsdSkelBlendShapeQuery()
   using This = UsdSkelBlendShapeQuery;
 
   class_<This>("BlendShapeQuery", init<>())
-      .def(init<UsdSkelBindingAPI>())
+    .def(init<UsdSkelBindingAPI>())
 
-      .def("__str__", &This::GetDescription)
+    .def("__str__", &This::GetDescription)
 
-      .def("GetBlendShape", &This::GetBlendShape)
-      .def("GetInbetween", &This::GetInbetween)
-      .def("GetBlendShapeIndex", &This::GetBlendShapeIndex)
+    .def("GetBlendShape", &This::GetBlendShape)
+    .def("GetInbetween", &This::GetInbetween)
+    .def("GetBlendShapeIndex", &This::GetBlendShapeIndex)
 
-      .def("GetNumBlendShapes", &This::GetNumBlendShapes)
-      .def("GetNumSubShapes", &This::GetNumSubShapes)
+    .def("GetNumBlendShapes", &This::GetNumBlendShapes)
+    .def("GetNumSubShapes", &This::GetNumSubShapes)
 
-      .def("ComputeBlendShapePointIndices",
-           &This::ComputeBlendShapePointIndices,
-           return_value_policy<TfPySequenceToList>())
+    .def("ComputeBlendShapePointIndices",
+         &This::ComputeBlendShapePointIndices,
+         return_value_policy<TfPySequenceToList>())
 
-      .def("ComputeSubShapePointOffsets",
-           &This::ComputeSubShapePointOffsets,
-           return_value_policy<TfPySequenceToList>())
+    .def("ComputeSubShapePointOffsets",
+         &This::ComputeSubShapePointOffsets,
+         return_value_policy<TfPySequenceToList>())
 
-      .def("ComputeSubShapeWeights", &_ComputeSubShapeWeights)
+    .def("ComputeSubShapeWeights", &_ComputeSubShapeWeights)
 
-      .def("ComputeDeformedPoints",
-           &_ComputeDeformedPoints,
-           (arg("subShapeWeights"),
-            arg("blendShapeIndices"),
-            arg("subShapeIndices"),
-            arg("blendShapePointIndices"),
-            arg("subShapePointOffset"),
-            arg("points")));
+    .def("ComputeDeformedPoints",
+         &_ComputeDeformedPoints,
+         (arg("subShapeWeights"),
+          arg("blendShapeIndices"),
+          arg("subShapeIndices"),
+          arg("blendShapePointIndices"),
+          arg("subShapePointOffset"),
+          arg("points")));
 }

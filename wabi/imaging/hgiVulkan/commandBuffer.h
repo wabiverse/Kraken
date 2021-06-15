@@ -42,7 +42,7 @@ WABI_NAMESPACE_BEGIN
 
 class HgiVulkanDevice;
 
-using HgiVulkanCompletedHandler       = std::function<void(void)>;
+using HgiVulkanCompletedHandler = std::function<void(void)>;
 using HgiVulkanCompletedHandlerVector = std::vector<HgiVulkanCompletedHandler>;
 
 /// \class HgiVulkanCommandBuffer
@@ -125,9 +125,9 @@ class HgiVulkanCommandBuffer final {
   void RunAndClearCompletedHandlers();
 
  private:
-  HgiVulkanCommandBuffer()        = delete;
+  HgiVulkanCommandBuffer() = delete;
   HgiVulkanCommandBuffer &operator=(const HgiVulkanCommandBuffer &) = delete;
-  HgiVulkanCommandBuffer(const HgiVulkanCommandBuffer &)            = delete;
+  HgiVulkanCommandBuffer(const HgiVulkanCommandBuffer &) = delete;
 
   // Returns the flags that will be used to reset command buffers.
   static VkCommandBufferResetFlags _GetCommandBufferResetFlags();

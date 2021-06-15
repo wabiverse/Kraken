@@ -64,8 +64,8 @@ class SdfPayload : boost::totally_ordered<SdfPayload> {
   /// and set this payload's asset path to the empty asset path.
   ///
   SDF_API
-  SdfPayload(const std::string &assetPath      = std::string(),
-             const SdfPath &primPath           = SdfPath(),
+  SdfPayload(const std::string &assetPath = std::string(),
+             const SdfPath &primPath = SdfPath(),
              const SdfLayerOffset &layerOffset = SdfLayerOffset());
 
   /// Returns the asset path of the layer that the payload uses.

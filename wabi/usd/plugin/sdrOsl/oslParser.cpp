@@ -103,13 +103,12 @@ SdrOslParserPlugin::~SdrOslParserPlugin()
   // Nothing yet
 }
 
-template<class String>
-static bool _ParseFromSourceCode(OSL::OSLQuery *query, const String &sourceCode)
+template<class String> static bool _ParseFromSourceCode(OSL::OSLQuery *query, const String &sourceCode)
 {
 #if OSL_LIBRARY_VERSION_CODE < 10701
   TF_WARN(
-      "Support for parsing OSL from an in-memory string is only "
-      "available in OSL version 1.7.1 or newer.");
+    "Support for parsing OSL from an in-memory string is only "
+    "available in OSL version 1.7.1 or newer.");
   return false;
 #else
   return query->open_bytecode(sourceCode);
@@ -127,14 +126,14 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
   if (!discoveryResult.uri.empty()) {
 #if AR_VERSION == 1
     // Get the resolved URI to a location that it can be read by the OSL parser
-    bool localFetchSuccessful = ArGetResolver().FetchToLocalResolvedPath(
-        discoveryResult.uri, discoveryResult.resolvedUri);
+    bool localFetchSuccessful = ArGetResolver().FetchToLocalResolvedPath(discoveryResult.uri,
+                                                                         discoveryResult.resolvedUri);
 
     if (!localFetchSuccessful) {
       TF_WARN(
-          "Could not localize the OSL at URI [%s] into a local path. "
-          "An invalid Sdr node definition will be created.",
-          discoveryResult.uri.c_str());
+        "Could not localize the OSL at URI [%s] into a local path. "
+        "An invalid Sdr node definition will be created.",
+        discoveryResult.uri.c_str());
 
       return NdrParserPlugin::GetInvalidNode(discoveryResult);
     }
@@ -150,22 +149,21 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
     else {
       std::shared_ptr<const char> buffer;
       std::shared_ptr<ArAsset> asset = ArGetResolver().OpenAsset(
-          ArResolvedPath(discoveryResult.resolvedUri));
+        ArResolvedPath(discoveryResult.resolvedUri));
       if (asset) {
         buffer = asset->GetBuffer();
       }
 
       if (!buffer) {
         TF_WARN(
-            "Could not open the OSL at URI [%s] (%s). An invalid Sdr "
-            "node definition will be created.",
-            discoveryResult.uri.c_str(),
-            discoveryResult.resolvedUri.c_str());
+          "Could not open the OSL at URI [%s] (%s). An invalid Sdr "
+          "node definition will be created.",
+          discoveryResult.uri.c_str(),
+          discoveryResult.resolvedUri.c_str());
         return NdrParserPlugin::GetInvalidNode(discoveryResult);
       }
 
-      parseSuccessful = _ParseFromSourceCode(&oslQuery,
-                                             OSL::string_view(buffer.get(), asset->GetSize()));
+      parseSuccessful = _ParseFromSourceCode(&oslQuery, OSL::string_view(buffer.get(), asset->GetSize()));
     }
   }
   else if (!discoveryResult.sourceCode.empty()) {
@@ -173,51 +171,51 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
   }
   else {
     TF_WARN(
-        "Invalid NdrNodeDiscoveryResult with identifier %s: both uri "
-        "and sourceCode are empty.",
-        discoveryResult.identifier.GetText());
+      "Invalid NdrNodeDiscoveryResult with identifier %s: both uri "
+      "and sourceCode are empty.",
+      discoveryResult.identifier.GetText());
     return NdrParserPlugin::GetInvalidNode(discoveryResult);
   }
 
   std::string errors = oslQuery.geterror();
   if (!parseSuccessful || !errors.empty()) {
     TF_WARN(
-        "Could not parse OSL shader at URI [%s]. An invalid Sdr node "
-        "definition will be created. %s%s",
-        discoveryResult.uri.c_str(),
-        (errors.empty() ? "" : "Errors from OSL parser: "),
-        (errors.empty() ? "" : TfStringReplace(errors, "\n", "; ").c_str()));
+      "Could not parse OSL shader at URI [%s]. An invalid Sdr node "
+      "definition will be created. %s%s",
+      discoveryResult.uri.c_str(),
+      (errors.empty() ? "" : "Errors from OSL parser: "),
+      (errors.empty() ? "" : TfStringReplace(errors, "\n", "; ").c_str()));
 
     return NdrParserPlugin::GetInvalidNode(discoveryResult);
   }
 
   return NdrNodeUniquePtr(
-      new SdrShaderNode(discoveryResult.identifier,
-                        discoveryResult.version,
-                        discoveryResult.name,
-                        discoveryResult.family,
-                        _tokens->sourceType,
-                        _tokens->sourceType,  // OSL shaders don't declare different types
-                                              // so use the same type as the source type
-                        discoveryResult.resolvedUri,
-                        discoveryResult.resolvedUri,  // Definitive assertion that the
-                                                      // implementation is the same asset
-                                                      // as the definition
-                        _getNodeProperties(oslQuery, discoveryResult),
-                        _getNodeMetadata(oslQuery, discoveryResult.metadata),
-                        discoveryResult.sourceCode));
+    new SdrShaderNode(discoveryResult.identifier,
+                      discoveryResult.version,
+                      discoveryResult.name,
+                      discoveryResult.family,
+                      _tokens->sourceType,
+                      _tokens->sourceType,  // OSL shaders don't declare different types
+                                            // so use the same type as the source type
+                      discoveryResult.resolvedUri,
+                      discoveryResult.resolvedUri,  // Definitive assertion that the
+                                                    // implementation is the same asset
+                                                    // as the definition
+                      _getNodeProperties(oslQuery, discoveryResult),
+                      _getNodeMetadata(oslQuery, discoveryResult.metadata),
+                      discoveryResult.sourceCode));
 }
 
 NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
-    const OSL::OSLQuery &query,
-    const NdrNodeDiscoveryResult &discoveryResult) const
+  const OSL::OSLQuery &query,
+  const NdrNodeDiscoveryResult &discoveryResult) const
 {
   NdrPropertyUniquePtrVec properties;
   const size_t nParams = query.nparams();
 
   for (size_t i = 0; i < nParams; ++i) {
     const OslParameter *param = query.getparam(i);
-    std::string propName      = param->name.string();
+    std::string propName = param->name.string();
 
     // Struct members are not supported
     if (propName.find('.') != std::string::npos) {
@@ -247,7 +245,7 @@ NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
 
       if (metaIt->first == _tokens->sdrDefinitionName) {
         definitionName = metaIt->second;
-        metaIt         = metadata.erase(metaIt);
+        metaIt = metadata.erase(metaIt);
         continue;
       }
 
@@ -255,11 +253,11 @@ NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
       // value is not respected
       if (metaIt->first == _tokens->arraySize) {
         TF_DEBUG(NDR_PARSING)
-            .Msg(
-                "Ignoring bad 'arraySize' attribute on property [%s] "
-                "on OSL shader [%s]",
-                propName.c_str(),
-                discoveryResult.name.c_str());
+          .Msg(
+            "Ignoring bad 'arraySize' attribute on property [%s] "
+            "on OSL shader [%s]",
+            propName.c_str(),
+            discoveryResult.name.c_str());
         metaIt = metadata.erase(metaIt);
         continue;
       }
@@ -272,7 +270,7 @@ NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
     // parameter name as the ImplementationName
     if (!definitionName.empty()) {
       metadata[SdrPropertyMetadata->ImplementationName] = TfToken(propName);
-      propName                                          = definitionName;
+      propName = definitionName;
     }
 
     // Extract options
@@ -282,22 +280,21 @@ NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
     }
 
     properties.emplace_back(SdrShaderPropertyUniquePtr(
-        new SdrShaderProperty(TfToken(propName),
-                              typeName,
-                              _getDefaultValue(*param, typeName, arraySize, metadata),
-                              param->isoutput,
-                              arraySize,
-                              metadata,
-                              hints,
-                              options)));
+      new SdrShaderProperty(TfToken(propName),
+                            typeName,
+                            _getDefaultValue(*param, typeName, arraySize, metadata),
+                            param->isoutput,
+                            arraySize,
+                            metadata,
+                            hints,
+                            options)));
   }
 
   return properties;
 }
 
-NdrTokenMap SdrOslParserPlugin::_getPropertyMetadata(
-    const OslParameter *param,
-    const NdrNodeDiscoveryResult &discoveryResult) const
+NdrTokenMap SdrOslParserPlugin::_getPropertyMetadata(const OslParameter *param,
+                                                     const NdrNodeDiscoveryResult &discoveryResult) const
 {
   NdrTokenMap metadata;
 
@@ -320,10 +317,10 @@ NdrTokenMap SdrOslParserPlugin::_getPropertyMetadata(
         }
         else {
           TF_DEBUG(NDR_PARSING)
-              .Msg("Bad virtual structure member in %s.%s:%s",
-                   discoveryResult.name.c_str(),
-                   param->name.string().c_str(),
-                   vstruct.c_str());
+            .Msg("Bad virtual structure member in %s.%s:%s",
+                 discoveryResult.name.c_str(),
+                 param->name.string().c_str(),
+                 vstruct.c_str());
         }
       }
     }
@@ -335,8 +332,7 @@ NdrTokenMap SdrOslParserPlugin::_getPropertyMetadata(
   return metadata;
 }
 
-void SdrOslParserPlugin::_injectParserMetadata(NdrTokenMap &metadata,
-                                               const TfToken &typeName) const
+void SdrOslParserPlugin::_injectParserMetadata(NdrTokenMap &metadata, const TfToken &typeName) const
 {
   if (typeName == SdrPropertyTypes->String) {
     if (IsPropertyAnAssetIdentifier(metadata)) {
@@ -390,8 +386,8 @@ std::tuple<TfToken, size_t> SdrOslParserPlugin::_getTypeName(const OslParameter 
   }
 
   // Otherwise, continue on to determine the type (and possibly array size)
-  std::string typeName  = std::string(param->type.c_str());
-  size_t arraySize      = 0;
+  std::string typeName = std::string(param->type.c_str());
+  size_t arraySize = 0;
   size_t openingBracket = typeName.find('[');
 
   if (openingBracket != std::string::npos) {
@@ -420,7 +416,7 @@ VtValue SdrOslParserPlugin::_getDefaultValue(const SdrOslParserPlugin::OslParame
 {
   // Determine array-ness
   bool isDynamicArray = IsTruthy(SdrPropertyMetadata->IsDynamicArray, metadata);
-  bool isArray        = (arraySize > 0) || isDynamicArray;
+  bool isArray = (arraySize > 0) || isDynamicArray;
 
   // INT and INT ARRAY
   // -------------------------------------------------------------------------
@@ -482,8 +478,7 @@ VtValue SdrOslParserPlugin::_getDefaultValue(const SdrOslParserPlugin::OslParame
       VtVec3fArray array(numElements);
 
       for (int i = 0; i < numElements; ++i) {
-        array[i] = GfVec3f(
-            param.fdefault[3 * i + 0], param.fdefault[3 * i + 1], param.fdefault[3 * i + 2]);
+        array[i] = GfVec3f(param.fdefault[3 * i + 0], param.fdefault[3 * i + 1], param.fdefault[3 * i + 2]);
       }
 
       return VtValue::Take(array);

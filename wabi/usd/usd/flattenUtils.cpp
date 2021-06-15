@@ -103,8 +103,7 @@ template<typename T> VtValue _Reduce(const SdfListOp<T> &lhs, const SdfListOp<T>
   }
   // The approximation used should always be composable,
   // so error if that didn't work.
-  TF_CODING_ERROR(
-      "Could not reduce listOp %s over %s", TfStringify(lhs).c_str(), TfStringify(rhs).c_str());
+  TF_CODING_ERROR("Could not reduce listOp %s over %s", TfStringify(lhs).c_str(), TfStringify(rhs).c_str());
   return VtValue();
 }
 
@@ -207,8 +206,8 @@ static void _ApplyLayerOffsetToClipInfo(const SdfLayerOffset &offset,
 
 template<class RefOrPayloadType>
 static boost::optional<RefOrPayloadType> _ApplyLayerOffsetToRefOrPayload(
-    const SdfLayerOffset &offset,
-    const RefOrPayloadType &refOrPayload)
+  const SdfLayerOffset &offset,
+  const RefOrPayloadType &refOrPayload)
 {
   RefOrPayloadType result = refOrPayload;
   result.SetLayerOffset(offset * refOrPayload.GetLayerOffset());
@@ -245,7 +244,7 @@ static void _ApplyLayerOffset(const SdfLayerOffset &offset, const TfToken &field
     if (val->IsHolding<SdfReferenceListOp>()) {
       SdfReferenceListOp refs = val->UncheckedGet<SdfReferenceListOp>();
       refs.ModifyOperations(
-          std::bind(_ApplyLayerOffsetToRefOrPayload<SdfReference>, offset, std::placeholders::_1));
+        std::bind(_ApplyLayerOffsetToRefOrPayload<SdfReference>, offset, std::placeholders::_1));
       val->Swap(refs);
     }
   }
@@ -253,7 +252,7 @@ static void _ApplyLayerOffset(const SdfLayerOffset &offset, const TfToken &field
     if (val->IsHolding<SdfPayloadListOp>()) {
       SdfPayloadListOp pls = val->UncheckedGet<SdfPayloadListOp>();
       pls.ModifyOperations(
-          std::bind(_ApplyLayerOffsetToRefOrPayload<SdfPayload>, offset, std::placeholders::_1));
+        std::bind(_ApplyLayerOffsetToRefOrPayload<SdfPayload>, offset, std::placeholders::_1));
       val->Swap(pls);
     }
   }
@@ -264,9 +263,9 @@ static void _ApplyLayerOffset(const SdfLayerOffset &offset, const TfToken &field
 
 template<class RefOrPayloadType>
 static boost::optional<RefOrPayloadType> _FixReferenceOrPayload(
-    const UsdFlattenResolveAssetPathFn &resolveAssetPathFn,
-    const SdfLayerHandle &sourceLayer,
-    const RefOrPayloadType &refOrPayload)
+  const UsdFlattenResolveAssetPathFn &resolveAssetPathFn,
+  const SdfLayerHandle &sourceLayer,
+  const RefOrPayloadType &refOrPayload)
 {
   RefOrPayloadType result = refOrPayload;
   result.SetAssetPath(resolveAssetPathFn(sourceLayer, refOrPayload.GetAssetPath()));
@@ -310,7 +309,7 @@ static void _FixAssetPaths(const SdfLayerHandle &sourceLayer,
     if (!tsmc.empty()) {
       // Quick test that the first entry of the time sample map is
       // holding either an asset path or an array of asset paths.
-      bool holdingAssetPath      = tsmc.begin()->second.IsHolding<SdfAssetPath>();
+      bool holdingAssetPath = tsmc.begin()->second.IsHolding<SdfAssetPath>();
       bool holdingAssetPathArray = tsmc.begin()->second.IsHolding<VtArray<SdfAssetPath>>();
       if (holdingAssetPath || holdingAssetPathArray) {
         SdfTimeSampleMap tsmap;
@@ -341,10 +340,8 @@ static void _FixAssetPaths(const SdfLayerHandle &sourceLayer,
   else if (val->IsHolding<SdfReferenceListOp>()) {
     SdfReferenceListOp refs;
     val->Swap(refs);
-    refs.ModifyOperations(std::bind(_FixReferenceOrPayload<SdfReference>,
-                                    resolveAssetPathFn,
-                                    sourceLayer,
-                                    std::placeholders::_1));
+    refs.ModifyOperations(std::bind(
+      _FixReferenceOrPayload<SdfReference>, resolveAssetPathFn, sourceLayer, std::placeholders::_1));
     val->Swap(refs);
     return;
   }
@@ -358,10 +355,8 @@ static void _FixAssetPaths(const SdfLayerHandle &sourceLayer,
   else if (val->IsHolding<SdfPayloadListOp>()) {
     SdfPayloadListOp pls;
     val->Swap(pls);
-    pls.ModifyOperations(std::bind(_FixReferenceOrPayload<SdfPayload>,
-                                   resolveAssetPathFn,
-                                   sourceLayer,
-                                   std::placeholders::_1));
+    pls.ModifyOperations(
+      std::bind(_FixReferenceOrPayload<SdfPayload>, resolveAssetPathFn, sourceLayer, std::placeholders::_1));
     val->Swap(pls);
     return;
   }
@@ -370,7 +365,7 @@ static void _FixAssetPaths(const SdfLayerHandle &sourceLayer,
       VtDictionary clips = val->UncheckedGet<VtDictionary>();
       for (auto &entry : clips) {
         const std::string &clipSetName = entry.first;
-        VtValue &clipInfoVal           = entry.second;
+        VtValue &clipInfoVal = entry.second;
         if (!clipInfoVal.IsHolding<VtDictionary>()) {
           TF_WARN("Expected dictionary for entry '%s' in 'clips'", clipSetName.c_str());
           continue;
@@ -383,8 +378,7 @@ static void _FixAssetPaths(const SdfLayerHandle &sourceLayer,
         }
         v = TfMapLookupPtr(clipInfo, UsdClipsAPIInfoKeys->manifestAssetPath);
         if (v && v->IsHolding<SdfAssetPath>()) {
-          _FixAssetPaths(
-              sourceLayer, UsdClipsAPIInfoKeys->manifestAssetPath, resolveAssetPathFn, v);
+          _FixAssetPaths(sourceLayer, UsdClipsAPIInfoKeys->manifestAssetPath, resolveAssetPathFn, v);
         }
         clipInfoVal = VtValue(clipInfo);
       }
@@ -416,8 +410,8 @@ static VtValue _ReduceField(const PcpLayerStackRefPtr &layerStack,
                             const UsdFlattenResolveAssetPathFn &resolveAssetPathFn)
 {
   const SdfLayerRefPtrVector &layers = layerStack->GetLayers();
-  const SdfPath &path                = targetSpec->GetPath();
-  const SdfSpecType specType         = targetSpec->GetSpecType();
+  const SdfPath &path = targetSpec->GetPath();
+  const SdfSpecType specType = targetSpec->GetSpecType();
 
   VtValue val;
   for (size_t i = 0; i < layers.size(); ++i) {
@@ -429,12 +423,12 @@ static VtValue _ReduceField(const PcpLayerStackRefPtr &layerStack,
     // attribute in one layer, and a relationship in another.
     if (layers[i]->GetSpecType(path) != specType) {
       TF_WARN(
-          "UsdFlattenLayerStack: Ignoring spec at "
-          "<%s> in @%s@: expected spec type %s but found %s",
-          path.GetText(),
-          layers[i]->GetIdentifier().c_str(),
-          TfStringify(specType).c_str(),
-          TfStringify(layers[i]->GetSpecType(path)).c_str());
+        "UsdFlattenLayerStack: Ignoring spec at "
+        "<%s> in @%s@: expected spec type %s but found %s",
+        path.GetText(),
+        layers[i]->GetIdentifier().c_str(),
+        TfStringify(specType).c_str(),
+        TfStringify(layers[i]->GetSpecType(path)).c_str());
       continue;
     }
     VtValue layerVal;
@@ -457,9 +451,9 @@ static void _FlattenFields(const PcpLayerStackRefPtr &layerStack,
                            const UsdFlattenResolveAssetPathFn &resolveAssetPathFn)
 {
   const SdfLayerRefPtrVector &layers = layerStack->GetLayers();
-  const SdfSchemaBase &schema        = targetSpec->GetLayer()->GetSchema();
-  const SdfSpecType specType         = targetSpec->GetSpecType();
-  const SdfPath &path                = targetSpec->GetPath();
+  const SdfSchemaBase &schema = targetSpec->GetLayer()->GetSchema();
+  const SdfSpecType specType = targetSpec->GetSpecType();
+  const SdfPath &path = targetSpec->GetPath();
   for (const TfToken &field : schema.GetFields(specType)) {
     if (_fieldsToSkip->find(field) != _fieldsToSkip->end()) {
       continue;
@@ -471,8 +465,7 @@ static void _FlattenFields(const PcpLayerStackRefPtr &layerStack,
     // Only flatten TimeSamples if not masked by stronger Defaults.
     for (size_t i = 0; i < layers.size(); ++i) {
       if (layers[i]->HasField(path, SdfFieldKeys->TimeSamples)) {
-        VtValue val = _ReduceField(
-            layerStack, targetSpec, SdfFieldKeys->TimeSamples, resolveAssetPathFn);
+        VtValue val = _ReduceField(layerStack, targetSpec, SdfFieldKeys->TimeSamples, resolveAssetPathFn);
         targetSpec->GetLayer()->SetField(path, SdfFieldKeys->TimeSamples, val);
         break;
       }
@@ -514,11 +507,8 @@ static void _FlattenSpec(const PcpLayerStackRefPtr &layerStack,
   // Variants
   TfTokenVector nameOrder;
   PcpTokenSet nameSet;
-  PcpComposeSiteChildNames(layerStack->GetLayers(),
-                           vset->GetPath(),
-                           SdfChildrenKeys->VariantChildren,
-                           &nameOrder,
-                           &nameSet);
+  PcpComposeSiteChildNames(
+    layerStack->GetLayers(), vset->GetPath(), SdfChildrenKeys->VariantChildren, &nameOrder, &nameSet);
   for (const TfToken &varName : nameOrder) {
     if (SdfVariantSpecHandle var = SdfVariantSpec::New(vset, varName)) {
       _FlattenFields(layerStack, var, resolveAssetPathFn);
@@ -548,8 +538,8 @@ static void _FlattenTargetPaths(const PcpLayerStackRefPtr &layerStack,
     else {
       targetProxy.ClearEdits();
       targetProxy.GetPrependedItems() = listOp.GetPrependedItems();
-      targetProxy.GetAppendedItems()  = listOp.GetAppendedItems();
-      targetProxy.GetDeletedItems()   = listOp.GetDeletedItems();
+      targetProxy.GetAppendedItems() = listOp.GetAppendedItems();
+      targetProxy.GetDeletedItems() = listOp.GetDeletedItems();
       // We deliberately do not handle reordered or added items.
     }
   }
@@ -564,12 +554,8 @@ void _FlattenSpec(const PcpLayerStackRefPtr &layerStack,
   // Child prims
   TfTokenVector nameOrder;
   PcpTokenSet nameSet;
-  PcpComposeSiteChildNames(layers,
-                           prim->GetPath(),
-                           SdfChildrenKeys->PrimChildren,
-                           &nameOrder,
-                           &nameSet,
-                           &SdfFieldKeys->PrimOrder);
+  PcpComposeSiteChildNames(
+    layers, prim->GetPath(), SdfChildrenKeys->PrimChildren, &nameOrder, &nameSet, &SdfFieldKeys->PrimOrder);
   for (const TfToken &childName : nameOrder) {
     // Use SdfSpecifierDef as a placeholder specifier; it will be
     // fixed up when we _FlattenFields().
@@ -587,7 +573,7 @@ void _FlattenSpec(const PcpLayerStackRefPtr &layerStack,
   nameOrder.clear();
   nameSet.clear();
   PcpComposeSiteChildNames(
-      layers, prim->GetPath(), SdfChildrenKeys->VariantSetChildren, &nameOrder, &nameSet);
+    layers, prim->GetPath(), SdfChildrenKeys->VariantSetChildren, &nameOrder, &nameSet);
   for (const TfToken &vsetName : nameOrder) {
     if (SdfVariantSetSpecHandle vset = SdfVariantSetSpec::New(prim, vsetName)) {
       _FlattenFields(layerStack, vset, resolveAssetPathFn);
@@ -598,16 +584,14 @@ void _FlattenSpec(const PcpLayerStackRefPtr &layerStack,
   // Properties
   nameOrder.clear();
   nameSet.clear();
-  PcpComposeSiteChildNames(
-      layers, prim->GetPath(), SdfChildrenKeys->PropertyChildren, &nameOrder, &nameSet);
+  PcpComposeSiteChildNames(layers, prim->GetPath(), SdfChildrenKeys->PropertyChildren, &nameOrder, &nameSet);
   for (const TfToken &childName : nameOrder) {
-    SdfPath childPath    = prim->GetPath().AppendProperty(childName);
+    SdfPath childPath = prim->GetPath().AppendProperty(childName);
     SdfSpecType specType = _GetSiteSpecType(layers, childPath);
     if (specType == SdfSpecTypeAttribute) {
       // Use Int as a (required) placeholder type; it will
       // be updated when we _FlattenFields().
-      if (SdfAttributeSpecHandle attr = SdfAttributeSpec::New(
-              prim, childName, SdfValueTypeNames->Int)) {
+      if (SdfAttributeSpecHandle attr = SdfAttributeSpec::New(prim, childName, SdfValueTypeNames->Int)) {
         _FlattenFields(layerStack, attr, resolveAssetPathFn);
         _FlattenTargetPaths(layerStack,
                             attr,
@@ -619,11 +603,8 @@ void _FlattenSpec(const PcpLayerStackRefPtr &layerStack,
     else if (specType == SdfSpecTypeRelationship) {
       if (SdfRelationshipSpecHandle rel = SdfRelationshipSpec::New(prim, childName)) {
         _FlattenFields(layerStack, rel, resolveAssetPathFn);
-        _FlattenTargetPaths(layerStack,
-                            rel,
-                            SdfFieldKeys->TargetPaths,
-                            rel->GetTargetPathList(),
-                            resolveAssetPathFn);
+        _FlattenTargetPaths(
+          layerStack, rel, SdfFieldKeys->TargetPaths, rel->GetTargetPathList(), resolveAssetPathFn);
       }
     }
     else {
@@ -645,8 +626,8 @@ SdfLayerRefPtr UsdFlattenLayerStack(const PcpLayerStackRefPtr &layerStack,
   // XXX Currently, SdfLayer::CreateAnonymous() examines the tag
   // file extension to determine the file type.  Provide an
   // extension here if needed to ensure that we get a usda file.
-  SdfLayerRefPtr outputLayer = SdfLayer::CreateAnonymous(
-      TfStringEndsWith(tag, ".usda") ? tag : (tag + ".usda"));
+  SdfLayerRefPtr outputLayer = SdfLayer::CreateAnonymous(TfStringEndsWith(tag, ".usda") ? tag :
+                                                                                          (tag + ".usda"));
   _FlattenFields(layerStack, outputLayer->GetPseudoRoot(), resolveAssetPathFn);
   _FlattenSpec(layerStack, outputLayer->GetPseudoRoot(), resolveAssetPathFn);
   return outputLayer;
@@ -662,8 +643,7 @@ std::string UsdFlattenLayerStackResolveAssetPath(const SdfLayerHandle &sourceLay
 {
   // Treat empty asset paths specially, since they cause coding errors in
   // SdfComputeAssetPathRelativeToLayer.
-  return assetPath.empty() ? assetPath :
-                             SdfComputeAssetPathRelativeToLayer(sourceLayer, assetPath);
+  return assetPath.empty() ? assetPath : SdfComputeAssetPathRelativeToLayer(sourceLayer, assetPath);
 }
 
 WABI_NAMESPACE_END

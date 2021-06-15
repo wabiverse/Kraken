@@ -38,7 +38,7 @@ class ZepWidget_Qt : public QWidget, public IZepComponent {
     m_spEditor->RegisterCallback(this);
 
     auto ptToPx = [](float pt, float dpi) { return pt / 72 * dpi; };
-    float dpi   = QGuiApplication::primaryScreen()->logicalDotsPerInch();
+    float dpi = QGuiApplication::primaryScreen()->logicalDotsPerInch();
 
     // 14 points, about right for main text area
     m_spEditor->GetDisplay().GetFont(ZepTextType::Text).SetPixelHeight(ptToPx(14, dpi));
@@ -66,8 +66,8 @@ class ZepWidget_Qt : public QWidget, public IZepComponent {
     }
     else if (message->messageId == Msg::GetClipBoard) {
       QClipboard *pClip = QApplication::clipboard();
-      message->str      = pClip->text().toUtf8().data();
-      message->handled  = true;
+      message->str = pClip->text().toUtf8().data();
+      message->handled = true;
     }
     else if (message->messageId == Msg::SetClipBoard) {
       QClipboard *pClip = QApplication::clipboard();
@@ -100,7 +100,7 @@ class ZepWidget_Qt : public QWidget, public IZepComponent {
   virtual void keyPressEvent(QKeyEvent *ev) override
   {
     uint32_t mod = 0;
-    auto pMode   = m_spEditor->GetActiveTabWindow()->GetActiveWindow()->GetBuffer().GetMode();
+    auto pMode = m_spEditor->GetActiveTabWindow()->GetActiveWindow()->GetBuffer().GetMode();
 
     auto isCtrl = [&]() {
 // Meta an control swapped on Apple!

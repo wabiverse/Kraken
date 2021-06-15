@@ -102,9 +102,7 @@ class Tf_NoticeRegistry : boost::noncopyable {
   // Abort if casting of a notice failed; warn if it succeeded but
   // TfSafeDynamic_cast was required.
   TF_API
-  void _VerifyFailedCast(const std::type_info &toType,
-                         const TfNotice &notice,
-                         const TfNotice *castNotice);
+  void _VerifyFailedCast(const std::type_info &toType, const TfNotice &notice, const TfNotice *castNotice);
 
   // Return reference to singleton object.
   TF_API

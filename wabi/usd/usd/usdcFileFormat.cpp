@@ -53,10 +53,10 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 UsdUsdcFileFormat::UsdUsdcFileFormat()
-    : SdfFileFormat(UsdUsdcFileFormatTokens->Id,
-                    Usd_CrateData::GetSoftwareVersionToken(),
-                    UsdUsdFileFormatTokens->Target,
-                    UsdUsdcFileFormatTokens->Id)
+  : SdfFileFormat(UsdUsdcFileFormatTokens->Id,
+                  Usd_CrateData::GetSoftwareVersionToken(),
+                  UsdUsdFileFormatTokens->Target,
+                  UsdUsdcFileFormatTokens->Id)
 {}
 
 UsdUsdcFileFormat::~UsdUsdcFileFormat()
@@ -82,7 +82,7 @@ bool UsdUsdcFileFormat::Read(SdfLayer *layer, const string &resolvedPath, bool m
   TRACE_FUNCTION();
 
   SdfAbstractDataRefPtr data = InitData(layer->GetFileFormatArguments());
-  auto crateData             = TfDynamic_cast<Usd_CrateDataRefPtr>(data);
+  auto crateData = TfDynamic_cast<Usd_CrateDataRefPtr>(data);
 
   if (!crateData || !crateData->Open(resolvedPath))
     return false;
@@ -125,9 +125,7 @@ bool UsdUsdcFileFormat::WriteToString(const SdfLayer &layer,
   return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToString(layer, str, comment);
 }
 
-bool UsdUsdcFileFormat::WriteToStream(const SdfSpecHandle &spec,
-                                      std::ostream &out,
-                                      size_t indent) const
+bool UsdUsdcFileFormat::WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const
 {
   return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToStream(spec, out, indent);
 }

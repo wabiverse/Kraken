@@ -99,8 +99,7 @@ UsdAttribute UsdGeomMotionAPI::GetVelocityScaleAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->motionVelocityScale);
 }
 
-UsdAttribute UsdGeomMotionAPI::CreateVelocityScaleAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdGeomMotionAPI::CreateVelocityScaleAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->motionVelocityScale,
                                     SdfValueTypeNames->Float,
@@ -111,8 +110,7 @@ UsdAttribute UsdGeomMotionAPI::CreateVelocityScaleAttr(VtValue const &defaultVal
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -126,10 +124,10 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdGeomMotionAPI::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdGeomTokens->motionVelocityScale,
+    UsdGeomTokens->motionVelocityScale,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdAPISchemaBase::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -152,8 +150,8 @@ WABI_NAMESPACE_BEGIN
 
 float UsdGeomMotionAPI::ComputeVelocityScale(UsdTimeCode time) const
 {
-  UsdPrim prim        = GetPrim();
-  UsdPrim pseudoRoot  = prim.GetStage()->GetPseudoRoot();
+  UsdPrim prim = GetPrim();
+  UsdPrim pseudoRoot = prim.GetStage()->GetPseudoRoot();
   float velocityScale = 1.0;
 
   while (prim != pseudoRoot) {

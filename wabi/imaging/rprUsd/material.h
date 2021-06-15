@@ -53,11 +53,11 @@ class RprUsdMaterial {
   void SetName(const char *name);
 
  protected:
-  rpr::MaterialNode *m_surfaceNode      = nullptr;
+  rpr::MaterialNode *m_surfaceNode = nullptr;
   rpr::MaterialNode *m_displacementNode = nullptr;
-  rpr::MaterialNode *m_volumeNode       = nullptr;
-  bool m_isShadowCatcher                = false;
-  bool m_isReflectionCatcher            = false;
+  rpr::MaterialNode *m_volumeNode = nullptr;
+  bool m_isShadowCatcher = false;
+  bool m_isReflectionCatcher = false;
   TfToken m_uvPrimvarName;
   VtValue m_displacementScale;
 };

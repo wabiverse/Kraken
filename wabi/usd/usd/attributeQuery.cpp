@@ -40,7 +40,7 @@ UsdAttributeQuery::UsdAttributeQuery(const UsdAttribute &attr)
 }
 
 UsdAttributeQuery::UsdAttributeQuery(const UsdPrim &prim, const TfToken &attrName)
-    : UsdAttributeQuery(prim.GetAttribute(attrName))
+  : UsdAttributeQuery(prim.GetAttribute(attrName))
 {}
 
 std::vector<UsdAttributeQuery> UsdAttributeQuery::CreateQueries(const UsdPrim &prim,
@@ -88,14 +88,13 @@ bool UsdAttributeQuery::Get(VtValue *value, UsdTimeCode time) const
 bool UsdAttributeQuery::GetTimeSamples(std::vector<double> *times) const
 {
   return _attr._GetStage()->_GetTimeSamplesInIntervalFromResolveInfo(
-      _resolveInfo, _attr, GfInterval::GetFullInterval(), times);
+    _resolveInfo, _attr, GfInterval::GetFullInterval(), times);
 }
 
 bool UsdAttributeQuery::GetTimeSamplesInInterval(const GfInterval &interval,
                                                  std::vector<double> *times) const
 {
-  return _attr._GetStage()->_GetTimeSamplesInIntervalFromResolveInfo(
-      _resolveInfo, _attr, interval, times);
+  return _attr._GetStage()->_GetTimeSamplesInIntervalFromResolveInfo(_resolveInfo, _attr, interval, times);
 }
 
 /* static */
@@ -106,10 +105,9 @@ bool UsdAttributeQuery::GetUnionedTimeSamples(const std::vector<UsdAttributeQuer
 }
 
 /* static */
-bool UsdAttributeQuery::GetUnionedTimeSamplesInInterval(
-    const std::vector<UsdAttributeQuery> &attrQueries,
-    const GfInterval &interval,
-    std::vector<double> *times)
+bool UsdAttributeQuery::GetUnionedTimeSamplesInInterval(const std::vector<UsdAttributeQuery> &attrQueries,
+                                                        const GfInterval &interval,
+                                                        std::vector<double> *times)
 {
   // Clear the vector first before proceeding to accumulate sample times.
   times->clear();
@@ -134,7 +132,7 @@ bool UsdAttributeQuery::GetUnionedTimeSamplesInInterval(
     // This will work even if the attributes belong to different
     // USD stages.
     success = attr.GetStage()->_GetTimeSamplesInIntervalFromResolveInfo(
-                  attrQuery._resolveInfo, attr, interval, &attrSampleTimes) &&
+                attrQuery._resolveInfo, attr, interval, &attrSampleTimes) &&
               success;
 
     // Merge attrSamplesTimes into the times vector.
@@ -155,7 +153,7 @@ bool UsdAttributeQuery::GetBracketingTimeSamples(double desiredTime,
                                                  bool *hasTimeSamples) const
 {
   return _attr._GetStage()->_GetBracketingTimeSamplesFromResolveInfo(
-      _resolveInfo, _attr, desiredTime, /* authoredOnly */ false, lower, upper, hasTimeSamples);
+    _resolveInfo, _attr, desiredTime, /* authoredOnly */ false, lower, upper, hasTimeSamples);
 }
 
 bool UsdAttributeQuery::HasValue() const
@@ -190,8 +188,7 @@ ARCH_PRAGMA_INSTANTIATION_AFTER_SPECIALIZATION
 // types.
 #define _INSTANTIATE_GET(r, unused, elem) \
   template USD_API bool UsdAttributeQuery::_Get(SDF_VALUE_CPP_TYPE(elem) *, UsdTimeCode) const; \
-  template USD_API bool UsdAttributeQuery::_Get(SDF_VALUE_CPP_ARRAY_TYPE(elem) *, UsdTimeCode) \
-      const;
+  template USD_API bool UsdAttributeQuery::_Get(SDF_VALUE_CPP_ARRAY_TYPE(elem) *, UsdTimeCode) const;
 
 BOOST_PP_SEQ_FOR_EACH(_INSTANTIATE_GET, ~, SDF_VALUE_TYPES)
 #undef _INSTANTIATE_GET

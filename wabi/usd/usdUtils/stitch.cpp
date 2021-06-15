@@ -87,9 +87,8 @@ template<typename T> VtValue _Reduce(const SdfListOp<T> &stronger, const SdfList
   }
   // The approximation used should always be composable,
   // so error if that didn't work.
-  TF_CODING_ERROR("Could not reduce listOp %s over %s",
-                  TfStringify(stronger).c_str(),
-                  TfStringify(weaker).c_str());
+  TF_CODING_ERROR(
+    "Could not reduce listOp %s over %s", TfStringify(stronger).c_str(), TfStringify(weaker).c_str());
   return VtValue();
 }
 
@@ -141,9 +140,8 @@ static bool _MergeValueFn(SdfSpecType specType,
     // Note that the source layer corresponds to the weaker layer and
     // the destination layer corresponds to the stronger layer in the
     // callback signature.
-    using Status        = UsdUtilsStitchValueStatus;
-    const Status status = stitchFn(
-        field, srcPath, dstLayer, fieldInDst, srcLayer, fieldInSrc, &value);
+    using Status = UsdUtilsStitchValueStatus;
+    const Status status = stitchFn(field, srcPath, dstLayer, fieldInDst, srcLayer, fieldInSrc, &value);
 
     if (status == Status::NoStitchedValue) {
       return false;
@@ -190,11 +188,11 @@ static bool _MergeValueFn(SdfSpecType specType,
 
     if (!edits.empty()) {
       *valueToCopy = VtValue(
-          SdfCopySpecsValueEdit([edits](const SdfLayerHandle &layer, const SdfPath &path) {
-            for (const auto &entry : edits) {
-              layer->SetTimeSample(path, entry.first, entry.second);
-            }
-          }));
+        SdfCopySpecsValueEdit([edits](const SdfLayerHandle &layer, const SdfPath &path) {
+          for (const auto &entry : edits) {
+            layer->SetTimeSample(path, entry.first, entry.second);
+          }
+        }));
       return true;
     }
     return false;
@@ -254,28 +252,20 @@ static bool _MergeValueFn(SdfSpecType specType,
   // return false to indicate that the stronger value should not be
   // copied over.
   const VtValue fallback = srcLayer->GetSchema().GetFallback(field);
-  return _MergeValue<VtDictionary>(
-             field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
+  return _MergeValue<VtDictionary>(field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
          _MergeValue<SdfVariantSelectionMap>(
-             field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
-         _MergeValue<SdfIntListOp>(
-             field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
-         _MergeValue<SdfUIntListOp>(
-             field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
-         _MergeValue<SdfUInt64ListOp>(
-             field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
-         _MergeValue<SdfTokenListOp>(
-             field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
-         _MergeValue<SdfStringListOp>(
-             field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
-         _MergeValue<SdfPathListOp>(
-             field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
+           field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
+         _MergeValue<SdfIntListOp>(field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
+         _MergeValue<SdfUIntListOp>(field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
+         _MergeValue<SdfUInt64ListOp>(field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
+         _MergeValue<SdfTokenListOp>(field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
+         _MergeValue<SdfStringListOp>(field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
+         _MergeValue<SdfPathListOp>(field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
          _MergeValue<SdfReferenceListOp>(
-             field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
-         _MergeValue<SdfPayloadListOp>(
-             field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
+           field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
+         _MergeValue<SdfPayloadListOp>(field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy) ||
          _MergeValue<SdfUnregisteredValueListOp>(
-             field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy);
+           field, fallback, dstLayer, dstPath, srcLayer, srcPath, valueToCopy);
 }
 
 static bool _DontCopyChildrenFn(const TfToken &childrenField,
@@ -321,7 +311,7 @@ static bool _MergeChildren(const TfToken &field,
       finalDstChildren.push_back(srcChild);
     }
     else {
-      const size_t idx      = std::distance(finalDstChildren.begin(), dstChildIt);
+      const size_t idx = std::distance(finalDstChildren.begin(), dstChildIt);
       finalSrcChildren[idx] = srcChild;
     }
   }
@@ -356,22 +346,10 @@ static bool _MergeChildrenFn(const TfToken &childrenField,
   // There are children under both the source and destination spec.
   // We need to merge the two lists.
   const VtValue fallback = srcLayer->GetSchema().GetFallback(childrenField);
-  if (_MergeChildren<std::vector<TfToken>>(childrenField,
-                                           fallback,
-                                           srcLayer,
-                                           srcPath,
-                                           dstLayer,
-                                           dstPath,
-                                           finalSrcChildren,
-                                           finalDstChildren) ||
-      _MergeChildren<std::vector<SdfPath>>(childrenField,
-                                           fallback,
-                                           srcLayer,
-                                           srcPath,
-                                           dstLayer,
-                                           dstPath,
-                                           finalSrcChildren,
-                                           finalDstChildren)) {
+  if (_MergeChildren<std::vector<TfToken>>(
+        childrenField, fallback, srcLayer, srcPath, dstLayer, dstPath, finalSrcChildren, finalDstChildren) ||
+      _MergeChildren<std::vector<SdfPath>>(
+        childrenField, fallback, srcLayer, srcPath, dstLayer, dstPath, finalSrcChildren, finalDstChildren)) {
     return true;
   }
 

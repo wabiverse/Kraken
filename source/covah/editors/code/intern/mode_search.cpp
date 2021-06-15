@@ -14,10 +14,10 @@ ZepMode_Search::ZepMode_Search(ZepEditor &editor,
                                ZepWindow &launchWindow,
                                ZepWindow &window,
                                const ZepPath &path)
-    : ZepMode(editor),
-      m_launchWindow(launchWindow),
-      m_window(window),
-      m_startPath(path)
+  : ZepMode(editor),
+    m_launchWindow(launchWindow),
+    m_window(window),
+    m_startPath(path)
 {}
 
 ZepMode_Search::~ZepMode_Search()
@@ -179,8 +179,8 @@ void ZepMode_Search::OpenSelection(OpenType type)
     return;
 
   auto cursor = m_window.GetBufferCursor();
-  auto line   = m_window.GetBuffer().GetBufferLine(cursor);
-  auto paths  = m_indexTree[m_indexTree.size() - 1];
+  auto line = m_window.GetBuffer().GetBufferLine(cursor);
+  auto paths = m_indexTree[m_indexTree.size() - 1];
 
   auto &buffer = m_window.GetBuffer();
 
@@ -189,21 +189,19 @@ void ZepMode_Search::OpenSelection(OpenType type)
   long count = 0;
   for (auto &index : m_indexTree.back()->indices) {
     if (count == line) {
-      auto path      = m_spFilePaths->paths[index.second.index];
+      auto path = m_spFilePaths->paths[index.second.index];
       auto full_path = m_spFilePaths->root / path;
-      auto pBuffer   = GetEditor().GetFileBuffer(full_path, 0, true);
+      auto pBuffer = GetEditor().GetFileBuffer(full_path, 0, true);
       if (pBuffer != nullptr) {
         switch (type) {
           case OpenType::Replace:
             m_launchWindow.SetBuffer(pBuffer);
             break;
           case OpenType::VSplit:
-            GetEditor().GetActiveTabWindow()->AddWindow(
-                pBuffer, &m_launchWindow, RegionLayoutType::HBox);
+            GetEditor().GetActiveTabWindow()->AddWindow(pBuffer, &m_launchWindow, RegionLayoutType::HBox);
             break;
           case OpenType::HSplit:
-            GetEditor().GetActiveTabWindow()->AddWindow(
-                pBuffer, &m_launchWindow, RegionLayoutType::VBox);
+            GetEditor().GetActiveTabWindow()->AddWindow(pBuffer, &m_launchWindow, RegionLayoutType::VBox);
             break;
           case OpenType::Tab:
             GetEditor().AddTabWindow()->AddWindow(pBuffer, nullptr, RegionLayoutType::HBox);
@@ -248,50 +246,49 @@ void ZepMode_Search::UpdateTree()
   }
   else if (m_searchTerm.size() > treeDepth) {
     std::shared_ptr<IndexSet> spStartSet;
-    spStartSet     = m_indexTree[m_indexTree.size() - 1];
+    spStartSet = m_indexTree[m_indexTree.size() - 1];
     char startChar = m_searchTerm[m_indexTree.size() - 1];
 
     // Search for a match at the next level of the search tree
     m_searchResult = GetEditor().GetThreadPool().enqueue(
-        [&](std::shared_ptr<IndexSet> spStartSet, const char startChar) {
-          auto spResult = std::make_shared<IndexSet>();
-          for (auto &searchPair : spStartSet->indices) {
-            auto index = searchPair.second.index;
-            auto loc   = searchPair.second.location;
-            auto dist  = searchPair.first;
+      [&](std::shared_ptr<IndexSet> spStartSet, const char startChar) {
+        auto spResult = std::make_shared<IndexSet>();
+        for (auto &searchPair : spStartSet->indices) {
+          auto index = searchPair.second.index;
+          auto loc = searchPair.second.location;
+          auto dist = searchPair.first;
 
-            size_t pos = 0;
-            if (m_caseImportant) {
-              auto str = m_spFilePaths->paths[index].string();
-              pos      = str.find_first_of(startChar, loc);
+          size_t pos = 0;
+          if (m_caseImportant) {
+            auto str = m_spFilePaths->paths[index].string();
+            pos = str.find_first_of(startChar, loc);
+          }
+          else {
+            auto str = m_spFilePaths->lowerPaths[index];
+            pos = str.find_first_of(startChar, loc);
+          }
+
+          if (pos != std::string::npos) {
+            // this approach 'clumps things together'
+            // It rewards more for strings of subsequent characters
+            uint32_t newDist = ((uint32_t)pos - loc);
+            if (dist == 0) {
+              newDist = 1;
+            }
+            else if (newDist == 1) {
+              newDist = dist;
             }
             else {
-              auto str = m_spFilePaths->lowerPaths[index];
-              pos      = str.find_first_of(startChar, loc);
+              newDist = dist + 1;
             }
 
-            if (pos != std::string::npos) {
-              // this approach 'clumps things together'
-              // It rewards more for strings of subsequent characters
-              uint32_t newDist = ((uint32_t)pos - loc);
-              if (dist == 0) {
-                newDist = 1;
-              }
-              else if (newDist == 1) {
-                newDist = dist;
-              }
-              else {
-                newDist = dist + 1;
-              }
-
-              spResult->indices.insert(
-                  std::make_pair(newDist, SearchResult{index, (uint32_t)pos}));
-            }
+            spResult->indices.insert(std::make_pair(newDist, SearchResult{index, (uint32_t)pos}));
           }
-          return spResult;
-        },
-        spStartSet,
-        startChar);
+        }
+        return spResult;
+      },
+      spStartSet,
+      startChar);
 
     treeSearchActive = true;
   }

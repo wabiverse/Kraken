@@ -78,8 +78,7 @@ template<class CachedType> class ArThreadLocalScopedCache {
     // Since this is intended to be used by ArResolver implementations,
     // we expect cacheScopeData to never be NULL and to either be empty
     // or holding a cache pointer that we've filled in previously.
-    if (!cacheScopeData ||
-        (!cacheScopeData->IsEmpty() && !cacheScopeData->IsHolding<CachePtr>())) {
+    if (!cacheScopeData || (!cacheScopeData->IsEmpty() && !cacheScopeData->IsHolding<CachePtr>())) {
       TF_CODING_ERROR("Unexpected cache scope data");
       return;
     }
@@ -114,7 +113,7 @@ template<class CachedType> class ArThreadLocalScopedCache {
   }
 
  private:
-  using _CachePtrStack            = std::vector<CachePtr>;
+  using _CachePtrStack = std::vector<CachePtr>;
   using _ThreadLocalCachePtrStack = tbb::enumerable_thread_specific<_CachePtrStack>;
   _ThreadLocalCachePtrStack _threadCacheStack;
 };

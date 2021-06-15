@@ -105,8 +105,7 @@ UsdAttribute UsdGeomSubset::GetElementTypeAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->elementType);
 }
 
-UsdAttribute UsdGeomSubset::CreateElementTypeAttr(VtValue const &defaultValue,
-                                                  bool writeSparsely) const
+UsdAttribute UsdGeomSubset::CreateElementTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->elementType,
                                     SdfValueTypeNames->Token,
@@ -121,8 +120,7 @@ UsdAttribute UsdGeomSubset::GetIndicesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->indices);
 }
 
-UsdAttribute UsdGeomSubset::CreateIndicesAttr(VtValue const &defaultValue,
-                                              bool writeSparsely) const
+UsdAttribute UsdGeomSubset::CreateIndicesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->indices,
                                     SdfValueTypeNames->IntArray,
@@ -137,8 +135,7 @@ UsdAttribute UsdGeomSubset::GetFamilyNameAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->familyName);
 }
 
-UsdAttribute UsdGeomSubset::CreateFamilyNameAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdGeomSubset::CreateFamilyNameAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->familyName,
                                     SdfValueTypeNames->Token,
@@ -149,8 +146,7 @@ UsdAttribute UsdGeomSubset::CreateFamilyNameAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -164,12 +160,12 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdGeomSubset::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdGeomTokens->elementType,
-      UsdGeomTokens->indices,
-      UsdGeomTokens->familyName,
+    UsdGeomTokens->elementType,
+    UsdGeomTokens->indices,
+    UsdGeomTokens->familyName,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdTyped::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -208,7 +204,7 @@ UsdGeomSubset UsdGeomSubset::CreateGeomSubset(const UsdGeomImageable &geom,
                                               const TfToken &familyName,
                                               const TfToken &familyType)
 {
-  SdfPath subsetPath   = geom.GetPath().AppendChild(subsetName);
+  SdfPath subsetPath = geom.GetPath().AppendChild(subsetName);
   UsdGeomSubset subset = UsdGeomSubset::Define(geom.GetPrim().GetStage(), subsetPath);
 
   subset.GetElementTypeAttr().Set(elementType);
@@ -229,10 +225,10 @@ static UsdGeomSubset _CreateUniqueGeomSubset(UsdStagePtr stage,
                                              const std::string &baseName)
 {
   std::string name = baseName;
-  size_t idx       = 0;
+  size_t idx = 0;
   while (true) {
     SdfPath childPath = parentPath.AppendChild(TfToken(name));
-    auto subsetPrim   = stage->GetPrimAtPath(childPath);
+    auto subsetPrim = stage->GetPrimAtPath(childPath);
     if (!subsetPrim) {
       return UsdGeomSubset::Define(stage, childPath);
     }
@@ -251,7 +247,7 @@ UsdGeomSubset UsdGeomSubset::CreateUniqueGeomSubset(const UsdGeomImageable &geom
                                                     const TfToken &familyType)
 {
   UsdGeomSubset subset = _CreateUniqueGeomSubset(
-      geom.GetPrim().GetStage(), geom.GetPath(), /*baseName*/ subsetName);
+    geom.GetPrim().GetStage(), geom.GetPath(), /*baseName*/ subsetName);
 
   subset.GetElementTypeAttr().Set(elementType);
   subset.GetIndicesAttr().Set(indices);
@@ -355,10 +351,9 @@ TfToken UsdGeomSubset::GetFamilyType(const UsdGeomImageable &geom, const TfToken
 }
 
 /* static */
-VtIntArray UsdGeomSubset::GetUnassignedIndices(
-    const std::vector<UsdGeomSubset> &subsets,
-    const size_t elementCount,
-    const UsdTimeCode &time /* UsdTimeCode::EarliestTime() */)
+VtIntArray UsdGeomSubset::GetUnassignedIndices(const std::vector<UsdGeomSubset> &subsets,
+                                               const size_t elementCount,
+                                               const UsdTimeCode &time /* UsdTimeCode::EarliestTime() */)
 {
   std::set<int> assignedIndices;
   for (const auto &subset : subsets) {
@@ -427,11 +422,11 @@ bool UsdGeomSubset::ValidateSubsets(const std::vector<UsdGeomSubset> &subsets,
     if (subsetElementType != elementType) {
       if (reason) {
         *reason = TfStringPrintf(
-            "Subset at path <%s> has elementType "
-            "%s, which does not match '%s'.",
-            subset.GetPath().GetText(),
-            subsetElementType.GetText(),
-            elementType.GetText());
+          "Subset at path <%s> has elementType "
+          "%s, which does not match '%s'.",
+          subset.GetPath().GetText(),
+          subsetElementType.GetText(),
+          elementType.GetText());
       }
       // Return early if all the subsets don't have the same element type.
       return false;
@@ -461,11 +456,11 @@ bool UsdGeomSubset::ValidateSubsets(const std::vector<UsdGeomSubset> &subsets,
           valid = false;
           if (reason) {
             *reason += TfStringPrintf(
-                "Found overlapping index %d "
-                "in GeomSubset at path <%s> at time %s.\n",
-                index,
-                subset.GetPath().GetText(),
-                TfStringify(t).c_str());
+              "Found overlapping index %d "
+              "in GeomSubset at path <%s> at time %s.\n",
+              index,
+              subset.GetPath().GetText(),
+              TfStringify(t).c_str());
           }
         }
       }
@@ -476,10 +471,10 @@ bool UsdGeomSubset::ValidateSubsets(const std::vector<UsdGeomSubset> &subsets,
       valid = false;
       if (reason) {
         *reason += TfStringPrintf(
-            "Number of unique indices at time %s "
-            "does not match the element count %ld.",
-            TfStringify(t).c_str(),
-            elementCount);
+          "Number of unique indices at time %s "
+          "does not match the element count %ld.",
+          TfStringify(t).c_str(),
+          elementCount);
       }
     }
 
@@ -488,19 +483,19 @@ bool UsdGeomSubset::ValidateSubsets(const std::vector<UsdGeomSubset> &subsets,
       valid = false;
       if (reason) {
         *reason += TfStringPrintf(
-            "Found one or more indices that are "
-            "greater than the element count %ld at time %s.\n",
-            elementCount,
-            TfStringify(t).c_str());
+          "Found one or more indices that are "
+          "greater than the element count %ld at time %s.\n",
+          elementCount,
+          TfStringify(t).c_str());
       }
     }
     if (*indicesInFamily.begin() < 0) {
       valid = false;
       if (reason) {
         *reason += TfStringPrintf(
-            "Found one or more indices that are "
-            "less than 0 at time %s.\n",
-            TfStringify(t).c_str());
+          "Found one or more indices that are "
+          "less than 0 at time %s.\n",
+          TfStringify(t).c_str());
       }
     }
   }
@@ -514,8 +509,7 @@ bool UsdGeomSubset::ValidateFamily(const UsdGeomImageable &geom,
                                    const TfToken &familyName,
                                    std::string *const reason)
 {
-  std::vector<UsdGeomSubset> familySubsets = UsdGeomSubset::GetGeomSubsets(
-      geom, elementType, familyName);
+  std::vector<UsdGeomSubset> familySubsets = UsdGeomSubset::GetGeomSubsets(geom, elementType, familyName);
 
   bool valid = true;
 
@@ -539,9 +533,9 @@ bool UsdGeomSubset::ValidateFamily(const UsdGeomImageable &geom,
     valid = false;
     if (reason) {
       *reason += TfStringPrintf(
-          "Unable to determine face-count for geom"
-          " <%s>",
-          geom.GetPath().GetText());
+        "Unable to determine face-count for geom"
+        " <%s>",
+        geom.GetPath().GetText());
     }
   }
 
@@ -577,10 +571,10 @@ bool UsdGeomSubset::ValidateFamily(const UsdGeomImageable &geom,
             valid = false;
             if (reason) {
               *reason += TfStringPrintf(
-                  "Found duplicate index %d "
-                  "in GeomSubset at path <%s>.\n",
-                  index,
-                  subset.GetPath().GetText());
+                "Found duplicate index %d "
+                "in GeomSubset at path <%s>.\n",
+                index,
+                subset.GetPath().GetText());
             }
           }
         }
@@ -592,10 +586,10 @@ bool UsdGeomSubset::ValidateFamily(const UsdGeomImageable &geom,
       valid = false;
       if (reason) {
         *reason += TfStringPrintf(
-            "Number of unique indices at time %s "
-            "does not match the face count %ld.",
-            TfStringify(t).c_str(),
-            faceCount);
+          "Number of unique indices at time %s "
+          "does not match the face count %ld.",
+          TfStringify(t).c_str(),
+          faceCount);
       }
     }
 
@@ -604,10 +598,10 @@ bool UsdGeomSubset::ValidateFamily(const UsdGeomImageable &geom,
       valid = false;
       if (reason) {
         *reason += TfStringPrintf(
-            "Found one or more indices that are "
-            "greater than the face-count %ld at time %s.\n",
-            faceCount,
-            TfStringify(t).c_str());
+          "Found one or more indices that are "
+          "greater than the face-count %ld at time %s.\n",
+          faceCount,
+          TfStringify(t).c_str());
       }
     }
 
@@ -616,9 +610,9 @@ bool UsdGeomSubset::ValidateFamily(const UsdGeomImageable &geom,
       valid = false;
       if (reason) {
         *reason += TfStringPrintf(
-            "Found one or more indices that are "
-            "less than 0 at time %s.\n",
-            TfStringify(t).c_str());
+          "Found one or more indices that are "
+          "less than 0 at time %s.\n",
+          TfStringify(t).c_str());
       }
     }
   }

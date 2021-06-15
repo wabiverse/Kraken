@@ -50,9 +50,9 @@ void wrapRmanArgsParser()
   return_value_policy<copy_const_reference> copyRefPolicy;
 
   class_<This, boost::noncopyable>("RmanArgsParser")
-      .def("Parse", &_Parse, return_value_policy<manage_new_object>())
-      .def("GetDiscoveryTypes", &This::GetDiscoveryTypes, copyRefPolicy)
-      .def("GetSourceType", &This::GetSourceType, copyRefPolicy);
+    .def("Parse", &_Parse, return_value_policy<manage_new_object>())
+    .def("GetDiscoveryTypes", &This::GetDiscoveryTypes, copyRefPolicy)
+    .def("GetSourceType", &This::GetSourceType, copyRefPolicy);
 }
 
 TF_REFPTR_CONST_VOLATILE_GET(SdrShaderNode)

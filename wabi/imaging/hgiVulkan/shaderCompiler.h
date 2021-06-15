@@ -75,8 +75,7 @@ bool HgiVulkanCompileGLSL(const char *name,
 /// (HgiShaderProgram), but not the HgiResourceBindings so we must use
 /// spirv reflection to discover the descriptorSet info for the module.
 HGIVULKAN_API
-HgiVulkanDescriptorSetInfoVector HgiVulkanGatherDescriptorSetInfo(
-    std::vector<unsigned int> const &spirv);
+HgiVulkanDescriptorSetInfoVector HgiVulkanGatherDescriptorSetInfo(std::vector<unsigned int> const &spirv);
 
 /// Given all of the DescriptorSetInfos of all of the shader modules in a
 /// shader program, this function merges them and creates the descriptorSet
@@ -84,9 +83,9 @@ HgiVulkanDescriptorSetInfoVector HgiVulkanGatherDescriptorSetInfo(
 /// The caller takes ownership of the returned layouts and must destroy them.
 HGIVULKAN_API
 VkDescriptorSetLayoutVector HgiVulkanMakeDescriptorSetLayouts(
-    HgiVulkanDevice *device,
-    std::vector<HgiVulkanDescriptorSetInfoVector> const &infos,
-    std::string const &debugName);
+  HgiVulkanDevice *device,
+  std::vector<HgiVulkanDescriptorSetInfoVector> const &infos,
+  std::string const &debugName);
 
 WABI_NAMESPACE_END
 

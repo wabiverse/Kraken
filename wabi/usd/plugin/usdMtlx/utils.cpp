@@ -188,12 +188,12 @@ NdrStringVec UsdMtlxMergeSearchPaths(const NdrStringVec &stronger, const NdrStri
 const NdrStringVec &UsdMtlxStandardLibraryPaths()
 {
   static const auto materialxLibraryPaths = UsdMtlxMergeSearchPaths(
-      UsdMtlxGetSearchPathsFromEnvVar("wabi_USDMTLX_STDLIB_SEARCH_PATHS"),
-      NdrStringVec{
+    UsdMtlxGetSearchPathsFromEnvVar("wabi_USDMTLX_STDLIB_SEARCH_PATHS"),
+    NdrStringVec{
 #ifdef WABI_MATERIALX_STDLIB_DIR
-          WABI_MATERIALX_STDLIB_DIR
+      WABI_MATERIALX_STDLIB_DIR
 #endif
-      });
+    });
   return materialxLibraryPaths;
 }
 
@@ -208,7 +208,7 @@ mx::ConstDocumentPtr UsdMtlxGetDocumentFromString(const std::string &mtlxXml)
   std::string hashStr = std::to_string(std::hash<std::string>{}(mtlxXml));
   // Look up in the cache, inserting a null document if missing.
   auto insertResult = _GetCache().emplace(hashStr, nullptr);
-  auto &document    = insertResult.first->second;
+  auto &document = insertResult.first->second;
   if (insertResult.second) {
     // cache miss
     try {
@@ -228,7 +228,7 @@ mx::ConstDocumentPtr UsdMtlxGetDocument(const std::string &resolvedUri)
 {
   // Look up in the cache, inserting a null document if missing.
   auto insertResult = _GetCache().emplace(resolvedUri, nullptr);
-  auto &document    = insertResult.first->second;
+  auto &document = insertResult.first->second;
   if (!insertResult.second) {
     // Cache hit.
     return document;
@@ -237,8 +237,8 @@ mx::ConstDocumentPtr UsdMtlxGetDocument(const std::string &resolvedUri)
   // Read the file or the standard library files.
   if (resolvedUri.empty()) {
     document = mx::createDocument();
-    for (auto &&fileResult : NdrFsHelpersDiscoverNodes(
-             UsdMtlxStandardLibraryPaths(), UsdMtlxStandardFileExtensions(), false)) {
+    for (auto &&fileResult :
+         NdrFsHelpersDiscoverNodes(UsdMtlxStandardLibraryPaths(), UsdMtlxStandardFileExtensions(), false)) {
       try {
         // Read the file.
         auto doc = mx::createDocument();
@@ -257,7 +257,7 @@ mx::ConstDocumentPtr UsdMtlxGetDocument(const std::string &resolvedUri)
       }
       catch (mx::Exception &x) {
         TF_DEBUG(NDR_PARSING)
-            .Msg("MaterialX error reading '%s': %s", fileResult.resolvedUri.c_str(), x.what());
+          .Msg("MaterialX error reading '%s': %s", fileResult.resolvedUri.c_str(), x.what());
         continue;
       }
     }
@@ -302,7 +302,7 @@ NdrVersion UsdMtlxGetVersion(const mx::ConstInterfaceElementPtr &mtlx, bool *imp
     const bool isdefault = mtlx->getDefaultVersion();
     if (isdefault) {
       *implicitDefault = false;
-      version          = version.GetAsDefault();
+      version = version.GetAsDefault();
     }
     else {
       // No opinion means implicitly a (potential) default.
@@ -333,40 +333,39 @@ const std::string &UsdMtlxGetSourceURI(const mx::ConstElementPtr &element)
 
 UsdMtlxUsdTypeInfo UsdMtlxGetUsdType(const std::string &mtlxTypeName)
 {
-#define TUPLE3(sdf, exact, sdr) \
-  UsdMtlxUsdTypeInfo(SdfValueTypeNames->sdf, exact, SdrPropertyTypes->sdr)
+#define TUPLE3(sdf, exact, sdr) UsdMtlxUsdTypeInfo(SdfValueTypeNames->sdf, exact, SdrPropertyTypes->sdr)
 #define TUPLEN(sdf, exact, sdr, sz) \
   UsdMtlxUsdTypeInfo(SdfValueTypeNames->sdf, exact, SdrPropertyTypes->sdr, sz)
 #define TUPLEX(sdf, exact, sdr) UsdMtlxUsdTypeInfo(SdfValueTypeNames->sdf, exact, sdr)
 
-  static const auto noMatch  = TfToken();
+  static const auto noMatch = TfToken();
   static const auto notFound = UsdMtlxUsdTypeInfo(SdfValueTypeName(), false, noMatch);
 
   static const auto table = std::unordered_map<std::string, UsdMtlxUsdTypeInfo>{
-      {"boolean", TUPLEX(Bool, true, noMatch)},
-      {"color2array", TUPLEX(Float2Array, false, noMatch)},
-      {"color2", TUPLEN(Float2, false, Float, 2)},
-      {"color3array", TUPLE3(Color3fArray, true, Color)},
-      {"color3", TUPLE3(Color3f, true, Color)},
-      {"color4array", TUPLEX(Color4fArray, true, noMatch)},
-      {"color4", TUPLEN(Color4f, true, Float, 4)},
-      {"filename", TUPLE3(Asset, true, String)},
-      {"floatarray", TUPLE3(FloatArray, true, Float)},
-      {"float", TUPLE3(Float, true, Float)},
-      {"geomnamearray", TUPLEX(StringArray, false, noMatch)},
-      {"geomname", TUPLEX(String, false, noMatch)},
-      {"integerarray", TUPLE3(IntArray, true, Int)},
-      {"integer", TUPLE3(Int, true, Int)},
-      {"matrix33", TUPLEX(Matrix3d, true, noMatch)},
-      {"matrix44", TUPLE3(Matrix4d, true, Matrix)},
-      {"stringarray", TUPLE3(StringArray, true, String)},
-      {"string", TUPLE3(String, true, String)},
-      {"vector2array", TUPLEX(Float2Array, true, noMatch)},
-      {"vector2", TUPLEN(Float2, true, Float, 2)},
-      {"vector3array", TUPLEX(Float3Array, true, noMatch)},
-      {"vector3", TUPLEN(Float3, true, Float, 3)},
-      {"vector4array", TUPLEX(Float4Array, true, noMatch)},
-      {"vector4", TUPLEN(Float4, true, Float, 4)},
+    {"boolean", TUPLEX(Bool, true, noMatch)},
+    {"color2array", TUPLEX(Float2Array, false, noMatch)},
+    {"color2", TUPLEN(Float2, false, Float, 2)},
+    {"color3array", TUPLE3(Color3fArray, true, Color)},
+    {"color3", TUPLE3(Color3f, true, Color)},
+    {"color4array", TUPLEX(Color4fArray, true, noMatch)},
+    {"color4", TUPLEN(Color4f, true, Float, 4)},
+    {"filename", TUPLE3(Asset, true, String)},
+    {"floatarray", TUPLE3(FloatArray, true, Float)},
+    {"float", TUPLE3(Float, true, Float)},
+    {"geomnamearray", TUPLEX(StringArray, false, noMatch)},
+    {"geomname", TUPLEX(String, false, noMatch)},
+    {"integerarray", TUPLE3(IntArray, true, Int)},
+    {"integer", TUPLE3(Int, true, Int)},
+    {"matrix33", TUPLEX(Matrix3d, true, noMatch)},
+    {"matrix44", TUPLE3(Matrix4d, true, Matrix)},
+    {"stringarray", TUPLE3(StringArray, true, String)},
+    {"string", TUPLE3(String, true, String)},
+    {"vector2array", TUPLEX(Float2Array, true, noMatch)},
+    {"vector2", TUPLEN(Float2, true, Float, 2)},
+    {"vector3array", TUPLEX(Float3Array, true, noMatch)},
+    {"vector3", TUPLEN(Float3, true, Float, 3)},
+    {"vector4array", TUPLEX(Float4Array, true, noMatch)},
+    {"vector4", TUPLEN(Float4, true, Float, 4)},
   };
 #undef TUPLE3
 #undef TUPLEX
@@ -378,7 +377,7 @@ UsdMtlxUsdTypeInfo UsdMtlxGetUsdType(const std::string &mtlxTypeName)
 VtValue UsdMtlxGetUsdValue(const mx::ConstElementPtr &mtlx, bool getDefaultValue)
 {
   static const std::string defaultAttr("default");
-  static const std::string typeAttr  = mx::TypedElement::TYPE_ATTRIBUTE;
+  static const std::string typeAttr = mx::TypedElement::TYPE_ATTRIBUTE;
   static const std::string valueAttr = mx::ValueElement::VALUE_ATTRIBUTE;
 
   // Bail if no element.
@@ -387,8 +386,7 @@ VtValue UsdMtlxGetUsdValue(const mx::ConstElementPtr &mtlx, bool getDefaultValue
   }
 
   // Get the value string.
-  auto &&valueString = getDefaultValue ? mtlx->getAttribute(defaultAttr) :
-                                         mtlx->getAttribute(valueAttr);
+  auto &&valueString = getDefaultValue ? mtlx->getAttribute(defaultAttr) : mtlx->getAttribute(valueAttr);
 
   // Get the value.
   return _GetUsdValue(valueString, mtlx->getAttribute(typeAttr));

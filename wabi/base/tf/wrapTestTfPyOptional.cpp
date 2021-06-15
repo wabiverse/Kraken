@@ -73,34 +73,34 @@ struct Tf_TestPyOptional {
 void wrapTf_TestTfPyOptional()
 {
   class_<Tf_TestPyOptional, boost::noncopyable>("Tf_TestPyOptional")
-      .def("TakesOptional",
-           _TakesOptional,
-           (arg("optString") = boost::optional<string>(),
-            arg("optStrvec") = boost::optional<vector<string>>()))
-      .staticmethod("TakesOptional")
+    .def(
+      "TakesOptional",
+      _TakesOptional,
+      (arg("optString") = boost::optional<string>(), arg("optStrvec") = boost::optional<vector<string>>()))
+    .staticmethod("TakesOptional")
 
-      .def("TestOptionalStringVector", _TestOptional<std::vector<std::string>>)
-      .staticmethod("TestOptionalStringVector")
-      .def("TestOptionalString", _TestOptional<std::string>)
-      .staticmethod("TestOptionalString")
-      .def("TestOptionalDouble", _TestOptional<double>)
-      .staticmethod("TestOptionalDouble")
-      .def("TestOptionalFloat", _TestOptional<float>)
-      .staticmethod("TestOptionalFloat")
-      .def("TestOptionalLong", _TestOptional<long>)
-      .staticmethod("TestOptionalLong")
-      .def("TestOptionalULong", _TestOptional<unsigned long>)
-      .staticmethod("TestOptionalULong")
-      .def("TestOptionalInt", _TestOptional<int>)
-      .staticmethod("TestOptionalInt")
-      .def("TestOptionalUInt", _TestOptional<unsigned int>)
-      .staticmethod("TestOptionalUInt")
-      .def("TestOptionalShort", _TestOptional<short>)
-      .staticmethod("TestOptionalShort")
-      .def("TestOptionalUShort", _TestOptional<unsigned short>)
-      .staticmethod("TestOptionalUShort")
-      .def("TestOptionalChar", _TestOptional<char>)
-      .staticmethod("TestOptionalChar")
-      .def("TestOptionalUChar", _TestOptional<unsigned char>)
-      .staticmethod("TestOptionalUChar");
+    .def("TestOptionalStringVector", _TestOptional<std::vector<std::string>>)
+    .staticmethod("TestOptionalStringVector")
+    .def("TestOptionalString", _TestOptional<std::string>)
+    .staticmethod("TestOptionalString")
+    .def("TestOptionalDouble", _TestOptional<double>)
+    .staticmethod("TestOptionalDouble")
+    .def("TestOptionalFloat", _TestOptional<float>)
+    .staticmethod("TestOptionalFloat")
+    .def("TestOptionalLong", _TestOptional<long>)
+    .staticmethod("TestOptionalLong")
+    .def("TestOptionalULong", _TestOptional<unsigned long>)
+    .staticmethod("TestOptionalULong")
+    .def("TestOptionalInt", _TestOptional<int>)
+    .staticmethod("TestOptionalInt")
+    .def("TestOptionalUInt", _TestOptional<unsigned int>)
+    .staticmethod("TestOptionalUInt")
+    .def("TestOptionalShort", _TestOptional<short>)
+    .staticmethod("TestOptionalShort")
+    .def("TestOptionalUShort", _TestOptional<unsigned short>)
+    .staticmethod("TestOptionalUShort")
+    .def("TestOptionalChar", _TestOptional<char>)
+    .staticmethod("TestOptionalChar")
+    .def("TestOptionalUChar", _TestOptional<unsigned char>)
+    .staticmethod("TestOptionalUChar");
 }

@@ -126,24 +126,20 @@ class Sdf_PathNode {
 
   static Sdf_PathPrimNodeHandle FindOrCreatePrim(Sdf_PathNode const *parent, const TfToken &name);
 
-  static Sdf_PathPropNodeHandle FindOrCreatePrimProperty(Sdf_PathNode const *parent,
-                                                         const TfToken &name);
+  static Sdf_PathPropNodeHandle FindOrCreatePrimProperty(Sdf_PathNode const *parent, const TfToken &name);
 
   static Sdf_PathPrimNodeHandle FindOrCreatePrimVariantSelection(Sdf_PathNode const *parent,
                                                                  const TfToken &variantSet,
                                                                  const TfToken &variant);
 
-  static Sdf_PathPropNodeHandle FindOrCreateTarget(Sdf_PathNode const *parent,
-                                                   SdfPath const &targetPath);
+  static Sdf_PathPropNodeHandle FindOrCreateTarget(Sdf_PathNode const *parent, SdfPath const &targetPath);
 
   static Sdf_PathPropNodeHandle FindOrCreateRelationalAttribute(Sdf_PathNode const *parent,
                                                                 const TfToken &name);
 
-  static Sdf_PathPropNodeHandle FindOrCreateMapper(Sdf_PathNode const *parent,
-                                                   SdfPath const &targetPath);
+  static Sdf_PathPropNodeHandle FindOrCreateMapper(Sdf_PathNode const *parent, SdfPath const &targetPath);
 
-  static Sdf_PathPropNodeHandle FindOrCreateMapperArg(Sdf_PathNode const *parent,
-                                                      const TfToken &name);
+  static Sdf_PathPropNodeHandle FindOrCreateMapperArg(Sdf_PathNode const *parent, const TfToken &name);
 
   static Sdf_PathPropNodeHandle FindOrCreateExpression(Sdf_PathNode const *parent);
 
@@ -155,10 +151,9 @@ class Sdf_PathNode {
     return NodeType(_nodeType);
   }
 
-  static std::pair<Sdf_PathNode const *, Sdf_PathNode const *> RemoveCommonSuffix(
-      Sdf_PathNode const *a,
-      Sdf_PathNode const *b,
-      bool stopAtRootPrim);
+  static std::pair<Sdf_PathNode const *, Sdf_PathNode const *> RemoveCommonSuffix(Sdf_PathNode const *a,
+                                                                                  Sdf_PathNode const *b,
+                                                                                  bool stopAtRootPrim);
 
   // This method returns a node pointer
   Sdf_PathNode const *GetParentNode() const
@@ -184,8 +179,7 @@ class Sdf_PathNode {
   }
   bool IsNamespaced() const
   {
-    return (_nodeType == PrimPropertyNode || _nodeType == RelationalAttributeNode) &&
-           _IsNamespacedImpl();
+    return (_nodeType == PrimPropertyNode || _nodeType == RelationalAttributeNode) && _IsNamespacedImpl();
   }
 
   bool ContainsPrimVariantSelection() const
@@ -214,12 +208,10 @@ class Sdf_PathNode {
   void AppendText(std::string *str) const;
 
   // Return the stringified path to this node as a TfToken lvalue.
-  SDF_API static const TfToken &GetPathToken(Sdf_PathNode const *primPart,
-                                             Sdf_PathNode const *propPart);
+  SDF_API static const TfToken &GetPathToken(Sdf_PathNode const *primPart, Sdf_PathNode const *propPart);
 
   // Return the stringified path to this node as a TfToken rvalue.
-  SDF_API static TfToken GetPathAsToken(Sdf_PathNode const *primPart,
-                                        Sdf_PathNode const *propPart);
+  SDF_API static TfToken GetPathAsToken(Sdf_PathNode const *primPart, Sdf_PathNode const *propPart);
 
   // Lexicographic ordering for Compare().
   struct LessThan {
@@ -242,16 +234,16 @@ class Sdf_PathNode {
 
  protected:
   Sdf_PathNode(Sdf_PathNode const *parent, NodeType nodeType)
-      : _parent(parent),
-        _refCount(1),
-        _elementCount(parent ? parent->_elementCount + 1 : 1),
-        _nodeType(nodeType),
-        _isAbsolute(parent && parent->IsAbsolutePath()),
-        _containsPrimVariantSelection(nodeType == PrimVariantSelectionNode ||
-                                      (parent && parent->_containsPrimVariantSelection)),
-        _containsTargetPath(nodeType == TargetNode || nodeType == MapperNode ||
-                            (parent && parent->_containsTargetPath)),
-        _hasToken(false)
+    : _parent(parent),
+      _refCount(1),
+      _elementCount(parent ? parent->_elementCount + 1 : 1),
+      _nodeType(nodeType),
+      _isAbsolute(parent && parent->IsAbsolutePath()),
+      _containsPrimVariantSelection(nodeType == PrimVariantSelectionNode ||
+                                    (parent && parent->_containsPrimVariantSelection)),
+      _containsTargetPath(nodeType == TargetNode || nodeType == MapperNode ||
+                          (parent && parent->_containsTargetPath)),
+      _hasToken(false)
   {}
 
   // This constructor is used only to create the two special root nodes.
@@ -364,8 +356,8 @@ class Sdf_PrimPathNode : public Sdf_PrimPartPathNode {
 
  private:
   Sdf_PrimPathNode(Sdf_PathNode const *parent, const TfToken &name)
-      : Sdf_PrimPartPathNode(parent, nodeType),
-        _name(name)
+    : Sdf_PrimPartPathNode(parent, nodeType),
+      _name(name)
   {}
 
   SDF_API ~Sdf_PrimPathNode();
@@ -390,8 +382,8 @@ class Sdf_PrimPropertyPathNode : public Sdf_PropPartPathNode {
 
  private:
   Sdf_PrimPropertyPathNode(Sdf_PathNode const *parent, const TfToken &name)
-      : Sdf_PropPartPathNode(parent, nodeType),
-        _name(name)
+    : Sdf_PropPartPathNode(parent, nodeType),
+      _name(name)
   {}
 
   SDF_API ~Sdf_PrimPropertyPathNode();
@@ -418,10 +410,9 @@ class Sdf_PrimVariantSelectionNode : public Sdf_PrimPartPathNode {
   void _AppendText(std::string *str) const;
 
  private:
-  Sdf_PrimVariantSelectionNode(Sdf_PathNode const *parent,
-                               const VariantSelectionType &variantSelection)
-      : Sdf_PrimPartPathNode(parent, nodeType),
-        _variantSelection(new VariantSelectionType(variantSelection))
+  Sdf_PrimVariantSelectionNode(Sdf_PathNode const *parent, const VariantSelectionType &variantSelection)
+    : Sdf_PrimPartPathNode(parent, nodeType),
+      _variantSelection(new VariantSelectionType(variantSelection))
   {}
 
   SDF_API ~Sdf_PrimVariantSelectionNode();
@@ -448,8 +439,8 @@ class Sdf_TargetPathNode : public Sdf_PropPartPathNode {
 
  private:
   Sdf_TargetPathNode(Sdf_PathNode const *parent, const SdfPath &targetPath)
-      : Sdf_PropPartPathNode(parent, nodeType),
-        _targetPath(targetPath)
+    : Sdf_PropPartPathNode(parent, nodeType),
+      _targetPath(targetPath)
   {}
 
   SDF_API ~Sdf_TargetPathNode();
@@ -474,8 +465,8 @@ class Sdf_RelationalAttributePathNode : public Sdf_PropPartPathNode {
 
  private:
   Sdf_RelationalAttributePathNode(Sdf_PathNode const *parent, const TfToken &name)
-      : Sdf_PropPartPathNode(parent, nodeType),
-        _name(name)
+    : Sdf_PropPartPathNode(parent, nodeType),
+      _name(name)
   {}
 
   SDF_API ~Sdf_RelationalAttributePathNode();
@@ -502,8 +493,8 @@ class Sdf_MapperPathNode : public Sdf_PropPartPathNode {
 
  private:
   Sdf_MapperPathNode(Sdf_PathNode const *parent, const SdfPath &targetPath)
-      : Sdf_PropPartPathNode(parent, nodeType),
-        _targetPath(targetPath)
+    : Sdf_PropPartPathNode(parent, nodeType),
+      _targetPath(targetPath)
   {}
 
   SDF_API ~Sdf_MapperPathNode();
@@ -530,8 +521,8 @@ class Sdf_MapperArgPathNode : public Sdf_PropPartPathNode {
 
  private:
   Sdf_MapperArgPathNode(Sdf_PathNode const *parent, const TfToken &name)
-      : Sdf_PropPartPathNode(parent, nodeType),
-        _name(name)
+    : Sdf_PropPartPathNode(parent, nodeType),
+      _name(name)
   {}
 
   SDF_API ~Sdf_MapperArgPathNode();

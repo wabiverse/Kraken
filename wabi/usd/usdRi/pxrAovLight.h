@@ -178,8 +178,7 @@ class UsdRiPxrAovLight : public UsdLuxLight {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateAovNameAttr(VtValue const &defaultValue = VtValue(),
-                                 bool writeSparsely          = false) const;
+  UsdAttribute CreateAovNameAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -204,7 +203,7 @@ class UsdRiPxrAovLight : public UsdLuxLight {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateInPrimaryHitAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -229,7 +228,7 @@ class UsdRiPxrAovLight : public UsdLuxLight {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateInReflectionAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -254,7 +253,7 @@ class UsdRiPxrAovLight : public UsdLuxLight {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateInRefractionAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -276,8 +275,7 @@ class UsdRiPxrAovLight : public UsdLuxLight {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateInvertAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateInvertAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -302,7 +300,7 @@ class UsdRiPxrAovLight : public UsdLuxLight {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateOnVolumeBoundariesAttr(VtValue const &defaultValue = VtValue(),
-                                            bool writeSparsely          = false) const;
+                                            bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -325,8 +323,7 @@ class UsdRiPxrAovLight : public UsdLuxLight {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateUseColorAttr(VtValue const &defaultValue = VtValue(),
-                                  bool writeSparsely          = false) const;
+  UsdAttribute CreateUseColorAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -352,7 +349,7 @@ class UsdRiPxrAovLight : public UsdLuxLight {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateUseThroughputAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

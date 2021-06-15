@@ -76,9 +76,9 @@ static const std::string _GetPrimaryUvSetName()
 struct ShaderBuilder {
  public:
   ShaderBuilder(const NdrNodeDiscoveryResult &discoveryResult)
-      : discoveryResult(discoveryResult),
-        valid(true),
-        metadata(discoveryResult.metadata)
+    : discoveryResult(discoveryResult),
+      valid(true),
+      metadata(discoveryResult.metadata)
   {}
 
   void SetInvalid()
@@ -157,9 +157,7 @@ void ShaderBuilder::AddProperty(const mx::ConstTypedElementPtr &element,
 
       // This could be a custom type.  Check the document.
       if (!element->getDocument()->getTypeDef(mtlxType)) {
-        TF_WARN("MaterialX unrecognized type %s on %s",
-                mtlxType.c_str(),
-                element->getNamePath().c_str());
+        TF_WARN("MaterialX unrecognized type %s on %s", mtlxType.c_str(), element->getNamePath().c_str());
       }
     }
   }
@@ -245,14 +243,8 @@ void ShaderBuilder::AddProperty(const mx::ConstTypedElementPtr &element,
   }
 
   // Add the property.
-  properties.push_back(SdrShaderPropertyUniquePtr(new SdrShaderProperty(TfToken(name),
-                                                                        type,
-                                                                        defaultValue,
-                                                                        isOutput,
-                                                                        converted.arraySize,
-                                                                        metadata,
-                                                                        hints,
-                                                                        options)));
+  properties.push_back(SdrShaderPropertyUniquePtr(new SdrShaderProperty(
+    TfToken(name), type, defaultValue, isOutput, converted.arraySize, metadata, hints, options)));
 }
 
 static void ParseMetadata(ShaderBuilder *builder,
@@ -305,8 +297,8 @@ static void ParseElement(ShaderBuilder *builder, const mx::ConstNodeDefPtr &node
 
   // Build the basic shader node info. We are filling in implementationURI
   // as a placeholder - it should get set to a more acccurate value by caller.
-  builder->context           = context;
-  builder->definitionURI     = UsdMtlxGetSourceURI(nodeDef);
+  builder->context = context;
+  builder->definitionURI = UsdMtlxGetSourceURI(nodeDef);
   builder->implementationURI = builder->definitionURI;
 
   // Metadata
@@ -349,8 +341,7 @@ static void ParseElement(ShaderBuilder *builder, const mx::ConstNodeDefPtr &node
     builder->AddProperty(mtlxOutput, true, nullptr);
   }
 
-  builder->metadata[SdrNodeMetadata->Primvars] = TfStringJoin(
-      primvars.begin(), primvars.end(), "|");
+  builder->metadata[SdrNodeMetadata->Primvars] = TfStringJoin(primvars.begin(), primvars.end(), "|");
 }
 
 static void ParseElement(ShaderBuilder *builder,
@@ -403,10 +394,10 @@ static void ParseElement(ShaderBuilder *builder,
     }
     if (TfIsRelativePath(filename)) {
       TF_DEBUG(NDR_PARSING)
-          .Msg(
-              "MaterialX implementation %s could "
-              "not be found",
-              filename.c_str());
+        .Msg(
+          "MaterialX implementation %s could "
+          "not be found",
+          filename.c_str());
       builder->SetInvalid();
       return;
     }
@@ -425,7 +416,7 @@ static void ParseElement(ShaderBuilder *builder,
 /// Parses nodes in MaterialX files.
 class UsdMtlxParserPlugin : public NdrParserPlugin {
  public:
-  UsdMtlxParserPlugin()           = default;
+  UsdMtlxParserPlugin() = default;
   ~UsdMtlxParserPlugin() override = default;
 
   NdrNodeUniquePtr Parse(const NdrNodeDiscoveryResult &discoveryResult) override;
@@ -438,8 +429,7 @@ NdrNodeUniquePtr UsdMtlxParserPlugin::Parse(const NdrNodeDiscoveryResult &discov
   MaterialX::ConstDocumentPtr document = nullptr;
   // Get the MaterialX document.
   if (!discoveryResult.resolvedUri.empty()) {
-    document = UsdMtlxGetDocument(
-        discoveryResult.resolvedUri == "mtlx" ? "" : discoveryResult.resolvedUri);
+    document = UsdMtlxGetDocument(discoveryResult.resolvedUri == "mtlx" ? "" : discoveryResult.resolvedUri);
     if (!TF_VERIFY(document)) {
       return GetInvalidNode(discoveryResult);
     }
@@ -453,9 +443,9 @@ NdrNodeUniquePtr UsdMtlxParserPlugin::Parse(const NdrNodeDiscoveryResult &discov
   }
   else {
     TF_WARN(
-        "Invalid NdrNodeDiscoveryResult for identifier '%s': both "
-        "resolvedUri and sourceCode fields are empty.",
-        discoveryResult.identifier.GetText());
+      "Invalid NdrNodeDiscoveryResult for identifier '%s': both "
+      "resolvedUri and sourceCode fields are empty.",
+      discoveryResult.identifier.GetText());
     return GetInvalidNode(discoveryResult);
   }
 
@@ -467,8 +457,7 @@ NdrNodeUniquePtr UsdMtlxParserPlugin::Parse(const NdrNodeDiscoveryResult &discov
 
   auto element = document->getChild(discoveryResult.blindData);
   if (!element) {
-    TF_WARN("Invalid MaterialX blindData; unknown node name ' %s '",
-            discoveryResult.blindData.c_str());
+    TF_WARN("Invalid MaterialX blindData; unknown node name ' %s '", discoveryResult.blindData.c_str());
     return GetInvalidNode(discoveryResult);
   }
 
@@ -481,9 +470,8 @@ NdrNodeUniquePtr UsdMtlxParserPlugin::Parse(const NdrNodeDiscoveryResult &discov
     ParseElement(&builder, impl, discoveryResult);
   }
   else {
-    TF_VERIFY(false,
-              "MaterialX node '%s' isn't a nodegraph or implementation",
-              element->getNamePath().c_str());
+    TF_VERIFY(
+      false, "MaterialX node '%s' isn't a nodegraph or implementation", element->getNamePath().c_str());
   }
 
   return builder.Build();

@@ -94,11 +94,7 @@ void md5_hmac_finish(md5_context *ctx, unsigned char output[16]);
  * \param ilen     length of the input data
  * \param output   HMAC-MD5 result
  */
-void md5_hmac(unsigned char *key,
-              int keylen,
-              unsigned char *input,
-              int ilen,
-              unsigned char output[16]);
+void md5_hmac(unsigned char *key, int keylen, unsigned char *input, int ilen, unsigned char output[16]);
 
 /**
  * \brief          Checkup routine
@@ -121,7 +117,7 @@ int md5_self_test(int verbose);
 #ifndef PUT_ULONG_LE
 #  define PUT_ULONG_LE(n, b, i) \
     { \
-      (b)[(i)]     = (unsigned char)((n)); \
+      (b)[(i)] = (unsigned char)((n)); \
       (b)[(i) + 1] = (unsigned char)((n) >> 8); \
       (b)[(i) + 2] = (unsigned char)((n) >> 16); \
       (b)[(i) + 3] = (unsigned char)((n) >> 24); \
@@ -305,10 +301,9 @@ void md5_update(md5_context *ctx, unsigned char *input, int ilen)
   }
 }
 
-static const unsigned char md5_padding[64] = {0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                              0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                              0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                              0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static const unsigned char md5_padding[64] = {
+  0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 /*
  * MD5 final digest
@@ -320,7 +315,7 @@ void md5_finish(md5_context *ctx, unsigned char output[16])
   unsigned char msglen[8];
 
   high = (ctx->total[0] >> 29) | (ctx->total[1] << 3);
-  low  = (ctx->total[0] << 3);
+  low = (ctx->total[0] << 3);
 
   PUT_ULONG_LE(low, msglen, 0);
   PUT_ULONG_LE(high, msglen, 4);

@@ -56,16 +56,12 @@ WRAP_CUSTOM;
 
 static UsdAttribute _CreateTitleAttr(UsdUIWindow &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateTitleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                              writeSparsely);
+  return self.CreateTitleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
-static UsdAttribute _CreateWindowCoordsAttr(UsdUIWindow &self,
-                                            object defaultVal,
-                                            bool writeSparsely)
+static UsdAttribute _CreateWindowCoordsAttr(UsdUIWindow &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateTitleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float4),
-                              writeSparsely);
+  return self.CreateTitleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float4), writeSparsely);
 }
 
 static std::string _Repr(const UsdUIWindow &self)
@@ -83,39 +79,36 @@ void wrapUsdUIWindow()
   class_<This, bases<UsdTyped>> cls("Window");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetTitleAttr", &This::GetTitleAttr)
-      .def("CreateTitleAttr",
-           &_CreateTitleAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTitleAttr", &This::GetTitleAttr)
+    .def(
+      "CreateTitleAttr", &_CreateTitleAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetWindowCoordsAttr", &This::GetWindowCoordsAttr)
-      .def("CreateWindowCoordsAttr",
-           &_CreateWindowCoordsAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetWindowCoordsAttr", &This::GetWindowCoordsAttr)
+    .def("CreateWindowCoordsAttr",
+         &_CreateWindowCoordsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

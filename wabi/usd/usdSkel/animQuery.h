@@ -114,8 +114,7 @@ class UsdSkelAnimQuery {
                                             UsdTimeCode time = UsdTimeCode::Default()) const;
 
   USDSKEL_API
-  bool ComputeBlendShapeWeights(VtFloatArray *weights,
-                                UsdTimeCode time = UsdTimeCode::Default()) const;
+  bool ComputeBlendShapeWeights(VtFloatArray *weights, UsdTimeCode time = UsdTimeCode::Default()) const;
 
   /// Get the time samples at which values contributing to joint transforms
   /// are set. This only computes the time samples for sampling transforms in
@@ -133,8 +132,7 @@ class UsdSkelAnimQuery {
   ///
   /// \sa UsdAttribute::GetTimeSamplesInInterval
   USDSKEL_API
-  bool GetJointTransformTimeSamplesInInterval(const GfInterval &interval,
-                                              std::vector<double> *times) const;
+  bool GetJointTransformTimeSamplesInInterval(const GfInterval &interval, std::vector<double> *times) const;
 
   /// Get the attributes contributing to JointTransform computations
   USDSKEL_API

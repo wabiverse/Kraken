@@ -116,12 +116,12 @@ static {{QUAT}} * __init__()
 void wrapQuat{{SUFFIX}}()
 {
   object getImaginary = make_function(
-      &{
-        {
-          QUAT
-        }
-      } ::GetImaginary,
-      return_value_policy<return_by_value>());
+    &{
+      {
+        QUAT
+      }
+    } ::GetImaginary,
+    return_value_policy<return_by_value>());
 
   object setImaginaryVec = make_function((void ({
                                            {
@@ -139,11 +139,11 @@ void wrapQuat{{SUFFIX}}()
                                              QUAT
                                            }
                                          } ::*)({{SCL}}, {{SCL}}, {{SCL}})) &
+                                           {
                                              {
-                                               {
-                                                 QUAT
-                                               }
-                                             } ::SetImaginary,
+                                               QUAT
+                                             }
+                                           } ::SetImaginary,
                                          default_call_policies(),
                                          (arg("i"), arg("j"), arg("k")));
 
@@ -152,134 +152,134 @@ void wrapQuat{{SUFFIX}}()
   def("Dot", ({{SCL}}(*)(const {{QUAT}} &, const {{QUAT}} &))GfDot);
 
   class_<{{QUAT}}>("Quat{{ SUFFIX }}", no_init)
-      .def("__init__", make_constructor(__init__))
+    .def("__init__", make_constructor(__init__))
 
-      .def(TfTypePythonClass())
+    .def(TfTypePythonClass())
 
-      .def(init<GfQuat{{SUFFIX}}>())
-      .def(init<{{SCL}}>(arg("real")))
-      .def(init<{{SCL}}, const GfVec3{{SUFFIX}} &>((arg("real"), arg("imaginary"))))
-      .def(init<{{SCL}}, {{SCL}}, {{SCL}}, {{SCL}}>((arg("real"), arg("i"), arg("j"), arg("k"))))
+    .def(init<GfQuat{{SUFFIX}}>())
+    .def(init<{{SCL}}>(arg("real")))
+    .def(init<{{SCL}}, const GfVec3{{SUFFIX}} &>((arg("real"), arg("imaginary"))))
+    .def(init<{{SCL}}, {{SCL}}, {{SCL}}, {{SCL}}>((arg("real"), arg("i"), arg("j"), arg("k"))))
   {% for S in SCALARS if S != SCL and not ALLOW_IMPLICIT_CONVERSION(S, SCL) %
   }
   .def(init<const GfQuat{{SCALAR_SUFFIX(S)}} &>()){ % endfor % }
 
-      .def(
-          "GetIdentity",
-          &{
-            {
-              QUAT
-            }
-          } ::GetIdentity)
-      .staticmethod("GetIdentity")
+    .def(
+      "GetIdentity",
+      &{
+        {
+          QUAT
+        }
+      } ::GetIdentity)
+    .staticmethod("GetIdentity")
 
-      .def(
-          "GetReal",
-          &{
-            {
-              QUAT
-            }
-          } ::GetReal)
-      .def(
-          "SetReal",
-          &{
-            {
-              QUAT
-            }
-          } ::SetReal)
-      .add_property(
-          "real",
-          &{
-            {
-              QUAT
-            }
-          } ::GetReal,
-          &{
-            {
-              QUAT
-            }
-          } ::SetReal)
+    .def(
+      "GetReal",
+      &{
+        {
+          QUAT
+        }
+      } ::GetReal)
+    .def(
+      "SetReal",
+      &{
+        {
+          QUAT
+        }
+      } ::SetReal)
+    .add_property(
+      "real",
+      &{
+        {
+          QUAT
+        }
+      } ::GetReal,
+      &{
+        {
+          QUAT
+        }
+      } ::SetReal)
 
-      .def("GetImaginary", getImaginary)
-      .def("SetImaginary", setImaginaryVec)
-      .def("SetImaginary", setImaginaryScl)
-      .add_property("imaginary", getImaginary, setImaginaryVec)
+    .def("GetImaginary", getImaginary)
+    .def("SetImaginary", setImaginaryVec)
+    .def("SetImaginary", setImaginaryScl)
+    .add_property("imaginary", getImaginary, setImaginaryVec)
 
-      .def(
-          "GetLength",
-          &{
-            {
-              QUAT
-            }
-          } ::GetLength)
+    .def(
+      "GetLength",
+      &{
+        {
+          QUAT
+        }
+      } ::GetLength)
 
-      .def(
-          "GetNormalized",
-          &{
-            {
-              QUAT
-            }
-          } ::GetNormalized,
-          (arg("eps") = GF_MIN_VECTOR_LENGTH))
-      .def(
-          "Normalize",
-          &{
-            {
-              QUAT
-            }
-          } ::Normalize,
-          (arg("eps") = GF_MIN_VECTOR_LENGTH),
-          return_self<>())
+    .def(
+      "GetNormalized",
+      &{
+        {
+          QUAT
+        }
+      } ::GetNormalized,
+      (arg("eps") = GF_MIN_VECTOR_LENGTH))
+    .def(
+      "Normalize",
+      &{
+        {
+          QUAT
+        }
+      } ::Normalize,
+      (arg("eps") = GF_MIN_VECTOR_LENGTH),
+      return_self<>())
 
-      .def(
-          "GetConjugate",
-          &{
-            {
-              QUAT
-            }
-          } ::GetConjugate)
-      .def(
-          "GetInverse",
-          &{
-            {
-              QUAT
-            }
-          } ::GetInverse)
+    .def(
+      "GetConjugate",
+      &{
+        {
+          QUAT
+        }
+      } ::GetConjugate)
+    .def(
+      "GetInverse",
+      &{
+        {
+          QUAT
+        }
+      } ::GetInverse)
 
-      .def(
-          "Transform",
-          &{
-            {
-              QUAT
-            }
-          } ::Transform)
+    .def(
+      "Transform",
+      &{
+        {
+          QUAT
+        }
+      } ::Transform)
 
-      .def(str(self))
-      .def(-self)
-      .def(self == self)
-      .def(self != self)
-      .def(self *= self)
-      .def(self *= {{SCL}}())
-      .def(self /= {{SCL}}())
-      .def(self += self)
-      .def(self -= self)
-      .def(self + self)
-      .def(self - self)
-      .def(self * self)
-      .def(self * {{SCL}}())
-      .def({{SCL}}() * self)
-      .def(self / {{SCL}}())
+    .def(str(self))
+    .def(-self)
+    .def(self == self)
+    .def(self != self)
+    .def(self *= self)
+    .def(self *= {{SCL}}())
+    .def(self /= {{SCL}}())
+    .def(self += self)
+    .def(self -= self)
+    .def(self + self)
+    .def(self - self)
+    .def(self * self)
+    .def(self * {{SCL}}())
+    .def({{SCL}}() * self)
+    .def(self / {{SCL}}())
 
 #if PY_MAJOR_VERSION == 2
-      // Needed only to support "from __future__ import division" in
-      // python 2. In python 3 builds boost::python adds this for us.
-      .def("__truediv__", __truediv__)
-      .def("__itruediv__", __itruediv__)
+    // Needed only to support "from __future__ import division" in
+    // python 2. In python 3 builds boost::python adds this for us.
+    .def("__truediv__", __truediv__)
+    .def("__itruediv__", __itruediv__)
 #endif
 
-      .def("__repr__", __repr__)
+    .def("__repr__", __repr__)
 
-      ;
+    ;
 
   {% for S in SCALARS if S != SCL and ALLOW_IMPLICIT_CONVERSION(S, SCL) %
   }

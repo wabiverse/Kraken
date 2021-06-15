@@ -99,55 +99,47 @@ void wrapFileFormat()
   typedef SdfFileFormatPtr ThisPtr;
 
   scope s =
-      class_<This, ThisPtr, boost::noncopyable>("FileFormat", no_init)
+    class_<This, ThisPtr, boost::noncopyable>("FileFormat", no_init)
 
-          .def(TfPyRefAndWeakPtr())
+      .def(TfPyRefAndWeakPtr())
 
-          .add_property("formatId",
-                        make_function(&This::GetFormatId, return_value_policy<return_by_value>()))
-          .add_property("target",
-                        make_function(&This::GetTarget, return_value_policy<return_by_value>()))
-          .add_property(
-              "fileCookie",
-              make_function(&This::GetFileCookie, return_value_policy<return_by_value>()))
-          .add_property("primaryFileExtension",
-                        make_function(&This::GetPrimaryFileExtension,
-                                      return_value_policy<return_by_value>()))
+      .add_property("formatId", make_function(&This::GetFormatId, return_value_policy<return_by_value>()))
+      .add_property("target", make_function(&This::GetTarget, return_value_policy<return_by_value>()))
+      .add_property("fileCookie",
+                    make_function(&This::GetFileCookie, return_value_policy<return_by_value>()))
+      .add_property("primaryFileExtension",
+                    make_function(&This::GetPrimaryFileExtension, return_value_policy<return_by_value>()))
 
-          .def("GetFileExtensions",
-               &This::GetFileExtensions,
-               return_value_policy<return_by_value>())
+      .def("GetFileExtensions", &This::GetFileExtensions, return_value_policy<return_by_value>())
 
-          .def("IsSupportedExtension", &This::IsSupportedExtension)
+      .def("IsSupportedExtension", &This::IsSupportedExtension)
 
-          .def("IsPackage", &This::IsPackage)
+      .def("IsPackage", &This::IsPackage)
 
-          .def("CanRead", &This::CanRead)
+      .def("CanRead", &This::CanRead)
 
-          .def("GetFileExtension", &This::GetFileExtension)
-          .staticmethod("GetFileExtension")
+      .def("GetFileExtension", &This::GetFileExtension)
+      .staticmethod("GetFileExtension")
 
-          .def("FindAllFileFormatExtensions",
-               &This::FindAllFileFormatExtensions,
-               return_value_policy<TfPySequenceToList>())
-          .staticmethod("FindAllFileFormatExtensions")
+      .def("FindAllFileFormatExtensions",
+           &This::FindAllFileFormatExtensions,
+           return_value_policy<TfPySequenceToList>())
+      .staticmethod("FindAllFileFormatExtensions")
 
-          .def("FindById", &This::FindById)
-          .staticmethod("FindById")
+      .def("FindById", &This::FindById)
+      .staticmethod("FindById")
 
-          .def("FindByExtension",
-               (SdfFileFormatConstPtr(*)(const std::string &, const std::string &)) &
-                   This::FindByExtension,
-               (arg("extension"), arg("target") = std::string()))
-          .def("FindByExtension",
-               (SdfFileFormatConstPtr(*)(const std::string &,
-                                         const SdfFileFormat::FileFormatArguments &)) &
-                   This::FindByExtension,
-               (arg("extension"), arg("args")))
-          .staticmethod("FindByExtension")
+      .def("FindByExtension",
+           (SdfFileFormatConstPtr(*)(const std::string &, const std::string &)) & This::FindByExtension,
+           (arg("extension"), arg("target") = std::string()))
+      .def("FindByExtension",
+           (SdfFileFormatConstPtr(*)(const std::string &, const SdfFileFormat::FileFormatArguments &)) &
+             This::FindByExtension,
+           (arg("extension"), arg("args")))
+      .staticmethod("FindByExtension")
 
-          .def("RegisterFileFormat", &_RegisterFileFormat)
-          .staticmethod("RegisterFileFormat");
+      .def("RegisterFileFormat", &_RegisterFileFormat)
+      .staticmethod("RegisterFileFormat");
 
   TF_PY_WRAP_PUBLIC_TOKENS("Tokens", SdfFileFormatTokens, SDF_FILE_FORMAT_TOKENS);
 }

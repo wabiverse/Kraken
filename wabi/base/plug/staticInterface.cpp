@@ -65,16 +65,16 @@ void Plug_StaticInterfaceBase::_LoadAndInstantiate(const std::type_info &type) c
   const TfType &tfType = TfType::FindByName(TfType::GetCanonicalTypeName(type));
   if (!tfType) {
     TF_CODING_ERROR(
-        "Failed to load plugin interface: "
-        "Can't find type %s",
-        type.name());
+      "Failed to load plugin interface: "
+      "Can't find type %s",
+      type.name());
     return;
   }
   if (tfType.IsRoot()) {
     TF_CODING_ERROR(
-        "Failed to load plugin interface: "
-        "Can't manufacture type %s",
-        tfType.GetTypeName().c_str());
+      "Failed to load plugin interface: "
+      "Can't manufacture type %s",
+      tfType.GetTypeName().c_str());
     return;
   }
 
@@ -82,9 +82,9 @@ void Plug_StaticInterfaceBase::_LoadAndInstantiate(const std::type_info &type) c
   PlugPluginPtr plugin = PlugRegistry::GetInstance().GetPluginForType(tfType);
   if (!plugin) {
     TF_RUNTIME_ERROR(
-        "Failed to load plugin interface: "
-        "Can't find plugin that defines type %s",
-        tfType.GetTypeName().c_str());
+      "Failed to load plugin interface: "
+      "Can't find plugin that defines type %s",
+      tfType.GetTypeName().c_str());
     return;
   }
 
@@ -98,9 +98,9 @@ void Plug_StaticInterfaceBase::_LoadAndInstantiate(const std::type_info &type) c
   Plug_InterfaceFactory::Base *factory = tfType.GetFactory<Plug_InterfaceFactory::Base>();
   if (!factory) {
     TF_CODING_ERROR(
-        "Failed to load plugin interface: "
-        "No default constructor for type %s",
-        tfType.GetTypeName().c_str());
+      "Failed to load plugin interface: "
+      "No default constructor for type %s",
+      tfType.GetTypeName().c_str());
     return;
   }
   _ptr = factory->New();
@@ -108,9 +108,9 @@ void Plug_StaticInterfaceBase::_LoadAndInstantiate(const std::type_info &type) c
   // Report on error.
   if (!_ptr) {
     TF_CODING_ERROR(
-        "Failed to load plugin interface: "
-        "Plugin didn't manufacture an instance of %s",
-        tfType.GetTypeName().c_str());
+      "Failed to load plugin interface: "
+      "Plugin didn't manufacture an instance of %s",
+      tfType.GetTypeName().c_str());
   }
 }
 

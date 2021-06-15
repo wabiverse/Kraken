@@ -53,7 +53,7 @@ namespace {
 
 static const char UDIM_PATTERN[] = "<UDIM>";
 static const int UDIM_START_TILE = 1001;
-static const int UDIM_END_TILE   = 1100;
+static const int UDIM_END_TILE = 1100;
 
 // Split a udim file path such as /someDir/myFile.<UDIM>.exr into a
 // prefix (/someDir/myFile.) and suffix (.exr).
@@ -116,13 +116,12 @@ static std::vector<std::tuple<int, TfToken>> _FindUdimTiles(const std::string &f
 }
 }  // anonymous namespace
 
-HdPhUdimTextureObject::HdPhUdimTextureObject(
-    const HdPhTextureIdentifier &textureId,
-    HdPh_TextureObjectRegistry *const textureObjectRegistry)
-    : HdPhTextureObject(textureId, textureObjectRegistry),
-      _dimensions(0),
-      _mipCount(0),
-      _hgiFormat(HgiFormatInvalid)
+HdPhUdimTextureObject::HdPhUdimTextureObject(const HdPhTextureIdentifier &textureId,
+                                             HdPh_TextureObjectRegistry *const textureObjectRegistry)
+  : HdPhTextureObject(textureId, textureObjectRegistry),
+    _dimensions(0),
+    _mipCount(0),
+    _hgiFormat(HgiFormatInvalid)
 {}
 
 HdPhUdimTextureObject::~HdPhUdimTextureObject()
@@ -142,9 +141,8 @@ void HdPhUdimTextureObject::_DestroyTextures()
   }
 }
 
-static const HioImageSharedPtr &_GetSmallestImageLargerThan(
-    const std::vector<HioImageSharedPtr> &images,
-    const GfVec3i &dimensions)
+static const HioImageSharedPtr &_GetSmallestImageLargerThan(const std::vector<HioImageSharedPtr> &images,
+                                                            const GfVec3i &dimensions)
 {
   for (auto it = images.rbegin(); it != images.rend(); ++it) {
     if (dimensions[0] <= (*it)->GetWidth() && dimensions[1] <= (*it)->GetHeight()) {
@@ -156,25 +154,24 @@ static const HioImageSharedPtr &_GetSmallestImageLargerThan(
 
 void HdPhUdimTextureObject::_Load()
 {
-  const std::vector<std::tuple<int, TfToken>> tiles = _FindUdimTiles(
-      GetTextureIdentifier().GetFilePath());
+  const std::vector<std::tuple<int, TfToken>> tiles = _FindUdimTiles(GetTextureIdentifier().GetFilePath());
   if (tiles.empty()) {
     return;
   }
 
   const HdPhSubtextureIdentifier *const subId = GetTextureIdentifier().GetSubtextureIdentifier();
 
-  const HioImage::SourceColorSpace sourceColorSpace   = _GetSourceColorSpace(subId);
+  const HioImage::SourceColorSpace sourceColorSpace = _GetSourceColorSpace(subId);
   const std::vector<HioImageSharedPtr> firstImageMips = HdPhTextureUtils::GetAllMipImages(
-      std::get<1>(tiles[0]), sourceColorSpace);
+    std::get<1>(tiles[0]), sourceColorSpace);
   if (firstImageMips.empty()) {
     return;
   }
 
   // Determine Hio and corresponding Hgi format from first tile.
-  const HioFormat hioFormat   = firstImageMips[0]->GetFormat();
+  const HioFormat hioFormat = firstImageMips[0]->GetFormat();
   const bool premultiplyAlpha = _GetPremultiplyAlpha(subId);
-  _hgiFormat                  = HdPhTextureUtils::GetHgiFormat(hioFormat, premultiplyAlpha);
+  _hgiFormat = HdPhTextureUtils::GetHgiFormat(hioFormat, premultiplyAlpha);
 
   if (_hgiFormat == HgiFormatInvalid || HgiIsCompressed(_hgiFormat)) {
     TF_WARN("Unsupported texture format for UDIM");
@@ -184,7 +181,7 @@ void HdPhUdimTextureObject::_Load()
   _tileCount = static_cast<int>(tiles.size());
 
   _dimensions = HdPhTextureUtils::ComputeDimensionsFromTargetMemory(
-      firstImageMips, _hgiFormat, _tileCount, GetTargetMemory());
+    firstImageMips, _hgiFormat, _tileCount, GetTargetMemory());
 
   // Texture array queries will use a float as the array specifier.
   const unsigned int maxTileId = std::get<0>(tiles.back()) + 1;
@@ -192,7 +189,7 @@ void HdPhUdimTextureObject::_Load()
 
   // Use Hgi to compute the mip sizes from the dimensions
   const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(_hgiFormat, _dimensions, _tileCount);
-  _mipCount                              = mipInfos.size();
+  _mipCount = mipInfos.size();
 
   const HgiMipInfo &lastMipInfo = mipInfos.back();
 
@@ -200,29 +197,28 @@ void HdPhUdimTextureObject::_Load()
   _textureData.resize(lastMipInfo.byteOffset + _tileCount * lastMipInfo.byteSizePerLayer);
 
   WorkParallelForN(
-      tiles.size(),
-      [&](size_t begin, size_t end) {
-        for (size_t tileId = begin; tileId < end; ++tileId) {
-          std::tuple<int, TfToken> const &tile        = tiles[tileId];
-          _layoutData[std::get<0>(tile)]              = tileId + 1;
-          const std::vector<HioImageSharedPtr> images = HdPhTextureUtils::GetAllMipImages(
-              std::get<1>(tile), sourceColorSpace);
-          if (images.empty()) {
-            continue;
-          }
-          for (const HgiMipInfo &mipInfo : mipInfos) {
-            HioImageSharedPtr const &image = _GetSmallestImageLargerThan(images,
-                                                                         mipInfo.dimensions);
-            HdPhTextureUtils::ReadAndConvertImage(image,
-                                                  /* flipped = */ true,
-                                                  premultiplyAlpha,
-                                                  mipInfo,
-                                                  tileId,
-                                                  _textureData.data());
-          }
+    tiles.size(),
+    [&](size_t begin, size_t end) {
+      for (size_t tileId = begin; tileId < end; ++tileId) {
+        std::tuple<int, TfToken> const &tile = tiles[tileId];
+        _layoutData[std::get<0>(tile)] = tileId + 1;
+        const std::vector<HioImageSharedPtr> images = HdPhTextureUtils::GetAllMipImages(std::get<1>(tile),
+                                                                                        sourceColorSpace);
+        if (images.empty()) {
+          continue;
         }
-      },
-      1);
+        for (const HgiMipInfo &mipInfo : mipInfos) {
+          HioImageSharedPtr const &image = _GetSmallestImageLargerThan(images, mipInfo.dimensions);
+          HdPhTextureUtils::ReadAndConvertImage(image,
+                                                /* flipped = */ true,
+                                                premultiplyAlpha,
+                                                mipInfo,
+                                                tileId,
+                                                _textureData.data());
+        }
+      }
+    },
+    1);
 }
 
 void HdPhUdimTextureObject::_Commit()
@@ -243,27 +239,27 @@ void HdPhUdimTextureObject::_Commit()
   // Texel GPU texture creation
   {
     HgiTextureDesc texDesc;
-    texDesc.debugName      = _GetDebugName(GetTextureIdentifier());
-    texDesc.type           = HgiTextureType2DArray;
-    texDesc.dimensions     = _dimensions;
-    texDesc.layerCount     = _tileCount;
-    texDesc.format         = _hgiFormat;
-    texDesc.mipLevels      = _mipCount;
-    texDesc.initialData    = _textureData.data();
+    texDesc.debugName = _GetDebugName(GetTextureIdentifier());
+    texDesc.type = HgiTextureType2DArray;
+    texDesc.dimensions = _dimensions;
+    texDesc.layerCount = _tileCount;
+    texDesc.format = _hgiFormat;
+    texDesc.mipLevels = _mipCount;
+    texDesc.initialData = _textureData.data();
     texDesc.pixelsByteSize = _textureData.size();
-    _texelTexture          = hgi->CreateTexture(texDesc);
+    _texelTexture = hgi->CreateTexture(texDesc);
   }
 
   // Layout GPU texture creation
   {
     HgiTextureDesc texDesc;
-    texDesc.debugName      = _GetDebugName(GetTextureIdentifier());
-    texDesc.type           = HgiTextureType1D;
-    texDesc.dimensions     = GfVec3i(_layoutData.size(), 1, 1);
-    texDesc.format         = HgiFormatFloat32;
-    texDesc.initialData    = _layoutData.data();
+    texDesc.debugName = _GetDebugName(GetTextureIdentifier());
+    texDesc.type = HgiTextureType1D;
+    texDesc.dimensions = GfVec3i(_layoutData.size(), 1, 1);
+    texDesc.format = HgiFormatFloat32;
+    texDesc.initialData = _layoutData.data();
     texDesc.pixelsByteSize = _layoutData.size() * sizeof(float);
-    _layoutTexture         = hgi->CreateTexture(texDesc);
+    _layoutTexture = hgi->CreateTexture(texDesc);
   }
 
   // Free CPU memory after transfer to GPU

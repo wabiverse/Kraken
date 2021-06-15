@@ -69,19 +69,19 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 HgiVulkan::HgiVulkan()
-    : _instance(new HgiVulkanInstance()),
-      _device(new HgiVulkanDevice(_instance)),
-      _garbageCollector(new HgiVulkanGarbageCollector(this)),
-      _threadId(std::this_thread::get_id()),
-      _frameDepth(0)
+  : _instance(new HgiVulkanInstance()),
+    _device(new HgiVulkanDevice(_instance)),
+    _garbageCollector(new HgiVulkanGarbageCollector(this)),
+    _threadId(std::this_thread::get_id()),
+    _frameDepth(0)
 {}
 
 HgiVulkan::HgiVulkan(HgiVulkanInstance *existingInst)
-    : _instance(existingInst),
-      _device(new HgiVulkanDevice(_instance)),
-      _garbageCollector(new HgiVulkanGarbageCollector(this)),
-      _threadId(std::this_thread::get_id()),
-      _frameDepth(0)
+  : _instance(existingInst),
+    _device(new HgiVulkanDevice(_instance)),
+    _garbageCollector(new HgiVulkanGarbageCollector(this)),
+    _threadId(std::this_thread::get_id()),
+    _frameDepth(0)
 {}
 
 HgiVulkan::~HgiVulkan()
@@ -176,8 +176,7 @@ void HgiVulkan::DestroyBuffer(HgiBufferHandle *bufHandle)
 /* Multi threaded */
 HgiShaderFunctionHandle HgiVulkan::CreateShaderFunction(HgiShaderFunctionDesc const &desc)
 {
-  return HgiShaderFunctionHandle(new HgiVulkanShaderFunction(GetPrimaryDevice(), desc),
-                                 GetUniqueId());
+  return HgiShaderFunctionHandle(new HgiVulkanShaderFunction(GetPrimaryDevice(), desc), GetUniqueId());
 }
 
 /* Multi threaded */
@@ -189,8 +188,7 @@ void HgiVulkan::DestroyShaderFunction(HgiShaderFunctionHandle *shaderFnHandle)
 /* Multi threaded */
 HgiShaderProgramHandle HgiVulkan::CreateShaderProgram(HgiShaderProgramDesc const &desc)
 {
-  return HgiShaderProgramHandle(new HgiVulkanShaderProgram(GetPrimaryDevice(), desc),
-                                GetUniqueId());
+  return HgiShaderProgramHandle(new HgiVulkanShaderProgram(GetPrimaryDevice(), desc), GetUniqueId());
 }
 
 /* Multi threaded */
@@ -202,8 +200,7 @@ void HgiVulkan::DestroyShaderProgram(HgiShaderProgramHandle *shaderPrgHandle)
 /* Multi threaded */
 HgiResourceBindingsHandle HgiVulkan::CreateResourceBindings(HgiResourceBindingsDesc const &desc)
 {
-  return HgiResourceBindingsHandle(new HgiVulkanResourceBindings(GetPrimaryDevice(), desc),
-                                   GetUniqueId());
+  return HgiResourceBindingsHandle(new HgiVulkanResourceBindings(GetPrimaryDevice(), desc), GetUniqueId());
 }
 
 /* Multi threaded */
@@ -214,8 +211,7 @@ void HgiVulkan::DestroyResourceBindings(HgiResourceBindingsHandle *resHandle)
 
 HgiGraphicsPipelineHandle HgiVulkan::CreateGraphicsPipeline(HgiGraphicsPipelineDesc const &desc)
 {
-  return HgiGraphicsPipelineHandle(new HgiVulkanGraphicsPipeline(GetPrimaryDevice(), desc),
-                                   GetUniqueId());
+  return HgiGraphicsPipelineHandle(new HgiVulkanGraphicsPipeline(GetPrimaryDevice(), desc), GetUniqueId());
 }
 
 void HgiVulkan::DestroyGraphicsPipeline(HgiGraphicsPipelineHandle *pipeHandle)
@@ -225,8 +221,7 @@ void HgiVulkan::DestroyGraphicsPipeline(HgiGraphicsPipelineHandle *pipeHandle)
 
 HgiComputePipelineHandle HgiVulkan::CreateComputePipeline(HgiComputePipelineDesc const &desc)
 {
-  return HgiComputePipelineHandle(new HgiVulkanComputePipeline(GetPrimaryDevice(), desc),
-                                  GetUniqueId());
+  return HgiComputePipelineHandle(new HgiVulkanComputePipeline(GetPrimaryDevice(), desc), GetUniqueId());
 }
 
 void HgiVulkan::DestroyComputePipeline(HgiComputePipelineHandle *pipeHandle)
@@ -320,7 +315,7 @@ void HgiVulkan::_EndFrameSync()
     return;
   }
 
-  HgiVulkanDevice *device      = GetPrimaryDevice();
+  HgiVulkanDevice *device = GetPrimaryDevice();
   HgiVulkanCommandQueue *queue = device->GetCommandQueue();
 
   // Reset command buffers for each device's queue.

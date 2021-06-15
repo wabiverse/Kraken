@@ -102,9 +102,9 @@ void RmanDiscoveryPlugin_SetDefaultFollowSymlinks(bool followSymlinks)
 
 RmanDiscoveryPlugin::RmanDiscoveryPlugin()
 {
-  _searchPaths       = RmanDiscoveryPlugin_GetDefaultSearchPaths();
+  _searchPaths = RmanDiscoveryPlugin_GetDefaultSearchPaths();
   _allowedExtensions = TfStringSplit("oso:args", ":");
-  _followSymlinks    = RmanDiscoveryPlugin_GetDefaultFollowSymlinks();
+  _followSymlinks = RmanDiscoveryPlugin_GetDefaultFollowSymlinks();
 }
 
 RmanDiscoveryPlugin::RmanDiscoveryPlugin(Filter filter) : RmanDiscoveryPlugin()
@@ -116,8 +116,7 @@ RmanDiscoveryPlugin::~RmanDiscoveryPlugin() = default;
 
 NdrNodeDiscoveryResultVec RmanDiscoveryPlugin::DiscoverNodes(const Context &context)
 {
-  auto result = NdrFsHelpersDiscoverNodes(
-      _searchPaths, _allowedExtensions, _followSymlinks, &context);
+  auto result = NdrFsHelpersDiscoverNodes(_searchPaths, _allowedExtensions, _followSymlinks, &context);
 
   if (_filter) {
     auto j = result.begin();

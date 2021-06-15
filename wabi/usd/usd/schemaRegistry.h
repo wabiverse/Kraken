@@ -220,8 +220,7 @@ class UsdSchemaRegistry : public TfWeakBase, boost::noncopyable {
   /// If the instance name is empty or the API is not a multiple apply schema,
   /// this will return false.
   USD_API
-  static bool IsAllowedAPISchemaInstanceName(const TfToken &apiSchemaName,
-                                             const TfToken &instanceName);
+  static bool IsAllowedAPISchemaInstanceName(const TfToken &apiSchemaName, const TfToken &instanceName);
 
   /// Returns a list of prim type names that the given \p apiSchemaName can
   /// only be applied to.
@@ -236,9 +235,8 @@ class UsdSchemaRegistry : public TfWeakBase, boost::noncopyable {
   /// instance, it will fall back to looking for a "can only apply to" list
   /// for just the schema name itself.
   USD_API
-  static const TfTokenVector &GetAPISchemaCanOnlyApplyToTypeNames(
-      const TfToken &apiSchemaName,
-      const TfToken &instanceName = TfToken());
+  static const TfTokenVector &GetAPISchemaCanOnlyApplyToTypeNames(const TfToken &apiSchemaName,
+                                                                  const TfToken &instanceName = TfToken());
 
   /// Returns a map of the names of all registered auto apply API schemas
   /// to the list of type names each is registered to be auto applied to.
@@ -264,7 +262,7 @@ class UsdSchemaRegistry : public TfWeakBase, boost::noncopyable {
   /// may want to collect just these plugin API schema mappings.
   USD_API
   static void CollectAddtionalAutoApplyAPISchemasFromPlugins(
-      std::map<TfToken, TfTokenVector> *autoApplyAPISchemas);
+    std::map<TfToken, TfTokenVector> *autoApplyAPISchemas);
 
   /// Returns the namespace prefix that is prepended to all properties of
   /// the given \p multiApplyAPISchemaName.
@@ -301,8 +299,8 @@ class UsdSchemaRegistry : public TfWeakBase, boost::noncopyable {
   /// provided types.
   USD_API
   std::unique_ptr<UsdPrimDefinition> BuildComposedPrimDefinition(
-      const TfToken &primType,
-      const TfTokenVector &appliedAPISchemas) const;
+    const TfToken &primType,
+    const TfTokenVector &appliedAPISchemas) const;
 
   /// Returns a dictionary mapping concrete schema prim type names to a
   /// VtTokenArray of fallback prim type names if fallback types are defined
@@ -339,8 +337,7 @@ class UsdSchemaRegistry : public TfWeakBase, boost::noncopyable {
                                         const TfTokenVector &appliedAPISchemas) const;
 
   SdfLayerRefPtr _schematics;
-  typedef TfHashMap<TfToken, UsdPrimDefinition *, TfToken::HashFunctor>
-      _TypeNameToPrimDefinitionMap;
+  typedef TfHashMap<TfToken, UsdPrimDefinition *, TfToken::HashFunctor> _TypeNameToPrimDefinitionMap;
 
   _TypeNameToPrimDefinitionMap _concreteTypedPrimDefinitions;
   _TypeNameToPrimDefinitionMap _appliedAPIPrimDefinitions;
@@ -360,11 +357,11 @@ USD_API_TEMPLATE_CLASS(TfSingleton<UsdSchemaRegistry>);
 // to be able to access this plugin data in the same way that the
 // UsdSchemaRegistry does.
 void Usd_GetAPISchemaPluginApplyToInfoForType(
-    const TfType &apiSchemaType,
-    const TfToken &apiSchemaName,
-    std::map<TfToken, TfTokenVector> *autoApplyAPISchemasMap,
-    TfHashMap<TfToken, TfTokenVector, TfHash> *canOnlyApplyAPISchemasMap,
-    TfHashMap<TfToken, TfToken::Set, TfHash> *allowedInstanceNamesMap);
+  const TfType &apiSchemaType,
+  const TfToken &apiSchemaName,
+  std::map<TfToken, TfTokenVector> *autoApplyAPISchemasMap,
+  TfHashMap<TfToken, TfTokenVector, TfHash> *canOnlyApplyAPISchemasMap,
+  TfHashMap<TfToken, TfToken::Set, TfHash> *allowedInstanceNamesMap);
 
 WABI_NAMESPACE_END
 

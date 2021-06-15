@@ -56,11 +56,7 @@ namespace wabi_double_conversion {
 //
 // This method only works for some parameters. If it can't handle the input it
 // returns false. The output is null-terminated when the function succeeds.
-bool FastFixedDtoa(double v,
-                   int fractional_count,
-                   Vector<char> buffer,
-                   int *length,
-                   int *decimal_point);
+bool FastFixedDtoa(double v, int fractional_count, Vector<char> buffer, int *length, int *decimal_point);
 
 }  // namespace wabi_double_conversion
 

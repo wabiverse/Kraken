@@ -62,26 +62,24 @@ void wrapUsdGeomXformCommonAPI()
   class_<This, bases<UsdAPISchemaBase>> cls("XformCommonAPI");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -115,8 +113,7 @@ static tuple _GetXformVectors(UsdGeomXformCommonAPI self, const UsdTimeCode &tim
   GfVec3f rotation, scale, pivot;
   UsdGeomXformCommonAPI::RotationOrder rotationOrder;
 
-  bool result = self.GetXformVectors(
-      &translation, &rotation, &scale, &pivot, &rotationOrder, time);
+  bool result = self.GetXformVectors(&translation, &rotation, &scale, &pivot, &rotationOrder, time);
 
   return result ? make_tuple(translation, rotation, scale, pivot, rotationOrder) : tuple();
 }
@@ -128,7 +125,7 @@ static tuple _GetXformVectorsByAccumulation(UsdGeomXformCommonAPI self, const Us
   UsdGeomXformCommonAPI::RotationOrder rotationOrder;
 
   bool result = self.GetXformVectorsByAccumulation(
-      &translation, &rotation, &scale, &pivot, &rotationOrder, time);
+    &translation, &rotation, &scale, &pivot, &rotationOrder, time);
 
   return result ? make_tuple(translation, rotation, scale, pivot, rotationOrder) : tuple();
 }
@@ -165,68 +162,56 @@ WRAP_CUSTOM
   }
 
   _class
-      .def("SetXformVectors",
-           &This::SetXformVectors,
-           (arg("translation"),
-            arg("rotation"),
-            arg("scale"),
-            arg("pivot"),
-            arg("rotationOrder"),
-            arg("time")))
+    .def(
+      "SetXformVectors",
+      &This::SetXformVectors,
+      (arg("translation"), arg("rotation"), arg("scale"), arg("pivot"), arg("rotationOrder"), arg("time")))
 
-      .def("GetXformVectors", &_GetXformVectors, arg("time"))
+    .def("GetXformVectors", &_GetXformVectors, arg("time"))
 
-      .def("GetXformVectorsByAccumulation", &_GetXformVectorsByAccumulation, arg("time"))
+    .def("GetXformVectorsByAccumulation", &_GetXformVectorsByAccumulation, arg("time"))
 
-      .def("SetTranslate",
-           &This::SetTranslate,
-           (arg("translation"), arg("time") = UsdTimeCode::Default()))
+    .def("SetTranslate", &This::SetTranslate, (arg("translation"), arg("time") = UsdTimeCode::Default()))
 
-      .def("SetPivot", &This::SetPivot, (arg("pivot"), arg("time") = UsdTimeCode::Default()))
+    .def("SetPivot", &This::SetPivot, (arg("pivot"), arg("time") = UsdTimeCode::Default()))
 
-      .def("SetRotate",
-           &This::SetRotate,
-           (arg("rotation"),
-            arg("rotationOrder") = This::RotationOrderXYZ,
-            arg("time")          = UsdTimeCode::Default()))
+    .def(
+      "SetRotate",
+      &This::SetRotate,
+      (arg("rotation"), arg("rotationOrder") = This::RotationOrderXYZ, arg("time") = UsdTimeCode::Default()))
 
-      .def("SetScale", &This::SetScale, (arg("scale"), arg("time") = UsdTimeCode::Default()))
+    .def("SetScale", &This::SetScale, (arg("scale"), arg("time") = UsdTimeCode::Default()))
 
-      .def("GetResetXformStack", &This::GetResetXformStack)
+    .def("GetResetXformStack", &This::GetResetXformStack)
 
-      .def("SetResetXformStack", &This::SetResetXformStack, arg("resetXformStack"))
+    .def("SetResetXformStack", &This::SetResetXformStack, arg("resetXformStack"))
 
-      .def("CreateXformOps",
-           _CreateXformOps1,
-           (arg("rotationOrder"),
-            arg("op1") = UsdGeomXformCommonAPI::OpNone,
-            arg("op2") = UsdGeomXformCommonAPI::OpNone,
-            arg("op3") = UsdGeomXformCommonAPI::OpNone,
-            arg("op4") = UsdGeomXformCommonAPI::OpNone))
+    .def("CreateXformOps",
+         _CreateXformOps1,
+         (arg("rotationOrder"),
+          arg("op1") = UsdGeomXformCommonAPI::OpNone,
+          arg("op2") = UsdGeomXformCommonAPI::OpNone,
+          arg("op3") = UsdGeomXformCommonAPI::OpNone,
+          arg("op4") = UsdGeomXformCommonAPI::OpNone))
 
-      .def("CreateXformOps",
-           _CreateXformOps2,
-           (arg("op1") = UsdGeomXformCommonAPI::OpNone,
-            arg("op2") = UsdGeomXformCommonAPI::OpNone,
-            arg("op3") = UsdGeomXformCommonAPI::OpNone,
-            arg("op4") = UsdGeomXformCommonAPI::OpNone))
+    .def("CreateXformOps",
+         _CreateXformOps2,
+         (arg("op1") = UsdGeomXformCommonAPI::OpNone,
+          arg("op2") = UsdGeomXformCommonAPI::OpNone,
+          arg("op3") = UsdGeomXformCommonAPI::OpNone,
+          arg("op4") = UsdGeomXformCommonAPI::OpNone))
 
-      .def("GetRotationTransform",
-           &This::GetRotationTransform,
-           (arg("rotation"), arg("rotationOrder")))
-      .staticmethod("GetRotationTransform")
+    .def("GetRotationTransform", &This::GetRotationTransform, (arg("rotation"), arg("rotationOrder")))
+    .staticmethod("GetRotationTransform")
 
-      .def("ConvertRotationOrderToOpType",
-           &This::ConvertRotationOrderToOpType,
-           arg("rotationOrder"))
-      .staticmethod("ConvertRotationOrderToOpType")
+    .def("ConvertRotationOrderToOpType", &This::ConvertRotationOrderToOpType, arg("rotationOrder"))
+    .staticmethod("ConvertRotationOrderToOpType")
 
-      .def("ConvertOpTypeToRotationOrder", &This::ConvertOpTypeToRotationOrder, arg("opType"))
-      .staticmethod("ConvertOpTypeToRotationOrder")
+    .def("ConvertOpTypeToRotationOrder", &This::ConvertOpTypeToRotationOrder, arg("opType"))
+    .staticmethod("ConvertOpTypeToRotationOrder")
 
-      .def(
-          "CanConvertOpTypeToRotationOrder", &This::CanConvertOpTypeToRotationOrder, arg("opType"))
-      .staticmethod("CanConvertOpTypeToRotationOrder");
+    .def("CanConvertOpTypeToRotationOrder", &This::CanConvertOpTypeToRotationOrder, arg("opType"))
+    .staticmethod("CanConvertOpTypeToRotationOrder");
 }
 
 }  // namespace

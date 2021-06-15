@@ -55,10 +55,10 @@
 WABI_NAMESPACE_BEGIN
 
 UsdAppUtilsFrameRecorder::UsdAppUtilsFrameRecorder()
-    : _imageWidth(960u),
-      _complexity(1.0f),
-      _colorCorrectionMode("disabled"),
-      _purposes({UsdGeomTokens->default_, UsdGeomTokens->proxy})
+  : _imageWidth(960u),
+    _complexity(1.0f),
+    _colorCorrectionMode("disabled"),
+    _purposes({UsdGeomTokens->default_, UsdGeomTokens->proxy})
 {
   GarchGLApiLoad();
 }
@@ -71,7 +71,7 @@ static bool _HasPurpose(const TfTokenVector &purposes, const TfToken &purpose)
 void UsdAppUtilsFrameRecorder::SetIncludedPurposes(const TfTokenVector &purposes)
 {
   TfTokenVector allPurposes = {UsdGeomTokens->render, UsdGeomTokens->proxy, UsdGeomTokens->guide};
-  _purposes                 = {UsdGeomTokens->default_};
+  _purposes = {UsdGeomTokens->default_};
 
   for (TfToken const &p : purposes) {
     if (_HasPurpose(allPurposes, p)) {
@@ -94,11 +94,11 @@ static GfCamera _ComputeCameraToFrameStage(const UsdStagePtr &stage,
   UsdGeomBBoxCache bboxCache(timeCode,
                              includedPurposes,
                              /* useExtentsHint = */ true);
-  GfBBox3d bbox   = bboxCache.ComputeWorldBound(stage->GetPseudoRoot());
-  GfVec3d center  = bbox.ComputeCentroid();
+  GfBBox3d bbox = bboxCache.ComputeWorldBound(stage->GetPseudoRoot());
+  GfVec3d center = bbox.ComputeCentroid();
   GfRange3d range = bbox.ComputeAlignedRange();
-  GfVec3d dim     = range.GetSize();
-  TfToken upAxis  = UsdGeomGetStageUpAxis(stage);
+  GfVec3d dim = range.GetSize();
+  TfToken upAxis = UsdGeomGetStageUpAxis(stage);
   // Find corner of bbox in the focal plane.
   GfVec2d plane_corner;
   if (upAxis == UsdGeomTokens->y) {
@@ -136,24 +136,24 @@ static void _ReadbackTexture(Hgi *const hgi,
                              std::vector<uint8_t> &buffer)
 {
   const HgiTextureDesc &textureDesc = textureHandle.Get()->GetDescriptor();
-  const size_t formatByteSize       = HgiGetDataSizeOfFormat(textureDesc.format);
-  const size_t width                = textureDesc.dimensions[0];
-  const size_t height               = textureDesc.dimensions[1];
-  const size_t dataByteSize         = width * height * formatByteSize;
+  const size_t formatByteSize = HgiGetDataSizeOfFormat(textureDesc.format);
+  const size_t width = textureDesc.dimensions[0];
+  const size_t height = textureDesc.dimensions[1];
+  const size_t dataByteSize = width * height * formatByteSize;
 
   // For Metal the CPU buffer has to be rounded up to multiple of 4096 bytes.
-  constexpr size_t bitMask     = 4096 - 1;
+  constexpr size_t bitMask = 4096 - 1;
   const size_t alignedByteSize = (dataByteSize + bitMask) & (~bitMask);
 
   buffer.resize(alignedByteSize);
 
   HgiBlitCmdsUniquePtr const blitCmds = hgi->CreateBlitCmds();
   HgiTextureGpuToCpuOp copyOp;
-  copyOp.gpuSourceTexture          = textureHandle;
-  copyOp.sourceTexelOffset         = GfVec3i(0);
-  copyOp.mipLevel                  = 0;
-  copyOp.cpuDestinationBuffer      = buffer.data();
-  copyOp.destinationByteOffset     = 0;
+  copyOp.gpuSourceTexture = textureHandle;
+  copyOp.sourceTexelOffset = GfVec3i(0);
+  copyOp.mipLevel = 0;
+  copyOp.cpuDestinationBuffer = buffer.data();
+  copyOp.destinationByteOffset = 0;
   copyOp.destinationBufferByteSize = alignedByteSize;
   blitCmds->CopyTextureGpuToCpu(copyOp);
   hgi->SubmitCmds(blitCmds.get(), HgiSubmitWaitTypeWaitUntilCompleted);
@@ -165,9 +165,9 @@ static bool _WriteTextureToFile(HgiTextureDesc const &textureDesc,
                                 const bool flipped)
 {
   const size_t formatByteSize = HgiGetDataSizeOfFormat(textureDesc.format);
-  const size_t width          = textureDesc.dimensions[0];
-  const size_t height         = textureDesc.dimensions[1];
-  const size_t dataByteSize   = width * height * formatByteSize;
+  const size_t width = textureDesc.dimensions[0];
+  const size_t height = textureDesc.dimensions[1];
+  const size_t dataByteSize = width * height * formatByteSize;
 
   if (buffer.size() < dataByteSize) {
     return false;
@@ -178,18 +178,18 @@ static bool _WriteTextureToFile(HgiTextureDesc const &textureDesc,
   }
 
   HioImage::StorageSpec storage;
-  storage.width   = width;
-  storage.height  = height;
-  storage.format  = HdxGetHioFormat(textureDesc.format);
+  storage.width = width;
+  storage.height = height;
+  storage.format = HdxGetHioFormat(textureDesc.format);
   storage.flipped = flipped;
-  storage.data    = (void *)buffer.data();
+  storage.data = (void *)buffer.data();
 
   {
     TRACE_FUNCTION_SCOPE("writing image");
     VtDictionary metadata;
 
     HioImageSharedPtr const image = HioImage::OpenForWriting(filename);
-    const bool writeSuccess       = image && image->Write(storage, metadata);
+    const bool writeSuccess = image && image->Write(storage, metadata);
 
     if (!writeSuccess) {
       TF_RUNTIME_ERROR("Failed to write image to %s", filename.c_str());
@@ -236,7 +236,7 @@ bool UsdAppUtilsFrameRecorder::Record(const UsdStagePtr &stage,
   }
 
   const size_t imageHeight = std::max<size_t>(
-      static_cast<size_t>(static_cast<float>(_imageWidth) / aspectRatio), 1u);
+    static_cast<size_t>(static_cast<float>(_imageWidth) / aspectRatio), 1u);
   const GfVec2i renderResolution(_imageWidth, imageHeight);
 
   const GfFrustum frustum = gfCamera.GetFrustum();
@@ -246,7 +246,7 @@ bool UsdAppUtilsFrameRecorder::Record(const UsdStagePtr &stage,
 
   _imagingEngine.SetCameraState(frustum.ComputeViewMatrix(), frustum.ComputeProjectionMatrix());
   _imagingEngine.SetRenderViewport(
-      GfVec4d(0.0, 0.0, static_cast<double>(_imageWidth), static_cast<double>(imageHeight)));
+    GfVec4d(0.0, 0.0, static_cast<double>(_imageWidth), static_cast<double>(imageHeight)));
 
   GlfSimpleLight cameraLight(GfVec4f(cameraPos[0], cameraPos[1], cameraPos[2], 1.0f));
   cameraLight.SetAmbient(SCENE_AMBIENT);
@@ -263,19 +263,19 @@ bool UsdAppUtilsFrameRecorder::Record(const UsdStagePtr &stage,
   _imagingEngine.SetLightingState(lights, material, SCENE_AMBIENT);
 
   UsdImagingGLRenderParams renderParams;
-  renderParams.frame               = timeCode;
-  renderParams.complexity          = _complexity;
+  renderParams.frame = timeCode;
+  renderParams.complexity = _complexity;
   renderParams.colorCorrectionMode = _colorCorrectionMode;
-  renderParams.clearColor          = CLEAR_COLOR;
-  renderParams.showProxy           = _HasPurpose(_purposes, UsdGeomTokens->proxy);
-  renderParams.showRender          = _HasPurpose(_purposes, UsdGeomTokens->render);
-  renderParams.showGuides          = _HasPurpose(_purposes, UsdGeomTokens->guide);
+  renderParams.clearColor = CLEAR_COLOR;
+  renderParams.showProxy = _HasPurpose(_purposes, UsdGeomTokens->proxy);
+  renderParams.showRender = _HasPurpose(_purposes, UsdGeomTokens->render);
+  renderParams.showGuides = _HasPurpose(_purposes, UsdGeomTokens->guide);
 
   glEnable(GL_DEPTH_TEST);
   glViewport(0, 0, _imageWidth, imageHeight);
 
   const GLfloat CLEAR_DEPTH[1] = {1.0f};
-  const UsdPrim &pseudoRoot    = stage->GetPseudoRoot();
+  const UsdPrim &pseudoRoot = stage->GetPseudoRoot();
 
   do {
     glClearBufferfv(GL_COLOR, 0, CLEAR_COLOR.data());

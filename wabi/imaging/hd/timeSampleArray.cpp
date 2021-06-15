@@ -59,7 +59,7 @@ bool _TryResample(float alpha,
   if (valueType == type) {
     const T &val0 = v0.Get<T>();
     const T &val1 = v1.Get<T>();
-    *result       = VtValue(HdResampleNeighbors(alpha, val0, val1));
+    *result = VtValue(HdResampleNeighbors(alpha, val0, val1));
     return true;
   }
 
@@ -114,9 +114,8 @@ VtValue HdResampleNeighbors(float alpha, const VtValue &v0, const VtValue &v1)
 
   const TfType t1 = v1.GetType();
   if (t0 != t1) {
-    TF_CODING_ERROR("Mismatched sample value types '%s' and '%s'",
-                    v0.GetTypeName().c_str(),
-                    v1.GetTypeName().c_str());
+    TF_CODING_ERROR(
+      "Mismatched sample value types '%s' and '%s'", v0.GetTypeName().c_str(), v1.GetTypeName().c_str());
     return v0;
   }
 

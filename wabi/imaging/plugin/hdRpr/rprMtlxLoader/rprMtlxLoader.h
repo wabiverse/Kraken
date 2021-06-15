@@ -10,8 +10,7 @@ class RPRMtlxLoader {
  public:
   RPRMtlxLoader();
 
-  void SetupStdlib(MaterialX::FilePathVec const &libraryNames,
-                   MaterialX::FileSearchPath const &searchPath);
+  void SetupStdlib(MaterialX::FilePathVec const &libraryNames, MaterialX::FileSearchPath const &searchPath);
   MaterialX::ConstDocumentPtr GetStdlib() const
   {
     return _stdlib;
@@ -133,7 +132,7 @@ class RPRMtlxLoader {
  private:
   MaterialX::DocumentPtr _stdlib;
   MaterialX::FileSearchPath _stdSearchPath;
-  LogLevel _logLevel             = LogLevel::Error;
+  LogLevel _logLevel = LogLevel::Error;
   std::string _sceneDistanceUnit = "meter";
 };
 

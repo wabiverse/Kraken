@@ -188,8 +188,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateWidthAttr(VtValue const &defaultValue = VtValue(),
-                               bool writeSparsely          = false) const;
+  UsdAttribute CreateWidthAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -211,8 +210,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateHeightAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateHeightAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -234,8 +232,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateDepthAttr(VtValue const &defaultValue = VtValue(),
-                               bool writeSparsely          = false) const;
+  UsdAttribute CreateDepthAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -257,8 +254,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -282,7 +278,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateEdgeThicknessAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -305,7 +301,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateScaleWidthAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -328,7 +324,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateScaleHeightAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -351,7 +347,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateScaleDepthAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -374,7 +370,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRefineTopAttr(VtValue const &defaultValue = VtValue(),
-                                   bool writeSparsely          = false) const;
+                                   bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -397,7 +393,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRefineBottomAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -420,7 +416,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRefineLeftAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -443,7 +439,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRefineRightAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -466,7 +462,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRefineFrontAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -489,7 +485,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRefineBackAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -512,7 +508,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateEdgeScaleTopAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -535,7 +531,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateEdgeScaleBottomAttr(VtValue const &defaultValue = VtValue(),
-                                         bool writeSparsely          = false) const;
+                                         bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -558,7 +554,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateEdgeScaleLeftAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -581,7 +577,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateEdgeScaleRightAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -604,7 +600,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateEdgeScaleFrontAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -627,7 +623,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateEdgeScaleBackAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -651,7 +647,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateColorSaturationAttr(VtValue const &defaultValue = VtValue(),
-                                         bool writeSparsely          = false) const;
+                                         bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -673,8 +669,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateFalloffAttr(VtValue const &defaultValue = VtValue(),
-                                 bool writeSparsely          = false) const;
+  UsdAttribute CreateFalloffAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -697,7 +692,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateFalloffKnotsAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -720,7 +715,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateFalloffFloatsAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -744,7 +739,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateFalloffInterpolationAttr(VtValue const &defaultValue = VtValue(),
-                                              bool writeSparsely          = false) const;
+                                              bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -767,7 +762,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateColorRampAttr(VtValue const &defaultValue = VtValue(),
-                                   bool writeSparsely          = false) const;
+                                   bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -790,7 +785,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateColorRampKnotsAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -813,7 +808,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateColorRampColorsAttr(VtValue const &defaultValue = VtValue(),
-                                         bool writeSparsely          = false) const;
+                                         bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -837,7 +832,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateColorRampInterpolationAttr(VtValue const &defaultValue = VtValue(),
-                                                bool writeSparsely          = false) const;
+                                                bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

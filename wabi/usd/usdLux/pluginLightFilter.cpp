@@ -65,8 +65,7 @@ UsdLuxPluginLightFilter UsdLuxPluginLightFilter::Get(const UsdStagePtr &stage, c
 }
 
 /* static */
-UsdLuxPluginLightFilter UsdLuxPluginLightFilter::Define(const UsdStagePtr &stage,
-                                                        const SdfPath &path)
+UsdLuxPluginLightFilter UsdLuxPluginLightFilter::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("PluginLightFilter");
   if (!stage) {

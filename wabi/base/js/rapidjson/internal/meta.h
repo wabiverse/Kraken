@@ -63,8 +63,7 @@ template<> struct SelectIfImpl<false> {
     typedef T2 Type;
   };
 };
-template<bool C, typename T1, typename T2>
-struct SelectIfCond : SelectIfImpl<C>::template Apply<T1, T2> {
+template<bool C, typename T1, typename T2> struct SelectIfCond : SelectIfImpl<C>::template Apply<T1, T2> {
 };
 template<typename C, typename T1, typename T2> struct SelectIf : SelectIfCond<C::Value, T1, T2> {
 };
@@ -152,8 +151,7 @@ template<typename B, typename D> struct IsBaseOfImpl {
   enum { Value = (sizeof(Check(Host(), 0)) == sizeof(Yes)) };
 };
 
-template<typename B, typename D>
-struct IsBaseOf : OrExpr<IsSame<B, D>, BoolExpr<IsBaseOfImpl<B, D>>>::Type {
+template<typename B, typename D> struct IsBaseOf : OrExpr<IsSame<B, D>, BoolExpr<IsBaseOfImpl<B, D>>>::Type {
 };
 
 #endif  // RAPIDJSON_HAS_CXX11_TYPETRAITS
@@ -173,12 +171,10 @@ template<bool Condition, typename T = void> struct DisableIfCond {
 template<typename T> struct DisableIfCond<true, T> { /* empty */
 };
 
-template<typename Condition, typename T = void>
-struct EnableIf : EnableIfCond<Condition::Value, T> {
+template<typename Condition, typename T = void> struct EnableIf : EnableIfCond<Condition::Value, T> {
 };
 
-template<typename Condition, typename T = void>
-struct DisableIf : DisableIfCond<Condition::Value, T> {
+template<typename Condition, typename T = void> struct DisableIf : DisableIfCond<Condition::Value, T> {
 };
 
 // SFINAE helpers
@@ -190,8 +186,8 @@ template<typename T> struct RemoveSfinaeTag<SfinaeTag &(*)(T)> {
 };
 
 #define RAPIDJSON_REMOVEFPTR_(type) \
-  typename ::RAPIDJSON_NAMESPACE::internal::RemoveSfinaeTag< \
-      ::RAPIDJSON_NAMESPACE::internal::SfinaeTag &(*)type>::Type
+  typename ::RAPIDJSON_NAMESPACE::internal::RemoveSfinaeTag<::RAPIDJSON_NAMESPACE::internal::SfinaeTag &(*) \
+                                                              type>::Type
 
 #define RAPIDJSON_ENABLEIF(cond) \
   typename ::RAPIDJSON_NAMESPACE::internal::EnableIf<RAPIDJSON_REMOVEFPTR_(cond)>::Type * = NULL

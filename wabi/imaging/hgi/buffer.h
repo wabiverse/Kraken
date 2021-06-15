@@ -66,11 +66,7 @@ WABI_NAMESPACE_BEGIN
 ///
 struct HgiBufferDesc {
   HGI_API
-  HgiBufferDesc()
-      : usage(HgiBufferUsageUniform),
-        byteSize(0),
-        vertexStride(0),
-        initialData(nullptr)
+  HgiBufferDesc() : usage(HgiBufferUsageUniform), byteSize(0), vertexStride(0), initialData(nullptr)
   {}
 
   std::string debugName;
@@ -141,12 +137,12 @@ class HgiBuffer {
   HgiBufferDesc _descriptor;
 
  private:
-  HgiBuffer()        = delete;
+  HgiBuffer() = delete;
   HgiBuffer &operator=(const HgiBuffer &) = delete;
-  HgiBuffer(const HgiBuffer &)            = delete;
+  HgiBuffer(const HgiBuffer &) = delete;
 };
 
-using HgiBufferHandle       = HgiHandle<HgiBuffer>;
+using HgiBufferHandle = HgiHandle<HgiBuffer>;
 using HgiBufferHandleVector = std::vector<HgiBufferHandle>;
 
 WABI_NAMESPACE_END

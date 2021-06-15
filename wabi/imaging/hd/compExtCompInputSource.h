@@ -70,7 +70,7 @@ class Hd_CompExtCompInputSource final : public Hd_ExtCompInputSource {
   HdExtCompCpuComputationSharedPtr _source;
   size_t _sourceOutputIdx;
 
-  Hd_CompExtCompInputSource()                                  = delete;
+  Hd_CompExtCompInputSource() = delete;
   Hd_CompExtCompInputSource(const Hd_CompExtCompInputSource &) = delete;
   Hd_CompExtCompInputSource &operator=(const Hd_CompExtCompInputSource &) = delete;
 };

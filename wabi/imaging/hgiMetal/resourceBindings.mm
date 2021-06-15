@@ -38,7 +38,7 @@
 WABI_NAMESPACE_BEGIN
 
 HgiMetalResourceBindings::HgiMetalResourceBindings(HgiResourceBindingsDesc const &desc)
-    : HgiResourceBindings(desc)
+  : HgiResourceBindings(desc)
 {}
 
 HgiMetalResourceBindings::~HgiMetalResourceBindings() = default;
@@ -54,10 +54,10 @@ void HgiMetalResourceBindings::BindResources(id<MTLRenderCommandEncoder> renderE
       continue;
 
     HgiTextureHandle const &texHandle = texDesc.textures.front();
-    HgiMetalTexture *metalTexture     = static_cast<HgiMetalTexture *>(texHandle.Get());
+    HgiMetalTexture *metalTexture = static_cast<HgiMetalTexture *>(texHandle.Get());
 
     HgiSamplerHandle const &smpHandle = texDesc.samplers.front();
-    HgiMetalSampler *metalSmp         = static_cast<HgiMetalSampler *>(smpHandle.Get());
+    HgiMetalSampler *metalSmp = static_cast<HgiMetalSampler *>(smpHandle.Get());
 
     if (texDesc.stageUsage & HgiShaderStageVertex) {
       [renderEncoder setVertexTexture:metalTexture->GetTextureId() atIndex:texDesc.bindingIndex];
@@ -65,8 +65,7 @@ void HgiMetalResourceBindings::BindResources(id<MTLRenderCommandEncoder> renderE
     }
     if (texDesc.stageUsage & HgiShaderStageFragment) {
       [renderEncoder setFragmentTexture:metalTexture->GetTextureId() atIndex:texDesc.bindingIndex];
-      [renderEncoder setFragmentSamplerState:metalSmp->GetSamplerId()
-                                     atIndex:texDesc.bindingIndex];
+      [renderEncoder setFragmentSamplerState:metalSmp->GetSamplerId() atIndex:texDesc.bindingIndex];
     }
   }
 
@@ -84,9 +83,9 @@ void HgiMetalResourceBindings::BindResources(id<MTLRenderCommandEncoder> renderE
     uint32_t unit = bufDesc.bindingIndex;
 
     HgiBufferHandle const &bufHandle = bufDesc.buffers.front();
-    HgiMetalBuffer *metalbuffer      = static_cast<HgiMetalBuffer *>(bufHandle.Get());
+    HgiMetalBuffer *metalbuffer = static_cast<HgiMetalBuffer *>(bufHandle.Get());
 
-    id<MTLBuffer> h   = metalbuffer->GetBufferId();
+    id<MTLBuffer> h = metalbuffer->GetBufferId();
     NSUInteger offset = bufDesc.offsets.front();
 
     if (bufDesc.stageUsage & HgiShaderStageVertex) {
@@ -109,10 +108,10 @@ void HgiMetalResourceBindings::BindResources(id<MTLComputeCommandEncoder> comput
       continue;
 
     HgiTextureHandle const &texHandle = texDesc.textures.front();
-    HgiMetalTexture *metalTexture     = static_cast<HgiMetalTexture *>(texHandle.Get());
+    HgiMetalTexture *metalTexture = static_cast<HgiMetalTexture *>(texHandle.Get());
 
     HgiSamplerHandle const &smpHandle = texDesc.samplers.front();
-    HgiMetalSampler *metalSmp         = static_cast<HgiMetalSampler *>(smpHandle.Get());
+    HgiMetalSampler *metalSmp = static_cast<HgiMetalSampler *>(smpHandle.Get());
 
     if (texDesc.stageUsage & HgiShaderStageCompute) {
       [computeEncoder setTexture:metalTexture->GetTextureId() atIndex:texDesc.bindingIndex];
@@ -134,9 +133,9 @@ void HgiMetalResourceBindings::BindResources(id<MTLComputeCommandEncoder> comput
     uint32_t unit = bufDesc.bindingIndex;
 
     HgiBufferHandle const &bufHandle = bufDesc.buffers.front();
-    HgiMetalBuffer *metalbuffer      = static_cast<HgiMetalBuffer *>(bufHandle.Get());
+    HgiMetalBuffer *metalbuffer = static_cast<HgiMetalBuffer *>(bufHandle.Get());
 
-    id<MTLBuffer> h   = metalbuffer->GetBufferId();
+    id<MTLBuffer> h = metalbuffer->GetBufferId();
     NSUInteger offset = bufDesc.offsets.front();
 
     if (bufDesc.stageUsage & HgiShaderStageCompute) {

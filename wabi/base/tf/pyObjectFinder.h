@@ -48,15 +48,14 @@ template<class T, class PtrType> struct Tf_PyObjectFinder : public Tf_PyObjectFi
   {
     using namespace boost::python;
     TfPyLock lock;
-    void *p       = const_cast<void *>(objPtr);
+    void *p = const_cast<void *>(objPtr);
     PyObject *obj = Tf_PyGetPythonIdentity(PtrType(static_cast<T *>(p)));
     return obj ? object(handle<>(obj)) : object();
   }
 };
 
 TF_API
-void Tf_RegisterPythonObjectFinderInternal(std::type_info const &type,
-                                           Tf_PyObjectFinderBase const *finder);
+void Tf_RegisterPythonObjectFinderInternal(std::type_info const &type, Tf_PyObjectFinderBase const *finder);
 
 template<class T, class PtrType> void Tf_RegisterPythonObjectFinder()
 {

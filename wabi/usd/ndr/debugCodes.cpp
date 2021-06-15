@@ -40,8 +40,7 @@ TF_REGISTRY_FUNCTION(TfDebug)
 {
   TF_DEBUG_ENVIRONMENT_SYMBOL(NDR_DISCOVERY,
                               "Diagnostics from discovering nodes for Node Definition Registry");
-  TF_DEBUG_ENVIRONMENT_SYMBOL(NDR_PARSING,
-                              "Diagnostics from parsing nodes for Node Definition Registry");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(NDR_PARSING, "Diagnostics from parsing nodes for Node Definition Registry");
   TF_DEBUG_ENVIRONMENT_SYMBOL(NDR_INFO, "Advisory information for Node Definition Registry");
   TF_DEBUG_ENVIRONMENT_SYMBOL(NDR_STATS, "Statistics for registries derived from NdrRegistry");
   TF_DEBUG_ENVIRONMENT_SYMBOL(NDR_DEBUG, "Advanced debugging for Node Definition Registry");

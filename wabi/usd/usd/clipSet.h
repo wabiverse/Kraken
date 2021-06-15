@@ -72,10 +72,7 @@ class Usd_ClipSet {
 
   /// Return bracketing time samples for the attribute at \p path
   /// at \p time.
-  bool GetBracketingTimeSamplesForPath(const SdfPath &path,
-                                       double time,
-                                       double *lower,
-                                       double *upper) const;
+  bool GetBracketingTimeSamplesForPath(const SdfPath &path, double time, double *lower, double *upper) const;
 
   /// Return set of time samples for attribute at \p path.
   std::set<double> ListTimeSamplesForPath(const SdfPath &path) const;
@@ -89,10 +86,7 @@ class Usd_ClipSet {
   /// default value is declared, use the fallback value for
   /// the attribute's value type.
   template<class T>
-  bool QueryTimeSample(const SdfPath &path,
-                       double time,
-                       Usd_InterpolatorBase *interpolator,
-                       T *value) const;
+  bool QueryTimeSample(const SdfPath &path, double time, Usd_InterpolatorBase *interpolator, T *value) const;
 
   std::string name;
   PcpLayerStackPtr sourceLayerStack;
@@ -160,7 +154,7 @@ inline bool Usd_QueryTimeSample(const Usd_ClipSetRefPtr &clipSet,
 /// The layer will contain the given \p tag in its identifier.
 SdfLayerRefPtr Usd_GenerateClipManifest(const Usd_ClipRefPtrVector &clips,
                                         const SdfPath &clipPrimPath,
-                                        const std::string &tag                    = std::string(),
+                                        const std::string &tag = std::string(),
                                         bool writeBlocksForClipsWithMissingValues = false);
 
 /// Generate a manifest layer for the given \p clipLayers containing
@@ -173,7 +167,7 @@ SdfLayerRefPtr Usd_GenerateClipManifest(const Usd_ClipRefPtrVector &clips,
 /// that do not contain time samples for that attribute.
 SdfLayerRefPtr Usd_GenerateClipManifest(const SdfLayerHandleVector &clipLayers,
                                         const SdfPath &clipPrimPath,
-                                        const std::string &tag                = std::string(),
+                                        const std::string &tag = std::string(),
                                         const std::vector<double> *clipActive = nullptr);
 
 /// Return true if the given layer is a manifest that has been automatically

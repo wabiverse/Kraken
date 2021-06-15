@@ -28,10 +28,10 @@
 WABI_NAMESPACE_BEGIN
 
 HdPhDrawItemInstance::HdPhDrawItemInstance(HdPhDrawItem const *drawItem)
-    : _batch(nullptr),
-      _drawItem(drawItem),
-      _batchIndex(0),
-      _visible(drawItem->GetVisible())
+  : _batch(nullptr),
+    _drawItem(drawItem),
+    _batchIndex(0),
+    _visible(drawItem->GetVisible())
 {}
 
 HdPhDrawItemInstance::~HdPhDrawItemInstance()

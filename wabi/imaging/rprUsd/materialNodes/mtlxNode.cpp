@@ -168,21 +168,20 @@ VtValue RemapTokenInput(VtValue const &input, TokenParameterMapping const &mappi
 
 namespace {
 
-RprUsdMaterialNodeInput::Type RprUsd_GetMaterialNodeElementType(
-    MaterialX::TypedElementPtr const &element)
+RprUsdMaterialNodeInput::Type RprUsd_GetMaterialNodeElementType(MaterialX::TypedElementPtr const &element)
 {
   static std::map<std::string, RprUsdMaterialNodeInput::Type> s_mapping = {
-      {"boolean", RprUsdMaterialNodeElement::kBoolean},
-      {"color3", RprUsdMaterialNodeElement::kColor3},
-      {"float", RprUsdMaterialNodeElement::kFloat},
-      {"angle", RprUsdMaterialNodeElement::kAngle},
-      {"integer", RprUsdMaterialNodeElement::kInteger},
-      {"volumeshader", RprUsdMaterialNodeElement::kVolumeShader},
-      {"surfaceshader", RprUsdMaterialNodeElement::kSurfaceShader},
-      {"displacementshader", RprUsdMaterialNodeElement::kDisplacementShader},
-      {"vector3", RprUsdMaterialNodeElement::kVector3},
-      {"vector2", RprUsdMaterialNodeElement::kVector2},
-      {"string", RprUsdMaterialNodeElement::kString},
+    {"boolean", RprUsdMaterialNodeElement::kBoolean},
+    {"color3", RprUsdMaterialNodeElement::kColor3},
+    {"float", RprUsdMaterialNodeElement::kFloat},
+    {"angle", RprUsdMaterialNodeElement::kAngle},
+    {"integer", RprUsdMaterialNodeElement::kInteger},
+    {"volumeshader", RprUsdMaterialNodeElement::kVolumeShader},
+    {"surfaceshader", RprUsdMaterialNodeElement::kSurfaceShader},
+    {"displacementshader", RprUsdMaterialNodeElement::kDisplacementShader},
+    {"vector3", RprUsdMaterialNodeElement::kVector3},
+    {"vector2", RprUsdMaterialNodeElement::kVector2},
+    {"string", RprUsdMaterialNodeElement::kString},
   };
 
   auto it = s_mapping.find(element->getType());
@@ -214,9 +213,9 @@ RprUsdMaterialNodeInput::Type RprUsd_GetMaterialNodeElementType(MaterialX::Input
 RprUsd_MtlxNodeInfo::RprUsd_MtlxNodeInfo(MaterialX::DocumentPtr const &mtlxDoc,
                                          MaterialX::NodeDefPtr const &mtlxNodeDef,
                                          std::string const &uiFolder)
-    : m_uiFolder(uiFolder),
-      m_mtlxDoc(mtlxDoc),
-      m_mtlxNodeDef(mtlxNodeDef)
+  : m_uiFolder(uiFolder),
+    m_mtlxDoc(mtlxDoc),
+    m_mtlxNodeDef(mtlxNodeDef)
 {
 
   auto mtlxInputs = m_mtlxNodeDef->getInputs();
@@ -261,11 +260,8 @@ RprUsdMaterialNodeFactoryFnc RprUsd_MtlxNodeInfo::GetFactory() const
 
           int defaultIndex;
           TokenParameterMapping mapping;
-          if (GetTokenParameterMapping(inputId,
-                                       input.GetValueString(),
-                                       input.GetTokenValues(),
-                                       &defaultIndex,
-                                       &mapping)) {
+          if (GetTokenParameterMapping(
+                inputId, input.GetValueString(), input.GetTokenValues(), &defaultIndex, &mapping)) {
 
             tokenParamMappings[inputId] = mapping;
             rprNodeDefaultParameters.emplace_back(inputId, VtValue(defaultIndex));
@@ -280,15 +276,15 @@ RprUsdMaterialNodeFactoryFnc RprUsd_MtlxNodeInfo::GetFactory() const
       }
 
       return [rprNodeType, rprNodeDefaultParameters, tokenParamMappings](
-                 RprUsd_MaterialBuilderContext *context,
-                 std::map<TfToken, VtValue> const &parameters) -> RprUsd_MaterialNode * {
+               RprUsd_MaterialBuilderContext *context,
+               std::map<TfToken, VtValue> const &parameters) -> RprUsd_MaterialNode * {
         class RprUsd_MtlxNode : public RprUsd_BaseRuntimeNode {
          public:
           RprUsd_MtlxNode(rpr::MaterialNodeType type,
                           RprUsd_MaterialBuilderContext *ctx,
                           std::map<TfToken, TokenParameterMapping> const &tokenParamMappings)
-              : RprUsd_BaseRuntimeNode(type, ctx),
-                m_tokenParamMappings(tokenParamMappings)
+            : RprUsd_BaseRuntimeNode(type, ctx),
+              m_tokenParamMappings(tokenParamMappings)
           {}
 
           bool SetInput(TfToken const &inputId, VtValue const &value) override
@@ -299,9 +295,8 @@ RprUsdMaterialNodeFactoryFnc RprUsd_MtlxNodeInfo::GetFactory() const
 
               auto remappedValue = RemapTokenInput(value, mapping);
               if (remappedValue.IsEmpty()) {
-                TF_RUNTIME_ERROR("Failed to remap token parameter %s - %s",
-                                 inputId.GetText(),
-                                 value.GetTypeName().c_str());
+                TF_RUNTIME_ERROR(
+                  "Failed to remap token parameter %s - %s", inputId.GetText(), value.GetTypeName().c_str());
                 return false;
               }
 
@@ -348,12 +343,12 @@ RprUsdMaterialNodeFactoryFnc RprUsd_MtlxNodeInfo::GetFactory() const
 
 RprUsd_MtlxNodeElement::RprUsd_MtlxNodeElement(MaterialX::ValueElementPtr element,
                                                RprUsdMaterialNodeElement::Type type)
-    : RprUsdMaterialNodeInput(type),
-      m_mtlx(std::move(element))
+  : RprUsdMaterialNodeInput(type),
+    m_mtlx(std::move(element))
 {
   if (m_type == kToken) {
     auto &enumValues = m_mtlx->getAttribute(MaterialX::ValueElement::ENUM_ATTRIBUTE);
-    auto values      = TfStringTokenize(enumValues, ",");
+    auto values = TfStringTokenize(enumValues, ",");
     for (auto &value : values) {
       m_tokenValues.emplace_back(value, TfToken::Immortal);
     }

@@ -60,8 +60,7 @@ std::ostream &operator<<(std::ostream &out, {
   }
 } const &r)
 {
-  return out << '[' << Gf_OstreamHelperP(r.GetMin()) << "..." << Gf_OstreamHelperP(r.GetMax())
-             << ']';
+  return out << '[' << Gf_OstreamHelperP(r.GetMin()) << "..." << Gf_OstreamHelperP(r.GetMax()) << ']';
 }
 
 double

@@ -160,11 +160,7 @@ NEVER_INLINE int64_t timehash(pfHash hash, const void *key, int len, int seed)
 
 //-----------------------------------------------------------------------------
 
-double SpeedTest(pfHash hash,
-                 uint32_t seed,
-                 const int trials,
-                 const int blocksize,
-                 const int align)
+double SpeedTest(pfHash hash, uint32_t seed, const int trials, const int blocksize, const int align)
 {
   Rand r(seed);
 
@@ -209,7 +205,7 @@ double SpeedTest(pfHash hash,
 
 void BulkSpeedTest(pfHash hash, uint32_t seed)
 {
-  const int trials    = 2999;
+  const int trials = 2999;
   const int blocksize = 256 * 1024;
 
   printf("Bulk speed test - %d-byte keys\n", blocksize);

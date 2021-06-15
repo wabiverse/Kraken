@@ -52,8 +52,8 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 HdCyclesRenderPass::HdCyclesRenderPass(HdCyclesRenderDelegate *delegate,
                                        HdRenderIndex *index,
                                        HdRprimCollection const &collection)
-    : HdRenderPass(index, collection),
-      m_delegate(delegate)
+  : HdRenderPass(index, collection),
+    m_delegate(delegate)
 {}
 
 HdCyclesRenderPass::~HdCyclesRenderPass()
@@ -71,15 +71,15 @@ void HdCyclesRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassSt
   // Update the Cycles render passes with the new aov bindings if they have changed
   // Do not reset the session yet
   HdRenderPassAovBindingVector aovBindings = renderPassState->GetAovBindings();
-  const bool aovBindingsHaveChanged        = renderParam->GetAovBindings() != aovBindings;
+  const bool aovBindingsHaveChanged = renderParam->GetAovBindings() != aovBindings;
   if (aovBindingsHaveChanged) {
     renderParam->SetAovBindings(aovBindings);
   }
 
   // TODO: Revisit this code and move it to HdCyclesRenderPassState
   bool shouldUpdate = false;
-  auto hdCam        = const_cast<HdCyclesCamera *>(
-      dynamic_cast<HdCyclesCamera const *>(renderPassState->GetCamera()));
+  auto hdCam = const_cast<HdCyclesCamera *>(
+    dynamic_cast<HdCyclesCamera const *>(renderPassState->GetCamera()));
   if (hdCam) {
     GfMatrix4d projMtx = renderPassState->GetProjectionMatrix();
     GfMatrix4d viewMtx = renderPassState->GetWorldToViewMatrix();
@@ -122,11 +122,11 @@ void HdCyclesRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassSt
 
   // Resetting the Cycles session if the viewport size or AOV bindings changed
   const GfVec4f &viewport = renderPassState->GetViewport();
-  const auto width        = static_cast<int>(viewport[2]);
-  const auto height       = static_cast<int>(viewport[3]);
+  const auto width = static_cast<int>(viewport[2]);
+  const auto height = static_cast<int>(viewport[3]);
 
   if (width != m_width || height != m_height) {
-    m_width  = width;
+    m_width = width;
     m_height = height;
 
     // TODO: Due to the startup flow of Cycles, this gets called after a tiled render

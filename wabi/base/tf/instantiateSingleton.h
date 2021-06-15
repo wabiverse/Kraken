@@ -44,7 +44,7 @@
 WABI_NAMESPACE_BEGIN
 
 template<class T> std::mutex *TfSingleton<T>::_mutex = 0;
-template<class T> T *TfSingleton<T>::_instance       = 0;
+template<class T> T *TfSingleton<T>::_instance = 0;
 
 template<typename T> T &TfSingleton<T>::_CreateInstance()
 {

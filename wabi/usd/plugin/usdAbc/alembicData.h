@@ -79,9 +79,7 @@ class UsdAbc_AlembicData : public SdfAbstractData {
   virtual bool Has(const SdfPath &, const TfToken &fieldName, VtValue *value = NULL) const;
   virtual VtValue Get(const SdfPath &, const TfToken &fieldName) const;
   virtual void Set(const SdfPath &, const TfToken &fieldName, const VtValue &value);
-  virtual void Set(const SdfPath &,
-                   const TfToken &fieldName,
-                   const SdfAbstractDataConstValue &value);
+  virtual void Set(const SdfPath &, const TfToken &fieldName, const SdfAbstractDataConstValue &value);
   virtual void Erase(const SdfPath &, const TfToken &fieldName);
   virtual std::vector<TfToken> List(const SdfPath &) const;
   virtual std::set<double> ListAllTimeSamples() const;

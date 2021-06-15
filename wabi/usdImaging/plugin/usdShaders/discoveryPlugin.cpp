@@ -55,13 +55,12 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
                          /* node metadata */
                          (family)(version)
 
-                             ((infoNamespace, "info:"))((baseSourceAsset, ":sourceAsset")));
+                           ((infoNamespace, "info:"))((baseSourceAsset, ":sourceAsset")));
 
 static std::string _GetShaderResourcePath(char const *resourceName = "")
 {
   static PlugPluginPtr plugin = PLUG_THIS_PLUGIN;
-  const std::string path      = PlugFindPluginResource(plugin,
-                                                  TfStringCatPaths("shaders", resourceName));
+  const std::string path = PlugFindPluginResource(plugin, TfStringCatPaths("shaders", resourceName));
 
   TF_VERIFY(!path.empty(), "Could not find shader resource: %s\n", resourceName);
 
@@ -99,17 +98,16 @@ NdrNodeDiscoveryResultVec UsdShadersDiscoveryPlugin::DiscoverNodes(const Context
       continue;
     }
 
-    auto discoveryResults = UsdShadeShaderDefUtils::GetNodeDiscoveryResults(shader,
-                                                                            shaderDefsFile);
+    auto discoveryResults = UsdShadeShaderDefUtils::GetNodeDiscoveryResults(shader, shaderDefsFile);
 
     result.insert(result.end(), discoveryResults.begin(), discoveryResults.end());
 
     if (discoveryResults.empty()) {
       TF_RUNTIME_ERROR(
-          "Found shader definition <%s> with no valid "
-          "discovery results. This is likely because there are no "
-          "resolvable info:sourceAsset values.",
-          shaderDef.GetPath().GetText());
+        "Found shader definition <%s> with no valid "
+        "discovery results. This is likely because there are no "
+        "resolvable info:sourceAsset values.",
+        shaderDef.GetPath().GetText());
     }
   }
 

@@ -75,7 +75,7 @@ class HdPhExtCompGpuPrimvarBufferSource final : public HdNullBufferSource {
   size_t _numElements;
   SdfPath _compId;
 
-  HdPhExtCompGpuPrimvarBufferSource()                                          = delete;
+  HdPhExtCompGpuPrimvarBufferSource() = delete;
   HdPhExtCompGpuPrimvarBufferSource(const HdPhExtCompGpuPrimvarBufferSource &) = delete;
   HdPhExtCompGpuPrimvarBufferSource &operator=(const HdPhExtCompGpuPrimvarBufferSource &) = delete;
 };

@@ -66,8 +66,7 @@ class HdCyclesRenderPass final : public HdRenderPass {
    * @param renderPassState Input parameters
    * @param renderTags  Which render tags should be drawn this pass
    */
-  void _Execute(HdRenderPassStateSharedPtr const &renderPassState,
-                TfTokenVector const &renderTags) override;
+  void _Execute(HdRenderPassStateSharedPtr const &renderPassState, TfTokenVector const &renderTags) override;
 
   bool IsConverged() const override
   {
@@ -81,7 +80,7 @@ class HdCyclesRenderPass final : public HdRenderPass {
   GfMatrix4d m_viewMtx;
 
  public:
-  int m_width  = 0;
+  int m_width = 0;
   int m_height = 0;
 
   bool m_isConverged = false;

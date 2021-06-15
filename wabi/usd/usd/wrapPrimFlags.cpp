@@ -120,48 +120,48 @@ bool __call__Predicate(const Usd_PrimFlagsPredicate &p, const UsdPrim &prim)
 void wrapUsdPrimFlags()
 {
   class_<Usd_Term>("_Term", no_init)
-      .def(~self)
-      .def(self == self)
-      .def(self != self)
-      .def(self & self)
-      .def(self | self)
-      .def("__hash__", __hash__Term);
+    .def(~self)
+    .def(self == self)
+    .def(self != self)
+    .def(self & self)
+    .def(self | self)
+    .def("__hash__", __hash__Term);
   implicitly_convertible<Usd_Term, Usd_PrimFlagsPredicate>();
   implicitly_convertible<Usd_Term, Usd_PrimFlagsConjunction>();
   implicitly_convertible<Usd_Term, Usd_PrimFlagsDisjunction>();
 
   class_<Usd_PrimFlagsPredicate>("_PrimFlagsPredicate", no_init)
-      .def("Tautology", &Usd_PrimFlagsPredicate::Tautology)
-      .staticmethod("Tautology")
-      .def("Contradiction", &Usd_PrimFlagsPredicate::Contradiction)
-      .staticmethod("Contradiction")
-      .def(self == self)
-      .def(self != self)
-      .def("__hash__", __hash__Predicate)
-      .def("__call__", __call__Predicate);
+    .def("Tautology", &Usd_PrimFlagsPredicate::Tautology)
+    .staticmethod("Tautology")
+    .def("Contradiction", &Usd_PrimFlagsPredicate::Contradiction)
+    .staticmethod("Contradiction")
+    .def(self == self)
+    .def(self != self)
+    .def("__hash__", __hash__Predicate)
+    .def("__call__", __call__Predicate);
 
   class_<Usd_PrimFlagsConjunction, bases<Usd_PrimFlagsPredicate>>("_PrimFlagsConjunction", no_init)
-      .def(~self)
-      .def(self &= other<Usd_Term>())
-      .def(self & other<Usd_Term>())
-      .def(other<Usd_Term>() & self);
+    .def(~self)
+    .def(self &= other<Usd_Term>())
+    .def(self & other<Usd_Term>())
+    .def(other<Usd_Term>() & self);
 
   class_<Usd_PrimFlagsDisjunction, bases<Usd_PrimFlagsPredicate>>("_PrimFlagsDisjunction", no_init)
-      .def(~self)
-      .def(self |= other<Usd_Term>())
-      .def(self | other<Usd_Term>())
-      .def(other<Usd_Term>() | self);
+    .def(~self)
+    .def(self |= other<Usd_Term>())
+    .def(self | other<Usd_Term>())
+    .def(other<Usd_Term>() | self);
 
-  scope().attr("PrimIsActive")             = Usd_Term(UsdPrimIsActive);
-  scope().attr("PrimIsLoaded")             = Usd_Term(UsdPrimIsLoaded);
-  scope().attr("PrimIsModel")              = Usd_Term(UsdPrimIsModel);
-  scope().attr("PrimIsGroup")              = Usd_Term(UsdPrimIsGroup);
-  scope().attr("PrimIsAbstract")           = Usd_Term(UsdPrimIsAbstract);
-  scope().attr("PrimIsDefined")            = Usd_Term(UsdPrimIsDefined);
-  scope().attr("PrimIsInstance")           = Usd_Term(UsdPrimIsInstance);
+  scope().attr("PrimIsActive") = Usd_Term(UsdPrimIsActive);
+  scope().attr("PrimIsLoaded") = Usd_Term(UsdPrimIsLoaded);
+  scope().attr("PrimIsModel") = Usd_Term(UsdPrimIsModel);
+  scope().attr("PrimIsGroup") = Usd_Term(UsdPrimIsGroup);
+  scope().attr("PrimIsAbstract") = Usd_Term(UsdPrimIsAbstract);
+  scope().attr("PrimIsDefined") = Usd_Term(UsdPrimIsDefined);
+  scope().attr("PrimIsInstance") = Usd_Term(UsdPrimIsInstance);
   scope().attr("PrimHasDefiningSpecifier") = Usd_Term(UsdPrimHasDefiningSpecifier);
 
-  scope().attr("PrimDefaultPredicate")  = UsdPrimDefaultPredicate;
+  scope().attr("PrimDefaultPredicate") = UsdPrimDefaultPredicate;
   scope().attr("PrimAllPrimsPredicate") = UsdPrimAllPrimsPredicate;
 
   def("TraverseInstanceProxies", (Usd_PrimFlagsPredicate(*)()) & UsdTraverseInstanceProxies);

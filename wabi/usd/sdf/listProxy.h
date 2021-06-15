@@ -54,8 +54,8 @@ WABI_NAMESPACE_BEGIN
 /// insertion sequence).
 ///
 template<class _TypePolicy>
-class SdfListProxy : boost::totally_ordered<SdfListProxy<_TypePolicy>,
-                                            std::vector<typename _TypePolicy::value_type>> {
+class SdfListProxy
+  : boost::totally_ordered<SdfListProxy<_TypePolicy>, std::vector<typename _TypePolicy::value_type>> {
  public:
   typedef _TypePolicy TypePolicy;
   typedef SdfListProxy<TypePolicy> This;
@@ -126,20 +126,19 @@ class SdfListProxy : boost::totally_ordered<SdfListProxy<_TypePolicy>,
   friend class _ConstGetHelper;
 
   template<class Owner, class GetItem>
-  class _Iterator
-      : public boost::iterator_facade<_Iterator<Owner, GetItem>,
-                                      typename boost::remove_cv<typename boost::remove_reference<
-                                          typename GetItem::result_type>::type>::type,
-                                      std::random_access_iterator_tag,
-                                      typename GetItem::result_type> {
+  class _Iterator : public boost::iterator_facade<_Iterator<Owner, GetItem>,
+                                                  typename boost::remove_cv<typename boost::remove_reference<
+                                                    typename GetItem::result_type>::type>::type,
+                                                  std::random_access_iterator_tag,
+                                                  typename GetItem::result_type> {
    public:
     typedef _Iterator<Owner, GetItem> This;
-    typedef boost::iterator_facade<_Iterator<Owner, GetItem>,
-                                   typename boost::remove_cv<typename boost::remove_reference<
-                                       typename GetItem::result_type>::type>::type,
-                                   std::random_access_iterator_tag,
-                                   typename GetItem::result_type>
-        Parent;
+    typedef boost::iterator_facade<
+      _Iterator<Owner, GetItem>,
+      typename boost::remove_cv<typename boost::remove_reference<typename GetItem::result_type>::type>::type,
+      std::random_access_iterator_tag,
+      typename GetItem::result_type>
+      Parent;
     typedef typename Parent::reference reference;
     typedef typename Parent::difference_type difference_type;
 
@@ -165,8 +164,8 @@ class SdfListProxy : boost::totally_ordered<SdfListProxy<_TypePolicy>,
     {
       if (_owner != other._owner) {
         TF_CODING_ERROR(
-            "Comparing SdfListProxy iterators from "
-            "different proxies!");
+          "Comparing SdfListProxy iterators from "
+          "different proxies!");
         return false;
       }
       return _index == other._index;
@@ -214,8 +213,8 @@ class SdfListProxy : boost::totally_ordered<SdfListProxy<_TypePolicy>,
   /// Create a new proxy wrapping the list operation vector specified by
   /// \p op in the underlying \p listEditor.
   SdfListProxy(const boost::shared_ptr<Sdf_ListEditor<TypePolicy>> &editor, SdfListOpType op)
-      : _listEditor(editor),
-        _op(op)
+    : _listEditor(editor),
+      _op(op)
   {}
 
   /// Return an iterator to the start of the sequence.

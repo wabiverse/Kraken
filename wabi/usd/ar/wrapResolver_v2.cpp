@@ -51,53 +51,50 @@ void wrapResolver()
   typedef ArResolver This;
 
   class_<This, boost::noncopyable>("Resolver", no_init)
-      .def("ConfigureResolverForAsset", &This::ConfigureResolverForAsset)
+    .def("ConfigureResolverForAsset", &This::ConfigureResolverForAsset)
 
-      .def("CreateDefaultContext", &This::CreateDefaultContext)
-      .def("CreateDefaultContextForAsset", &This::CreateDefaultContextForAsset, args("assetPath"))
+    .def("CreateDefaultContext", &This::CreateDefaultContext)
+    .def("CreateDefaultContextForAsset", &This::CreateDefaultContextForAsset, args("assetPath"))
 
-      .def("CreateContextFromString",
-           (ArResolverContext(This::*)(const std::string &)) & This::CreateContextFromString,
-           args("contextStr"))
+    .def("CreateContextFromString",
+         (ArResolverContext(This::*)(const std::string &)) & This::CreateContextFromString,
+         args("contextStr"))
 
-      .def("CreateContextFromString",
-           (ArResolverContext(This::*)(const std::string &, const std::string &)) &
-               This::CreateContextFromString,
-           (arg("uriScheme"), arg("contextStr")))
+    .def("CreateContextFromString",
+         (ArResolverContext(This::*)(const std::string &, const std::string &)) &
+           This::CreateContextFromString,
+         (arg("uriScheme"), arg("contextStr")))
 
-      .def("CreateContextFromStrings", &This::CreateContextFromStrings, args("contextStrs"))
+    .def("CreateContextFromStrings", &This::CreateContextFromStrings, args("contextStrs"))
 
-      .def("GetCurrentContext", &This::GetCurrentContext)
+    .def("GetCurrentContext", &This::GetCurrentContext)
 
-      .def("IsRelativePath", &This::IsRelativePath)
-      .def("AnchorRelativePath", &This::AnchorRelativePath)
+    .def("IsRelativePath", &This::IsRelativePath)
+    .def("AnchorRelativePath", &This::AnchorRelativePath)
 
-      .def("IsContextDependentPath", &This::IsContextDependentPath, args("assetPath"))
+    .def("IsContextDependentPath", &This::IsContextDependentPath, args("assetPath"))
 
-      .def("CreateIdentifier",
-           &This::CreateIdentifier,
-           (args("assetPath"), args("anchorAssetPath") = ArResolvedPath()))
-      .def("CreateIdentifierForNewAsset",
-           &This::CreateIdentifierForNewAsset,
-           (args("assetPath"), args("anchorAssetPath") = ArResolvedPath()))
+    .def("CreateIdentifier",
+         &This::CreateIdentifier,
+         (args("assetPath"), args("anchorAssetPath") = ArResolvedPath()))
+    .def("CreateIdentifierForNewAsset",
+         &This::CreateIdentifierForNewAsset,
+         (args("assetPath"), args("anchorAssetPath") = ArResolvedPath()))
 
-      .def("Resolve", &This::Resolve, (args("assetPath")))
-      .def("ResolveForNewAsset", &This::ResolveForNewAsset, (args("assetPath")))
+    .def("Resolve", &This::Resolve, (args("assetPath")))
+    .def("ResolveForNewAsset", &This::ResolveForNewAsset, (args("assetPath")))
 
-      .def("GetAssetInfo", &This::GetAssetInfo, (args("assetPath"), args("resolvedPath")))
-      .def("GetModificationTimestamp",
-           &This::GetModificationTimestamp,
-           (args("assetPath"), args("resolvedPath")))
-      .def("GetExtension", &This::GetExtension, args("assetPath"))
-      .def("RefreshContext", &This::RefreshContext);
+    .def("GetAssetInfo", &This::GetAssetInfo, (args("assetPath"), args("resolvedPath")))
+    .def(
+      "GetModificationTimestamp", &This::GetModificationTimestamp, (args("assetPath"), args("resolvedPath")))
+    .def("GetExtension", &This::GetExtension, args("assetPath"))
+    .def("RefreshContext", &This::RefreshContext);
 
   def("GetResolver", ArGetResolver, return_value_policy<reference_existing_object>());
 
   def("SetPreferredResolver", ArSetPreferredResolver, arg("resolverTypeName"));
 
-  def("GetUnderlyingResolver",
-      ArGetUnderlyingResolver,
-      return_value_policy<reference_existing_object>());
+  def("GetUnderlyingResolver", ArGetUnderlyingResolver, return_value_policy<reference_existing_object>());
 }
 
 TF_REFPTR_CONST_VOLATILE_GET(ArResolver)

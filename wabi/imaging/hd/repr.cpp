@@ -37,8 +37,7 @@ static bool _ReprHasOpinion(const TfToken &reprToken)
 
 bool HdReprSelector::Contains(const TfToken &reprToken) const
 {
-  return (reprToken == refinedToken) || (reprToken == unrefinedToken) ||
-         (reprToken == pointsToken);
+  return (reprToken == refinedToken) || (reprToken == unrefinedToken) || (reprToken == pointsToken);
 }
 
 bool HdReprSelector::IsActiveRepr(size_t topologyIndex) const

@@ -48,14 +48,12 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(GLF_DRAW_TARGETS_NUM_SAMPLES,
-                      4,
-                      "Number of samples greater than 1 forces MSAA.");
+TF_DEFINE_ENV_SETTING(GLF_DRAW_TARGETS_NUM_SAMPLES, 4, "Number of samples greater than 1 forces MSAA.");
 
 static unsigned int GetNumSamples()
 {
   static int reqNumSamples = TfGetEnvSetting(GLF_DRAW_TARGETS_NUM_SAMPLES);
-  unsigned int numSamples  = 1;
+  unsigned int numSamples = 1;
   if (reqNumSamples > 1) {
     numSamples = (reqNumSamples & (reqNumSamples - 1)) ? 1 : reqNumSamples;
   }
@@ -68,13 +66,13 @@ GlfDrawTargetRefPtr GlfDrawTarget::New(GfVec2i const &size, bool requestMSAA)
 }
 
 GlfDrawTarget::GlfDrawTarget(GfVec2i const &size, bool requestMSAA /* =false */)
-    : _framebuffer(0),
-      _framebufferMS(0),
-      _unbindRestoreReadFB(0),
-      _unbindRestoreDrawFB(0),
-      _bindDepth(0),
-      _size(size),
-      _numSamples(1)
+  : _framebuffer(0),
+    _framebufferMS(0),
+    _unbindRestoreReadFB(0),
+    _unbindRestoreDrawFB(0),
+    _bindDepth(0),
+    _size(size),
+    _numSamples(1)
 {
   GarchGLApiLoad();
 
@@ -97,14 +95,14 @@ GlfDrawTargetRefPtr GlfDrawTarget::New(GlfDrawTargetPtr const &drawtarget)
 // clone constructor : generates a new GL framebuffer, but share the texture
 // attachments.
 GlfDrawTarget::GlfDrawTarget(GlfDrawTargetPtr const &drawtarget)
-    : _framebuffer(0),
-      _framebufferMS(0),
-      _unbindRestoreReadFB(0),
-      _unbindRestoreDrawFB(0),
-      _bindDepth(0),
-      _size(drawtarget->_size),
-      _numSamples(drawtarget->_numSamples),
-      _owningContext()
+  : _framebuffer(0),
+    _framebufferMS(0),
+    _unbindRestoreReadFB(0),
+    _unbindRestoreDrawFB(0),
+    _bindDepth(0),
+    _size(drawtarget->_size),
+    _numSamples(drawtarget->_numSamples),
+    _owningContext()
 {
   GarchGLApiLoad();
 
@@ -151,10 +149,7 @@ GlfDrawTarget::~GlfDrawTarget()
   }
 }
 
-void GlfDrawTarget::AddAttachment(std::string const &name,
-                                  GLenum format,
-                                  GLenum type,
-                                  GLenum internalFormat)
+void GlfDrawTarget::AddAttachment(std::string const &name, GLenum format, GLenum type, GLenum internalFormat)
 {
   if (!IsBound()) {
     TF_CODING_ERROR("Cannot change the size of an unbound GlfDrawTarget");
@@ -166,7 +161,7 @@ void GlfDrawTarget::AddAttachment(std::string const &name,
   if (it == attachments.end()) {
 
     AttachmentRefPtr attachment = Attachment::New(
-        (int)attachments.size(), format, type, internalFormat, _size, _numSamples);
+      (int)attachments.size(), format, type, internalFormat, _size, _numSamples);
 
     attachments.insert(AttachmentsMap::value_type(name, attachment));
 
@@ -326,7 +321,7 @@ GLuint GlfDrawTarget::GetFramebufferMSId() const
 // We assume that the framebuffer is currently bound !
 void GlfDrawTarget::_BindAttachment(GlfDrawTarget::AttachmentRefPtr const &a)
 {
-  GLuint id   = a->GetGlTextureName();
+  GLuint id = a->GetGlTextureName();
   GLuint idMS = a->GetGlTextureMSName();
 
   int attach = a->GetAttach();
@@ -355,8 +350,7 @@ void GlfDrawTarget::_BindAttachment(GlfDrawTarget::AttachmentRefPtr const &a)
   // Multisampled framebuffer
   if (HasMSAA()) {
     glBindFramebuffer(GL_FRAMEBUFFER, _framebufferMS);
-    glFramebufferTexture2D(
-        GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D_MULTISAMPLE, idMS, /*level*/ 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D_MULTISAMPLE, idMS, /*level*/ 0);
   }
 
   // Regular framebuffer
@@ -582,21 +576,21 @@ bool GlfDrawTarget::WriteToFile(std::string const &name,
   }
 
   GLenum glInternalFormat = a->GetInternalFormat();
-  bool isSRGB             = (glInternalFormat == GL_SRGB8 || glInternalFormat == GL_SRGB8_ALPHA8);
+  bool isSRGB = (glInternalFormat == GL_SRGB8 || glInternalFormat == GL_SRGB8_ALPHA8);
   HioImage::StorageSpec storage;
-  storage.width   = _size[0];
-  storage.height  = _size[1];
-  storage.format  = GlfGetHioFormat(a->GetFormat(),
+  storage.width = _size[0];
+  storage.height = _size[1];
+  storage.format = GlfGetHioFormat(a->GetFormat(),
                                    a->GetType(),
                                    /* isSRGB */ isSRGB);
   storage.flipped = true;
-  storage.data    = buf.get();
+  storage.data = buf.get();
 
   {
     TRACE_FUNCTION_SCOPE("writing image");
 
     HioImageSharedPtr const image = HioImage::OpenForWriting(filename);
-    const bool writeSuccess       = image && image->Write(storage, metadata);
+    const bool writeSuccess = image && image->Write(storage, metadata);
 
     if (!writeSuccess) {
       TF_RUNTIME_ERROR("Failed to write image to %s", filename.c_str());
@@ -627,14 +621,14 @@ GlfDrawTarget::Attachment::Attachment(int glIndex,
                                       GLenum internalFormat,
                                       GfVec2i size,
                                       unsigned int numSamples)
-    : _textureName(0),
-      _textureNameMS(0),
-      _format(format),
-      _type(type),
-      _internalFormat(internalFormat),
-      _glIndex(glIndex),
-      _size(size),
-      _numSamples(numSamples)
+  : _textureName(0),
+    _textureNameMS(0),
+    _format(format),
+    _type(type),
+    _internalFormat(internalFormat),
+    _glIndex(glIndex),
+    _size(size),
+    _numSamples(numSamples)
 {
   _GenTexture();
 }
@@ -651,15 +645,15 @@ void GlfDrawTarget::Attachment::_GenTexture()
   HF_MALLOC_TAG_FUNCTION();
 
   GLenum internalFormat = _internalFormat;
-  GLenum type           = _type;
-  size_t memoryUsed     = 0;
+  GLenum type = _type;
+  size_t memoryUsed = 0;
 
   if (_format == GL_DEPTH_COMPONENT) {
     internalFormat = GL_DEPTH_COMPONENT32F;
     if (type != GL_FLOAT) {
       TF_CODING_ERROR(
-          "Only GL_FLOAT textures can be used for the"
-          " depth attachment point");
+        "Only GL_FLOAT textures can be used for the"
+        " depth attachment point");
       type = GL_FLOAT;
     }
   }
@@ -697,7 +691,7 @@ void GlfDrawTarget::Attachment::_GenTexture()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     glTexImage2DMultisample(
-        GL_TEXTURE_2D_MULTISAMPLE, _numSamples, _internalFormat, _size[0], _size[1], GL_TRUE);
+      GL_TEXTURE_2D_MULTISAMPLE, _numSamples, _internalFormat, _size[0], _size[1], GL_TRUE);
 
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 
@@ -767,9 +761,7 @@ GlfTexture::BindingVector GlfDrawTarget::Attachment::GetBindings(TfToken const &
                                                                  GLuint samplerName)
 {
   return BindingVector(
-      1,
-      Binding(
-          identifier, GlfTextureTokens->texels, GL_TEXTURE_2D, GetGlTextureName(), samplerName));
+    1, Binding(identifier, GlfTextureTokens->texels, GL_TEXTURE_2D, GetGlTextureName(), samplerName));
 }
 
 GLuint GlfDrawTarget::Attachment::GetGlTextureName()
@@ -784,14 +776,14 @@ VtDictionary GlfDrawTarget::Attachment::GetTextureInfo(bool forceLoad)
 
   VtDictionary info;
 
-  info["width"]          = (int)_size[0];
-  info["height"]         = (int)_size[1];
-  info["memoryUsed"]     = GetMemoryUsed();
-  info["depth"]          = 1;
-  info["format"]         = (int)_internalFormat;
-  info["imageFilePath"]  = TfToken("DrawTarget");
+  info["width"] = (int)_size[0];
+  info["height"] = (int)_size[1];
+  info["memoryUsed"] = GetMemoryUsed();
+  info["depth"] = 1;
+  info["format"] = (int)_internalFormat;
+  info["imageFilePath"] = TfToken("DrawTarget");
   info["referenceCount"] = GetCurrentCount();
-  info["numSamples"]     = _numSamples;
+  info["numSamples"] = _numSamples;
 
   return info;
 }

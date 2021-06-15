@@ -168,8 +168,7 @@ template<class T> class Sdf_LsdMapEditor : public Sdf_MapEditor<T> {
 //
 
 template<class T>
-boost::shared_ptr<Sdf_MapEditor<T>> Sdf_CreateMapEditor(const SdfSpecHandle &owner,
-                                                        const TfToken &field)
+boost::shared_ptr<Sdf_MapEditor<T>> Sdf_CreateMapEditor(const SdfSpecHandle &owner, const TfToken &field)
 {
   return boost::shared_ptr<Sdf_MapEditor<T>>(new Sdf_LsdMapEditor<T>(owner, field));
 }

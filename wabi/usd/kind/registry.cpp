@@ -75,7 +75,7 @@ void KindRegistry::_Register(const TfToken &kind, const TfToken &baseKind)
   }
 
   _KindData data;
-  data.baseKind  = baseKind;
+  data.baseKind = baseKind;
   _kindMap[kind] = data;
 }
 

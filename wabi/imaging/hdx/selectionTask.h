@@ -84,7 +84,7 @@ class HdxSelectionTask : public HdTask {
   HdBufferArrayRangeSharedPtr _selUniformBar;
   HdBufferArrayRangeSharedPtr _selPointColorsBar;
 
-  HdxSelectionTask()                         = delete;
+  HdxSelectionTask() = delete;
   HdxSelectionTask(const HdxSelectionTask &) = delete;
   HdxSelectionTask &operator=(const HdxSelectionTask &) = delete;
 };

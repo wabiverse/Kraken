@@ -108,9 +108,9 @@ class UsdImagingGLLegacyEngine : public TfWeakBase {
                         const UsdPrim &root,
                         const UsdImagingGLRenderParams &params,
                         GfVec3d *outHitPoint,
-                        SdfPath *outHitPrimPath   = NULL,
+                        SdfPath *outHitPrimPath = NULL,
                         SdfPath *outInstancerPath = NULL,
-                        int *outHitInstanceIndex  = NULL);
+                        int *outHitInstanceIndex = NULL);
 
  private:
   bool _SupportsPrimitiveRestartIndex();

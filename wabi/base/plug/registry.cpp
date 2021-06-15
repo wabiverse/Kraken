@@ -79,17 +79,16 @@ bool PlugRegistry::_InsertRegisteredPluginPath(const std::string &path)
 }
 
 template<class ConcurrentVector>
-void PlugRegistry::_RegisterPlugin(const Plug_RegistrationMetadata &metadata,
-                                   ConcurrentVector *newPlugins)
+void PlugRegistry::_RegisterPlugin(const Plug_RegistrationMetadata &metadata, ConcurrentVector *newPlugins)
 {
   std::pair<PlugPluginPtr, bool> newPlugin(TfNullPtr, false);
   switch (metadata.type) {
     default:
     case Plug_RegistrationMetadata::UnknownType:
       TF_CODING_ERROR(
-          "Tried to register a plugin of unknown type "
-          "(maybe from %s)",
-          metadata.pluginPath.c_str());
+        "Tried to register a plugin of unknown type "
+        "(maybe from %s)",
+        metadata.pluginPath.c_str());
       break;
 
     case Plug_RegistrationMetadata::LibraryType:
@@ -138,14 +137,11 @@ PlugPluginPtrVector PlugRegistry::_RegisterPlugins(const std::vector<std::string
     // XXX -- Is this mutex really needed?
     std::lock_guard<std::mutex> lock(_mutex);
     Plug_ReadPlugInfo(
-        pathsToPlugInfo,
-        pathsAreOrdered,
-        std::bind(&PlugRegistry::_InsertRegisteredPluginPath, this, std::placeholders::_1),
-        std::bind(&PlugRegistry::_RegisterPlugin<NewPluginsVec>,
-                  this,
-                  std::placeholders::_1,
-                  &newPlugins),
-        &taskArena);
+      pathsToPlugInfo,
+      pathsAreOrdered,
+      std::bind(&PlugRegistry::_InsertRegisteredPluginPath, this, std::placeholders::_1),
+      std::bind(&PlugRegistry::_RegisterPlugin<NewPluginsVec>, this, std::placeholders::_1, &newPlugins),
+      &taskArena);
   }
 
   if (!newPlugins.empty()) {
@@ -181,7 +177,7 @@ JsValue PlugRegistry::GetDataFromPluginMetaData(TfType type, const string &key) 
 {
   JsValue result;
 
-  string typeName      = type.GetTypeName();
+  string typeName = type.GetTypeName();
   PlugPluginPtr plugin = GetPluginForType(type);
   if (plugin) {
     JsObject dict = plugin->GetMetadataForType(type);
@@ -244,9 +240,9 @@ void Plug_SetPaths(const std::vector<std::string> &paths,
                    const std::vector<std::string> &debugMessages,
                    bool pathsAreOrdered)
 {
-  auto &pathsInfo           = Plug_GetPathsInfo();
-  pathsInfo.paths           = paths;
-  pathsInfo.debugMessages   = debugMessages;
+  auto &pathsInfo = Plug_GetPathsInfo();
+  pathsInfo.paths = paths;
+  pathsInfo.debugMessages = debugMessages;
   pathsInfo.pathsAreOrdered = pathsAreOrdered;
 }
 
@@ -265,8 +261,7 @@ void PlugPlugin::_RegisterAllPlugins()
         TF_DEBUG(PLUG_INFO_SEARCH).Msg("%s", msg.c_str());
       }
       // Register plugins in the tree. This declares TfTypes.
-      result = registry._RegisterPlugins(Plug_GetPathsInfo().paths,
-                                         Plug_GetPathsInfo().pathsAreOrdered);
+      result = registry._RegisterPlugins(Plug_GetPathsInfo().paths, Plug_GetPathsInfo().pathsAreOrdered);
     }
   });
 

@@ -47,18 +47,15 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateCurveVertexCountsAttr(UsdGeomCurves &self,
-                                                 object defaultVal,
-                                                 bool writeSparsely)
+static UsdAttribute _CreateCurveVertexCountsAttr(UsdGeomCurves &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateCurveVertexCountsAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray), writeSparsely);
+  return self.CreateCurveVertexCountsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
+                                          writeSparsely);
 }
 
 static UsdAttribute _CreateWidthsAttr(UsdGeomCurves &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateWidthsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
-                               writeSparsely);
+  return self.CreateWidthsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray), writeSparsely);
 }
 
 static std::string _Repr(const UsdGeomCurves &self)
@@ -76,36 +73,33 @@ void wrapUsdGeomCurves()
   class_<This, bases<UsdGeomPointBased>> cls("Curves");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetCurveVertexCountsAttr", &This::GetCurveVertexCountsAttr)
-      .def("CreateCurveVertexCountsAttr",
-           &_CreateCurveVertexCountsAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetCurveVertexCountsAttr", &This::GetCurveVertexCountsAttr)
+    .def("CreateCurveVertexCountsAttr",
+         &_CreateCurveVertexCountsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetWidthsAttr", &This::GetWidthsAttr)
-      .def("CreateWidthsAttr",
-           &_CreateWidthsAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetWidthsAttr", &This::GetWidthsAttr)
+    .def(
+      "CreateWidthsAttr", &_CreateWidthsAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -165,12 +159,11 @@ static TfPyObjWrapper _ComputeExtent(object points, object widths)
 WRAP_CUSTOM
 {
   _class.def("GetWidthsInterpolation", &UsdGeomCurves::GetWidthsInterpolation)
-      .def("SetWidthsInterpolation", &UsdGeomCurves::SetWidthsInterpolation, arg("interpolation"))
+    .def("SetWidthsInterpolation", &UsdGeomCurves::SetWidthsInterpolation, arg("interpolation"))
 
-      .def("ComputeExtent", &_ComputeExtent, (arg("points"), arg("widths")))
-      .def(
-          "GetCurveCount", &UsdGeomCurves::GetCurveCount, arg("timeCode") = UsdTimeCode::Default())
-      .staticmethod("ComputeExtent");
+    .def("ComputeExtent", &_ComputeExtent, (arg("points"), arg("widths")))
+    .def("GetCurveCount", &UsdGeomCurves::GetCurveCount, arg("timeCode") = UsdTimeCode::Default())
+    .staticmethod("ComputeExtent");
 }
 
 }  // anonymous namespace

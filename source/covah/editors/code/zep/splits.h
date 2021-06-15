@@ -22,8 +22,8 @@ struct Region {
   uint32_t flags = RegionFlags::Expanding;
   NRectf rect;
   NVec2f fixed_size = NVec2f(0.0f, 0.0f);
-  NVec2f padding    = NVec2f(0.0f, 0.0f);
-  NVec4f margin     = NVec4f(0.0f, 0.0f, 0.0f, 0.0f);
+  NVec2f padding = NVec2f(0.0f, 0.0f);
+  NVec4f margin = NVec4f(0.0f, 0.0f, 0.0f, 0.0f);
   std::string name;
 
   Region *pParent = nullptr;
@@ -33,7 +33,7 @@ struct Region {
 inline std::ostream &operator<<(std::ostream &str, const Region &region)
 {
   static int indent = 0;
-  auto do_indent    = [&str](int sz) {
+  auto do_indent = [&str](int sz) {
     for (int i = 0; i < sz; i++)
       str << " ";
   };

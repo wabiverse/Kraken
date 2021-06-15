@@ -66,9 +66,9 @@ WABI_NAMESPACE_BEGIN
 
 template<class Key,
          class Mapped,
-         class HashFn   = std::hash<Key>,
+         class HashFn = std::hash<Key>,
          class EqualKey = std::equal_to<Key>,
-         class Alloc    = std::allocator<std::pair<const Key, Mapped>>>
+         class Alloc = std::allocator<std::pair<const Key, Mapped>>>
 class TfHashMap : private std::unordered_map<Key, Mapped, HashFn, EqualKey, Alloc> {
   typedef std::unordered_map<Key, Mapped, HashFn, EqualKey, Alloc> _Base;
 
@@ -92,21 +92,21 @@ class TfHashMap : private std::unordered_map<Key, Mapped, HashFn, EqualKey, Allo
   TfHashMap() : _Base()
   {}
   explicit TfHashMap(size_type n,
-                     const hasher &hf            = hasher(),
-                     const key_equal &eql        = key_equal(),
+                     const hasher &hf = hasher(),
+                     const key_equal &eql = key_equal(),
                      const allocator_type &alloc = allocator_type())
-      : _Base(n, hf, eql, alloc)
+    : _Base(n, hf, eql, alloc)
   {}
   explicit TfHashMap(const allocator_type &alloc) : _Base(alloc)
   {}
   template<class InputIterator>
   TfHashMap(InputIterator first,
             InputIterator last,
-            size_type n                 = 0,
-            const hasher &hf            = hasher(),
-            const key_equal &eql        = key_equal(),
+            size_type n = 0,
+            const hasher &hf = hasher(),
+            const key_equal &eql = key_equal(),
             const allocator_type &alloc = allocator_type())
-      : _Base(first, last, n, hf, eql, alloc)
+    : _Base(first, last, n, hf, eql, alloc)
   {}
   TfHashMap(const TfHashMap &other) : _Base(other)
   {}
@@ -200,9 +200,9 @@ class TfHashMap : private std::unordered_map<Key, Mapped, HashFn, EqualKey, Allo
 
 template<class Key,
          class Mapped,
-         class HashFn   = std::hash<Key>,
+         class HashFn = std::hash<Key>,
          class EqualKey = std::equal_to<Key>,
-         class Alloc    = std::allocator<std::pair<const Key, Mapped>>>
+         class Alloc = std::allocator<std::pair<const Key, Mapped>>>
 class TfHashMultiMap : private std::unordered_multimap<Key, Mapped, HashFn, EqualKey, Alloc> {
   typedef std::unordered_multimap<Key, Mapped, HashFn, EqualKey, Alloc> _Base;
 
@@ -226,21 +226,21 @@ class TfHashMultiMap : private std::unordered_multimap<Key, Mapped, HashFn, Equa
   TfHashMultiMap() : _Base()
   {}
   explicit TfHashMultiMap(size_type n,
-                          const hasher &hf            = hasher(),
-                          const key_equal &eql        = key_equal(),
+                          const hasher &hf = hasher(),
+                          const key_equal &eql = key_equal(),
                           const allocator_type &alloc = allocator_type())
-      : _Base(n, hf, eql, alloc)
+    : _Base(n, hf, eql, alloc)
   {}
   explicit TfHashMultiMap(const allocator_type &alloc) : _Base(alloc)
   {}
   template<class InputIterator>
   TfHashMultiMap(InputIterator first,
                  InputIterator last,
-                 size_type n                 = 0,
-                 const hasher &hf            = hasher(),
-                 const key_equal &eql        = key_equal(),
+                 size_type n = 0,
+                 const hasher &hf = hasher(),
+                 const key_equal &eql = key_equal(),
                  const allocator_type &alloc = allocator_type())
-      : _Base(first, last, n, hf, eql, alloc)
+    : _Base(first, last, n, hf, eql, alloc)
   {}
   TfHashMultiMap(const TfHashMultiMap &other) : _Base(other)
   {}
@@ -336,9 +336,9 @@ class TfHashMultiMap : private std::unordered_multimap<Key, Mapped, HashFn, Equa
 
 template<class Key,
          class Mapped,
-         class HashFn   = __gnu_cxx::hash<Key>,
+         class HashFn = __gnu_cxx::hash<Key>,
          class EqualKey = __gnu_cxx::equal_to<Key>,
-         class Alloc    = __gnu_cxx::allocator<Mapped>>
+         class Alloc = __gnu_cxx::allocator<Mapped>>
 class TfHashMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, Alloc> {
 
   using _Base = __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, Alloc>;
@@ -364,10 +364,10 @@ class TfHashMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, All
   {}
 
   explicit TfHashMap(size_type n,
-                     const hasher &hf            = hasher(),
-                     const key_equal &eql        = key_equal(),
+                     const hasher &hf = hasher(),
+                     const key_equal &eql = key_equal(),
                      const allocator_type &alloc = allocator_type())
-      : _Base(n, hf, eql, alloc)
+    : _Base(n, hf, eql, alloc)
   {}
 
   explicit TfHashMap(const allocator_type &alloc) : _Base(0, hasher(), key_equal(), alloc)
@@ -376,11 +376,11 @@ class TfHashMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, All
   template<class InputIterator>
   TfHashMap(InputIterator first,
             InputIterator last,
-            size_type n                 = 0,
-            const hasher &hf            = hasher(),
-            const key_equal &eql        = key_equal(),
+            size_type n = 0,
+            const hasher &hf = hasher(),
+            const key_equal &eql = key_equal(),
             const allocator_type &alloc = allocator_type())
-      : _Base(first, last, n, hf, eql, alloc)
+    : _Base(first, last, n, hf, eql, alloc)
   {}
 
   TfHashMap(const TfHashMap &other) : _Base(other)
@@ -516,9 +516,9 @@ class TfHashMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, All
 
 template<class Key,
          class Mapped,
-         class HashFn   = __gnu_cxx::hash<Key>,
+         class HashFn = __gnu_cxx::hash<Key>,
          class EqualKey = __gnu_cxx::equal_to<Key>,
-         class Alloc    = __gnu_cxx::allocator<Mapped>>
+         class Alloc = __gnu_cxx::allocator<Mapped>>
 class TfHashMultiMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, Alloc> {
 
   using _Base = __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, Alloc>;
@@ -543,21 +543,21 @@ class TfHashMultiMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey
   TfHashMultiMap() : _Base()
   {}
   explicit TfHashMultiMap(size_type n,
-                          const hasher &hf            = hasher(),
-                          const key_equal &eql        = key_equal(),
+                          const hasher &hf = hasher(),
+                          const key_equal &eql = key_equal(),
                           const allocator_type &alloc = allocator_type())
-      : _Base(n, hf, eql, alloc)
+    : _Base(n, hf, eql, alloc)
   {}
   explicit TfHashMultiMap(const allocator_type &alloc) : _Base(0, hasher(), key_equal(), alloc)
   {}
   template<class InputIterator>
   TfHashMultiMap(InputIterator first,
                  InputIterator last,
-                 size_type n                 = 0,
-                 const hasher &hf            = hasher(),
-                 const key_equal &eql        = key_equal(),
+                 size_type n = 0,
+                 const hasher &hf = hasher(),
+                 const key_equal &eql = key_equal(),
                  const allocator_type &alloc = allocator_type())
-      : _Base(first, last, n, hf, eql, alloc)
+    : _Base(first, last, n, hf, eql, alloc)
   {}
   TfHashMultiMap(const TfHashMultiMap &other) : _Base(other)
   {}

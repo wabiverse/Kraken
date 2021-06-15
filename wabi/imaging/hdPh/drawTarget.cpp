@@ -29,18 +29,13 @@ WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PUBLIC_TOKENS(HdPhDrawTargetTokens, HDPH_DRAW_TARGET_TOKENS);
 
-HdPhDrawTarget::HdPhDrawTarget(SdfPath const &id)
-    : HdSprim(id),
-      _enabled(true),
-      _resolution(512, 512)
+HdPhDrawTarget::HdPhDrawTarget(SdfPath const &id) : HdSprim(id), _enabled(true), _resolution(512, 512)
 {}
 
 HdPhDrawTarget::~HdPhDrawTarget() = default;
 
 /*virtual*/
-void HdPhDrawTarget::Sync(HdSceneDelegate *sceneDelegate,
-                          HdRenderParam *renderParam,
-                          HdDirtyBits *dirtyBits)
+void HdPhDrawTarget::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -85,13 +80,13 @@ void HdPhDrawTarget::Sync(HdSceneDelegate *sceneDelegate,
   if (bits & DirtyDTAovBindings) {
     const VtValue aovBindingsValue = sceneDelegate->Get(id, HdPhDrawTargetTokens->aovBindings);
     _drawTargetRenderPassState.SetAovBindings(
-        aovBindingsValue.GetWithDefault<HdRenderPassAovBindingVector>({}));
+      aovBindingsValue.GetWithDefault<HdRenderPassAovBindingVector>({}));
   }
 
   if (bits & DirtyDTDepthPriority) {
     const VtValue depthPriorityValue = sceneDelegate->Get(id, HdPhDrawTargetTokens->depthPriority);
     _drawTargetRenderPassState.SetDepthPriority(
-        depthPriorityValue.GetWithDefault<HdDepthPriority>(HdDepthPriorityNearest));
+      depthPriorityValue.GetWithDefault<HdDepthPriority>(HdDepthPriorityNearest));
   }
 
   if (bits & DirtyDTCollection) {

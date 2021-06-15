@@ -252,8 +252,7 @@ class Tf_RegistryInit {
 /// registered in more than one namespace.
 ///
 /// \hideinitializer
-#define TF_REGISTRY_FUNCTION_WITH_TAG(KEY_TYPE, TAG) \
-  TF_REGISTRY_DEFINE(KEY_TYPE, TF_PP_CAT(TAG, __LINE__))
+#define TF_REGISTRY_FUNCTION_WITH_TAG(KEY_TYPE, TAG) TF_REGISTRY_DEFINE(KEY_TYPE, TF_PP_CAT(TAG, __LINE__))
 
 WABI_NAMESPACE_END
 

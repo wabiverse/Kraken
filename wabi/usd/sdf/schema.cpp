@@ -56,8 +56,7 @@ WABI_NAMESPACE_BEGIN
 TF_DEFINE_PRIVATE_TOKENS(_tokens,
 
                          ((Default, "default"))((DisplayGroup,
-                                                 "displayGroup"))((Type, "type"))((AppliesTo,
-                                                                                   "appliesTo")));
+                                                 "displayGroup"))((Type, "type"))((AppliesTo, "appliesTo")));
 
 //
 // SdfSchemaBase::FieldDefinition
@@ -66,16 +65,16 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 SdfSchemaBase::FieldDefinition::FieldDefinition(const SdfSchemaBase &schema,
                                                 const TfToken &name,
                                                 const VtValue &fallbackValue)
-    : _schema(schema),
-      _name(name),
-      _fallbackValue(fallbackValue),
-      _isPlugin(false),
-      _isReadOnly(false),
-      _holdsChildren(false),
-      _valueValidator(nullptr),
-      _listValueValidator(nullptr),
-      _mapKeyValidator(nullptr),
-      _mapValueValidator(nullptr)
+  : _schema(schema),
+    _name(name),
+    _fallbackValue(fallbackValue),
+    _isPlugin(false),
+    _isReadOnly(false),
+    _holdsChildren(false),
+    _valueValidator(nullptr),
+    _listValueValidator(nullptr),
+    _mapKeyValidator(nullptr),
+    _mapValueValidator(nullptr)
 {}
 
 const TfToken &SdfSchemaBase::FieldDefinition::GetName() const
@@ -129,7 +128,7 @@ SdfSchemaBase::FieldDefinition &SdfSchemaBase::FieldDefinition::ReadOnly()
 SdfSchemaBase::FieldDefinition &SdfSchemaBase::FieldDefinition::Children()
 {
   _holdsChildren = true;
-  _isReadOnly    = true;
+  _isReadOnly = true;
   return *this;
 }
 
@@ -224,21 +223,19 @@ bool SdfSchemaBase::SpecDefinition::IsValidField(const TfToken &name) const
   return _fields.find(name) != _fields.end();
 }
 
-SdfSchemaBase::_SpecDefiner &SdfSchemaBase::_SpecDefiner::MetadataField(const TfToken &name,
-                                                                        bool required)
+SdfSchemaBase::_SpecDefiner &SdfSchemaBase::_SpecDefiner::MetadataField(const TfToken &name, bool required)
 {
   return MetadataField(name, TfToken(), required);
 }
 
-SdfSchemaBase::_SpecDefiner &SdfSchemaBase::_SpecDefiner::MetadataField(
-    const TfToken &name,
-    const TfToken &displayGroup,
-    bool required)
+SdfSchemaBase::_SpecDefiner &SdfSchemaBase::_SpecDefiner::MetadataField(const TfToken &name,
+                                                                        const TfToken &displayGroup,
+                                                                        bool required)
 {
   _FieldInfo fieldInfo;
-  fieldInfo.metadata             = true;
+  fieldInfo.metadata = true;
   fieldInfo.metadataDisplayGroup = displayGroup;
-  fieldInfo.required             = required;
+  fieldInfo.required = required;
 
   _definition->_AddField(name, fieldInfo);
   if (required)
@@ -259,15 +256,13 @@ SdfSchemaBase::_SpecDefiner &SdfSchemaBase::_SpecDefiner::Field(const TfToken &n
 
 void SdfSchemaBase::SpecDefinition::_AddField(const TfToken &name, const _FieldInfo &fieldInfo)
 {
-  std::pair<_FieldMap::iterator, bool> insertStatus = _fields.insert(
-      std::make_pair(name, fieldInfo));
+  std::pair<_FieldMap::iterator, bool> insertStatus = _fields.insert(std::make_pair(name, fieldInfo));
   if (!insertStatus.second) {
     TF_CODING_ERROR("Duplicate registration for field '%s'", name.GetText());
     return;
   }
   if (fieldInfo.required) {
-    _requiredFields.insert(std::lower_bound(_requiredFields.begin(), _requiredFields.end(), name),
-                           name);
+    _requiredFields.insert(std::lower_bound(_requiredFields.begin(), _requiredFields.end(), name), name);
   }
 }
 
@@ -323,8 +318,7 @@ static SdfAllowed _ValidateNamespacedIdentifierToken(const SdfSchemaBase &, cons
   return SdfSchemaBase::IsValidNamespacedIdentifier(value.Get<TfToken>());
 }
 
-static SdfAllowed _ValidateIsSceneDescriptionValue(const SdfSchemaBase &schema,
-                                                   const VtValue &value)
+static SdfAllowed _ValidateIsSceneDescriptionValue(const SdfSchemaBase &schema, const VtValue &value)
 {
   return schema.IsValidValue(value);
 }
@@ -376,12 +370,12 @@ struct Sdf_SchemaFieldTypeRegistrar {
 
 static void _AddStandardTypesToRegistry(Sdf_ValueTypeRegistry *r)
 {
-  using T                 = Sdf_ValueTypeRegistry::Type;
-  const TfEnum &length    = SdfDefaultUnit(TfEnum(SdfLengthUnit(0)));
-  const TfToken &point    = SdfValueRoleNames->Point;
-  const TfToken &vector   = SdfValueRoleNames->Vector;
-  const TfToken &normal   = SdfValueRoleNames->Normal;
-  const TfToken &color    = SdfValueRoleNames->Color;
+  using T = Sdf_ValueTypeRegistry::Type;
+  const TfEnum &length = SdfDefaultUnit(TfEnum(SdfLengthUnit(0)));
+  const TfToken &point = SdfValueRoleNames->Point;
+  const TfToken &vector = SdfValueRoleNames->Vector;
+  const TfToken &normal = SdfValueRoleNames->Normal;
+  const TfToken &color = SdfValueRoleNames->Color;
   const TfToken &texCoord = SdfValueRoleNames->TextureCoordinate;
 
   // Make sure TfTypes are registered.
@@ -454,12 +448,12 @@ static void _AddStandardTypesToRegistry(Sdf_ValueTypeRegistry *r)
 
 static void _AddLegacyTypesToRegistry(Sdf_ValueTypeRegistry *r)
 {
-  using T               = Sdf_ValueTypeRegistry::Type;
-  const TfEnum &length  = SdfDefaultUnit(TfEnum(SdfLengthUnit(0)));
-  const TfToken &point  = SdfValueRoleNames->Point;
+  using T = Sdf_ValueTypeRegistry::Type;
+  const TfEnum &length = SdfDefaultUnit(TfEnum(SdfLengthUnit(0)));
+  const TfToken &point = SdfValueRoleNames->Point;
   const TfToken &vector = SdfValueRoleNames->Vector;
   const TfToken &normal = SdfValueRoleNames->Normal;
-  const TfToken &color  = SdfValueRoleNames->Color;
+  const TfToken &color = SdfValueRoleNames->Color;
 
   // XXX: Legacy types.  We can remove these when assets are
   //      updated.  parserHelpers.cpp adds support for reading
@@ -493,8 +487,7 @@ static void _AddLegacyTypesToRegistry(Sdf_ValueTypeRegistry *r)
   r->AddType(T("Matrix3d", GfMatrix3d(1.0)).Dimensions({3, 3}));
   r->AddType(T("Matrix4d", GfMatrix4d(1.0)).Dimensions({4, 4}));
   r->AddType(T("Frame", GfMatrix4d(1.0)).Role(SdfValueRoleNames->Frame).Dimensions({4, 4}));
-  r->AddType(
-      T("Transform", GfMatrix4d(1.0)).Role(SdfValueRoleNames->Transform).Dimensions({4, 4}));
+  r->AddType(T("Transform", GfMatrix4d(1.0)).Role(SdfValueRoleNames->Transform).Dimensions({4, 4}));
   r->AddType(T("PointIndex", int()).Role(SdfValueRoleNames->PointIndex));
   r->AddType(T("EdgeIndex", int()).Role(SdfValueRoleNames->EdgeIndex));
   r->AddType(T("FaceIndex", int()).Role(SdfValueRoleNames->FaceIndex));
@@ -503,7 +496,7 @@ static void _AddLegacyTypesToRegistry(Sdf_ValueTypeRegistry *r)
 class SdfSchemaBase::_ValueTypeRegistrar::Type::_Impl {
  public:
   _Impl(const TfToken &name, const VtValue &defaultValue, const VtValue &defaultArrayValue)
-      : type(name, defaultValue, defaultArrayValue)
+    : type(name, defaultValue, defaultArrayValue)
   {}
 
   _Impl(const TfToken &name, const TfType &type_) : type(name, type_)
@@ -515,38 +508,36 @@ class SdfSchemaBase::_ValueTypeRegistrar::Type::_Impl {
 SdfSchemaBase::_ValueTypeRegistrar::Type::Type(const TfToken &name,
                                                const VtValue &defaultValue,
                                                const VtValue &defaultArrayValue)
-    : _impl(new _Impl(name, defaultValue, defaultArrayValue))
+  : _impl(new _Impl(name, defaultValue, defaultArrayValue))
 {}
 
 SdfSchemaBase::_ValueTypeRegistrar::Type::Type(const TfToken &name, const TfType &type)
-    : _impl(new _Impl(name, type))
+  : _impl(new _Impl(name, type))
 {}
 
 SdfSchemaBase::_ValueTypeRegistrar::Type::~Type() = default;
 
 SdfSchemaBase::_ValueTypeRegistrar::Type &SdfSchemaBase::_ValueTypeRegistrar::Type::CPPTypeName(
-    const std::string &cppTypeName)
+  const std::string &cppTypeName)
 {
   _impl->type.CPPTypeName(cppTypeName);
   return *this;
 }
 
 SdfSchemaBase::_ValueTypeRegistrar::Type &SdfSchemaBase::_ValueTypeRegistrar::Type::Dimensions(
-    const SdfTupleDimensions &dims)
+  const SdfTupleDimensions &dims)
 {
   _impl->type.Dimensions(dims);
   return *this;
 }
 
-SdfSchemaBase::_ValueTypeRegistrar::Type &SdfSchemaBase::_ValueTypeRegistrar::Type::DefaultUnit(
-    TfEnum unit)
+SdfSchemaBase::_ValueTypeRegistrar::Type &SdfSchemaBase::_ValueTypeRegistrar::Type::DefaultUnit(TfEnum unit)
 {
   _impl->type.DefaultUnit(unit);
   return *this;
 }
 
-SdfSchemaBase::_ValueTypeRegistrar::Type &SdfSchemaBase::_ValueTypeRegistrar::Type::Role(
-    const TfToken &role)
+SdfSchemaBase::_ValueTypeRegistrar::Type &SdfSchemaBase::_ValueTypeRegistrar::Type::Role(const TfToken &role)
 {
   _impl->type.Role(role);
   return *this;
@@ -559,7 +550,7 @@ SdfSchemaBase::_ValueTypeRegistrar::Type &SdfSchemaBase::_ValueTypeRegistrar::Ty
 }
 
 SdfSchemaBase::_ValueTypeRegistrar::_ValueTypeRegistrar(Sdf_ValueTypeRegistry *registry)
-    : _registry(registry)
+  : _registry(registry)
 {
   // Do nothing
 }
@@ -618,8 +609,8 @@ void SdfSchemaBase::_RegisterStandardFields()
   _DoRegisterField(SdfFieldKeys->Active, true);
   _DoRegisterField(SdfFieldKeys->AllowedTokens, VtTokenArray());
   _DoRegisterField(SdfFieldKeys->AssetInfo, VtDictionary())
-      .MapKeyValidator(&_ValidateIdentifier)
-      .MapValueValidator(&_ValidateIsSceneDescriptionValue);
+    .MapKeyValidator(&_ValidateIdentifier)
+    .MapValueValidator(&_ValidateIsSceneDescriptionValue);
   _DoRegisterField(SdfFieldKeys->TimeSamples, SdfTimeSampleMap());
   _DoRegisterField(SdfFieldKeys->ColorConfiguration, SdfAssetPath());
   _DoRegisterField(SdfFieldKeys->ColorManagementSystem, TfToken());
@@ -630,18 +621,17 @@ void SdfSchemaBase::_RegisterStandardFields()
   // connections requires adding/removing children specs, which we are
   // disallowing via the Info API.
   _DoRegisterField(SdfFieldKeys->ConnectionPaths, SdfPathListOp())
-      .ReadOnly()
-      .ListValueValidator(&_ValidateAttributeConnectionPath);
+    .ReadOnly()
+    .ListValueValidator(&_ValidateAttributeConnectionPath);
 
   _DoRegisterField(SdfFieldKeys->Custom, false);
   _DoRegisterField(SdfFieldKeys->CustomData, VtDictionary())
-      .MapKeyValidator(&_ValidateIdentifier)
-      .MapValueValidator(&_ValidateIsSceneDescriptionValue);
+    .MapKeyValidator(&_ValidateIdentifier)
+    .MapValueValidator(&_ValidateIsSceneDescriptionValue);
   _DoRegisterField(SdfFieldKeys->CustomLayerData, VtDictionary())
-      .MapKeyValidator(&_ValidateIdentifier)
-      .MapValueValidator(&_ValidateIsSceneDescriptionValue);
-  _DoRegisterField(SdfFieldKeys->Default, VtValue())
-      .ValueValidator(&_ValidateIsSceneDescriptionValue);
+    .MapKeyValidator(&_ValidateIdentifier)
+    .MapValueValidator(&_ValidateIsSceneDescriptionValue);
+  _DoRegisterField(SdfFieldKeys->Default, VtValue()).ValueValidator(&_ValidateIsSceneDescriptionValue);
   _DoRegisterField(SdfFieldKeys->DisplayGroup, "");
   _DoRegisterField(SdfFieldKeys->DisplayGroupOrder, VtStringArray());
   _DoRegisterField(SdfFieldKeys->DisplayName, "");
@@ -655,193 +645,189 @@ void SdfSchemaBase::_RegisterStandardFields()
   _DoRegisterField(SdfFieldKeys->Hidden, false);
   _DoRegisterField(SdfFieldKeys->HasOwnedSubLayers, false);
   _DoRegisterField(SdfFieldKeys->Instanceable, false);
-  _DoRegisterField(SdfFieldKeys->InheritPaths, SdfPathListOp())
-      .ListValueValidator(&_ValidateInheritPath);
+  _DoRegisterField(SdfFieldKeys->InheritPaths, SdfPathListOp()).ListValueValidator(&_ValidateInheritPath);
   _DoRegisterField(SdfFieldKeys->Kind, TfToken());
   _DoRegisterField(SdfFieldKeys->Owner, "");
   _DoRegisterField(SdfFieldKeys->PrimOrder, std::vector<TfToken>())
-      .ListValueValidator(&_ValidateIdentifierToken);
+    .ListValueValidator(&_ValidateIdentifierToken);
   _DoRegisterField(SdfFieldKeys->NoLoadHint, false);
-  _DoRegisterField(SdfFieldKeys->Payload, SdfPayloadListOp())
-      .ListValueValidator(&_ValidatePayload);
+  _DoRegisterField(SdfFieldKeys->Payload, SdfPayloadListOp()).ListValueValidator(&_ValidatePayload);
   _DoRegisterField(SdfFieldKeys->Permission, SdfPermissionPublic);
   _DoRegisterField(SdfFieldKeys->Prefix, "");
   _DoRegisterField(SdfFieldKeys->PrefixSubstitutions, VtDictionary())
-      .MapKeyValidator(&_ValidateIsNonEmptyString)
-      .MapValueValidator(&_ValidateIsString);
+    .MapKeyValidator(&_ValidateIsNonEmptyString)
+    .MapValueValidator(&_ValidateIsString);
   _DoRegisterField(SdfFieldKeys->PropertyOrder, std::vector<TfToken>())
-      .ListValueValidator(&_ValidateNamespacedIdentifierToken);
-  _DoRegisterField(SdfFieldKeys->References, SdfReferenceListOp())
-      .ListValueValidator(&_ValidateReference);
+    .ListValueValidator(&_ValidateNamespacedIdentifierToken);
+  _DoRegisterField(SdfFieldKeys->References, SdfReferenceListOp()).ListValueValidator(&_ValidateReference);
   _DoRegisterField(SdfFieldKeys->SessionOwner, "");
-  _DoRegisterField(SdfFieldKeys->Specializes, SdfPathListOp())
-      .ListValueValidator(&_ValidateSpecializesPath);
+  _DoRegisterField(SdfFieldKeys->Specializes, SdfPathListOp()).ListValueValidator(&_ValidateSpecializesPath);
   _DoRegisterField(SdfFieldKeys->Suffix, "");
   _DoRegisterField(SdfFieldKeys->SuffixSubstitutions, VtDictionary())
-      .MapKeyValidator(&_ValidateIsNonEmptyString)
-      .MapValueValidator(&_ValidateIsString);
+    .MapKeyValidator(&_ValidateIsNonEmptyString)
+    .MapValueValidator(&_ValidateIsString);
 
   // See comment on SdfFieldKeys->ConnectionPaths for why this is read-only.
   _DoRegisterField(SdfFieldKeys->TargetPaths, SdfPathListOp())
-      .ReadOnly()
-      .ListValueValidator(&_ValidateRelationshipTargetPath);
+    .ReadOnly()
+    .ListValueValidator(&_ValidateRelationshipTargetPath);
 
   _DoRegisterField(SdfFieldKeys->Relocates, SdfRelocatesMap())
-      .MapKeyValidator(&_ValidateRelocatesPath)
-      .MapValueValidator(&_ValidateRelocatesPath);
+    .MapKeyValidator(&_ValidateRelocatesPath)
+    .MapValueValidator(&_ValidateRelocatesPath);
   _DoRegisterField(SdfFieldKeys->Specifier, SdfSpecifierOver);
   _DoRegisterField(SdfFieldKeys->StartFrame, 0.0);
   _DoRegisterField(SdfFieldKeys->StartTimeCode, 0.0);
   _DoRegisterField(SdfFieldKeys->SubLayers, std::vector<std::string>())
-      .ListValueValidator(&_ValidateSubLayer);
+    .ListValueValidator(&_ValidateSubLayer);
   _DoRegisterField(SdfFieldKeys->SubLayerOffsets, std::vector<SdfLayerOffset>());
   _DoRegisterField(SdfFieldKeys->SymmetricPeer, "");
   _DoRegisterField(SdfFieldKeys->SymmetryArgs, VtDictionary())
-      .MapKeyValidator(&_ValidateIdentifier)
-      .MapValueValidator(&_ValidateIsSceneDescriptionValue);
+    .MapKeyValidator(&_ValidateIdentifier)
+    .MapValueValidator(&_ValidateIsSceneDescriptionValue);
   _DoRegisterField(SdfFieldKeys->SymmetryArguments, VtDictionary())
-      .MapKeyValidator(&_ValidateIdentifier)
-      .MapValueValidator(&_ValidateIsSceneDescriptionValue);
+    .MapKeyValidator(&_ValidateIdentifier)
+    .MapValueValidator(&_ValidateIsSceneDescriptionValue);
   _DoRegisterField(SdfFieldKeys->SymmetryFunction, TfToken());
   _DoRegisterField(SdfFieldKeys->TimeCodesPerSecond, 24.0);
   _DoRegisterField(SdfFieldKeys->TypeName, TfToken());
   _DoRegisterField(SdfFieldKeys->VariantSetNames, SdfStringListOp())
-      .ListValueValidator(&_ValidateIdentifier);
+    .ListValueValidator(&_ValidateIdentifier);
   _DoRegisterField(SdfFieldKeys->VariantSelection, SdfVariantSelectionMap())
-      .MapValueValidator(&_ValidateVariantIdentifier);
+    .MapValueValidator(&_ValidateVariantIdentifier);
   _DoRegisterField(SdfFieldKeys->Variability, SdfVariabilityVarying);
 
   // Children fields.
   _DoRegisterField(SdfChildrenKeys->ConnectionChildren, std::vector<SdfPath>())
-      .Children()
-      .ListValueValidator(&_ValidateAttributeConnectionPath);
+    .Children()
+    .ListValueValidator(&_ValidateAttributeConnectionPath);
   _DoRegisterField(SdfChildrenKeys->ExpressionChildren, std::vector<TfToken>()).Children();
   _DoRegisterField(SdfChildrenKeys->MapperArgChildren, std::vector<TfToken>())
-      .Children()
-      .ListValueValidator(&_ValidateIdentifier);
+    .Children()
+    .ListValueValidator(&_ValidateIdentifier);
   _DoRegisterField(SdfChildrenKeys->MapperChildren, std::vector<SdfPath>())
-      .Children()
-      .ListValueValidator(&_ValidateAttributeConnectionPath);
+    .Children()
+    .ListValueValidator(&_ValidateAttributeConnectionPath);
   _DoRegisterField(SdfChildrenKeys->PrimChildren, std::vector<TfToken>())
-      .Children()
-      .ListValueValidator(&_ValidateIdentifier);
+    .Children()
+    .ListValueValidator(&_ValidateIdentifier);
   _DoRegisterField(SdfChildrenKeys->PropertyChildren, std::vector<TfToken>())
-      .Children()
-      .ListValueValidator(&_ValidateIdentifier);
+    .Children()
+    .ListValueValidator(&_ValidateIdentifier);
   _DoRegisterField(SdfChildrenKeys->RelationshipTargetChildren, std::vector<SdfPath>())
-      .Children()
-      .ListValueValidator(&_ValidateRelationshipTargetPath);
+    .Children()
+    .ListValueValidator(&_ValidateRelationshipTargetPath);
   _DoRegisterField(SdfChildrenKeys->VariantChildren, std::vector<TfToken>())
-      .Children()
-      .ListValueValidator(&_ValidateVariantIdentifier);
+    .Children()
+    .ListValueValidator(&_ValidateVariantIdentifier);
   _DoRegisterField(SdfChildrenKeys->VariantSetChildren, std::vector<TfToken>())
-      .Children()
-      .ListValueValidator(&_ValidateIdentifier);
+    .Children()
+    .ListValueValidator(&_ValidateIdentifier);
 
   //
   // Spec definitions
   //
 
   _Define(SdfSpecTypePseudoRoot)
-      .MetadataField(SdfFieldKeys->ColorConfiguration)
-      .MetadataField(SdfFieldKeys->ColorManagementSystem)
-      .Field(SdfFieldKeys->Comment)
-      .MetadataField(SdfFieldKeys->CustomLayerData)
-      .MetadataField(SdfFieldKeys->DefaultPrim)
-      .MetadataField(SdfFieldKeys->Documentation)
-      .MetadataField(SdfFieldKeys->EndTimeCode)
-      .MetadataField(SdfFieldKeys->FramesPerSecond)
-      .MetadataField(SdfFieldKeys->FramePrecision)
-      .MetadataField(SdfFieldKeys->HasOwnedSubLayers)
-      .MetadataField(SdfFieldKeys->Owner)
-      .MetadataField(SdfFieldKeys->SessionOwner)
-      .MetadataField(SdfFieldKeys->StartTimeCode)
-      .MetadataField(SdfFieldKeys->TimeCodesPerSecond)
-      .MetadataField(SdfFieldKeys->EndFrame)
-      .MetadataField(SdfFieldKeys->StartFrame)
+    .MetadataField(SdfFieldKeys->ColorConfiguration)
+    .MetadataField(SdfFieldKeys->ColorManagementSystem)
+    .Field(SdfFieldKeys->Comment)
+    .MetadataField(SdfFieldKeys->CustomLayerData)
+    .MetadataField(SdfFieldKeys->DefaultPrim)
+    .MetadataField(SdfFieldKeys->Documentation)
+    .MetadataField(SdfFieldKeys->EndTimeCode)
+    .MetadataField(SdfFieldKeys->FramesPerSecond)
+    .MetadataField(SdfFieldKeys->FramePrecision)
+    .MetadataField(SdfFieldKeys->HasOwnedSubLayers)
+    .MetadataField(SdfFieldKeys->Owner)
+    .MetadataField(SdfFieldKeys->SessionOwner)
+    .MetadataField(SdfFieldKeys->StartTimeCode)
+    .MetadataField(SdfFieldKeys->TimeCodesPerSecond)
+    .MetadataField(SdfFieldKeys->EndFrame)
+    .MetadataField(SdfFieldKeys->StartFrame)
 
-      .Field(SdfChildrenKeys->PrimChildren)
-      .Field(SdfFieldKeys->PrimOrder)
-      .Field(SdfFieldKeys->SubLayers)
-      .Field(SdfFieldKeys->SubLayerOffsets);
+    .Field(SdfChildrenKeys->PrimChildren)
+    .Field(SdfFieldKeys->PrimOrder)
+    .Field(SdfFieldKeys->SubLayers)
+    .Field(SdfFieldKeys->SubLayerOffsets);
 
   _Define(SdfSpecTypePrim)
-      .Field(SdfFieldKeys->Specifier, /* required = */ true)
+    .Field(SdfFieldKeys->Specifier, /* required = */ true)
 
-      .Field(SdfFieldKeys->Comment)
-      .Field(SdfFieldKeys->InheritPaths)
-      .Field(SdfFieldKeys->Specializes)
-      .Field(SdfChildrenKeys->PrimChildren)
-      .Field(SdfFieldKeys->PrimOrder)
-      .Field(SdfChildrenKeys->PropertyChildren)
-      .Field(SdfFieldKeys->PropertyOrder)
-      .Field(SdfFieldKeys->References)
-      .Field(SdfFieldKeys->Relocates)
-      .Field(SdfFieldKeys->VariantSelection)
-      .Field(SdfChildrenKeys->VariantSetChildren)
-      .Field(SdfFieldKeys->VariantSetNames)
+    .Field(SdfFieldKeys->Comment)
+    .Field(SdfFieldKeys->InheritPaths)
+    .Field(SdfFieldKeys->Specializes)
+    .Field(SdfChildrenKeys->PrimChildren)
+    .Field(SdfFieldKeys->PrimOrder)
+    .Field(SdfChildrenKeys->PropertyChildren)
+    .Field(SdfFieldKeys->PropertyOrder)
+    .Field(SdfFieldKeys->References)
+    .Field(SdfFieldKeys->Relocates)
+    .Field(SdfFieldKeys->VariantSelection)
+    .Field(SdfChildrenKeys->VariantSetChildren)
+    .Field(SdfFieldKeys->VariantSetNames)
 
-      .MetadataField(SdfFieldKeys->Active, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->AssetInfo, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->CustomData, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->DisplayGroupOrder, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->Documentation, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->Hidden, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->Instanceable, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->Kind, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->Payload, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->Permission, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->Prefix, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->PrefixSubstitutions, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->Suffix, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->SuffixSubstitutions, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->SymmetricPeer, SdfMetadataDisplayGroupTokens->symmetry)
-      .MetadataField(SdfFieldKeys->SymmetryArguments, SdfMetadataDisplayGroupTokens->symmetry)
-      .MetadataField(SdfFieldKeys->SymmetryFunction, SdfMetadataDisplayGroupTokens->symmetry)
-      .MetadataField(SdfFieldKeys->TypeName, SdfMetadataDisplayGroupTokens->core);
+    .MetadataField(SdfFieldKeys->Active, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->AssetInfo, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->CustomData, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->DisplayGroupOrder, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->Documentation, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->Hidden, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->Instanceable, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->Kind, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->Payload, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->Permission, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->Prefix, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->PrefixSubstitutions, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->Suffix, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->SuffixSubstitutions, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->SymmetricPeer, SdfMetadataDisplayGroupTokens->symmetry)
+    .MetadataField(SdfFieldKeys->SymmetryArguments, SdfMetadataDisplayGroupTokens->symmetry)
+    .MetadataField(SdfFieldKeys->SymmetryFunction, SdfMetadataDisplayGroupTokens->symmetry)
+    .MetadataField(SdfFieldKeys->TypeName, SdfMetadataDisplayGroupTokens->core);
 
   // The property spec definition will be used as the basis for the
   // attribute and relationship spec definitions.
   SpecDefinition property;
   _Define(&property)
-      .Field(SdfFieldKeys->Custom, /* required = */ true)
-      .Field(SdfFieldKeys->Variability, /* required = */ true)
+    .Field(SdfFieldKeys->Custom, /* required = */ true)
+    .Field(SdfFieldKeys->Variability, /* required = */ true)
 
-      .Field(SdfFieldKeys->Comment)
-      .Field(SdfFieldKeys->Default)
-      .Field(SdfFieldKeys->TimeSamples)
+    .Field(SdfFieldKeys->Comment)
+    .Field(SdfFieldKeys->Default)
+    .Field(SdfFieldKeys->TimeSamples)
 
-      .MetadataField(SdfFieldKeys->AssetInfo, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->CustomData, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->DisplayGroup, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->DisplayName, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->Documentation, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->Hidden, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->Permission, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->Prefix, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->Suffix, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->SymmetricPeer, SdfMetadataDisplayGroupTokens->symmetry)
-      .MetadataField(SdfFieldKeys->SymmetryArguments, SdfMetadataDisplayGroupTokens->symmetry)
-      .MetadataField(SdfFieldKeys->SymmetryFunction, SdfMetadataDisplayGroupTokens->symmetry);
+    .MetadataField(SdfFieldKeys->AssetInfo, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->CustomData, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->DisplayGroup, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->DisplayName, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->Documentation, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->Hidden, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->Permission, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->Prefix, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->Suffix, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->SymmetricPeer, SdfMetadataDisplayGroupTokens->symmetry)
+    .MetadataField(SdfFieldKeys->SymmetryArguments, SdfMetadataDisplayGroupTokens->symmetry)
+    .MetadataField(SdfFieldKeys->SymmetryFunction, SdfMetadataDisplayGroupTokens->symmetry);
 
   _Define(SdfSpecTypeAttribute)
-      .CopyFrom(property)
-      .Field(SdfFieldKeys->TypeName, /* required = */ true)
+    .CopyFrom(property)
+    .Field(SdfFieldKeys->TypeName, /* required = */ true)
 
-      .Field(SdfChildrenKeys->ConnectionChildren)
-      .Field(SdfFieldKeys->ConnectionPaths)
-      .Field(SdfFieldKeys->DisplayUnit)
-      .MetadataField(SdfFieldKeys->AllowedTokens, SdfMetadataDisplayGroupTokens->core)
-      .MetadataField(SdfFieldKeys->ColorSpace, SdfMetadataDisplayGroupTokens->core);
+    .Field(SdfChildrenKeys->ConnectionChildren)
+    .Field(SdfFieldKeys->ConnectionPaths)
+    .Field(SdfFieldKeys->DisplayUnit)
+    .MetadataField(SdfFieldKeys->AllowedTokens, SdfMetadataDisplayGroupTokens->core)
+    .MetadataField(SdfFieldKeys->ColorSpace, SdfMetadataDisplayGroupTokens->core);
 
   _Define(SdfSpecTypeConnection);
 
   _Define(SdfSpecTypeRelationship)
-      .CopyFrom(property)
-      .Field(SdfChildrenKeys->RelationshipTargetChildren)
-      .Field(SdfFieldKeys->TargetPaths)
+    .CopyFrom(property)
+    .Field(SdfChildrenKeys->RelationshipTargetChildren)
+    .Field(SdfFieldKeys->TargetPaths)
 
-      .MetadataField(SdfFieldKeys->NoLoadHint, SdfMetadataDisplayGroupTokens->core);
+    .MetadataField(SdfFieldKeys->NoLoadHint, SdfMetadataDisplayGroupTokens->core);
 
   _Define(SdfSpecTypeRelationshipTarget);
 
@@ -874,7 +860,7 @@ SdfSchemaBase::FieldDefinition &SdfSchemaBase::_CreateField(const TfToken &key,
   }
 
   const std::pair<_FieldDefinitionMap::iterator, bool> insertStatus = _fieldDefinitions.insert(
-      std::make_pair(key, def));
+    std::make_pair(key, def));
   if (!insertStatus.second) {
     TF_CODING_ERROR("Duplicate creation for field '%s'", key.GetText());
   }
@@ -882,8 +868,7 @@ SdfSchemaBase::FieldDefinition &SdfSchemaBase::_CreateField(const TfToken &key,
   return insertStatus.first->second;
 }
 
-SdfSchemaBase::FieldDefinition &SdfSchemaBase::_DoRegisterField(const TfToken &key,
-                                                                const VtValue &v)
+SdfSchemaBase::FieldDefinition &SdfSchemaBase::_DoRegisterField(const TfToken &key, const VtValue &v)
 {
   // The field for which we're trying to register extra schema
   // information must have already been created with a call to
@@ -900,12 +885,12 @@ SdfSchemaBase::FieldDefinition &SdfSchemaBase::_DoRegisterField(const TfToken &k
   // we stay in sync with the fields in SchemaTypeRegistration.h.
   if (!TfSafeTypeCompare(fieldDef.GetFallbackValue().GetTypeid(), v.GetTypeid())) {
     TF_FATAL_ERROR(
-        "Registered fallback value for field '%s' does "
-        "not match field type definition. "
-        "(expected: %s, got: %s)",
-        key.GetText(),
-        fieldDef.GetFallbackValue().GetTypeName().c_str(),
-        v.GetTypeName().c_str());
+      "Registered fallback value for field '%s' does "
+      "not match field type definition. "
+      "(expected: %s, got: %s)",
+      key.GetText(),
+      fieldDef.GetFallbackValue().GetTypeName().c_str(),
+      v.GetTypeName().c_str());
   }
 
   fieldDef.FallbackValue(v);
@@ -920,8 +905,7 @@ SdfSchemaBase::_SpecDefiner SdfSchemaBase::_ExtendSpecDefinition(SdfSpecType spe
   return _SpecDefiner(this, &_specDefinitions[specType].first);
 }
 
-const SdfSchemaBase::FieldDefinition *SdfSchemaBase::GetFieldDefinition(
-    const TfToken &fieldKey) const
+const SdfSchemaBase::FieldDefinition *SdfSchemaBase::GetFieldDefinition(const TfToken &fieldKey) const
 {
   return TfMapLookupPtr(_fieldDefinitions, fieldKey);
 }
@@ -968,8 +952,7 @@ VtValue SdfSchemaBase::CastToTypeOf(const TfToken &fieldKey, const VtValue &valu
   return VtValue::CastToTypeOf(value, fallback);
 }
 
-const SdfSchemaBase::SpecDefinition *SdfSchemaBase::_CheckAndGetSpecDefinition(
-    SdfSpecType specType) const
+const SdfSchemaBase::SpecDefinition *SdfSchemaBase::_CheckAndGetSpecDefinition(SdfSpecType specType) const
 {
   const SpecDefinition *def = GetSpecDefinition(specType);
   if (!def) {
@@ -997,8 +980,7 @@ TfTokenVector SdfSchemaBase::GetMetadataFields(SdfSpecType specType) const
   return (def ? def->GetMetadataFields() : TfTokenVector());
 }
 
-TfToken SdfSchemaBase::GetMetadataFieldDisplayGroup(SdfSpecType specType,
-                                                    TfToken const &metadataField) const
+TfToken SdfSchemaBase::GetMetadataFieldDisplayGroup(SdfSpecType specType, TfToken const &metadataField) const
 {
   const SpecDefinition *def = _CheckAndGetSpecDefinition(specType);
   return (def ? def->GetMetadataFieldDisplayGroup(metadataField) : TfToken());
@@ -1034,19 +1016,19 @@ SdfAllowed SdfSchemaBase::IsValidValue(const VtValue &value) const
       }
       else {
         const std::string error = TfStringPrintf(
-            "Value for key '%s' does not have a valid scene "
-            "description type (%s)",
-            it->first.c_str(),
-            it->second.GetTypeName().c_str());
+          "Value for key '%s' does not have a valid scene "
+          "description type (%s)",
+          it->first.c_str(),
+          it->second.GetTypeName().c_str());
         return SdfAllowed(error);
       }
     }
   }
   else if (!FindType(value)) {
     return SdfAllowed(
-        "Value does not have a valid scene description type "
-        "(" +
-        value.GetTypeName() + ")");
+      "Value does not have a valid scene description type "
+      "(" +
+      value.GetTypeName() + ")");
   }
 
   return true;
@@ -1113,7 +1095,7 @@ SdfAllowed SdfSchemaBase::IsValidVariantIdentifier(const std::string &identifier
   // Allow [[:alnum:]_|\-]+ with an optional leading dot.
 
   std::string::const_iterator first = identifier.begin();
-  std::string::const_iterator last  = identifier.end();
+  std::string::const_iterator last = identifier.end();
 
   // Allow optional leading dot.
   if (first != last && *first == '.') {
@@ -1124,11 +1106,11 @@ SdfAllowed SdfSchemaBase::IsValidVariantIdentifier(const std::string &identifier
     char c = *first;
     if (!(isalnum(c) || (c == '_') || (c == '|') || (c == '-'))) {
       return SdfAllowed(
-          TfStringPrintf("\"%s\" is not a valid variant "
-                         "name due to '%c' at index %d",
-                         identifier.c_str(),
-                         c,
-                         (int)(first - identifier.begin())));
+        TfStringPrintf("\"%s\" is not a valid variant "
+                       "name due to '%c' at index %d",
+                       identifier.c_str(),
+                       c,
+                       (int)(first - identifier.begin())));
     }
   }
 
@@ -1164,17 +1146,17 @@ SdfAllowed SdfSchemaBase::IsValidAttributeConnectionPath(const SdfPath &path)
 {
   if (path.ContainsPrimVariantSelection()) {
     return SdfAllowed(
-        "Attribute connection paths cannot contain "
-        "variant selections");
+      "Attribute connection paths cannot contain "
+      "variant selections");
   }
   if (path.IsAbsolutePath() && (path.IsPropertyPath() || path.IsPrimPath())) {
     return true;
   }
   else {
     return SdfAllowed(
-        TfStringPrintf("Connection paths must be absolute prim or "
-                       "property paths: <%s>",
-                       path.GetText()));
+      TfStringPrintf("Connection paths must be absolute prim or "
+                     "property paths: <%s>",
+                     path.GetText()));
   }
 }
 
@@ -1182,17 +1164,16 @@ SdfAllowed SdfSchemaBase::IsValidRelationshipTargetPath(const SdfPath &path)
 {
   if (path.ContainsPrimVariantSelection()) {
     return SdfAllowed(
-        "Relationship target paths cannot contain "
-        "variant selections");
+      "Relationship target paths cannot contain "
+      "variant selections");
   }
-  if (path.IsAbsolutePath() &&
-      (path.IsPropertyPath() || path.IsPrimPath() || path.IsMapperPath())) {
+  if (path.IsAbsolutePath() && (path.IsPropertyPath() || path.IsPrimPath() || path.IsMapperPath())) {
     return true;
   }
   else {
     return SdfAllowed(
-        "Relationship target paths must be absolute prim, "
-        "property or mapper paths");
+      "Relationship target paths must be absolute prim, "
+      "property or mapper paths");
   }
 }
 
@@ -1234,8 +1215,7 @@ SdfAllowed SdfSchemaBase::IsValidSubLayer(const std::string &sublayer)
       errs.push_back(err.GetCommentary());
     }
     m.Clear();
-    return SdfAllowed(
-        TfStringPrintf("Invalid sublayer path: %s", TfStringJoin(errs, "; ").c_str()));
+    return SdfAllowed(TfStringPrintf("Invalid sublayer path: %s", TfStringJoin(errs, "; ").c_str()));
   }
   return true;
 }
@@ -1245,8 +1225,7 @@ typedef Sdf_ParserHelpers::Value Value;
 // Helper function that adds values of type T to the value list that are
 // either stored directly or stored as elements of a vector<T>. Returns true
 // on success and false on failure.
-template<typename T>
-static bool _AccumulateTypedValues(const JsValue &value, std::deque<Value> *values)
+template<typename T> static bool _AccumulateTypedValues(const JsValue &value, std::deque<Value> *values)
 {
   if (value.IsArrayOf<T>()) {
     for (const T &v : value.GetArrayOf<T>()) {
@@ -1292,19 +1271,16 @@ static void _AddValuesToValueContext(std::deque<Value> *values,
 // "Vec3d[]" from a JsValue containing vector<double>(1, 2, 3, 4, 5, 6) into
 // VtValue(VtArray([2], Vec3d(1, 2, 3), Vec3d(4, 5, 6))). If an error occurs,
 // an empty VtValue is returned and the error text is stored in *errorText.
-static VtValue _ParseValue(const std::string &valueTypeName,
-                           const JsValue &value,
-                           std::string *errorText)
+static VtValue _ParseValue(const std::string &valueTypeName, const JsValue &value, std::string *errorText)
 {
   // Checks for strings, ints, doubles, and vectors of those types because
   // that's what _ConvertDict() in Plugin.cpp parses out of plugInfo.json
   std::deque<Value> values;
-  if (!_AccumulateTypedValues<std::string>(value, &values) &&
-      !_AccumulateTypedValues<int>(value, &values) &&
+  if (!_AccumulateTypedValues<std::string>(value, &values) && !_AccumulateTypedValues<int>(value, &values) &&
       !_AccumulateTypedValues<double>(value, &values)) {
     *errorText =
-        "Value was not a string, an int, a double, or a "
-        "vector of those types";
+      "Value was not a string, an int, a double, or a "
+      "vector of those types";
     return VtValue();
   }
 
@@ -1387,9 +1363,9 @@ static VtValue _GetDefaultMetadataValue(const SdfSchemaBase &schema,
       // Defaults aren't allowed for dictionaries because we have
       // no way of parsing them at the moment
       TF_CODING_ERROR(
-          "Default values are not allowed on fields "
-          "of type \"dictionary\", which will "
-          "always default to an empty dictionary.");
+        "Default values are not allowed on fields "
+        "of type \"dictionary\", which will "
+        "always default to an empty dictionary.");
       return VtValue();
     }
     return VtValue(VtDictionary());
@@ -1401,10 +1377,10 @@ static VtValue _GetDefaultMetadataValue(const SdfSchemaBase &schema,
       // Defaults aren't allowed for list ops because we have
       // no way of parsing them at the moment
       TF_CODING_ERROR(
-          "Default values are not allowed on fields "
-          "of type \"%s\", which will always"
-          "default to an empty list op.",
-          valueTypeName.c_str());
+        "Default values are not allowed on fields "
+        "of type \"%s\", which will always"
+        "default to an empty list op.",
+        valueTypeName.c_str());
       return VtValue();
     }
     return listOpValue;
@@ -1429,13 +1405,13 @@ static VtValue _GetDefaultMetadataValue(const SdfSchemaBase &schema,
 }
 
 // Reads and registers new fields from plugInfo.json files
-const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::
-    _UpdateMetadataFromPlugins(const PlugPluginPtrVector &plugins,
-                               const std::string &tag,
-                               const _DefaultValueFactoryFn &defFactory)
+const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::_UpdateMetadataFromPlugins(
+  const PlugPluginPtrVector &plugins,
+  const std::string &tag,
+  const _DefaultValueFactoryFn &defFactory)
 {
   static const std::string sdfMetadataTag = "SdfMetadata";
-  const std::string &metadataTag          = (tag.empty() ? sdfMetadataTag : tag);
+  const std::string &metadataTag = (tag.empty() ? sdfMetadataTag : tag);
   std::vector<const SdfSchemaBase::FieldDefinition *> metadataFieldsParsed;
 
   // Update the schema with new metadata fields from each plugin, if they
@@ -1455,37 +1431,36 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::
       JsObject fieldInfo;
       if (!_GetKey(fields, fieldName, &fieldInfo)) {
         TF_CODING_ERROR(
-            "Value must be a dictionary (at \"%s\" in "
-            "plugin \"%s\")",
-            fieldName.GetText(),
-            plug->GetPath().c_str());
+          "Value must be a dictionary (at \"%s\" in "
+          "plugin \"%s\")",
+          fieldName.GetText(),
+          plug->GetPath().c_str());
         continue;
       }
 
       std::string valueTypeName;
       if (!_ExtractKey(fieldInfo, _tokens->Type.GetString(), &valueTypeName)) {
         TF_CODING_ERROR(
-            "Could not read a string for \"type\" "
-            "(at \"%s\" in plugin \"%s\")",
-            fieldName.GetText(),
-            plug->GetPath().c_str());
+          "Could not read a string for \"type\" "
+          "(at \"%s\" in plugin \"%s\")",
+          fieldName.GetText(),
+          plug->GetPath().c_str());
         continue;
       }
 
       if (IsRegistered(fieldName)) {
         TF_CODING_ERROR(
-            "\"%s\" is already a registered field "
-            "(in plugin \"%s\")",
-            fieldName.GetText(),
-            plug->GetPath().c_str());
+          "\"%s\" is already a registered field "
+          "(in plugin \"%s\")",
+          fieldName.GetText(),
+          plug->GetPath().c_str());
         continue;
       }
 
       // Parse plugin-defined default value for this field.
       VtValue defaultValue;
       {
-        const JsValue pluginDefault = TfMapLookupByValue(
-            fieldInfo, _tokens->Default.GetString(), JsValue());
+        const JsValue pluginDefault = TfMapLookupByValue(fieldInfo, _tokens->Default.GetString(), JsValue());
 
         TfErrorMark m;
 
@@ -1504,17 +1479,17 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::
           // given enough info to do this itself.
           if (m.IsClean()) {
             TF_CODING_ERROR(
-                "No default value for metadata "
-                "(at \"%s\" in plugin \"%s\")",
-                fieldName.GetText(),
-                plug->GetPath().c_str());
+              "No default value for metadata "
+              "(at \"%s\" in plugin \"%s\")",
+              fieldName.GetText(),
+              plug->GetPath().c_str());
           }
           else {
             TF_CODING_ERROR(
-                "Error parsing default value for "
-                "metadata (at \"%s\" in plugin \"%s\")",
-                fieldName.GetText(),
-                plug->GetPath().c_str());
+              "Error parsing default value for "
+              "metadata (at \"%s\" in plugin \"%s\")",
+              fieldName.GetText(),
+              plug->GetPath().c_str());
           }
           continue;
         }
@@ -1542,8 +1517,7 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::
       // for.
       set<string> appliesTo;
       {
-        const JsValue val = TfMapLookupByValue(
-            fieldInfo, _tokens->AppliesTo.GetString(), JsValue());
+        const JsValue val = TfMapLookupByValue(fieldInfo, _tokens->AppliesTo.GetString(), JsValue());
         if (val.IsArrayOf<string>()) {
           const vector<string> vec = val.GetArrayOf<string>();
           appliesTo.insert(vec.begin(), vec.end());
@@ -1583,7 +1557,7 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::
       // to use.
       for (const std::pair<const std::string, JsValue> &it : fieldInfo) {
         const std::string &metadataInfoName = it.first;
-        const JsValue &metadataInfoValue    = it.second;
+        const JsValue &metadataInfoValue = it.second;
 
         TfToken metadataInfo(metadataInfoName);
         fieldDef.AddInfo(metadataInfo, metadataInfoValue);
@@ -1596,8 +1570,7 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::
 
 void SdfSchemaBase::_AddRequiredFieldName(const TfToken &fieldName)
 {
-  if (find(_requiredFieldNames.begin(), _requiredFieldNames.end(), fieldName) ==
-      _requiredFieldNames.end())
+  if (find(_requiredFieldNames.begin(), _requiredFieldNames.end(), fieldName) == _requiredFieldNames.end())
     _requiredFieldNames.push_back(fieldName);
 }
 
@@ -1640,55 +1613,55 @@ const Sdf_ValueTypeNamesType *Sdf_InitializeValueTypeNames()
   static const _Registry registry;
 
   const Sdf_ValueTypeRegistry &r = registry.registry;
-  Sdf_ValueTypeNamesType *n      = new Sdf_ValueTypeNamesType;
+  Sdf_ValueTypeNamesType *n = new Sdf_ValueTypeNamesType;
 
-  n->Bool       = r.FindType("bool");
-  n->UChar      = r.FindType("uchar");
-  n->Int        = r.FindType("int");
-  n->UInt       = r.FindType("uint");
-  n->Int64      = r.FindType("int64");
-  n->UInt64     = r.FindType("uint64");
-  n->Half       = r.FindType("half");
-  n->Float      = r.FindType("float");
-  n->Double     = r.FindType("double");
-  n->TimeCode   = r.FindType("timecode");
-  n->String     = r.FindType("string");
-  n->Token      = r.FindType("token");
-  n->Asset      = r.FindType("asset");
-  n->Int2       = r.FindType("int2");
-  n->Int3       = r.FindType("int3");
-  n->Int4       = r.FindType("int4");
-  n->Half2      = r.FindType("half2");
-  n->Half3      = r.FindType("half3");
-  n->Half4      = r.FindType("half4");
-  n->Float2     = r.FindType("float2");
-  n->Float3     = r.FindType("float3");
-  n->Float4     = r.FindType("float4");
-  n->Double2    = r.FindType("double2");
-  n->Double3    = r.FindType("double3");
-  n->Double4    = r.FindType("double4");
-  n->Point3h    = r.FindType("point3h");
-  n->Point3f    = r.FindType("point3f");
-  n->Point3d    = r.FindType("point3d");
-  n->Vector3h   = r.FindType("vector3h");
-  n->Vector3f   = r.FindType("vector3f");
-  n->Vector3d   = r.FindType("vector3d");
-  n->Normal3h   = r.FindType("normal3h");
-  n->Normal3f   = r.FindType("normal3f");
-  n->Normal3d   = r.FindType("normal3d");
-  n->Color3h    = r.FindType("color3h");
-  n->Color3f    = r.FindType("color3f");
-  n->Color3d    = r.FindType("color3d");
-  n->Color4h    = r.FindType("color4h");
-  n->Color4f    = r.FindType("color4f");
-  n->Color4d    = r.FindType("color4d");
-  n->Quath      = r.FindType("quath");
-  n->Quatf      = r.FindType("quatf");
-  n->Quatd      = r.FindType("quatd");
-  n->Matrix2d   = r.FindType("matrix2d");
-  n->Matrix3d   = r.FindType("matrix3d");
-  n->Matrix4d   = r.FindType("matrix4d");
-  n->Frame4d    = r.FindType("frame4d");
+  n->Bool = r.FindType("bool");
+  n->UChar = r.FindType("uchar");
+  n->Int = r.FindType("int");
+  n->UInt = r.FindType("uint");
+  n->Int64 = r.FindType("int64");
+  n->UInt64 = r.FindType("uint64");
+  n->Half = r.FindType("half");
+  n->Float = r.FindType("float");
+  n->Double = r.FindType("double");
+  n->TimeCode = r.FindType("timecode");
+  n->String = r.FindType("string");
+  n->Token = r.FindType("token");
+  n->Asset = r.FindType("asset");
+  n->Int2 = r.FindType("int2");
+  n->Int3 = r.FindType("int3");
+  n->Int4 = r.FindType("int4");
+  n->Half2 = r.FindType("half2");
+  n->Half3 = r.FindType("half3");
+  n->Half4 = r.FindType("half4");
+  n->Float2 = r.FindType("float2");
+  n->Float3 = r.FindType("float3");
+  n->Float4 = r.FindType("float4");
+  n->Double2 = r.FindType("double2");
+  n->Double3 = r.FindType("double3");
+  n->Double4 = r.FindType("double4");
+  n->Point3h = r.FindType("point3h");
+  n->Point3f = r.FindType("point3f");
+  n->Point3d = r.FindType("point3d");
+  n->Vector3h = r.FindType("vector3h");
+  n->Vector3f = r.FindType("vector3f");
+  n->Vector3d = r.FindType("vector3d");
+  n->Normal3h = r.FindType("normal3h");
+  n->Normal3f = r.FindType("normal3f");
+  n->Normal3d = r.FindType("normal3d");
+  n->Color3h = r.FindType("color3h");
+  n->Color3f = r.FindType("color3f");
+  n->Color3d = r.FindType("color3d");
+  n->Color4h = r.FindType("color4h");
+  n->Color4f = r.FindType("color4f");
+  n->Color4d = r.FindType("color4d");
+  n->Quath = r.FindType("quath");
+  n->Quatf = r.FindType("quatf");
+  n->Quatd = r.FindType("quatd");
+  n->Matrix2d = r.FindType("matrix2d");
+  n->Matrix3d = r.FindType("matrix3d");
+  n->Matrix4d = r.FindType("matrix4d");
+  n->Frame4d = r.FindType("frame4d");
   n->TexCoord2f = r.FindType("texCoord2f");
   n->TexCoord2d = r.FindType("texCoord2d");
   n->TexCoord2h = r.FindType("texCoord2h");
@@ -1696,53 +1669,53 @@ const Sdf_ValueTypeNamesType *Sdf_InitializeValueTypeNames()
   n->TexCoord3d = r.FindType("texCoord3d");
   n->TexCoord3h = r.FindType("texCoord3h");
 
-  n->BoolArray       = r.FindType("bool[]");
-  n->UCharArray      = r.FindType("uchar[]");
-  n->IntArray        = r.FindType("int[]");
-  n->UIntArray       = r.FindType("uint[]");
-  n->Int64Array      = r.FindType("int64[]");
-  n->UInt64Array     = r.FindType("uint64[]");
-  n->HalfArray       = r.FindType("half[]");
-  n->FloatArray      = r.FindType("float[]");
-  n->DoubleArray     = r.FindType("double[]");
-  n->TimeCodeArray   = r.FindType("timecode[]");
-  n->StringArray     = r.FindType("string[]");
-  n->TokenArray      = r.FindType("token[]");
-  n->AssetArray      = r.FindType("asset[]");
-  n->Int2Array       = r.FindType("int2[]");
-  n->Int3Array       = r.FindType("int3[]");
-  n->Int4Array       = r.FindType("int4[]");
-  n->Half2Array      = r.FindType("half2[]");
-  n->Half3Array      = r.FindType("half3[]");
-  n->Half4Array      = r.FindType("half4[]");
-  n->Float2Array     = r.FindType("float2[]");
-  n->Float3Array     = r.FindType("float3[]");
-  n->Float4Array     = r.FindType("float4[]");
-  n->Double2Array    = r.FindType("double2[]");
-  n->Double3Array    = r.FindType("double3[]");
-  n->Double4Array    = r.FindType("double4[]");
-  n->Point3hArray    = r.FindType("point3h[]");
-  n->Point3fArray    = r.FindType("point3f[]");
-  n->Point3dArray    = r.FindType("point3d[]");
-  n->Vector3hArray   = r.FindType("vector3h[]");
-  n->Vector3fArray   = r.FindType("vector3f[]");
-  n->Vector3dArray   = r.FindType("vector3d[]");
-  n->Normal3hArray   = r.FindType("normal3h[]");
-  n->Normal3fArray   = r.FindType("normal3f[]");
-  n->Normal3dArray   = r.FindType("normal3d[]");
-  n->Color3hArray    = r.FindType("color3h[]");
-  n->Color3fArray    = r.FindType("color3f[]");
-  n->Color3dArray    = r.FindType("color3d[]");
-  n->Color4hArray    = r.FindType("color4h[]");
-  n->Color4fArray    = r.FindType("color4f[]");
-  n->Color4dArray    = r.FindType("color4d[]");
-  n->QuathArray      = r.FindType("quath[]");
-  n->QuatfArray      = r.FindType("quatf[]");
-  n->QuatdArray      = r.FindType("quatd[]");
-  n->Matrix2dArray   = r.FindType("matrix2d[]");
-  n->Matrix3dArray   = r.FindType("matrix3d[]");
-  n->Matrix4dArray   = r.FindType("matrix4d[]");
-  n->Frame4dArray    = r.FindType("frame4d[]");
+  n->BoolArray = r.FindType("bool[]");
+  n->UCharArray = r.FindType("uchar[]");
+  n->IntArray = r.FindType("int[]");
+  n->UIntArray = r.FindType("uint[]");
+  n->Int64Array = r.FindType("int64[]");
+  n->UInt64Array = r.FindType("uint64[]");
+  n->HalfArray = r.FindType("half[]");
+  n->FloatArray = r.FindType("float[]");
+  n->DoubleArray = r.FindType("double[]");
+  n->TimeCodeArray = r.FindType("timecode[]");
+  n->StringArray = r.FindType("string[]");
+  n->TokenArray = r.FindType("token[]");
+  n->AssetArray = r.FindType("asset[]");
+  n->Int2Array = r.FindType("int2[]");
+  n->Int3Array = r.FindType("int3[]");
+  n->Int4Array = r.FindType("int4[]");
+  n->Half2Array = r.FindType("half2[]");
+  n->Half3Array = r.FindType("half3[]");
+  n->Half4Array = r.FindType("half4[]");
+  n->Float2Array = r.FindType("float2[]");
+  n->Float3Array = r.FindType("float3[]");
+  n->Float4Array = r.FindType("float4[]");
+  n->Double2Array = r.FindType("double2[]");
+  n->Double3Array = r.FindType("double3[]");
+  n->Double4Array = r.FindType("double4[]");
+  n->Point3hArray = r.FindType("point3h[]");
+  n->Point3fArray = r.FindType("point3f[]");
+  n->Point3dArray = r.FindType("point3d[]");
+  n->Vector3hArray = r.FindType("vector3h[]");
+  n->Vector3fArray = r.FindType("vector3f[]");
+  n->Vector3dArray = r.FindType("vector3d[]");
+  n->Normal3hArray = r.FindType("normal3h[]");
+  n->Normal3fArray = r.FindType("normal3f[]");
+  n->Normal3dArray = r.FindType("normal3d[]");
+  n->Color3hArray = r.FindType("color3h[]");
+  n->Color3fArray = r.FindType("color3f[]");
+  n->Color3dArray = r.FindType("color3d[]");
+  n->Color4hArray = r.FindType("color4h[]");
+  n->Color4fArray = r.FindType("color4f[]");
+  n->Color4dArray = r.FindType("color4d[]");
+  n->QuathArray = r.FindType("quath[]");
+  n->QuatfArray = r.FindType("quatf[]");
+  n->QuatdArray = r.FindType("quatd[]");
+  n->Matrix2dArray = r.FindType("matrix2d[]");
+  n->Matrix3dArray = r.FindType("matrix3d[]");
+  n->Matrix4dArray = r.FindType("matrix4d[]");
+  n->Frame4dArray = r.FindType("frame4d[]");
   n->TexCoord2fArray = r.FindType("texCoord2f[]");
   n->TexCoord2dArray = r.FindType("texCoord2d[]");
   n->TexCoord2hArray = r.FindType("texCoord2h[]");

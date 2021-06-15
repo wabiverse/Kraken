@@ -56,24 +56,17 @@ WRAP_CUSTOM;
 
 static UsdAttribute _CreateDataTypeAttr(UsdRenderVar &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateDataTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                 writeSparsely);
+  return self.CreateDataTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
-static UsdAttribute _CreateSourceNameAttr(UsdRenderVar &self,
-                                          object defaultVal,
-                                          bool writeSparsely)
+static UsdAttribute _CreateSourceNameAttr(UsdRenderVar &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateSourceNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->String),
-                                   writeSparsely);
+  return self.CreateSourceNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->String), writeSparsely);
 }
 
-static UsdAttribute _CreateSourceTypeAttr(UsdRenderVar &self,
-                                          object defaultVal,
-                                          bool writeSparsely)
+static UsdAttribute _CreateSourceTypeAttr(UsdRenderVar &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateSourceTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                   writeSparsely);
+  return self.CreateSourceTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
 static std::string _Repr(const UsdRenderVar &self)
@@ -91,44 +84,42 @@ void wrapUsdRenderVar()
   class_<This, bases<UsdTyped>> cls("Var");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetDataTypeAttr", &This::GetDataTypeAttr)
-      .def("CreateDataTypeAttr",
-           &_CreateDataTypeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetDataTypeAttr", &This::GetDataTypeAttr)
+    .def("CreateDataTypeAttr",
+         &_CreateDataTypeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetSourceNameAttr", &This::GetSourceNameAttr)
-      .def("CreateSourceNameAttr",
-           &_CreateSourceNameAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetSourceNameAttr", &This::GetSourceNameAttr)
+    .def("CreateSourceNameAttr",
+         &_CreateSourceNameAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetSourceTypeAttr", &This::GetSourceTypeAttr)
-      .def("CreateSourceTypeAttr",
-           &_CreateSourceTypeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetSourceTypeAttr", &This::GetSourceTypeAttr)
+    .def("CreateSourceTypeAttr",
+         &_CreateSourceTypeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

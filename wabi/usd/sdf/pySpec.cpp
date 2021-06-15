@@ -51,9 +51,8 @@ std::string _SpecRepr(const bp::object &self, const SdfSpec *spec)
   }
   else {
     SdfLayerHandle layer = spec->GetLayer();
-    std::string path     = layer->GetIdentifier();
-    return TF_PY_REPR_PREFIX + "Find(" + TfPyRepr(path) + ", " +
-           TfPyRepr(spec->GetPath().GetString()) + ")";
+    std::string path = layer->GetIdentifier();
+    return TF_PY_REPR_PREFIX + "Find(" + TfPyRepr(path) + ", " + TfPyRepr(spec->GetPath().GetString()) + ")";
   }
 }
 

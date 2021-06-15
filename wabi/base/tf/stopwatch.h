@@ -84,7 +84,7 @@ class TfStopwatch {
   ///  Resets the accumulated time and the sample count to zero.
   void Reset()
   {
-    _nTicks      = 0;
+    _nTicks = 0;
     _sampleCount = 0;
   }
 
@@ -143,7 +143,7 @@ class TfStopwatch {
   }
 
  private:
-  uint64_t _nTicks    = 0;
+  uint64_t _nTicks = 0;
   uint64_t _startTick = 0;
   size_t _sampleCount = 0;
 };

@@ -179,8 +179,7 @@ class UsdRiPxrEnvDayLight : public UsdLuxLight {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateDayAttr(VtValue const &defaultValue = VtValue(),
-                             bool writeSparsely          = false) const;
+  UsdAttribute CreateDayAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -204,8 +203,7 @@ class UsdRiPxrEnvDayLight : public UsdLuxLight {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateHazinessAttr(VtValue const &defaultValue = VtValue(),
-                                  bool writeSparsely          = false) const;
+  UsdAttribute CreateHazinessAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -230,8 +228,7 @@ class UsdRiPxrEnvDayLight : public UsdLuxLight {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateHourAttr(VtValue const &defaultValue = VtValue(),
-                              bool writeSparsely          = false) const;
+  UsdAttribute CreateHourAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -255,8 +252,7 @@ class UsdRiPxrEnvDayLight : public UsdLuxLight {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateLatitudeAttr(VtValue const &defaultValue = VtValue(),
-                                  bool writeSparsely          = false) const;
+  UsdAttribute CreateLatitudeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -281,7 +277,7 @@ class UsdRiPxrEnvDayLight : public UsdLuxLight {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateLongitudeAttr(VtValue const &defaultValue = VtValue(),
-                                   bool writeSparsely          = false) const;
+                                   bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -305,8 +301,7 @@ class UsdRiPxrEnvDayLight : public UsdLuxLight {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateMonthAttr(VtValue const &defaultValue = VtValue(),
-                               bool writeSparsely          = false) const;
+  UsdAttribute CreateMonthAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -330,8 +325,7 @@ class UsdRiPxrEnvDayLight : public UsdLuxLight {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateSkyTintAttr(VtValue const &defaultValue = VtValue(),
-                                 bool writeSparsely          = false) const;
+  UsdAttribute CreateSkyTintAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -357,7 +351,7 @@ class UsdRiPxrEnvDayLight : public UsdLuxLight {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateSunDirectionAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -381,8 +375,7 @@ class UsdRiPxrEnvDayLight : public UsdLuxLight {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateSunSizeAttr(VtValue const &defaultValue = VtValue(),
-                                 bool writeSparsely          = false) const;
+  UsdAttribute CreateSunSizeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -407,8 +400,7 @@ class UsdRiPxrEnvDayLight : public UsdLuxLight {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateSunTintAttr(VtValue const &defaultValue = VtValue(),
-                                 bool writeSparsely          = false) const;
+  UsdAttribute CreateSunTintAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -430,8 +422,7 @@ class UsdRiPxrEnvDayLight : public UsdLuxLight {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateYearAttr(VtValue const &defaultValue = VtValue(),
-                              bool writeSparsely          = false) const;
+  UsdAttribute CreateYearAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -455,8 +446,7 @@ class UsdRiPxrEnvDayLight : public UsdLuxLight {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateZoneAttr(VtValue const &defaultValue = VtValue(),
-                              bool writeSparsely          = false) const;
+  UsdAttribute CreateZoneAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

@@ -110,259 +110,259 @@ static size_t __hash__({
 void wrapRange{{SUFFIX}}()
 {
   object getMin = make_function(
-      &{
-        {
-          RNG
-        }
-      } ::GetMin,
-      return_value_policy<return_by_value>());
+    &{
+      {
+        RNG
+      }
+    } ::GetMin,
+    return_value_policy<return_by_value>());
 
   object getMax = make_function(
+    &{
+      {
+        RNG
+      }
+    } ::GetMax,
+    return_value_policy<return_by_value>());
+
+  class_<{{RNG}}>("Range{{ SUFFIX }}", init<>())
+    .def(init<{{RNG}}>())
+    .def(init<{{MINMAXPARM}}, {{MINMAXPARM}}>())
+
+    .def(TfTypePythonClass())
+
+    .def_readonly("dimension", _dimension)
+
+    .add_property(
+      "min",
+      getMin,
       &{
         {
           RNG
         }
-      } ::GetMax,
-      return_value_policy<return_by_value>());
+      } ::SetMin)
+    .add_property(
+      "max",
+      getMax,
+      &{
+        {
+          RNG
+        }
+      } ::SetMax)
 
-  class_<{{RNG}}>("Range{{ SUFFIX }}", init<>())
-      .def(init<{{RNG}}>())
-      .def(init<{{MINMAXPARM}}, {{MINMAXPARM}}>())
+    .def("GetMin", getMin)
+    .def("GetMax", getMax)
 
-      .def(TfTypePythonClass())
+    .def(
+      "GetSize",
+      &{
+        {
+          RNG
+        }
+      } ::GetSize)
+    .def(
+      "GetMidpoint",
+      &{
+        {
+          RNG
+        }
+      } ::GetMidpoint)
 
-      .def_readonly("dimension", _dimension)
+    .def(
+      "SetMin",
+      &{
+        {
+          RNG
+        }
+      } ::SetMin)
+    .def(
+      "SetMax",
+      &{
+        {
+          RNG
+        }
+      } ::SetMax)
 
-      .add_property(
-          "min",
-          getMin,
-          &{
-            {
-              RNG
-            }
-          } ::SetMin)
-      .add_property(
-          "max",
-          getMax,
-          &{
-            {
-              RNG
-            }
-          } ::SetMax)
+    .def(
+      "IsEmpty",
+      &{
+        {
+          RNG
+        }
+      } ::IsEmpty)
 
-      .def("GetMin", getMin)
-      .def("GetMax", getMax)
+    .def(
+      "SetEmpty",
+      &{
+        {
+          RNG
+        }
+      } ::SetEmpty)
 
-      .def(
-          "GetSize",
-          &{
-            {
-              RNG
-            }
-          } ::GetSize)
-      .def(
-          "GetMidpoint",
-          &{
-            {
-              RNG
-            }
-          } ::GetMidpoint)
+    .def(
+      "Contains",
+      (bool ({
+        {
+          RNG
+        }
+      } ::*)({{MINMAXPARM}}) const) &
+        {
+          {
+            RNG
+          }
+        } ::Contains)
+    .def(
+      "Contains",
+      (bool ({
+        {
+          RNG
+        }
+      } ::*)(const {{RNG}} &) const) &
+        {
+          {
+            RNG
+          }
+        } ::Contains)
 
-      .def(
-          "SetMin",
-          &{
-            {
-              RNG
-            }
-          } ::SetMin)
-      .def(
-          "SetMax",
-          &{
-            {
-              RNG
-            }
-          } ::SetMax)
+    .def(
+      "GetUnion",
+      &{
+        {
+          RNG
+        }
+      } ::GetUnion)
+    .staticmethod("GetUnion")
 
-      .def(
-          "IsEmpty",
-          &{
-            {
-              RNG
-            }
-          } ::IsEmpty)
+    .def(
+      "UnionWith",
+      (const {{RNG}} & ({
+         {
+           RNG
+         }
+       } ::*)({{MINMAXPARM}})) &
+        {
+          {
+            RNG
+          }
+        } ::UnionWith,
+      return_self<>())
+    .def(
+      "UnionWith",
+      (const {{RNG}} & ({
+         {
+           RNG
+         }
+       } ::*)(const {{RNG}} &)) &
+        {
+          {
+            RNG
+          }
+        } ::UnionWith,
+      return_self<>())
 
-      .def(
-          "SetEmpty",
-          &{
-            {
-              RNG
-            }
-          } ::SetEmpty)
+    .def(
+      "GetIntersection",
+      &{
+        {
+          RNG
+        }
+      } ::GetIntersection)
+    .staticmethod("GetIntersection")
 
-      .def(
-          "Contains",
-          (bool ({
-            {
-              RNG
-            }
-          } ::*)({{MINMAXPARM}}) const) &
-              {
-                {
-                  RNG
-                }
-              } ::Contains)
-      .def(
-          "Contains",
-          (bool ({
-            {
-              RNG
-            }
-          } ::*)(const {{RNG}} &) const) &
-              {
-                {
-                  RNG
-                }
-              } ::Contains)
+    .def(
+      "IntersectWith",
+      (const {{RNG}} & ({
+         {
+           RNG
+         }
+       } ::*)(const {{RNG}} &)) &
+        {
+          {
+            RNG
+          }
+        } ::IntersectWith,
+      return_self<>())
 
-      .def(
-          "GetUnion",
-          &{
-            {
-              RNG
-            }
-          } ::GetUnion)
-      .staticmethod("GetUnion")
+    .def(
+      "GetDistanceSquared",
+      &{
+        {
+          RNG
+        }
+      } ::GetDistanceSquared)
 
-      .def(
-          "UnionWith",
-          (const {{RNG}} & ({
-             {
-               RNG
-             }
-           } ::*)({{MINMAXPARM}})) &
-              {
-                {
-                  RNG
-                }
-              } ::UnionWith,
-          return_self<>())
-      .def(
-          "UnionWith",
-          (const {{RNG}} & ({
-             {
-               RNG
-             }
-           } ::*)(const {{RNG}} &)) &
-              {
-                {
-                  RNG
-                }
-              } ::UnionWith,
-          return_self<>())
-
-      .def(
-          "GetIntersection",
-          &{
-            {
-              RNG
-            }
-          } ::GetIntersection)
-      .staticmethod("GetIntersection")
-
-      .def(
-          "IntersectWith",
-          (const {{RNG}} & ({
-             {
-               RNG
-             }
-           } ::*)(const {{RNG}} &)) &
-              {
-                {
-                  RNG
-                }
-              } ::IntersectWith,
-          return_self<>())
-
-      .def(
-          "GetDistanceSquared",
-          &{
-            {
-              RNG
-            }
-          } ::GetDistanceSquared)
-
-      .def(str(self))
-      .def(self += self)
-      .def(self -= self)
-      .def(self *= double())
-      .def(self /= double())
-      .def(self + self)
-      .def(self - self)
-      .def(double() * self)
-      .def(self * double())
-      .def(self / double())
+    .def(str(self))
+    .def(self += self)
+    .def(self -= self)
+    .def(self *= double())
+    .def(self /= double())
+    .def(self + self)
+    .def(self - self)
+    .def(double() * self)
+    .def(self * double())
+    .def(self / double())
   {% for S in SCALARS if S != SCL %
   }
   .def(self == {{RNGNAME(DIM, S)}}())
-      .def(self != {{RNGNAME(DIM, S)}}()){ % endfor % }
-      .def(self == self)
-      .def(self != self)
+    .def(self != {{RNGNAME(DIM, S)}}()){ % endfor % }
+    .def(self == self)
+    .def(self != self)
 
 #if PY_MAJOR_VERSION == 2
-      // Needed only to support "from __future__ import division" in
-      // python 2. In python 3 builds boost::python adds this for us.
-      .def("__truediv__", __truediv__)
-      .def("__itruediv__", __itruediv__)
+    // Needed only to support "from __future__ import division" in
+    // python 2. In python 3 builds boost::python adds this for us.
+    .def("__truediv__", __truediv__)
+    .def("__itruediv__", __itruediv__)
 #endif
 
-      .def("__repr__", _Repr)
-      .def("__hash__", __hash__)
+    .def("__repr__", _Repr)
+    .def("__hash__", __hash__)
 
   {
     % if DIM == 2 %
   }
   .def(
+    "GetCorner",
+    &{
+      {
+        RNG
+      }
+    } ::GetCorner)
+    .def(
+      "GetQuadrant",
+      &{
+        {
+          RNG
+        }
+      } ::GetQuadrant)
+    .def_readonly(
+      "unitSquare",
+      &{
+        {
+          RNG
+        }
+      } ::UnitSquare){ % elif DIM == 3 % }
+    .def(
       "GetCorner",
       &{
         {
           RNG
         }
       } ::GetCorner)
-      .def(
-          "GetQuadrant",
-          &{
-            {
-              RNG
-            }
-          } ::GetQuadrant)
-      .def_readonly(
-          "unitSquare",
-          &{
-            {
-              RNG
-            }
-          } ::UnitSquare){ % elif DIM == 3 % }
-      .def(
-          "GetCorner",
-          &{
-            {
-              RNG
-            }
-          } ::GetCorner)
-      .def(
-          "GetOctant",
-          &{
-            {
-              RNG
-            }
-          } ::GetOctant)
-      .def_readonly(
-          "unitCube",
-          &{
-            {
-              RNG
-            }
-          } ::UnitCube){ % endif % }
+    .def(
+      "GetOctant",
+      &{
+        {
+          RNG
+        }
+      } ::GetOctant)
+    .def_readonly(
+      "unitCube",
+      &{
+        {
+          RNG
+        }
+      } ::UnitCube){ % endif % }
 
   ;
   to_python_converter<std::vector<{{RNG}}>, TfPySequenceToPython<std::vector<{{RNG}}>>>();

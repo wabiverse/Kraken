@@ -84,10 +84,10 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy {
    public:
     /// Constructor.
     _StripedInterleavedBufferRange(HdPhResourceRegistry *resourceRegistry)
-        : HdPhBufferArrayRange(resourceRegistry),
-          _stripedBuffer(nullptr),
-          _index(NOT_ALLOCATED),
-          _numElements(1)
+      : HdPhBufferArrayRange(resourceRegistry),
+        _stripedBuffer(nullptr),
+        _index(NOT_ALLOCATED),
+        _numElements(1)
     {}
 
     /// Destructor.
@@ -209,9 +209,9 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy {
     size_t _numElements;
   };
 
-  using _StripedInterleavedBufferSharedPtr      = std::shared_ptr<_StripedInterleavedBuffer>;
+  using _StripedInterleavedBufferSharedPtr = std::shared_ptr<_StripedInterleavedBuffer>;
   using _StripedInterleavedBufferRangeSharedPtr = std::shared_ptr<_StripedInterleavedBufferRange>;
-  using _StripedInterleavedBufferRangePtr       = std::weak_ptr<_StripedInterleavedBufferRange>;
+  using _StripedInterleavedBufferRangePtr = std::weak_ptr<_StripedInterleavedBufferRange>;
 
   /// striped buffer
   class _StripedInterleavedBuffer : public HdBufferArray {
@@ -323,8 +323,7 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy {
     }
   };
 
-  HdPhInterleavedMemoryManager(HdPhResourceRegistry *resourceRegistry)
-      : _resourceRegistry(resourceRegistry)
+  HdPhInterleavedMemoryManager(HdPhResourceRegistry *resourceRegistry) : _resourceRegistry(resourceRegistry)
   {}
 
   /// Factory for creating HdBufferArrayRange
@@ -344,7 +343,7 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy {
 class HdPhInterleavedUBOMemoryManager : public HdPhInterleavedMemoryManager {
  public:
   HdPhInterleavedUBOMemoryManager(HdPhResourceRegistry *resourceRegistry)
-      : HdPhInterleavedMemoryManager(resourceRegistry)
+    : HdPhInterleavedMemoryManager(resourceRegistry)
   {}
 
   /// Factory for creating HdBufferArray managed by
@@ -363,7 +362,7 @@ class HdPhInterleavedUBOMemoryManager : public HdPhInterleavedMemoryManager {
 class HdPhInterleavedSSBOMemoryManager : public HdPhInterleavedMemoryManager {
  public:
   HdPhInterleavedSSBOMemoryManager(HdPhResourceRegistry *resourceRegistry)
-      : HdPhInterleavedMemoryManager(resourceRegistry)
+    : HdPhInterleavedMemoryManager(resourceRegistry)
   {}
 
   /// Factory for creating HdBufferArray managed by

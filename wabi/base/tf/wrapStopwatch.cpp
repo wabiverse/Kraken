@@ -39,14 +39,14 @@ void wrapStopwatch()
 
   class_<This>("Stopwatch")
 
-      .def("Start", &This::Start)
-      .def("Stop", &This::Stop)
-      .def("Reset", &This::Reset)
-      .def("AddFrom", &This::AddFrom)
+    .def("Start", &This::Start)
+    .def("Stop", &This::Stop)
+    .def("Reset", &This::Reset)
+    .def("AddFrom", &This::AddFrom)
 
-      .add_property("nanoseconds", &This::GetNanoseconds)
-      .add_property("microseconds", &This::GetMicroseconds)
-      .add_property("milliseconds", &This::GetMilliseconds)
-      .add_property("sampleCount", &This::GetSampleCount)
-      .add_property("seconds", &This::GetSeconds);
+    .add_property("nanoseconds", &This::GetNanoseconds)
+    .add_property("microseconds", &This::GetMicroseconds)
+    .add_property("milliseconds", &This::GetMilliseconds)
+    .add_property("sampleCount", &This::GetSampleCount)
+    .add_property("seconds", &This::GetSeconds);
 }

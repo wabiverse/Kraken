@@ -69,14 +69,12 @@ static GfVec2i _GetScreenSize()
   //
 
   GLint attachType = 0;
-  glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER,
-                                        GL_COLOR_ATTACHMENT0,
-                                        GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE,
-                                        &attachType);
+  glGetFramebufferAttachmentParameteriv(
+    GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &attachType);
 
   GLint attachId = 0;
   glGetFramebufferAttachmentParameteriv(
-      GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &attachId);
+    GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &attachId);
 
   // XXX Fallback to gl viewport in case we do not find a non-default FBO for
   // bakends that do not attach a custom FB. This is in-correct, but gl does
@@ -135,8 +133,8 @@ static GfVec2i _GetScreenSize()
 }
 
 HdxOitResolveTask::HdxOitResolveTask(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdTask(id),
-      _screenSize(0)
+  : HdTask(id),
+    _screenSize(0)
 {}
 
 HdxOitResolveTask::~HdxOitResolveTask() = default;
@@ -147,8 +145,7 @@ void HdxOitResolveTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDi
   *dirtyBits = HdChangeTracker::Clean;
 }
 
-const HdRenderPassAovBindingVector &HdxOitResolveTask::_GetAovBindings(
-    HdTaskContext *const ctx) const
+const HdRenderPassAovBindingVector &HdxOitResolveTask::_GetAovBindings(HdTaskContext *const ctx) const
 {
   static HdRenderPassAovBindingVector empty;
 
@@ -172,9 +169,9 @@ GfVec2i HdxOitResolveTask::_ComputeScreenSize(HdTaskContext *ctx, HdRenderIndex 
     return _GetScreenSize();
   }
 
-  const SdfPath &bufferId      = aovBindings.front().renderBufferId;
+  const SdfPath &bufferId = aovBindings.front().renderBufferId;
   HdRenderBuffer *const buffer = static_cast<HdRenderBuffer *>(
-      renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, bufferId));
+    renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, bufferId));
   if (!buffer) {
     TF_CODING_ERROR("No render buffer at path %s specified in AOV bindings", bufferId.GetText());
     return _GetScreenSize();
@@ -194,8 +191,8 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
     return;
   }
 
-  HdPhResourceRegistrySharedPtr const &hdPhResourceRegistry =
-      std::static_pointer_cast<HdPhResourceRegistry>(renderIndex->GetResourceRegistry());
+  HdPhResourceRegistrySharedPtr const &hdPhResourceRegistry = std::static_pointer_cast<HdPhResourceRegistry>(
+    renderIndex->GetResourceRegistry());
 
   const bool createOitBuffers = !_counterBar;
   if (createOitBuffers) {
@@ -203,26 +200,24 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
     // Counter Buffer
     //
     HdBufferSpecVector counterSpecs;
-    counterSpecs.push_back(
-        HdBufferSpec(HdxTokens->hdxOitCounterBuffer, HdTupleType{HdTypeInt32, 1}));
+    counterSpecs.push_back(HdBufferSpec(HdxTokens->hdxOitCounterBuffer, HdTupleType{HdTypeInt32, 1}));
     _counterBar = hdPhResourceRegistry->AllocateSingleBufferArrayRange(
-        /*role*/ HdxTokens->oitCounter, counterSpecs, HdBufferArrayUsageHint());
+      /*role*/ HdxTokens->oitCounter, counterSpecs, HdBufferArrayUsageHint());
     //
     // Index Buffer
     //
     HdBufferSpecVector indexSpecs;
     indexSpecs.push_back(HdBufferSpec(HdxTokens->hdxOitIndexBuffer, HdTupleType{HdTypeInt32, 1}));
     _indexBar = hdPhResourceRegistry->AllocateSingleBufferArrayRange(
-        /*role*/ HdxTokens->oitIndices, indexSpecs, HdBufferArrayUsageHint());
+      /*role*/ HdxTokens->oitIndices, indexSpecs, HdBufferArrayUsageHint());
 
     //
     // Data Buffer
     //
     HdBufferSpecVector dataSpecs;
-    dataSpecs.push_back(
-        HdBufferSpec(HdxTokens->hdxOitDataBuffer, HdTupleType{HdTypeFloatVec4, 1}));
+    dataSpecs.push_back(HdBufferSpec(HdxTokens->hdxOitDataBuffer, HdTupleType{HdTypeFloatVec4, 1}));
     _dataBar = hdPhResourceRegistry->AllocateSingleBufferArrayRange(
-        /*role*/ HdxTokens->oitData, dataSpecs, HdBufferArrayUsageHint());
+      /*role*/ HdxTokens->oitData, dataSpecs, HdBufferArrayUsageHint());
 
     //
     // Depth Buffer
@@ -230,25 +225,24 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
     HdBufferSpecVector depthSpecs;
     depthSpecs.push_back(HdBufferSpec(HdxTokens->hdxOitDepthBuffer, HdTupleType{HdTypeFloat, 1}));
     _depthBar = hdPhResourceRegistry->AllocateSingleBufferArrayRange(
-        /*role*/ HdxTokens->oitDepth, depthSpecs, HdBufferArrayUsageHint());
+      /*role*/ HdxTokens->oitDepth, depthSpecs, HdBufferArrayUsageHint());
 
     //
     // Uniforms
     //
     HdBufferSpecVector uniformSpecs;
-    uniformSpecs.push_back(
-        HdBufferSpec(HdxTokens->oitScreenSize, HdTupleType{HdTypeInt32Vec2, 1}));
+    uniformSpecs.push_back(HdBufferSpec(HdxTokens->oitScreenSize, HdTupleType{HdTypeInt32Vec2, 1}));
 
     _uniformBar = hdPhResourceRegistry->AllocateUniformBufferArrayRange(
-        /*role*/ HdxTokens->oitUniforms, uniformSpecs, HdBufferArrayUsageHint());
+      /*role*/ HdxTokens->oitUniforms, uniformSpecs, HdBufferArrayUsageHint());
   }
 
   // Make sure task context has our buffer each frame (in case its cleared)
   (*ctx)[HdxTokens->oitCounterBufferBar] = _counterBar;
-  (*ctx)[HdxTokens->oitIndexBufferBar]   = _indexBar;
-  (*ctx)[HdxTokens->oitDataBufferBar]    = _dataBar;
-  (*ctx)[HdxTokens->oitDepthBufferBar]   = _depthBar;
-  (*ctx)[HdxTokens->oitUniformBar]       = _uniformBar;
+  (*ctx)[HdxTokens->oitIndexBufferBar] = _indexBar;
+  (*ctx)[HdxTokens->oitDataBufferBar] = _dataBar;
+  (*ctx)[HdxTokens->oitDepthBufferBar] = _depthBar;
+  (*ctx)[HdxTokens->oitUniformBar] = _uniformBar;
 
   // The OIT buffer are sized based on the size of the screen and use
   // fragCoord to index into the buffers.
@@ -256,7 +250,7 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
   const bool resizeOitBuffers = (screenSize[0] > _screenSize[0] || screenSize[1] > _screenSize[1]);
 
   if (resizeOitBuffers) {
-    _screenSize             = screenSize;
+    _screenSize = screenSize;
     const int newBufferSize = screenSize[0] * screenSize[1];
 
     // +1 because element 0 of the counter buffer is used as an atomic
@@ -268,8 +262,7 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
 
     // Update the values in the uniform buffer
     hdPhResourceRegistry->AddSource(
-        _uniformBar,
-        std::make_shared<HdVtBufferSource>(HdxTokens->oitScreenSize, VtValue(screenSize)));
+      _uniformBar, std::make_shared<HdVtBufferSource>(HdxTokens->oitScreenSize, VtValue(screenSize)));
   }
 }
 
@@ -291,8 +284,7 @@ void HdxOitResolveTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
     HdRprimCollection collection;
     HdRenderDelegate *renderDelegate = renderIndex->GetRenderDelegate();
 
-    if (!TF_VERIFY(dynamic_cast<HdPhRenderDelegate *>(renderDelegate),
-                   "OIT Task only works with HdPh")) {
+    if (!TF_VERIFY(dynamic_cast<HdPhRenderDelegate *>(renderDelegate), "OIT Task only works with HdPh")) {
       return;
     }
 

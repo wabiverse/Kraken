@@ -48,11 +48,7 @@ WABI_NAMESPACE_BEGIN
 class HdRenderBuffer : public HdBprim {
  public:
   // change tracking for HdRenderBuffer
-  enum DirtyBits : HdDirtyBits {
-    Clean            = 0,
-    DirtyDescription = 1 << 0,
-    AllDirty         = (DirtyDescription)
-  };
+  enum DirtyBits : HdDirtyBits { Clean = 0, DirtyDescription = 1 << 0, AllDirty = (DirtyDescription) };
 
   HD_API
   HdRenderBuffer(SdfPath const &id);

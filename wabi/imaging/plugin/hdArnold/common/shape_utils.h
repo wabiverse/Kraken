@@ -84,26 +84,24 @@ class ArnoldUsdCurvesData {
     }
     VtArray<T> remapped(_numPerVertex);
     const auto *originalP = original.data();
-    auto *remappedP       = remapped.data();
+    auto *remappedP = remapped.data();
     // We use the first and the last item for each curve and using the CanInterpolate type.
     // - Interpolate values if we can interpolate the type.
     // - Look for the closest one if we can't interpolate the type.
     for (auto curve = decltype(numVertexCounts){0}; curve < numVertexCounts; curve += 1) {
-      const auto originalVertexCount         = _vertexCounts[curve];
-      const auto arnoldVertexCount           = _arnoldVertexCounts[curve];
-      const auto arnoldVertexCountMinusOne   = arnoldVertexCount - 1;
+      const auto originalVertexCount = _vertexCounts[curve];
+      const auto arnoldVertexCount = _arnoldVertexCounts[curve];
+      const auto arnoldVertexCountMinusOne = arnoldVertexCount - 1;
       const auto originalVertexCountMinusOne = originalVertexCount - 1;
-      *remappedP                             = *originalP;
-      remappedP[arnoldVertexCountMinusOne]   = originalP[originalVertexCountMinusOne];
+      *remappedP = *originalP;
+      remappedP[arnoldVertexCountMinusOne] = originalP[originalVertexCountMinusOne];
 
       // The original vertex count should always be more than the
       if (arnoldVertexCount > 2) {
         for (auto i = 1; i < arnoldVertexCountMinusOne; i += 1) {
           // Convert i to a range of 0..1.
-          const auto arnoldVertex = static_cast<float>(i) /
-                                    static_cast<float>(arnoldVertexCountMinusOne);
-          const auto originalVertex = arnoldVertex *
-                                      static_cast<float>(originalVertexCountMinusOne);
+          const auto arnoldVertex = static_cast<float>(i) / static_cast<float>(arnoldVertexCountMinusOne);
+          const auto originalVertex = arnoldVertex * static_cast<float>(originalVertexCountMinusOne);
           // AiLerp fails with string and other types, so we have to make sure it's not being
           // called based on the type, so using a partial template specialization, that does not
           // work with functions.
@@ -126,8 +124,7 @@ class ArnoldUsdCurvesData {
   /// @param value VtValue holding the USD vertex primvar, if remapping is successful, @param value
   /// will be changed.
   /// @return True if remapping was successful, false otherwise.
-  template<typename T0, typename T1, typename... T>
-  inline bool RemapCurvesVertexPrimvar(VtValue &value)
+  template<typename T0, typename T1, typename... T> inline bool RemapCurvesVertexPrimvar(VtValue &value)
   {
     return RemapCurvesVertexPrimvar<T0>(value) || RemapCurvesVertexPrimvar<T1, T...>(value);
   }
@@ -136,8 +133,8 @@ class ArnoldUsdCurvesData {
   VtIntArray _arnoldVertexCounts;   ///< Arnold vertex counts.
   const VtIntArray &_vertexCounts;  ///< USD vertex counts.
   int _vmin;                        ///< Minimum vertex count per segment.
-  int _vstep;         ///< Number of vertices needed to increase segment count by one.
-  int _numPerVertex;  ///< Number of per vertex values.
+  int _vstep;                       ///< Number of vertices needed to increase segment count by one.
+  int _numPerVertex;                ///< Number of per vertex values.
 
   template<typename T0, typename... T> struct IsAny : std::false_type {
   };
@@ -147,11 +144,10 @@ class ArnoldUsdCurvesData {
 
   template<typename T0, typename T1, typename... T>
   struct IsAny<T0, T1, T...>
-      : std::integral_constant<bool, std::is_same<T0, T1>::value || IsAny<T0, T...>::value> {
+    : std::integral_constant<bool, std::is_same<T0, T1>::value || IsAny<T0, T...>::value> {
   };
 
-  template<typename T>
-  using CanInterpolate = IsAny<T, float, double, GfHalf, GfVec2f, GfVec3f, GfVec4f>;
+  template<typename T> using CanInterpolate = IsAny<T, float, double, GfHalf, GfVec2f, GfVec3f, GfVec4f>;
 
   template<typename T, bool interpolate = CanInterpolate<T>::value> struct RemapVertexPrimvar {
     static inline void fn(T &, const T *, float)
@@ -168,12 +164,11 @@ class ArnoldUsdCurvesData {
   template<typename T> struct RemapVertexPrimvar<T, true> {
     static inline void fn(T &remapped, const T *original, float originalVertex)
     {
-      float originalVertexFloor         = 0;
-      const auto originalVertexFrac     = modff(originalVertex, &originalVertexFloor);
+      float originalVertexFloor = 0;
+      const auto originalVertexFrac = modff(originalVertex, &originalVertexFloor);
       const auto originalVertexFloorInt = static_cast<int>(originalVertexFloor);
-      remapped                          = AiLerp(originalVertexFrac,
-                        original[originalVertexFloorInt],
-                        original[originalVertexFloorInt + 1]);
+      remapped = AiLerp(
+        originalVertexFrac, original[originalVertexFloorInt], original[originalVertexFloorInt + 1]);
     }
   };
 };

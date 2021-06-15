@@ -147,7 +147,7 @@ class HdPh_GeometricShader : public HdPhShaderCode {
                        bool cullingPass,
                        FvarPatchType fvarPatchType,
                        SdfPath const &debugId = SdfPath(),
-                       float lineWidth        = 0);
+                       float lineWidth = 0);
 
   HDPH_API
   ~HdPh_GeometricShader() override;
@@ -236,9 +236,8 @@ class HdPh_GeometricShader : public HdPhShaderCode {
   int GetNumPrimitiveVertsForGeometryShader() const;
 
   // Factory for convenience.
-  static HdPh_GeometricShaderSharedPtr Create(
-      HdPh_ShaderKey const &shaderKey,
-      HdPhResourceRegistrySharedPtr const &resourceRegistry);
+  static HdPh_GeometricShaderSharedPtr Create(HdPh_ShaderKey const &shaderKey,
+                                              HdPhResourceRegistrySharedPtr const &resourceRegistry);
 
  private:
   PrimitiveType _primType;

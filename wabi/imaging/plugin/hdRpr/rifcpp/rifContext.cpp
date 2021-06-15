@@ -76,8 +76,7 @@ class ContextCPU final : public Context {
 std::vector<rpr_char> GetRprCachePath(rpr::Context *rprContext)
 {
   size_t length;
-  rpr_status status = rprContext->GetInfo(
-      RPR_CONTEXT_CACHE_PATH, sizeof(size_t), nullptr, &length);
+  rpr_status status = rprContext->GetInfo(RPR_CONTEXT_CACHE_PATH, sizeof(size_t), nullptr, &length);
   if (status != RPR_SUCCESS) {
     throw rif::Error(RPR_GET_ERROR_MESSAGE(status, "Failed to get cache path", rprContext));
   }
@@ -95,24 +94,22 @@ rif_image_desc GetRifImageDesc(HdRprApiFramebuffer *rprFrameBuffer)
 {
   auto rprDesc = rprFrameBuffer->GetDesc();
 
-  rif_image_desc imageDesc    = {};
-  imageDesc.image_width       = rprDesc.fb_width;
-  imageDesc.image_height      = rprDesc.fb_height;
-  imageDesc.image_depth       = 1;
-  imageDesc.image_row_pitch   = 0;
+  rif_image_desc imageDesc = {};
+  imageDesc.image_width = rprDesc.fb_width;
+  imageDesc.image_height = rprDesc.fb_height;
+  imageDesc.image_depth = 1;
+  imageDesc.image_row_pitch = 0;
   imageDesc.image_slice_pitch = 0;
-  imageDesc.num_components    = 4;
-  imageDesc.type              = RIF_COMPONENT_TYPE_FLOAT32;
+  imageDesc.num_components = 4;
+  imageDesc.type = RIF_COMPONENT_TYPE_FLOAT32;
 
   return imageDesc;
 }
 
-ContextOpenCL::ContextOpenCL(rpr::Context *rprContext, std::string const &modelPath)
-    : Context(modelPath)
+ContextOpenCL::ContextOpenCL(rpr::Context *rprContext, std::string const &modelPath) : Context(modelPath)
 {
   int deviceCount = 0;
-  RIF_ERROR_CHECK_THROW(rifGetDeviceCount(rifBackendApiType, &deviceCount),
-                        "Failed to query device count");
+  RIF_ERROR_CHECK_THROW(rifGetDeviceCount(rifBackendApiType, &deviceCount), "Failed to query device count");
 
   assert(deviceCount != 0);
   if (0 == deviceCount)
@@ -120,33 +117,28 @@ ContextOpenCL::ContextOpenCL(rpr::Context *rprContext, std::string const &modelP
 
   rpr_cl_context clContext;
   rpr_status status = rprContext->GetInfo(
-      rpr::ContextInfo(RPR_CL_CONTEXT), sizeof(rpr_cl_context), &clContext, nullptr);
+    rpr::ContextInfo(RPR_CL_CONTEXT), sizeof(rpr_cl_context), &clContext, nullptr);
   if (status != RPR_SUCCESS) {
     throw rif::Error(RPR_GET_ERROR_MESSAGE(status, "Failed to query CL context", rprContext));
   }
 
   rpr_cl_device clDevice;
-  status = rprContext->GetInfo(
-      rpr::ContextInfo(RPR_CL_DEVICE), sizeof(rpr_cl_device), &clDevice, nullptr);
+  status = rprContext->GetInfo(rpr::ContextInfo(RPR_CL_DEVICE), sizeof(rpr_cl_device), &clDevice, nullptr);
   if (status != RPR_SUCCESS) {
     throw rif::Error(RPR_GET_ERROR_MESSAGE(status, "Failed to query CL device", rprContext));
   }
 
   rpr_cl_command_queue clCommandQueue;
-  status = rprContext->GetInfo(rpr::ContextInfo(RPR_CL_COMMAND_QUEUE),
-                               sizeof(rpr_cl_command_queue),
-                               &clCommandQueue,
-                               nullptr);
+  status = rprContext->GetInfo(
+    rpr::ContextInfo(RPR_CL_COMMAND_QUEUE), sizeof(rpr_cl_command_queue), &clCommandQueue, nullptr);
   if (status != RPR_SUCCESS) {
-    throw rif::Error(
-        RPR_GET_ERROR_MESSAGE(status, "Failed to query CL command queue", rprContext));
+    throw rif::Error(RPR_GET_ERROR_MESSAGE(status, "Failed to query CL command queue", rprContext));
   }
 
   std::vector<rpr_char> path = GetRprCachePath(rprContext);
-  RIF_ERROR_CHECK_THROW(
-      rifCreateContextFromOpenClContext(
-          RIF_API_VERSION, clContext, clDevice, clCommandQueue, path.data(), &m_context),
-      "Failed to create RIF context")
+  RIF_ERROR_CHECK_THROW(rifCreateContextFromOpenClContext(
+                          RIF_API_VERSION, clContext, clDevice, clCommandQueue, path.data(), &m_context),
+                        "Failed to create RIF context")
 }
 
 std::unique_ptr<Image> ContextOpenCL::CreateImage(HdRprApiFramebuffer *rprFrameBuffer)
@@ -164,9 +156,8 @@ std::unique_ptr<Image> ContextOpenCL::CreateImage(HdRprApiFramebuffer *rprFrameB
   }
 
   auto rifImageDesc = GetRifImageDesc(rprFrameBuffer);
-  RIF_ERROR_CHECK_THROW(
-      rifContextCreateImageFromOpenClMemory(m_context, &rifImageDesc, clMem, &rifImage),
-      "Failed to create RIF image from OpenCL memory");
+  RIF_ERROR_CHECK_THROW(rifContextCreateImageFromOpenClMemory(m_context, &rifImageDesc, clMem, &rifImage),
+                        "Failed to create RIF image from OpenCL memory");
 
   return std::unique_ptr<Image>(new Image(rifImage));
 }
@@ -174,8 +165,7 @@ std::unique_ptr<Image> ContextOpenCL::CreateImage(HdRprApiFramebuffer *rprFrameB
 ContextCPU::ContextCPU(rpr::Context *rprContext, std::string const &modelPath) : Context(modelPath)
 {
   int deviceCount = 0;
-  RIF_ERROR_CHECK_THROW(rifGetDeviceCount(rifBackendApiType, &deviceCount),
-                        "Failed to query device count");
+  RIF_ERROR_CHECK_THROW(rifGetDeviceCount(rifBackendApiType, &deviceCount), "Failed to query device count");
 
   assert(deviceCount != 0);
   if (0 == deviceCount)
@@ -183,9 +173,8 @@ ContextCPU::ContextCPU(rpr::Context *rprContext, std::string const &modelPath) :
 
   std::vector<rpr_char> path = GetRprCachePath(rprContext);
 
-  RIF_ERROR_CHECK_THROW(
-      rifCreateContext(RIF_API_VERSION, rifBackendApiType, 0, path.data(), &m_context),
-      "Failed to create RIF context")
+  RIF_ERROR_CHECK_THROW(rifCreateContext(RIF_API_VERSION, rifBackendApiType, 0, path.data(), &m_context),
+                        "Failed to create RIF context")
 }
 
 std::unique_ptr<Image> ContextCPU::CreateImage(HdRprApiFramebuffer *rprFrameBuffer)
@@ -206,17 +195,15 @@ void ContextCPU::UpdateInputImage(HdRprApiFramebuffer *rprFrameBuffer, rif_image
   // data have to be acquired from RPR framebuffers and moved to filter inputs
 
   size_t sizeInBytes = 0;
-  size_t retSize     = 0;
+  size_t retSize = 0;
 
   // verify image size
   RIF_ERROR_CHECK_THROW(
-      rifImageGetInfo(
-          image, RIF_IMAGE_DATA_SIZEBYTE, sizeof(size_t), (void *)&sizeInBytes, &retSize),
-      "Failed to get RIF image info");
+    rifImageGetInfo(image, RIF_IMAGE_DATA_SIZEBYTE, sizeof(size_t), (void *)&sizeInBytes, &retSize),
+    "Failed to get RIF image info");
 
   size_t fbSize;
-  rpr_status status = rprFrameBuffer->GetRprObject()->GetInfo(
-      RPR_FRAMEBUFFER_DATA, 0, NULL, &fbSize);
+  rpr_status status = rprFrameBuffer->GetRprObject()->GetInfo(RPR_FRAMEBUFFER_DATA, 0, NULL, &fbSize);
   if (status != RPR_SUCCESS) {
     throw rif::Error(RPR_GET_ERROR_MESSAGE(status, "Failed to query RPR_FRAMEBUFFER_DATA"));
   }
@@ -228,11 +215,9 @@ void ContextCPU::UpdateInputImage(HdRprApiFramebuffer *rprFrameBuffer, rif_image
 
   // resolve framebuffer data to rif image
   void *imageData = nullptr;
-  RIF_ERROR_CHECK_THROW(rifImageMap(image, RIF_IMAGE_MAP_WRITE, &imageData),
-                        "Failed to map RIF image");
+  RIF_ERROR_CHECK_THROW(rifImageMap(image, RIF_IMAGE_MAP_WRITE, &imageData), "Failed to map RIF image");
 
-  auto rprStatus = rprFrameBuffer->GetRprObject()->GetInfo(
-      RPR_FRAMEBUFFER_DATA, fbSize, imageData, NULL);
+  auto rprStatus = rprFrameBuffer->GetRprObject()->GetInfo(RPR_FRAMEBUFFER_DATA, fbSize, imageData, NULL);
   assert(RPR_SUCCESS == rprStatus);
 
   // try to unmap at first, then raise a possible error
@@ -277,20 +262,18 @@ rpr_int GpuDeviceIdUsed(rpr_creation_flags contextFlags)
   return -1;
 }
 
-ContextMetal::ContextMetal(rpr::Context *rprContext, std::string const &modelPath)
-    : Context(modelPath)
+ContextMetal::ContextMetal(rpr::Context *rprContext, std::string const &modelPath) : Context(modelPath)
 {
   int deviceCount = 0;
-  RIF_ERROR_CHECK_THROW(rifGetDeviceCount(rifBackendApiType, &deviceCount),
-                        "Failed to query device count");
+  RIF_ERROR_CHECK_THROW(rifGetDeviceCount(rifBackendApiType, &deviceCount), "Failed to query device count");
 
   assert(deviceCount != 0);
   if (0 == deviceCount)
     RIF_THROW_ERROR_MSG("No compatible devices");
 
   rpr_creation_flags contextFlags = 0;
-  rpr_status status               = rprContext->GetInfo(
-      RPR_CONTEXT_CREATION_FLAGS, sizeof(rpr_creation_flags), &contextFlags, nullptr);
+  rpr_status status = rprContext->GetInfo(
+    RPR_CONTEXT_CREATION_FLAGS, sizeof(rpr_creation_flags), &contextFlags, nullptr);
   if (status != RPR_SUCCESS) {
     throw rif::Error(RPR_GET_ERROR_MESSAGE(status, "Failed to query RPR context creation flags"));
   }
@@ -298,12 +281,10 @@ ContextMetal::ContextMetal(rpr::Context *rprContext, std::string const &modelPat
   std::vector<rpr_char> path = GetRprCachePath(rprContext);
 
   // we find the active gpu from the rpr contextFlags and then use that to create the rif context
-  RIF_ERROR_CHECK_THROW(rifCreateContext(RIF_API_VERSION,
-                                         rifBackendApiType,
-                                         GpuDeviceIdUsed(contextFlags),
-                                         path.data(),
-                                         &m_context),
-                        "Failed to create RIF context");
+  RIF_ERROR_CHECK_THROW(
+    rifCreateContext(
+      RIF_API_VERSION, rifBackendApiType, GpuDeviceIdUsed(contextFlags), path.data(), &m_context),
+    "Failed to create RIF context");
 }
 
 std::unique_ptr<Image> ContextMetal::CreateImage(HdRprApiFramebuffer *rprFrameBuffer)
@@ -314,14 +295,14 @@ std::unique_ptr<Image> ContextMetal::CreateImage(HdRprApiFramebuffer *rprFrameBu
   }
 
   rif_image rifImage = nullptr;
-  rpr_cl_mem clMem   = rprFrameBuffer->GetCLMem();
+  rpr_cl_mem clMem = rprFrameBuffer->GetCLMem();
   assert(clMem);
   if (!clMem)
     RIF_THROW_ERROR_MSG("Failed to get frame buffer cl_mem");
 
   rpr::ImageFormat fbFormat;
   auto status = rprFrameBuffer->GetRprObject()->GetInfo(
-      RPR_FRAMEBUFFER_FORMAT, sizeof(fbFormat), &fbFormat, nullptr);
+    RPR_FRAMEBUFFER_FORMAT, sizeof(fbFormat), &fbFormat, nullptr);
   if (status != RPR_SUCCESS) {
     throw rif::Error(RPR_GET_ERROR_MESSAGE(status, "Failed to get framebuffer format"));
   }
@@ -333,13 +314,11 @@ std::unique_ptr<Image> ContextMetal::CreateImage(HdRprApiFramebuffer *rprFrameBu
   else if (fbFormat.type == RPR_COMPONENT_TYPE_FLOAT16) {
     bytesPerComponent = 2;
   }
-  auto desc         = GetRifImageDesc(rprFrameBuffer);
-  rif_longlong size = desc.image_width * desc.image_height * fbFormat.num_components *
-                      bytesPerComponent;
+  auto desc = GetRifImageDesc(rprFrameBuffer);
+  rif_longlong size = desc.image_width * desc.image_height * fbFormat.num_components * bytesPerComponent;
 
-  RIF_ERROR_CHECK_THROW(
-      rifContextCreateImageFromMetalMemory(m_context, &desc, clMem, size, &rifImage),
-      "Failed to create RIF image from metal memory");
+  RIF_ERROR_CHECK_THROW(rifContextCreateImageFromMetalMemory(m_context, &desc, clMem, size, &rifImage),
+                        "Failed to create RIF image from metal memory");
 
   return std::unique_ptr<Image>(new Image(rifImage));
 #else
@@ -352,9 +331,8 @@ bool HasGpuContext(rpr_creation_flags contextFlags)
 
 #define GPU(x) RPR_CREATION_FLAGS_ENABLE_GPU##x
 
-  rpr_creation_flags gpuMask = GPU(0) | GPU(1) | GPU(2) | GPU(3) | GPU(4) | GPU(5) | GPU(6) |
-                               GPU(7) | GPU(8) | GPU(9) | GPU(10) | GPU(11) | GPU(12) | GPU(13) |
-                               GPU(14) | GPU(15);
+  rpr_creation_flags gpuMask = GPU(0) | GPU(1) | GPU(2) | GPU(3) | GPU(4) | GPU(5) | GPU(6) | GPU(7) |
+                               GPU(8) | GPU(9) | GPU(10) | GPU(11) | GPU(12) | GPU(13) | GPU(14) | GPU(15);
 
 #undef GPU
 
@@ -373,9 +351,8 @@ std::unique_ptr<Context> Context::Create(rpr::Context *rprContext,
 
   rpr_creation_flags contextFlags = 0;
   if (RPR_ERROR_CHECK(
-          rprContext->GetInfo(
-              RPR_CONTEXT_CREATION_FLAGS, sizeof(rpr_creation_flags), &contextFlags, nullptr),
-          "Failed to query RPR context creation flags")) {
+        rprContext->GetInfo(RPR_CONTEXT_CREATION_FLAGS, sizeof(rpr_creation_flags), &contextFlags, nullptr),
+        "Failed to query RPR context creation flags")) {
     return nullptr;
   }
 
@@ -389,9 +366,8 @@ std::unique_ptr<Context> Context::Create(rpr::Context *rprContext,
       rifContext.reset(new ContextCPU(rprContext, modelPath));
     }
 
-    RIF_ERROR_CHECK_THROW(
-        rifContextCreateCommandQueue(rifContext->m_context, &rifContext->m_commandQueue),
-        "Failed to create RIF command queue");
+    RIF_ERROR_CHECK_THROW(rifContextCreateCommandQueue(rifContext->m_context, &rifContext->m_commandQueue),
+                          "Failed to create RIF command queue");
 
     return rifContext;
   }
@@ -430,9 +406,8 @@ void Context::UpdateInputImage(HdRprApiFramebuffer *rprFrameBuffer, rif_image im
 
 void Context::AttachFilter(rif_image_filter filter, rif_image inputImage, rif_image outputImage)
 {
-  RIF_ERROR_CHECK_THROW(
-      rifCommandQueueAttachImageFilter(m_commandQueue, filter, inputImage, outputImage),
-      "Failed to attach image filter to queue");
+  RIF_ERROR_CHECK_THROW(rifCommandQueueAttachImageFilter(m_commandQueue, filter, inputImage, outputImage),
+                        "Failed to attach image filter to queue");
   ++m_numAttachedFilters;
 }
 
@@ -462,9 +437,8 @@ void Context::ExecuteCommandQueue()
     return;
   }
 
-  RIF_ERROR_CHECK_THROW(
-      rifContextExecuteCommandQueue(m_context, m_commandQueue, nullptr, nullptr, nullptr),
-      "Failed to execute command queue");
+  RIF_ERROR_CHECK_THROW(rifContextExecuteCommandQueue(m_context, m_commandQueue, nullptr, nullptr, nullptr),
+                        "Failed to execute command queue");
   RIF_ERROR_CHECK_THROW(rifSyncronizeQueue(m_commandQueue), "Failed to synchronize command queue");
 }
 

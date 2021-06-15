@@ -114,8 +114,8 @@ class UsdImagingGLEngine {
   UsdImagingGLEngine(const SdfPath &rootPath,
                      const SdfPathVector &excludedPaths,
                      const SdfPathVector &invisedPaths = SdfPathVector(),
-                     const SdfPath &sceneDelegateID    = SdfPath::AbsoluteRootPath(),
-                     const HdDriver &driver            = HdDriver());
+                     const SdfPath &sceneDelegateID = SdfPath::AbsoluteRootPath(),
+                     const HdDriver &driver = HdDriver());
 
   // Disallow copies
   UsdImagingGLEngine(const UsdImagingGLEngine &) = delete;
@@ -304,9 +304,9 @@ class UsdImagingGLEngine {
                         const UsdImagingGLRenderParams &params,
                         GfVec3d *outHitPoint,
                         GfVec3d *outHitNormal,
-                        SdfPath *outHitPrimPath                 = NULL,
-                        SdfPath *outHitInstancerPath            = NULL,
-                        int *outHitInstanceIndex                = NULL,
+                        SdfPath *outHitPrimPath = NULL,
+                        SdfPath *outHitInstancerPath = NULL,
+                        int *outHitInstanceIndex = NULL,
                         HdInstancerContext *outInstancerContext = NULL);
 
   /// Decodes a pick result given hydra prim ID/instance ID (like you'd get
@@ -314,9 +314,9 @@ class UsdImagingGLEngine {
   USDIMAGINGGL_API
   bool DecodeIntersection(unsigned char const primIdColor[4],
                           unsigned char const instanceIdColor[4],
-                          SdfPath *outHitPrimPath                 = NULL,
-                          SdfPath *outHitInstancerPath            = NULL,
-                          int *outHitInstanceIndex                = NULL,
+                          SdfPath *outHitPrimPath = NULL,
+                          SdfPath *outHitInstancerPath = NULL,
+                          int *outHitInstanceIndex = NULL,
                           HdInstancerContext *outInstancerContext = NULL);
 
   /// @}
@@ -407,8 +407,7 @@ class UsdImagingGLEngine {
   /// GetRendererCommandDescriptors() for the same active render delegate.
   ///
   USDIMAGINGGL_API
-  bool InvokeRendererCommand(const TfToken &command,
-                             const HdCommandArgs &args = HdCommandArgs()) const;
+  bool InvokeRendererCommand(const TfToken &command, const HdCommandArgs &args = HdCommandArgs()) const;
 
   // ---------------------------------------------------------------------
   /// \name Control of background rendering threads.
@@ -520,11 +519,9 @@ class UsdImagingGLEngine {
                                      SdfPathVector const &roots,
                                      UsdImagingGLRenderParams const &params);
   USDIMAGINGGL_API
-  static HdxRenderTaskParams _MakeHydraUsdImagingGLRenderParams(
-      UsdImagingGLRenderParams const &params);
+  static HdxRenderTaskParams _MakeHydraUsdImagingGLRenderParams(UsdImagingGLRenderParams const &params);
   USDIMAGINGGL_API
-  static void _ComputeRenderTags(UsdImagingGLRenderParams const &params,
-                                 TfTokenVector *renderTags);
+  static void _ComputeRenderTags(UsdImagingGLRenderParams const &params, TfTokenVector *renderTags);
 
   USDIMAGINGGL_API
   void _InitializeHgiIfNecessary();

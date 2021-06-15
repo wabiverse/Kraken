@@ -40,11 +40,11 @@
 WABI_NAMESPACE_BEGIN
 
 HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
-    : HgiTexture(desc),
-      _textureId(nil)
+  : HgiTexture(desc),
+    _textureId(nil)
 {
   MTLResourceOptions resourceOptions = MTLResourceStorageModePrivate;
-  MTLTextureUsage usage              = MTLTextureUsageUnknown;
+  MTLTextureUsage usage = MTLTextureUsageUnknown;
 
   if (desc.initialData && desc.pixelsByteSize > 0) {
     resourceOptions = MTLResourceStorageModeManaged;
@@ -75,9 +75,9 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
     usage |= MTLTextureUsageShaderWrite;
   }
 
-  const size_t width  = desc.dimensions[0];
+  const size_t width = desc.dimensions[0];
   const size_t height = desc.dimensions[1];
-  const size_t depth  = desc.dimensions[2];
+  const size_t depth = desc.dimensions[2];
 
   MTLTextureDescriptor *texDesc;
 
@@ -88,31 +88,31 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
 
   texDesc.mipmapLevelCount = desc.mipLevels;
 
-  texDesc.arrayLength     = desc.layerCount;
+  texDesc.arrayLength = desc.layerCount;
   texDesc.resourceOptions = resourceOptions;
-  texDesc.usage           = usage;
+  texDesc.usage = usage;
 
 #if (defined(__MAC_10_15) && __MAC_OS_X_VERSION_MAX_ALLOWED >= __MAC_10_15) || \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
+  __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
   if (@available(macOS 10.15, ios 13.0, *)) {
     size_t numChannels = HgiGetComponentCount(desc.format);
 
     if (usage == MTLTextureUsageShaderRead && numChannels == 1) {
       MTLTextureSwizzle s = HgiMetalConversions::GetComponentSwizzle(desc.componentMapping.r);
-      texDesc.swizzle     = MTLTextureSwizzleChannelsMake(s, s, s, s);
+      texDesc.swizzle = MTLTextureSwizzleChannelsMake(s, s, s, s);
     }
     else {
       texDesc.swizzle = MTLTextureSwizzleChannelsMake(
-          HgiMetalConversions::GetComponentSwizzle(desc.componentMapping.r),
-          HgiMetalConversions::GetComponentSwizzle(desc.componentMapping.g),
-          HgiMetalConversions::GetComponentSwizzle(desc.componentMapping.b),
-          HgiMetalConversions::GetComponentSwizzle(desc.componentMapping.a));
+        HgiMetalConversions::GetComponentSwizzle(desc.componentMapping.r),
+        HgiMetalConversions::GetComponentSwizzle(desc.componentMapping.g),
+        HgiMetalConversions::GetComponentSwizzle(desc.componentMapping.b),
+        HgiMetalConversions::GetComponentSwizzle(desc.componentMapping.a));
     }
   }
 #endif
 
   if (desc.type == HgiTextureType3D) {
-    texDesc.depth       = depth;
+    texDesc.depth = depth;
     texDesc.textureType = MTLTextureType3D;
   }
   else if (desc.type == HgiTextureType2DArray) {
@@ -137,15 +137,15 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
 
     // Upload each (available) mip
     const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(
-        desc.format, desc.dimensions, desc.layerCount, desc.pixelsByteSize);
-    const size_t mipLevels        = std::min(mipInfos.size(), size_t(desc.mipLevels));
+      desc.format, desc.dimensions, desc.layerCount, desc.pixelsByteSize);
+    const size_t mipLevels = std::min(mipInfos.size(), size_t(desc.mipLevels));
     const char *const initialData = reinterpret_cast<const char *>(desc.initialData);
 
     for (size_t mip = 0; mip < mipLevels; mip++) {
       const HgiMipInfo &mipInfo = mipInfos[mip];
 
-      const size_t width       = mipInfo.dimensions[0];
-      const size_t height      = mipInfo.dimensions[1];
+      const size_t width = mipInfo.dimensions[0];
+      const size_t height = mipInfo.dimensions[1];
       const size_t bytesPerRow = perPixelSize * width;
 
       if (desc.type == HgiTextureType1D) {
@@ -161,7 +161,7 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
                       bytesPerRow:bytesPerRow];
       }
       else if (desc.type == HgiTextureType3D) {
-        const size_t depth      = mipInfo.dimensions[2];
+        const size_t depth = mipInfo.dimensions[2];
         const size_t imageBytes = bytesPerRow * height;
         for (size_t d = 0; d < depth; d++) {
           const size_t offset = d * imageBytes;
@@ -211,25 +211,25 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
 }
 
 HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureViewDesc const &desc)
-    : HgiTexture(desc.sourceTexture->GetDescriptor()),
-      _textureId(nil)
+  : HgiTexture(desc.sourceTexture->GetDescriptor()),
+    _textureId(nil)
 {
   HgiMetalTexture *srcTexture = static_cast<HgiMetalTexture *>(desc.sourceTexture.Get());
-  NSRange levels              = NSMakeRange(desc.sourceFirstMip, desc.mipLevels);
-  NSRange slices              = NSMakeRange(desc.sourceFirstLayer, desc.layerCount);
-  MTLPixelFormat mtlFormat    = HgiMetalConversions::GetPixelFormat(desc.format);
+  NSRange levels = NSMakeRange(desc.sourceFirstMip, desc.mipLevels);
+  NSRange slices = NSMakeRange(desc.sourceFirstLayer, desc.layerCount);
+  MTLPixelFormat mtlFormat = HgiMetalConversions::GetPixelFormat(desc.format);
 
   _textureId = [srcTexture->GetTextureId()
-      newTextureViewWithPixelFormat:mtlFormat
-                        textureType:[srcTexture->GetTextureId() textureType]
-                             levels:levels
-                             slices:slices];
+    newTextureViewWithPixelFormat:mtlFormat
+                      textureType:[srcTexture->GetTextureId() textureType]
+                           levels:levels
+                           slices:slices];
 
   // Update the texture descriptor to reflect the above
-  _descriptor.debugName  = desc.debugName;
-  _descriptor.format     = desc.format;
+  _descriptor.debugName = desc.debugName;
+  _descriptor.format = desc.format;
   _descriptor.layerCount = desc.layerCount;
-  _descriptor.mipLevels  = desc.mipLevels;
+  _descriptor.mipLevels = desc.mipLevels;
 }
 
 HgiMetalTexture::~HgiMetalTexture()

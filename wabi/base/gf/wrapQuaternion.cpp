@@ -90,51 +90,51 @@ void wrapQuaternion()
 
   class_<This>("Quaternion", "Quaternion class", init<>())
 
-      .def(init<int>())
+    .def(init<int>())
 
-      .def(init<double, const GfVec3d &>())
+    .def(init<double, const GfVec3d &>())
 
-      .def(TfTypePythonClass())
+    .def(TfTypePythonClass())
 
-      .def("GetIdentity", &This::GetIdentity)
-      .staticmethod("GetIdentity")
+    .def("GetIdentity", &This::GetIdentity)
+    .staticmethod("GetIdentity")
 
-      .add_property("real", &This::GetReal, &This::SetReal)
-      .add_property("imaginary", getImaginary, &This::SetImaginary)
+    .add_property("real", &This::GetReal, &This::SetReal)
+    .add_property("imaginary", getImaginary, &This::SetImaginary)
 
-      .def("GetImaginary", getImaginary)
-      .def("GetInverse", &This::GetInverse)
-      .def("GetLength", &This::GetLength)
-      .def("GetReal", &This::GetReal)
+    .def("GetImaginary", getImaginary)
+    .def("GetInverse", &This::GetInverse)
+    .def("GetLength", &This::GetLength)
+    .def("GetReal", &This::GetReal)
 
-      .def("GetNormalized", &This::GetNormalized, GetNormalized_overloads())
-      .def("Normalize", &This::Normalize, Normalize_overloads()[return_self<>()])
+    .def("GetNormalized", &This::GetNormalized, GetNormalized_overloads())
+    .def("Normalize", &This::Normalize, Normalize_overloads()[return_self<>()])
 
-      .def(str(self))
-      .def(self == self)
-      .def(self != self)
-      .def(self *= self)
-      .def(self *= double())
-      .def(self /= double())
-      .def(self += self)
-      .def(self -= self)
-      .def(self + self)
-      .def(self - self)
-      .def(self * self)
-      .def(self * double())
-      .def(double() * self)
-      .def(self / double())
+    .def(str(self))
+    .def(self == self)
+    .def(self != self)
+    .def(self *= self)
+    .def(self *= double())
+    .def(self /= double())
+    .def(self += self)
+    .def(self -= self)
+    .def(self + self)
+    .def(self - self)
+    .def(self * self)
+    .def(self * double())
+    .def(double() * self)
+    .def(self / double())
 
 #if PY_MAJOR_VERSION == 2
-      // Needed only to support "from __future__ import division" in
-      // python 2. In python 3 builds boost::python adds this for us.
-      .def("__truediv__", __truediv__)
-      .def("__itruediv__", __itruediv__)
+    // Needed only to support "from __future__ import division" in
+    // python 2. In python 3 builds boost::python adds this for us.
+    .def("__truediv__", __truediv__)
+    .def("__itruediv__", __itruediv__)
 #endif
 
-      .def("__repr__", _Repr)
-      .def("__hash__", __hash__)
+    .def("__repr__", _Repr)
+    .def("__hash__", __hash__)
 
-      ;
+    ;
   to_python_converter<std::vector<This>, TfPySequenceToPython<std::vector<This>>>();
 }

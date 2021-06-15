@@ -50,8 +50,8 @@ class HdPhResourceRegistry;
 class HdPhVBOMemoryManager : public HdAggregationStrategy {
  public:
   HdPhVBOMemoryManager(HdPhResourceRegistry *resourceRegistry)
-      : HdAggregationStrategy(),
-        _resourceRegistry(resourceRegistry)
+    : HdAggregationStrategy(),
+      _resourceRegistry(resourceRegistry)
   {}
 
   /// Factory for creating HdBufferArray managed by
@@ -86,11 +86,11 @@ class HdPhVBOMemoryManager : public HdAggregationStrategy {
    public:
     /// Constructor.
     _StripedBufferArrayRange(HdPhResourceRegistry *resourceRegistry)
-        : HdPhBufferArrayRange(resourceRegistry),
-          _stripedBufferArray(nullptr),
-          _elementOffset(0),
-          _numElements(0),
-          _capacity(0)
+      : HdPhBufferArrayRange(resourceRegistry),
+        _stripedBufferArray(nullptr),
+        _elementOffset(0),
+        _numElements(0),
+        _capacity(0)
     {}
 
     /// Destructor.
@@ -228,9 +228,9 @@ class HdPhVBOMemoryManager : public HdAggregationStrategy {
     int _capacity;
   };
 
-  using _StripedBufferArraySharedPtr      = std::shared_ptr<_StripedBufferArray>;
+  using _StripedBufferArraySharedPtr = std::shared_ptr<_StripedBufferArray>;
   using _StripedBufferArrayRangeSharedPtr = std::shared_ptr<_StripedBufferArrayRange>;
-  using _StripedBufferArrayRangePtr       = std::weak_ptr<_StripedBufferArrayRange>;
+  using _StripedBufferArrayRangePtr = std::weak_ptr<_StripedBufferArrayRange>;
 
   /// striped buffer array
   class _StripedBufferArray : public HdBufferArray {

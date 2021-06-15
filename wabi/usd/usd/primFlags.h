@@ -151,14 +151,14 @@ class Usd_PrimFlagsPredicate {
 
   Usd_PrimFlagsPredicate(Usd_PrimFlags flag) : _negate(false)
   {
-    _mask[flag]   = 1;
+    _mask[flag] = 1;
     _values[flag] = true;
   }
 
   // Implicit conversion from a single term.
   Usd_PrimFlagsPredicate(Usd_Term term) : _negate(false)
   {
-    _mask[term.flag]   = 1;
+    _mask[term.flag] = 1;
     _values[term.flag] = !term.negated;
   }
 
@@ -182,11 +182,11 @@ class Usd_PrimFlagsPredicate {
   Usd_PrimFlagsPredicate &TraverseInstanceProxies(bool traverse)
   {
     if (traverse) {
-      _mask[Usd_PrimInstanceProxyFlag]   = 0;
+      _mask[Usd_PrimInstanceProxyFlag] = 0;
       _values[Usd_PrimInstanceProxyFlag] = 1;
     }
     else {
-      _mask[Usd_PrimInstanceProxyFlag]   = 1;
+      _mask[Usd_PrimInstanceProxyFlag] = 1;
       _values[Usd_PrimInstanceProxyFlag] = 0;
     }
     return *this;
@@ -255,7 +255,7 @@ class Usd_PrimFlagsPredicate {
     // Manually set the instance proxy bit, since instance proxy
     // state is never stored in Usd_PrimData's flags.
     const Usd_PrimFlagBits primFlags =
-        Usd_PrimFlagBits(prim->_GetFlags()).set(Usd_PrimInstanceProxyFlag, isInstanceProxy);
+      Usd_PrimFlagBits(prim->_GetFlags()).set(Usd_PrimInstanceProxyFlag, isInstanceProxy);
 
     // Mask the prim's flags, compare to desired values, then optionally
     // negate the result.
@@ -337,7 +337,7 @@ class Usd_PrimFlagsConjunction : public Usd_PrimFlagsPredicate {
 
     // If we don't have the bit, set it in _mask and _values (if needed).
     if (!_mask[term.flag]) {
-      _mask[term.flag]   = 1;
+      _mask[term.flag] = 1;
       _values[term.flag] = !term.negated;
     }
     else if (_values[term.flag] != !term.negated) {
@@ -379,12 +379,10 @@ class Usd_PrimFlagsConjunction : public Usd_PrimFlagsPredicate {
   friend Usd_PrimFlagsConjunction operator&&(Usd_Term lhs, Usd_Term rhs);
 
   /// Create a new conjunction with the term \p rhs added.
-  friend Usd_PrimFlagsConjunction operator&&(const Usd_PrimFlagsConjunction &conjunction,
-                                             Usd_Term rhs);
+  friend Usd_PrimFlagsConjunction operator&&(const Usd_PrimFlagsConjunction &conjunction, Usd_Term rhs);
 
   /// Create a new conjunction with the term \p lhs added.
-  friend Usd_PrimFlagsConjunction operator&&(Usd_Term lhs,
-                                             const Usd_PrimFlagsConjunction &conjunction);
+  friend Usd_PrimFlagsConjunction operator&&(Usd_Term lhs, const Usd_PrimFlagsConjunction &conjunction);
 };
 
 inline Usd_PrimFlagsConjunction operator&&(Usd_Term lhs, Usd_Term rhs)
@@ -395,14 +393,12 @@ inline Usd_PrimFlagsConjunction operator&&(Usd_Term lhs, Usd_Term rhs)
   return (tmp && lhs) && rhs;
 }
 
-inline Usd_PrimFlagsConjunction operator&&(const Usd_PrimFlagsConjunction &conjunction,
-                                           Usd_Term rhs)
+inline Usd_PrimFlagsConjunction operator&&(const Usd_PrimFlagsConjunction &conjunction, Usd_Term rhs)
 {
   return Usd_PrimFlagsConjunction(conjunction) &= rhs;
 }
 
-inline Usd_PrimFlagsConjunction operator&&(Usd_Term lhs,
-                                           const Usd_PrimFlagsConjunction &conjunction)
+inline Usd_PrimFlagsConjunction operator&&(Usd_Term lhs, const Usd_PrimFlagsConjunction &conjunction)
 {
   return Usd_PrimFlagsConjunction(conjunction) &= lhs;
 }
@@ -446,7 +442,7 @@ class Usd_PrimFlagsDisjunction : public Usd_PrimFlagsPredicate {
 
     // If we don't have the bit, set it in _mask and _values (if needed).
     if (!_mask[term.flag]) {
-      _mask[term.flag]   = 1;
+      _mask[term.flag] = 1;
       _values[term.flag] = term.negated;
     }
     else if (_values[term.flag] != term.negated) {
@@ -488,12 +484,10 @@ class Usd_PrimFlagsDisjunction : public Usd_PrimFlagsPredicate {
   friend Usd_PrimFlagsDisjunction operator||(Usd_Term lhs, Usd_Term rhs);
 
   /// Create a new disjunction with the term \p rhs added.
-  friend Usd_PrimFlagsDisjunction operator||(const Usd_PrimFlagsDisjunction &disjunction,
-                                             Usd_Term rhs);
+  friend Usd_PrimFlagsDisjunction operator||(const Usd_PrimFlagsDisjunction &disjunction, Usd_Term rhs);
 
   /// Create a new disjunction with the term \p lhs added.
-  friend Usd_PrimFlagsDisjunction operator||(Usd_Term lhs,
-                                             const Usd_PrimFlagsDisjunction &disjunction);
+  friend Usd_PrimFlagsDisjunction operator||(Usd_Term lhs, const Usd_PrimFlagsDisjunction &disjunction);
 };
 
 inline Usd_PrimFlagsDisjunction operator||(Usd_Term lhs, Usd_Term rhs)
@@ -501,14 +495,12 @@ inline Usd_PrimFlagsDisjunction operator||(Usd_Term lhs, Usd_Term rhs)
   return (Usd_PrimFlagsDisjunction() || lhs) || rhs;
 }
 
-inline Usd_PrimFlagsDisjunction operator||(const Usd_PrimFlagsDisjunction &disjunction,
-                                           Usd_Term rhs)
+inline Usd_PrimFlagsDisjunction operator||(const Usd_PrimFlagsDisjunction &disjunction, Usd_Term rhs)
 {
   return Usd_PrimFlagsDisjunction(disjunction) |= rhs;
 }
 
-inline Usd_PrimFlagsDisjunction operator||(Usd_Term lhs,
-                                           const Usd_PrimFlagsDisjunction &disjunction)
+inline Usd_PrimFlagsDisjunction operator||(Usd_Term lhs, const Usd_PrimFlagsDisjunction &disjunction)
 {
   return Usd_PrimFlagsDisjunction(disjunction) |= lhs;
 }
@@ -558,13 +550,13 @@ extern unspecified UsdPrimAllPrimsPredicate;
 
 #else
 
-static const Usd_PrimFlags UsdPrimIsActive             = Usd_PrimActiveFlag;
-static const Usd_PrimFlags UsdPrimIsLoaded             = Usd_PrimLoadedFlag;
-static const Usd_PrimFlags UsdPrimIsModel              = Usd_PrimModelFlag;
-static const Usd_PrimFlags UsdPrimIsGroup              = Usd_PrimGroupFlag;
-static const Usd_PrimFlags UsdPrimIsAbstract           = Usd_PrimAbstractFlag;
-static const Usd_PrimFlags UsdPrimIsDefined            = Usd_PrimDefinedFlag;
-static const Usd_PrimFlags UsdPrimIsInstance           = Usd_PrimInstanceFlag;
+static const Usd_PrimFlags UsdPrimIsActive = Usd_PrimActiveFlag;
+static const Usd_PrimFlags UsdPrimIsLoaded = Usd_PrimLoadedFlag;
+static const Usd_PrimFlags UsdPrimIsModel = Usd_PrimModelFlag;
+static const Usd_PrimFlags UsdPrimIsGroup = Usd_PrimGroupFlag;
+static const Usd_PrimFlags UsdPrimIsAbstract = Usd_PrimAbstractFlag;
+static const Usd_PrimFlags UsdPrimIsDefined = Usd_PrimDefinedFlag;
+static const Usd_PrimFlags UsdPrimIsInstance = Usd_PrimInstanceFlag;
 static const Usd_PrimFlags UsdPrimHasDefiningSpecifier = Usd_PrimHasDefiningSpecifierFlag;
 
 USD_API extern const Usd_PrimFlagsConjunction UsdPrimDefaultPredicate;

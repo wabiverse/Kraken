@@ -45,11 +45,11 @@
 WABI_NAMESPACE_BEGIN
 
 HgiGLGraphicsCmds::HgiGLGraphicsCmds(HgiGLDevice *device, HgiGraphicsCmdsDesc const &desc)
-    : HgiGraphicsCmds(),
-      _recording(true),
-      _descriptor(desc),
-      _primitiveType(HgiPrimitiveTypeTriangleList),
-      _pushStack(0)
+  : HgiGraphicsCmds(),
+    _recording(true),
+    _descriptor(desc),
+    _primitiveType(HgiPrimitiveTypeTriangleList),
+    _pushStack(0)
 {
   if (desc.HasAttachments()) {
     _ops.push_back(HgiGLOps::BindFramebufferOp(device, desc));
@@ -110,8 +110,8 @@ void HgiGLGraphicsCmds::DrawIndirect(HgiBufferHandle const &drawParameterBuffer,
                                      uint32_t drawCount,
                                      uint32_t stride)
 {
-  _ops.push_back(HgiGLOps::DrawIndirect(
-      _primitiveType, drawParameterBuffer, drawBufferOffset, drawCount, stride));
+  _ops.push_back(
+    HgiGLOps::DrawIndirect(_primitiveType, drawParameterBuffer, drawBufferOffset, drawCount, stride));
 }
 
 void HgiGLGraphicsCmds::DrawIndexed(HgiBufferHandle const &indexBuffer,
@@ -120,12 +120,8 @@ void HgiGLGraphicsCmds::DrawIndexed(HgiBufferHandle const &indexBuffer,
                                     uint32_t vertexOffset,
                                     uint32_t instanceCount)
 {
-  _ops.push_back(HgiGLOps::DrawIndexed(_primitiveType,
-                                       indexBuffer,
-                                       indexCount,
-                                       indexBufferByteOffset,
-                                       vertexOffset,
-                                       instanceCount));
+  _ops.push_back(HgiGLOps::DrawIndexed(
+    _primitiveType, indexBuffer, indexCount, indexBufferByteOffset, vertexOffset, instanceCount));
 }
 
 void HgiGLGraphicsCmds::DrawIndexedIndirect(HgiBufferHandle const &indexBuffer,
@@ -135,7 +131,7 @@ void HgiGLGraphicsCmds::DrawIndexedIndirect(HgiBufferHandle const &indexBuffer,
                                             uint32_t stride)
 {
   _ops.push_back(HgiGLOps::DrawIndexedIndirect(
-      _primitiveType, indexBuffer, drawParameterBuffer, drawBufferOffset, drawCount, stride));
+    _primitiveType, indexBuffer, drawParameterBuffer, drawBufferOffset, drawCount, stride));
 }
 
 void HgiGLGraphicsCmds::PushDebugGroup(const char *label)
@@ -173,7 +169,7 @@ bool HgiGLGraphicsCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
   HgiGL_ScopedStateHolder openglStateGuard;
 
   // Resolve multisample textures
-  HgiGL *hgiGL        = static_cast<HgiGL *>(hgi);
+  HgiGL *hgiGL = static_cast<HgiGL *>(hgi);
   HgiGLDevice *device = hgiGL->GetPrimaryDevice();
   _AddResolveToOps(device);
 

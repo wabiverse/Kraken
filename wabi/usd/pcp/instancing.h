@@ -102,8 +102,7 @@ inline bool Pcp_ChildNodeIsDirectOrInDirectArcSubtree(const PcpNodeRef &node)
   if (node.IsRootNode() || !node.IsDueToAncestor()) {
     return true;
   }
-  for (PcpNodeRef parent = node.GetParentNode(); !parent.IsRootNode();
-       parent            = parent.GetParentNode()) {
+  for (PcpNodeRef parent = node.GetParentNode(); !parent.IsRootNode(); parent = parent.GetParentNode()) {
     if (!parent.IsDueToAncestor()) {
       return true;
     }
@@ -153,7 +152,7 @@ inline void Pcp_TraverseInstanceableStrongToWeak(const PcpPrimIndex &primIndex, 
   {
     const PcpNodeRef &childNode = *childIt;
     Pcp_TraverseInstanceableStrongToWeakHelper(
-        childNode, visitor, /* hasAnyDirectArcsInNodeChain = */ false);
+      childNode, visitor, /* hasAnyDirectArcsInNodeChain = */ false);
   }
 }
 
@@ -188,7 +187,7 @@ inline void Pcp_TraverseInstanceableWeakToStrong(const PcpPrimIndex &primIndex, 
   {
     const PcpNodeRef &childNode = *childIt;
     Pcp_TraverseInstanceableWeakToStrongHelper(
-        childNode, visitor, /* hasAnyDirectArcsInNodeChain = */ false);
+      childNode, visitor, /* hasAnyDirectArcsInNodeChain = */ false);
   }
 
   visitor->Visit(rootNode, /* nodeIsInstanceable = */ false);

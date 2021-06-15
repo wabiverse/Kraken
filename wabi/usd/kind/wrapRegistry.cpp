@@ -46,15 +46,15 @@ void wrapRegistry()
   typedef TfWeakPtr<KindRegistry> ThisPtr;
 
   class_<This, ThisPtr, boost::noncopyable>("Registry", no_init)
-      .def(TfPySingleton())
-      .def("HasKind", &This::HasKind)
-      .staticmethod("HasKind")
-      .def("GetAllKinds", &This::GetAllKinds, return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetAllKinds")
-      .def("GetBaseKind", &This::GetBaseKind)
-      .staticmethod("GetBaseKind")
-      .def("IsA", &This::IsA)
-      .staticmethod("IsA");
+    .def(TfPySingleton())
+    .def("HasKind", &This::HasKind)
+    .staticmethod("HasKind")
+    .def("GetAllKinds", &This::GetAllKinds, return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetAllKinds")
+    .def("GetBaseKind", &This::GetBaseKind)
+    .staticmethod("GetBaseKind")
+    .def("IsA", &This::IsA)
+    .staticmethod("IsA");
 }
 
 TF_REFPTR_CONST_VOLATILE_GET(KindRegistry)

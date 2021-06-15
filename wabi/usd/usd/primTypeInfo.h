@@ -142,7 +142,7 @@ class UsdPrimTypeInfo {
     // Have both move and copy constructors to minimize the number vector
     // copies when possible.
     _TypeId(const _TypeId &typeId) = default;
-    _TypeId(_TypeId &&typeId)      = default;
+    _TypeId(_TypeId &&typeId) = default;
 
     // Explicit constructor from just a prim type name.
     explicit _TypeId(const TfToken &primTypeName_) : primTypeName(primTypeName_)

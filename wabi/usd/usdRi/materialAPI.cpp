@@ -106,8 +106,7 @@ UsdAttribute UsdRiMaterialAPI::GetSurfaceAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->outputsRiSurface);
 }
 
-UsdAttribute UsdRiMaterialAPI::CreateSurfaceAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdRiMaterialAPI::CreateSurfaceAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->outputsRiSurface,
                                     SdfValueTypeNames->Token,
@@ -122,8 +121,7 @@ UsdAttribute UsdRiMaterialAPI::GetDisplacementAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->outputsRiDisplacement);
 }
 
-UsdAttribute UsdRiMaterialAPI::CreateDisplacementAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdRiMaterialAPI::CreateDisplacementAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->outputsRiDisplacement,
                                     SdfValueTypeNames->Token,
@@ -138,8 +136,7 @@ UsdAttribute UsdRiMaterialAPI::GetVolumeAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->outputsRiVolume);
 }
 
-UsdAttribute UsdRiMaterialAPI::CreateVolumeAttr(VtValue const &defaultValue,
-                                                bool writeSparsely) const
+UsdAttribute UsdRiMaterialAPI::CreateVolumeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->outputsRiVolume,
                                     SdfValueTypeNames->Token,
@@ -150,8 +147,7 @@ UsdAttribute UsdRiMaterialAPI::CreateVolumeAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -165,12 +161,12 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRiMaterialAPI::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRiTokens->outputsRiSurface,
-      UsdRiTokens->outputsRiDisplacement,
-      UsdRiTokens->outputsRiVolume,
+    UsdRiTokens->outputsRiSurface,
+    UsdRiTokens->outputsRiDisplacement,
+    UsdRiTokens->outputsRiVolume,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdAPISchemaBase::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -196,19 +192,17 @@ WABI_NAMESPACE_END
 WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(
-    _tokens,
+  _tokens,
 
-    ((defaultOutputName, "outputs:out"))
+  ((defaultOutputName, "outputs:out"))
 
-    // These tokens are required for backwards compatibility. They're
-    // redefined here so we can stop relying on UsdRiLookAPI entirely.
-    (ri)((riLookDisplacement, "riLook:displacement"))((riLookSurface,
-                                                       "riLook:surface"))((riLookVolume,
-                                                                           "riLook:volume"))
+  // These tokens are required for backwards compatibility. They're
+  // redefined here so we can stop relying on UsdRiLookAPI entirely.
+  (ri)((riLookDisplacement, "riLook:displacement"))((riLookSurface, "riLook:surface"))((riLookVolume,
+                                                                                        "riLook:volume"))
 
-    // deprecated tokens for handling backwards compatibility.
-    ((bxdfOutputName, "ri:bxdf"))((bxdfOutputAttrName, "outputs:ri:bxdf"))((riLookBxdf,
-                                                                            "riLook:bxdf")));
+  // deprecated tokens for handling backwards compatibility.
+  ((bxdfOutputName, "ri:bxdf"))((bxdfOutputAttrName, "outputs:ri:bxdf"))((riLookBxdf, "riLook:bxdf")));
 
 TF_DEFINE_ENV_SETTING(USD_RI_WRITE_BXDF_OUTPUT,
                       false,
@@ -290,50 +284,46 @@ bool UsdRiMaterialAPI::SetSurfaceSource(const SdfPath &surfacePath) const
 {
   static const bool writeBxdfOutput = TfGetEnvSetting(USD_RI_WRITE_BXDF_OUTPUT);
   if (writeBxdfOutput) {
-    if (UsdShadeOutput bxdfOutput = UsdShadeMaterial(GetPrim()).CreateOutput(
-            _tokens->bxdfOutputName, SdfValueTypeNames->Token)) {
+    if (UsdShadeOutput bxdfOutput = UsdShadeMaterial(GetPrim()).CreateOutput(_tokens->bxdfOutputName,
+                                                                             SdfValueTypeNames->Token)) {
       const SdfPath sourcePath = surfacePath.IsPropertyPath() ?
-                                     surfacePath :
-                                     surfacePath.AppendProperty(_tokens->defaultOutputName);
+                                   surfacePath :
+                                   surfacePath.AppendProperty(_tokens->defaultOutputName);
       return UsdShadeConnectableAPI::ConnectToSource(bxdfOutput, sourcePath);
     }
     return false;
   }
 
   UsdShadeOutput surfaceOutput = UsdShadeMaterial(GetPrim()).CreateSurfaceOutput(
-      /*purpose*/ _tokens->ri);
+    /*purpose*/ _tokens->ri);
   return UsdShadeConnectableAPI::ConnectToSource(
-      surfaceOutput,
-      surfacePath.IsPropertyPath() ? surfacePath :
-                                     surfacePath.AppendProperty(_tokens->defaultOutputName));
+    surfaceOutput,
+    surfacePath.IsPropertyPath() ? surfacePath : surfacePath.AppendProperty(_tokens->defaultOutputName));
 }
 
 bool UsdRiMaterialAPI::SetDisplacementSource(const SdfPath &displacementPath) const
 {
   UsdShadeOutput displacementOutput = UsdShadeMaterial(GetPrim()).CreateDisplacementOutput(
-      /*purpose*/ _tokens->ri);
+    /*purpose*/ _tokens->ri);
   return UsdShadeConnectableAPI::ConnectToSource(
-      displacementOutput,
-      displacementPath.IsPropertyPath() ?
-          displacementPath :
-          displacementPath.AppendProperty(_tokens->defaultOutputName));
+    displacementOutput,
+    displacementPath.IsPropertyPath() ? displacementPath :
+                                        displacementPath.AppendProperty(_tokens->defaultOutputName));
 }
 
 bool UsdRiMaterialAPI::SetVolumeSource(const SdfPath &volumePath) const
 {
   UsdShadeOutput volumeOutput = UsdShadeMaterial(GetPrim()).CreateVolumeOutput(
-      /*purpose*/ _tokens->ri);
+    /*purpose*/ _tokens->ri);
   return UsdShadeConnectableAPI::ConnectToSource(
-      volumeOutput,
-      volumePath.IsPropertyPath() ? volumePath :
-                                    volumePath.AppendProperty(_tokens->defaultOutputName));
+    volumeOutput,
+    volumePath.IsPropertyPath() ? volumePath : volumePath.AppendProperty(_tokens->defaultOutputName));
 }
 
 UsdShadeNodeGraph::InterfaceInputConsumersMap UsdRiMaterialAPI::ComputeInterfaceInputConsumersMap(
-    bool computeTransitiveConsumers) const
+  bool computeTransitiveConsumers) const
 {
-  return UsdShadeNodeGraph(GetPrim()).ComputeInterfaceInputConsumersMap(
-      computeTransitiveConsumers);
+  return UsdShadeNodeGraph(GetPrim()).ComputeInterfaceInputConsumersMap(computeTransitiveConsumers);
 }
 
 WABI_NAMESPACE_END

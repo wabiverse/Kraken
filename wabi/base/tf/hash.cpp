@@ -36,7 +36,7 @@ WABI_NAMESPACE_BEGIN
 
 void Tf_HashState::_AppendBytes(char const *bytes, size_t numBytes)
 {
-  _state  = ArchHash64(bytes, numBytes, _state);
+  _state = ArchHash64(bytes, numBytes, _state);
   _didOne = true;
 }
 

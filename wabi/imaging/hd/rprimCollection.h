@@ -65,7 +65,7 @@ class HdRprimCollection {
   HD_API
   HdRprimCollection(TfToken const &name,
                     HdReprSelector const &reprSelector,
-                    bool forcedRepr            = false,
+                    bool forcedRepr = false,
                     TfToken const &materialTag = TfToken());
 
   /// Constructs an rprim collection, excluding all Rprims not prefixed by \p
@@ -80,7 +80,7 @@ class HdRprimCollection {
   HdRprimCollection(TfToken const &name,
                     HdReprSelector const &reprSelector,
                     SdfPath const &rootPath,
-                    bool forcedRepr            = false,
+                    bool forcedRepr = false,
                     TfToken const &materialTag = TfToken());
 
   /// Copy constructor.
@@ -198,12 +198,7 @@ class HdRprimCollection {
   // TfHash support.
   template<class HashState> friend void TfHashAppend(HashState &h, HdRprimCollection const &rc)
   {
-    h.Append(rc._name,
-             rc._reprSelector,
-             rc._forcedRepr,
-             rc._rootPaths,
-             rc._excludePaths,
-             rc._materialTag);
+    h.Append(rc._name, rc._reprSelector, rc._forcedRepr, rc._rootPaths, rc._excludePaths, rc._materialTag);
   }
 
   HD_API

@@ -183,11 +183,11 @@ class UsdGeomXformCommonAPI : public UsdAPISchemaBase {
   /// Enumerates the categories of ops that can be handled by XformCommonAPI.
   /// For use with CreateXformOps().
   enum OpFlags {
-    OpNone      = 0,
+    OpNone = 0,
     OpTranslate = 1,
-    OpPivot     = 2,
-    OpRotate    = 4,
-    OpScale     = 8,
+    OpPivot = 2,
+    OpRotate = 4,
+    OpScale = 8,
   };
 
   /// Return type for CreateXformOps().
@@ -276,8 +276,7 @@ class UsdGeomXformCommonAPI : public UsdAPISchemaBase {
 
   /// Set translation at \p time to \p translation.
   USDGEOM_API
-  bool SetTranslate(const GfVec3d &translation,
-                    const UsdTimeCode time = UsdTimeCode::Default()) const;
+  bool SetTranslate(const GfVec3d &translation, const UsdTimeCode time = UsdTimeCode::Default()) const;
 
   /// Set pivot position at \p time to \p pivot.
   USDGEOM_API
@@ -287,7 +286,7 @@ class UsdGeomXformCommonAPI : public UsdAPISchemaBase {
   USDGEOM_API
   bool SetRotate(const GfVec3f &rotation,
                  UsdGeomXformCommonAPI::RotationOrder rotOrder = RotationOrderXYZ,
-                 const UsdTimeCode time                        = UsdTimeCode::Default()) const;
+                 const UsdTimeCode time = UsdTimeCode::Default()) const;
 
   /// Set scale at \p time to \p scale.
   USDGEOM_API

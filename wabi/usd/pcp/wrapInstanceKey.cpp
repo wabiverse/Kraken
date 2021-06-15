@@ -45,11 +45,11 @@ static size_t __hash__(const PcpInstanceKey &key)
 void wrapInstanceKey()
 {
   class_<PcpInstanceKey>("InstanceKey")
-      .def(init<const PcpPrimIndex &>(args("primIndex")))
+    .def(init<const PcpPrimIndex &>(args("primIndex")))
 
-      .def(self == self)
-      .def(self != self)
+    .def(self == self)
+    .def(self != self)
 
-      .def("__str__", &PcpInstanceKey::GetString)
-      .def("__hash_", __hash__);
+    .def("__str__", &PcpInstanceKey::GetString)
+    .def("__hash_", __hash__);
 }

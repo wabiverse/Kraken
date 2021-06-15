@@ -34,9 +34,9 @@
 WABI_NAMESPACE_BEGIN
 
 HdPhDynamicUvTextureObject::HdPhDynamicUvTextureObject(
-    const HdPhTextureIdentifier &textureId,
-    HdPh_TextureObjectRegistry *const textureObjectRegistry)
-    : HdPhUvTextureObject(textureId, textureObjectRegistry)
+  const HdPhTextureIdentifier &textureId,
+  HdPh_TextureObjectRegistry *const textureObjectRegistry)
+  : HdPhUvTextureObject(textureId, textureObjectRegistry)
 {}
 
 HdPhDynamicUvTextureObject::~HdPhDynamicUvTextureObject()
@@ -47,8 +47,8 @@ HdPhDynamicUvTextureObject::~HdPhDynamicUvTextureObject()
 HdPhDynamicUvTextureImplementation *HdPhDynamicUvTextureObject::_GetImpl() const
 {
   const HdPhDynamicUvSubtextureIdentifier *const subId =
-      dynamic_cast<const HdPhDynamicUvSubtextureIdentifier *>(
-          GetTextureIdentifier().GetSubtextureIdentifier());
+    dynamic_cast<const HdPhDynamicUvSubtextureIdentifier *>(
+      GetTextureIdentifier().GetSubtextureIdentifier());
   if (!TF_VERIFY(subId)) {
     return nullptr;
   }

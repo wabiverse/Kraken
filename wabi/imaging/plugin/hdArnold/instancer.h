@@ -69,9 +69,7 @@ class HdArnoldInstancer : public HdInstancer {
   ~HdArnoldInstancer() override = default;
 #if WABI_VERSION >= 2102
   HDARNOLD_API
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 #endif
   /// Calculates the matrices for all instances for a given shape, including sampling multiple
   /// times.
@@ -79,8 +77,7 @@ class HdArnoldInstancer : public HdInstancer {
   /// @param prototypeId ID of the instanced shape.
   /// @param sampleArray Output struct to hold time sampled matrices.
   HDARNOLD_API
-  void CalculateInstanceMatrices(const SdfPath &prototypeId,
-                                 HdArnoldSampledMatrixArrayType &sampleArray);
+  void CalculateInstanceMatrices(const SdfPath &prototypeId, HdArnoldSampledMatrixArrayType &sampleArray);
 
   /// Sets the primvars on the instancer node.
   ///
@@ -100,12 +97,12 @@ class HdArnoldInstancer : public HdInstancer {
   HDARNOLD_API
   void _SyncPrimvars(
 #if WABI_VERSION >= 2102
-      HdDirtyBits dirtyBits
+    HdDirtyBits dirtyBits
 #endif
   );
 
-  std::mutex _mutex;             ///< Mutex to safe-guard calls to _SyncPrimvars.
-  HdArnoldPrimvarMap _primvars;  ///< Unordered map to store all the primvars.
+  std::mutex _mutex;                                 ///< Mutex to safe-guard calls to _SyncPrimvars.
+  HdArnoldPrimvarMap _primvars;                      ///< Unordered map to store all the primvars.
   HdArnoldSampledType<VtMatrix4dArray> _transforms;  ///< Sampled instance transform values.
   HdArnoldSampledType<VtVec3fArray> _translates;     ///< Sampled instance translate values.
   // Newer versions use GfQuatH arrays instead of GfVec4f arrays.

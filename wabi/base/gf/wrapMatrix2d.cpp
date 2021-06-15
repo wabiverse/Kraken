@@ -76,7 +76,7 @@ static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
     return -1;
   }
   GfMatrix2d &mat = extract<GfMatrix2d &>(self);
-  *ptrptr         = static_cast<void *>(mat.GetArray());
+  *ptrptr = static_cast<void *>(mat.GetArray());
   // Return size in bytes.
   return sizeof(GfMatrix2d);
 }
@@ -122,9 +122,9 @@ static int getbuffer(PyObject *self, Py_buffer *view, int flags)
 
   GfMatrix2d &mat = extract<GfMatrix2d &>(self);
 
-  view->obj      = self;
-  view->buf      = static_cast<void *>(mat.GetArray());
-  view->len      = sizeof(GfMatrix2d);
+  view->obj = self;
+  view->buf = static_cast<void *>(mat.GetArray());
+  view->len = sizeof(GfMatrix2d);
   view->readonly = 0;
   view->itemsize = sizeof(double);
   if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT) {
@@ -134,23 +134,23 @@ static int getbuffer(PyObject *self, Py_buffer *view, int flags)
     view->format = NULL;
   }
   if ((flags & PyBUF_ND) == PyBUF_ND) {
-    view->ndim                = 2;
+    view->ndim = 2;
     static Py_ssize_t shape[] = {2, 2};
-    view->shape               = shape;
+    view->shape = shape;
   }
   else {
-    view->ndim  = 0;
+    view->ndim = 0;
     view->shape = NULL;
   }
   if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES) {
     static Py_ssize_t strides[] = {2 * sizeof(double), sizeof(double)};
-    view->strides               = strides;
+    view->strides = strides;
   }
   else {
     view->strides = NULL;
   }
   view->suboffsets = NULL;
-  view->internal   = NULL;
+  view->internal = NULL;
 
   Py_INCREF(self);  // need to retain a reference to self.
   return 0;
@@ -160,13 +160,13 @@ static int getbuffer(PyObject *self, Py_buffer *view, int flags)
 // to the right buffer protocol functions.
 static PyBufferProcs bufferProcs = {
 #if PY_MAJOR_VERSION == 2
-    (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
-    (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
-    (segcountproc)getsegcount,    /*bf_getsegcount*/
-    (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
+  (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
+  (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
+  (segcountproc)getsegcount,    /*bf_getsegcount*/
+  (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
 #endif
-    (getbufferproc)getbuffer,
-    (releasebufferproc)0,
+  (getbufferproc)getbuffer,
+  (releasebufferproc)0,
 };
 
 // End python buffer protocol support.
@@ -175,8 +175,8 @@ static PyBufferProcs bufferProcs = {
 static string _Repr(GfMatrix2d const &self)
 {
   static char newline[] = ",\n            ";
-  return TF_PY_REPR_PREFIX + "Matrix2d(" + TfPyRepr(self[0][0]) + ", " + TfPyRepr(self[0][1]) +
-         newline + TfPyRepr(self[1][0]) + ", " + TfPyRepr(self[1][1]) + ")";
+  return TF_PY_REPR_PREFIX + "Matrix2d(" + TfPyRepr(self[0][0]) + ", " + TfPyRepr(self[0][1]) + newline +
+         TfPyRepr(self[1][0]) + ", " + TfPyRepr(self[1][1]) + ")";
 }
 
 static GfMatrix2d GetInverseWrapper(const GfMatrix2d &self)
@@ -234,7 +234,7 @@ static void __setitem__double(GfMatrix2d &self, tuple index, double value)
 
 static void __setitem__vector(GfMatrix2d &self, int index, GfVec2d value)
 {
-  int ni      = normalizeIndex(index);
+  int ni = normalizeIndex(index);
   self[ni][0] = value[0];
   self[ni][1] = value[1];
 }
@@ -308,84 +308,84 @@ void wrapMatrix2d()
 
   class_<This> cls("Matrix2d", no_init);
   cls.def_pickle(GfMatrix2d_Pickle_Suite())
-      .def("__init__", make_constructor(__init__))
-      .def(init<const GfMatrix2d &>())
-      .def(init<const GfMatrix2f &>())
-      .def(init<int>())
-      .def(init<double>())
-      .def(init<double, double, double, double>())
-      .def(init<const GfVec2d &>())
-      .def(init<const vector<vector<float>> &>())
-      .def(init<const vector<vector<double>> &>())
+    .def("__init__", make_constructor(__init__))
+    .def(init<const GfMatrix2d &>())
+    .def(init<const GfMatrix2f &>())
+    .def(init<int>())
+    .def(init<double>())
+    .def(init<double, double, double, double>())
+    .def(init<const GfVec2d &>())
+    .def(init<const vector<vector<float>> &>())
+    .def(init<const vector<vector<double>> &>())
 
-      .def(TfTypePythonClass())
+    .def(TfTypePythonClass())
 
-      .add_static_property("dimension", get_dimension)
-      .def("__len__", __len__, "Return number of rows")
+    .add_static_property("dimension", get_dimension)
+    .def("__len__", __len__, "Return number of rows")
 
-      .def("__getitem__", __getitem__double)
-      .def("__getitem__", __getitem__vector)
-      .def("__setitem__", __setitem__double)
-      .def("__setitem__", __setitem__vector)
-      .def("__contains__", __contains__double)
-      .def("__contains__", __contains__vector, "Check rows against GfVec")
+    .def("__getitem__", __getitem__double)
+    .def("__getitem__", __getitem__vector)
+    .def("__setitem__", __setitem__double)
+    .def("__setitem__", __setitem__vector)
+    .def("__contains__", __contains__double)
+    .def("__contains__", __contains__vector, "Check rows against GfVec")
 
-      .def("Set", (This & (This::*)(double, double, double, double)) & This::Set, return_self<>())
+    .def("Set", (This & (This::*)(double, double, double, double)) & This::Set, return_self<>())
 
-      .def("SetIdentity", &This::SetIdentity, return_self<>())
-      .def("SetZero", &This::SetZero, return_self<>())
+    .def("SetIdentity", &This::SetIdentity, return_self<>())
+    .def("SetZero", &This::SetZero, return_self<>())
 
-      .def("SetDiagonal", (This & (This::*)(double)) & This::SetDiagonal, return_self<>())
-      .def("SetDiagonal", (This & (This::*)(const GfVec2d &)) & This::SetDiagonal, return_self<>())
+    .def("SetDiagonal", (This & (This::*)(double)) & This::SetDiagonal, return_self<>())
+    .def("SetDiagonal", (This & (This::*)(const GfVec2d &)) & This::SetDiagonal, return_self<>())
 
-      .def("SetRow", &This::SetRow)
-      .def("SetColumn", &This::SetColumn)
-      .def("GetRow", &This::GetRow)
-      .def("GetColumn", &This::GetColumn)
+    .def("SetRow", &This::SetRow)
+    .def("SetColumn", &This::SetColumn)
+    .def("GetRow", &This::GetRow)
+    .def("GetColumn", &This::GetColumn)
 
-      .def("GetTranspose", &This::GetTranspose)
-      .def("GetInverse", GetInverseWrapper)
+    .def("GetTranspose", &This::GetTranspose)
+    .def("GetInverse", GetInverseWrapper)
 
-      .def("GetDeterminant", &This::GetDeterminant)
+    .def("GetDeterminant", &This::GetDeterminant)
 
-      .def(str(self))
-      .def(self == self)
-      .def(self == GfMatrix2f())
-      .def(self != self)
-      .def(self != GfMatrix2f())
-      .def(self *= self)
-      .def(self * self)
-      .def(self *= double())
-      .def(self * double())
-      .def(double() * self)
-      .def(self += self)
-      .def(self + self)
-      .def(self -= self)
-      .def(self - self)
-      .def(-self)
-      .def(self / self)
-      .def(self * GfVec2d())
-      .def(GfVec2d() * self)
-      .def(self * GfVec2f())
-      .def(GfVec2f() * self)
+    .def(str(self))
+    .def(self == self)
+    .def(self == GfMatrix2f())
+    .def(self != self)
+    .def(self != GfMatrix2f())
+    .def(self *= self)
+    .def(self * self)
+    .def(self *= double())
+    .def(self * double())
+    .def(double() * self)
+    .def(self += self)
+    .def(self + self)
+    .def(self -= self)
+    .def(self - self)
+    .def(-self)
+    .def(self / self)
+    .def(self * GfVec2d())
+    .def(GfVec2d() * self)
+    .def(self * GfVec2f())
+    .def(GfVec2f() * self)
 
 #if PY_MAJOR_VERSION == 2
-      // Needed only to support "from __future__ import division" in
-      // python 2. In python 3 builds boost::python adds this for us.
-      .def("__truediv__", __truediv__)
+    // Needed only to support "from __future__ import division" in
+    // python 2. In python 3 builds boost::python adds this for us.
+    .def("__truediv__", __truediv__)
 #endif
 
-      .def("__repr__", _Repr)
-      .def("__hash__", __hash__)
+    .def("__repr__", _Repr)
+    .def("__hash__", __hash__)
 
-      ;
+    ;
   to_python_converter<std::vector<This>, TfPySequenceToPython<std::vector<This>>>();
 
   // Install buffer protocol: set the tp_as_buffer slot to point to a
   // structure of function pointers that implement the buffer protocol for
   // this type, and set the type flags to indicate that this type supports the
   // buffer protocol.
-  auto *typeObj         = reinterpret_cast<PyTypeObject *>(cls.ptr());
+  auto *typeObj = reinterpret_cast<PyTypeObject *>(cls.ptr());
   typeObj->tp_as_buffer = &bufferProcs;
   typeObj->tp_flags |= (TfPy_TPFLAGS_HAVE_NEWBUFFER | TfPy_TPFLAGS_HAVE_GETCHARBUFFER);
 }

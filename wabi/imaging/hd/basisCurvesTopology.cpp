@@ -30,27 +30,27 @@
 WABI_NAMESPACE_BEGIN
 
 HdBasisCurvesTopology::HdBasisCurvesTopology()
-    : HdTopology(),
-      _curveType(HdTokens->linear),
-      _curveBasis(TfToken()),
-      _curveWrap(HdTokens->nonperiodic),
-      _curveVertexCounts(),
-      _curveIndices(),
-      _invisiblePoints(),
-      _invisibleCurves()
+  : HdTopology(),
+    _curveType(HdTokens->linear),
+    _curveBasis(TfToken()),
+    _curveWrap(HdTokens->nonperiodic),
+    _curveVertexCounts(),
+    _curveIndices(),
+    _invisiblePoints(),
+    _invisibleCurves()
 {
   HD_PERF_COUNTER_INCR(HdPerfTokens->basisCurvesTopology);
 }
 
 HdBasisCurvesTopology::HdBasisCurvesTopology(const HdBasisCurvesTopology &src)
-    : HdTopology(src),
-      _curveType(src._curveType),
-      _curveBasis(src._curveBasis),
-      _curveWrap(src._curveWrap),
-      _curveVertexCounts(src._curveVertexCounts),
-      _curveIndices(src._curveIndices),
-      _invisiblePoints(src._invisiblePoints),
-      _invisibleCurves(src._invisibleCurves)
+  : HdTopology(src),
+    _curveType(src._curveType),
+    _curveBasis(src._curveBasis),
+    _curveWrap(src._curveWrap),
+    _curveVertexCounts(src._curveVertexCounts),
+    _curveIndices(src._curveIndices),
+    _invisiblePoints(src._invisiblePoints),
+    _invisibleCurves(src._invisibleCurves)
 {
   HD_PERF_COUNTER_INCR(HdPerfTokens->basisCurvesTopology);
 }
@@ -60,23 +60,23 @@ HdBasisCurvesTopology::HdBasisCurvesTopology(const TfToken &curveType,
                                              const TfToken &curveWrap,
                                              const VtIntArray &curveVertexCounts,
                                              const VtIntArray &curveIndices)
-    : HdTopology(),
-      _curveType(curveType),
-      _curveBasis(curveBasis),
-      _curveWrap(curveWrap),
-      _curveVertexCounts(curveVertexCounts),
-      _curveIndices(curveIndices),
-      _invisiblePoints(),
-      _invisibleCurves()
+  : HdTopology(),
+    _curveType(curveType),
+    _curveBasis(curveBasis),
+    _curveWrap(curveWrap),
+    _curveVertexCounts(curveVertexCounts),
+    _curveIndices(curveIndices),
+    _invisiblePoints(),
+    _invisibleCurves()
 {
   if (_curveType != HdTokens->linear && _curveType != HdTokens->cubic) {
     TF_WARN("Curve type must be 'linear' or 'cubic'.  Got: '%s'", _curveType.GetText());
-    _curveType  = HdTokens->linear;
+    _curveType = HdTokens->linear;
     _curveBasis = TfToken();
   }
   if (curveBasis == HdTokens->linear && curveType == HdTokens->cubic) {
     TF_WARN("Basis 'linear' passed in to 'cubic' curveType.  Converting 'curveType' to 'linear'.");
-    _curveType  = HdTokens->linear;
+    _curveType = HdTokens->linear;
     _curveBasis = TfToken();
   }
   HD_PERF_COUNTER_INCR(HdPerfTokens->basisCurvesTopology);
@@ -108,11 +108,10 @@ HdTopology::ID HdBasisCurvesTopology::ComputeHash() const
   HD_TRACE_FUNCTION();
 
   HdTopology::ID hash = 0;
-  hash                = ArchHash64((const char *)&_curveBasis, sizeof(TfToken), hash);
-  hash                = ArchHash64((const char *)&_curveType, sizeof(TfToken), hash);
-  hash                = ArchHash64((const char *)&_curveWrap, sizeof(TfToken), hash);
-  hash                = ArchHash64(
-      (const char *)_curveVertexCounts.cdata(), _curveVertexCounts.size() * sizeof(int), hash);
+  hash = ArchHash64((const char *)&_curveBasis, sizeof(TfToken), hash);
+  hash = ArchHash64((const char *)&_curveType, sizeof(TfToken), hash);
+  hash = ArchHash64((const char *)&_curveWrap, sizeof(TfToken), hash);
+  hash = ArchHash64((const char *)_curveVertexCounts.cdata(), _curveVertexCounts.size() * sizeof(int), hash);
   hash = ArchHash64((const char *)_curveIndices.cdata(), _curveIndices.size() * sizeof(int), hash);
 
   // Note: We don't hash topological visibility, because it is treated as a
@@ -124,8 +123,8 @@ std::ostream &operator<<(std::ostream &out, HdBasisCurvesTopology const &topo)
 {
   out << "(" << topo.GetCurveBasis().GetString() << ", " << topo.GetCurveType().GetString() << ", "
       << topo.GetCurveWrap().GetString() << ", (" << topo.GetCurveVertexCounts() << "), ("
-      << topo.GetCurveIndices() << "), (" << topo.GetInvisiblePoints() << "), ("
-      << topo.GetInvisibleCurves() << "))";
+      << topo.GetCurveIndices() << "), (" << topo.GetInvisiblePoints() << "), (" << topo.GetInvisibleCurves()
+      << "))";
   return out;
 }
 

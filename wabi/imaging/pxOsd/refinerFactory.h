@@ -52,8 +52,7 @@ class PxOsdRefinerFactory {
  public:
   /// Returns an OpenSubdiv TopologyRefiner
   PXOSD_API
-  static PxOsdTopologyRefinerSharedPtr Create(PxOsdMeshTopology const &topology,
-                                              TfToken name = TfToken());
+  static PxOsdTopologyRefinerSharedPtr Create(PxOsdMeshTopology const &topology, TfToken name = TfToken());
 
   /// Returns an OpenSubdiv TopologyRefiner with faceVarying topology
   PXOSD_API

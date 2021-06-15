@@ -130,8 +130,8 @@ class HdPhBasisCurves final : public HdBasisCurves {
   };
 
   enum DirtyBits : HdDirtyBits {
-    DirtyIndices       = HdChangeTracker::CustomBitsBegin,
-    DirtyHullIndices   = (DirtyIndices << 1),
+    DirtyIndices = HdChangeTracker::CustomBitsBegin,
+    DirtyHullIndices = (DirtyIndices << 1),
     DirtyPointsIndices = (DirtyHullIndices << 1)
   };
 
@@ -140,7 +140,7 @@ class HdPhBasisCurves final : public HdBasisCurves {
   // NOTE: I worry that it may be possible for these to get out of sync.
   // The right long term fix is likely to maintain proper separation between
   // varying and vertex primvars throughout the HdPh rendering pipeline.
-  bool _basisWidthInterpolation  = false;
+  bool _basisWidthInterpolation = false;
   bool _basisNormalInterpolation = false;
 
   bool _SupportsRefinement(int refineLevel);

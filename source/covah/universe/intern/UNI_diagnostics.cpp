@@ -287,10 +287,9 @@ static void plugin_diagnostics()
 {
   printf("::: PLUGIN SYSTEM :::\n");
   const std::string pixar_plugs = TfStringCatPaths(UNI.system.paths.datafiles_path, "covahverse");
-  const std::string other_plugs = TfStringCatPaths(UNI.system.paths.datafiles_path,
-                                                   "plugin/covahverse");
-  PlugPluginPtrVector pixars    = PlugRegistry::GetInstance().RegisterPlugins(pixar_plugs);
-  PlugPluginPtrVector others    = PlugRegistry::GetInstance().RegisterPlugins(other_plugs);
+  const std::string other_plugs = TfStringCatPaths(UNI.system.paths.datafiles_path, "plugin/covahverse");
+  PlugPluginPtrVector pixars = PlugRegistry::GetInstance().RegisterPlugins(pixar_plugs);
+  PlugPluginPtrVector others = PlugRegistry::GetInstance().RegisterPlugins(other_plugs);
 }
 
 static void sdf_diagnostics()
@@ -299,7 +298,7 @@ static void sdf_diagnostics()
   const SdfSchema &schema = SdfSchema::GetInstance();
 
   printf("Registered Attribute Specifications:\n");
-  TfTokenVector attrs              = schema.GetFields(SdfSpecType::SdfSpecTypeAttribute);
+  TfTokenVector attrs = schema.GetFields(SdfSpecType::SdfSpecTypeAttribute);
   TfTokenVector::iterator attrs_it = attrs.begin();
   while (attrs_it != attrs.end()) {
     printf(":: %s\n", attrs_it->GetText());
@@ -308,7 +307,7 @@ static void sdf_diagnostics()
   printf("\n");
 
   printf("Registered Connection Specifications:\n");
-  TfTokenVector connections              = schema.GetFields(SdfSpecType::SdfSpecTypeConnection);
+  TfTokenVector connections = schema.GetFields(SdfSpecType::SdfSpecTypeConnection);
   TfTokenVector::iterator connections_it = connections.begin();
   while (connections_it != connections.end()) {
     printf(":: %s\n", connections_it->GetText());
@@ -325,7 +324,7 @@ static void sdf_diagnostics()
    *  :: Either implement completeley -- or remove dead code. */
 
   printf("Registered Expression Specifications:\n");
-  TfTokenVector expressions              = schema.GetFields(SdfSpecType::SdfSpecTypeExpression);
+  TfTokenVector expressions = schema.GetFields(SdfSpecType::SdfSpecTypeExpression);
   TfTokenVector::iterator expressions_it = expressions.begin();
   while (expressions_it != expressions.end()) {
     printf(":: %s\n", expressions_it->GetText());
@@ -334,7 +333,7 @@ static void sdf_diagnostics()
   printf("\n");
 
   printf("Registered Mapper Specifications:\n");
-  TfTokenVector mappers              = schema.GetFields(SdfSpecType::SdfSpecTypeMapper);
+  TfTokenVector mappers = schema.GetFields(SdfSpecType::SdfSpecTypeMapper);
   TfTokenVector::iterator mappers_it = mappers.begin();
   while (mappers_it != mappers.end()) {
     printf(":: %s\n", mappers_it->GetText());
@@ -343,7 +342,7 @@ static void sdf_diagnostics()
   printf("\n");
 
   printf("Registered Mapper Argument Specifications:\n");
-  TfTokenVector mapargs              = schema.GetFields(SdfSpecType::SdfSpecTypeMapperArg);
+  TfTokenVector mapargs = schema.GetFields(SdfSpecType::SdfSpecTypeMapperArg);
   TfTokenVector::iterator mapargs_it = mapargs.begin();
   while (mapargs_it != mapargs.end()) {
     printf(":: %s\n", mapargs_it->GetText());
@@ -353,7 +352,7 @@ static void sdf_diagnostics()
 #endif /* PIXAR_HOLDS_BROKEN_FEATURESET */
 
   printf("Registered Prim Specifications:\n");
-  TfTokenVector prims              = schema.GetFields(SdfSpecType::SdfSpecTypePrim);
+  TfTokenVector prims = schema.GetFields(SdfSpecType::SdfSpecTypePrim);
   TfTokenVector::iterator prims_it = prims.begin();
   while (prims_it != prims.end()) {
     printf(":: %s\n", prims_it->GetText());
@@ -362,7 +361,7 @@ static void sdf_diagnostics()
   printf("\n");
 
   printf("Registered Pseuedo Root Specifications:\n");
-  TfTokenVector proots              = schema.GetFields(SdfSpecType::SdfSpecTypePseudoRoot);
+  TfTokenVector proots = schema.GetFields(SdfSpecType::SdfSpecTypePseudoRoot);
   TfTokenVector::iterator proots_it = proots.begin();
   while (proots_it != proots.end()) {
     printf(":: %s\n", proots_it->GetText());
@@ -371,7 +370,7 @@ static void sdf_diagnostics()
   printf("\n");
 
   printf("Registered Relationship Specifications:\n");
-  TfTokenVector rels              = schema.GetFields(SdfSpecType::SdfSpecTypeRelationship);
+  TfTokenVector rels = schema.GetFields(SdfSpecType::SdfSpecTypeRelationship);
   TfTokenVector::iterator rels_it = rels.begin();
   while (rels_it != rels.end()) {
     printf(":: %s\n", rels_it->GetText());
@@ -389,7 +388,7 @@ static void sdf_diagnostics()
   printf("\n");
 
   printf("Registered Variant Specifications:\n");
-  TfTokenVector variants              = schema.GetFields(SdfSpecType::SdfSpecTypeVariant);
+  TfTokenVector variants = schema.GetFields(SdfSpecType::SdfSpecTypeVariant);
   TfTokenVector::iterator variants_it = variants.begin();
   while (variants_it != variants.end()) {
     printf(":: %s\n", variants_it->GetText());
@@ -398,7 +397,7 @@ static void sdf_diagnostics()
   printf("\n");
 
   printf("Registered Variant Set Specifications:\n");
-  TfTokenVector variantsets              = schema.GetFields(SdfSpecType::SdfSpecTypeVariantSet);
+  TfTokenVector variantsets = schema.GetFields(SdfSpecType::SdfSpecTypeVariantSet);
   TfTokenVector::iterator variantsets_it = variantsets.begin();
   while (variantsets_it != variantsets.end()) {
     printf(":: %s\n", variantsets_it->GetText());
@@ -408,7 +407,7 @@ static void sdf_diagnostics()
 
   typedef typename std::vector<SdfValueTypeName> SdfValueTypeNameVector;
   printf("Registered Schema Type Names:\n");
-  SdfValueTypeNameVector schema_types              = schema.GetAllTypes();
+  SdfValueTypeNameVector schema_types = schema.GetAllTypes();
   SdfValueTypeNameVector::iterator schema_types_it = schema_types.begin();
   while (schema_types_it != schema_types.end()) {
     printf(":: %s\n", schema_types_it->GetAsToken().GetText());

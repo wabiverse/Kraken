@@ -112,8 +112,7 @@ UsdAttribute UsdRiRisObject::GetFilePathAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->infoFilePath);
 }
 
-UsdAttribute UsdRiRisObject::CreateFilePathAttr(VtValue const &defaultValue,
-                                                bool writeSparsely) const
+UsdAttribute UsdRiRisObject::CreateFilePathAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->infoFilePath,
                                     SdfValueTypeNames->Asset,
@@ -128,8 +127,7 @@ UsdAttribute UsdRiRisObject::GetArgsPathAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->infoArgsPath);
 }
 
-UsdAttribute UsdRiRisObject::CreateArgsPathAttr(VtValue const &defaultValue,
-                                                bool writeSparsely) const
+UsdAttribute UsdRiRisObject::CreateArgsPathAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->infoArgsPath,
                                     SdfValueTypeNames->Asset,
@@ -140,8 +138,7 @@ UsdAttribute UsdRiRisObject::CreateArgsPathAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -155,11 +152,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRiRisObject::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRiTokens->infoFilePath,
-      UsdRiTokens->infoArgsPath,
+    UsdRiTokens->infoFilePath,
+    UsdRiTokens->infoArgsPath,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdShadeShader::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdShadeShader::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

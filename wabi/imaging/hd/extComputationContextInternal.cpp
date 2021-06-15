@@ -27,10 +27,10 @@
 WABI_NAMESPACE_BEGIN
 
 Hd_ExtComputationContextInternal::Hd_ExtComputationContextInternal()
-    : HdExtComputationContext(),
-      m_inputs(),
-      m_outputs(),
-      m_compuationError(false)
+  : HdExtComputationContext(),
+    m_inputs(),
+    m_outputs(),
+    m_compuationError(false)
 {}
 
 Hd_ExtComputationContextInternal::~Hd_ExtComputationContextInternal()
@@ -79,8 +79,7 @@ const VtValue &Hd_ExtComputationContextInternal::GetInputValue(const TfToken &na
   return it->second;
 }
 
-const VtValue *Hd_ExtComputationContextInternal::GetOptionalInputValuePtr(
-    const TfToken &name) const
+const VtValue *Hd_ExtComputationContextInternal::GetOptionalInputValuePtr(const TfToken &name) const
 {
   ValueMap::const_iterator it = m_inputs.find(name);
 

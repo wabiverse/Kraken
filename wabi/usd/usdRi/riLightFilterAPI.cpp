@@ -114,8 +114,7 @@ UsdAttribute UsdRiRiLightFilterAPI::GetRiInvertAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->riInvert);
 }
 
-UsdAttribute UsdRiRiLightFilterAPI::CreateRiInvertAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdRiRiLightFilterAPI::CreateRiInvertAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->riInvert,
                                     SdfValueTypeNames->Bool,
@@ -174,8 +173,7 @@ UsdAttribute UsdRiRiLightFilterAPI::CreateRiSpecularAttr(VtValue const &defaultV
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -189,15 +187,15 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRiRiLightFilterAPI::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRiTokens->riCombineMode,
-      UsdRiTokens->riDensity,
-      UsdRiTokens->riInvert,
-      UsdRiTokens->riIntensity,
-      UsdRiTokens->riDiffuse,
-      UsdRiTokens->riSpecular,
+    UsdRiTokens->riCombineMode,
+    UsdRiTokens->riDensity,
+    UsdRiTokens->riInvert,
+    UsdRiTokens->riIntensity,
+    UsdRiTokens->riDiffuse,
+    UsdRiTokens->riSpecular,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdSchemaBase::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdSchemaBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

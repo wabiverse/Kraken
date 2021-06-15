@@ -77,18 +77,18 @@ struct ParamDesc {
 
 #if WABI_VERSION >= 2102
 std::vector<ParamDesc> genericParams = {
-    {"intensity", UsdLuxTokens->inputsIntensity},
-    {"exposure", UsdLuxTokens->inputsExposure},
-    {"color", UsdLuxTokens->inputsColor},
-    {"diffuse", UsdLuxTokens->inputsDiffuse},
-    {"specular", UsdLuxTokens->inputsSpecular},
-    {"normalize", UsdLuxTokens->inputsNormalize},
+  {"intensity", UsdLuxTokens->inputsIntensity},
+  {"exposure", UsdLuxTokens->inputsExposure},
+  {"color", UsdLuxTokens->inputsColor},
+  {"diffuse", UsdLuxTokens->inputsDiffuse},
+  {"specular", UsdLuxTokens->inputsSpecular},
+  {"normalize", UsdLuxTokens->inputsNormalize},
 #  if WABI_VERSION >= 2105
-    {"cast_shadows", UsdLuxTokens->inputsShadowEnable},
-    {"shadow_color", UsdLuxTokens->inputsShadowColor},
+  {"cast_shadows", UsdLuxTokens->inputsShadowEnable},
+  {"shadow_color", UsdLuxTokens->inputsShadowColor},
 #  else
-    {"cast_shadows", UsdLuxTokens->shadowEnable},
-    {"shadow_color", UsdLuxTokens->shadowColor},
+  {"cast_shadows", UsdLuxTokens->shadowEnable},
+  {"shadow_color", UsdLuxTokens->shadowColor},
 #  endif
 };
 
@@ -96,20 +96,20 @@ std::vector<ParamDesc> pointParams = {{"radius", UsdLuxTokens->inputsRadius}};
 
 std::vector<ParamDesc> spotParams = {
 #  if WABI_VERSION >= 2105
-    {"radius", UsdLuxTokens->inputsRadius},
-    {"cosine_power", UsdLuxTokens->inputsShapingFocus}};
+  {"radius", UsdLuxTokens->inputsRadius},
+  {"cosine_power", UsdLuxTokens->inputsShapingFocus}};
 #  else
-    {"radius", UsdLuxTokens->inputsRadius},
-    {"cosine_power", UsdLuxTokens->shapingFocus}};
+  {"radius", UsdLuxTokens->inputsRadius},
+  {"cosine_power", UsdLuxTokens->shapingFocus}};
 #  endif
 
 std::vector<ParamDesc> photometricParams = {
 #  if WABI_VERSION >= 2105
-    {"filename", UsdLuxTokens->inputsShapingIesFile},
-    {"radius", UsdLuxTokens->inputsRadius}};
+  {"filename", UsdLuxTokens->inputsShapingIesFile},
+  {"radius", UsdLuxTokens->inputsRadius}};
 #  else
-    {"filename", UsdLuxTokens->shapingIesFile},
-    {"radius", UsdLuxTokens->inputsRadius}};
+  {"filename", UsdLuxTokens->shapingIesFile},
+  {"radius", UsdLuxTokens->inputsRadius}};
 #  endif
 
 std::vector<ParamDesc> distantParams = {{"angle", UsdLuxTokens->inputsAngle}};
@@ -119,14 +119,14 @@ std::vector<ParamDesc> diskParams = {{"radius", UsdLuxTokens->inputsRadius}};
 std::vector<ParamDesc> cylinderParams = {{"radius", UsdLuxTokens->inputsRadius}};
 #else
 std::vector<ParamDesc> genericParams = {
-    {"intensity", HdLightTokens->intensity},
-    {"exposure", HdLightTokens->exposure},
-    {"color", HdLightTokens->color},
-    {"diffuse", HdLightTokens->diffuse},
-    {"specular", HdLightTokens->specular},
-    {"normalize", HdLightTokens->normalize},
-    {"cast_shadows", HdLightTokens->shadowEnable},
-    {"shadow_color", HdLightTokens->shadowColor},
+  {"intensity", HdLightTokens->intensity},
+  {"exposure", HdLightTokens->exposure},
+  {"color", HdLightTokens->color},
+  {"diffuse", HdLightTokens->diffuse},
+  {"specular", HdLightTokens->specular},
+  {"normalize", HdLightTokens->normalize},
+  {"cast_shadows", HdLightTokens->shadowEnable},
+  {"shadow_color", HdLightTokens->shadowColor},
 };
 
 std::vector<ParamDesc> pointParams = {{"radius", HdLightTokens->radius}};
@@ -204,8 +204,7 @@ AtString getLightType(HdSceneDelegate *delegate, const SdfPath &id)
       !isDefault(UsdLuxTokens->inputsShapingConeAngle, 180.0f) ||
       !isDefault(UsdLuxTokens->inputsShapingConeSoftness, 0.0f)) {
 #elif WABI_VERSION >= 2102
-  if (!isDefault(UsdLuxTokens->shapingFocus, 0.0f) ||
-      !isDefault(UsdLuxTokens->shapingConeAngle, 180.0f) ||
+  if (!isDefault(UsdLuxTokens->shapingFocus, 0.0f) || !isDefault(UsdLuxTokens->shapingConeAngle, 180.0f) ||
       !isDefault(UsdLuxTokens->shapingConeSoftness, 0.0f)) {
 #else
   if (!isDefault(_tokens->shapingFocus, 0.0f) || !isDefault(_tokens->shapingConeAngle, 180.0f) ||
@@ -224,44 +223,43 @@ auto spotLightSync = [](AtNode *light,
                         HdArnoldRenderDelegate *renderDelegate) {
   iterateParams(light, nentry, id, sceneDelegate, spotParams);
 #if WABI_VERSION >= 2105
-  const auto hdAngle = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsShapingConeAngle)
-                           .GetWithDefault(180.0f);
-  const auto softness = sceneDelegate
-                            ->GetLightParamValue(id, UsdLuxTokens->inputsShapingConeSoftness)
-                            .GetWithDefault(0.0f);
+  const auto hdAngle =
+    sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsShapingConeAngle).GetWithDefault(180.0f);
+  const auto softness =
+    sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsShapingConeSoftness).GetWithDefault(0.0f);
 #elif WABI_VERSION >= 2102
   const auto hdAngle =
-      sceneDelegate->GetLightParamValue(id, UsdLuxTokens->shapingConeAngle).GetWithDefault(180.0f);
-  const auto softness = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->shapingConeSoftness)
-                            .GetWithDefault(0.0f);
+    sceneDelegate->GetLightParamValue(id, UsdLuxTokens->shapingConeAngle).GetWithDefault(180.0f);
+  const auto softness =
+    sceneDelegate->GetLightParamValue(id, UsdLuxTokens->shapingConeSoftness).GetWithDefault(0.0f);
 #else
   const auto hdAngle =
-      sceneDelegate->GetLightParamValue(id, _tokens->shapingConeAngle).GetWithDefault(180.0f);
+    sceneDelegate->GetLightParamValue(id, _tokens->shapingConeAngle).GetWithDefault(180.0f);
   const auto softness =
-      sceneDelegate->GetLightParamValue(id, _tokens->shapingConeSoftness).GetWithDefault(0.0f);
+    sceneDelegate->GetLightParamValue(id, _tokens->shapingConeSoftness).GetWithDefault(0.0f);
 #endif
   const auto arnoldAngle = hdAngle * 2.0f;
-  const auto penumbra    = arnoldAngle * softness;
+  const auto penumbra = arnoldAngle * softness;
   AiNodeSetFlt(light, str::cone_angle, arnoldAngle);
   AiNodeSetFlt(light, str::penumbra_angle, penumbra);
   // Barndoor parameters are only exposed in houdini for now.
   auto hasBarndoor = false;
   auto getBarndoor = [&](const TfToken &name) -> float {
     const auto barndoor = AiClamp(
-        sceneDelegate->GetLightParamValue(id, name).GetWithDefault(0.0f), 0.0f, 1.0f);
+      sceneDelegate->GetLightParamValue(id, name).GetWithDefault(0.0f), 0.0f, 1.0f);
     if (barndoor > AI_EPSILON) {
       hasBarndoor = true;
     }
     return barndoor;
   };
-  const auto barndoorbottom     = getBarndoor(_tokens->barndoorbottom);
+  const auto barndoorbottom = getBarndoor(_tokens->barndoorbottom);
   const auto barndoorbottomedge = getBarndoor(_tokens->barndoorbottomedge);
-  const auto barndoorleft       = getBarndoor(_tokens->barndoorleft);
-  const auto barndoorleftedge   = getBarndoor(_tokens->barndoorleftedge);
-  const auto barndoorright      = getBarndoor(_tokens->barndoorright);
-  const auto barndoorrightedge  = getBarndoor(_tokens->barndoorrightedge);
-  const auto barndoortop        = getBarndoor(_tokens->barndoortop);
-  const auto barndoortopedge    = getBarndoor(_tokens->barndoortopedge);
+  const auto barndoorleft = getBarndoor(_tokens->barndoorleft);
+  const auto barndoorleftedge = getBarndoor(_tokens->barndoorleftedge);
+  const auto barndoorright = getBarndoor(_tokens->barndoorright);
+  const auto barndoorrightedge = getBarndoor(_tokens->barndoorrightedge);
+  const auto barndoortop = getBarndoor(_tokens->barndoortop);
+  const auto barndoortopedge = getBarndoor(_tokens->barndoortopedge);
   auto createBarndoor = [&]() { *filter = AiNode(renderDelegate->GetUniverse(), str::barndoor); };
   if (hasBarndoor) {
     // We check if the filter is non-zero and if it's a barndoor
@@ -354,12 +352,12 @@ auto rectLightSync = [](AtNode *light,
                         HdSceneDelegate *sceneDelegate,
                         HdArnoldRenderDelegate *renderDelegate) {
   TF_UNUSED(filter);
-  float width  = 1.0f;
+  float width = 1.0f;
   float height = 1.0f;
 #if WABI_VERSION >= 2102
   const auto &widthValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsWidth);
 #else
-  const auto &widthValue       = sceneDelegate->GetLightParamValue(id, HdLightTokens->width);
+  const auto &widthValue = sceneDelegate->GetLightParamValue(id, HdLightTokens->width);
 #endif
   if (widthValue.IsHolding<float>()) {
     width = widthValue.UncheckedGet<float>();
@@ -367,7 +365,7 @@ auto rectLightSync = [](AtNode *light,
 #if WABI_VERSION >= 2102
   const auto &heightValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsHeight);
 #else
-  const auto &heightValue      = sceneDelegate->GetLightParamValue(id, HdLightTokens->height);
+  const auto &heightValue = sceneDelegate->GetLightParamValue(id, HdLightTokens->height);
 #endif
   if (heightValue.IsHolding<float>()) {
     height = heightValue.UncheckedGet<float>();
@@ -399,7 +397,7 @@ auto cylinderLightSync = [](AtNode *light,
 #if WABI_VERSION >= 2102
   const auto &lengthValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsLength);
 #else
-  const auto &lengthValue      = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->length);
+  const auto &lengthValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->length);
 #endif
   if (lengthValue.IsHolding<float>()) {
     length = lengthValue.UncheckedGet<float>();
@@ -417,8 +415,7 @@ auto domeLightSync = [](AtNode *light,
                         HdArnoldRenderDelegate *renderDelegate) {
   TF_UNUSED(filter);
 #if WABI_VERSION >= 2102
-  const auto &formatValue = sceneDelegate->GetLightParamValue(id,
-                                                              UsdLuxTokens->inputsTextureFormat);
+  const auto &formatValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsTextureFormat);
 #else
   const auto &formatValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->textureFormat);
 #endif
@@ -470,9 +467,7 @@ class HdArnoldGenericLight : public HdLight {
   /// @param sceneDelegate Pointer to the Scene Delegate.
   /// @param renderParam Pointer to HdArnoldRenderParam.
   /// @param dirtyBits Dirty Bits of the Hydra primitive.
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   /// Returns the set of initial dirty bits.
   ///
@@ -494,7 +489,7 @@ class HdArnoldGenericLight : public HdLight {
   HdArnoldRenderDelegate *_delegate;  ///< Pointer to the Render Delegate.
   AtNode *_light;                     ///< Pointer to the Arnold Light.
   AtNode *_texture = nullptr;         ///< Pointer to the Arnold Texture Shader.
-  AtNode *_filter  = nullptr;         ///< Pointer to the Arnold Light filter for barndoor effects.
+  AtNode *_filter = nullptr;          ///< Pointer to the Arnold Light filter for barndoor effects.
   TfToken _lightLink;                 ///< Light Link collection the light belongs to.
   TfToken _shadowLink;                ///< Shadow Link collection the light belongs to.
   bool _supportsTexture = false;      ///< Value indicating texture support.
@@ -505,12 +500,12 @@ HdArnoldGenericLight::HdArnoldGenericLight(HdArnoldRenderDelegate *delegate,
                                            const AtString &arnoldType,
                                            const HdArnoldGenericLight::SyncParams &sync,
                                            bool supportsTexture)
-    : HdLight(id),
-      _syncParams(sync),
-      _delegate(delegate),
-      _lightLink(_tokens->emptyLink),
-      _shadowLink(_tokens->emptyLink),
-      _supportsTexture(supportsTexture)
+  : HdLight(id),
+    _syncParams(sync),
+    _delegate(delegate),
+    _lightLink(_tokens->emptyLink),
+    _shadowLink(_tokens->emptyLink),
+    _supportsTexture(supportsTexture)
 {
   _light = AiNode(_delegate->GetUniverse(), arnoldType);
   if (id.IsEmpty()) {
@@ -549,9 +544,9 @@ void HdArnoldGenericLight::Sync(HdSceneDelegate *sceneDelegate,
   if (*dirtyBits & HdLight::DirtyParams) {
     // If the params have changed, we need to see if any of the shaping parameters were applied to
     // the sphere light.
-    const auto *nentry   = AiNodeGetNodeEntry(_light);
+    const auto *nentry = AiNodeGetNodeEntry(_light);
     const auto lightType = AiNodeEntryGetNameAtString(nentry);
-    auto interrupted     = false;
+    auto interrupted = false;
     if (lightType == str::spot_light || lightType == str::point_light ||
         lightType == str::photometric_light) {
       const auto newLightType = getLightType(sceneDelegate, id);
@@ -603,17 +598,16 @@ void HdArnoldGenericLight::Sync(HdSceneDelegate *sceneDelegate,
     // post-20.11 to make this bit still work.
     for (const auto &primvar :
          sceneDelegate->GetPrimvarDescriptors(id, HdInterpolation::HdInterpolationConstant)) {
-      ConvertPrimvarToBuiltinParameter(
-          _light,
-          primvar.name,
-          sceneDelegate->Get(
-              id,
+      ConvertPrimvarToBuiltinParameter(_light,
+                                       primvar.name,
+                                       sceneDelegate->Get(
+                                         id,
 #if WABI_VERSION >= 2011
-              TfToken { TfStringPrintf("primvars:%s", primvar.name.GetText()) }
+                                         TfToken { TfStringPrintf("primvars:%s", primvar.name.GetText()) }
 #else
-              primvar.name
+                                         primvar.name
 #endif
-              ));
+                                         ));
     }
     const auto filtersValue = sceneDelegate->GetLightParamValue(id, _tokens->filters);
     if (filtersValue.IsHolding<SdfPathVector>()) {
@@ -622,7 +616,7 @@ void HdArnoldGenericLight::Sync(HdSceneDelegate *sceneDelegate,
       filters.reserve(filterPaths.size());
       for (const auto &filterPath : filterPaths) {
         auto *filterMaterial = reinterpret_cast<const HdArnoldMaterial *>(
-            sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, filterPath));
+          sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, filterPath));
         if (filterMaterial == nullptr) {
           continue;
         }
@@ -641,7 +635,7 @@ void HdArnoldGenericLight::Sync(HdSceneDelegate *sceneDelegate,
       }
       else {
         AiNodeSetArray(
-            _light, str::filters, AiArrayConvert(filters.size(), 1, AI_TYPE_NODE, filters.data()));
+          _light, str::filters, AiArrayConvert(filters.size(), 1, AI_TYPE_NODE, filters.data()));
       }
     }
   }
@@ -681,7 +675,7 @@ void HdArnoldGenericLight::Sync(HdSceneDelegate *sceneDelegate,
 
 void HdArnoldGenericLight::SetupTexture(const VtValue &value)
 {
-  const auto *nentry   = AiNodeGetNodeEntry(_light);
+  const auto *nentry = AiNodeGetNodeEntry(_light);
   const auto hasShader = AiNodeEntryLookUpParameter(nentry, str::shader) != nullptr;
   if (hasShader) {
     AiNodeSetPtr(_light, str::shader, nullptr);
@@ -697,7 +691,7 @@ void HdArnoldGenericLight::SetupTexture(const VtValue &value)
     return;
   }
   const auto &assetPath = value.UncheckedGet<SdfAssetPath>();
-  auto path             = assetPath.GetResolvedPath();
+  auto path = assetPath.GetResolvedPath();
   if (path.empty()) {
     path = assetPath.GetAssetPath();
   }

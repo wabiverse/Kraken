@@ -86,9 +86,9 @@ class HgiMetalComputeCmds final : public HgiComputeCmds {
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
-  HgiMetalComputeCmds()        = delete;
+  HgiMetalComputeCmds() = delete;
   HgiMetalComputeCmds &operator=(const HgiMetalComputeCmds &) = delete;
-  HgiMetalComputeCmds(const HgiMetalComputeCmds &)            = delete;
+  HgiMetalComputeCmds(const HgiMetalComputeCmds &) = delete;
 
   void _CreateEncoder();
 

@@ -50,7 +50,7 @@ class UsdDracoFileFormat : public SdfFileFormat {
   virtual bool ReadFromString(SdfLayer *layer, const std::string &str) const;
   virtual bool WriteToFile(const SdfLayer &layer,
                            const std::string &filePath,
-                           const std::string &comment      = std::string(),
+                           const std::string &comment = std::string(),
                            const FileFormatArguments &args = FileFormatArguments()) const;
   virtual bool WriteToString(const SdfLayer &layer,
                              std::string *str,

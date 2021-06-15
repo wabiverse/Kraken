@@ -55,9 +55,8 @@ struct _VstructInfoEntry {
 
   typedef std::unordered_map<TfToken, std::vector<TfToken>, TfToken::HashFunctor> MemberMap;
   typedef std::unordered_map<TfToken, TfToken, TfToken::HashFunctor> ReverseMemberMap;
-  typedef std::
-      unordered_map<TfToken, MatfiltVstructConditionalEvaluator::Ptr, TfToken::HashFunctor>
-          ConditionalMap;
+  typedef std::unordered_map<TfToken, MatfiltVstructConditionalEvaluator::Ptr, TfToken::HashFunctor>
+    ConditionalMap;
 
   MemberMap members;
   ReverseMemberMap reverseMembers;
@@ -79,8 +78,8 @@ struct _ShaderInfoEntry {
   static Ptr Build(const TfToken &nodeTypeId, const NdrTokenVec &shaderTypePriority)
   {
     auto result = Ptr(new _ShaderInfoEntry);
-    if (auto sdrShader = SdrRegistry::GetInstance().GetShaderNodeByIdentifier(
-            nodeTypeId, shaderTypePriority)) {
+    if (auto sdrShader = SdrRegistry::GetInstance().GetShaderNodeByIdentifier(nodeTypeId,
+                                                                              shaderTypePriority)) {
       for (const auto &inputName : sdrShader->GetInputNames()) {
         auto sdrInput = sdrShader->GetShaderInput(inputName);
         if (!sdrInput) {
@@ -107,7 +106,7 @@ struct _ShaderInfoEntry {
 
     auto I = _cachedEntries.find(nodeTypeId);
     if (I == _cachedEntries.end()) {
-      auto result                = Build(nodeTypeId, shaderTypePriority);
+      auto result = Build(nodeTypeId, shaderTypePriority);
       _cachedEntries[nodeTypeId] = result;
       return result;
     }
@@ -124,7 +123,7 @@ struct _ShaderInfoEntry {
       return;
     }
 
-    const TfToken &vsName       = prop->GetVStructMemberOf();
+    const TfToken &vsName = prop->GetVStructMemberOf();
     const TfToken &vsMemberName = prop->GetVStructMemberName();
     if (vsName.IsEmpty() || vsMemberName.IsEmpty()) {
       return;
@@ -163,14 +162,12 @@ struct _ShaderInfoEntry {
     const TfToken &condExpr = prop->GetVStructConditionalExpr();
 
     if (!condExpr.IsEmpty()) {
-      entry->conditionals[prop->GetName()] = MatfiltVstructConditionalEvaluator::Parse(
-          condExpr.data());
+      entry->conditionals[prop->GetName()] = MatfiltVstructConditionalEvaluator::Parse(condExpr.data());
     }
   }
 };
 
-std::unordered_map<TfToken, _ShaderInfoEntry::Ptr, TfToken::HashFunctor>
-    _ShaderInfoEntry::_cachedEntries;
+std::unordered_map<TfToken, _ShaderInfoEntry::Ptr, TfToken::HashFunctor> _ShaderInfoEntry::_cachedEntries;
 
 std::mutex _ShaderInfoEntry::_cachedEntryMutex;
 
@@ -210,7 +207,7 @@ static void _ResolveVstructsForNode(HdMaterialNetwork2 &network,
     }
     TF_DEBUG(HDPRMAN_VSTRUCTS).Msg("Found input %s with a vstruct\n", inputName.GetText());
 
-    const auto &vstructInfo         = (*I).second;
+    const auto &vstructInfo = (*I).second;
     const auto &upstreamConnections = connectionI.second;
 
     if (upstreamConnections.empty()) {
@@ -230,8 +227,7 @@ static void _ResolveVstructsForNode(HdMaterialNetwork2 &network,
 
     // confirm connected upstream output is a vstruct
     auto upstreamShaderInfo = _ShaderInfoEntry::Get(upstreamNode.nodeTypeId, shaderTypePriority);
-    auto upstreamVstructI   = upstreamShaderInfo->vstructs.find(
-        upstreamConnection.upstreamOutputName);
+    auto upstreamVstructI = upstreamShaderInfo->vstructs.find(upstreamConnection.upstreamOutputName);
     if (upstreamVstructI == upstreamShaderInfo->vstructs.end()) {
       continue;
     }
@@ -282,13 +278,13 @@ static void _ResolveVstructsForNode(HdMaterialNetwork2 &network,
         else {
           // no condition, just connect
           node.inputConnections[memberInputName] = {
-              {upstreamConnection.upstreamNode, upstreamMemberOutputName}};
+            {upstreamConnection.upstreamNode, upstreamMemberOutputName}};
           TF_DEBUG(HDPRMAN_VSTRUCTS)
-              .Msg("Connected condition-less %s.%s to %s.%s\n",
-                   nodeId.GetText(),
-                   memberInputName.GetText(),
-                   upstreamConnection.upstreamNode.GetText(),
-                   upstreamMemberOutputName.GetText());
+            .Msg("Connected condition-less %s.%s to %s.%s\n",
+                 nodeId.GetText(),
+                 memberInputName.GetText(),
+                 upstreamConnection.upstreamNode.GetText(),
+                 upstreamMemberOutputName.GetText());
         }
         break;
       }
@@ -317,8 +313,7 @@ void MatfiltResolveVstructs(const SdfPath &networkId,
   for (auto &I : network.nodes) {
     const SdfPath &nodeId = I.first;
     HdMaterialNode2 &node = I.second;
-    _ResolveVstructsForNode(
-        network, nodeId, node, resolvedNodeNames, shaderTypePriority, enableConditions);
+    _ResolveVstructsForNode(network, nodeId, node, resolvedNodeNames, shaderTypePriority, enableConditions);
   }
 }
 

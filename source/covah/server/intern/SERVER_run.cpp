@@ -90,7 +90,7 @@ eServerErrorCode ServerStart(int argc, char *argv[])
 
   std::string server_port("tcp://127.0.0.1:");
 
-  int status     = -1;
+  int status = -1;
   int reconnects = 0;
   while (status != SERVER_SUCCESS) {
     server_port = server_port.substr(0, server_port.find_last_of(":"));

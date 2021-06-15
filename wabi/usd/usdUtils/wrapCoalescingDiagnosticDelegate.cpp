@@ -91,26 +91,26 @@ void wrapCoalescingDiagnosticDelegate()
 {
   using SharedItem = UsdUtilsCoalescingDiagnosticDelegateSharedItem;
   class_<SharedItem>("CoalescingDiagnosticDelegateSharedItem", no_init)
-      .add_property("sourceLineNumber", &SharedItem::sourceLineNumber)
-      .add_property("sourceFileName", &SharedItem::sourceFileName)
-      .add_property("sourceFunction", &SharedItem::sourceFunction);
+    .add_property("sourceLineNumber", &SharedItem::sourceLineNumber)
+    .add_property("sourceFileName", &SharedItem::sourceFileName)
+    .add_property("sourceFunction", &SharedItem::sourceFunction);
 
   using UnsharedItem = UsdUtilsCoalescingDiagnosticDelegateUnsharedItem;
   class_<UnsharedItem>("CoalescingDiagnosticDelegateUnsharedItem", no_init)
-      .add_property("context", &UnsharedItem::context)
-      .add_property("commentary", &UnsharedItem::commentary);
+    .add_property("context", &UnsharedItem::context)
+    .add_property("commentary", &UnsharedItem::commentary);
 
   using Item = UsdUtilsCoalescingDiagnosticDelegateItem;
   class_<Item>("CoalescingDiagnosticDelegateItem", no_init)
-      .add_property("sharedItem", &Item::sharedItem)
-      .add_property("unsharedItems", &_GetUnsharedItems);
+    .add_property("sharedItem", &Item::sharedItem)
+    .add_property("unsharedItems", &_GetUnsharedItems);
 
   using This = UsdUtilsCoalescingDiagnosticDelegate;
   class_<This, boost::noncopyable>("CoalescingDiagnosticDelegate")
-      .def("DumpCoalescedDiagnosticsToStdout", &_DumpCoalescedDiagnosticsToStdout)
-      .def("DumpUncoalescedDiagnostics", &_DumpUncoalescedDiagnosticsToStdout)
-      .def("DumpCoalescedDiagnosticsToStderr", &_DumpCoalescedDiagnosticsToStderr)
-      .def("DumpUncoalescedDiagnostics", &_DumpUncoalescedDiagnosticsToStderr)
-      .def("TakeCoalescedDiagnostics", &_TakeCoalescedDiagnostics)
-      .def("TakeUncoalescedDiagnostics", &_TakeUncoalescedDiagnostics);
+    .def("DumpCoalescedDiagnosticsToStdout", &_DumpCoalescedDiagnosticsToStdout)
+    .def("DumpUncoalescedDiagnostics", &_DumpUncoalescedDiagnosticsToStdout)
+    .def("DumpCoalescedDiagnosticsToStderr", &_DumpCoalescedDiagnosticsToStderr)
+    .def("DumpUncoalescedDiagnostics", &_DumpUncoalescedDiagnosticsToStderr)
+    .def("TakeCoalescedDiagnostics", &_TakeCoalescedDiagnostics)
+    .def("TakeUncoalescedDiagnostics", &_TakeUncoalescedDiagnostics);
 }

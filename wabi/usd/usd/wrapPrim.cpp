@@ -99,42 +99,35 @@ static string __repr__(const UsdPrim &self)
 
 static TfTokenVector _WrapGetPropertyNames(const UsdPrim &prim, boost::python::object predicate)
 {
-  const auto &pred = predicate ?
-                         boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
-                         UsdPrim::PropertyPredicateFunc();
+  const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
+                                 UsdPrim::PropertyPredicateFunc();
   return prim.GetPropertyNames(pred);
 }
 
-static TfTokenVector _WrapGetAuthoredPropertyNames(const UsdPrim &prim,
-                                                   boost::python::object predicate)
+static TfTokenVector _WrapGetAuthoredPropertyNames(const UsdPrim &prim, boost::python::object predicate)
 {
-  const auto &pred = predicate ?
-                         boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
-                         UsdPrim::PropertyPredicateFunc();
+  const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
+                                 UsdPrim::PropertyPredicateFunc();
   return prim.GetAuthoredPropertyNames(pred);
 }
 
-static std::vector<UsdProperty> _WrapGetProperties(const UsdPrim &prim,
-                                                   boost::python::object predicate)
+static std::vector<UsdProperty> _WrapGetProperties(const UsdPrim &prim, boost::python::object predicate)
 {
-  const auto &pred = predicate ?
-                         boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
-                         UsdPrim::PropertyPredicateFunc();
+  const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
+                                 UsdPrim::PropertyPredicateFunc();
   return prim.GetProperties(pred);
 }
 
 static std::vector<UsdProperty> _WrapGetAuthoredProperties(const UsdPrim &prim,
                                                            boost::python::object predicate)
 {
-  const auto &pred = predicate ?
-                         boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
-                         UsdPrim::PropertyPredicateFunc();
+  const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
+                                 UsdPrim::PropertyPredicateFunc();
   return prim.GetAuthoredProperties(pred);
 }
 
 struct Usd_PrimCanApplyAPIResult : public TfPyAnnotatedBoolResult<string> {
-  Usd_PrimCanApplyAPIResult(bool val, string const &msg)
-      : TfPyAnnotatedBoolResult<string>(val, msg)
+  Usd_PrimCanApplyAPIResult(bool val, string const &msg) : TfPyAnnotatedBoolResult<string>(val, msg)
   {}
 };
 
@@ -170,263 +163,228 @@ void wrapUsdPrim()
   TfPyFunctionFromPython<bool(TfToken const &)>();
 
   class_<UsdPrim, bases<UsdObject>>("Prim")
-      .def(Usd_ObjectSubclass())
-      .def("__repr__", __repr__)
+    .def(Usd_ObjectSubclass())
+    .def("__repr__", __repr__)
 
-      .def("GetPrimTypeInfo", &UsdPrim::GetPrimTypeInfo, return_internal_reference<>())
-      .def("GetPrimDefinition", &UsdPrim::GetPrimDefinition, return_internal_reference<>())
-      .def("GetPrimStack", &UsdPrim::GetPrimStack)
+    .def("GetPrimTypeInfo", &UsdPrim::GetPrimTypeInfo, return_internal_reference<>())
+    .def("GetPrimDefinition", &UsdPrim::GetPrimDefinition, return_internal_reference<>())
+    .def("GetPrimStack", &UsdPrim::GetPrimStack)
 
-      .def("GetSpecifier", &UsdPrim::GetSpecifier)
-      .def("SetSpecifier", &UsdPrim::SetSpecifier, arg("specifier"))
+    .def("GetSpecifier", &UsdPrim::GetSpecifier)
+    .def("SetSpecifier", &UsdPrim::SetSpecifier, arg("specifier"))
 
-      .def("GetTypeName", &UsdPrim::GetTypeName, return_value_policy<return_by_value>())
-      .def("SetTypeName", &UsdPrim::SetTypeName, arg("typeName"))
-      .def("ClearTypeName", &UsdPrim::ClearTypeName)
-      .def("HasAuthoredTypeName", &UsdPrim::HasAuthoredTypeName)
+    .def("GetTypeName", &UsdPrim::GetTypeName, return_value_policy<return_by_value>())
+    .def("SetTypeName", &UsdPrim::SetTypeName, arg("typeName"))
+    .def("ClearTypeName", &UsdPrim::ClearTypeName)
+    .def("HasAuthoredTypeName", &UsdPrim::HasAuthoredTypeName)
 
-      .def("IsActive", &UsdPrim::IsActive)
-      .def("SetActive", &UsdPrim::SetActive, arg("active"))
-      .def("ClearActive", &UsdPrim::ClearActive)
-      .def("HasAuthoredActive", &UsdPrim::HasAuthoredActive)
+    .def("IsActive", &UsdPrim::IsActive)
+    .def("SetActive", &UsdPrim::SetActive, arg("active"))
+    .def("ClearActive", &UsdPrim::ClearActive)
+    .def("HasAuthoredActive", &UsdPrim::HasAuthoredActive)
 
-      .def("IsLoaded", &UsdPrim::IsLoaded)
-      .def("IsModel", &UsdPrim::IsModel)
-      .def("IsGroup", &UsdPrim::IsGroup)
-      .def("IsAbstract", &UsdPrim::IsAbstract)
-      .def("IsDefined", &UsdPrim::IsDefined)
-      .def("HasDefiningSpecifier", &UsdPrim::HasDefiningSpecifier)
+    .def("IsLoaded", &UsdPrim::IsLoaded)
+    .def("IsModel", &UsdPrim::IsModel)
+    .def("IsGroup", &UsdPrim::IsGroup)
+    .def("IsAbstract", &UsdPrim::IsAbstract)
+    .def("IsDefined", &UsdPrim::IsDefined)
+    .def("HasDefiningSpecifier", &UsdPrim::HasDefiningSpecifier)
 
-      .def("GetPropertyNames",
-           &_WrapGetPropertyNames,
-           (arg("predicate") = boost::python::object()),
-           return_value_policy<TfPySequenceToList>())
-      .def("GetAuthoredPropertyNames",
-           &_WrapGetAuthoredPropertyNames,
-           (arg("predicate") = boost::python::object()),
-           return_value_policy<TfPySequenceToList>())
+    .def("GetPropertyNames",
+         &_WrapGetPropertyNames,
+         (arg("predicate") = boost::python::object()),
+         return_value_policy<TfPySequenceToList>())
+    .def("GetAuthoredPropertyNames",
+         &_WrapGetAuthoredPropertyNames,
+         (arg("predicate") = boost::python::object()),
+         return_value_policy<TfPySequenceToList>())
 
-      .def("GetProperties",
-           &_WrapGetProperties,
-           arg("predicate") = boost::python::object(),
-           return_value_policy<TfPySequenceToList>())
+    .def("GetProperties",
+         &_WrapGetProperties,
+         arg("predicate") = boost::python::object(),
+         return_value_policy<TfPySequenceToList>())
 
-      .def("GetAuthoredProperties",
-           &_WrapGetAuthoredProperties,
-           arg("predicate") = boost::python::object(),
-           return_value_policy<TfPySequenceToList>())
+    .def("GetAuthoredProperties",
+         &_WrapGetAuthoredProperties,
+         arg("predicate") = boost::python::object(),
+         return_value_policy<TfPySequenceToList>())
 
-      .def("GetPropertiesInNamespace",
-           (vector<UsdProperty>(UsdPrim::*)(const vector<string> &) const) &
-               UsdPrim::GetPropertiesInNamespace,
-           arg("namespaces"),
-           return_value_policy<TfPySequenceToList>())
+    .def("GetPropertiesInNamespace",
+         (vector<UsdProperty>(UsdPrim::*)(const vector<string> &) const) & UsdPrim::GetPropertiesInNamespace,
+         arg("namespaces"),
+         return_value_policy<TfPySequenceToList>())
 
-      .def("GetPropertiesInNamespace",
-           (vector<UsdProperty>(UsdPrim::*)(const string &) const) &
-               UsdPrim::GetPropertiesInNamespace,
-           arg("namespaces"),
-           return_value_policy<TfPySequenceToList>())
+    .def("GetPropertiesInNamespace",
+         (vector<UsdProperty>(UsdPrim::*)(const string &) const) & UsdPrim::GetPropertiesInNamespace,
+         arg("namespaces"),
+         return_value_policy<TfPySequenceToList>())
 
-      .def("GetAuthoredPropertiesInNamespace",
-           (vector<UsdProperty>(UsdPrim::*)(const vector<string> &) const) &
-               UsdPrim::GetAuthoredPropertiesInNamespace,
-           arg("namespaces"),
-           return_value_policy<TfPySequenceToList>())
+    .def("GetAuthoredPropertiesInNamespace",
+         (vector<UsdProperty>(UsdPrim::*)(const vector<string> &) const) &
+           UsdPrim::GetAuthoredPropertiesInNamespace,
+         arg("namespaces"),
+         return_value_policy<TfPySequenceToList>())
 
-      .def("GetAuthoredPropertiesInNamespace",
-           (vector<UsdProperty>(UsdPrim::*)(const string &) const) &
-               UsdPrim::GetAuthoredPropertiesInNamespace,
-           arg("namespaces"),
-           return_value_policy<TfPySequenceToList>())
+    .def("GetAuthoredPropertiesInNamespace",
+         (vector<UsdProperty>(UsdPrim::*)(const string &) const) & UsdPrim::GetAuthoredPropertiesInNamespace,
+         arg("namespaces"),
+         return_value_policy<TfPySequenceToList>())
 
-      .def("GetAppliedSchemas",
-           &UsdPrim::GetAppliedSchemas,
-           return_value_policy<TfPySequenceToList>())
+    .def("GetAppliedSchemas", &UsdPrim::GetAppliedSchemas, return_value_policy<TfPySequenceToList>())
 
-      .def("GetPropertyOrder",
-           &UsdPrim::GetPropertyOrder,
-           return_value_policy<TfPySequenceToList>())
-      .def("SetPropertyOrder", &UsdPrim::SetPropertyOrder, arg("order"))
-      .def("ClearPropertyOrder", &UsdPrim::ClearPropertyOrder)
+    .def("GetPropertyOrder", &UsdPrim::GetPropertyOrder, return_value_policy<TfPySequenceToList>())
+    .def("SetPropertyOrder", &UsdPrim::SetPropertyOrder, arg("order"))
+    .def("ClearPropertyOrder", &UsdPrim::ClearPropertyOrder)
 
-      .def("IsA", (bool (UsdPrim::*)(const TfType &) const) & UsdPrim::IsA, arg("schemaType"))
-      .def("HasAPI",
-           (bool (UsdPrim::*)(const TfType &, const TfToken &) const) & UsdPrim::HasAPI,
-           (arg("schemaType"), arg("instanceName") = TfToken()))
-      .def("CanApplyAPI", &_WrapCanApplyAPI, (arg("schemaType")))
-      .def("CanApplyAPI", &_WrapCanApplyAPI_2, (arg("schemaType"), arg("instanceName")))
-      .def("ApplyAPI",
-           (bool (UsdPrim::*)(const TfType &) const) & UsdPrim::ApplyAPI,
-           (arg("schemaType")))
-      .def("ApplyAPI",
-           (bool (UsdPrim::*)(const TfType &, const TfToken &) const) & UsdPrim::ApplyAPI,
-           (arg("schemaType"), arg("instanceName")))
-      .def("RemoveAPI",
-           (bool (UsdPrim::*)(const TfType &) const) & UsdPrim::RemoveAPI,
-           (arg("schemaType")))
-      .def("RemoveAPI",
-           (bool (UsdPrim::*)(const TfType &, const TfToken &) const) & UsdPrim::RemoveAPI,
-           (arg("schemaType"), arg("instanceName")))
+    .def("IsA", (bool (UsdPrim::*)(const TfType &) const) & UsdPrim::IsA, arg("schemaType"))
+    .def("HasAPI",
+         (bool (UsdPrim::*)(const TfType &, const TfToken &) const) & UsdPrim::HasAPI,
+         (arg("schemaType"), arg("instanceName") = TfToken()))
+    .def("CanApplyAPI", &_WrapCanApplyAPI, (arg("schemaType")))
+    .def("CanApplyAPI", &_WrapCanApplyAPI_2, (arg("schemaType"), arg("instanceName")))
+    .def("ApplyAPI", (bool (UsdPrim::*)(const TfType &) const) & UsdPrim::ApplyAPI, (arg("schemaType")))
+    .def("ApplyAPI",
+         (bool (UsdPrim::*)(const TfType &, const TfToken &) const) & UsdPrim::ApplyAPI,
+         (arg("schemaType"), arg("instanceName")))
+    .def("RemoveAPI", (bool (UsdPrim::*)(const TfType &) const) & UsdPrim::RemoveAPI, (arg("schemaType")))
+    .def("RemoveAPI",
+         (bool (UsdPrim::*)(const TfType &, const TfToken &) const) & UsdPrim::RemoveAPI,
+         (arg("schemaType"), arg("instanceName")))
 
-      .def("AddAppliedSchema", &UsdPrim::AddAppliedSchema)
-      .def("RemoveAppliedSchema", &UsdPrim::RemoveAppliedSchema)
+    .def("AddAppliedSchema", &UsdPrim::AddAppliedSchema)
+    .def("RemoveAppliedSchema", &UsdPrim::RemoveAppliedSchema)
 
-      .def("GetChild", &UsdPrim::GetChild, arg("name"))
+    .def("GetChild", &UsdPrim::GetChild, arg("name"))
 
-      .def("GetChildren", &UsdPrim::GetChildren, return_value_policy<TfPySequenceToList>())
-      .def("GetAllChildren", &UsdPrim::GetAllChildren, return_value_policy<TfPySequenceToList>())
-      .def("GetFilteredChildren",
-           &UsdPrim::GetFilteredChildren,
-           arg("predicate"),
-           return_value_policy<TfPySequenceToList>())
+    .def("GetChildren", &UsdPrim::GetChildren, return_value_policy<TfPySequenceToList>())
+    .def("GetAllChildren", &UsdPrim::GetAllChildren, return_value_policy<TfPySequenceToList>())
+    .def("GetFilteredChildren",
+         &UsdPrim::GetFilteredChildren,
+         arg("predicate"),
+         return_value_policy<TfPySequenceToList>())
 
-      .def("GetChildrenNames",
-           &UsdPrim::GetChildrenNames,
-           return_value_policy<TfPySequenceToList>())
-      .def("GetAllChildrenNames",
-           &UsdPrim::GetAllChildrenNames,
-           return_value_policy<TfPySequenceToList>())
-      .def("GetFilteredChildrenNames",
-           &UsdPrim::GetFilteredChildrenNames,
-           return_value_policy<TfPySequenceToList>())
+    .def("GetChildrenNames", &UsdPrim::GetChildrenNames, return_value_policy<TfPySequenceToList>())
+    .def("GetAllChildrenNames", &UsdPrim::GetAllChildrenNames, return_value_policy<TfPySequenceToList>())
+    .def("GetFilteredChildrenNames",
+         &UsdPrim::GetFilteredChildrenNames,
+         return_value_policy<TfPySequenceToList>())
 
-      .def("GetChildrenReorder",
-           &UsdPrim::GetChildrenReorder,
-           return_value_policy<TfPySequenceToList>())
-      .def("SetChildrenReorder", &UsdPrim::SetChildrenReorder, arg("order"))
-      .def("ClearChildrenReorder", &UsdPrim::ClearChildrenReorder)
+    .def("GetChildrenReorder", &UsdPrim::GetChildrenReorder, return_value_policy<TfPySequenceToList>())
+    .def("SetChildrenReorder", &UsdPrim::SetChildrenReorder, arg("order"))
+    .def("ClearChildrenReorder", &UsdPrim::ClearChildrenReorder)
 
-      .def("GetParent", &UsdPrim::GetParent)
-      .def("GetNextSibling", (UsdPrim(UsdPrim::*)() const) & UsdPrim::GetNextSibling)
-      .def("GetFilteredNextSibling",
-           (UsdPrim(UsdPrim::*)(const Usd_PrimFlagsPredicate &) const) &
-               UsdPrim::GetFilteredNextSibling)
-      .def("IsPseudoRoot", &UsdPrim::IsPseudoRoot)
+    .def("GetParent", &UsdPrim::GetParent)
+    .def("GetNextSibling", (UsdPrim(UsdPrim::*)() const) & UsdPrim::GetNextSibling)
+    .def("GetFilteredNextSibling",
+         (UsdPrim(UsdPrim::*)(const Usd_PrimFlagsPredicate &) const) & UsdPrim::GetFilteredNextSibling)
+    .def("IsPseudoRoot", &UsdPrim::IsPseudoRoot)
 
-      .def("HasVariantSets", &UsdPrim::HasVariantSets)
-      .def("GetVariantSets", &UsdPrim::GetVariantSets)
+    .def("HasVariantSets", &UsdPrim::HasVariantSets)
+    .def("GetVariantSets", &UsdPrim::GetVariantSets)
 
-      .def("GetVariantSet", &UsdPrim::GetVariantSet)
+    .def("GetVariantSet", &UsdPrim::GetVariantSet)
 
-      .def("GetPrimIndex", &UsdPrim::GetPrimIndex, return_value_policy<return_by_value>())
-      .def("ComputeExpandedPrimIndex", &UsdPrim::ComputeExpandedPrimIndex)
+    .def("GetPrimIndex", &UsdPrim::GetPrimIndex, return_value_policy<return_by_value>())
+    .def("ComputeExpandedPrimIndex", &UsdPrim::ComputeExpandedPrimIndex)
 
-      .def("CreateAttribute",
-           (UsdAttribute(UsdPrim::*)(
-               const TfToken &, const SdfValueTypeName &, bool, SdfVariability) const) &
-               UsdPrim::CreateAttribute,
-           (arg("name"),
-            arg("typeName"),
-            arg("custom")      = true,
-            arg("variability") = SdfVariabilityVarying))
+    .def("CreateAttribute",
+         (UsdAttribute(UsdPrim::*)(const TfToken &, const SdfValueTypeName &, bool, SdfVariability) const) &
+           UsdPrim::CreateAttribute,
+         (arg("name"), arg("typeName"), arg("custom") = true, arg("variability") = SdfVariabilityVarying))
 
-      .def("CreateAttribute",
-           (UsdAttribute(UsdPrim::*)(
-               const vector<string> &, const SdfValueTypeName &, bool, SdfVariability) const) &
-               UsdPrim::CreateAttribute,
-           (arg("nameElts"),
-            arg("typeName"),
-            arg("custom")      = true,
-            arg("variability") = SdfVariabilityVarying))
+    .def(
+      "CreateAttribute",
+      (UsdAttribute(UsdPrim::*)(const vector<string> &, const SdfValueTypeName &, bool, SdfVariability)
+         const) &
+        UsdPrim::CreateAttribute,
+      (arg("nameElts"), arg("typeName"), arg("custom") = true, arg("variability") = SdfVariabilityVarying))
 
-      .def("GetAttributes", &UsdPrim::GetAttributes, return_value_policy<TfPySequenceToList>())
-      .def("GetAuthoredAttributes",
-           &UsdPrim::GetAuthoredAttributes,
-           return_value_policy<TfPySequenceToList>())
+    .def("GetAttributes", &UsdPrim::GetAttributes, return_value_policy<TfPySequenceToList>())
+    .def("GetAuthoredAttributes", &UsdPrim::GetAuthoredAttributes, return_value_policy<TfPySequenceToList>())
 
-      .def("GetAttribute", &UsdPrim::GetAttribute, arg("attrName"))
-      .def("HasAttribute", &UsdPrim::HasAttribute, arg("attrName"))
+    .def("GetAttribute", &UsdPrim::GetAttribute, arg("attrName"))
+    .def("HasAttribute", &UsdPrim::HasAttribute, arg("attrName"))
 
-      .def("FindAllAttributeConnectionPaths",
-           &_FindAllAttributeConnectionPaths,
-           (arg("predicate") = object(), arg("recurseOnSources") = false))
+    .def("FindAllAttributeConnectionPaths",
+         &_FindAllAttributeConnectionPaths,
+         (arg("predicate") = object(), arg("recurseOnSources") = false))
 
-      .def("CreateRelationship",
-           (UsdRelationship(UsdPrim::*)(const TfToken &, bool) const) &
-               UsdPrim::CreateRelationship,
-           (arg("name"), arg("custom") = true))
+    .def("CreateRelationship",
+         (UsdRelationship(UsdPrim::*)(const TfToken &, bool) const) & UsdPrim::CreateRelationship,
+         (arg("name"), arg("custom") = true))
 
-      .def("CreateRelationship",
-           (UsdRelationship(UsdPrim::*)(const vector<string> &, bool) const) &
-               UsdPrim::CreateRelationship,
-           (arg("nameElts"), arg("custom") = true))
+    .def("CreateRelationship",
+         (UsdRelationship(UsdPrim::*)(const vector<string> &, bool) const) & UsdPrim::CreateRelationship,
+         (arg("nameElts"), arg("custom") = true))
 
-      .def("GetRelationships",
-           &UsdPrim::GetRelationships,
-           return_value_policy<TfPySequenceToList>())
-      .def("GetAuthoredRelationships",
-           &UsdPrim::GetAuthoredRelationships,
-           return_value_policy<TfPySequenceToList>())
+    .def("GetRelationships", &UsdPrim::GetRelationships, return_value_policy<TfPySequenceToList>())
+    .def("GetAuthoredRelationships",
+         &UsdPrim::GetAuthoredRelationships,
+         return_value_policy<TfPySequenceToList>())
 
-      .def("GetRelationship", &UsdPrim::GetRelationship, arg("relName"))
-      .def("HasRelationship", &UsdPrim::HasRelationship, arg("relName"))
+    .def("GetRelationship", &UsdPrim::GetRelationship, arg("relName"))
+    .def("HasRelationship", &UsdPrim::HasRelationship, arg("relName"))
 
-      .def("FindAllRelationshipTargetPaths",
-           &_FindAllRelationshipTargetPaths,
-           (arg("predicate") = object(), arg("recurseOnTargets") = false))
+    .def("FindAllRelationshipTargetPaths",
+         &_FindAllRelationshipTargetPaths,
+         (arg("predicate") = object(), arg("recurseOnTargets") = false))
 
-      .def("HasPayload", &UsdPrim::HasPayload)
-      .def("SetPayload",
-           (bool (UsdPrim::*)(const SdfPayload &) const) & UsdPrim::SetPayload,
-           (arg("payload")))
-      .def("SetPayload",
-           (bool (UsdPrim::*)(const string &, const SdfPath &) const) & UsdPrim::SetPayload,
-           (arg("assetPath"), arg("primPath")))
-      .def("SetPayload",
-           (bool (UsdPrim::*)(const SdfLayerHandle &, const SdfPath &) const) &
-               UsdPrim::SetPayload,
-           (arg("layer"), arg("primPath")))
-      .def("ClearPayload", &UsdPrim::ClearPayload)
+    .def("HasPayload", &UsdPrim::HasPayload)
+    .def("SetPayload", (bool (UsdPrim::*)(const SdfPayload &) const) & UsdPrim::SetPayload, (arg("payload")))
+    .def("SetPayload",
+         (bool (UsdPrim::*)(const string &, const SdfPath &) const) & UsdPrim::SetPayload,
+         (arg("assetPath"), arg("primPath")))
+    .def("SetPayload",
+         (bool (UsdPrim::*)(const SdfLayerHandle &, const SdfPath &) const) & UsdPrim::SetPayload,
+         (arg("layer"), arg("primPath")))
+    .def("ClearPayload", &UsdPrim::ClearPayload)
 
-      .def("GetPayloads", &UsdPrim::GetPayloads)
-      .def("HasAuthoredPayloads", &UsdPrim::HasAuthoredPayloads)
+    .def("GetPayloads", &UsdPrim::GetPayloads)
+    .def("HasAuthoredPayloads", &UsdPrim::HasAuthoredPayloads)
 
-      .def("Load", &UsdPrim::Load, (arg("policy") = UsdLoadWithDescendants))
-      .def("Unload", &UsdPrim::Unload)
+    .def("Load", &UsdPrim::Load, (arg("policy") = UsdLoadWithDescendants))
+    .def("Unload", &UsdPrim::Unload)
 
-      .def("GetReferences", &UsdPrim::GetReferences)
-      .def("HasAuthoredReferences", &UsdPrim::HasAuthoredReferences)
+    .def("GetReferences", &UsdPrim::GetReferences)
+    .def("HasAuthoredReferences", &UsdPrim::HasAuthoredReferences)
 
-      .def("GetInherits", &UsdPrim::GetInherits)
-      .def("HasAuthoredInherits", &UsdPrim::HasAuthoredInherits)
+    .def("GetInherits", &UsdPrim::GetInherits)
+    .def("HasAuthoredInherits", &UsdPrim::HasAuthoredInherits)
 
-      .def("GetSpecializes", &UsdPrim::GetSpecializes)
-      .def("HasAuthoredSpecializes", &UsdPrim::HasAuthoredSpecializes)
+    .def("GetSpecializes", &UsdPrim::GetSpecializes)
+    .def("HasAuthoredSpecializes", &UsdPrim::HasAuthoredSpecializes)
 
-      .def("RemoveProperty", &UsdPrim::RemoveProperty, arg("propName"))
-      .def("GetProperty", &UsdPrim::GetProperty, arg("propName"))
-      .def("HasProperty", &UsdPrim::HasProperty, arg("propName"))
+    .def("RemoveProperty", &UsdPrim::RemoveProperty, arg("propName"))
+    .def("GetProperty", &UsdPrim::GetProperty, arg("propName"))
+    .def("HasProperty", &UsdPrim::HasProperty, arg("propName"))
 
-      .def("IsInstanceable", &UsdPrim::IsInstanceable)
-      .def("SetInstanceable", &UsdPrim::SetInstanceable, arg("instanceable"))
-      .def("ClearInstanceable", &UsdPrim::ClearInstanceable)
-      .def("HasAuthoredInstanceable", &UsdPrim::HasAuthoredInstanceable)
+    .def("IsInstanceable", &UsdPrim::IsInstanceable)
+    .def("SetInstanceable", &UsdPrim::SetInstanceable, arg("instanceable"))
+    .def("ClearInstanceable", &UsdPrim::ClearInstanceable)
+    .def("HasAuthoredInstanceable", &UsdPrim::HasAuthoredInstanceable)
 
-      .def("IsPrototypePath", &UsdPrim::IsPrototypePath, arg("path"))
-      .staticmethod("IsPrototypePath")
-      .def("IsPathInPrototype", &UsdPrim::IsPathInPrototype, arg("path"))
-      .staticmethod("IsPathInPrototype")
+    .def("IsPrototypePath", &UsdPrim::IsPrototypePath, arg("path"))
+    .staticmethod("IsPrototypePath")
+    .def("IsPathInPrototype", &UsdPrim::IsPathInPrototype, arg("path"))
+    .staticmethod("IsPathInPrototype")
 
-      .def("IsInstance", &UsdPrim::IsInstance)
-      .def("IsPrototype", &UsdPrim::IsPrototype)
-      .def("IsInPrototype", &UsdPrim::IsInPrototype)
-      .def("GetPrototype", &UsdPrim::GetPrototype)
+    .def("IsInstance", &UsdPrim::IsInstance)
+    .def("IsPrototype", &UsdPrim::IsPrototype)
+    .def("IsInPrototype", &UsdPrim::IsInPrototype)
+    .def("GetPrototype", &UsdPrim::GetPrototype)
 
-      .def("IsInstanceProxy", &UsdPrim::IsInstanceProxy)
-      .def("GetPrimInPrototype", &UsdPrim::GetPrimInPrototype)
+    .def("IsInstanceProxy", &UsdPrim::IsInstanceProxy)
+    .def("GetPrimInPrototype", &UsdPrim::GetPrimInPrototype)
 
-      .def("GetPrimAtPath", &UsdPrim::GetPrimAtPath, arg("path"))
-      .def("GetObjectAtPath", &UsdPrim::GetObjectAtPath, arg("path"))
-      .def("GetPropertyAtPath", &UsdPrim::GetPropertyAtPath, arg("path"))
-      .def("GetAttributeAtPath", &UsdPrim::GetAttributeAtPath, arg("path"))
-      .def("GetRelationshipAtPath", &UsdPrim::GetRelationshipAtPath, arg("path"))
-      .def("GetInstances", &UsdPrim::GetInstances, return_value_policy<TfPySequenceToList>())
+    .def("GetPrimAtPath", &UsdPrim::GetPrimAtPath, arg("path"))
+    .def("GetObjectAtPath", &UsdPrim::GetObjectAtPath, arg("path"))
+    .def("GetPropertyAtPath", &UsdPrim::GetPropertyAtPath, arg("path"))
+    .def("GetAttributeAtPath", &UsdPrim::GetAttributeAtPath, arg("path"))
+    .def("GetRelationshipAtPath", &UsdPrim::GetRelationshipAtPath, arg("path"))
+    .def("GetInstances", &UsdPrim::GetInstances, return_value_policy<TfPySequenceToList>())
 
-      // Exposed only for testing and debugging.
-      .def("_GetSourcePrimIndex",
-           &Usd_PrimGetSourcePrimIndex,
-           return_value_policy<return_by_value>());
+    // Exposed only for testing and debugging.
+    .def("_GetSourcePrimIndex", &Usd_PrimGetSourcePrimIndex, return_value_policy<return_by_value>());
 
   to_python_converter<std::vector<UsdPrim>, TfPySequenceToPython<std::vector<UsdPrim>>>();
 

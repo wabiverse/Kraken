@@ -29,15 +29,14 @@
 WABI_NAMESPACE_BEGIN
 
 HdxPrman_ResourceRegistry::HdxPrman_ResourceRegistry(
-    std::shared_ptr<HdxPrman_InteractiveContext> const &context)
-    : _context(context)
+  std::shared_ptr<HdxPrman_InteractiveContext> const &context)
+  : _context(context)
 {}
 
 HdxPrman_ResourceRegistry::~HdxPrman_ResourceRegistry()
 {}
 
-void HdxPrman_ResourceRegistry::ReloadResource(TfToken const &resourceType,
-                                               std::string const &path)
+void HdxPrman_ResourceRegistry::ReloadResource(TfToken const &resourceType, std::string const &path)
 {
   if (resourceType == HdResourceTypeTokens->texture) {
     _context->ri->InvalidateTexture(RtUString(path.c_str()));

@@ -40,9 +40,8 @@ TF_REGISTRY_FUNCTION(TfDebug)
                               "Force the use of the single threaded version of frustum culling");
 
   TF_DEBUG_ENVIRONMENT_SYMBOL(HDPH_DUMP_GLSLFX_CONFIG, "Print composed GLSLFX configuration");
-  TF_DEBUG_ENVIRONMENT_SYMBOL(
-      HDPH_DUMP_FAILING_SHADER_SOURCE,
-      "Print generated shader source code for shaders that fail compilation");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HDPH_DUMP_FAILING_SHADER_SOURCE,
+                              "Print generated shader source code for shaders that fail compilation");
   TF_DEBUG_ENVIRONMENT_SYMBOL(HDPH_DUMP_FAILING_SHADER_SOURCEFILE,
                               "Write out generated shader source code to files for shaders that "
                               "fail compilation");

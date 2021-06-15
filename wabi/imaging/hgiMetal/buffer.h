@@ -68,9 +68,9 @@ class HgiMetalBuffer final : public HgiBuffer {
   }
 
  private:
-  HgiMetalBuffer()        = delete;
+  HgiMetalBuffer() = delete;
   HgiMetalBuffer &operator=(const HgiMetalBuffer &) = delete;
-  HgiMetalBuffer(const HgiMetalBuffer &)            = delete;
+  HgiMetalBuffer(const HgiMetalBuffer &) = delete;
 
   id<MTLBuffer> _bufferId;
 };

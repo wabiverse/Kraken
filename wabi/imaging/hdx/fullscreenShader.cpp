@@ -42,25 +42,25 @@ WABI_NAMESPACE_BEGIN
 TF_DEFINE_PRIVATE_TOKENS(_tokens,
                          ((fullscreenVertex, "FullscreenVertex"))((compositeFragmentNoDepth,
                                                                    "CompositeFragmentNoDepth"))((
-                             compositeFragmentWithDepth,
-                             "CompositeFragmentWithDepth"))(fullscreenShader));
+                           compositeFragmentWithDepth,
+                           "CompositeFragmentWithDepth"))(fullscreenShader));
 
 HdxFullscreenShader::HdxFullscreenShader(Hgi *hgi, std::string const &debugName)
-    : _hgi(hgi),
-      _debugName(debugName),
-      _indexBuffer(),
-      _vertexBuffer(),
-      _shaderProgram(),
-      _resourceBindings(),
-      _pipeline(),
-      _sampler(),
-      _blendingEnabled(false),
-      _srcColorBlendFactor(HgiBlendFactorZero),
-      _dstColorBlendFactor(HgiBlendFactorZero),
-      _colorBlendOp(HgiBlendOpAdd),
-      _srcAlphaBlendFactor(HgiBlendFactorZero),
-      _dstAlphaBlendFactor(HgiBlendFactorZero),
-      _alphaBlendOp(HgiBlendOpAdd)
+  : _hgi(hgi),
+    _debugName(debugName),
+    _indexBuffer(),
+    _vertexBuffer(),
+    _shaderProgram(),
+    _resourceBindings(),
+    _pipeline(),
+    _sampler(),
+    _blendingEnabled(false),
+    _srcColorBlendFactor(HgiBlendFactorZero),
+    _dstColorBlendFactor(HgiBlendFactorZero),
+    _colorBlendOp(HgiBlendOpAdd),
+    _srcAlphaBlendFactor(HgiBlendFactorZero),
+    _dstAlphaBlendFactor(HgiBlendFactorZero),
+    _alphaBlendOp(HgiBlendOpAdd)
 {
   if (_debugName.empty()) {
     _debugName = "HdxFullscreenShader";
@@ -73,7 +73,7 @@ HdxFullscreenShader::HdxFullscreenShader(Hgi *hgi, std::string const &debugName)
   // Depth test must be on because when off it also disables depth writes.
   // Instead we set the compare function to always.
   _depthState.depthTestEnabled = true;
-  _depthState.depthCompareFn   = HgiCompareFunctionAlways;
+  _depthState.depthCompareFn = HgiCompareFunctionAlways;
 
   // We don't use the stencil mask in this task.
   _depthState.stencilTestEnabled = false;
@@ -118,7 +118,7 @@ void HdxFullscreenShader::SetProgram(TfToken const &glslfx,
   if (_glslfx == glslfx && _shaderName == shaderName) {
     return;
   }
-  _glslfx     = glslfx;
+  _glslfx = glslfx;
   _shaderName = shaderName;
 
   if (_shaderProgram) {
@@ -139,7 +139,7 @@ void HdxFullscreenShader::SetProgram(TfToken const &glslfx,
   vsCode += vsGlslfx.GetSource(_tokens->fullscreenVertex);
   TF_VERIFY(!vsCode.empty());
 
-  vertDesc.shaderCode            = vsCode.c_str();
+  vertDesc.shaderCode = vsCode.c_str();
   HgiShaderFunctionHandle vertFn = _hgi->CreateShaderFunction(vertDesc);
 
   // Setup the fragment shader
@@ -150,7 +150,7 @@ void HdxFullscreenShader::SetProgram(TfToken const &glslfx,
   }
   fsCode += fsGlslfx.GetSource(_shaderName);
   TF_VERIFY(!fsCode.empty());
-  fragDesc.shaderCode            = fsCode.c_str();
+  fragDesc.shaderCode = fsCode.c_str();
   HgiShaderFunctionHandle fragFn = _hgi->CreateShaderFunction(fragDesc);
 
   // Setup the shader program
@@ -171,7 +171,7 @@ void HdxFullscreenShader::SetProgram(TfToken const &glslfx,
 HgiShaderFunctionDesc HdxFullscreenShader::GetFullScreenVertexDesc()
 {
   HgiShaderFunctionDesc vertDesc;
-  vertDesc.debugName   = _tokens->fullscreenVertex;
+  vertDesc.debugName = _tokens->fullscreenVertex;
   vertDesc.shaderStage = HgiShaderStageVertex;
 
   HgiShaderFunctionAddStageInput(&vertDesc, "position", "vec4", "position");
@@ -218,13 +218,13 @@ void HdxFullscreenShader::SetBlendState(bool enableBlending,
     _hgi->DestroyGraphicsPipeline(&_pipeline);
   }
 
-  _blendingEnabled     = enableBlending;
+  _blendingEnabled = enableBlending;
   _srcColorBlendFactor = srcColorBlendFactor;
   _dstColorBlendFactor = dstColorBlendFactor;
-  _colorBlendOp        = colorBlendOp;
+  _colorBlendOp = colorBlendOp;
   _srcAlphaBlendFactor = srcAlphaBlendFactor;
   _dstAlphaBlendFactor = dstAlphaBlendFactor;
-  _alphaBlendOp        = alphaBlendOp;
+  _alphaBlendOp = alphaBlendOp;
 }
 
 void HdxFullscreenShader::SetShaderConstants(uint32_t byteSize, const void *data)
@@ -265,41 +265,38 @@ void HdxFullscreenShader::_CreateBufferResources()
    * read depth from a texture, but otherwise the depth is -1, meaning near
    * plane.
    */
-  constexpr size_t elementsPerVertex        = 6;
-  constexpr size_t vertDataCount            = elementsPerVertex * 3;
-  constexpr float vertDataGL[vertDataCount] = {
-      -1, 3, 0, 1, 0, 2, -1, -1, 0, 1, 0, 0, 3, -1, 0, 1, 2, 0};
+  constexpr size_t elementsPerVertex = 6;
+  constexpr size_t vertDataCount = elementsPerVertex * 3;
+  constexpr float vertDataGL[vertDataCount] = {-1, 3, 0, 1, 0, 2, -1, -1, 0, 1, 0, 0, 3, -1, 0, 1, 2, 0};
 
-  constexpr float vertDataOther[vertDataCount] = {
-      -1, 3, 0, 1, 0, -1, -1, -1, 0, 1, 0, 1, 3, -1, 0, 1, 2, 1};
+  constexpr float vertDataOther[vertDataCount] = {-1, 3, 0, 1, 0, -1, -1, -1, 0, 1, 0, 1, 3, -1, 0, 1, 2, 1};
 
   HgiBufferDesc vboDesc;
-  vboDesc.debugName    = "HdxFullscreenShader VertexBuffer";
-  vboDesc.usage        = HgiBufferUsageVertex;
-  vboDesc.initialData  = _hgi->GetAPIName() != HgiTokens->OpenGL ? vertDataOther : vertDataGL;
-  vboDesc.byteSize     = sizeof(vertDataGL);
+  vboDesc.debugName = "HdxFullscreenShader VertexBuffer";
+  vboDesc.usage = HgiBufferUsageVertex;
+  vboDesc.initialData = _hgi->GetAPIName() != HgiTokens->OpenGL ? vertDataOther : vertDataGL;
+  vboDesc.byteSize = sizeof(vertDataGL);
   vboDesc.vertexStride = elementsPerVertex * sizeof(vertDataGL[0]);
-  _vertexBuffer        = _hgi->CreateBuffer(vboDesc);
+  _vertexBuffer = _hgi->CreateBuffer(vboDesc);
 
   static const int32_t indices[3] = {0, 1, 2};
 
   HgiBufferDesc iboDesc;
-  iboDesc.debugName   = "HdxFullscreenShader IndexBuffer";
-  iboDesc.usage       = HgiBufferUsageIndex32;
+  iboDesc.debugName = "HdxFullscreenShader IndexBuffer";
+  iboDesc.usage = HgiBufferUsageIndex32;
   iboDesc.initialData = indices;
-  iboDesc.byteSize    = sizeof(indices) * sizeof(indices[0]);
-  _indexBuffer        = _hgi->CreateBuffer(iboDesc);
+  iboDesc.byteSize = sizeof(indices) * sizeof(indices[0]);
+  _indexBuffer = _hgi->CreateBuffer(iboDesc);
 }
 
-void HdxFullscreenShader::BindTextures(TfTokenVector const &names,
-                                       HgiTextureHandleVector const &textures)
+void HdxFullscreenShader::BindTextures(TfTokenVector const &names, HgiTextureHandleVector const &textures)
 {
   if (!TF_VERIFY(names.size() == textures.size())) {
     return;
   }
 
   for (size_t i = 0; i < names.size(); i++) {
-    TfToken const &name         = names[i];
+    TfToken const &name = names[i];
     HgiTextureHandle const &tex = textures[i];
     if (tex) {
       _textures[name] = tex;
@@ -328,7 +325,7 @@ bool HdxFullscreenShader::_CreateResourceBindings(TextureMap const &textures)
       continue;
     HgiTextureBindDesc texBind;
     texBind.bindingIndex = bindSlots++;
-    texBind.stageUsage   = HgiShaderStageFragment;
+    texBind.stageUsage = HgiShaderStageFragment;
     texBind.textures.push_back(texHandle);
     texBind.samplers.push_back(_sampler);
     resourceDesc.textures.push_back(std::move(texBind));
@@ -341,7 +338,7 @@ bool HdxFullscreenShader::_CreateResourceBindings(TextureMap const &textures)
     HgiBufferBindDesc bufBind;
     bufBind.bindingIndex = buffer.first;
     bufBind.resourceType = HgiBindResourceTypeStorageBuffer;
-    bufBind.stageUsage   = HgiShaderStageFragment;
+    bufBind.stageUsage = HgiShaderStageFragment;
     bufBind.offsets.push_back(0);
     bufBind.buffers.push_back(bufferHandle);
     resourceDesc.buffers.push_back(std::move(bufBind));
@@ -365,13 +362,13 @@ void HdxFullscreenShader::_CreateVertexBufferDescriptor()
 {
   // Describe the vertex buffer
   HgiVertexAttributeDesc posAttr;
-  posAttr.format             = HgiFormatFloat32Vec3;
-  posAttr.offset             = 0;
+  posAttr.format = HgiFormatFloat32Vec3;
+  posAttr.offset = 0;
   posAttr.shaderBindLocation = 0;
 
   HgiVertexAttributeDesc uvAttr;
-  uvAttr.format             = HgiFormatFloat32Vec2;
-  uvAttr.offset             = sizeof(float) * 4;  // after posAttr
+  uvAttr.format = HgiFormatFloat32Vec2;
+  uvAttr.offset = sizeof(float) * 4;  // after posAttr
   uvAttr.shaderBindLocation = 1;
 
   size_t bindSlots = 0;
@@ -397,29 +394,29 @@ bool HdxFullscreenShader::_CreatePipeline(HgiTextureHandle const &colorDst,
   }
 
   // Setup attachments
-  _attachment0.blendEnabled        = _blendingEnabled;
-  _attachment0.loadOp              = HgiAttachmentLoadOpDontCare;
-  _attachment0.storeOp             = HgiAttachmentStoreOpStore;
+  _attachment0.blendEnabled = _blendingEnabled;
+  _attachment0.loadOp = HgiAttachmentLoadOpDontCare;
+  _attachment0.storeOp = HgiAttachmentStoreOpStore;
   _attachment0.srcColorBlendFactor = _srcColorBlendFactor;
   _attachment0.dstColorBlendFactor = _dstColorBlendFactor;
-  _attachment0.colorBlendOp        = _colorBlendOp;
+  _attachment0.colorBlendOp = _colorBlendOp;
   _attachment0.srcAlphaBlendFactor = _srcAlphaBlendFactor;
   _attachment0.dstAlphaBlendFactor = _dstAlphaBlendFactor;
-  _attachment0.alphaBlendOp        = _alphaBlendOp;
+  _attachment0.alphaBlendOp = _alphaBlendOp;
   if (colorDst) {
     _attachment0.format = colorDst.Get()->GetDescriptor().format;
-    _attachment0.usage  = colorDst.Get()->GetDescriptor().usage;
+    _attachment0.usage = colorDst.Get()->GetDescriptor().usage;
   }
 
-  _depthAttachment.loadOp  = HgiAttachmentLoadOpDontCare;
+  _depthAttachment.loadOp = HgiAttachmentLoadOpDontCare;
   _depthAttachment.storeOp = HgiAttachmentStoreOpStore;
   if (depthDst) {
     _depthAttachment.format = depthDst.Get()->GetDescriptor().format;
-    _depthAttachment.usage  = depthDst.Get()->GetDescriptor().usage;
+    _depthAttachment.usage = depthDst.Get()->GetDescriptor().usage;
   }
 
   HgiGraphicsPipelineDesc desc;
-  desc.debugName     = _debugName + " Pipeline";
+  desc.debugName = _debugName + " Pipeline";
   desc.shaderProgram = _shaderProgram;
   desc.colorAttachmentDescs.push_back(_attachment0);
   desc.depthAttachmentDesc = _depthAttachment;
@@ -428,7 +425,7 @@ bool HdxFullscreenShader::_CreatePipeline(HgiTextureHandle const &colorDst,
 
   // User can provide custom depth state, but DepthWrite is controlled by the
   // presence of the depth attachment.
-  desc.depthState                   = _depthState;
+  desc.depthState = _depthState;
   desc.depthState.depthWriteEnabled = depthWrite;
 
   // Alpha to coverage would prevent any pixels that have an alpha of 0.0 from
@@ -437,9 +434,9 @@ bool HdxFullscreenShader::_CreatePipeline(HgiTextureHandle const &colorDst,
   desc.multiSampleState.alphaToCoverageEnable = false;
 
   // Setup raserization state
-  desc.rasterizationState.cullMode    = HgiCullModeBack;
+  desc.rasterizationState.cullMode = HgiCullModeBack;
   desc.rasterizationState.polygonMode = HgiPolygonModeFill;
-  desc.rasterizationState.winding     = HgiWindingCounterClockwise;
+  desc.rasterizationState.winding = HgiWindingCounterClockwise;
 
   // Set the shaders
   desc.shaderProgram = _shaderProgram;
@@ -451,7 +448,7 @@ bool HdxFullscreenShader::_CreatePipeline(HgiTextureHandle const &colorDst,
 
   // shader constants
   if (!_constantsData.empty()) {
-    desc.shaderConstantsDesc.byteSize   = _constantsData.size();
+    desc.shaderConstantsDesc.byteSize = _constantsData.size();
     desc.shaderConstantsDesc.stageUsage = HgiShaderStageFragment;
   }
 
@@ -503,11 +500,11 @@ void HdxFullscreenShader::_Draw(TextureMap const &textures,
 {
   // If the user has not set a custom shader program, pick default program.
   if (!_shaderProgram) {
-    auto const &it        = textures.find(HdAovTokens->depth);
+    auto const &it = textures.find(HdAovTokens->depth);
     const bool depthAware = it != textures.end();
     HgiShaderFunctionDesc vertDesc;
 
-    vertDesc.debugName   = _tokens->fullscreenVertex.GetString();
+    vertDesc.debugName = _tokens->fullscreenVertex.GetString();
     vertDesc.shaderStage = HgiShaderStageVertex;
     HgiShaderFunctionAddStageInput(&vertDesc, "position", "vec4", "position");
     HgiShaderFunctionAddStageInput(&vertDesc, "uvIn", "vec2");
@@ -515,7 +512,7 @@ void HdxFullscreenShader::_Draw(TextureMap const &textures,
     HgiShaderFunctionAddStageOutput(&vertDesc, "uvOut", "vec2");
 
     HgiShaderFunctionDesc fragDesc;
-    fragDesc.debugName   = _shaderName.GetString();
+    fragDesc.debugName = _shaderName.GetString();
     fragDesc.shaderStage = HgiShaderStageFragment;
     HgiShaderFunctionAddStageInput(&fragDesc, "uvOut", "vec2");
     HgiShaderFunctionAddStageOutput(&fragDesc, "hd_FragColor", "vec4", "color");
@@ -527,8 +524,7 @@ void HdxFullscreenShader::_Draw(TextureMap const &textures,
     }
 
     SetProgram(HdxPackageFullscreenShader(),
-               depthAware ? _tokens->compositeFragmentWithDepth :
-                            _tokens->compositeFragmentNoDepth,
+               depthAware ? _tokens->compositeFragmentWithDepth : _tokens->compositeFragmentNoDepth,
                fragDesc,
                vertDesc);
   }
@@ -579,7 +575,7 @@ void HdxFullscreenShader::_Draw(TextureMap const &textures,
 
   if (depthDst) {
     gfxDesc.depthAttachmentDesc = _depthAttachment;
-    gfxDesc.depthTexture        = depthDst;
+    gfxDesc.depthTexture = depthDst;
   }
 
   // Begin rendering
@@ -593,7 +589,7 @@ void HdxFullscreenShader::_Draw(TextureMap const &textures,
 
   if (!_constantsData.empty()) {
     gfxCmds->SetConstantValues(
-        _pipeline, HgiShaderStageFragment, 0, _constantsData.size(), _constantsData.data());
+      _pipeline, HgiShaderStageFragment, 0, _constantsData.size(), _constantsData.data());
   }
 
   gfxCmds->DrawIndexed(_indexBuffer, 3, 0, 0, 1);

@@ -40,16 +40,16 @@
 WABI_NAMESPACE_BEGIN
 
 HgiVulkanInstance::HgiVulkanInstance()
-    : vkDebugMessenger(nullptr),
-      vkCreateDebugUtilsMessengerEXT(nullptr),
-      vkDestroyDebugUtilsMessengerEXT(nullptr),
-      _vkInstance(nullptr)
+  : vkDebugMessenger(nullptr),
+    vkCreateDebugUtilsMessengerEXT(nullptr),
+    vkDestroyDebugUtilsMessengerEXT(nullptr),
+    _vkInstance(nullptr)
 {
   VkApplicationInfo appInfo = {VK_STRUCTURE_TYPE_APPLICATION_INFO};
-  appInfo.apiVersion        = VK_API_VERSION_1_2;
+  appInfo.apiVersion = VK_API_VERSION_1_2;
 
   VkInstanceCreateInfo createInfo = {VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO};
-  createInfo.pApplicationInfo     = &appInfo;
+  createInfo.pApplicationInfo = &appInfo;
 
   // Setup instance extensions.
   std::vector<const char *> extensions = {
@@ -77,13 +77,13 @@ HgiVulkanInstance::HgiVulkanInstance()
   // Requires VK_LAYER_PATH to be set.
   if (HgiVulkanIsDebugEnabled()) {
     extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-    const char *debugLayers[]      = {"VK_LAYER_KHRONOS_validation"};
+    const char *debugLayers[] = {"VK_LAYER_KHRONOS_validation"};
     createInfo.ppEnabledLayerNames = debugLayers;
-    createInfo.enabledLayerCount   = (uint32_t)TfArraySize(debugLayers);
+    createInfo.enabledLayerCount = (uint32_t)TfArraySize(debugLayers);
   }
 
   createInfo.ppEnabledExtensionNames = extensions.data();
-  createInfo.enabledExtensionCount   = (uint32_t)extensions.size();
+  createInfo.enabledExtensionCount = (uint32_t)extensions.size();
 
   TF_VERIFY(vkCreateInstance(&createInfo, HgiVulkanAllocator(), &_vkInstance) == VK_SUCCESS);
 
@@ -91,10 +91,10 @@ HgiVulkanInstance::HgiVulkanInstance()
 }
 
 HgiVulkanInstance::HgiVulkanInstance(VkInstance &existingInst)
-    : vkDebugMessenger(nullptr),
-      vkCreateDebugUtilsMessengerEXT(nullptr),
-      vkDestroyDebugUtilsMessengerEXT(nullptr),
-      _vkInstance(existingInst)
+  : vkDebugMessenger(nullptr),
+    vkCreateDebugUtilsMessengerEXT(nullptr),
+    vkDestroyDebugUtilsMessengerEXT(nullptr),
+    _vkInstance(existingInst)
 {
   HgiVulkanCreateDebug(this);
 }

@@ -32,8 +32,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-UsdStagePopulationMask::UsdStagePopulationMask(std::vector<SdfPath> &&paths)
-    : _paths(std::move(paths))
+UsdStagePopulationMask::UsdStagePopulationMask(std::vector<SdfPath> &&paths) : _paths(std::move(paths))
 {
   _ValidateAndNormalize();
 }
@@ -94,9 +93,9 @@ UsdStagePopulationMask UsdStagePopulationMask::GetUnion(SdfPath const &path) con
   // This could be made faster if need-be.
   if (!path.IsAbsolutePath() || !path.IsAbsoluteRootOrPrimPath()) {
     TF_CODING_ERROR(
-        "Invalid path <%s>; must be an absolute prim path or "
-        "the absolute root path",
-        path.GetText());
+      "Invalid path <%s>; must be an absolute prim path or "
+      "the absolute root path",
+      path.GetText());
   }
   UsdStagePopulationMask other;
   other._paths.push_back(path);
@@ -141,8 +140,7 @@ UsdStagePopulationMask UsdStagePopulationMask::Intersection(UsdStagePopulationMa
   return result;
 }
 
-UsdStagePopulationMask UsdStagePopulationMask ::GetIntersection(
-    UsdStagePopulationMask const &other) const
+UsdStagePopulationMask UsdStagePopulationMask ::GetIntersection(UsdStagePopulationMask const &other) const
 {
   return Intersection(*this, other);
 }
@@ -163,7 +161,7 @@ bool UsdStagePopulationMask::Includes(SdfPath const &path) const
   auto iter = lower_bound(_paths.begin(), _paths.end(), path);
 
   SdfPath const *prev = iter == _paths.begin() ? nullptr : &iter[-1];
-  SdfPath const *cur  = iter == _paths.end() ? nullptr : &iter[0];
+  SdfPath const *cur = iter == _paths.end() ? nullptr : &iter[0];
 
   return (prev && path.HasPrefix(*prev)) || (cur && cur->HasPrefix(path));
 }
@@ -172,9 +170,8 @@ namespace {
 // Return pair where the first element is true if the mask represented by
 // paths includes the subtree rooted at path, false otherwise. The second
 // element is the result of calling lower_bound on paths with path.
-std::pair<bool, std::vector<SdfPath>::const_iterator> _IncludesSubtree(
-    std::vector<SdfPath> const &paths,
-    SdfPath const &path)
+std::pair<bool, std::vector<SdfPath>::const_iterator> _IncludesSubtree(std::vector<SdfPath> const &paths,
+                                                                       SdfPath const &path)
 {
   if (paths.empty())
     return {false, paths.end()};
@@ -184,7 +181,7 @@ std::pair<bool, std::vector<SdfPath>::const_iterator> _IncludesSubtree(
   auto iter = lower_bound(paths.begin(), paths.end(), path);
 
   SdfPath const *prev = iter == paths.begin() ? nullptr : &iter[-1];
-  SdfPath const *cur  = iter == paths.end() ? nullptr : &iter[0];
+  SdfPath const *cur = iter == paths.end() ? nullptr : &iter[0];
 
   return {(cur && *cur == path) || (prev && path.HasPrefix(*prev)), iter};
 }
@@ -209,8 +206,7 @@ TfToken _GetChildNameBeneathPath(SdfPath const &fullPath, SdfPath const &path)
 }
 }  // namespace
 
-bool UsdStagePopulationMask::GetIncludedChildNames(SdfPath const &path,
-                                                   std::vector<TfToken> *names) const
+bool UsdStagePopulationMask::GetIncludedChildNames(SdfPath const &path, std::vector<TfToken> *names) const
 {
   names->clear();
 
@@ -220,7 +216,7 @@ bool UsdStagePopulationMask::GetIncludedChildNames(SdfPath const &path,
 
   for (auto it = includesSubtree.second; it != _paths.end() && it->HasPrefix(path); ++it) {
 
-    const SdfPath &maskPath  = *it;
+    const SdfPath &maskPath = *it;
     const TfToken &childName = _GetChildNameBeneathPath(maskPath, path);
     if (!TF_VERIFY(!childName.IsEmpty())) {
       // Should never happen because all paths in the range are prefixed
@@ -250,9 +246,9 @@ void UsdStagePopulationMask::_ValidateAndNormalize()
   for (auto const &path : _paths) {
     if (!path.IsAbsolutePath() || !path.IsAbsoluteRootOrPrimPath()) {
       TF_CODING_ERROR(
-          "Invalid path <%s>; must be an absolute prim path "
-          "or the absolute root path",
-          path.GetText());
+        "Invalid path <%s>; must be an absolute prim path "
+        "or the absolute root path",
+        path.GetText());
       return;
     }
   }

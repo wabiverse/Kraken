@@ -32,15 +32,15 @@
 WABI_NAMESPACE_BEGIN
 
 #define HDX_TOKENS \
-  (hdxOitCounterBuffer)(hdxOitDataBuffer)( \
-      hdxOitDepthBuffer)(hdxOitIndexBuffer)(hdxSelectionBuffer)(imagerVersion)(lightingContext)(lightingShader)(occludedSelectionOpacity)(oitCounter)(oitData)(oitDepth)(oitIndices)(oitUniforms)(oitCounterBufferBar)(oitDataBufferBar)(oitDepthBufferBar)(oitIndexBufferBar)(oitUniformBar)(oitRenderPassState)(oitScreenSize)(oitRequestFlag)(oitClearedFlag)(renderPassState)(renderIndexVersion)(selection)(selectionState)(selectionOffsets)(selectionUniforms)(selColor)(selLocateColor)(selectionPointColors)(drawTargetRenderPasses)
+  (hdxOitCounterBuffer)( \
+    hdxOitDataBuffer)(hdxOitDepthBuffer)(hdxOitIndexBuffer)(hdxSelectionBuffer)(imagerVersion)(lightingContext)(lightingShader)(occludedSelectionOpacity)(oitCounter)(oitData)(oitDepth)(oitIndices)(oitUniforms)(oitCounterBufferBar)(oitDataBufferBar)(oitDepthBufferBar)(oitIndexBufferBar)(oitUniformBar)(oitRenderPassState)(oitScreenSize)(oitRequestFlag)(oitClearedFlag)(renderPassState)(renderIndexVersion)(selection)(selectionState)(selectionOffsets)(selectionUniforms)(selColor)(selLocateColor)(selectionPointColors)(drawTargetRenderPasses)
 
 TF_DECLARE_PUBLIC_TOKENS(HdxTokens, HDX_API, HDX_TOKENS);
 
 #define HDX_PRIMITIVE_TOKENS \
   (lightTypePositional)(lightTypeDirectional)(lightTypeSpot) \
 \
-      (aovInputTask)(drawTargetTask)(drawTargetResolveTask)(colorizeSelectionTask)(oitRenderTask)(oitResolveTask)(oitVolumeRenderTask)(pickTask)(pickFromRenderBufferTask)(presentTask)(renderTask)(renderSetupTask)(simpleLightTask)(shadowTask)
+    (aovInputTask)(drawTargetTask)(drawTargetResolveTask)(colorizeSelectionTask)(oitRenderTask)(oitResolveTask)(oitVolumeRenderTask)(pickTask)(pickFromRenderBufferTask)(presentTask)(renderTask)(renderSetupTask)(simpleLightTask)(shadowTask)
 
 TF_DECLARE_PUBLIC_TOKENS(HdxPrimitiveTokens, HDX_API, HDX_PRIMITIVE_TOKENS);
 

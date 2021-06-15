@@ -54,10 +54,7 @@ COVAH_LIB_API
 size_t CLI_strnlen(const char *s, const size_t maxlen);
 
 COVAH_LIB_API
-size_t CLI_vsnprintf(char *__restrict buffer,
-                     size_t maxncpy,
-                     const char *__restrict format,
-                     va_list arg);
+size_t CLI_vsnprintf(char *__restrict buffer, size_t maxncpy, const char *__restrict format, va_list arg);
 
 COVAH_LIB_API
 size_t CLI_vsnprintf_rlen(char *__restrict buffer,

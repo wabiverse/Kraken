@@ -55,9 +55,9 @@ WABI_NAMESPACE_BEGIN
 TF_DEFINE_PRIVATE_TOKENS(_tokens,
                          (opacity)(opacityThreshold)(isPtex)(st)(uv)(fieldname)(diffuseColor)(a)
 
-                             (HwUvTexture_1)(textureMemory)(sourceColorSpace)(in)
+                           (HwUvTexture_1)(textureMemory)(sourceColorSpace)(in)
 
-                                 (mtlx));
+                             (mtlx));
 
 static TfToken _GetMaterialTag(VtDictionary const &metadata, HdMaterialNode2 const &terminal)
 {
@@ -85,7 +85,7 @@ static TfToken _GetMaterialTag(VtDictionary const &metadata, HdMaterialNode2 con
 
   // Next strongest opinion is a connection to 'terminal.opacity'
   auto const &opacityConIt = terminal.inputConnections.find(_tokens->opacity);
-  isTranslucent            = (opacityConIt != terminal.inputConnections.end());
+  isTranslucent = (opacityConIt != terminal.inputConnections.end());
 
   // Weakest opinion is an authored terminal.opacity value.
   if (!isTranslucent) {
@@ -94,7 +94,7 @@ static TfToken _GetMaterialTag(VtDictionary const &metadata, HdMaterialNode2 con
         continue;
 
       VtValue const &vtOpacity = paramIt.second;
-      isTranslucent            = vtOpacity.Get<float>() < 1.0f;
+      isTranslucent = vtOpacity.Get<float>() < 1.0f;
       break;
     }
   }
@@ -118,9 +118,9 @@ static void _GetGlslfxForTerminal(HioGlslfxSharedPtr &glslfxOut,
 
   // If there is a URI, we will use that, otherwise we will try to use
   // the source code.
-  SdrRegistry &shaderReg        = SdrRegistry::GetInstance();
-  SdrShaderNodeConstPtr sdrNode = shaderReg.GetShaderNodeByIdentifierAndType(
-      nodeTypeId, HioGlslfxTokens->glslfx);
+  SdrRegistry &shaderReg = SdrRegistry::GetInstance();
+  SdrShaderNodeConstPtr sdrNode = shaderReg.GetShaderNodeByIdentifierAndType(nodeTypeId,
+                                                                             HioGlslfxTokens->glslfx);
 
   if (sdrNode) {
     std::string const &glslfxFilePath = sdrNode->GetResolvedImplementationURI();
@@ -132,8 +132,7 @@ static void _GetGlslfxForTerminal(HioGlslfxSharedPtr &glslfxOut,
       }
 
       // Find the glslfx file from the registry
-      HdInstance<HioGlslfxSharedPtr> glslfxInstance = resourceRegistry->RegisterGLSLFXFile(
-          *glslfxOutHash);
+      HdInstance<HioGlslfxSharedPtr> glslfxInstance = resourceRegistry->RegisterGLSLFXFile(*glslfxOutHash);
 
       if (glslfxInstance.IsFirstInstance()) {
         glslfxOut = std::make_shared<HioGlslfx>(glslfxFilePath);
@@ -163,9 +162,9 @@ static HdMaterialNode2 const *_GetTerminalNode(HdMaterialNetwork2 const &network
     return nullptr;
   }
   HdMaterialConnection2 const &connection = terminalConnIt->second;
-  SdfPath const &terminalPath             = connection.upstreamNode;
-  auto const &terminalIt                  = network.nodes.find(terminalPath);
-  *terminalNodePath                       = terminalPath;
+  SdfPath const &terminalPath = connection.upstreamNode;
+  auto const &terminalIt = network.nodes.find(terminalPath);
+  *terminalNodePath = terminalPath;
   return &terminalIt->second;
 }
 
@@ -180,8 +179,8 @@ static VtValue _GetNodeFallbackValue(HdMaterialNode2 const &node, TfToken const 
   SdrRegistry &shaderReg = SdrRegistry::GetInstance();
 
   // Find the corresponding Sdr node.
-  SdrShaderNodeConstPtr const sdrNode = shaderReg.GetShaderNodeByIdentifierAndType(
-      node.nodeTypeId, HioGlslfxTokens->glslfx);
+  SdrShaderNodeConstPtr const sdrNode = shaderReg.GetShaderNodeByIdentifierAndType(node.nodeTypeId,
+                                                                                   HioGlslfxTokens->glslfx);
   if (!sdrNode) {
     return VtValue();
   }
@@ -193,7 +192,7 @@ static VtValue _GetNodeFallbackValue(HdMaterialNode2 const &node, TfToken const 
   // pass-through in the network. But Phoenix has no other
   // mechanism currently to deal with fallback values.
   if (SdrShaderPropertyConstPtr const &defaultInput = sdrNode->GetDefaultInput()) {
-    TfToken const &def     = defaultInput->GetName();
+    TfToken const &def = defaultInput->GetName();
     auto const &defParamIt = node.parameters.find(def);
     if (defParamIt != node.parameters.end()) {
       return defParamIt->second;
@@ -232,8 +231,8 @@ static VtValue _GetParamFallbackValue(HdMaterialNetwork2 const &network,
 
   if (connIt != node.inputConnections.end()) {
     if (!connIt->second.empty()) {
-      HdMaterialConnection2 const &con    = connIt->second.front();
-      auto const &pnIt                    = network.nodes.find(con.upstreamNode);
+      HdMaterialConnection2 const &con = connIt->second.front();
+      auto const &pnIt = network.nodes.find(con.upstreamNode);
       HdMaterialNode2 const &upstreamNode = pnIt->second;
 
       const VtValue fallbackValue = _GetNodeFallbackValue(upstreamNode, con.upstreamOutputName);
@@ -254,8 +253,8 @@ static VtValue _GetParamFallbackValue(HdMaterialNetwork2 const &network,
   // DefaultValue for the input as specified in the Sdr schema.
   // E.g. PreviewSurface is a terminal with an Sdr schema.
 
-  SdrShaderNodeConstPtr terminalSdr = shaderReg.GetShaderNodeByIdentifierAndType(
-      node.nodeTypeId, HioGlslfxTokens->glslfx);
+  SdrShaderNodeConstPtr terminalSdr = shaderReg.GetShaderNodeByIdentifierAndType(node.nodeTypeId,
+                                                                                 HioGlslfxTokens->glslfx);
 
   if (terminalSdr) {
     if (SdrShaderPropertyConstPtr const &input = terminalSdr->GetShaderInput(paramName)) {
@@ -319,7 +318,7 @@ static void _MakeMaterialParamsForUnconnectedParam(TfToken const &paramName,
 {
   HdPh_MaterialParam param;
   param.paramType = HdPh_MaterialParam::ParamTypeFallback;
-  param.name      = paramName;
+  param.name = paramName;
 
   params->push_back(std::move(param));
 }
@@ -329,7 +328,7 @@ static void _MakeMaterialParamsForAdditionalPrimvar(TfToken const &primvarName,
 {
   HdPh_MaterialParam param;
   param.paramType = HdPh_MaterialParam::ParamTypeAdditionalPrimvar;
-  param.name      = primvarName;
+  param.name = primvarName;
 
   params->push_back(std::move(param));
 }
@@ -344,13 +343,13 @@ static void _MakeMaterialParamsForPrimvarReader(HdMaterialNetwork2 const &networ
   if (visitedNodes->find(nodePath) != visitedNodes->end())
     return;
 
-  SdrRegistry &shaderReg        = SdrRegistry::GetInstance();
-  SdrShaderNodeConstPtr sdrNode = shaderReg.GetShaderNodeByIdentifierAndType(
-      node.nodeTypeId, HioGlslfxTokens->glslfx);
+  SdrRegistry &shaderReg = SdrRegistry::GetInstance();
+  SdrShaderNodeConstPtr sdrNode = shaderReg.GetShaderNodeByIdentifierAndType(node.nodeTypeId,
+                                                                             HioGlslfxTokens->glslfx);
 
   HdPh_MaterialParam param;
   param.paramType = HdPh_MaterialParam::ParamTypePrimvarRedirect;
-  param.name      = paramName;
+  param.name = paramName;
 
   // A node may require 'additional primvars' to function correctly.
   for (auto const &propName : sdrNode->GetAdditionalPrimvarProperties()) {
@@ -377,8 +376,8 @@ static void _MakeMaterialParamsForTransform2d(HdMaterialNetwork2 const &network,
   SdrRegistry &shaderReg = SdrRegistry::GetInstance();
 
   HdPh_MaterialParam transform2dParam;
-  transform2dParam.paramType     = HdPh_MaterialParam::ParamTypeTransform2d;
-  transform2dParam.name          = paramName;
+  transform2dParam.paramType = HdPh_MaterialParam::ParamTypeTransform2d;
+  transform2dParam.name = paramName;
   transform2dParam.fallbackValue = _GetParamFallbackValue(network, node, _tokens->in);
 
   HdPh_MaterialParamVector additionalParams;
@@ -388,18 +387,18 @@ static void _MakeMaterialParamsForTransform2d(HdMaterialNetwork2 const &network,
   if (inIt != node.inputConnections.end()) {
     if (!inIt->second.empty()) {
       HdMaterialConnection2 const &con = inIt->second.front();
-      SdfPath const &upstreamNodePath  = con.upstreamNode;
+      SdfPath const &upstreamNodePath = con.upstreamNode;
 
-      auto const &pnIt                   = network.nodes.find(upstreamNodePath);
+      auto const &pnIt = network.nodes.find(upstreamNodePath);
       HdMaterialNode2 const &primvarNode = pnIt->second;
-      SdrShaderNodeConstPtr primvarSdr   = shaderReg.GetShaderNodeByIdentifierAndType(
-          primvarNode.nodeTypeId, HioGlslfxTokens->glslfx);
+      SdrShaderNodeConstPtr primvarSdr = shaderReg.GetShaderNodeByIdentifierAndType(primvarNode.nodeTypeId,
+                                                                                    HioGlslfxTokens->glslfx);
 
       if (primvarSdr) {
         HdPh_MaterialParamVector primvarParams;
 
         _MakeMaterialParamsForPrimvarReader(
-            network, primvarNode, upstreamNodePath, inIt->first, visitedNodes, &primvarParams);
+          network, primvarNode, upstreamNodePath, inIt->first, visitedNodes, &primvarParams);
 
         if (!primvarParams.empty()) {
           HdPh_MaterialParam const &primvarParam = primvarParams.front();
@@ -433,14 +432,14 @@ static void _MakeMaterialParamsForTransform2d(HdMaterialNetwork2 const &network,
   // Make materials params for each component of transform2d
   // (rotation, scale, translation)
   HdPh_MaterialParam rotParam;
-  rotParam.paramType     = HdPh_MaterialParam::ParamTypeFallback;
-  rotParam.name          = TfToken(paramName.GetString() + "_" + HdPhTokens->rotation.GetString());
+  rotParam.paramType = HdPh_MaterialParam::ParamTypeFallback;
+  rotParam.name = TfToken(paramName.GetString() + "_" + HdPhTokens->rotation.GetString());
   rotParam.fallbackValue = _GetParamFallbackValue(network, node, HdPhTokens->rotation);
   params->push_back(std::move(rotParam));
 
   HdPh_MaterialParam scaleParam;
-  scaleParam.paramType     = HdPh_MaterialParam::ParamTypeFallback;
-  scaleParam.name          = TfToken(paramName.GetString() + "_" + HdPhTokens->scale.GetString());
+  scaleParam.paramType = HdPh_MaterialParam::ParamTypeFallback;
+  scaleParam.name = TfToken(paramName.GetString() + "_" + HdPhTokens->scale.GetString());
   scaleParam.fallbackValue = _GetParamFallbackValue(network, node, HdPhTokens->scale);
   params->push_back(std::move(scaleParam));
 
@@ -463,7 +462,7 @@ static std::string _ResolveAssetPath(VtValue const &value)
   // resolution already, so we skip doing it here and simply use the string.
   if (value.IsHolding<SdfAssetPath>()) {
     SdfAssetPath p = value.Get<SdfAssetPath>();
-    std::string v  = p.GetResolvedPath();
+    std::string v = p.GetResolvedPath();
     if (v.empty()) {
       v = p.GetAssetPath();
     }
@@ -554,7 +553,7 @@ static HdMinFilter _ResolveMinSamplerParameter(SdfPath const &nodePath,
   // token was authored, linear was used.
 
   const TfToken value = _ResolveParameter(
-      node, sdrNode, HdPhTextureTokens->minFilter, HdPhTextureTokens->linearMipmapLinear);
+    node, sdrNode, HdPhTextureTokens->minFilter, HdPhTextureTokens->linearMipmapLinear);
 
   if (value == HdPhTextureTokens->nearest) {
     return HdMinFilterNearest;
@@ -588,7 +587,7 @@ static HdMagFilter _ResolveMagSamplerParameter(SdfPath const &nodePath,
                                                SdrShaderNodeConstPtr const &sdrNode)
 {
   const TfToken value = _ResolveParameter(
-      node, sdrNode, HdPhTextureTokens->magFilter, HdPhTextureTokens->linear);
+    node, sdrNode, HdPhTextureTokens->magFilter, HdPhTextureTokens->linear);
 
   if (value == HdPhTextureTokens->nearest) {
     return HdMagFilterNearest;
@@ -616,16 +615,15 @@ static HdSamplerParameters _GetSamplerParameters(SdfPath const &nodePath,
 // pre-multiply textures by their alpha if applicable, and provide a hint for
 // in what color space the texture is encoded
 //
-static std::unique_ptr<HdPhSubtextureIdentifier> _GetSubtextureIdentifier(
-    const HdTextureType textureType,
-    const TfToken &nodeType,
-    const bool premultiplyAlpha,
-    const TfToken &sourceColorSpace)
+static std::unique_ptr<HdPhSubtextureIdentifier> _GetSubtextureIdentifier(const HdTextureType textureType,
+                                                                          const TfToken &nodeType,
+                                                                          const bool premultiplyAlpha,
+                                                                          const TfToken &sourceColorSpace)
 {
   if (textureType == HdTextureType::Uv) {
     const bool flipVertically = (nodeType == _tokens->HwUvTexture_1);
     return std::make_unique<HdPhAssetUvSubtextureIdentifier>(
-        flipVertically, premultiplyAlpha, sourceColorSpace);
+      flipVertically, premultiplyAlpha, sourceColorSpace);
   }
   if (textureType == HdTextureType::Udim) {
     return std::make_unique<HdPhUdimSubtextureIdentifier>(premultiplyAlpha, sourceColorSpace);
@@ -637,32 +635,32 @@ static std::unique_ptr<HdPhSubtextureIdentifier> _GetSubtextureIdentifier(
 }
 
 static void _MakeMaterialParamsForTexture(
-    HdMaterialNetwork2 const &network,
-    HdMaterialNode2 const &node,
-    HdMaterialNode2 const &downstreamNode,  // needed to determine def value
-    SdfPath const &nodePath,
-    TfToken const &outputName,
-    TfToken const &paramName,
-    SdfPathSet *visitedNodes,
-    HdPh_MaterialParamVector *params,
-    HdPhMaterialNetwork::TextureDescriptorVector *textureDescriptors,
-    TfToken const &materialTag)
+  HdMaterialNetwork2 const &network,
+  HdMaterialNode2 const &node,
+  HdMaterialNode2 const &downstreamNode,  // needed to determine def value
+  SdfPath const &nodePath,
+  TfToken const &outputName,
+  TfToken const &paramName,
+  SdfPathSet *visitedNodes,
+  HdPh_MaterialParamVector *params,
+  HdPhMaterialNetwork::TextureDescriptorVector *textureDescriptors,
+  TfToken const &materialTag)
 {
   if (visitedNodes->find(nodePath) != visitedNodes->end())
     return;
 
-  SdrRegistry &shaderReg        = SdrRegistry::GetInstance();
+  SdrRegistry &shaderReg = SdrRegistry::GetInstance();
   SdrShaderNodeConstPtr sdrNode = shaderReg.GetShaderNodeByIdentifier(
-      node.nodeTypeId, {HioGlslfxTokens->glslfx, _tokens->mtlx});
+    node.nodeTypeId, {HioGlslfxTokens->glslfx, _tokens->mtlx});
 
   HdPh_MaterialParam texParam;
   texParam.paramType = HdPh_MaterialParam::ParamTypeTexture;
-  texParam.name      = paramName;
+  texParam.name = paramName;
 
   // Get swizzle metadata if possible
   if (SdrShaderPropertyConstPtr sdrProperty = sdrNode->GetShaderOutput(outputName)) {
     NdrTokenMap const &propMetadata = sdrProperty->GetMetadata();
-    auto const &it                  = propMetadata.find(HdPhSdrMetadataTokens->swizzle);
+    auto const &it = propMetadata.find(HdPhSdrMetadataTokens->swizzle);
     if (it != propMetadata.end()) {
       texParam.swizzle = it->second;
     }
@@ -684,15 +682,14 @@ static void _MakeMaterialParamsForTexture(
     auto const &opacityConIt = downstreamNode.inputConnections.find(_tokens->opacity);
     if (opacityConIt != downstreamNode.inputConnections.end()) {
       HdMaterialConnection2 const &con = opacityConIt->second.front();
-      premultiplyTexture               = ((nodePath == con.upstreamNode) &&
-                            (con.upstreamOutputName == _tokens->a));
+      premultiplyTexture = ((nodePath == con.upstreamNode) && (con.upstreamOutputName == _tokens->a));
     }
   }
   texParam.isPremultiplied = premultiplyTexture;
 
   // Get texture's sourceColorSpace hint
   const TfToken sourceColorSpace = _ResolveParameter(
-      node, sdrNode, _tokens->sourceColorSpace, HdPhTokens->colorSpaceAuto);
+    node, sdrNode, _tokens->sourceColorSpace, HdPhTokens->colorSpaceAuto);
 
   // Extract texture file path
   bool useTexturePrimToFindTexture = true;
@@ -705,7 +702,7 @@ static void _MakeMaterialParamsForTexture(
 
   if (assetIdentifierPropertyNames.size() == 1) {
     TfToken const &fileProp = assetIdentifierPropertyNames[0];
-    auto const &it          = node.parameters.find(fileProp);
+    auto const &it = node.parameters.find(fileProp);
     if (it != node.parameters.end()) {
       const VtValue &v = it->second;
       // We use the nodePath, not the filePath, for the 'connection'.
@@ -734,7 +731,7 @@ static void _MakeMaterialParamsForTexture(
         // texture loading and commit.
         //
         useTexturePrimToFindTexture = false;
-        textureId                   = v.UncheckedGet<HdPhTextureIdentifier>();
+        textureId = v.UncheckedGet<HdPhTextureIdentifier>();
       }
       else if (v.IsHolding<std::string>() || v.IsHolding<SdfAssetPath>()) {
         const std::string filePath = _ResolveAssetPath(v);
@@ -744,10 +741,10 @@ static void _MakeMaterialParamsForTexture(
         }
 
         useTexturePrimToFindTexture = false;
-        textureId                   = HdPhTextureIdentifier(
-            TfToken(filePath),
-            _GetSubtextureIdentifier(
-                texParam.textureType, node.nodeTypeId, premultiplyTexture, sourceColorSpace));
+        textureId = HdPhTextureIdentifier(
+          TfToken(filePath),
+          _GetSubtextureIdentifier(
+            texParam.textureType, node.nodeTypeId, premultiplyTexture, sourceColorSpace));
         // If the file attribute is an SdfPath, interpret it as path
         // to a prim holding the texture resource (e.g., a render buffer).
       }
@@ -774,13 +771,13 @@ static void _MakeMaterialParamsForTexture(
   if (stIt != node.inputConnections.end()) {
     if (!stIt->second.empty()) {
       HdMaterialConnection2 const &con = stIt->second.front();
-      SdfPath const &upstreamNodePath  = con.upstreamNode;
+      SdfPath const &upstreamNodePath = con.upstreamNode;
 
-      auto const &upIt                    = network.nodes.find(upstreamNodePath);
+      auto const &upIt = network.nodes.find(upstreamNodePath);
       HdMaterialNode2 const &upstreamNode = upIt->second;
 
       SdrShaderNodeConstPtr upstreamSdr = shaderReg.GetShaderNodeByIdentifierAndType(
-          upstreamNode.nodeTypeId, HioGlslfxTokens->glslfx);
+        upstreamNode.nodeTypeId, HioGlslfxTokens->glslfx);
 
       if (upstreamSdr) {
         TfToken sdrRole(upstreamSdr->GetRole());
@@ -788,7 +785,7 @@ static void _MakeMaterialParamsForTexture(
           HdPh_MaterialParamVector primvarParams;
 
           _MakeMaterialParamsForPrimvarReader(
-              network, upstreamNode, upstreamNodePath, stIt->first, visitedNodes, &primvarParams);
+            network, upstreamNode, upstreamNodePath, stIt->first, visitedNodes, &primvarParams);
 
           if (!primvarParams.empty()) {
             HdPh_MaterialParam const &primvarParam = primvarParams.front();
@@ -807,12 +804,12 @@ static void _MakeMaterialParamsForTexture(
           HdPh_MaterialParamVector transform2dParams;
 
           _MakeMaterialParamsForTransform2d(
-              network,
-              upstreamNode,
-              upstreamNodePath,
-              TfToken(paramName.GetString() + "_" + stIt->first.GetString() + "_transform2d"),
-              visitedNodes,
-              &transform2dParams);
+            network,
+            upstreamNode,
+            upstreamNodePath,
+            TfToken(paramName.GetString() + "_" + stIt->first.GetString() + "_transform2d"),
+            visitedNodes,
+            &transform2dParams);
 
           if (!transform2dParams.empty()) {
             HdPh_MaterialParam const &transform2dParam = transform2dParams.front();
@@ -847,22 +844,20 @@ static void _MakeMaterialParamsForTexture(
   // Handle texture scale and bias
   HdPh_MaterialParam texScaleParam;
   texScaleParam.paramType = HdPh_MaterialParam::ParamTypeFallback;
-  texScaleParam.name      = TfToken(paramName.GetString() + "_" + HdPhTokens->scale.GetString());
-  texScaleParam.fallbackValue = VtValue(
-      _ResolveParameter(node, sdrNode, HdPhTokens->scale, GfVec4f(1.0f)));
+  texScaleParam.name = TfToken(paramName.GetString() + "_" + HdPhTokens->scale.GetString());
+  texScaleParam.fallbackValue = VtValue(_ResolveParameter(node, sdrNode, HdPhTokens->scale, GfVec4f(1.0f)));
   params->push_back(std::move(texScaleParam));
 
   HdPh_MaterialParam texBiasParam;
-  texBiasParam.paramType     = HdPh_MaterialParam::ParamTypeFallback;
-  texBiasParam.name          = TfToken(paramName.GetString() + "_" + HdPhTokens->bias.GetString());
-  texBiasParam.fallbackValue = VtValue(
-      _ResolveParameter(node, sdrNode, HdPhTokens->bias, GfVec4f(0.0f)));
+  texBiasParam.paramType = HdPh_MaterialParam::ParamTypeFallback;
+  texBiasParam.name = TfToken(paramName.GetString() + "_" + HdPhTokens->bias.GetString());
+  texBiasParam.fallbackValue = VtValue(_ResolveParameter(node, sdrNode, HdPhTokens->bias, GfVec4f(0.0f)));
   params->push_back(std::move(texBiasParam));
 
   // Attribute is in Mebibytes, but Phoenix texture system expects
   // bytes.
-  const size_t memoryRequest = 1048576 * _ResolveParameter<float>(
-                                             node, sdrNode, _tokens->textureMemory, 0.0f);
+  const size_t memoryRequest = 1048576 *
+                               _ResolveParameter<float>(node, sdrNode, _tokens->textureMemory, 0.0f);
 
   textureDescriptors->push_back({paramName,
                                  textureId,
@@ -894,7 +889,7 @@ static void _MakeMaterialParamsForFieldReader(HdMaterialNetwork2 const &network,
 
   HdPh_MaterialParam param;
   param.paramType = HdPh_MaterialParam::ParamTypeFieldRedirect;
-  param.name      = paramName;
+  param.name = paramName;
 
   // XXX Why _tokens->fieldname:
   // Hard-coding the name of the attribute of HwFieldReader identifying
@@ -920,14 +915,13 @@ static void _MakeMaterialParamsForFieldReader(HdMaterialNetwork2 const &network,
   params->push_back(std::move(param));
 }
 
-static void _MakeParamsForInputParameter(
-    HdMaterialNetwork2 const &network,
-    HdMaterialNode2 const &node,
-    TfToken const &paramName,
-    SdfPathSet *visitedNodes,
-    HdPh_MaterialParamVector *params,
-    HdPhMaterialNetwork::TextureDescriptorVector *textureDescriptors,
-    TfToken const &materialTag)
+static void _MakeParamsForInputParameter(HdMaterialNetwork2 const &network,
+                                         HdMaterialNode2 const &node,
+                                         TfToken const &paramName,
+                                         SdfPathSet *visitedNodes,
+                                         HdPh_MaterialParamVector *params,
+                                         HdPhMaterialNetwork::TextureDescriptorVector *textureDescriptors,
+                                         TfToken const &materialTag)
 {
   SdrRegistry &shaderReg = SdrRegistry::GetInstance();
 
@@ -942,16 +936,16 @@ static void _MakeParamsForInputParameter(
 
       // Find the node that is connected to this input
       HdMaterialConnection2 const &con = cons.front();
-      auto const &upIt                 = network.nodes.find(con.upstreamNode);
+      auto const &upIt = network.nodes.find(con.upstreamNode);
 
       if (upIt != network.nodes.end()) {
 
-        SdfPath const &upstreamPath         = upIt->first;
-        TfToken const &upstreamOutputName   = con.upstreamOutputName;
+        SdfPath const &upstreamPath = upIt->first;
+        TfToken const &upstreamOutputName = con.upstreamOutputName;
         HdMaterialNode2 const &upstreamNode = upIt->second;
 
         SdrShaderNodeConstPtr upstreamSdr = shaderReg.GetShaderNodeByIdentifier(
-            upstreamNode.nodeTypeId, {HioGlslfxTokens->glslfx, _tokens->mtlx});
+          upstreamNode.nodeTypeId, {HioGlslfxTokens->glslfx, _tokens->mtlx});
 
         if (upstreamSdr) {
           TfToken sdrRole(upstreamSdr->GetRole());
@@ -970,17 +964,17 @@ static void _MakeParamsForInputParameter(
           }
           else if (sdrRole == SdrNodeRole->Primvar) {
             _MakeMaterialParamsForPrimvarReader(
-                network, upstreamNode, upstreamPath, paramName, visitedNodes, params);
+              network, upstreamNode, upstreamPath, paramName, visitedNodes, params);
             return;
           }
           else if (sdrRole == SdrNodeRole->Field) {
             _MakeMaterialParamsForFieldReader(
-                network, upstreamNode, upstreamPath, paramName, visitedNodes, params);
+              network, upstreamNode, upstreamPath, paramName, visitedNodes, params);
             return;
           }
           else if (sdrRole == SdrNodeRole->Math) {
             _MakeMaterialParamsForTransform2d(
-                network, upstreamNode, upstreamPath, paramName, visitedNodes, params);
+              network, upstreamNode, upstreamPath, paramName, visitedNodes, params);
             return;
           }
         }
@@ -1013,9 +1007,9 @@ static void _GatherMaterialParams(HdMaterialNetwork2 const &network,
   // exclusively. It cannot convert arbitrary material networks to Phoenix by
   // generating the appropriate glsl code.
 
-  SdrRegistry &shaderReg        = SdrRegistry::GetInstance();
-  SdrShaderNodeConstPtr sdrNode = shaderReg.GetShaderNodeByIdentifierAndType(
-      node.nodeTypeId, HioGlslfxTokens->glslfx);
+  SdrRegistry &shaderReg = SdrRegistry::GetInstance();
+  SdrShaderNodeConstPtr sdrNode = shaderReg.GetShaderNodeByIdentifierAndType(node.nodeTypeId,
+                                                                             HioGlslfxTokens->glslfx);
 
   SdfPathSet visitedNodes;
 
@@ -1029,14 +1023,13 @@ static void _GatherMaterialParams(HdMaterialNetwork2 const &network,
 
   for (TfToken const &inputName : parameters) {
     _MakeParamsForInputParameter(
-        network, node, inputName, &visitedNodes, params, textureDescriptors, materialTag);
+      network, node, inputName, &visitedNodes, params, textureDescriptors, materialTag);
   }
 
   // Set fallback values for the inputs on the terminal (excepting
   // referenced sampler coords).
   for (HdPh_MaterialParam &p : *params) {
-    if (p.paramType != HdPh_MaterialParam::ParamTypeAdditionalPrimvar &&
-        p.fallbackValue.IsEmpty()) {
+    if (p.paramType != HdPh_MaterialParam::ParamTypeAdditionalPrimvar && p.fallbackValue.IsEmpty()) {
       p.fallbackValue = _GetParamFallbackValue(network, node, p.name);
     }
   }
@@ -1058,8 +1051,8 @@ static void _GatherMaterialParams(HdMaterialNetwork2 const &network,
 }
 
 HdPhMaterialNetwork::HdPhMaterialNetwork()
-    : _materialTag(HdPhMaterialTagTokens->defaultMaterialTag),
-      _surfaceGfxHash(0)
+  : _materialTag(HdPhMaterialTagTokens->defaultMaterialTag),
+    _surfaceGfxHash(0)
 {}
 
 HdPhMaterialNetwork::~HdPhMaterialNetwork() = default;
@@ -1088,7 +1081,7 @@ void HdPhMaterialNetwork::ProcessMaterialNetwork(SdfPath const &materialId,
 
   SdfPath surfTerminalPath;
   if (HdMaterialNode2 const *surfTerminal = _GetTerminalNode(
-          surfaceNetwork, terminalName, &surfTerminalPath)) {
+        surfaceNetwork, terminalName, &surfTerminalPath)) {
 
 #ifdef WITH_MATERIALX
     if (!isVolume) {
@@ -1096,8 +1089,7 @@ void HdPhMaterialNetwork::ProcessMaterialNetwork(SdfPath const &materialId,
     }
 #endif
     // Extract the glslfx and metadata for surface/volume.
-    _GetGlslfxForTerminal(
-        _surfaceGfx, &_surfaceGfxHash, surfTerminal->nodeTypeId, resourceRegistry);
+    _GetGlslfxForTerminal(_surfaceGfx, &_surfaceGfxHash, surfTerminal->nodeTypeId, resourceRegistry);
     if (_surfaceGfx) {
 
       // If the glslfx file is not valid we skip parsing the network.
@@ -1105,12 +1097,11 @@ void HdPhMaterialNetwork::ProcessMaterialNetwork(SdfPath const &materialId,
       // will use the fallback shader.
       if (_surfaceGfx->IsValid()) {
 
-        _fragmentSource   = isVolume ? _surfaceGfx->GetVolumeSource() :
-                                       _surfaceGfx->GetSurfaceSource();
+        _fragmentSource = isVolume ? _surfaceGfx->GetVolumeSource() : _surfaceGfx->GetSurfaceSource();
         _materialMetadata = _surfaceGfx->GetMetadata();
-        _materialTag      = _GetMaterialTag(_materialMetadata, *surfTerminal);
+        _materialTag = _GetMaterialTag(_materialMetadata, *surfTerminal);
         _GatherMaterialParams(
-            surfaceNetwork, *surfTerminal, &_materialParams, &_textureDescriptors, _materialTag);
+          surfaceNetwork, *surfTerminal, &_materialParams, &_textureDescriptors, _materialTag);
 
         // OSL networks have a displacement network in hdNetworkMap
         // under terminal: HdMaterialTerminalTokens->displacement.
@@ -1147,8 +1138,7 @@ HdPh_MaterialParamVector const &HdPhMaterialNetwork::GetMaterialParams() const
   return _materialParams;
 }
 
-HdPhMaterialNetwork::TextureDescriptorVector const &HdPhMaterialNetwork::GetTextureDescriptors()
-    const
+HdPhMaterialNetwork::TextureDescriptorVector const &HdPhMaterialNetwork::GetTextureDescriptors() const
 {
   return _textureDescriptors;
 }

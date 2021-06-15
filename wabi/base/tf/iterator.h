@@ -200,9 +200,9 @@ template<class T, bool Reverse = false> class TfIterator {
 
   // Select the correct data storage depending on whether we should iterate
   // over a copy of the container.
-  typedef typename std::conditional<Tf_ShouldIterateOverCopy<T>::value,
-                                    _IteratorPairAndCopy,
-                                    _IteratorPair>::type _Data;
+  typedef
+    typename std::conditional<Tf_ShouldIterateOverCopy<T>::value, _IteratorPairAndCopy, _IteratorPair>::type
+      _Data;
 
  public:
   // Choose either iterator or const_iterator for Iterator depending on
@@ -355,7 +355,7 @@ template<class T, bool Reverse = false> class TfIterator {
       // Use assignment rather than initializer-list here to work around
       // a GCC 4.1.2 bug when using TfIterator with TfHashMap.
       current = IterInterface::Begin(c);
-      end     = IterInterface::End(c);
+      end = IterInterface::End(c);
     }
     _IteratorPair(Iterator const &b, Iterator const &e) : current(b), end(e)
     {}
@@ -371,7 +371,7 @@ template<class T, bool Reverse = false> class TfIterator {
     explicit _IteratorPairAndCopy(T const &c) : _IteratorPair(), _copy(c)
     {
       current = IterInterface::Begin(_copy);
-      end     = IterInterface::End(_copy);
+      end = IterInterface::End(_copy);
     }
     using _IteratorPair::current;
     using _IteratorPair::end;
@@ -392,7 +392,7 @@ template<class T> TfIterator<typename std::remove_reference<T>::type> TfMakeIter
 
 template<class T>
 TfIterator<typename std::remove_reference<T>::type, /* Reverse = */ true> TfMakeReverseIterator(
-    T &&container)
+  T &&container)
 {
   return TfIterator<typename std::remove_reference<T>::type, true>(std::forward<T>(container));
 }

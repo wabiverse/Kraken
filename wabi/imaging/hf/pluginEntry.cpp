@@ -37,11 +37,11 @@
 WABI_NAMESPACE_BEGIN
 
 Hf_PluginEntry::Hf_PluginEntry(const TfType &type, const std::string &displayName, int priority)
-    : _type(type),
-      _displayName(displayName),
-      _priority(priority),
-      _instance(nullptr),
-      _refCount(0)
+  : _type(type),
+    _displayName(displayName),
+    _priority(priority),
+    _instance(nullptr),
+    _refCount(0)
 {}
 
 Hf_PluginEntry::~Hf_PluginEntry()
@@ -54,20 +54,20 @@ Hf_PluginEntry::~Hf_PluginEntry()
 }
 
 Hf_PluginEntry::Hf_PluginEntry(Hf_PluginEntry &&source)
-    : _type(source._type),
-      _displayName(std::move(source._displayName)),
-      _priority(source._priority),
-      _instance(source._instance),
-      _refCount(source._refCount)
+  : _type(source._type),
+    _displayName(std::move(source._displayName)),
+    _priority(source._priority),
+    _instance(source._instance),
+    _refCount(source._refCount)
 {}
 
 Hf_PluginEntry &Hf_PluginEntry::operator=(Hf_PluginEntry &&source)
 {
-  _type        = std::move(source._type);
+  _type = std::move(source._type);
   _displayName = std::move(source._displayName);
-  _priority    = std::move(source._priority);
-  _instance    = std::move(source._instance);
-  _refCount    = std::move(source._refCount);
+  _priority = std::move(source._priority);
+  _instance = std::move(source._instance);
+  _refCount = std::move(source._refCount);
 
   return *this;
 }
@@ -80,9 +80,9 @@ TfToken Hf_PluginEntry::GetId() const
 
 void Hf_PluginEntry::GetDesc(HfPluginDesc *desc) const
 {
-  desc->id          = GetId();
+  desc->id = GetId();
   desc->displayName = _displayName;
-  desc->priority    = _priority;
+  desc->priority = _priority;
 }
 
 void Hf_PluginEntry::IncRefCount()

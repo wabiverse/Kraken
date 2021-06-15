@@ -102,8 +102,7 @@ template<class To> struct _Convert {
 template<class ToRng> struct _ConvertRng {
   template<class FromRng> inline ToRng operator()(FromRng const &from) const
   {
-    return ToRng(typename ToRng::MinMaxType(from.GetMin()),
-                 typename ToRng::MinMaxType(from.GetMax()));
+    return ToRng(typename ToRng::MinMaxType(from.GetMin()), typename ToRng::MinMaxType(from.GetMax()));
   }
 };
 

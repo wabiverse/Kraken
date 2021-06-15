@@ -52,7 +52,7 @@ std::pair<tuple, dict> TfPyProcessOptionalArgs(const tuple &args,
 {
   std::pair<tuple, dict> rval;
 
-  const unsigned int numArgs         = static_cast<unsigned int>(len(args));
+  const unsigned int numArgs = static_cast<unsigned int>(len(args));
   const unsigned int numExpectedArgs = static_cast<unsigned int>(expectedArgs.size());
 
   if (!allowExtraArgs) {
@@ -66,8 +66,7 @@ std::pair<tuple, dict> TfPyProcessOptionalArgs(const tuple &args,
     for (KeyIterator it(keys), it_end; it != it_end; ++it) {
       if (std::find_if(expectedArgs.begin(),
                        expectedArgs.end(),
-                       std::bind(_ArgumentIsNamed, *it, std::placeholders::_1)) ==
-          expectedArgs.end()) {
+                       std::bind(_ArgumentIsNamed, *it, std::placeholders::_1)) == expectedArgs.end()) {
 
         TfPyThrowTypeError("Unexpected keyword argument '%s'");
       }
@@ -79,8 +78,7 @@ std::pair<tuple, dict> TfPyProcessOptionalArgs(const tuple &args,
   for (unsigned int i = 0; i < std::min(numArgs, numExpectedArgs); ++i) {
     const string &argName = expectedArgs[i].GetName();
     if (rval.second.has_key(argName)) {
-      TfPyThrowTypeError(
-          TfStringPrintf("Multiple values for keyword argument '%s'", argName.c_str()));
+      TfPyThrowTypeError(TfStringPrintf("Multiple values for keyword argument '%s'", argName.c_str()));
     }
 
     rval.second[argName] = args[i];
@@ -93,9 +91,7 @@ std::pair<tuple, dict> TfPyProcessOptionalArgs(const tuple &args,
   return rval;
 }
 
-static void _AddArgAndTypeDocStrings(const TfPyArg &arg,
-                                     vector<string> *argStrs,
-                                     vector<string> *typeStrs)
+static void _AddArgAndTypeDocStrings(const TfPyArg &arg, vector<string> *argStrs, vector<string> *typeStrs)
 {
   argStrs->push_back(arg.GetName());
   if (!arg.GetDefaultValueDoc().empty()) {

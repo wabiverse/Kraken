@@ -54,12 +54,9 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateDescriptionAttr(UsdUIBackdrop &self,
-                                           object defaultVal,
-                                           bool writeSparsely)
+static UsdAttribute _CreateDescriptionAttr(UsdUIBackdrop &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateDescriptionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                    writeSparsely);
+  return self.CreateDescriptionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
 static std::string _Repr(const UsdUIBackdrop &self)
@@ -77,34 +74,32 @@ void wrapUsdUIBackdrop()
   class_<This, bases<UsdTyped>> cls("Backdrop");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetDescriptionAttr", &This::GetDescriptionAttr)
-      .def("CreateDescriptionAttr",
-           &_CreateDescriptionAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetDescriptionAttr", &This::GetDescriptionAttr)
+    .def("CreateDescriptionAttr",
+         &_CreateDescriptionAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

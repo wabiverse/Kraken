@@ -181,16 +181,14 @@ static rj::Value _ToImplObjectValue(const JsObject &object, Allocator &allocator
   rj::Value value(rj::kObjectType);
 
   for (const auto &p : object) {
-    value.AddMember(rj::Value(p.first.c_str(), allocator).Move(),
-                    _JsValueToImplValue(p.second, allocator),
-                    allocator);
+    value.AddMember(
+      rj::Value(p.first.c_str(), allocator).Move(), _JsValueToImplValue(p.second, allocator), allocator);
   }
 
   return value;
 }
 
-template<typename Allocator>
-static rj::Value _ToImplArrayValue(const JsArray &array, Allocator &allocator)
+template<typename Allocator> static rj::Value _ToImplArrayValue(const JsArray &array, Allocator &allocator)
 {
   rj::Value value(rj::kArrayType);
 
@@ -201,8 +199,7 @@ static rj::Value _ToImplArrayValue(const JsArray &array, Allocator &allocator)
   return value;
 }
 
-template<typename Allocator>
-static rj::Value _JsValueToImplValue(const JsValue &value, Allocator &allocator)
+template<typename Allocator> static rj::Value _JsValueToImplValue(const JsValue &value, Allocator &allocator)
 {
   switch (value.GetType()) {
     case JsValue::ObjectType:
@@ -236,9 +233,8 @@ JsValue JsParseStream(std::istream &istr, JsParseError *error)
   // Parse streams by reading into a string first. This makes it easier to
   // yield good error messages that include line and column numbers, rather
   // than the character offset that rapidjson currently provides.
-  return JsParseString(
-      std::string((std::istreambuf_iterator<char>(istr)), std::istreambuf_iterator<char>()),
-      error);
+  return JsParseString(std::string((std::istreambuf_iterator<char>(istr)), std::istreambuf_iterator<char>()),
+                       error);
 }
 
 JsValue JsParseString(const std::string &data, JsParseError *error)
@@ -252,8 +248,8 @@ JsValue JsParseString(const std::string &data, JsParseError *error)
   rj::Reader reader;
   rj::StringStream ss(data.c_str());
   // Need Full precision flag to round trip double values correctly.
-  rj::ParseResult result = reader.Parse<rj::kParseFullPrecisionFlag | rj::kParseStopWhenDoneFlag>(
-      ss, handler);
+  rj::ParseResult result = reader.Parse<rj::kParseFullPrecisionFlag | rj::kParseStopWhenDoneFlag>(ss,
+                                                                                                  handler);
 
   if (!result) {
     if (error) {
@@ -261,9 +257,9 @@ JsValue JsParseString(const std::string &data, JsParseError *error)
       // line/column information like other parsers (like json_spirit,
       // upon which this library was previously implemented). Analyze
       // the input data to convert the offset to line/column.
-      error->line       = 1;
+      error->line = 1;
       const size_t eoff = result.Offset();
-      size_t nlpos      = 0;
+      size_t nlpos = 0;
       for (size_t i = 0; i < eoff; ++i) {
         if (data[i] == '\n') {
           error->line++;
@@ -364,26 +360,25 @@ namespace {
 class Js_PolymorphicWriterInterface {
  public:
   virtual ~Js_PolymorphicWriterInterface();
-  virtual bool Null()                                 = 0;
-  virtual bool Bool(bool b)                           = 0;
-  virtual bool Int(int i)                             = 0;
-  virtual bool Uint(unsigned u)                       = 0;
-  virtual bool Int64(int64_t i64)                     = 0;
-  virtual bool Uint64(uint64_t u64)                   = 0;
-  virtual bool Double(double d)                       = 0;
+  virtual bool Null() = 0;
+  virtual bool Bool(bool b) = 0;
+  virtual bool Int(int i) = 0;
+  virtual bool Uint(unsigned u) = 0;
+  virtual bool Int64(int64_t i64) = 0;
+  virtual bool Uint64(uint64_t u64) = 0;
+  virtual bool Double(double d) = 0;
   virtual bool String(const char *str, size_t length) = 0;
-  virtual bool StartObject()                          = 0;
-  virtual bool Key(const char *str, size_t length)    = 0;
-  virtual bool EndObject()                            = 0;
-  virtual bool StartArray()                           = 0;
-  virtual bool EndArray()                             = 0;
+  virtual bool StartObject() = 0;
+  virtual bool Key(const char *str, size_t length) = 0;
+  virtual bool EndObject() = 0;
+  virtual bool StartArray() = 0;
+  virtual bool EndArray() = 0;
 };
 
 Js_PolymorphicWriterInterface::~Js_PolymorphicWriterInterface() = default;
 
 // Wraps the rapidJSON class and exposes its interface via virtual functions.
-template<class TWriter>
-class Js_PolymorphicWriter : public Js_PolymorphicWriterInterface, public TWriter {
+template<class TWriter> class Js_PolymorphicWriter : public Js_PolymorphicWriterInterface, public TWriter {
  public:
   using Writer = TWriter;
   using Writer::Writer;
@@ -447,7 +442,7 @@ class Js_PolymorphicWriter : public Js_PolymorphicWriterInterface, public TWrite
 // JsWriter is a wrapper around a Js_PolymorphicWriterInterface instance.
 class JsWriter::_Impl {
   using PrettyWriter = Js_PolymorphicWriter<_WriterFix<rj::PrettyWriter<rj::OStreamWrapper>>>;
-  using Writer       = Js_PolymorphicWriter<_WriterFix<rj::Writer<rj::OStreamWrapper>>>;
+  using Writer = Js_PolymorphicWriter<_WriterFix<rj::Writer<rj::OStreamWrapper>>>;
 
  public:
   _Impl(std::ostream &s, Style style) : _strWrapper(s)

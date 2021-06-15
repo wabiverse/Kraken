@@ -181,8 +181,7 @@ class UsdLuxCylinderLight : public UsdLuxLight {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
-  UsdAttribute CreateLengthAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateLengthAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -204,8 +203,7 @@ class UsdLuxCylinderLight : public UsdLuxLight {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
-  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -231,7 +229,7 @@ class UsdLuxCylinderLight : public UsdLuxLight {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateTreatAsLineAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

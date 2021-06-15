@@ -29,17 +29,16 @@
 #include <limits>
 WABI_NAMESPACE_BEGIN
 
-HdExtCompPrimvarBufferSource::HdExtCompPrimvarBufferSource(
-    const TfToken &primvarName,
-    const HdExtCompCpuComputationSharedPtr &source,
-    const TfToken &sourceOutputName,
-    const HdTupleType &valueType)
-    : HdBufferSource(),
-      _primvarName(primvarName),
-      _source(source),
-      _sourceOutputIdx(HdExtCompCpuComputation::INVALID_OUTPUT_INDEX),
-      _tupleType(valueType),
-      _rawDataPtr(nullptr)
+HdExtCompPrimvarBufferSource::HdExtCompPrimvarBufferSource(const TfToken &primvarName,
+                                                           const HdExtCompCpuComputationSharedPtr &source,
+                                                           const TfToken &sourceOutputName,
+                                                           const HdTupleType &valueType)
+  : HdBufferSource(),
+    _primvarName(primvarName),
+    _source(source),
+    _sourceOutputIdx(HdExtCompCpuComputation::INVALID_OUTPUT_INDEX),
+    _tupleType(valueType),
+    _rawDataPtr(nullptr)
 {
   _sourceOutputIdx = source->GetOutputIndex(sourceOutputName);
 }

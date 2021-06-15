@@ -81,30 +81,29 @@ HioImageSharedPtr HioImageRegistry::_ConstructImage(std::string const &filename)
   if (!pluginType) {
     // Unknown prim type.
     TF_DEBUG(HIO_DEBUG_TEXTURE_IMAGE_PLUGINS)
-        .Msg("[PluginLoad] Unknown image type '%s' for file '%s'\n",
-             fileExtension.GetText(),
-             filename.c_str());
+      .Msg(
+        "[PluginLoad] Unknown image type '%s' for file '%s'\n", fileExtension.GetText(), filename.c_str());
     return NULL_IMAGE;
   }
 
-  PlugRegistry &plugReg      = PlugRegistry::GetInstance();
+  PlugRegistry &plugReg = PlugRegistry::GetInstance();
   PlugPluginPtr const plugin = plugReg.GetPluginForType(pluginType);
   if (!plugin || !plugin->Load()) {
     TF_CODING_ERROR(
-        "[PluginLoad] PlugPlugin could not be loaded for "
-        "TfType '%s'\n",
-        pluginType.GetTypeName().c_str());
+      "[PluginLoad] PlugPlugin could not be loaded for "
+      "TfType '%s'\n",
+      pluginType.GetTypeName().c_str());
     return NULL_IMAGE;
   }
 
   HioImageFactoryBase *const factory = pluginType.GetFactory<HioImageFactoryBase>();
   if (!factory) {
     TF_CODING_ERROR(
-        "[PluginLoad] Cannot manufacture type '%s' "
-        "for image type '%s' for file '%s'\n",
-        pluginType.GetTypeName().c_str(),
-        fileExtension.GetText(),
-        filename.c_str());
+      "[PluginLoad] Cannot manufacture type '%s' "
+      "for image type '%s' for file '%s'\n",
+      pluginType.GetTypeName().c_str(),
+      fileExtension.GetText(),
+      filename.c_str());
 
     return NULL_IMAGE;
   }
@@ -112,21 +111,21 @@ HioImageSharedPtr HioImageRegistry::_ConstructImage(std::string const &filename)
   HioImageSharedPtr const instance = factory->New();
   if (!instance) {
     TF_CODING_ERROR(
-        "[PluginLoad] Cannot construct instance of type '%s' "
-        "for image type '%s' for file '%s'\n",
-        pluginType.GetTypeName().c_str(),
-        fileExtension.GetText(),
-        filename.c_str());
+      "[PluginLoad] Cannot construct instance of type '%s' "
+      "for image type '%s' for file '%s'\n",
+      pluginType.GetTypeName().c_str(),
+      fileExtension.GetText(),
+      filename.c_str());
     return NULL_IMAGE;
   }
 
   TF_DEBUG(HIO_DEBUG_TEXTURE_IMAGE_PLUGINS)
-      .Msg(
-          "[PluginLoad] Loaded plugin '%s' for image type '%s' for "
-          "file '%s'\n",
-          pluginType.GetTypeName().c_str(),
-          fileExtension.GetText(),
-          filename.c_str());
+    .Msg(
+      "[PluginLoad] Loaded plugin '%s' for image type '%s' for "
+      "file '%s'\n",
+      pluginType.GetTypeName().c_str(),
+      fileExtension.GetText(),
+      filename.c_str());
 
   return instance;
 }

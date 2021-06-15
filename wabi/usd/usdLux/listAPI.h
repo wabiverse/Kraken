@@ -307,7 +307,7 @@ class UsdLuxListAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateLightListCacheBehaviorAttr(VtValue const &defaultValue = VtValue(),
-                                                bool writeSparsely          = false) const;
+                                                bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //

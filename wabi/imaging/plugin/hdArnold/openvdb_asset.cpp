@@ -32,9 +32,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdArnoldOpenvdbAsset::HdArnoldOpenvdbAsset(HdArnoldRenderDelegate *renderDelegate,
-                                           const SdfPath &id)
-    : HdField(id)
+HdArnoldOpenvdbAsset::HdArnoldOpenvdbAsset(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id)
+  : HdField(id)
 {
   TF_UNUSED(renderDelegate);
 }

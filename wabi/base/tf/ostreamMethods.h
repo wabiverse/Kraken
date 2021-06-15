@@ -62,8 +62,8 @@ template<class T> constexpr bool Tf_IsOstreamable()
 /// \ingroup group_tf_DebuggingOutput
 template<class T, uint32_t N>
 typename std::enable_if<WABI_NS::Tf_IsOstreamable<T>(), std::ostream &>::type operator<<(
-    std::ostream &out,
-    const TfSmallVector<T, N> &v)
+  std::ostream &out,
+  const TfSmallVector<T, N> &v)
 {
   out << "[ ";
   for (auto const &obj : v)
@@ -83,8 +83,8 @@ namespace std {
 /// \ingroup group_tf_DebuggingOutput
 template<class T>
 typename std::enable_if<WABI_NS::Tf_IsOstreamable<T>(), std::ostream &>::type operator<<(
-    std::ostream &out,
-    const std::vector<T> &v)
+  std::ostream &out,
+  const std::vector<T> &v)
 {
   out << "[ ";
   for (auto const &obj : v)
@@ -98,8 +98,8 @@ typename std::enable_if<WABI_NS::Tf_IsOstreamable<T>(), std::ostream &>::type op
 /// \ingroup group_tf_DebuggingOutput
 template<class T>
 typename std::enable_if<WABI_NS::Tf_IsOstreamable<T>(), std::ostream &>::type operator<<(
-    std::ostream &out,
-    const std::set<T> &v)
+  std::ostream &out,
+  const std::set<T> &v)
 {
   out << "( ";
   for (auto const &obj : v)
@@ -113,8 +113,8 @@ typename std::enable_if<WABI_NS::Tf_IsOstreamable<T>(), std::ostream &>::type op
 /// \ingroup group_tf_DebuggingOutput
 template<class T>
 typename std::enable_if<WABI_NS::Tf_IsOstreamable<T>(), std::ostream &>::type operator<<(
-    std::ostream &out,
-    const std::list<T> &l)
+  std::ostream &out,
+  const std::list<T> &l)
 {
   out << "{ ";
   for (auto const &obj : l)

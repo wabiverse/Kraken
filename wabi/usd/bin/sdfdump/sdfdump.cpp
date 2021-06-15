@@ -145,8 +145,7 @@ void ParseTimes(vector<string> const &timeSpecs,
         if (elts.size() != 2) {
           throw std::invalid_argument(TfStringPrintf("invalid time syntax '%s'", spec.c_str()));
         }
-        timeRanges->emplace_back(boost::lexical_cast<double>(elts[0]),
-                                 boost::lexical_cast<double>(elts[1]));
+        timeRanges->emplace_back(boost::lexical_cast<double>(elts[0]), boost::lexical_cast<double>(elts[1]));
       }
       else {
         literalTimes->emplace_back(boost::lexical_cast<double>(spec));
@@ -163,24 +162,24 @@ void ParseTimes(vector<string> const &timeSpecs,
 }
 
 struct ReportParams {
-  TfPatternMatcher *pathMatcher  = nullptr;
+  TfPatternMatcher *pathMatcher = nullptr;
   TfPatternMatcher *fieldMatcher = nullptr;
   SortKey sortKey;
   vector<double> literalTimes;
   vector<pair<double, double>> timeRanges;
   double timeTolerance;
   bool showSummary = false;
-  bool validate    = false;
-  bool showValues  = true;
-  bool fullArrays  = false;
+  bool validate = false;
+  bool showValues = true;
+  bool fullArrays = false;
 };
 
 struct SummaryStats {
-  size_t numSpecs         = 0;
-  size_t numPrimSpecs     = 0;
+  size_t numSpecs = 0;
+  size_t numPrimSpecs = 0;
   size_t numPropertySpecs = 0;
-  size_t numFields        = 0;
-  size_t numSampleTimes   = 0;
+  size_t numFields = 0;
+  size_t numSampleTimes = 0;
 };
 
 SummaryStats GetSummaryStats(SdfLayerHandle const &layer)
@@ -206,9 +205,7 @@ vector<SdfPath> CollectPaths(SdfLayerHandle const &layer, ReportParams const &p)
   return result;
 }
 
-vector<TfToken> CollectFields(SdfLayerHandle const &layer,
-                              SdfPath const &path,
-                              ReportParams const &p)
+vector<TfToken> CollectFields(SdfLayerHandle const &layer, SdfPath const &path, ReportParams const &p)
 {
   vector<TfToken> fields = layer->ListFields(path);
   fields.erase(remove_if(fields.begin(),
@@ -221,19 +218,17 @@ vector<TfToken> CollectFields(SdfLayerHandle const &layer,
 string GetValueString(VtValue const &value, ReportParams const &p)
 {
   return (!p.fullArrays && value.IsArrayValued()) ?
-             TfStringPrintf("%s size %zu", value.GetTypeName().c_str(), value.GetArraySize()) :
-             TfStringPrintf("%s = %s", value.GetTypeName().c_str(), TfStringify(value).c_str());
+           TfStringPrintf("%s size %zu", value.GetTypeName().c_str(), value.GetArraySize()) :
+           TfStringPrintf("%s = %s", value.GetTypeName().c_str(), TfStringify(value).c_str());
 }
 
-string GetTimeSamplesValueString(SdfLayerHandle const &layer,
-                                 SdfPath const &path,
-                                 ReportParams const &p)
+string GetTimeSamplesValueString(SdfLayerHandle const &layer, SdfPath const &path, ReportParams const &p)
 {
   // Pull all the sample times for the given path, then collect up by p's
   // literalTimes and timeRanges, then if we're pulling values we'll do that
   // for each sample, and format.
   bool takeAllTimes = p.literalTimes.empty() && p.timeRanges.empty();
-  auto times        = layer->ListTimeSamplesForPath(path);
+  auto times = layer->ListTimeSamplesForPath(path);
   vector<double> selectedTimes;
   selectedTimes.reserve(times.size());
 
@@ -243,10 +238,9 @@ string GetTimeSamplesValueString(SdfLayerHandle const &layer,
   else {
     for (auto time : times) {
       // Check literalTimes.
-      auto rng = equal_range(
-          p.literalTimes.begin(), p.literalTimes.end(), time, [&p](double a, double b) {
-            return IsClose(a, b, p.timeTolerance) ? false : a < b;
-          });
+      auto rng = equal_range(p.literalTimes.begin(), p.literalTimes.end(), time, [&p](double a, double b) {
+        return IsClose(a, b, p.timeTolerance) ? false : a < b;
+      });
       if (rng.first != rng.second)
         selectedTimes.push_back(time);
 
@@ -265,8 +259,7 @@ string GetTimeSamplesValueString(SdfLayerHandle const &layer,
   VtValue val;
   for (auto time : selectedTimes) {
     TF_VERIFY(layer->QueryTimeSample(path, time, &val));
-    result.push_back(
-        TfStringPrintf("%s: %s", TfStringify(time).c_str(), GetValueString(val, p).c_str()));
+    result.push_back(TfStringPrintf("%s: %s", TfStringify(time).c_str(), GetValueString(val, p).c_str()));
   }
   return TfStringPrintf("[\n        %s ]", TfStringJoin(result, "\n        ").c_str());
 }
@@ -302,8 +295,8 @@ void GetReportByPath(SdfLayerHandle const &layer, ReportParams const &p, vector<
       continue;
     for (auto const &field : fields) {
       if (p.showValues) {
-        report.push_back(TfStringPrintf(
-            "  %s: %s", field.GetText(), GetFieldValueString(layer, path, field, p).c_str()));
+        report.push_back(
+          TfStringPrintf("  %s: %s", field.GetText(), GetFieldValueString(layer, path, field, p).c_str()));
       }
       else {
         report.push_back(TfStringPrintf("  %s", field.GetText()));
@@ -326,7 +319,7 @@ void GetReportByField(SdfLayerHandle const &layer, ReportParams const &p, vector
       string fieldString;
       if (p.showValues) {
         fieldString = TfStringPrintf(
-            "%s: %s", field.GetText(), GetFieldValueString(layer, path, field, p).c_str());
+          "%s: %s", field.GetText(), GetFieldValueString(layer, path, field, p).c_str());
       }
       else {
         fieldString = TfStringPrintf("%s", field.GetText());
@@ -351,14 +344,12 @@ void Validate(SdfLayerHandle const &layer, ReportParams const &p, vector<string>
   TF_DESCRIBE_SCOPE("Collecting paths in @%s@", layer->GetIdentifier().c_str());
   vector<SdfPath> paths;
   layer->Traverse(SdfPath::AbsoluteRootPath(), [&paths, layer](SdfPath const &path) {
-    TF_DESCRIBE_SCOPE(
-        "Collecting path <%s> in @%s@", path.GetText(), layer->GetIdentifier().c_str());
+    TF_DESCRIBE_SCOPE("Collecting path <%s> in @%s@", path.GetText(), layer->GetIdentifier().c_str());
     paths.push_back(path);
   });
   sort(paths.begin(), paths.end());
   for (auto const &path : paths) {
-    TF_DESCRIBE_SCOPE(
-        "Collecting fields for <%s> in @%s@", path.GetText(), layer->GetIdentifier().c_str());
+    TF_DESCRIBE_SCOPE("Collecting fields for <%s> in @%s@", path.GetText(), layer->GetIdentifier().c_str());
     vector<TfToken> fields = layer->ListFields(path);
     if (fields.empty())
       continue;
@@ -374,12 +365,12 @@ void Validate(SdfLayerHandle const &layer, ReportParams const &p, vector<string>
 
         for (auto time : times) {
           TF_DESCRIBE_SCOPE(
-              "Getting sample value at time "
-              "%f for '%s' on <%s> in @%s@",
-              time,
-              field.GetText(),
-              path.GetText(),
-              layer->GetIdentifier().c_str());
+            "Getting sample value at time "
+            "%f for '%s' on <%s> in @%s@",
+            time,
+            field.GetText(),
+            path.GetText(),
+            layer->GetIdentifier().c_str());
           layer->QueryTimeSample(path, time, &value);
         }
       }
@@ -402,13 +393,13 @@ void Report(SdfLayerHandle layer, ReportParams const &p)
   if (p.showSummary) {
     auto stats = GetSummaryStats(layer);
     report.push_back(
-        TfStringPrintf("  %zu specs, %zu prim specs, %zu property specs, %zu fields, "
-                       "%zu sample times",
-                       stats.numSpecs,
-                       stats.numPrimSpecs,
-                       stats.numPropertySpecs,
-                       stats.numFields,
-                       stats.numSampleTimes));
+      TfStringPrintf("  %zu specs, %zu prim specs, %zu property specs, %zu fields, "
+                     "%zu sample times",
+                     stats.numSpecs,
+                     stats.numPrimSpecs,
+                     stats.numPropertySpecs,
+                     stats.numFields,
+                     stats.numSampleTimes));
   }
   else if (p.validate) {
     Validate(layer, p, report);
@@ -506,15 +497,15 @@ int main(int argc, char const *argv[])
   }
 
   ReportParams params;
-  params.showSummary   = showSummary;
-  params.validate      = validate;
-  params.pathMatcher   = &pathMatcher;
-  params.fieldMatcher  = &fieldMatcher;
-  params.sortKey       = sortKey;
-  params.literalTimes  = literalTimes;
-  params.timeRanges    = timeRanges;
-  params.showValues    = !noValues;
-  params.fullArrays    = fullArrays;
+  params.showSummary = showSummary;
+  params.validate = validate;
+  params.pathMatcher = &pathMatcher;
+  params.fieldMatcher = &fieldMatcher;
+  params.sortKey = sortKey;
+  params.literalTimes = literalTimes;
+  params.timeRanges = timeRanges;
+  params.showValues = !noValues;
+  params.fullArrays = fullArrays;
   params.timeTolerance = timeTolerance;
 
   for (auto const &file : inputFiles) {

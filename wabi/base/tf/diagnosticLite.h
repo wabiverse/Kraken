@@ -68,8 +68,8 @@ enum TfDiagnosticType : int {
 
 struct Tf_DiagnosticLiteHelper {
   constexpr Tf_DiagnosticLiteHelper(TfCallContext const &context, TfDiagnosticType type)
-      : _context(context),
-        _type(type)
+    : _context(context),
+      _type(type)
   {}
 
   TF_API void IssueError(char const *fmt, ...) const ARCH_PRINTF_FUNCTION(2, 3);
@@ -114,7 +114,7 @@ constexpr bool Tf_AxiomHelper(bool val, TfCallContext const &ctx, char const *tx
 {
   return (ARCH_LIKELY(val)) ? true :
                               (Tf_DiagnosticLiteHelper(ctx, TF_DIAGNOSTIC_FATAL_ERROR_TYPE)
-                                   .IssueFatalError("Failed axiom: ' %s '", txt),
+                                 .IssueFatalError("Failed axiom: ' %s '", txt),
                                false);
 }
 

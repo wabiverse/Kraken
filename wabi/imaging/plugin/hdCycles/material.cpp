@@ -83,21 +83,20 @@ TF_MAKE_STATIC_DATA(NdrTokenVec, _sourceTypes)
 }
 
 std::map<TfToken, ccl::DisplacementMethod> DISPLACEMENT_CONVERSION = {
-    {HdCyclesTokens->displacement_bump, ccl::DISPLACE_BUMP},
-    {HdCyclesTokens->displacement_true, ccl::DISPLACE_TRUE},
-    {HdCyclesTokens->displacement_both, ccl::DISPLACE_BOTH},
+  {HdCyclesTokens->displacement_bump, ccl::DISPLACE_BUMP},
+  {HdCyclesTokens->displacement_true, ccl::DISPLACE_TRUE},
+  {HdCyclesTokens->displacement_both, ccl::DISPLACE_BOTH},
 };
 
 std::map<TfToken, ccl::VolumeInterpolation> VOLUME_INTERPOLATION_CONVERSION = {
-    {HdCyclesTokens->volume_interpolation_linear, ccl::VOLUME_INTERPOLATION_LINEAR},
-    {HdCyclesTokens->volume_interpolation_cubic, ccl::VOLUME_INTERPOLATION_CUBIC},
+  {HdCyclesTokens->volume_interpolation_linear, ccl::VOLUME_INTERPOLATION_LINEAR},
+  {HdCyclesTokens->volume_interpolation_cubic, ccl::VOLUME_INTERPOLATION_CUBIC},
 };
 
 std::map<TfToken, ccl::VolumeSampling> VOLUME_SAMPLING_CONVERSION = {
-    {HdCyclesTokens->volume_sampling_distance, ccl::VOLUME_SAMPLING_DISTANCE},
-    {HdCyclesTokens->volume_sampling_equiangular, ccl::VOLUME_SAMPLING_EQUIANGULAR},
-    {HdCyclesTokens->volume_sampling_multiple_importance,
-     ccl::VOLUME_SAMPLING_MULTIPLE_IMPORTANCE},
+  {HdCyclesTokens->volume_sampling_distance, ccl::VOLUME_SAMPLING_DISTANCE},
+  {HdCyclesTokens->volume_sampling_equiangular, ccl::VOLUME_SAMPLING_EQUIANGULAR},
+  {HdCyclesTokens->volume_sampling_multiple_importance, ccl::VOLUME_SAMPLING_MULTIPLE_IMPORTANCE},
 };
 
 bool IsValidCyclesIdentifier(const std::string &identifier)
@@ -129,7 +128,7 @@ void ApplyPrimvarAOVs(ccl::ShaderGraph *graph)
       auto *attr = new ccl::AttributeNode();
       graph->add(attr);
       attr->attribute = ccl::ustring("Pref");
-      auto *aov       = new ccl::OutputAOVNode();
+      auto *aov = new ccl::OutputAOVNode();
       graph->add(aov);
       aov->name = ccl::ustring("Pref");
       graph->connect(attr->output("Vector"), aov->input("Color"));
@@ -151,14 +150,14 @@ TfTokenVector const &HdCyclesMaterial::GetShaderSourceTypes()
 }
 
 HdCyclesMaterial::HdCyclesMaterial(SdfPath const &id, HdCyclesRenderDelegate *a_renderDelegate)
-    : HdMaterial(id),
-      m_shader(nullptr),
-      m_shaderGraph(nullptr),
-      m_renderDelegate(a_renderDelegate)
+  : HdMaterial(id),
+    m_shader(nullptr),
+    m_shaderGraph(nullptr),
+    m_renderDelegate(a_renderDelegate)
 {
-  m_shader        = new ccl::Shader();
-  m_shader->name  = id.GetString();
-  m_shaderGraph   = new ccl::ShaderGraph();
+  m_shader = new ccl::Shader();
+  m_shader->name = id.GetString();
+  m_shaderGraph = new ccl::ShaderGraph();
   m_shader->graph = m_shaderGraph;
 
   if (m_renderDelegate)
@@ -176,11 +175,10 @@ HdCyclesMaterial::~HdCyclesMaterial()
 // TODO: These conversion functions will be moved to a more generic
 // Material Adapter...
 
-ccl::ShaderNode *matConvertUSDPrimvarReader(HdMaterialNode &usd_node,
-                                            ccl::ShaderGraph *cycles_shader_graph)
+ccl::ShaderNode *matConvertUSDPrimvarReader(HdMaterialNode &usd_node, ccl::ShaderGraph *cycles_shader_graph)
 {
   ccl::UVMapNode *uvmap = new ccl::UVMapNode();
-  uvmap->attribute      = ccl::ustring("st");
+  uvmap->attribute = ccl::ustring("st");
 
   for (std::pair<TfToken, VtValue> params : usd_node.parameters) {
     if (params.first == _tokens->varname) {
@@ -193,8 +191,7 @@ ccl::ShaderNode *matConvertUSDPrimvarReader(HdMaterialNode &usd_node,
   return uvmap;
 }
 
-ccl::ShaderNode *matConvertUSDUVTexture(HdMaterialNode &usd_node,
-                                        ccl::ShaderGraph *cycles_shader_graph)
+ccl::ShaderNode *matConvertUSDUVTexture(HdMaterialNode &usd_node, ccl::ShaderGraph *cycles_shader_graph)
 {
   ccl::ImageTextureNode *imageTexture = new ccl::ImageTextureNode();
 
@@ -215,8 +212,7 @@ ccl::ShaderNode *matConvertUSDUVTexture(HdMaterialNode &usd_node,
 #ifdef USD_HAS_UDIM_RESOLVE_FIX
         filepath = std::string(params.second.Get<SdfAssetPath>().GetResolvedPath().c_str());
 #else
-        std::string raw_path = std::string(
-            params.second.Get<SdfAssetPath>().GetAssetPath().c_str());
+        std::string raw_path = std::string(params.second.Get<SdfAssetPath>().GetAssetPath().c_str());
         if (HdCyclesPathIsUDIM(raw_path)) {
           filepath = raw_path;
         }
@@ -237,11 +233,10 @@ ccl::ShaderNode *matConvertUSDUVTexture(HdMaterialNode &usd_node,
   return imageTexture;
 }
 
-ccl::ShaderNode *matConvertUSDPreviewSurface(HdMaterialNode &usd_node,
-                                             ccl::ShaderGraph *cycles_shader_graph)
+ccl::ShaderNode *matConvertUSDPreviewSurface(HdMaterialNode &usd_node, ccl::ShaderGraph *cycles_shader_graph)
 {
   ccl::PrincipledBsdfNode *principled = new ccl::PrincipledBsdfNode();
-  principled->base_color              = ccl::make_float3(1.0f, 1.0f, 1.0f);
+  principled->base_color = ccl::make_float3(1.0f, 1.0f, 1.0f);
 
   // Convert params
   for (std::pair<TfToken, VtValue> params : usd_node.parameters) {
@@ -285,8 +280,7 @@ ccl::ShaderNode *matConvertUSDPreviewSurface(HdMaterialNode &usd_node,
 TfToken socketConverter(TfToken a_token)
 {
   // TODO: Add check if preview surface
-  if (a_token == _tokens->rgb || a_token == _tokens->r || a_token == _tokens->g ||
-      a_token == _tokens->b) {
+  if (a_token == _tokens->rgb || a_token == _tokens->r || a_token == _tokens->g || a_token == _tokens->b) {
     return _tokens->Color;
   }
   else if (a_token == _tokens->st) {
@@ -396,7 +390,7 @@ ccl::ShaderNode *convertCyclesNode(HdMaterialNode &usd_node, ccl::ShaderGraph *c
         case ccl::SocketType::ENUM: {
           if (params.second.IsHolding<int>()) {
             const ccl::NodeEnum &node_enums = *socket.enum_values;
-            auto index                      = params.second.Get<int>();
+            auto index = params.second.Get<int>();
             if (node_enums.exists(index)) {
               const char *value = node_enums[index].string().c_str();
               cyclesNode->set(socket, value);
@@ -434,8 +428,7 @@ ccl::ShaderNode *convertCyclesNode(HdMaterialNode &usd_node, ccl::ShaderGraph *c
 #ifdef USD_HAS_UDIM_RESOLVE_FIX
             val = std::string(params.second.Get<SdfAssetPath>().GetResolvedPath().c_str());
 #else
-            std::string raw_path = std::string(
-                params.second.Get<SdfAssetPath>().GetAssetPath().c_str());
+            std::string raw_path = std::string(params.second.Get<SdfAssetPath>().GetAssetPath().c_str());
             if (HdCyclesPathIsUDIM(raw_path)) {
               val = raw_path;
             }
@@ -571,7 +564,7 @@ static bool GetMaterialNetwork(TfToken const &terminal,
 
       if (cycles_node != nullptr) {
         conversionMap.insert(std::pair<SdfPath, std::pair<HdMaterialNode *, ccl::ShaderNode *>>(
-            node.path, std::make_pair(&node, cycles_node)));
+          node.path, std::make_pair(&node, cycles_node)));
       }
 
       for (const SdfPath &tPath : networkMap.terminals) {
@@ -591,8 +584,7 @@ static bool GetMaterialNetwork(TfToken const &terminal,
           }
           if (terminal == HdCyclesMaterialTerminalTokens->displacement) {
             if (cycles_node->output("Displacement") != NULL) {
-              graph->connect(cycles_node->output("Displacement"),
-                             graph->output()->input("Displacement"));
+              graph->connect(cycles_node->output("Displacement"), graph->output()->input("Displacement"));
             }
           }
           if (terminal == HdCyclesMaterialTerminalTokens->volume) {
@@ -606,25 +598,24 @@ static bool GetMaterialNetwork(TfToken const &terminal,
 
     // Link material nodes
     for (const HdMaterialRelationship &matRel : net.second.relationships) {
-      ccl::ShaderNode *tonode   = conversionMap[matRel.outputId].second;
+      ccl::ShaderNode *tonode = conversionMap[matRel.outputId].second;
       ccl::ShaderNode *fromnode = conversionMap[matRel.inputId].second;
 
-      HdMaterialNode *hd_tonode   = conversionMap[matRel.outputId].first;
+      HdMaterialNode *hd_tonode = conversionMap[matRel.outputId].first;
       HdMaterialNode *hd_fromnode = conversionMap[matRel.inputId].first;
 
       // Skip invalid connections. I don't know where they come from, but they exist.
-      if (fromnode == nullptr || hd_fromnode == nullptr || tonode == nullptr ||
-          hd_tonode == nullptr) {
+      if (fromnode == nullptr || hd_fromnode == nullptr || tonode == nullptr || hd_tonode == nullptr) {
         continue;
       }
 
-      std::string to_identifier   = hd_tonode->identifier.GetString();
+      std::string to_identifier = hd_tonode->identifier.GetString();
       std::string from_identifier = hd_fromnode->identifier.GetString();
 
       ccl::ShaderOutput *output = nullptr;
-      ccl::ShaderInput *input   = nullptr;
+      ccl::ShaderInput *input = nullptr;
 
-      bool to_has_valid_prefix   = IsValidCyclesIdentifier(to_identifier);
+      bool to_has_valid_prefix = IsValidCyclesIdentifier(to_identifier);
       bool from_has_valid_prefix = IsValidCyclesIdentifier(from_identifier);
 
       // Converts Preview surface connections
@@ -637,13 +628,11 @@ static bool GetMaterialNetwork(TfToken const &terminal,
         cOutputName = socketConverter(cOutputName);
 
       if (tonode == nullptr) {
-        TF_WARN("MATERIAL ERROR: Could not link, tonode was null: %s",
-                matRel.outputId.GetString().c_str());
+        TF_WARN("MATERIAL ERROR: Could not link, tonode was null: %s", matRel.outputId.GetString().c_str());
         continue;
       }
       else if (fromnode == nullptr) {
-        TF_WARN("MATERIAL ERROR: Could not link, fromnode was null: %s",
-                matRel.inputId.GetString().c_str());
+        TF_WARN("MATERIAL ERROR: Could not link, fromnode was null: %s", matRel.inputId.GetString().c_str());
         continue;
       }
 
@@ -689,8 +678,7 @@ static bool GetMaterialNetwork(TfToken const &terminal,
           if (output_node->name == "output") {
             if (output_node->input("Surface")->link) {
               if (terminal == HdCyclesMaterialTerminalTokens->surface) {
-                graph->connect(output_node->input("Surface")->link,
-                               graph->output()->input("Surface"));
+                graph->connect(output_node->input("Surface")->link, graph->output()->input("Surface"));
               }
             }
           }
@@ -706,7 +694,7 @@ void HdCyclesMaterial::Sync(HdSceneDelegate *sceneDelegate,
                             HdRenderParam *renderParam,
                             HdDirtyBits *dirtyBits)
 {
-  auto cyclesRenderParam     = static_cast<HdCyclesRenderParam *>(renderParam);
+  auto cyclesRenderParam = static_cast<HdCyclesRenderParam *>(renderParam);
   HdCyclesRenderParam *param = static_cast<HdCyclesRenderParam *>(renderParam);
 
   const SdfPath &id = GetId();
@@ -724,9 +712,9 @@ void HdCyclesMaterial::Sync(HdSceneDelegate *sceneDelegate,
 
       auto &networkMap = vtMat.UncheckedGet<HdMaterialNetworkMap>();
 
-      HdMaterialNetwork const *surface      = nullptr;
+      HdMaterialNetwork const *surface = nullptr;
       HdMaterialNetwork const *displacement = nullptr;
-      HdMaterialNetwork const *volume       = nullptr;
+      HdMaterialNetwork const *volume = nullptr;
 
       // Keeping track of preview node to clean the output nodes
       std::vector<ccl::ShaderNode *> preview_shaders;
@@ -774,57 +762,48 @@ void HdCyclesMaterial::Sync(HdSceneDelegate *sceneDelegate,
   }
 
   if (*dirtyBits & HdMaterial::DirtyResource) {
-    TfToken displacementMethod = _HdCyclesGetParam<TfToken>(
-        sceneDelegate,
-        id,
-        HdCyclesTokens->cyclesMaterialDisplacementMethod,
-        HdCyclesTokens->displacement_bump);
+    TfToken displacementMethod = _HdCyclesGetParam<TfToken>(sceneDelegate,
+                                                            id,
+                                                            HdCyclesTokens->cyclesMaterialDisplacementMethod,
+                                                            HdCyclesTokens->displacement_bump);
 
     if (m_shader->displacement_method != DISPLACEMENT_CONVERSION[displacementMethod]) {
       m_shader->displacement_method = DISPLACEMENT_CONVERSION[displacementMethod];
     }
 
     m_shader->pass_id = _HdCyclesGetParam<int>(
-        sceneDelegate, id, HdCyclesTokens->cyclesMaterialPassId, m_shader->pass_id);
+      sceneDelegate, id, HdCyclesTokens->cyclesMaterialPassId, m_shader->pass_id);
 
     m_shader->use_mis = _HdCyclesGetParam<bool>(
-        sceneDelegate, id, HdCyclesTokens->cyclesMaterialUseMis, m_shader->use_mis);
+      sceneDelegate, id, HdCyclesTokens->cyclesMaterialUseMis, m_shader->use_mis);
 
     m_shader->use_transparent_shadow = _HdCyclesGetParam<bool>(
-        sceneDelegate,
-        id,
-        HdCyclesTokens->cyclesMaterialUseTransparentShadow,
-        m_shader->use_transparent_shadow);
+      sceneDelegate,
+      id,
+      HdCyclesTokens->cyclesMaterialUseTransparentShadow,
+      m_shader->use_transparent_shadow);
 
     m_shader->heterogeneous_volume = _HdCyclesGetParam<bool>(
-        sceneDelegate,
-        id,
-        HdCyclesTokens->cyclesMaterialHeterogeneousVolume,
-        m_shader->heterogeneous_volume);
+      sceneDelegate, id, HdCyclesTokens->cyclesMaterialHeterogeneousVolume, m_shader->heterogeneous_volume);
 
     m_shader->volume_step_rate = _HdCyclesGetParam<float>(
-        sceneDelegate,
-        id,
-        HdCyclesTokens->cyclesMaterialVolumeStepRate,
-        m_shader->volume_step_rate);
+      sceneDelegate, id, HdCyclesTokens->cyclesMaterialVolumeStepRate, m_shader->volume_step_rate);
 
     TfToken volume_interpolation = _HdCyclesGetParam<TfToken>(
-        sceneDelegate,
-        id,
-        HdCyclesTokens->cyclesMaterialVolumeInterpolationMethod,
-        HdCyclesTokens->volume_interpolation_linear);
+      sceneDelegate,
+      id,
+      HdCyclesTokens->cyclesMaterialVolumeInterpolationMethod,
+      HdCyclesTokens->volume_interpolation_linear);
 
-    if (m_shader->volume_interpolation_method !=
-        VOLUME_INTERPOLATION_CONVERSION[volume_interpolation]) {
-      m_shader->volume_interpolation_method =
-          VOLUME_INTERPOLATION_CONVERSION[volume_interpolation];
+    if (m_shader->volume_interpolation_method != VOLUME_INTERPOLATION_CONVERSION[volume_interpolation]) {
+      m_shader->volume_interpolation_method = VOLUME_INTERPOLATION_CONVERSION[volume_interpolation];
     }
 
     TfToken volume_sampling = _HdCyclesGetParam<TfToken>(
-        sceneDelegate,
-        id,
-        HdCyclesTokens->cyclesMaterialVolumeSamplingMethod,
-        HdCyclesTokens->volume_sampling_multiple_importance);
+      sceneDelegate,
+      id,
+      HdCyclesTokens->cyclesMaterialVolumeSamplingMethod,
+      HdCyclesTokens->volume_sampling_multiple_importance);
 
     if (m_shader->volume_sampling_method != VOLUME_SAMPLING_CONVERSION[volume_sampling]) {
       m_shader->volume_sampling_method = VOLUME_SAMPLING_CONVERSION[volume_sampling];

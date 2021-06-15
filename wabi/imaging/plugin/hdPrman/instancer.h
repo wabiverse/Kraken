@@ -59,9 +59,7 @@ class HdPrmanInstancer : public HdInstancer {
   /// Update the cached primvar map from scene data.  Pulled primvars are
   /// cached in _primvarMap.  This function skips pulling primvars that
   /// are pulled explicitly in SampleInstanceTransforms.
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
  private:
   void _SyncPrimvars(HdSceneDelegate *sceneDelegate, HdDirtyBits dirtyBits);

@@ -89,17 +89,16 @@ class HdPh_IndirectDrawBatch : public HdPh_DrawBatch {
   void _Init(HdPhDrawItemInstance *drawItemInstance) override;
 
  private:
-  void _ValidateCompatibility(
-      HdPhBufferArrayRangeSharedPtr const &constantBar,
-      HdPhBufferArrayRangeSharedPtr const &indexBar,
-      HdPhBufferArrayRangeSharedPtr const &topologyVisibilityBar,
-      HdPhBufferArrayRangeSharedPtr const &elementBar,
-      HdPhBufferArrayRangeSharedPtr const &fvarBar,
-      HdPhBufferArrayRangeSharedPtr const &varyingBar,
-      HdPhBufferArrayRangeSharedPtr const &vertexBar,
-      int instancerNumLevels,
-      HdPhBufferArrayRangeSharedPtr const &instanceIndexBar,
-      std::vector<HdPhBufferArrayRangeSharedPtr> const &instanceBars) const;
+  void _ValidateCompatibility(HdPhBufferArrayRangeSharedPtr const &constantBar,
+                              HdPhBufferArrayRangeSharedPtr const &indexBar,
+                              HdPhBufferArrayRangeSharedPtr const &topologyVisibilityBar,
+                              HdPhBufferArrayRangeSharedPtr const &elementBar,
+                              HdPhBufferArrayRangeSharedPtr const &fvarBar,
+                              HdPhBufferArrayRangeSharedPtr const &varyingBar,
+                              HdPhBufferArrayRangeSharedPtr const &vertexBar,
+                              int instancerNumLevels,
+                              HdPhBufferArrayRangeSharedPtr const &instanceIndexBar,
+                              std::vector<HdPhBufferArrayRangeSharedPtr> const &instanceBars) const;
 
   // Culling requires custom resource binding.
   class _CullingProgram : public _DrawingProgram {
@@ -110,8 +109,7 @@ class HdPh_IndirectDrawBatch : public HdPh_DrawBatch {
 
    protected:
     // _DrawingProgram overrides
-    void _GetCustomBindings(HdBindingRequestVector *customBindings,
-                            bool *enableInstanceDraw) const override;
+    void _GetCustomBindings(HdBindingRequestVector *customBindings, bool *enableInstanceDraw) const override;
 
    private:
     bool _useDrawArrays;
@@ -135,8 +133,7 @@ class HdPh_IndirectDrawBatch : public HdPh_DrawBatch {
 
   void _BeginGPUCountVisibleInstances(HdPhResourceRegistrySharedPtr const &resourceRegistry);
 
-  void _EndGPUCountVisibleInstances(HdPhResourceRegistrySharedPtr const &resourceRegistry,
-                                    size_t *result);
+  void _EndGPUCountVisibleInstances(HdPhResourceRegistrySharedPtr const &resourceRegistry, size_t *result);
 
   HdPhDispatchBufferSharedPtr _dispatchBuffer;
   HdPhDispatchBufferSharedPtr _dispatchBufferCullInput;

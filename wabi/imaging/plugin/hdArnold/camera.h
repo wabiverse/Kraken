@@ -47,9 +47,7 @@ class HdArnoldCamera : public HdCamera {
   /// @param renderPaaram Pointer to a HdArnoldRenderParam instance.
   /// @param dirtyBits Dirty Bits to sync.
   HDARNOLD_API
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   /// Returns the minimal set of dirty bits to place in the
   /// change tracker for use in the first sync of this prim.

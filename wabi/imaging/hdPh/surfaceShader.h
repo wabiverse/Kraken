@@ -45,7 +45,7 @@ using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 
 using HdPhSurfaceShaderSharedPtr = std::shared_ptr<class HdPhSurfaceShader>;
 
-using HdBufferSpecVector            = std::vector<struct HdBufferSpec>;
+using HdBufferSpecVector = std::vector<struct HdBufferSpec>;
 using HdPhResourceRegistrySharedPtr = std::shared_ptr<class HdPhResourceRegistry>;
 
 /// \class HdPhSurfaceShader
@@ -132,8 +132,7 @@ class HdPhSurfaceShader : public HdPhShaderCode {
 
   /// Returns if the two shaders can be aggregated into the same draw batch.
   HDPH_API
-  static bool CanAggregate(HdPhShaderCodeSharedPtr const &shaderA,
-                           HdPhShaderCodeSharedPtr const &shaderB);
+  static bool CanAggregate(HdPhShaderCodeSharedPtr const &shaderA, HdPhShaderCodeSharedPtr const &shaderB);
 
   /// Adds the fallback value of the given material param to
   /// buffer specs and sources using the param's name.

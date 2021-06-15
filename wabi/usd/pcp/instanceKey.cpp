@@ -106,15 +106,14 @@ std::string PcpInstanceKey::GetString() const
   }
   else {
     for (const auto &arc : _arcs) {
-      s += TfStringPrintf("  %s%s : %s\n",
-                          TfEnum::GetDisplayName(arc._arcType).c_str(),
-                          (arc._timeOffset.IsIdentity() ?
-                               "" :
-                               TfStringPrintf(" (offset: %f scale: %f)",
-                                              arc._timeOffset.GetOffset(),
-                                              arc._timeOffset.GetScale())
-                                   .c_str()),
-                          Pcp_FormatSite(arc._sourceSite).c_str());
+      s += TfStringPrintf(
+        "  %s%s : %s\n",
+        TfEnum::GetDisplayName(arc._arcType).c_str(),
+        (arc._timeOffset.IsIdentity() ?
+           "" :
+           TfStringPrintf(" (offset: %f scale: %f)", arc._timeOffset.GetOffset(), arc._timeOffset.GetScale())
+             .c_str()),
+        Pcp_FormatSite(arc._sourceSite).c_str());
     }
   }
 

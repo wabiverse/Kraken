@@ -118,8 +118,8 @@ class UsdApolloEngine {
   UsdApolloEngine(const SdfPath &rootPath,
                   const SdfPathVector &excludedPaths,
                   const SdfPathVector &invisedPaths = SdfPathVector(),
-                  const SdfPath &sceneDelegateID    = SdfPath::AbsoluteRootPath(),
-                  const HdDriver &driver            = HdDriver());
+                  const SdfPath &sceneDelegateID = SdfPath::AbsoluteRootPath(),
+                  const HdDriver &driver = HdDriver());
 
   /**
    * Disallow copies. */
@@ -334,9 +334,9 @@ class UsdApolloEngine {
                         const UsdApolloRenderParams &params,
                         GfVec3d *outHitPoint,
                         GfVec3d *outHitNormal,
-                        SdfPath *outHitPrimPath                 = NULL,
-                        SdfPath *outHitInstancerPath            = NULL,
-                        int *outHitInstanceIndex                = NULL,
+                        SdfPath *outHitPrimPath = NULL,
+                        SdfPath *outHitInstancerPath = NULL,
+                        int *outHitInstanceIndex = NULL,
                         HdInstancerContext *outInstancerContext = NULL);
 
   /**
@@ -345,9 +345,9 @@ class UsdApolloEngine {
   USDAPOLLO_API
   bool DecodeIntersection(unsigned char const primIdColor[4],
                           unsigned char const instanceIdColor[4],
-                          SdfPath *outHitPrimPath                 = NULL,
-                          SdfPath *outHitInstancerPath            = NULL,
-                          int *outHitInstanceIndex                = NULL,
+                          SdfPath *outHitPrimPath = NULL,
+                          SdfPath *outHitInstancerPath = NULL,
+                          int *outHitInstanceIndex = NULL,
                           HdInstancerContext *outInstancerContext = NULL);
 
   /**
@@ -456,8 +456,7 @@ class UsdApolloEngine {
    * succeeed if it is not among those returned by
    * GetRendererCommandDescriptors() for the same active render delegate. */
   USDAPOLLO_API
-  bool InvokeRendererCommand(const TfToken &command,
-                             const HdCommandArgs &args = HdCommandArgs()) const;
+  bool InvokeRendererCommand(const TfToken &command, const HdCommandArgs &args = HdCommandArgs()) const;
 
   /**
    * ---------------------------------------------------------------------
@@ -584,12 +583,10 @@ class UsdApolloEngine {
                                            SdfPathVector const &roots,
                                            UsdApolloRenderParams const &params);
   USDAPOLLO_API
-  static HdxRenderTaskParams APOLLO_MakeHydraUsdApolloRenderParams(
-      UsdApolloRenderParams const &params);
+  static HdxRenderTaskParams APOLLO_MakeHydraUsdApolloRenderParams(UsdApolloRenderParams const &params);
 
   USDAPOLLO_API
-  static void APOLLO_ComputeRenderTags(UsdApolloRenderParams const &params,
-                                       TfTokenVector *renderTags);
+  static void APOLLO_ComputeRenderTags(UsdApolloRenderParams const &params, TfTokenVector *renderTags);
 
   USDAPOLLO_API
   void APOLLO_InitializeHgiIfNecessary();

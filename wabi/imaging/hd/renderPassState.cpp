@@ -35,59 +35,59 @@
 WABI_NAMESPACE_BEGIN
 
 HdRenderPassState::HdRenderPassState()
-    : _camera(nullptr),
-      _viewport(0, 0, 1, 1),
-      _overrideWindowPolicy{false, CameraUtilFit},
-      _cullMatrix(1),
-      _worldToViewMatrix(1),
-      _projectionMatrix(1)
+  : _camera(nullptr),
+    _viewport(0, 0, 1, 1),
+    _overrideWindowPolicy{false, CameraUtilFit},
+    _cullMatrix(1),
+    _worldToViewMatrix(1),
+    _projectionMatrix(1)
 
-      ,
-      _overrideColor(0.0f, 0.0f, 0.0f, 0.0f),
-      _wireframeColor(0.0f, 0.0f, 0.0f, 0.0f),
-      _pointColor(0.0f, 0.0f, 0.0f, 1.0f),
-      _pointSize(3.0),
-      _lightingEnabled(true),
-      _clippingEnabled(true)
+    ,
+    _overrideColor(0.0f, 0.0f, 0.0f, 0.0f),
+    _wireframeColor(0.0f, 0.0f, 0.0f, 0.0f),
+    _pointColor(0.0f, 0.0f, 0.0f, 1.0f),
+    _pointSize(3.0),
+    _lightingEnabled(true),
+    _clippingEnabled(true)
 
-      ,
-      _maskColor(1.0f, 0.0f, 0.0f, 1.0f),
-      _indicatorColor(0.0f, 1.0f, 0.0f, 1.0f),
-      _pointSelectedSize(3.0)
+    ,
+    _maskColor(1.0f, 0.0f, 0.0f, 1.0f),
+    _indicatorColor(0.0f, 1.0f, 0.0f, 1.0f),
+    _pointSelectedSize(3.0)
 
-      ,
-      _alphaThreshold(0.5f),
-      _tessLevel(32.0),
-      _drawRange(0.9, -1.0)
+    ,
+    _alphaThreshold(0.5f),
+    _tessLevel(32.0),
+    _drawRange(0.9, -1.0)
 
-      ,
-      _depthBiasUseDefault(true),
-      _depthBiasEnabled(false),
-      _depthBiasConstantFactor(0.0f),
-      _depthBiasSlopeFactor(1.0f),
-      _depthFunc(HdCmpFuncLEqual),
-      _depthMaskEnabled(true),
-      _depthTestEnabled(true),
-      _cullStyle(HdCullStyleNothing),
-      _stencilFunc(HdCmpFuncAlways),
-      _stencilRef(0),
-      _stencilMask(~0),
-      _stencilFailOp(HdStencilOpKeep),
-      _stencilZFailOp(HdStencilOpKeep),
-      _stencilZPassOp(HdStencilOpKeep),
-      _stencilEnabled(false),
-      _lineWidth(1.0f),
-      _blendColorOp(HdBlendOpAdd),
-      _blendColorSrcFactor(HdBlendFactorOne),
-      _blendColorDstFactor(HdBlendFactorZero),
-      _blendAlphaOp(HdBlendOpAdd),
-      _blendAlphaSrcFactor(HdBlendFactorOne),
-      _blendAlphaDstFactor(HdBlendFactorZero),
-      _blendConstantColor(0.0f, 0.0f, 0.0f, 0.0f),
-      _blendEnabled(false),
-      _alphaToCoverageEnabled(false),
-      _colorMaskUseDefault(true),
-      _useMultiSampleAov(true)
+    ,
+    _depthBiasUseDefault(true),
+    _depthBiasEnabled(false),
+    _depthBiasConstantFactor(0.0f),
+    _depthBiasSlopeFactor(1.0f),
+    _depthFunc(HdCmpFuncLEqual),
+    _depthMaskEnabled(true),
+    _depthTestEnabled(true),
+    _cullStyle(HdCullStyleNothing),
+    _stencilFunc(HdCmpFuncAlways),
+    _stencilRef(0),
+    _stencilMask(~0),
+    _stencilFailOp(HdStencilOpKeep),
+    _stencilZFailOp(HdStencilOpKeep),
+    _stencilZPassOp(HdStencilOpKeep),
+    _stencilEnabled(false),
+    _lineWidth(1.0f),
+    _blendColorOp(HdBlendOpAdd),
+    _blendColorSrcFactor(HdBlendFactorOne),
+    _blendColorDstFactor(HdBlendFactorZero),
+    _blendAlphaOp(HdBlendOpAdd),
+    _blendAlphaSrcFactor(HdBlendFactorOne),
+    _blendAlphaDstFactor(HdBlendFactorZero),
+    _blendConstantColor(0.0f, 0.0f, 0.0f, 0.0f),
+    _blendEnabled(false),
+    _alphaToCoverageEnabled(false),
+    _colorMaskUseDefault(true),
+    _useMultiSampleAov(true)
 
 {}
 
@@ -106,24 +106,23 @@ void HdRenderPassState::SetCameraAndViewport(HdCamera const *camera, GfVec4d con
   if (!camera) {
     TF_CODING_ERROR("Received null camera\n");
   }
-  _camera   = camera;
-  _viewport = GfVec4f(
-      (float)viewport[0], (float)viewport[1], (float)viewport[2], (float)viewport[3]);
+  _camera = camera;
+  _viewport = GfVec4f((float)viewport[0], (float)viewport[1], (float)viewport[2], (float)viewport[3]);
 
   // Invalidate framing so that it isn't used by GetProjectionMatrix().
   _framing = CameraUtilFraming();
 }
 
 void HdRenderPassState::SetCameraAndFraming(
-    HdCamera const *camera,
-    const CameraUtilFraming &framing,
-    const std::pair<bool, CameraUtilConformWindowPolicy> &overrideWindowPolicy)
+  HdCamera const *camera,
+  const CameraUtilFraming &framing,
+  const std::pair<bool, CameraUtilConformWindowPolicy> &overrideWindowPolicy)
 {
   if (!camera) {
     TF_CODING_ERROR("Received null camera\n");
   }
-  _camera               = camera;
-  _framing              = framing;
+  _camera = camera;
+  _framing = framing;
   _overrideWindowPolicy = overrideWindowPolicy;
 }
 
@@ -286,7 +285,7 @@ void HdRenderPassState::SetDepthBiasEnabled(bool enable)
 void HdRenderPassState::SetDepthBias(float constantFactor, float slopeFactor)
 {
   _depthBiasConstantFactor = constantFactor;
-  _depthBiasSlopeFactor    = slopeFactor;
+  _depthBiasSlopeFactor = slopeFactor;
 }
 
 void HdRenderPassState::SetDepthFunc(HdCompareFunction depthFunc)
@@ -321,10 +320,10 @@ void HdRenderPassState::SetStencil(HdCompareFunction func,
                                    HdStencilOp zfail,
                                    HdStencilOp zpass)
 {
-  _stencilFunc    = func;
-  _stencilRef     = ref;
-  _stencilMask    = mask;
-  _stencilFailOp  = fail;
+  _stencilFunc = func;
+  _stencilRef = ref;
+  _stencilMask = mask;
+  _stencilFailOp = fail;
   _stencilZFailOp = zfail;
   _stencilZPassOp = zpass;
 }
@@ -351,10 +350,10 @@ void HdRenderPassState::SetBlend(HdBlendOp colorOp,
                                  HdBlendFactor alphaSrcFactor,
                                  HdBlendFactor alphaDstFactor)
 {
-  _blendColorOp        = colorOp;
+  _blendColorOp = colorOp;
   _blendColorSrcFactor = colorSrcFactor;
   _blendColorDstFactor = colorDstFactor;
-  _blendAlphaOp        = alphaOp;
+  _blendAlphaOp = alphaOp;
   _blendAlphaSrcFactor = alphaSrcFactor;
   _blendAlphaDstFactor = alphaDstFactor;
 }

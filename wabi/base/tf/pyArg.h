@@ -46,11 +46,11 @@ class TfPyArg {
   /// \p typeDoc and \p defaultValueDoc are optional documentation strings
   /// describing the expected type and default value of this argument.
   TfPyArg(const std::string &name,
-          const std::string &typeDoc         = std::string(),
+          const std::string &typeDoc = std::string(),
           const std::string &defaultValueDoc = std::string())
-      : _name(name),
-        _typeDoc(typeDoc),
-        _defaultValueDoc(defaultValueDoc)
+    : _name(name),
+      _typeDoc(typeDoc),
+      _defaultValueDoc(defaultValueDoc)
   {}
 
   /// Returns argument name.
@@ -92,10 +92,10 @@ typedef std::vector<TfPyArg> TfPyArgs;
 /// unmatched arguments will be added to the returned tuple or dict.
 TF_API
 std::pair<boost::python::tuple, boost::python::dict> TfPyProcessOptionalArgs(
-    const boost::python::tuple &args,
-    const boost::python::dict &kwargs,
-    const TfPyArgs &expectedArgs,
-    bool allowExtraArgs = false);
+  const boost::python::tuple &args,
+  const boost::python::dict &kwargs,
+  const TfPyArgs &expectedArgs,
+  bool allowExtraArgs = false);
 
 /// Create a doc string for a function with the given \p functionName,
 /// \p requiredArguments and \p optionalArguments. An extra \p description
@@ -104,7 +104,7 @@ TF_API
 std::string TfPyCreateFunctionDocString(const std::string &functionName,
                                         const TfPyArgs &requiredArguments = TfPyArgs(),
                                         const TfPyArgs &optionalArguments = TfPyArgs(),
-                                        const std::string &description    = std::string());
+                                        const std::string &description = std::string());
 
 WABI_NAMESPACE_END
 

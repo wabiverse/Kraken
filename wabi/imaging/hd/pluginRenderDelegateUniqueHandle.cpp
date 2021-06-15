@@ -28,9 +28,9 @@
 WABI_NAMESPACE_BEGIN
 
 HdPluginRenderDelegateUniqueHandle::HdPluginRenderDelegateUniqueHandle(
-    HdPluginRenderDelegateUniqueHandle &&other)
-    : _plugin(other._plugin),
-      _delegate(other._delegate)
+  HdPluginRenderDelegateUniqueHandle &&other)
+  : _plugin(other._plugin),
+    _delegate(other._delegate)
 {
   other._delegate = nullptr;
 }
@@ -43,20 +43,19 @@ HdPluginRenderDelegateUniqueHandle::~HdPluginRenderDelegateUniqueHandle()
 }
 
 HdPluginRenderDelegateUniqueHandle &HdPluginRenderDelegateUniqueHandle::operator=(
-    HdPluginRenderDelegateUniqueHandle &&other)
+  HdPluginRenderDelegateUniqueHandle &&other)
 {
   if (_delegate) {
     _plugin->DeleteRenderDelegate(_delegate);
   }
-  _plugin         = other._plugin;
-  _delegate       = other._delegate;
+  _plugin = other._plugin;
+  _delegate = other._delegate;
   other._delegate = nullptr;
 
   return *this;
 }
 
-HdPluginRenderDelegateUniqueHandle &HdPluginRenderDelegateUniqueHandle::operator=(
-    const std::nullptr_t &)
+HdPluginRenderDelegateUniqueHandle &HdPluginRenderDelegateUniqueHandle::operator=(const std::nullptr_t &)
 {
   if (_delegate) {
     _plugin->DeleteRenderDelegate(_delegate);

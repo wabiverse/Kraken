@@ -51,14 +51,12 @@ HdRenderDelegate *HdArnoldRendererPlugin::CreateRenderDelegate()
   return new HdArnoldRenderDelegate();
 }
 
-HdRenderDelegate *HdArnoldRendererPlugin::CreateRenderDelegate(
-    const HdRenderSettingsMap &settingsMap)
+HdRenderDelegate *HdArnoldRendererPlugin::CreateRenderDelegate(const HdRenderSettingsMap &settingsMap)
 {
-  auto context                = HdArnoldRenderContext::Hydra;
+  auto context = HdArnoldRenderContext::Hydra;
   const auto *houdiniRenderer = TfMapLookupPtr(settingsMap, _tokens->houdini_renderer);
   if (houdiniRenderer != nullptr &&
-      ((houdiniRenderer->IsHolding<TfToken>() &&
-        houdiniRenderer->UncheckedGet<TfToken>() == str::t_husk) ||
+      ((houdiniRenderer->IsHolding<TfToken>() && houdiniRenderer->UncheckedGet<TfToken>() == str::t_husk) ||
        (houdiniRenderer->IsHolding<std::string>() &&
         houdiniRenderer->UncheckedGet<std::string>() == str::t_husk.GetString()))) {
     context = HdArnoldRenderContext::Husk;

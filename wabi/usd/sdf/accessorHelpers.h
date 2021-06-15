@@ -104,9 +104,7 @@ WABI_NAMESPACE_BEGIN
   bool SDF_ACCESSOR_CLASS::Has##name_() const \
   { \
     typedef Sdf_AccessorHelpers<SDF_ACCESSOR_CLASS> _Helper; \
-    return SDF_ACCESSOR_READ_PREDICATE(_GET_KEY_(key_)) ? \
-               _Helper::HasField(this, _GET_KEY_(key_)) : \
-               false; \
+    return SDF_ACCESSOR_READ_PREDICATE(_GET_KEY_(key_)) ? _Helper::HasField(this, _GET_KEY_(key_)) : false; \
   }
 
 #define SDF_DEFINE_CLEAR(name_, key_) \
@@ -139,8 +137,8 @@ WABI_NAMESPACE_BEGIN
   { \
     typedef Sdf_AccessorHelpers<SDF_ACCESSOR_CLASS> _Helper; \
     return SDF_ACCESSOR_READ_PREDICATE(_GET_KEY_(key_)) ? \
-               SdfDictionaryProxy(_Helper::GetSpecHandle(this), _GET_KEY_(key_)) : \
-               SdfDictionaryProxy(); \
+             SdfDictionaryProxy(_Helper::GetSpecHandle(this), _GET_KEY_(key_)) : \
+             SdfDictionaryProxy(); \
   }
 
 #define SDF_DEFINE_DICTIONARY_SET(name_, key_) \
@@ -190,8 +188,7 @@ WABI_NAMESPACE_BEGIN
 // members directly, while spec API classes need to query their associated
 // spec. These templates capture those differences.
 
-template<class T, bool IsForSpec = boost::is_base_of<SdfSpec, T>::value>
-struct Sdf_AccessorHelpers;
+template<class T, bool IsForSpec = boost::is_base_of<SdfSpec, T>::value> struct Sdf_AccessorHelpers;
 
 template<class T> struct Sdf_AccessorHelpers<T, true> {
   static const SdfSchemaBase &GetSchema(const T *spec)

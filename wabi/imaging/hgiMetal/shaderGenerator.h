@@ -55,8 +55,7 @@ WABI_NAMESPACE_BEGIN
 // Stage function entryPoint definition
 // Stage function implementation
 
-using HgiMetalShaderStageEntryPointUniquePtr =
-    std::unique_ptr<class HgiMetalShaderStageEntryPoint>;
+using HgiMetalShaderStageEntryPointUniquePtr = std::unique_ptr<class HgiMetalShaderStageEntryPoint>;
 
 /// \class HgiMetalShaderGenerator
 ///
@@ -82,7 +81,7 @@ class HgiMetalShaderGenerator final : public HgiShaderGenerator {
 
  private:
   HgiMetalShaderStageEntryPointUniquePtr _BuildShaderStageEntryPoints(
-      const HgiShaderFunctionDesc &descriptor);
+    const HgiShaderFunctionDesc &descriptor);
 
   void _BuildTextureShaderSections(const HgiShaderFunctionDesc &descriptor);
   void _BuildBufferShaderSections(const HgiShaderFunctionDesc &descriptor);

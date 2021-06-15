@@ -56,9 +56,9 @@ void Indexer::GetSearchPaths(ZepEditor &editor,
       auto spConfig = cpptoml::parse_file(config.string());
       if (spConfig != nullptr) {
         ignore_patterns = spConfig->get_qualified_array_of<std::string>("search.ignore")
-                              .value_or(std::vector<std::string>{});
+                            .value_or(std::vector<std::string>{});
         include_patterns = spConfig->get_qualified_array_of<std::string>("search.include")
-                               .value_or(std::vector<std::string>{});
+                             .value_or(std::vector<std::string>{});
       }
     }
     catch (cpptoml::parse_exception &ex) {
@@ -77,8 +77,7 @@ void Indexer::GetSearchPaths(ZepEditor &editor,
     ignore_patterns = {"[Bb]uild/*", "**/[Oo]bj/**", "**/[Bb]in/**", "[Bb]uilt*"};
   }
   if (include_patterns.empty()) {
-    include_patterns = {
-        "*.cpp", "*.c", "*.hpp", "*.h", "*.lsp", "*.scm", "*.cs", "*.cfg", "*.orca"};
+    include_patterns = {"*.cpp", "*.c", "*.hpp", "*.h", "*.lsp", "*.scm", "*.cs", "*.cfg", "*.orca"};
   }
 }  // namespace Zep
 
@@ -98,65 +97,65 @@ std::future<std::shared_ptr<FileIndexResult>> Indexer::IndexPaths(ZepEditor &edi
 
   auto pFileSystem = &editor.GetFileSystem();
   return editor.GetThreadPool().enqueue(
-      [=](ZepPath root) {
-        spResult->root = root;
+    [=](ZepPath root) {
+      spResult->root = root;
 
-        try {
-          // Index the whole subtree, ignoring any patterns supplied to us
-          pFileSystem->ScanDirectory(root, [&](const ZepPath &p, bool &recurse) -> bool {
-            recurse = true;
+      try {
+        // Index the whole subtree, ignoring any patterns supplied to us
+        pFileSystem->ScanDirectory(root, [&](const ZepPath &p, bool &recurse) -> bool {
+          recurse = true;
 
-            auto bDir = pFileSystem->IsDirectory(p);
+          auto bDir = pFileSystem->IsDirectory(p);
 
-            // Add this one to our list
-            auto targetZep = pFileSystem->Canonical(p);
-            auto rel       = path_get_relative(root, targetZep);
+          // Add this one to our list
+          auto targetZep = pFileSystem->Canonical(p);
+          auto rel = path_get_relative(root, targetZep);
 
-            bool matched = true;
-            for (auto &proj : ignorePaths) {
-              auto res = fnmatch(proj.c_str(), rel.string().c_str(), 0);
-              if (res == 0) {
-                matched = false;
-                break;
-              }
+          bool matched = true;
+          for (auto &proj : ignorePaths) {
+            auto res = fnmatch(proj.c_str(), rel.string().c_str(), 0);
+            if (res == 0) {
+              matched = false;
+              break;
             }
+          }
 
-            if (!matched) {
-              if (bDir) {
-                recurse = false;
-              }
-              return true;
-            }
-
-            matched = false;
-            for (auto &proj : includePaths) {
-              auto res = fnmatch(proj.c_str(), rel.string().c_str(), 0);
-              if (res == 0) {
-                matched = true;
-                break;
-              }
-            }
-
-            if (!matched) {
-              return true;
-            }
-
-            // Not adding directories to the search list
+          if (!matched) {
             if (bDir) {
-              return true;
+              recurse = false;
             }
-
-            spResult->paths.push_back(rel);
-            spResult->lowerPaths.push_back(string_tolower(rel.string()));
-
             return true;
-          });
-        }
-        catch (std::exception &) {
-        }
-        return spResult;
-      },
-      startPath);
+          }
+
+          matched = false;
+          for (auto &proj : includePaths) {
+            auto res = fnmatch(proj.c_str(), rel.string().c_str(), 0);
+            if (res == 0) {
+              matched = true;
+              break;
+            }
+          }
+
+          if (!matched) {
+            return true;
+          }
+
+          // Not adding directories to the search list
+          if (bDir) {
+            return true;
+          }
+
+          spResult->paths.push_back(rel);
+          spResult->lowerPaths.push_back(string_tolower(rel.string()));
+
+          return true;
+        });
+      }
+      catch (std::exception &) {
+      }
+      return spResult;
+    },
+    startPath);
 }
 
 void Indexer::Notify(std::shared_ptr<ZepMessage> message)
@@ -223,8 +222,8 @@ void Indexer::StartSymbolSearch()
 bool Indexer::StartIndexing()
 {
   bool foundGit = false;
-  m_searchRoot  = GetEditor().GetFileSystem().GetSearchRoot(
-      GetEditor().GetFileSystem().GetWorkingDirectory(), foundGit);
+  m_searchRoot = GetEditor().GetFileSystem().GetSearchRoot(GetEditor().GetFileSystem().GetWorkingDirectory(),
+                                                           foundGit);
   if (!foundGit) {
     ZLOG(INFO, "Not a git project");
     return false;
@@ -244,7 +243,7 @@ bool Indexer::StartIndexing()
   fs.Write(indexDBRoot / "indexdb", &v, 1);
 
   m_fileSearchActive = true;
-  m_indexResult      = Indexer::IndexPaths(GetEditor(), m_searchRoot);
+  m_indexResult = Indexer::IndexPaths(GetEditor(), m_searchRoot);
 
   return true;
 }

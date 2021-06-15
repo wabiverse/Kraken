@@ -62,7 +62,7 @@ class HdxOitRenderTask : public HdxRenderTask {
   void _Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) override;
 
  private:
-  HdxOitRenderTask()                         = delete;
+  HdxOitRenderTask() = delete;
   HdxOitRenderTask(const HdxOitRenderTask &) = delete;
   HdxOitRenderTask &operator=(const HdxOitRenderTask &) = delete;
 

@@ -86,35 +86,34 @@ static TraceReporterRefPtr _Constructor1(const std::string &label)
 
 void wrapReporter()
 {
-  using This    = TraceReporter;
+  using This = TraceReporter;
   using ThisPtr = TraceReporterPtr;
 
   object reporter_class =
-      class_<This, ThisPtr, boost::noncopyable>("Reporter", no_init)
-          .def(TfPyRefAndWeakPtr())
-          .def(TfMakePyConstructor(_Constructor1))
+    class_<This, ThisPtr, boost::noncopyable>("Reporter", no_init)
+      .def(TfPyRefAndWeakPtr())
+      .def(TfMakePyConstructor(_Constructor1))
 
-          .def("GetLabel", &This::GetLabel, return_value_policy<return_by_value>())
+      .def("GetLabel", &This::GetLabel, return_value_policy<return_by_value>())
 
-          .def("Report", &::_Report, (arg("iterationCount") = 1))
+      .def("Report", &::_Report, (arg("iterationCount") = 1))
 
-          .def("Report", &::_ReportToFile, (arg("iterationCount") = 1, arg("append") = false))
+      .def("Report", &::_ReportToFile, (arg("iterationCount") = 1, arg("append") = false))
 
-          .def("ReportTimes", &::_ReportTimes)
+      .def("ReportTimes", &::_ReportTimes)
 
-          .def("ReportChromeTracing", &::_ReportChromeTracing)
-          .def("ReportChromeTracingToFile", &::_ReportChromeTracingToFile)
+      .def("ReportChromeTracing", &::_ReportChromeTracing)
+      .def("ReportChromeTracingToFile", &::_ReportChromeTracingToFile)
 
-          .add_property("aggregateTreeRoot", &This::GetAggregateTreeRoot)
+      .add_property("aggregateTreeRoot", &This::GetAggregateTreeRoot)
 
-          .def("UpdateTraceTrees", &This::UpdateTraceTrees)
+      .def("UpdateTraceTrees", &This::UpdateTraceTrees)
 
-          .def("ClearTree", &This::ClearTree)
+      .def("ClearTree", &This::ClearTree)
 
-          .add_property("groupByFunction", &This::GetGroupByFunction, &This::SetGroupByFunction)
+      .add_property("groupByFunction", &This::GetGroupByFunction, &This::SetGroupByFunction)
 
-          .add_property(
-              "foldRecursiveCalls", &This::GetFoldRecursiveCalls, &This::SetFoldRecursiveCalls)
+      .add_property("foldRecursiveCalls", &This::GetFoldRecursiveCalls, &This::SetFoldRecursiveCalls)
 
-          .add_static_property("globalReporter", &This::GetGlobalReporter);
+      .add_static_property("globalReporter", &This::GetGlobalReporter);
 };

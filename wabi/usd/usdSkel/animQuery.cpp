@@ -48,8 +48,7 @@ UsdPrim UsdSkelAnimQuery::GetPrim() const
 }
 
 template<typename Matrix4>
-bool UsdSkelAnimQuery::ComputeJointLocalTransforms(VtArray<Matrix4> *xforms,
-                                                   UsdTimeCode time) const
+bool UsdSkelAnimQuery::ComputeJointLocalTransforms(VtArray<Matrix4> *xforms, UsdTimeCode time) const
 {
   if (TF_VERIFY(IsValid(), "invalid anim query.")) {
     return _impl->ComputeJointLocalTransforms(xforms, time);

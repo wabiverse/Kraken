@@ -101,9 +101,9 @@ template<bool Const, typename Encoding, typename Allocator> class GenericMemberI
   template<bool, typename, typename> friend class GenericMemberIterator;
 
   using difference_type = std::ptrdiff_t;
-  using value_type      = ValueType;
-  using reference       = typename std::conditional<Const, value_type const &, value_type &>::type;
-  using pointer         = typename std::conditional<Const, value_type const *, value_type *>::type;
+  using value_type = ValueType;
+  using reference = typename std::conditional<Const, value_type const &, value_type &>::type;
+  using pointer = typename std::conditional<Const, value_type const *, value_type *>::type;
   using iterator_category = std::random_access_iterator_tag;
 
   using BaseType = GenericMemberIterator<Const, Encoding, Allocator>;
@@ -268,14 +268,12 @@ template<bool Const, typename Encoding, typename Allocator> class GenericMemberI
 template<bool Const, typename Encoding, typename Allocator> struct GenericMemberIterator;
 
 //! non-const GenericMemberIterator
-template<typename Encoding, typename Allocator>
-struct GenericMemberIterator<false, Encoding, Allocator> {
+template<typename Encoding, typename Allocator> struct GenericMemberIterator<false, Encoding, Allocator> {
   //! use plain pointer as iterator type
   typedef GenericMember<Encoding, Allocator> *Iterator;
 };
 //! const GenericMemberIterator
-template<typename Encoding, typename Allocator>
-struct GenericMemberIterator<true, Encoding, Allocator> {
+template<typename Encoding, typename Allocator> struct GenericMemberIterator<true, Encoding, Allocator> {
   //! use plain const pointer as iterator type
   typedef const GenericMember<Encoding, Allocator> *Iterator;
 };
@@ -340,8 +338,7 @@ template<typename CharType> struct GenericStringRef {
                            GenericValue instead.
                     */
 #endif
-  template<SizeType N>
-  GenericStringRef(const CharType (&str)[N]) RAPIDJSON_NOEXCEPT : s(str), length(N - 1)
+  template<SizeType N> GenericStringRef(const CharType (&str)[N]) RAPIDJSON_NOEXCEPT : s(str), length(N - 1)
   {}
 
   //! Explicitly create string reference from \c const character pointer
@@ -430,8 +427,7 @@ template<typename CharType> inline GenericStringRef<CharType> StringRef(const Ch
    GenericValue \param length The length of source string. \return GenericStringRef string
    reference object \relatesalso GenericStringRef
 */
-template<typename CharType>
-inline GenericStringRef<CharType> StringRef(const CharType *str, size_t length)
+template<typename CharType> inline GenericStringRef<CharType> StringRef(const CharType *str, size_t length)
 {
   return GenericStringRef<CharType>(str, SizeType(length));
 }
@@ -468,7 +464,7 @@ template<typename T>
 struct IsGenericValueImpl<T,
                           typename Void<typename T::EncodingType>::Type,
                           typename Void<typename T::AllocatorType>::Type>
-    : IsBaseOf<GenericValue<typename T::EncodingType, typename T::AllocatorType>, T>::Type {
+  : IsBaseOf<GenericValue<typename T::EncodingType, typename T::AllocatorType>, T>::Type {
 };
 
 // helper to match arbitrary GenericValue instantiations, including derived classes
@@ -639,8 +635,7 @@ template<typename ValueType> struct TypeHelper<ValueType, const typename ValueTy
 };
 
 #if RAPIDJSON_HAS_STDSTRING
-template<typename ValueType>
-struct TypeHelper<ValueType, std::basic_string<typename ValueType::Ch>> {
+template<typename ValueType> struct TypeHelper<ValueType, std::basic_string<typename ValueType::Ch>> {
   typedef std::basic_string<typename ValueType::Ch> StringType;
   static bool Is(const ValueType &v)
   {
@@ -750,12 +745,11 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   typedef typename Encoding::Ch Ch;            //!< Character type derived from Encoding.
   typedef GenericStringRef<Ch> StringRefType;  //!< Reference to a constant string
   typedef typename GenericMemberIterator<false, Encoding, Allocator>::Iterator
-      MemberIterator;  //!< Member iterator for iterating in object.
+    MemberIterator;  //!< Member iterator for iterating in object.
   typedef typename GenericMemberIterator<true, Encoding, Allocator>::Iterator
-      ConstMemberIterator;              //!< Constant member iterator for iterating in object.
-  typedef GenericValue *ValueIterator;  //!< Value iterator for iterating in array.
-  typedef const GenericValue
-      *ConstValueIterator;  //!< Constant value iterator for iterating in array.
+    ConstMemberIterator;                           //!< Constant member iterator for iterating in object.
+  typedef GenericValue *ValueIterator;             //!< Value iterator for iterating in array.
+  typedef const GenericValue *ConstValueIterator;  //!< Constant value iterator for iterating in array.
   typedef GenericValue<Encoding, Allocator> ValueType;  //!< Value type of itself.
   typedef GenericArray<false, ValueType> Array;
   typedef GenericArray<true, ValueType> ConstArray;
@@ -785,8 +779,7 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
 
 #if RAPIDJSON_HAS_CXX11_RVALUE_REFS
   //! Moving from a GenericDocument is not permitted.
-  template<typename StackAllocator>
-  GenericValue(GenericDocument<Encoding, Allocator, StackAllocator> &&rhs);
+  template<typename StackAllocator> GenericValue(GenericDocument<Encoding, Allocator, StackAllocator> &&rhs);
 
   //! Move assignment from a GenericDocument is not permitted.
   template<typename StackAllocator>
@@ -801,13 +794,8 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   */
   explicit GenericValue(Type type) RAPIDJSON_NOEXCEPT : data_()
   {
-    static const uint16_t defaultFlags[7] = {kNullFlag,
-                                             kFalseFlag,
-                                             kTrueFlag,
-                                             kObjectFlag,
-                                             kArrayFlag,
-                                             kShortStringFlag,
-                                             kNumberAnyFlag};
+    static const uint16_t defaultFlags[7] = {
+      kNullFlag, kFalseFlag, kTrueFlag, kObjectFlag, kArrayFlag, kShortStringFlag, kNumberAnyFlag};
     RAPIDJSON_ASSERT(type <= kNumberType);
     data_.f.flags = defaultFlags[type];
 
@@ -834,12 +822,11 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
    */
 #ifndef RAPIDJSON_DOXYGEN_RUNNING  // hide SFINAE from Doxygen
   template<typename T>
-  explicit GenericValue(T b, RAPIDJSON_ENABLEIF((internal::IsSame<bool, T>)))
-      RAPIDJSON_NOEXCEPT  // See #472
+  explicit GenericValue(T b, RAPIDJSON_ENABLEIF((internal::IsSame<bool, T>))) RAPIDJSON_NOEXCEPT  // See #472
 #else
   explicit GenericValue(bool b) RAPIDJSON_NOEXCEPT
 #endif
-      : data_()
+    : data_()
   {
     // safe-guard against failing SFINAE
     RAPIDJSON_STATIC_ASSERT((internal::IsSame<bool, T>::Value));
@@ -849,21 +836,21 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   //! Constructor for int value.
   explicit GenericValue(int i) RAPIDJSON_NOEXCEPT : data_()
   {
-    data_.n.i64   = i;
+    data_.n.i64 = i;
     data_.f.flags = (i >= 0) ? (kNumberIntFlag | kUintFlag | kUint64Flag) : kNumberIntFlag;
   }
 
   //! Constructor for unsigned value.
   explicit GenericValue(unsigned u) RAPIDJSON_NOEXCEPT : data_()
   {
-    data_.n.u64   = u;
+    data_.n.u64 = u;
     data_.f.flags = (u & 0x80000000) ? kNumberUintFlag : (kNumberUintFlag | kIntFlag | kInt64Flag);
   }
 
   //! Constructor for int64_t value.
   explicit GenericValue(int64_t i64) RAPIDJSON_NOEXCEPT : data_()
   {
-    data_.n.i64   = i64;
+    data_.n.i64 = i64;
     data_.f.flags = kNumberInt64Flag;
     if (i64 >= 0) {
       data_.f.flags |= kNumberUint64Flag;
@@ -879,7 +866,7 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   //! Constructor for uint64_t value.
   explicit GenericValue(uint64_t u64) RAPIDJSON_NOEXCEPT : data_()
   {
-    data_.n.u64   = u64;
+    data_.n.u64 = u64;
     data_.f.flags = kNumberUint64Flag;
     if (!(u64 & RAPIDJSON_UINT64_C2(0x80000000, 0x00000000)))
       data_.f.flags |= kInt64Flag;
@@ -892,7 +879,7 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   //! Constructor for double value.
   explicit GenericValue(double d) RAPIDJSON_NOEXCEPT : data_()
   {
-    data_.n.d     = d;
+    data_.n.d = d;
     data_.f.flags = kNumberDoubleFlag;
   }
 
@@ -938,7 +925,7 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   */
   GenericValue(Array a) RAPIDJSON_NOEXCEPT : data_(a.value_.data_)
   {
-    a.value_.data_         = Data();
+    a.value_.data_ = Data();
     a.value_.data_.f.flags = kArrayFlag;
   }
 
@@ -950,7 +937,7 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   */
   GenericValue(Object o) RAPIDJSON_NOEXCEPT : data_(o.value_.data_)
   {
-    o.value_.data_         = Data();
+    o.value_.data_ = Data();
     o.value_.data_.f.flags = kObjectFlag;
   }
 
@@ -1109,8 +1096,7 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
       case kObjectType:  // Warning: O(n^2) inner-loop
         if (data_.o.size != rhs.data_.o.size)
           return false;
-        for (ConstMemberIterator lhsMemberItr = MemberBegin(); lhsMemberItr != MemberEnd();
-             ++lhsMemberItr) {
+        for (ConstMemberIterator lhsMemberItr = MemberBegin(); lhsMemberItr != MemberEnd(); ++lhsMemberItr) {
           typename RhsType::ConstMemberIterator rhsMemberItr = rhs.FindMember(lhsMemberItr->name);
           if (rhsMemberItr == rhs.MemberEnd() || lhsMemberItr->value != rhsMemberItr->value)
             return false;
@@ -1163,9 +1149,7 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
    * \c false
    */
   template<typename T>
-  RAPIDJSON_DISABLEIF_RETURN(
-      (internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
-      (bool))
+  RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>), (bool))
   operator==(const T &rhs) const
   {
     return *this == GenericValue(rhs);
@@ -1201,8 +1185,8 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
    */
   template<typename T>
   friend RAPIDJSON_DISABLEIF_RETURN((internal::IsGenericValue<T>), (bool)) operator==(
-      const T &lhs,
-      const GenericValue &rhs)
+    const T &lhs,
+    const GenericValue &rhs)
   {
     return rhs == lhs;
   }
@@ -1212,8 +1196,8 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
    */
   template<typename T>
   friend RAPIDJSON_DISABLEIF_RETURN((internal::IsGenericValue<T>), (bool)) operator!=(
-      const T &lhs,
-      const GenericValue &rhs)
+    const T &lhs,
+    const GenericValue &rhs)
   {
     return !(rhs == lhs);
   }
@@ -1285,12 +1269,12 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
     if (!IsNumber())
       return false;
     if (IsUint64()) {
-      uint64_t u        = GetUint64();
+      uint64_t u = GetUint64();
       volatile double d = static_cast<double>(u);
       return static_cast<uint64_t>(d) == u;
     }
     if (IsInt64()) {
-      int64_t i         = GetInt64();
+      int64_t i = GetInt64();
       volatile double d = static_cast<double>(i);
       return static_cast<int64_t>(d) == i;
     }
@@ -1384,8 +1368,8 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   */
   template<typename T>
   RAPIDJSON_DISABLEIF_RETURN(
-      (internal::NotExpr<internal::IsSame<typename internal::RemoveConst<T>::Type, Ch>>),
-      (GenericValue &))
+    (internal::NotExpr<internal::IsSame<typename internal::RemoveConst<T>::Type, Ch>>),
+    (GenericValue &))
   operator[](T *name)
   {
     GenericValue n(StringRef(name));
@@ -1393,8 +1377,8 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   }
   template<typename T>
   RAPIDJSON_DISABLEIF_RETURN(
-      (internal::NotExpr<internal::IsSame<typename internal::RemoveConst<T>::Type, Ch>>),
-      (const GenericValue &))
+    (internal::NotExpr<internal::IsSame<typename internal::RemoveConst<T>::Type, Ch>>),
+    (const GenericValue &))
   operator[](T *name) const
   {
     return const_cast<GenericValue &>(*this)[name];
@@ -1603,14 +1587,13 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
     if (o.size >= o.capacity) {
       if (o.capacity == 0) {
         o.capacity = kDefaultObjectCapacity;
-        SetMembersPointer(
-            reinterpret_cast<Member *>(allocator.Malloc(o.capacity * sizeof(Member))));
+        SetMembersPointer(reinterpret_cast<Member *>(allocator.Malloc(o.capacity * sizeof(Member))));
       }
       else {
         SizeType oldCapacity = o.capacity;
         o.capacity += (oldCapacity + 1) / 2;  // grow by factor 1.5
         SetMembersPointer(reinterpret_cast<Member *>(allocator.Realloc(
-            GetMembersPointer(), oldCapacity * sizeof(Member), o.capacity * sizeof(Member))));
+          GetMembersPointer(), oldCapacity * sizeof(Member), o.capacity * sizeof(Member))));
       }
     }
     Member *members = GetMembersPointer();
@@ -1671,9 +1654,8 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
       \note Amortized Constant time complexity.
   */
   template<typename T>
-  RAPIDJSON_DISABLEIF_RETURN(
-      (internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
-      (GenericValue &))
+  RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
+                             (GenericValue &))
   AddMember(GenericValue &name, T value, Allocator &allocator)
   {
     GenericValue v(value);
@@ -1749,9 +1731,8 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
       \note Amortized Constant time complexity.
   */
   template<typename T>
-  RAPIDJSON_DISABLEIF_RETURN(
-      (internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
-      (GenericValue &))
+  RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
+                             (GenericValue &))
   AddMember(StringRefType name, T value, Allocator &allocator)
   {
     GenericValue n(name);
@@ -1791,8 +1772,7 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   }
 #endif
 
-  template<typename SourceAllocator>
-  bool RemoveMember(const GenericValue<Encoding, SourceAllocator> &name)
+  template<typename SourceAllocator> bool RemoveMember(const GenericValue<Encoding, SourceAllocator> &name)
   {
     MemberIterator m = FindMember(name);
     if (m != MemberEnd()) {
@@ -1885,8 +1865,7 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   }
 #endif
 
-  template<typename SourceAllocator>
-  bool EraseMember(const GenericValue<Encoding, SourceAllocator> &name)
+  template<typename SourceAllocator> bool EraseMember(const GenericValue<Encoding, SourceAllocator> &name)
   {
     MemberIterator m = FindMember(name);
     if (m != MemberEnd()) {
@@ -2009,10 +1988,8 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   {
     RAPIDJSON_ASSERT(IsArray());
     if (newCapacity > data_.a.capacity) {
-      SetElementsPointer(reinterpret_cast<GenericValue *>(
-          allocator.Realloc(GetElementsPointer(),
-                            data_.a.capacity * sizeof(GenericValue),
-                            newCapacity * sizeof(GenericValue))));
+      SetElementsPointer(reinterpret_cast<GenericValue *>(allocator.Realloc(
+        GetElementsPointer(), data_.a.capacity * sizeof(GenericValue), newCapacity * sizeof(GenericValue))));
       data_.a.capacity = newCapacity;
     }
     return *this;
@@ -2076,9 +2053,8 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
       \note Amortized constant time complexity.
   */
   template<typename T>
-  RAPIDJSON_DISABLEIF_RETURN(
-      (internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
-      (GenericValue &))
+  RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
+                             (GenericValue &))
   PushBack(T value, Allocator &allocator)
   {
     GenericValue v(value);
@@ -2379,11 +2355,9 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
         if (RAPIDJSON_UNLIKELY(!handler.StartObject()))
           return false;
         for (ConstMemberIterator m = MemberBegin(); m != MemberEnd(); ++m) {
-          RAPIDJSON_ASSERT(
-              m->name.IsString());  // User may change the type of name by MemberIterator.
-          if (RAPIDJSON_UNLIKELY(!handler.Key(m->name.GetString(),
-                                              m->name.GetStringLength(),
-                                              (m->name.data_.f.flags & kCopyFlag) != 0)))
+          RAPIDJSON_ASSERT(m->name.IsString());  // User may change the type of name by MemberIterator.
+          if (RAPIDJSON_UNLIKELY(!handler.Key(
+                m->name.GetString(), m->name.GetStringLength(), (m->name.data_.f.flags & kCopyFlag) != 0)))
             return false;
           if (RAPIDJSON_UNLIKELY(!m->value.Accept(handler)))
             return false;
@@ -2421,38 +2395,38 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   template<typename, typename, typename> friend class GenericDocument;
 
   enum {
-    kBoolFlag      = 0x0008,
-    kNumberFlag    = 0x0010,
-    kIntFlag       = 0x0020,
-    kUintFlag      = 0x0040,
-    kInt64Flag     = 0x0080,
-    kUint64Flag    = 0x0100,
-    kDoubleFlag    = 0x0200,
-    kStringFlag    = 0x0400,
-    kCopyFlag      = 0x0800,
+    kBoolFlag = 0x0008,
+    kNumberFlag = 0x0010,
+    kIntFlag = 0x0020,
+    kUintFlag = 0x0040,
+    kInt64Flag = 0x0080,
+    kUint64Flag = 0x0100,
+    kDoubleFlag = 0x0200,
+    kStringFlag = 0x0400,
+    kCopyFlag = 0x0800,
     kInlineStrFlag = 0x1000,
 
     // Initial flags of different types.
-    kNullFlag         = kNullType,
-    kTrueFlag         = kTrueType | kBoolFlag,
-    kFalseFlag        = kFalseType | kBoolFlag,
-    kNumberIntFlag    = kNumberType | kNumberFlag | kIntFlag | kInt64Flag,
-    kNumberUintFlag   = kNumberType | kNumberFlag | kUintFlag | kUint64Flag | kInt64Flag,
-    kNumberInt64Flag  = kNumberType | kNumberFlag | kInt64Flag,
+    kNullFlag = kNullType,
+    kTrueFlag = kTrueType | kBoolFlag,
+    kFalseFlag = kFalseType | kBoolFlag,
+    kNumberIntFlag = kNumberType | kNumberFlag | kIntFlag | kInt64Flag,
+    kNumberUintFlag = kNumberType | kNumberFlag | kUintFlag | kUint64Flag | kInt64Flag,
+    kNumberInt64Flag = kNumberType | kNumberFlag | kInt64Flag,
     kNumberUint64Flag = kNumberType | kNumberFlag | kUint64Flag,
     kNumberDoubleFlag = kNumberType | kNumberFlag | kDoubleFlag,
     kNumberAnyFlag = kNumberType | kNumberFlag | kIntFlag | kInt64Flag | kUintFlag | kUint64Flag |
                      kDoubleFlag,
     kConstStringFlag = kStringType | kStringFlag,
-    kCopyStringFlag  = kStringType | kStringFlag | kCopyFlag,
+    kCopyStringFlag = kStringType | kStringFlag | kCopyFlag,
     kShortStringFlag = kStringType | kStringFlag | kCopyFlag | kInlineStrFlag,
-    kObjectFlag      = kObjectType,
-    kArrayFlag       = kArrayType,
+    kObjectFlag = kObjectType,
+    kArrayFlag = kArrayType,
 
     kTypeMask = 0x07
   };
 
-  static const SizeType kDefaultArrayCapacity  = 16;
+  static const SizeType kDefaultArrayCapacity = 16;
   static const SizeType kDefaultObjectCapacity = 16;
 
   struct Flag {
@@ -2461,7 +2435,7 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
 #elif RAPIDJSON_64BIT
     char payload[sizeof(SizeType) * 2 + sizeof(void *) + 6];  // 6 padding bytes
 #else
-        char payload[sizeof(SizeType) * 2 + sizeof(void *) + 2];  // 2 padding bytes
+      char payload[sizeof(SizeType) * 2 + sizeof(void *) + 2];  // 2 padding bytes
 #endif
     uint16_t flags;
   };
@@ -2484,8 +2458,8 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   struct ShortString {
     enum {
       MaxChars = sizeof(static_cast<Flag *>(0)->payload) / sizeof(Ch),
-      MaxSize  = MaxChars - 1,
-      LenPos   = MaxSize
+      MaxSize = MaxChars - 1,
+      LenPos = MaxSize
     };
     Ch str[MaxChars];
 
@@ -2582,8 +2556,7 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   {
     data_.f.flags = kArrayFlag;
     if (count) {
-      GenericValue *e = static_cast<GenericValue *>(
-          allocator.Malloc(count * sizeof(GenericValue)));
+      GenericValue *e = static_cast<GenericValue *>(allocator.Malloc(count * sizeof(GenericValue)));
       SetElementsPointer(e);
       std::memcpy(e, values, count * sizeof(GenericValue));
     }
@@ -2624,9 +2597,9 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
       str = data_.ss.str;
     }
     else {
-      data_.f.flags  = kCopyStringFlag;
+      data_.f.flags = kCopyStringFlag;
       data_.s.length = s.length;
-      str            = static_cast<Ch *>(allocator.Malloc((s.length + 1) * sizeof(Ch)));
+      str = static_cast<Ch *>(allocator.Malloc((s.length + 1) * sizeof(Ch)));
       SetStringPointer(str);
     }
     std::memcpy(str, s, s.length * sizeof(Ch));
@@ -2682,13 +2655,13 @@ typedef GenericValue<UTF8<>> Value;
    GenericDocument object via a pointer to a GenericValue.
 */
 template<typename Encoding,
-         typename Allocator      = MemoryPoolAllocator<>,
+         typename Allocator = MemoryPoolAllocator<>,
          typename StackAllocator = CrtAllocator>
 class GenericDocument : public GenericValue<Encoding, Allocator> {
  public:
   typedef typename Encoding::Ch Ch;                     //!< Character type derived from Encoding.
   typedef GenericValue<Encoding, Allocator> ValueType;  //!< Value type of the document.
-  typedef Allocator AllocatorType;  //!< Allocator type from template parameter.
+  typedef Allocator AllocatorType;                      //!< Allocator type from template parameter.
 
   //! Constructor
   /*! Creates an empty document of specified type.
@@ -2698,14 +2671,14 @@ class GenericDocument : public GenericValue<Encoding, Allocator> {
       \param stackAllocator   Optional allocator for allocating memory for stack.
   */
   explicit GenericDocument(Type type,
-                           Allocator *allocator           = 0,
-                           size_t stackCapacity           = kDefaultStackCapacity,
+                           Allocator *allocator = 0,
+                           size_t stackCapacity = kDefaultStackCapacity,
                            StackAllocator *stackAllocator = 0)
-      : GenericValue<Encoding, Allocator>(type),
-        allocator_(allocator),
-        ownAllocator_(0),
-        stack_(stackAllocator, stackCapacity),
-        parseResult_()
+    : GenericValue<Encoding, Allocator>(type),
+      allocator_(allocator),
+      ownAllocator_(0),
+      stack_(stackAllocator, stackCapacity),
+      parseResult_()
   {
     if (!allocator_)
       ownAllocator_ = allocator_ = RAPIDJSON_NEW(Allocator());
@@ -2717,13 +2690,13 @@ class GenericDocument : public GenericValue<Encoding, Allocator> {
       \param stackCapacity    Optional initial capacity of stack in bytes.
       \param stackAllocator   Optional allocator for allocating memory for stack.
   */
-  GenericDocument(Allocator *allocator           = 0,
-                  size_t stackCapacity           = kDefaultStackCapacity,
+  GenericDocument(Allocator *allocator = 0,
+                  size_t stackCapacity = kDefaultStackCapacity,
                   StackAllocator *stackAllocator = 0)
-      : allocator_(allocator),
-        ownAllocator_(0),
-        stack_(stackAllocator, stackCapacity),
-        parseResult_()
+    : allocator_(allocator),
+      ownAllocator_(0),
+      stack_(stackAllocator, stackCapacity),
+      parseResult_()
   {
     if (!allocator_)
       ownAllocator_ = allocator_ = RAPIDJSON_NEW(Allocator());
@@ -2732,16 +2705,15 @@ class GenericDocument : public GenericValue<Encoding, Allocator> {
 #if RAPIDJSON_HAS_CXX11_RVALUE_REFS
   //! Move constructor in C++11
   GenericDocument(GenericDocument &&rhs) RAPIDJSON_NOEXCEPT
-      : ValueType(
-            std::forward<ValueType>(rhs)),  // explicit cast to avoid prohibited move from Document
-        allocator_(rhs.allocator_),
-        ownAllocator_(rhs.ownAllocator_),
-        stack_(std::move(rhs.stack_)),
-        parseResult_(rhs.parseResult_)
+    : ValueType(std::forward<ValueType>(rhs)),  // explicit cast to avoid prohibited move from Document
+      allocator_(rhs.allocator_),
+      ownAllocator_(rhs.ownAllocator_),
+      stack_(std::move(rhs.stack_)),
+      parseResult_(rhs.parseResult_)
   {
-    rhs.allocator_    = 0;
+    rhs.allocator_ = 0;
     rhs.ownAllocator_ = 0;
-    rhs.parseResult_  = ParseResult();
+    rhs.parseResult_ = ParseResult();
   }
 #endif
 
@@ -2761,14 +2733,14 @@ class GenericDocument : public GenericValue<Encoding, Allocator> {
     // Calling the destructor here would prematurely call stack_'s destructor
     Destroy();
 
-    allocator_    = rhs.allocator_;
+    allocator_ = rhs.allocator_;
     ownAllocator_ = rhs.ownAllocator_;
-    stack_        = std::move(rhs.stack_);
-    parseResult_  = rhs.parseResult_;
+    stack_ = std::move(rhs.stack_);
+    parseResult_ = rhs.parseResult_;
 
-    rhs.allocator_    = 0;
+    rhs.allocator_ = 0;
     rhs.ownAllocator_ = 0;
-    rhs.parseResult_  = ParseResult();
+    rhs.parseResult_ = ParseResult();
 
     return *this;
   }
@@ -2813,9 +2785,8 @@ class GenericDocument : public GenericValue<Encoding, Allocator> {
   {
     ClearStackOnExit scope(*this);
     if (g(*this)) {
-      RAPIDJSON_ASSERT(stack_.GetSize() == sizeof(ValueType));  // Got one and only one root object
-      ValueType::operator=(
-          *stack_.template Pop<ValueType>(1));  // Move value from stack to document
+      RAPIDJSON_ASSERT(stack_.GetSize() == sizeof(ValueType));   // Got one and only one root object
+      ValueType::operator=(*stack_.template Pop<ValueType>(1));  // Move value from stack to document
     }
     return *this;
   }
@@ -2834,13 +2805,12 @@ class GenericDocument : public GenericValue<Encoding, Allocator> {
   GenericDocument &ParseStream(InputStream &is)
   {
     GenericReader<SourceEncoding, Encoding, StackAllocator> reader(
-        stack_.HasAllocator() ? &stack_.GetAllocator() : 0);
+      stack_.HasAllocator() ? &stack_.GetAllocator() : 0);
     ClearStackOnExit scope(*this);
     parseResult_ = reader.template Parse<parseFlags>(is, *this);
     if (parseResult_) {
-      RAPIDJSON_ASSERT(stack_.GetSize() == sizeof(ValueType));  // Got one and only one root object
-      ValueType::operator=(
-          *stack_.template Pop<ValueType>(1));  // Move value from stack to document
+      RAPIDJSON_ASSERT(stack_.GetSize() == sizeof(ValueType));   // Got one and only one root object
+      ValueType::operator=(*stack_.template Pop<ValueType>(1));  // Move value from stack to document
     }
     return *this;
   }
@@ -3107,8 +3077,7 @@ class GenericDocument : public GenericValue<Encoding, Allocator> {
 
   bool EndObject(SizeType memberCount)
   {
-    typename ValueType::Member *members = stack_.template Pop<typename ValueType::Member>(
-        memberCount);
+    typename ValueType::Member *members = stack_.template Pop<typename ValueType::Member>(memberCount);
     stack_.template Top<ValueType>()->SetObjectRaw(members, memberCount, GetAllocator());
     return true;
   }
@@ -3161,9 +3130,8 @@ typedef GenericDocument<UTF8<>> Document;
 // defined here due to the dependency on GenericDocument
 template<typename Encoding, typename Allocator>
 template<typename SourceAllocator>
-inline GenericValue<Encoding, Allocator>::GenericValue(
-    const GenericValue<Encoding, SourceAllocator> &rhs,
-    Allocator &allocator)
+inline GenericValue<Encoding, Allocator>::GenericValue(const GenericValue<Encoding, SourceAllocator> &rhs,
+                                                       Allocator &allocator)
 {
   switch (rhs.GetType()) {
     case kObjectType:
@@ -3175,7 +3143,7 @@ inline GenericValue<Encoding, Allocator>::GenericValue(
     case kStringType:
       if (rhs.data_.f.flags == kConstStringFlag) {
         data_.f.flags = rhs.data_.f.flags;
-        data_         = *reinterpret_cast<const Data *>(&rhs.data_);
+        data_ = *reinterpret_cast<const Data *>(&rhs.data_);
       }
       else {
         SetStringRaw(StringRef(rhs.GetString(), rhs.GetStringLength()), allocator);
@@ -3183,7 +3151,7 @@ inline GenericValue<Encoding, Allocator>::GenericValue(
       break;
     default:
       data_.f.flags = rhs.data_.f.flags;
-      data_         = *reinterpret_cast<const Data *>(&rhs.data_);
+      data_ = *reinterpret_cast<const Data *>(&rhs.data_);
       break;
   }
 }
@@ -3268,9 +3236,8 @@ template<bool Const, typename ValueT> class GenericArray {
     return *this;
   }
   template<typename T>
-  RAPIDJSON_DISABLEIF_RETURN(
-      (internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
-      (const GenericArray &))
+  RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
+                             (const GenericArray &))
   PushBack(T value, AllocatorType &allocator) const
   {
     value_.PushBack(value, allocator);
@@ -3323,11 +3290,9 @@ template<bool Const, typename ValueT> class GenericObject {
   typedef GenericMemberIterator<Const,
                                 typename ValueT::EncodingType,
                                 typename ValueT::AllocatorType>
-      MemberIterator;  // This may be const or non-const iterator
-  typedef GenericMemberIterator<true,
-                                typename ValueT::EncodingType,
-                                typename ValueT::AllocatorType>
-      ConstMemberIterator;
+    MemberIterator;  // This may be const or non-const iterator
+  typedef GenericMemberIterator<true, typename ValueT::EncodingType, typename ValueT::AllocatorType>
+    ConstMemberIterator;
   typedef typename ValueType::AllocatorType AllocatorType;
   typedef typename ValueType::StringRefType StringRefType;
   typedef typename ValueType::EncodingType EncodingType;
@@ -3417,18 +3382,15 @@ template<bool Const, typename ValueT> class GenericObject {
     return *this;
   }
 #if RAPIDJSON_HAS_STDSTRING
-  GenericObject AddMember(ValueType &name,
-                          std::basic_string<Ch> &value,
-                          AllocatorType &allocator) const
+  GenericObject AddMember(ValueType &name, std::basic_string<Ch> &value, AllocatorType &allocator) const
   {
     value_.AddMember(name, value, allocator);
     return *this;
   }
 #endif
   template<typename T>
-  RAPIDJSON_DISABLEIF_RETURN(
-      (internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
-      (ValueType &))
+  RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
+                             (ValueType &))
   AddMember(ValueType &name, T value, AllocatorType &allocator) const
   {
     value_.AddMember(name, value, allocator);
@@ -3467,9 +3429,8 @@ template<bool Const, typename ValueT> class GenericObject {
     return *this;
   }
   template<typename T>
-  RAPIDJSON_DISABLEIF_RETURN(
-      (internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
-      (GenericObject))
+  RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
+                             (GenericObject))
   AddMember(StringRefType name, T value, AllocatorType &allocator) const
   {
     value_.AddMember(name, value, allocator);

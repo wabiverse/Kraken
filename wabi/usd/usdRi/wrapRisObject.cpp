@@ -54,20 +54,14 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateFilePathAttr(UsdRiRisObject &self,
-                                        object defaultVal,
-                                        bool writeSparsely)
+static UsdAttribute _CreateFilePathAttr(UsdRiRisObject &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateFilePathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
-                                 writeSparsely);
+  return self.CreateFilePathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
 }
 
-static UsdAttribute _CreateArgsPathAttr(UsdRiRisObject &self,
-                                        object defaultVal,
-                                        bool writeSparsely)
+static UsdAttribute _CreateArgsPathAttr(UsdRiRisObject &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateArgsPathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
-                                 writeSparsely);
+  return self.CreateArgsPathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
 }
 
 static std::string _Repr(const UsdRiRisObject &self)
@@ -85,39 +79,37 @@ void wrapUsdRiRisObject()
   class_<This, bases<UsdShadeShader>> cls("RisObject");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetFilePathAttr", &This::GetFilePathAttr)
-      .def("CreateFilePathAttr",
-           &_CreateFilePathAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetFilePathAttr", &This::GetFilePathAttr)
+    .def("CreateFilePathAttr",
+         &_CreateFilePathAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetArgsPathAttr", &This::GetArgsPathAttr)
-      .def("CreateArgsPathAttr",
-           &_CreateArgsPathAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetArgsPathAttr", &This::GetArgsPathAttr)
+    .def("CreateArgsPathAttr",
+         &_CreateArgsPathAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

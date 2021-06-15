@@ -59,9 +59,9 @@ class HgiMetalSampler final : public HgiSampler {
   id<MTLSamplerState> GetSamplerId() const;
 
  private:
-  HgiMetalSampler()        = delete;
+  HgiMetalSampler() = delete;
   HgiMetalSampler &operator=(const HgiMetalSampler &) = delete;
-  HgiMetalSampler(const HgiMetalSampler &)            = delete;
+  HgiMetalSampler(const HgiMetalSampler &) = delete;
 
  private:
   id<MTLSamplerState> _samplerId;

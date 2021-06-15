@@ -59,8 +59,7 @@ static const int _dimension = 1;
 
 static string _Repr(GfRange1d const &self)
 {
-  return TF_PY_REPR_PREFIX + "Range1d(" + TfPyRepr(self.GetMin()) + ", " +
-         TfPyRepr(self.GetMax()) + ")";
+  return TF_PY_REPR_PREFIX + "Range1d(" + TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax()) + ")";
 }
 
 #if PY_MAJOR_VERSION == 2
@@ -89,76 +88,74 @@ void wrapRange1d()
   object getMax = make_function(&GfRange1d::GetMax, return_value_policy<return_by_value>());
 
   class_<GfRange1d>("Range1d", init<>())
-      .def(init<GfRange1d>())
-      .def(init<double, double>())
+    .def(init<GfRange1d>())
+    .def(init<double, double>())
 
-      .def(TfTypePythonClass())
+    .def(TfTypePythonClass())
 
-      .def_readonly("dimension", _dimension)
+    .def_readonly("dimension", _dimension)
 
-      .add_property("min", getMin, &GfRange1d::SetMin)
-      .add_property("max", getMax, &GfRange1d::SetMax)
+    .add_property("min", getMin, &GfRange1d::SetMin)
+    .add_property("max", getMax, &GfRange1d::SetMax)
 
-      .def("GetMin", getMin)
-      .def("GetMax", getMax)
+    .def("GetMin", getMin)
+    .def("GetMax", getMax)
 
-      .def("GetSize", &GfRange1d::GetSize)
-      .def("GetMidpoint", &GfRange1d::GetMidpoint)
+    .def("GetSize", &GfRange1d::GetSize)
+    .def("GetMidpoint", &GfRange1d::GetMidpoint)
 
-      .def("SetMin", &GfRange1d::SetMin)
-      .def("SetMax", &GfRange1d::SetMax)
+    .def("SetMin", &GfRange1d::SetMin)
+    .def("SetMax", &GfRange1d::SetMax)
 
-      .def("IsEmpty", &GfRange1d::IsEmpty)
+    .def("IsEmpty", &GfRange1d::IsEmpty)
 
-      .def("SetEmpty", &GfRange1d::SetEmpty)
+    .def("SetEmpty", &GfRange1d::SetEmpty)
 
-      .def("Contains", (bool (GfRange1d::*)(double) const) & GfRange1d::Contains)
-      .def("Contains", (bool (GfRange1d::*)(const GfRange1d &) const) & GfRange1d::Contains)
+    .def("Contains", (bool (GfRange1d::*)(double) const) & GfRange1d::Contains)
+    .def("Contains", (bool (GfRange1d::*)(const GfRange1d &) const) & GfRange1d::Contains)
 
-      .def("GetUnion", &GfRange1d::GetUnion)
-      .staticmethod("GetUnion")
+    .def("GetUnion", &GfRange1d::GetUnion)
+    .staticmethod("GetUnion")
 
-      .def("UnionWith",
-           (const GfRange1d &(GfRange1d::*)(double)) & GfRange1d::UnionWith,
-           return_self<>())
-      .def("UnionWith",
-           (const GfRange1d &(GfRange1d::*)(const GfRange1d &)) & GfRange1d::UnionWith,
-           return_self<>())
+    .def("UnionWith", (const GfRange1d &(GfRange1d::*)(double)) & GfRange1d::UnionWith, return_self<>())
+    .def("UnionWith",
+         (const GfRange1d &(GfRange1d::*)(const GfRange1d &)) & GfRange1d::UnionWith,
+         return_self<>())
 
-      .def("GetIntersection", &GfRange1d::GetIntersection)
-      .staticmethod("GetIntersection")
+    .def("GetIntersection", &GfRange1d::GetIntersection)
+    .staticmethod("GetIntersection")
 
-      .def("IntersectWith",
-           (const GfRange1d &(GfRange1d::*)(const GfRange1d &)) & GfRange1d::IntersectWith,
-           return_self<>())
+    .def("IntersectWith",
+         (const GfRange1d &(GfRange1d::*)(const GfRange1d &)) & GfRange1d::IntersectWith,
+         return_self<>())
 
-      .def("GetDistanceSquared", &GfRange1d::GetDistanceSquared)
+    .def("GetDistanceSquared", &GfRange1d::GetDistanceSquared)
 
-      .def(str(self))
-      .def(self += self)
-      .def(self -= self)
-      .def(self *= double())
-      .def(self /= double())
-      .def(self + self)
-      .def(self - self)
-      .def(double() * self)
-      .def(self * double())
-      .def(self / double())
-      .def(self == GfRange1f())
-      .def(self != GfRange1f())
-      .def(self == self)
-      .def(self != self)
+    .def(str(self))
+    .def(self += self)
+    .def(self -= self)
+    .def(self *= double())
+    .def(self /= double())
+    .def(self + self)
+    .def(self - self)
+    .def(double() * self)
+    .def(self * double())
+    .def(self / double())
+    .def(self == GfRange1f())
+    .def(self != GfRange1f())
+    .def(self == self)
+    .def(self != self)
 
 #if PY_MAJOR_VERSION == 2
-      // Needed only to support "from __future__ import division" in
-      // python 2. In python 3 builds boost::python adds this for us.
-      .def("__truediv__", __truediv__)
-      .def("__itruediv__", __itruediv__)
+    // Needed only to support "from __future__ import division" in
+    // python 2. In python 3 builds boost::python adds this for us.
+    .def("__truediv__", __truediv__)
+    .def("__itruediv__", __itruediv__)
 #endif
 
-      .def("__repr__", _Repr)
-      .def("__hash__", __hash__)
+    .def("__repr__", _Repr)
+    .def("__hash__", __hash__)
 
-      ;
+    ;
   to_python_converter<std::vector<GfRange1d>, TfPySequenceToPython<std::vector<GfRange1d>>>();
 }

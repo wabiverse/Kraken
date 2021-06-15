@@ -116,8 +116,7 @@ class _HgiToResourceRegistryMap final {
     // Create resource registry, custom deleter to remove corresponding
     // entry from map.
     HdPhResourceRegistrySharedPtr const result(
-        new HdPhResourceRegistry(hgi),
-        [this](HdPhResourceRegistry *registry) { this->_Destroy(registry); });
+      new HdPhResourceRegistry(hgi), [this](HdPhResourceRegistry *registry) { this->_Destroy(registry); });
 
     // Insert into map.
     _map.insert({hgi, result});
@@ -156,25 +155,25 @@ HdPhRenderDelegate::HdPhRenderDelegate() : HdPhRenderDelegate(HdRenderSettingsMa
 {}
 
 HdPhRenderDelegate::HdPhRenderDelegate(HdRenderSettingsMap const &settingsMap)
-    : HdRenderDelegate(settingsMap),
-      _hgi(nullptr),
-      _renderParam(std::make_unique<HdPhRenderParam>())
+  : HdRenderDelegate(settingsMap),
+    _hgi(nullptr),
+    _renderParam(std::make_unique<HdPhRenderParam>())
 {
   // Initialize the settings and settings descriptors.
   _settingDescriptors = {
-      HdRenderSettingDescriptor{"Enable Tiny Prim Culling",
-                                HdPhRenderSettingsTokens->enableTinyPrimCulling,
-                                VtValue(bool(TfGetEnvSetting(HD_ENABLE_GPU_TINY_PRIM_CULLING)))},
-      HdRenderSettingDescriptor{"Step size when raymarching volume",
-                                HdPhRenderSettingsTokens->volumeRaymarchingStepSize,
-                                VtValue(HdPhVolume::defaultStepSize)},
-      HdRenderSettingDescriptor{"Step size when raymarching volume for lighting computation",
-                                HdPhRenderSettingsTokens->volumeRaymarchingStepSizeLighting,
-                                VtValue(HdPhVolume::defaultStepSizeLighting)},
-      HdRenderSettingDescriptor{"Maximum memory for a volume field texture in Mb "
-                                "(unless overridden by field prim)",
-                                HdPhRenderSettingsTokens->volumeMaxTextureMemoryPerField,
-                                VtValue(HdPhVolume::defaultMaxTextureMemoryPerField)}};
+    HdRenderSettingDescriptor{"Enable Tiny Prim Culling",
+                              HdPhRenderSettingsTokens->enableTinyPrimCulling,
+                              VtValue(bool(TfGetEnvSetting(HD_ENABLE_GPU_TINY_PRIM_CULLING)))},
+    HdRenderSettingDescriptor{"Step size when raymarching volume",
+                              HdPhRenderSettingsTokens->volumeRaymarchingStepSize,
+                              VtValue(HdPhVolume::defaultStepSize)},
+    HdRenderSettingDescriptor{"Step size when raymarching volume for lighting computation",
+                              HdPhRenderSettingsTokens->volumeRaymarchingStepSizeLighting,
+                              VtValue(HdPhVolume::defaultStepSizeLighting)},
+    HdRenderSettingDescriptor{"Maximum memory for a volume field texture in Mb "
+                              "(unless overridden by field prim)",
+                              HdPhRenderSettingsTokens->volumeMaxTextureMemoryPerField,
+                              VtValue(HdPhVolume::defaultMaxTextureMemoryPerField)}};
 
   _PopulateDefaultSettings(_settingDescriptors);
 }
@@ -192,10 +191,9 @@ VtDictionary HdPhRenderDelegate::GetRenderStats() const
   if (gpuMemIt != ra.end()) {
     // If we find gpuMemoryUsed, add the texture memory to it.
     // XXX: We should look into fixing this in the resource registry itself
-    size_t texMem = VtDictionaryGet<size_t>(
-        ra, HdPerfTokens->textureMemory.GetString(), VtDefault = 0);
+    size_t texMem = VtDictionaryGet<size_t>(ra, HdPerfTokens->textureMemory.GetString(), VtDefault = 0);
     size_t gpuMemTotal = gpuMemIt->second.Get<size_t>();
-    gpuMemIt->second   = VtValue(gpuMemTotal + texMem);
+    gpuMemIt->second = VtValue(gpuMemTotal + texMem);
   }
 
   return ra;
@@ -491,9 +489,9 @@ Hgi *HdPhRenderDelegate::GetHgi()
 void HdPhRenderDelegate::_ApplyTextureSettings()
 {
   const float memInMb = std::max(
-      0.0f,
-      GetRenderSetting<float>(HdPhRenderSettingsTokens->volumeMaxTextureMemoryPerField,
-                              HdPhVolume::defaultMaxTextureMemoryPerField));
+    0.0f,
+    GetRenderSetting<float>(HdPhRenderSettingsTokens->volumeMaxTextureMemoryPerField,
+                            HdPhVolume::defaultMaxTextureMemoryPerField));
 
   _resourceRegistry->SetMemoryRequestForTextureType(HdTextureType::Field, 1048576 * memInMb);
 }

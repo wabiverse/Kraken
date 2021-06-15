@@ -32,10 +32,10 @@
 WABI_NAMESPACE_BEGIN
 
 Hd_VertexAdjacency::Hd_VertexAdjacency()
-    : _numPoints(0),
-      _adjacencyTable(),
-      _adjacencyRange(),
-      _sharedAdjacencyBuilder()
+  : _numPoints(0),
+    _adjacencyTable(),
+    _adjacencyRange(),
+    _sharedAdjacencyBuilder()
 {}
 
 Hd_VertexAdjacency::~Hd_VertexAdjacency()
@@ -48,9 +48,9 @@ bool Hd_VertexAdjacency::BuildAdjacencyTable(HdMeshTopology const *topology)
   // compute adjacency
 
   int const *numVertsPtr = topology->GetFaceVertexCounts().cdata();
-  int const *vertsPtr    = topology->GetFaceVertexIndices().cdata();
-  int numFaces           = topology->GetFaceVertexCounts().size();
-  bool flip              = (topology->GetOrientation() != HdTokens->rightHanded);
+  int const *vertsPtr = topology->GetFaceVertexIndices().cdata();
+  int numFaces = topology->GetFaceVertexCounts().size();
+  bool flip = (topology->GetOrientation() != HdTokens->rightHanded);
 
   // compute numPoints from topology indices
   _numPoints = topology->GetNumPoints();
@@ -69,10 +69,10 @@ bool Hd_VertexAdjacency::BuildAdjacencyTable(HdMeshTopology const *topology)
       int index = vertsPtr[vertIndex++];
       if (index < 0 || index >= _numPoints) {
         TF_CODING_ERROR(
-            "vertex index out of range "
-            "index: %d numPoints: %d",
-            index,
-            _numPoints);
+          "vertex index out of range "
+          "index: %d numPoints: %d",
+          index,
+          _numPoints);
         _numPoints = 0;
         _adjacencyTable.clear();
         return false;
@@ -129,7 +129,7 @@ bool Hd_VertexAdjacency::BuildAdjacencyTable(HdMeshTopology const *topology)
 }
 
 HdBufferSourceSharedPtr Hd_VertexAdjacency::GetSharedAdjacencyBuilderComputation(
-    HdMeshTopology const *topology)
+  HdMeshTopology const *topology)
 {
   // if there's a already requested (and unresolved) adjacency computation,
   // just returns it to make a dependency.
@@ -144,7 +144,7 @@ HdBufferSourceSharedPtr Hd_VertexAdjacency::GetSharedAdjacencyBuilderComputation
   }
 
   Hd_AdjacencyBuilderComputationSharedPtr builder = Hd_AdjacencyBuilderComputationSharedPtr(
-      new Hd_AdjacencyBuilderComputation(this, topology));
+    new Hd_AdjacencyBuilderComputation(this, topology));
 
   // store the computation as weak ptr so that it can be referenced
   // by another computation.
@@ -157,8 +157,8 @@ HdBufferSourceSharedPtr Hd_VertexAdjacency::GetSharedAdjacencyBuilderComputation
 
 Hd_AdjacencyBuilderComputation::Hd_AdjacencyBuilderComputation(Hd_VertexAdjacency *adjacency,
                                                                HdMeshTopology const *topology)
-    : _adjacency(adjacency),
-      _topology(topology)
+  : _adjacency(adjacency),
+    _topology(topology)
 {}
 
 bool Hd_AdjacencyBuilderComputation::Resolve()
@@ -187,8 +187,8 @@ bool Hd_AdjacencyBuilderComputation::_CheckValid() const
 
 Hd_AdjacencyBufferSource::Hd_AdjacencyBufferSource(Hd_VertexAdjacency const *adjacency,
                                                    HdBufferSourceSharedPtr const &adjacencyBuilder)
-    : _adjacency(adjacency),
-      _adjacencyBuilder(adjacencyBuilder)
+  : _adjacency(adjacency),
+    _adjacencyBuilder(adjacencyBuilder)
 {}
 
 bool Hd_AdjacencyBufferSource::Resolve()
@@ -203,8 +203,7 @@ bool Hd_AdjacencyBufferSource::Resolve()
 
   // prepare buffer source to be transferred.
   VtIntArray const &adjacency = _adjacency->GetAdjacencyTable();
-  _SetResult(
-      HdBufferSourceSharedPtr(new HdVtBufferSource(HdTokens->adjacency, VtValue(adjacency))));
+  _SetResult(HdBufferSourceSharedPtr(new HdVtBufferSource(HdTokens->adjacency, VtValue(adjacency))));
   _SetResolved();
   return true;
 }

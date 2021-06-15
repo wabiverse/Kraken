@@ -47,12 +47,11 @@ namespace {
 struct Usd_PyStageCacheContext {
   // Constructor stores off arguments to pass to the factory later.
   template<class Arg>
-  explicit Usd_PyStageCacheContext(Arg arg)
-      : _makeContext([arg]() { return new UsdStageCacheContext(arg); })
+  explicit Usd_PyStageCacheContext(Arg arg) : _makeContext([arg]() { return new UsdStageCacheContext(arg); })
   {}
 
   explicit Usd_PyStageCacheContext(UsdStageCache &cache)
-      : _makeContext([&cache]() { return new UsdStageCacheContext(cache); })
+    : _makeContext([&cache]() { return new UsdStageCacheContext(cache); })
   {}
 
   // Instantiate the C++ class object and hold it by shared_ptr.
@@ -95,9 +94,9 @@ void wrapUsdStageCacheContext()
   // as long as the context is, to transitively keep their held cache objects
   // alive.
   class_<Usd_PyStageCacheContext>("StageCacheContext", no_init)
-      .def(init<Usd_NonPopulatingStageCacheWrapper>()[with_custodian_and_ward<1, 2>()])
-      .def(init<UsdStageCache &>()[with_custodian_and_ward<1, 2>()])
-      .def(init<UsdStageCacheContextBlockType>())
-      .def("__enter__", &Usd_PyStageCacheContext::__enter__)
-      .def("__exit__", &Usd_PyStageCacheContext::__exit__);
+    .def(init<Usd_NonPopulatingStageCacheWrapper>()[with_custodian_and_ward<1, 2>()])
+    .def(init<UsdStageCache &>()[with_custodian_and_ward<1, 2>()])
+    .def(init<UsdStageCacheContextBlockType>())
+    .def("__enter__", &Usd_PyStageCacheContext::__enter__)
+    .def("__exit__", &Usd_PyStageCacheContext::__exit__);
 }

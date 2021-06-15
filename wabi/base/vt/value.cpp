@@ -60,7 +60,7 @@ using std::vector;
 WABI_NAMESPACE_BEGIN
 
 static_assert(std::is_nothrow_move_constructible<VtValue>::value &&
-                  std::is_nothrow_move_assignable<VtValue>::value,
+                std::is_nothrow_move_assignable<VtValue>::value,
               "");
 
 TF_REGISTRY_FUNCTION(TfType)
@@ -81,7 +81,7 @@ template<typename From, typename To> static inline VtValue _BoostNumericCast(con
 // If the To type has no infinity, simply use boost numeric_cast.
 template<typename From, typename To>
 static typename std::enable_if<!std::numeric_limits<To>::has_infinity, VtValue>::type _NumericCast(
-    VtValue const &val)
+  VtValue const &val)
 {
   return _BoostNumericCast<From, To>(val.UncheckedGet<From>());
 }
@@ -90,7 +90,7 @@ static typename std::enable_if<!std::numeric_limits<To>::has_infinity, VtValue>:
 // finite value that To can take to infinity.
 template<typename From, typename To>
 static typename std::enable_if<std::numeric_limits<To>::has_infinity, VtValue>::type _NumericCast(
-    VtValue const &val)
+  VtValue const &val)
 {
   const From x = val.UncheckedGet<From>();
 
@@ -128,14 +128,14 @@ class Vt_CastRegistry {
     std::type_index dst = to;
 
     bool isNewEntry =
-        _conversions.insert(std::make_pair(_ConversionSourceToTarget(src, dst), castFn)).second;
+      _conversions.insert(std::make_pair(_ConversionSourceToTarget(src, dst), castFn)).second;
     if (!isNewEntry) {
       // This happens at startup if there's a bug in the code.
       TF_CODING_ERROR(
-          "VtValue cast already registered from "
-          "'%s' to '%s'.  New cast will be ignored.",
-          ArchGetDemangled(from).c_str(),
-          ArchGetDemangled(to).c_str());
+        "VtValue cast already registered from "
+        "'%s' to '%s'.  New cast will be ignored.",
+        ArchGetDemangled(from).c_str(),
+        ArchGetDemangled(to).c_str());
       return;
     }
   }
@@ -376,9 +376,9 @@ TfType VtValue::GetType() const
                                          TfType::FindByTypeid(_info->typeInfo);
   if (t.IsUnknown()) {
     TF_WARN(
-        "Returning unknown type for VtValue with unregistered "
-        "C++ type %s",
-        ArchGetDemangled(GetTypeid()).c_str());
+      "Returning unknown type for VtValue with unregistered "
+      "C++ type %s",
+      ArchGetDemangled(GetTypeid()).c_str());
   }
   return t;
 }
@@ -425,9 +425,7 @@ size_t VtValue::GetHash() const
   return ret.CastToTypeid(type);
 }
 
-void VtValue::_RegisterCast(type_info const &from,
-                            type_info const &to,
-                            VtValue (*castFn)(VtValue const &))
+void VtValue::_RegisterCast(type_info const &from, type_info const &to, VtValue (*castFn)(VtValue const &))
 {
   Vt_CastRegistry::GetInstance().Register(from, to, castFn);
 }
@@ -458,7 +456,7 @@ bool VtValue::_EqualityImpl(VtValue const &rhs) const
     if (GetType() != rhs.GetType())
       return false;
 
-    VtValue const *proxy    = _IsProxy() ? this : &rhs;
+    VtValue const *proxy = _IsProxy() ? this : &rhs;
     VtValue const *nonProxy = _IsProxy() ? &rhs : this;
 
     void const *proxiedObj = proxy->_info->GetProxiedObjPtr(proxy->_storage);
@@ -489,8 +487,7 @@ TfPyObjWrapper VtValue::_GetPythonObject() const
 }
 #endif  // WITH_PYTHON
 
-static void const *_FindOrCreateDefaultValue(std::type_info const &type,
-                                             Vt_DefaultValueHolder (*factory)())
+static void const *_FindOrCreateDefaultValue(std::type_info const &type, Vt_DefaultValueHolder (*factory)())
 {
   // This function returns a default value for \a type.  It stores a global
   // map from type name to value.  If we have an entry for the requested type
@@ -539,22 +536,21 @@ bool VtValue::_TypeIsImpl(std::type_info const &qt) const
   return false;
 }
 
-void const *VtValue::_FailGet(Vt_DefaultValueHolder (*factory)(),
-                              std::type_info const &queryType) const
+void const *VtValue::_FailGet(Vt_DefaultValueHolder (*factory)(), std::type_info const &queryType) const
 {
   // Issue a coding error detailing relevant types.
   if (IsEmpty()) {
     TF_CODING_ERROR(
-        "Attempted to get value of type '%s' from "
-        "empty VtValue.",
-        ArchGetDemangled(queryType).c_str());
+      "Attempted to get value of type '%s' from "
+      "empty VtValue.",
+      ArchGetDemangled(queryType).c_str());
   }
   else {
     TF_CODING_ERROR(
-        "Attempted to get value of type '%s' from "
-        "VtValue holding '%s'",
-        ArchGetDemangled(queryType).c_str(),
-        ArchGetDemangled(GetTypeid()).c_str());
+      "Attempted to get value of type '%s' from "
+      "VtValue holding '%s'",
+      ArchGetDemangled(queryType).c_str(),
+      ArchGetDemangled(GetTypeid()).c_str());
   }
 
   // Get a default value for query type, and use that.

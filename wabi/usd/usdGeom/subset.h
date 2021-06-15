@@ -202,7 +202,7 @@ class UsdGeomSubset : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateElementTypeAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -225,8 +225,7 @@ class UsdGeomSubset : public UsdTyped {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateIndicesAttr(VtValue const &defaultValue = VtValue(),
-                                 bool writeSparsely          = false) const;
+  UsdAttribute CreateIndicesAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -272,7 +271,7 @@ class UsdGeomSubset : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateFamilyNameAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //
@@ -333,7 +332,7 @@ class UsdGeomSubset : public UsdTyped {
   USDGEOM_API
   static std::vector<UsdGeomSubset> GetGeomSubsets(const UsdGeomImageable &geom,
                                                    const TfToken &elementType = TfToken(),
-                                                   const TfToken &familyName  = TfToken());
+                                                   const TfToken &familyName = TfToken());
 
   /// Returns the names of all the families of GeomSubsets defined on the given
   /// imageable, \p geom.

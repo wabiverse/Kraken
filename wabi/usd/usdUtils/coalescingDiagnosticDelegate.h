@@ -71,8 +71,7 @@ struct UsdUtilsCoalescingDiagnosticDelegateItem {
 /// A vector of coalesced results, each containing a shared component,
 /// the file/function/line number, and a set of unshared components, the
 /// call context and commentary.
-typedef std::vector<UsdUtilsCoalescingDiagnosticDelegateItem>
-    UsdUtilsCoalescingDiagnosticDelegateVector;
+typedef std::vector<UsdUtilsCoalescingDiagnosticDelegateItem> UsdUtilsCoalescingDiagnosticDelegateVector;
 
 /// A class which collects warnings and statuses from the
 /// Tf diagnostic manager system in a thread safe manner.

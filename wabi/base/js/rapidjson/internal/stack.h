@@ -37,28 +37,28 @@ template<typename Allocator> class Stack {
   // Optimization note: Do not allocate memory for stack_ in constructor.
   // Do it lazily when first Push() -> Expand() -> Resize().
   Stack(Allocator *allocator, size_t stackCapacity)
-      : allocator_(allocator),
-        ownAllocator_(0),
-        stack_(0),
-        stackTop_(0),
-        stackEnd_(0),
-        initialCapacity_(stackCapacity)
+    : allocator_(allocator),
+      ownAllocator_(0),
+      stack_(0),
+      stackTop_(0),
+      stackEnd_(0),
+      initialCapacity_(stackCapacity)
   {}
 
 #if RAPIDJSON_HAS_CXX11_RVALUE_REFS
   Stack(Stack &&rhs)
-      : allocator_(rhs.allocator_),
-        ownAllocator_(rhs.ownAllocator_),
-        stack_(rhs.stack_),
-        stackTop_(rhs.stackTop_),
-        stackEnd_(rhs.stackEnd_),
-        initialCapacity_(rhs.initialCapacity_)
+    : allocator_(rhs.allocator_),
+      ownAllocator_(rhs.ownAllocator_),
+      stack_(rhs.stack_),
+      stackTop_(rhs.stackTop_),
+      stackEnd_(rhs.stackEnd_),
+      initialCapacity_(rhs.initialCapacity_)
   {
-    rhs.allocator_       = 0;
-    rhs.ownAllocator_    = 0;
-    rhs.stack_           = 0;
-    rhs.stackTop_        = 0;
-    rhs.stackEnd_        = 0;
+    rhs.allocator_ = 0;
+    rhs.ownAllocator_ = 0;
+    rhs.stack_ = 0;
+    rhs.stackTop_ = 0;
+    rhs.stackEnd_ = 0;
     rhs.initialCapacity_ = 0;
   }
 #endif
@@ -74,18 +74,18 @@ template<typename Allocator> class Stack {
     if (&rhs != this) {
       Destroy();
 
-      allocator_       = rhs.allocator_;
-      ownAllocator_    = rhs.ownAllocator_;
-      stack_           = rhs.stack_;
-      stackTop_        = rhs.stackTop_;
-      stackEnd_        = rhs.stackEnd_;
+      allocator_ = rhs.allocator_;
+      ownAllocator_ = rhs.ownAllocator_;
+      stack_ = rhs.stack_;
+      stackTop_ = rhs.stackTop_;
+      stackEnd_ = rhs.stackEnd_;
       initialCapacity_ = rhs.initialCapacity_;
 
-      rhs.allocator_       = 0;
-      rhs.ownAllocator_    = 0;
-      rhs.stack_           = 0;
-      rhs.stackTop_        = 0;
-      rhs.stackEnd_        = 0;
+      rhs.allocator_ = 0;
+      rhs.ownAllocator_ = 0;
+      rhs.stack_ = 0;
+      rhs.stackTop_ = 0;
+      rhs.stackEnd_ = 0;
       rhs.initialCapacity_ = 0;
     }
     return *this;
@@ -112,7 +112,7 @@ template<typename Allocator> class Stack {
     if (Empty()) {
       // If the stack is empty, completely deallocate the memory.
       Allocator::Free(stack_);
-      stack_    = 0;
+      stack_ = 0;
       stackTop_ = 0;
       stackEnd_ = 0;
     }
@@ -231,7 +231,7 @@ template<typename Allocator> class Stack {
   void Resize(size_t newCapacity)
   {
     const size_t size = GetSize();  // Backup the current size
-    stack_    = static_cast<char *>(allocator_->Realloc(stack_, GetCapacity(), newCapacity));
+    stack_ = static_cast<char *>(allocator_->Realloc(stack_, GetCapacity(), newCapacity));
     stackTop_ = stack_ + size;
     stackEnd_ = stack_ + newCapacity;
   }

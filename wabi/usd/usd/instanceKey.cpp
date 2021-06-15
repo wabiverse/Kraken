@@ -35,10 +35,9 @@ WABI_NAMESPACE_BEGIN
 Usd_InstanceKey::Usd_InstanceKey() : _hash(_ComputeHash())
 {}
 
-static UsdStagePopulationMask _MakeMaskRelativeTo(SdfPath const &path,
-                                                  UsdStagePopulationMask const &mask)
+static UsdStagePopulationMask _MakeMaskRelativeTo(SdfPath const &path, UsdStagePopulationMask const &mask)
 {
-  SdfPath const &absRoot         = SdfPath::AbsoluteRootPath();
+  SdfPath const &absRoot = SdfPath::AbsoluteRootPath();
   std::vector<SdfPath> maskPaths = mask.GetPaths();
   for (SdfPath &maskPath : maskPaths) {
     if (maskPath.HasPrefix(path)) {
@@ -54,8 +53,7 @@ static UsdStagePopulationMask _MakeMaskRelativeTo(SdfPath const &path,
                                 std::remove(maskPaths.begin(), maskPaths.end(), SdfPath()));
 }
 
-static UsdStageLoadRules _MakeLoadRulesRelativeTo(SdfPath const &path,
-                                                  UsdStageLoadRules const &rules)
+static UsdStageLoadRules _MakeLoadRulesRelativeTo(SdfPath const &path, UsdStageLoadRules const &rules)
 {
   UsdStageLoadRules::Rule rootRule = rules.GetEffectiveRuleForPath(path);
   std::vector<std::pair<SdfPath, UsdStageLoadRules::Rule>> elems = rules.GetRules();
@@ -63,7 +61,7 @@ static UsdStageLoadRules _MakeLoadRulesRelativeTo(SdfPath const &path,
   SdfPath const &absRoot = SdfPath::AbsoluteRootPath();
   for (auto &p : elems) {
     if (p.first == path) {
-      p.first  = absRoot;
+      p.first = absRoot;
       p.second = rootRule;
     }
     else if (p.first.HasPrefix(path)) {
@@ -97,7 +95,7 @@ static UsdStageLoadRules _MakeLoadRulesRelativeTo(SdfPath const &path,
 Usd_InstanceKey::Usd_InstanceKey(const PcpPrimIndex &instance,
                                  const UsdStagePopulationMask *mask,
                                  const UsdStageLoadRules &loadRules)
-    : _pcpInstanceKey(instance)
+  : _pcpInstanceKey(instance)
 {
   Usd_ComputeClipSetDefinitionsForPrimIndex(instance, &_clipDefs);
 
@@ -124,8 +122,8 @@ Usd_InstanceKey::Usd_InstanceKey(const PcpPrimIndex &instance,
 
 bool Usd_InstanceKey::operator==(const Usd_InstanceKey &rhs) const
 {
-  return _hash == rhs._hash && _pcpInstanceKey == rhs._pcpInstanceKey &&
-         _clipDefs == rhs._clipDefs && _mask == rhs._mask && _loadRules == rhs._loadRules;
+  return _hash == rhs._hash && _pcpInstanceKey == rhs._pcpInstanceKey && _clipDefs == rhs._clipDefs &&
+         _mask == rhs._mask && _loadRules == rhs._loadRules;
 }
 
 size_t Usd_InstanceKey::_ComputeHash() const

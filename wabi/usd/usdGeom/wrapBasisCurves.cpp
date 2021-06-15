@@ -47,28 +47,19 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateTypeAttr(UsdGeomBasisCurves &self,
-                                    object defaultVal,
-                                    bool writeSparsely)
+static UsdAttribute _CreateTypeAttr(UsdGeomBasisCurves &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                             writeSparsely);
+  return self.CreateTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
-static UsdAttribute _CreateBasisAttr(UsdGeomBasisCurves &self,
-                                     object defaultVal,
-                                     bool writeSparsely)
+static UsdAttribute _CreateBasisAttr(UsdGeomBasisCurves &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateBasisAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                              writeSparsely);
+  return self.CreateBasisAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
-static UsdAttribute _CreateWrapAttr(UsdGeomBasisCurves &self,
-                                    object defaultVal,
-                                    bool writeSparsely)
+static UsdAttribute _CreateWrapAttr(UsdGeomBasisCurves &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateWrapAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                             writeSparsely);
+  return self.CreateWrapAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
 static std::string _Repr(const UsdGeomBasisCurves &self)
@@ -86,44 +77,37 @@ void wrapUsdGeomBasisCurves()
   class_<This, bases<UsdGeomCurves>> cls("BasisCurves");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetTypeAttr", &This::GetTypeAttr)
-      .def("CreateTypeAttr",
-           &_CreateTypeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTypeAttr", &This::GetTypeAttr)
+    .def("CreateTypeAttr", &_CreateTypeAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetBasisAttr", &This::GetBasisAttr)
-      .def("CreateBasisAttr",
-           &_CreateBasisAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetBasisAttr", &This::GetBasisAttr)
+    .def(
+      "CreateBasisAttr", &_CreateBasisAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetWrapAttr", &This::GetWrapAttr)
-      .def("CreateWrapAttr",
-           &_CreateWrapAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetWrapAttr", &This::GetWrapAttr)
+    .def("CreateWrapAttr", &_CreateWrapAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -161,9 +145,9 @@ WRAP_CUSTOM
   typedef UsdGeomBasisCurves This;
 
   _class.def("ComputeInterpolationForSize", _ComputeInterpolationForSize)
-      .def("ComputeUniformDataSize", &This::ComputeUniformDataSize)
-      .def("ComputeVaryingDataSize", &This::ComputeVaryingDataSize)
-      .def("ComputeVertexDataSize", &This::ComputeVertexDataSize);
+    .def("ComputeUniformDataSize", &This::ComputeUniformDataSize)
+    .def("ComputeVaryingDataSize", &This::ComputeVaryingDataSize)
+    .def("ComputeVertexDataSize", &This::ComputeVertexDataSize);
 }
 
 }  // anonymous namespace

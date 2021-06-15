@@ -48,17 +48,13 @@ TF_DECLARE_WEAK_PTRS(PcpLayerStack);
 /// uniquely defines a clip set.
 class Usd_ClipSetDefinition {
  public:
-  Usd_ClipSetDefinition()
-      : interpolateMissingClipValues(false),
-        indexOfLayerWhereAssetPathsFound(0)
+  Usd_ClipSetDefinition() : interpolateMissingClipValues(false), indexOfLayerWhereAssetPathsFound(0)
   {}
 
   bool operator==(const Usd_ClipSetDefinition &rhs) const
   {
-    return (clipAssetPaths == rhs.clipAssetPaths &&
-            clipManifestAssetPath == rhs.clipManifestAssetPath &&
-            clipPrimPath == rhs.clipPrimPath && clipActive == rhs.clipActive &&
-            clipTimes == rhs.clipTimes &&
+    return (clipAssetPaths == rhs.clipAssetPaths && clipManifestAssetPath == rhs.clipManifestAssetPath &&
+            clipPrimPath == rhs.clipPrimPath && clipActive == rhs.clipActive && clipTimes == rhs.clipTimes &&
             interpolateMissingClipValues == rhs.interpolateMissingClipValues &&
             sourceLayerStack == rhs.sourceLayerStack && sourcePrimPath == rhs.sourcePrimPath &&
             indexOfLayerWhereAssetPathsFound == rhs.indexOfLayerWhereAssetPathsFound);
@@ -121,10 +117,9 @@ class Usd_ClipSetDefinition {
 /// them in \p clipSetDefinitions. The clip sets in this vector are sorted in
 /// strength order. If \p clipSetNames is provided it will contain the name
 /// for each clip set in the corresponding position in \p clipSetDefinitions.
-void Usd_ComputeClipSetDefinitionsForPrimIndex(
-    const PcpPrimIndex &primIndex,
-    std::vector<Usd_ClipSetDefinition> *clipSetDefinitions,
-    std::vector<std::string> *clipSetNames = nullptr);
+void Usd_ComputeClipSetDefinitionsForPrimIndex(const PcpPrimIndex &primIndex,
+                                               std::vector<Usd_ClipSetDefinition> *clipSetDefinitions,
+                                               std::vector<std::string> *clipSetNames = nullptr);
 
 WABI_NAMESPACE_END
 

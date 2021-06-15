@@ -62,8 +62,7 @@ template<class _TypePolicy> class SdfListEditorProxy {
   typedef std::vector<value_type> value_vector_type;
 
   // ApplyEdits types.
-  typedef std::function<boost::optional<value_type>(SdfListOpType, const value_type &)>
-      ApplyCallback;
+  typedef std::function<boost::optional<value_type>(SdfListOpType, const value_type &)> ApplyCallback;
 
   // ModifyEdits types.
   typedef std::function<boost::optional<value_type>(const value_type &)> ModifyCallback;
@@ -75,7 +74,7 @@ template<class _TypePolicy> class SdfListEditorProxy {
 
   /// Creates a new proxy object backed by the supplied list editor.
   explicit SdfListEditorProxy(const boost::shared_ptr<Sdf_ListEditor<TypePolicy>> &listEditor)
-      : _listEditor(listEditor)
+    : _listEditor(listEditor)
   {}
 
   /// Returns true if the list editor is expired.

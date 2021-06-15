@@ -99,13 +99,11 @@ void SHA1_Transform(uint32_t state[5], const uint8_t buffer[64]);
 #ifdef WORDS_BIGENDIAN
 #  define blk0(i) block->l[i]
 #else
-#  define blk0(i) \
-    (block->l[i] = (rol(block->l[i], 24) & 0xFF00FF00) | (rol(block->l[i], 8) & 0x00FF00FF))
+#  define blk0(i) (block->l[i] = (rol(block->l[i], 24) & 0xFF00FF00) | (rol(block->l[i], 8) & 0x00FF00FF))
 #endif
 #define blk(i) \
-  (block->l[i & 15] = rol(block->l[(i + 13) & 15] ^ block->l[(i + 8) & 15] ^ \
-                              block->l[(i + 2) & 15] ^ block->l[i & 15], \
-                          1))
+  (block->l[i & 15] = rol( \
+     block->l[(i + 13) & 15] ^ block->l[(i + 8) & 15] ^ block->l[(i + 2) & 15] ^ block->l[i & 15], 1))
 
 /* (R0+R1), R2, R3, R4 are the different operations used in SHA1 */
 #define R0(v, w, x, y, z, i) \
@@ -324,7 +322,7 @@ void sha1_32a(const void *key, int len, uint32_t seed, void *out)
 
 #ifdef TEST
 
-static char *test_data[]    = {"abc",
+static char *test_data[] = {"abc",
                             "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
                             "A million repetitions of 'a'"};
 static char *test_results[] = {"A9993E36 4706816A BA3E2571 7850C26C 9CD0D89D",

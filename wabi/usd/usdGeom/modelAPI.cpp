@@ -99,8 +99,7 @@ UsdAttribute UsdGeomModelAPI::GetModelDrawModeAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->modelDrawMode);
 }
 
-UsdAttribute UsdGeomModelAPI::CreateModelDrawModeAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdGeomModelAPI::CreateModelDrawModeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->modelDrawMode,
                                     SdfValueTypeNames->Token,
@@ -255,8 +254,7 @@ UsdAttribute UsdGeomModelAPI::CreateModelCardTextureZNegAttr(VtValue const &defa
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -270,19 +268,19 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdGeomModelAPI::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdGeomTokens->modelDrawMode,
-      UsdGeomTokens->modelApplyDrawMode,
-      UsdGeomTokens->modelDrawModeColor,
-      UsdGeomTokens->modelCardGeometry,
-      UsdGeomTokens->modelCardTextureXPos,
-      UsdGeomTokens->modelCardTextureYPos,
-      UsdGeomTokens->modelCardTextureZPos,
-      UsdGeomTokens->modelCardTextureXNeg,
-      UsdGeomTokens->modelCardTextureYNeg,
-      UsdGeomTokens->modelCardTextureZNeg,
+    UsdGeomTokens->modelDrawMode,
+    UsdGeomTokens->modelApplyDrawMode,
+    UsdGeomTokens->modelDrawModeColor,
+    UsdGeomTokens->modelCardGeometry,
+    UsdGeomTokens->modelCardTextureXPos,
+    UsdGeomTokens->modelCardTextureYPos,
+    UsdGeomTokens->modelCardTextureZPos,
+    UsdGeomTokens->modelCardTextureXNeg,
+    UsdGeomTokens->modelCardTextureYNeg,
+    UsdGeomTokens->modelCardTextureZNeg,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdAPISchemaBase::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -367,8 +365,8 @@ VtVec3fArray UsdGeomModelAPI::ComputeExtentsHint(UsdGeomBBoxCache &bboxCache) co
     const GfVec3d &min = range.GetMin();
     const GfVec3d &max = range.GetMax();
 
-    size_t index       = bboxType * 2;
-    extents[index]     = GfVec3f(min[0], min[1], min[2]);
+    size_t index = bboxType * 2;
+    extents[index] = GfVec3f(min[0], min[1], min[2]);
     extents[index + 1] = GfVec3f(max[0], max[1], max[2]);
   }
 
@@ -383,19 +381,16 @@ VtVec3fArray UsdGeomModelAPI::ComputeExtentsHint(UsdGeomBBoxCache &bboxCache) co
   return extents;
 }
 
-UsdGeomConstraintTarget UsdGeomModelAPI::GetConstraintTarget(
-    const std::string &constraintName) const
+UsdGeomConstraintTarget UsdGeomModelAPI::GetConstraintTarget(const std::string &constraintName) const
 {
-  const TfToken &constraintAttrName = UsdGeomConstraintTarget::GetConstraintAttrName(
-      constraintName);
+  const TfToken &constraintAttrName = UsdGeomConstraintTarget::GetConstraintAttrName(constraintName);
 
   return UsdGeomConstraintTarget(GetPrim().GetAttribute(constraintAttrName));
 }
 
 UsdGeomConstraintTarget UsdGeomModelAPI::CreateConstraintTarget(const string &constraintName) const
 {
-  const TfToken &constraintAttrName = UsdGeomConstraintTarget::GetConstraintAttrName(
-      constraintName);
+  const TfToken &constraintAttrName = UsdGeomConstraintTarget::GetConstraintAttrName(constraintName);
 
   // Check if the constraint target attribute already exists.
   UsdAttribute constraintAttr = GetPrim().GetAttribute(constraintAttrName);

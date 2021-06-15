@@ -20,10 +20,10 @@ limitations under the License.
 WABI_NAMESPACE_BEGIN
 
 HdRprRenderBuffer::HdRprRenderBuffer(SdfPath const &id, HdRprApi *api)
-    : HdRenderBuffer(id),
-      m_numMappers(0),
-      m_isConverged(false),
-      m_rprApi(api)
+  : HdRenderBuffer(id),
+    m_numMappers(0),
+    m_isConverged(false),
+    m_rprApi(api)
 {}
 
 void HdRprRenderBuffer::Sync(HdSceneDelegate *sceneDelegate,
@@ -60,9 +60,9 @@ bool HdRprRenderBuffer::Allocate(GfVec3i const &dimensions, HdFormat format, boo
   m_mapConditionVar.wait(lock, [this]() { return m_numMappers == 0; });
 #endif  // ENABLE_MULTITHREADED_RENDER_BUFFER
 
-  m_width        = dimensions[0];
-  m_height       = dimensions[1];
-  m_format       = format;
+  m_width = dimensions[0];
+  m_height = dimensions[1];
+  m_format = format;
   m_multiSampled = multiSampled;
   m_isConverged.store(false);
 
@@ -86,7 +86,7 @@ void HdRprRenderBuffer::_Deallocate()
   m_mapConditionVar.wait(lock, [this]() { return m_numMappers == 0; });
 #endif  // ENABLE_MULTITHREADED_RENDER_BUFFER
 
-  m_width  = 0u;
+  m_width = 0u;
   m_height = 0u;
   m_format = HdFormatInvalid;
   m_isConverged.store(false);
@@ -172,7 +172,7 @@ VtValue HdRprRenderBuffer::GetResource(bool multiSampled) const
 
     VtDictionary dictionary;
     dictionary["isVulkanInteropEnabled"] = m_rprApi->IsVulkanInteropEnabled();
-    dictionary["framebuffer"]            = color;
+    dictionary["framebuffer"] = color;
 
     return VtValue(dictionary);
   }

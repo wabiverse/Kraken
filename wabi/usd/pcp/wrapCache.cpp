@@ -45,16 +45,15 @@ WABI_NAMESPACE_USING
 
 namespace {
 
-static boost::python::tuple _ComputeLayerStack(PcpCache &cache,
-                                               const PcpLayerStackIdentifier &identifier)
+static boost::python::tuple _ComputeLayerStack(PcpCache &cache, const PcpLayerStackIdentifier &identifier)
 {
   PcpErrorVector errors;
   PcpLayerStackRefPtr result = cache.ComputeLayerStack(identifier, &errors);
 
   typedef Tf_MakePyConstructor::RefPtrFactory<>::apply<PcpLayerStackRefPtr>::type RefPtrFactory;
 
-  return boost::python::make_tuple(
-      boost::python::object(boost::python::handle<>(RefPtrFactory()(result))), errors);
+  return boost::python::make_tuple(boost::python::object(boost::python::handle<>(RefPtrFactory()(result))),
+                                   errors);
 }
 
 static const PcpPrimIndex &_WrapPrimIndex(PcpCache &, const PcpPrimIndex &primIndex)
@@ -100,12 +99,11 @@ static boost::python::tuple _ComputePropertyIndex(PcpCache &cache, const SdfPath
   PcpErrorVector errors;
   const PcpPropertyIndex &result = cache.ComputePropertyIndex(path, &errors);
   return_by_value::apply<PcpPropertyIndex>::type converter;
-  return boost::python::make_tuple(
-      boost::python::object(boost::python::handle<>(converter(result))), errors);
+  return boost::python::make_tuple(boost::python::object(boost::python::handle<>(converter(result))),
+                                   errors);
 }
 
-static const PcpPropertyIndex &_WrapPropertyIndex(PcpCache &,
-                                                  const PcpPropertyIndex &propertyIndex)
+static const PcpPropertyIndex &_WrapPropertyIndex(PcpCache &, const PcpPropertyIndex &propertyIndex)
 {
   return propertyIndex;
 }
@@ -135,7 +133,7 @@ static boost::python::tuple _ComputeRelationshipTargetPaths(PcpCache &cache,
   SdfPathVector result;
   SdfPathVector deletedPaths;
   cache.ComputeRelationshipTargetPaths(
-      path, &result, localOnly, stopProperty, includeStopProperty, &deletedPaths, &errors);
+    path, &result, localOnly, stopProperty, includeStopProperty, &deletedPaths, &errors);
   return boost::python::make_tuple(result, deletedPaths, errors);
 }
 
@@ -149,7 +147,7 @@ static boost::python::tuple _ComputeAttributeConnectionPaths(PcpCache &cache,
   SdfPathVector result;
   SdfPathVector deletedPaths;
   cache.ComputeAttributeConnectionPaths(
-      path, &result, localOnly, stopProperty, includeStopProperty, &deletedPaths, &errors);
+    path, &result, localOnly, stopProperty, includeStopProperty, &deletedPaths, &errors);
   return boost::python::make_tuple(result, deletedPaths, errors);
 }
 
@@ -186,7 +184,7 @@ static PcpDependencyVector _FindSiteDependencies(const PcpCache &cache,
                                                  bool filterForExistingCachesOnly)
 {
   return cache.FindSiteDependencies(
-      layerStack, path, depMask, recurseOnSite, recurseOnIndex, filterForExistingCachesOnly);
+    layerStack, path, depMask, recurseOnSite, recurseOnIndex, filterForExistingCachesOnly);
 }
 
 static void _Reload(PcpCache &cache)
@@ -201,83 +199,74 @@ static void _Reload(PcpCache &cache)
 void wrapCache()
 {
   class_<PcpCache, boost::noncopyable>(
-      "Cache",
-      init<const PcpLayerStackIdentifier &, const std::string &, bool>(
-          (arg("layerStackIdentifier"),
-           arg("fileFormatTarget") = std::string(),
-           arg("usd")              = false)))
+    "Cache",
+    init<const PcpLayerStackIdentifier &, const std::string &, bool>(
+      (arg("layerStackIdentifier"), arg("fileFormatTarget") = std::string(), arg("usd") = false)))
 
-      // Note: The following parameters are not wrapped as a properties
-      // because setting them may require returning additional out-
-      // parameters representing the resulting cache invalidation.
-      .def("GetLayerStackIdentifier",
-           &PcpCache::GetLayerStackIdentifier,
-           return_value_policy<return_by_value>())
-      .def("SetVariantFallbacks", &_SetVariantFallbacks)
-      .def("GetVariantFallbacks",
-           &PcpCache::GetVariantFallbacks,
-           return_value_policy<TfPyMapToDictionary>())
-      .def("GetUsedLayers", &PcpCache::GetUsedLayers, return_value_policy<TfPySequenceToList>())
-      .def("GetUsedLayersRevision", &PcpCache::GetUsedLayersRevision)
-      .def("IsPayloadIncluded", &PcpCache::IsPayloadIncluded)
-      .def("RequestPayloads", &_RequestPayloads)
-      .def("RequestLayerMuting",
-           &_RequestLayerMuting,
-           (args("layersToMute"), args("layersToUnmute")))
-      .def("GetMutedLayers", &PcpCache::GetMutedLayers, return_value_policy<TfPySequenceToList>())
-      .def("IsLayerMuted",
-           (bool (PcpCache::*)(const std::string &) const) & PcpCache::IsLayerMuted,
-           (args("layerIdentifier")))
+    // Note: The following parameters are not wrapped as a properties
+    // because setting them may require returning additional out-
+    // parameters representing the resulting cache invalidation.
+    .def(
+      "GetLayerStackIdentifier", &PcpCache::GetLayerStackIdentifier, return_value_policy<return_by_value>())
+    .def("SetVariantFallbacks", &_SetVariantFallbacks)
+    .def("GetVariantFallbacks", &PcpCache::GetVariantFallbacks, return_value_policy<TfPyMapToDictionary>())
+    .def("GetUsedLayers", &PcpCache::GetUsedLayers, return_value_policy<TfPySequenceToList>())
+    .def("GetUsedLayersRevision", &PcpCache::GetUsedLayersRevision)
+    .def("IsPayloadIncluded", &PcpCache::IsPayloadIncluded)
+    .def("RequestPayloads", &_RequestPayloads)
+    .def("RequestLayerMuting", &_RequestLayerMuting, (args("layersToMute"), args("layersToUnmute")))
+    .def("GetMutedLayers", &PcpCache::GetMutedLayers, return_value_policy<TfPySequenceToList>())
+    .def("IsLayerMuted",
+         (bool (PcpCache::*)(const std::string &) const) & PcpCache::IsLayerMuted,
+         (args("layerIdentifier")))
 
-      .add_property("layerStack", &PcpCache::GetLayerStack)
-      .add_property(
-          "fileFormatTarget",
-          make_function(&PcpCache::GetFileFormatTarget, return_value_policy<return_by_value>()))
+    .add_property("layerStack", &PcpCache::GetLayerStack)
+    .add_property("fileFormatTarget",
+                  make_function(&PcpCache::GetFileFormatTarget, return_value_policy<return_by_value>()))
 
-      .def("ComputeLayerStack", &_ComputeLayerStack)
-      .def("UsesLayerStack", &PcpCache::UsesLayerStack)
-      .def("ComputePrimIndex", &_ComputePrimIndex)
-      .def("FindPrimIndex", &_FindPrimIndex)
-      .def("ComputePropertyIndex", &_ComputePropertyIndex)
-      .def("FindPropertyIndex", &_FindPropertyIndex)
+    .def("ComputeLayerStack", &_ComputeLayerStack)
+    .def("UsesLayerStack", &PcpCache::UsesLayerStack)
+    .def("ComputePrimIndex", &_ComputePrimIndex)
+    .def("FindPrimIndex", &_FindPrimIndex)
+    .def("ComputePropertyIndex", &_ComputePropertyIndex)
+    .def("FindPropertyIndex", &_FindPropertyIndex)
 
-      .def("ComputeRelationshipTargetPaths",
-           &_ComputeRelationshipTargetPaths,
-           (args("relPath"),
-            args("localOnly")           = false,
-            args("stopProperty")        = SdfSpecHandle(),
-            args("includeStopProperty") = false))
-      .def("ComputeAttributeConnectionPaths",
-           &_ComputeAttributeConnectionPaths,
-           (args("relPath"),
-            args("localOnly")           = false,
-            args("stopProperty")        = SdfSpecHandle(),
-            args("includeStopProperty") = false))
+    .def("ComputeRelationshipTargetPaths",
+         &_ComputeRelationshipTargetPaths,
+         (args("relPath"),
+          args("localOnly") = false,
+          args("stopProperty") = SdfSpecHandle(),
+          args("includeStopProperty") = false))
+    .def("ComputeAttributeConnectionPaths",
+         &_ComputeAttributeConnectionPaths,
+         (args("relPath"),
+          args("localOnly") = false,
+          args("stopProperty") = SdfSpecHandle(),
+          args("includeStopProperty") = false))
 
-      .def("FindSiteDependencies",
-           &_FindSiteDependencies,
-           (args("siteLayerStack"),
-            args("sitePath"),
-            args("dependencyType")              = PcpDependencyTypeAnyNonVirtual,
-            args("recurseOnSite")               = false,
-            args("recurseOnIndex")              = false,
-            args("filterForExistingCachesOnly") = false),
-           return_value_policy<TfPySequenceToList>())
-      .def("FindAllLayerStacksUsingLayer",
-           &PcpCache::FindAllLayerStacksUsingLayer,
-           return_value_policy<TfPySequenceToList>())
+    .def("FindSiteDependencies",
+         &_FindSiteDependencies,
+         (args("siteLayerStack"),
+          args("sitePath"),
+          args("dependencyType") = PcpDependencyTypeAnyNonVirtual,
+          args("recurseOnSite") = false,
+          args("recurseOnIndex") = false,
+          args("filterForExistingCachesOnly") = false),
+         return_value_policy<TfPySequenceToList>())
+    .def("FindAllLayerStacksUsingLayer",
+         &PcpCache::FindAllLayerStacksUsingLayer,
+         return_value_policy<TfPySequenceToList>())
 
-      .def("IsInvalidAssetPath", &PcpCache::IsInvalidAssetPath)
-      .def("IsInvalidSublayerIdentifier", &PcpCache::IsInvalidSublayerIdentifier)
+    .def("IsInvalidAssetPath", &PcpCache::IsInvalidAssetPath)
+    .def("IsInvalidSublayerIdentifier", &PcpCache::IsInvalidSublayerIdentifier)
 
-      .def("HasAnyDynamicFileFormatArgumentDependencies",
-           &PcpCache::HasAnyDynamicFileFormatArgumentDependencies)
-      .def("IsPossibleDynamicFileFormatArgumentField",
-           &PcpCache::IsPossibleDynamicFileFormatArgumentField)
-      .def("GetDynamicFileFormatArgumentDependencyData",
-           &PcpCache::GetDynamicFileFormatArgumentDependencyData,
-           return_value_policy<reference_existing_object>())
+    .def("HasAnyDynamicFileFormatArgumentDependencies",
+         &PcpCache::HasAnyDynamicFileFormatArgumentDependencies)
+    .def("IsPossibleDynamicFileFormatArgumentField", &PcpCache::IsPossibleDynamicFileFormatArgumentField)
+    .def("GetDynamicFileFormatArgumentDependencyData",
+         &PcpCache::GetDynamicFileFormatArgumentDependencyData,
+         return_value_policy<reference_existing_object>())
 
-      .def("PrintStatistics", &PcpCache::PrintStatistics)
-      .def("Reload", &_Reload);
+    .def("PrintStatistics", &PcpCache::PrintStatistics)
+    .def("Reload", &_Reload);
 }

@@ -147,9 +147,7 @@ class SdfLayerStateDelegateBase : public TfRefBase, public TfWeakBase {
   virtual void _OnSetLayer(const SdfLayerHandle &layer) = 0;
 
   /// Invoked when a field is being changed on the associated layer.
-  virtual void _OnSetField(const SdfPath &path,
-                           const TfToken &fieldName,
-                           const VtValue &value)                   = 0;
+  virtual void _OnSetField(const SdfPath &path, const TfToken &fieldName, const VtValue &value) = 0;
   virtual void _OnSetField(const SdfPath &path,
                            const TfToken &fieldName,
                            const SdfAbstractDataConstValue &value) = 0;
@@ -158,7 +156,7 @@ class SdfLayerStateDelegateBase : public TfRefBase, public TfWeakBase {
   virtual void _OnSetFieldDictValueByKey(const SdfPath &path,
                                          const TfToken &fieldName,
                                          const TfToken &keyPath,
-                                         const VtValue &value)                   = 0;
+                                         const VtValue &value) = 0;
   virtual void _OnSetFieldDictValueByKey(const SdfPath &path,
                                          const TfToken &fieldName,
                                          const TfToken &keyPath,
@@ -168,7 +166,7 @@ class SdfLayerStateDelegateBase : public TfRefBase, public TfWeakBase {
   virtual void _OnSetTimeSample(const SdfPath &path, double time, const VtValue &value) = 0;
   virtual void _OnSetTimeSample(const SdfPath &path,
                                 double time,
-                                const SdfAbstractDataConstValue &value)                 = 0;
+                                const SdfAbstractDataConstValue &value) = 0;
 
   /// Invoked when a new spec is created on the associated layer.
   virtual void _OnCreateSpec(const SdfPath &path, SdfSpecType specType, bool inert) = 0;
@@ -181,24 +179,16 @@ class SdfLayerStateDelegateBase : public TfRefBase, public TfWeakBase {
   virtual void _OnMoveSpec(const SdfPath &oldPath, const SdfPath &newPath) = 0;
 
   /// Invoked when a child spec is pushed onto a parent's list of children.
-  virtual void _OnPushChild(const SdfPath &parentPath,
-                            const TfToken &fieldName,
-                            const TfToken &value) = 0;
+  virtual void _OnPushChild(const SdfPath &parentPath, const TfToken &fieldName, const TfToken &value) = 0;
 
   /// Invoked when a child spec is pushed onto a parent's list of children.
-  virtual void _OnPushChild(const SdfPath &parentPath,
-                            const TfToken &fieldName,
-                            const SdfPath &value) = 0;
+  virtual void _OnPushChild(const SdfPath &parentPath, const TfToken &fieldName, const SdfPath &value) = 0;
 
   /// Invoked when a child spec is popped off a parent's list of children.
-  virtual void _OnPopChild(const SdfPath &parentPath,
-                           const TfToken &fieldName,
-                           const TfToken &oldValue) = 0;
+  virtual void _OnPopChild(const SdfPath &parentPath, const TfToken &fieldName, const TfToken &oldValue) = 0;
 
   /// Invoked when a child spec is popped off a parent's list of children.
-  virtual void _OnPopChild(const SdfPath &parentPath,
-                           const TfToken &fieldName,
-                           const SdfPath &oldValue) = 0;
+  virtual void _OnPopChild(const SdfPath &parentPath, const TfToken &fieldName, const SdfPath &oldValue) = 0;
 
  private:
   friend class SdfLayer;
@@ -225,9 +215,7 @@ class SdfSimpleLayerStateDelegate : public SdfLayerStateDelegateBase {
 
   virtual void _OnSetLayer(const SdfLayerHandle &layer) override;
 
-  virtual void _OnSetField(const SdfPath &path,
-                           const TfToken &fieldName,
-                           const VtValue &value) override;
+  virtual void _OnSetField(const SdfPath &path, const TfToken &fieldName, const VtValue &value) override;
   virtual void _OnSetField(const SdfPath &path,
                            const TfToken &fieldName,
                            const SdfAbstractDataConstValue &value) override;
@@ -251,18 +239,10 @@ class SdfSimpleLayerStateDelegate : public SdfLayerStateDelegateBase {
 
   virtual void _OnMoveSpec(const SdfPath &oldPath, const SdfPath &newPath) override;
 
-  virtual void _OnPushChild(const SdfPath &path,
-                            const TfToken &fieldName,
-                            const TfToken &value) override;
-  virtual void _OnPushChild(const SdfPath &path,
-                            const TfToken &fieldName,
-                            const SdfPath &value) override;
-  virtual void _OnPopChild(const SdfPath &path,
-                           const TfToken &fieldName,
-                           const TfToken &oldValue) override;
-  virtual void _OnPopChild(const SdfPath &path,
-                           const TfToken &fieldName,
-                           const SdfPath &oldValue) override;
+  virtual void _OnPushChild(const SdfPath &path, const TfToken &fieldName, const TfToken &value) override;
+  virtual void _OnPushChild(const SdfPath &path, const TfToken &fieldName, const SdfPath &value) override;
+  virtual void _OnPopChild(const SdfPath &path, const TfToken &fieldName, const TfToken &oldValue) override;
+  virtual void _OnPopChild(const SdfPath &path, const TfToken &fieldName, const SdfPath &oldValue) override;
 
  private:
   bool _dirty;

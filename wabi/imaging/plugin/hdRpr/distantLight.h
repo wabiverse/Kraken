@@ -32,9 +32,7 @@ class HdRprDistantLight : public HdSprim {
   HdRprDistantLight(SdfPath const &id) : HdSprim(id)
   {}
 
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 

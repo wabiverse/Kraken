@@ -25,7 +25,7 @@
 WABI_NAMESPACE_BEGIN
 
 HdCyclesOpenvdbAsset::HdCyclesOpenvdbAsset(HdCyclesRenderDelegate *a_delegate, const SdfPath &id)
-    : HdField(id)
+  : HdField(id)
 {
   TF_UNUSED(a_delegate);
 }

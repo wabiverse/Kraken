@@ -110,8 +110,7 @@ bool UsdSkelCache::ComputeSkelBindings(const UsdSkelRoot &skelRoot,
   }
 
   TF_DEBUG(USDSKEL_CACHE)
-      .Msg("[UsdSkelCache] Compute skel bindings for <%s>\n",
-           skelRoot.GetPrim().GetPath().GetText());
+    .Msg("[UsdSkelCache] Compute skel bindings for <%s>\n", skelRoot.GetPrim().GetPath().GetText());
 
   bindings->clear();
 
@@ -130,10 +129,10 @@ bool UsdSkelCache::ComputeSkelBindings(const UsdSkelRoot &skelRoot,
     if (ARCH_UNLIKELY(!it->IsA<UsdGeomImageable>())) {
       if (!it.IsPostVisit()) {
         TF_DEBUG(USDSKEL_CACHE)
-            .Msg(
-                "[UsdSkelCache]  Pruning traversal at <%s> "
-                "(prim is not UsdGeomImageable)\n",
-                it->GetPath().GetText());
+          .Msg(
+            "[UsdSkelCache]  Pruning traversal at <%s> "
+            "(prim is not UsdGeomImageable)\n",
+            it->GetPath().GetText());
 
         it.PruneChildren();
       }
@@ -158,21 +157,21 @@ bool UsdSkelCache::ComputeSkelBindings(const UsdSkelRoot &skelRoot,
     }
     else {
       TF_DEBUG(USDSKEL_CACHE)
-          .Msg(
-              "[UsdSkelCache]  Found skel binding at <%s> "
-              "which targets skel <%s>.\n",
-              it->GetPath().GetText(),
-              skel.GetPrim().GetPath().GetText());
+        .Msg(
+          "[UsdSkelCache]  Found skel binding at <%s> "
+          "which targets skel <%s>.\n",
+          it->GetPath().GetText(),
+          skel.GetPrim().GetPath().GetText());
     }
 
     if (skel && skel.GetPrim().IsActive()) {
       if (const UsdSkelSkinningQuery query = GetSkinningQuery(*it)) {
         TF_DEBUG(USDSKEL_CACHE)
-            .Msg(
-                "[UsdSkelCache]  Found skinnable prim <%s>, bound to "
-                "skel <%s>.\n",
-                it->GetPath().GetText(),
-                skel.GetPrim().GetPath().GetText());
+          .Msg(
+            "[UsdSkelCache]  Found skinnable prim <%s>, bound to "
+            "skel <%s>.\n",
+            it->GetPath().GetText(),
+            skel.GetPrim().GetPath().GetText());
 
         bindingMap[skel].push_back(query);
 
@@ -226,10 +225,10 @@ bool UsdSkelCache::ComputeSkelBinding(const UsdSkelRoot &skelRoot,
     if (ARCH_UNLIKELY(!it->IsA<UsdGeomImageable>())) {
       if (!it.IsPostVisit()) {
         TF_DEBUG(USDSKEL_CACHE)
-            .Msg(
-                "[UsdSkelCache]  Pruning traversal at <%s> "
-                "(prim is not UsdGeomImageable)\n",
-                it->GetPath().GetText());
+          .Msg(
+            "[UsdSkelCache]  Pruning traversal at <%s> "
+            "(prim is not UsdGeomImageable)\n",
+            it->GetPath().GetText());
 
         it.PruneChildren();
       }
@@ -254,17 +253,16 @@ bool UsdSkelCache::ComputeSkelBinding(const UsdSkelRoot &skelRoot,
     }
     else {
       TF_DEBUG(USDSKEL_CACHE)
-          .Msg(
-              "[UsdSkelCache]  Found skel binding at <%s> "
-              "which targets skel <%s>.\n",
-              it->GetPath().GetText(),
-              boundSkel.GetPrim().GetPath().GetText());
+        .Msg(
+          "[UsdSkelCache]  Found skel binding at <%s> "
+          "which targets skel <%s>.\n",
+          it->GetPath().GetText(),
+          boundSkel.GetPrim().GetPath().GetText());
     }
 
     if (boundSkel.GetPrim() == skel.GetPrim()) {
       if (const UsdSkelSkinningQuery query = GetSkinningQuery(*it)) {
-        TF_DEBUG(USDSKEL_CACHE)
-            .Msg("[UsdSkelCache]  Found skinnable prim <%s>\n", it->GetPath().GetText());
+        TF_DEBUG(USDSKEL_CACHE).Msg("[UsdSkelCache]  Found skinnable prim <%s>\n", it->GetPath().GetText());
 
         skinningQueries.push_back(query);
 

@@ -205,8 +205,7 @@ class UsdUIWindow : public UsdTyped {
    */
 
   USDUI_API
-  UsdAttribute CreateTitleAttr(VtValue const &defaultValue = VtValue(),
-                               bool writeSparsely          = false) const;
+  UsdAttribute CreateTitleAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
   /**
    * ---------------------------------------------------------------------
@@ -237,7 +236,7 @@ class UsdUIWindow : public UsdTyped {
 
   USDUI_API
   UsdAttribute CreateWindowCoordsAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   /**

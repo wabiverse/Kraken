@@ -31,7 +31,7 @@
 WABI_NAMESPACE_BEGIN
 
 using HdPh_GeometricShaderSharedPtr = std::shared_ptr<class HdPh_GeometricShader>;
-using HdPhShaderCodeSharedPtr       = std::shared_ptr<class HdPhShaderCode>;
+using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
 
 class HdPhDrawItem : public HdDrawItem {
  public:

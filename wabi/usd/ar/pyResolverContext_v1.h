@@ -66,8 +66,7 @@ template<class Context> void ArWrapResolverContextForPython();
 // Private helper functions for converting ArResolverContext
 // objects to and from Python.
 
-template<class Context>
-bool Ar_ConvertResolverContextFromPython(PyObject *obj, ArResolverContext *context)
+template<class Context> bool Ar_ConvertResolverContextFromPython(PyObject *obj, ArResolverContext *context)
 {
   boost::python::extract<const Context &> x(obj);
   if (x.check()) {
@@ -93,13 +92,11 @@ bool Ar_ConvertResolverContextToPython(const ArResolverContext &context, TfPyObj
 }
 
 typedef std::function<bool(PyObject *, ArResolverContext *)> Ar_MakeResolverContextFromPythonFn;
-typedef std::function<bool(const ArResolverContext &, TfPyObjWrapper *)>
-    Ar_ResolverContextToPythonFn;
+typedef std::function<bool(const ArResolverContext &, TfPyObjWrapper *)> Ar_ResolverContextToPythonFn;
 
 AR_API
-void Ar_RegisterResolverContextPythonConversion(
-    const Ar_MakeResolverContextFromPythonFn &convertFunc,
-    const Ar_ResolverContextToPythonFn &getObjectFunc);
+void Ar_RegisterResolverContextPythonConversion(const Ar_MakeResolverContextFromPythonFn &convertFunc,
+                                                const Ar_ResolverContextToPythonFn &getObjectFunc);
 
 AR_API
 bool Ar_CanConvertResolverContextFromPython(PyObject *pyObj);

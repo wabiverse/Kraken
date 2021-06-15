@@ -59,8 +59,7 @@ TfToken SdfPropertySpec::GetNameToken() const
 
 bool SdfPropertySpec::CanSetName(const std::string &newName, std::string *whyNot) const
 {
-  return Sdf_ChildrenUtils<Sdf_PropertyChildPolicy>::CanRename(*this, TfToken(newName))
-      .IsAllowed(whyNot);
+  return Sdf_ChildrenUtils<Sdf_PropertyChildPolicy>::CanRename(*this, TfToken(newName)).IsAllowed(whyNot);
 }
 
 bool SdfPropertySpec::SetName(const std::string &newName, bool validate)
@@ -115,9 +114,7 @@ SDF_DEFINE_GET_SET(SymmetryFunction, SdfFieldKeys->SymmetryFunction, TfToken)
 SDF_DEFINE_TYPED_GET_SET(Permission, SdfFieldKeys->Permission, SdfPermission, SdfPermission)
 
 SDF_DEFINE_DICTIONARY_GET_SET(GetCustomData, SetCustomData, SdfFieldKeys->CustomData);
-SDF_DEFINE_DICTIONARY_GET_SET(GetSymmetryArguments,
-                              SetSymmetryArgument,
-                              SdfFieldKeys->SymmetryArguments);
+SDF_DEFINE_DICTIONARY_GET_SET(GetSymmetryArguments, SetSymmetryArgument, SdfFieldKeys->SymmetryArguments);
 SDF_DEFINE_DICTIONARY_GET_SET(GetAssetInfo, SetAssetInfo, SdfFieldKeys->AssetInfo);
 
 // Property Value API
@@ -162,10 +159,10 @@ bool SdfPropertySpec::SetDefaultValue(const VtValue &defaultValue)
       return SetField(SdfFieldKeys->Default, defaultValue);
     }
     TF_CODING_ERROR(
-        "Can't set value on attribute <%s> with "
-        "unknown type \"%s\"",
-        GetPath().GetText(),
-        GetTypeName().GetAsToken().GetText());
+      "Can't set value on attribute <%s> with "
+      "unknown type \"%s\"",
+      GetPath().GetText(),
+      GetTypeName().GetAsToken().GetText());
     return false;
   }
 
@@ -194,11 +191,11 @@ bool SdfPropertySpec::SetDefaultValue(const VtValue &defaultValue)
   // If we reach here, we are either assigning invalid values to enum types
   // or defaultValue can't cast to valueType.
   TF_CODING_ERROR(
-      "Can't set value on <%s> to %s: "
-      "expected a value of type \"%s\"",
-      GetPath().GetText(),
-      TfStringify(defaultValue).c_str(),
-      valueType.GetTypeName().c_str());
+    "Can't set value on <%s> to %s: "
+    "expected a value of type \"%s\"",
+    GetPath().GetText(),
+    TfStringify(defaultValue).c_str(),
+    valueType.GetTypeName().c_str());
   return false;
 }
 
@@ -249,7 +246,7 @@ SdfValueTypeName SdfPropertySpec::GetTypeName() const
 bool SdfPropertySpec::HasOnlyRequiredFields() const
 {
   return GetLayer()->_IsInert(
-      GetPath(), true /*ignoreChildren*/, true /* requiredFieldOnlyPropertiesAreInert */);
+    GetPath(), true /*ignoreChildren*/, true /* requiredFieldOnlyPropertiesAreInert */);
 }
 
 WABI_NAMESPACE_END

@@ -47,13 +47,13 @@ bool HdExtComputation::_IsEnabledSharedExtComputationData()
 }
 
 HdExtComputation::HdExtComputation(SdfPath const &id)
-    : HdSprim(id),
-      _dispatchCount(0),
-      _elementCount(0),
-      _sceneInputNames(),
-      _computationInputs(),
-      _computationOutputs(),
-      _gpuKernelSource()
+  : HdSprim(id),
+    _dispatchCount(0),
+    _elementCount(0),
+    _sceneInputNames(),
+    _computationInputs(),
+    _computationOutputs(),
+    _gpuKernelSource()
 {}
 
 void HdExtComputation::Sync(HdSceneDelegate *sceneDelegate,
@@ -74,18 +74,18 @@ void HdExtComputation::_Sync(HdSceneDelegate *sceneDelegate,
     return;
   }
   TF_DEBUG(HD_EXT_COMPUTATION_UPDATED)
-      .Msg(
-          "HdExtComputation::Sync for %s"
-          " (dirty bits = 0x%x)\n",
-          GetId().GetText(),
-          *dirtyBits);
+    .Msg(
+      "HdExtComputation::Sync for %s"
+      " (dirty bits = 0x%x)\n",
+      GetId().GetText(),
+      *dirtyBits);
 
   HdDirtyBits bits = *dirtyBits;
 
   if (bits & DirtyInputDesc) {
     TF_DEBUG(HD_EXT_COMPUTATION_UPDATED).Msg("    dirty inputs\n");
 
-    _sceneInputNames   = sceneDelegate->GetExtComputationSceneInputNames(GetId());
+    _sceneInputNames = sceneDelegate->GetExtComputationSceneInputNames(GetId());
     _computationInputs = sceneDelegate->GetExtComputationInputDescriptors(GetId());
   }
 
@@ -94,8 +94,7 @@ void HdExtComputation::_Sync(HdSceneDelegate *sceneDelegate,
   }
 
   if (bits & DirtyDispatchCount) {
-    VtValue vtDispatchCount = sceneDelegate->GetExtComputationInput(GetId(),
-                                                                    HdTokens->dispatchCount);
+    VtValue vtDispatchCount = sceneDelegate->GetExtComputationInput(GetId(), HdTokens->dispatchCount);
     // For backward compatibility, allow the dispatch count to be empty.
     if (!vtDispatchCount.IsEmpty()) {
       _dispatchCount = vtDispatchCount.Get<size_t>();
@@ -106,8 +105,7 @@ void HdExtComputation::_Sync(HdSceneDelegate *sceneDelegate,
   }
 
   if (bits & DirtyElementCount) {
-    VtValue vtElementCount = sceneDelegate->GetExtComputationInput(GetId(),
-                                                                   HdTokens->elementCount);
+    VtValue vtElementCount = sceneDelegate->GetExtComputationInput(GetId(), HdTokens->elementCount);
     // For backward compatibility, allow the element count to be empty.
     if (!vtElementCount.IsEmpty()) {
       _elementCount = vtElementCount.Get<size_t>();
@@ -119,15 +117,13 @@ void HdExtComputation::_Sync(HdSceneDelegate *sceneDelegate,
 
   if (bits & DirtyKernel) {
     _gpuKernelSource = sceneDelegate->GetExtComputationKernel(GetId());
-    TF_DEBUG(HD_EXT_COMPUTATION_UPDATED)
-        .Msg("    GpuKernelSource = '%s'\n", _gpuKernelSource.c_str());
+    TF_DEBUG(HD_EXT_COMPUTATION_UPDATED).Msg("    GpuKernelSource = '%s'\n", _gpuKernelSource.c_str());
     // XXX we should update any created GPU computations as well
     // with the new kernel if we want to provide a good editing flow.
   }
 
   // Clear processed bits
-  *dirtyBits &= ~(DirtyInputDesc | DirtyOutputDesc | DirtyDispatchCount | DirtyElementCount |
-                  DirtyKernel);
+  *dirtyBits &= ~(DirtyInputDesc | DirtyOutputDesc | DirtyDispatchCount | DirtyElementCount | DirtyKernel);
   // XXX: DirtyCompInput isn't used yet.
   *dirtyBits &= ~DirtyCompInput;
 }

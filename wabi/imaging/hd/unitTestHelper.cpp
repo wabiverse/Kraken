@@ -48,10 +48,10 @@ class Hd_DrawTask final : public HdTask {
   Hd_DrawTask(HdRenderPassSharedPtr const &renderPass,
               HdRenderPassStateSharedPtr const &renderPassState,
               bool withGuides)
-      : HdTask(SdfPath::EmptyPath()),
-        _renderPass(renderPass),
-        _renderPassState(renderPassState),
-        _renderTags()
+    : HdTask(SdfPath::EmptyPath()),
+      _renderPass(renderPass),
+      _renderPassState(renderPassState),
+      _renderTags()
   {
     _renderTags.reserve(2);
     _renderTags.push_back(HdRenderTagTokens->geometry);
@@ -86,7 +86,7 @@ class Hd_DrawTask final : public HdTask {
   HdRenderPassStateSharedPtr _renderPassState;
   TfTokenVector _renderTags;
 
-  Hd_DrawTask()                    = delete;
+  Hd_DrawTask() = delete;
   Hd_DrawTask(const Hd_DrawTask &) = delete;
   Hd_DrawTask &operator=(const Hd_DrawTask &) = delete;
 };
@@ -99,14 +99,14 @@ template<typename T> static VtArray<T> _BuildArray(T values[], int numValues)
 }
 
 Hd_TestDriver::Hd_TestDriver()
-    : _engine(),
-      _renderDelegate(),
-      _renderIndex(nullptr),
-      _sceneDelegate(nullptr),
-      _cameraId(SdfPath("/__camera")),
-      _renderPass(),
-      _renderPassState(_renderDelegate.CreateRenderPassState()),
-      _collection(_tokens->testCollection, HdReprSelector())
+  : _engine(),
+    _renderDelegate(),
+    _renderIndex(nullptr),
+    _sceneDelegate(nullptr),
+    _cameraId(SdfPath("/__camera")),
+    _renderPass(),
+    _renderPassState(_renderDelegate.CreateRenderPassState()),
+    _collection(_tokens->testCollection, HdReprSelector())
 {
   HdReprSelector reprSelector = HdReprSelector(HdReprTokens->hull);
   if (TfGetenv("HD_ENABLE_SMOOTH_NORMALS", "CPU") == "CPU" ||
@@ -117,14 +117,14 @@ Hd_TestDriver::Hd_TestDriver()
 }
 
 Hd_TestDriver::Hd_TestDriver(HdReprSelector const &reprSelector)
-    : _engine(),
-      _renderDelegate(),
-      _renderIndex(nullptr),
-      _sceneDelegate(nullptr),
-      _cameraId(SdfPath("/__camera")),
-      _renderPass(),
-      _renderPassState(_renderDelegate.CreateRenderPassState()),
-      _collection(_tokens->testCollection, HdReprSelector())
+  : _engine(),
+    _renderDelegate(),
+    _renderIndex(nullptr),
+    _sceneDelegate(nullptr),
+    _cameraId(SdfPath("/__camera")),
+    _renderPass(),
+    _renderPassState(_renderDelegate.CreateRenderPassState()),
+    _collection(_tokens->testCollection, HdReprSelector())
 {
   _Init(reprSelector);
 }
@@ -169,8 +169,7 @@ void Hd_TestDriver::Draw(bool withGuides)
 
 void Hd_TestDriver::Draw(HdRenderPassSharedPtr const &renderPass, bool withGuides)
 {
-  HdTaskSharedPtrVector tasks = {
-      std::make_shared<Hd_DrawTask>(renderPass, _renderPassState, withGuides)};
+  HdTaskSharedPtrVector tasks = {std::make_shared<Hd_DrawTask>(renderPass, _renderPassState, withGuides)};
   _engine.Execute(&_sceneDelegate->GetRenderIndex(), &tasks);
 }
 
@@ -178,14 +177,11 @@ void Hd_TestDriver::SetCamera(GfMatrix4d const &modelViewMatrix,
                               GfMatrix4d const &projectionMatrix,
                               GfVec4d const &viewport)
 {
-  _sceneDelegate->UpdateCamera(
-      _cameraId, HdCameraTokens->worldToViewMatrix, VtValue(modelViewMatrix));
-  _sceneDelegate->UpdateCamera(
-      _cameraId, HdCameraTokens->projectionMatrix, VtValue(projectionMatrix));
+  _sceneDelegate->UpdateCamera(_cameraId, HdCameraTokens->worldToViewMatrix, VtValue(modelViewMatrix));
+  _sceneDelegate->UpdateCamera(_cameraId, HdCameraTokens->projectionMatrix, VtValue(projectionMatrix));
   // Baselines for tests were generated without constraining the view
   // frustum based on the viewport aspect ratio.
-  _sceneDelegate->UpdateCamera(
-      _cameraId, HdCameraTokens->windowPolicy, VtValue(CameraUtilDontConform));
+  _sceneDelegate->UpdateCamera(_cameraId, HdCameraTokens->windowPolicy, VtValue(CameraUtilDontConform));
 
   HdSprim const *cam = _renderIndex->GetSprim(HdPrimTypeTokens->camera, _cameraId);
   TF_VERIFY(cam);
@@ -201,7 +197,7 @@ HdRenderPassSharedPtr const &Hd_TestDriver::GetRenderPass()
 {
   if (!_renderPass) {
     _renderPass = HdRenderPassSharedPtr(
-        new Hd_UnitTestNullRenderPass(&_sceneDelegate->GetRenderIndex(), _collection));
+      new Hd_UnitTestNullRenderPass(&_sceneDelegate->GetRenderIndex(), _collection));
   }
   return _renderPass;
 }

@@ -16,10 +16,10 @@ class Scroller : public ZepComponent {
   virtual void Notify(std::shared_ptr<ZepMessage> message) override;
 
   float vScrollVisiblePercent = 1.0f;
-  float vScrollPosition       = 0.0f;
-  float vScrollLinePercent    = 0.0f;
-  float vScrollPagePercent    = 0.0f;
-  bool vertical               = true;
+  float vScrollPosition = 0.0f;
+  float vScrollLinePercent = 0.0f;
+  float vScrollPagePercent = 0.0f;
+  bool vertical = true;
 
  private:
   void CheckState();

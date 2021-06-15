@@ -95,8 +95,7 @@ bool _ShouldCopyValue(const Py_SdfShouldCopyValueFn &pyFunc,
                       bool fieldInDst,
                       boost::optional<VtValue> *value)
 {
-  object result = pyFunc(
-      specType, field, srcLayer, srcPath, fieldInSrc, dstLayer, dstPath, fieldInDst);
+  object result = pyFunc(specType, field, srcLayer, srcPath, fieldInSrc, dstLayer, dstPath, fieldInDst);
 
   if (PyBool_Check(result.ptr())) {
     return extract<bool>(result)();
@@ -106,7 +105,7 @@ bool _ShouldCopyValue(const Py_SdfShouldCopyValueFn &pyFunc,
   if (getTuple.check()) {
     if (PyBool_Check(object(result[0]).ptr())) {
       const bool status = extract<bool>(result[0])();
-      *value            = _GetValueForField(srcLayer, field, result[1]);
+      *value = _GetValueForField(srcLayer, field, result[1]);
       return status;
     }
   }
@@ -136,8 +135,8 @@ bool _ShouldCopyChildren(const Py_SdfShouldCopyChildrenFn &pyFunc,
   if (getTuple.check()) {
     if (PyBool_Check(object(result[0]).ptr())) {
       const bool status = extract<bool>(result[0])();
-      *srcChildren      = _GetValueForField(srcLayer, field, result[1]);
-      *dstChildren      = _GetValueForField(srcLayer, field, result[2]);
+      *srcChildren = _GetValueForField(srcLayer, field, result[1]);
+      *dstChildren = _GetValueForField(srcLayer, field, result[2]);
       return status;
     }
   }
@@ -190,9 +189,8 @@ bool Py_SdfCopySpec(const SdfLayerHandle &srcLayer,
 void wrapCopyUtils()
 {
   def("CopySpec",
-      (bool (*)(
-          const SdfLayerHandle &, const SdfPath &, const SdfLayerHandle &, const SdfPath &)) &
-          SdfCopySpec,
+      (bool (*)(const SdfLayerHandle &, const SdfPath &, const SdfLayerHandle &, const SdfPath &)) &
+        SdfCopySpec,
       (arg("srcLayer"), arg("srcPath"), arg("dstLayer"), arg("dstPath")));
 
   TfPyFunctionFromPython<Py_SdfShouldCopyChildrenSig>();

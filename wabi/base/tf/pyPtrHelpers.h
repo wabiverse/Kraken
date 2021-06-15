@@ -176,8 +176,7 @@ template<class Ptr> struct _PtrFromPython {
   {
     if (p == Py_None)
       return p;
-    void *result = converter::get_lvalue_from_python(p,
-                                                     converter::registered<Pointee>::converters);
+    void *result = converter::get_lvalue_from_python(p, converter::registered<Pointee>::converters);
     return result;
   }
 
@@ -214,14 +213,13 @@ template<typename PtrType> struct _AnyWeakPtrFromPython {
     if (p == Py_None)
       return p;
     void *result = converter::get_lvalue_from_python(
-        p, converter::registered<typename _PtrInterface<PtrType>::Pointee>::converters);
+      p, converter::registered<typename _PtrInterface<PtrType>::Pointee>::converters);
     return result;
   }
 
   static void construct(PyObject *source, converter::rvalue_from_python_stage1_data *data)
   {
-    void *const storage =
-        ((converter::rvalue_from_python_storage<TfAnyWeakPtr> *)data)->storage.bytes;
+    void *const storage = ((converter::rvalue_from_python_storage<TfAnyWeakPtr> *)data)->storage.bytes;
     // Deal with the "None" case.
     if (data->convertible == source)
       new (storage) TfAnyWeakPtr();
@@ -300,8 +298,7 @@ template<typename Ptr> struct _PtrToPythonWrapper {
     return ret.first;
   }
 };
-template<typename T>
-converter::to_python_function_t _PtrToPythonWrapper<T>::_originalConverter = 0;
+template<typename T> converter::to_python_function_t _PtrToPythonWrapper<T>::_originalConverter = 0;
 
 struct WeakPtr : def_visitor<WeakPtr> {
   friend class def_visitor_access;
@@ -312,8 +309,7 @@ struct WeakPtr : def_visitor<WeakPtr> {
     _RegisterConversionsHelper<WrapperPtrType, Wrapper, T>();
   }
 
-  template<typename WrapperPtrType, typename Wrapper, typename T>
-  static void _RegisterConversionsHelper()
+  template<typename WrapperPtrType, typename Wrapper, typename T> static void _RegisterConversionsHelper()
   {
 
     static_assert(std::is_same<typename _PtrInterface<WrapperPtrType>::Pointee, Wrapper>::value,
@@ -342,15 +338,14 @@ struct WeakPtr : def_visitor<WeakPtr> {
     // conversion.  The unwrapped type is handled separately -- we don't
     // have to replace an existing converter, we can just register our own.
     converter::registration *r = const_cast<converter::registration *>(
-        converter::registry::query(type_id<WrapperPtrType>()));
+      converter::registry::query(type_id<WrapperPtrType>()));
     if (r) {
       _PtrToPythonWrapper<WrapperPtrType>::_originalConverter = r->m_to_python;
       r->m_to_python = _PtrToPythonWrapper<WrapperPtrType>::Convert;
     }
     else {
       // CODE_COVERAGE_OFF Can only happen if there's a bug.
-      TF_CODING_ERROR("No python registration for '%s'!",
-                      ArchGetDemangled(typeid(WrapperPtrType)).c_str());
+      TF_CODING_ERROR("No python registration for '%s'!", ArchGetDemangled(typeid(WrapperPtrType)).c_str());
       // CODE_COVERAGE_ON
     }
 
@@ -396,8 +391,7 @@ struct RefAndWeakPtr : def_visitor<RefAndWeakPtr> {
   template<typename CLS, typename Wrapper, typename T> static void _AddAPI(Wrapper *, T *)
   {
     _PtrFromPython<TfRefPtr<T>>();
-    typedef typename _PtrInterface<typename CLS::metadata::held_type>::template Rebind<T>::Type
-        PtrType;
+    typedef typename _PtrInterface<typename CLS::metadata::held_type>::template Rebind<T>::Type PtrType;
     _ConvertPtrToPython<TfRefPtr<T>, PtrType>();
   }
 

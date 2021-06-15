@@ -41,7 +41,7 @@ ArResolverScopedCache::ArResolverScopedCache()
 }
 
 ArResolverScopedCache::ArResolverScopedCache(const ArResolverScopedCache *parent)
-    : _cacheScopeData(parent->_cacheScopeData)
+  : _cacheScopeData(parent->_cacheScopeData)
 {
   ArGetResolver().BeginCacheScope(&_cacheScopeData);
 }

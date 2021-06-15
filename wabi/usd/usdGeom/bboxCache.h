@@ -112,7 +112,7 @@ class UsdGeomBBoxCache {
   USDGEOM_API
   UsdGeomBBoxCache(UsdTimeCode time,
                    TfTokenVector includedPurposes,
-                   bool useExtentsHint   = false,
+                   bool useExtentsHint = false,
                    bool ignoreVisibility = false);
 
   /// Copy constructor.
@@ -189,10 +189,9 @@ class UsdGeomBBoxCache {
   ///
   /// See ComputeWorldBound() for notes on performance and error handling.
   USDGEOM_API
-  GfBBox3d ComputeUntransformedBound(
-      const UsdPrim &prim,
-      const SdfPathSet &pathsToSkip,
-      const TfHashMap<SdfPath, GfMatrix4d, SdfPath::Hash> &ctmOverrides);
+  GfBBox3d ComputeUntransformedBound(const UsdPrim &prim,
+                                     const SdfPathSet &pathsToSkip,
+                                     const TfHashMap<SdfPath, GfMatrix4d, SdfPath::Hash> &ctmOverrides);
 
   /// Compute the bound of the given point instances in world space.
   ///
@@ -207,8 +206,7 @@ class UsdGeomBBoxCache {
 
   /// Compute the bound of the given point instance in world space.
   ///
-  GfBBox3d ComputePointInstanceWorldBound(const UsdGeomPointInstancer &instancer,
-                                          int64_t instanceId)
+  GfBBox3d ComputePointInstanceWorldBound(const UsdGeomPointInstancer &instancer, int64_t instanceId)
   {
     GfBBox3d ret;
     ComputePointInstanceWorldBounds(instancer, &instanceId, 1, &ret);
@@ -258,8 +256,7 @@ class UsdGeomBBoxCache {
                                        GfBBox3d *result);
 
   /// Compute the oriented bounding boxes of the given point instances.
-  GfBBox3d ComputePointInstanceLocalBound(const UsdGeomPointInstancer &instancer,
-                                          int64_t instanceId)
+  GfBBox3d ComputePointInstanceLocalBound(const UsdGeomPointInstancer &instancer, int64_t instanceId)
   {
     GfBBox3d ret;
     ComputePointInstanceLocalBounds(instancer, &instanceId, 1, &ret);
@@ -284,8 +281,7 @@ class UsdGeomBBoxCache {
 
   /// Computes the bound of the given point instances, but does not include
   /// the instancer's transform.
-  GfBBox3d ComputePointInstanceUntransformedBound(const UsdGeomPointInstancer &instancer,
-                                                  int64_t instanceId)
+  GfBBox3d ComputePointInstanceUntransformedBound(const UsdGeomPointInstancer &instancer, int64_t instanceId)
   {
     GfBBox3d ret;
     ComputePointInstanceUntransformedBounds(instancer, &instanceId, 1, &ret);
@@ -410,8 +406,8 @@ class UsdGeomBBoxCache {
 
     _PrimContext() = default;
     explicit _PrimContext(const UsdPrim &prim_, const TfToken &purpose = TfToken())
-        : prim(prim_),
-          instanceInheritablePurpose(purpose){};
+      : prim(prim_),
+        instanceInheritablePurpose(purpose){};
 
     bool operator==(const _PrimContext &rhs) const
     {
@@ -452,9 +448,7 @@ class UsdGeomBBoxCache {
   //
   // \p inverseComponentCtm is used to combine all the child bboxes in
   // component-relative space.
-  void _ResolvePrim(_BBoxTask *task,
-                    const _PrimContext &prim,
-                    const GfMatrix4d &inverseComponentCtm);
+  void _ResolvePrim(_BBoxTask *task, const _PrimContext &prim, const GfMatrix4d &inverseComponentCtm);
 
   struct _Entry {
     _Entry() : isComplete(false), isVarying(false), isIncluded(false)

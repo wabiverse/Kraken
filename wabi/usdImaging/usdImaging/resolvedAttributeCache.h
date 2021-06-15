@@ -82,22 +82,21 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
   typedef TfHashMap<UsdPrim, value_type, boost::hash<UsdPrim>> ValueOverridesMap;
 
   /// Construct a new for the specified \p time.
-  explicit UsdImaging_ResolvedAttributeCache(
-      const UsdTimeCode time,
-      ImplData *implData                     = nullptr,
-      const ValueOverridesMap valueOverrides = ValueOverridesMap())
-      : _time(time),
-        _rootPath(SdfPath::AbsoluteRootPath()),
-        _cacheVersion(_GetInitialCacheVersion()),
-        _valueOverrides(valueOverrides),
-        _implData(implData)
+  explicit UsdImaging_ResolvedAttributeCache(const UsdTimeCode time,
+                                             ImplData *implData = nullptr,
+                                             const ValueOverridesMap valueOverrides = ValueOverridesMap())
+    : _time(time),
+      _rootPath(SdfPath::AbsoluteRootPath()),
+      _cacheVersion(_GetInitialCacheVersion()),
+      _valueOverrides(valueOverrides),
+      _implData(implData)
   {}
 
   /// Construct a new cache for UsdTimeCode::Default().
   UsdImaging_ResolvedAttributeCache()
-      : _time(UsdTimeCode::Default()),
-        _rootPath(SdfPath::AbsoluteRootPath()),
-        _cacheVersion(1)
+    : _time(UsdTimeCode::Default()),
+      _rootPath(SdfPath::AbsoluteRootPath()),
+      _cacheVersion(1)
   {}
 
   ~UsdImaging_ResolvedAttributeCache()
@@ -112,10 +111,10 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
     TRACE_FUNCTION();
     if (!prim.GetPath().HasPrefix(_rootPath) && !prim.IsInPrototype()) {
       TF_CODING_ERROR(
-          "Attempt to get value for: %s "
-          "which is not within the specified root: %s",
-          prim.GetPath().GetString().c_str(),
-          _rootPath.GetString().c_str());
+        "Attempt to get value for: %s "
+        "which is not within the specified root: %s",
+        prim.GetPath().GetString().c_str(),
+        _rootPath.GetString().c_str());
       return Strategy::MakeDefault();
     }
 
@@ -214,7 +213,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
     SdfPathVector processedOverridePaths;
     TF_FOR_ALL(it, valueOverrides)
     {
-      const UsdPrim &prim     = it->first;
+      const UsdPrim &prim = it->first;
       const value_type &value = it->second;
 
       // If the existing value matches the incoming value, skip
@@ -227,7 +226,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
 
     TF_FOR_ALL(it, valueOverridesToProcess)
     {
-      const UsdPrim &prim     = it->first;
+      const UsdPrim &prim = it->first;
       const value_type &value = it->second;
 
       // XXX: performance
@@ -300,9 +299,9 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
     {}
 
     _Entry(const query_type &query_, const value_type &value_, unsigned version_)
-        : query(query_),
-          value(value_),
-          version(version_)
+      : query(query_),
+        value(value_),
+        version(version_)
     {}
 
     query_type query;
@@ -365,15 +364,14 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
 };
 
 template<typename Strategy, typename ImplData>
-void UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_SetCacheEntryForPrim(
-    const UsdPrim &prim,
-    value_type const &value,
-    _Entry *entry) const
+void UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_SetCacheEntryForPrim(const UsdPrim &prim,
+                                                                                  value_type const &value,
+                                                                                  _Entry *entry) const
 {
   // Note: _cacheVersion is not allowed to change during cache access.
   unsigned v = entry->version;
   if (v < _cacheVersion && entry->version.compare_and_swap(_cacheVersion, v) == v) {
-    entry->value   = value;
+    entry->value = value;
     entry->version = _GetValidVersion();
   }
   else {
@@ -388,9 +386,9 @@ void UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_SetCacheEntryForPri
 }
 
 template<typename Strategy, typename ImplData>
-typename UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_Entry *
-UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_GetCacheEntryForPrim(
-    const UsdPrim &prim) const
+typename UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_Entry *UsdImaging_ResolvedAttributeCache<
+  Strategy,
+  ImplData>::_GetCacheEntryForPrim(const UsdPrim &prim) const
 {
   typename _CacheMap::const_iterator it = _cache.find(prim);
   if (it != _cache.end()) {
@@ -398,8 +396,8 @@ UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_GetCacheEntryForPrim(
   }
 
   _Entry e;
-  e.query   = Strategy::MakeQuery(prim, _implData);
-  e.value   = Strategy::MakeDefault();
+  e.query = Strategy::MakeQuery(prim, _implData);
+  e.value = Strategy::MakeDefault();
   e.version = _GetInvalidVersion();
   return &(_cache.insert(typename _CacheMap::value_type(prim, e)).first->second);
 }
@@ -471,9 +469,7 @@ struct UsdImaging_XfStrategy {
     return query_type();
   }
 
-  static value_type Compute(UsdImaging_XformCache const *owner,
-                            UsdPrim const &prim,
-                            query_type const *query)
+  static value_type Compute(UsdImaging_XformCache const *owner, UsdPrim const &prim, query_type const *query)
   {
     value_type xform = MakeDefault();
     // No need to check query validity here because XformQuery doesn't
@@ -485,11 +481,10 @@ struct UsdImaging_XfStrategy {
 
   // Compute the full transform, this is not part of the interface required by
   // the cache.
-  static value_type ComputeTransform(
-      UsdPrim const &prim,
-      SdfPath const &rootPath,
-      UsdTimeCode time,
-      const TfHashMap<SdfPath, GfMatrix4d, SdfPath::Hash> &ctmOverrides)
+  static value_type ComputeTransform(UsdPrim const &prim,
+                                     SdfPath const &rootPath,
+                                     UsdTimeCode time,
+                                     const TfHashMap<SdfPath, GfMatrix4d, SdfPath::Hash> &ctmOverrides)
   {
     bool reset = false;
     GfMatrix4d ctm(1.0);
@@ -554,9 +549,7 @@ struct UsdImaging_VisStrategy {
     return query_type();
   }
 
-  static value_type Compute(UsdImaging_VisCache const *owner,
-                            UsdPrim const &prim,
-                            query_type const *query)
+  static value_type Compute(UsdImaging_VisCache const *owner, UsdPrim const &prim, query_type const *query)
   {
     value_type v = *owner->_GetValue(prim.GetParent());
 
@@ -659,8 +652,7 @@ WABI_NAMESPACE_BEGIN
 struct UsdImaging_MaterialBindingImplData {
   /// Constructor takes the purpose for which material bindings are to be
   /// evaluated.
-  UsdImaging_MaterialBindingImplData(const TfToken &materialPurpose)
-      : _materialPurpose(materialPurpose)
+  UsdImaging_MaterialBindingImplData(const TfToken &materialPurpose) : _materialPurpose(materialPurpose)
   {}
 
   /// Destructor invokes ClearCaches(), which does the cache deletion in
@@ -700,9 +692,8 @@ struct UsdImaging_MaterialBindingImplData {
 };
 
 struct UsdImaging_MaterialStrategy;
-typedef UsdImaging_ResolvedAttributeCache<UsdImaging_MaterialStrategy,
-                                          UsdImaging_MaterialBindingImplData>
-    UsdImaging_MaterialBindingCache;
+typedef UsdImaging_ResolvedAttributeCache<UsdImaging_MaterialStrategy, UsdImaging_MaterialBindingImplData>
+  UsdImaging_MaterialBindingCache;
 
 struct UsdImaging_MaterialStrategy {
   typedef SdfPath value_type;  // inherited path to bound shader
@@ -722,9 +713,7 @@ struct UsdImaging_MaterialStrategy {
   static query_type MakeQuery(UsdPrim const &prim, ImplData *implData)
   {
     return UsdShadeMaterialBindingAPI(prim).ComputeBoundMaterial(
-        &implData->GetBindingsCache(),
-        &implData->GetCollectionQueryCache(),
-        implData->GetMaterialPurpose());
+      &implData->GetBindingsCache(), &implData->GetCollectionQueryCache(), implData->GetMaterialPurpose());
   }
 
   static value_type Compute(UsdImaging_MaterialBindingCache const *owner,
@@ -732,10 +721,10 @@ struct UsdImaging_MaterialStrategy {
                             query_type const *query)
   {
     TF_DEBUG(USDIMAGING_SHADERS)
-        .Msg(
-            "Looking for \"preview\" material "
-            "binding for %s\n",
-            prim.GetPath().GetText());
+      .Msg(
+        "Looking for \"preview\" material "
+        "binding for %s\n",
+        prim.GetPath().GetText());
     if (*query) {
       SdfPath binding = query->GetPath();
       if (!binding.IsEmpty()) {
@@ -754,9 +743,9 @@ struct UsdImaging_MaterialStrategy {
     // We don't need to walk up the namespace here since
     // ComputeBoundMaterial does it for us.
     if (UsdShadeMaterial mat = UsdShadeMaterialBindingAPI(prim).ComputeBoundMaterial(
-            &implData->GetBindingsCache(),
-            &implData->GetCollectionQueryCache(),
-            implData->GetMaterialPurpose())) {
+          &implData->GetBindingsCache(),
+          &implData->GetCollectionQueryCache(),
+          implData->GetMaterialPurpose())) {
       return mat.GetPath();
     }
     return value_type();
@@ -836,7 +825,7 @@ WABI_NAMESPACE_BEGIN
 
 struct UsdImaging_PointInstancerIndicesStrategy;
 typedef UsdImaging_ResolvedAttributeCache<UsdImaging_PointInstancerIndicesStrategy>
-    UsdImaging_PointInstancerIndicesCache;
+  UsdImaging_PointInstancerIndicesCache;
 
 struct UsdImaging_PointInstancerIndicesStrategy {
   // map from protoIndex -> instanceIndices.
@@ -925,7 +914,7 @@ struct UsdImaging_CoordSysBindingStrategy;
 
 typedef UsdImaging_ResolvedAttributeCache<UsdImaging_CoordSysBindingStrategy,
                                           UsdImaging_CoordSysBindingImplData>
-    UsdImaging_CoordSysBindingCache;
+  UsdImaging_CoordSysBindingCache;
 
 struct UsdImaging_CoordSysBindingStrategy {
   using ImplData = UsdImaging_CoordSysBindingImplData;
@@ -989,9 +978,9 @@ struct UsdImaging_CoordSysBindingStrategy {
             // The target xform prim does not exist, so ignore
             // this coord sys binding.
             TF_WARN(
-                "UsdImaging: Ignoring coordinate system "
-                "binding to non-existent prim <%s>\n",
-                binding.coordSysPrimPath.GetText());
+              "UsdImaging: Ignoring coordinate system "
+              "binding to non-existent prim <%s>\n",
+              binding.coordSysPrimPath.GetText());
             continue;
           }
           bool found = false;
@@ -999,8 +988,8 @@ struct UsdImaging_CoordSysBindingStrategy {
             if (usdBindings[i].name == binding.name) {
               // Found an override -- replace this binding.
               usdBindings[i] = binding;
-              hdIds[i]       = query->_IdForBinding(binding);
-              found          = true;
+              hdIds[i] = query->_IdForBinding(binding);
+              found = true;
               break;
             }
           }
@@ -1030,7 +1019,7 @@ WABI_NAMESPACE_BEGIN
 
 struct UsdImaging_InheritedPrimvarStrategy;
 typedef UsdImaging_ResolvedAttributeCache<UsdImaging_InheritedPrimvarStrategy>
-    UsdImaging_InheritedPrimvarCache;
+  UsdImaging_InheritedPrimvarCache;
 
 struct UsdImaging_InheritedPrimvarStrategy {
   struct PrimvarRecord {
@@ -1069,9 +1058,9 @@ struct UsdImaging_InheritedPrimvarStrategy {
       }
       // Merge any local bindings.
       std::vector<UsdGeomPrimvar> primvars = query->FindIncrementallyInheritablePrimvars(
-          v ? v->primvars : std::vector<UsdGeomPrimvar>());
+        v ? v->primvars : std::vector<UsdGeomPrimvar>());
       if (!primvars.empty()) {
-        v           = std::make_shared<PrimvarRecord>();
+        v = std::make_shared<PrimvarRecord>();
         v->primvars = std::move(primvars);
         v->variable = false;
         for (UsdGeomPrimvar const &pv : v->primvars) {

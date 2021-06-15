@@ -72,21 +72,19 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
 #else
 #  define TF_NUM_ARGS(...) \
     _TF_NUM_ARGS_CHECK(__VA_ARGS__) \
-    BOOST_PP_IIF(BOOST_PP_EQUAL(1, _TF_NUM_ARGS1(__VA_ARGS__)), \
-                 BOOST_PP_EXPAND(TF_ARG_2 BOOST_PP_LPAREN() \
-                                     BOOST_PP_EXPAND(_TF_NUM_ARGS_0X TF_ARG_1(__VA_ARGS__)( \
-                                         BOOST_PP_REPEAT(TF_MAX_ARITY, _TF_NUM_ARGS_REP, _TF))) \
-                                         BOOST_PP_COMMA() 1 BOOST_PP_RPAREN()), \
-                 _TF_NUM_ARGS1(__VA_ARGS__))
+    BOOST_PP_IIF( \
+      BOOST_PP_EQUAL(1, _TF_NUM_ARGS1(__VA_ARGS__)), \
+      BOOST_PP_EXPAND(TF_ARG_2 BOOST_PP_LPAREN() BOOST_PP_EXPAND(_TF_NUM_ARGS_0X TF_ARG_1(__VA_ARGS__)( \
+        BOOST_PP_REPEAT(TF_MAX_ARITY, _TF_NUM_ARGS_REP, _TF))) BOOST_PP_COMMA() 1 BOOST_PP_RPAREN()), \
+      _TF_NUM_ARGS1(__VA_ARGS__))
 
 #  define _TF_NUM_ARGS_CHECK(...) \
-    BOOST_PP_IIF( \
-        _TF_EXPAND(TF_ARG_2 BOOST_PP_LPAREN() BOOST_PP_CAT( \
-            _TF_NUM_ARGS_00, \
-            _TF_EXPAND(BOOST_PP_CAT(TF_ARG_, BOOST_PP_INC(TF_MAX_ARITY)) \
-                           _TF_NUM_ARGS_TF(__VA_ARGS__))) BOOST_PP_COMMA() 1 BOOST_PP_RPAREN()), \
-        _TF_MAX_ARITY_OVERFLOW_IN_TF_NUM_ARGS, \
-        BOOST_PP_TUPLE_EAT(1)) \
+    BOOST_PP_IIF(_TF_EXPAND(TF_ARG_2 BOOST_PP_LPAREN() BOOST_PP_CAT( \
+                   _TF_NUM_ARGS_00, \
+                   _TF_EXPAND(BOOST_PP_CAT(TF_ARG_, BOOST_PP_INC(TF_MAX_ARITY)) \
+                                _TF_NUM_ARGS_TF(__VA_ARGS__))) BOOST_PP_COMMA() 1 BOOST_PP_RPAREN()), \
+                 _TF_MAX_ARITY_OVERFLOW_IN_TF_NUM_ARGS, \
+                 BOOST_PP_TUPLE_EAT(1)) \
     (...)
 
 #  define _TF_NUM_ARGS_00_TF 0, 0
@@ -125,9 +123,8 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
 // arguments. MSVC will complain about insufficient arguments otherwise.
 // The ~ will be discarded in any case.
 #define TF_PP_EAT_PARENS(...) \
-  _TF_PP_EAT_PARENS_IFF(_TF_PP_EAT_PARENS_IS_PARENS(__VA_ARGS__ ~), \
-                        _TF_PP_EAT_PARENS_EXPAND1, \
-                        _TF_PP_EAT_PARENS_EXPAND) \
+  _TF_PP_EAT_PARENS_IFF( \
+    _TF_PP_EAT_PARENS_IS_PARENS(__VA_ARGS__ ~), _TF_PP_EAT_PARENS_EXPAND1, _TF_PP_EAT_PARENS_EXPAND) \
   (__VA_ARGS__)
 
 /// Expand the arguments and make the result a string.
@@ -155,8 +152,7 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
 // The outer _TF_PP_EAT_PARENS_EXPAND() is needed for MSVC, which otherwise
 // would stringizing to "_TF_PP_EAT_PARENS_EXPAND " plus the literal
 // substitution of the arguments.
-#define _TF_PP_EAT_PARENS_EXPAND1(...) \
-  _TF_PP_EAT_PARENS_EXPAND(_TF_PP_EAT_PARENS_EXPAND __VA_ARGS__)
+#define _TF_PP_EAT_PARENS_EXPAND1(...) _TF_PP_EAT_PARENS_EXPAND(_TF_PP_EAT_PARENS_EXPAND __VA_ARGS__)
 
 // This works around a MSVC bug.  When a macro expands to FOO(__VA_ARGS__,bar),
 // MSVC will separate the arguments of __VA_ARGS__ even if they're inside
@@ -178,8 +174,7 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
 // _TF_PP_EAT_PARENS_IS_PARENS2 or a 0 passed as a final argument.  In either
 // case the desired result is the second argument to
 // _TF_PP_EAT_PARENS_IS_PARENS_CHECK_N.
-#define _TF_PP_EAT_PARENS_IS_PARENS(x) \
-  _TF_PP_EAT_PARENS_IS_PARENS_CHECK(_TF_PP_EAT_PARENS_IS_PARENS2 x)
+#define _TF_PP_EAT_PARENS_IS_PARENS(x) _TF_PP_EAT_PARENS_IS_PARENS_CHECK(_TF_PP_EAT_PARENS_IS_PARENS2 x)
 #define _TF_PP_EAT_PARENS_IS_PARENS_CHECK(...) \
   _TF_PP_EAT_PARENS_CALL(_TF_PP_EAT_PARENS_IS_PARENS_CHECK_N, (__VA_ARGS__, 0, ))
 #define _TF_PP_EAT_PARENS_IS_PARENS_CHECK_N(x, n, ...) n
@@ -261,83 +256,19 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
 #define TF_ARG_14(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, ...) _14
 #define TF_ARG_15(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, ...) _15
 #define TF_ARG_16(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, ...) _16
-#define TF_ARG_17( \
-    _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, ...) \
-  _17
-#define TF_ARG_18( \
-    _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, ...) \
-  _18
+#define TF_ARG_17(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, ...) _17
+#define TF_ARG_18(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, ...) _18
 #define TF_ARG_19( \
-    _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, ...) \
+  _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, ...) \
   _19
-#define TF_ARG_20(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
-                  _10, \
-                  _11, \
-                  _12, \
-                  _13, \
-                  _14, \
-                  _15, \
-                  _16, \
-                  _17, \
-                  _18, \
-                  _19, \
-                  _20, \
-                  ...) \
+#define TF_ARG_20( \
+  _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, ...) \
   _20
-#define TF_ARG_21(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
-                  _10, \
-                  _11, \
-                  _12, \
-                  _13, \
-                  _14, \
-                  _15, \
-                  _16, \
-                  _17, \
-                  _18, \
-                  _19, \
-                  _20, \
-                  _21, \
-                  ...) \
+#define TF_ARG_21( \
+  _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, ...) \
   _21
-#define TF_ARG_22(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
-                  _10, \
-                  _11, \
-                  _12, \
-                  _13, \
-                  _14, \
-                  _15, \
-                  _16, \
-                  _17, \
-                  _18, \
-                  _19, \
-                  _20, \
-                  _21, \
-                  _22, \
-                  ...) \
+#define TF_ARG_22( \
+  _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, ...) \
   _22
 #define TF_ARG_23(_1, \
                   _2, \

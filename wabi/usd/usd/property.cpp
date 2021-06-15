@@ -39,7 +39,7 @@ SdfPropertySpecHandleVector UsdProperty::GetPropertyStack(UsdTimeCode time) cons
 TfToken UsdProperty::GetBaseName() const
 {
   std::string const &fullName = _PropName().GetString();
-  size_t delim                = fullName.rfind(GetNamespaceDelimiter());
+  size_t delim = fullName.rfind(GetNamespaceDelimiter());
 
   if (!TF_VERIFY(delim != fullName.size() - 1))
     return TfToken();
@@ -50,7 +50,7 @@ TfToken UsdProperty::GetBaseName() const
 TfToken UsdProperty::GetNamespace() const
 {
   std::string const &fullName = _PropName().GetString();
-  size_t delim                = fullName.rfind(GetNamespaceDelimiter());
+  size_t delim = fullName.rfind(GetNamespaceDelimiter());
 
   if (!TF_VERIFY(delim != fullName.size() - 1))
     return TfToken();
@@ -179,9 +179,8 @@ static SdfPath _MapPath(_PathMap const &map, SdfPath const &path)
     return path;
   }
 
-  auto it = SdfPathFindLongestPrefix(make_transform_iterator(map.begin(), TfGet<0>()),
-                                     make_transform_iterator(map.end(), TfGet<0>()),
-                                     path);
+  auto it = SdfPathFindLongestPrefix(
+    make_transform_iterator(map.begin(), TfGet<0>()), make_transform_iterator(map.end(), TfGet<0>()), path);
   if (it.base() != map.end()) {
     return path.ReplacePrefix(it.base()->first, it.base()->second);
   }
@@ -263,8 +262,8 @@ bool UsdProperty::_GetTargets(SdfSpecType specType, SdfPathVector *out, bool *fo
   if (!isClean) {
     stage->_ReportPcpErrors(pcpErrors,
                             TfStringPrintf(specType == SdfSpecTypeAttribute ?
-                                               "getting connections for attribute <%s>" :
-                                               "getting targets for relationship <%s>",
+                                             "getting connections for attribute <%s>" :
+                                             "getting targets for relationship <%s>",
                                            GetPath().GetText()));
     if (foundErrors) {
       *foundErrors = true;

@@ -51,37 +51,37 @@ class HdChangeTracker {
   // Common dirty bits for Rprims
   // XXX: Move this to HdRprim
   enum RprimDirtyBits : HdDirtyBits {
-    Clean                       = 0,
-    InitRepr                    = 1 << 0,
-    Varying                     = 1 << 1,
-    AllDirty                    = ~Varying,
-    DirtyPrimID                 = 1 << 2,
-    DirtyExtent                 = 1 << 3,
-    DirtyDisplayStyle           = 1 << 4,
-    DirtyPoints                 = 1 << 5,
-    DirtyPrimvar                = 1 << 6,
-    DirtyMaterialId             = 1 << 7,
-    DirtyTopology               = 1 << 8,
-    DirtyTransform              = 1 << 9,
-    DirtyVisibility             = 1 << 10,
-    DirtyNormals                = 1 << 11,
-    DirtyDoubleSided            = 1 << 12,
-    DirtyCullStyle              = 1 << 13,
-    DirtySubdivTags             = 1 << 14,
-    DirtyWidths                 = 1 << 15,
-    DirtyInstancer              = 1 << 16,
-    DirtyInstanceIndex          = 1 << 17,
-    DirtyRepr                   = 1 << 18,
-    DirtyRenderTag              = 1 << 19,
+    Clean = 0,
+    InitRepr = 1 << 0,
+    Varying = 1 << 1,
+    AllDirty = ~Varying,
+    DirtyPrimID = 1 << 2,
+    DirtyExtent = 1 << 3,
+    DirtyDisplayStyle = 1 << 4,
+    DirtyPoints = 1 << 5,
+    DirtyPrimvar = 1 << 6,
+    DirtyMaterialId = 1 << 7,
+    DirtyTopology = 1 << 8,
+    DirtyTransform = 1 << 9,
+    DirtyVisibility = 1 << 10,
+    DirtyNormals = 1 << 11,
+    DirtyDoubleSided = 1 << 12,
+    DirtyCullStyle = 1 << 13,
+    DirtySubdivTags = 1 << 14,
+    DirtyWidths = 1 << 15,
+    DirtyInstancer = 1 << 16,
+    DirtyInstanceIndex = 1 << 17,
+    DirtyRepr = 1 << 18,
+    DirtyRenderTag = 1 << 19,
     DirtyComputationPrimvarDesc = 1 << 20,
-    DirtyCategories             = 1 << 21,
-    DirtyVolumeField            = 1 << 22,
-    AllSceneDirtyBits           = ((1 << 23) - 1),
+    DirtyCategories = 1 << 21,
+    DirtyVolumeField = 1 << 22,
+    AllSceneDirtyBits = ((1 << 23) - 1),
 
     NewRepr = 1 << 23,
 
     CustomBitsBegin = 1 << 24,
-    CustomBitsEnd   = 1 << 30,
+    CustomBitsEnd = 1 << 30,
   };
 
   // InstancerDirtybits are a subset of rprim dirty bits right now:
@@ -91,8 +91,8 @@ class HdChangeTracker {
   // XXX: Move this to HdTask
   enum TaskDirtyBits : HdDirtyBits {
     // Varying               = 1 << 0,
-    DirtyType       = 1 << 1,
-    DirtyParams     = 1 << 2,
+    DirtyType = 1 << 1,
+    DirtyParams = 1 << 2,
     DirtyCollection = 1 << 3,
     DirtyRenderTags = 1 << 4,
   };
@@ -375,14 +375,12 @@ class HdChangeTracker {
   /// \p parentInstancerId.  Changes to the latter mark the former with
   /// DirtyInstancer.
   HD_API
-  void AddInstancerInstancerDependency(SdfPath const &parentInstancerId,
-                                       SdfPath const &instancerId);
+  void AddInstancerInstancerDependency(SdfPath const &parentInstancerId, SdfPath const &instancerId);
 
   /// Remove a dependency between \p instancerId and parent instancer
   /// \p parentInstancerId.
   HD_API
-  void RemoveInstancerInstancerDependency(SdfPath const &parentInstancerId,
-                                          SdfPath const &instancerId);
+  void RemoveInstancerInstancerDependency(SdfPath const &parentInstancerId, SdfPath const &instancerId);
 
   // ---------------------------------------------------------------------- //
   /// @}

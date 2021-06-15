@@ -54,8 +54,8 @@ TF_DEFINE_PRIVATE_TOKENS(_fallbackShaderTokens,
 
                          (density)(emission));
 
-const float HdPhVolume::defaultStepSize                 = 1.0f;
-const float HdPhVolume::defaultStepSizeLighting         = 10.0f;
+const float HdPhVolume::defaultStepSize = 1.0f;
+const float HdPhVolume::defaultStepSizeLighting = 10.0f;
 const float HdPhVolume::defaultMaxTextureMemoryPerField = 128.0f;
 
 HdPhVolume::HdPhVolume(SdfPath const &id) : HdVolume(id)
@@ -72,10 +72,8 @@ static const int _shaderAndBBoxComputationDirtyBitsMask = HdChangeTracker::Clean
                                                           HdChangeTracker::DirtyVolumeField;
 
 static const int _initialDirtyBitsMask = _shaderAndBBoxComputationDirtyBitsMask |
-                                         HdChangeTracker::DirtyPrimID |
-                                         HdChangeTracker::DirtyPrimvar |
-                                         HdChangeTracker::DirtyTransform |
-                                         HdChangeTracker::DirtyVisibility |
+                                         HdChangeTracker::DirtyPrimID | HdChangeTracker::DirtyPrimvar |
+                                         HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyVisibility |
                                          HdChangeTracker::DirtyInstancer;
 
 HdDirtyBits HdPhVolume::GetInitialDirtyBitsMask() const
@@ -98,8 +96,7 @@ void HdPhVolume::_InitRepr(TfToken const &reprToken, HdDirtyBits *dirtyBits)
     *dirtyBits |= HdChangeTracker::NewRepr;
   }
 
-  _ReprVector::iterator it = std::find_if(
-      _reprs.begin(), _reprs.end(), _ReprComparator(reprToken));
+  _ReprVector::iterator it = std::find_if(_reprs.begin(), _reprs.end(), _ReprComparator(reprToken));
   bool isNew = it == _reprs.end();
   if (isNew) {
     // add new repr
@@ -222,17 +219,17 @@ class _NameToFieldDescriptor {
   // Issue validation error if relationship did not target a field prim.
   //
   _NameToFieldDescriptor(HdSceneDelegate *const sceneDelegate, const SdfPath &id)
-      : _descriptors(sceneDelegate->GetVolumeFieldDescriptors(id))
+    : _descriptors(sceneDelegate->GetVolumeFieldDescriptors(id))
   {
     for (const HdVolumeFieldDescriptor &desc : _descriptors) {
       if (dynamic_cast<HdPhField *>(
-              sceneDelegate->GetRenderIndex().GetBprim(desc.fieldPrimType, desc.fieldId))) {
+            sceneDelegate->GetRenderIndex().GetBprim(desc.fieldPrimType, desc.fieldId))) {
 
         _nameToDescriptor.insert({desc.fieldName, &desc});
       }
       else {
         HF_VALIDATION_WARN(
-            id, "Volume has field relationship to non-field prim %s.", desc.fieldId.GetText());
+          id, "Volume has field relationship to non-field prim %s.", desc.fieldId.GetText());
       }
     }
   }
@@ -253,7 +250,7 @@ class _NameToFieldDescriptor {
 
  private:
   using _NameToDescriptor =
-      std::unordered_map<TfToken, const HdVolumeFieldDescriptor *, TfToken::HashFunctor>;
+    std::unordered_map<TfToken, const HdVolumeFieldDescriptor *, TfToken::HashFunctor>;
   HdVolumeFieldDescriptorVector _descriptors;
   _NameToDescriptor _nameToDescriptor;
 };
@@ -274,13 +271,12 @@ HdPh_VolumeShaderSharedPtr _ComputeMaterialShader(HdSceneDelegate *const sceneDe
 {
   TRACE_FUNCTION();
 
-  HdPhResourceRegistrySharedPtr const resourceRegistry =
-      std::static_pointer_cast<HdPhResourceRegistry>(
-          sceneDelegate->GetRenderIndex().GetResourceRegistry());
+  HdPhResourceRegistrySharedPtr const resourceRegistry = std::static_pointer_cast<HdPhResourceRegistry>(
+    sceneDelegate->GetRenderIndex().GetResourceRegistry());
 
   // Generate new shader from volume shader
   HdPh_VolumeShaderSharedPtr const result = std::make_shared<HdPh_VolumeShader>(
-      sceneDelegate->GetRenderIndex().GetRenderDelegate());
+    sceneDelegate->GetRenderIndex().GetRenderDelegate());
 
   // Buffer specs and source for the shader BAR
   HdBufferSpecVector bufferSpecs;
@@ -335,17 +331,13 @@ HdPh_VolumeShaderSharedPtr _ComputeMaterialShader(HdSceneDelegate *const sceneDe
     // Record field descriptor
     fieldDescs.push_back(*desc);
 
-    const TfToken textureName(fieldName.GetString() +
-                              HdPh_ResourceBindingSuffixTokens->texture.GetString());
+    const TfToken textureName(fieldName.GetString() + HdPh_ResourceBindingSuffixTokens->texture.GetString());
     static const HdTextureType textureType = HdTextureType::Field;
 
     // Produce HdGet_FIELDNAME_texture(vec3 p) to sample
     // the texture.
-    const HdPh_MaterialParam param(HdPh_MaterialParam::ParamTypeTexture,
-                                   textureName,
-                                   VtValue(GfVec4f(0)),
-                                   TfTokenVector(),
-                                   textureType);
+    const HdPh_MaterialParam param(
+      HdPh_MaterialParam::ParamTypeTexture, textureName, VtValue(GfVec4f(0)), TfTokenVector(), textureType);
 
     HdPhSurfaceShader::AddFallbackValueToSpecsAndSources(param, &bufferSpecs, &bufferSources);
 
@@ -393,7 +385,7 @@ VtValue _ComputeBBoxVertices(GfRange3d const &range)
 {
   VtVec3fArray result(8);
 
-  const GfVec3d min  = HdPh_VolumeShader::GetSafeMin(range);
+  const GfVec3d min = HdPh_VolumeShader::GetSafeMin(range);
   const GfVec3d &max = HdPh_VolumeShader::GetSafeMax(range);
 
   int i = 0;
@@ -449,9 +441,9 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
   if (HdPhShouldPopulateConstantPrimvars(dirtyBits, GetId())) {
     /* CONSTANT PRIMVARS, TRANSFORM AND EXTENT */
     const HdPrimvarDescriptorVector constantPrimvars = HdPhGetPrimvarDescriptors(
-        this, drawItem, sceneDelegate, HdInterpolationConstant);
+      this, drawItem, sceneDelegate, HdInterpolationConstant);
     HdPhPopulateConstantPrimvars(
-        this, &_sharedData, sceneDelegate, renderParam, drawItem, dirtyBits, constantPrimvars);
+      this, &_sharedData, sceneDelegate, renderParam, drawItem, dirtyBits, constantPrimvars);
   }
 
   if ((*dirtyBits) & HdChangeTracker::DirtyMaterialId) {
@@ -466,7 +458,7 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
     // when the fields of a volume are animated.
     //
     const HdPhMaterial *const material = static_cast<const HdPhMaterial *>(
-        sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, GetMaterialId()));
+      sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, GetMaterialId()));
 
     // Compute the material shader by adding GLSL code such as
     // "HdGet_density(vec3 p)" for sampling the fields needed by the volume
@@ -477,14 +469,14 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
     // to evaluate physical properties of a volume at the point p.
 
     drawItem->SetMaterialShader(_ComputeMaterialShader(
-        sceneDelegate, GetId(), _ComputeVolumeShader(material), _sharedData.bounds.GetRange()));
+      sceneDelegate, GetId(), _ComputeVolumeShader(material), _sharedData.bounds.GetRange()));
   }
 
   HdPhResourceRegistrySharedPtr resourceRegistry = std::static_pointer_cast<HdPhResourceRegistry>(
-      sceneDelegate->GetRenderIndex().GetResourceRegistry());
+    sceneDelegate->GetRenderIndex().GetResourceRegistry());
 
   HdPh_VolumeShaderSharedPtr const materialShader = std::dynamic_pointer_cast<HdPh_VolumeShader>(
-      drawItem->GetMaterialShader());
+    drawItem->GetMaterialShader());
 
   if (!materialShader) {
     TF_CODING_ERROR("Expected valid volume shader for draw item.");
@@ -505,11 +497,10 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
     //
     if (!HdPhIsValidBAR(drawItem->GetVertexPrimvarRange())) {
       static const HdBufferSpecVector bufferSpecs{
-          HdBufferSpec(HdTokens->points, HdTupleType{HdTypeFloatVec3, 1})};
+        HdBufferSpec(HdTokens->points, HdTupleType{HdTypeFloatVec3, 1})};
 
-      HdBufferArrayRangeSharedPtr const range =
-          resourceRegistry->AllocateNonUniformBufferArrayRange(
-              HdTokens->primvar, bufferSpecs, HdBufferArrayUsageHint());
+      HdBufferArrayRangeSharedPtr const range = resourceRegistry->AllocateNonUniformBufferArrayRange(
+        HdTokens->primvar, bufferSpecs, HdBufferArrayUsageHint());
       _sharedData.barContainer.Set(drawItem->GetDrawingCoord()->GetVertexPrimvarIndex(), range);
     }
 
@@ -521,10 +512,9 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
     // from the volume bounding box computed from the fields, ...
     if (!materialShader->GetFillsPointsBar()) {
       // ... fill the points from the authored extents.
-      resourceRegistry->AddSource(
-          drawItem->GetVertexPrimvarRange(),
-          std::make_shared<HdVtBufferSource>(HdTokens->points,
-                                             _ComputeBBoxVertices(_sharedData.bounds.GetRange())));
+      resourceRegistry->AddSource(drawItem->GetVertexPrimvarRange(),
+                                  std::make_shared<HdVtBufferSource>(
+                                    HdTokens->points, _ComputeBBoxVertices(_sharedData.bounds.GetRange())));
     }
   }
 
@@ -540,8 +530,8 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
       // XXX:
       // Always the same triangle indices, should they be allocated only
       // once and shared across all volumes?
-      HdBufferSourceSharedPtr const source = std::make_shared<HdVtBufferSource>(
-          HdTokens->indices, _GetCubeTriangleIndices());
+      HdBufferSourceSharedPtr const source = std::make_shared<HdVtBufferSource>(HdTokens->indices,
+                                                                                _GetCubeTriangleIndices());
 
       HdBufferSourceSharedPtrVector sources = {source};
 
@@ -549,9 +539,8 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
         HdBufferSpecVector bufferSpecs;
         HdBufferSpec::GetBufferSpecs(sources, &bufferSpecs);
 
-        HdBufferArrayRangeSharedPtr const range =
-            resourceRegistry->AllocateNonUniformBufferArrayRange(
-                HdTokens->primvar, bufferSpecs, HdBufferArrayUsageHint());
+        HdBufferArrayRangeSharedPtr const range = resourceRegistry->AllocateNonUniformBufferArrayRange(
+          HdTokens->primvar, bufferSpecs, HdBufferArrayUsageHint());
         _sharedData.barContainer.Set(drawItem->GetDrawingCoord()->GetTopologyIndex(), range);
       }
 

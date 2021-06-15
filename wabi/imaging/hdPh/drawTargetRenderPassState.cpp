@@ -28,10 +28,10 @@
 WABI_NAMESPACE_BEGIN
 
 HdPhDrawTargetRenderPassState::HdPhDrawTargetRenderPassState()
-    : _depthPriority(HdDepthPriorityNearest),
-      _cameraId(),
-      _rprimCollection(),
-      _rprimCollectionVersion(1)  // Clients start at 0
+  : _depthPriority(HdDepthPriorityNearest),
+    _cameraId(),
+    _rprimCollection(),
+    _rprimCollectionVersion(1)  // Clients start at 0
 {}
 
 HdPhDrawTargetRenderPassState::~HdPhDrawTargetRenderPassState() = default;

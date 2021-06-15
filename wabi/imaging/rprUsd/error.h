@@ -37,8 +37,7 @@ limitations under the License.
   RprUsdFailed(status, msg, __ARCH_FILE__, __ARCH_FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 #define RPR_GET_ERROR_MESSAGE(status, msg, ...) \
-  RprUsdConstructErrorMessage( \
-      status, msg, __ARCH_FILE__, __ARCH_FUNCTION__, __LINE__, ##__VA_ARGS__)
+  RprUsdConstructErrorMessage(status, msg, __ARCH_FILE__, __ARCH_FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 #define RPR_THROW_ERROR_MSG(fmt, ...) \
   RprUsdThrowErrorMsg(__ARCH_FILE__, __ARCH_FUNCTION__, __LINE__, fmt, ##__VA_ARGS__);
@@ -55,12 +54,10 @@ inline std::string RprUsdConstructErrorMessage(rpr::Status errorStatus,
   auto rprErrorString = [errorStatus, context]() -> std::string {
     if (context) {
       size_t lastErrorMessageSize = 0;
-      auto status                 = context->GetInfo(
-          RPR_CONTEXT_LAST_ERROR_MESSAGE, 0, nullptr, &lastErrorMessageSize);
+      auto status = context->GetInfo(RPR_CONTEXT_LAST_ERROR_MESSAGE, 0, nullptr, &lastErrorMessageSize);
       if (status == RPR_SUCCESS && lastErrorMessageSize > 1) {
         std::string message(lastErrorMessageSize, '\0');
-        status = context->GetInfo(
-            RPR_CONTEXT_LAST_ERROR_MESSAGE, message.size(), &message[0], nullptr);
+        status = context->GetInfo(RPR_CONTEXT_LAST_ERROR_MESSAGE, message.size(), &message[0], nullptr);
         if (status == RPR_SUCCESS) {
           return message;
         }
@@ -94,8 +91,7 @@ inline std::string RprUsdConstructErrorMessage(rpr::Status errorStatus,
   }
   else {
     auto errorStr = rprErrorString();
-    return TfStringPrintf(
-        "[RPR ERROR] %s -- %s%s", messageOnFail.c_str(), errorStr.c_str(), suffix.c_str());
+    return TfStringPrintf("[RPR ERROR] %s -- %s%s", messageOnFail.c_str(), errorStr.c_str(), suffix.c_str());
   }
 }
 
@@ -114,8 +110,7 @@ inline bool RprUsdFailed(rpr::Status status,
     return true;
   }
 
-  auto errorMessage = RprUsdConstructErrorMessage(
-      status, messageOnFail, file, function, line, context);
+  auto errorMessage = RprUsdConstructErrorMessage(status, messageOnFail, file, function, line, context);
   fprintf(stderr, "%s\n", errorMessage.c_str());
   return true;
 }
@@ -128,19 +123,15 @@ class RprUsdError : public std::runtime_error {
               char const *function,
               size_t line,
               rpr::Context *context = nullptr)
-      : std::runtime_error(
-            RprUsdConstructErrorMessage(errorStatus, messageOnFail, file, function, line, context))
+    : std::runtime_error(
+        RprUsdConstructErrorMessage(errorStatus, messageOnFail, file, function, line, context))
   {}
 
   RprUsdError(std::string const &errorMesssage) : std::runtime_error(errorMesssage)
   {}
 };
 
-inline void RprUsdThrowErrorMsg(char const *file,
-                                char const *function,
-                                size_t line,
-                                const char *fmt,
-                                ...)
+inline void RprUsdThrowErrorMsg(char const *file, char const *function, size_t line, const char *fmt, ...)
 {
   va_list ap;
   va_start(ap, fmt);

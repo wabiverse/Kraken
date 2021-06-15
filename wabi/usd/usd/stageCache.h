@@ -239,8 +239,7 @@ class UsdStageCache {
   /// than one matching stage in this cache, return an arbitrary matching one.
   /// See also FindAllMatching().
   USD_API
-  UsdStageRefPtr FindOneMatching(const SdfLayerHandle &rootLayer,
-                                 const SdfLayerHandle &sessionLayer) const;
+  UsdStageRefPtr FindOneMatching(const SdfLayerHandle &rootLayer, const SdfLayerHandle &sessionLayer) const;
 
   /// Find a stage in this cache with \p rootLayer and \p pathResolverContext.
   /// If there is no matching stage in this cache, return null.  If there is

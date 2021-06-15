@@ -48,10 +48,10 @@ static void _Status(string const &msg,
                     int lineNo)
 {
   TfDiagnosticMgr::StatusHelper(
-      Tf_PythonCallContext(fileName.c_str(), moduleName.c_str(), functionName.c_str(), lineNo),
-      TF_DIAGNOSTIC_STATUS_TYPE,
-      TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_STATUS_TYPE)).c_str())
-      .Post(msg);
+    Tf_PythonCallContext(fileName.c_str(), moduleName.c_str(), functionName.c_str(), lineNo),
+    TF_DIAGNOSTIC_STATUS_TYPE,
+    TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_STATUS_TYPE)).c_str())
+    .Post(msg);
 }
 
 static string TfStatus__repr__(TfStatus const &self)
@@ -77,5 +77,5 @@ void wrapStatus()
   // above.
   scope statusScope = class_<This, bases<TfDiagnosticBase>>("StatusObject", no_init)
 
-                          .def("__repr__", TfStatus__repr__);
+                        .def("__repr__", TfStatus__repr__);
 }

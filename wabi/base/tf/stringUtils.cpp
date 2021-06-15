@@ -82,11 +82,11 @@ string TfStringPrintf(const char *fmt, ...)
 double TfStringToDouble(const char *ptr)
 {
   wabi_double_conversion::StringToDoubleConverter strToDouble(
-      wabi_double_conversion::DoubleToStringConverter::NO_FLAGS,
-      /* empty_string_value */ 0,
-      /* junk_string_value */ 0,
-      /* infinity symbol */ "inf",
-      /* nan symbol */ "nan");
+    wabi_double_conversion::DoubleToStringConverter::NO_FLAGS,
+    /* empty_string_value */ 0,
+    /* junk_string_value */ 0,
+    /* infinity symbol */ "inf",
+    /* nan symbol */ "nan");
   int numDigits_unused;
   return strToDouble.StringToDouble(ptr, static_cast<int>(strlen(ptr)), &numDigits_unused);
 }
@@ -104,12 +104,11 @@ double TfStringToDouble(const string &s)
 // return that minimum representable value and set *outOfRange to true (if
 // outOfRange is not NULL).
 template<class Int>
-static typename boost::enable_if<boost::is_signed<Int>, Int>::type _StringToNegative(
-    const char *p,
-    bool *outOfRange)
+static typename boost::enable_if<boost::is_signed<Int>, Int>::type _StringToNegative(const char *p,
+                                                                                     bool *outOfRange)
 {
   const Int M = std::numeric_limits<Int>::min();
-  Int result  = 0;
+  Int result = 0;
   while (*p >= '0' && *p <= '9') {
     Int digit = (*p++ - '0');
     // If the new digit would exceed the range, bail.  The expression below
@@ -135,7 +134,7 @@ template<class Int> static Int _StringToPositive(const char *p, bool *outOfRange
 {
   const Int R = 10;
   const Int M = std::numeric_limits<Int>::max();
-  Int result  = 0;
+  Int result = 0;
   while (*p >= '0' && *p <= '9') {
     Int digit = (*p++ - '0');
     // If the new digit would exceed the range, bail.  The expression below
@@ -303,7 +302,7 @@ string TfGetBaseName(const string &fileName)
   // fileName was already basename, in which case we want to return the
   // string back.
   if (result == fileName.c_str()) {
-    const bool hasDriveLetter   = fileName.find(":") != string::npos;
+    const bool hasDriveLetter = fileName.find(":") != string::npos;
     const bool hasPathSeparator = i != string::npos;
     if (hasDriveLetter || hasPathSeparator) {
       return std::string();
@@ -346,7 +345,7 @@ string TfStringTrimLeft(const string &s, const char *trimChars)
 string TfStringTrim(const string &s, const char *trimChars)
 {
   string::size_type i = s.find_first_not_of(trimChars);
-  string tmp          = (i == string::npos) ? string() : s.substr(i);
+  string tmp = (i == string::npos) ? string() : s.substr(i);
   return tmp.substr(0, tmp.find_last_not_of(trimChars) + 1);
 }
 
@@ -356,7 +355,7 @@ string TfStringReplace(const string &source, const string &from, const string &t
     return source;
   }
 
-  string result         = source;
+  string result = source;
   string::size_type pos = 0;
 
   while ((pos = result.find(from, pos)) != string::npos) {
@@ -427,7 +426,7 @@ vector<string> TfStringSplit(string const &src, string const &separator)
     return split;
 
   size_t from = 0;
-  size_t pos  = 0;
+  size_t pos = 0;
 
   while (true) {
     pos = src.find(separator, from);
@@ -515,16 +514,16 @@ vector<string> TfQuotedStringTokenize(const string &source, const char *delimite
 
       // Find matching quote. Again, we skip quotes that have been
       // escaped with a preceding backslash.
-      j     = quoteIndex;
+      j = quoteIndex;
       quote = source[j];
-      j     = _FindFirstOfNotEscaped(source, quote.c_str(), j + 1);
+      j = _FindFirstOfNotEscaped(source, quote.c_str(), j + 1);
 
       // If we've reached the end of the string, then we are
       // missing an end-quote.
       if (j == string::npos) {
         if (errors != NULL) {
           *errors = TfStringPrintf(
-              "String is missing an end-quote (\'%s\'): %s", quote.c_str(), source.c_str());
+            "String is missing an end-quote (\'%s\'): %s", quote.c_str(), source.c_str());
         }
         resultVec.clear();
         return resultVec;
@@ -578,8 +577,7 @@ vector<string> TfMatchedStringTokenize(const string &source,
   // If a close delimiter appears before an open delimiter, and it's not
   // preceded by the escape character, we have mismatched delimiters.
   size_t closeIndex = source.find(closeDelimiter);
-  if ((closeIndex != string::npos) &&
-      ((closeIndex == 0) || (source[closeIndex - 1] != escapeCharacter)) &&
+  if ((closeIndex != string::npos) && ((closeIndex == 0) || (source[closeIndex - 1] != escapeCharacter)) &&
       (closeIndex < source.find(openDelimiter))) {
     if (errors != NULL) {
       *errors = TfStringPrintf("String has unmatched close delimiter ('%c', '%c'): %s",
@@ -605,9 +603,9 @@ vector<string> TfMatchedStringTokenize(const string &source,
   size_t sourceSize = source.size();
 
   while ((openIndex = source.find(openDelimiter, openIndex)) != string::npos) {
-    openCount  = 1;
+    openCount = 1;
     closeCount = 0;
-    nextIndex  = openIndex;
+    nextIndex = openIndex;
 
     string token;
     while (closeCount != openCount) {
@@ -690,7 +688,7 @@ inline long AtoL(char const *&s)
 
 static bool DictionaryLess(char const *l, char const *r)
 {
-  int caseCmp         = 0;
+  int caseCmp = 0;
   int leadingZerosCmp = 0;
 
   while (*l && *r) {
@@ -746,14 +744,14 @@ std::string TfStringify(std::string const &s)
 static const wabi_double_conversion::DoubleToStringConverter &Tf_GetDoubleToStringConverter()
 {
   static const wabi_double_conversion::DoubleToStringConverter conv(
-      wabi_double_conversion::DoubleToStringConverter::NO_FLAGS,
-      "inf",
-      "nan",
-      'e',
-      /* decimal_in_shortest_low */ -6,
-      /* decimal_in_shortest_high */ 15,
-      /* max_leading_padding_zeroes_in_precision_mode */ 0,
-      /* max_trailing_padding_zeroes_in_precision_mode */ 0);
+    wabi_double_conversion::DoubleToStringConverter::NO_FLAGS,
+    "inf",
+    "nan",
+    'e',
+    /* decimal_in_shortest_low */ -6,
+    /* decimal_in_shortest_high */ 15,
+    /* max_leading_padding_zeroes_in_precision_mode */ 0,
+    /* max_trailing_padding_zeroes_in_precision_mode */ 0);
 
   return conv;
 }
@@ -980,8 +978,7 @@ std::string TfMakeValidIdentifier(const std::string &in)
   }
 
   for (++p; *p; ++p) {
-    if (!(('a' <= *p && *p <= 'z') || ('A' <= *p && *p <= 'Z') || ('0' <= *p && *p <= '9') ||
-          *p == '_')) {
+    if (!(('a' <= *p && *p <= 'z') || ('A' <= *p && *p <= 'Z') || ('0' <= *p && *p <= '9') || *p == '_')) {
       result.push_back('_');
     }
     else {

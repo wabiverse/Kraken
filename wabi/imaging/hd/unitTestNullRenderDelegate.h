@@ -32,7 +32,7 @@ WABI_NAMESPACE_BEGIN
 
 class Hd_UnitTestNullRenderDelegate final : public HdRenderDelegate {
  public:
-  Hd_UnitTestNullRenderDelegate()          = default;
+  Hd_UnitTestNullRenderDelegate() = default;
   virtual ~Hd_UnitTestNullRenderDelegate() = default;
 
   virtual const TfTokenVector &GetSupportedRprimTypes() const override;

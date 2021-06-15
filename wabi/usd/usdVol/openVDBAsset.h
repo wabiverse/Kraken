@@ -191,7 +191,7 @@ class UsdVolOpenVDBAsset : public UsdVolFieldAsset {
   /// the default for \p writeSparsely is \c false.
   USDVOL_API
   UsdAttribute CreateFieldDataTypeAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -218,7 +218,7 @@ class UsdVolOpenVDBAsset : public UsdVolFieldAsset {
   /// the default for \p writeSparsely is \c false.
   USDVOL_API
   UsdAttribute CreateFieldClassAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

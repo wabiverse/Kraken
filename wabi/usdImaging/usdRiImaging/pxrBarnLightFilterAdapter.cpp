@@ -54,10 +54,9 @@ bool UsdRiImagingPxrBarnLightFilterAdapter::IsSupported(UsdImagingIndexProxy con
          index->IsSprimTypeSupported(HdPrimTypeTokens->lightFilter);
 }
 
-SdfPath UsdRiImagingPxrBarnLightFilterAdapter::Populate(
-    UsdPrim const &prim,
-    UsdImagingIndexProxy *index,
-    UsdImagingInstancerContext const *instancerContext)
+SdfPath UsdRiImagingPxrBarnLightFilterAdapter::Populate(UsdPrim const &prim,
+                                                        UsdImagingIndexProxy *index,
+                                                        UsdImagingInstancerContext const *instancerContext)
 {
   index->InsertSprim(HdPrimTypeTokens->lightFilter, prim.GetPath(), prim);
   HD_PERF_COUNTER_INCR(HdPrimTypeTokens->lightFilter);

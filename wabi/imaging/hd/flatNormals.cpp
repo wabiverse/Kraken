@@ -41,12 +41,12 @@ template<typename SrcType, typename DstType> class _FlatNormalsWorker {
                      bool flip,
                      SrcType const *points,
                      DstType *normals)
-      : _faceOffsets(faceOffsets),
-        _faceCounts(faceCounts),
-        _faceIndices(faceIndices),
-        _flip(flip),
-        _points(points),
-        _normals(normals)
+    : _faceOffsets(faceOffsets),
+      _faceCounts(faceCounts),
+      _faceIndices(faceIndices),
+      _flip(flip),
+      _points(points),
+      _normals(normals)
   {}
 
   void Compute(size_t begin, size_t end)
@@ -54,7 +54,7 @@ template<typename SrcType, typename DstType> class _FlatNormalsWorker {
     for (size_t i = begin; i < end; ++i) {
       SrcType normal(0);
       int offset = _faceOffsets[i];
-      int count  = _faceCounts[i];
+      int count = _faceCounts[i];
 
       SrcType const &v0 = _points[_faceIndices[offset + 0]];
       for (int j = 2; j < count; ++j) {
@@ -86,16 +86,16 @@ VtArray<DstType> _ComputeFlatNormals(HdMeshTopology const *topology, SrcType con
 
   VtIntArray faceOffsets(numFaces);
   VtIntArray const &faceCounts = topology->GetFaceVertexCounts();
-  int offset                   = 0;
+  int offset = 0;
   for (int i = 0; i < numFaces; ++i) {
     faceOffsets[i] = offset;
     offset += faceCounts[i];
   }
   VtIntArray const &faceIndices = topology->GetFaceVertexIndices();
-  bool flip                     = (topology->GetOrientation() != HdTokens->rightHanded);
+  bool flip = (topology->GetOrientation() != HdTokens->rightHanded);
 
   _FlatNormalsWorker<SrcType, DstType> workerState(
-      faceOffsets, faceCounts, faceIndices, flip, points, normals.data());
+    faceOffsets, faceCounts, faceIndices, flip, points, normals.data());
 
   WorkParallelForN(numFaces,
                    std::bind(&_FlatNormalsWorker<SrcType, DstType>::Compute,
@@ -107,31 +107,27 @@ VtArray<DstType> _ComputeFlatNormals(HdMeshTopology const *topology, SrcType con
 }
 
 /* static */
-VtArray<GfVec3f> Hd_FlatNormals::ComputeFlatNormals(HdMeshTopology const *topology,
-                                                    GfVec3f const *pointsPtr)
+VtArray<GfVec3f> Hd_FlatNormals::ComputeFlatNormals(HdMeshTopology const *topology, GfVec3f const *pointsPtr)
 {
   return _ComputeFlatNormals(topology, pointsPtr);
 }
 
 /* static */
-VtArray<GfVec3d> Hd_FlatNormals::ComputeFlatNormals(HdMeshTopology const *topology,
-                                                    GfVec3d const *pointsPtr)
+VtArray<GfVec3d> Hd_FlatNormals::ComputeFlatNormals(HdMeshTopology const *topology, GfVec3d const *pointsPtr)
 {
   return _ComputeFlatNormals(topology, pointsPtr);
 }
 
 /* static */
-VtArray<HdVec4f_2_10_10_10_REV> Hd_FlatNormals::ComputeFlatNormalsPacked(
-    HdMeshTopology const *topology,
-    GfVec3f const *pointsPtr)
+VtArray<HdVec4f_2_10_10_10_REV> Hd_FlatNormals::ComputeFlatNormalsPacked(HdMeshTopology const *topology,
+                                                                         GfVec3f const *pointsPtr)
 {
   return _ComputeFlatNormals<GfVec3f, HdVec4f_2_10_10_10_REV>(topology, pointsPtr);
 }
 
 /* static */
-VtArray<HdVec4f_2_10_10_10_REV> Hd_FlatNormals::ComputeFlatNormalsPacked(
-    HdMeshTopology const *topology,
-    GfVec3d const *pointsPtr)
+VtArray<HdVec4f_2_10_10_10_REV> Hd_FlatNormals::ComputeFlatNormalsPacked(HdMeshTopology const *topology,
+                                                                         GfVec3d const *pointsPtr)
 {
   return _ComputeFlatNormals<GfVec3d, HdVec4f_2_10_10_10_REV>(topology, pointsPtr);
 }
@@ -140,18 +136,18 @@ Hd_FlatNormalsComputation::Hd_FlatNormalsComputation(HdMeshTopology const *topol
                                                      HdBufferSourceSharedPtr const &points,
                                                      TfToken const &dstName,
                                                      bool packed)
-    : _topology(topology),
-      _points(points),
-      _dstName(dstName),
-      _packed(packed)
+  : _topology(topology),
+    _points(points),
+    _dstName(dstName),
+    _packed(packed)
 {}
 
 void Hd_FlatNormalsComputation::GetBufferSpecs(HdBufferSpecVector *specs) const
 {
   // The datatype of normals is the same as that of points, unless the
   // packed format was requested.
-  specs->emplace_back(
-      _dstName, _packed ? HdTupleType{HdTypeInt32_2_10_10_10_REV, 1} : _points->GetTupleType());
+  specs->emplace_back(_dstName,
+                      _packed ? HdTupleType{HdTypeInt32_2_10_10_10_REV, 1} : _points->GetTupleType());
 }
 
 TfToken const &Hd_FlatNormalsComputation::GetName() const
@@ -179,22 +175,22 @@ bool Hd_FlatNormalsComputation::Resolve()
   switch (_points->GetTupleType().type) {
     case HdTypeFloatVec3:
       if (_packed) {
-        normals = Hd_FlatNormals::ComputeFlatNormalsPacked(
-            _topology, static_cast<const GfVec3f *>(_points->GetData()));
+        normals = Hd_FlatNormals::ComputeFlatNormalsPacked(_topology,
+                                                           static_cast<const GfVec3f *>(_points->GetData()));
       }
       else {
-        normals = Hd_FlatNormals::ComputeFlatNormals(
-            _topology, static_cast<const GfVec3f *>(_points->GetData()));
+        normals = Hd_FlatNormals::ComputeFlatNormals(_topology,
+                                                     static_cast<const GfVec3f *>(_points->GetData()));
       }
       break;
     case HdTypeDoubleVec3:
       if (_packed) {
-        normals = Hd_FlatNormals::ComputeFlatNormalsPacked(
-            _topology, static_cast<const GfVec3d *>(_points->GetData()));
+        normals = Hd_FlatNormals::ComputeFlatNormalsPacked(_topology,
+                                                           static_cast<const GfVec3d *>(_points->GetData()));
       }
       else {
-        normals = Hd_FlatNormals::ComputeFlatNormals(
-            _topology, static_cast<const GfVec3d *>(_points->GetData()));
+        normals = Hd_FlatNormals::ComputeFlatNormals(_topology,
+                                                     static_cast<const GfVec3d *>(_points->GetData()));
       }
       break;
     default:
@@ -203,7 +199,7 @@ bool Hd_FlatNormalsComputation::Resolve()
   }
 
   HdBufferSourceSharedPtr normalsBuffer = HdBufferSourceSharedPtr(
-      new HdVtBufferSource(_dstName, VtValue(normals)));
+    new HdVtBufferSource(_dstName, VtValue(normals)));
   _SetResult(normalsBuffer);
   _SetResolved();
   return true;

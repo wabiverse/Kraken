@@ -25,27 +25,27 @@ enum class Direction { Forward, Backward };
 
 namespace SearchType {
 enum : uint32_t {
-  WORD       = (1 << 0),
-  Begin      = (1 << 1),
-  End        = (1 << 2),
-  Word       = (1 << 3),
+  WORD = (1 << 0),
+  Begin = (1 << 1),
+  End = (1 << 2),
+  Word = (1 << 3),
   SingleLine = (1 << 4)
 };
 };
 
 namespace FileFlags {
 enum : uint32_t {
-  StrippedCR         = (1 << 0),
+  StrippedCR = (1 << 0),
   TerminatedWithZero = (1 << 1),
-  ReadOnly           = (1 << 2),
-  Locked             = (1 << 3),  // Can this file path ever be written to?
-  Dirty              = (1 << 4),  // Has the file been changed?
-  HasWarnings        = (1 << 6),
-  HasErrors          = (1 << 7),
-  DefaultBuffer      = (1 << 8),  // Default startup buffer
-  HasTabs            = (1 << 9),
-  HasSpaceTabs       = (1 << 10),
-  InsertTabs         = (1 << 11)
+  ReadOnly = (1 << 2),
+  Locked = (1 << 3),  // Can this file path ever be written to?
+  Dirty = (1 << 4),   // Has the file been changed?
+  HasWarnings = (1 << 6),
+  HasErrors = (1 << 7),
+  DefaultBuffer = (1 << 8),  // Default startup buffer
+  HasTabs = (1 << 9),
+  HasSpaceTabs = (1 << 10),
+  InsertTabs = (1 << 11)
 };
 }
 
@@ -54,7 +54,7 @@ enum : uint32_t {
 inline int ToASCII(const char ch)
 {
   auto ret = (unsigned int)ch;
-  ret      = std::min(ret, 127u);
+  ret = std::min(ret, 127u);
   return ret;
 }
 
@@ -124,12 +124,8 @@ class ZepBuffer : public ZepComponent {
   GlyphRange StandardCtrlMotion(GlyphIterator cursor, Direction searchDir) const;
 
   // Things that change
-  bool Delete(const GlyphIterator &startOffset,
-              const GlyphIterator &endOffset,
-              ChangeRecord &changeRecord);
-  bool Insert(const GlyphIterator &startOffset,
-              const std::string &str,
-              ChangeRecord &changeRecord);
+  bool Delete(const GlyphIterator &startOffset, const GlyphIterator &endOffset, ChangeRecord &changeRecord);
+  bool Insert(const GlyphIterator &startOffset, const std::string &str, ChangeRecord &changeRecord);
   bool Replace(const GlyphIterator &startOffset,
                const GlyphIterator &endOffset,
                /*note; not ref*/ std::string str,
@@ -214,9 +210,7 @@ class ZepBuffer : public ZepComponent {
                      const GlyphIterator &begin,
                      const GlyphIterator &end,
                      std::function<bool(const std::shared_ptr<RangeMarker> &)> fnCB) const;
-  std::shared_ptr<RangeMarker> FindNextMarker(GlyphIterator start,
-                                              Direction dir,
-                                              uint32_t markerType);
+  std::shared_ptr<RangeMarker> FindNextMarker(GlyphIterator start, Direction dir, uint32_t markerType);
 
   void SetBufferType(BufferType type);
   BufferType GetBufferType() const;
@@ -274,10 +268,10 @@ class ZepBuffer : public ZepComponent {
   // File and modification info
   ZepPath m_filePath;
   std::string m_strName;
-  uint32_t m_fileFlags    = 0;
+  uint32_t m_fileFlags = 0;
   BufferType m_bufferType = BufferType::Normal;
   GlyphIterator m_lastEditLocation;  // = 0;
-  uint64_t m_updateCount    = 0;
+  uint64_t m_updateCount = 0;
   uint64_t m_lastUpdateTime = 0;
 
   // Syntax and theme
@@ -310,11 +304,11 @@ struct BufferMessage : public ZepMessage {
                 BufferMessageType messageType,
                 const GlyphIterator &startLoc,
                 const GlyphIterator &endLoc)
-      : ZepMessage(Msg::Buffer),
-        pBuffer(pBuff),
-        type(messageType),
-        startLocation(startLoc),
-        endLocation(endLoc)
+    : ZepMessage(Msg::Buffer),
+      pBuffer(pBuff),
+      type(messageType),
+      startLocation(startLoc),
+      endLocation(endLoc)
   {}
 
   ZepBuffer *pBuffer;

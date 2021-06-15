@@ -107,7 +107,7 @@ class PcpCache {
   PCP_API
   PcpCache(const PcpLayerStackIdentifier &layerStackIdentifier,
            const std::string &fileFormatTarget = std::string(),
-           bool usd                            = false);
+           bool usd = false);
   PCP_API ~PcpCache();
 
   /// \name Parameters
@@ -213,8 +213,8 @@ class PcpCache {
   PCP_API
   void RequestLayerMuting(const std::vector<std::string> &layersToMute,
                           const std::vector<std::string> &layersToUnmute,
-                          PcpChanges *changes                        = nullptr,
-                          std::vector<std::string> *newLayersMuted   = nullptr,
+                          PcpChanges *changes = nullptr,
+                          std::vector<std::string> *newLayersMuted = nullptr,
                           std::vector<std::string> *newLayersUnmuted = nullptr);
 
   /// Returns the list of canonical identifiers for muted layers
@@ -306,12 +306,8 @@ class PcpCache {
                                     const ChildrenPredicate &childrenPred,
                                     const PayloadPredicate &payloadPred)
   {
-    ComputePrimIndexesInParallel(SdfPathVector(1, path),
-                                 allErrors,
-                                 childrenPred,
-                                 payloadPred,
-                                 "Pcp",
-                                 "ComputePrimIndexesInParallel");
+    ComputePrimIndexesInParallel(
+      SdfPathVector(1, path), allErrors, childrenPred, payloadPred, "Pcp", "ComputePrimIndexesInParallel");
   }
 
   /// \overload
@@ -326,7 +322,7 @@ class PcpCache {
                                     const char *mallocTag2)
   {
     ComputePrimIndexesInParallel(
-        SdfPathVector(1, path), allErrors, childrenPred, payloadPred, mallocTag1, mallocTag2);
+      SdfPathVector(1, path), allErrors, childrenPred, payloadPred, mallocTag1, mallocTag2);
   }
 
   /// Vectorized form of ComputePrimIndexesInParallel().  Equivalent to
@@ -526,7 +522,7 @@ class PcpCache {
   /// if the prim index has no dynamic file formats that it depends on.
   PCP_API
   const PcpDynamicFileFormatDependencyData &GetDynamicFileFormatArgumentDependencyData(
-      const SdfPath &primIndexPath) const;
+    const SdfPath &primIndexPath) const;
 
   /// @}
 
@@ -612,9 +608,8 @@ class PcpCache {
     _UntypedIndexingChildrenPredicate() : pred(nullptr), invoke(nullptr)
     {}
     template<class Pred>
-    explicit _UntypedIndexingChildrenPredicate(const Pred *pred)
-        : pred(pred),
-          invoke(_Invoke<Pred>)
+    explicit _UntypedIndexingChildrenPredicate(const Pred *pred) : pred(pred),
+                                                                   invoke(_Invoke<Pred>)
     {}
 
     inline bool operator()(const PcpPrimIndex &index, TfTokenVector *childNamesToCompose) const
@@ -660,11 +655,10 @@ class PcpCache {
                                                             PcpErrorVector *allErrors);
 
   // Friend to allow low-level indexing code access to the above.
-  friend const PcpPrimIndex &Pcp_ComputePrimIndexWithCompatibleInputs(
-      PcpCache &cache,
-      const SdfPath &path,
-      const PcpPrimIndexInputs &inputs,
-      PcpErrorVector *allErrors);
+  friend const PcpPrimIndex &Pcp_ComputePrimIndexWithCompatibleInputs(PcpCache &cache,
+                                                                      const SdfPath &path,
+                                                                      const PcpPrimIndexInputs &inputs,
+                                                                      PcpErrorVector *allErrors);
 
   // Parallel indexing implementation.
   PCP_API

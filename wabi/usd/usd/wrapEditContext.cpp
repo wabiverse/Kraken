@@ -37,8 +37,8 @@ struct Usd_PyEditContextAccess {
   static void __enter__(UsdPyEditContext &self)
   {
     self._editContext = self._editTarget.IsValid() ?
-                            std::make_shared<UsdEditContext>(self._stage, self._editTarget) :
-                            std::make_shared<UsdEditContext>(self._stage);
+                          std::make_shared<UsdEditContext>(self._stage, self._editTarget) :
+                          std::make_shared<UsdEditContext>(self._stage);
   }
 
   static void __exit__(UsdPyEditContext &self, object, object, object)
@@ -53,9 +53,9 @@ WABI_NAMESPACE_USING
 
 void wrapUsdEditContext()
 {
-  class_<UsdPyEditContext>("EditContext",
-                           init<UsdStagePtr, optional<UsdEditTarget>>(
-                               (arg("stage"), arg("editTarget") = UsdEditTarget())))
-      .def("__enter__", &Usd_PyEditContextAccess::__enter__, return_self<>())
-      .def("__exit__", &Usd_PyEditContextAccess::__exit__);
+  class_<UsdPyEditContext>(
+    "EditContext",
+    init<UsdStagePtr, optional<UsdEditTarget>>((arg("stage"), arg("editTarget") = UsdEditTarget())))
+    .def("__enter__", &Usd_PyEditContextAccess::__enter__, return_self<>())
+    .def("__exit__", &Usd_PyEditContextAccess::__exit__);
 }

@@ -128,9 +128,7 @@ class SdfSpec {
   /// Sets the value for \p entryKey to \p value within the dictionary
   ///        with the given metadata key \p dictionaryKey
   SDF_API
-  void SetInfoDictionaryValue(const TfToken &dictionaryKey,
-                              const TfToken &entryKey,
-                              const VtValue &value);
+  void SetInfoDictionaryValue(const TfToken &dictionaryKey, const TfToken &entryKey, const VtValue &value);
 
   /// Returns whether there is a setting for the scene spec info
   /// with the given key.

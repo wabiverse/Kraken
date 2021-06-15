@@ -180,7 +180,7 @@ ccl::TypeDesc HdBbAttributeSource::GetTypeDesc(const HdType &type, const TfToken
 bool HdBbAttributeSource::IsHoldingFloat(const VtValue &value)
 {
   HdTupleType value_tuple_type = HdGetValueTupleType(value);
-  HdType component_type        = HdGetComponentType(value_tuple_type.type);
+  HdType component_type = HdGetComponentType(value_tuple_type.type);
   return component_type == HdTypeFloat;
 }
 
@@ -188,9 +188,8 @@ bool HdBbAttributeSource::CanCastToFloat(const VtValue &value)
 {
   // unsupported Matrix3 and Matrix4
   return value.CanCast<float>() || value.CanCast<GfVec2f>() || value.CanCast<GfVec3f>() ||
-         value.CanCast<GfVec4f>() || value.CanCast<VtFloatArray>() ||
-         value.CanCast<VtVec2fArray>() || value.CanCast<VtVec3fArray>() ||
-         value.CanCast<VtVec4fArray>();
+         value.CanCast<GfVec4f>() || value.CanCast<VtFloatArray>() || value.CanCast<VtVec2fArray>() ||
+         value.CanCast<VtVec3fArray>() || value.CanCast<VtVec4fArray>();
 }
 
 bool HdBbAttributeSource::_CheckBuffersValid() const
@@ -210,10 +209,9 @@ bool HdBbAttributeSource::_CheckBuffersValid() const
 
   // check element type
   const ccl::AttributeElement &element = GetAttributeElement();
-  if (!TF_VERIFY(
-          element != ccl::AttributeElement::ATTR_ELEMENT_NONE,
-          "AttributeElement for the source value is NONE! Attribute:%s can not be committed!",
-          m_name.data())) {
+  if (!TF_VERIFY(element != ccl::AttributeElement::ATTR_ELEMENT_NONE,
+                 "AttributeElement for the source value is NONE! Attribute:%s can not be committed!",
+                 m_name.data())) {
     return false;
   }
 
@@ -227,10 +225,9 @@ bool HdBbAttributeSource::_CheckBuffersValid() const
 
   // destination buffer type
   const HdType type = GetType(type_desc);
-  if (!TF_VERIFY(
-          type != HdTypeInvalid,
-          "HdType for the destination buffer is Invalid! Attribute:%s can not be committed!",
-          m_name.data())) {
+  if (!TF_VERIFY(type != HdTypeInvalid,
+                 "HdType for the destination buffer is Invalid! Attribute:%s can not be committed!",
+                 m_name.data())) {
     return false;
   }
 
@@ -239,7 +236,7 @@ bool HdBbAttributeSource::_CheckBuffersValid() const
 
 bool HdBbAttributeSource::_CheckBuffersSize() const
 {
-  const VtValue &value                 = m_value;
+  const VtValue &value = m_value;
   const ccl::AttributeElement &element = GetAttributeElement();
 
   // ELEMENT_OBJECT accepts only a value(array size == 0) or array(array size == 1)
@@ -253,14 +250,13 @@ bool HdBbAttributeSource::_CheckBuffersSize() const
     }
   };
 
-  const size_t source_size  = get_source_size();
+  const size_t source_size = get_source_size();
   const size_t element_size = GetGeometry()->element_size(element, m_attributes->prim);
-  if (!TF_VERIFY(
-          source_size == element_size,
-          "SourceSize:%lu is not the same as ElementSize:%lu ! Attribute:%s can not be committed!",
-          source_size,
-          element_size,
-          m_name.data())) {
+  if (!TF_VERIFY(source_size == element_size,
+                 "SourceSize:%lu is not the same as ElementSize:%lu ! Attribute:%s can not be committed!",
+                 source_size,
+                 element_size,
+                 m_name.data())) {
     return false;
   }
 
@@ -304,9 +300,9 @@ bool HdBbAttributeSource::_CheckValid() const
   }
 
   TF_CODING_ERROR(
-      "Attribute:%s is not going to be committed. Attribute has unknown type or can not be "
-      "converted to known type!",
-      m_name.data());
+    "Attribute:%s is not going to be committed. Attribute has unknown type or can not be "
+    "converted to known type!",
+    m_name.data());
   return false;  // unsupported type
 }
 
@@ -315,7 +311,7 @@ VtValue HdBbAttributeSource::UncheckedCastToFloat(const VtValue &input_value)
   VtValue value = input_value;
 
   HdTupleType tuple_type = HdGetValueTupleType(value);
-  size_t count           = HdGetComponentCount(tuple_type.type);
+  size_t count = HdGetComponentCount(tuple_type.type);
 
   // Casting Matrix3 and Matrix4 is disabled.
   if (value.IsArrayValued()) {
@@ -352,8 +348,8 @@ bool HdBbAttributeSource::ResolveAsValue()
   // create attribute
   const ccl::ustring name{m_name.data(), m_name.size()};
   const ccl::AttributeElement &attrib_element = GetAttributeElement();
-  const ccl::TypeDesc &type_desc              = GetSourceTypeDesc();
-  m_attribute                                 = m_attributes->add(name, type_desc, attrib_element);
+  const ccl::TypeDesc &type_desc = GetSourceTypeDesc();
+  m_attribute = m_attributes->add(name, type_desc, attrib_element);
 
   // copy the data, source's stride is always <= than cycles'
   size_t num_src_comp = HdGetComponentCount(HdGetValueTupleType(m_value).type);
@@ -384,17 +380,17 @@ bool HdBbAttributeSource::ResolveAsArray()
   // create attribute
   const ccl::ustring name{m_name.data(), m_name.size()};
   const ccl::AttributeElement &attrib_element = GetAttributeElement();
-  const ccl::TypeDesc &type_desc              = GetSourceTypeDesc();
-  m_attribute                                 = m_attributes->add(name, type_desc, attrib_element);
+  const ccl::TypeDesc &type_desc = GetSourceTypeDesc();
+  m_attribute = m_attributes->add(name, type_desc, attrib_element);
 
   // copy the data, source's stride is always <= than cycles'
   size_t num_src_comp = HdGetComponentCount(HdGetValueTupleType(m_value).type);
-  size_t src_size     = m_value.GetArraySize() * num_src_comp;
-  auto src_data       = reinterpret_cast<const float *>(HdGetValueData(m_value));
+  size_t src_size = m_value.GetArraySize() * num_src_comp;
+  auto src_data = reinterpret_cast<const float *>(HdGetValueData(m_value));
   assert(src_data != nullptr);
 
   size_t num_dst_comp = GetTupleType(type_desc).count;
-  auto dst_data       = reinterpret_cast<float *>(m_attribute->data());
+  auto dst_data = reinterpret_cast<float *>(m_attribute->data());
   assert(dst_data != nullptr);
 
   assert(num_src_comp <= num_dst_comp);
@@ -500,37 +496,36 @@ HdBbAttributeSource::HdBbAttributeSource(TfToken name,
                                          ccl::AttributeSet *attributes,
                                          ccl::AttributeElement element,
                                          const ccl::TypeDesc &type_desc)
-    : m_name{std::move(name)},
-      m_value{value},
-      m_attributes{attributes},
-      m_element{element},
-      m_type_desc{type_desc},
-      m_attribute{nullptr}
+  : m_name{std::move(name)},
+    m_value{value},
+    m_attributes{attributes},
+    m_element{element},
+    m_type_desc{type_desc},
+    m_attribute{nullptr}
 {}
 
 HdBbAttributeSource::HdBbAttributeSource(const VtValue &value,
                                          ccl::AttributeSet *attribs,
                                          ccl::AttributeStandard std)
-    : HdBbAttributeSource(TfToken{ccl::Attribute::standard_name(std)},
-                          GetRole(attribs->geometry->standard_type(std)),
-                          value,
-                          attribs,
-                          attribs->geometry->standard_element(std),
-                          attribs->geometry->standard_type(std))
+  : HdBbAttributeSource(TfToken{ccl::Attribute::standard_name(std)},
+                        GetRole(attribs->geometry->standard_type(std)),
+                        value,
+                        attribs,
+                        attribs->geometry->standard_element(std),
+                        attribs->geometry->standard_type(std))
 {}
 
-HdCyclesPointCloudAttributeSource::HdCyclesPointCloudAttributeSource(
-    TfToken name,
-    const TfToken &role,
-    const VtValue &value,
-    ccl::PointCloud *pc,
-    const HdInterpolation &interpolation)
-    : HdBbAttributeSource(std::move(name),
-                          role,
-                          value,
-                          &pc->attributes,
-                          interpolation_to_pointcloud_element(interpolation),
-                          GetTypeDesc(HdGetValueTupleType(value).type, role))
+HdCyclesPointCloudAttributeSource::HdCyclesPointCloudAttributeSource(TfToken name,
+                                                                     const TfToken &role,
+                                                                     const VtValue &value,
+                                                                     ccl::PointCloud *pc,
+                                                                     const HdInterpolation &interpolation)
+  : HdBbAttributeSource(std::move(name),
+                        role,
+                        value,
+                        &pc->attributes,
+                        interpolation_to_pointcloud_element(interpolation),
+                        GetTypeDesc(HdGetValueTupleType(value).type, role))
 {}
 
 /*
@@ -573,9 +568,8 @@ template<typename Dst, typename Src> VtValue cast_arr_to_arr(const VtValue &inpu
   auto &array = input.UncheckedGet<VtArray<Src>>();
 
   VtArray<Dst> output(array.size());
-  std::transform(array.begin(), array.end(), output.begin(), [](const Src &val) -> Dst {
-    return static_cast<Dst>(val);
-  });
+  std::transform(
+    array.begin(), array.end(), output.begin(), [](const Src &val) -> Dst { return static_cast<Dst>(val); });
   return VtValue{output};
 }
 

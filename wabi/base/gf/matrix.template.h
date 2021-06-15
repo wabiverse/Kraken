@@ -99,7 +99,7 @@
     }
     ScalarType;
 
-    static const size_t numRows    = {{DIM}};
+    static const size_t numRows = {{DIM}};
     static const size_t numColumns = {{DIM}};
 
     /// Default constructor. Leaves the matrix component values undefined.
@@ -334,8 +334,8 @@
       }
     } const &m)
     {
-      int nElems       = {{DIM}} * {{DIM}};
-      size_t h         = 0;
+      int nElems = {{DIM}} * {{DIM}};
+      size_t h = 0;
       const {{SCL}} *p = m.GetArray();
       while (nElems--)
         boost::hash_combine(h, *p++);
@@ -576,11 +576,11 @@
       }
     }
     f operator*(
-        const {{MAT}} & m, const GfVec {
-          {
-            DIM
-          }
-        } f &vec);
+      const {{MAT}} & m, const GfVec {
+        {
+          DIM
+        }
+      } f &vec);
 
     /// Returns the product of row vector \e vec and a matrix \e m.
     /// Note that the return type is a \c GfVec{{ DIM }}f.
@@ -592,12 +592,12 @@
       }
     }
     f operator*(
-        const GfVec {
-          {
-            DIM
-          }
-        } f &vec,
-        const {{MAT}} & m);
+      const GfVec {
+        {
+          DIM
+        }
+      } f &vec,
+      const {{MAT}} & m);
 
     { % endif % } { % block customXformFunctions % } {
       % endblock customXformFunctions %
@@ -634,17 +634,17 @@
   /// to \p tolerance, or false otherwise.
   GF_API
   bool GfIsClose(
+    {
       {
-        {
-          MAT
-        }
-      } const &m1,
+        MAT
+      }
+    } const &m1,
+    {
       {
-        {
-          MAT
-        }
-      } const &m2,
-      double tolerance);
+        MAT
+      }
+    } const &m2,
+    double tolerance);
 
   /// Output a {{ MAT }}
   /// \ingroup group_gf_DebuggingOutput

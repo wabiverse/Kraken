@@ -72,9 +72,9 @@ class HdPh_UnitTestWindow : public GarchGLDebugWindow {
 };
 
 HdPh_UnitTestWindow::HdPh_UnitTestWindow(HdPh_UnitTestGLDrawing *unitTest, int w, int h)
-    : GarchGLDebugWindow("Hd Test", w, h),
-      _unitTest(unitTest),
-      _animate(false)
+  : GarchGLDebugWindow("Hd Test", w, h),
+    _unitTest(unitTest),
+    _animate(false)
 {}
 
 HdPh_UnitTestWindow::~HdPh_UnitTestWindow()
@@ -132,16 +132,8 @@ void HdPh_UnitTestWindow::OnPaintGL()
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
   glBindFramebuffer(GL_READ_FRAMEBUFFER, _drawTarget->GetFramebufferId());
 
-  glBlitFramebuffer(0,
-                    0,
-                    GetWidth(),
-                    GetHeight(),
-                    0,
-                    0,
-                    GetWidth(),
-                    GetHeight(),
-                    GL_COLOR_BUFFER_BIT,
-                    GL_NEAREST);
+  glBlitFramebuffer(
+    0, 0, GetWidth(), GetHeight(), 0, 0, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
   glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
@@ -231,8 +223,7 @@ int HdPh_UnitTestGLDrawing::GetHeight() const
   return _widget->GetHeight();
 }
 
-bool HdPh_UnitTestGLDrawing::WriteToFile(std::string const &attachment,
-                                         std::string const &filename) const
+bool HdPh_UnitTestGLDrawing::WriteToFile(std::string const &attachment, std::string const &filename) const
 {
   return _widget->WriteToFile(attachment, filename);
 }
@@ -240,7 +231,7 @@ bool HdPh_UnitTestGLDrawing::WriteToFile(std::string const &attachment,
 void HdPh_UnitTestGLDrawing::RunTest(int argc, char *argv[])
 {
   bool offscreen = false;
-  bool animate   = false;
+  bool animate = false;
   for (int i = 0; i < argc; ++i) {
     if (std::string(argv[i]) == "--offscreen") {
       offscreen = true;
@@ -288,8 +279,8 @@ void HdPh_UnitTestGLDrawing::UninitTest()
 void HdPh_UnitTestGLDrawing::MousePress(int button, int x, int y, int modKeys)
 {
   _mouseButton[button] = true;
-  _mousePos[0]         = x;
-  _mousePos[1]         = y;
+  _mousePos[0] = x;
+  _mousePos[1] = y;
 }
 
 /* virtual */
@@ -346,8 +337,8 @@ GfMatrix4d HdPh_UnitTestGLDrawing::GetProjectionMatrix() const
 
 GfFrustum HdPh_UnitTestGLDrawing::GetFrustum() const
 {
-  int width          = GetWidth();
-  int height         = GetHeight();
+  int width = GetWidth();
+  int height = GetHeight();
   double aspectRatio = double(width) / height;
 
   GfFrustum frustum;

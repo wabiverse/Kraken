@@ -52,10 +52,10 @@ class HdEmbreeRenderParam final : public HdRenderParam {
                       RTCScene scene,
                       HdRenderThread *renderThread,
                       std::atomic<int> *sceneVersion)
-      : _scene(scene),
-        _device(device),
-        _renderThread(renderThread),
-        _sceneVersion(sceneVersion)
+    : _scene(scene),
+      _device(device),
+      _renderThread(renderThread),
+      _sceneVersion(sceneVersion)
   {}
   virtual ~HdEmbreeRenderParam() = default;
 

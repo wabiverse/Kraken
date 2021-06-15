@@ -51,7 +51,7 @@ struct NdrNodeDiscoveryResult;
   TF_REGISTRY_FUNCTION(TfType) \
   { \
     TfType::Define<ParserPluginClass, TfType::Bases<NdrParserPlugin>>() \
-        .SetFactory<NdrParserPluginFactory<ParserPluginClass>>(); \
+      .SetFactory<NdrParserPluginFactory<ParserPluginClass>>(); \
   }
 
 /// \class NdrParserPlugin

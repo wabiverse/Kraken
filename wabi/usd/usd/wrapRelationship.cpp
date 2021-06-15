@@ -57,9 +57,8 @@ static SdfPathVector _GetForwardedTargets(const UsdRelationship &self)
 static string __repr__(const UsdRelationship &self)
 {
   if (self) {
-    return TfStringPrintf("%s.GetRelationship(%s)",
-                          TfPyRepr(self.GetPrim()).c_str(),
-                          TfPyRepr(self.GetName()).c_str());
+    return TfStringPrintf(
+      "%s.GetRelationship(%s)", TfPyRepr(self.GetPrim()).c_str(), TfPyRepr(self.GetName()).c_str());
   }
   else {
     return "invalid " + self.GetDescription();
@@ -71,18 +70,17 @@ static string __repr__(const UsdRelationship &self)
 void wrapUsdRelationship()
 {
   class_<UsdRelationship, bases<UsdProperty>>("Relationship")
-      .def(Usd_ObjectSubclass())
-      .def("__repr__", __repr__)
-      .def("AddTarget",
-           &UsdRelationship::AddTarget,
-           (arg("target"), arg("position") = UsdListPositionBackOfPrependList))
-      .def("RemoveTarget", &UsdRelationship::RemoveTarget, arg("target"))
-      .def("SetTargets", &UsdRelationship::SetTargets, arg("targets"))
-      .def("ClearTargets", &UsdRelationship::ClearTargets, arg("removeSpec"))
-      .def("GetTargets", _GetTargets, return_value_policy<TfPySequenceToList>())
-      .def("GetForwardedTargets", _GetForwardedTargets, return_value_policy<TfPySequenceToList>())
-      .def("HasAuthoredTargets", &UsdRelationship::HasAuthoredTargets);
+    .def(Usd_ObjectSubclass())
+    .def("__repr__", __repr__)
+    .def("AddTarget",
+         &UsdRelationship::AddTarget,
+         (arg("target"), arg("position") = UsdListPositionBackOfPrependList))
+    .def("RemoveTarget", &UsdRelationship::RemoveTarget, arg("target"))
+    .def("SetTargets", &UsdRelationship::SetTargets, arg("targets"))
+    .def("ClearTargets", &UsdRelationship::ClearTargets, arg("removeSpec"))
+    .def("GetTargets", _GetTargets, return_value_policy<TfPySequenceToList>())
+    .def("GetForwardedTargets", _GetForwardedTargets, return_value_policy<TfPySequenceToList>())
+    .def("HasAuthoredTargets", &UsdRelationship::HasAuthoredTargets);
   TfPyRegisterStlSequencesFromPython<UsdRelationship>();
-  to_python_converter<std::vector<UsdRelationship>,
-                      TfPySequenceToPython<std::vector<UsdRelationship>>>();
+  to_python_converter<std::vector<UsdRelationship>, TfPySequenceToPython<std::vector<UsdRelationship>>>();
 }

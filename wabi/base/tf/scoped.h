@@ -198,8 +198,7 @@ class TfScopedAutoVar {
   /// Sets \p x to \p val immediately and restores its old value when this
   /// goes out of scope.
   template<typename T>
-  explicit TfScopedAutoVar(T &x, const T &val)
-      : _scope(std::bind(&TfScopedAutoVar::_Set<T>, &x, x))
+  explicit TfScopedAutoVar(T &x, const T &val) : _scope(std::bind(&TfScopedAutoVar::_Set<T>, &x, x))
   {
     x = val;
   }

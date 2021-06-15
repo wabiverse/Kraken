@@ -283,8 +283,7 @@ class UsdAttribute : public UsdProperty {
   /// \sa UsdAttribute::GetTimeSamples
   /// \sa UsdAttribute::GetUnionedTimeSamplesInInterval
   USD_API
-  static bool GetUnionedTimeSamples(const std::vector<UsdAttribute> &attrs,
-                                    std::vector<double> *times);
+  static bool GetUnionedTimeSamples(const std::vector<UsdAttribute> &attrs, std::vector<double> *times);
 
   /// Populates the given vector, \p times with the union of all the
   /// authored sample times in the GfInterval, \p interval on all of the
@@ -620,17 +619,15 @@ class UsdAttribute : public UsdProperty {
   friend class Usd_PrimData;
   friend struct UsdPrim_AttrConnectionFinder;
 
-  UsdAttribute(const Usd_PrimDataHandle &prim,
-               const SdfPath &proxyPrimPath,
-               const TfToken &attrName)
-      : UsdProperty(UsdTypeAttribute, prim, proxyPrimPath, attrName)
+  UsdAttribute(const Usd_PrimDataHandle &prim, const SdfPath &proxyPrimPath, const TfToken &attrName)
+    : UsdProperty(UsdTypeAttribute, prim, proxyPrimPath, attrName)
   {}
 
   UsdAttribute(UsdObjType objType,
                const Usd_PrimDataHandle &prim,
                const SdfPath &proxyPrimPath,
                const TfToken &propName)
-      : UsdProperty(objType, prim, proxyPrimPath, propName)
+    : UsdProperty(objType, prim, proxyPrimPath, propName)
   {}
 
   SdfAttributeSpecHandle _CreateSpec(const SdfValueTypeName &typeName,
@@ -642,9 +639,7 @@ class UsdAttribute : public UsdProperty {
   // new information.
   SdfAttributeSpecHandle _CreateSpec() const;
 
-  bool _Create(const SdfValueTypeName &typeName,
-               bool custom,
-               const SdfVariability &variability) const;
+  bool _Create(const SdfValueTypeName &typeName, bool custom, const SdfVariability &variability) const;
 
   template<typename T> bool _Get(T *value, UsdTimeCode time) const;
 

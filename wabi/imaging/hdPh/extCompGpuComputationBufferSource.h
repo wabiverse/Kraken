@@ -70,9 +70,8 @@ class HdPhExtCompGpuComputationBufferSource final : public HdNullBufferSource {
   /// \param[inout] resource the GPU resident resource that will contain the data
   /// in the inputs after Resolve is called.
   /// \see HdExtComputation
-  HdPhExtCompGpuComputationBufferSource(
-      HdBufferSourceSharedPtrVector const &inputs,
-      HdPhExtCompGpuComputationResourceSharedPtr const &resource);
+  HdPhExtCompGpuComputationBufferSource(HdBufferSourceSharedPtrVector const &inputs,
+                                        HdPhExtCompGpuComputationResourceSharedPtr const &resource);
 
   HDPH_API
   virtual ~HdPhExtCompGpuComputationBufferSource() = default;
@@ -99,10 +98,9 @@ class HdPhExtCompGpuComputationBufferSource final : public HdNullBufferSource {
   HdBufferSourceSharedPtrVector _inputs;
   HdPhExtCompGpuComputationResourceSharedPtr _resource;
 
-  HdPhExtCompGpuComputationBufferSource()                                              = delete;
+  HdPhExtCompGpuComputationBufferSource() = delete;
   HdPhExtCompGpuComputationBufferSource(const HdPhExtCompGpuComputationBufferSource &) = delete;
-  HdPhExtCompGpuComputationBufferSource &operator=(const HdPhExtCompGpuComputationBufferSource &) =
-      delete;
+  HdPhExtCompGpuComputationBufferSource &operator=(const HdPhExtCompGpuComputationBufferSource &) = delete;
 };
 
 WABI_NAMESPACE_END

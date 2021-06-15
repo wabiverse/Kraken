@@ -36,9 +36,9 @@ struct TfPyExceptionState {
   TfPyExceptionState(boost::python::handle<> const &type,
                      boost::python::handle<> const &value,
                      boost::python::handle<> const &trace)
-      : _type(type),
-        _value(value),
-        _trace(trace)
+    : _type(type),
+      _value(value),
+      _trace(trace)
   {}
   boost::python::handle<> const &GetType() const
   {

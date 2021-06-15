@@ -50,9 +50,8 @@ static Ar_PythonConverterRegistry &_GetRegistry()
   return registry;
 }
 
-void Ar_RegisterResolverContextPythonConversion(
-    const Ar_MakeResolverContextFromPythonFn &convertFunc,
-    const Ar_ResolverContextToPythonFn &getObjectFunc)
+void Ar_RegisterResolverContextPythonConversion(const Ar_MakeResolverContextFromPythonFn &convertFunc,
+                                                const Ar_ResolverContextToPythonFn &getObjectFunc)
 {
   _GetRegistry()._convertFromPython.push_back(convertFunc);
   _GetRegistry()._convertToPython.push_back(getObjectFunc);

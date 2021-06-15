@@ -46,8 +46,8 @@ class HdRenderIndex;
 class HdSceneDelegate;
 class HdCamera;
 
-using HdRenderPassSharedPtr               = std::shared_ptr<class HdRenderPass>;
-using HdPhSimpleLightingShaderSharedPtr   = std::shared_ptr<class HdPhSimpleLightingShader>;
+using HdRenderPassSharedPtr = std::shared_ptr<class HdRenderPass>;
+using HdPhSimpleLightingShaderSharedPtr = std::shared_ptr<class HdPhSimpleLightingShader>;
 using HdxShadowMatrixComputationSharedPtr = std::shared_ptr<class HdxShadowMatrixComputation>;
 
 TF_DECLARE_REF_PTRS(GlfSimpleShadowArray);
@@ -74,8 +74,8 @@ class HdxSimpleLightTask : public HdTask {
 
  private:
   std::vector<GfMatrix4d> _ComputeShadowMatrices(
-      const HdCamera *camera,
-      HdxShadowMatrixComputationSharedPtr const &computation) const;
+    const HdCamera *camera,
+    HdxShadowMatrixComputationSharedPtr const &computation) const;
 
   SdfPath _cameraId;
   std::map<TfToken, SdfPathVector> _lightIds;
@@ -105,21 +105,21 @@ class HdxSimpleLightTask : public HdTask {
                              SdfPathVector const &lightExcludePaths,
                              std::map<TfToken, SdfPathVector> *lights);
 
-  HdxSimpleLightTask()                           = delete;
+  HdxSimpleLightTask() = delete;
   HdxSimpleLightTask(const HdxSimpleLightTask &) = delete;
   HdxSimpleLightTask &operator=(const HdxSimpleLightTask &) = delete;
 };
 
 struct HdxSimpleLightTaskParams {
   HdxSimpleLightTaskParams()
-      : cameraPath(),
-        lightIncludePaths(1, SdfPath::AbsoluteRootPath()),
-        lightExcludePaths(),
-        enableShadows(false),
-        viewport(0.0f),
-        overrideWindowPolicy{false, CameraUtilFit},
-        material(),
-        sceneAmbient(0)
+    : cameraPath(),
+      lightIncludePaths(1, SdfPath::AbsoluteRootPath()),
+      lightExcludePaths(),
+      enableShadows(false),
+      viewport(0.0f),
+      overrideWindowPolicy{false, CameraUtilFit},
+      material(),
+      sceneAmbient(0)
   {}
 
   SdfPath cameraPath;

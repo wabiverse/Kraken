@@ -44,7 +44,7 @@ bool _IsValid(HioFieldTextureDataSharedPtr const &textureData)
 HdPh_FieldTextureCpuData::HdPh_FieldTextureCpuData(HioFieldTextureDataSharedPtr const &textureData,
                                                    const std::string &debugName,
                                                    const bool premultiplyAlpha)
-    : _generateMipmaps(false)
+  : _generateMipmaps(false)
 {
   TRACE_FUNCTION();
 
@@ -76,35 +76,34 @@ HdPh_FieldTextureCpuData::HdPh_FieldTextureCpuData(HioFieldTextureDataSharedPtr 
   const HioFormat hioFormat = textureData->GetFormat();
 
   _textureDesc.format = HdPhTextureUtils::GetHgiFormat(hioFormat, premultiplyAlpha);
-  const HdPhTextureUtils::ConversionFunction conversionFunction =
-      HdPhTextureUtils::GetHioToHgiConversion(hioFormat, premultiplyAlpha);
+  const HdPhTextureUtils::ConversionFunction conversionFunction = HdPhTextureUtils::GetHioToHgiConversion(
+    hioFormat, premultiplyAlpha);
 
   // Handle grayscale textures by expanding value to green and blue.
   if (HgiGetComponentCount(_textureDesc.format) == 1) {
     _textureDesc.componentMapping = {
-        HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleOne};
+      HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleOne};
   }
 
   _textureDesc.dimensions = GfVec3i(
-      textureData->ResizedWidth(), textureData->ResizedHeight(), textureData->ResizedDepth());
+    textureData->ResizedWidth(), textureData->ResizedHeight(), textureData->ResizedDepth());
 
   const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(
-      _textureDesc.format, _textureDesc.dimensions, _textureDesc.layerCount);
+    _textureDesc.format, _textureDesc.dimensions, _textureDesc.layerCount);
 
   // How many mipmaps to use from the file.
   unsigned int numGivenMipmaps = 1;
-  const HgiMipInfo &mipInfo    = mipInfos[numGivenMipmaps - 1];
+  const HgiMipInfo &mipInfo = mipInfos[numGivenMipmaps - 1];
 
   // Size of initial data.
   _textureDesc.pixelsByteSize = mipInfo.byteOffset + mipInfo.byteSizePerLayer;
 
   if (conversionFunction) {
-    const size_t numPixels = _textureDesc.pixelsByteSize /
-                             HgiGetDataSizeOfFormat(_textureDesc.format);
+    const size_t numPixels = _textureDesc.pixelsByteSize / HgiGetDataSizeOfFormat(_textureDesc.format);
 
     // Convert the texture data
     std::unique_ptr<unsigned char[]> convertedData = std::make_unique<unsigned char[]>(
-        _textureDesc.pixelsByteSize);
+      _textureDesc.pixelsByteSize);
     conversionFunction(textureData->GetRawBuffer(), numPixels, convertedData.get());
     _convertedData = std::move(convertedData);
 

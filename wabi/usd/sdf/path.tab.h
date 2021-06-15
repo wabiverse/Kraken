@@ -61,14 +61,14 @@
 /* Put the tokens into the symbol table, so that GDB and other debuggers
    know about them.  */
 enum yytokentype {
-  TOK_MAPPER                = 258,
-  TOK_EXPRESSION            = 259,
-  TOK_IDENTIFIER            = 260,
+  TOK_MAPPER = 258,
+  TOK_EXPRESSION = 259,
+  TOK_IDENTIFIER = 260,
   TOK_NAMESPACED_IDENTIFIER = 261,
-  TOK_PRIM_NAME             = 262,
-  TOK_VARIANT_NAME          = 263,
-  TOK_DOTDOT                = 264,
-  TOK_WHITESPACE            = 265
+  TOK_PRIM_NAME = 262,
+  TOK_VARIANT_NAME = 263,
+  TOK_DOTDOT = 264,
+  TOK_WHITESPACE = 265
 };
 #endif
 

@@ -68,9 +68,9 @@ class HgiGLTexture final : public HgiTexture {
   HgiGLTexture(HgiTextureViewDesc const &desc);
 
  private:
-  HgiGLTexture()        = delete;
+  HgiGLTexture() = delete;
   HgiGLTexture &operator=(const HgiGLTexture &) = delete;
-  HgiGLTexture(const HgiGLTexture &)            = delete;
+  HgiGLTexture(const HgiGLTexture &) = delete;
 
   uint32_t _textureId;
 };

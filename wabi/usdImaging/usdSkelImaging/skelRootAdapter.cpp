@@ -51,7 +51,7 @@ WABI_NAMESPACE_BEGIN
 TF_REGISTRY_FUNCTION(TfType)
 {
   using Adapter = UsdSkelImagingSkelRootAdapter;
-  TfType t      = TfType::Define<Adapter, TfType::Bases<Adapter::BaseAdapter>>();
+  TfType t = TfType::Define<Adapter, TfType::Bases<Adapter::BaseAdapter>>();
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
@@ -118,8 +118,8 @@ SdfPath UsdSkelImagingSkelRootAdapter::Populate(const UsdPrim &prim,
 
       // Register the SkeletonAdapter for each skinned prim, effectively
       // hijacking all processing to go via it.
-      UsdImagingPrimAdapterSharedPtr skinnedPrimAdapter = _GetPrimAdapter(
-          skinnedPrim, /*ignoreInstancing*/ true);
+      UsdImagingPrimAdapterSharedPtr skinnedPrimAdapter = _GetPrimAdapter(skinnedPrim,
+                                                                          /*ignoreInstancing*/ true);
       if (!skinnedPrimAdapter) {
         // This prim is technically considered skinnable,
         // but an adapter may not be registered for the prim type.
@@ -147,22 +147,21 @@ SdfPath UsdSkelImagingSkelRootAdapter::Populate(const UsdPrim &prim,
 
 /*virtual*/
 void UsdSkelImagingSkelRootAdapter::TrackVariability(
-    const UsdPrim &prim,
-    const SdfPath &cachePath,
-    HdDirtyBits *timeVaryingBits,
-    const UsdImagingInstancerContext *instancerContext) const
+  const UsdPrim &prim,
+  const SdfPath &cachePath,
+  HdDirtyBits *timeVaryingBits,
+  const UsdImagingInstancerContext *instancerContext) const
 {
   // The SkeletonAdapter is registered for skeletons and skinned prims, so
   // there's no work to be done here.
 }
 
 /*virtual*/
-void UsdSkelImagingSkelRootAdapter::UpdateForTime(
-    const UsdPrim &prim,
-    const SdfPath &cachePath,
-    UsdTimeCode time,
-    HdDirtyBits requestedBits,
-    const UsdImagingInstancerContext *instancerContext) const
+void UsdSkelImagingSkelRootAdapter::UpdateForTime(const UsdPrim &prim,
+                                                  const SdfPath &cachePath,
+                                                  UsdTimeCode time,
+                                                  HdDirtyBits requestedBits,
+                                                  const UsdImagingInstancerContext *instancerContext) const
 {
   // The SkeletonAdapter is registered for skeletons and skinned prims, so
   // there's no work to be done here.
@@ -190,8 +189,7 @@ void UsdSkelImagingSkelRootAdapter::MarkDirty(const UsdPrim &prim,
 }
 
 /*virtual*/
-void UsdSkelImagingSkelRootAdapter::_RemovePrim(const SdfPath &cachePath,
-                                                UsdImagingIndexProxy *index)
+void UsdSkelImagingSkelRootAdapter::_RemovePrim(const SdfPath &cachePath, UsdImagingIndexProxy *index)
 {
   // The SkeletonAdapter is registered for skeletons and skinned prims, so
   // there's no work to be done here.

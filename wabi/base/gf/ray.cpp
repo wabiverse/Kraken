@@ -62,19 +62,19 @@ TF_REGISTRY_FUNCTION(TfType)
 void GfRay::SetPointAndDirection(const GfVec3d &startPoint, const GfVec3d &direction)
 {
   _startPoint = startPoint;
-  _direction  = direction;
+  _direction = direction;
 }
 
 void GfRay::SetEnds(const GfVec3d &startPoint, const GfVec3d &endPoint)
 {
   _startPoint = startPoint;
-  _direction  = endPoint - startPoint;
+  _direction = endPoint - startPoint;
 }
 
 GfRay &GfRay::Transform(const GfMatrix4d &matrix)
 {
   _startPoint = matrix.Transform(_startPoint);
-  _direction  = matrix.TransformDir(_direction);
+  _direction = matrix.TransformDir(_direction);
 
   return *this;
 }
@@ -304,15 +304,15 @@ bool GfRay::Intersect(const GfRange3d &box, double *enterDistance, double *exitD
       }
     }
 
-    d         = 1.0 / d;
+    d = 1.0 / d;
     double t1 = d * (box.GetMin()[i] - GetStartPoint()[i]);
     double t2 = d * (box.GetMax()[i] - GetStartPoint()[i]);
 
     // Make sure t1 is the nearer one
     if (t1 > t2) {
       double tmp = t1;
-      t1         = t2;
-      t2         = tmp;
+      t1 = t2;
+      t2 = tmp;
     }
 
     // Update the min and max
@@ -375,8 +375,8 @@ bool GfRay::Intersect(const GfVec3d &center,
 
   A = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1);
   B = 2 * ((x2 - x1) * (x1 - x3) + (y2 - y1) * (y1 - y3) + (z2 - z1) * (z1 - z3));
-  C = x3 * x3 + y3 * y3 + z3 * z3 + x1 * x1 + y1 * y1 + z1 * z1 -
-      2 * (x3 * x1 + y3 * y1 + z3 * z1) - radius * radius;
+  C = x3 * x3 + y3 * y3 + z3 * z3 + x1 * x1 + y1 * y1 + z1 * z1 - 2 * (x3 * x1 + y3 * y1 + z3 * z1) -
+      radius * radius;
 
   return _SolveQuadratic(A, B, C, enterDistance, exitDistance);
 }
@@ -390,8 +390,8 @@ bool GfRay::Intersect(const GfVec3d &origin,
   GfVec3d unitAxis = axis.GetNormalized();
 
   GfVec3d delta = _startPoint - origin;
-  GfVec3d u     = _direction - GfDot(_direction, unitAxis) * unitAxis;
-  GfVec3d v     = delta - GfDot(delta, unitAxis) * unitAxis;
+  GfVec3d u = _direction - GfDot(_direction, unitAxis) * unitAxis;
+  GfVec3d v = delta - GfDot(delta, unitAxis) * unitAxis;
 
   // Quadratic equation for implicit infinite cylinder
   double a = GfDot(u, u);
@@ -414,8 +414,8 @@ bool GfRay::Intersect(const GfVec3d &origin,
   GfVec3d apex = origin + height * unitAxis;
 
   GfVec3d delta = _startPoint - apex;
-  GfVec3d u     = _direction - GfDot(_direction, unitAxis) * unitAxis;
-  GfVec3d v     = delta - GfDot(delta, unitAxis) * unitAxis;
+  GfVec3d u = _direction - GfDot(_direction, unitAxis) * unitAxis;
+  GfVec3d v = delta - GfDot(delta, unitAxis) * unitAxis;
 
   double p = GfDot(_direction, unitAxis);
   double q = GfDot(delta, unitAxis);
@@ -433,7 +433,7 @@ bool GfRay::Intersect(const GfVec3d &origin,
 
   // Eliminate any solutions on the double cone
   bool enterValid = GfDot(unitAxis, GetPoint(*enterDistance) - apex) <= 0.0;
-  bool exitValid  = GfDot(unitAxis, GetPoint(*exitDistance) - apex) <= 0.0;
+  bool exitValid = GfDot(unitAxis, GetPoint(*exitDistance) - apex) <= 0.0;
 
   if ((!enterValid) && (!exitValid)) {
 
@@ -511,7 +511,7 @@ bool GfRay::_SolveQuadratic(const double a,
   }
 
   // Two intersection points
-  double q  = -0.5 * (b + copysign(1.0, b) * GfSqrt(disc));
+  double q = -0.5 * (b + copysign(1.0, b) * GfSqrt(disc));
   double t0 = q / a;
   double t1 = c / q;
 
@@ -537,8 +537,8 @@ bool GfRay::_SolveQuadratic(const double a,
 
 std::ostream &operator<<(std::ostream &out, const GfRay &r)
 {
-  return out << '[' << Gf_OstreamHelperP(r.GetStartPoint()) << " >> "
-             << Gf_OstreamHelperP(r.GetDirection()) << ']';
+  return out << '[' << Gf_OstreamHelperP(r.GetStartPoint()) << " >> " << Gf_OstreamHelperP(r.GetDirection())
+             << ']';
 }
 
 WABI_NAMESPACE_END

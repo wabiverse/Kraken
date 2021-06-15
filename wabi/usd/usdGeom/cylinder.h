@@ -183,8 +183,7 @@ class UsdGeomCylinder : public UsdGeomGprim {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateHeightAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateHeightAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -209,8 +208,7 @@ class UsdGeomCylinder : public UsdGeomGprim {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -234,8 +232,7 @@ class UsdGeomCylinder : public UsdGeomGprim {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateAxisAttr(VtValue const &defaultValue = VtValue(),
-                              bool writeSparsely          = false) const;
+  UsdAttribute CreateAxisAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -258,8 +255,7 @@ class UsdGeomCylinder : public UsdGeomGprim {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateExtentAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateExtentAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //
@@ -285,10 +281,7 @@ class UsdGeomCylinder : public UsdGeomGprim {
   /// tools, hence it is static and acts outside a specific prim (as in
   /// attribute based methods).
   USDGEOM_API
-  static bool ComputeExtent(double height,
-                            double radius,
-                            const TfToken &axis,
-                            VtVec3fArray *extent);
+  static bool ComputeExtent(double height, double radius, const TfToken &axis, VtVec3fArray *extent);
 
   /// \overload
   /// Computes the extent as if the matrix \p transform was first applied.

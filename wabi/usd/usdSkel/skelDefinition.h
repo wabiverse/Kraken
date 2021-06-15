@@ -115,8 +115,7 @@ class UsdSkel_SkelDefinition : public TfRefBase, public TfWeakBase {
 
   bool _Init(const UsdSkelSkeleton &skel);
 
-  template<int ComputeFlag, typename Matrix4>
-  bool _GetJointSkelRestTransforms(VtArray<Matrix4> *xforms);
+  template<int ComputeFlag, typename Matrix4> bool _GetJointSkelRestTransforms(VtArray<Matrix4> *xforms);
 
   template<int ComputeFlag, typename Matrix4>
   bool _GetJointWorldInverseBindTransforms(VtArray<Matrix4> *xforms);

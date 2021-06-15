@@ -72,9 +72,7 @@ class RprUsd_HoudiniPrincipledNode : public RprUsd_BaseRuntimeNode {
   VtValue m_displacementOutput;
 };
 
-bool IsHoudiniPrincipledShaderHydraNode(HdSceneDelegate *delegate,
-                                        SdfPath const &nodePath,
-                                        bool *isSurface);
+bool IsHoudiniPrincipledShaderHydraNode(HdSceneDelegate *delegate, SdfPath const &nodePath, bool *isSurface);
 
 WABI_NAMESPACE_END
 

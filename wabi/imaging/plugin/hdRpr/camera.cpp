@@ -50,26 +50,24 @@ bool EvalCameraParam(T *value,
                      HdSceneDelegate *sceneDelegate,
                      const SdfPath &primPath)
 {
-  return EvalCameraParam(
-      value, paramName, sceneDelegate, primPath, std::numeric_limits<T>::quiet_NaN());
+  return EvalCameraParam(value, paramName, sceneDelegate, primPath, std::numeric_limits<T>::quiet_NaN());
 }
 
 }  // namespace
 
 HdRprCamera::HdRprCamera(SdfPath const &id)
-    : HdCamera(id),
-      m_horizontalAperture(std::numeric_limits<float>::quiet_NaN()),
-      m_verticalAperture(std::numeric_limits<float>::quiet_NaN()),
-      m_horizontalApertureOffset(std::numeric_limits<float>::quiet_NaN()),
-      m_verticalApertureOffset(std::numeric_limits<float>::quiet_NaN()),
-      m_focalLength(std::numeric_limits<float>::quiet_NaN()),
-      m_fStop(std::numeric_limits<float>::quiet_NaN()),
-      m_focusDistance(std::numeric_limits<float>::quiet_NaN()),
-      m_apertureBlades(0),
-      m_shutterOpen(std::numeric_limits<double>::quiet_NaN()),
-      m_shutterClose(std::numeric_limits<double>::quiet_NaN()),
-      m_clippingRange(std::numeric_limits<float>::quiet_NaN(),
-                      std::numeric_limits<float>::quiet_NaN())
+  : HdCamera(id),
+    m_horizontalAperture(std::numeric_limits<float>::quiet_NaN()),
+    m_verticalAperture(std::numeric_limits<float>::quiet_NaN()),
+    m_horizontalApertureOffset(std::numeric_limits<float>::quiet_NaN()),
+    m_verticalApertureOffset(std::numeric_limits<float>::quiet_NaN()),
+    m_focalLength(std::numeric_limits<float>::quiet_NaN()),
+    m_fStop(std::numeric_limits<float>::quiet_NaN()),
+    m_focusDistance(std::numeric_limits<float>::quiet_NaN()),
+    m_apertureBlades(0),
+    m_shutterOpen(std::numeric_limits<double>::quiet_NaN()),
+    m_shutterClose(std::numeric_limits<double>::quiet_NaN()),
+    m_clippingRange(std::numeric_limits<float>::quiet_NaN(), std::numeric_limits<float>::quiet_NaN())
 {}
 
 HdDirtyBits HdRprCamera::GetInitialDirtyBitsMask() const
@@ -77,9 +75,7 @@ HdDirtyBits HdRprCamera::GetInitialDirtyBitsMask() const
   return HdCamera::DirtyParams | HdCamera::GetInitialDirtyBitsMask();
 }
 
-void HdRprCamera::Sync(HdSceneDelegate *sceneDelegate,
-                       HdRenderParam *renderParam,
-                       HdDirtyBits *dirtyBits)
+void HdRprCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
   // HdRprApi uses HdRprCamera directly, so we need to stop the render thread before changing the
   // camera.
@@ -95,25 +91,23 @@ void HdRprCamera::Sync(HdSceneDelegate *sceneDelegate,
     EvalCameraParam(&m_horizontalAperture, HdCameraTokens->horizontalAperture, sceneDelegate, id);
     EvalCameraParam(&m_verticalAperture, HdCameraTokens->verticalAperture, sceneDelegate, id);
     EvalCameraParam(
-        &m_horizontalApertureOffset, HdCameraTokens->horizontalApertureOffset, sceneDelegate, id);
-    EvalCameraParam(
-        &m_verticalApertureOffset, HdCameraTokens->verticalApertureOffset, sceneDelegate, id);
+      &m_horizontalApertureOffset, HdCameraTokens->horizontalApertureOffset, sceneDelegate, id);
+    EvalCameraParam(&m_verticalApertureOffset, HdCameraTokens->verticalApertureOffset, sceneDelegate, id);
 
     EvalCameraParam(&m_fStop, HdCameraTokens->fStop, sceneDelegate, id);
     EvalCameraParam(&m_focusDistance, HdCameraTokens->focusDistance, sceneDelegate, id);
     EvalCameraParam(&m_shutterOpen, HdCameraTokens->shutterOpen, sceneDelegate, id);
     EvalCameraParam(&m_shutterClose, HdCameraTokens->shutterClose, sceneDelegate, id);
-    EvalCameraParam(&m_clippingRange,
-                    HdCameraTokens->clippingRange,
-                    sceneDelegate,
-                    id,
-                    GfRange1f(std::numeric_limits<float>::quiet_NaN(),
-                              std::numeric_limits<float>::quiet_NaN()));
+    EvalCameraParam(
+      &m_clippingRange,
+      HdCameraTokens->clippingRange,
+      sceneDelegate,
+      id,
+      GfRange1f(std::numeric_limits<float>::quiet_NaN(), std::numeric_limits<float>::quiet_NaN()));
 
 #if WABI_VERSION >= 2102
     HdCamera::Projection hdCamProjection;
-    EvalCameraParam(
-        &hdCamProjection, UsdGeomTokens->projection, sceneDelegate, id, HdCamera::Perspective);
+    EvalCameraParam(&hdCamProjection, UsdGeomTokens->projection, sceneDelegate, id, HdCamera::Perspective);
     m_projection = static_cast<Projection>(hdCamProjection);
 #else
     TfToken hdCamProjection;

@@ -81,9 +81,8 @@ void wrapReference()
 
   // Register conversion for python list <-> vector<SdfReference>
   to_python_converter<SdfReferenceVector, TfPySequenceToPython<SdfReferenceVector>>();
-  TfPyContainerConversions::from_python_sequence<
-      SdfReferenceVector,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<SdfReferenceVector,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 
   // Note: Since we have no proxy for Sdf.Reference we wrap it as an
   //       immutable type to avoid confusion about code like this
@@ -93,32 +92,29 @@ void wrapReference()
   //       Sdf.Reference object.
 
   class_<This>("Reference")
-      .def(init<const string &, const SdfPath &, const SdfLayerOffset &, const VtDictionary &>(
-          (arg("assetPath")   = string(),
-           arg("primPath")    = SdfPath(),
-           arg("layerOffset") = SdfLayerOffset(),
-           arg("customData")  = VtDictionary(0))))
-      .def(init<const This &>())
+    .def(init<const string &, const SdfPath &, const SdfLayerOffset &, const VtDictionary &>(
+      (arg("assetPath") = string(),
+       arg("primPath") = SdfPath(),
+       arg("layerOffset") = SdfLayerOffset(),
+       arg("customData") = VtDictionary(0))))
+    .def(init<const This &>())
 
-      .add_property("assetPath",
-                    make_function(&This::GetAssetPath, return_value_policy<return_by_value>()))
-      .add_property("primPath",
-                    make_function(&This::GetPrimPath, return_value_policy<return_by_value>()))
-      .add_property("layerOffset",
-                    make_function(&This::GetLayerOffset, return_value_policy<return_by_value>()))
-      .add_property("customData",
-                    make_function(&This::GetCustomData, return_value_policy<return_by_value>()))
+    .add_property("assetPath", make_function(&This::GetAssetPath, return_value_policy<return_by_value>()))
+    .add_property("primPath", make_function(&This::GetPrimPath, return_value_policy<return_by_value>()))
+    .add_property("layerOffset",
+                  make_function(&This::GetLayerOffset, return_value_policy<return_by_value>()))
+    .add_property("customData", make_function(&This::GetCustomData, return_value_policy<return_by_value>()))
 
-      .def("IsInternal", &This::IsInternal)
+    .def("IsInternal", &This::IsInternal)
 
-      .def(self == self)
-      .def(self != self)
-      .def(self < self)
-      .def(self > self)
-      .def(self <= self)
-      .def(self >= self)
+    .def(self == self)
+    .def(self != self)
+    .def(self < self)
+    .def(self > self)
+    .def(self <= self)
+    .def(self >= self)
 
-      .def("__repr__", _Repr)
+    .def("__repr__", _Repr)
 
-      ;
+    ;
 }

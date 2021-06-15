@@ -54,11 +54,7 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 
                          (renderBufferDescriptor));
 
-static void _CreateGrid(int nx,
-                        int ny,
-                        VtVec3fArray *points,
-                        VtIntArray *numVerts,
-                        VtIntArray *verts)
+static void _CreateGrid(int nx, int ny, VtVec3fArray *points, VtIntArray *numVerts, VtIntArray *verts)
 {
   // create a unit plane (-1 ~ 1)
   for (int y = 0; y <= ny; ++y) {
@@ -94,8 +90,7 @@ class ShadowMatrix : public HdxShadowMatrixComputation {
     _shadowMatrix = frustum.ComputeViewMatrix() * frustum.ComputeProjectionMatrix();
   }
 
-  std::vector<GfMatrix4d> Compute(const GfVec4f &viewport,
-                                  CameraUtilConformWindowPolicy policy) override
+  std::vector<GfMatrix4d> Compute(const GfVec4f &viewport, CameraUtilConformWindowPolicy policy) override
   {
     return {_shadowMatrix};
   }
@@ -114,8 +109,8 @@ class ShadowMatrix : public HdxShadowMatrixComputation {
 
 // ------------------------------------------------------------------------
 Hdx_UnitTestDelegate::Hdx_UnitTestDelegate(HdRenderIndex *index)
-    : HdSceneDelegate(index, SdfPath::AbsoluteRootPath()),
-      _refineLevel(0)
+  : HdSceneDelegate(index, SdfPath::AbsoluteRootPath()),
+    _refineLevel(0)
 {
   // add camera
   _cameraId = SdfPath("/camera");
@@ -133,8 +128,7 @@ void Hdx_UnitTestDelegate::SetRefineLevel(int level)
   _refineLevel = level;
   TF_FOR_ALL(it, _meshes)
   {
-    GetRenderIndex().GetChangeTracker().MarkRprimDirty(it->first,
-                                                       HdChangeTracker::DirtyDisplayStyle);
+    GetRenderIndex().GetChangeTracker().MarkRprimDirty(it->first, HdChangeTracker::DirtyDisplayStyle);
   }
   TF_FOR_ALL(it, _refineLevels)
   {
@@ -151,10 +145,10 @@ void Hdx_UnitTestDelegate::SetCamera(SdfPath const &cameraId,
                                      GfMatrix4d const &viewMatrix,
                                      GfMatrix4d const &projMatrix)
 {
-  _ValueCache &cache                       = _valueCacheMap[cameraId];
-  cache[HdCameraTokens->windowPolicy]      = VtValue(CameraUtilFit);
+  _ValueCache &cache = _valueCacheMap[cameraId];
+  cache[HdCameraTokens->windowPolicy] = VtValue(CameraUtilFit);
   cache[HdCameraTokens->worldToViewMatrix] = VtValue(viewMatrix);
-  cache[HdCameraTokens->projectionMatrix]  = VtValue(projMatrix);
+  cache[HdCameraTokens->projectionMatrix] = VtValue(projMatrix);
 
   GetRenderIndex().GetChangeTracker().MarkSprimDirty(cameraId, HdCamera::AllDirty);
 }
@@ -163,10 +157,10 @@ void Hdx_UnitTestDelegate::AddCamera(SdfPath const &id)
 {
   // add a camera
   GetRenderIndex().InsertSprim(HdPrimTypeTokens->camera, this, id);
-  _ValueCache &cache                       = _valueCacheMap[id];
-  cache[HdCameraTokens->windowPolicy]      = VtValue(CameraUtilFit);
+  _ValueCache &cache = _valueCacheMap[id];
+  cache[HdCameraTokens->windowPolicy] = VtValue(CameraUtilFit);
   cache[HdCameraTokens->worldToViewMatrix] = VtValue(GfMatrix4d(1.0));
-  cache[HdCameraTokens->projectionMatrix]  = VtValue(GfMatrix4d(1.0));
+  cache[HdCameraTokens->projectionMatrix] = VtValue(GfMatrix4d(1.0));
 }
 
 void Hdx_UnitTestDelegate::AddLight(SdfPath const &id, GlfSimpleLight const &light)
@@ -176,30 +170,30 @@ void Hdx_UnitTestDelegate::AddLight(SdfPath const &id, GlfSimpleLight const &lig
   _ValueCache &cache = _valueCacheMap[id];
 
   HdxShadowParams shadowParams;
-  shadowParams.enabled      = light.HasShadow();
-  shadowParams.resolution   = 512;
+  shadowParams.enabled = light.HasShadow();
+  shadowParams.resolution = 512;
   shadowParams.shadowMatrix = HdxShadowMatrixComputationSharedPtr(new ShadowMatrix(light));
-  shadowParams.bias         = -0.001;
-  shadowParams.blur         = 0.1;
+  shadowParams.bias = -0.001;
+  shadowParams.blur = 0.1;
 
-  cache[HdLightTokens->params]           = light;
-  cache[HdLightTokens->shadowParams]     = shadowParams;
-  cache[HdLightTokens->shadowCollection] = HdRprimCollection(
-      HdTokens->geometry, HdReprSelector(HdReprTokens->refined));
+  cache[HdLightTokens->params] = light;
+  cache[HdLightTokens->shadowParams] = shadowParams;
+  cache[HdLightTokens->shadowCollection] = HdRprimCollection(HdTokens->geometry,
+                                                             HdReprSelector(HdReprTokens->refined));
 }
 
 void Hdx_UnitTestDelegate::SetLight(SdfPath const &id, TfToken const &key, VtValue value)
 {
   _ValueCache &cache = _valueCacheMap[id];
-  cache[key]         = value;
+  cache[key] = value;
   if (key == HdLightTokens->params) {
     // update shadow matrix too
-    GlfSimpleLight light         = value.Get<GlfSimpleLight>();
+    GlfSimpleLight light = value.Get<GlfSimpleLight>();
     HdxShadowParams shadowParams = cache[HdLightTokens->shadowParams].Get<HdxShadowParams>();
-    shadowParams.shadowMatrix    = HdxShadowMatrixComputationSharedPtr(new ShadowMatrix(light));
+    shadowParams.shadowMatrix = HdxShadowMatrixComputationSharedPtr(new ShadowMatrix(light));
 
-    GetRenderIndex().GetChangeTracker().MarkSprimDirty(
-        id, HdLight::DirtyParams | HdLight::DirtyShadowParams);
+    GetRenderIndex().GetChangeTracker().MarkSprimDirty(id,
+                                                       HdLight::DirtyParams | HdLight::DirtyShadowParams);
     cache[HdLightTokens->shadowParams] = shadowParams;
   }
   else if (key == HdTokens->transform) {
@@ -214,7 +208,7 @@ void Hdx_UnitTestDelegate::AddRenderBuffer(SdfPath const &id, const HdRenderBuff
 {
   GetRenderIndex().InsertBprim(HdPrimTypeTokens->renderBuffer, this, id);
 
-  _ValueCache &cache                     = _valueCacheMap[id];
+  _ValueCache &cache = _valueCacheMap[id];
   cache[_tokens->renderBufferDescriptor] = desc;
 }
 
@@ -231,16 +225,16 @@ void Hdx_UnitTestDelegate::AddDrawTarget(SdfPath const &id)
     const SdfPath path = id.AppendProperty(attachmentName);
 
     HdRenderBufferDescriptor desc;
-    desc.dimensions   = GfVec3i(256, 256, 1);
-    desc.format       = HdFormatUNorm8Vec4;
+    desc.dimensions = GfVec3i(256, 256, 1);
+    desc.format = HdFormatUNorm8Vec4;
     desc.multiSampled = true;
 
     AddRenderBuffer(path, desc);
 
     HdRenderPassAovBinding aovBinding;
-    aovBinding.aovName        = attachmentName;
+    aovBinding.aovName = attachmentName;
     aovBinding.renderBufferId = path;
-    aovBinding.clearValue     = VtValue(GfVec4f(1, 1, 0, 1));
+    aovBinding.clearValue = VtValue(GfVec4f(1, 1, 0, 1));
     aovBindings.push_back(aovBinding);
   }
 
@@ -250,26 +244,26 @@ void Hdx_UnitTestDelegate::AddDrawTarget(SdfPath const &id)
     const SdfPath path = id.AppendProperty(attachmentName);
 
     HdRenderBufferDescriptor desc;
-    desc.dimensions   = GfVec3i(256, 256, 1);
-    desc.format       = HdFormatFloat32;
+    desc.dimensions = GfVec3i(256, 256, 1);
+    desc.format = HdFormatFloat32;
     desc.multiSampled = true;
 
     AddRenderBuffer(path, desc);
 
     HdRenderPassAovBinding aovBinding;
-    aovBinding.aovName        = attachmentName;
+    aovBinding.aovName = attachmentName;
     aovBinding.renderBufferId = path;
-    aovBinding.clearValue     = VtValue(GfVec4f(1, 1, 1, 1));
+    aovBinding.clearValue = VtValue(GfVec4f(1, 1, 1, 1));
     aovBindings.push_back(aovBinding);
   }
 
   cache[HdPhDrawTargetTokens->aovBindings] = VtValue(aovBindings);
 
   cache[HdPhDrawTargetTokens->resolution] = VtValue(GfVec2i(256, 256));
-  cache[HdPhDrawTargetTokens->enable]     = VtValue(true);
-  cache[HdPhDrawTargetTokens->camera]     = VtValue(SdfPath());
+  cache[HdPhDrawTargetTokens->enable] = VtValue(true);
+  cache[HdPhDrawTargetTokens->camera] = VtValue(SdfPath());
   cache[HdPhDrawTargetTokens->collection] = VtValue(
-      HdRprimCollection(HdTokens->geometry, HdReprSelector(HdReprTokens->hull)));
+    HdRprimCollection(HdTokens->geometry, HdReprSelector(HdReprTokens->hull)));
 
   GetRenderIndex().GetChangeTracker().MarkStateDirty(HdPhDrawTargetTokens->drawTargetSet);
 }
@@ -277,7 +271,7 @@ void Hdx_UnitTestDelegate::AddDrawTarget(SdfPath const &id)
 void Hdx_UnitTestDelegate::SetDrawTarget(SdfPath const &id, TfToken const &key, VtValue value)
 {
   _ValueCache &cache = _valueCacheMap[id];
-  cache[key]         = value;
+  cache[key] = value;
   if (key == HdPhDrawTargetTokens->enable) {
     GetRenderIndex().GetChangeTracker().MarkSprimDirty(id, HdPhDrawTarget::DirtyDTEnable);
   }
@@ -301,7 +295,7 @@ void Hdx_UnitTestDelegate::SetDrawTarget(SdfPath const &id, TfToken const &key, 
 void Hdx_UnitTestDelegate::AddRenderTask(SdfPath const &id)
 {
   GetRenderIndex().InsertTask<HdxRenderTask>(this, id);
-  _ValueCache &cache          = _valueCacheMap[id];
+  _ValueCache &cache = _valueCacheMap[id];
   cache[HdTokens->collection] = HdRprimCollection(HdTokens->geometry,
                                                   HdReprSelector(HdReprTokens->smoothHull));
 
@@ -315,8 +309,8 @@ void Hdx_UnitTestDelegate::AddRenderSetupTask(SdfPath const &id)
   GetRenderIndex().InsertTask<HdxRenderSetupTask>(this, id);
   _ValueCache &cache = _valueCacheMap[id];
   HdxRenderTaskParams params;
-  params.camera           = _cameraId;
-  params.viewport         = GfVec4f(0, 0, 512, 512);
+  params.camera = _cameraId;
+  params.viewport = GfVec4f(0, 0, 512, 512);
   cache[HdTokens->params] = VtValue(params);
 }
 
@@ -325,8 +319,8 @@ void Hdx_UnitTestDelegate::AddSimpleLightTask(SdfPath const &id)
   GetRenderIndex().InsertTask<HdxSimpleLightTask>(this, id);
   _ValueCache &cache = _valueCacheMap[id];
   HdxSimpleLightTaskParams params;
-  params.cameraPath    = _cameraId;
-  params.viewport      = GfVec4f(0, 0, 512, 512);
+  params.cameraPath = _cameraId;
+  params.viewport = GfVec4f(0, 0, 512, 512);
   params.enableShadows = true;
 
   cache[HdTokens->params] = VtValue(params);
@@ -351,7 +345,7 @@ void Hdx_UnitTestDelegate::AddDrawTargetTask(SdfPath const &id)
   _ValueCache &cache = _valueCacheMap[id];
 
   HdxDrawTargetTaskParams params;
-  params.enableLighting   = true;
+  params.enableLighting = true;
   cache[HdTokens->params] = params;
 }
 
@@ -371,7 +365,7 @@ void Hdx_UnitTestDelegate::AddPickTask(SdfPath const &id)
 void Hdx_UnitTestDelegate::SetTaskParam(SdfPath const &id, TfToken const &name, VtValue val)
 {
   _ValueCache &cache = _valueCacheMap[id];
-  cache[name]        = val;
+  cache[name] = val;
 
   if (name == HdTokens->collection) {
     GetRenderIndex().GetChangeTracker().MarkTaskDirty(id, HdChangeTracker::DirtyCollection);
@@ -395,7 +389,7 @@ void Hdx_UnitTestDelegate::AddInstancer(SdfPath const &id,
   HdRenderIndex &index = GetRenderIndex();
   // add instancer
   index.InsertInstancer(this, id);
-  _instancers[id]               = _Instancer();
+  _instancers[id] = _Instancer();
   _instancers[id].rootTransform = rootTransform;
 
   if (!parentId.IsEmpty()) {
@@ -418,9 +412,9 @@ void Hdx_UnitTestDelegate::SetInstancerProperties(SdfPath const &id,
     return;
   }
 
-  _instancers[id].scale            = scale;
-  _instancers[id].rotate           = rotate;
-  _instancers[id].translate        = translate;
+  _instancers[id].scale = scale;
+  _instancers[id].rotate = rotate;
+  _instancers[id].translate = translate;
   _instancers[id].prototypeIndices = prototypeIndex;
 }
 
@@ -509,21 +503,21 @@ void Hdx_UnitTestDelegate::AddCube(SdfPath const &id,
                                    HdInterpolation opacityInterpolation)
 {
   GfVec3f points[] = {
-      GfVec3f(1.0f, 1.0f, 1.0f),
-      GfVec3f(-1.0f, 1.0f, 1.0f),
-      GfVec3f(-1.0f, -1.0f, 1.0f),
-      GfVec3f(1.0f, -1.0f, 1.0f),
-      GfVec3f(-1.0f, -1.0f, -1.0f),
-      GfVec3f(-1.0f, 1.0f, -1.0f),
-      GfVec3f(1.0f, 1.0f, -1.0f),
-      GfVec3f(1.0f, -1.0f, -1.0f),
+    GfVec3f(1.0f, 1.0f, 1.0f),
+    GfVec3f(-1.0f, 1.0f, 1.0f),
+    GfVec3f(-1.0f, -1.0f, 1.0f),
+    GfVec3f(1.0f, -1.0f, 1.0f),
+    GfVec3f(-1.0f, -1.0f, -1.0f),
+    GfVec3f(-1.0f, 1.0f, -1.0f),
+    GfVec3f(1.0f, 1.0f, -1.0f),
+    GfVec3f(1.0f, -1.0f, -1.0f),
   };
 
   if (scheme == PxOsdOpenSubdivTokens->loop) {
     int numVerts[] = {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
-    int verts[]    = {
-        0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7, 0, 6, 5, 0, 5, 1,
-        4, 7, 3, 4, 3, 2, 0, 3, 7, 0, 7, 6, 4, 2, 1, 4, 1, 5,
+    int verts[] = {
+      0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7, 0, 6, 5, 0, 5, 1,
+      4, 7, 3, 4, 3, 2, 0, 3, 7, 0, 7, 6, 4, 2, 1, 4, 1, 5,
     };
     AddMesh(id,
             transform,
@@ -541,8 +535,8 @@ void Hdx_UnitTestDelegate::AddCube(SdfPath const &id,
   }
   else {
     int numVerts[] = {4, 4, 4, 4, 4, 4};
-    int verts[]    = {
-        0, 1, 2, 3, 4, 5, 6, 7, 0, 6, 5, 1, 4, 7, 3, 2, 0, 3, 7, 6, 4, 2, 1, 5,
+    int verts[] = {
+      0, 1, 2, 3, 4, 5, 6, 7, 0, 6, 5, 1, 4, 7, 3, 2, 0, 3, 7, 6, 4, 2, 1, 5,
     };
     AddMesh(id,
             transform,
@@ -591,21 +585,19 @@ void Hdx_UnitTestDelegate::AddTet(SdfPath const &id,
                                   SdfPath const &instancerId,
                                   TfToken const &scheme)
 {
-  GfVec3f points[] = {
-      GfVec3f(-1, -1, -1),       GfVec3f(-1, -1, -1),     GfVec3f(1, 1, -1),
-      GfVec3f(1, -1, 1),         GfVec3f(-1, 1, 1),       GfVec3f(-0.3, -0.3, -0.3),
-      GfVec3f(0.3, 0.3, -0.3),   GfVec3f(0.3, -0.3, 0.3), GfVec3f(-0.3, 0.3, 0.3),
-      GfVec3f(-0.2, -0.6, -0.6), GfVec3f(0.6, 0.2, -0.6), GfVec3f(0.6, -0.6, 0.2),
-      GfVec3f(-0.6, -0.6, -0.2), GfVec3f(0.2, -0.6, 0.6), GfVec3f(-0.6, 0.2, 0.6),
-      GfVec3f(-0.6, -0.2, -0.6), GfVec3f(-0.6, 0.6, 0.2), GfVec3f(0.2, 0.6, -0.6),
-      GfVec3f(0.6, 0.6, -0.2),   GfVec3f(-0.2, 0.6, 0.6), GfVec3f(0.6, -0.2, 0.6)};
+  GfVec3f points[] = {GfVec3f(-1, -1, -1),       GfVec3f(-1, -1, -1),     GfVec3f(1, 1, -1),
+                      GfVec3f(1, -1, 1),         GfVec3f(-1, 1, 1),       GfVec3f(-0.3, -0.3, -0.3),
+                      GfVec3f(0.3, 0.3, -0.3),   GfVec3f(0.3, -0.3, 0.3), GfVec3f(-0.3, 0.3, 0.3),
+                      GfVec3f(-0.2, -0.6, -0.6), GfVec3f(0.6, 0.2, -0.6), GfVec3f(0.6, -0.6, 0.2),
+                      GfVec3f(-0.6, -0.6, -0.2), GfVec3f(0.2, -0.6, 0.6), GfVec3f(-0.6, 0.2, 0.6),
+                      GfVec3f(-0.6, -0.2, -0.6), GfVec3f(-0.6, 0.6, 0.2), GfVec3f(0.2, 0.6, -0.6),
+                      GfVec3f(0.6, 0.6, -0.2),   GfVec3f(-0.2, 0.6, 0.6), GfVec3f(0.6, -0.2, 0.6)};
 
   int numVerts[] = {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4};
-  int verts[]    = {1,  2,  10, 9,  9,  10, 6,  5,  2,  3,  11, 10, 10, 11, 7,  6,  3,  1,  9,  11,
-                 11, 9,  5,  7,  1,  3,  13, 12, 12, 13, 7,  5,  3,  4,  14, 13, 13, 14, 8,  7,
-                 4,  1,  12, 14, 14, 12, 5,  8,  1,  4,  16, 15, 15, 16, 8,  5,  4,  2,  17, 16,
-                 16, 17, 6,  8,  2,  1,  15, 17, 17, 15, 5,  6,  2,  4,  19, 18, 18, 19, 8,  6,
-                 4,  3,  20, 19, 19, 20, 7,  8,  3,  2,  18, 20, 20, 18, 6,  7};
+  int verts[] = {1, 2, 10, 9,  9,  10, 6, 5, 2, 3, 11, 10, 10, 11, 7, 6, 3, 1, 9,  11, 11, 9,  5, 7,
+                 1, 3, 13, 12, 12, 13, 7, 5, 3, 4, 14, 13, 13, 14, 8, 7, 4, 1, 12, 14, 14, 12, 5, 8,
+                 1, 4, 16, 15, 15, 16, 8, 5, 4, 2, 17, 16, 16, 17, 6, 8, 2, 1, 15, 17, 17, 15, 5, 6,
+                 2, 4, 19, 18, 18, 19, 8, 6, 4, 3, 20, 19, 19, 20, 7, 8, 3, 2, 18, 20, 20, 18, 6, 7};
 
   AddMesh(id,
           transform,
@@ -678,7 +670,7 @@ HdMeshTopology Hdx_UnitTestDelegate::GetMeshTopology(SdfPath const &id)
   const _Mesh &mesh = _meshes[id];
 
   return HdMeshTopology(
-      PxOsdOpenSubdivTokens->catmullClark, HdTokens->rightHanded, mesh.numVerts, mesh.verts);
+    PxOsdOpenSubdivTokens->catmullClark, HdTokens->rightHanded, mesh.numVerts, mesh.verts);
 }
 
 VtValue Hdx_UnitTestDelegate::Get(SdfPath const &id, TfToken const &key)
@@ -725,8 +717,7 @@ VtValue Hdx_UnitTestDelegate::Get(SdfPath const &id, TfToken const &key)
 }
 
 /*virtual*/
-VtIntArray Hdx_UnitTestDelegate::GetInstanceIndices(SdfPath const &instancerId,
-                                                    SdfPath const &prototypeId)
+VtIntArray Hdx_UnitTestDelegate::GetInstanceIndices(SdfPath const &instancerId, SdfPath const &prototypeId)
 {
   HD_TRACE_FUNCTION();
   VtIntArray indices(0);
@@ -772,9 +763,8 @@ HdDisplayStyle Hdx_UnitTestDelegate::GetDisplayStyle(SdfPath const &id)
   return HdDisplayStyle(_refineLevel);
 }
 
-HdPrimvarDescriptorVector Hdx_UnitTestDelegate::GetPrimvarDescriptors(
-    SdfPath const &id,
-    HdInterpolation interpolation)
+HdPrimvarDescriptorVector Hdx_UnitTestDelegate::GetPrimvarDescriptors(SdfPath const &id,
+                                                                      HdInterpolation interpolation)
 {
   HdPrimvarDescriptorVector primvars;
   if (interpolation == HdInterpolationVertex) {
@@ -834,8 +824,7 @@ SdfPath Hdx_UnitTestDelegate::GetInstancerId(SdfPath const &primId)
 }
 
 /*virtual*/
-VtValue Hdx_UnitTestDelegate::GetCameraParamValue(SdfPath const &cameraId,
-                                                  TfToken const &paramName)
+VtValue Hdx_UnitTestDelegate::GetCameraParamValue(SdfPath const &cameraId, TfToken const &paramName)
 {
   _ValueCache *vcache = TfMapLookupPtr(_valueCacheMap, cameraId);
   VtValue ret;
@@ -890,18 +879,18 @@ bool Hdx_UnitTestDelegate::WriteRenderBufferToFile(SdfPath const &id, std::strin
   }
 
   HioImage::StorageSpec storage;
-  storage.width   = renderBuffer->GetWidth();
-  storage.height  = renderBuffer->GetHeight();
-  storage.format  = HdPhHioConversions::GetHioFormat(renderBuffer->GetFormat());
+  storage.width = renderBuffer->GetWidth();
+  storage.height = renderBuffer->GetHeight();
+  storage.format = HdPhHioConversions::GetHioFormat(renderBuffer->GetFormat());
   storage.flipped = true;
-  storage.data    = renderBuffer->Map();
+  storage.data = renderBuffer->Map();
   TfScoped<> scopedUnmap([renderBuffer]() { renderBuffer->Unmap(); });
 
   if (storage.format == HioFormatInvalid) {
     TF_CODING_ERROR(
-        "Render buffer %s has format not corresponding to a"
-        "HioFormat",
-        id.GetText());
+      "Render buffer %s has format not corresponding to a"
+      "HioFormat",
+      id.GetText());
     return false;
   }
 

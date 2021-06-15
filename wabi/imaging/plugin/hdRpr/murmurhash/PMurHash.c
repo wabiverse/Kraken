@@ -90,8 +90,7 @@ on big endian machines, or a byte-by-byte read if the endianess is unknown.
 /* gcc 'may' define __LITTLE_ENDIAN__ or __BIG_ENDIAN__ to 1 (Note the trailing __),
  * or even _LITTLE_ENDIAN or _BIG_ENDIAN (Note the single _ prefix) */
 #if !defined(__BYTE_ORDER)
-#  if defined(__LITTLE_ENDIAN__) && __LITTLE_ENDIAN__ == 1 || \
-      defined(_LITTLE_ENDIAN) && _LITTLE_ENDIAN == 1
+#  if defined(__LITTLE_ENDIAN__) && __LITTLE_ENDIAN__ == 1 || defined(_LITTLE_ENDIAN) && _LITTLE_ENDIAN == 1
 #    define __BYTE_ORDER __LITTLE_ENDIAN
 #  elif defined(__BIG_ENDIAN__) && __BIG_ENDIAN__ == 1 || defined(_BIG_ENDIAN) && _BIG_ENDIAN == 1
 #    define __BYTE_ORDER __BIG_ENDIAN
@@ -180,7 +179,7 @@ on big endian machines, or a byte-by-byte read if the endianess is unknown.
 void PMurHash32_Process(uint32_t *ph1, uint32_t *pcarry, const void *key, int len)
 {
   uint32_t h1 = *ph1;
-  uint32_t c  = *pcarry;
+  uint32_t c = *pcarry;
 
   const uint8_t *ptr = (uint8_t *)key;
   const uint8_t *end;
@@ -225,7 +224,7 @@ void PMurHash32_Process(uint32_t *ph1, uint32_t *pcarry, const void *key, int le
     case 1: /* c=[0---]  w=[4321]  b=[3210]=c>>24|w<<8   c'=[4---] */
       for (; ptr < end; ptr += 4) {
         uint32_t k1 = c >> 24;
-        c           = READ_UINT32(ptr);
+        c = READ_UINT32(ptr);
         k1 |= c << 8;
         DOBLOCK(h1, k1);
       }
@@ -233,7 +232,7 @@ void PMurHash32_Process(uint32_t *ph1, uint32_t *pcarry, const void *key, int le
     case 2: /* c=[10--]  w=[5432]  b=[3210]=c>>16|w<<16  c'=[54--] */
       for (; ptr < end; ptr += 4) {
         uint32_t k1 = c >> 16;
-        c           = READ_UINT32(ptr);
+        c = READ_UINT32(ptr);
         k1 |= c << 16;
         DOBLOCK(h1, k1);
       }
@@ -241,7 +240,7 @@ void PMurHash32_Process(uint32_t *ph1, uint32_t *pcarry, const void *key, int le
     case 3: /* c=[210-]  w=[6543]  b=[3210]=c>>8|w<<24   c'=[654-] */
       for (; ptr < end; ptr += 4) {
         uint32_t k1 = c >> 8;
-        c           = READ_UINT32(ptr);
+        c = READ_UINT32(ptr);
         k1 |= c << 24;
         DOBLOCK(h1, k1);
       }
@@ -255,7 +254,7 @@ void PMurHash32_Process(uint32_t *ph1, uint32_t *pcarry, const void *key, int le
   DOBYTES(len, h1, c, n, ptr, len);
 
   /* Copy out new running hash and carry */
-  *ph1    = h1;
+  *ph1 = h1;
   *pcarry = (c & ~0xff) | n;
 }
 
@@ -315,7 +314,7 @@ void PMurHash32_test(const void *key, int len, uint32_t seed, void *out)
 #else
   PMurHash32_Process(&h1, &carry, ptr, (int)(end - ptr));
 #endif
-  h1               = PMurHash32_Result(h1, carry, len);
+  h1 = PMurHash32_Result(h1, carry, len);
   *(uint32_t *)out = h1;
 }
 

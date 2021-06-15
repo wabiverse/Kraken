@@ -63,8 +63,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(TraceAggregateNode);
 
 class TraceAggregateNode : public TfRefBase, public TfWeakBase {
  public:
-  using This       = TraceAggregateNode;
-  using ThisPtr    = TraceAggregateNodePtr;
+  using This = TraceAggregateNode;
+  using ThisPtr = TraceAggregateNodePtr;
   using ThisRefPtr = TraceAggregateNodeRefPtr;
 
   using TimeStamp = TraceEvent::TimeStamp;
@@ -94,14 +94,13 @@ class TraceAggregateNode : public TfRefBase, public TfWeakBase {
   static ThisRefPtr New(const Id &id,
                         const TfToken &key,
                         const TimeStamp ts,
-                        const int count          = 1,
+                        const int count = 1,
                         const int exclusiveCount = 1)
   {
     return TfCreateRefPtr(new This(id, key, ts, count, exclusiveCount));
   }
 
-  TRACE_API TraceAggregateNodeRefPtr
-  Append(Id id, const TfToken &key, TimeStamp ts, int c = 1, int xc = 1);
+  TRACE_API TraceAggregateNodeRefPtr Append(Id id, const TfToken &key, TimeStamp ts, int c = 1, int xc = 1);
 
   TRACE_API void Append(TraceAggregateNodeRefPtr child);
 
@@ -228,18 +227,18 @@ class TraceAggregateNode : public TfRefBase, public TfWeakBase {
 
  private:
   TraceAggregateNode(const Id &id, const TfToken &key, TimeStamp ts, int count, int exclusiveCount)
-      : _id(id),
-        _key(key),
-        _ts(ts),
-        _exclusiveTs(ts),
-        _count(count),
-        _exclusiveCount(exclusiveCount),
-        _recursiveCount(count),
-        _recursiveExclusiveTs(ts),
-        _expanded(false),
-        _isRecursionMarker(false),
-        _isRecursionHead(false),
-        _isRecursionProcessed(false)
+    : _id(id),
+      _key(key),
+      _ts(ts),
+      _exclusiveTs(ts),
+      _count(count),
+      _exclusiveCount(exclusiveCount),
+      _recursiveCount(count),
+      _recursiveExclusiveTs(ts),
+      _expanded(false),
+      _isRecursionMarker(false),
+      _isRecursionHead(false),
+      _isRecursionProcessed(false)
   {}
 
   using _ChildDictionary = TfDenseHashMap<TfToken, size_t, TfHash>;
@@ -281,22 +280,22 @@ class TraceAggregateNode : public TfRefBase, public TfWeakBase {
   _CounterValues _counterValues;
 
   unsigned int
-      // If multiple Trace Editors are to be pointed at the same Reporter, this
-      // might have to be changed
-      _expanded : 1,
+    // If multiple Trace Editors are to be pointed at the same Reporter, this
+    // might have to be changed
+    _expanded : 1,
 
-      // This flag keeps track of whether or not this node is simply intended
-      // as a marker for the start of a recursive call tree.
-      _isRecursionMarker : 1,
+    // This flag keeps track of whether or not this node is simply intended
+    // as a marker for the start of a recursive call tree.
+    _isRecursionMarker : 1,
 
-      // This flag keeps track of whether or not a node is the head of a
-      // recursive call tree.  In other words, if it is a function that has been
-      // called recursively.
-      _isRecursionHead : 1,
+    // This flag keeps track of whether or not a node is the head of a
+    // recursive call tree.  In other words, if it is a function that has been
+    // called recursively.
+    _isRecursionHead : 1,
 
-      // This flag is used during recursive traversal to mark the node as having
-      // been visited and avoid too much processing.
-      _isRecursionProcessed : 1;
+    // This flag is used during recursive traversal to mark the node as having
+    // been visited and avoid too much processing.
+    _isRecursionProcessed : 1;
 };
 
 WABI_NAMESPACE_END

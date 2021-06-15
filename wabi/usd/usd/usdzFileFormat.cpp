@@ -47,10 +47,10 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 UsdUsdzFileFormat::UsdUsdzFileFormat()
-    : SdfFileFormat(UsdUsdzFileFormatTokens->Id,
-                    UsdUsdzFileFormatTokens->Version,
-                    UsdUsdzFileFormatTokens->Target,
-                    UsdUsdzFileFormatTokens->Id)
+  : SdfFileFormat(UsdUsdzFileFormatTokens->Id,
+                  UsdUsdzFileFormatTokens->Version,
+                  UsdUsdzFileFormatTokens->Target,
+                  UsdUsdzFileFormatTokens->Id)
 {}
 
 UsdUsdzFileFormat::~UsdUsdzFileFormat()
@@ -65,8 +65,7 @@ namespace {
 
 std::string _GetFirstFileInZipFile(const std::string &zipFilePath)
 {
-  const UsdZipFile zipFile =
-      Usd_UsdzResolverCache::GetInstance().FindOrOpenZipFile(zipFilePath).second;
+  const UsdZipFile zipFile = Usd_UsdzResolverCache::GetInstance().FindOrOpenZipFile(zipFilePath).second;
   if (!zipFile) {
     return std::string();
   }
@@ -106,9 +105,7 @@ bool UsdUsdzFileFormat::CanRead(const std::string &filePath) const
   return packagedFileFormat->CanRead(packageRelativePath);
 }
 
-bool UsdUsdzFileFormat::Read(SdfLayer *layer,
-                             const std::string &resolvedPath,
-                             bool metadataOnly) const
+bool UsdUsdzFileFormat::Read(SdfLayer *layer, const std::string &resolvedPath, bool metadataOnly) const
 {
   TRACE_FUNCTION();
 
@@ -147,9 +144,7 @@ bool UsdUsdzFileFormat::WriteToString(const SdfLayer &layer,
   return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToString(layer, str, comment);
 }
 
-bool UsdUsdzFileFormat::WriteToStream(const SdfSpecHandle &spec,
-                                      std::ostream &out,
-                                      size_t indent) const
+bool UsdUsdzFileFormat::WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const
 {
   return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToStream(spec, out, indent);
 }

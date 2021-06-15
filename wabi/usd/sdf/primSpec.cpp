@@ -74,10 +74,8 @@ SdfPrimSpecHandle SdfPrimSpec::New(const SdfLayerHandle &parentLayer,
 {
   TRACE_FUNCTION();
 
-  return _New(parentLayer ? parentLayer->GetPseudoRoot() : TfNullPtr,
-              TfToken(name),
-              spec,
-              TfToken(typeName));
+  return _New(
+    parentLayer ? parentLayer->GetPseudoRoot() : TfNullPtr, TfToken(name), spec, TfToken(typeName));
 }
 
 SdfPrimSpecHandle SdfPrimSpec::New(const SdfPrimSpecHandle &parentPrim,
@@ -99,17 +97,17 @@ SdfPrimSpecHandle SdfPrimSpec::_New(const SdfPrimSpecHandle &parentPrim,
 
   if (!parentPrimPtr) {
     TF_CODING_ERROR(
-        "Cannot create prim '%s' because the parent prim is "
-        "NULL",
-        name.GetText());
+      "Cannot create prim '%s' because the parent prim is "
+      "NULL",
+      name.GetText());
     return TfNullPtr;
   }
   if (!SdfPrimSpec::IsValidName(name)) {
     TF_RUNTIME_ERROR(
-        "Cannot create prim '%s' because '%s' is not a valid "
-        "name",
-        parentPrimPtr->GetPath().AppendChild(name).GetText(),
-        name.GetText());
+      "Cannot create prim '%s' because '%s' is not a valid "
+      "name",
+      parentPrimPtr->GetPath().AppendChild(name).GetText(),
+      name.GetText());
     return TfNullPtr;
   }
 
@@ -118,18 +116,16 @@ SdfPrimSpecHandle SdfPrimSpec::_New(const SdfPrimSpecHandle &parentPrim,
 
   // Use the special "pass" token if the caller tried to
   // create a typeless def
-  TfToken type = (typeName.IsEmpty() && spec == SdfSpecifierDef) ? SdfTokens->AnyTypeToken :
-                                                                   typeName;
+  TfToken type = (typeName.IsEmpty() && spec == SdfSpecifierDef) ? SdfTokens->AnyTypeToken : typeName;
 
   SdfLayerHandle layer = parentPrimPtr->GetLayer();
-  SdfPath childPath    = parentPrimPtr->GetPath().AppendChild(name);
+  SdfPath childPath = parentPrimPtr->GetPath().AppendChild(name);
 
   // PrimSpecs are considered inert if their specifier is
   // "over" and the type is not specified.
   bool inert = (spec == SdfSpecifierOver) && type.IsEmpty();
 
-  if (!Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::CreateSpec(
-          layer, childPath, SdfSpecTypePrim, inert)) {
+  if (!Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::CreateSpec(layer, childPath, SdfSpecTypePrim, inert)) {
     return TfNullPtr;
   }
 
@@ -175,8 +171,7 @@ bool SdfPrimSpec::CanSetName(const std::string &newName, std::string *whyNot) co
     return false;
   }
 
-  return Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::CanRename(*this, TfToken(newName))
-      .IsAllowed(whyNot);
+  return Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::CanRename(*this, TfToken(newName)).IsAllowed(whyNot);
 }
 
 bool SdfPrimSpec::SetName(const std::string &name, bool validate)
@@ -265,15 +260,14 @@ bool SdfPrimSpec::RemoveNameChild(const SdfPrimSpecHandle &child)
 {
   if (child->GetLayer() != GetLayer() || child->GetPath().GetParentPath() != GetPath()) {
     TF_CODING_ERROR(
-        "Cannot remove child prim '%s' from parent '%s' "
-        "because it is not a child of that prim",
-        child->GetPath().GetText(),
-        GetPath().GetText());
+      "Cannot remove child prim '%s' from parent '%s' "
+      "because it is not a child of that prim",
+      child->GetPath().GetText(),
+      GetPath().GetText());
     return false;
   }
 
-  return Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::RemoveChild(
-      GetLayer(), GetPath(), child->GetNameToken());
+  return Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::RemoveChild(GetLayer(), GetPath(), child->GetNameToken());
 }
 
 SdfNameChildrenOrderProxy SdfPrimSpec::GetNameChildrenOrder() const
@@ -335,8 +329,7 @@ bool SdfPrimSpec::InsertProperty(const SdfPropertySpecHandle &property, int inde
     return false;
   }
 
-  return Sdf_ChildrenUtils<Sdf_PropertyChildPolicy>::InsertChild(
-      GetLayer(), GetPath(), property, index);
+  return Sdf_ChildrenUtils<Sdf_PropertyChildPolicy>::InsertChild(GetLayer(), GetPath(), property, index);
 }
 
 void SdfPrimSpec::RemoveProperty(const SdfPropertySpecHandle &property)
@@ -347,15 +340,14 @@ void SdfPrimSpec::RemoveProperty(const SdfPropertySpecHandle &property)
 
   if (property->GetLayer() != GetLayer() || property->GetPath().GetParentPath() != GetPath()) {
     TF_CODING_ERROR(
-        "Cannot remove property '%s' from prim '%s' because it "
-        "does not belong to that prim",
-        property->GetPath().GetText(),
-        GetPath().GetText());
+      "Cannot remove property '%s' from prim '%s' because it "
+      "does not belong to that prim",
+      property->GetPath().GetText(),
+      GetPath().GetText());
     return;
   }
 
-  Sdf_ChildrenUtils<Sdf_PropertyChildPolicy>::RemoveChild(
-      GetLayer(), GetPath(), property->GetNameToken());
+  Sdf_ChildrenUtils<Sdf_PropertyChildPolicy>::RemoveChild(GetLayer(), GetPath(), property->GetNameToken());
 }
 
 SdfPrimSpec::AttributeSpecView SdfPrimSpec::GetAttributes() const
@@ -497,9 +489,7 @@ SDF_DEFINE_GET_SET_HAS_CLEAR(Instanceable, SdfFieldKeys->Instanceable, bool)
 SDF_DEFINE_TYPED_GET_SET(Specifier, SdfFieldKeys->Specifier, SdfSpecifier, SdfSpecifier)
 SDF_DEFINE_TYPED_GET_SET(Permission, SdfFieldKeys->Permission, SdfPermission, SdfPermission)
 
-SDF_DEFINE_DICTIONARY_GET_SET(GetSymmetryArguments,
-                              SetSymmetryArgument,
-                              SdfFieldKeys->SymmetryArguments);
+SDF_DEFINE_DICTIONARY_GET_SET(GetSymmetryArguments, SetSymmetryArgument, SdfFieldKeys->SymmetryArguments);
 SDF_DEFINE_DICTIONARY_GET_SET(GetCustomData, SetCustomData, SdfFieldKeys->CustomData);
 SDF_DEFINE_DICTIONARY_GET_SET(GetAssetInfo, SetAssetInfo, SdfFieldKeys->AssetInfo);
 
@@ -611,8 +601,7 @@ void SdfPrimSpec::ClearReferenceList()
 SdfVariantSetNamesProxy SdfPrimSpec::GetVariantSetNameList() const
 {
   boost::shared_ptr<Sdf_ListEditor<SdfNameKeyPolicy>> editor(
-      new Sdf_ListOpListEditor<SdfNameKeyPolicy>(SdfCreateHandle(this),
-                                                 SdfFieldKeys->VariantSetNames));
+    new Sdf_ListOpListEditor<SdfNameKeyPolicy>(SdfCreateHandle(this), SdfFieldKeys->VariantSetNames));
   return SdfVariantSetNamesProxy(editor);
 }
 
@@ -629,9 +618,9 @@ std::vector<std::string> SdfPrimSpec::GetVariantNames(const std::string &name) c
   if (_IsPseudoRoot() || !GetPath().IsPrimPath()) {
     return std::vector<std::string>();
   }
-  SdfPath variantSetPath                 = GetPath().AppendVariantSelection(name, "");
+  SdfPath variantSetPath = GetPath().AppendVariantSelection(name, "");
   std::vector<TfToken> variantNameTokens = GetLayer()->GetFieldAs<std::vector<TfToken>>(
-      variantSetPath, SdfChildrenKeys->VariantChildren);
+    variantSetPath, SdfChildrenKeys->VariantChildren);
 
   variantNames.reserve(variantNameTokens.size());
   TF_FOR_ALL(i, variantNameTokens)
@@ -644,10 +633,9 @@ std::vector<std::string> SdfPrimSpec::GetVariantNames(const std::string &name) c
 
 SdfVariantSetsProxy SdfPrimSpec::GetVariantSets() const
 {
-  return SdfVariantSetsProxy(
-      SdfVariantSetView(GetLayer(), GetPath(), SdfChildrenKeys->VariantSetChildren),
-      "variant sets",
-      SdfVariantSetsProxy::CanErase);
+  return SdfVariantSetsProxy(SdfVariantSetView(GetLayer(), GetPath(), SdfChildrenKeys->VariantSetChildren),
+                             "variant sets",
+                             SdfVariantSetsProxy::CanErase);
 }
 
 void SdfPrimSpec::RemoveVariantSet(const std::string &name)
@@ -667,8 +655,7 @@ SdfVariantSelectionProxy SdfPrimSpec::GetVariantSelections() const
   }
 }
 
-void SdfPrimSpec::SetVariantSelection(const std::string &variantSetName,
-                                      const std::string &variantName)
+void SdfPrimSpec::SetVariantSelection(const std::string &variantSetName, const std::string &variantName)
 {
   if (_ValidateEdit(SdfFieldKeys->VariantSelection)) {
     SdfVariantSelectionProxy proxy = GetVariantSelections();
@@ -793,8 +780,7 @@ static bool _IsValidPath(const SdfPath &path)
   //
   // XXX: Perhaps these conditions should be encoded in SdfPath itself?
   if (path.ContainsPrimVariantSelection()) {
-    for (SdfPath p = path.MakeAbsolutePath(SdfPath::AbsoluteRootPath());
-         p != SdfPath::AbsoluteRootPath();
+    for (SdfPath p = path.MakeAbsolutePath(SdfPath::AbsoluteRootPath()); p != SdfPath::AbsoluteRootPath();
          p = p.GetParentPath()) {
 
       const pair<string, string> varSel = p.GetVariantSelection();
@@ -857,7 +843,7 @@ bool Sdf_UncheckedCreatePrimInLayer(SdfLayer *layerPtr, const SdfPath &primPath)
   ancestors.reserve(primPath.GetPathElementCount());
 
   bool maybeVariantSelPaths = primPath.ContainsPrimVariantSelection();
-  SdfPath path              = primPath;
+  SdfPath path = primPath;
   do {
     ancestors.emplace_back(std::move(path));
     path = ancestors.back().GetParentPath();
@@ -876,12 +862,12 @@ bool Sdf_UncheckedCreatePrimInLayer(SdfLayer *layerPtr, const SdfPath &primPath)
     else {
       // Ordinary prim child case.
       if (ARCH_UNLIKELY(!Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::CreateSpec(
-              layerPtr, ancPath, SdfSpecTypePrim, /*inert=*/true))) {
+            layerPtr, ancPath, SdfSpecTypePrim, /*inert=*/true))) {
         TF_RUNTIME_ERROR(
-            "Failed to create prim at path '%s' in "
-            "layer @%s@",
-            ancPath.GetText(),
-            layerPtr->GetIdentifier().c_str());
+          "Failed to create prim at path '%s' in "
+          "layer @%s@",
+          ancPath.GetText(),
+          layerPtr->GetIdentifier().c_str());
         return false;
       }
     }
@@ -895,17 +881,17 @@ static inline bool Sdf_CanCreatePrimInLayer(SdfLayer *layer, _AbsPathHelper cons
 
   if (ARCH_UNLIKELY(!_IsValidPath(path))) {
     TF_CODING_ERROR(
-        "Cannot create prim at path '%s' because it is not a "
-        "valid prim or prim variant selection path",
-        absPath.GetOriginalPath().GetText());
+      "Cannot create prim at path '%s' because it is not a "
+      "valid prim or prim variant selection path",
+      absPath.GetOriginalPath().GetText());
     return false;
   }
 
   if (ARCH_UNLIKELY(!layer)) {
     TF_CODING_ERROR(
-        "Cannot create prim at path '%s' in null or expired "
-        "layer",
-        absPath.GetOriginalPath().GetText());
+      "Cannot create prim at path '%s' in null or expired "
+      "layer",
+      absPath.GetOriginalPath().GetText());
     return false;
   }
 

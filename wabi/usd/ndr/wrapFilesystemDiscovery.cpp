@@ -53,8 +53,7 @@ static _NdrFilesystemDiscoveryPluginRefPtr New()
   return TfCreateRefPtr(new _NdrFilesystemDiscoveryPlugin());
 }
 
-static _NdrFilesystemDiscoveryPluginRefPtr NewWithFilter(
-    _NdrFilesystemDiscoveryPlugin::Filter filter)
+static _NdrFilesystemDiscoveryPluginRefPtr NewWithFilter(_NdrFilesystemDiscoveryPlugin::Filter filter)
 {
   return TfCreateRefPtr(new _NdrFilesystemDiscoveryPlugin(std::move(filter)));
 }
@@ -83,8 +82,8 @@ void wrapFilesystemDiscoveryContext()
   typedef TfWeakPtr<_Context> ThisPtr;
 
   class_<This, ThisPtr, bases<NdrDiscoveryPluginContext>, boost::noncopyable>("Context", no_init)
-      .def(TfPyRefAndWeakPtr())
-      .def(TfMakePyConstructor(This::New));
+    .def(TfPyRefAndWeakPtr())
+    .def(TfMakePyConstructor(This::New));
 }
 
 }  // namespace
@@ -100,14 +99,12 @@ void wrapFilesystemDiscovery()
   TfPyFunctionFromPython<bool(NdrNodeDiscoveryResult &)>();
 
   scope s = class_<This, ThisPtr, bases<NdrDiscoveryPlugin>, boost::noncopyable>(
-                "_FilesystemDiscoveryPlugin", no_init)
-                .def(TfPyRefAndWeakPtr())
-                .def(TfMakePyConstructor(New))
-                .def(TfMakePyConstructor(NewWithFilter))
-                .def("DiscoverNodes",
-                     &This::DiscoverNodes,
-                     return_value_policy<TfPySequenceToList>())
-                .def("GetSearchURIs", &This::GetSearchURIs, copyRefPolicy);
+              "_FilesystemDiscoveryPlugin", no_init)
+              .def(TfPyRefAndWeakPtr())
+              .def(TfMakePyConstructor(New))
+              .def(TfMakePyConstructor(NewWithFilter))
+              .def("DiscoverNodes", &This::DiscoverNodes, return_value_policy<TfPySequenceToList>())
+              .def("GetSearchURIs", &This::GetSearchURIs, copyRefPolicy);
 
   wrapFilesystemDiscoveryContext();
 }

@@ -77,7 +77,7 @@ enum PcpDependencyType {
   /// relocates. These are referred to as "spooky" dependencies
   /// because they can be seen as a form of action-at-a-distance. They
   /// only occur as a result of relocation arcs.
-  PcpDependencyTypeVirtual    = (1 << 4),
+  PcpDependencyTypeVirtual = (1 << 4),
   PcpDependencyTypeNonVirtual = (1 << 5),
 
   /// Combined mask value representing both pure and partly direct

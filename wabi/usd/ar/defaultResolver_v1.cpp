@@ -101,8 +101,7 @@ bool ArDefaultResolver::IsRepositoryPath(const std::string &path)
   return false;
 }
 
-std::string ArDefaultResolver::AnchorRelativePath(const std::string &anchorPath,
-                                                  const std::string &path)
+std::string ArDefaultResolver::AnchorRelativePath(const std::string &anchorPath, const std::string &path)
 {
   if (TfIsRelativePath(anchorPath) || !IsRelativePath(path)) {
     return path;
@@ -115,8 +114,7 @@ std::string ArDefaultResolver::AnchorRelativePath(const std::string &anchorPath,
   // If anchorPath does not end with a '/', we assume it is specifying
   // a file, strip off the last component, and anchor the path to that
   // directory.
-  const std::string anchoredPath = TfStringCatPaths(TfStringGetBeforeSuffix(forwardPath, '/'),
-                                                    path);
+  const std::string anchoredPath = TfStringCatPaths(TfStringGetBeforeSuffix(forwardPath, '/'), path);
   return TfNormPath(anchoredPath);
 }
 
@@ -198,8 +196,7 @@ std::string ArDefaultResolver::Resolve(const std::string &path)
   return ResolveWithAssetInfo(path, /* assetInfo = */ nullptr);
 }
 
-std::string ArDefaultResolver::ResolveWithAssetInfo(const std::string &path,
-                                                    ArAssetInfo *assetInfo)
+std::string ArDefaultResolver::ResolveWithAssetInfo(const std::string &path, ArAssetInfo *assetInfo)
 {
   if (path.empty()) {
     return path;
@@ -207,8 +204,7 @@ std::string ArDefaultResolver::ResolveWithAssetInfo(const std::string &path,
 
   if (_CachePtr currentCache = _GetCurrentCache()) {
     _Cache::_PathToResolvedPathMap::accessor accessor;
-    if (currentCache->_pathToResolvedPathMap.insert(accessor,
-                                                    std::make_pair(path, std::string()))) {
+    if (currentCache->_pathToResolvedPathMap.insert(accessor, std::make_pair(path, std::string()))) {
       accessor->second = _ResolveNoCache(path);
     }
     return accessor->second;
@@ -234,8 +230,7 @@ void ArDefaultResolver::UpdateAssetInfo(const std::string &identifier,
   }
 }
 
-VtValue ArDefaultResolver::GetModificationTimestamp(const std::string &path,
-                                                    const std::string &resolvedPath)
+VtValue ArDefaultResolver::GetModificationTimestamp(const std::string &path, const std::string &resolvedPath)
 {
   // Since the default resolver always resolves paths to local
   // paths, we can just look at the mtime of the file indicated
@@ -247,8 +242,7 @@ VtValue ArDefaultResolver::GetModificationTimestamp(const std::string &path,
   return VtValue();
 }
 
-bool ArDefaultResolver::FetchToLocalResolvedPath(const std::string &path,
-                                                 const std::string &resolvedPath)
+bool ArDefaultResolver::FetchToLocalResolvedPath(const std::string &path, const std::string &resolvedPath)
 {
   // ArDefaultResolver always resolves paths to a file on the
   // local filesystem. Because of this, we know the asset specified
@@ -278,8 +272,7 @@ bool ArDefaultResolver::CanWriteLayerToPath(const std::string &path, std::string
   return true;
 }
 
-bool ArDefaultResolver::CanCreateNewLayerWithIdentifier(const std::string &identifier,
-                                                        std::string *whyNot)
+bool ArDefaultResolver::CanCreateNewLayerWithIdentifier(const std::string &identifier, std::string *whyNot)
 {
   return true;
 }
@@ -336,8 +329,7 @@ void ArDefaultResolver::UnbindContext(const ArResolverContext &context, VtValue 
 {
   _ContextStack &contextStack = _threadContextStack.local();
   if (contextStack.empty()) {
-    TF_CODING_ERROR("No context was bound, cannot unbind context: %s",
-                    context.GetDebugString().c_str());
+    TF_CODING_ERROR("No context was bound, cannot unbind context: %s", context.GetDebugString().c_str());
   }
 
   if (!contextStack.empty()) {

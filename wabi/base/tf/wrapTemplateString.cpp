@@ -75,13 +75,12 @@ void wrapTemplateString()
   typedef TfTemplateString This;
 
   class_<This>("TemplateString")
-      .def(init<string>())
-      .def("__repr__", __repr__)
-      .add_property("template",
-                    make_function(&This::GetTemplate, return_value_policy<return_by_value>()))
-      .def("Substitute", _Substitute)
-      .def("SafeSubstitute", _SafeSubstitute)
-      .def("GetEmptyMapping", &This::GetEmptyMapping, return_value_policy<TfPyMapToDictionary>())
-      .def("GetParseErrors", &This::GetParseErrors, return_value_policy<TfPySequenceToList>())
-      .add_property("valid", &This::IsValid);
+    .def(init<string>())
+    .def("__repr__", __repr__)
+    .add_property("template", make_function(&This::GetTemplate, return_value_policy<return_by_value>()))
+    .def("Substitute", _Substitute)
+    .def("SafeSubstitute", _SafeSubstitute)
+    .def("GetEmptyMapping", &This::GetEmptyMapping, return_value_policy<TfPyMapToDictionary>())
+    .def("GetParseErrors", &This::GetParseErrors, return_value_policy<TfPySequenceToList>())
+    .add_property("valid", &This::IsValid);
 }

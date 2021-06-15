@@ -60,10 +60,10 @@ TF_DEFINE_PRIVATE_TOKENS(
 /* clang-format on */
 
 HdPrmanLight::HdPrmanLight(SdfPath const &id, TfToken const &lightType)
-    : HdLight(id),
-      _hdLightType(lightType),
-      _shaderId(riley::LightShaderId::k_InvalidId),
-      _instanceId(riley::LightInstanceId::k_InvalidId)
+  : HdLight(id),
+    _hdLightType(lightType),
+    _shaderId(riley::LightShaderId::k_InvalidId),
+    _instanceId(riley::LightInstanceId::k_InvalidId)
 {
   /* NOTHING */
 }
@@ -116,9 +116,7 @@ static RtUString _RtStringFromSdfAssetPath(SdfAssetPath const &ap)
 }
 
 /* virtual */
-void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
-                        HdRenderParam *renderParam,
-                        HdDirtyBits *dirtyBits)
+void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
   static const RtUString us_intensity("intensity");
   static const RtUString us_exposure("exposure");
@@ -179,8 +177,7 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
   RtParamList attrs = context->ConvertAttributes(sceneDelegate, id);
 
   // Light shader.
-  riley::ShadingNode lightNode{
-      riley::ShadingNode::k_Light, US_NULL, RtUString(id.GetText()), RtParamList()};
+  riley::ShadingNode lightNode{riley::ShadingNode::k_Light, US_NULL, RtUString(id.GetText()), RtParamList()};
 
   // UsdLuxLight base parameters
   {
@@ -204,8 +201,7 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
     }
 
     // enableColorTemperature -> enableTemperature
-    VtValue enableTemperature = sceneDelegate->GetLightParamValue(
-        id, HdLightTokens->enableColorTemperature);
+    VtValue enableTemperature = sceneDelegate->GetLightParamValue(id, HdLightTokens->enableColorTemperature);
     if (enableTemperature.IsHolding<bool>()) {
       int v = enableTemperature.UncheckedGet<bool>();
       lightNode.params.SetInteger(us_enableTemperature, v);
@@ -250,8 +246,7 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
 
       // XXX -- emissionFocusNormalize is missing here
 
-      VtValue shapingFocusTint = sceneDelegate->GetLightParamValue(
-          id, HdLightTokens->shapingFocusTint);
+      VtValue shapingFocusTint = sceneDelegate->GetLightParamValue(id, HdLightTokens->shapingFocusTint);
       if (shapingFocusTint.IsHolding<GfVec3f>()) {
         GfVec3f v = shapingFocusTint.UncheckedGet<GfVec3f>();
         lightNode.params.SetColor(us_emissionFocusTint, RtColorRGB(v[0], v[1], v[2]));
@@ -261,41 +256,36 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
     // ies is only supported on rect, disk, cylinder and sphere light.
     // cone angle only supported on rect, disk, cylinder and sphere lights.
     // XXX -- fix for mesh/geometry light when it comes online
-    if (_hdLightType == HdPrimTypeTokens->rectLight ||
-        _hdLightType == HdPrimTypeTokens->diskLight ||
-        _hdLightType == HdPrimTypeTokens->cylinderLight ||
-        _hdLightType == HdPrimTypeTokens->sphereLight) {
+    if (_hdLightType == HdPrimTypeTokens->rectLight || _hdLightType == HdPrimTypeTokens->diskLight ||
+        _hdLightType == HdPrimTypeTokens->cylinderLight || _hdLightType == HdPrimTypeTokens->sphereLight) {
 
-      VtValue shapingConeAngle = sceneDelegate->GetLightParamValue(
-          id, HdLightTokens->shapingConeAngle);
+      VtValue shapingConeAngle = sceneDelegate->GetLightParamValue(id, HdLightTokens->shapingConeAngle);
       if (shapingConeAngle.IsHolding<float>()) {
         lightNode.params.SetFloat(us_coneAngle, shapingConeAngle.UncheckedGet<float>());
       }
 
-      VtValue shapingConeSoftness = sceneDelegate->GetLightParamValue(
-          id, HdLightTokens->shapingConeSoftness);
+      VtValue shapingConeSoftness = sceneDelegate->GetLightParamValue(id,
+                                                                      HdLightTokens->shapingConeSoftness);
       if (shapingConeSoftness.IsHolding<float>()) {
         lightNode.params.SetFloat(us_coneSoftness, shapingConeSoftness.UncheckedGet<float>());
       }
 
-      VtValue shapingIesFile = sceneDelegate->GetLightParamValue(id,
-                                                                 HdLightTokens->shapingIesFile);
+      VtValue shapingIesFile = sceneDelegate->GetLightParamValue(id, HdLightTokens->shapingIesFile);
       if (shapingIesFile.IsHolding<SdfAssetPath>()) {
         SdfAssetPath ap = shapingIesFile.UncheckedGet<SdfAssetPath>();
         lightNode.params.SetString(us_iesProfile, _RtStringFromSdfAssetPath(ap));
       }
 
-      VtValue shapingIesAngleScale = sceneDelegate->GetLightParamValue(
-          id, HdLightTokens->shapingIesAngleScale);
+      VtValue shapingIesAngleScale = sceneDelegate->GetLightParamValue(id,
+                                                                       HdLightTokens->shapingIesAngleScale);
       if (shapingIesAngleScale.IsHolding<float>()) {
         lightNode.params.SetFloat(us_iesProfileScale, shapingIesAngleScale.UncheckedGet<float>());
       }
 
-      VtValue shapingIesNormalize = sceneDelegate->GetLightParamValue(
-          id, HdLightTokens->shapingIesNormalize);
+      VtValue shapingIesNormalize = sceneDelegate->GetLightParamValue(id,
+                                                                      HdLightTokens->shapingIesNormalize);
       if (shapingIesNormalize.IsHolding<bool>()) {
-        lightNode.params.SetInteger(us_iesProfileNormalize,
-                                    shapingIesNormalize.UncheckedGet<bool>());
+        lightNode.params.SetInteger(us_iesProfileNormalize, shapingIesNormalize.UncheckedGet<bool>());
       }
     }
   }
@@ -323,8 +313,7 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
       lightNode.params.SetFloat(us_shadowFalloff, shadowFalloff.UncheckedGet<float>());
     }
 
-    VtValue shadowFalloffGamma = sceneDelegate->GetLightParamValue(
-        id, HdLightTokens->shadowFalloffGamma);
+    VtValue shadowFalloffGamma = sceneDelegate->GetLightParamValue(id, HdLightTokens->shadowFalloffGamma);
     if (shadowFalloffGamma.IsHolding<float>()) {
       lightNode.params.SetFloat(us_shadowFalloffGamma, shadowFalloffGamma.UncheckedGet<float>());
     }
@@ -335,7 +324,7 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
       if (!shadowLink.IsEmpty()) {
         lightNode.params.SetString(us_shadowSubset, RtUString(shadowLink.GetText()));
         TF_DEBUG(HDPRMAN_LIGHT_LINKING)
-            .Msg("HdPrman: Light <%s> shadowSubset \"%s\"\n", id.GetText(), shadowLink.GetText());
+          .Msg("HdPrman: Light <%s> shadowSubset \"%s\"\n", id.GetText(), shadowLink.GetText());
       }
     }
   }
@@ -348,7 +337,7 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
     }
 
     VtValue cheapCausticsExcludeGroupVal = sceneDelegate->GetLightParamValue(
-        id, _tokens->cheapCausticsExcludeGroup);
+      id, _tokens->cheapCausticsExcludeGroup);
     if (cheapCausticsExcludeGroupVal.IsHolding<TfToken>()) {
       TfToken cheapCausticsExcludeGroup = cheapCausticsExcludeGroupVal.UncheckedGet<TfToken>();
       if (!cheapCausticsExcludeGroup.IsEmpty()) {
@@ -362,11 +351,9 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
       lightNode.params.SetInteger(us_fixedSampleCount, fixedSampleCount.UncheckedGet<int>());
     }
 
-    VtValue importanceMultiplier = sceneDelegate->GetLightParamValue(
-        id, _tokens->importanceMultiplier);
+    VtValue importanceMultiplier = sceneDelegate->GetLightParamValue(id, _tokens->importanceMultiplier);
     if (importanceMultiplier.IsHolding<float>()) {
-      lightNode.params.SetFloat(us_importanceMultiplier,
-                                importanceMultiplier.UncheckedGet<float>());
+      lightNode.params.SetFloat(us_importanceMultiplier, importanceMultiplier.UncheckedGet<float>());
     }
 
     VtValue intensityNearDist = sceneDelegate->GetLightParamValue(id, _tokens->intensityNearDist);
@@ -384,11 +371,10 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
       lightNode.params.SetInteger(us_traceLightPaths, traceLightPaths.UncheckedGet<int>());
     }
 
-    VtValue visibleInRefractionPath = sceneDelegate->GetLightParamValue(
-        id, _tokens->visibleInRefractionPath);
+    VtValue visibleInRefractionPath = sceneDelegate->GetLightParamValue(id,
+                                                                        _tokens->visibleInRefractionPath);
     if (visibleInRefractionPath.IsHolding<int>()) {
-      lightNode.params.SetInteger(us_visibleInRefractionPath,
-                                  visibleInRefractionPath.UncheckedGet<int>());
+      lightNode.params.SetInteger(us_visibleInRefractionPath, visibleInRefractionPath.UncheckedGet<int>());
     }
 
     VtValue lightGroupVal = sceneDelegate->GetLightParamValue(id, _tokens->lightGroup);
@@ -401,16 +387,16 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
   }
 
   TF_DEBUG(HDPRMAN_LIGHT_LIST)
-      .Msg("HdPrman: Light <%s> lightType \"%s\"\n", id.GetText(), _hdLightType.GetText());
+    .Msg("HdPrman: Light <%s> lightType \"%s\"\n", id.GetText(), _hdLightType.GetText());
 
   // Type-specific parameters
   bool supportsLightColorMap = false;
   if (_hdLightType == HdPrimTypeTokens->domeLight) {
-    lightNode.name        = us_PxrDomeLight;
+    lightNode.name = us_PxrDomeLight;
     supportsLightColorMap = true;
   }
   else if (_hdLightType == HdPrimTypeTokens->rectLight) {
-    lightNode.name        = us_PxrRectLight;
+    lightNode.name = us_PxrRectLight;
     supportsLightColorMap = true;
 
     // width
@@ -481,8 +467,7 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
       lightNode.params.SetVector(us_colorMapGamma, RtVector3(v[0], v[1], v[2]));
     }
 
-    VtValue colorMapSaturation = sceneDelegate->GetLightParamValue(id,
-                                                                   _tokens->colorMapSaturation);
+    VtValue colorMapSaturation = sceneDelegate->GetLightParamValue(id, _tokens->colorMapSaturation);
     if (colorMapSaturation.IsHolding<float>()) {
       lightNode.params.SetFloat(us_colorMapSaturation, colorMapSaturation.UncheckedGet<float>());
     }
@@ -502,21 +487,19 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
       // geometry must subscribe to that grouping.
       attrs.SetString(RixStr.k_grouping_membership, RtUString(_lightLink.GetText()));
       TF_DEBUG(HDPRMAN_LIGHT_LINKING)
-          .Msg("HdPrman: Light <%s> grouping membership \"%s\"\n",
-               id.GetText(),
-               _lightLink.GetText());
+        .Msg("HdPrman: Light <%s> grouping membership \"%s\"\n", id.GetText(), _lightLink.GetText());
     }
     else {
       // Default light group
       attrs.SetString(RixStr.k_grouping_membership, us_default);
       TF_DEBUG(HDPRMAN_LIGHT_LINKING)
-          .Msg("HdPrman: Light <%s> grouping membership \"default\"\n", id.GetText());
+        .Msg("HdPrman: Light <%s> grouping membership \"default\"\n", id.GetText());
     }
   }
 
   // filters
   riley::ShadingNode *filterNodes = nullptr;
-  int nFilterNodes                = 0;
+  int nFilterNodes = 0;
   std::vector<riley::CoordinateSystemId> coordsysIds;
   {
     VtValue val = sceneDelegate->GetLightParamValue(id, HdTokens->filters);
@@ -530,10 +513,10 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
 
         for (SdfPath &filterPath : _lightFilterPaths) {
           TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING)
-              .Msg("HdPrman: Light <%s> filter \"%s\" path \"%s\"\n",
-                   id.GetText(),
-                   filterPath.GetName().c_str(),
-                   filterPath.GetText());
+            .Msg("HdPrman: Light <%s> filter \"%s\" path \"%s\"\n",
+                 id.GetText(),
+                 filterPath.GetName().c_str(),
+                 filterPath.GetText());
 
           if (!sceneDelegate->GetVisible(filterPath)) {
             // XXX -- need to get a dependency analysis working here
@@ -552,9 +535,9 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
           TfToken filterType = tval.UncheckedGet<TfToken>();
 
           riley::ShadingNode *filter = &filterNodes[nFilterNodes];
-          filter->type               = riley::ShadingNode::k_LightFilter;
-          filter->name               = RtUString(filterType.GetText());
-          filter->handle             = RtUString(filterPath.GetName().c_str());
+          filter->type = riley::ShadingNode::k_LightFilter;
+          filter->name = RtUString(filterType.GetText());
+          filter->handle = RtUString(filterPath.GetName().c_str());
 
           if (HdPrmanLightFilterPopulateParams(filter,
                                                filterPath,
@@ -571,16 +554,16 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
           // More than 1 light filter requires a combiner to blend
           // their results
           riley::ShadingNode *filter = &filterNodes[nFilterNodes];
-          filter->type               = riley::ShadingNode::k_LightFilter;
-          filter->name               = RtUString("PxrCombinerLightFilter");
-          filter->handle             = RtUString("terminal.Lightfilter");
+          filter->type = riley::ShadingNode::k_LightFilter;
+          filter->name = RtUString("PxrCombinerLightFilter");
+          filter->handle = RtUString("terminal.Lightfilter");
           std::vector<RtUString> sa;
           for (int i = 0; i < nFilterNodes; i++) {
             sa.push_back(filterNodes[i].handle);
           }
           // XXX -- assume mult for now
           filter->params.ReferenceLightFilterArray(
-              RtUString("mult"), (const RtUString *const &)&sa[0], sa.size());
+            RtUString("mult"), (const RtUString *const &)&sa[0], sa.size());
           nFilterNodes++;
         }
       }
@@ -607,14 +590,13 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
   if (lightNode.name == us_PxrDomeLight) {
     // Transform Dome to match OpenEXR spec for environment maps
     // Rotate -90 X, Rotate 90 Y
-    orientMat = GfMatrix4d(
-        0.0, 0.0, -1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+    orientMat = GfMatrix4d(0.0, 0.0, -1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
   }
   else {
     // Transform lights to match correct orientation
     // Scale -1 Z, Rotate 180 Z
     orientMat = GfMatrix4d(
-        -1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+      -1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
   }
 
   geomMat = orientMat * geomMat;
@@ -628,8 +610,7 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
   attrs.SetInteger(RixStr.k_lighting_mute, !sceneDelegate->GetVisible(id));
 
   // Light instance
-  riley::ScopedCoordinateSystem const coordsys = {unsigned(coordsysIds.size()),
-                                                  coordsysIds.data()};
+  riley::ScopedCoordinateSystem const coordsys = {unsigned(coordsysIds.size()), coordsysIds.data()};
   _instanceId = riley->CreateLightInstance(riley::GeometryMasterId::k_InvalidId,  // no group
                                            riley::GeometryMasterId::k_InvalidId,  // no geo
                                            riley::MaterialId::k_InvalidId,        // no material

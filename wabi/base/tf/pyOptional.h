@@ -47,7 +47,7 @@ template<typename T, typename TfromPy> struct object_from_python {
   object_from_python()
   {
     boost::python::converter::registry::push_back(
-        &TfromPy::convertible, &TfromPy::construct, boost::python::type_id<T>());
+      &TfromPy::convertible, &TfromPy::construct, boost::python::type_id<T>());
   }
 };
 
@@ -83,8 +83,7 @@ template<typename T> struct python_optional : public boost::noncopyable {
       return NULL;
     }
 
-    static void construct(PyObject *source,
-                          boost::python::converter::rvalue_from_python_stage1_data *data)
+    static void construct(PyObject *source, boost::python::converter::rvalue_from_python_stage1_data *data)
     {
       using namespace boost::python::converter;
 

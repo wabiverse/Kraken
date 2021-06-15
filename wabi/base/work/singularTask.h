@@ -75,8 +75,8 @@ class WorkSingularTask {
 
   template<class Callable, class... Args>
   WorkSingularTask(WorkDispatcher &d, Callable &&c, Args &&...args)
-      : _waker(_MakeWaker(d, std::bind(std::forward<Callable>(c), std::forward<Args>(args)...))),
-        _count(0)
+    : _waker(_MakeWaker(d, std::bind(std::forward<Callable>(c), std::forward<Args>(args)...))),
+      _count(0)
   {}
 
 #endif  // doxygen
@@ -119,7 +119,7 @@ class WorkSingularTask {
   static std::function<void(std::atomic_size_t &)> _MakeWaker(Dispatcher &d, Fn &&fn)
   {
     return std::function<void(std::atomic_size_t &)>(
-        _Waker<Dispatcher, typename std::decay<Fn>::type>(d, std::forward<Fn>(fn)));
+      _Waker<Dispatcher, typename std::decay<Fn>::type>(d, std::forward<Fn>(fn)));
   }
 
   std::function<void(std::atomic_size_t &)> _waker;

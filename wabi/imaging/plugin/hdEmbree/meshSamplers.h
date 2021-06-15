@@ -89,8 +89,8 @@ class HdEmbreeConstantSampler : public HdEmbreePrimvarSampler {
   /// \param name The name of the primvar.
   /// \param value The buffer data for the primvar.
   HdEmbreeConstantSampler(TfToken const &name, VtValue const &value)
-      : _buffer(name, value),
-        _sampler(_buffer)
+    : _buffer(name, value),
+      _sampler(_buffer)
   {}
 
   /// Sample the primvar at an (element, u, v) location. For constant
@@ -102,11 +102,7 @@ class HdEmbreeConstantSampler : public HdEmbreePrimvarSampler {
   /// \param value The memory to write the value to (only written on success).
   /// \param dataType The HdTupleType describing element values.
   /// \return True if the value was successfully sampled.
-  virtual bool Sample(unsigned int element,
-                      float u,
-                      float v,
-                      void *value,
-                      HdTupleType dataType) const;
+  virtual bool Sample(unsigned int element, float u, float v, void *value, HdTupleType dataType) const;
 
  private:
   HdVtBufferSource const _buffer;
@@ -129,20 +125,16 @@ class HdEmbreeUniformSampler : public HdEmbreePrimvarSampler {
   /// \param value The buffer data for the primvar.
   /// \param primitiveParams A mapping from geometry face index to authored
   ///                        face index.
-  HdEmbreeUniformSampler(TfToken const &name,
-                         VtValue const &value,
-                         VtIntArray const &primitiveParams)
-      : _buffer(name, value),
-        _sampler(_buffer),
-        _primitiveParams(primitiveParams)
+  HdEmbreeUniformSampler(TfToken const &name, VtValue const &value, VtIntArray const &primitiveParams)
+    : _buffer(name, value),
+      _sampler(_buffer),
+      _primitiveParams(primitiveParams)
   {}
 
   /// Constructor.
   /// \param name The name of the primvar.
   /// \param value The buffer data for the primvar.
-  HdEmbreeUniformSampler(TfToken const &name, VtValue const &value)
-      : _buffer(name, value),
-        _sampler(_buffer)
+  HdEmbreeUniformSampler(TfToken const &name, VtValue const &value) : _buffer(name, value), _sampler(_buffer)
   {}
 
   /// Sample the primvar at an (element, u, v) location. For uniform
@@ -156,11 +148,7 @@ class HdEmbreeUniformSampler : public HdEmbreePrimvarSampler {
   /// \param value The memory to write the value to (only written on success).
   /// \param dataType The HdTupleType describing element values.
   /// \return True if the value was successfully sampled.
-  virtual bool Sample(unsigned int element,
-                      float u,
-                      float v,
-                      void *value,
-                      HdTupleType dataType) const;
+  virtual bool Sample(unsigned int element, float u, float v, void *value, HdTupleType dataType) const;
 
  private:
   HdVtBufferSource const _buffer;
@@ -183,12 +171,10 @@ class HdEmbreeTriangleVertexSampler : public HdEmbreePrimvarSampler {
   /// \param value The buffer data for the primvar.
   /// \param indices A map from triangle index to vertex indices in the
   ///                triangulated geometry.
-  HdEmbreeTriangleVertexSampler(TfToken const &name,
-                                VtValue const &value,
-                                VtVec3iArray const &indices)
-      : _buffer(name, value),
-        _sampler(_buffer),
-        _indices(indices)
+  HdEmbreeTriangleVertexSampler(TfToken const &name, VtValue const &value, VtVec3iArray const &indices)
+    : _buffer(name, value),
+      _sampler(_buffer),
+      _indices(indices)
   {}
 
   /// Sample the primvar at an (element, u, v) location. For vertex primvars,
@@ -203,11 +189,7 @@ class HdEmbreeTriangleVertexSampler : public HdEmbreePrimvarSampler {
   /// \param value The memory to write the value to (only written on success).
   /// \param dataType The HdTupleType describing element values.
   /// \return True if the value was successfully sampled.
-  virtual bool Sample(unsigned int element,
-                      float u,
-                      float v,
-                      void *value,
-                      HdTupleType dataType) const;
+  virtual bool Sample(unsigned int element, float u, float v, void *value, HdTupleType dataType) const;
 
  private:
   HdVtBufferSource const _buffer;
@@ -238,11 +220,9 @@ class HdEmbreeTriangleFaceVaryingSampler : public HdEmbreePrimvarSampler {
   /// \param value The buffer data for the primvar.
   /// \param meshUtil An HdMeshUtil instance that knows how to triangulate
   ///                 the input buffer data.
-  HdEmbreeTriangleFaceVaryingSampler(TfToken const &name,
-                                     VtValue const &value,
-                                     HdMeshUtil &meshUtil)
-      : _buffer(name, _Triangulate(name, value, meshUtil)),
-        _sampler(_buffer)
+  HdEmbreeTriangleFaceVaryingSampler(TfToken const &name, VtValue const &value, HdMeshUtil &meshUtil)
+    : _buffer(name, _Triangulate(name, value, meshUtil)),
+      _sampler(_buffer)
   {}
 
   /// Sample the primvar at an (element, u, v) location. For face varying
@@ -258,11 +238,7 @@ class HdEmbreeTriangleFaceVaryingSampler : public HdEmbreePrimvarSampler {
   /// \param value The memory to write the value to (only written on success).
   /// \param dataType The HdTupleType describing element values.
   /// \return True if the value was successfully sampled.
-  virtual bool Sample(unsigned int element,
-                      float u,
-                      float v,
-                      void *value,
-                      HdTupleType dataType) const;
+  virtual bool Sample(unsigned int element, float u, float v, void *value, HdTupleType dataType) const;
 
  private:
   HdVtBufferSource const _buffer;
@@ -314,11 +290,7 @@ class HdEmbreeSubdivVertexSampler : public HdEmbreePrimvarSampler {
   /// \param value The memory to write the value to (only written on success).
   /// \param dataType The HdTupleType describing element values.
   /// \return True if the value was successfully sampled.
-  virtual bool Sample(unsigned int element,
-                      float u,
-                      float v,
-                      void *value,
-                      HdTupleType dataType) const;
+  virtual bool Sample(unsigned int element, float u, float v, void *value, HdTupleType dataType) const;
 
  private:
   int _embreeBufferId;

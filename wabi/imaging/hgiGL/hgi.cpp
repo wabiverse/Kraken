@@ -55,9 +55,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(HGIGL_ENABLE_GL_VERSION_VALIDATION,
-                      true,
-                      "Enables validation OpenGL version.");
+TF_DEFINE_ENV_SETTING(HGIGL_ENABLE_GL_VERSION_VALIDATION, true, "Enables validation OpenGL version.");
 
 TF_REGISTRY_FUNCTION(TfType)
 {
@@ -73,8 +71,8 @@ HgiGL::HgiGL() : _device(nullptr), _garbageCollector(this), _frameDepth(0)
     GarchGLApiLoad();
     if (validate && !HgiGLMeetsMinimumRequirements()) {
       TF_WARN(
-          "HgiGL minimum OpenGL requirements not met. Please ensure "
-          "that OpenGL is initialized and supports version 4.5.");
+        "HgiGL minimum OpenGL requirements not met. Please ensure "
+        "that OpenGL is initialized and supports version 4.5.");
     }
   });
 
@@ -252,7 +250,7 @@ bool HgiGL::_SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait)
     // CPU - GPU synchronization (stall) by client request only.
     static const uint64_t timeOut = 100000000000;
 
-    GLsync fence  = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
     GLenum status = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, timeOut);
 
     if (status != GL_ALREADY_SIGNALED && status != GL_CONDITION_SATISFIED) {

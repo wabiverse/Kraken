@@ -32,21 +32,19 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiShaderFunctionTextureDesc::HgiShaderFunctionTextureDesc()
-    : dimensions(2),
-      format(HgiFormatInvalid)
+HgiShaderFunctionTextureDesc::HgiShaderFunctionTextureDesc() : dimensions(2), format(HgiFormatInvalid)
 {}
 
 HgiShaderFunctionBufferDesc::HgiShaderFunctionBufferDesc() = default;
-HgiShaderFunctionParamDesc::HgiShaderFunctionParamDesc()   = default;
+HgiShaderFunctionParamDesc::HgiShaderFunctionParamDesc() = default;
 
 HgiShaderFunctionDesc::HgiShaderFunctionDesc()
-    : shaderStage(0),
-      shaderCode(nullptr),
-      textures(),
-      constantParams(),
-      stageInputs(),
-      stageOutputs()
+  : shaderStage(0),
+    shaderCode(nullptr),
+    textures(),
+    constantParams(),
+    stageInputs(),
+    stageOutputs()
 {}
 
 bool operator==(const HgiShaderFunctionTextureDesc &lhs, const HgiShaderFunctionTextureDesc &rhs)
@@ -102,8 +100,8 @@ void HgiShaderFunctionAddTexture(HgiShaderFunctionDesc *const desc,
 {
   HgiShaderFunctionTextureDesc texDesc;
   texDesc.nameInShader = nameInShader;
-  texDesc.dimensions   = dimensions;
-  texDesc.format       = format;
+  texDesc.dimensions = dimensions;
+  texDesc.format = format;
 
   desc->textures.push_back(std::move(texDesc));
 }
@@ -114,7 +112,7 @@ void HgiShaderFunctionAddBuffer(HgiShaderFunctionDesc *const desc,
 {
   HgiShaderFunctionBufferDesc bufDesc;
   bufDesc.nameInShader = nameInShader;
-  bufDesc.type         = type;
+  bufDesc.type = type;
 
   desc->buffers.push_back(std::move(bufDesc));
 }
@@ -127,10 +125,10 @@ void HgiShaderFunctionAddConstantParam(HgiShaderFunctionDesc *const desc,
                                        const std::string &attributeIndex)
 {
   HgiShaderFunctionParamDesc paramDesc;
-  paramDesc.nameInShader   = nameInShader;
-  paramDesc.type           = type;
-  paramDesc.role           = role;
-  paramDesc.attribute      = attribute;
+  paramDesc.nameInShader = nameInShader;
+  paramDesc.type = type;
+  paramDesc.role = role;
+  paramDesc.attribute = attribute;
   paramDesc.attributeIndex = attributeIndex;
 
   desc->constantParams.push_back(std::move(paramDesc));
@@ -144,10 +142,10 @@ void HgiShaderFunctionAddStageInput(HgiShaderFunctionDesc *const desc,
                                     const std::string &attributeIndex)
 {
   HgiShaderFunctionParamDesc paramDesc;
-  paramDesc.nameInShader   = nameInShader;
-  paramDesc.type           = type;
-  paramDesc.role           = role;
-  paramDesc.attribute      = attribute;
+  paramDesc.nameInShader = nameInShader;
+  paramDesc.type = type;
+  paramDesc.role = role;
+  paramDesc.attribute = attribute;
   paramDesc.attributeIndex = attributeIndex;
 
   desc->stageInputs.push_back(std::move(paramDesc));
@@ -161,10 +159,10 @@ void HgiShaderFunctionAddStageOutput(HgiShaderFunctionDesc *const desc,
                                      const std::string &attributeIndex)
 {
   HgiShaderFunctionParamDesc paramDesc;
-  paramDesc.nameInShader   = nameInShader;
-  paramDesc.type           = type;
-  paramDesc.role           = role;
-  paramDesc.attribute      = attribute;
+  paramDesc.nameInShader = nameInShader;
+  paramDesc.type = type;
+  paramDesc.role = role;
+  paramDesc.attribute = attribute;
   paramDesc.attributeIndex = attributeIndex;
 
   desc->stageOutputs.push_back(std::move(paramDesc));

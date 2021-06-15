@@ -40,11 +40,11 @@
 WABI_NAMESPACE_BEGIN
 
 HdPhExtCompGpuComputationBufferSource::HdPhExtCompGpuComputationBufferSource(
-    HdBufferSourceSharedPtrVector const &inputs,
-    HdPhExtCompGpuComputationResourceSharedPtr const &resource)
-    : HdNullBufferSource(),
-      _inputs(inputs),
-      _resource(resource)
+  HdBufferSourceSharedPtrVector const &inputs,
+  HdPhExtCompGpuComputationResourceSharedPtr const &resource)
+  : HdNullBufferSource(),
+    _inputs(inputs),
+    _resource(resource)
 {}
 
 bool HdPhExtCompGpuComputationBufferSource::Resolve()

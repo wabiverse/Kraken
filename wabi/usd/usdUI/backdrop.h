@@ -206,7 +206,7 @@ class UsdUIBackdrop : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDUI_API
   UsdAttribute CreateDescriptionAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

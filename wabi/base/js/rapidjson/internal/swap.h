@@ -32,8 +32,8 @@ namespace internal {
 template<typename T> inline void Swap(T &a, T &b) RAPIDJSON_NOEXCEPT
 {
   T tmp = a;
-  a     = b;
-  b     = tmp;
+  a = b;
+  b = tmp;
 }
 
 }  // namespace internal

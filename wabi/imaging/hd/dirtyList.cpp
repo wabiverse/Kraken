@@ -32,13 +32,13 @@
 WABI_NAMESPACE_BEGIN
 
 HdDirtyList::HdDirtyList(HdRprimCollection const &collection, HdRenderIndex &index)
-    : _collection(collection),
-      _dirtyIds(),
-      _renderIndex(index),
-      _sceneStateVersion(_renderIndex.GetChangeTracker().GetSceneStateVersion() - 1),
-      _rprimIndexVersion(_renderIndex.GetChangeTracker().GetRprimIndexVersion() - 1),
-      _renderTagVersion(_renderIndex.GetChangeTracker().GetRenderTagVersion() - 1),
-      _varyingStateVersion(_renderIndex.GetChangeTracker().GetVaryingStateVersion() - 1)
+  : _collection(collection),
+    _dirtyIds(),
+    _renderIndex(index),
+    _sceneStateVersion(_renderIndex.GetChangeTracker().GetSceneStateVersion() - 1),
+    _rprimIndexVersion(_renderIndex.GetChangeTracker().GetRprimIndexVersion() - 1),
+    _renderTagVersion(_renderIndex.GetChangeTracker().GetRenderTagVersion() - 1),
+    _varyingStateVersion(_renderIndex.GetChangeTracker().GetVaryingStateVersion() - 1)
 {
   HD_PERF_COUNTER_INCR(HdPerfTokens->dirtyLists);
 }
@@ -60,8 +60,7 @@ bool HdDirtyList::ApplyEdit(HdRprimCollection const &col)
   //
   // when repr changes, don't reuse the dirty list, since the required
   // DirtyBits may change.
-  if (col.GetName() != _collection.GetName() ||
-      col.GetReprSelector() != _collection.GetReprSelector() ||
+  if (col.GetName() != _collection.GetName() || col.GetReprSelector() != _collection.GetReprSelector() ||
       col.IsForcedRepr() != _collection.IsForcedRepr()) {
     return false;
   }
@@ -124,7 +123,7 @@ SdfPathVector const &HdDirtyList::GetDirtyRprims()
   // XXX: This could be caught earlier and avoid Sync altogether.
   if (_sceneStateVersion == currentSceneStateVersion) {
     TF_DEBUG(HD_DIRTY_LIST)
-        .Msg("DirtyList(%p): Scene State the same %d\n", (void *)this, _sceneStateVersion);
+      .Msg("DirtyList(%p): Scene State the same %d\n", (void *)this, _sceneStateVersion);
 
     static SdfPathVector _EMPTY;
     return _EMPTY;
@@ -138,25 +137,24 @@ SdfPathVector const &HdDirtyList::GetDirtyRprims()
   //  - Varying Set Changed
   //  - Time Step               (neither of the above)
 
-  unsigned int currentRprimIndexVersion   = changeTracker.GetRprimIndexVersion();
-  unsigned int currentRenderTagVersion    = changeTracker.GetRenderTagVersion();
+  unsigned int currentRprimIndexVersion = changeTracker.GetRprimIndexVersion();
+  unsigned int currentRenderTagVersion = changeTracker.GetRenderTagVersion();
   unsigned int currentVaryingStateVersion = changeTracker.GetVaryingStateVersion();
 
-  if ((_rprimIndexVersion != currentRprimIndexVersion) ||
-      (_renderTagVersion != currentRenderTagVersion)) {
+  if ((_rprimIndexVersion != currentRprimIndexVersion) || (_renderTagVersion != currentRenderTagVersion)) {
     TF_DEBUG(HD_DIRTY_LIST)
-        .Msg(
-            "DirtyList(%p): Filter Changed:\n"
-            "  (Rprim Index Version %d -> %d)\n"
-            "  (Render Tag Version %d -> %d)\n",
-            (void *)this,
-            _rprimIndexVersion,
-            currentRprimIndexVersion,
-            _renderTagVersion,
-            currentRenderTagVersion);
+      .Msg(
+        "DirtyList(%p): Filter Changed:\n"
+        "  (Rprim Index Version %d -> %d)\n"
+        "  (Render Tag Version %d -> %d)\n",
+        (void *)this,
+        _rprimIndexVersion,
+        currentRprimIndexVersion,
+        _renderTagVersion,
+        currentRenderTagVersion);
 
     _rprimIndexVersion = currentRprimIndexVersion;
-    _renderTagVersion  = currentRenderTagVersion;
+    _renderTagVersion = currentRenderTagVersion;
 
     // Get list including all dirty prims
     _dirtyIds = _renderIndex._GetDirtyRprimIds(0);
@@ -166,12 +164,12 @@ SdfPathVector const &HdDirtyList::GetDirtyRprims()
   }
   else if (_varyingStateVersion != currentVaryingStateVersion) {
     TF_DEBUG(HD_DIRTY_LIST)
-        .Msg(
-            "DirtyList(%p): varying state changed "
-            "(%d -> %d)\n",
-            (void *)this,
-            _varyingStateVersion,
-            currentVaryingStateVersion);
+      .Msg(
+        "DirtyList(%p): varying state changed "
+        "(%d -> %d)\n",
+        (void *)this,
+        _varyingStateVersion,
+        currentVaryingStateVersion);
 
     _varyingStateVersion = currentVaryingStateVersion;
 

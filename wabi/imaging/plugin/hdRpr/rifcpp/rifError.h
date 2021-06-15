@@ -76,8 +76,7 @@ inline std::string ConstructErrorMessage(rif_int errorStatus,
   }
   else {
     auto errorStr = rifErrorString();
-    return TfStringPrintf(
-        "[RIF ERROR] %s -- %s%s", messageOnFail.c_str(), errorStr.c_str(), suffix.c_str());
+    return TfStringPrintf("[RIF ERROR] %s -- %s%s", messageOnFail.c_str(), errorStr.c_str(), suffix.c_str());
   }
 }
 
@@ -98,12 +97,8 @@ inline bool IsErrorCheck(const rif_int status,
 
 class Error : public std::runtime_error {
  public:
-  Error(rif_int errorStatus,
-        const char *messageOnFail,
-        char const *file,
-        char const *function,
-        size_t line)
-      : std::runtime_error(ConstructErrorMessage(errorStatus, messageOnFail, file, function, line))
+  Error(rif_int errorStatus, const char *messageOnFail, char const *file, char const *function, size_t line)
+    : std::runtime_error(ConstructErrorMessage(errorStatus, messageOnFail, file, function, line))
   {}
 
   Error(std::string const &errorMesssage) : std::runtime_error(errorMesssage)

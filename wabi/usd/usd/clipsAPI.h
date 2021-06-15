@@ -468,8 +468,7 @@ class UsdClipsAPI : public UsdAPISchemaBase {
   /// Note that USD requires that hash groups be adjacent in the string,
   /// and that there only be one or two such groups.
   USD_API
-  bool GetClipTemplateAssetPath(std::string *clipTemplateAssetPath,
-                                const std::string &clipSet) const;
+  bool GetClipTemplateAssetPath(std::string *clipTemplateAssetPath, const std::string &clipSet) const;
   /// \overload
   /// This function operates on the default clip set.
   /// \sa \ref UsdClipsAPISetNames
@@ -479,8 +478,7 @@ class UsdClipsAPI : public UsdAPISchemaBase {
   /// Set the clip template asset path for the clip set named \p clipSet.
   /// \sa GetClipTemplateAssetPath
   USD_API
-  bool SetClipTemplateAssetPath(const std::string &clipTemplateAssetPath,
-                                const std::string &clipSet);
+  bool SetClipTemplateAssetPath(const std::string &clipTemplateAssetPath, const std::string &clipSet);
   /// \overload
   /// This function operates on the default clip set.
   /// \sa \ref UsdClipsAPISetNames
@@ -501,8 +499,7 @@ class UsdClipsAPI : public UsdAPISchemaBase {
   /// Set the clip template offset for the clip set named \p clipSet.
   /// \sa GetClipTemplateActiveOffset
   USD_API
-  bool SetClipTemplateActiveOffset(const double clipTemplateActiveOffset,
-                                   const std::string &clipSet);
+  bool SetClipTemplateActiveOffset(const double clipTemplateActiveOffset, const std::string &clipSet);
 
   /// \overload
   /// This function operates on the default clip set.
@@ -513,8 +510,7 @@ class UsdClipsAPI : public UsdAPISchemaBase {
   /// A double representing the offset value used by USD when
   /// determining the active period for each clip.
   USD_API
-  bool GetClipTemplateActiveOffset(double *clipTemplateActiveOffset,
-                                   const std::string &clipSet) const;
+  bool GetClipTemplateActiveOffset(double *clipTemplateActiveOffset, const std::string &clipSet) const;
 
   /// \overload
   /// This function operates on the default clip set.
@@ -582,7 +578,7 @@ class UsdClipsAPI : public UsdAPISchemaBase {
 /// \hideinitializer
 #define USDCLIPS_INFO_KEYS \
   (active)(assetPaths)( \
-      interpolateMissingClipValues)(manifestAssetPath)(primPath)(templateAssetPath)(templateEndTime)(templateStartTime)(templateStride)(templateActiveOffset)(times)
+    interpolateMissingClipValues)(manifestAssetPath)(primPath)(templateAssetPath)(templateEndTime)(templateStartTime)(templateStride)(templateActiveOffset)(times)
 
 /// \anchor UsdClipsAPIInfoKeys
 ///

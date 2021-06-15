@@ -239,8 +239,7 @@ class UsdMediaSpatialAudio : public UsdGeomXformable {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDMEDIA_API
-  UsdAttribute CreateFilePathAttr(VtValue const &defaultValue = VtValue(),
-                                  bool writeSparsely          = false) const;
+  UsdAttribute CreateFilePathAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -275,7 +274,7 @@ class UsdMediaSpatialAudio : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDMEDIA_API
   UsdAttribute CreateAuralModeAttr(VtValue const &defaultValue = VtValue(),
-                                   bool writeSparsely          = false) const;
+                                   bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -318,7 +317,7 @@ class UsdMediaSpatialAudio : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDMEDIA_API
   UsdAttribute CreatePlaybackModeAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -350,7 +349,7 @@ class UsdMediaSpatialAudio : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDMEDIA_API
   UsdAttribute CreateStartTimeAttr(VtValue const &defaultValue = VtValue(),
-                                   bool writeSparsely          = false) const;
+                                   bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -384,8 +383,7 @@ class UsdMediaSpatialAudio : public UsdGeomXformable {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDMEDIA_API
-  UsdAttribute CreateEndTimeAttr(VtValue const &defaultValue = VtValue(),
-                                 bool writeSparsely          = false) const;
+  UsdAttribute CreateEndTimeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -415,7 +413,7 @@ class UsdMediaSpatialAudio : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDMEDIA_API
   UsdAttribute CreateMediaOffsetAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -439,8 +437,7 @@ class UsdMediaSpatialAudio : public UsdGeomXformable {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDMEDIA_API
-  UsdAttribute CreateGainAttr(VtValue const &defaultValue = VtValue(),
-                              bool writeSparsely          = false) const;
+  UsdAttribute CreateGainAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

@@ -140,8 +140,7 @@ UsdAttribute UsdVolField3DAsset::CreateFieldPurposeAttr(VtValue const &defaultVa
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -155,11 +154,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdVolField3DAsset::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdVolTokens->fieldDataType,
-      UsdVolTokens->fieldPurpose,
+    UsdVolTokens->fieldDataType,
+    UsdVolTokens->fieldPurpose,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdVolFieldAsset::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdVolFieldAsset::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

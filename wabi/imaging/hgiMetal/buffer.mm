@@ -39,9 +39,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiMetalBuffer::HgiMetalBuffer(HgiMetal *hgi, HgiBufferDesc const &desc)
-    : HgiBuffer(desc),
-      _bufferId(nil)
+HgiMetalBuffer::HgiMetalBuffer(HgiMetal *hgi, HgiBufferDesc const &desc) : HgiBuffer(desc), _bufferId(nil)
 {
 
   if (desc.byteSize == 0) {

@@ -30,7 +30,7 @@
 WABI_NAMESPACE_BEGIN
 
 HdPhBufferArrayRange::HdPhBufferArrayRange(HdPhResourceRegistry *resourceRegistry)
-    : _resourceRegistry(resourceRegistry)
+  : _resourceRegistry(resourceRegistry)
 {}
 
 HdPhBufferArrayRange::~HdPhBufferArrayRange()

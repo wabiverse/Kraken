@@ -66,8 +66,7 @@ void SdfLayerStateDelegateBase::SetFieldDictValueByKey(const SdfPath &path,
                                                        const VtValue *oldValue)
 {
   _OnSetFieldDictValueByKey(path, field, keyPath, value);
-  _layer->_PrimSetFieldDictValueByKey(
-      path, field, keyPath, value, oldValue, /* useDelegate = */ false);
+  _layer->_PrimSetFieldDictValueByKey(path, field, keyPath, value, oldValue, /* useDelegate = */ false);
 }
 
 void SdfLayerStateDelegateBase::SetFieldDictValueByKey(const SdfPath &path,
@@ -77,13 +76,10 @@ void SdfLayerStateDelegateBase::SetFieldDictValueByKey(const SdfPath &path,
                                                        const VtValue *oldValue)
 {
   _OnSetFieldDictValueByKey(path, field, keyPath, value);
-  _layer->_PrimSetFieldDictValueByKey(
-      path, field, keyPath, value, oldValue, /* useDelegate = */ false);
+  _layer->_PrimSetFieldDictValueByKey(path, field, keyPath, value, oldValue, /* useDelegate = */ false);
 }
 
-void SdfLayerStateDelegateBase::SetTimeSample(const SdfPath &path,
-                                              double time,
-                                              const VtValue &value)
+void SdfLayerStateDelegateBase::SetTimeSample(const SdfPath &path, double time, const VtValue &value)
 {
   _OnSetTimeSample(path, time, value);
   _layer->_PrimSetTimeSample(path, time, value, /* useDelegate = */ false);
@@ -225,9 +221,7 @@ void SdfSimpleLayerStateDelegate::_OnSetFieldDictValueByKey(const SdfPath &path,
   _dirty = true;
 }
 
-void SdfSimpleLayerStateDelegate::_OnSetTimeSample(const SdfPath &path,
-                                                   double time,
-                                                   const VtValue &value)
+void SdfSimpleLayerStateDelegate::_OnSetTimeSample(const SdfPath &path, double time, const VtValue &value)
 {
   _dirty = true;
 }
@@ -239,9 +233,7 @@ void SdfSimpleLayerStateDelegate::_OnSetTimeSample(const SdfPath &path,
   _dirty = true;
 }
 
-void SdfSimpleLayerStateDelegate::_OnCreateSpec(const SdfPath &path,
-                                                SdfSpecType specType,
-                                                bool inert)
+void SdfSimpleLayerStateDelegate::_OnCreateSpec(const SdfPath &path, SdfSpecType specType, bool inert)
 {
   _dirty = true;
 }

@@ -28,7 +28,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdBufferArrayRange::HdBufferArrayRange()  = default;
+HdBufferArrayRange::HdBufferArrayRange() = default;
 HdBufferArrayRange::~HdBufferArrayRange() = default;
 
 std::ostream &operator<<(std::ostream &out, const HdBufferArrayRange &self)
@@ -71,8 +71,8 @@ void HdBufferArrayRangeContainer::Resize(int size)
 
   if (size < 0) {
     TF_CODING_ERROR(
-        "Size negative in "
-        "HdBufferArrayRangeContainer::Resize()");
+      "Size negative in "
+      "HdBufferArrayRangeContainer::Resize()");
     return;
   }
 

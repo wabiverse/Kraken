@@ -66,7 +66,7 @@ class SdfRelationshipSpec : public SdfPropertySpec {
   SDF_API
   static SdfRelationshipSpecHandle New(const SdfPrimSpecHandle &owner,
                                        const std::string &name,
-                                       bool custom                = true,
+                                       bool custom = true,
                                        SdfVariability variability = SdfVariabilityUniform);
 
   /// @}

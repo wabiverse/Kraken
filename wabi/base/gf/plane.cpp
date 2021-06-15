@@ -54,13 +54,13 @@ TF_REGISTRY_FUNCTION(TfType)
 
 void GfPlane::Set(const GfVec3d &normal, const GfVec3d &point)
 {
-  _normal   = normal.GetNormalized();
+  _normal = normal.GetNormalized();
   _distance = GfDot(_normal, point);
 }
 
 void GfPlane::Set(const GfVec3d &p0, const GfVec3d &p1, const GfVec3d &p2)
 {
-  _normal   = GfCross(p1 - p0, p2 - p0).GetNormalized();
+  _normal = GfCross(p1 - p0, p2 - p0).GetNormalized();
   _distance = GfDot(_normal, p0);
 }
 
@@ -206,9 +206,9 @@ bool GfFitPlaneToPoints(const std::vector<GfVec3d> &points, GfPlane *fitPlane)
     // X = {{b}, {c}}
     const GfVec2d atb1(-xy, -xz);
     const GfVec2d leastSquaresEstimate = ata1.GetInverse() * atb1;
-    equation[0]                        = 1.0;
-    equation[1]                        = leastSquaresEstimate[0];
-    equation[2]                        = leastSquaresEstimate[1];
+    equation[0] = 1.0;
+    equation[1] = leastSquaresEstimate[0];
+    equation[2] = leastSquaresEstimate[1];
   }
   else if (det2 > 0.0 && det2 > det3) {
     // A^T B = {{\sum (x_i) (-y_i)},
@@ -216,9 +216,9 @@ bool GfFitPlaneToPoints(const std::vector<GfVec3d> &points, GfPlane *fitPlane)
     // X = {{a}, {c}}
     const GfVec2d atb2(-xy, -yz);
     const GfVec2d leastSquaresEstimate = ata2.GetInverse() * atb2;
-    equation[0]                        = leastSquaresEstimate[0];
-    equation[1]                        = 1.0;
-    equation[2]                        = leastSquaresEstimate[1];
+    equation[0] = leastSquaresEstimate[0];
+    equation[1] = 1.0;
+    equation[2] = leastSquaresEstimate[1];
   }
   else if (det3 > 0.0) {
     // A^T B = {{\sum (x_i) (z_i)},
@@ -226,9 +226,9 @@ bool GfFitPlaneToPoints(const std::vector<GfVec3d> &points, GfPlane *fitPlane)
     // X = {{a}, {b}}
     const GfVec2d atb3(-xz, -yz);
     const GfVec2d leastSquaresEstimate = ata3.GetInverse() * atb3;
-    equation[0]                        = leastSquaresEstimate[0];
-    equation[1]                        = leastSquaresEstimate[1];
-    equation[2]                        = 1.0;
+    equation[0] = leastSquaresEstimate[0];
+    equation[1] = leastSquaresEstimate[1];
+    equation[2] = 1.0;
   }
   else {
     // In all cases, det(A^T A) is zero. This happens when the points are

@@ -58,9 +58,8 @@ TfPyExceptionState Tf_PyFetchPythonExceptionState()
 {
   PyObject *excType, *excValue, *excTrace;
   PyErr_Fetch(&excType, &excValue, &excTrace);
-  return TfPyExceptionState(handle<>(allow_null(excType)),
-                            handle<>(allow_null(excValue)),
-                            handle<>(allow_null(excTrace)));
+  return TfPyExceptionState(
+    handle<>(allow_null(excType)), handle<>(allow_null(excValue)), handle<>(allow_null(excTrace)));
 }
 
 void Tf_PyRestorePythonExceptionState(TfPyExceptionState state)

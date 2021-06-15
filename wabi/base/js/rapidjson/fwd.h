@@ -77,8 +77,7 @@ struct MemoryStream;
 
 template<typename Encoding, typename Derived> struct BaseReaderHandler;
 
-template<typename SourceEncoding, typename TargetEncoding, typename StackAllocator>
-class GenericReader;
+template<typename SourceEncoding, typename TargetEncoding, typename StackAllocator> class GenericReader;
 
 typedef GenericReader<UTF8<char>, UTF8<char>, CrtAllocator> Reader;
 
@@ -135,7 +134,7 @@ template<typename SchemaDocumentType, typename OutputHandler, typename StateAllo
 class GenericSchemaValidator;
 
 typedef GenericSchemaValidator<SchemaDocument, BaseReaderHandler<UTF8<char>, void>, CrtAllocator>
-    SchemaValidator;
+  SchemaValidator;
 
 RAPIDJSON_NAMESPACE_END
 

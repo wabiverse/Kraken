@@ -151,8 +151,7 @@ UsdRelationship UsdRenderSettings::CreateProductsRel() const
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -166,11 +165,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRenderSettings::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRenderTokens->includedPurposes,
-      UsdRenderTokens->materialBindingPurposes,
+    UsdRenderTokens->includedPurposes,
+    UsdRenderTokens->materialBindingPurposes,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdRenderSettingsBase::GetSchemaAttributeNames(true), localNames);
+    UsdRenderSettingsBase::GetSchemaAttributeNames(true), localNames);
 
   if (includeInherited)
     return allNames;

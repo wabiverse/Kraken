@@ -106,9 +106,8 @@ class ArResolver {
   /// If \p anchorAssetPath is not empty, it is the resolved asset path
   /// that \p assetPath should be anchored to if it is a relative path.
   AR_API
-  std::string CreateIdentifierForNewAsset(
-      const std::string &assetPath,
-      const ArResolvedPath &anchorAssetPath = ArResolvedPath());
+  std::string CreateIdentifierForNewAsset(const std::string &assetPath,
+                                          const ArResolvedPath &anchorAssetPath = ArResolvedPath());
 
   /// @}
 
@@ -186,8 +185,7 @@ class ArResolver {
   /// If no resolver is registered for \p uriScheme, returns an empty
   /// ArResolverContext.
   AR_API
-  ArResolverContext CreateContextFromString(const std::string &uriScheme,
-                                            const std::string &contextStr);
+  ArResolverContext CreateContextFromString(const std::string &uriScheme, const std::string &contextStr);
 
   /// Return an ArResolverContext created by combining the ArResolverContext
   /// objects created from the given \p contextStrs.
@@ -215,7 +213,7 @@ class ArResolver {
   /// \p contextStrs, that entry will be ignored.
   AR_API
   ArResolverContext CreateContextFromStrings(
-      const std::vector<std::pair<std::string, std::string>> &contextStrs);
+    const std::vector<std::pair<std::string, std::string>> &contextStrs);
 
   /// Refresh any caches associated with the given context.
   AR_API
@@ -267,8 +265,7 @@ class ArResolver {
   /// This timestamp may be equality compared to determine if an asset
   /// has been modified.
   AR_API
-  VtValue GetModificationTimestamp(const std::string &assetPath,
-                                   const ArResolvedPath &resolvedPath);
+  VtValue GetModificationTimestamp(const std::string &assetPath, const ArResolvedPath &resolvedPath);
 
   /// Returns an ArAsset object for the asset located at \p resolvedPath.
   /// Returns an invalid std::shared_ptr if object could not be created.
@@ -397,8 +394,7 @@ class ArResolver {
   ///
   /// \deprecated Planned for removal in favor of CreateIdentifier.
   AR_API
-  virtual std::string AnchorRelativePath(const std::string &anchorPath,
-                                         const std::string &path) = 0;
+  virtual std::string AnchorRelativePath(const std::string &anchorPath, const std::string &path) = 0;
 
   /// Returns true if the given path is a relative path.
   /// \deprecated
@@ -575,8 +571,7 @@ class ArResolver {
   /// resolved path computed for the given \p assetPath.
   /// The default implementation returns a default-constructed ArAssetInfo.
   AR_API
-  virtual ArAssetInfo _GetAssetInfo(const std::string &assetPath,
-                                    const ArResolvedPath &resolvedPath);
+  virtual ArAssetInfo _GetAssetInfo(const std::string &assetPath, const ArResolvedPath &resolvedPath);
 
   /// Return a value representing the last time the asset at the given
   /// \p assetPath was modified. \p resolvedPath is the resolved path

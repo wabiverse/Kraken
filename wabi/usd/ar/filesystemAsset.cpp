@@ -56,7 +56,7 @@ std::shared_ptr<const char> ArFilesystemAsset::GetBuffer()
 
   struct _Deleter {
     explicit _Deleter(ArchConstFileMapping &&mapping)
-        : _mapping(new ArchConstFileMapping(std::move(mapping)))
+      : _mapping(new ArchConstFileMapping(std::move(mapping)))
     {}
 
     void operator()(const char *b)

@@ -54,28 +54,20 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateSurfaceAttr(UsdRiMaterialAPI &self,
-                                       object defaultVal,
-                                       bool writeSparsely)
+static UsdAttribute _CreateSurfaceAttr(UsdRiMaterialAPI &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateSurfaceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                writeSparsely);
+  return self.CreateSurfaceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
-static UsdAttribute _CreateDisplacementAttr(UsdRiMaterialAPI &self,
-                                            object defaultVal,
-                                            bool writeSparsely)
+static UsdAttribute _CreateDisplacementAttr(UsdRiMaterialAPI &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateDisplacementAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
                                      writeSparsely);
 }
 
-static UsdAttribute _CreateVolumeAttr(UsdRiMaterialAPI &self,
-                                      object defaultVal,
-                                      bool writeSparsely)
+static UsdAttribute _CreateVolumeAttr(UsdRiMaterialAPI &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateVolumeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                               writeSparsely);
+  return self.CreateVolumeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
 static std::string _Repr(const UsdRiMaterialAPI &self)
@@ -93,44 +85,41 @@ void wrapUsdRiMaterialAPI()
   class_<This, bases<UsdAPISchemaBase>> cls("MaterialAPI");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Apply", &This::Apply, (arg("prim")))
-      .staticmethod("Apply")
+    .def("Apply", &This::Apply, (arg("prim")))
+    .staticmethod("Apply")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetSurfaceAttr", &This::GetSurfaceAttr)
-      .def("CreateSurfaceAttr",
-           &_CreateSurfaceAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetSurfaceAttr", &This::GetSurfaceAttr)
+    .def("CreateSurfaceAttr",
+         &_CreateSurfaceAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetDisplacementAttr", &This::GetDisplacementAttr)
-      .def("CreateDisplacementAttr",
-           &_CreateDisplacementAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetDisplacementAttr", &This::GetDisplacementAttr)
+    .def("CreateDisplacementAttr",
+         &_CreateDisplacementAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetVolumeAttr", &This::GetVolumeAttr)
-      .def("CreateVolumeAttr",
-           &_CreateVolumeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetVolumeAttr", &This::GetVolumeAttr)
+    .def(
+      "CreateVolumeAttr", &_CreateVolumeAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -160,24 +149,24 @@ WRAP_CUSTOM
 {
   typedef UsdRiMaterialAPI This;
   _class
-      .def(init<UsdShadeMaterial>(arg("material")))
+    .def(init<UsdShadeMaterial>(arg("material")))
 
-      .def("GetSurface", &This::GetSurface, (arg("ignoreBaseMaterial") = false))
-      .def("GetDisplacement", &This::GetDisplacement, (arg("ignoreBaseMaterial") = false))
-      .def("GetVolume", &This::GetVolume, (arg("ignoreBaseMaterial") = false))
+    .def("GetSurface", &This::GetSurface, (arg("ignoreBaseMaterial") = false))
+    .def("GetDisplacement", &This::GetDisplacement, (arg("ignoreBaseMaterial") = false))
+    .def("GetVolume", &This::GetVolume, (arg("ignoreBaseMaterial") = false))
 
-      .def("GetSurfaceOutput", &This::GetSurfaceOutput)
-      .def("GetDisplacementOutput", &This::GetDisplacementOutput)
-      .def("GetVolumeOutput", &This::GetVolumeOutput)
+    .def("GetSurfaceOutput", &This::GetSurfaceOutput)
+    .def("GetDisplacementOutput", &This::GetDisplacementOutput)
+    .def("GetVolumeOutput", &This::GetVolumeOutput)
 
-      .def("SetSurfaceSource", &This::SetSurfaceSource)
-      .def("SetDisplacementSource", &This::SetDisplacementSource)
-      .def("SetVolumeSource", &This::SetVolumeSource)
+    .def("SetSurfaceSource", &This::SetSurfaceSource)
+    .def("SetDisplacementSource", &This::SetDisplacementSource)
+    .def("SetVolumeSource", &This::SetVolumeSource)
 
-      .def("ComputeInterfaceInputConsumersMap",
-           &This::ComputeInterfaceInputConsumersMap,
-           (arg("computeTransitiveConsumers") = false),
-           return_value_policy<TfPyMapToDictionary>());
+    .def("ComputeInterfaceInputConsumersMap",
+         &This::ComputeInterfaceInputConsumersMap,
+         (arg("computeTransitiveConsumers") = false),
+         return_value_policy<TfPyMapToDictionary>());
 }
 
 }  // anonymous namespace

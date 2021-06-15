@@ -74,9 +74,9 @@ class HgiMetalShaderFunction final : public HgiShaderFunction {
   HgiMetalShaderFunction(HgiMetal *hgi, HgiShaderFunctionDesc const &desc);
 
  private:
-  HgiMetalShaderFunction()        = delete;
+  HgiMetalShaderFunction() = delete;
   HgiMetalShaderFunction &operator=(const HgiMetalShaderFunction &) = delete;
-  HgiMetalShaderFunction(const HgiMetalShaderFunction &)            = delete;
+  HgiMetalShaderFunction(const HgiMetalShaderFunction &) = delete;
 
  private:
   std::string _errors;

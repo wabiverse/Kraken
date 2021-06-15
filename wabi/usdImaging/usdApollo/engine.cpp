@@ -62,9 +62,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(USDAPOLLO_ENGINE_DEBUG_SCENE_DELEGATE_ID,
-                      "/",
-                      "Default usdImaging scene delegate id");
+TF_DEFINE_ENV_SETTING(USDAPOLLO_ENGINE_DEBUG_SCENE_DELEGATE_ID, "/", "Default usdImaging scene delegate id");
 
 namespace {
 
@@ -80,8 +78,7 @@ bool _GetHydraEnabledEnvVar()
 
 SdfPath const &_GetUsdImagingDelegateId()
 {
-  static SdfPath const delegateId = SdfPath(
-      TfGetEnvSetting(USDAPOLLO_ENGINE_DEBUG_SCENE_DELEGATE_ID));
+  static SdfPath const delegateId = SdfPath(TfGetEnvSetting(USDAPOLLO_ENGINE_DEBUG_SCENE_DELEGATE_ID));
   return delegateId;
 }
 
@@ -118,7 +115,7 @@ bool UsdApolloEngine::IsHydraEnabled()
  * ---------------------------------------------------------------------------- */
 
 UsdApolloEngine::UsdApolloEngine(const HdDriver &driver)
-    : UsdApolloEngine(SdfPath::AbsoluteRootPath(), {}, {}, _GetUsdImagingDelegateId(), driver)
+  : UsdApolloEngine(SdfPath::AbsoluteRootPath(), {}, {}, _GetUsdImagingDelegateId(), driver)
 {}
 
 UsdApolloEngine::UsdApolloEngine(const SdfPath &rootPath,
@@ -126,15 +123,15 @@ UsdApolloEngine::UsdApolloEngine(const SdfPath &rootPath,
                                  const SdfPathVector &invisedPaths,
                                  const SdfPath &sceneDelegateID,
                                  const HdDriver &driver)
-    : m_hgi(),
-      m_hgiDriver(driver),
-      m_sceneDelegateId(sceneDelegateID),
-      m_selTracker(std::make_shared<HdxSelectionTracker>()),
-      m_selectionColor(1.0f, 1.0f, 0.0f, 1.0f),
-      m_rootPath(rootPath),
-      m_excludedPrimPaths(excludedPaths),
-      m_invisedPrimPaths(invisedPaths),
-      m_isPopulated(false)
+  : m_hgi(),
+    m_hgiDriver(driver),
+    m_sceneDelegateId(sceneDelegateID),
+    m_selTracker(std::make_shared<HdxSelectionTracker>()),
+    m_selectionColor(1.0f, 1.0f, 0.0f, 1.0f),
+    m_rootPath(rootPath),
+    m_excludedPrimPaths(excludedPaths),
+    m_invisedPrimPaths(invisedPaths),
+    m_isPopulated(false)
 {
   if (!SetRendererPlugin(TfToken("HdPhoenixRendererPlugin"))) {
     TF_CODING_ERROR("No renderer plugins found! Check before creation.");
@@ -145,10 +142,10 @@ void UsdApolloEngine::APOLLO_DestroyHydraObjects()
 {
   /**
    * Destroy objects in opposite order of construction. */
-  m_engine         = nullptr;
+  m_engine = nullptr;
   m_taskController = nullptr;
-  m_sceneDelegate  = nullptr;
-  m_renderIndex    = nullptr;
+  m_sceneDelegate = nullptr;
+  m_renderIndex = nullptr;
   m_renderDelegate = nullptr;
 }
 
@@ -240,7 +237,7 @@ void UsdApolloEngine::Render(const UsdPrim &root, const UsdApolloRenderParams &p
   /**
    * XXX: (UsdImagingPaths) Is it correct to map
    * USD root path directly to the cachePath here? */
-  const SdfPath cachePath   = root.GetPath();
+  const SdfPath cachePath = root.GetPath();
   const SdfPathVector paths = {m_sceneDelegate->ConvertCachePathToIndexPath(cachePath)};
 
   RenderBatch(paths, params);
@@ -281,8 +278,7 @@ void UsdApolloEngine::SetFraming(CameraUtilFraming const &framing)
   }
 }
 
-void UsdApolloEngine::SetOverrideWindowPolicy(
-    const std::pair<bool, CameraUtilConformWindowPolicy> &policy)
+void UsdApolloEngine::SetOverrideWindowPolicy(const std::pair<bool, CameraUtilConformWindowPolicy> &policy)
 {
   if (TF_VERIFY(m_taskController)) {
     m_taskController->SetOverrideWindowPolicy(policy);
@@ -319,8 +315,7 @@ void UsdApolloEngine::SetCameraPath(SdfPath const &id)
   m_sceneDelegate->SetCameraForSampling(id);
 }
 
-void UsdApolloEngine::SetCameraState(const GfMatrix4d &viewMatrix,
-                                     const GfMatrix4d &projectionMatrix)
+void UsdApolloEngine::SetCameraState(const GfMatrix4d &viewMatrix, const GfMatrix4d &projectionMatrix)
 {
   TF_VERIFY(m_taskController);
   m_taskController->SetFreeCameraMatrices(viewMatrix, projectionMatrix);
@@ -467,7 +462,7 @@ bool UsdApolloEngine::TestIntersection(const GfMatrix4d &viewMatrix,
    * XXX: (UsdImagingPaths) This is incorrect..."Root" points to a USD subtree,
    * but the subtree in the hydra namespace might be very different (e.g. for
    * native instancing). We need a translation step. */
-  const SdfPath cachePath   = root.GetPath();
+  const SdfPath cachePath = root.GetPath();
   const SdfPathVector roots = {m_sceneDelegate->ConvertCachePathToIndexPath(cachePath)};
   APOLLO_UpdateHydraCollection(&m_intersectCollection, roots, params);
 
@@ -475,12 +470,12 @@ bool UsdApolloEngine::TestIntersection(const GfMatrix4d &viewMatrix,
 
   HdxPickHitVector allHits;
   HdxPickTaskContextParams pickParams;
-  pickParams.resolveMode      = HdxPickTokens->resolveNearestToCenter;
-  pickParams.viewMatrix       = viewMatrix;
+  pickParams.resolveMode = HdxPickTokens->resolveNearestToCenter;
+  pickParams.viewMatrix = viewMatrix;
   pickParams.projectionMatrix = projectionMatrix;
-  pickParams.clipPlanes       = params.clipPlanes;
-  pickParams.collection       = m_intersectCollection;
-  pickParams.outHits          = &allHits;
+  pickParams.clipPlanes = params.clipPlanes;
+  pickParams.collection = m_intersectCollection;
+  pickParams.outHits = &allHits;
   const VtValue vtPickParams(pickParams);
 
   m_engine->SetTaskContextData(HdxPickTokens->pickParams, vtPickParams);
@@ -503,10 +498,9 @@ bool UsdApolloEngine::TestIntersection(const GfMatrix4d &viewMatrix,
     *outHitNormal = hit.worldSpaceHitNormal;
   }
 
-  hit.objectId = m_sceneDelegate->GetScenePrimPath(
-      hit.objectId, hit.instanceIndex, outInstancerContext);
+  hit.objectId = m_sceneDelegate->GetScenePrimPath(hit.objectId, hit.instanceIndex, outInstancerContext);
   hit.instancerId =
-      m_sceneDelegate->ConvertIndexPathToCachePath(hit.instancerId).GetAbsoluteRootOrPrimPath();
+    m_sceneDelegate->ConvertIndexPathToCachePath(hit.instancerId).GetAbsoluteRootOrPrimPath();
 
   if (outHitPrimPath) {
     *outHitPrimPath = hit.objectId;
@@ -530,21 +524,19 @@ bool UsdApolloEngine::DecodeIntersection(unsigned char const primIdColor[4],
 {
   TF_VERIFY(m_sceneDelegate);
 
-  const int primId      = HdxPickTask::DecodeIDRenderColor(primIdColor);
+  const int primId = HdxPickTask::DecodeIDRenderColor(primIdColor);
   const int instanceIdx = HdxPickTask::DecodeIDRenderColor(instanceIdColor);
-  SdfPath primPath      = m_sceneDelegate->GetRenderIndex().GetRprimPathFromPrimId(primId);
+  SdfPath primPath = m_sceneDelegate->GetRenderIndex().GetRprimPathFromPrimId(primId);
 
   if (primPath.IsEmpty()) {
     return false;
   }
 
   SdfPath delegateId, instancerId;
-  m_sceneDelegate->GetRenderIndex().GetSceneDelegateAndInstancerIds(
-      primPath, &delegateId, &instancerId);
+  m_sceneDelegate->GetRenderIndex().GetSceneDelegateAndInstancerIds(primPath, &delegateId, &instancerId);
 
   primPath = m_sceneDelegate->GetScenePrimPath(primPath, instanceIdx, outInstancerContext);
-  instancerId =
-      m_sceneDelegate->ConvertIndexPathToCachePath(instancerId).GetAbsoluteRootOrPrimPath();
+  instancerId = m_sceneDelegate->ConvertIndexPathToCachePath(instancerId).GetAbsoluteRootOrPrimPath();
 
   if (outHitPrimPath) {
     *outHitPrimPath = primPath;
@@ -610,8 +602,8 @@ void UsdApolloEngine::APOLLO_InitializeHgiIfNecessary()
    * that ideally all use the same HdDriver and Hgi to share
    * GPU resources. */
   if (m_hgiDriver.driver.IsEmpty()) {
-    m_hgi              = Hgi::CreatePlatformDefaultHgi();
-    m_hgiDriver.name   = HgiTokens->renderDriver;
+    m_hgi = Hgi::CreatePlatformDefaultHgi();
+    m_hgiDriver.name = HgiTokens->renderDriver;
     m_hgiDriver.driver = VtValue(m_hgi.get());
   }
 }
@@ -643,13 +635,12 @@ bool UsdApolloEngine::SetRendererPlugin(TfToken const &id)
 }
 
 void UsdApolloEngine::APOLLO_SetRenderDelegateAndRestoreState(
-    HdPluginRenderDelegateUniqueHandle &&renderDelegate)
+  HdPluginRenderDelegateUniqueHandle &&renderDelegate)
 {
   /**
    * Pull old delegate/task controller state. */
-  const GfMatrix4d rootTransform = m_sceneDelegate ? m_sceneDelegate->GetRootTransform() :
-                                                     GfMatrix4d(1.0);
-  const bool isVisible           = m_sceneDelegate ? m_sceneDelegate->GetRootVisibility() : true;
+  const GfMatrix4d rootTransform = m_sceneDelegate ? m_sceneDelegate->GetRootTransform() : GfMatrix4d(1.0);
+  const bool isVisible = m_sceneDelegate ? m_sceneDelegate->GetRootVisibility() : true;
   HdSelectionSharedPtr const selection = APOLLO_GetSelection();
 
   APOLLO_SetRenderDelegate(std::move(renderDelegate));
@@ -661,7 +652,7 @@ void UsdApolloEngine::APOLLO_SetRenderDelegateAndRestoreState(
 }
 
 SdfPath UsdApolloEngine::APOLLO_ComputeControllerPath(
-    const HdPluginRenderDelegateUniqueHandle &renderDelegate)
+  const HdPluginRenderDelegateUniqueHandle &renderDelegate)
 {
   const std::string pluginId = TfMakeValidIdentifier(renderDelegate.GetPluginId().GetText());
   const TfToken rendererName(TfStringPrintf("_UsdImaging_%s_%p", pluginId.c_str(), this));
@@ -697,8 +688,8 @@ void UsdApolloEngine::APOLLO_SetRenderDelegate(HdPluginRenderDelegateUniqueHandl
 
   /**
    * Create the new task controller. */
-  m_taskController = std::make_unique<HdxTaskController>(
-      m_renderIndex.get(), APOLLO_ComputeControllerPath(m_renderDelegate));
+  m_taskController = std::make_unique<HdxTaskController>(m_renderIndex.get(),
+                                                         APOLLO_ComputeControllerPath(m_renderDelegate));
 
   /**
    * The task context holds on to resources in the render
@@ -718,10 +709,8 @@ TfTokenVector UsdApolloEngine::GetRendererAovs() const
 
   if (m_renderIndex->IsBprimTypeSupported(HdPrimTypeTokens->renderBuffer)) {
 
-    static const TfToken candidates[] = {HdAovTokens->primId,
-                                         HdAovTokens->depth,
-                                         HdAovTokens->normal,
-                                         HdAovTokensMakePrimvar(TfToken("st"))};
+    static const TfToken candidates[] = {
+      HdAovTokens->primId, HdAovTokens->depth, HdAovTokens->normal, HdAovTokensMakePrimvar(TfToken("st"))};
 
     TfTokenVector aovs = {HdAovTokens->color};
 
@@ -763,14 +752,13 @@ UsdApolloRendererSettingsList UsdApolloEngine::GetRendererSettingsList() const
 {
   TF_VERIFY(m_renderDelegate);
 
-  const HdRenderSettingDescriptorList descriptors =
-      m_renderDelegate->GetRenderSettingDescriptors();
+  const HdRenderSettingDescriptorList descriptors = m_renderDelegate->GetRenderSettingDescriptors();
   UsdApolloRendererSettingsList ret;
 
   for (auto const &desc : descriptors) {
     UsdApolloRendererSetting r;
-    r.key      = desc.key;
-    r.name     = desc.name;
+    r.key = desc.key;
+    r.name = desc.name;
     r.defValue = desc.defaultValue;
 
     /**
@@ -846,8 +834,7 @@ HdCommandDescriptors UsdApolloEngine::GetRendererCommandDescriptors() const
   return m_renderDelegate->GetCommandDescriptors();
 }
 
-bool UsdApolloEngine::InvokeRendererCommand(const TfToken &command,
-                                            const HdCommandArgs &args) const
+bool UsdApolloEngine::InvokeRendererCommand(const TfToken &command, const HdCommandArgs &args) const
 {
   if (ARCH_UNLIKELY(!m_renderDelegate)) {
     return false;
@@ -954,8 +941,7 @@ HdRenderIndex *UsdApolloEngine::APOLLO_GetRenderIndex() const
   return m_renderIndex.get();
 }
 
-void UsdApolloEngine::APOLLO_Execute(const UsdApolloRenderParams &params,
-                                     HdTaskSharedPtrVector tasks)
+void UsdApolloEngine::APOLLO_Execute(const UsdApolloRenderParams &params, HdTaskSharedPtrVector tasks)
 {
   TF_VERIFY(m_sceneDelegate);
 
@@ -1164,7 +1150,7 @@ bool UsdApolloEngine::APOLLO_UpdateHydraCollection(HdRprimCollection *collection
   /**
    * Choose repr. */
   HdReprSelector reprSelector = HdReprSelector(HdReprTokens->smoothHull);
-  const bool refined          = params.complexity > 1.0;
+  const bool refined = params.complexity > 1.0;
 
   if (params.drawMode == UsdApolloDrawMode::DRAW_POINTS) {
     reprSelector = HdReprSelector(HdReprTokens->points);
@@ -1180,8 +1166,7 @@ bool UsdApolloEngine::APOLLO_UpdateHydraCollection(HdRprimCollection *collection
   else if (params.drawMode == UsdApolloDrawMode::DRAW_WIREFRAME_ON_SURFACE) {
     /**
      * Wireframe on surface. */
-    reprSelector = HdReprSelector(refined ? HdReprTokens->refinedWireOnSurf :
-                                            HdReprTokens->wireOnSurf);
+    reprSelector = HdReprSelector(refined ? HdReprTokens->refinedWireOnSurf : HdReprTokens->wireOnSurf);
   }
 
   else if (params.drawMode == UsdApolloDrawMode::DRAW_WIREFRAME) {
@@ -1243,17 +1228,17 @@ bool UsdApolloEngine::APOLLO_UpdateHydraCollection(HdRprimCollection *collection
 
 /* static */
 HdxRenderTaskParams UsdApolloEngine::APOLLO_MakeHydraUsdApolloRenderParams(
-    UsdApolloRenderParams const &renderParams)
+  UsdApolloRenderParams const &renderParams)
 {
   /**
    * Note this table is dangerous and making changes to the order of the
    * enums in UsdApolloCullStyle, will affect this with no compiler help. */
   static const HdCullStyle USD_2_HD_CULL_STYLE[] = {
-      HdCullStyleDontCare,              /** <- Cull No Opinion (unused)            */
-      HdCullStyleNothing,               /** <- CULL_STYLE_NOTHING,                 */
-      HdCullStyleBack,                  /** <- CULL_STYLE_BACK,                    */
-      HdCullStyleFront,                 /** <- CULL_STYLE_FRONT,                   */
-      HdCullStyleBackUnlessDoubleSided, /** <- CULL_STYLE_BACK_UNLESS_DOUBLE_SIDED */
+    HdCullStyleDontCare,              /** <- Cull No Opinion (unused)            */
+    HdCullStyleNothing,               /** <- CULL_STYLE_NOTHING,                 */
+    HdCullStyleBack,                  /** <- CULL_STYLE_BACK,                    */
+    HdCullStyleFront,                 /** <- CULL_STYLE_FRONT,                   */
+    HdCullStyleBackUnlessDoubleSided, /** <- CULL_STYLE_BACK_UNLESS_DOUBLE_SIDED */
   };
   static_assert(((sizeof(USD_2_HD_CULL_STYLE) / sizeof(USD_2_HD_CULL_STYLE[0])) ==
                  (size_t)UsdApolloCullStyle::CULL_STYLE_COUNT),
@@ -1261,7 +1246,7 @@ HdxRenderTaskParams UsdApolloEngine::APOLLO_MakeHydraUsdApolloRenderParams(
 
   HdxRenderTaskParams params;
 
-  params.overrideColor  = renderParams.overrideColor;
+  params.overrideColor = renderParams.overrideColor;
   params.wireframeColor = renderParams.wireframeColor;
 
   if (renderParams.drawMode == UsdApolloDrawMode::DRAW_GEOM_ONLY ||
@@ -1272,10 +1257,10 @@ HdxRenderTaskParams UsdApolloEngine::APOLLO_MakeHydraUsdApolloRenderParams(
     params.enableLighting = renderParams.enableLighting && !renderParams.enableIdRender;
   }
 
-  params.enableIdRender      = renderParams.enableIdRender;
+  params.enableIdRender = renderParams.enableIdRender;
   params.depthBiasUseDefault = true;
-  params.depthFunc           = HdCmpFuncLess;
-  params.cullStyle           = USD_2_HD_CULL_STYLE[(size_t)renderParams.cullStyle];
+  params.depthFunc = HdCmpFuncLess;
+  params.cullStyle = USD_2_HD_CULL_STYLE[(size_t)renderParams.cullStyle];
 
   /**
    * Decrease the alpha threshold if we are
@@ -1288,7 +1273,7 @@ HdxRenderTaskParams UsdApolloEngine::APOLLO_MakeHydraUsdApolloRenderParams(
   }
 
   params.enableSceneMaterials = renderParams.enableSceneMaterials;
-  params.enableSceneLights    = renderParams.enableSceneLights;
+  params.enableSceneLights = renderParams.enableSceneLights;
 
   /**
    * We don't provide the following because task controller ignores them:
@@ -1339,8 +1324,7 @@ TfToken UsdApolloEngine::APOLLO_GetDefaultRendererPluginId()
     }
   }
 
-  TF_WARN("Failed to find default renderer with display name '%s'.",
-          defaultRendererDisplayName.c_str());
+  TF_WARN("Failed to find default renderer with display name '%s'.", defaultRendererDisplayName.c_str());
 
   return TfToken();
 }

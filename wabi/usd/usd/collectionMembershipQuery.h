@@ -126,8 +126,7 @@ class UsdCollectionMembershipQuery {
   /// Equality operator
   bool operator==(UsdCollectionMembershipQuery const &rhs) const
   {
-    return _hasExcludes == rhs._hasExcludes &&
-           _pathExpansionRuleMap == rhs._pathExpansionRuleMap &&
+    return _hasExcludes == rhs._hasExcludes && _pathExpansionRuleMap == rhs._pathExpansionRuleMap &&
            _includedCollections == rhs._includedCollections;
   }
 
@@ -185,9 +184,9 @@ class UsdCollectionMembershipQuery {
 /// The results depends on the load state of the UsdStage, \p stage.
 USD_API
 std::set<UsdObject> UsdComputeIncludedObjectsFromCollection(
-    const UsdCollectionMembershipQuery &query,
-    const UsdStageWeakPtr &stage,
-    const Usd_PrimFlagsPredicate &pred = UsdPrimDefaultPredicate);
+  const UsdCollectionMembershipQuery &query,
+  const UsdStageWeakPtr &stage,
+  const Usd_PrimFlagsPredicate &pred = UsdPrimDefaultPredicate);
 
 /// Returns all the paths that satisfy the predicate, \p pred in the
 /// collection represented by the UsdCollectionMembershipQuery object, \p
@@ -196,9 +195,9 @@ std::set<UsdObject> UsdComputeIncludedObjectsFromCollection(
 /// The result depends on the load state of the UsdStage, \p stage.
 USD_API
 SdfPathSet UsdComputeIncludedPathsFromCollection(
-    const UsdCollectionMembershipQuery &query,
-    const UsdStageWeakPtr &stage,
-    const Usd_PrimFlagsPredicate &pred = UsdPrimDefaultPredicate);
+  const UsdCollectionMembershipQuery &query,
+  const UsdStageWeakPtr &stage,
+  const Usd_PrimFlagsPredicate &pred = UsdPrimDefaultPredicate);
 
 WABI_NAMESPACE_END
 

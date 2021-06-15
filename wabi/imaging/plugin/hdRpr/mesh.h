@@ -54,10 +54,10 @@ class HdRprMesh final : public HdRprBaseRprim<HdMesh> {
 
  private:
   RprUsdMaterial const *GetFallbackMaterial(
-      HdSceneDelegate *sceneDelegate,
-      HdRprApi *rprApi,
-      HdDirtyBits dirtyBits,
-      std::map<HdInterpolation, HdPrimvarDescriptorVector> const &primvarDescsPerInterpolation);
+    HdSceneDelegate *sceneDelegate,
+    HdRprApi *rprApi,
+    HdDirtyBits dirtyBits,
+    std::map<HdInterpolation, HdPrimvarDescriptorVector> const &primvarDescsPerInterpolation);
 
  private:
   std::vector<rpr::Shape *> m_rprMeshes;
@@ -79,9 +79,9 @@ class HdRprMesh final : public HdRprBaseRprim<HdMesh> {
 
   VtArray<VtVec3fArray> m_normalSamples;
   VtIntArray m_normalIndices;
-  bool m_normalsValid    = false;
+  bool m_normalsValid = false;
   bool m_authoredNormals = false;
-  bool m_smoothNormals   = false;
+  bool m_smoothNormals = false;
 
   VtArray<VtVec2fArray> m_uvSamples;
   VtIntArray m_uvIndices;

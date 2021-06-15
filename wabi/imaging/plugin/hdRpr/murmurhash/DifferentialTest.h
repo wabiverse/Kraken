@@ -18,12 +18,11 @@
 // (these could be false positives). If we find collisions of 3 or more, the
 // differential test fails.
 
-template<class keytype>
-bool ProcessDifferentials(std::vector<keytype> &diffs, int reps, bool dumpCollisions)
+template<class keytype> bool ProcessDifferentials(std::vector<keytype> &diffs, int reps, bool dumpCollisions)
 {
   std::sort(diffs.begin(), diffs.end());
 
-  int count  = 1;
+  int count = 1;
   int ignore = 0;
 
   bool result = true;
@@ -51,7 +50,7 @@ bool ProcessDifferentials(std::vector<keytype> &diffs, int reps, bool dumpCollis
           ignore++;
         }
 
-        kp    = diffs[i];
+        kp = diffs[i];
         count = 1;
       }
     }
@@ -69,9 +68,7 @@ bool ProcessDifferentials(std::vector<keytype> &diffs, int reps, bool dumpCollis
     }
   }
 
-  printf("%d total collisions, of which %d single collisions were ignored",
-         (int)diffs.size(),
-         ignore);
+  printf("%d total collisions, of which %d single collisions were ignored", (int)diffs.size(), ignore);
 
   if (result == false) {
     printf(" !!!!! ");
@@ -127,12 +124,12 @@ void DiffTestRecurse(pfHash hash,
 template<typename keytype, typename hashtype>
 bool DiffTest(pfHash hash, int diffbits, int reps, bool dumpCollisions)
 {
-  const int keybits  = sizeof(keytype) * 8;
+  const int keybits = sizeof(keytype) * 8;
   const int hashbits = sizeof(hashtype) * 8;
 
   double diffcount = chooseUpToK(keybits, diffbits);
   double testcount = (diffcount * double(reps));
-  double expected  = testcount / pow(2.0, double(hashbits));
+  double expected = testcount / pow(2.0, double(hashbits));
 
   Rand r(100);
 
@@ -146,8 +143,7 @@ bool DiffTest(pfHash hash, int diffbits, int reps, bool dumpCollisions)
          diffbits,
          keybits,
          hashbits);
-  printf(
-      "%d reps, %0.f total tests, expecting %2.2f random collisions", reps, testcount, expected);
+  printf("%d reps, %0.f total tests, expecting %2.2f random collisions", reps, testcount, expected);
 
   for (int i = 0; i < reps; i++) {
     if (i % (reps / 10) == 0)
@@ -208,7 +204,7 @@ void DiffDistTest(pfHash hash, const int diffbits, int trials, double &worst, do
   //----------
 
   worst = 0;
-  avg   = 0;
+  avg = 0;
 
   hashtype h2;
 
@@ -243,7 +239,7 @@ template<typename keytype, typename hashtype> bool DiffDistTest2(pfHash hash)
 {
   Rand r(857374);
 
-  int keybits        = sizeof(keytype) * 8;
+  int keybits = sizeof(keytype) * 8;
   const int keycount = 256 * 256 * 32;
   keytype k;
 

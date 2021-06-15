@@ -51,16 +51,16 @@ WABI_NAMESPACE_BEGIN
 TF_DEFINE_PUBLIC_TOKENS(HdEmbreeRenderSettingsTokens, HDEMBREE_RENDER_SETTINGS_TOKENS);
 
 const TfTokenVector HdEmbreeRenderDelegate::SUPPORTED_RPRIM_TYPES = {
-    HdPrimTypeTokens->mesh,
+  HdPrimTypeTokens->mesh,
 };
 
 const TfTokenVector HdEmbreeRenderDelegate::SUPPORTED_SPRIM_TYPES = {
-    HdPrimTypeTokens->camera,
-    HdPrimTypeTokens->extComputation,
+  HdPrimTypeTokens->camera,
+  HdPrimTypeTokens->extComputation,
 };
 
 const TfTokenVector HdEmbreeRenderDelegate::SUPPORTED_BPRIM_TYPES = {
-    HdPrimTypeTokens->renderBuffer,
+  HdPrimTypeTokens->renderBuffer,
 };
 
 std::mutex HdEmbreeRenderDelegate::_mutexResourceRegistry;
@@ -108,7 +108,7 @@ HdEmbreeRenderDelegate::HdEmbreeRenderDelegate() : HdRenderDelegate()
 }
 
 HdEmbreeRenderDelegate::HdEmbreeRenderDelegate(HdRenderSettingsMap const &settingsMap)
-    : HdRenderDelegate(settingsMap)
+  : HdRenderDelegate(settingsMap)
 {
   _Initialize();
 }
@@ -161,7 +161,7 @@ void HdEmbreeRenderDelegate::_Initialize()
   // Store top-level embree objects inside a render param that can be
   // passed to prims during Sync(). Also pass a handle to the render thread.
   _renderParam = std::make_shared<HdEmbreeRenderParam>(
-      _rtcDevice, _rtcScene, &_renderThread, &_sceneVersion);
+    _rtcDevice, _rtcScene, &_renderThread, &_sceneVersion);
 
   // Pass the scene handle to the renderer.
   _renderer.SetScene(_rtcScene);
@@ -287,7 +287,7 @@ HdRenderPassSharedPtr HdEmbreeRenderDelegate::CreateRenderPass(HdRenderIndex *in
                                                                HdRprimCollection const &collection)
 {
   return HdRenderPassSharedPtr(
-      new HdEmbreeRenderPass(index, collection, &_renderThread, &_renderer, &_sceneVersion));
+    new HdEmbreeRenderPass(index, collection, &_renderThread, &_renderer, &_sceneVersion));
 }
 
 HdInstancer *HdEmbreeRenderDelegate::CreateInstancer(HdSceneDelegate *delegate, SdfPath const &id)

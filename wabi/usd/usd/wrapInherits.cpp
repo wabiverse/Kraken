@@ -37,15 +37,14 @@ WABI_NAMESPACE_USING
 void wrapUsdInherits()
 {
   class_<UsdInherits>("Inherits", no_init)
-      .def("AddInherit",
-           &UsdInherits::AddInherit,
-           (arg("primPath"), arg("position") = UsdListPositionBackOfPrependList))
-      .def("RemoveInherit", &UsdInherits::RemoveInherit, arg("primPath"))
-      .def("ClearInherits", &UsdInherits::ClearInherits)
-      .def("SetInherits", &UsdInherits::SetInherits)
-      .def("GetAllDirectInherits",
-           &UsdInherits::GetAllDirectInherits,
-           return_value_policy<TfPySequenceToList>())
-      .def("GetPrim", (UsdPrim(UsdInherits::*)()) & UsdInherits::GetPrim)
-      .def(!self);
+    .def("AddInherit",
+         &UsdInherits::AddInherit,
+         (arg("primPath"), arg("position") = UsdListPositionBackOfPrependList))
+    .def("RemoveInherit", &UsdInherits::RemoveInherit, arg("primPath"))
+    .def("ClearInherits", &UsdInherits::ClearInherits)
+    .def("SetInherits", &UsdInherits::SetInherits)
+    .def(
+      "GetAllDirectInherits", &UsdInherits::GetAllDirectInherits, return_value_policy<TfPySequenceToList>())
+    .def("GetPrim", (UsdPrim(UsdInherits::*)()) & UsdInherits::GetPrim)
+    .def(!self);
 }

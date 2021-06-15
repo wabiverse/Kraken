@@ -43,8 +43,8 @@ HdMesh::~HdMesh()
 TfTokenVector const &HdMesh::GetBuiltinPrimvarNames() const
 {
   static const TfTokenVector primvarNames = {
-      HdTokens->points,
-      HdTokens->normals,
+    HdTokens->points,
+    HdTokens->normals,
   };
   return primvarNames;
 }

@@ -57,9 +57,9 @@ class HgiGLGraphicsPipeline final : public HgiGraphicsPipeline {
   HgiGLGraphicsPipeline(HgiGraphicsPipelineDesc const &desc);
 
  private:
-  HgiGLGraphicsPipeline()        = delete;
+  HgiGLGraphicsPipeline() = delete;
   HgiGLGraphicsPipeline &operator=(const HgiGLGraphicsPipeline &) = delete;
-  HgiGLGraphicsPipeline(const HgiGLGraphicsPipeline &)            = delete;
+  HgiGLGraphicsPipeline(const HgiGLGraphicsPipeline &) = delete;
 
   uint32_t _vao;
 };

@@ -50,8 +50,7 @@
 #  if _MSC_VER >= 1600  // [
 #    include <stdint.h>
 
-#    if !defined(__cplusplus) || \
-        defined(__STDC_CONSTANT_MACROS)  // [   See footnote 224 at page 260
+#    if !defined(__cplusplus) || defined(__STDC_CONSTANT_MACROS)  // [   See footnote 224 at page 260
 
 #      undef INT8_C
 #      undef INT16_C
@@ -268,8 +267,7 @@ typedef uint64_t uintmax_t;
 
 // 7.18.4 Limits of other integer types
 
-#    if !defined(__cplusplus) || \
-        defined(__STDC_CONSTANT_MACROS)  // [   See footnote 224 at page 260
+#    if !defined(__cplusplus) || defined(__STDC_CONSTANT_MACROS)  // [   See footnote 224 at page 260
 
 // 7.18.4.1 Macros for minimum-width integer constants
 

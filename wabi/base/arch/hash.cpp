@@ -493,10 +493,10 @@ void SpookyHash::Short(const void *message, size_t length, uint64 *hash1, uint64
   }
 
   size_t remainder = length % 32;
-  uint64 a         = *hash1;
-  uint64 b         = *hash2;
-  uint64 c         = sc_const;
-  uint64 d         = sc_const;
+  uint64 a = *hash1;
+  uint64 b = *hash2;
+  uint64 c = sc_const;
+  uint64 d = sc_const;
 
   if (length > 15) {
     const uint64 *end = u.p64 + (length / 32) * 4;
@@ -590,7 +590,7 @@ void SpookyHash::Hash128(const void *message, size_t length, uint64 *hash1, uint
   h2 = h5 = h8 = h11 = sc_const;
 
   u.p8 = (const uint8 *)message;
-  end  = u.p64 + (length / sc_blockSize) * sc_numVars;
+  end = u.p64 + (length / sc_blockSize) * sc_numVars;
 
   // handle all whole sc_blockSize blocks of bytes
   if (ALLOW_UNALIGNED_READS || ((u.i & 0x7) == 0)) {
@@ -622,10 +622,10 @@ void SpookyHash::Hash128(const void *message, size_t length, uint64 *hash1, uint
 // init spooky state
 void SpookyHash::Init(uint64 seed1, uint64 seed2)
 {
-  m_length    = 0;
+  m_length = 0;
   m_remainder = 0;
-  m_state[0]  = seed1;
-  m_state[1]  = seed2;
+  m_state[0] = seed1;
+  m_state[1] = seed2;
 }
 
 // add a message fragment to the state
@@ -644,7 +644,7 @@ void SpookyHash::Update(const void *message, size_t length)
   // Is this message fragment too short?  If it is, stuff it away.
   if (newLength < sc_bufSize) {
     memcpy(&((uint8 *)m_data)[m_remainder], message, length);
-    m_length    = length + m_length;
+    m_length = length + m_length;
     m_remainder = (uint8)newLength;
     return;
   }
@@ -656,16 +656,16 @@ void SpookyHash::Update(const void *message, size_t length)
     h2 = h5 = h8 = h11 = sc_const;
   }
   else {
-    h0  = m_state[0];
-    h1  = m_state[1];
-    h2  = m_state[2];
-    h3  = m_state[3];
-    h4  = m_state[4];
-    h5  = m_state[5];
-    h6  = m_state[6];
-    h7  = m_state[7];
-    h8  = m_state[8];
-    h9  = m_state[9];
+    h0 = m_state[0];
+    h1 = m_state[1];
+    h2 = m_state[2];
+    h3 = m_state[3];
+    h4 = m_state[4];
+    h5 = m_state[5];
+    h6 = m_state[6];
+    h7 = m_state[7];
+    h8 = m_state[8];
+    h9 = m_state[9];
     h10 = m_state[10];
     h11 = m_state[11];
   }
@@ -686,7 +686,7 @@ void SpookyHash::Update(const void *message, size_t length)
   }
 
   // handle all whole blocks of sc_blockSize bytes
-  end       = u.p64 + (length / sc_blockSize) * sc_numVars;
+  end = u.p64 + (length / sc_blockSize) * sc_numVars;
   remainder = (uint8)(length - ((const uint8 *)end - u.p8));
   if (ALLOW_UNALIGNED_READS || (u.i & 0x7) == 0) {
     while (u.p64 < end) {
@@ -707,16 +707,16 @@ void SpookyHash::Update(const void *message, size_t length)
   memcpy(m_data, end, remainder);
 
   // stuff away the variables
-  m_state[0]  = h0;
-  m_state[1]  = h1;
-  m_state[2]  = h2;
-  m_state[3]  = h3;
-  m_state[4]  = h4;
-  m_state[5]  = h5;
-  m_state[6]  = h6;
-  m_state[7]  = h7;
-  m_state[8]  = h8;
-  m_state[9]  = h9;
+  m_state[0] = h0;
+  m_state[1] = h1;
+  m_state[2] = h2;
+  m_state[3] = h3;
+  m_state[4] = h4;
+  m_state[5] = h5;
+  m_state[6] = h6;
+  m_state[7] = h7;
+  m_state[8] = h8;
+  m_state[9] = h9;
   m_state[10] = h10;
   m_state[11] = h11;
 }
@@ -733,18 +733,18 @@ void SpookyHash::Final(uint64 *hash1, uint64 *hash2)
   }
 
   const uint64 *data = (const uint64 *)m_data;
-  uint8 remainder    = m_remainder;
+  uint8 remainder = m_remainder;
 
-  uint64 h0  = m_state[0];
-  uint64 h1  = m_state[1];
-  uint64 h2  = m_state[2];
-  uint64 h3  = m_state[3];
-  uint64 h4  = m_state[4];
-  uint64 h5  = m_state[5];
-  uint64 h6  = m_state[6];
-  uint64 h7  = m_state[7];
-  uint64 h8  = m_state[8];
-  uint64 h9  = m_state[9];
+  uint64 h0 = m_state[0];
+  uint64 h1 = m_state[1];
+  uint64 h2 = m_state[2];
+  uint64 h3 = m_state[3];
+  uint64 h4 = m_state[4];
+  uint64 h5 = m_state[5];
+  uint64 h6 = m_state[6];
+  uint64 h7 = m_state[7];
+  uint64 h8 = m_state[8];
+  uint64 h9 = m_state[9];
   uint64 h10 = m_state[10];
   uint64 h11 = m_state[11];
 

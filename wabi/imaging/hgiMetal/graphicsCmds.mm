@@ -43,18 +43,17 @@
 WABI_NAMESPACE_BEGIN
 
 HgiMetalGraphicsCmds::HgiMetalGraphicsCmds(HgiMetal *hgi, HgiGraphicsCmdsDesc const &desc)
-    : HgiGraphicsCmds(),
-      _hgi(hgi),
-      _renderPassDescriptor(nil),
-      _encoder(nil),
-      _descriptor(desc),
-      _debugLabel(nil),
-      _viewportSet(false)
+  : HgiGraphicsCmds(),
+    _hgi(hgi),
+    _renderPassDescriptor(nil),
+    _encoder(nil),
+    _descriptor(desc),
+    _debugLabel(nil),
+    _viewportSet(false)
 {
   TF_VERIFY(desc.colorTextures.size() == desc.colorAttachmentDescs.size());
 
-  if (!desc.colorResolveTextures.empty() &&
-      desc.colorResolveTextures.size() != desc.colorTextures.size()) {
+  if (!desc.colorResolveTextures.empty() && desc.colorResolveTextures.size() != desc.colorTextures.size()) {
     TF_CODING_ERROR("color and resolve texture count mismatch.");
     return;
   }
@@ -68,11 +67,10 @@ HgiMetalGraphicsCmds::HgiMetalGraphicsCmds(HgiMetal *hgi, HgiGraphicsCmdsDesc co
 
   // Color attachments
   bool resolvingColor = !desc.colorResolveTextures.empty();
-  bool hasClear       = false;
+  bool hasClear = false;
   for (size_t i = 0; i < desc.colorAttachmentDescs.size(); i++) {
     HgiAttachmentDesc const &hgiColorAttachment = desc.colorAttachmentDescs[i];
-    MTLRenderPassColorAttachmentDescriptor *metalColorAttachment =
-        _renderPassDescriptor.colorAttachments[i];
+    MTLRenderPassColorAttachmentDescriptor *metalColorAttachment = _renderPassDescriptor.colorAttachments[i];
 
     if (hgiColorAttachment.loadOp == HgiAttachmentLoadOpClear) {
       hasClear = true;
@@ -82,16 +80,14 @@ HgiMetalGraphicsCmds::HgiMetalGraphicsCmds(HgiMetal *hgi, HgiGraphicsCmdsDesc co
       metalColorAttachment.loadAction = MTLLoadActionLoad;
     }
     else {
-      metalColorAttachment.loadAction = HgiMetalConversions::GetAttachmentLoadOp(
-          hgiColorAttachment.loadOp);
+      metalColorAttachment.loadAction = HgiMetalConversions::GetAttachmentLoadOp(hgiColorAttachment.loadOp);
     }
 
-    metalColorAttachment.storeAction = HgiMetalConversions::GetAttachmentStoreOp(
-        hgiColorAttachment.storeOp);
+    metalColorAttachment.storeAction = HgiMetalConversions::GetAttachmentStoreOp(hgiColorAttachment.storeOp);
     if (hgiColorAttachment.loadOp == HgiAttachmentLoadOpClear) {
-      GfVec4f const &clearColor       = hgiColorAttachment.clearValue;
+      GfVec4f const &clearColor = hgiColorAttachment.clearValue;
       metalColorAttachment.clearColor = MTLClearColorMake(
-          clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+        clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
     }
 
     HgiMetalTexture *colorTexture = static_cast<HgiMetalTexture *>(desc.colorTextures[i].Get());
@@ -100,8 +96,7 @@ HgiMetalGraphicsCmds::HgiMetalGraphicsCmds(HgiMetal *hgi, HgiGraphicsCmdsDesc co
     metalColorAttachment.texture = colorTexture->GetTextureId();
 
     if (resolvingColor) {
-      HgiMetalTexture *resolveTexture = static_cast<HgiMetalTexture *>(
-          desc.colorResolveTextures[i].Get());
+      HgiMetalTexture *resolveTexture = static_cast<HgiMetalTexture *>(desc.colorResolveTextures[i].Get());
 
       metalColorAttachment.resolveTexture = resolveTexture->GetTextureId();
 
@@ -117,17 +112,14 @@ HgiMetalGraphicsCmds::HgiMetalGraphicsCmds(HgiMetal *hgi, HgiGraphicsCmdsDesc co
   // Depth attachment
   if (desc.depthTexture) {
     HgiAttachmentDesc const &hgiDepthAttachment = desc.depthAttachmentDesc;
-    MTLRenderPassDepthAttachmentDescriptor *metalDepthAttachment =
-        _renderPassDescriptor.depthAttachment;
+    MTLRenderPassDepthAttachmentDescriptor *metalDepthAttachment = _renderPassDescriptor.depthAttachment;
 
     if (hgiDepthAttachment.loadOp == HgiAttachmentLoadOpClear) {
       hasClear = true;
     }
 
-    metalDepthAttachment.loadAction = HgiMetalConversions::GetAttachmentLoadOp(
-        hgiDepthAttachment.loadOp);
-    metalDepthAttachment.storeAction = HgiMetalConversions::GetAttachmentStoreOp(
-        hgiDepthAttachment.storeOp);
+    metalDepthAttachment.loadAction = HgiMetalConversions::GetAttachmentLoadOp(hgiDepthAttachment.loadOp);
+    metalDepthAttachment.storeAction = HgiMetalConversions::GetAttachmentStoreOp(hgiDepthAttachment.storeOp);
 
     metalDepthAttachment.clearDepth = hgiDepthAttachment.clearValue[0];
 
@@ -137,8 +129,7 @@ HgiMetalGraphicsCmds::HgiMetalGraphicsCmds(HgiMetal *hgi, HgiGraphicsCmdsDesc co
     metalDepthAttachment.texture = depthTexture->GetTextureId();
 
     if (desc.depthResolveTexture) {
-      HgiMetalTexture *resolveTexture = static_cast<HgiMetalTexture *>(
-          desc.depthResolveTexture.Get());
+      HgiMetalTexture *resolveTexture = static_cast<HgiMetalTexture *>(desc.depthResolveTexture.Get());
 
       metalDepthAttachment.resolveTexture = resolveTexture->GetTextureId();
 
@@ -170,7 +161,7 @@ void HgiMetalGraphicsCmds::_CreateEncoder()
 {
   if (!_encoder) {
     _encoder = [_hgi->GetPrimaryCommandBuffer(false)
-        renderCommandEncoderWithDescriptor:_renderPassDescriptor];
+      renderCommandEncoderWithDescriptor:_renderPassDescriptor];
 
     if (_debugLabel) {
       [_encoder setLabel:_debugLabel];
@@ -254,7 +245,7 @@ void HgiMetalGraphicsCmds::BindVertexBuffers(uint32_t firstBinding,
 
   for (size_t i = 0; i < vertexBuffers.size(); i++) {
     HgiBufferHandle bufHandle = vertexBuffers[i];
-    HgiMetalBuffer *buf       = static_cast<HgiMetalBuffer *>(bufHandle.Get());
+    HgiMetalBuffer *buf = static_cast<HgiMetalBuffer *>(bufHandle.Get());
     HgiBufferDesc const &desc = buf->GetDescriptor();
 
     TF_VERIFY(desc.usage & HgiBufferUsageVertex);
@@ -312,7 +303,7 @@ void HgiMetalGraphicsCmds::DrawIndexed(HgiBufferHandle const &indexBuffer,
 
   _CreateEncoder();
 
-  HgiMetalBuffer *indexBuf       = static_cast<HgiMetalBuffer *>(indexBuffer.Get());
+  HgiMetalBuffer *indexBuf = static_cast<HgiMetalBuffer *>(indexBuffer.Get());
   HgiBufferDesc const &indexDesc = indexBuf->GetDescriptor();
 
   // We assume 32bit indices: GL_UNSIGNED_INT
@@ -340,7 +331,7 @@ void HgiMetalGraphicsCmds::DrawIndexedIndirect(HgiBufferHandle const &indexBuffe
 {
   _CreateEncoder();
 
-  HgiMetalBuffer *indexBuf       = static_cast<HgiMetalBuffer *>(indexBuffer.Get());
+  HgiMetalBuffer *indexBuf = static_cast<HgiMetalBuffer *>(indexBuffer.Get());
   HgiBufferDesc const &indexDesc = indexBuf->GetDescriptor();
 
   // We assume 32bit indices: GL_UNSIGNED_INT
@@ -382,8 +373,7 @@ void HgiMetalGraphicsCmds::MemoryBarrier(HgiMemoryBarrier barrier)
 {
   TF_VERIFY(barrier == HgiMemoryBarrierAll, "Unknown barrier");
 
-  MTLBarrierScope scope = MTLBarrierScopeBuffers | MTLBarrierScopeTextures |
-                          MTLBarrierScopeRenderTargets;
+  MTLBarrierScope scope = MTLBarrierScopeBuffers | MTLBarrierScopeTextures | MTLBarrierScopeRenderTargets;
 
   MTLRenderStages srcStages = MTLRenderStageVertex | MTLRenderStageFragment;
   MTLRenderStages dstStages = MTLRenderStageVertex | MTLRenderStageFragment;

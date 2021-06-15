@@ -61,11 +61,10 @@ class UsdImagingNurbsCurvesAdapter : public UsdImagingGprimAdapter {
 
   /// Thread Safe.
   USDIMAGING_API
-  void TrackVariability(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      HdDirtyBits *timeVaryingBits,
-      UsdImagingInstancerContext const *instancerContext = nullptr) const override;
+  void TrackVariability(UsdPrim const &prim,
+                        SdfPath const &cachePath,
+                        HdDirtyBits *timeVaryingBits,
+                        UsdImagingInstancerContext const *instancerContext = nullptr) const override;
 
   /// Thread Safe.
   USDIMAGING_API
@@ -85,9 +84,7 @@ class UsdImagingNurbsCurvesAdapter : public UsdImagingGprimAdapter {
   // ---------------------------------------------------------------------- //
 
   USDIMAGING_API
-  VtValue GetTopology(UsdPrim const &prim,
-                      SdfPath const &cachePath,
-                      UsdTimeCode time) const override;
+  VtValue GetTopology(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
 
   USDIMAGING_API
   VtValue Get(UsdPrim const &prim,

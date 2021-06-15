@@ -35,8 +35,8 @@
 WABI_NAMESPACE_BEGIN
 
 HdPrmanCoordSys::HdPrmanCoordSys(SdfPath const &id)
-    : HdCoordSys(id),
-      _coordSysId(riley::CoordinateSystemId::k_InvalidId)
+  : HdCoordSys(id),
+    _coordSysId(riley::CoordinateSystemId::k_InvalidId)
 {
   /* NOTHING */
 }

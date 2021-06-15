@@ -46,14 +46,14 @@ WABI_NAMESPACE_BEGIN
 class UsdDracoImportAttributeInterface {
  public:
   virtual const UsdDracoAttributeDescriptor &GetDescriptor() const = 0;
-  virtual void SetToMesh(UsdGeomMesh *usdMesh) const               = 0;
-  virtual void PopulateValues()                                    = 0;
-  virtual int GetMappedIndex(draco::PointIndex pi) const           = 0;
-  virtual void ResizeIndices(size_t size)                          = 0;
-  virtual void SetIndex(size_t at, int index)                      = 0;
-  virtual size_t GetNumValues() const                              = 0;
-  virtual size_t GetNumIndices() const                             = 0;
-  virtual bool HasPointAttribute() const                           = 0;
+  virtual void SetToMesh(UsdGeomMesh *usdMesh) const = 0;
+  virtual void PopulateValues() = 0;
+  virtual int GetMappedIndex(draco::PointIndex pi) const = 0;
+  virtual void ResizeIndices(size_t size) = 0;
+  virtual void SetIndex(size_t at, int index) = 0;
+  virtual size_t GetNumValues() const = 0;
+  virtual size_t GetNumIndices() const = 0;
+  virtual bool HasPointAttribute() const = 0;
 };
 
 /// \class UsdDracoImportAttribute
@@ -99,8 +99,7 @@ template<class T> class UsdDracoImportAttribute : public UsdDracoImportAttribute
   }
 
   // Specialization for GfHalf type.
-  template<class T_                                                         = T,
-           typename std::enable_if<std::is_same<T_, GfHalf>::value>::type * = nullptr>
+  template<class T_ = T, typename std::enable_if<std::is_same<T_, GfHalf>::value>::type * = nullptr>
   void _GetAttributeValueSpecialized(draco::AttributeValueIndex avi)
   {
     // USD halfs are stored as Draco 16-bit ints.
@@ -144,12 +143,11 @@ template<class T> class UsdDracoImportAttribute : public UsdDracoImportAttribute
 template<class T>
 UsdDracoImportAttribute<T>::UsdDracoImportAttribute(UsdDracoAttributeDescriptor descriptor,
                                                     const draco::Mesh &dracoMesh)
-    : _descriptor(descriptor),
-      _pointAttribute(_GetFromMesh(dracoMesh))
+  : _descriptor(descriptor),
+    _pointAttribute(_GetFromMesh(dracoMesh))
 {}
 
-template<class T>
-const UsdDracoAttributeDescriptor &UsdDracoImportAttribute<T>::GetDescriptor() const
+template<class T> const UsdDracoAttributeDescriptor &UsdDracoImportAttribute<T>::GetDescriptor() const
 {
   return _descriptor;
 }
@@ -158,11 +156,10 @@ template<class T>
 const draco::PointAttribute *UsdDracoImportAttribute<T>::_GetFromMesh(const draco::Mesh &dracoMesh)
 {
   const bool hasMetadata = _descriptor.GetAttributeType() == draco::GeometryAttribute::GENERIC;
-  const int attributeId  = hasMetadata ?
-                               dracoMesh.GetAttributeIdByMetadataEntry(
-                                  UsdDracoAttributeDescriptor::METADATA_NAME_KEY,
-                                  _descriptor.GetName().GetText()) :
-                               dracoMesh.GetNamedAttributeId(_descriptor.GetAttributeType());
+  const int attributeId = hasMetadata ? dracoMesh.GetAttributeIdByMetadataEntry(
+                                          UsdDracoAttributeDescriptor::METADATA_NAME_KEY,
+                                          _descriptor.GetName().GetText()) :
+                                        dracoMesh.GetNamedAttributeId(_descriptor.GetAttributeType());
   return (attributeId == -1) ? nullptr : dracoMesh.attribute(attributeId);
 }
 
@@ -173,8 +170,8 @@ template<class T> void UsdDracoImportAttribute<T>::SetToMesh(UsdGeomMesh *usdMes
   if (_descriptor.GetIsPrimvar()) {
     // Set data as a primvar.
     const UsdGeomPrimvarsAPI api = UsdGeomPrimvarsAPI(usdMesh->GetPrim());
-    UsdGeomPrimvar primvar       = api.CreatePrimvar(
-        _descriptor.GetName(), UsdDracoAttributeFactory::GetSdfValueTypeName(_descriptor));
+    UsdGeomPrimvar primvar = api.CreatePrimvar(_descriptor.GetName(),
+                                               UsdDracoAttributeFactory::GetSdfValueTypeName(_descriptor));
     primvar.Set(_values, _descriptor.GetValuesTime());
     primvar.SetIndices(_indices, _descriptor.GetIndicesTime());
     if (_descriptor.GetInterpolation() == UsdGeomTokens->vertex) {
@@ -192,7 +189,7 @@ template<class T> void UsdDracoImportAttribute<T>::SetToMesh(UsdGeomMesh *usdMes
   else {
     // Set data as an attribute.
     UsdAttribute attribute = usdMesh->GetPrim().CreateAttribute(
-        _descriptor.GetName(), UsdDracoAttributeFactory::GetSdfValueTypeName(_descriptor));
+      _descriptor.GetName(), UsdDracoAttributeFactory::GetSdfValueTypeName(_descriptor));
     attribute.Set(_values, _descriptor.GetValuesTime());
   }
 }
@@ -223,7 +220,7 @@ void UsdDracoImportAttribute<T>::PopulateValuesWithOrder(const UsdDracoImportAtt
     const draco::Mesh::Face &face = dracoMesh.face(draco::FaceIndex(i));
     for (size_t c = 0; c < 3; c++) {
       const draco::PointIndex pi = face[c];
-      const int origIndex        = order.GetMappedValue(pi);
+      const int origIndex = order.GetMappedValue(pi);
       if (!populated[origIndex]) {
         _pointAttribute->GetMappedValue(pi, _values[origIndex].data());
         populated[origIndex] = true;

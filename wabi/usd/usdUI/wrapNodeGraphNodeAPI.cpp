@@ -54,20 +54,16 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreatePosAttr(UsdUINodeGraphNodeAPI &self,
-                                   object defaultVal,
-                                   bool writeSparsely)
+static UsdAttribute _CreatePosAttr(UsdUINodeGraphNodeAPI &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreatePosAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2),
-                            writeSparsely);
+  return self.CreatePosAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2), writeSparsely);
 }
 
 static UsdAttribute _CreateStackingOrderAttr(UsdUINodeGraphNodeAPI &self,
                                              object defaultVal,
                                              bool writeSparsely)
 {
-  return self.CreateStackingOrderAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int),
-                                      writeSparsely);
+  return self.CreateStackingOrderAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
 }
 
 static UsdAttribute _CreateDisplayColorAttr(UsdUINodeGraphNodeAPI &self,
@@ -78,12 +74,9 @@ static UsdAttribute _CreateDisplayColorAttr(UsdUINodeGraphNodeAPI &self,
                                      writeSparsely);
 }
 
-static UsdAttribute _CreateIconAttr(UsdUINodeGraphNodeAPI &self,
-                                    object defaultVal,
-                                    bool writeSparsely)
+static UsdAttribute _CreateIconAttr(UsdUINodeGraphNodeAPI &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateIconAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
-                             writeSparsely);
+  return self.CreateIconAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
 }
 
 static UsdAttribute _CreateExpansionStateAttr(UsdUINodeGraphNodeAPI &self,
@@ -94,12 +87,9 @@ static UsdAttribute _CreateExpansionStateAttr(UsdUINodeGraphNodeAPI &self,
                                        writeSparsely);
 }
 
-static UsdAttribute _CreateSizeAttr(UsdUINodeGraphNodeAPI &self,
-                                    object defaultVal,
-                                    bool writeSparsely)
+static UsdAttribute _CreateSizeAttr(UsdUINodeGraphNodeAPI &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateSizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2),
-                             writeSparsely);
+  return self.CreateSizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2), writeSparsely);
 }
 
 static std::string _Repr(const UsdUINodeGraphNodeAPI &self)
@@ -117,59 +107,51 @@ void wrapUsdUINodeGraphNodeAPI()
   class_<This, bases<UsdAPISchemaBase>> cls("NodeGraphNodeAPI");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Apply", &This::Apply, (arg("prim")))
-      .staticmethod("Apply")
+    .def("Apply", &This::Apply, (arg("prim")))
+    .staticmethod("Apply")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetPosAttr", &This::GetPosAttr)
-      .def("CreatePosAttr",
-           &_CreatePosAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetPosAttr", &This::GetPosAttr)
+    .def("CreatePosAttr", &_CreatePosAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetStackingOrderAttr", &This::GetStackingOrderAttr)
-      .def("CreateStackingOrderAttr",
-           &_CreateStackingOrderAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetStackingOrderAttr", &This::GetStackingOrderAttr)
+    .def("CreateStackingOrderAttr",
+         &_CreateStackingOrderAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetDisplayColorAttr", &This::GetDisplayColorAttr)
-      .def("CreateDisplayColorAttr",
-           &_CreateDisplayColorAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetDisplayColorAttr", &This::GetDisplayColorAttr)
+    .def("CreateDisplayColorAttr",
+         &_CreateDisplayColorAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetIconAttr", &This::GetIconAttr)
-      .def("CreateIconAttr",
-           &_CreateIconAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetIconAttr", &This::GetIconAttr)
+    .def("CreateIconAttr", &_CreateIconAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetExpansionStateAttr", &This::GetExpansionStateAttr)
-      .def("CreateExpansionStateAttr",
-           &_CreateExpansionStateAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetExpansionStateAttr", &This::GetExpansionStateAttr)
+    .def("CreateExpansionStateAttr",
+         &_CreateExpansionStateAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetSizeAttr", &This::GetSizeAttr)
-      .def("CreateSizeAttr",
-           &_CreateSizeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetSizeAttr", &This::GetSizeAttr)
+    .def("CreateSizeAttr", &_CreateSizeAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

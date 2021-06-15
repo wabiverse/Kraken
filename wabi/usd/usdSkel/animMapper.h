@@ -89,7 +89,7 @@ class UsdSkelAnimMapper {
   template<typename Container>
   bool Remap(const Container &source,
              Container *target,
-             int elementSize                                    = 1,
+             int elementSize = 1,
              const typename Container::value_type *defaultValue = nullptr) const;
 
   /// Type-erased remapping of data from \p source into \p target.
@@ -104,7 +104,7 @@ class UsdSkelAnimMapper {
   USDSKEL_API
   bool Remap(const VtValue &source,
              VtValue *target,
-             int elementSize             = 1,
+             int elementSize = 1,
              const VtValue &defaultValue = VtValue()) const;
 
   /// Convenience method for the common task of remapping transform arrays.
@@ -153,15 +153,13 @@ class UsdSkelAnimMapper {
                      int elementSize,
                      const VtValue &defaultValue) const;
 
-  template<typename T>
-  static void _ResizeContainer(VtArray<T> *array, size_t size, const T &defaultValue);
+  template<typename T> static void _ResizeContainer(VtArray<T> *array, size_t size, const T &defaultValue);
 
   template<typename Container>
-  static void _ResizeContainer(
-      Container *container,
-      size_t size,
-      const typename Container::value_type &defaultValue,
-      typename std::enable_if<!VtIsArray<Container>::value, Container>::type * = 0)
+  static void _ResizeContainer(Container *container,
+                               size_t size,
+                               const typename Container::value_type &defaultValue,
+                               typename std::enable_if<!VtIsArray<Container>::value, Container>::type * = 0)
   {
     container->resize(size, defaultValue);
   }
@@ -209,9 +207,9 @@ bool UsdSkelAnimMapper::Remap(const Container &source,
   }
   if (elementSize <= 0) {
     TF_WARN(
-        "Invalid elementSize [%d]: "
-        "size must be greater than zero.",
-        elementSize);
+      "Invalid elementSize [%d]: "
+      "size must be greater than zero.",
+      elementSize);
     return false;
   }
 
@@ -239,7 +237,7 @@ bool UsdSkelAnimMapper::Remap(const Container &source,
     const _ValueType *sourceData = source.cdata();
 
     _ValueType *targetData = target->data();
-    size_t copyCount       = std::min(source.size() / elementSize, _indexMap.size());
+    size_t copyCount = std::min(source.size() / elementSize, _indexMap.size());
 
     const int *indexMap = _indexMap.data();
 

@@ -92,8 +92,7 @@ class HdExtCompPrimvarBufferSource final : public HdBufferSource {
 
  private:
   // TfHash support.
-  template<class HashState>
-  friend void TfHashAppend(HashState &h, HdExtCompPrimvarBufferSource const &);
+  template<class HashState> friend void TfHashAppend(HashState &h, HdExtCompPrimvarBufferSource const &);
 
   TfToken _primvarName;
   HdExtCompCpuComputationSharedPtr _source;
@@ -101,7 +100,7 @@ class HdExtCompPrimvarBufferSource final : public HdBufferSource {
   HdTupleType _tupleType;
   void const *_rawDataPtr;
 
-  HdExtCompPrimvarBufferSource()                                     = delete;
+  HdExtCompPrimvarBufferSource() = delete;
   HdExtCompPrimvarBufferSource(const HdExtCompPrimvarBufferSource &) = delete;
   HdExtCompPrimvarBufferSource &operator=(const HdExtCompPrimvarBufferSource &) = delete;
 };

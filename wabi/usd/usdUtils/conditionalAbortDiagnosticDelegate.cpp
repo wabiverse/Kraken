@@ -52,32 +52,31 @@ std::vector<TfPatternMatcher> constructPatternFilters(const std::vector<std::str
 }
 
 UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters::
-    UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters(
-        const std::vector<std::string> &stringFilters,
-        const std::vector<std::string> &codePathFilters)
-    : _stringFilters(stringFilters),
-      _codePathFilters(codePathFilters)
+  UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters(const std::vector<std::string> &stringFilters,
+                                                         const std::vector<std::string> &codePathFilters)
+  : _stringFilters(stringFilters),
+    _codePathFilters(codePathFilters)
 {}
 
 void UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters::SetStringFilters(
-    const std::vector<std::string> &stringFilters)
+  const std::vector<std::string> &stringFilters)
 {
   _stringFilters = stringFilters;
 }
 
 void UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters::SetCodePathFilters(
-    const std::vector<std::string> &codePathFilters)
+  const std::vector<std::string> &codePathFilters)
 {
   _codePathFilters = codePathFilters;
 }
 
 UsdUtilsConditionalAbortDiagnosticDelegate::UsdUtilsConditionalAbortDiagnosticDelegate(
-    const UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters &includeFilters,
-    const UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters &excludeFilters)
-    : _includePatternStringFilters(constructPatternFilters(includeFilters.GetStringFilters())),
-      _includePatternCodePathFilters(constructPatternFilters(includeFilters.GetCodePathFilters())),
-      _excludePatternStringFilters(constructPatternFilters(excludeFilters.GetStringFilters())),
-      _excludePatternCodePathFilters(constructPatternFilters(excludeFilters.GetCodePathFilters()))
+  const UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters &includeFilters,
+  const UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters &excludeFilters)
+  : _includePatternStringFilters(constructPatternFilters(includeFilters.GetStringFilters())),
+    _includePatternCodePathFilters(constructPatternFilters(includeFilters.GetCodePathFilters())),
+    _excludePatternStringFilters(constructPatternFilters(excludeFilters.GetStringFilters())),
+    _excludePatternCodePathFilters(constructPatternFilters(excludeFilters.GetCodePathFilters()))
 {
   TfDiagnosticMgr::GetInstance().AddDelegate(this);
 }
@@ -88,9 +87,9 @@ UsdUtilsConditionalAbortDiagnosticDelegate::~UsdUtilsConditionalAbortDiagnosticD
 }
 
 bool UsdUtilsConditionalAbortDiagnosticDelegate::_RuleMatcher(
-    const TfDiagnosticBase &err,
-    const std::vector<TfPatternMatcher> &stringPatternFilters,
-    const std::vector<TfPatternMatcher> &codePathPatternFilters)
+  const TfDiagnosticBase &err,
+  const std::vector<TfPatternMatcher> &stringPatternFilters,
+  const std::vector<TfPatternMatcher> &codePathPatternFilters)
 {
   const std::string &sourceFileName = err.GetSourceFileName();
   if (!sourceFileName.empty()) {
@@ -117,17 +116,16 @@ void UsdUtilsConditionalAbortDiagnosticDelegate::IssueError(const TfError &err)
   if (_RuleMatcher(err, _includePatternStringFilters, _includePatternCodePathFilters) &&
       !_RuleMatcher(err, _excludePatternStringFilters, _excludePatternCodePathFilters)) {
     TfLogCrash(
-        "Aborted by UsdUtilsConditionalAbortDiagnosticDelegate On "
-        "Error",
-        err.GetCommentary(),
-        std::string(),
-        err.GetContext(),
-        true);
+      "Aborted by UsdUtilsConditionalAbortDiagnosticDelegate On "
+      "Error",
+      err.GetCommentary(),
+      std::string(),
+      err.GetContext(),
+      true);
     ArchAbort(false);
   }
   else if (!err.GetQuiet()) {
-    _PrintDiagnostic(
-        err.GetDiagnosticCode(), err.GetContext(), err.GetCommentary(), err.GetInfo<TfError>());
+    _PrintDiagnostic(err.GetDiagnosticCode(), err.GetContext(), err.GetCommentary(), err.GetInfo<TfError>());
   }
 }
 
@@ -140,10 +138,8 @@ void UsdUtilsConditionalAbortDiagnosticDelegate::IssueFatalError(const TfCallCon
 
 void UsdUtilsConditionalAbortDiagnosticDelegate::IssueStatus(const TfStatus &status)
 {
-  _PrintDiagnostic(status.GetDiagnosticCode(),
-                   status.GetContext(),
-                   status.GetCommentary(),
-                   status.GetInfo<TfStatus>());
+  _PrintDiagnostic(
+    status.GetDiagnosticCode(), status.GetContext(), status.GetCommentary(), status.GetInfo<TfStatus>());
 }
 
 void UsdUtilsConditionalAbortDiagnosticDelegate::IssueWarning(const TfWarning &warning)
@@ -152,12 +148,12 @@ void UsdUtilsConditionalAbortDiagnosticDelegate::IssueWarning(const TfWarning &w
   if (_RuleMatcher(warning, _includePatternStringFilters, _includePatternCodePathFilters) &&
       !_RuleMatcher(warning, _excludePatternStringFilters, _excludePatternCodePathFilters)) {
     TfLogCrash(
-        "Aborted by UsdUtilsConditionalAbortDiagnosticDelegate On "
-        "Warning",
-        warning.GetCommentary(),
-        std::string(),
-        warning.GetContext(),
-        true);
+      "Aborted by UsdUtilsConditionalAbortDiagnosticDelegate On "
+      "Warning",
+      warning.GetCommentary(),
+      std::string(),
+      warning.GetContext(),
+      true);
     ArchAbort(false);
   }
   else if (!warning.GetQuiet()) {

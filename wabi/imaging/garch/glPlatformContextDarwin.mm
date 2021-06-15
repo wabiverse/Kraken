@@ -60,12 +60,11 @@ class GarchNSGLContextState::Detail {
 };
 
 /// Construct with the current state.
-GarchNSGLContextState::GarchNSGLContextState()
-    : _detail(std::make_shared<GarchNSGLContextState::Detail>())
+GarchNSGLContextState::GarchNSGLContextState() : _detail(std::make_shared<GarchNSGLContextState::Detail>())
 {}
 
 GarchNSGLContextState::GarchNSGLContextState(NullState)
-    : _detail(std::make_shared<GarchNSGLContextState::Detail>(NullState::nullstate))
+  : _detail(std::make_shared<GarchNSGLContextState::Detail>(NullState::nullstate))
 {}
 
 /// Construct with the given state.

@@ -32,25 +32,25 @@ WABI_NAMESPACE_BEGIN
 
 #define HDPH_GLSL_PROGRAM_TOKENS \
   (smoothNormalsFloatToFloat)(smoothNormalsFloatToPacked)( \
-      smoothNormalsDoubleToDouble)(smoothNormalsDoubleToPacked)(flatNormalsTriFloatToFloat)(flatNormalsTriFloatToPacked)(flatNormalsTriDoubleToDouble)(flatNormalsTriDoubleToPacked)(flatNormalsQuadFloatToFloat)(flatNormalsQuadFloatToPacked)(flatNormalsQuadDoubleToDouble)(flatNormalsQuadDoubleToPacked)(quadrangulateFloat)(quadrangulateDouble)
+    smoothNormalsDoubleToDouble)(smoothNormalsDoubleToPacked)(flatNormalsTriFloatToFloat)(flatNormalsTriFloatToPacked)(flatNormalsTriDoubleToDouble)(flatNormalsTriDoubleToPacked)(flatNormalsQuadFloatToFloat)(flatNormalsQuadFloatToPacked)(flatNormalsQuadDoubleToDouble)(flatNormalsQuadDoubleToPacked)(quadrangulateFloat)(quadrangulateDouble)
 
 #define HDPH_TOKENS \
   (constantLighting)(packedSmoothNormals)( \
-      smoothNormals)(packedFlatNormals)(flatNormals)(scale)(bias)(rotation)(translation)(sRGB)(raw)(( \
-      _double, "double"))((_float, "float"))((_int, "int"))(( \
-      colorSpaceAuto, "auto"))(fvarIndices)(fvarPatchParam)
+    smoothNormals)(packedFlatNormals)(flatNormals)(scale)(bias)(rotation)(translation)(sRGB)(raw)(( \
+    _double, "double"))((_float, "float"))((_int, "int"))((colorSpaceAuto, \
+                                                           "auto"))(fvarIndices)(fvarPatchParam)
 
 #define HDPH_LIGHT_TOKENS (color)
 
 #define HDPH_TEXTURE_TOKENS \
   (wrapS)(wrapT)( \
-      wrapR)(black)(clamp)(mirror)(repeat)(useMetadata)(minFilter)(magFilter)(linear)(nearest)(linearMipmapLinear)(linearMipmapNearest)(nearestMipmapLinear)(nearestMipmapNearest)
+    wrapR)(black)(clamp)(mirror)(repeat)(useMetadata)(minFilter)(magFilter)(linear)(nearest)(linearMipmapLinear)(linearMipmapNearest)(nearestMipmapLinear)(nearestMipmapNearest)
 
 #define HDPH_RENDER_BUFFER_TOKENS ((phoenixMsaaSampleCount, "phoenix:msaaSampleCount"))
 
 #define HDPH_RENDER_SETTINGS_TOKENS \
   (enableTinyPrimCulling)(volumeRaymarchingStepSize)( \
-      volumeRaymarchingStepSizeLighting)(volumeMaxTextureMemoryPerField)
+    volumeRaymarchingStepSizeLighting)(volumeMaxTextureMemoryPerField)
 
 // Material tags help bucket prims into different queues for draw submission.
 // The tags supported by Phoenix are:

@@ -36,9 +36,9 @@ WABI_NAMESPACE_BEGIN
 HgiShaderSection::HgiShaderSection(const std::string &identifier,
                                    const HgiShaderSectionAttributeVector &attributes,
                                    const std::string &defaultValue)
-    : _identifierVar(identifier),
-      _attributes(attributes),
-      _defaultValue(defaultValue)
+  : _identifierVar(identifier),
+    _attributes(attributes),
+    _defaultValue(defaultValue)
 {}
 
 HgiShaderSection::~HgiShaderSection() = default;

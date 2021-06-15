@@ -9,7 +9,7 @@ uint32_t murmur_hash(const void *key, int len, uint32_t seed)
   // 'm' and 'r' are mixing constants generated offline.
   // They're not really 'magic', they just happen to work well.
   const unsigned int m = 0x5bd1e995;
-  const int r          = 24;
+  const int r = 24;
 
   // Initialize the hash to a 'random' value
   unsigned int h = seed ^ len;
@@ -75,9 +75,9 @@ unsigned int invert_shift_xor(unsigned int hs, unsigned int s)
 
 unsigned int murmur_hash_inverse(unsigned int h, unsigned int seed)
 {
-  const unsigned int m    = 0x5bd1e995;
+  const unsigned int m = 0x5bd1e995;
   const unsigned int minv = 0xe59b19bd;  // Multiplicative inverse of m under % 2^32
-  const int r             = 24;
+  const int r = 24;
 
   h = invert_shift_xor(h, 15);
   h *= minv;
@@ -92,7 +92,7 @@ unsigned int murmur_hash_inverse(unsigned int h, unsigned int seed)
 
 #ifdef PLATFORM_BIG_ENDIAN
   char *data = (char *)&k;
-  k          = (data[0]) + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
+  k = (data[0]) + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
 #endif
 
   return k;
@@ -106,27 +106,27 @@ uint64_t murmur_hash_64(const void *key, uint32_t len, uint64_t seed)
   uint64_t h = seed ^ (len * m);
 
   const uint64_t *data = (const uint64_t *)key;
-  const uint64_t *end  = data + (len / 8);
+  const uint64_t *end = data + (len / 8);
 
   while (data != end) {
 #ifdef PLATFORM_BIG_ENDIAN
     uint64 k = *data++;
-    char *p  = (char *)&k;
+    char *p = (char *)&k;
     char c;
-    c    = p[0];
+    c = p[0];
     p[0] = p[7];
     p[7] = c;
-    c    = p[1];
+    c = p[1];
     p[1] = p[6];
     p[6] = c;
-    c    = p[2];
+    c = p[2];
     p[2] = p[5];
     p[5] = c;
-    c    = p[3];
+    c = p[3];
     p[3] = p[4];
     p[4] = c;
 #else
-    uint64_t k     = *data++;
+    uint64_t k = *data++;
 #endif
 
     k *= m;

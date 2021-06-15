@@ -2,9 +2,7 @@
 
 namespace Zep {
 
-ZepTreeNode::ZepTreeNode(const std::string &strName, uint32_t flags)
-    : m_strName(strName),
-      m_flags(flags)
+ZepTreeNode::ZepTreeNode(const std::string &strName, uint32_t flags) : m_strName(strName), m_flags(flags)
 {}
 
 ZepFileTree::ZepFileTree()
@@ -18,10 +16,10 @@ ZepMode_Tree::ZepMode_Tree(ZepEditor &editor,
                            std::shared_ptr<ZepTree> spTree,
                            ZepWindow &launchWindow,
                            ZepWindow &window)
-    : ZepMode_Vim(editor),
-      m_spTree(spTree),
-      m_launchWindow(launchWindow),
-      m_window(window)
+  : ZepMode_Vim(editor),
+    m_spTree(spTree),
+    m_launchWindow(launchWindow),
+    m_window(window)
 {}
 
 ZepMode_Tree::~ZepMode_Tree()

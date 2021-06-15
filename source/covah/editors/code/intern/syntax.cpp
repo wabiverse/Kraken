@@ -15,12 +15,12 @@ ZepSyntax::ZepSyntax(ZepBuffer &buffer,
                      const std::unordered_set<std::string> &keywords,
                      const std::unordered_set<std::string> &identifiers,
                      uint32_t flags)
-    : ZepComponent(buffer.GetEditor()),
-      m_buffer(buffer),
-      m_keywords(keywords),
-      m_identifiers(identifiers),
-      m_stop(false),
-      m_flags(flags)
+  : ZepComponent(buffer.GetEditor()),
+    m_buffer(buffer),
+    m_keywords(keywords),
+    m_identifiers(identifiers),
+    m_stop(false),
+    m_flags(flags)
 {
   m_syntax.resize(m_buffer.GetWorkingBuffer().size());
   m_adornments.push_back(std::make_shared<ZepSyntaxAdorn_RainbowBrackets>(*this, m_buffer));
@@ -43,7 +43,7 @@ SyntaxResult ZepSyntax::GetSyntaxAt(const GlyphIterator &offset) const
 
   result.background = m_syntax[offset.Index()].background;
   result.foreground = m_syntax[offset.Index()].foreground;
-  result.underline  = m_syntax[offset.Index()].underline;
+  result.underline = m_syntax[offset.Index()].underline;
 
   bool found = false;
   for (auto &adorn : m_adornments) {
@@ -83,7 +83,7 @@ void ZepSyntax::QueueUpdateSyntax(GlyphIterator startLocation, GlyphIterator end
   // This means a small edit at the end of a big file, followed by a small edit at the top
   // is the worst case scenario, because
   m_processedChar = std::min(startLocation.Index(), long(m_processedChar));
-  m_targetChar    = std::max(endLocation.Index(), long(m_targetChar));
+  m_targetChar = std::max(endLocation.Index(), long(m_targetChar));
 
   // Make sure the syntax buffer is big enough - adding normal syntax to the end
   // This may also 'chop'
@@ -91,7 +91,7 @@ void ZepSyntax::QueueUpdateSyntax(GlyphIterator startLocation, GlyphIterator end
   m_syntax.resize(m_buffer.GetWorkingBuffer().size(), SyntaxData{});
 
   m_processedChar = std::min(long(m_processedChar), long(m_buffer.GetWorkingBuffer().size() - 1));
-  m_targetChar    = std::min(long(m_targetChar), long(m_buffer.GetWorkingBuffer().size() - 1));
+  m_targetChar = std::min(long(m_targetChar), long(m_buffer.GetWorkingBuffer().size() - 1));
 
   // Have the thread update the syntax in the new region
   // If the pool has no threads, this will end up serial
@@ -135,9 +135,9 @@ void ZepSyntax::Notify(std::shared_ptr<ZepMessage> spMsg)
 // TODO: Multiline comments
 void ZepSyntax::UpdateSyntax()
 {
-  auto &buffer    = m_buffer.GetWorkingBuffer();
+  auto &buffer = m_buffer.GetWorkingBuffer();
   auto itrCurrent = buffer.begin() + m_processedChar;
-  auto itrEnd     = buffer.begin() + m_targetChar;
+  auto itrEnd = buffer.begin() + m_targetChar;
 
   assert(std::distance(itrCurrent, itrEnd) < int(m_syntax.size()));
   assert(m_syntax.size() == buffer.size());
@@ -178,11 +178,10 @@ void ZepSyntax::UpdateSyntax()
               SyntaxData{type, background});
   };
 
-  auto markSingle =
-      [&](GapBuffer<uint8_t>::const_iterator itrA, ThemeColor type, ThemeColor background) {
-        (m_syntax.begin() + (itrA - buffer.begin()))->foreground = type;
-        (m_syntax.begin() + (itrA - buffer.begin()))->background = background;
-      };
+  auto markSingle = [&](GapBuffer<uint8_t>::const_iterator itrA, ThemeColor type, ThemeColor background) {
+    (m_syntax.begin() + (itrA - buffer.begin()))->foreground = type;
+    (m_syntax.begin() + (itrA - buffer.begin()))->background = background;
+  };
 
   // Update start location
   m_processedChar = long(itrCurrent - buffer.begin());
@@ -271,8 +270,7 @@ void ZepSyntax::UpdateSyntax()
     if (m_flags & ZepSyntaxFlags::LispLike) {
       // Lisp languages use ; or # for comments
       std::string commentStr = ";#";
-      auto itrComment        = buffer.find_first_of(
-          itrFirst, itrLast, commentStr.begin(), commentStr.end());
+      auto itrComment = buffer.find_first_of(itrFirst, itrLast, commentStr.begin(), commentStr.end());
       if (itrComment != buffer.end()) {
         itrLast = buffer.find_first_of(itrComment, buffer.end(), lineEnd.begin(), lineEnd.end());
         mark(itrComment, itrLast, ThemeColor::Comment, ThemeColor::None);
@@ -280,14 +278,12 @@ void ZepSyntax::UpdateSyntax()
     }
     else {
       std::string commentStr = "/";
-      auto itrComment        = buffer.find_first_of(
-          itrFirst, itrLast, commentStr.begin(), commentStr.end());
+      auto itrComment = buffer.find_first_of(itrFirst, itrLast, commentStr.begin(), commentStr.end());
       if (itrComment != buffer.end()) {
         auto itrCommentStart = itrComment++;
         if (itrComment < buffer.end()) {
           if (*itrComment == '/') {
-            itrLast = buffer.find_first_of(
-                itrCommentStart, buffer.end(), lineEnd.begin(), lineEnd.end());
+            itrLast = buffer.find_first_of(itrCommentStart, buffer.end(), lineEnd.begin(), lineEnd.end());
             mark(itrCommentStart, itrLast, ThemeColor::Comment, ThemeColor::None);
           }
         }
@@ -299,7 +295,7 @@ void ZepSyntax::UpdateSyntax()
 
   // If we got here, we sucessfully completed
   // Reset the target to the beginning
-  m_targetChar    = long(0);
+  m_targetChar = long(0);
   m_processedChar = long(buffer.size() - 1);
 }
 

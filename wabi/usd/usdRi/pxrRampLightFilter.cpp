@@ -65,8 +65,7 @@ UsdRiPxrRampLightFilter UsdRiPxrRampLightFilter::Get(const UsdStagePtr &stage, c
 }
 
 /* static */
-UsdRiPxrRampLightFilter UsdRiPxrRampLightFilter::Define(const UsdStagePtr &stage,
-                                                        const SdfPath &path)
+UsdRiPxrRampLightFilter UsdRiPxrRampLightFilter::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("wabiRampLightFilter");
   if (!stage) {
@@ -285,8 +284,7 @@ UsdAttribute UsdRiPxrRampLightFilter::CreateColorRampInterpolationAttr(VtValue c
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -300,20 +298,20 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRiPxrRampLightFilter::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRiTokens->rampMode,
-      UsdRiTokens->beginDistance,
-      UsdRiTokens->endDistance,
-      UsdRiTokens->falloff,
-      UsdRiTokens->falloffKnots,
-      UsdRiTokens->falloffFloats,
-      UsdRiTokens->falloffInterpolation,
-      UsdRiTokens->colorRamp,
-      UsdRiTokens->colorRampKnots,
-      UsdRiTokens->colorRampColors,
-      UsdRiTokens->colorRampInterpolation,
+    UsdRiTokens->rampMode,
+    UsdRiTokens->beginDistance,
+    UsdRiTokens->endDistance,
+    UsdRiTokens->falloff,
+    UsdRiTokens->falloffKnots,
+    UsdRiTokens->falloffFloats,
+    UsdRiTokens->falloffInterpolation,
+    UsdRiTokens->colorRamp,
+    UsdRiTokens->colorRampKnots,
+    UsdRiTokens->colorRampColors,
+    UsdRiTokens->colorRampInterpolation,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdLuxLightFilter::GetSchemaAttributeNames(true), localNames);
+    UsdLuxLightFilter::GetSchemaAttributeNames(true), localNames);
 
   if (includeInherited)
     return allNames;

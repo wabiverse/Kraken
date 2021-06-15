@@ -55,9 +55,9 @@ bool UsdRiImagingPxrIntMultLightFilterAdapter::IsSupported(UsdImagingIndexProxy 
 }
 
 SdfPath UsdRiImagingPxrIntMultLightFilterAdapter::Populate(
-    UsdPrim const &prim,
-    UsdImagingIndexProxy *index,
-    UsdImagingInstancerContext const *instancerContext)
+  UsdPrim const &prim,
+  UsdImagingIndexProxy *index,
+  UsdImagingInstancerContext const *instancerContext)
 {
   index->InsertSprim(HdPrimTypeTokens->lightFilter, prim.GetPath(), prim);
   HD_PERF_COUNTER_INCR(HdPrimTypeTokens->lightFilter);

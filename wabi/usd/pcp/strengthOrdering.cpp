@@ -249,7 +249,7 @@ static int _CompareNodeStrength(const PcpNodeRef &a,
   // Search the two paths through the prim index graph to find the
   // lowest common parent node and the two siblings beneath that parent.
   std::pair<PcpNodeRefVector::const_reverse_iterator, PcpNodeRefVector::const_reverse_iterator>
-      nodesUnderCommonParent = std::mismatch(aNodes.rbegin(), aNodes.rend(), bNodes.rbegin());
+    nodesUnderCommonParent = std::mismatch(aNodes.rbegin(), aNodes.rend(), bNodes.rbegin());
 
   // If the two paths through the graph diverge at some point, we should
   // have found a mismatch above. If we didn't, it must mean that the two
@@ -265,10 +265,8 @@ static int _CompareNodeStrength(const PcpNodeRef &a,
   }
 
   // Otherwise, compare the two sibling nodes to see which is stronger.
-  TF_VERIFY(nodesUnderCommonParent.first != aNodes.rend() &&
-            nodesUnderCommonParent.second != bNodes.rend());
-  return PcpCompareSiblingNodeStrength(*nodesUnderCommonParent.first,
-                                       *nodesUnderCommonParent.second);
+  TF_VERIFY(nodesUnderCommonParent.first != aNodes.rend() && nodesUnderCommonParent.second != bNodes.rend());
+  return PcpCompareSiblingNodeStrength(*nodesUnderCommonParent.first, *nodesUnderCommonParent.second);
 }
 
 int PcpCompareNodeStrength(const PcpNodeRef &a, const PcpNodeRef &b)

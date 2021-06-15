@@ -92,8 +92,8 @@ template<class Ret, class... Args> class TfFunctionRef<Ret(Args...)> {
   /// Construct with an lvalue callable \p fn.
   template<class Fn>
   constexpr TfFunctionRef(Fn &fn) noexcept
-      : _fn(static_cast<void const *>(std::addressof(fn))),
-        _invoke(_InvokeFn<Fn>)
+    : _fn(static_cast<void const *>(std::addressof(fn))),
+      _invoke(_InvokeFn<Fn>)
   {}
 
   /// Copy construct from another TfFunctionRef.  The constructed

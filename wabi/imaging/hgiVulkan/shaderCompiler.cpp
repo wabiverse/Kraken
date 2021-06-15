@@ -109,7 +109,7 @@ bool HgiVulkanCompileGLSL(const char *name,
   glslang::EShTargetLanguageVersion targetVersion = glslang::EShTargetSpv_1_0;
 
   shader.setEnvInput(
-      glslang::EShSourceGlsl, shaderType, glslang::EShClientVulkan, ClientInputSemanticsVersion);
+    glslang::EShSourceGlsl, shaderType, glslang::EShClientVulkan, ClientInputSemanticsVersion);
 
   shader.setEnvClient(glslang::EShClientVulkan, vulkanClientVersion);
   shader.setEnvTarget(glslang::EShTargetSpv, targetVersion);
@@ -119,113 +119,112 @@ bool HgiVulkanCompileGLSL(const char *name,
   //
 
   // Reference see file: StandAlone/ResourceLimits.cpp on Khronos git
-  const TBuiltInResource DefaultTBuiltInResource = {
-      /* .MaxLights = */ 32,
-      /* .MaxClipPlanes = */ 6,
-      /* .MaxTextureUnits = */ 32,
-      /* .MaxTextureCoords = */ 32,
-      /* .MaxVertexAttribs = */ 64,
-      /* .MaxVertexUniformComponents = */ 4096,
-      /* .MaxVaryingFloats = */ 64,
-      /* .MaxVertexTextureImageUnits = */ 32,
-      /* .MaxCombinedTextureImageUnits = */ 80,
-      /* .MaxTextureImageUnits = */ 32,
-      /* .MaxFragmentUniformComponents = */ 4096,
-      /* .MaxDrawBuffers = */ 32,
-      /* .MaxVertexUniformVectors = */ 128,
-      /* .MaxVaryingVectors = */ 8,
-      /* .MaxFragmentUniformVectors = */ 16,
-      /* .MaxVertexOutputVectors = */ 16,
-      /* .MaxFragmentInputVectors = */ 15,
-      /* .MinProgramTexelOffset = */ -8,
-      /* .MaxProgramTexelOffset = */ 7,
-      /* .MaxClipDistances = */ 8,
-      /* .MaxComputeWorkGroupCountX = */ 65535,
-      /* .MaxComputeWorkGroupCountY = */ 65535,
-      /* .MaxComputeWorkGroupCountZ = */ 65535,
-      /* .MaxComputeWorkGroupSizeX = */ 1024,
-      /* .MaxComputeWorkGroupSizeY = */ 1024,
-      /* .MaxComputeWorkGroupSizeZ = */ 64,
-      /* .MaxComputeUniformComponents = */ 1024,
-      /* .MaxComputeTextureImageUnits = */ 16,
-      /* .MaxComputeImageUniforms = */ 8,
-      /* .MaxComputeAtomicCounters = */ 8,
-      /* .MaxComputeAtomicCounterBuffers = */ 1,
-      /* .MaxVaryingComponents = */ 60,
-      /* .MaxVertexOutputComponents = */ 64,
-      /* .MaxGeometryInputComponents = */ 64,
-      /* .MaxGeometryOutputComponents = */ 128,
-      /* .MaxFragmentInputComponents = */ 128,
-      /* .MaxImageUnits = */ 8,
-      /* .MaxCombinedImageUnitsAndFragmentOutputs = */ 8,
-      /* .MaxCombinedShaderOutputResources = */ 8,
-      /* .MaxImageSamples = */ 0,
-      /* .MaxVertexImageUniforms = */ 0,
-      /* .MaxTessControlImageUniforms = */ 0,
-      /* .MaxTessEvaluationImageUniforms = */ 0,
-      /* .MaxGeometryImageUniforms = */ 0,
-      /* .MaxFragmentImageUniforms = */ 8,
-      /* .MaxCombinedImageUniforms = */ 8,
-      /* .MaxGeometryTextureImageUnits = */ 16,
-      /* .MaxGeometryOutputVertices = */ 256,
-      /* .MaxGeometryTotalOutputComponents = */ 1024,
-      /* .MaxGeometryUniformComponents = */ 1024,
-      /* .MaxGeometryVaryingComponents = */ 64,
-      /* .MaxTessControlInputComponents = */ 128,
-      /* .MaxTessControlOutputComponents = */ 128,
-      /* .MaxTessControlTextureImageUnits = */ 16,
-      /* .MaxTessControlUniformComponents = */ 1024,
-      /* .MaxTessControlTotalOutputComponents = */ 4096,
-      /* .MaxTessEvaluationInputComponents = */ 128,
-      /* .MaxTessEvaluationOutputComponents = */ 128,
-      /* .MaxTessEvaluationTextureImageUnits = */ 16,
-      /* .MaxTessEvaluationUniformComponents = */ 1024,
-      /* .MaxTessPatchComponents = */ 120,
-      /* .MaxPatchVertices = */ 32,
-      /* .MaxTessGenLevel = */ 64,
-      /* .MaxViewports = */ 16,
-      /* .MaxVertexAtomicCounters = */ 0,
-      /* .MaxTessControlAtomicCounters = */ 0,
-      /* .MaxTessEvaluationAtomicCounters = */ 0,
-      /* .MaxGeometryAtomicCounters = */ 0,
-      /* .MaxFragmentAtomicCounters = */ 8,
-      /* .MaxCombinedAtomicCounters = */ 8,
-      /* .MaxAtomicCounterBindings = */ 1,
-      /* .MaxVertexAtomicCounterBuffers = */ 0,
-      /* .MaxTessControlAtomicCounterBuffers = */ 0,
-      /* .MaxTessEvaluationAtomicCounterBuffers = */ 0,
-      /* .MaxGeometryAtomicCounterBuffers = */ 0,
-      /* .MaxFragmentAtomicCounterBuffers = */ 1,
-      /* .MaxCombinedAtomicCounterBuffers = */ 1,
-      /* .MaxAtomicCounterBufferSize = */ 16384,
-      /* .MaxTransformFeedbackBuffers = */ 4,
-      /* .MaxTransformFeedbackInterleavedComponents = */ 64,
-      /* .MaxCullDistances = */ 8,
-      /* .MaxCombinedClipAndCullDistances = */ 8,
-      /* .MaxSamples = */ 4,
-      /* .maxMeshOutputVerticesNV = */ 256,
-      /* .maxMeshOutputPrimitivesNV = */ 512,
-      /* .maxMeshWorkGroupSizeX_NV = */ 32,
-      /* .maxMeshWorkGroupSizeY_NV = */ 1,
-      /* .maxMeshWorkGroupSizeZ_NV = */ 1,
-      /* .maxTaskWorkGroupSizeX_NV = */ 32,
-      /* .maxTaskWorkGroupSizeY_NV = */ 1,
-      /* .maxTaskWorkGroupSizeZ_NV = */ 1,
-      /* .maxMeshViewCountNV = */ 4,
-      /* .maxDualSourceDrawBuffersEXT = */ 1,
+  const TBuiltInResource DefaultTBuiltInResource = {/* .MaxLights = */ 32,
+                                                    /* .MaxClipPlanes = */ 6,
+                                                    /* .MaxTextureUnits = */ 32,
+                                                    /* .MaxTextureCoords = */ 32,
+                                                    /* .MaxVertexAttribs = */ 64,
+                                                    /* .MaxVertexUniformComponents = */ 4096,
+                                                    /* .MaxVaryingFloats = */ 64,
+                                                    /* .MaxVertexTextureImageUnits = */ 32,
+                                                    /* .MaxCombinedTextureImageUnits = */ 80,
+                                                    /* .MaxTextureImageUnits = */ 32,
+                                                    /* .MaxFragmentUniformComponents = */ 4096,
+                                                    /* .MaxDrawBuffers = */ 32,
+                                                    /* .MaxVertexUniformVectors = */ 128,
+                                                    /* .MaxVaryingVectors = */ 8,
+                                                    /* .MaxFragmentUniformVectors = */ 16,
+                                                    /* .MaxVertexOutputVectors = */ 16,
+                                                    /* .MaxFragmentInputVectors = */ 15,
+                                                    /* .MinProgramTexelOffset = */ -8,
+                                                    /* .MaxProgramTexelOffset = */ 7,
+                                                    /* .MaxClipDistances = */ 8,
+                                                    /* .MaxComputeWorkGroupCountX = */ 65535,
+                                                    /* .MaxComputeWorkGroupCountY = */ 65535,
+                                                    /* .MaxComputeWorkGroupCountZ = */ 65535,
+                                                    /* .MaxComputeWorkGroupSizeX = */ 1024,
+                                                    /* .MaxComputeWorkGroupSizeY = */ 1024,
+                                                    /* .MaxComputeWorkGroupSizeZ = */ 64,
+                                                    /* .MaxComputeUniformComponents = */ 1024,
+                                                    /* .MaxComputeTextureImageUnits = */ 16,
+                                                    /* .MaxComputeImageUniforms = */ 8,
+                                                    /* .MaxComputeAtomicCounters = */ 8,
+                                                    /* .MaxComputeAtomicCounterBuffers = */ 1,
+                                                    /* .MaxVaryingComponents = */ 60,
+                                                    /* .MaxVertexOutputComponents = */ 64,
+                                                    /* .MaxGeometryInputComponents = */ 64,
+                                                    /* .MaxGeometryOutputComponents = */ 128,
+                                                    /* .MaxFragmentInputComponents = */ 128,
+                                                    /* .MaxImageUnits = */ 8,
+                                                    /* .MaxCombinedImageUnitsAndFragmentOutputs = */ 8,
+                                                    /* .MaxCombinedShaderOutputResources = */ 8,
+                                                    /* .MaxImageSamples = */ 0,
+                                                    /* .MaxVertexImageUniforms = */ 0,
+                                                    /* .MaxTessControlImageUniforms = */ 0,
+                                                    /* .MaxTessEvaluationImageUniforms = */ 0,
+                                                    /* .MaxGeometryImageUniforms = */ 0,
+                                                    /* .MaxFragmentImageUniforms = */ 8,
+                                                    /* .MaxCombinedImageUniforms = */ 8,
+                                                    /* .MaxGeometryTextureImageUnits = */ 16,
+                                                    /* .MaxGeometryOutputVertices = */ 256,
+                                                    /* .MaxGeometryTotalOutputComponents = */ 1024,
+                                                    /* .MaxGeometryUniformComponents = */ 1024,
+                                                    /* .MaxGeometryVaryingComponents = */ 64,
+                                                    /* .MaxTessControlInputComponents = */ 128,
+                                                    /* .MaxTessControlOutputComponents = */ 128,
+                                                    /* .MaxTessControlTextureImageUnits = */ 16,
+                                                    /* .MaxTessControlUniformComponents = */ 1024,
+                                                    /* .MaxTessControlTotalOutputComponents = */ 4096,
+                                                    /* .MaxTessEvaluationInputComponents = */ 128,
+                                                    /* .MaxTessEvaluationOutputComponents = */ 128,
+                                                    /* .MaxTessEvaluationTextureImageUnits = */ 16,
+                                                    /* .MaxTessEvaluationUniformComponents = */ 1024,
+                                                    /* .MaxTessPatchComponents = */ 120,
+                                                    /* .MaxPatchVertices = */ 32,
+                                                    /* .MaxTessGenLevel = */ 64,
+                                                    /* .MaxViewports = */ 16,
+                                                    /* .MaxVertexAtomicCounters = */ 0,
+                                                    /* .MaxTessControlAtomicCounters = */ 0,
+                                                    /* .MaxTessEvaluationAtomicCounters = */ 0,
+                                                    /* .MaxGeometryAtomicCounters = */ 0,
+                                                    /* .MaxFragmentAtomicCounters = */ 8,
+                                                    /* .MaxCombinedAtomicCounters = */ 8,
+                                                    /* .MaxAtomicCounterBindings = */ 1,
+                                                    /* .MaxVertexAtomicCounterBuffers = */ 0,
+                                                    /* .MaxTessControlAtomicCounterBuffers = */ 0,
+                                                    /* .MaxTessEvaluationAtomicCounterBuffers = */ 0,
+                                                    /* .MaxGeometryAtomicCounterBuffers = */ 0,
+                                                    /* .MaxFragmentAtomicCounterBuffers = */ 1,
+                                                    /* .MaxCombinedAtomicCounterBuffers = */ 1,
+                                                    /* .MaxAtomicCounterBufferSize = */ 16384,
+                                                    /* .MaxTransformFeedbackBuffers = */ 4,
+                                                    /* .MaxTransformFeedbackInterleavedComponents = */ 64,
+                                                    /* .MaxCullDistances = */ 8,
+                                                    /* .MaxCombinedClipAndCullDistances = */ 8,
+                                                    /* .MaxSamples = */ 4,
+                                                    /* .maxMeshOutputVerticesNV = */ 256,
+                                                    /* .maxMeshOutputPrimitivesNV = */ 512,
+                                                    /* .maxMeshWorkGroupSizeX_NV = */ 32,
+                                                    /* .maxMeshWorkGroupSizeY_NV = */ 1,
+                                                    /* .maxMeshWorkGroupSizeZ_NV = */ 1,
+                                                    /* .maxTaskWorkGroupSizeX_NV = */ 32,
+                                                    /* .maxTaskWorkGroupSizeY_NV = */ 1,
+                                                    /* .maxTaskWorkGroupSizeZ_NV = */ 1,
+                                                    /* .maxMeshViewCountNV = */ 4,
+                                                    /* .maxDualSourceDrawBuffersEXT = */ 1,
 
-      /* .limits = */
-      {
-          /* .nonInductiveForLoops = */ 1,
-          /* .whileLoops = */ 1,
-          /* .doWhileLoops = */ 1,
-          /* .generalUniformIndexing = */ 1,
-          /* .generalAttributeMatrixVectorIndexing = */ 1,
-          /* .generalVaryingIndexing = */ 1,
-          /* .generalSamplerIndexing = */ 1,
-          /* .generalVariableIndexing = */ 1,
-          /* .generalConstantMatrixVectorIndexing = */ 1,
-      }};
+                                                    /* .limits = */
+                                                    {
+                                                      /* .nonInductiveForLoops = */ 1,
+                                                      /* .whileLoops = */ 1,
+                                                      /* .doWhileLoops = */ 1,
+                                                      /* .generalUniformIndexing = */ 1,
+                                                      /* .generalAttributeMatrixVectorIndexing = */ 1,
+                                                      /* .generalVaryingIndexing = */ 1,
+                                                      /* .generalSamplerIndexing = */ 1,
+                                                      /* .generalVariableIndexing = */ 1,
+                                                      /* .generalConstantMatrixVectorIndexing = */ 1,
+                                                    }};
 
   EShMessages messages = (EShMessages)(EShMsgSpvRules | EShMsgVulkanRules);
 
@@ -296,9 +295,9 @@ bool HgiVulkanCompileGLSL(const char *name,
   spv::SpvBuildLogger logger;
   glslang::SpvOptions spvOptions;
   spvOptions.generateDebugInfo = false;
-  spvOptions.optimizeSize      = false;
-  spvOptions.disassemble       = false;
-  spvOptions.validate          = false;
+  spvOptions.optimizeSize = false;
+  spvOptions.disassemble = false;
+  spvOptions.validate = false;
 
   glslang::GlslangToSpv(*program.getIntermediate(shaderType), *spirvOUT, &logger, &spvOptions);
 
@@ -324,40 +323,37 @@ static bool _VerifyResults(SpvReflectShaderModule *module, SpvReflectResult cons
   return true;
 }
 
-static VkDescriptorSetLayout _CreateDescriptorSetLayout(
-    HgiVulkanDevice *device,
-    VkDescriptorSetLayoutCreateInfo const &createInfo,
-    std::string const &debugName)
+static VkDescriptorSetLayout _CreateDescriptorSetLayout(HgiVulkanDevice *device,
+                                                        VkDescriptorSetLayoutCreateInfo const &createInfo,
+                                                        std::string const &debugName)
 {
   VkDescriptorSetLayout layout = nullptr;
   TF_VERIFY(vkCreateDescriptorSetLayout(
-                device->GetVulkanDevice(), &createInfo, HgiVulkanAllocator(), &layout) ==
-            VK_SUCCESS);
+              device->GetVulkanDevice(), &createInfo, HgiVulkanAllocator(), &layout) == VK_SUCCESS);
 
   // Debug label
   if (!debugName.empty()) {
     std::string debugLabel = "DescriptorSetLayout " + debugName;
     HgiVulkanSetDebugName(
-        device, (uint64_t)layout, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, debugLabel.c_str());
+      device, (uint64_t)layout, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, debugLabel.c_str());
   }
 
   return layout;
 }
 
-HgiVulkanDescriptorSetInfoVector HgiVulkanGatherDescriptorSetInfo(
-    std::vector<unsigned int> const &spirv)
+HgiVulkanDescriptorSetInfoVector HgiVulkanGatherDescriptorSetInfo(std::vector<unsigned int> const &spirv)
 {
   // This code is based on main_descriptors.cpp in the SPIRV-Reflect repo.
 
   SpvReflectShaderModule module = {};
-  SpvReflectResult result       = spvReflectCreateShaderModule(
-      spirv.size() * sizeof(uint32_t), spirv.data(), &module);
+  SpvReflectResult result = spvReflectCreateShaderModule(
+    spirv.size() * sizeof(uint32_t), spirv.data(), &module);
   if (!_VerifyResults(&module, result)) {
     return HgiVulkanDescriptorSetInfoVector();
   }
 
   uint32_t count = 0;
-  result         = spvReflectEnumerateDescriptorSets(&module, &count, NULL);
+  result = spvReflectEnumerateDescriptorSets(&module, &count, NULL);
   if (!_VerifyResults(&module, result)) {
     return HgiVulkanDescriptorSetInfoVector();
   }
@@ -374,15 +370,15 @@ HgiVulkanDescriptorSetInfoVector HgiVulkanGatherDescriptorSetInfo(
 
   for (size_t s = 0; s < sets.size(); s++) {
     SpvReflectDescriptorSet const &reflSet = *(sets[s]);
-    HgiVulkanDescriptorSetInfo &info       = infos[s];
+    HgiVulkanDescriptorSetInfo &info = infos[s];
     info.bindings.resize(reflSet.binding_count);
 
     for (uint32_t b = 0; b < reflSet.binding_count; b++) {
       SpvReflectDescriptorBinding const &reflBinding = *(reflSet.bindings[b]);
 
       VkDescriptorSetLayoutBinding &layoutBinding = info.bindings[b];
-      layoutBinding.binding                       = reflBinding.binding;
-      layoutBinding.descriptorType  = static_cast<VkDescriptorType>(reflBinding.descriptor_type);
+      layoutBinding.binding = reflBinding.binding;
+      layoutBinding.descriptorType = static_cast<VkDescriptorType>(reflBinding.descriptor_type);
       layoutBinding.descriptorCount = 1;
 
       for (uint32_t d = 0; d < reflBinding.array.dims_count; d++) {
@@ -400,9 +396,9 @@ HgiVulkanDescriptorSetInfoVector HgiVulkanGatherDescriptorSetInfo(
 }
 
 VkDescriptorSetLayoutVector HgiVulkanMakeDescriptorSetLayouts(
-    HgiVulkanDevice *device,
-    std::vector<HgiVulkanDescriptorSetInfoVector> const &infos,
-    std::string const &debugName)
+  HgiVulkanDevice *device,
+  std::vector<HgiVulkanDescriptorSetInfoVector> const &infos,
+  std::string const &debugName)
 {
   std::unordered_map<uint32_t, HgiVulkanDescriptorSetInfo> mergedInfos;
 
@@ -450,9 +446,9 @@ VkDescriptorSetLayoutVector HgiVulkanMakeDescriptorSetLayouts(
   // Generate the VkDescriptorSetLayoutCreateInfos for the bindings we merged.
   for (auto &pair : mergedInfos) {
     HgiVulkanDescriptorSetInfo &info = pair.second;
-    info.createInfo.sType            = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    info.createInfo.bindingCount     = info.bindings.size();
-    info.createInfo.pBindings        = info.bindings.data();
+    info.createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    info.createInfo.bindingCount = info.bindings.size();
+    info.createInfo.pBindings = info.bindings.data();
   }
 
   // Create VkDescriptorSetLayouts out of the merge infos above.

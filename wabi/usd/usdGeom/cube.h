@@ -177,8 +177,7 @@ class UsdGeomCube : public UsdGeomGprim {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateSizeAttr(VtValue const &defaultValue = VtValue(),
-                              bool writeSparsely          = false) const;
+  UsdAttribute CreateSizeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -201,8 +200,7 @@ class UsdGeomCube : public UsdGeomGprim {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateExtentAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateExtentAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

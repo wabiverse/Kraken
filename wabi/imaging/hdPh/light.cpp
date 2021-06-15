@@ -33,9 +33,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPhLight::HdPhLight(SdfPath const &id, TfToken const &lightType)
-    : HdLight(id),
-      _lightType(lightType)
+HdPhLight::HdPhLight(SdfPath const &id, TfToken const &lightType) : HdLight(id), _lightType(lightType)
 {}
 
 HdPhLight::~HdPhLight() = default;
@@ -57,8 +55,8 @@ GlfSimpleLight HdPhLight::_ApproximateAreaLight(SdfPath const &id, HdSceneDelega
 
   // Get the transform of the light
   GfMatrix4d transform = _params[HdTokens->transform].Get<GfMatrix4d>();
-  GfVec3d hdp          = transform.ExtractTranslation();
-  GfVec4f p            = GfVec4f(hdp[0], hdp[1], hdp[2], 1.0f);
+  GfVec3d hdp = transform.ExtractTranslation();
+  GfVec4f p = GfVec4f(hdp[0], hdp[1], hdp[2], 1.0f);
 
   // Create the Glf Simple Light object that will be used by the rest
   // of the pipeline. No support for shadows for this translated light.
@@ -71,8 +69,7 @@ GlfSimpleLight HdPhLight::_ApproximateAreaLight(SdfPath const &id, HdSceneDelega
   return l;
 }
 
-GlfSimpleLight HdPhLight::_PrepareDomeLight(SdfPath const &id,
-                                            HdSceneDelegate *const sceneDelegate)
+GlfSimpleLight HdPhLight::_PrepareDomeLight(SdfPath const &id, HdSceneDelegate *const sceneDelegate)
 {
   // Create the Glf Simple Light object that will be used by the rest
   // of the pipeline. No support for shadows for dome light.
@@ -98,9 +95,7 @@ GlfSimpleLight HdPhLight::_PrepareDomeLight(SdfPath const &id,
 }
 
 /* virtual */
-void HdPhLight::Sync(HdSceneDelegate *sceneDelegate,
-                     HdRenderParam *renderParam,
-                     HdDirtyBits *dirtyBits)
+void HdPhLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
   TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();

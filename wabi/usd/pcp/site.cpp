@@ -38,8 +38,8 @@ PcpSite::PcpSite()
 }
 
 PcpSite::PcpSite(const PcpLayerStackIdentifier &layerStackIdentifier_, const SdfPath &path_)
-    : layerStackIdentifier(layerStackIdentifier_),
-      path(path_)
+  : layerStackIdentifier(layerStackIdentifier_),
+    path(path_)
 {
   // Do nothing
 }
@@ -52,8 +52,8 @@ PcpSite::PcpSite(const PcpLayerStackPtr &layerStack, const SdfPath &path_) : pat
 }
 
 PcpSite::PcpSite(const SdfLayerHandle &layer, const SdfPath &path_)
-    : layerStackIdentifier(layer),
-      path(path_)
+  : layerStackIdentifier(layer),
+    path(path_)
 {
   // Do nothing
 }
@@ -92,34 +92,34 @@ PcpSiteStr::PcpSiteStr()
 }
 
 PcpSiteStr::PcpSiteStr(const PcpLayerStackIdentifierStr &id, const SdfPath &path)
-    : layerStackIdentifierStr(id),
-      path(path)
+  : layerStackIdentifierStr(id),
+    path(path)
 {
   // Do nothing
 }
 
 PcpSiteStr::PcpSiteStr(const PcpLayerStackIdentifier &id, const SdfPath &path)
-    : layerStackIdentifierStr(id),
-      path(path)
+  : layerStackIdentifierStr(id),
+    path(path)
 {
   // Do nothing
 }
 
 PcpSiteStr::PcpSiteStr(const SdfLayerHandle &layer, const SdfPath &path)
-    : layerStackIdentifierStr(layer ? layer->GetIdentifier() : std::string()),
-      path(path)
+  : layerStackIdentifierStr(layer ? layer->GetIdentifier() : std::string()),
+    path(path)
 {
   // Do nothing
 }
 
 PcpSiteStr::PcpSiteStr(PcpLayerStackSite const &site)
-    : layerStackIdentifierStr(site.layerStack->GetIdentifier()),
-      path(site.path)
+  : layerStackIdentifierStr(site.layerStack->GetIdentifier()),
+    path(site.path)
 {}
 
 PcpSiteStr::PcpSiteStr(PcpSite const &site)
-    : layerStackIdentifierStr(site.layerStackIdentifier),
-      path(site.path)
+  : layerStackIdentifierStr(site.layerStackIdentifier),
+    path(site.path)
 {}
 
 bool PcpSiteStr::operator==(const PcpSiteStr &rhs) const
@@ -149,8 +149,8 @@ PcpLayerStackSite::PcpLayerStackSite()
 }
 
 PcpLayerStackSite::PcpLayerStackSite(const PcpLayerStackRefPtr &layerStack_, const SdfPath &path_)
-    : layerStack(layerStack_),
-      path(path_)
+  : layerStack(layerStack_),
+    path(path_)
 {
   // Do nothing
 }

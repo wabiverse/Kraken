@@ -46,33 +46,32 @@ WABI_NAMESPACE_BEGIN
 // -------------------------------------------------------------------------- //
 
 HdxSimpleLightTask::HdxSimpleLightTask(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdTask(id),
-      _cameraId(),
-      _lightIds(),
-      _lightIncludePaths(),
-      _lightExcludePaths(),
-      _numLights(0),
-      _lightingShader(std::make_shared<HdPhSimpleLightingShader>()),
-      _enableShadows(false),
-      _viewport(0.0f, 0.0f, 0.0f, 0.0f),
-      _overrideWindowPolicy{false, CameraUtilFit},
-      _material(),
-      _sceneAmbient(),
-      _glfSimpleLights()
+  : HdTask(id),
+    _cameraId(),
+    _lightIds(),
+    _lightIncludePaths(),
+    _lightExcludePaths(),
+    _numLights(0),
+    _lightingShader(std::make_shared<HdPhSimpleLightingShader>()),
+    _enableShadows(false),
+    _viewport(0.0f, 0.0f, 0.0f, 0.0f),
+    _overrideWindowPolicy{false, CameraUtilFit},
+    _material(),
+    _sceneAmbient(),
+    _glfSimpleLights()
 {}
 
 HdxSimpleLightTask::~HdxSimpleLightTask() = default;
 
 std::vector<GfMatrix4d> HdxSimpleLightTask::_ComputeShadowMatrices(
-    const HdCamera *const camera,
-    HdxShadowMatrixComputationSharedPtr const &computation) const
+  const HdCamera *const camera,
+  HdxShadowMatrixComputationSharedPtr const &computation) const
 {
   const CameraUtilConformWindowPolicy camPolicy = camera->GetWindowPolicy();
 
   if (_framing.IsValid()) {
-    CameraUtilConformWindowPolicy const policy = _overrideWindowPolicy.first ?
-                                                     _overrideWindowPolicy.second :
-                                                     camPolicy;
+    CameraUtilConformWindowPolicy const policy = _overrideWindowPolicy.first ? _overrideWindowPolicy.second :
+                                                                               camPolicy;
     return computation->Compute(_framing, policy);
   }
   else {
@@ -80,17 +79,14 @@ std::vector<GfMatrix4d> HdxSimpleLightTask::_ComputeShadowMatrices(
   }
 }
 
-void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate,
-                              HdTaskContext *ctx,
-                              HdDirtyBits *dirtyBits)
+void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits)
 {
   HD_TRACE_FUNCTION();
 
   // Store the lighting context in the task context
   // so later on other tasks can use this information
   // draw shadows or other purposes
-  (*ctx)[HdxTokens->lightingShader] = std::dynamic_pointer_cast<HdPhLightingShader>(
-      _lightingShader);
+  (*ctx)[HdxTokens->lightingShader] = std::dynamic_pointer_cast<HdPhLightingShader>(_lightingShader);
 
   HdRenderIndex &renderIndex = delegate->GetRenderIndex();
 
@@ -100,21 +96,21 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate,
       return;
     }
 
-    _lightIncludePaths    = params.lightIncludePaths;
-    _lightExcludePaths    = params.lightExcludePaths;
-    _cameraId             = params.cameraPath;
-    _enableShadows        = params.enableShadows;
-    _viewport             = params.viewport;
-    _framing              = params.framing;
+    _lightIncludePaths = params.lightIncludePaths;
+    _lightExcludePaths = params.lightExcludePaths;
+    _cameraId = params.cameraPath;
+    _enableShadows = params.enableShadows;
+    _viewport = params.viewport;
+    _framing = params.framing;
     _overrideWindowPolicy = params.overrideWindowPolicy;
     // XXX: compatibility hack for passing some unit tests until we have
     //      more formal material plumbing.
-    _material     = params.material;
+    _material = params.material;
     _sceneAmbient = params.sceneAmbient;
   }
 
   const HdCamera *camera = static_cast<const HdCamera *>(
-      renderIndex.GetSprim(HdPrimTypeTokens->camera, _cameraId));
+    renderIndex.GetSprim(HdPrimTypeTokens->camera, _cameraId));
   if (!TF_VERIFY(camera)) {
     return;
   }
@@ -134,9 +130,9 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate,
   // Place lighting context in task context
   (*ctx)[HdxTokens->lightingContext] = lightingContext;
 
-  GfMatrix4d const &viewMatrix        = camera->GetViewMatrix();
+  GfMatrix4d const &viewMatrix = camera->GetViewMatrix();
   GfMatrix4d const &viewInverseMatrix = camera->GetViewInverseMatrix();
-  GfMatrix4d const &projectionMatrix  = camera->GetProjectionMatrix();
+  GfMatrix4d const &projectionMatrix = camera->GetProjectionMatrix();
   // Extract the camera window policy to adjust the frustum correctly for
   // lights that have shadows.
 
@@ -150,7 +146,7 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate,
                                            HdPrimTypeTokens->rectLight};
   _lightIds.clear();
   _numLights = _AppendLightsOfType(
-      renderIndex, lightTypes, _lightIncludePaths, _lightExcludePaths, &_lightIds);
+    renderIndex, lightTypes, _lightIncludePaths, _lightExcludePaths, &_lightIds);
 
   // We rebuild the lights array every time, but avoid reallocating
   // the array every frame as this was showing up as a significant portion
@@ -176,7 +172,7 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate,
     {
 
       HdPhLight const *light = static_cast<const HdPhLight *>(
-          renderIndex.GetSprim(lightPerTypeIt->first, *lightPathIt));
+        renderIndex.GetSprim(lightPerTypeIt->first, *lightPathIt));
       if (!TF_VERIFY(light)) {
         _glfSimpleLights.push_back(GlfSimpleLight());
         continue;
@@ -185,7 +181,7 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate,
       // Take a copy of the simple light into our temporary array and
       // update it with viewer-dependant values.
       const VtValue vtLightParams = light->Get(HdLightTokens->params);
-      GlfSimpleLight glfl         = vtLightParams.GetWithDefault<GlfSimpleLight>(GlfSimpleLight());
+      GlfSimpleLight glfl = vtLightParams.GetWithDefault<GlfSimpleLight>(GlfSimpleLight());
 
       // Skip lights with zero intensity
       if (!glfl.HasIntensity()) {
@@ -211,9 +207,9 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate,
         glfl.SetIsCameraSpaceLight(false);
       }
 
-      const VtValue vLightShadowParams        = light->Get(HdLightTokens->shadowParams);
+      const VtValue vLightShadowParams = light->Get(HdLightTokens->shadowParams);
       const HdxShadowParams lightShadowParams = vLightShadowParams.GetWithDefault<HdxShadowParams>(
-          HdxShadowParams());
+        HdxShadowParams());
 
       // If shadows are disabled from the rendergraph then
       // we treat this light as if it had the shadow disabled
@@ -232,7 +228,7 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate,
         }
 
         const std::vector<GfMatrix4d> shadowMatrices = _ComputeShadowMatrices(
-            camera, lightShadowParams.shadowMatrix);
+          camera, lightShadowParams.shadowMatrix);
 
         if (shadowMatrices.empty()) {
           glfl.SetHasShadow(false);
@@ -289,8 +285,8 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate,
         continue;
       }
       // Complete the shadow setup for this light
-      int shadowStart                        = _glfSimpleLights[lightId].GetShadowIndexStart();
-      int shadowEnd                          = _glfSimpleLights[lightId].GetShadowIndexEnd();
+      int shadowStart = _glfSimpleLights[lightId].GetShadowIndexStart();
+      int shadowEnd = _glfSimpleLights[lightId].GetShadowIndexEnd();
       std::vector<GfMatrix4d> shadowMatrices = _glfSimpleLights[lightId].GetShadowMatrices();
 
       for (int shadowId = shadowStart; shadowId <= shadowEnd; ++shadowId) {
@@ -373,15 +369,14 @@ bool operator!=(const HdxSimpleLightTaskParams &lhs, const HdxSimpleLightTaskPar
 
 std::ostream &operator<<(std::ostream &out, const HdxShadowParams &pv)
 {
-  out << pv.shadowMatrix << " " << pv.resolution << " " << pv.bias << " " << pv.blur << " "
-      << pv.enabled;
+  out << pv.shadowMatrix << " " << pv.resolution << " " << pv.bias << " " << pv.blur << " " << pv.enabled;
   return out;
 }
 
 bool operator==(const HdxShadowParams &lhs, const HdxShadowParams &rhs)
 {
-  return lhs.shadowMatrix == rhs.shadowMatrix && lhs.resolution == rhs.resolution &&
-         lhs.bias == rhs.bias && lhs.blur == rhs.blur && lhs.enabled == rhs.enabled;
+  return lhs.shadowMatrix == rhs.shadowMatrix && lhs.resolution == rhs.resolution && lhs.bias == rhs.bias &&
+         lhs.blur == rhs.blur && lhs.enabled == rhs.enabled;
 }
 
 bool operator!=(const HdxShadowParams &lhs, const HdxShadowParams &rhs)

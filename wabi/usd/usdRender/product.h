@@ -201,7 +201,7 @@ class UsdRenderProduct : public UsdRenderSettingsBase {
   /// the default for \p writeSparsely is \c false.
   USDRENDER_API
   UsdAttribute CreateProductTypeAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -227,7 +227,7 @@ class UsdRenderProduct : public UsdRenderSettingsBase {
   /// the default for \p writeSparsely is \c false.
   USDRENDER_API
   UsdAttribute CreateProductNameAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //

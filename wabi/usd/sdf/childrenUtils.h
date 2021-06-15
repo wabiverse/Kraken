@@ -62,10 +62,7 @@ template<class ChildPolicy> class Sdf_ChildrenUtils {
 
   // This overload is intended primarily for internal use.
   SDF_API
-  static bool CreateSpec(SdfLayer *layer,
-                         const SdfPath &childPath,
-                         SdfSpecType specType,
-                         bool inert = true);
+  static bool CreateSpec(SdfLayer *layer, const SdfPath &childPath, SdfSpecType specType, bool inert = true);
 
   /// \name Rename API
   /// @{

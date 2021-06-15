@@ -112,8 +112,7 @@ class HdPhTextureObject : public std::enable_shared_from_this<HdPhTextureObject>
   bool _GetPremultiplyAlpha(const HdPhSubtextureIdentifier *const subId) const;
 
   HDPH_API
-  HioImage::SourceColorSpace _GetSourceColorSpace(
-      const HdPhSubtextureIdentifier *const subId) const;
+  HioImage::SourceColorSpace _GetSourceColorSpace(const HdPhSubtextureIdentifier *const subId) const;
 
   /// Load texture to CPU (thread-safe)
   ///

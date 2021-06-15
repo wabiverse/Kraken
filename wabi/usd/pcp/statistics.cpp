@@ -205,13 +205,11 @@ class Pcp_Statistics {
   {
     using namespace std;
 
-    out << "  Total nodes:                       " << _Helper::FormatNumber(totalStats.numNodes)
-        << endl;
-    out << "  Total culled* nodes:               " << _Helper::FormatNumber(culledStats.numNodes)
-        << endl;
+    out << "  Total nodes:                       " << _Helper::FormatNumber(totalStats.numNodes) << endl;
+    out << "  Total culled* nodes:               " << _Helper::FormatNumber(culledStats.numNodes) << endl;
     out << "  By type (total / culled*):         " << endl;
 
-    std::map<PcpArcType, size_t> typeToNumNodes       = totalStats.typeToNumNodes;
+    std::map<PcpArcType, size_t> typeToNumNodes = totalStats.typeToNumNodes;
     std::map<PcpArcType, size_t> typeToNumCulledNodes = culledStats.typeToNumNodes;
     for (PcpArcType t = PcpArcTypeRoot; t != PcpNumArcTypes; t = (PcpArcType)(t + 1)) {
       const std::string nodeTypeName = TfEnum::GetDisplayName(t);
@@ -248,10 +246,9 @@ class Pcp_Statistics {
     out << "PcpCache Statistics" << endl << "-------------------" << endl;
 
     out << "Entries: " << endl;
-    out << "  Prim indexes:                      " << _Helper::FormatNumber(stats.numPrimIndexes)
+    out << "  Prim indexes:                      " << _Helper::FormatNumber(stats.numPrimIndexes) << endl;
+    out << "  Property indexes:                  " << _Helper::FormatNumber(stats.numPropertyIndexes)
         << endl;
-    out << "  Property indexes:                  "
-        << _Helper::FormatNumber(stats.numPropertyIndexes) << endl;
     out << endl;
 
     out << "Prim graphs: " << endl;
@@ -259,24 +256,19 @@ class Pcp_Statistics {
     out << endl;
 
     out << "Prim graphs (shared): " << endl;
-    out << "  Graph instances:                   "
-        << _Helper::FormatNumber(stats.numGraphInstances) << endl;
+    out << "  Graph instances:                   " << _Helper::FormatNumber(stats.numGraphInstances) << endl;
     PrintGraphStats(stats.sharedAllGraphStats, stats.sharedCulledGraphStats, out);
     out << endl;
 
     out << "Memory usage: " << endl;
-    out << "  sizeof(PcpMapFunction):            " << _Helper::FormatSize(sizeof(PcpMapFunction))
+    out << "  sizeof(PcpMapFunction):            " << _Helper::FormatSize(sizeof(PcpMapFunction)) << endl;
+    out << "  sizeof(PcpLayerStackPtr):          " << _Helper::FormatSize(sizeof(PcpLayerStackPtr)) << endl;
+    out << "  sizeof(PcpLayerStackSite):         " << _Helper::FormatSize(sizeof(PcpLayerStackSite)) << endl;
+    out << "  sizeof(PcpPrimIndex):              " << _Helper::FormatSize(sizeof(PcpPrimIndex)) << endl;
+    out << "  sizeof(PcpPrimIndex_Graph):        " << _Helper::FormatSize(sizeof(PcpPrimIndex_Graph))
         << endl;
-    out << "  sizeof(PcpLayerStackPtr):          " << _Helper::FormatSize(sizeof(PcpLayerStackPtr))
+    out << "  sizeof(PcpPrimIndex_Graph::_Node): " << _Helper::FormatSize(sizeof(PcpPrimIndex_Graph::_Node))
         << endl;
-    out << "  sizeof(PcpLayerStackSite):         "
-        << _Helper::FormatSize(sizeof(PcpLayerStackSite)) << endl;
-    out << "  sizeof(PcpPrimIndex):              " << _Helper::FormatSize(sizeof(PcpPrimIndex))
-        << endl;
-    out << "  sizeof(PcpPrimIndex_Graph):        "
-        << _Helper::FormatSize(sizeof(PcpPrimIndex_Graph)) << endl;
-    out << "  sizeof(PcpPrimIndex_Graph::_Node): "
-        << _Helper::FormatSize(sizeof(PcpPrimIndex_Graph::_Node)) << endl;
     out << endl;
 
     out << "PcpMapFunction size histogram: " << endl;

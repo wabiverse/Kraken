@@ -46,9 +46,8 @@ class UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters {
   UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters()
   {}
   USDUTILS_API
-  UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters(
-      const std::vector<std::string> &stringFilters,
-      const std::vector<std::string> &codePathFilters);
+  UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters(const std::vector<std::string> &stringFilters,
+                                                         const std::vector<std::string> &codePathFilters);
 
   const std::vector<std::string> &GetStringFilters() const
   {
@@ -104,18 +103,18 @@ class UsdUtilsConditionalAbortDiagnosticDelegate : public TfDiagnosticMgr::Deleg
   /// \note The _includeFilters and _excludeFilters are immutable
   USDUTILS_API
   UsdUtilsConditionalAbortDiagnosticDelegate(
-      const UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters &includeFilters,
-      const UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters &excludeFilters);
+    const UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters &includeFilters,
+    const UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters &excludeFilters);
 
   /// Handles the removal of this delegate from TfDiagnosticMgr.
   USDUTILS_API
   virtual ~UsdUtilsConditionalAbortDiagnosticDelegate();
 
   UsdUtilsConditionalAbortDiagnosticDelegate() = delete;
-  UsdUtilsConditionalAbortDiagnosticDelegate(
-      const UsdUtilsConditionalAbortDiagnosticDelegate &delegate) = delete;
-  UsdUtilsConditionalAbortDiagnosticDelegate &operator            =(
-      const UsdUtilsConditionalAbortDiagnosticDelegate &delegate) = delete;
+  UsdUtilsConditionalAbortDiagnosticDelegate(const UsdUtilsConditionalAbortDiagnosticDelegate &delegate) =
+    delete;
+  UsdUtilsConditionalAbortDiagnosticDelegate &operator=(
+    const UsdUtilsConditionalAbortDiagnosticDelegate &delegate) = delete;
 
   // Interface overrides
   void IssueError(const TfError &err) override;

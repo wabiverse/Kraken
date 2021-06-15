@@ -55,17 +55,16 @@ void *TfDlopen(const std::string &filename, int flag, std::string *error, bool l
   TF_DEBUG(TF_DLOPEN).Msg("TfDlopen: [opening] '%s' (flag=%x)...\n", filename.c_str(), flag);
 
   // Try to open the dynamic library
-  bool state   = _opening;
-  _opening     = true;
+  bool state = _opening;
+  _opening = true;
   void *handle = ArchLibraryOpen(filename.c_str(), flag);
-  _opening     = state;
+  _opening = state;
 
   TF_DEBUG(TF_DLOPEN).Msg("TfDlopen: [opened] '%s' (handle=%p)\n", filename.c_str(), handle);
 
   std::string err = ArchLibraryError();
   if (!err.empty()) {
-    TF_DEBUG(TF_DLOPEN).Msg(
-        "TfDlopen: [error on opening] '%s': %s\n", filename.c_str(), err.c_str());
+    TF_DEBUG(TF_DLOPEN).Msg("TfDlopen: [error on opening] '%s': %s\n", filename.c_str(), err.c_str());
     if (error) {
       *error = std::move(err);
     }
@@ -90,7 +89,7 @@ void *TfDlopen(const std::string &filename, int flag, std::string *error, bool l
 int TfDlclose(void *handle)
 {
   bool state = _closing;
-  _closing   = true;
+  _closing = true;
 
   TF_DEBUG(TF_DLCLOSE).Msg("TfDlclose: handle = %p\n", handle);
 

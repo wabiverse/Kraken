@@ -126,8 +126,8 @@ struct SMikkTSpaceContext {
 
 // these are both thread safe!
 tbool genTangSpaceDefault(
-    const SMikkTSpaceContext *pContext);  // Default (recommended) fAngularThreshold is 180 degrees
-                                          // (which means threshold disabled)
+  const SMikkTSpaceContext *pContext);  // Default (recommended) fAngularThreshold is 180 degrees
+                                        // (which means threshold disabled)
 tbool genTangSpace(const SMikkTSpaceContext *pContext, const float fAngularThreshold);
 
 // To avoid visual errors (distortions/unwanted hard edges in lighting), when using sampled normal

@@ -101,8 +101,7 @@ class ArResolverContext {
 
   /// Construct a resolver context using the context object \p context.
   /// See class documentation for requirements.
-  template<class Context,
-           typename std::enable_if<ArIsContextObject<Context>::value>::type * = nullptr>
+  template<class Context, typename std::enable_if<ArIsContextObject<Context>::value>::type * = nullptr>
   ArResolverContext(const Context &context) : _context(new _Typed<Context>(context))
   {}
 
@@ -117,9 +116,7 @@ class ArResolverContext {
   /// NULL otherwise.
   template<class Context> const Context *Get() const
   {
-    return _context && _context->IsHolding(typeid(Context)) ?
-               &_GetTyped<Context>(*_context)._context :
-               NULL;
+    return _context && _context->IsHolding(typeid(Context)) ? &_GetTyped<Context>(*_context)._context : NULL;
   }
 
   /// Returns a debug string representing the contained context
@@ -149,8 +146,7 @@ class ArResolverContext {
       if (_context->IsHolding(rhs._context->GetTypeid())) {
         return _context->LessThan(*rhs._context);
       }
-      return (std::string(_context->GetTypeid().name()) <
-              std::string(rhs._context->GetTypeid().name()));
+      return (std::string(_context->GetTypeid().name()) < std::string(rhs._context->GetTypeid().name()));
     }
     else if (_context && !rhs._context) {
       return false;
@@ -188,11 +184,11 @@ class ArResolverContext {
       return TfSafeTypeCompare(ti, GetTypeid());
     }
 
-    virtual const std::type_info &GetTypeid() const  = 0;
+    virtual const std::type_info &GetTypeid() const = 0;
     virtual bool LessThan(const _Untyped &rhs) const = 0;
-    virtual bool Equals(const _Untyped &rhs) const   = 0;
-    virtual size_t Hash() const                      = 0;
-    virtual std::string GetDebugString() const       = 0;
+    virtual bool Equals(const _Untyped &rhs) const = 0;
+    virtual size_t Hash() const = 0;
+    virtual std::string GetDebugString() const = 0;
   };
 
   template<class Context> struct _Typed : public _Untyped {

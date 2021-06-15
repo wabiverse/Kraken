@@ -101,13 +101,13 @@ void TfPyLock::BeginAllowThreads()
   if (!_acquired) {
     if (Py_IsInitialized())
       TF_WARN(
-          "Cannot allow threads on a TfPyLock that is not "
-          "acquired.\n");
+        "Cannot allow threads on a TfPyLock that is not "
+        "acquired.\n");
     return;
   }
 
   // Save the thread state locally.
-  _savedState      = PyEval_SaveThread();
+  _savedState = PyEval_SaveThread();
   _allowingThreads = true;
 }
 
@@ -116,8 +116,8 @@ void TfPyLock::EndAllowThreads()
   // If not allowing threads, emit a warning and do nothing
   if (!_allowingThreads) {
     TF_WARN(
-        "Cannot end allowing threads on a TfPyLock that is not "
-        "currently allowing threads.\n");
+      "Cannot end allowing threads on a TfPyLock that is not "
+      "currently allowing threads.\n");
     return;
   }
 

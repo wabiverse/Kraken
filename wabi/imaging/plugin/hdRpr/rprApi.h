@@ -53,16 +53,16 @@ template<typename T, typename... Args> std::unique_ptr<T> make_unique(Args &&...
 }
 
 enum HdRprVisibilityFlag {
-  kVisiblePrimary          = 1 << 0,
-  kVisibleShadow           = 1 << 1,
-  kVisibleReflection       = 1 << 2,
-  kVisibleRefraction       = 1 << 3,
-  kVisibleTransparent      = 1 << 4,
-  kVisibleDiffuse          = 1 << 5,
+  kVisiblePrimary = 1 << 0,
+  kVisibleShadow = 1 << 1,
+  kVisibleReflection = 1 << 2,
+  kVisibleRefraction = 1 << 3,
+  kVisibleTransparent = 1 << 4,
+  kVisibleDiffuse = 1 << 5,
   kVisibleGlossyReflection = 1 << 6,
   kVisibleGlossyRefraction = 1 << 7,
-  kVisibleLight            = 1 << 8,
-  kVisibleAll              = (kVisibleLight << 1) - 1
+  kVisibleLight = 1 << 8,
+  kVisibleAll = (kVisibleLight << 1) - 1
 };
 const uint32_t kInvisible = 0u;
 
@@ -101,12 +101,12 @@ class HdRprApi final {
   void ReleaseGeometryLightMaterial(RprUsdMaterial *material);
 
   struct VolumeMaterialParameters {
-    GfVec3f scatteringColor   = GfVec3f(1.0f);
+    GfVec3f scatteringColor = GfVec3f(1.0f);
     GfVec3f transmissionColor = GfVec3f(1.0f);
-    GfVec3f emissionColor     = GfVec3f(1.0f);
-    float density             = 1.0f;
-    float anisotropy          = 0.0f;
-    bool multipleScattering   = false;
+    GfVec3f emissionColor = GfVec3f(1.0f);
+    float density = 1.0f;
+    float anisotropy = 0.0f;
+    bool multipleScattering = false;
   };
   HdRprApiVolume *CreateVolume(VtUIntArray const &densityCoords,
                                VtFloatArray const &densityValues,
@@ -169,10 +169,7 @@ class HdRprApi final {
   void Release(rpr::Curve *curve);
 
   void SetTransform(rpr::SceneObject *object, GfMatrix4f const &transform);
-  void SetTransform(rpr::Shape *shape,
-                    size_t numSamples,
-                    float *timeSamples,
-                    GfMatrix4d *transformSamples);
+  void SetTransform(rpr::Shape *shape, size_t numSamples, float *timeSamples, GfMatrix4d *transformSamples);
 
   void SetName(rpr::ContextObject *object, const char *name);
   void SetName(RprUsdMaterial *object, const char *name);

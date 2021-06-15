@@ -26,9 +26,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-UsdPrimTypeInfo::UsdPrimTypeInfo(_TypeId &&typeId)
-    : _typeId(std::move(typeId)),
-      _primDefinition(nullptr)
+UsdPrimTypeInfo::UsdPrimTypeInfo(_TypeId &&typeId) : _typeId(std::move(typeId)), _primDefinition(nullptr)
 {
   // Helper for initializing the schema type from either the mapped type
   // name or the prim type name.
@@ -54,7 +52,7 @@ UsdPrimTypeInfo::UsdPrimTypeInfo(_TypeId &&typeId)
 const UsdPrimDefinition *UsdPrimTypeInfo::_FindOrCreatePrimDefinition() const
 {
   const UsdPrimDefinition *primDef = nullptr;
-  const UsdSchemaRegistry &reg     = UsdSchemaRegistry::GetInstance();
+  const UsdSchemaRegistry &reg = UsdSchemaRegistry::GetInstance();
   if (_typeId.appliedAPISchemas.empty()) {
     // With no applied schemas we can just get the concrete typed prim
     // definition from the schema registry. Prim definitions for all
@@ -78,16 +76,15 @@ const UsdPrimDefinition *UsdPrimTypeInfo::_FindOrCreatePrimDefinition() const
     // registry does NOT take ownership of this new prim definition; this
     // type info will own it instead.
     std::unique_ptr<UsdPrimDefinition> composedPrimDef = reg.BuildComposedPrimDefinition(
-        _schemaTypeName, _typeId.appliedAPISchemas);
+      _schemaTypeName, _typeId.appliedAPISchemas);
     // Try to cache the new prim definition, but if another thread beat us
     // to it, we'll use its definition instead and just let ours get
     // deleted.
-    if (_primDefinition.compare_exchange_strong(
-            primDef, composedPrimDef.get(), std::memory_order_acq_rel)) {
+    if (_primDefinition.compare_exchange_strong(primDef, composedPrimDef.get(), std::memory_order_acq_rel)) {
       // Since we succeeded, transfer ownership of the new prim definition
       // to this type info.
       _ownedPrimDefinition = std::move(composedPrimDef);
-      primDef              = _ownedPrimDefinition.get();
+      primDef = _ownedPrimDefinition.get();
     }
   }
   return primDef;

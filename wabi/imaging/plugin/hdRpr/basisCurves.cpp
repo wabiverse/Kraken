@@ -23,7 +23,7 @@ limitations under the License.
 WABI_NAMESPACE_BEGIN
 
 HdRprBasisCurves::HdRprBasisCurves(SdfPath const &id HDRPR_INSTANCER_ID_ARG_DECL)
-    : HdRprBaseRprim(id HDRPR_INSTANCER_ID_ARG)
+  : HdRprBaseRprim(id HDRPR_INSTANCER_ID_ARG)
 {}
 
 HdDirtyBits HdRprBasisCurves::_PropagateDirtyBits(HdDirtyBits bits) const
@@ -41,9 +41,8 @@ void HdRprBasisCurves::_InitRepr(TfToken const &reprName, HdDirtyBits *dirtyBits
 
 HdDirtyBits HdRprBasisCurves::GetInitialDirtyBitsMask() const
 {
-  return HdChangeTracker::DirtyTopology | HdChangeTracker::DirtyPoints |
-         HdChangeTracker::DirtyWidths | HdChangeTracker::DirtyPrimvar |
-         HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyVisibility |
+  return HdChangeTracker::DirtyTopology | HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyWidths |
+         HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyVisibility |
          HdChangeTracker::DirtyMaterialId;
 }
 
@@ -53,7 +52,7 @@ void HdRprBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
                             TfToken const &reprSelector)
 {
   auto rprRenderParam = static_cast<HdRprRenderParam *>(renderParam);
-  auto rprApi         = rprRenderParam->AcquireRprApiForEdit();
+  auto rprApi = rprRenderParam->AcquireRprApiForEdit();
 
   SdfPath const &id = GetId();
   std::map<HdInterpolation, HdPrimvarDescriptorVector> primvarDescsPerInterpolation;
@@ -73,7 +72,7 @@ void HdRprBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
 
   if (*dirtyBits & HdChangeTracker::DirtyTopology) {
     m_topology = sceneDelegate->GetBasisCurvesTopology(id);
-    m_indices  = VtIntArray();
+    m_indices = VtIntArray();
     if (m_topology.HasIndices()) {
       m_indices = m_topology.GetCurveIndices();
     }
@@ -82,16 +81,14 @@ void HdRprBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
 
   if (*dirtyBits & HdChangeTracker::DirtyWidths) {
     HdRprFillPrimvarDescsPerInterpolation(sceneDelegate, id, &primvarDescsPerInterpolation);
-    if (HdRprIsPrimvarExists(
-            HdTokens->widths, primvarDescsPerInterpolation, &m_widthsInterpolation)) {
+    if (HdRprIsPrimvarExists(HdTokens->widths, primvarDescsPerInterpolation, &m_widthsInterpolation)) {
       m_widths = sceneDelegate->Get(id, HdTokens->widths).Get<VtFloatArray>();
     }
     else {
-      m_widths              = VtFloatArray(1, 1.0f);
+      m_widths = VtFloatArray(1, 1.0f);
       m_widthsInterpolation = HdInterpolationConstant;
-      TF_WARN(
-          "[%s] Curve do not have widths. Fallback value is 1.0f with a constant interpolation",
-          id.GetText());
+      TF_WARN("[%s] Curve do not have widths. Fallback value is 1.0f with a constant interpolation",
+              id.GetText());
     }
     newCurve = true;
   }
@@ -101,7 +98,7 @@ void HdRprBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
   }
 
   auto material = static_cast<const HdRprMaterial *>(
-      sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, m_materialId));
+    sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, m_materialId));
 
   bool isVisibilityMaskDirty = false;
   if (*dirtyBits & HdChangeTracker::DirtyPrimvar) {
@@ -124,18 +121,18 @@ void HdRprBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
     newCurve = true;
 
     HdRprGeometrySettings geomSettings = {};
-    geomSettings.visibilityMask        = kVisibleAll;
+    geomSettings.visibilityMask = kVisibleAll;
     HdRprParseGeometrySettings(sceneDelegate, id, primvarDescsPerInterpolation, &geomSettings);
 
     if (m_visibilityMask != geomSettings.visibilityMask) {
-      m_visibilityMask      = geomSettings.visibilityMask;
+      m_visibilityMask = geomSettings.visibilityMask;
       isVisibilityMaskDirty = true;
     }
   }
 
   if (*dirtyBits & HdChangeTracker::DirtyTransform) {
     m_transform = GfMatrix4f(sceneDelegate->GetTransform(id));
-    newCurve    = true;
+    newCurve = true;
   }
 
   if (*dirtyBits & HdChangeTracker::DirtyVisibility) {
@@ -161,8 +158,7 @@ void HdRprBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
                        id.GetText(),
                        m_topology.GetCurveWrap().GetText());
     }
-    else if (m_topology.GetCurveType() != HdTokens->linear &&
-             m_topology.GetCurveType() != HdTokens->cubic) {
+    else if (m_topology.GetCurveType() != HdTokens->linear && m_topology.GetCurveType() != HdTokens->cubic) {
       TF_RUNTIME_ERROR("[%s] Curve could not be created: unsupported basis curve type - %s",
                        id.GetText(),
                        m_topology.GetCurveType().GetText());
@@ -172,28 +168,26 @@ void HdRprBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
                                       m_topology.GetCurveVertexCounts().size(),
                                       m_points.size())) {
       TF_RUNTIME_ERROR(
-          "[%s] Curve could not be created: mismatch in number of widths and requested "
-          "interpolation type",
-          id.GetText());
+        "[%s] Curve could not be created: mismatch in number of widths and requested "
+        "interpolation type",
+        id.GetText());
     }
     else if (!m_uvs.empty() && !HdRprIsValidPrimvarSize(m_uvs.size(),
                                                         m_uvsInterpolation,
                                                         m_topology.GetCurveVertexCounts().size(),
                                                         m_points.size())) {
       TF_RUNTIME_ERROR(
-          "[%s] Curve could not be created: mismatch in number of uvs and requested interpolation "
-          "type",
-          id.GetText());
+        "[%s] Curve could not be created: mismatch in number of uvs and requested interpolation "
+        "type",
+        id.GetText());
     }
     else {
       HdRprFillPrimvarDescsPerInterpolation(sceneDelegate, id, &primvarDescsPerInterpolation);
       if (HdRprIsPrimvarExists(HdTokens->normals, primvarDescsPerInterpolation)) {
-        TF_WARN("[%s] Ribbon curves are not supported. Curve of tube type will be created",
-                id.GetText());
+        TF_WARN("[%s] Ribbon curves are not supported. Curve of tube type will be created", id.GetText());
       }
 
-      if (m_uvsInterpolation != HdInterpolationConstant ||
-          m_uvsInterpolation != HdInterpolationUniform) {
+      if (m_uvsInterpolation != HdInterpolationConstant || m_uvsInterpolation != HdInterpolationUniform) {
         TF_WARN("[%s] Unsupported uv interpolation type", id.GetText());
       }
 
@@ -276,13 +270,13 @@ rpr::Curve *HdRprBasisCurves::CreateLinearRprCurve(HdRprApi *rprApi)
   //   but we have to ensure that number of indices in each curve multiple of
   //   kRprNumPointsPerSegment
 
-  const bool periodic       = m_topology.GetCurveWrap() == HdTokens->periodic;
-  const bool strip          = periodic || m_topology.GetCurveWrap() == HdTokens->nonperiodic;
+  const bool periodic = m_topology.GetCurveWrap() == HdTokens->periodic;
+  const bool strip = periodic || m_topology.GetCurveWrap() == HdTokens->nonperiodic;
   const bool isCurveTapered = m_widthsInterpolation != HdInterpolationConstant &&
                               m_widthsInterpolation != HdInterpolationUniform;
 
   const int kNumPointsPerSegment = 2;
-  const int kVstep               = strip ? 1 : 2;
+  const int kVstep = strip ? 1 : 2;
 
   VtIntArray rprIndices;
   VtIntArray rprSegmentPerCurve;
@@ -316,8 +310,8 @@ rpr::Curve *HdRprBasisCurves::CreateLinearRprCurve(HdRprApi *rprApi)
 
   // Validate Hydra curve data and calculate amount of required memory.
   //
-  size_t numRadiuses     = 0;
-  size_t numIndices      = 0;
+  size_t numRadiuses = 0;
+  size_t numIndices = 0;
   int curveSegmentOffset = 0;
   int curveIndicesOffset = 0;
   for (size_t iCurve = 0; iCurve < curveCounts.size(); ++iCurve) {
@@ -328,9 +322,9 @@ rpr::Curve *HdRprBasisCurves::CreateLinearRprCurve(HdRprApi *rprApi)
 
     if (!strip && numVertices % 2 != 0) {
       TF_RUNTIME_ERROR(
-          "[%s] corrupted curve data: segmented linear curve should contain even number of "
-          "vertices",
-          GetId().GetText());
+        "[%s] corrupted curve data: segmented linear curve should contain even number of "
+        "vertices",
+        GetId().GetText());
       return nullptr;
     }
 
@@ -342,8 +336,7 @@ rpr::Curve *HdRprBasisCurves::CreateLinearRprCurve(HdRprApi *rprApi)
          m_widths.size() < (curveSegmentOffset + numSegments)) ||
         (m_widthsInterpolation == HdInterpolationVertex &&
          m_widths.size() < (curveIndicesOffset + numVertices))) {
-      TF_RUNTIME_ERROR("[%s] corrupted curve data: insufficient amount of widths",
-                       GetId().GetText());
+      TF_RUNTIME_ERROR("[%s] corrupted curve data: insufficient amount of widths", GetId().GetText());
       return nullptr;
     }
 
@@ -359,7 +352,7 @@ rpr::Curve *HdRprBasisCurves::CreateLinearRprCurve(HdRprApi *rprApi)
       numIndices += numSegments * 2;
 
       // RPR requires curves to consist only of segments of kRprNumPointsPerSegment length
-      auto numPointsInCurve  = (numVertices - 1) * 2;
+      auto numPointsInCurve = (numVertices - 1) * 2;
       auto numTrailingPoints = numPointsInCurve % kRprNumPointsPerSegment;
       if (numTrailingPoints > 0) {
         numIndices += kRprNumPointsPerSegment - numTrailingPoints;
@@ -409,13 +402,12 @@ rpr::Curve *HdRprBasisCurves::CreateLinearRprCurve(HdRprApi *rprApi)
         const int segmentIndicesOffset = iSegment * kVstep;
 
         rprIndices.push_back(indexSampler(curveIndicesOffset + segmentIndicesOffset));
-        rprIndices.push_back(
-            indexSampler(curveIndicesOffset + (segmentIndicesOffset + 1) % numVertices));
+        rprIndices.push_back(indexSampler(curveIndicesOffset + (segmentIndicesOffset + 1) % numVertices));
       }
 
       // RPR requires curves to consist only of segments of kRprNumPointsPerSegment length
       auto numPointsInCurve = (numVertices - 1) * 2;
-      auto extraPoints      = numPointsInCurve % kRprNumPointsPerSegment;
+      auto extraPoints = numPointsInCurve % kRprNumPointsPerSegment;
       if (extraPoints) {
         extraPoints = kRprNumPointsPerSegment - extraPoints;
 
@@ -468,9 +460,9 @@ rpr::Curve *HdRprBasisCurves::CreateBezierRprCurve(HdRprApi *rprApi)
   rprSegmentPerCurve.reserve(curveCounts.size());
 
   const int kNumPointsPerSegment = 4;
-  const int kVstep               = 3;
+  const int kVstep = 3;
 
-  const bool periodic       = m_topology.GetCurveWrap() == HdTokens->periodic;
+  const bool periodic = m_topology.GetCurveWrap() == HdTokens->periodic;
   const bool isCurveTapered = m_widthsInterpolation != HdInterpolationConstant &&
                               m_widthsInterpolation != HdInterpolationUniform;
 
@@ -498,8 +490,8 @@ rpr::Curve *HdRprBasisCurves::CreateBezierRprCurve(HdRprApi *rprApi)
 
   // Validate Hydra curve data and calculate amount of required memory.
   //
-  size_t numRadiuses     = 0;
-  size_t numIndices      = 0;
+  size_t numRadiuses = 0;
+  size_t numIndices = 0;
   int curveSegmentOffset = 0;
   int curveIndicesOffset = 0;
   for (size_t iCurve = 0; iCurve < curveCounts.size(); ++iCurve) {
@@ -509,8 +501,7 @@ rpr::Curve *HdRprBasisCurves::CreateBezierRprCurve(HdRprApi *rprApi)
     }
 
     // Validity check from the USD docs
-    if ((periodic && numVertices % kVstep != 0) ||
-        (!periodic && (numVertices - 4) % kVstep != 0)) {
+    if ((periodic && numVertices % kVstep != 0) || (!periodic && (numVertices - 4) % kVstep != 0)) {
       TF_RUNTIME_ERROR("[%s] corrupted curve data: invalid topology", GetId().GetText());
       return nullptr;
     }
@@ -523,8 +514,7 @@ rpr::Curve *HdRprBasisCurves::CreateBezierRprCurve(HdRprApi *rprApi)
          m_widths.size() < (curveSegmentOffset + numSegments)) ||
         (m_widthsInterpolation == HdInterpolationVertex &&
          m_widths.size() < (curveIndicesOffset + numVertices))) {
-      TF_RUNTIME_ERROR("[%s] corrupted curve data: insufficient amount of widths",
-                       GetId().GetText());
+      TF_RUNTIME_ERROR("[%s] corrupted curve data: insufficient amount of widths", GetId().GetText());
       return nullptr;
     }
 

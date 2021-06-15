@@ -216,10 +216,9 @@ static bool ANCHOR_ImplSDL2_Init(SDL_Window *window)
 
   // Setup backend capabilities flags
   ANCHOR_IO &io = ANCHOR::GetIO();
-  io.BackendFlags |=
-    ANCHORBackendFlags_HasMouseCursors;  // We can honor GetMouseCursor() values (optional)
-  io.BackendFlags |= ANCHORBackendFlags_HasSetMousePos;  // We can honor io.WantSetMousePos
-                                                         // requests (optional, rarely used)
+  io.BackendFlags |= ANCHORBackendFlags_HasMouseCursors;  // We can honor GetMouseCursor() values (optional)
+  io.BackendFlags |= ANCHORBackendFlags_HasSetMousePos;   // We can honor io.WantSetMousePos
+                                                          // requests (optional, rarely used)
   io.BackendPlatformName = "ANCHOR_BACKEND_sdl";
 
   // Keyboard mapping. ANCHOR will use those indices to peek into the io.KeysDown[] array.
@@ -256,10 +255,8 @@ static bool ANCHOR_ImplSDL2_Init(SDL_Window *window)
   g_MouseCursors[ANCHOR_MouseCursor_ResizeAll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
   g_MouseCursors[ANCHOR_MouseCursor_ResizeNS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
   g_MouseCursors[ANCHOR_MouseCursor_ResizeEW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
-  g_MouseCursors[ANCHOR_MouseCursor_ResizeNESW] = SDL_CreateSystemCursor(
-    SDL_SYSTEM_CURSOR_SIZENESW);
-  g_MouseCursors[ANCHOR_MouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(
-    SDL_SYSTEM_CURSOR_SIZENWSE);
+  g_MouseCursors[ANCHOR_MouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
+  g_MouseCursors[ANCHOR_MouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
   g_MouseCursors[ANCHOR_MouseCursor_Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
   g_MouseCursors[ANCHOR_MouseCursor_NotAllowed] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
 
@@ -340,8 +337,7 @@ eAnchorStatus ANCHOR_DisplayManagerSDL::getNumDisplays(AnchorU8 &numDisplays) co
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus ANCHOR_DisplayManagerSDL::getNumDisplaySettings(AnchorU8 display,
-                                                              AnchorS32 &numSettings) const
+eAnchorStatus ANCHOR_DisplayManagerSDL::getNumDisplaySettings(AnchorU8 display, AnchorS32 &numSettings) const
 {
   ANCHOR_ASSERT(display < 1);
 
@@ -381,9 +377,8 @@ eAnchorStatus ANCHOR_DisplayManagerSDL::getDisplaySetting(AnchorU8 display,
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus ANCHOR_DisplayManagerSDL::getCurrentDisplaySetting(
-  AnchorU8 display,
-  ANCHOR_DisplaySetting &setting) const
+eAnchorStatus ANCHOR_DisplayManagerSDL::getCurrentDisplaySetting(AnchorU8 display,
+                                                                 ANCHOR_DisplaySetting &setting) const
 {
   SDL_DisplayMode mode;
   SDL_GetCurrentDisplayMode(display, &mode);
@@ -399,9 +394,8 @@ eAnchorStatus ANCHOR_DisplayManagerSDL::getCurrentDisplayModeSDL(SDL_DisplayMode
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus ANCHOR_DisplayManagerSDL::setCurrentDisplaySetting(
-  AnchorU8 display,
-  const ANCHOR_DisplaySetting &setting)
+eAnchorStatus ANCHOR_DisplayManagerSDL::setCurrentDisplaySetting(AnchorU8 display,
+                                                                 const ANCHOR_DisplaySetting &setting)
 {
   /*
    * Mode switching code ported from Quake 2 version 3.21 and bzflag version
@@ -480,11 +474,10 @@ static void ANCHOR_ImplSDL2_UpdateMousePosAndButtons()
 
   int mx, my;
   Uint32 mouse_buttons = SDL_GetMouseState(&mx, &my);
-  io.MouseDown[0] =
-    g_MousePressed[0] ||
-    (mouse_buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) !=
-      0;  // If a mouse press event came, always pass it as "mouse held this frame", so we
-          // don't miss click-release events that are shorter than 1 frame.
+  io.MouseDown[0] = g_MousePressed[0] ||
+                    (mouse_buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) !=
+                      0;  // If a mouse press event came, always pass it as "mouse held this frame", so we
+                          // don't miss click-release events that are shorter than 1 frame.
   io.MouseDown[1] = g_MousePressed[1] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0;
   io.MouseDown[2] = g_MousePressed[2] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_MIDDLE)) != 0;
   g_MousePressed[0] = g_MousePressed[1] = g_MousePressed[2] = false;
@@ -554,14 +547,11 @@ static void ANCHOR_ImplSDL2_UpdateGamepads()
 // Update gamepad inputs
 #define MAP_BUTTON(NAV_NO, BUTTON_NO) \
   { \
-    io.NavInputs[NAV_NO] = (SDL_GameControllerGetButton(game_controller, BUTTON_NO) != 0) ? \
-                             1.0f : \
-                             0.0f; \
+    io.NavInputs[NAV_NO] = (SDL_GameControllerGetButton(game_controller, BUTTON_NO) != 0) ? 1.0f : 0.0f; \
   }
 #define MAP_ANALOG(NAV_NO, AXIS_NO, V0, V1) \
   { \
-    float vn = (float)(SDL_GameControllerGetAxis(game_controller, AXIS_NO) - V0) / \
-               (float)(V1 - V0); \
+    float vn = (float)(SDL_GameControllerGetAxis(game_controller, AXIS_NO) - V0) / (float)(V1 - V0); \
     if (vn > 1.0f) \
       vn = 1.0f; \
     if (vn > 0.0f && io.NavInputs[NAV_NO] < vn) \
@@ -611,8 +601,7 @@ void ANCHOR_SystemSDL::ANCHOR_ImplSDL2_NewFrame(SDL_Window *window)
   // Setup time step (we don't use SDL_GetTicks() because it is using millisecond resolution)
   static Uint64 frequency = SDL_GetPerformanceFrequency();
   Uint64 current_time = SDL_GetPerformanceCounter();
-  io.DeltaTime = g_Time > 0 ? (float)((double)(current_time - g_Time) / frequency) :
-                              (float)(1.0f / 60.0f);
+  io.DeltaTime = g_Time > 0 ? (float)((double)(current_time - g_Time) / frequency) : (float)(1.0f / 60.0f);
   g_Time = current_time;
 
   ANCHOR_ImplSDL2_UpdateMousePosAndButtons();
@@ -641,13 +630,8 @@ ANCHOR_WindowSDL::ANCHOR_WindowSDL(ANCHOR_SystemSDL *system,
     m_sdl_custom_cursor(NULL)
 {
   /* creating the window _must_ come after setting attributes */
-  m_sdl_win = SDL_CreateWindow(title,
-                               left,
-                               top,
-                               width,
-                               height,
-                               SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN |
-                                 SDL_WINDOW_ALLOW_HIGHDPI);
+  m_sdl_win = SDL_CreateWindow(
+    title, left, top, width, height, SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN | SDL_WINDOW_ALLOW_HIGHDPI);
 
   /* now set up the rendering context. */
   if (setDrawingContextType(type) == ANCHOR_SUCCESS) {
@@ -701,8 +685,7 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
 
     /**
      * Physical Device Properties 2 */
-    const char **ext_dprops_2 = (const char **)malloc(sizeof(const char *) *
-                                                      (extensions_count + 1));
+    const char **ext_dprops_2 = (const char **)malloc(sizeof(const char *) * (extensions_count + 1));
     memcpy(ext_dprops_2, extensions, extensions_count * sizeof(const char *));
     ext_dprops_2[extensions_count] = VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME;
     extensions = ext_dprops_2;
@@ -721,8 +704,7 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
       /**
        * Enable debug report extension (we need additional storage,
        * so we duplicate the user array to add our new extension to it). */
-      const char **extensions_ext = (const char **)malloc(sizeof(const char *) *
-                                                          (extensions_count + 1));
+      const char **extensions_ext = (const char **)malloc(sizeof(const char *) * (extensions_count + 1));
       memcpy(extensions_ext, extensions, extensions_count * sizeof(const char *));
       extensions_ext[extensions_count] = "VK_EXT_debug_utils";
       create_info.enabledExtensionCount = extensions_count + 1;
@@ -789,8 +771,8 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
   {
     uint32_t count;
     vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &count, NULL);
-    VkQueueFamilyProperties *queues = (VkQueueFamilyProperties *)malloc(
-      sizeof(VkQueueFamilyProperties) * count);
+    VkQueueFamilyProperties *queues = (VkQueueFamilyProperties *)malloc(sizeof(VkQueueFamilyProperties) *
+                                                                        count);
     vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &count, queues);
     for (uint32_t i = 0; i < count; i++)
       if (queues[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
@@ -899,10 +881,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_report(VkDebugReportFlagsEXT flags,
 
 /**
  * Main Application Window. --------------------------------- */
-static void SetupVulkanWindow(ANCHOR_VulkanGPU_Surface *wd,
-                              VkSurfaceKHR surface,
-                              int width,
-                              int height)
+static void SetupVulkanWindow(ANCHOR_VulkanGPU_Surface *wd, VkSurfaceKHR surface, int width, int height)
 {
   wd->Surface = surface;
 
@@ -1013,16 +992,10 @@ static void FrameRender(ANCHOR_VulkanGPU_Surface *wd, ImDrawData *draw_data)
 {
   VkResult err;
 
-  VkSemaphore image_acquired_semaphore =
-    wd->FrameSemaphores[wd->SemaphoreIndex].ImageAcquiredSemaphore;
-  VkSemaphore render_complete_semaphore =
-    wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
-  err = vkAcquireNextImageKHR(g_Device,
-                              wd->Swapchain,
-                              UINT64_MAX,
-                              image_acquired_semaphore,
-                              VK_NULL_HANDLE,
-                              &wd->FrameIndex);
+  VkSemaphore image_acquired_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].ImageAcquiredSemaphore;
+  VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
+  err = vkAcquireNextImageKHR(
+    g_Device, wd->Swapchain, UINT64_MAX, image_acquired_semaphore, VK_NULL_HANDLE, &wd->FrameIndex);
   if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR) {
     g_SwapChainRebuild = true;
     return;
@@ -1092,8 +1065,7 @@ static void FramePresent(ANCHOR_VulkanGPU_Surface *wd)
 {
   if (g_SwapChainRebuild)
     return;
-  VkSemaphore render_complete_semaphore =
-    wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
+  VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
   VkPresentInfoKHR info = {};
   info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
   info.waitSemaphoreCount = 1;
@@ -1128,8 +1100,7 @@ ANCHOR_Context *ANCHOR_WindowSDL::newDrawingContext(eAnchorDrawingContextType ty
     /**
      * Create Window Surface. */
     VkSurfaceKHR surface;
-    if (SDL_Vulkan_CreateSurface(m_sdl_win, g_PixarVkInstance->GetVulkanInstance(), &surface) ==
-        0) {
+    if (SDL_Vulkan_CreateSurface(m_sdl_win, g_PixarVkInstance->GetVulkanInstance(), &surface) == 0) {
       TF_CODING_ERROR("Failed to create Vulkan surface.\n");
     }
 
@@ -1195,10 +1166,8 @@ ANCHOR_Context *ANCHOR_WindowSDL::newDrawingContext(eAnchorDrawingContextType ty
     {
       /**
        * Use any command queue. */
-      VkCommandPool command_pool =
-        m_vulkan_context->Frames[m_vulkan_context->FrameIndex].CommandPool;
-      VkCommandBuffer command_buffer =
-        m_vulkan_context->Frames[m_vulkan_context->FrameIndex].CommandBuffer;
+      VkCommandPool command_pool = m_vulkan_context->Frames[m_vulkan_context->FrameIndex].CommandPool;
+      VkCommandBuffer command_buffer = m_vulkan_context->Frames[m_vulkan_context->FrameIndex].CommandBuffer;
 
       VkResult err = vkResetCommandPool(g_Device, command_pool, 0);
       check_vk_result(err);
@@ -1363,8 +1332,7 @@ eAnchorStatus ANCHOR_WindowSDL::swapBuffers()
 {
   ANCHOR::Render();
   ImDrawData *draw_data = ANCHOR::GetDrawData();
-  const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f ||
-                             draw_data->DisplaySize[1] <= 0.0f);
+  const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f || draw_data->DisplaySize[1] <= 0.0f);
   if (!is_minimized) {
     m_vulkan_context->ClearValue.color.float32[0] = g_HDPARAMS_Apollo.clearColor[0];
     m_vulkan_context->ClearValue.color.float32[1] = g_HDPARAMS_Apollo.clearColor[1];

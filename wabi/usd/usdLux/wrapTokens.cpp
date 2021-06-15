@@ -56,19 +56,18 @@ class _WrapStaticToken {
 
 template<typename T> void _AddToken(T &cls, const char *name, const TfToken &token)
 {
-  cls.add_static_property(name,
-                          boost::python::make_function(
-                              _WrapStaticToken(&token),
-                              boost::python::return_value_policy<boost::python::return_by_value>(),
-                              boost::mpl::vector1<std::string>()));
+  cls.add_static_property(
+    name,
+    boost::python::make_function(_WrapStaticToken(&token),
+                                 boost::python::return_value_policy<boost::python::return_by_value>(),
+                                 boost::mpl::vector1<std::string>()));
 }
 
 }  // namespace
 
 void wrapUsdLuxTokens()
 {
-  boost::python::class_<UsdLuxTokensType, boost::noncopyable> cls("Tokens",
-                                                                  boost::python::no_init);
+  boost::python::class_<UsdLuxTokensType, boost::noncopyable> cls("Tokens", boost::python::no_init);
   _AddToken(cls, "angular", UsdLuxTokens->angular);
   _AddToken(cls, "automatic", UsdLuxTokens->automatic);
   _AddToken(cls, "collectionFilterLinkIncludeRoot", UsdLuxTokens->collectionFilterLinkIncludeRoot);

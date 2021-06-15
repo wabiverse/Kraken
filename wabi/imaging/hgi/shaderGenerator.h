@@ -77,9 +77,9 @@ class HgiShaderGenerator {
   const std::string &_GetVersion() const;
 
  private:
-  HgiShaderGenerator()        = delete;
+  HgiShaderGenerator() = delete;
   HgiShaderGenerator &operator=(const HgiShaderGenerator &) = delete;
-  HgiShaderGenerator(const HgiShaderGenerator &)            = delete;
+  HgiShaderGenerator(const HgiShaderGenerator &) = delete;
 
   const std::string _version;
   const std::string _originalShader;

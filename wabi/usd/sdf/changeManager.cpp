@@ -64,7 +64,7 @@ void Sdf_ChangeManager::_SendNoticesForChangeList(const SdfLayerHandle &layer,
   const SdfChangeList::EntryList &entryList = changeList.GetEntryList();
   TF_FOR_ALL(pathChanges, entryList)
   {
-    const SdfPath &path               = pathChanges->first;
+    const SdfPath &path = pathChanges->first;
     const SdfChangeList::Entry &entry = pathChanges->second;
 
     TF_FOR_ALL(it, entry.infoChanged)
@@ -154,14 +154,13 @@ void Sdf_ChangeManager::_SendNotices()
   // out any changes from layers that have since been destroyed, as the change
   // manager should only send notifications for existing layers.
   SdfLayerChangeListVec &tlsChanges = _data.local().changes;
-  SdfLayerChangeListVec changes     = std::move(tlsChanges);
+  SdfLayerChangeListVec changes = std::move(tlsChanges);
   tlsChanges.clear();
 
-  changes.erase(
-      std::remove_if(changes.begin(),
-                     changes.end(),
-                     [](SdfLayerChangeListVec::value_type const &p) { return !p.first; }),
-      changes.end());
+  changes.erase(std::remove_if(changes.begin(),
+                               changes.end(),
+                               [](SdfLayerChangeListVec::value_type const &p) { return !p.first; }),
+                changes.end());
 
   if (changes.empty())
     return;
@@ -171,15 +170,13 @@ void Sdf_ChangeManager::_SendNotices()
     _SendNoticesForChangeList(lc.first, lc.second);
     if (TfDebug::IsEnabled(SDF_CHANGES)) {
       TF_DEBUG(SDF_CHANGES)
-          .Msg("Changes to layer %s:\n%s",
-               lc.first->GetIdentifier().c_str(),
-               TfStringify(lc.second).c_str());
+        .Msg("Changes to layer %s:\n%s", lc.first->GetIdentifier().c_str(), TfStringify(lc.second).c_str());
     }
   }
 
   // Obtain a serial number for this round of change processing.
   static tbb::atomic<size_t> &changeSerialNumber = _InitChangeSerialNumber();
-  size_t serialNumber                            = changeSerialNumber.fetch_and_increment();
+  size_t serialNumber = changeSerialNumber.fetch_and_increment();
 
   // Send global notice.
   SdfNotice::LayersDidChange(changes, serialNumber).Send();
@@ -240,13 +237,12 @@ static bool _IsOrderChangeOnly(const VtValue &oldVal, const VtValue &newVal)
     const TfTokenVector &newNames = newVal.Get<TfTokenVector>();
     if (oldNames.size() == newNames.size()) {
       TRACE_SCOPE(
-          "Sdf_ChangeManager::DidChangeField - "
-          "Comparing old/new PrimChildren order");
+        "Sdf_ChangeManager::DidChangeField - "
+        "Comparing old/new PrimChildren order");
       // XXX:optimization: This may turn out to be too slow,
       // meriting a more sophisticated approach.
-      std::set<TfToken, TfTokenFastArbitraryLessThan> oldNamesSet(oldNames.begin(),
-                                                                  oldNames.end()),
-          newNamesSet(newNames.begin(), newNames.end());
+      std::set<TfToken, TfTokenFastArbitraryLessThan> oldNamesSet(oldNames.begin(), oldNames.end()),
+        newNamesSet(newNames.begin(), newNames.end());
       return oldNamesSet == newNamesSet;
     }
   }
@@ -310,8 +306,7 @@ void Sdf_ChangeManager::DidChangeField(const SdfLayerHandle &layer,
       _GetListFor(changes, layer).DidReorderProperties(path);
     }
   }
-  else if (field == SdfFieldKeys->VariantSetNames ||
-           field == SdfChildrenKeys->VariantSetChildren) {
+  else if (field == SdfFieldKeys->VariantSetNames || field == SdfChildrenKeys->VariantSetChildren) {
     _GetListFor(changes, layer).DidChangePrimVariantSets(path);
   }
   else if (field == SdfFieldKeys->InheritPaths) {
@@ -340,16 +335,10 @@ void Sdf_ChangeManager::DidChangeField(const SdfLayerHandle &layer,
 
       const std::set<std::string> oldSet(oldSubLayers.begin(), oldSubLayers.end());
       const std::set<std::string> newSet(newSubLayers.begin(), newSubLayers.end());
-      std::set_difference(oldSet.begin(),
-                          oldSet.end(),
-                          newSet.begin(),
-                          newSet.end(),
-                          std::back_inserter(removedLayers));
-      std::set_difference(newSet.begin(),
-                          newSet.end(),
-                          oldSet.begin(),
-                          oldSet.end(),
-                          std::back_inserter(addedLayers));
+      std::set_difference(
+        oldSet.begin(), oldSet.end(), newSet.begin(), newSet.end(), std::back_inserter(removedLayers));
+      std::set_difference(
+        newSet.begin(), newSet.end(), oldSet.begin(), oldSet.end(), std::back_inserter(addedLayers));
 
       // If the old and new sets are the same, the order is all
       // that has changed. The changelist protocol does not have
@@ -386,8 +375,7 @@ void Sdf_ChangeManager::DidChangeField(const SdfLayerHandle &layer,
       if (TF_VERIFY(newOffsets.size() == subLayers.size())) {
         for (size_t i = 0; i < newOffsets.size(); ++i) {
           if (oldOffsets[i] != newOffsets[i]) {
-            _GetListFor(changes, layer)
-                .DidChangeSublayerPaths(subLayers[i], SdfChangeList::SubLayerOffset);
+            _GetListFor(changes, layer).DidChangeSublayerPaths(subLayers[i], SdfChangeList::SubLayerOffset);
           }
         }
       }
@@ -425,23 +413,18 @@ void Sdf_ChangeManager::DidChangeField(const SdfLayerHandle &layer,
       }
     }
   }
-  else if (field == SdfFieldKeys->TimeCodesPerSecond &&
-           TF_VERIFY(path == SdfPath::AbsoluteRootPath())) {
+  else if (field == SdfFieldKeys->TimeCodesPerSecond && TF_VERIFY(path == SdfPath::AbsoluteRootPath())) {
     // Changing TCPS.  If the old or new value is empty, the effective old
     // or new value is the value of FPS, if there is one.  See
     // SdfLayer::GetTimeCodesPerSecond.
-    const VtValue oldTcps = (!oldVal.IsEmpty() ?
-                                 oldVal :
-                                 layer->GetField(path, SdfFieldKeys->FramesPerSecond));
-    const VtValue newTcps = (!newVal.IsEmpty() ?
-                                 newVal :
-                                 layer->GetField(path, SdfFieldKeys->FramesPerSecond));
+    const VtValue oldTcps = (!oldVal.IsEmpty() ? oldVal :
+                                                 layer->GetField(path, SdfFieldKeys->FramesPerSecond));
+    const VtValue newTcps = (!newVal.IsEmpty() ? newVal :
+                                                 layer->GetField(path, SdfFieldKeys->FramesPerSecond));
 
-    _GetListFor(changes, layer)
-        .DidChangeInfo(path, SdfFieldKeys->TimeCodesPerSecond, oldTcps, newTcps);
+    _GetListFor(changes, layer).DidChangeInfo(path, SdfFieldKeys->TimeCodesPerSecond, oldTcps, newTcps);
   }
-  else if (field == SdfFieldKeys->FramesPerSecond &&
-           TF_VERIFY(path == SdfPath::AbsoluteRootPath())) {
+  else if (field == SdfFieldKeys->FramesPerSecond && TF_VERIFY(path == SdfPath::AbsoluteRootPath())) {
     // Announce the change to FPS itself.
     SdfChangeList &list = _GetListFor(changes, layer);
     list.DidChangeInfo(path, SdfFieldKeys->FramesPerSecond, oldVal, newVal);
@@ -453,11 +436,9 @@ void Sdf_ChangeManager::DidChangeField(const SdfLayerHandle &layer,
       list.DidChangeInfo(path, SdfFieldKeys->TimeCodesPerSecond, oldVal, newVal);
     }
   }
-  else if (field == SdfChildrenKeys->ConnectionChildren ||
-           field == SdfChildrenKeys->ExpressionChildren ||
+  else if (field == SdfChildrenKeys->ConnectionChildren || field == SdfChildrenKeys->ExpressionChildren ||
            field == SdfChildrenKeys->RelationshipTargetChildren ||
-           field == SdfChildrenKeys->VariantChildren ||
-           field == SdfChildrenKeys->VariantSetChildren) {
+           field == SdfChildrenKeys->VariantChildren || field == SdfChildrenKeys->VariantSetChildren) {
     // These children fields are internal. We send notification that the
     // child spec was created/deleted, not that the children field
     // changed.
@@ -474,8 +455,7 @@ void Sdf_ChangeManager::DidChangeField(const SdfLayerHandle &layer,
   }
 }
 
-void Sdf_ChangeManager::DidChangeAttributeTimeSamples(const SdfLayerHandle &layer,
-                                                      const SdfPath &attrPath)
+void Sdf_ChangeManager::DidChangeAttributeTimeSamples(const SdfLayerHandle &layer, const SdfPath &attrPath)
 {
   _GetListFor(_data.local().changes, layer).DidChangeAttributeTimeSamples(attrPath);
 }
@@ -499,7 +479,7 @@ void Sdf_ChangeManager::DidMoveSpec(const SdfLayerHandle &layer,
     }
     else if (oldPath.IsTargetPath()) {
       const SdfPath &parentPropPath = oldPath.GetParentPath();
-      const SdfSpecType specType    = layer->GetSpecType(parentPropPath);
+      const SdfSpecType specType = layer->GetSpecType(parentPropPath);
       if (specType == SdfSpecTypeAttribute) {
         _GetListFor(changes, layer).DidChangeAttributeConnection(parentPropPath);
       }
@@ -516,16 +496,16 @@ void Sdf_ChangeManager::DidMoveSpec(const SdfLayerHandle &layer,
     }
     else if (oldPath.IsPropertyPath()) {
       _GetListFor(changes, layer)
-          .DidRemoveProperty(oldPath,
-                             /* hasOnlyRequiredFields = */ false);
+        .DidRemoveProperty(oldPath,
+                           /* hasOnlyRequiredFields = */ false);
       _GetListFor(changes, layer)
-          .DidAddProperty(newPath,
-                          /* hasOnlyRequiredFields = */ false);
+        .DidAddProperty(newPath,
+                        /* hasOnlyRequiredFields = */ false);
     }
     else if (oldPath.IsTargetPath()) {
       const SdfPath &oldParentPropPath = oldPath.GetParentPath();
       const SdfPath &newParentPropPath = newPath.GetParentPath();
-      const SdfSpecType specType       = layer->GetSpecType(oldParentPropPath);
+      const SdfSpecType specType = layer->GetSpecType(oldParentPropPath);
       if (specType == SdfSpecTypeAttribute) {
         _GetListFor(changes, layer).DidChangeAttributeConnection(oldParentPropPath);
         _GetListFor(changes, layer).DidChangeAttributeConnection(newParentPropPath);
@@ -550,8 +530,8 @@ void Sdf_ChangeManager::DidAddSpec(const SdfLayerHandle &layer, const SdfPath &p
   }
   else if (path.IsPropertyPath()) {
     _GetListFor(changes, layer)
-        .DidAddProperty(path,
-                        /* hasOnlyRequiredFields = */ inert);
+      .DidAddProperty(path,
+                      /* hasOnlyRequiredFields = */ inert);
   }
   else if (path.IsTargetPath()) {
     _GetListFor(changes, layer).DidAddTarget(path);
@@ -579,8 +559,8 @@ void Sdf_ChangeManager::DidRemoveSpec(const SdfLayerHandle &layer, const SdfPath
   }
   else if (path.IsPropertyPath()) {
     _GetListFor(changes, layer)
-        .DidRemoveProperty(path,
-                           /* hasOnlyRequiredFields = */ inert);
+      .DidRemoveProperty(path,
+                         /* hasOnlyRequiredFields = */ inert);
   }
   else if (path.IsTargetPath()) {
     _GetListFor(changes, layer).DidRemoveTarget(path);
@@ -596,13 +576,12 @@ void Sdf_ChangeManager::DidRemoveSpec(const SdfLayerHandle &layer, const SdfPath
   }
 }
 
-SdfChangeList &Sdf_ChangeManager::_GetListFor(SdfLayerChangeListVec &theList,
-                                              SdfLayerHandle const &layer)
+SdfChangeList &Sdf_ChangeManager::_GetListFor(SdfLayerChangeListVec &theList, SdfLayerHandle const &layer)
 {
   auto iter = std::find_if(
-      theList.begin(), theList.end(), [&layer](SdfLayerChangeListVec::value_type const &p) {
-        return p.first == layer;
-      });
+    theList.begin(), theList.end(), [&layer](SdfLayerChangeListVec::value_type const &p) {
+      return p.first == layer;
+    });
   if (iter != theList.end()) {
     return iter->second;
   }

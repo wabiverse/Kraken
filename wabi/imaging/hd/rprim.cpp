@@ -46,10 +46,10 @@
 WABI_NAMESPACE_BEGIN
 
 HdRprim::HdRprim(SdfPath const &id)
-    : _instancerId(),
-      _materialId(),
-      _sharedData(HdDrawingCoord::DefaultNumSlots,
-                  /*visible=*/true)
+  : _instancerId(),
+    _materialId(),
+    _sharedData(HdDrawingCoord::DefaultNumSlots,
+                /*visible=*/true)
 {
   _sharedData.rprimID = id;
 }
@@ -104,8 +104,8 @@ HdDirtyBits HdRprim::PropagateRprimDirtyBits(HdDirtyBits bits)
   // If the dependent computations changed - assume all
   // primvars are dirty
   if (bits & HdChangeTracker::DirtyComputationPrimvarDesc) {
-    bits |= (HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyNormals |
-             HdChangeTracker::DirtyWidths | HdChangeTracker::DirtyPrimvar);
+    bits |= (HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyNormals | HdChangeTracker::DirtyWidths |
+             HdChangeTracker::DirtyPrimvar);
   }
 
   // when refine level changes, topology becomes dirty.
@@ -116,8 +116,7 @@ HdDirtyBits HdRprim::PropagateRprimDirtyBits(HdDirtyBits bits)
 
   // if topology changes, all dependent bits become dirty.
   if (bits & HdChangeTracker::DirtyTopology) {
-    bits |= (HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyNormals |
-             HdChangeTracker::DirtyPrimvar);
+    bits |= (HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyNormals | HdChangeTracker::DirtyPrimvar);
   }
 
   // Let subclasses propagate bits
@@ -190,11 +189,10 @@ void HdRprim::UpdateReprSelector(HdSceneDelegate *delegate, HdDirtyBits *dirtyBi
 HdReprSharedPtr const &HdRprim::_GetRepr(TfToken const &reprToken) const
 {
   _ReprVector::const_iterator reprIt = std::find_if(
-      _reprs.begin(), _reprs.end(), _ReprComparator(reprToken));
+    _reprs.begin(), _reprs.end(), _ReprComparator(reprToken));
   if (reprIt == _reprs.end()) {
-    TF_CODING_ERROR("_InitRepr() should be called for repr %s on prim %s.",
-                    reprToken.GetText(),
-                    GetId().GetText());
+    TF_CODING_ERROR(
+      "_InitRepr() should be called for repr %s on prim %s.", reprToken.GetText(), GetId().GetText());
     static const HdReprSharedPtr ERROR_RETURN;
     return ERROR_RETURN;
   }

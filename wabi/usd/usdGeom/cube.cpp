@@ -131,8 +131,7 @@ UsdAttribute UsdGeomCube::CreateExtentAttr(VtValue const &defaultValue, bool wri
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -146,11 +145,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdGeomCube::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdGeomTokens->size,
-      UsdGeomTokens->extent,
+    UsdGeomTokens->size,
+    UsdGeomTokens->extent,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdGeomGprim::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomGprim::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -190,10 +189,10 @@ bool UsdGeomCube::ComputeExtent(double size, const GfMatrix4d &transform, VtVec3
   // Create Sized Extent
   extent->resize(2);
 
-  GfBBox3d bbox   = GfBBox3d(GfRange3d(GfVec3d(size * -0.5), GfVec3d(size * 0.5)), transform);
+  GfBBox3d bbox = GfBBox3d(GfRange3d(GfVec3d(size * -0.5), GfVec3d(size * 0.5)), transform);
   GfRange3d range = bbox.ComputeAlignedRange();
-  (*extent)[0]    = GfVec3f(range.GetMin());
-  (*extent)[1]    = GfVec3f(range.GetMax());
+  (*extent)[0] = GfVec3f(range.GetMin());
+  (*extent)[1] = GfVec3f(range.GetMax());
 
   return true;
 }

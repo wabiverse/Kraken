@@ -54,33 +54,22 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateFilePathAttr(UsdVolFieldAsset &self,
-                                        object defaultVal,
-                                        bool writeSparsely)
+static UsdAttribute _CreateFilePathAttr(UsdVolFieldAsset &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateFilePathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
-                                 writeSparsely);
+  return self.CreateFilePathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
 }
 
-static UsdAttribute _CreateFieldNameAttr(UsdVolFieldAsset &self,
-                                         object defaultVal,
-                                         bool writeSparsely)
+static UsdAttribute _CreateFieldNameAttr(UsdVolFieldAsset &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateFieldNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                  writeSparsely);
+  return self.CreateFieldNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
-static UsdAttribute _CreateFieldIndexAttr(UsdVolFieldAsset &self,
-                                          object defaultVal,
-                                          bool writeSparsely)
+static UsdAttribute _CreateFieldIndexAttr(UsdVolFieldAsset &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateFieldIndexAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int),
-                                   writeSparsely);
+  return self.CreateFieldIndexAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
 }
 
-static UsdAttribute _CreateFieldDataTypeAttr(UsdVolFieldAsset &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
+static UsdAttribute _CreateFieldDataTypeAttr(UsdVolFieldAsset &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateFieldDataTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
                                       writeSparsely);
@@ -90,8 +79,8 @@ static UsdAttribute _CreateVectorDataRoleHintAttr(UsdVolFieldAsset &self,
                                                   object defaultVal,
                                                   bool writeSparsely)
 {
-  return self.CreateVectorDataRoleHintAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  return self.CreateVectorDataRoleHintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                           writeSparsely);
 }
 
 static std::string _Repr(const UsdVolFieldAsset &self)
@@ -109,51 +98,49 @@ void wrapUsdVolFieldAsset()
   class_<This, bases<UsdVolFieldBase>> cls("FieldAsset");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetFilePathAttr", &This::GetFilePathAttr)
-      .def("CreateFilePathAttr",
-           &_CreateFilePathAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetFilePathAttr", &This::GetFilePathAttr)
+    .def("CreateFilePathAttr",
+         &_CreateFilePathAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetFieldNameAttr", &This::GetFieldNameAttr)
-      .def("CreateFieldNameAttr",
-           &_CreateFieldNameAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetFieldNameAttr", &This::GetFieldNameAttr)
+    .def("CreateFieldNameAttr",
+         &_CreateFieldNameAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetFieldIndexAttr", &This::GetFieldIndexAttr)
-      .def("CreateFieldIndexAttr",
-           &_CreateFieldIndexAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetFieldIndexAttr", &This::GetFieldIndexAttr)
+    .def("CreateFieldIndexAttr",
+         &_CreateFieldIndexAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetFieldDataTypeAttr", &This::GetFieldDataTypeAttr)
-      .def("CreateFieldDataTypeAttr",
-           &_CreateFieldDataTypeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetFieldDataTypeAttr", &This::GetFieldDataTypeAttr)
+    .def("CreateFieldDataTypeAttr",
+         &_CreateFieldDataTypeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetVectorDataRoleHintAttr", &This::GetVectorDataRoleHintAttr)
-      .def("CreateVectorDataRoleHintAttr",
-           &_CreateVectorDataRoleHintAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetVectorDataRoleHintAttr", &This::GetVectorDataRoleHintAttr)
+    .def("CreateVectorDataRoleHintAttr",
+         &_CreateVectorDataRoleHintAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

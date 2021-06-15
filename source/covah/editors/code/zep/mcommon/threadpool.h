@@ -76,7 +76,7 @@ class ThreadPool {
   // deleted copy&move ctors&assignments
   ThreadPool(const ThreadPool &) = delete;
   ThreadPool &operator=(const ThreadPool &) = delete;
-  ThreadPool(ThreadPool &&)                 = delete;
+  ThreadPool(ThreadPool &&) = delete;
   ThreadPool &operator=(ThreadPool &&) = delete;
   // add new work item to the pool
   template<class F, class... Args>
@@ -85,7 +85,7 @@ class ThreadPool {
     using packaged_task_t = std::packaged_task<typename std::result_of<F(Args...)>::type()>;
 
     std::shared_ptr<packaged_task_t> task(
-        new packaged_task_t(std::bind(std::forward<F>(f), std::forward<Args>(args)...)));
+      new packaged_task_t(std::bind(std::forward<F>(f), std::forward<Args>(args)...)));
 
     // If there are no works, just run the task in the main thread and return
     if (workers.empty()) {

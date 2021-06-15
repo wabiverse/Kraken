@@ -66,19 +66,19 @@ namespace {
 /// volumes.
 /// HoudiniGetVolumePrimitives -> Returns a Houdini primitive to work with
 /// native Houdini volumes.
-using HoudiniGetVdbPrimitive    = void *(*)(const char *, const char *);
+using HoudiniGetVdbPrimitive = void *(*)(const char *, const char *);
 using HoudiniGetVolumePrimitive = void *(*)(const char *, const char *, int);
 struct HoudiniFnSet {
-  HoudiniGetVdbPrimitive getVdbPrimitive       = nullptr;
+  HoudiniGetVdbPrimitive getVdbPrimitive = nullptr;
   HoudiniGetVolumePrimitive getVolumePrimitive = nullptr;
 
   /// We need to load USD_SopVol.(so|dylib|dll) to access the volume function
   /// pointers.
   HoudiniFnSet()
   {
-    constexpr auto getVdbName    = "SOPgetVDBVolumePrimitive";
+    constexpr auto getVdbName = "SOPgetVDBVolumePrimitive";
     constexpr auto getVolumeName = "SOPgetHoudiniVolumePrimitive";
-    const auto HFS               = ArchGetEnv("HFS");
+    const auto HFS = ArchGetEnv("HFS");
     const auto dsoPath = HFS + ARCH_PATH_SEP + "houdini" + ARCH_PATH_SEP + "dso" + ARCH_PATH_SEP +
                          "USD_SopVol" + ARCH_LIBRARY_SUFFIX;
     // We don't have to worry about unloading the library, as our library
@@ -87,9 +87,8 @@ struct HoudiniFnSet {
     if (sopVol == nullptr) {
       return;
     }
-    getVdbPrimitive    = reinterpret_cast<HoudiniGetVdbPrimitive>(GETSYM(sopVol, getVdbName));
-    getVolumePrimitive = reinterpret_cast<HoudiniGetVolumePrimitive>(
-        GETSYM(sopVol, getVolumeName));
+    getVdbPrimitive = reinterpret_cast<HoudiniGetVdbPrimitive>(GETSYM(sopVol, getVdbName));
+    getVolumePrimitive = reinterpret_cast<HoudiniGetVolumePrimitive>(GETSYM(sopVol, getVolumeName));
   }
 };
 
@@ -114,8 +113,8 @@ struct HtoAFnSet {
     /// One of the current limitations is that we don't support HtoA
     /// installed in a path containing `;` or `&`.
     constexpr auto convertVdbName = "HtoAConvertPrimVdbToArnold";
-    const auto HOUDINI_PATH       = ArchGetEnv("HOUDINI_PATH");
-    auto searchForPygeo           = [&](const std::string &path) -> bool {
+    const auto HOUDINI_PATH = ArchGetEnv("HOUDINI_PATH");
+    auto searchForPygeo = [&](const std::string &path) -> bool {
       if (path == "&") {
         return false;
       }
@@ -126,13 +125,13 @@ struct HtoAFnSet {
 #else
                            ".so"
 #endif
-          ;
+        ;
       void *htoaPygeo = ArchLibraryOpen(dsoPath, ARCH_LIBRARY_NOW);
       if (htoaPygeo == nullptr) {
         return false;
       }
       convertPrimVdbToArnold = reinterpret_cast<HtoAConvertPrimVdbToArnold>(
-          GETSYM(htoaPygeo, convertVdbName));
+        GETSYM(htoaPygeo, convertVdbName));
       if (convertPrimVdbToArnold == nullptr) {
         TF_WARN("Error loading %s from %s", convertVdbName, dsoPath.c_str());
       }
@@ -156,9 +155,8 @@ struct HtoAFnSet {
     }
     /// TF warning, error and status functions don't show up in the terminal
     /// when running on Linux/MacOS and Houdini 18.
-    std::cerr
-        << "[HdArnold] Cannot load _htoa_pygeo library required for volume rendering in Solaris"
-        << std::endl;
+    std::cerr << "[HdArnold] Cannot load _htoa_pygeo library required for volume rendering in Solaris"
+              << std::endl;
   }
 };
 
@@ -179,15 +177,15 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 
 #if WABI_VERSION >= 2102
 HdArnoldVolume::HdArnoldVolume(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id)
-    : HdVolume(id),
-      _renderDelegate(renderDelegate)
+  : HdVolume(id),
+    _renderDelegate(renderDelegate)
 {}
 #else
 HdArnoldVolume::HdArnoldVolume(HdArnoldRenderDelegate *renderDelegate,
                                const SdfPath &id,
                                const SdfPath &instancerId)
-    : HdVolume(id, instancerId),
-      _renderDelegate(renderDelegate)
+  : HdVolume(id, instancerId),
+    _renderDelegate(renderDelegate)
 {}
 #endif
 
@@ -204,7 +202,7 @@ void HdArnoldVolume::Sync(HdSceneDelegate *sceneDelegate,
 {
   TF_UNUSED(reprToken);
   HdArnoldRenderParamInterrupt param(renderParam);
-  const auto &id      = GetId();
+  const auto &id = GetId();
   auto volumesChanged = false;
   if (HdChangeTracker::IsTopologyDirty(*dirtyBits, id)) {
     param.Interrupt();
@@ -217,27 +215,24 @@ void HdArnoldVolume::Sync(HdSceneDelegate *sceneDelegate,
     const auto materialId = sceneDelegate->GetMaterialId(id);
     _materialTracker.TrackSingleMaterial(_renderDelegate, id, materialId);
     const auto *material = reinterpret_cast<const HdArnoldMaterial *>(
-        sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, materialId));
+      sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, materialId));
     auto *volumeShader = material != nullptr ? material->GetVolumeShader() :
                                                _renderDelegate->GetFallbackVolumeShader();
-    _ForEachVolume(
-        [&](HdArnoldShape *s) { AiNodeSetPtr(s->GetShape(), str::shader, volumeShader); });
+    _ForEachVolume([&](HdArnoldShape *s) { AiNodeSetPtr(s->GetShape(), str::shader, volumeShader); });
   }
 
   auto transformDirtied = false;
   if (HdChangeTracker::IsTransformDirty(*dirtyBits, id)) {
     param.Interrupt();
-    _ForEachVolume(
-        [&](HdArnoldShape *s) { HdArnoldSetTransform(s->GetShape(), sceneDelegate, GetId()); });
+    _ForEachVolume([&](HdArnoldShape *s) { HdArnoldSetTransform(s->GetShape(), sceneDelegate, GetId()); });
     transformDirtied = true;
   }
 
   if (HdChangeTracker::IsVisibilityDirty(*dirtyBits, id)) {
     param.Interrupt();
     _UpdateVisibility(sceneDelegate, dirtyBits);
-    _ForEachVolume([&](HdArnoldShape *s) {
-      s->SetVisibility(_sharedData.visible ? AI_RAY_ALL : uint8_t{0});
-    });
+    _ForEachVolume(
+      [&](HdArnoldShape *s) { s->SetVisibility(_sharedData.visible ? AI_RAY_ALL : uint8_t{0}); });
   }
 
   if (*dirtyBits & HdChangeTracker::DirtyPrimvar) {
@@ -279,7 +274,7 @@ void HdArnoldVolume::_CreateVolumes(const SdfPath &id, HdSceneDelegate *sceneDel
   const auto fieldDescriptors = sceneDelegate->GetVolumeFieldDescriptors(id);
   for (const auto &field : fieldDescriptors) {
     auto *openvdbAsset = dynamic_cast<HdArnoldOpenvdbAsset *>(
-        sceneDelegate->GetRenderIndex().GetBprim(_tokens->openvdbAsset, field.fieldId));
+      sceneDelegate->GetRenderIndex().GetBprim(_tokens->openvdbAsset, field.fieldId));
     if (openvdbAsset == nullptr) {
       continue;
     }
@@ -287,7 +282,7 @@ void HdArnoldVolume::_CreateVolumes(const SdfPath &id, HdSceneDelegate *sceneDel
     const auto vv = sceneDelegate->Get(field.fieldId, _tokens->filePath);
     if (vv.IsHolding<SdfAssetPath>()) {
       const auto &assetPath = vv.UncheckedGet<SdfAssetPath>();
-      auto path             = assetPath.GetResolvedPath();
+      auto path = assetPath.GetResolvedPath();
       if (path.empty()) {
         path = assetPath.GetAssetPath();
       }
@@ -305,19 +300,18 @@ void HdArnoldVolume::_CreateVolumes(const SdfPath &id, HdSceneDelegate *sceneDel
     }
   }
 
-  _volumes.erase(
-      std::remove_if(_volumes.begin(),
-                     _volumes.end(),
-                     [&openvdbs](HdArnoldShape *shape) -> bool {
-                       if (openvdbs.find(std::string(
-                               AiNodeGetStr(shape->GetShape(), str::filename).c_str())) ==
-                           openvdbs.end()) {
-                         delete shape;
-                         return true;
-                       }
-                       return false;
-                     }),
-      _volumes.end());
+  _volumes.erase(std::remove_if(_volumes.begin(),
+                                _volumes.end(),
+                                [&openvdbs](HdArnoldShape *shape) -> bool {
+                                  if (openvdbs.find(std::string(
+                                        AiNodeGetStr(shape->GetShape(), str::filename).c_str())) ==
+                                      openvdbs.end()) {
+                                    delete shape;
+                                    return true;
+                                  }
+                                  return false;
+                                }),
+                 _volumes.end());
 
   for (const auto &openvdb : openvdbs) {
     AtNode *volume = nullptr;
@@ -330,14 +324,13 @@ void HdArnoldVolume::_CreateVolumes(const SdfPath &id, HdSceneDelegate *sceneDel
     }
     if (volume == nullptr) {
       auto *shape = new HdArnoldShape(str::volume, _renderDelegate, id, GetPrimId());
-      volume      = shape->GetShape();
+      volume = shape->GetShape();
       AiNodeSetStr(volume, str::filename, AtString(openvdb.first.c_str()));
-      AiNodeSetStr(
-          volume, str::name, AtString(TfStringPrintf("%s_p_%p", id.GetText(), volume).c_str()));
+      AiNodeSetStr(volume, str::name, AtString(TfStringPrintf("%s_p_%p", id.GetText(), volume).c_str()));
       _volumes.push_back(shape);
     }
     const auto numFields = openvdb.second.size();
-    auto *fields         = AiArrayAllocate(numFields, 1, AI_TYPE_STRING);
+    auto *fields = AiArrayAllocate(numFields, 1, AI_TYPE_STRING);
     for (auto i = decltype(numFields){0}; i < numFields; ++i) {
       AiArraySetStr(fields, i, AtString(openvdb.second[i].GetText()));
     }
@@ -376,10 +369,9 @@ void HdArnoldVolume::_CreateVolumes(const SdfPath &id, HdSceneDelegate *sceneDel
       continue;
     }
 
-    auto *shape  = new HdArnoldShape(str::volume, _renderDelegate, id, GetPrimId());
+    auto *shape = new HdArnoldShape(str::volume, _renderDelegate, id, GetPrimId());
     auto *volume = shape->GetShape();
-    AiNodeSetStr(
-        volume, str::name, AtString(TfStringPrintf("%s_p_%p", id.GetText(), volume).c_str()));
+    AiNodeSetStr(volume, str::name, AtString(TfStringPrintf("%s_p_%p", id.GetText(), volume).c_str()));
     htoaFnSet.convertPrimVdbToArnold(volume, static_cast<int>(gridVec.size()), gridVec.data());
     _inMemoryVolumes.push_back(shape);
   }

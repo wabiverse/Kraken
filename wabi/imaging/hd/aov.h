@@ -47,10 +47,10 @@ struct HdAovDescriptor {
   HdAovDescriptor() : format(HdFormatInvalid), multiSampled(false), clearValue(), aovSettings()
   {}
   HdAovDescriptor(HdFormat f, bool ms, VtValue const &c)
-      : format(f),
-        multiSampled(ms),
-        clearValue(c),
-        aovSettings()
+    : format(f),
+      multiSampled(ms),
+      clearValue(c),
+      aovSettings()
   {}
 
   // ----------------------------------------------------------------
@@ -96,8 +96,7 @@ struct HdRenderBufferDescriptor {
 
   bool operator==(HdRenderBufferDescriptor const &rhs) const
   {
-    return dimensions == rhs.dimensions && format == rhs.format &&
-           multiSampled == rhs.multiSampled;
+    return dimensions == rhs.dimensions && format == rhs.format && multiSampled == rhs.multiSampled;
   }
   bool operator!=(HdRenderBufferDescriptor const &rhs) const
   {

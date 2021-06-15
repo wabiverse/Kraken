@@ -58,8 +58,8 @@ static UsdAttribute _CreateLightListCacheBehaviorAttr(UsdLuxListAPI &self,
                                                       object defaultVal,
                                                       bool writeSparsely)
 {
-  return self.CreateLightListCacheBehaviorAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  return self.CreateLightListCacheBehaviorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                               writeSparsely);
 }
 
 static std::string _Repr(const UsdLuxListAPI &self)
@@ -77,36 +77,34 @@ void wrapUsdLuxListAPI()
   class_<This, bases<UsdAPISchemaBase>> cls("ListAPI");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Apply", &This::Apply, (arg("prim")))
-      .staticmethod("Apply")
+    .def("Apply", &This::Apply, (arg("prim")))
+    .staticmethod("Apply")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetLightListCacheBehaviorAttr", &This::GetLightListCacheBehaviorAttr)
-      .def("CreateLightListCacheBehaviorAttr",
-           &_CreateLightListCacheBehaviorAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetLightListCacheBehaviorAttr", &This::GetLightListCacheBehaviorAttr)
+    .def("CreateLightListCacheBehaviorAttr",
+         &_CreateLightListCacheBehaviorAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetLightListRel", &This::GetLightListRel)
-      .def("CreateLightListRel", &This::CreateLightListRel)
-      .def("__repr__", ::_Repr);
+    .def("GetLightListRel", &This::GetLightListRel)
+    .def("CreateLightListRel", &This::CreateLightListRel)
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -138,10 +136,10 @@ namespace {
 WRAP_CUSTOM
 {
   _class.def("ComputeLightList", &UsdLuxListAPI::ComputeLightList)
-      .def("StoreLightList", &UsdLuxListAPI::StoreLightList)
-      .def("InvalidateLightList", &UsdLuxListAPI::InvalidateLightList)
-      //        .def("IsLightListValid", &UsdLuxListAPI::IsLightListValid)
-      ;
+    .def("StoreLightList", &UsdLuxListAPI::StoreLightList)
+    .def("InvalidateLightList", &UsdLuxListAPI::InvalidateLightList)
+    //        .def("IsLightListValid", &UsdLuxListAPI::IsLightListValid)
+    ;
 
   scope s = _class;
   TfPyWrapEnum<UsdLuxListAPI::ComputeMode>();

@@ -83,16 +83,16 @@ WABI_NAMESPACE_BEGIN
 ///
 template<typename T> class TfSpan {
  public:
-  using element_type    = T;
-  using value_type      = typename std::remove_cv<T>::type;
-  using pointer         = T *;
-  using reference       = T &;
-  using index_type      = std::size_t;
+  using element_type = T;
+  using value_type = typename std::remove_cv<T>::type;
+  using pointer = T *;
+  using reference = T &;
+  using index_type = std::size_t;
   using difference_type = std::ptrdiff_t;
 
-  using iterator               = T *;
-  using const_iterator         = const T *;
-  using reverse_iterator       = std::reverse_iterator<iterator>;
+  using iterator = T *;
+  using const_iterator = const T *;
+  using reverse_iterator = std::reverse_iterator<iterator>;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
   TfSpan() noexcept = default;
@@ -115,13 +115,12 @@ template<typename T> class TfSpan {
   /// The resulting span has a range of
   /// [cont.data(), cont.data()+cont.size())
   template<class Container>
-  TfSpan(
-      Container &cont,
-      typename std::enable_if<!std::is_const<element_type>::value &&
-                                  std::is_same<typename Container::value_type, value_type>::value,
-                              Container>::type * = 0)
-      : _data(cont.data()),
-        _size(cont.size())
+  TfSpan(Container &cont,
+         typename std::enable_if<!std::is_const<element_type>::value &&
+                                   std::is_same<typename Container::value_type, value_type>::value,
+                                 Container>::type * = 0)
+    : _data(cont.data()),
+      _size(cont.size())
   {
     TF_DEV_AXIOM(_size == 0 || _data);
   }
@@ -133,8 +132,8 @@ template<typename T> class TfSpan {
   TfSpan(const Container &cont,
          typename std::enable_if<std::is_same<typename Container::value_type, value_type>::value,
                                  Container>::type * = 0)
-      : _data(cont.data()),
-        _size(cont.size())
+    : _data(cont.data()),
+      _size(cont.size())
   {
     TF_DEV_AXIOM(_size == 0 || _data);
   }
@@ -259,7 +258,7 @@ template<typename T> class TfSpan {
   }
 
  private:
-  pointer _data    = nullptr;
+  pointer _data = nullptr;
   index_type _size = 0;
 };
 

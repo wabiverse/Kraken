@@ -112,8 +112,7 @@ UsdAttribute UsdSkelBlendShape::GetOffsetsAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->offsets);
 }
 
-UsdAttribute UsdSkelBlendShape::CreateOffsetsAttr(VtValue const &defaultValue,
-                                                  bool writeSparsely) const
+UsdAttribute UsdSkelBlendShape::CreateOffsetsAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->offsets,
                                     SdfValueTypeNames->Vector3fArray,
@@ -144,8 +143,7 @@ UsdAttribute UsdSkelBlendShape::GetPointIndicesAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->pointIndices);
 }
 
-UsdAttribute UsdSkelBlendShape::CreatePointIndicesAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdSkelBlendShape::CreatePointIndicesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->pointIndices,
                                     SdfValueTypeNames->IntArray,
@@ -156,8 +154,7 @@ UsdAttribute UsdSkelBlendShape::CreatePointIndicesAttr(VtValue const &defaultVal
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -171,12 +168,12 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdSkelBlendShape::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdSkelTokens->offsets,
-      UsdSkelTokens->normalOffsets,
-      UsdSkelTokens->pointIndices,
+    UsdSkelTokens->offsets,
+    UsdSkelTokens->normalOffsets,
+    UsdSkelTokens->pointIndices,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdTyped::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -204,20 +201,18 @@ UsdSkelInbetweenShape UsdSkelBlendShape::CreateInbetween(const TfToken &name) co
 
 UsdSkelInbetweenShape UsdSkelBlendShape::GetInbetween(const TfToken &name) const
 {
-  return UsdSkelInbetweenShape(
-      GetPrim().GetAttribute(UsdSkelInbetweenShape::_MakeNamespaced(name)));
+  return UsdSkelInbetweenShape(GetPrim().GetAttribute(UsdSkelInbetweenShape::_MakeNamespaced(name)));
 }
 
 bool UsdSkelBlendShape::HasInbetween(const TfToken &name) const
 {
   TfToken inbetweenName = UsdSkelInbetweenShape::_MakeNamespaced(name, /*quiet*/ true);
-  return inbetweenName.IsEmpty() ?
-             false :
-             UsdSkelInbetweenShape::IsInbetween(GetPrim().GetAttribute(inbetweenName));
+  return inbetweenName.IsEmpty() ? false :
+                                   UsdSkelInbetweenShape::IsInbetween(GetPrim().GetAttribute(inbetweenName));
 }
 
 std::vector<UsdSkelInbetweenShape> UsdSkelBlendShape::_MakeInbetweens(
-    const std::vector<UsdProperty> &props) const
+  const std::vector<UsdProperty> &props) const
 {
   std::vector<UsdSkelInbetweenShape> shapes;
   shapes.reserve(props.size());
@@ -236,17 +231,16 @@ std::vector<UsdSkelInbetweenShape> UsdSkelBlendShape::_MakeInbetweens(
 std::vector<UsdSkelInbetweenShape> UsdSkelBlendShape::GetInbetweens() const
 {
   const UsdPrim &prim = GetPrim();
-  return _MakeInbetweens(
-      prim ? prim.GetPropertiesInNamespace(UsdSkelInbetweenShape::_GetNamespacePrefix()) :
-             std::vector<UsdProperty>());
+  return _MakeInbetweens(prim ? prim.GetPropertiesInNamespace(UsdSkelInbetweenShape::_GetNamespacePrefix()) :
+                                std::vector<UsdProperty>());
 }
 
 std::vector<UsdSkelInbetweenShape> UsdSkelBlendShape::GetAuthoredInbetweens() const
 {
   const UsdPrim &prim = GetPrim();
   return _MakeInbetweens(
-      prim ? prim.GetAuthoredPropertiesInNamespace(UsdSkelInbetweenShape::_GetNamespacePrefix()) :
-             std::vector<UsdProperty>());
+    prim ? prim.GetAuthoredPropertiesInNamespace(UsdSkelInbetweenShape::_GetNamespacePrefix()) :
+           std::vector<UsdProperty>());
 }
 
 bool UsdSkelBlendShape::ValidatePointIndices(TfSpan<const int> indices,
@@ -258,8 +252,7 @@ bool UsdSkelBlendShape::ValidatePointIndices(TfSpan<const int> indices,
     if (pointIndex >= 0) {
       if (ARCH_UNLIKELY(static_cast<size_t>(pointIndex) >= numPoints)) {
         if (reason) {
-          *reason = TfStringPrintf(
-              "Index [%d] at element %td >= numPoints [%zu]", pointIndex, i, numPoints);
+          *reason = TfStringPrintf("Index [%d] at element %td >= numPoints [%zu]", pointIndex, i, numPoints);
         }
         return false;
       }

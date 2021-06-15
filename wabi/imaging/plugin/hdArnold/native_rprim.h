@@ -30,9 +30,7 @@ class HdArnoldNativeRprim : public HdArnoldRprim<HdRprim> {
  public:
 #if WABI_VERSION >= 2102
   HDARNOLD_API
-  HdArnoldNativeRprim(HdArnoldRenderDelegate *renderDelegate,
-                      const AtString &arnoldType,
-                      const SdfPath &id);
+  HdArnoldNativeRprim(HdArnoldRenderDelegate *renderDelegate, const AtString &arnoldType, const SdfPath &id);
 #else
   HDARNOLD_API
   HdArnoldNativeRprim(HdArnoldRenderDelegate *renderDelegate,

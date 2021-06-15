@@ -36,8 +36,8 @@ class RprUsd_MtlxNodeInfo;
 struct RprUsd_MaterialBuilderContext;
 
 using RprUsdMaterialNodeFactoryFnc =
-    std::function<RprUsd_MaterialNode *(RprUsd_MaterialBuilderContext *context,
-                                        std::map<TfToken, VtValue> const &parameters)>;
+  std::function<RprUsd_MaterialNode *(RprUsd_MaterialBuilderContext *context,
+                                      std::map<TfToken, VtValue> const &parameters)>;
 
 struct RprUsdMaterialNodeDesc {
   RprUsdMaterialNodeFactoryFnc factory;
@@ -132,10 +132,10 @@ class RprUsdMaterialNodeInfo {
 
   virtual const char *GetName() const = 0;
 
-  virtual size_t GetNumInputs() const                               = 0;
+  virtual size_t GetNumInputs() const = 0;
   virtual RprUsdMaterialNodeInput const *GetInput(size_t idx) const = 0;
 
-  virtual size_t GetNumOutputs() const                                 = 0;
+  virtual size_t GetNumOutputs() const = 0;
   virtual RprUsdMaterialNodeElement const *GetOutput(size_t idx) const = 0;
 
   virtual const char *GetUIName() const = 0;
@@ -149,8 +149,8 @@ class RprUsdMaterialNodeElement {
  public:
   virtual ~RprUsdMaterialNodeElement() = default;
 
-  virtual const char *GetName() const      = 0;
-  virtual const char *GetUIName() const    = 0;
+  virtual const char *GetName() const = 0;
+  virtual const char *GetUIName() const = 0;
   virtual const char *GetDocString() const = 0;
 
   enum Type {
@@ -187,12 +187,12 @@ class RprUsdMaterialNodeInput : public RprUsdMaterialNodeElement {
  public:
   ~RprUsdMaterialNodeInput() override = default;
 
-  virtual const char *GetUIMin() const                       = 0;
-  virtual const char *GetUISoftMin() const                   = 0;
-  virtual const char *GetUIMax() const                       = 0;
-  virtual const char *GetUISoftMax() const                   = 0;
-  virtual const char *GetUIFolder() const                    = 0;
-  virtual const char *GetValueString() const                 = 0;
+  virtual const char *GetUIMin() const = 0;
+  virtual const char *GetUISoftMin() const = 0;
+  virtual const char *GetUIMax() const = 0;
+  virtual const char *GetUISoftMax() const = 0;
+  virtual const char *GetUIFolder() const = 0;
+  virtual const char *GetValueString() const = 0;
   virtual std::vector<TfToken> const &GetTokenValues() const = 0;
 
  protected:
@@ -209,12 +209,11 @@ inline void RprUsdMaterialRegistry::Register(TfToken const &id,
                                              RprUsdMaterialNodeFactoryFnc factory,
                                              RprUsdMaterialNodeInfo const *info)
 {
-  TF_DEBUG(RPR_USD_DEBUG_MATERIAL_REGISTRY)
-      .Msg("Registering material node with id \"%s\"\n", id.GetText());
+  TF_DEBUG(RPR_USD_DEBUG_MATERIAL_REGISTRY).Msg("Registering material node with id \"%s\"\n", id.GetText());
 
   RprUsdMaterialNodeDesc desc = {};
-  desc.factory                = std::move(factory);
-  desc.info                   = info;
+  desc.factory = std::move(factory);
+  desc.info = info;
 
   auto status = m_registeredNodesLookup.emplace(id, m_registeredNodes.size());
   if (!status.second) {

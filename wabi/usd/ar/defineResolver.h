@@ -79,8 +79,7 @@ template<class T> class Ar_ResolverFactory : public Ar_ResolverFactoryBase {
 
 template<class Resolver, class... Bases> void Ar_DefineResolver()
 {
-  TfType::Define<Resolver, TfType::Bases<Bases...>>()
-      .template SetFactory<Ar_ResolverFactory<Resolver>>();
+  TfType::Define<Resolver, TfType::Bases<Bases...>>().template SetFactory<Ar_ResolverFactory<Resolver>>();
 }
 
 WABI_NAMESPACE_END

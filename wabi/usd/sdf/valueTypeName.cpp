@@ -138,8 +138,7 @@ bool SdfValueTypeName::operator==(const SdfValueTypeName &rhs) const
   // equivalent type names from different registries compare
   // equal. The registry ensures that type and role are
   // the only things we need to look at here.
-  return (_impl->type->type == rhs._impl->type->type &&
-          _impl->type->role == rhs._impl->type->role);
+  return (_impl->type->type == rhs._impl->type->type && _impl->type->role == rhs._impl->type->role);
 }
 
 bool SdfValueTypeName::operator==(const std::string &rhs) const

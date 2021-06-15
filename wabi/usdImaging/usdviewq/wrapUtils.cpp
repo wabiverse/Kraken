@@ -75,11 +75,11 @@ void wrapUtils()
   typedef UsdviewqUtils This;
 
   scope utilsScope = class_<This>("Utils")
-                         .def("_GetAllPrimsOfType",
-                              This::_GetAllPrimsOfType,
-                              return_value_policy<TfPySequenceToList>())
-                         .staticmethod("_GetAllPrimsOfType")
+                       .def("_GetAllPrimsOfType",
+                            This::_GetAllPrimsOfType,
+                            return_value_policy<TfPySequenceToList>())
+                       .staticmethod("_GetAllPrimsOfType")
 
-                         .def("GetPrimInfo", _GetPrimInfo)
-                         .staticmethod("GetPrimInfo");
+                       .def("GetPrimInfo", _GetPrimInfo)
+                       .staticmethod("GetPrimInfo");
 }

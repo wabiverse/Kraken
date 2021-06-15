@@ -50,9 +50,9 @@ WABI_NAMESPACE_BEGIN
 ///
 USDIMAGING_API
 std::vector<std::tuple<int, TfToken>> UsdImaging_GetUdimTiles(
-    std::string const &basePath,
-    int tileLimit,
-    SdfLayerHandle const &layerHandle = SdfLayerHandle());
+  std::string const &basePath,
+  int tileLimit,
+  SdfLayerHandle const &layerHandle = SdfLayerHandle());
 
 WABI_NAMESPACE_END
 

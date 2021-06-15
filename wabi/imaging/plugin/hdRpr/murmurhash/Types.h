@@ -138,9 +138,9 @@ template<typename hashtype> struct CollisionCallback : public KeyCallback {
   typedef CollisionMap<hashtype, ByteVec> collmap;
 
   CollisionCallback(pfHash hash, hashset &collisions, collmap &cmap)
-      : m_pfHash(hash),
-        m_collisions(collisions),
-        m_collmap(cmap)
+    : m_pfHash(hash),
+      m_collisions(collisions),
+      m_collmap(cmap)
   {}
 
   virtual void operator()(const void *key, int len)

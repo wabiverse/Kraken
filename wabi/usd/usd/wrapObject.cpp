@@ -69,8 +69,7 @@ static TfPyObjWrapper _GetMetadataByDictKey(const UsdObject &self,
 static bool _SetMetadata(const UsdObject &self, const TfToken &key, object obj)
 {
   VtValue value;
-  return UsdPythonToMetadataValue(key, /*keyPath*/ TfToken(), obj, &value) &&
-         self.SetMetadata(key, value);
+  return UsdPythonToMetadataValue(key, /*keyPath*/ TfToken(), obj, &value) && self.SetMetadata(key, value);
 }
 
 static bool _SetMetadataByDictKey(const UsdObject &self,
@@ -156,9 +155,9 @@ static object __getattribute__(object selfObj, const char *name)
   // object's prim is valid, or if the attribute is one of a specific
   // inclusion list.
   if ((name[0] == '_' && name[1] == '_') || extract<UsdObject &>(selfObj)().GetPrim().IsValid() ||
-      strcmp(name, "IsValid") == 0 || strcmp(name, "GetDescription") == 0 ||
-      strcmp(name, "GetPrim") == 0 || strcmp(name, "GetPath") == 0 ||
-      strcmp(name, "GetPrimPath") == 0 || strcmp(name, "IsPseudoRoot") == 0) {
+      strcmp(name, "IsValid") == 0 || strcmp(name, "GetDescription") == 0 || strcmp(name, "GetPrim") == 0 ||
+      strcmp(name, "GetPath") == 0 || strcmp(name, "GetPrimPath") == 0 ||
+      strcmp(name, "IsPseudoRoot") == 0) {
     // Dispatch to object's __getattribute__.
     return (*_object__getattribute__)(selfObj, name);
   }
@@ -176,84 +175,77 @@ void wrapUsdObject()
 {
   class_<UsdObject> clsObj("Object");
   clsObj.def(Usd_ObjectSubclass())
-      .def("IsValid", &UsdObject::IsValid)
+    .def("IsValid", &UsdObject::IsValid)
 
-      .def(self == self)
-      .def(self != self)
-      .def(!self)
-      .def("__hash__", __hash__)
+    .def(self == self)
+    .def(self != self)
+    .def(!self)
+    .def("__hash__", __hash__)
 
-      .def("GetStage", &UsdObject::GetStage)
-      .def("GetPath", &UsdObject::GetPath)
-      .def("GetPrimPath", &UsdObject::GetPrimPath, return_value_policy<return_by_value>())
-      .def("GetPrim", &UsdObject::GetPrim)
-      .def("GetName", &UsdObject::GetName, return_value_policy<return_by_value>())
-      .def("GetDescription", &UsdObject::GetDescription)
+    .def("GetStage", &UsdObject::GetStage)
+    .def("GetPath", &UsdObject::GetPath)
+    .def("GetPrimPath", &UsdObject::GetPrimPath, return_value_policy<return_by_value>())
+    .def("GetPrim", &UsdObject::GetPrim)
+    .def("GetName", &UsdObject::GetName, return_value_policy<return_by_value>())
+    .def("GetDescription", &UsdObject::GetDescription)
 
-      .def("GetMetadata", _GetMetadata, arg("key"))
-      .def("SetMetadata", _SetMetadata, (arg("key"), arg("value")))
+    .def("GetMetadata", _GetMetadata, arg("key"))
+    .def("SetMetadata", _SetMetadata, (arg("key"), arg("value")))
 
-      .def("ClearMetadata", &UsdObject::ClearMetadata, arg("key"))
-      .def("HasMetadata", &UsdObject::HasMetadata, arg("key"))
-      .def("HasAuthoredMetadata", &UsdObject::HasAuthoredMetadata, arg("key"))
+    .def("ClearMetadata", &UsdObject::ClearMetadata, arg("key"))
+    .def("HasMetadata", &UsdObject::HasMetadata, arg("key"))
+    .def("HasAuthoredMetadata", &UsdObject::HasAuthoredMetadata, arg("key"))
 
-      .def("GetMetadataByDictKey", _GetMetadataByDictKey, (arg("key"), arg("keyPath")))
-      .def("SetMetadataByDictKey",
-           _SetMetadataByDictKey,
-           (arg("key"), arg("keyPath"), arg("value")))
+    .def("GetMetadataByDictKey", _GetMetadataByDictKey, (arg("key"), arg("keyPath")))
+    .def("SetMetadataByDictKey", _SetMetadataByDictKey, (arg("key"), arg("keyPath"), arg("value")))
 
-      .def("ClearMetadataByDictKey",
-           &UsdObject::ClearMetadataByDictKey,
-           (arg("key"), arg("keyPath")))
-      .def("HasMetadataDictKey", &UsdObject::HasMetadataDictKey, (arg("key"), arg("keyPath")))
-      .def("HasAuthoredMetadataDictKey",
-           &UsdObject::HasAuthoredMetadataDictKey,
-           (arg("key"), arg("keyPath")))
+    .def("ClearMetadataByDictKey", &UsdObject::ClearMetadataByDictKey, (arg("key"), arg("keyPath")))
+    .def("HasMetadataDictKey", &UsdObject::HasMetadataDictKey, (arg("key"), arg("keyPath")))
+    .def("HasAuthoredMetadataDictKey", &UsdObject::HasAuthoredMetadataDictKey, (arg("key"), arg("keyPath")))
 
-      .def(
-          "GetAllMetadata", &UsdObject::GetAllMetadata, return_value_policy<TfPyMapToDictionary>())
-      .def("GetAllAuthoredMetadata",
-           &UsdObject::GetAllAuthoredMetadata,
-           return_value_policy<TfPyMapToDictionary>())
+    .def("GetAllMetadata", &UsdObject::GetAllMetadata, return_value_policy<TfPyMapToDictionary>())
+    .def("GetAllAuthoredMetadata",
+         &UsdObject::GetAllAuthoredMetadata,
+         return_value_policy<TfPyMapToDictionary>())
 
-      .def("IsHidden", &UsdObject::IsHidden)
-      .def("SetHidden", &UsdObject::SetHidden, arg("hidden"))
-      .def("ClearHidden", &UsdObject::ClearHidden)
-      .def("HasAuthoredHidden", &UsdObject::HasAuthoredHidden)
+    .def("IsHidden", &UsdObject::IsHidden)
+    .def("SetHidden", &UsdObject::SetHidden, arg("hidden"))
+    .def("ClearHidden", &UsdObject::ClearHidden)
+    .def("HasAuthoredHidden", &UsdObject::HasAuthoredHidden)
 
-      .def("GetCustomData", _GetCustomData)
-      .def("GetCustomDataByKey", _GetCustomDataByKey, arg("keyPath"))
-      .def("SetCustomData", _SetCustomData, arg("customData"))
-      .def("SetCustomDataByKey", _SetCustomDataByKey, (arg("keyPath"), arg("value")))
-      .def("ClearCustomData", &UsdObject::ClearCustomData)
-      .def("ClearCustomDataByKey", &UsdObject::ClearCustomDataByKey, arg("keyPath"))
+    .def("GetCustomData", _GetCustomData)
+    .def("GetCustomDataByKey", _GetCustomDataByKey, arg("keyPath"))
+    .def("SetCustomData", _SetCustomData, arg("customData"))
+    .def("SetCustomDataByKey", _SetCustomDataByKey, (arg("keyPath"), arg("value")))
+    .def("ClearCustomData", &UsdObject::ClearCustomData)
+    .def("ClearCustomDataByKey", &UsdObject::ClearCustomDataByKey, arg("keyPath"))
 
-      .def("HasCustomData", &UsdObject::HasCustomData)
-      .def("HasCustomDataKey", &UsdObject::HasCustomDataKey, arg("keyPath"))
-      .def("HasAuthoredCustomData", &UsdObject::HasAuthoredCustomData)
-      .def("HasAuthoredCustomDataKey", &UsdObject::HasAuthoredCustomDataKey, arg("keyPath"))
+    .def("HasCustomData", &UsdObject::HasCustomData)
+    .def("HasCustomDataKey", &UsdObject::HasCustomDataKey, arg("keyPath"))
+    .def("HasAuthoredCustomData", &UsdObject::HasAuthoredCustomData)
+    .def("HasAuthoredCustomDataKey", &UsdObject::HasAuthoredCustomDataKey, arg("keyPath"))
 
-      .def("GetAssetInfo", _GetAssetInfo)
-      .def("GetAssetInfoByKey", _GetAssetInfoByKey, arg("keyPath"))
-      .def("SetAssetInfo", _SetAssetInfo, arg("assetInfo"))
-      .def("SetAssetInfoByKey", _SetAssetInfoByKey, (arg("keyPath"), arg("value")))
-      .def("ClearAssetInfo", &UsdObject::ClearAssetInfo)
-      .def("ClearAssetInfoByKey", &UsdObject::ClearAssetInfoByKey, arg("keyPath"))
+    .def("GetAssetInfo", _GetAssetInfo)
+    .def("GetAssetInfoByKey", _GetAssetInfoByKey, arg("keyPath"))
+    .def("SetAssetInfo", _SetAssetInfo, arg("assetInfo"))
+    .def("SetAssetInfoByKey", _SetAssetInfoByKey, (arg("keyPath"), arg("value")))
+    .def("ClearAssetInfo", &UsdObject::ClearAssetInfo)
+    .def("ClearAssetInfoByKey", &UsdObject::ClearAssetInfoByKey, arg("keyPath"))
 
-      .def("HasAssetInfo", &UsdObject::HasAssetInfo)
-      .def("HasAssetInfoKey", &UsdObject::HasAssetInfoKey, arg("keyPath"))
-      .def("HasAuthoredAssetInfo", &UsdObject::HasAuthoredAssetInfo)
-      .def("HasAuthoredAssetInfoKey", &UsdObject::HasAuthoredAssetInfoKey, arg("keyPath"))
+    .def("HasAssetInfo", &UsdObject::HasAssetInfo)
+    .def("HasAssetInfoKey", &UsdObject::HasAssetInfoKey, arg("keyPath"))
+    .def("HasAuthoredAssetInfo", &UsdObject::HasAuthoredAssetInfo)
+    .def("HasAuthoredAssetInfoKey", &UsdObject::HasAuthoredAssetInfoKey, arg("keyPath"))
 
-      .def("GetDocumentation", &UsdObject::GetDocumentation)
-      .def("SetDocumentation", &UsdObject::SetDocumentation, arg("doc"))
-      .def("ClearDocumentation", &UsdObject::ClearDocumentation)
-      .def("HasAuthoredDocumentation", &UsdObject::HasAuthoredDocumentation)
+    .def("GetDocumentation", &UsdObject::GetDocumentation)
+    .def("SetDocumentation", &UsdObject::SetDocumentation, arg("doc"))
+    .def("ClearDocumentation", &UsdObject::ClearDocumentation)
+    .def("HasAuthoredDocumentation", &UsdObject::HasAuthoredDocumentation)
 
-      .def("GetNamespaceDelimiter", &UsdObject::GetNamespaceDelimiter)
-      .staticmethod("GetNamespaceDelimiter")
+    .def("GetNamespaceDelimiter", &UsdObject::GetNamespaceDelimiter)
+    .staticmethod("GetNamespaceDelimiter")
 
-      ;
+    ;
 
   // Save existing __getattribute__ and replace.
   *_object__getattribute__ = object(clsObj.attr("__getattribute__"));

@@ -85,15 +85,14 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
       return !_GetOperations(SdfListOpTypeOrdered).empty();
     }
     else {
-      return (!_GetOperations(SdfListOpTypeAdded).empty() ||
-              !_GetOperations(SdfListOpTypePrepended).empty() ||
-              !_GetOperations(SdfListOpTypeAppended).empty() ||
-              !_GetOperations(SdfListOpTypeDeleted).empty() ||
-              !_GetOperations(SdfListOpTypeOrdered).empty());
+      return (
+        !_GetOperations(SdfListOpTypeAdded).empty() || !_GetOperations(SdfListOpTypePrepended).empty() ||
+        !_GetOperations(SdfListOpTypeAppended).empty() || !_GetOperations(SdfListOpTypeDeleted).empty() ||
+        !_GetOperations(SdfListOpTypeOrdered).empty());
     }
   }
 
-  virtual bool IsExplicit() const    = 0;
+  virtual bool IsExplicit() const = 0;
   virtual bool IsOrderedOnly() const = 0;
 
   virtual SdfAllowed PermissionToEdit(SdfListOpType op) const
@@ -110,8 +109,8 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
   }
 
   virtual bool CopyEdits(const Sdf_ListEditor &rhs) = 0;
-  virtual bool ClearEdits()                         = 0;
-  virtual bool ClearEditsAndMakeExplicit()          = 0;
+  virtual bool ClearEdits() = 0;
+  virtual bool ClearEditsAndMakeExplicit() = 0;
 
   typedef std::function<boost::optional<value_type>(const value_type &)> ModifyCallback;
 
@@ -121,8 +120,7 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
   /// returned key.
   virtual void ModifyItemEdits(const ModifyCallback &cb) = 0;
 
-  typedef std::function<boost::optional<value_type>(SdfListOpType, const value_type &)>
-      ApplyCallback;
+  typedef std::function<boost::optional<value_type>(SdfListOpType, const value_type &)> ApplyCallback;
 
   /// Apply the list operations represented by this interface to the given
   /// vector of values \p vec. If \p callback is valid then it's called
@@ -131,8 +129,7 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
   /// the returned key is applied, allowing callbacks to perform key
   /// translation.  Note that this means list editors can't meaningfully
   /// hold the empty key.
-  virtual void ApplyEditsToList(value_vector_type *vec,
-                                const ApplyCallback &cb = ApplyCallback()) = 0;
+  virtual void ApplyEditsToList(value_vector_type *vec, const ApplyCallback &cb = ApplyCallback()) = 0;
 
   /// Returns the number of elements in the specified list of operations.
   size_t GetSize(SdfListOpType op) const
@@ -164,9 +161,9 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
   /// if \p val is not found.
   size_t Find(SdfListOpType op, const value_type &val) const
   {
-    const value_vector_type &vec                      = _GetOperations(op);
+    const value_vector_type &vec = _GetOperations(op);
     typename value_vector_type::const_iterator findIt = std::find(
-        vec.begin(), vec.end(), _typePolicy.Canonicalize(val));
+      vec.begin(), vec.end(), _typePolicy.Canonicalize(val));
     if (findIt != vec.end()) {
       return std::distance(vec.begin(), findIt);
     }
@@ -176,10 +173,7 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
 
   /// Replaces the operations in the specified list of operations in range
   /// [index, index + n) with the given \p elems.
-  virtual bool ReplaceEdits(SdfListOpType op,
-                            size_t index,
-                            size_t n,
-                            const value_vector_type &elems) = 0;
+  virtual bool ReplaceEdits(SdfListOpType op, size_t index, size_t n, const value_vector_type &elems) = 0;
 
   /// Applies a \p rhs opinions about a given operation list to this one.
   virtual void ApplyList(SdfListOpType op, const Sdf_ListEditor &rhs) = 0;
@@ -189,9 +183,9 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
   {}
 
   Sdf_ListEditor(const SdfSpecHandle &owner, const TfToken &field, const TypePolicy &typePolicy)
-      : _owner(owner),
-        _field(field),
-        _typePolicy(typePolicy)
+    : _owner(owner),
+      _field(field),
+      _typePolicy(typePolicy)
   {}
 
   virtual ~Sdf_ListEditor() = default;
@@ -233,8 +227,7 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
     typename value_vector_type::const_iterator oldValuesTail = oldValues.begin(),
                                                newValuesTail = newValues.begin();
     auto oldEnd = oldValues.end(), newEnd = newValues.end();
-    while (oldValuesTail != oldEnd && newValuesTail != newEnd &&
-           *oldValuesTail == *newValuesTail) {
+    while (oldValuesTail != oldEnd && newValuesTail != newEnd && *oldValuesTail == *newValuesTail) {
       ++oldValuesTail, ++newValuesTail;
     }
 
@@ -243,11 +236,11 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
       for (auto j = newValues.begin(); j != i; ++j) {
         if (*i == *j) {
           TF_CODING_ERROR(
-              "Duplicate item '%s' not allowed for "
-              "field '%s' on <%s>",
-              TfStringify(*i).c_str(),
-              _field.GetText(),
-              this->GetPath().GetText());
+            "Duplicate item '%s' not allowed for "
+            "field '%s' on <%s>",
+            TfStringify(*i).c_str(),
+            _field.GetText(),
+            this->GetPath().GetText());
           return false;
         }
       }
@@ -285,8 +278,7 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
   TypePolicy _typePolicy;
 };
 
-template<class TypePolicy>
-std::ostream &operator<<(std::ostream &s, const Sdf_ListEditor<TypePolicy> &x)
+template<class TypePolicy> std::ostream &operator<<(std::ostream &s, const Sdf_ListEditor<TypePolicy> &x)
 {
   struct Util {
     typedef typename Sdf_ListEditor<TypePolicy>::value_vector_type value_vector_type;

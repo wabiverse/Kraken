@@ -40,29 +40,25 @@ WABI_NAMESPACE_BEGIN
 // aligned with the HioFormat table.
 constexpr bool _CompileTimeValidateHioFormatSwitch()
 {
-  return (HioFormatCount == 46 && HioFormatUNorm8 == 0 && HioFormatFloat32 == 12 &&
-          HioFormatUInt32 == 28 && HioFormatBC6FloatVec3 == 40 && HioFormatBC1UNorm8Vec4 == 44) ?
-             true :
-             false;
+  return (HioFormatCount == 46 && HioFormatUNorm8 == 0 && HioFormatFloat32 == 12 && HioFormatUInt32 == 28 &&
+          HioFormatBC6FloatVec3 == 40 && HioFormatBC1UNorm8Vec4 == 44) ?
+           true :
+           false;
 }
 
-static_assert(_CompileTimeValidateHioFormatSwitch(),
-              "switch in HioTypes out of sync with HioFormat enum");
+static_assert(_CompileTimeValidateHioFormatSwitch(), "switch in HioTypes out of sync with HioFormat enum");
 
 static HioFormat _hioFormats[][4] = {
-    {HioFormatUNorm8, HioFormatUNorm8Vec2, HioFormatUNorm8Vec3, HioFormatUNorm8Vec4},
-    {HioFormatUNorm8srgb,
-     HioFormatUNorm8Vec2srgb,
-     HioFormatUNorm8Vec3srgb,
-     HioFormatUNorm8Vec4srgb},
-    {HioFormatSNorm8, HioFormatSNorm8Vec2, HioFormatSNorm8Vec3, HioFormatSNorm8Vec4},
-    {HioFormatUInt16, HioFormatUInt16Vec2, HioFormatUInt16Vec3, HioFormatUInt16Vec4},
-    {HioFormatInt16, HioFormatInt16Vec2, HioFormatInt16Vec3, HioFormatInt16Vec4},
-    {HioFormatUInt32, HioFormatUInt32Vec2, HioFormatUInt32Vec3, HioFormatUInt32Vec4},
-    {HioFormatInt32, HioFormatInt32Vec2, HioFormatInt32Vec3, HioFormatInt32Vec4},
-    {HioFormatFloat16, HioFormatFloat16Vec2, HioFormatFloat16Vec3, HioFormatFloat16Vec4},
-    {HioFormatFloat32, HioFormatFloat32Vec2, HioFormatFloat32Vec3, HioFormatFloat32Vec4},
-    {HioFormatDouble64, HioFormatDouble64Vec2, HioFormatDouble64Vec3, HioFormatDouble64Vec4},
+  {HioFormatUNorm8, HioFormatUNorm8Vec2, HioFormatUNorm8Vec3, HioFormatUNorm8Vec4},
+  {HioFormatUNorm8srgb, HioFormatUNorm8Vec2srgb, HioFormatUNorm8Vec3srgb, HioFormatUNorm8Vec4srgb},
+  {HioFormatSNorm8, HioFormatSNorm8Vec2, HioFormatSNorm8Vec3, HioFormatSNorm8Vec4},
+  {HioFormatUInt16, HioFormatUInt16Vec2, HioFormatUInt16Vec3, HioFormatUInt16Vec4},
+  {HioFormatInt16, HioFormatInt16Vec2, HioFormatInt16Vec3, HioFormatInt16Vec4},
+  {HioFormatUInt32, HioFormatUInt32Vec2, HioFormatUInt32Vec3, HioFormatUInt32Vec4},
+  {HioFormatInt32, HioFormatInt32Vec2, HioFormatInt32Vec3, HioFormatInt32Vec4},
+  {HioFormatFloat16, HioFormatFloat16Vec2, HioFormatFloat16Vec3, HioFormatFloat16Vec4},
+  {HioFormatFloat32, HioFormatFloat32Vec2, HioFormatFloat32Vec3, HioFormatFloat32Vec4},
+  {HioFormatDouble64, HioFormatDouble64Vec2, HioFormatDouble64Vec3, HioFormatDouble64Vec4},
 };
 
 static_assert(TfArraySize(_hioFormats) == HioTypeCount,
@@ -258,9 +254,7 @@ size_t HioGetDataSizeOfType(HioFormat format)
   return HioGetDataSizeOfType(HioGetHioType(format));
 }
 
-size_t HioGetDataSizeOfFormat(HioFormat format,
-                              size_t *const blockWidth,
-                              size_t *const blockHeight)
+size_t HioGetDataSizeOfFormat(HioFormat format, size_t *const blockWidth, size_t *const blockHeight)
 {
   if (blockWidth) {
     *blockWidth = 1;

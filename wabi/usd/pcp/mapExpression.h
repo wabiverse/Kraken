@@ -206,14 +206,11 @@ class PcpMapExpression {
       const _NodeRefPtr arg1, arg2;
       const Value valueForConstant;
 
-      Key(_Op op_,
-          const _NodeRefPtr &arg1_,
-          const _NodeRefPtr &arg2_,
-          const Value &valueForConstant_)
-          : op(op_),
-            arg1(arg1_),
-            arg2(arg2_),
-            valueForConstant(valueForConstant_)
+      Key(_Op op_, const _NodeRefPtr &arg1_, const _NodeRefPtr &arg2_, const Value &valueForConstant_)
+        : op(op_),
+          arg1(arg1_),
+          arg2(arg2_),
+          valueForConstant(valueForConstant_)
       {}
       inline size_t GetHash() const;
       bool operator==(const Key &key) const;
@@ -228,8 +225,8 @@ class PcpMapExpression {
 
     // Factory method to create new nodes.
     static _NodeRefPtr New(_Op op,
-                           const _NodeRefPtr &arg1       = _NodeRefPtr(),
-                           const _NodeRefPtr &arg2       = _NodeRefPtr(),
+                           const _NodeRefPtr &arg1 = _NodeRefPtr(),
+                           const _NodeRefPtr &arg2 = _NodeRefPtr(),
                            const Value &valueForConstant = Value());
     ~_Node();
 

@@ -36,15 +36,15 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 UsdSchemaBase::UsdSchemaBase(const UsdPrim &prim)
-    : _primData(prim._Prim()),
-      _proxyPrimPath(prim._ProxyPrimPath())
+  : _primData(prim._Prim()),
+    _proxyPrimPath(prim._ProxyPrimPath())
 {
   /* NOTHING */
 }
 
 UsdSchemaBase::UsdSchemaBase(const UsdSchemaBase &schema)
-    : _primData(schema._primData),
-      _proxyPrimPath(schema._proxyPrimPath)
+  : _primData(schema._primData),
+    _proxyPrimPath(schema._proxyPrimPath)
 {
   /* NOTHING YET */
 }
@@ -59,7 +59,7 @@ UsdSchemaBase::~UsdSchemaBase()
 const UsdPrimDefinition *UsdSchemaBase::GetSchemaClassPrimDefinition() const
 {
   const UsdSchemaRegistry &reg = UsdSchemaRegistry::GetInstance();
-  const TfToken usdTypeName    = reg.GetSchemaTypeName(_GetType());
+  const TfToken usdTypeName = reg.GetSchemaTypeName(_GetType());
   return IsAppliedAPISchema() ? reg.FindAppliedAPIPrimDefinition(usdTypeName) :
                                 reg.FindConcretePrimDefinition(usdTypeName);
 }

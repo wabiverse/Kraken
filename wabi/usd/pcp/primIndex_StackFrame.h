@@ -46,12 +46,12 @@ class PcpPrimIndex_StackFrame {
                           PcpPrimIndex_StackFrame *previousFrame,
                           PcpPrimIndex const *originatingIndex,
                           bool skipDuplicateNodes)
-      : previousFrame(previousFrame),
-        requestedSite(requestedSite),
-        parentNode(parentNode),
-        arcToParent(arcToParent),
-        originatingIndex(originatingIndex),
-        skipDuplicateNodes(skipDuplicateNodes)
+    : previousFrame(previousFrame),
+      requestedSite(requestedSite),
+      parentNode(parentNode),
+      arcToParent(arcToParent),
+      originatingIndex(originatingIndex),
+      skipDuplicateNodes(skipDuplicateNodes)
   {}
 
   /// Link to the previous recursive invocation.
@@ -89,8 +89,8 @@ class PcpPrimIndex_StackFrameIterator {
   PcpPrimIndex_StackFrame *previousFrame;
 
   PcpPrimIndex_StackFrameIterator(const PcpNodeRef &n, PcpPrimIndex_StackFrame *f)
-      : node(n),
-        previousFrame(f)
+    : node(n),
+      previousFrame(f)
   {}
 
   /// Step to the next parent node.
@@ -104,7 +104,7 @@ class PcpPrimIndex_StackFrameIterator {
       // No more parents in this graph, but there is an outer
       // prim index that this node will become part of.
       // Step to the (eventual) parent in that graph.
-      node          = previousFrame->parentNode;
+      node = previousFrame->parentNode;
       previousFrame = previousFrame->previousFrame;
     }
     else {
@@ -117,7 +117,7 @@ class PcpPrimIndex_StackFrameIterator {
   void NextFrame()
   {
     if (previousFrame) {
-      node          = previousFrame->parentNode;
+      node = previousFrame->parentNode;
       previousFrame = previousFrame->previousFrame;
     }
     else {

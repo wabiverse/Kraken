@@ -20,10 +20,7 @@ WABI_NAMESPACE_BEGIN
 
 namespace {
 
-rpr::ImageDesc GetRprImageDesc(rpr::ImageFormat format,
-                               uint32_t width,
-                               uint32_t height,
-                               uint32_t depth = 1)
+rpr::ImageDesc GetRprImageDesc(rpr::ImageFormat format, uint32_t width, uint32_t height, uint32_t depth = 1)
 {
   int bytesPerComponent = 1;
   if (format.type == RPR_COMPONENT_TYPE_FLOAT16) {
@@ -33,11 +30,11 @@ rpr::ImageDesc GetRprImageDesc(rpr::ImageFormat format,
     bytesPerComponent = 4;
   }
 
-  rpr::ImageDesc desc    = {};
-  desc.image_width       = width;
-  desc.image_height      = height;
-  desc.image_depth       = depth;
-  desc.image_row_pitch   = width * format.num_components * bytesPerComponent;
+  rpr::ImageDesc desc = {};
+  desc.image_width = width;
+  desc.image_height = height;
+  desc.image_depth = depth;
+  desc.image_row_pitch = width * format.num_components * bytesPerComponent;
   desc.image_slice_pitch = desc.image_row_pitch * height;
 
   return desc;
@@ -55,8 +52,8 @@ std::unique_ptr<uint8_t[]> _ConvertTexture(RprUsdTextureData *textureData,
   size_t dstPixelStride = dstNumComponents * sizeof(ComponentT);
 
   size_t numPixels = size_t(textureData->GetWidth()) * textureData->GetHeight();
-  auto dstData     = std::make_unique<uint8_t[]>(numPixels * dstPixelStride);
-  uint8_t *dst     = dstData.get();
+  auto dstData = std::make_unique<uint8_t[]>(numPixels * dstPixelStride);
+  uint8_t *dst = dstData.get();
 
   for (size_t i = 0; i < numPixels; ++i) {
     converter((ComponentT *)(dst + i * dstPixelStride), (ComponentT *)(src + i * srcPixelStride));
@@ -81,11 +78,11 @@ std::unique_ptr<uint8_t[]> ConvertTexture(RprUsdTextureData *textureData,
   if (dstNumComponents < format.num_components) {
     // Trim excessive channels
     return _ConvertTexture<ComponentT>(
-        textureData, format, dstNumComponents, [=](ComponentT *dst, ComponentT *src) {
-          for (size_t i = 0; i < dstNumComponents; ++i) {
-            dst[i] = src[i];
-          }
-        });
+      textureData, format, dstNumComponents, [=](ComponentT *dst, ComponentT *src) {
+        for (size_t i = 0; i < dstNumComponents; ++i) {
+          dst[i] = src[i];
+        }
+      });
   }
 
   if (format.num_components == 1) {
@@ -94,46 +91,46 @@ std::unique_ptr<uint8_t[]> ConvertTexture(RprUsdTextureData *textureData,
     if (dstNumComponents == 4) {
       // r -> rrr1
       return _ConvertTexture<ComponentT>(
-          textureData, format, dstNumComponents, [](ComponentT *dst, ComponentT *src) {
-            dst[0] = dst[1] = dst[2] = src[0];
-            dst[3]                   = WhiteColor<ComponentT>{}.value;
-          });
+        textureData, format, dstNumComponents, [](ComponentT *dst, ComponentT *src) {
+          dst[0] = dst[1] = dst[2] = src[0];
+          dst[3] = WhiteColor<ComponentT>{}.value;
+        });
     }
     else {
       return _ConvertTexture<ComponentT>(
-          textureData, format, dstNumComponents, [=](ComponentT *dst, ComponentT *src) {
-            for (size_t i = 0; i < dstNumComponents; ++i) {
-              dst[i] = src[0];
-            }
-          });
+        textureData, format, dstNumComponents, [=](ComponentT *dst, ComponentT *src) {
+          for (size_t i = 0; i < dstNumComponents; ++i) {
+            dst[i] = src[0];
+          }
+        });
     }
   }
   else if (format.num_components == 2) {
     if (dstNumComponents == 4) {
       // rg -> rrrg
       return _ConvertTexture<ComponentT>(
-          textureData, format, dstNumComponents, [](ComponentT *dst, ComponentT *src) {
-            dst[0] = dst[1] = dst[2] = src[0];
-            dst[3]                   = src[1];
-          });
+        textureData, format, dstNumComponents, [](ComponentT *dst, ComponentT *src) {
+          dst[0] = dst[1] = dst[2] = src[0];
+          dst[3] = src[1];
+        });
     }
     else {
       // rg -> rrr
       return _ConvertTexture<ComponentT>(
-          textureData, format, dstNumComponents, [](ComponentT *dst, ComponentT *src) {
-            dst[0] = dst[1] = dst[2] = src[0];
-          });
+        textureData, format, dstNumComponents, [](ComponentT *dst, ComponentT *src) {
+          dst[0] = dst[1] = dst[2] = src[0];
+        });
     }
   }
   else if (format.num_components == 3) {
     // rgb -> rgb1
     return _ConvertTexture<ComponentT>(
-        textureData, format, dstNumComponents, [](ComponentT *dst, ComponentT *src) {
-          dst[0] = src[0];
-          dst[1] = src[1];
-          dst[2] = src[2];
-          dst[3] = WhiteColor<ComponentT>{}.value;
-        });
+      textureData, format, dstNumComponents, [](ComponentT *dst, ComponentT *src) {
+        dst[0] = src[0];
+        dst[1] = src[1];
+        dst[2] = src[2];
+        dst[3] = WhiteColor<ComponentT>{}.value;
+      });
   }
 
   return nullptr;
@@ -193,7 +190,7 @@ rpr::Image *CreateRprImage(rpr::Context *context,
     }
 
     if (convertedData) {
-      textureBuffer         = convertedData.get();
+      textureBuffer = convertedData.get();
       format.num_components = numComponentsRequired;
       desc = GetRprImageDesc(format, textureData->GetWidth(), textureData->GetHeight());
     }
@@ -230,8 +227,7 @@ RprUsdCoreImage *RprUsdCoreImage::Create(rpr::Context *context,
                                          void const *data,
                                          rpr::Status *status)
 {
-  auto rootImage = context->CreateImage(
-      format, GetRprImageDesc(format, width, height), data, status);
+  auto rootImage = context->CreateImage(format, GetRprImageDesc(format, width, height), data, status);
   if (!rootImage) {
     return nullptr;
   }
@@ -276,13 +272,12 @@ RprUsdCoreImage *RprUsdCoreImage::Create(rpr::Context *context,
         coreImage = new RprUsdCoreImage;
 
         rpr::ImageFormat rootImageFormat = {};
-        rootImageFormat.num_components   = 0;
-        rootImageFormat.type             = RPR_COMPONENT_TYPE_UINT8;
-        rpr::ImageDesc rootImageDesc     = {};
+        rootImageFormat.num_components = 0;
+        rootImageFormat.type = RPR_COMPONENT_TYPE_UINT8;
+        rpr::ImageDesc rootImageDesc = {};
 
         rpr::Status status;
-        coreImage->m_rootImage = context->CreateImage(
-            rootImageFormat, rootImageDesc, nullptr, &status);
+        coreImage->m_rootImage = context->CreateImage(rootImageFormat, rootImageDesc, nullptr, &status);
         if (!coreImage->m_rootImage) {
           delete coreImage;
           delete rprImage;
@@ -341,10 +336,7 @@ rpr::ImageDesc RprUsdCoreImage::GetDesc()
   return RprUsdGetInfo<rpr::ImageDesc>(GetBaseImage(), RPR_IMAGE_DESC);
 }
 
-rpr::Status RprUsdCoreImage::GetInfo(rpr::ImageInfo imageInfo,
-                                     size_t size,
-                                     void *data,
-                                     size_t *size_ret)
+rpr::Status RprUsdCoreImage::GetInfo(rpr::ImageInfo imageInfo, size_t size, void *data, size_t *size_ret)
 {
   return GetBaseImage()->GetInfo(imageInfo, size, data, size_ret);
 }

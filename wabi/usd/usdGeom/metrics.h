@@ -193,20 +193,20 @@ bool UsdGeomLinearUnitsAre(double authoredUnits, double standardUnits, double ep
 /// \sa UsdGeomLinearUnits_group
 class UsdGeomLinearUnits {
  public:
-  static constexpr double nanometers  = 1e-9;
+  static constexpr double nanometers = 1e-9;
   static constexpr double micrometers = 1e-6;
   static constexpr double millimeters = 0.001;
   static constexpr double centimeters = 0.01;
-  static constexpr double meters      = 1.0;
-  static constexpr double kilometers  = 1000;
+  static constexpr double meters = 1.0;
+  static constexpr double kilometers = 1000;
 
   /// Measured for one year = 365.25 days
   static constexpr double lightYears = 9.4607304725808e15;
 
   static constexpr double inches = 0.0254;
-  static constexpr double feet   = 0.3048;
-  static constexpr double yards  = 0.9144;
-  static constexpr double miles  = 1609.344;
+  static constexpr double feet = 0.3048;
+  static constexpr double yards = 0.9144;
+  static constexpr double miles = 1609.344;
 };
 
 /// @}

@@ -105,8 +105,7 @@ UsdAttribute UsdGeomCylinder::GetHeightAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->height);
 }
 
-UsdAttribute UsdGeomCylinder::CreateHeightAttr(VtValue const &defaultValue,
-                                               bool writeSparsely) const
+UsdAttribute UsdGeomCylinder::CreateHeightAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->height,
                                     SdfValueTypeNames->Double,
@@ -121,8 +120,7 @@ UsdAttribute UsdGeomCylinder::GetRadiusAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->radius);
 }
 
-UsdAttribute UsdGeomCylinder::CreateRadiusAttr(VtValue const &defaultValue,
-                                               bool writeSparsely) const
+UsdAttribute UsdGeomCylinder::CreateRadiusAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->radius,
                                     SdfValueTypeNames->Double,
@@ -152,8 +150,7 @@ UsdAttribute UsdGeomCylinder::GetExtentAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->extent);
 }
 
-UsdAttribute UsdGeomCylinder::CreateExtentAttr(VtValue const &defaultValue,
-                                               bool writeSparsely) const
+UsdAttribute UsdGeomCylinder::CreateExtentAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->extent,
                                     SdfValueTypeNames->Float3Array,
@@ -164,8 +161,7 @@ UsdAttribute UsdGeomCylinder::CreateExtentAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -179,13 +175,13 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdGeomCylinder::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdGeomTokens->height,
-      UsdGeomTokens->radius,
-      UsdGeomTokens->axis,
-      UsdGeomTokens->extent,
+    UsdGeomTokens->height,
+    UsdGeomTokens->radius,
+    UsdGeomTokens->axis,
+    UsdGeomTokens->extent,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdGeomGprim::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomGprim::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -227,10 +223,7 @@ static bool _ComputeExtentMax(double height, double radius, const TfToken &axis,
   return true;
 }
 
-bool UsdGeomCylinder::ComputeExtent(double height,
-                                    double radius,
-                                    const TfToken &axis,
-                                    VtVec3fArray *extent)
+bool UsdGeomCylinder::ComputeExtent(double height, double radius, const TfToken &axis, VtVec3fArray *extent)
 {
   // Create Sized Extent
   extent->resize(2);
@@ -260,10 +253,10 @@ bool UsdGeomCylinder::ComputeExtent(double height,
     return false;
   }
 
-  GfBBox3d bbox   = GfBBox3d(GfRange3d(-max, max), transform);
+  GfBBox3d bbox = GfBBox3d(GfRange3d(-max, max), transform);
   GfRange3d range = bbox.ComputeAlignedRange();
-  (*extent)[0]    = GfVec3f(range.GetMin());
-  (*extent)[1]    = GfVec3f(range.GetMax());
+  (*extent)[0] = GfVec3f(range.GetMin());
+  (*extent)[1] = GfVec3f(range.GetMax());
 
   return true;
 }

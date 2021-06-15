@@ -42,14 +42,14 @@ class FileReadStream {
       \param bufferSize size of buffer in bytes. Must >=4 bytes.
   */
   FileReadStream(std::FILE *fp, char *buffer, size_t bufferSize)
-      : fp_(fp),
-        buffer_(buffer),
-        bufferSize_(bufferSize),
-        bufferLast_(0),
-        current_(buffer_),
-        readCount_(0),
-        count_(0),
-        eof_(false)
+    : fp_(fp),
+      buffer_(buffer),
+      bufferSize_(bufferSize),
+      bufferLast_(0),
+      current_(buffer_),
+      readCount_(0),
+      count_(0),
+      eof_(false)
   {
     RAPIDJSON_ASSERT(fp_ != 0);
     RAPIDJSON_ASSERT(bufferSize >= 4);
@@ -104,9 +104,9 @@ class FileReadStream {
       ++current_;
     else if (!eof_) {
       count_ += readCount_;
-      readCount_  = fread(buffer_, 1, bufferSize_, fp_);
+      readCount_ = fread(buffer_, 1, bufferSize_, fp_);
       bufferLast_ = buffer_ + readCount_ - 1;
-      current_    = buffer_;
+      current_ = buffer_;
 
       if (readCount_ < bufferSize_) {
         buffer_[readCount_] = '\0';

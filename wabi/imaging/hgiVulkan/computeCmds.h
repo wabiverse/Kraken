@@ -85,9 +85,9 @@ class HgiVulkanComputeCmds final : public HgiComputeCmds {
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
-  HgiVulkanComputeCmds()        = delete;
+  HgiVulkanComputeCmds() = delete;
   HgiVulkanComputeCmds &operator=(const HgiVulkanComputeCmds &) = delete;
-  HgiVulkanComputeCmds(const HgiVulkanComputeCmds &)            = delete;
+  HgiVulkanComputeCmds(const HgiVulkanComputeCmds &) = delete;
 
   void _BindResources();
   void _CreateCommandBuffer();

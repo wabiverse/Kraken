@@ -64,7 +64,7 @@ node_initialize
 
 node_update
 {
-  auto *data         = reinterpret_cast<DriverData *>(AiNodeGetLocalData(node));
+  auto *data = reinterpret_cast<DriverData *>(AiNodeGetLocalData(node));
   data->renderBuffer = static_cast<HdArnoldRenderBuffer *>(AiNodeGetPtr(node, str::aov_pointer));
 }
 
@@ -74,8 +74,7 @@ node_finish
 driver_supports_pixel_type
 {
   return pixel_type == AI_TYPE_RGBA || pixel_type == AI_TYPE_RGB || pixel_type == AI_TYPE_VECTOR ||
-         pixel_type == AI_TYPE_VECTOR2 || pixel_type == AI_TYPE_FLOAT ||
-         pixel_type == AI_TYPE_FLOAT;
+         pixel_type == AI_TYPE_VECTOR2 || pixel_type == AI_TYPE_FLOAT || pixel_type == AI_TYPE_FLOAT;
 }
 
 driver_extension
@@ -96,18 +95,14 @@ driver_prepare_bucket
 
 driver_process_bucket
 {
-  auto *driverData       = reinterpret_cast<DriverData *>(AiNodeGetLocalData(node));
+  auto *driverData = reinterpret_cast<DriverData *>(AiNodeGetLocalData(node));
   const char *outputName = nullptr;
-  int pixelType          = AI_TYPE_RGBA;
+  int pixelType = AI_TYPE_RGBA;
   const void *bucketData = nullptr;
   while (AiOutputIteratorGetNext(iterator, &outputName, &pixelType, &bucketData)) {
     if (Ai_likely(driverData->renderBuffer != nullptr)) {
-      driverData->renderBuffer->WriteBucket(bucket_xo,
-                                            bucket_yo,
-                                            bucket_size_x,
-                                            bucket_size_y,
-                                            _GetFormatFromArnoldType(pixelType),
-                                            bucketData);
+      driverData->renderBuffer->WriteBucket(
+        bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, _GetFormatFromArnoldType(pixelType), bucketData);
     }
     // There will be only one aov assigned to each driver.
     break;

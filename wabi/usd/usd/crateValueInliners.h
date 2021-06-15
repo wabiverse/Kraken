@@ -61,9 +61,7 @@ template<class T> void _DecodeInline(T *, ...)
 ////////////////////////////////////////////////////////////////////////
 // Inline double as float if possible.
 template<class FP>
-typename std::enable_if<std::is_floating_point<FP>::value, bool>::type _EncodeInline(
-    FP fp,
-    uint32_t *ival)
+typename std::enable_if<std::is_floating_point<FP>::value, bool>::type _EncodeInline(FP fp, uint32_t *ival)
 {
   // If fp is representable exactly as float, encode as inline float.
   float f;
@@ -74,8 +72,7 @@ typename std::enable_if<std::is_floating_point<FP>::value, bool>::type _EncodeIn
   return false;
 }
 template<class FP>
-typename std::enable_if<std::is_floating_point<FP>::value>::type _DecodeInline(FP *fp,
-                                                                               uint32_t ival)
+typename std::enable_if<std::is_floating_point<FP>::value>::type _DecodeInline(FP *fp, uint32_t ival)
 {
   float f;
   memcpy(&f, &ival, sizeof(f));
@@ -85,8 +82,7 @@ typename std::enable_if<std::is_floating_point<FP>::value>::type _DecodeInline(F
 ////////////////////////////////////////////////////////////////////////
 // Inline integral as int if possible.
 template<class INT>
-typename std::enable_if<std::is_integral<INT>::value, bool>::type _EncodeInline(INT i,
-                                                                                uint32_t *ival)
+typename std::enable_if<std::is_integral<INT>::value, bool>::type _EncodeInline(INT i, uint32_t *ival)
 {
   // If i is in-range for (u)int32_t, encode as such.
   using int_t = typename std::conditional<std::is_signed<INT>::value, int32_t, uint32_t>::type;
@@ -123,8 +119,7 @@ typename std::enable_if<GfIsGfVec<T>::value, bool>::type _EncodeInline(T vec, ui
   memcpy(out, ivec, sizeof(ivec));
   return true;
 }
-template<class T>
-typename std::enable_if<GfIsGfVec<T>::value>::type _DecodeInline(T *vec, uint32_t in)
+template<class T> typename std::enable_if<GfIsGfVec<T>::value>::type _DecodeInline(T *vec, uint32_t in)
 {
   int8_t ivec[T::dimension];
   memcpy(ivec, &in, sizeof(ivec));
@@ -137,8 +132,7 @@ typename std::enable_if<GfIsGfVec<T>::value>::type _DecodeInline(T *vec, uint32_
 // Inline GfMatrices when they are all zeros off the diagonal and the diagonal
 // entries are exactly represented by int8_t.
 template<class Matrix>
-typename std::enable_if<GfIsGfMatrix<Matrix>::value, bool>::type _EncodeInline(Matrix m,
-                                                                               uint32_t *out)
+typename std::enable_if<GfIsGfMatrix<Matrix>::value, bool>::type _EncodeInline(Matrix m, uint32_t *out)
 {
   static_assert(Matrix::numRows == Matrix::numColumns, "Requires square matrices");
   static_assert(Matrix::numRows <= 4, "Matrix dimension cannot exceed 4");

@@ -215,12 +215,10 @@ struct HgiGraphicsShaderConstantsDesc {
 };
 
 HGI_API
-bool operator==(const HgiGraphicsShaderConstantsDesc &lhs,
-                const HgiGraphicsShaderConstantsDesc &rhs);
+bool operator==(const HgiGraphicsShaderConstantsDesc &lhs, const HgiGraphicsShaderConstantsDesc &rhs);
 
 HGI_API
-bool operator!=(const HgiGraphicsShaderConstantsDesc &lhs,
-                const HgiGraphicsShaderConstantsDesc &rhs);
+bool operator!=(const HgiGraphicsShaderConstantsDesc &lhs, const HgiGraphicsShaderConstantsDesc &rhs);
 
 /// \struct HgiGraphicsPipelineDesc
 ///
@@ -304,12 +302,12 @@ class HgiGraphicsPipeline {
   HgiGraphicsPipelineDesc _descriptor;
 
  private:
-  HgiGraphicsPipeline()        = delete;
+  HgiGraphicsPipeline() = delete;
   HgiGraphicsPipeline &operator=(const HgiGraphicsPipeline &) = delete;
-  HgiGraphicsPipeline(const HgiGraphicsPipeline &)            = delete;
+  HgiGraphicsPipeline(const HgiGraphicsPipeline &) = delete;
 };
 
-using HgiGraphicsPipelineHandle       = HgiHandle<HgiGraphicsPipeline>;
+using HgiGraphicsPipelineHandle = HgiHandle<HgiGraphicsPipeline>;
 using HgiGraphicsPipelineHandleVector = std::vector<HgiGraphicsPipelineHandle>;
 
 WABI_NAMESPACE_END

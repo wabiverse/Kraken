@@ -35,7 +35,7 @@ limitations under the License.
 WABI_NAMESPACE_BEGIN
 
 HdRprMesh::HdRprMesh(SdfPath const &id HDRPR_INSTANCER_ID_ARG_DECL)
-    : HdRprBaseRprim(id HDRPR_INSTANCER_ID_ARG)
+  : HdRprBaseRprim(id HDRPR_INSTANCER_ID_ARG)
 {}
 
 HdDirtyBits HdRprMesh::_PropagateDirtyBits(HdDirtyBits bits) const
@@ -48,13 +48,12 @@ HdDirtyBits HdRprMesh::GetInitialDirtyBitsMask() const
   // The initial dirty bits control what data is available on the first
   // run through _PopulateMesh(), so it should list every data item
   // that _PopluateMesh requests.
-  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyPoints |
-             HdChangeTracker::DirtyTopology | HdChangeTracker::DirtyTransform |
-             HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyNormals |
-             HdChangeTracker::DirtyMaterialId | HdChangeTracker::DirtySubdivTags |
-             HdChangeTracker::DirtyDisplayStyle | HdChangeTracker::DirtyVisibility |
-             HdChangeTracker::DirtyInstancer | HdChangeTracker::DirtyInstanceIndex |
-             HdChangeTracker::DirtyDoubleSided;
+  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyTopology |
+             HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyPrimvar |
+             HdChangeTracker::DirtyNormals | HdChangeTracker::DirtyMaterialId |
+             HdChangeTracker::DirtySubdivTags | HdChangeTracker::DirtyDisplayStyle |
+             HdChangeTracker::DirtyVisibility | HdChangeTracker::DirtyInstancer |
+             HdChangeTracker::DirtyInstanceIndex | HdChangeTracker::DirtyDoubleSided;
 
   return (HdDirtyBits)mask;
 }
@@ -68,10 +67,10 @@ void HdRprMesh::_InitRepr(TfToken const &reprName, HdDirtyBits *dirtyBits)
 }
 
 RprUsdMaterial const *HdRprMesh::GetFallbackMaterial(
-    HdSceneDelegate *sceneDelegate,
-    HdRprApi *rprApi,
-    HdDirtyBits dirtyBits,
-    std::map<HdInterpolation, HdPrimvarDescriptorVector> const &primvarDescsPerInterpolation)
+  HdSceneDelegate *sceneDelegate,
+  HdRprApi *rprApi,
+  HdDirtyBits dirtyBits,
+  std::map<HdInterpolation, HdPrimvarDescriptorVector> const &primvarDescsPerInterpolation)
 {
   if (m_fallbackMaterial && (dirtyBits & HdChangeTracker::DirtyPrimvar)) {
     rprApi->Release(m_fallbackMaterial);
@@ -114,7 +113,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
   HF_MALLOC_TAG_FUNCTION();
 
   auto rprRenderParam = static_cast<HdRprRenderParam *>(renderParam);
-  auto rprApi         = rprRenderParam->AcquireRprApiForEdit();
+  auto rprApi = rprRenderParam->AcquireRprApiForEdit();
 
   SdfPath const &id = GetId();
 
@@ -130,36 +129,36 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
     m_displayStyle = sceneDelegate->GetDisplayStyle(id);
     if (m_refineLevel != m_displayStyle.refineLevel) {
       isRefineLevelDirty = true;
-      m_refineLevel      = m_displayStyle.refineLevel;
+      m_refineLevel = m_displayStyle.refineLevel;
     }
   }
 
-  bool isIgnoreContourDirty  = false;
+  bool isIgnoreContourDirty = false;
   bool isVisibilityMaskDirty = false;
-  bool isIdDirty             = false;
+  bool isIdDirty = false;
   if (*dirtyBits & HdChangeTracker::DirtyPrimvar) {
     HdRprGeometrySettings geomSettings = {};
-    geomSettings.visibilityMask        = kVisibleAll;
+    geomSettings.visibilityMask = kVisibleAll;
     HdRprFillPrimvarDescsPerInterpolation(sceneDelegate, id, &primvarDescsPerInterpolation);
     HdRprParseGeometrySettings(sceneDelegate, id, primvarDescsPerInterpolation, &geomSettings);
 
     if (m_refineLevel != geomSettings.subdivisionLevel) {
-      m_refineLevel      = geomSettings.subdivisionLevel;
+      m_refineLevel = geomSettings.subdivisionLevel;
       isRefineLevelDirty = true;
     }
 
     if (m_visibilityMask != geomSettings.visibilityMask) {
-      m_visibilityMask      = geomSettings.visibilityMask;
+      m_visibilityMask = geomSettings.visibilityMask;
       isVisibilityMaskDirty = true;
     }
 
     if (m_id != geomSettings.id) {
-      m_id      = geomSettings.id;
+      m_id = geomSettings.id;
       isIdDirty = true;
     }
 
     if (m_ignoreContour != geomSettings.ignoreContour) {
-      m_ignoreContour      = geomSettings.ignoreContour;
+      m_ignoreContour = geomSettings.ignoreContour;
       isIgnoreContourDirty = true;
     }
 
@@ -173,9 +172,8 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
     }
   }
 
-  bool pointsIsComputed    = false;
-  auto extComputationDescs = sceneDelegate->GetExtComputationPrimvarDescriptors(
-      id, HdInterpolationVertex);
+  bool pointsIsComputed = false;
+  auto extComputationDescs = sceneDelegate->GetExtComputationPrimvarDescriptors(id, HdInterpolationVertex);
   for (auto &desc : extComputationDescs) {
     if (desc.name != HdTokens->points) {
       continue;
@@ -187,7 +185,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
 #if WABI_VERSION >= 2105
       HdExtComputationUtils::SampledValueStore<2> valueStore;
       HdExtComputationUtils::SampleComputedPrimvarValues(
-          {desc}, sceneDelegate, m_numGeometrySamples, &valueStore);
+        {desc}, sceneDelegate, m_numGeometrySamples, &valueStore);
       auto pointValueIt = valueStore.find(desc.name);
       if (pointValueIt != valueStore.end()) {
         auto &sampleValues = pointValueIt->second.values;
@@ -204,8 +202,8 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
         }
 
         if (!newPointSamples.empty()) {
-          m_pointSamples   = std::move(newPointSamples);
-          m_normalsValid   = false;
+          m_pointSamples = std::move(newPointSamples);
+          m_normalsValid = false;
           pointsIsComputed = true;
 
           newMesh = true;
@@ -214,16 +212,16 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
 #else   // WABI_VERSION < 2105
       if (m_numGeometrySamples != 1) {
         TF_WARN(
-            "UsdSkel deformation motion blur is supported only in USD 21.05+ (current version "
-            "%d.%d)",
-            WABI_VERSION_MINOR,
-            WABI_VERSION_PATCH);
+          "UsdSkel deformation motion blur is supported only in USD 21.05+ (current version "
+          "%d.%d)",
+          WABI_VERSION_MINOR,
+          WABI_VERSION_PATCH);
       }
-      auto valueStore   = HdExtComputationUtils::GetComputedPrimvarValues({desc}, sceneDelegate);
+      auto valueStore = HdExtComputationUtils::GetComputedPrimvarValues({desc}, sceneDelegate);
       auto pointValueIt = valueStore.find(desc.name);
       if (pointValueIt != valueStore.end()) {
-        m_pointSamples   = {pointValueIt->second.Get<VtVec3fArray>()};
-        m_normalsValid   = false;
+        m_pointSamples = {pointValueIt->second.Get<VtVec3fArray>()};
+        m_normalsValid = false;
         pointsIsComputed = true;
 
         newMesh = true;
@@ -235,13 +233,12 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
   }
 
   if (!pointsIsComputed && HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, HdTokens->points)) {
-    if (!HdRprSamplePrimvar(
-            id, HdTokens->points, sceneDelegate, m_numGeometrySamples, &m_pointSamples)) {
+    if (!HdRprSamplePrimvar(id, HdTokens->points, sceneDelegate, m_numGeometrySamples, &m_pointSamples)) {
       m_pointSamples.clear();
     }
 
     m_normalsValid = false;
-    newMesh        = true;
+    newMesh = true;
   }
 
   if (HdChangeTracker::IsTopologyDirty(*dirtyBits, id)) {
@@ -251,15 +248,15 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
       }
     }
 
-    m_topology          = GetMeshTopology(sceneDelegate);
-    m_faceVertexCounts  = m_topology.GetFaceVertexCounts();
+    m_topology = GetMeshTopology(sceneDelegate);
+    m_faceVertexCounts = m_topology.GetFaceVertexCounts();
     m_faceVertexIndices = m_topology.GetFaceVertexIndices();
 
     m_adjacencyValid = false;
-    m_normalsValid   = false;
+    m_normalsValid = false;
 
     m_enableSubdiv = m_topology.GetScheme() == PxOsdOpenSubdivTokens->catmullClark;
-    m_geomSubsets  = m_topology.GetGeomSubsets();
+    m_geomSubsets = m_topology.GetGeomSubsets();
 
     // GeomSubset data is directly transfered from USD into Hydra topology.
     // This data should be validated and preprocessed before using it:
@@ -268,7 +265,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
     std::map<SdfPath, size_t> materialToSubsetMapping;
     for (size_t i = 0; i < m_geomSubsets.size();) {
       auto &subset = m_geomSubsets[i];
-      auto it      = materialToSubsetMapping.find(subset.materialId);
+      auto it = materialToSubsetMapping.find(subset.materialId);
       if (it == materialToSubsetMapping.end()) {
         materialToSubsetMapping.emplace(subset.materialId, i);
         ++i;
@@ -307,9 +304,9 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
       if (numUnusedFaces) {
         m_geomSubsets.push_back(HdGeomSubset());
         HdGeomSubset &unusedSubset = m_geomSubsets.back();
-        unusedSubset.type          = HdGeomSubset::TypeFaceSet;
-        unusedSubset.id            = id;
-        unusedSubset.materialId    = m_materialId;
+        unusedSubset.type = HdGeomSubset::TypeFaceSet;
+        unusedSubset.id = id;
+        unusedSubset.materialId = m_materialId;
         unusedSubset.indices.resize(numUnusedFaces);
         size_t count = 0;
         for (size_t i = 0; i < faceIsUnused.size() && count < numUnusedFaces; ++i) {
@@ -357,14 +354,14 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
 
   // We are loading mesh UVs only when it has material
   auto material = static_cast<const HdRprMaterial *>(
-      sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, m_materialId));
+    sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, m_materialId));
 
   // Check all materials, including those from geomSubsets
   if (!material || !material->GetRprMaterialObject()) {
     for (auto &subset : m_geomSubsets) {
       if (subset.type == HdGeomSubset::TypeFaceSet && !subset.materialId.IsEmpty()) {
-        material = static_cast<const HdRprMaterial *>(sceneDelegate->GetRenderIndex().GetSprim(
-            HdPrimTypeTokens->material, subset.materialId));
+        material = static_cast<const HdRprMaterial *>(
+          sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, subset.materialId));
         if (material && material->GetRprMaterialObject()) {
           break;
         }
@@ -420,14 +417,14 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
     if (!m_adjacencyValid) {
       m_adjacency.BuildAdjacencyTable(&m_topology);
       m_adjacencyValid = true;
-      m_normalsValid   = false;
+      m_normalsValid = false;
     }
 
     if (!m_normalsValid) {
       m_normalSamples.clear();
       for (auto &points : m_pointSamples) {
         m_normalSamples.push_back(
-            Hd_SmoothNormals::ComputeSmoothNormals(&m_adjacency, points.size(), points.cdata()));
+          Hd_SmoothNormals::ComputeSmoothNormals(&m_adjacency, points.size(), points.cdata()));
       }
       m_normalsValid = true;
 
@@ -501,19 +498,16 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
         subsetVertexPerFace.reserve(subset.indices.size());
 
         vertexIndexRemapping.reserve(m_pointSamples.front().size());
-        std::fill(vertexIndexRemapping.begin(),
-                  vertexIndexRemapping.begin() + m_pointSamples.front().size(),
-                  -1);
+        std::fill(
+          vertexIndexRemapping.begin(), vertexIndexRemapping.begin() + m_pointSamples.front().size(), -1);
         if (!m_normalIndices.empty()) {
           normalIndexRemapping.reserve(m_normalSamples.front().size());
-          std::fill(normalIndexRemapping.begin(),
-                    normalIndexRemapping.begin() + m_normalSamples.front().size(),
-                    -1);
+          std::fill(
+            normalIndexRemapping.begin(), normalIndexRemapping.begin() + m_normalSamples.front().size(), -1);
         }
         if (!m_uvIndices.empty()) {
           uvIndexRemapping.reserve(m_uvSamples.front().size());
-          std::fill(
-              uvIndexRemapping.begin(), uvIndexRemapping.begin() + m_uvSamples.front().size(), -1);
+          std::fill(uvIndexRemapping.begin(), uvIndexRemapping.begin() + m_uvSamples.front().size(), -1);
         }
 
         for (auto faceIndex : subset.indices) {
@@ -541,8 +535,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
               if (m_normalIndices.empty()) {
                 if (newPoint) {
                   for (int sampleIndex = 0; sampleIndex < m_normalSamples.size(); ++sampleIndex) {
-                    subsetNormalSamples[sampleIndex].push_back(
-                        m_normalSamples[sampleIndex][pointIndex]);
+                    subsetNormalSamples[sampleIndex].push_back(m_normalSamples[sampleIndex][pointIndex]);
                   }
                 }
               }
@@ -554,8 +547,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
                   normalIndexRemapping[normalIndex] = subsetNormalIndex;
 
                   for (int sampleIndex = 0; sampleIndex < m_normalSamples.size(); ++sampleIndex) {
-                    subsetNormalSamples[sampleIndex].push_back(
-                        m_normalSamples[sampleIndex][normalIndex]);
+                    subsetNormalSamples[sampleIndex].push_back(m_normalSamples[sampleIndex][normalIndex]);
                   }
                 }
                 subsetNormalIndices.push_back(subsetNormalIndex);
@@ -574,7 +566,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
                 const int uvIndex = m_uvIndices[faceIndexesOffset + i];
                 int subsetuvIndex = uvIndexRemapping[uvIndex];
                 if (subsetuvIndex == -1) {
-                  subsetuvIndex             = static_cast<int>(subsetUvSamples.front().size());
+                  subsetuvIndex = static_cast<int>(subsetUvSamples.front().size());
                   uvIndexRemapping[uvIndex] = subsetuvIndex;
 
                   for (int sampleIndex = 0; sampleIndex < m_uvSamples.size(); ++sampleIndex) {
@@ -646,20 +638,17 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
         (*dirtyBits & HdChangeTracker::DirtyDisplayStyle) ||
         isRefineLevelDirty) {  // update displacement material
       auto getMeshMaterial =
-          [sceneDelegate, rprApi, dirtyBits, &primvarDescsPerInterpolation, this](
-              SdfPath const &materialId) {
-            auto material = static_cast<const HdRprMaterial *>(
-                sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, materialId));
-            if (material && material->GetRprMaterialObject()) {
-              return material->GetRprMaterialObject();
-            }
-            else {
-              HdRprFillPrimvarDescsPerInterpolation(
-                  sceneDelegate, GetId(), &primvarDescsPerInterpolation);
-              return GetFallbackMaterial(
-                  sceneDelegate, rprApi, *dirtyBits, primvarDescsPerInterpolation);
-            }
-          };
+        [sceneDelegate, rprApi, dirtyBits, &primvarDescsPerInterpolation, this](SdfPath const &materialId) {
+          auto material = static_cast<const HdRprMaterial *>(
+            sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, materialId));
+          if (material && material->GetRprMaterialObject()) {
+            return material->GetRprMaterialObject();
+          }
+          else {
+            HdRprFillPrimvarDescsPerInterpolation(sceneDelegate, GetId(), &primvarDescsPerInterpolation);
+            return GetFallbackMaterial(sceneDelegate, rprApi, *dirtyBits, primvarDescsPerInterpolation);
+          }
+        };
 
       if (m_geomSubsets.empty()) {
         auto material = getMeshMaterial(m_materialId);
@@ -682,11 +671,9 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
 
     if (newMesh || (*dirtyBits & HdChangeTracker::DirtyInstancer)) {
       if (auto instancer = static_cast<HdRprInstancer *>(
-              sceneDelegate->GetRenderIndex().GetInstancer(GetInstancerId()))) {
+            sceneDelegate->GetRenderIndex().GetInstancer(GetInstancerId()))) {
         auto instanceTransforms = instancer->SampleInstanceTransforms(id);
-        auto newNumInstances    = (instanceTransforms.count > 0) ?
-                                      instanceTransforms.values[0].size() :
-                                      0;
+        auto newNumInstances = (instanceTransforms.count > 0) ? instanceTransforms.values[0].size() : 0;
         if (newNumInstances == 0) {
           // Reset to state without instances
           for (auto instances : m_rprMeshInstances) {
@@ -713,15 +700,14 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
             auto &instanceTransform = combinedTransforms.back();
 
             if (m_transformSamples.count == 0 ||
-                (m_transformSamples.count == 1 &&
-                 (m_transformSamples.values[0] == GfMatrix4d(1)))) {
+                (m_transformSamples.count == 1 && (m_transformSamples.values[0] == GfMatrix4d(1)))) {
               for (size_t j = 0; j < instanceTransforms.count; ++j) {
                 instanceTransform[j] = instanceTransforms.values[j][i];
               }
             }
             else {
               for (size_t j = 0; j < instanceTransforms.count; ++j) {
-                GfMatrix4d xf_j      = m_transformSamples.Resample(instanceTransforms.times[j]);
+                GfMatrix4d xf_j = m_transformSamples.Resample(instanceTransforms.times[j]);
                 instanceTransform[j] = xf_j * instanceTransforms.values[j][i];
               }
             }
@@ -818,7 +804,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
 void HdRprMesh::Finalize(HdRenderParam *renderParam)
 {
   auto rprRenderParam = static_cast<HdRprRenderParam *>(renderParam);
-  auto rprApi         = rprRenderParam->AcquireRprApiForEdit();
+  auto rprApi = rprRenderParam->AcquireRprApiForEdit();
 
   for (auto mesh : m_rprMeshes) {
     rprApi->Release(mesh);

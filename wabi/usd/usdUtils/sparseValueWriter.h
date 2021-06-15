@@ -250,9 +250,7 @@ class UsdUtilsSparseValueWriter {
 
   /// \overload
   template<typename T>
-  bool SetAttribute(const UsdAttribute &attr,
-                    T &value,
-                    const UsdTimeCode time = UsdTimeCode::Default())
+  bool SetAttribute(const UsdAttribute &attr, T &value, const UsdTimeCode time = UsdTimeCode::Default())
   {
     VtValue val = VtValue::Take(value);
     return SetAttribute(attr, &val, time);
@@ -273,8 +271,7 @@ class UsdUtilsSparseValueWriter {
 
  private:
   // Templated helper method used by the two public SetAttribute() methods.
-  template<typename T>
-  bool _SetAttributeImpl(const UsdAttribute &attr, T &value, const UsdTimeCode time);
+  template<typename T> bool _SetAttributeImpl(const UsdAttribute &attr, T &value, const UsdTimeCode time);
 
   struct _AttrHash {
     inline size_t operator()(const UsdAttribute &attr) const
@@ -283,8 +280,7 @@ class UsdUtilsSparseValueWriter {
     }
   };
 
-  using _AttrValueWriterMap =
-      std::unordered_map<UsdAttribute, UsdUtilsSparseAttrValueWriter, _AttrHash>;
+  using _AttrValueWriterMap = std::unordered_map<UsdAttribute, UsdUtilsSparseAttrValueWriter, _AttrHash>;
   _AttrValueWriterMap _attrValueWriterMap;
 };
 

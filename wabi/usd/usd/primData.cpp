@@ -53,30 +53,30 @@ static const UsdPrimTypeInfo *_GetEmptyPrimTypeInfo()
 }
 
 Usd_PrimData::Usd_PrimData(UsdStage *stage, const SdfPath &path)
-    : _stage(stage),
-      _primIndex(nullptr),
-      _path(path),
-      _primTypeInfo(_GetEmptyPrimTypeInfo()),
-      _firstChild(nullptr),
-      _refCount(0)
+  : _stage(stage),
+    _primIndex(nullptr),
+    _path(path),
+    _primTypeInfo(_GetEmptyPrimTypeInfo()),
+    _firstChild(nullptr),
+    _refCount(0)
 {
   if (!stage)
     TF_FATAL_ERROR("Attempted to construct with null stage");
 
   TF_DEBUG(USD_PRIM_LIFETIMES)
-      .Msg("Usd_PrimData::ctor<%s,%s,%s>\n",
-           GetTypeName().GetText(),
-           path.GetText(),
-           _stage->GetRootLayer()->GetIdentifier().c_str());
+    .Msg("Usd_PrimData::ctor<%s,%s,%s>\n",
+         GetTypeName().GetText(),
+         path.GetText(),
+         _stage->GetRootLayer()->GetIdentifier().c_str());
 }
 
 Usd_PrimData::~Usd_PrimData()
 {
   TF_DEBUG(USD_PRIM_LIFETIMES)
-      .Msg("~Usd_PrimData::dtor<%s,%s,%s>\n",
-           GetTypeName().GetText(),
-           _path.GetText(),
-           _stage ? _stage->GetRootLayer()->GetIdentifier().c_str() : "prim is invalid/expired");
+    .Msg("~Usd_PrimData::dtor<%s,%s,%s>\n",
+         GetTypeName().GetText(),
+         _path.GetText(),
+         _stage ? _stage->GetRootLayer()->GetIdentifier().c_str() : "prim is invalid/expired");
 }
 
 Usd_PrimDataConstPtr Usd_PrimData::GetParent() const
@@ -116,29 +116,30 @@ void Usd_PrimData::_ComposeAndCacheFlags(Usd_PrimDataConstPtr parent, bool isPro
   // Special-case the root (the only prim which has no parent) and
   // instancing prototypes.
   if (ARCH_UNLIKELY(!parent || isPrototypePrim)) {
-    _flags[Usd_PrimActiveFlag]               = true;
-    _flags[Usd_PrimLoadedFlag]               = true;
-    _flags[Usd_PrimModelFlag]                = true;
-    _flags[Usd_PrimGroupFlag]                = true;
-    _flags[Usd_PrimDefinedFlag]              = true;
+    _flags[Usd_PrimActiveFlag] = true;
+    _flags[Usd_PrimLoadedFlag] = true;
+    _flags[Usd_PrimModelFlag] = true;
+    _flags[Usd_PrimGroupFlag] = true;
+    _flags[Usd_PrimDefinedFlag] = true;
     _flags[Usd_PrimHasDefiningSpecifierFlag] = true;
-    _flags[Usd_PrimPrototypeFlag]            = isPrototypePrim;
-    _flags[Usd_PrimPseudoRootFlag]           = !parent;
+    _flags[Usd_PrimPrototypeFlag] = isPrototypePrim;
+    _flags[Usd_PrimPseudoRootFlag] = !parent;
   }
   else {
     // Compose and cache 'active'.
-    const bool active          = UsdStage::_IsActive(this);
+    const bool active = UsdStage::_IsActive(this);
     _flags[Usd_PrimActiveFlag] = active;
 
     // Cache whether or not this prim has a payload.
-    bool hasPayload                = _primIndex->HasAnyPayloads();
+    bool hasPayload = _primIndex->HasAnyPayloads();
     _flags[Usd_PrimHasPayloadFlag] = hasPayload;
 
     // An active prim is loaded if it's loadable and in the load set, or
     // it's not loadable and its parent is loaded.
-    _flags[Usd_PrimLoadedFlag] = active && (hasPayload ? _stage->_GetPcpCache()->IsPayloadIncluded(
-                                                             _primIndex->GetPath()) :
-                                                         parent->IsLoaded());
+    _flags[Usd_PrimLoadedFlag] = active &&
+                                 (hasPayload ?
+                                    _stage->_GetPcpCache()->IsPayloadIncluded(_primIndex->GetPath()) :
+                                    parent->IsLoaded());
 
     // According to Model hierarchy rules, only Model Groups may have Model
     // children (groups or otherwise).  So if our parent is not a Model
@@ -163,7 +164,7 @@ void Usd_PrimData::_ComposeAndCacheFlags(Usd_PrimDataConstPtr parent, bool isPro
     _flags[Usd_PrimAbstractFlag] = parent->IsAbstract() || specifier == SdfSpecifierClass;
 
     // Cache whether or not this prim has an authored defining specifier.
-    const bool isDefiningSpec                = SdfIsDefiningSpecifier(specifier);
+    const bool isDefiningSpec = SdfIsDefiningSpecifier(specifier);
     _flags[Usd_PrimHasDefiningSpecifierFlag] = isDefiningSpec;
 
     // This prim is defined if its parent is and its specifier is defining.
@@ -175,7 +176,7 @@ void Usd_PrimData::_ComposeAndCacheFlags(Usd_PrimDataConstPtr parent, bool isPro
 
     // These flags indicate whether this prim is an instance or an
     // instance prototype.
-    _flags[Usd_PrimInstanceFlag]  = active && _primIndex->IsInstanceable();
+    _flags[Usd_PrimInstanceFlag] = active && _primIndex->IsInstanceable();
     _flags[Usd_PrimPrototypeFlag] = parent->IsInPrototype();
   }
 }
@@ -204,36 +205,32 @@ std::string Usd_DescribePrimData(const Usd_PrimData *p, SdfPath const &proxyPrim
   if (!p)
     return "null prim";
 
-  bool isInstance      = p->IsInstance();
+  bool isInstance = p->IsInstance();
   bool isInstanceProxy = Usd_IsInstanceProxy(p, proxyPrimPath);
-  bool isInPrototype   = isInstanceProxy ? Usd_InstanceCache::IsPathInPrototype(proxyPrimPath) :
-                                           p->IsInPrototype();
-  bool isPrototype     = p->IsPrototype();
-  Usd_PrimDataConstPtr prototypeForInstance = isInstance && p->_stage ? p->GetPrototype() :
-                                                                        nullptr;
+  bool isInPrototype = isInstanceProxy ? Usd_InstanceCache::IsPathInPrototype(proxyPrimPath) :
+                                         p->IsInPrototype();
+  bool isPrototype = p->IsPrototype();
+  Usd_PrimDataConstPtr prototypeForInstance = isInstance && p->_stage ? p->GetPrototype() : nullptr;
 
   return TfStringPrintf(
-      "%s%s%sprim %s<%s> %s%s%s",
-      Usd_IsDead(p) ? "expired " : (p->_flags[Usd_PrimActiveFlag] ? "" : "inactive "),
-      p->GetTypeName().IsEmpty() ? "" :
-                                   TfStringPrintf("'%s' ", p->GetTypeName().GetText()).c_str(),
-      // XXX: Add applied schemas to this descriptor
-      isInstance      ? "instance " :
-      isInstanceProxy ? "instance proxy " :
-                        "",
-      isInPrototype ? "in prototype " : "",
-      isInstanceProxy ? proxyPrimPath.GetText() : p->_path.GetText(),
-      (isInstanceProxy || isInstance) ?
-          TfStringPrintf("with prototype <%s> ",
-                         isInstance ? prototypeForInstance->GetPath().GetText() :
-                                      p->_path.GetText())
-              .c_str() :
-          "",
-      (isInstanceProxy || isPrototype || isInPrototype) ?
-          TfStringPrintf("using prim index <%s> ", p->GetSourcePrimIndex().GetPath().GetText())
-              .c_str() :
-          "",
-      p->_stage ? TfStringPrintf("on %s", UsdDescribe(p->_stage).c_str()).c_str() : "");
+    "%s%s%sprim %s<%s> %s%s%s",
+    Usd_IsDead(p) ? "expired " : (p->_flags[Usd_PrimActiveFlag] ? "" : "inactive "),
+    p->GetTypeName().IsEmpty() ? "" : TfStringPrintf("'%s' ", p->GetTypeName().GetText()).c_str(),
+    // XXX: Add applied schemas to this descriptor
+    isInstance      ? "instance " :
+    isInstanceProxy ? "instance proxy " :
+                      "",
+    isInPrototype ? "in prototype " : "",
+    isInstanceProxy ? proxyPrimPath.GetText() : p->_path.GetText(),
+    (isInstanceProxy || isInstance) ?
+      TfStringPrintf("with prototype <%s> ",
+                     isInstance ? prototypeForInstance->GetPath().GetText() : p->_path.GetText())
+        .c_str() :
+      "",
+    (isInstanceProxy || isPrototype || isInPrototype) ?
+      TfStringPrintf("using prim index <%s> ", p->GetSourcePrimIndex().GetPath().GetText()).c_str() :
+      "",
+    p->_stage ? TfStringPrintf("on %s", UsdDescribe(p->_stage).c_str()).c_str() : "");
 }
 
 void Usd_IssueFatalPrimAccessError(const Usd_PrimData *p)

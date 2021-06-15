@@ -59,9 +59,9 @@ class _ComposeValueHelper {
                       PcpPrimIndex_StackFrame *&previousStackFrame,
                       const TfToken &fieldName,
                       bool strongestOpinionOnly)
-      : _iterator(parentNode, previousStackFrame),
-        _fieldName(fieldName),
-        _strongestOpinionOnly(strongestOpinionOnly)
+    : _iterator(parentNode, previousStackFrame),
+      _fieldName(fieldName),
+      _strongestOpinionOnly(strongestOpinionOnly)
   {}
 
   // Composes the values from the node and its subtree. Return true if
@@ -126,13 +126,12 @@ class _ComposeValueHelper {
 
 }  // anonymous namespace
 
-PcpDynamicFileFormatContext::PcpDynamicFileFormatContext(
-    const PcpNodeRef &parentNode,
-    PcpPrimIndex_StackFrame *previousStackFrame,
-    TfToken::Set *composedFieldNames)
-    : _parentNode(parentNode),
-      _previousStackFrame(previousStackFrame),
-      _composedFieldNames(composedFieldNames)
+PcpDynamicFileFormatContext::PcpDynamicFileFormatContext(const PcpNodeRef &parentNode,
+                                                         PcpPrimIndex_StackFrame *previousStackFrame,
+                                                         TfToken::Set *composedFieldNames)
+  : _parentNode(parentNode),
+    _previousStackFrame(previousStackFrame),
+    _composedFieldNames(composedFieldNames)
 {}
 
 bool PcpDynamicFileFormatContext::_IsAllowedFieldForArguments(const TfToken &field,
@@ -142,14 +141,13 @@ bool PcpDynamicFileFormatContext::_IsAllowedFieldForArguments(const TfToken &fie
   // defined by plugins. We may ease this in the future to allow certain
   // builtin fields as well but there will need to be some updates to
   // change management to handle these correctly.
-  const SdfSchemaBase &schema =
-      _parentNode.GetLayerStack()->GetIdentifier().rootLayer->GetSchema();
+  const SdfSchemaBase &schema = _parentNode.GetLayerStack()->GetIdentifier().rootLayer->GetSchema();
   const SdfSchema::FieldDefinition *fieldDef = schema.GetFieldDefinition(field);
   if (!(fieldDef && fieldDef->IsPlugin())) {
     TF_CODING_ERROR(
-        "Field %s is not a plugin field and is not supported "
-        "for composing dynamic file format arguments",
-        field.GetText());
+      "Field %s is not a plugin field and is not supported "
+      "for composing dynamic file format arguments",
+      field.GetText());
     return false;
   }
 
@@ -176,19 +174,19 @@ bool PcpDynamicFileFormatContext::ComposeValue(const TfToken &field, VtValue *va
   // strongest to weakest opinions.
   if (fieldIsDictValued) {
     VtDictionary composedDict;
-    if (_ComposeValueHelper::ComposeValue(
-            _parentNode,
-            _previousStackFrame,
-            field,
-            /*findStrongestOnly = */ false,
-            [&composedDict](VtValue &&val) {
-              if (val.IsHolding<VtDictionary>()) {
-                VtDictionaryOverRecursive(&composedDict, val.UncheckedGet<VtDictionary>());
-              }
-              else {
-                TF_CODING_ERROR("Expected value to contain VtDictionary");
-              }
-            })) {
+    if (_ComposeValueHelper::ComposeValue(_parentNode,
+                                          _previousStackFrame,
+                                          field,
+                                          /*findStrongestOnly = */ false,
+                                          [&composedDict](VtValue &&val) {
+                                            if (val.IsHolding<VtDictionary>()) {
+                                              VtDictionaryOverRecursive(&composedDict,
+                                                                        val.UncheckedGet<VtDictionary>());
+                                            }
+                                            else {
+                                              TF_CODING_ERROR("Expected value to contain VtDictionary");
+                                            }
+                                          })) {
       // Output the composed dictionary only if we found a value for the
       // field.
       value->Swap(composedDict);
@@ -211,8 +209,7 @@ bool PcpDynamicFileFormatContext::ComposeValue(const TfToken &field, VtValue *va
   }
 }
 
-bool PcpDynamicFileFormatContext::ComposeValueStack(const TfToken &field,
-                                                    VtValueVector *values) const
+bool PcpDynamicFileFormatContext::ComposeValueStack(const TfToken &field, VtValueVector *values) const
 {
   if (!_IsAllowedFieldForArguments(field)) {
     return false;
@@ -238,10 +235,9 @@ bool PcpDynamicFileFormatContext::ComposeValueStack(const TfToken &field,
 
 // "Private" function for creating a PcpDynamicFileFormatContext; should only
 // be used by prim indexing.
-PcpDynamicFileFormatContext Pcp_CreateDynamicFileFormatContext(
-    const PcpNodeRef &parentNode,
-    PcpPrimIndex_StackFrame *previousFrame,
-    TfToken::Set *composedFieldNames)
+PcpDynamicFileFormatContext Pcp_CreateDynamicFileFormatContext(const PcpNodeRef &parentNode,
+                                                               PcpPrimIndex_StackFrame *previousFrame,
+                                                               TfToken::Set *composedFieldNames)
 {
   return PcpDynamicFileFormatContext(parentNode, previousFrame, composedFieldNames);
 }

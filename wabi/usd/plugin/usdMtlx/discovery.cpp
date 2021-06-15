@@ -178,10 +178,9 @@ class UsdMtlxDiscoveryPlugin : public NdrDiscoveryPlugin {
 
 UsdMtlxDiscoveryPlugin::UsdMtlxDiscoveryPlugin()
 {
-  static const auto searchPaths = UsdMtlxGetSearchPathsFromEnvVar(
-      "wabi_USDMTLX_PLUGIN_SEARCH_PATHS");
+  static const auto searchPaths = UsdMtlxGetSearchPathsFromEnvVar("wabi_USDMTLX_PLUGIN_SEARCH_PATHS");
 
-  _searchPaths    = searchPaths;
+  _searchPaths = searchPaths;
   _allSearchPaths = UsdMtlxMergeSearchPaths(_searchPaths, UsdMtlxStandardLibraryPaths());
 }
 

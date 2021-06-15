@@ -75,19 +75,18 @@ class Usd_PrimTypeInfoCache {
 
   // Computes a mapping of invalid prim type name to its valid fallback
   // type name from the provided fallback prim types dictionary.
-  void ComputeInvalidPrimTypeToFallbackMap(
-      const VtDictionary &fallbackPrimTypesDict,
-      TfHashMap<TfToken, TfToken, TfHash> *typeToFallbackTypeMap);
+  void ComputeInvalidPrimTypeToFallbackMap(const VtDictionary &fallbackPrimTypesDict,
+                                           TfHashMap<TfToken, TfToken, TfHash> *typeToFallbackTypeMap);
 
  private:
   // Wrapper around the thread safe hash map implementation used by the
   // Usd_PrimTypeInfoCache to cache prim type info
   class _ThreadSafeHashMapImpl {
    public:
-    _ThreadSafeHashMapImpl()                               = default;
+    _ThreadSafeHashMapImpl() = default;
     _ThreadSafeHashMapImpl(const _ThreadSafeHashMapImpl &) = delete;
 
-    using KeyType      = TypeId;
+    using KeyType = TypeId;
     using ValueTypePtr = std::unique_ptr<UsdPrimTypeInfo>;
 
     // Find and return a pointer to the prim type info if it already exists.

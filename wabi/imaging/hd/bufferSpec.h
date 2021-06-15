@@ -55,8 +55,7 @@ struct HdBufferSpec final {
   {}
 
   /// Util function for adding buffer specs of sources into bufferspecs.
-  template<typename T>
-  static void GetBufferSpecs(T const &sources, HdBufferSpecVector *bufferSpecs)
+  template<typename T> static void GetBufferSpecs(T const &sources, HdBufferSpecVector *bufferSpecs)
   {
     for (auto const &src : sources) {
       if (src->IsValid()) {
@@ -73,8 +72,7 @@ struct HdBufferSpec final {
   /// Returns union set of \p spec1 and \p spec2.
   /// Duplicated entries are uniquified.
   HD_API
-  static HdBufferSpecVector ComputeUnion(HdBufferSpecVector const &spec1,
-                                         HdBufferSpecVector const &spec2);
+  static HdBufferSpecVector ComputeUnion(HdBufferSpecVector const &spec1, HdBufferSpecVector const &spec2);
 
   /// Returns difference set of \p spec1 and \p spec2, i.e., entries in spec1
   /// that are not in spec2.

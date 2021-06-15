@@ -378,8 +378,7 @@ CODE
 // [Windows] OS specific includes (optional)
 #  if defined(_WIN32) && defined(ANCHOR_DISABLE_DEFAULT_FILE_FUNCTIONS) && \
     defined(ANCHOR_DISABLE_WIN32_DEFAULT_CLIPBOARD_FUNCTIONS) && \
-    defined(ANCHOR_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS) && \
-    !defined(ANCHOR_DISABLE_WIN32_FUNCTIONS)
+    defined(ANCHOR_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS) && !defined(ANCHOR_DISABLE_WIN32_FUNCTIONS)
 #    define ANCHOR_DISABLE_WIN32_FUNCTIONS
 #  endif
 #  if defined(_WIN32) && !defined(ANCHOR_DISABLE_WIN32_FUNCTIONS)
@@ -408,12 +407,11 @@ CODE
 
 // Visual Studio warnings
 #  ifdef _MSC_VER
-#    pragma warning(disable : 4127)  // condition expression is constant
-#    pragma warning(disable : 4996)  // 'This function or variable may be unsafe': strcpy, strdup,
-                                     // sprintf, vsnprintf, sscanf, fopen
+#    pragma warning(disable : 4127)            // condition expression is constant
+#    pragma warning(disable : 4996)            // 'This function or variable may be unsafe': strcpy, strdup,
+                                               // sprintf, vsnprintf, sscanf, fopen
 #    if defined(_MSC_VER) && _MSC_VER >= 1922  // MSVC 2019 16.2 or later
-#      pragma warning( \
-        disable : 5054)  // operator '|': deprecated between enumerations of different types
+#      pragma warning(disable : 5054)  // operator '|': deprecated between enumerations of different types
 #    endif
 #    pragma warning(disable : 26451)  // [Static Analyzer] Arithmetic overflow : Using operator
                                       // 'xxx' on a 4 byte value and then casting the result to a 8
@@ -453,15 +451,13 @@ CODE
 #    pragma clang diagnostic ignored \
       "-Wglobal-constructors"  // warning: declaration requires a global destructor         //
                                // similar to above, not sure what the exact difference is.
-#    pragma clang diagnostic ignored \
-      "-Wsign-conversion"  // warning: implicit conversion changes signedness
+#    pragma clang diagnostic ignored "-Wsign-conversion"  // warning: implicit conversion changes signedness
 #    pragma clang diagnostic ignored \
       "-Wformat-pedantic"  // warning: format specifies type 'void *' but the argument has type
                            // 'xxxx *' // unreasonable, would lead to casting every %p arg to
                            // void*. probably enabled by -pedantic.
-#    pragma clang diagnostic ignored \
-      "-Wint-to-void-pointer-cast"  // warning: cast to 'void *' from smaller integer
-                                    // type 'int'
+#    pragma clang diagnostic ignored "-Wint-to-void-pointer-cast"  // warning: cast to 'void *' from smaller
+                                                                   // integer type 'int'
 #    pragma clang diagnostic ignored \
       "-Wzero-as-null-pointer-constant"  // warning: zero as null pointer constant // some
                                          // standard header variations use #define NULL 0
@@ -479,20 +475,17 @@ CODE
       "-Wpragmas"  // warning: unknown option after '#pragma GCC diagnostic' kind
 #    pragma GCC diagnostic ignored "-Wunused-function"  // warning: 'xxxx' defined but not used
 #    pragma GCC diagnostic ignored \
-      "-Wint-to-pointer-cast"  // warning: cast to pointer from integer of different size
-#    pragma GCC diagnostic ignored \
-      "-Wformat"  // warning: format '%p' expects argument of type 'void*', but argument 6 has
-                  // type 'ANCHOR_Window*'
-#    pragma GCC diagnostic ignored \
-      "-Wdouble-promotion"  // warning: implicit conversion from 'float' to 'double' when passing
-                            // argument to function
+      "-Wint-to-pointer-cast"                  // warning: cast to pointer from integer of different size
+#    pragma GCC diagnostic ignored "-Wformat"  // warning: format '%p' expects argument of type 'void*', but
+                                               // argument 6 has type 'ANCHOR_Window*'
+#    pragma GCC diagnostic ignored "-Wdouble-promotion"  // warning: implicit conversion from 'float' to
+                                                         // 'double' when passing argument to function
 #    pragma GCC diagnostic ignored \
       "-Wconversion"  // warning: conversion to 'xxxx' from 'xxxx' may alter its value
 #    pragma GCC diagnostic ignored \
       "-Wformat-nonliteral"  // warning: format not a string literal, format string not checked
-#    pragma GCC diagnostic ignored \
-      "-Wstrict-overflow"  // warning: assuming signed overflow does not occur when assuming that
-                           // (X - c) > X is always false
+#    pragma GCC diagnostic ignored "-Wstrict-overflow"  // warning: assuming signed overflow does not occur
+                                                        // when assuming that (X - c) > X is always false
 #    pragma GCC diagnostic ignored \
       "-Wclass-memaccess"  // [__GNUC__ >= 8] warning: 'memset/memcpy' clearing/writing an object
                            // of type 'xxxx' with no trivial copy-assignment; use assignment or
@@ -514,8 +507,7 @@ WABI_NAMESPACE_USING
 // visual noise doing a fast switch.
 static const float NAV_WINDOWING_HIGHLIGHT_DELAY =
   0.20f;  // Time before the highlight and screen dimming starts fading in
-static const float NAV_WINDOWING_LIST_APPEAR_DELAY =
-  0.15f;  // Time before the window list starts to appear
+static const float NAV_WINDOWING_LIST_APPEAR_DELAY = 0.15f;  // Time before the window list starts to appear
 
 // Window resizing from edges (when io.ConfigWindowsResizeFromEdges = true and
 // ANCHORBackendFlags_HasMouseCursors is set in io.BackendFlags by backend)
@@ -538,14 +530,11 @@ static ANCHOR_Window *CreateNewWindow(const char *name, ANCHOR_WindowFlags flags
 static GfVec2f CalcNextScrollFromScrollTargetAndClamp(ANCHOR_Window *window);
 
 static void AddDrawListToDrawData(AnchorVector<ImDrawList *> *out_list, ImDrawList *draw_list);
-static void AddWindowToSortBuffer(AnchorVector<ANCHOR_Window *> *out_sorted_windows,
-                                  ANCHOR_Window *window);
+static void AddWindowToSortBuffer(AnchorVector<ANCHOR_Window *> *out_sorted_windows, ANCHOR_Window *window);
 
 // Settings
 static void WindowSettingsHandler_ClearAll(ANCHOR_Context *, ANCHOR_SettingsHandler *);
-static void *WindowSettingsHandler_ReadOpen(ANCHOR_Context *,
-                                            ANCHOR_SettingsHandler *,
-                                            const char *name);
+static void *WindowSettingsHandler_ReadOpen(ANCHOR_Context *, ANCHOR_SettingsHandler *, const char *name);
 static void WindowSettingsHandler_ReadLine(ANCHOR_Context *,
                                            ANCHOR_SettingsHandler *,
                                            void *entry,
@@ -693,37 +682,35 @@ ANCHOR_Style::ANCHOR_Style()
 {
   Alpha = 1.0f;                   // Global alpha applies to everything in ANCHOR
   WindowPadding = GfVec2f(8, 8);  // Padding within a window
-  WindowRounding =
-    0.0f;  // Radius of window corners rounding. Set to 0.0f to have rectangular windows. Large
-           // values tend to lead to variety of artifacts and are not recommended.
+  WindowRounding = 0.0f;    // Radius of window corners rounding. Set to 0.0f to have rectangular windows.
+                            // Large values tend to lead to variety of artifacts and are not recommended.
   WindowBorderSize = 1.0f;  // Thickness of border around windows. Generally set to 0.0f or 1.0f.
                             // Other values not well tested.
-  WindowMinSize = GfVec2f(32, 32);         // Minimum window size
-  WindowTitleAlign = GfVec2f(0.0f, 0.5f);  // Alignment for title bar text
-  WindowMenuButtonPosition =
-    ANCHOR_Dir_Left;  // Position of the collapsing/docking button in the title bar (left/right).
-                      // Defaults to ANCHOR_Dir_Left.
-  ChildRounding = 0.0f;    // Radius of child window corners rounding. Set to 0.0f to have
-                           // rectangular child windows
-  ChildBorderSize = 1.0f;  // Thickness of border around child windows. Generally set to 0.0f
-                           // or 1.0f. Other values not well tested.
-  PopupRounding = 0.0f;    // Radius of popup window corners rounding. Set to 0.0f to have
-                           // rectangular child windows
-  PopupBorderSize = 1.0f;  // Thickness of border around popup or tooltip windows. Generally set to
-                           // 0.0f or 1.0f. Other values not well tested.
-  FramePadding = GfVec2f(4, 3);  // Padding within a framed rectangle (used by most widgets)
-  FrameRounding = 0.0f;    // Radius of frame corners rounding. Set to 0.0f to have rectangular
-                           // frames (used by most widgets).
-  FrameBorderSize = 0.0f;  // Thickness of border around frames. Generally set to 0.0f or 1.0f.
-                           // Other values not well tested.
+  WindowMinSize = GfVec2f(32, 32);             // Minimum window size
+  WindowTitleAlign = GfVec2f(0.0f, 0.5f);      // Alignment for title bar text
+  WindowMenuButtonPosition = ANCHOR_Dir_Left;  // Position of the collapsing/docking button in the title bar
+                                               // (left/right). Defaults to ANCHOR_Dir_Left.
+  ChildRounding = 0.0f;              // Radius of child window corners rounding. Set to 0.0f to have
+                                     // rectangular child windows
+  ChildBorderSize = 1.0f;            // Thickness of border around child windows. Generally set to 0.0f
+                                     // or 1.0f. Other values not well tested.
+  PopupRounding = 0.0f;              // Radius of popup window corners rounding. Set to 0.0f to have
+                                     // rectangular child windows
+  PopupBorderSize = 1.0f;            // Thickness of border around popup or tooltip windows. Generally set to
+                                     // 0.0f or 1.0f. Other values not well tested.
+  FramePadding = GfVec2f(4, 3);      // Padding within a framed rectangle (used by most widgets)
+  FrameRounding = 0.0f;              // Radius of frame corners rounding. Set to 0.0f to have rectangular
+                                     // frames (used by most widgets).
+  FrameBorderSize = 0.0f;            // Thickness of border around frames. Generally set to 0.0f or 1.0f.
+                                     // Other values not well tested.
   ItemSpacing = GfVec2f(8, 4);       // Horizontal and vertical spacing between widgets/lines
   ItemInnerSpacing = GfVec2f(4, 4);  // Horizontal and vertical spacing between within elements of
                                      // a composed widget (e.g. a slider and its label)
   CellPadding = GfVec2f(4, 2);       // Padding within a table cell
   TouchExtraPadding = GfVec2f(
-    0, 0);  // Expand reactive bounding box for touch-based system where touch position is not
-            // accurate enough. Unfortunately we don't sort widgets so priority on overlap will
-            // always be given to the first widget. So don't grow this too much!
+    0, 0);                // Expand reactive bounding box for touch-based system where touch position is not
+                          // accurate enough. Unfortunately we don't sort widgets so priority on overlap will
+                          // always be given to the first widget. So don't grow this too much!
   IndentSpacing = 21.0f;  // Horizontal spacing when e.g. entering a tree node. Generally ==
                           // (FontSize + FramePadding[0]*2).
   ColumnsMinSpacing =
@@ -731,23 +718,22 @@ ANCHOR_Style::ANCHOR_Style()
   ScrollbarSize = 14.0f;     // Width of the vertical scrollbar, Height of the horizontal scrollbar
   ScrollbarRounding = 9.0f;  // Radius of grab corners rounding for scrollbar
   GrabMinSize = 10.0f;       // Minimum width/height of a grab box for slider/scrollbar
-  GrabRounding =
-    0.0f;  // Radius of grabs corners rounding. Set to 0.0f to have rectangular slider grabs.
+  GrabRounding = 0.0f;  // Radius of grabs corners rounding. Set to 0.0f to have rectangular slider grabs.
   LogSliderDeadzone = 4.0f;  // The size in pixels of the dead-zone around zero on logarithmic
                              // sliders that cross zero.
-  TabRounding = 4.0f;    // Radius of upper corners of a tab. Set to 0.0f to have rectangular tabs.
-  TabBorderSize = 0.0f;  // Thickness of border around tabs.
-  TabMinWidthForCloseButton = 0.0f;  // Minimum width for close button to appears on an unselected
-                                     // tab when hovered. Set to 0.0f to always show when hovering,
-                                     // set to FLT_MAX to never show close button unless selected.
+  TabRounding = 4.0f;        // Radius of upper corners of a tab. Set to 0.0f to have rectangular tabs.
+  TabBorderSize = 0.0f;      // Thickness of border around tabs.
+  TabMinWidthForCloseButton = 0.0f;        // Minimum width for close button to appears on an unselected
+                                           // tab when hovered. Set to 0.0f to always show when hovering,
+                                           // set to FLT_MAX to never show close button unless selected.
   ColorButtonPosition = ANCHOR_Dir_Right;  // Side of the color button in the ColorEdit4 widget
                                            // (left/right). Defaults to ANCHOR_Dir_Right.
   ButtonTextAlign = GfVec2f(0.5f,
                             0.5f);  // Alignment of button text when button is larger than text.
-  SelectableTextAlign = GfVec2f(
-    0.0f, 0.0f);  // Alignment of selectable text. Defaults to (0.0f, 0.0f) (top-left aligned).
-                  // It's generally important to keep this left-aligned if you want to lay
-                  // multiple items on a same line.
+  SelectableTextAlign = GfVec2f(0.0f,
+                                0.0f);  // Alignment of selectable text. Defaults to (0.0f, 0.0f) (top-left
+                                        // aligned). It's generally important to keep this left-aligned if
+                                        // you want to lay multiple items on a same line.
   DisplayWindowPadding = GfVec2f(
     19, 19);  // Window position are clamped to be visible within the display area or monitors by
               // at least this amount. Only applies to regular windows.
@@ -756,16 +742,13 @@ ANCHOR_Style::ANCHOR_Style()
             // padding. Covers popups/tooltips as well regular windows.
   MouseCursorScale = 1.0f;  // Scale software rendered mouse cursor (when io.MouseDrawCursor is
                             // enabled). May be removed later.
-  AntiAliasedLines =
-    true;  // Enable anti-aliased lines/borders. Disable if you are really tight on CPU/GPU.
+  AntiAliasedLines = true;  // Enable anti-aliased lines/borders. Disable if you are really tight on CPU/GPU.
   AntiAliasedLinesUseTex = true;  // Enable anti-aliased lines/borders using textures where
                                   // possible. Require backend to render with bilinear filtering.
-  AntiAliasedFill =
-    true;  // Enable anti-aliased filled shapes (rounded rectangles, circles, etc.).
-  CurveTessellationTol =
-    1.25f;  // Tessellation tolerance when using PathBezierCurveTo() without a specific number of
-            // segments. Decrease for highly tessellated curves (higher quality, more polygons),
-            // increase to reduce quality.
+  AntiAliasedFill = true;         // Enable anti-aliased filled shapes (rounded rectangles, circles, etc.).
+  CurveTessellationTol = 1.25f;   // Tessellation tolerance when using PathBezierCurveTo() without a specific
+                                  // number of segments. Decrease for highly tessellated curves (higher
+                                  // quality, more polygons), increase to reduce quality.
   CircleTessellationMaxError =
     0.30f;  // Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or
             // drawing rounded corner rectangles with no explicit segment count specified.
@@ -813,11 +796,10 @@ ANCHOR_IO::ANCHOR_IO()
 {
   // Most fields are initialized with zero
   memset(this, 0, sizeof(*this));
-  ANCHOR_ASSERT(
-    ANCHOR_ARRAYSIZE(ANCHOR_IO::MouseDown) == ANCHOR_MouseButton_COUNT &&
-    ANCHOR_ARRAYSIZE(ANCHOR_IO::MouseClicked) ==
-      ANCHOR_MouseButton_COUNT);  // Our pre-C++11 IM_STATIC_ASSERT() macros triggers warning
-                                  // on modern compilers so we don't use it here.
+  ANCHOR_ASSERT(ANCHOR_ARRAYSIZE(ANCHOR_IO::MouseDown) == ANCHOR_MouseButton_COUNT &&
+                ANCHOR_ARRAYSIZE(ANCHOR_IO::MouseClicked) ==
+                  ANCHOR_MouseButton_COUNT);  // Our pre-C++11 IM_STATIC_ASSERT() macros triggers warning
+                                              // on modern compilers so we don't use it here.
 
   // Settings
   ConfigFlags = ANCHORConfigFlags_None;
@@ -844,8 +826,7 @@ ANCHOR_IO::ANCHOR_IO()
   // Miscellaneous options
   MouseDrawCursor = false;
 #  ifdef __APPLE__
-  ConfigMacOSXBehaviors =
-    true;  // Set Mac OS X style defaults based on __APPLE__ compile time flag
+  ConfigMacOSXBehaviors = true;  // Set Mac OS X style defaults based on __APPLE__ compile time flag
 #  else
   ConfigMacOSXBehaviors = false;
 #  endif
@@ -857,8 +838,7 @@ ANCHOR_IO::ANCHOR_IO()
   // Platform Functions
   BackendPlatformName = BackendRendererName = NULL;
   BackendPlatformUserData = BackendRendererUserData = BackendLanguageUserData = NULL;
-  GetClipboardTextFn =
-    GetClipboardTextFn_DefaultImpl;  // Platform dependent default implementations
+  GetClipboardTextFn = GetClipboardTextFn_DefaultImpl;  // Platform dependent default implementations
   SetClipboardTextFn = SetClipboardTextFn_DefaultImpl;
   ClipboardUserData = NULL;
   ImeSetInputScreenPosFn = ImeSetInputScreenPosFn_DefaultImpl;
@@ -1078,10 +1058,7 @@ GfVec2f ImLineClosestPoint(const GfVec2f &a, const GfVec2f &b, const GfVec2f &p)
   return a + ab_dir * dot / ab_len_sqr;
 }
 
-bool ImTriangleContainsPoint(const GfVec2f &a,
-                             const GfVec2f &b,
-                             const GfVec2f &c,
-                             const GfVec2f &p)
+bool ImTriangleContainsPoint(const GfVec2f &a, const GfVec2f &b, const GfVec2f &c, const GfVec2f &p)
 {
   bool b1 = ((p[0] - b[0]) * (a[1] - b[1]) - (p[1] - b[1]) * (a[0] - b[0])) < 0.0f;
   bool b2 = ((p[0] - c[0]) * (b[1] - c[1]) - (p[1] - c[1]) * (b[0] - c[0])) < 0.0f;
@@ -1106,10 +1083,7 @@ void ImTriangleBarycentricCoords(const GfVec2f &a,
   out_u = 1.0f - out_v - out_w;
 }
 
-GfVec2f ImTriangleClosestPoint(const GfVec2f &a,
-                               const GfVec2f &b,
-                               const GfVec2f &c,
-                               const GfVec2f &p)
+GfVec2f ImTriangleClosestPoint(const GfVec2f &a, const GfVec2f &b, const GfVec2f &c, const GfVec2f &p)
 {
   GfVec2f proj_ab = ImLineClosestPoint(a, b, p);
   GfVec2f proj_bc = ImLineClosestPoint(b, c, p);
@@ -1319,38 +1293,35 @@ int ImFormatStringV(char *buf, size_t buf_size, const char *fmt, va_list args)
 // - avoid an unnecessary branch/memory tap, - keep the ImHashXXX functions usable by static
 // constructors, - make it thread-safe.
 static const AnchorU32 GCrc32LookupTable[256] = {
-  0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3,
-  0x0EDB8832, 0x79DCB8A4, 0xE0D5E91E, 0x97D2D988, 0x09B64C2B, 0x7EB17CBD, 0xE7B82D07, 0x90BF1D91,
-  0x1DB71064, 0x6AB020F2, 0xF3B97148, 0x84BE41DE, 0x1ADAD47D, 0x6DDDE4EB, 0xF4D4B551, 0x83D385C7,
-  0x136C9856, 0x646BA8C0, 0xFD62F97A, 0x8A65C9EC, 0x14015C4F, 0x63066CD9, 0xFA0F3D63, 0x8D080DF5,
-  0x3B6E20C8, 0x4C69105E, 0xD56041E4, 0xA2677172, 0x3C03E4D1, 0x4B04D447, 0xD20D85FD, 0xA50AB56B,
-  0x35B5A8FA, 0x42B2986C, 0xDBBBC9D6, 0xACBCF940, 0x32D86CE3, 0x45DF5C75, 0xDCD60DCF, 0xABD13D59,
-  0x26D930AC, 0x51DE003A, 0xC8D75180, 0xBFD06116, 0x21B4F4B5, 0x56B3C423, 0xCFBA9599, 0xB8BDA50F,
-  0x2802B89E, 0x5F058808, 0xC60CD9B2, 0xB10BE924, 0x2F6F7C87, 0x58684C11, 0xC1611DAB, 0xB6662D3D,
-  0x76DC4190, 0x01DB7106, 0x98D220BC, 0xEFD5102A, 0x71B18589, 0x06B6B51F, 0x9FBFE4A5, 0xE8B8D433,
-  0x7807C9A2, 0x0F00F934, 0x9609A88E, 0xE10E9818, 0x7F6A0DBB, 0x086D3D2D, 0x91646C97, 0xE6635C01,
-  0x6B6B51F4, 0x1C6C6162, 0x856530D8, 0xF262004E, 0x6C0695ED, 0x1B01A57B, 0x8208F4C1, 0xF50FC457,
-  0x65B0D9C6, 0x12B7E950, 0x8BBEB8EA, 0xFCB9887C, 0x62DD1DDF, 0x15DA2D49, 0x8CD37CF3, 0xFBD44C65,
-  0x4DB26158, 0x3AB551CE, 0xA3BC0074, 0xD4BB30E2, 0x4ADFA541, 0x3DD895D7, 0xA4D1C46D, 0xD3D6F4FB,
-  0x4369E96A, 0x346ED9FC, 0xAD678846, 0xDA60B8D0, 0x44042D73, 0x33031DE5, 0xAA0A4C5F, 0xDD0D7CC9,
-  0x5005713C, 0x270241AA, 0xBE0B1010, 0xC90C2086, 0x5768B525, 0x206F85B3, 0xB966D409, 0xCE61E49F,
-  0x5EDEF90E, 0x29D9C998, 0xB0D09822, 0xC7D7A8B4, 0x59B33D17, 0x2EB40D81, 0xB7BD5C3B, 0xC0BA6CAD,
-  0xEDB88320, 0x9ABFB3B6, 0x03B6E20C, 0x74B1D29A, 0xEAD54739, 0x9DD277AF, 0x04DB2615, 0x73DC1683,
-  0xE3630B12, 0x94643B84, 0x0D6D6A3E, 0x7A6A5AA8, 0xE40ECF0B, 0x9309FF9D, 0x0A00AE27, 0x7D079EB1,
-  0xF00F9344, 0x8708A3D2, 0x1E01F268, 0x6906C2FE, 0xF762575D, 0x806567CB, 0x196C3671, 0x6E6B06E7,
-  0xFED41B76, 0x89D32BE0, 0x10DA7A5A, 0x67DD4ACC, 0xF9B9DF6F, 0x8EBEEFF9, 0x17B7BE43, 0x60B08ED5,
-  0xD6D6A3E8, 0xA1D1937E, 0x38D8C2C4, 0x4FDFF252, 0xD1BB67F1, 0xA6BC5767, 0x3FB506DD, 0x48B2364B,
-  0xD80D2BDA, 0xAF0A1B4C, 0x36034AF6, 0x41047A60, 0xDF60EFC3, 0xA867DF55, 0x316E8EEF, 0x4669BE79,
-  0xCB61B38C, 0xBC66831A, 0x256FD2A0, 0x5268E236, 0xCC0C7795, 0xBB0B4703, 0x220216B9, 0x5505262F,
-  0xC5BA3BBE, 0xB2BD0B28, 0x2BB45A92, 0x5CB36A04, 0xC2D7FFA7, 0xB5D0CF31, 0x2CD99E8B, 0x5BDEAE1D,
-  0x9B64C2B0, 0xEC63F226, 0x756AA39C, 0x026D930A, 0x9C0906A9, 0xEB0E363F, 0x72076785, 0x05005713,
-  0x95BF4A82, 0xE2B87A14, 0x7BB12BAE, 0x0CB61B38, 0x92D28E9B, 0xE5D5BE0D, 0x7CDCEFB7, 0x0BDBDF21,
-  0x86D3D2D4, 0xF1D4E242, 0x68DDB3F8, 0x1FDA836E, 0x81BE16CD, 0xF6B9265B, 0x6FB077E1, 0x18B74777,
-  0x88085AE6, 0xFF0F6A70, 0x66063BCA, 0x11010B5C, 0x8F659EFF, 0xF862AE69, 0x616BFFD3, 0x166CCF45,
-  0xA00AE278, 0xD70DD2EE, 0x4E048354, 0x3903B3C2, 0xA7672661, 0xD06016F7, 0x4969474D, 0x3E6E77DB,
-  0xAED16A4A, 0xD9D65ADC, 0x40DF0B66, 0x37D83BF0, 0xA9BCAE53, 0xDEBB9EC5, 0x47B2CF7F, 0x30B5FFE9,
-  0xBDBDF21C, 0xCABAC28A, 0x53B39330, 0x24B4A3A6, 0xBAD03605, 0xCDD70693, 0x54DE5729, 0x23D967BF,
-  0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94, 0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D,
+  0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3, 0x0EDB8832,
+  0x79DCB8A4, 0xE0D5E91E, 0x97D2D988, 0x09B64C2B, 0x7EB17CBD, 0xE7B82D07, 0x90BF1D91, 0x1DB71064, 0x6AB020F2,
+  0xF3B97148, 0x84BE41DE, 0x1ADAD47D, 0x6DDDE4EB, 0xF4D4B551, 0x83D385C7, 0x136C9856, 0x646BA8C0, 0xFD62F97A,
+  0x8A65C9EC, 0x14015C4F, 0x63066CD9, 0xFA0F3D63, 0x8D080DF5, 0x3B6E20C8, 0x4C69105E, 0xD56041E4, 0xA2677172,
+  0x3C03E4D1, 0x4B04D447, 0xD20D85FD, 0xA50AB56B, 0x35B5A8FA, 0x42B2986C, 0xDBBBC9D6, 0xACBCF940, 0x32D86CE3,
+  0x45DF5C75, 0xDCD60DCF, 0xABD13D59, 0x26D930AC, 0x51DE003A, 0xC8D75180, 0xBFD06116, 0x21B4F4B5, 0x56B3C423,
+  0xCFBA9599, 0xB8BDA50F, 0x2802B89E, 0x5F058808, 0xC60CD9B2, 0xB10BE924, 0x2F6F7C87, 0x58684C11, 0xC1611DAB,
+  0xB6662D3D, 0x76DC4190, 0x01DB7106, 0x98D220BC, 0xEFD5102A, 0x71B18589, 0x06B6B51F, 0x9FBFE4A5, 0xE8B8D433,
+  0x7807C9A2, 0x0F00F934, 0x9609A88E, 0xE10E9818, 0x7F6A0DBB, 0x086D3D2D, 0x91646C97, 0xE6635C01, 0x6B6B51F4,
+  0x1C6C6162, 0x856530D8, 0xF262004E, 0x6C0695ED, 0x1B01A57B, 0x8208F4C1, 0xF50FC457, 0x65B0D9C6, 0x12B7E950,
+  0x8BBEB8EA, 0xFCB9887C, 0x62DD1DDF, 0x15DA2D49, 0x8CD37CF3, 0xFBD44C65, 0x4DB26158, 0x3AB551CE, 0xA3BC0074,
+  0xD4BB30E2, 0x4ADFA541, 0x3DD895D7, 0xA4D1C46D, 0xD3D6F4FB, 0x4369E96A, 0x346ED9FC, 0xAD678846, 0xDA60B8D0,
+  0x44042D73, 0x33031DE5, 0xAA0A4C5F, 0xDD0D7CC9, 0x5005713C, 0x270241AA, 0xBE0B1010, 0xC90C2086, 0x5768B525,
+  0x206F85B3, 0xB966D409, 0xCE61E49F, 0x5EDEF90E, 0x29D9C998, 0xB0D09822, 0xC7D7A8B4, 0x59B33D17, 0x2EB40D81,
+  0xB7BD5C3B, 0xC0BA6CAD, 0xEDB88320, 0x9ABFB3B6, 0x03B6E20C, 0x74B1D29A, 0xEAD54739, 0x9DD277AF, 0x04DB2615,
+  0x73DC1683, 0xE3630B12, 0x94643B84, 0x0D6D6A3E, 0x7A6A5AA8, 0xE40ECF0B, 0x9309FF9D, 0x0A00AE27, 0x7D079EB1,
+  0xF00F9344, 0x8708A3D2, 0x1E01F268, 0x6906C2FE, 0xF762575D, 0x806567CB, 0x196C3671, 0x6E6B06E7, 0xFED41B76,
+  0x89D32BE0, 0x10DA7A5A, 0x67DD4ACC, 0xF9B9DF6F, 0x8EBEEFF9, 0x17B7BE43, 0x60B08ED5, 0xD6D6A3E8, 0xA1D1937E,
+  0x38D8C2C4, 0x4FDFF252, 0xD1BB67F1, 0xA6BC5767, 0x3FB506DD, 0x48B2364B, 0xD80D2BDA, 0xAF0A1B4C, 0x36034AF6,
+  0x41047A60, 0xDF60EFC3, 0xA867DF55, 0x316E8EEF, 0x4669BE79, 0xCB61B38C, 0xBC66831A, 0x256FD2A0, 0x5268E236,
+  0xCC0C7795, 0xBB0B4703, 0x220216B9, 0x5505262F, 0xC5BA3BBE, 0xB2BD0B28, 0x2BB45A92, 0x5CB36A04, 0xC2D7FFA7,
+  0xB5D0CF31, 0x2CD99E8B, 0x5BDEAE1D, 0x9B64C2B0, 0xEC63F226, 0x756AA39C, 0x026D930A, 0x9C0906A9, 0xEB0E363F,
+  0x72076785, 0x05005713, 0x95BF4A82, 0xE2B87A14, 0x7BB12BAE, 0x0CB61B38, 0x92D28E9B, 0xE5D5BE0D, 0x7CDCEFB7,
+  0x0BDBDF21, 0x86D3D2D4, 0xF1D4E242, 0x68DDB3F8, 0x1FDA836E, 0x81BE16CD, 0xF6B9265B, 0x6FB077E1, 0x18B74777,
+  0x88085AE6, 0xFF0F6A70, 0x66063BCA, 0x11010B5C, 0x8F659EFF, 0xF862AE69, 0x616BFFD3, 0x166CCF45, 0xA00AE278,
+  0xD70DD2EE, 0x4E048354, 0x3903B3C2, 0xA7672661, 0xD06016F7, 0x4969474D, 0x3E6E77DB, 0xAED16A4A, 0xD9D65ADC,
+  0x40DF0B66, 0x37D83BF0, 0xA9BCAE53, 0xDEBB9EC5, 0x47B2CF7F, 0x30B5FFE9, 0xBDBDF21C, 0xCABAC28A, 0x53B39330,
+  0x24B4A3A6, 0xBAD03605, 0xCDD70693, 0x54DE5729, 0x23D967BF, 0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94,
+  0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D,
 };
 
 // Known size hash
@@ -1453,10 +1424,7 @@ AnchorU64 ImFileWrite(const void *data, AnchorU64 sz, AnchorU64 count, ImFileHan
 // Helper: Load file content into memory
 // Memory allocated with IM_ALLOC(), must be freed by user using IM_FREE() == ANCHOR::MemFree()
 // This can't really be used with "rt" because fseek size won't match read size.
-void *ImFileLoadToMemory(const char *filename,
-                         const char *mode,
-                         size_t *out_file_size,
-                         int padding_bytes)
+void *ImFileLoadToMemory(const char *filename, const char *mode, size_t *out_file_size, int padding_bytes)
 {
   ANCHOR_ASSERT(filename && mode);
   if (out_file_size)
@@ -1717,12 +1685,7 @@ AnchorU32 ANCHOR::ColorConvertFloat4ToU32(const GfVec4f &in)
 
 // Convert rgb floats ([0-1],[0-1],[0-1]) to hsv floats ([0-1],[0-1],[0-1]), from Foley & van Dam
 // p592 Optimized http://lolengine.net/blog/2013/01/13/fast-rgb-to-hsv
-void ANCHOR::ColorConvertRGBtoHSV(float r,
-                                  float g,
-                                  float b,
-                                  float &out_h,
-                                  float &out_s,
-                                  float &out_v)
+void ANCHOR::ColorConvertRGBtoHSV(float r, float g, float b, float &out_h, float &out_s, float &out_v)
 {
   float K = 0.f;
   if (g < b) {
@@ -1742,12 +1705,7 @@ void ANCHOR::ColorConvertRGBtoHSV(float r,
 
 // Convert hsv floats ([0-1],[0-1],[0-1]) to rgb floats ([0-1],[0-1],[0-1]), from Foley & van Dam
 // p593 also http://en.wikipedia.org/wiki/HSL_and_HSV
-void ANCHOR::ColorConvertHSVtoRGB(float h,
-                                  float s,
-                                  float v,
-                                  float &out_r,
-                                  float &out_g,
-                                  float &out_b)
+void ANCHOR::ColorConvertHSVtoRGB(float h, float s, float v, float &out_r, float &out_g, float &out_b)
 {
   if (s == 0.0f) {
     // gray
@@ -1803,9 +1761,8 @@ void ANCHOR::ColorConvertHSVtoRGB(float h,
 //-----------------------------------------------------------------------------
 
 // std::lower_bound but without the bullshit
-static ANCHORStorage::ANCHORStoragePair *LowerBound(
-  AnchorVector<ANCHORStorage::ANCHORStoragePair> &data,
-  ANCHOR_ID key)
+static ANCHORStorage::ANCHORStoragePair *LowerBound(AnchorVector<ANCHORStorage::ANCHORStoragePair> &data,
+                                                    ANCHOR_ID key)
 {
   ANCHORStorage::ANCHORStoragePair *first = data.Data;
   ANCHORStorage::ANCHORStoragePair *last = data.Data + data.Size;
@@ -1974,8 +1931,7 @@ bool ANCHORTextFilter::Draw(const char *label, float width)
   return value_changed;
 }
 
-void ANCHORTextFilter::ANCHORTextRange::split(char separator,
-                                              AnchorVector<ANCHORTextRange> *out) const
+void ANCHORTextFilter::ANCHORTextRange::split(char separator, AnchorVector<ANCHORTextRange> *out) const
 {
   out->resize(0);
   const char *wb = b;
@@ -2187,18 +2143,15 @@ static void SetCursorPosYAndSetupForPrevLine(float pos_y, float line_height)
   float off_y = pos_y - window->DC.CursorPos[1];
   window->DC.CursorPos[1] = pos_y;
   window->DC.CursorMaxPos[1] = AnchorMax(window->DC.CursorMaxPos[1], pos_y);
-  window->DC.CursorPosPrevLine[1] =
-    window->DC.CursorPos[1] -
-    line_height;  // Setting those fields so that SetScrollHereY() can properly function after
-                  // the end of our clipper usage.
+  window->DC.CursorPosPrevLine[1] = window->DC.CursorPos[1] -
+                                    line_height;  // Setting those fields so that SetScrollHereY() can
+                                                  // properly function after the end of our clipper usage.
   window->DC.PrevLineSize[1] =
-    (line_height -
-     g.Style.ItemSpacing[1]);  // If we end up needing more accurate data (to e.g. use SameLine)
-                               // we may as well make the clipper have a fourth step to let user
-                               // process and display the last item in their list.
+    (line_height - g.Style.ItemSpacing[1]);  // If we end up needing more accurate data (to e.g. use
+                                             // SameLine) we may as well make the clipper have a fourth step
+                                             // to let user process and display the last item in their list.
   if (ANCHOR_OldColumns *columns = window->DC.CurrentColumns)
-    columns->LineMinY =
-      window->DC.CursorPos[1];  // Setting this so that cell Y position are set properly
+    columns->LineMinY = window->DC.CursorPos[1];  // Setting this so that cell Y position are set properly
   if (ANCHOR_Table *table = g.CurrentTable) {
     if (table->IsInsideRow)
       ANCHOR::TableEndRow(table);
@@ -2251,8 +2204,7 @@ void ANCHORListClipper::End()
   // In theory here we should assert that ANCHOR::GetCursorPosY() == StartPosY + DisplayEnd *
   // ItemsHeight, but it feels saner to just seek at the end and not assert/crash the user.
   if (ItemsCount < INT_MAX && DisplayStart >= 0)
-    SetCursorPosYAndSetupForPrevLine(StartPosY + (ItemsCount - ItemsFrozen) * ItemsHeight,
-                                     ItemsHeight);
+    SetCursorPosYAndSetupForPrevLine(StartPosY + (ItemsCount - ItemsFrozen) * ItemsHeight, ItemsHeight);
   ItemsCount = -1;
   StepNo = 3;
 }
@@ -2312,9 +2264,8 @@ bool ANCHORListClipper::Step()
     else {
       ItemsHeight = window->DC.CursorPos[1] - StartPosY;
     }
-    ANCHOR_ASSERT(
-      ItemsHeight > 0.0f &&
-      "Unable to calculate item height! First item hasn't moved the cursor vertically!");
+    ANCHOR_ASSERT(ItemsHeight > 0.0f &&
+                  "Unable to calculate item height! First item hasn't moved the cursor vertically!");
     StepNo = 2;
   }
 
@@ -2330,15 +2281,13 @@ bool ANCHORListClipper::Step()
     ANCHOR_ASSERT(ItemsHeight > 0.0f);
 
     int already_submitted = DisplayEnd;
-    ANCHOR::CalcListClipping(
-      ItemsCount - already_submitted, ItemsHeight, &DisplayStart, &DisplayEnd);
+    ANCHOR::CalcListClipping(ItemsCount - already_submitted, ItemsHeight, &DisplayStart, &DisplayEnd);
     DisplayStart += already_submitted;
     DisplayEnd += already_submitted;
 
     // Seek cursor
     if (DisplayStart > already_submitted)
-      SetCursorPosYAndSetupForPrevLine(StartPosY + (DisplayStart - ItemsFrozen) * ItemsHeight,
-                                       ItemsHeight);
+      SetCursorPosYAndSetupForPrevLine(StartPosY + (DisplayStart - ItemsFrozen) * ItemsHeight, ItemsHeight);
 
     StepNo = 3;
     return true;
@@ -2449,9 +2398,7 @@ struct ANCHOR_StyleVarInfo {
 };
 
 static const ANCHOR_StyleVarInfo GStyleVarInfo[] = {
-  {ANCHOR_DataType_Float,
-   1,
-   (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, Alpha)},  // ANCHOR_StyleVar_Alpha
+  {ANCHOR_DataType_Float, 1, (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, Alpha)},  // ANCHOR_StyleVar_Alpha
   {ANCHOR_DataType_Float,
    2,
    (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, WindowPadding)},  // ANCHOR_StyleVar_WindowPadding
@@ -2460,15 +2407,13 @@ static const ANCHOR_StyleVarInfo GStyleVarInfo[] = {
    (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, WindowRounding)},  // ANCHOR_StyleVar_WindowRounding
   {ANCHOR_DataType_Float,
    1,
-   (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style,
-                              WindowBorderSize)},  // ANCHOR_StyleVar_WindowBorderSize
+   (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, WindowBorderSize)},  // ANCHOR_StyleVar_WindowBorderSize
   {ANCHOR_DataType_Float,
    2,
    (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, WindowMinSize)},  // ANCHOR_StyleVar_WindowMinSize
   {ANCHOR_DataType_Float,
    2,
-   (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style,
-                              WindowTitleAlign)},  // ANCHOR_StyleVar_WindowTitleAlign
+   (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, WindowTitleAlign)},  // ANCHOR_StyleVar_WindowTitleAlign
   {ANCHOR_DataType_Float,
    1,
    (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, ChildRounding)},  // ANCHOR_StyleVar_ChildRounding
@@ -2495,8 +2440,7 @@ static const ANCHOR_StyleVarInfo GStyleVarInfo[] = {
    (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, ItemSpacing)},  // ANCHOR_StyleVar_ItemSpacing
   {ANCHOR_DataType_Float,
    2,
-   (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style,
-                              ItemInnerSpacing)},  // ANCHOR_StyleVar_ItemInnerSpacing
+   (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, ItemInnerSpacing)},  // ANCHOR_StyleVar_ItemInnerSpacing
   {ANCHOR_DataType_Float,
    1,
    (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, IndentSpacing)},  // ANCHOR_StyleVar_IndentSpacing
@@ -2508,8 +2452,7 @@ static const ANCHOR_StyleVarInfo GStyleVarInfo[] = {
    (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, ScrollbarSize)},  // ANCHOR_StyleVar_ScrollbarSize
   {ANCHOR_DataType_Float,
    1,
-   (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style,
-                              ScrollbarRounding)},  // ANCHOR_StyleVar_ScrollbarRounding
+   (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, ScrollbarRounding)},  // ANCHOR_StyleVar_ScrollbarRounding
   {ANCHOR_DataType_Float,
    1,
    (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, GrabMinSize)},  // ANCHOR_StyleVar_GrabMinSize
@@ -2524,8 +2467,7 @@ static const ANCHOR_StyleVarInfo GStyleVarInfo[] = {
    (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, ButtonTextAlign)},  // ANCHOR_StyleVar_ButtonTextAlign
   {ANCHOR_DataType_Float,
    2,
-   (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style,
-                              SelectableTextAlign)},  // ANCHOR_StyleVar_SelectableTextAlign
+   (AnchorU32)ANCHOR_OFFSETOF(ANCHOR_Style, SelectableTextAlign)},  // ANCHOR_StyleVar_SelectableTextAlign
 };
 
 static const ANCHOR_StyleVarInfo *GetStyleVarInfo(ANCHOR_StyleVar idx)
@@ -2720,10 +2662,7 @@ const char *ANCHOR::FindRenderedTextEnd(const char *text, const char *text_end)
 
 // Internal ANCHOR functions to render text
 // RenderText***() functions calls ImDrawList::AddText() calls AnchorBitmapFont::RenderText()
-void ANCHOR::RenderText(GfVec2f pos,
-                        const char *text,
-                        const char *text_end,
-                        bool hide_text_after_hash)
+void ANCHOR::RenderText(GfVec2f pos, const char *text, const char *text_end, bool hide_text_after_hash)
 {
   ANCHOR_Context &g = *G_CTX;
   ANCHOR_Window *window = g.CurrentWindow;
@@ -2740,17 +2679,13 @@ void ANCHOR::RenderText(GfVec2f pos,
   }
 
   if (text != text_display_end) {
-    window->DrawList->AddText(
-      g.Font, g.FontSize, pos, GetColorU32(ANCHOR_Col_Text), text, text_display_end);
+    window->DrawList->AddText(g.Font, g.FontSize, pos, GetColorU32(ANCHOR_Col_Text), text, text_display_end);
     if (g.LogEnabled)
       LogRenderedText(&pos, text, text_display_end);
   }
 }
 
-void ANCHOR::RenderTextWrapped(GfVec2f pos,
-                               const char *text,
-                               const char *text_end,
-                               float wrap_width)
+void ANCHOR::RenderTextWrapped(GfVec2f pos, const char *text, const char *text_end, float wrap_width)
 {
   ANCHOR_Context &g = *G_CTX;
   ANCHOR_Window *window = g.CurrentWindow;
@@ -2799,22 +2734,13 @@ void ANCHOR::RenderTextClippedEx(ImDrawList *draw_list,
 
   // Render
   if (need_clipping) {
-    GfVec4f fine_clip_rect(clip_min->GetArray()[0],
-                           clip_min->GetArray()[1],
-                           clip_max->GetArray()[0],
-                           clip_max->GetArray()[1]);
-    draw_list->AddText(NULL,
-                       0.0f,
-                       pos,
-                       GetColorU32(ANCHOR_Col_Text),
-                       text,
-                       text_display_end,
-                       0.0f,
-                       &fine_clip_rect);
+    GfVec4f fine_clip_rect(
+      clip_min->GetArray()[0], clip_min->GetArray()[1], clip_max->GetArray()[0], clip_max->GetArray()[1]);
+    draw_list->AddText(
+      NULL, 0.0f, pos, GetColorU32(ANCHOR_Col_Text), text, text_display_end, 0.0f, &fine_clip_rect);
   }
   else {
-    draw_list->AddText(
-      NULL, 0.0f, pos, GetColorU32(ANCHOR_Col_Text), text, text_display_end, 0.0f, NULL);
+    draw_list->AddText(NULL, 0.0f, pos, GetColorU32(ANCHOR_Col_Text), text, text_display_end, 0.0f, NULL);
   }
 }
 
@@ -2834,14 +2760,8 @@ void ANCHOR::RenderTextClipped(const GfVec2f &pos_min,
 
   ANCHOR_Context &g = *G_CTX;
   ANCHOR_Window *window = g.CurrentWindow;
-  RenderTextClippedEx(window->DrawList,
-                      pos_min,
-                      pos_max,
-                      text,
-                      text_display_end,
-                      text_size_if_known,
-                      align,
-                      clip_rect);
+  RenderTextClippedEx(
+    window->DrawList, pos_min, pos_max, text, text_display_end, text_size_if_known, align, clip_rect);
   if (g.LogEnabled)
     LogRenderedText(&pos_min, text, text_display_end);
 }
@@ -2891,15 +2811,14 @@ void ANCHOR::RenderTextEllipsis(ImDrawList *draw_list,
     }
     const AnchorFontGlyph *glyph = font->FindGlyph(ellipsis_char);
 
-    float ellipsis_glyph_width = glyph->X1;  // Width of the glyph with no padding on either side
+    float ellipsis_glyph_width = glyph->X1;             // Width of the glyph with no padding on either side
     float ellipsis_total_width = ellipsis_glyph_width;  // Full width of entire ellipsis
 
     if (ellipsis_char_count > 1) {
       // Full ellipsis size without free spacing after it.
       const float spacing_between_dots = 1.0f * (draw_list->_Data->FontSize / font->FontSize);
       ellipsis_glyph_width = glyph->X1 - glyph->X0 + spacing_between_dots;
-      ellipsis_total_width = ellipsis_glyph_width * (float)ellipsis_char_count -
-                             spacing_between_dots;
+      ellipsis_total_width = ellipsis_glyph_width * (float)ellipsis_char_count - spacing_between_dots;
     }
 
     // We can now claim the space between pos_max[0] and ellipsis_max[0]
@@ -2910,8 +2829,7 @@ void ANCHOR::RenderTextEllipsis(ImDrawList *draw_list,
     if (text == text_end_ellipsis && text_end_ellipsis < text_end_full) {
       // Always display at least 1 character if there's no room for character + ellipsis
       text_end_ellipsis = text + ImTextCountUtf8BytesFromChar(text, text_end_full);
-      text_size_clipped_x = font->CalcTextSizeA(
-        font_size, FLT_MAX, 0.0f, text, text_end_ellipsis)[0];
+      text_size_clipped_x = font->CalcTextSizeA(font_size, FLT_MAX, 0.0f, text, text_end_ellipsis)[0];
     }
     while (text_end_ellipsis > text && ImCharIsBlankA(text_end_ellipsis[-1])) {
       // Trim trailing space before ellipsis (FIXME: Supporting non-ascii blanks would be nice, for
@@ -2959,11 +2877,7 @@ void ANCHOR::RenderTextEllipsis(ImDrawList *draw_list,
 }
 
 // Render a rectangle shaped with optional rounding and borders
-void ANCHOR::RenderFrame(GfVec2f p_min,
-                         GfVec2f p_max,
-                         AnchorU32 fill_col,
-                         bool border,
-                         float rounding)
+void ANCHOR::RenderFrame(GfVec2f p_min, GfVec2f p_max, AnchorU32 fill_col, bool border, float rounding)
 {
   ANCHOR_Context &g = *G_CTX;
   ANCHOR_Window *window = g.CurrentWindow;
@@ -2976,8 +2890,7 @@ void ANCHOR::RenderFrame(GfVec2f p_min,
                               rounding,
                               0,
                               border_size);
-    window->DrawList->AddRect(
-      p_min, p_max, GetColorU32(ANCHOR_Col_Border), rounding, 0, border_size);
+    window->DrawList->AddRect(p_min, p_max, GetColorU32(ANCHOR_Col_Border), rounding, 0, border_size);
   }
 }
 
@@ -2993,8 +2906,7 @@ void ANCHOR::RenderFrameBorder(GfVec2f p_min, GfVec2f p_max, float rounding)
                               rounding,
                               0,
                               border_size);
-    window->DrawList->AddRect(
-      p_min, p_max, GetColorU32(ANCHOR_Col_Border), rounding, 0, border_size);
+    window->DrawList->AddRect(p_min, p_max, GetColorU32(ANCHOR_Col_Border), rounding, 0, border_size);
   }
 }
 
@@ -3339,8 +3251,7 @@ bool ANCHOR::IsItemHovered(ANCHORHoveredFlags flags)
     return false;
 
   // Test if the item is disabled
-  if ((g.CurrentItemFlags & ANCHOR_ItemFlags_Disabled) &&
-      !(flags & ANCHORHoveredFlags_AllowWhenDisabled))
+  if ((g.CurrentItemFlags & ANCHOR_ItemFlags_Disabled) && !(flags & ANCHORHoveredFlags_AllowWhenDisabled))
     return false;
 
   // Special handling for calling after Begin() which represent the title bar or tab.
@@ -3426,8 +3337,8 @@ void ANCHOR::ItemFocusable(ANCHOR_Window *window, ANCHOR_ID id)
 
   // Increment counters
   // FIXME: ANCHOR_ItemFlags_Disabled should disable more.
-  const bool is_tab_stop = (g.CurrentItemFlags &
-                            (ANCHOR_ItemFlags_NoTabStop | ANCHOR_ItemFlags_Disabled)) == 0;
+  const bool is_tab_stop = (g.CurrentItemFlags & (ANCHOR_ItemFlags_NoTabStop | ANCHOR_ItemFlags_Disabled)) ==
+                           0;
   window->DC.FocusCounterRegular++;
   if (is_tab_stop) {
     window->DC.FocusCounterTabStop++;
@@ -3440,11 +3351,11 @@ void ANCHOR::ItemFocusable(ANCHOR_Window *window, ANCHOR_ID id)
   if (g.ActiveId == id && g.TabFocusPressed && !IsActiveIdUsingKey(ANCHOR_Key_Tab) &&
       g.TabFocusRequestNextWindow == NULL) {
     g.TabFocusRequestNextWindow = window;
-    g.TabFocusRequestNextCounterTabStop =
-      window->DC.FocusCounterTabStop + (g.IO.KeyShift ?
-                                          (is_tab_stop ? -1 : 0) :
-                                          +1);  // Modulo on index will be applied at the end of
-                                                // frame once we've got the total counter of items.
+    g.TabFocusRequestNextCounterTabStop = window->DC.FocusCounterTabStop +
+                                          (g.IO.KeyShift ?
+                                             (is_tab_stop ? -1 : 0) :
+                                             +1);  // Modulo on index will be applied at the end of
+                                                   // frame once we've got the total counter of items.
   }
 
   // Handle focus requests
@@ -3483,8 +3394,7 @@ float ANCHOR::CalcWrapWidthForPos(const GfVec2f &pos, float wrap_pos_x)
     wrap_pos_x = window->WorkRect.Max[0];
   }
   else if (wrap_pos_x > 0.0f) {
-    wrap_pos_x += window->Pos[0] -
-                  window->Scroll[0];  // wrap_pos_x is provided is window local space
+    wrap_pos_x += window->Pos[0] - window->Scroll[0];  // wrap_pos_x is provided is window local space
   }
 
   return AnchorMax(wrap_pos_x - pos[0], 1.0f);
@@ -3736,8 +3646,7 @@ void ANCHOR::StartMouseMovingWindow(ANCHOR_Window *window)
   g.ActiveIdClickOffset = g.IO.MousePos - window->RootWindow->Pos;
 
   bool can_move_window = true;
-  if ((window->Flags & ANCHOR_WindowFlags_NoMove) ||
-      (window->RootWindow->Flags & ANCHOR_WindowFlags_NoMove))
+  if ((window->Flags & ANCHOR_WindowFlags_NoMove) || (window->RootWindow->Flags & ANCHOR_WindowFlags_NoMove))
     can_move_window = false;
   if (can_move_window)
     g.MovingWindow = window;
@@ -3804,15 +3713,13 @@ void ANCHOR::UpdateMouseMovingWindowEndFrame()
     // parent popups because they are not linked together any more.
     ANCHOR_Window *root_window = g.HoveredWindow ? g.HoveredWindow->RootWindow : NULL;
     const bool is_closed_popup = root_window && (root_window->Flags & ANCHOR_WindowFlags_Popup) &&
-                                 !IsPopupOpen(root_window->PopupId,
-                                              ANCHORPopupFlags_AnyPopupLevel);
+                                 !IsPopupOpen(root_window->PopupId, ANCHORPopupFlags_AnyPopupLevel);
 
     if (root_window != NULL && !is_closed_popup) {
       StartMouseMovingWindow(g.HoveredWindow);  //-V595
 
       // Cancel moving if clicked outside of title bar
-      if (g.IO.ConfigWindowsMoveFromTitleBarOnly &&
-          !(root_window->Flags & ANCHOR_WindowFlags_NoTitleBar))
+      if (g.IO.ConfigWindowsMoveFromTitleBarOnly && !(root_window->Flags & ANCHOR_WindowFlags_NoTitleBar))
         if (!root_window->TitleBarRect().Contains(g.IO.MouseClickedPos[0]))
           g.MovingWindow = NULL;
 
@@ -3868,19 +3775,17 @@ static void ANCHOR::UpdateMouseInputs()
     g.IO.MouseClicked[i] = g.IO.MouseDown[i] && g.IO.MouseDownDuration[i] < 0.0f;
     g.IO.MouseReleased[i] = !g.IO.MouseDown[i] && g.IO.MouseDownDuration[i] >= 0.0f;
     g.IO.MouseDownDurationPrev[i] = g.IO.MouseDownDuration[i];
-    g.IO.MouseDownDuration[i] = g.IO.MouseDown[i] ?
-                                  (g.IO.MouseDownDuration[i] < 0.0f ?
-                                     0.0f :
-                                     g.IO.MouseDownDuration[i] + g.IO.DeltaTime) :
-                                  -1.0f;
+    g.IO.MouseDownDuration[i] = g.IO.MouseDown[i] ? (g.IO.MouseDownDuration[i] < 0.0f ?
+                                                       0.0f :
+                                                       g.IO.MouseDownDuration[i] + g.IO.DeltaTime) :
+                                                    -1.0f;
     g.IO.MouseDoubleClicked[i] = false;
     if (g.IO.MouseClicked[i]) {
       if ((float)(g.Time - g.IO.MouseClickedTime[i]) < g.IO.MouseDoubleClickTime) {
         GfVec2f delta_from_click_pos = IsMousePosValid(&g.IO.MousePos) ?
                                          (g.IO.MousePos - g.IO.MouseClickedPos[i]) :
                                          GfVec2f(0.0f, 0.0f);
-        if (ImLengthSqr(delta_from_click_pos) <
-            g.IO.MouseDoubleClickMaxDist * g.IO.MouseDoubleClickMaxDist)
+        if (ImLengthSqr(delta_from_click_pos) < g.IO.MouseDoubleClickMaxDist * g.IO.MouseDoubleClickMaxDist)
           g.IO.MouseDoubleClicked[i] = true;
         g.IO.MouseClickedTime[i] =
           -g.IO.MouseDoubleClickTime *
@@ -3959,8 +3864,7 @@ void ANCHOR::UpdateMouseWheel()
   // may be best redesigned.
   if (g.IO.MouseWheel != 0.0f && g.IO.KeyCtrl && g.IO.FontAllowUserScaling) {
     StartLockWheelingWindow(window);
-    const float new_font_scale = ImClamp(
-      window->FontWindowScale + g.IO.MouseWheel * 0.10f, 0.50f, 2.50f);
+    const float new_font_scale = ImClamp(window->FontWindowScale + g.IO.MouseWheel * 0.10f, 0.50f, 2.50f);
     const float scale = new_font_scale / window->FontWindowScale;
     window->FontWindowScale = new_font_scale;
     if (window == window->RootWindow) {
@@ -3990,10 +3894,9 @@ void ANCHOR::UpdateMouseWheel()
   // Vertical Mouse Wheel scrolling
   if (wheel_y != 0.0f) {
     StartLockWheelingWindow(window);
-    while (
-      (window->Flags & ANCHOR_WindowFlags_ChildWindow) &&
-      ((window->ScrollMax[1] == 0.0f) || ((window->Flags & ANCHOR_WindowFlags_NoScrollWithMouse) &&
-                                          !(window->Flags & ANCHOR_WindowFlags_NoMouseInputs))))
+    while ((window->Flags & ANCHOR_WindowFlags_ChildWindow) &&
+           ((window->ScrollMax[1] == 0.0f) || ((window->Flags & ANCHOR_WindowFlags_NoScrollWithMouse) &&
+                                               !(window->Flags & ANCHOR_WindowFlags_NoMouseInputs))))
       window = window->ParentWindow;
     if (!(window->Flags & ANCHOR_WindowFlags_NoScrollWithMouse) &&
         !(window->Flags & ANCHOR_WindowFlags_NoMouseInputs)) {
@@ -4006,10 +3909,9 @@ void ANCHOR::UpdateMouseWheel()
   // Horizontal Mouse Wheel scrolling, or Vertical Mouse Wheel w/ Shift held
   if (wheel_x != 0.0f) {
     StartLockWheelingWindow(window);
-    while (
-      (window->Flags & ANCHOR_WindowFlags_ChildWindow) &&
-      ((window->ScrollMax[0] == 0.0f) || ((window->Flags & ANCHOR_WindowFlags_NoScrollWithMouse) &&
-                                          !(window->Flags & ANCHOR_WindowFlags_NoMouseInputs))))
+    while ((window->Flags & ANCHOR_WindowFlags_ChildWindow) &&
+           ((window->ScrollMax[0] == 0.0f) || ((window->Flags & ANCHOR_WindowFlags_NoScrollWithMouse) &&
+                                               !(window->Flags & ANCHOR_WindowFlags_NoMouseInputs))))
       window = window->ParentWindow;
     if (!(window->Flags & ANCHOR_WindowFlags_NoScrollWithMouse) &&
         !(window->Flags & ANCHOR_WindowFlags_NoMouseInputs)) {
@@ -4080,8 +3982,7 @@ void ANCHOR::UpdateHoveredWindowAndCaptureFlags()
 
   // Modal windows prevents mouse from hovering behind them.
   ANCHOR_Window *modal_window = GetTopMostPopupModal();
-  if (modal_window && g.HoveredWindow &&
-      !IsWindowChildOf(g.HoveredWindow->RootWindow, modal_window))
+  if (modal_window && g.HoveredWindow && !IsWindowChildOf(g.HoveredWindow->RootWindow, modal_window))
     clear_hovered_windows = true;
 
   // Disabled mouse?
@@ -4109,8 +4010,7 @@ void ANCHOR::UpdateHoveredWindowAndCaptureFlags()
   // FIXME: For patterns of drag and drop across OS windows, we may need to rework/remove this test
   // (first committed 311c0ca9 on 2015/02)
   const bool mouse_dragging_extern_payload = g.DragDropActive &&
-                                             (g.DragDropSourceFlags &
-                                              ANCHORDragDropFlags_SourceExtern) != 0;
+                                             (g.DragDropSourceFlags & ANCHORDragDropFlags_SourceExtern) != 0;
   if (!mouse_avail_to_ANCHOR && !mouse_dragging_extern_payload)
     clear_hovered_windows = true;
 
@@ -4122,8 +4022,7 @@ void ANCHOR::UpdateHoveredWindowAndCaptureFlags()
   if (g.WantCaptureMouseNextFrame != -1)
     g.IO.WantCaptureMouse = (g.WantCaptureMouseNextFrame != 0);
   else
-    g.IO.WantCaptureMouse = (mouse_avail_to_ANCHOR &&
-                             (g.HoveredWindow != NULL || mouse_any_down)) ||
+    g.IO.WantCaptureMouse = (mouse_avail_to_ANCHOR && (g.HoveredWindow != NULL || mouse_any_down)) ||
                             (g.OpenPopupStack.Size > 0);
 
   // Update io.WantCaptureKeyboard for the user application (true = dispatch keyboard info to
@@ -4189,11 +4088,9 @@ void ANCHOR::NewFrame()
   g.MenusIdSubmittedThisFrame.resize(0);
 
   // Calculate frame-rate for the user, as a purely luxurious feature
-  g.FramerateSecPerFrameAccum += g.IO.DeltaTime -
-                                 g.FramerateSecPerFrame[g.FramerateSecPerFrameIdx];
+  g.FramerateSecPerFrameAccum += g.IO.DeltaTime - g.FramerateSecPerFrame[g.FramerateSecPerFrameIdx];
   g.FramerateSecPerFrame[g.FramerateSecPerFrameIdx] = g.IO.DeltaTime;
-  g.FramerateSecPerFrameIdx = (g.FramerateSecPerFrameIdx + 1) %
-                              ANCHOR_ARRAYSIZE(g.FramerateSecPerFrame);
+  g.FramerateSecPerFrameIdx = (g.FramerateSecPerFrameIdx + 1) % ANCHOR_ARRAYSIZE(g.FramerateSecPerFrame);
   g.FramerateSecPerFrameCount = ImMin(g.FramerateSecPerFrameCount + 1,
                                       ANCHOR_ARRAYSIZE(g.FramerateSecPerFrame));
   g.IO.Framerate = (g.FramerateSecPerFrameAccum > 0.0f) ?
@@ -4215,8 +4112,7 @@ void ANCHOR::NewFrame()
   g.DrawListSharedData.InitialFlags = ImDrawListFlags_None;
   if (g.Style.AntiAliasedLines)
     g.DrawListSharedData.InitialFlags |= ImDrawListFlags_AntiAliasedLines;
-  if (g.Style.AntiAliasedLinesUseTex &&
-      !(g.Font->ContainerAtlas->Flags & AnchorFontAtlasFlags_NoBakedLines))
+  if (g.Style.AntiAliasedLinesUseTex && !(g.Font->ContainerAtlas->Flags & AnchorFontAtlasFlags_NoBakedLines))
     g.DrawListSharedData.InitialFlags |= ImDrawListFlags_AntiAliasedLinesUseTex;
   if (g.Style.AntiAliasedFill)
     g.DrawListSharedData.InitialFlags |= ImDrawListFlags_AntiAliasedFill;
@@ -4312,8 +4208,8 @@ void ANCHOR::NewFrame()
 
   g.MouseCursor = ANCHOR_MouseCursor_Arrow;
   g.WantCaptureMouseNextFrame = g.WantCaptureKeyboardNextFrame = g.WantTextInputNextFrame = -1;
-  g.PlatformImePos = GfVec2f(
-    1.0f, 1.0f);  // OS Input Method Editor showing on top-left of our window by default
+  g.PlatformImePos = GfVec2f(1.0f,
+                             1.0f);  // OS Input Method Editor showing on top-left of our window by default
 
   // Mouse wheel scrolling, scale
   UpdateMouseWheel();
@@ -4323,8 +4219,7 @@ void ANCHOR::NewFrame()
 
   // Mark all windows as not visible and compact unused memory.
   ANCHOR_ASSERT(g.WindowsFocusOrder.Size <= g.Windows.Size);
-  const float memory_compact_start_time = (g.GcCompactAll ||
-                                           g.IO.ConfigMemoryCompactTimer < 0.0f) ?
+  const float memory_compact_start_time = (g.GcCompactAll || g.IO.ConfigMemoryCompactTimer < 0.0f) ?
                                             FLT_MAX :
                                             (float)g.Time - g.IO.ConfigMemoryCompactTimer;
   for (int i = 0; i != g.Windows.Size; i++) {
@@ -4335,8 +4230,7 @@ void ANCHOR::NewFrame()
     window->WriteAccessed = false;
 
     // Garbage collect transient buffers of recently unused windows
-    if (!window->WasActive && !window->MemoryCompacted &&
-        window->LastTimeActive < memory_compact_start_time)
+    if (!window->WasActive && !window->MemoryCompacted && window->LastTimeActive < memory_compact_start_time)
       GcCompactTransientWindowBuffers(window);
   }
 
@@ -4532,15 +4426,13 @@ static int ANCHOR_CDECL ChildWindowComparer(const void *lhs, const void *rhs)
   return (a->BeginOrderWithinParent - b->BeginOrderWithinParent);
 }
 
-static void AddWindowToSortBuffer(AnchorVector<ANCHOR_Window *> *out_sorted_windows,
-                                  ANCHOR_Window *window)
+static void AddWindowToSortBuffer(AnchorVector<ANCHOR_Window *> *out_sorted_windows, ANCHOR_Window *window)
 {
   out_sorted_windows->push_back(window);
   if (window->Active) {
     int count = window->DC.ChildWindows.Size;
     if (count > 1)
-      ImQsort(
-        window->DC.ChildWindows.Data, (size_t)count, sizeof(ANCHOR_Window *), ChildWindowComparer);
+      ImQsort(window->DC.ChildWindows.Data, (size_t)count, sizeof(ANCHOR_Window *), ChildWindowComparer);
     for (int i = 0; i < count; i++) {
       ANCHOR_Window *child = window->DC.ChildWindows[i];
       if (child->Active)
@@ -4637,8 +4529,7 @@ void ImDrawDataBuilder::FlattenIntoSingleLayer()
   }
 }
 
-static void SetupViewportDrawData(ANCHORViewportP *viewport,
-                                  AnchorVector<ImDrawList *> *draw_lists)
+static void SetupViewportDrawData(ANCHORViewportP *viewport, AnchorVector<ImDrawList *> *draw_lists)
 {
   ANCHOR_IO &io = ANCHOR::GetIO();
   ImDrawData *draw_data = &viewport->DrawDataP;
@@ -4698,9 +4589,8 @@ void ANCHOR::EndFrame()
   ErrorCheckEndFrameSanityChecks();
 
   // Notify OS when our Input Method Editor cursor has moved (e.g. CJK inputs using Microsoft IME)
-  if (g.IO.ImeSetInputScreenPosFn &&
-      (g.PlatformImeLastPos[0] == FLT_MAX ||
-       ImLengthSqr(g.PlatformImeLastPos - g.PlatformImePos) > 0.0001f)) {
+  if (g.IO.ImeSetInputScreenPosFn && (g.PlatformImeLastPos[0] == FLT_MAX ||
+                                      ImLengthSqr(g.PlatformImeLastPos - g.PlatformImePos) > 0.0001f)) {
     g.IO.ImeSetInputScreenPosFn((int)g.PlatformImePos[0], (int)g.PlatformImePos[1]);
     g.PlatformImeLastPos = g.PlatformImePos;
   }
@@ -4746,8 +4636,7 @@ void ANCHOR::EndFrame()
   for (int i = 0; i != g.Windows.Size; i++) {
     ANCHOR_Window *window = g.Windows[i];
     if (window->Active &&
-        (window->Flags &
-         ANCHOR_WindowFlags_ChildWindow))  // if a child is active its parent will add it
+        (window->Flags & ANCHOR_WindowFlags_ChildWindow))  // if a child is active its parent will add it
       continue;
     AddWindowToSortBuffer(&g.WindowsTempSortBuffer, window);
   }
@@ -4791,9 +4680,8 @@ void ANCHOR::Render()
 
   // Add ImDrawList to render
   ANCHOR_Window *windows_to_render_top_most[2];
-  windows_to_render_top_most[0] = (g.NavWindowingTarget &&
-                                   !(g.NavWindowingTarget->Flags &
-                                     ANCHOR_WindowFlags_NoBringToFrontOnFocus)) ?
+  windows_to_render_top_most[0] = (g.NavWindowingTarget && !(g.NavWindowingTarget->Flags &
+                                                             ANCHOR_WindowFlags_NoBringToFrontOnFocus)) ?
                                     g.NavWindowingTarget->RootWindow :
                                     NULL;
   windows_to_render_top_most[1] = (g.NavWindowingTarget ? g.NavWindowingListWindow : NULL);
@@ -4801,16 +4689,14 @@ void ANCHOR::Render()
     ANCHOR_Window *window = g.Windows[n];
     ANCHOR_MSVC_WARNING_SUPPRESS(6011);  // Static Analysis false positive "warning C6011:
                                          // Dereferencing NULL pointer 'window'"
-    if (IsWindowActiveAndVisible(window) &&
-        (window->Flags & ANCHOR_WindowFlags_ChildWindow) == 0 &&
+    if (IsWindowActiveAndVisible(window) && (window->Flags & ANCHOR_WindowFlags_ChildWindow) == 0 &&
         window != windows_to_render_top_most[0] && window != windows_to_render_top_most[1])
       AddRootWindowToDrawData(window);
   }
   for (int n = 0; n < ANCHOR_ARRAYSIZE(windows_to_render_top_most); n++)
     if (windows_to_render_top_most[n] &&
-        IsWindowActiveAndVisible(
-          windows_to_render_top_most[n]))  // NavWindowingTarget is always temporarily displayed
-                                           // as the top-most window
+        IsWindowActiveAndVisible(windows_to_render_top_most[n]))  // NavWindowingTarget is always temporarily
+                                                                  // displayed as the top-most window
       AddRootWindowToDrawData(windows_to_render_top_most[n]);
 
   // Setup ImDrawData structures for end-user
@@ -4861,8 +4747,7 @@ GfVec2f ANCHOR::CalcTextSize(const char *text,
   const float font_size = g.FontSize;
   if (text == text_display_end)
     return GfVec2f(0.0f, font_size);
-  GfVec2f text_size = font->CalcTextSizeA(
-    font_size, FLT_MAX, wrap_width, text, text_display_end, NULL);
+  GfVec2f text_size = font->CalcTextSizeA(font_size, FLT_MAX, wrap_width, text, text_display_end, NULL);
 
   // Round
   // FIXME: This has been here since Dec 2015 (7b0bf230) but down the line we want this out.
@@ -4889,8 +4774,7 @@ static void FindHoveredWindow()
     hovered_window = g.MovingWindow;
 
   GfVec2f padding_regular = g.Style.TouchExtraPadding;
-  GfVec2f padding_for_resize = g.IO.ConfigWindowsResizeFromEdges ? g.WindowsHoverPadding :
-                                                                   padding_regular;
+  GfVec2f padding_for_resize = g.IO.ConfigWindowsResizeFromEdges ? g.WindowsHoverPadding : padding_regular;
   for (int i = g.Windows.Size - 1; i >= 0; i--) {
     ANCHOR_Window *window = g.Windows[i];
     ANCHOR_MSVC_WARNING_SUPPRESS(28182);  // [Static Analyzer] Dereferencing NULL pointer.
@@ -4901,8 +4785,8 @@ static void FindHoveredWindow()
 
     // Using the clipped AABB, a child window will typically be clipped by its parent (not always)
     ImRect bb(window->OuterRectClipped);
-    if (window->Flags & (ANCHOR_WindowFlags_ChildWindow | ANCHOR_WindowFlags_NoResize |
-                         ANCHOR_WindowFlags_AlwaysAutoResize))
+    if (window->Flags &
+        (ANCHOR_WindowFlags_ChildWindow | ANCHOR_WindowFlags_NoResize | ANCHOR_WindowFlags_AlwaysAutoResize))
       bb.Expand(padding_regular);
     else
       bb.Expand(padding_for_resize);
@@ -5199,8 +5083,8 @@ bool ANCHOR::IsItemDeactivated()
 bool ANCHOR::IsItemDeactivatedAfterEdit()
 {
   ANCHOR_Context &g = *G_CTX;
-  return IsItemDeactivated() && (g.ActiveIdPreviousFrameHasBeenEditedBefore ||
-                                 (g.ActiveId == 0 && g.ActiveIdHasBeenEditedBefore));
+  return IsItemDeactivated() &&
+         (g.ActiveIdPreviousFrameHasBeenEditedBefore || (g.ActiveId == 0 && g.ActiveIdHasBeenEditedBefore));
 }
 
 // == GetItemID() == GetFocusID()
@@ -5224,16 +5108,13 @@ bool ANCHOR::IsItemClicked(ANCHOR_MouseButton mouse_button)
 bool ANCHOR::IsItemToggledOpen()
 {
   ANCHOR_Context &g = *G_CTX;
-  return (g.CurrentWindow->DC.LastItemStatusFlags & ANCHOR_ItemStatusFlags_ToggledOpen) ? true :
-                                                                                          false;
+  return (g.CurrentWindow->DC.LastItemStatusFlags & ANCHOR_ItemStatusFlags_ToggledOpen) ? true : false;
 }
 
 bool ANCHOR::IsItemToggledSelection()
 {
   ANCHOR_Context &g = *G_CTX;
-  return (g.CurrentWindow->DC.LastItemStatusFlags & ANCHOR_ItemStatusFlags_ToggledSelection) ?
-           true :
-           false;
+  return (g.CurrentWindow->DC.LastItemStatusFlags & ANCHOR_ItemStatusFlags_ToggledSelection) ? true : false;
 }
 
 bool ANCHOR::IsAnyItemHovered()
@@ -5317,8 +5198,8 @@ bool ANCHOR::BeginChildEx(const char *name,
   ANCHOR_Context &g = *G_CTX;
   ANCHOR_Window *parent_window = g.CurrentWindow;
 
-  flags |= ANCHOR_WindowFlags_NoTitleBar | ANCHOR_WindowFlags_NoResize |
-           ANCHOR_WindowFlags_NoSavedSettings | ANCHOR_WindowFlags_ChildWindow;
+  flags |= ANCHOR_WindowFlags_NoTitleBar | ANCHOR_WindowFlags_NoResize | ANCHOR_WindowFlags_NoSavedSettings |
+           ANCHOR_WindowFlags_ChildWindow;
   flags |= (parent_window->Flags & ANCHOR_WindowFlags_NoMove);  // Inherit the NoMove flag
 
   // Size
@@ -5339,8 +5220,7 @@ bool ANCHOR::BeginChildEx(const char *name,
     ImFormatString(
       g.TempBuffer, ANCHOR_ARRAYSIZE(g.TempBuffer), "%s/%s_%08X", parent_window->Name, name, id);
   else
-    ImFormatString(
-      g.TempBuffer, ANCHOR_ARRAYSIZE(g.TempBuffer), "%s/%08X", parent_window->Name, id);
+    ImFormatString(g.TempBuffer, ANCHOR_ARRAYSIZE(g.TempBuffer), "%s/%08X", parent_window->Name, id);
 
   const float backup_border_size = g.Style.ChildBorderSize;
   if (!border)
@@ -5378,10 +5258,7 @@ bool ANCHOR::BeginChild(const char *str_id,
   return BeginChildEx(str_id, window->GetID(str_id), size_arg, border, extra_flags);
 }
 
-bool ANCHOR::BeginChild(ANCHOR_ID id,
-                        const GfVec2f &size_arg,
-                        bool border,
-                        ANCHOR_WindowFlags extra_flags)
+bool ANCHOR::BeginChild(ANCHOR_ID id, const GfVec2f &size_arg, bool border, ANCHOR_WindowFlags extra_flags)
 {
   ANCHOR_ASSERT(id != 0);
   return BeginChildEx(NULL, id, size_arg, border, extra_flags);
@@ -5393,8 +5270,7 @@ void ANCHOR::EndChild()
   ANCHOR_Window *window = g.CurrentWindow;
 
   ANCHOR_ASSERT(g.WithinEndChild == false);
-  ANCHOR_ASSERT(window->Flags &
-                ANCHOR_WindowFlags_ChildWindow);  // Mismatched BeginChild()/EndChild() calls
+  ANCHOR_ASSERT(window->Flags & ANCHOR_WindowFlags_ChildWindow);  // Mismatched BeginChild()/EndChild() calls
 
   g.WithinEndChild = true;
   if (window->BeginCount > 1) {
@@ -5402,9 +5278,8 @@ void ANCHOR::EndChild()
   }
   else {
     GfVec2f sz = window->Size;
-    if (window->AutoFitChildAxises &
-        (1 << ANCHOR_Axis_X))  // Arbitrary minimum zero-ish child size of 4.0f causes less trouble
-                               // than a 0.0f
+    if (window->AutoFitChildAxises & (1 << ANCHOR_Axis_X))  // Arbitrary minimum zero-ish child size of 4.0f
+                                                            // causes less trouble than a 0.0f
       sz[0] = AnchorMax(4.0f, sz[0]);
     if (window->AutoFitChildAxises & (1 << ANCHOR_Axis_Y))
       sz[1] = AnchorMax(4.0f, sz[1]);
@@ -5445,11 +5320,8 @@ bool ANCHOR::BeginChildFrame(ANCHOR_ID id, const GfVec2f &size, ANCHOR_WindowFla
   PushStyleVar(ANCHOR_StyleVar_ChildRounding, style.FrameRounding);
   PushStyleVar(ANCHOR_StyleVar_ChildBorderSize, style.FrameBorderSize);
   PushStyleVar(ANCHOR_StyleVar_WindowPadding, style.FramePadding);
-  bool ret = BeginChild(id,
-                        size,
-                        true,
-                        ANCHOR_WindowFlags_NoMove | ANCHOR_WindowFlags_AlwaysUseWindowPadding |
-                          extra_flags);
+  bool ret = BeginChild(
+    id, size, true, ANCHOR_WindowFlags_NoMove | ANCHOR_WindowFlags_AlwaysUseWindowPadding | extra_flags);
   PopStyleVar(3);
   PopStyleColor();
   return ret;
@@ -5598,22 +5470,20 @@ static void CalcWindowContentSizes(ANCHOR_Window *window,
 
   content_size_current->data()[0] = (window->ContentSizeExplicit[0] != 0.0f) ?
                                       window->ContentSizeExplicit[0] :
-                                      IM_FLOOR(window->DC.CursorMaxPos[0] -
-                                               window->DC.CursorStartPos[0]);
+                                      IM_FLOOR(window->DC.CursorMaxPos[0] - window->DC.CursorStartPos[0]);
   content_size_current->data()[1] = (window->ContentSizeExplicit[1] != 0.0f) ?
                                       window->ContentSizeExplicit[1] :
-                                      IM_FLOOR(window->DC.CursorMaxPos[1] -
-                                               window->DC.CursorStartPos[1]);
+                                      IM_FLOOR(window->DC.CursorMaxPos[1] - window->DC.CursorStartPos[1]);
   content_size_ideal->data()[0] = (window->ContentSizeExplicit[0] != 0.0f) ?
                                     window->ContentSizeExplicit[0] :
-                                    IM_FLOOR(AnchorMax(window->DC.CursorMaxPos[0],
-                                                       window->DC.IdealMaxPos[0]) -
-                                             window->DC.CursorStartPos[0]);
+                                    IM_FLOOR(
+                                      AnchorMax(window->DC.CursorMaxPos[0], window->DC.IdealMaxPos[0]) -
+                                      window->DC.CursorStartPos[0]);
   content_size_ideal->data()[1] = (window->ContentSizeExplicit[1] != 0.0f) ?
                                     window->ContentSizeExplicit[1] :
-                                    IM_FLOOR(AnchorMax(window->DC.CursorMaxPos[1],
-                                                       window->DC.IdealMaxPos[1]) -
-                                             window->DC.CursorStartPos[1]);
+                                    IM_FLOOR(
+                                      AnchorMax(window->DC.CursorMaxPos[1], window->DC.IdealMaxPos[1]) -
+                                      window->DC.CursorStartPos[1]);
 }
 
 static GfVec2f CalcWindowAutoFitSize(ANCHOR_Window *window, const GfVec2f &size_contents)
@@ -5641,9 +5511,7 @@ static GfVec2f CalcWindowAutoFitSize(ANCHOR_Window *window, const GfVec2f &size_
     // of windows?
     GfVec2f avail_size = ANCHOR::GetMainViewport()->Size;
     GfVec2f size_auto_fit = ImClamp(
-      size_desired,
-      size_min,
-      AnchorMax(size_min, avail_size - style.DisplaySafeAreaPadding * 2.0f));
+      size_desired, size_min, AnchorMax(size_min, avail_size - style.DisplaySafeAreaPadding * 2.0f));
 
     // When the window cannot fit all contents (either because of constraints, either because
     // screen is too small), we are growing the size on the other axis to compensate for expected
@@ -5654,8 +5522,7 @@ static GfVec2f CalcWindowAutoFitSize(ANCHOR_Window *window, const GfVec2f &size_
                                   !(window->Flags & ANCHOR_WindowFlags_NoScrollbar) &&
                                   (window->Flags & ANCHOR_WindowFlags_HorizontalScrollbar)) ||
                                  (window->Flags & ANCHOR_WindowFlags_AlwaysHorizontalScrollbar);
-    bool will_have_scrollbar_y = (size_auto_fit_after_constraint[1] - size_pad[1] -
-                                      decoration_up_height <
+    bool will_have_scrollbar_y = (size_auto_fit_after_constraint[1] - size_pad[1] - decoration_up_height <
                                     size_contents[1] &&
                                   !(window->Flags & ANCHOR_WindowFlags_NoScrollbar)) ||
                                  (window->Flags & ANCHOR_WindowFlags_AlwaysVerticalScrollbar);
@@ -5731,10 +5598,7 @@ static const ANCHORResizeBorderDef resize_border_def[4] = {
   {GfVec2f(0, -1), GfVec2f(1, 1), GfVec2f(0, 1), IM_PI * 0.50f}   // Down
 };
 
-static ImRect GetResizeBorderRect(ANCHOR_Window *window,
-                                  int border_n,
-                                  float perp_padding,
-                                  float thickness)
+static ImRect GetResizeBorderRect(ANCHOR_Window *window, int border_n, float perp_padding, float thickness)
 {
   ImRect rect = window->Rect();
   if (thickness == 0.0f)
@@ -5812,8 +5676,7 @@ static bool ANCHOR::UpdateWindowManualResize(ANCHOR_Window *window,
   const float grip_draw_size = IM_FLOOR(
     AnchorMax(g.FontSize * 1.35f, window->WindowRounding + 1.0f + g.FontSize * 0.2f));
   const float grip_hover_inner_size = IM_FLOOR(grip_draw_size * 0.75f);
-  const float grip_hover_outer_size = g.IO.ConfigWindowsResizeFromEdges ? WINDOWS_HOVER_PADDING :
-                                                                          0.0f;
+  const float grip_hover_outer_size = g.IO.ConfigWindowsResizeFromEdges ? WINDOWS_HOVER_PADDING : 0.0f;
 
   GfVec2f pos_target(FLT_MAX, FLT_MAX);
   GfVec2f size_target(FLT_MAX, FLT_MAX);
@@ -5845,8 +5708,7 @@ static bool ANCHOR::UpdateWindowManualResize(ANCHOR_Window *window,
     // GetForegroundDrawList(window)->AddRect(resize_rect.Min, resize_rect.Max, ANCHOR_COL32(255,
     // 255, 0, 255));
     if (hovered || held)
-      g.MouseCursor = (resize_grip_n & 1) ? ANCHOR_MouseCursor_ResizeNESW :
-                                            ANCHOR_MouseCursor_ResizeNWSE;
+      g.MouseCursor = (resize_grip_n & 1) ? ANCHOR_MouseCursor_ResizeNESW : ANCHOR_MouseCursor_ResizeNWSE;
 
     if (held && g.IO.MouseDoubleClicked[0] && resize_grip_n == 0) {
       // Manual auto-fit when double-clicking
@@ -5862,14 +5724,13 @@ static bool ANCHOR::UpdateWindowManualResize(ANCHOR_Window *window,
                                   def.CornerPosN[1] == 1.0f ? visibility_rect.Min[1] : -FLT_MAX);
       GfVec2f clamp_max = GfVec2f(def.CornerPosN[0] == 0.0f ? visibility_rect.Max[0] : +FLT_MAX,
                                   def.CornerPosN[1] == 0.0f ? visibility_rect.Max[1] : +FLT_MAX);
-      GfVec2f corner_target =
-        g.IO.MousePos - g.ActiveIdClickOffset +
-        ImLerp(def.InnerDir * grip_hover_outer_size,
-               def.InnerDir * -grip_hover_inner_size,
-               def.CornerPosN);  // Corner of the window corresponding to our corner grip
+      GfVec2f corner_target = g.IO.MousePos - g.ActiveIdClickOffset +
+                              ImLerp(
+                                def.InnerDir * grip_hover_outer_size,
+                                def.InnerDir * -grip_hover_inner_size,
+                                def.CornerPosN);  // Corner of the window corresponding to our corner grip
       corner_target = ImClamp(corner_target, clamp_min, clamp_max);
-      CalcResizePosSizeFromAnyCorner(
-        window, corner_target, def.CornerPosN, &pos_target, &size_target);
+      CalcResizePosSizeFromAnyCorner(window, corner_target, def.CornerPosN, &pos_target, &size_target);
     }
 
     // Only lower-left grip is visible before hovering/activating
@@ -5880,20 +5741,17 @@ static bool ANCHOR::UpdateWindowManualResize(ANCHOR_Window *window,
   }
   for (int border_n = 0; border_n < resize_border_count; border_n++) {
     const ANCHORResizeBorderDef &def = resize_border_def[border_n];
-    const ANCHOR_Axis axis = (border_n == ANCHOR_Dir_Left || border_n == ANCHOR_Dir_Right) ?
-                               ANCHOR_Axis_X :
-                               ANCHOR_Axis_Y;
+    const ANCHOR_Axis axis = (border_n == ANCHOR_Dir_Left || border_n == ANCHOR_Dir_Right) ? ANCHOR_Axis_X :
+                                                                                             ANCHOR_Axis_Y;
 
     bool hovered, held;
-    ImRect border_rect = GetResizeBorderRect(
-      window, border_n, grip_hover_inner_size, WINDOWS_HOVER_PADDING);
+    ImRect border_rect = GetResizeBorderRect(window, border_n, grip_hover_inner_size, WINDOWS_HOVER_PADDING);
     ANCHOR_ID border_id = window->GetID(border_n + 4);  // == GetWindowResizeBorderID()
     ButtonBehavior(border_rect, border_id, &hovered, &held, ANCHOR_ButtonFlags_FlattenChildren);
     // GetForegroundDrawLists(window)->AddRect(border_rect.Min, border_rect.Max, ANCHOR_COL32(255,
     // 255, 0, 255));
     if ((hovered && g.HoveredIdTimer > WINDOWS_RESIZE_FROM_EDGES_FEEDBACK_TIMER) || held) {
-      g.MouseCursor = (axis == ANCHOR_Axis_X) ? ANCHOR_MouseCursor_ResizeEW :
-                                                ANCHOR_MouseCursor_ResizeNS;
+      g.MouseCursor = (axis == ANCHOR_Axis_X) ? ANCHOR_MouseCursor_ResizeEW : ANCHOR_MouseCursor_ResizeNS;
       if (held)
         *border_held = border_n;
     }
@@ -5903,8 +5761,7 @@ static bool ANCHOR::UpdateWindowManualResize(ANCHOR_Window *window,
       GfVec2f clamp_max(border_n == ANCHOR_Dir_Left ? visibility_rect.Max[0] : +FLT_MAX,
                         border_n == ANCHOR_Dir_Up ? visibility_rect.Max[1] : +FLT_MAX);
       GfVec2f border_target = window->Pos;
-      border_target[axis] = g.IO.MousePos[axis] - g.ActiveIdClickOffset[axis] +
-                            WINDOWS_HOVER_PADDING;
+      border_target[axis] = g.IO.MousePos[axis] - g.ActiveIdClickOffset[axis] + WINDOWS_HOVER_PADDING;
       border_target = ImClamp(border_target, clamp_min, clamp_max);
       CalcResizePosSizeFromAnyCorner(
         window, border_target, ImMin(def.SegmentN1, def.SegmentN2), &pos_target, &size_target);
@@ -5919,18 +5776,14 @@ static bool ANCHOR::UpdateWindowManualResize(ANCHOR_Window *window,
   if (g.NavWindowingTarget && g.NavWindowingTarget->RootWindow == window) {
     GfVec2f nav_resize_delta;
     if (g.NavInputSource == ANCHORInputSource_Keyboard && g.IO.KeyShift)
-      nav_resize_delta = GetNavInputAmount2d(ANCHOR_NavDirSourceFlags_Keyboard,
-                                             ANCHOR_InputReadMode_Down);
+      nav_resize_delta = GetNavInputAmount2d(ANCHOR_NavDirSourceFlags_Keyboard, ANCHOR_InputReadMode_Down);
     if (g.NavInputSource == ANCHORInputSource_Gamepad)
-      nav_resize_delta = GetNavInputAmount2d(ANCHOR_NavDirSourceFlags_PadDPad,
-                                             ANCHOR_InputReadMode_Down);
+      nav_resize_delta = GetNavInputAmount2d(ANCHOR_NavDirSourceFlags_PadDPad, ANCHOR_InputReadMode_Down);
     if (nav_resize_delta[0] != 0.0f || nav_resize_delta[1] != 0.0f) {
       const float NAV_RESIZE_SPEED = 600.0f;
-      nav_resize_delta *= ImFloor(
-        NAV_RESIZE_SPEED * g.IO.DeltaTime *
-        ImMin(g.IO.DisplayFramebufferScale[0], g.IO.DisplayFramebufferScale[1]));
-      nav_resize_delta = AnchorMax(nav_resize_delta,
-                                   visibility_rect.Min - window->Pos - window->Size);
+      nav_resize_delta *= ImFloor(NAV_RESIZE_SPEED * g.IO.DeltaTime *
+                                  ImMin(g.IO.DisplayFramebufferScale[0], g.IO.DisplayFramebufferScale[1]));
+      nav_resize_delta = AnchorMax(nav_resize_delta, visibility_rect.Min - window->Pos - window->Size);
       g.NavWindowingToggleLayer = false;
       g.NavDisableMouseHover = true;
       resize_grip_col[0] = GetColorU32(ANCHOR_Col_ResizeGripActive);
@@ -5969,30 +5822,25 @@ static void ANCHOR::RenderWindowOuterBorders(ANCHOR_Window *window)
   float rounding = window->WindowRounding;
   float border_size = window->WindowBorderSize;
   if (border_size > 0.0f && !(window->Flags & ANCHOR_WindowFlags_NoBackground))
-    window->DrawList->AddRect(window->Pos,
-                              window->Pos + window->Size,
-                              GetColorU32(ANCHOR_Col_Border),
-                              rounding,
-                              0,
-                              border_size);
+    window->DrawList->AddRect(
+      window->Pos, window->Pos + window->Size, GetColorU32(ANCHOR_Col_Border), rounding, 0, border_size);
 
   int border_held = window->ResizeBorderHeld;
   if (border_held != -1) {
     const ANCHORResizeBorderDef &def = resize_border_def[border_held];
     ImRect border_r = GetResizeBorderRect(window, border_held, rounding, 0.0f);
-    window->DrawList->PathArcTo(ImLerp(border_r.Min, border_r.Max, def.SegmentN1) +
-                                  GfVec2f(0.5f, 0.5f) + def.InnerDir * rounding,
+    window->DrawList->PathArcTo(ImLerp(border_r.Min, border_r.Max, def.SegmentN1) + GfVec2f(0.5f, 0.5f) +
+                                  def.InnerDir * rounding,
                                 rounding,
                                 def.OuterAngle - IM_PI * 0.25f,
                                 def.OuterAngle);
-    window->DrawList->PathArcTo(ImLerp(border_r.Min, border_r.Max, def.SegmentN2) +
-                                  GfVec2f(0.5f, 0.5f) + def.InnerDir * rounding,
+    window->DrawList->PathArcTo(ImLerp(border_r.Min, border_r.Max, def.SegmentN2) + GfVec2f(0.5f, 0.5f) +
+                                  def.InnerDir * rounding,
                                 rounding,
                                 def.OuterAngle,
                                 def.OuterAngle + IM_PI * 0.25f);
-    window->DrawList->PathStroke(GetColorU32(ANCHOR_Col_SeparatorActive),
-                                 0,
-                                 AnchorMax(2.0f, border_size));  // Thicker than usual
+    window->DrawList->PathStroke(
+      GetColorU32(ANCHOR_Col_SeparatorActive), 0, AnchorMax(2.0f, border_size));  // Thicker than usual
   }
   if (g.Style.FrameBorderSize > 0 && !(window->Flags & ANCHOR_WindowFlags_NoTitleBar)) {
     float y = window->Pos[1] + window->TitleBarHeight() - 1;
@@ -6046,8 +5894,7 @@ void ANCHOR::RenderWindowDecorations(ANCHOR_Window *window,
         override_alpha = true;
       }
       if (override_alpha)
-        bg_col = (bg_col & ~ANCHOR_COL32_A_MASK) |
-                 (IM_F32_TO_INT8_SAT(alpha) << ANCHOR_COL32_A_SHIFT);
+        bg_col = (bg_col & ~ANCHOR_COL32_A_MASK) | (IM_F32_TO_INT8_SAT(alpha) << ANCHOR_COL32_A_SHIFT);
       window->DrawList->AddRectFilled(
         window->Pos + GfVec2f(0, window->TitleBarHeight()),
         window->Pos + window->Size,
@@ -6060,11 +5907,8 @@ void ANCHOR::RenderWindowDecorations(ANCHOR_Window *window,
     if (!(flags & ANCHOR_WindowFlags_NoTitleBar)) {
       AnchorU32 title_bar_col = GetColorU32(title_bar_is_highlight ? ANCHOR_Col_TitleBgActive :
                                                                      ANCHOR_Col_TitleBg);
-      window->DrawList->AddRectFilled(title_bar_rect.Min,
-                                      title_bar_rect.Max,
-                                      title_bar_col,
-                                      window_rounding,
-                                      ImDrawFlags_RoundCornersTop);
+      window->DrawList->AddRectFilled(
+        title_bar_rect.Min, title_bar_rect.Max, title_bar_col, window_rounding, ImDrawFlags_RoundCornersTop);
     }
 
     // Menu bar
@@ -6076,8 +5920,7 @@ void ANCHOR::RenderWindowDecorations(ANCHOR_Window *window,
       window->DrawList->AddRectFilled(menu_bar_rect.Min + GfVec2f(window_border_size, 0),
                                       menu_bar_rect.Max - GfVec2f(window_border_size, 0),
                                       GetColorU32(ANCHOR_Col_MenuBarBg),
-                                      (flags & ANCHOR_WindowFlags_NoTitleBar) ? window_rounding :
-                                                                                0.0f,
+                                      (flags & ANCHOR_WindowFlags_NoTitleBar) ? window_rounding : 0.0f,
                                       ImDrawFlags_RoundCornersTop);
       if (style.FrameBorderSize > 0.0f && menu_bar_rect.Max[1] < window->Pos[1] + window->Size[1])
         window->DrawList->AddLine(menu_bar_rect.GetBL(),
@@ -6098,22 +5941,20 @@ void ANCHOR::RenderWindowDecorations(ANCHOR_Window *window,
         const ANCHORResizeGripDef &grip = resize_grip_def[resize_grip_n];
         const GfVec2f corner = ImLerp(window->Pos, window->Pos + window->Size, grip.CornerPosN);
         /** todo::check_math */
-        window->DrawList->PathLineTo(GfVec2f(
-          corner[0] + grip.InnerDir[0] * ((resize_grip_n & 1) ?
-                                            GfVec2f(window_border_size, resize_grip_draw_size)[0] :
-                                            GfVec2f(resize_grip_draw_size, window_border_size)[0]),
-          corner[1] +
-            grip.InnerDir[1] * ((resize_grip_n & 1) ?
-                                  GfVec2f(window_border_size, resize_grip_draw_size)[1] :
-                                  GfVec2f(resize_grip_draw_size, window_border_size)[1])));
-        window->DrawList->PathLineTo(GfVec2f(
-          corner[0] + grip.InnerDir[0] * ((resize_grip_n & 1) ?
-                                            GfVec2f(resize_grip_draw_size, window_border_size)[0] :
-                                            GfVec2f(window_border_size, resize_grip_draw_size)[0]),
-          corner[1] +
-            grip.InnerDir[1] * ((resize_grip_n & 1) ?
-                                  GfVec2f(resize_grip_draw_size, window_border_size)[1] :
-                                  GfVec2f(window_border_size, resize_grip_draw_size)[1])));
+        window->DrawList->PathLineTo(
+          GfVec2f(corner[0] + grip.InnerDir[0] * ((resize_grip_n & 1) ?
+                                                    GfVec2f(window_border_size, resize_grip_draw_size)[0] :
+                                                    GfVec2f(resize_grip_draw_size, window_border_size)[0]),
+                  corner[1] + grip.InnerDir[1] * ((resize_grip_n & 1) ?
+                                                    GfVec2f(window_border_size, resize_grip_draw_size)[1] :
+                                                    GfVec2f(resize_grip_draw_size, window_border_size)[1])));
+        window->DrawList->PathLineTo(
+          GfVec2f(corner[0] + grip.InnerDir[0] * ((resize_grip_n & 1) ?
+                                                    GfVec2f(resize_grip_draw_size, window_border_size)[0] :
+                                                    GfVec2f(window_border_size, resize_grip_draw_size)[0]),
+                  corner[1] + grip.InnerDir[1] * ((resize_grip_n & 1) ?
+                                                    GfVec2f(resize_grip_draw_size, window_border_size)[1] :
+                                                    GfVec2f(window_border_size, resize_grip_draw_size)[1])));
         window->DrawList->PathArcToFast(
           GfVec2f(corner[0] + grip.InnerDir[0] * (window_rounding + window_border_size),
                   corner[1] + grip.InnerDir[1] * (window_rounding + window_border_size)),
@@ -6158,8 +5999,7 @@ void ANCHOR::RenderWindowTitleBarContents(ANCHOR_Window *window,
   GfVec2f collapse_button_pos;
   if (has_close_button) {
     pad_r += button_sz;
-    close_button_pos = GfVec2f(title_bar_rect.Max[0] - pad_r - style.FramePadding[0],
-                               title_bar_rect.Min[1]);
+    close_button_pos = GfVec2f(title_bar_rect.Max[0] - pad_r - style.FramePadding[0], title_bar_rect.Min[1]);
   }
   if (has_collapse_button && style.WindowMenuButtonPosition == ANCHOR_Dir_Right) {
     pad_r += button_sz;
@@ -6223,8 +6063,7 @@ void ANCHOR::RenderWindowTitleBarContents(ANCHOR_Window *window,
   // if (g.IO.KeyShift) window->DrawList->AddRect(layout_r.Min, layout_r.Max, ANCHOR_COL32(255,
   // 128, 0, 255)); // [DEBUG] if (g.IO.KeyCtrl) window->DrawList->AddRect(clip_r.Min, clip_r.Max,
   // ANCHOR_COL32(255, 128, 0, 255)); // [DEBUG]
-  RenderTextClipped(
-    layout_r.Min, layout_r.Max, name, NULL, &text_size, style.WindowTitleAlign, &clip_r);
+  RenderTextClipped(layout_r.Min, layout_r.Max, name, NULL, &text_size, style.WindowTitleAlign, &clip_r);
   if (flags & ANCHOR_WindowFlags_UnsavedDocument) {
     GfVec2f marker_pos = GfVec2f(AnchorMax(layout_r.Min[0],
                                            layout_r.Min[0] + (layout_r.GetWidth() - text_size[0]) *
@@ -6249,8 +6088,7 @@ void ANCHOR::UpdateWindowParentAndRootLinks(ANCHOR_Window *window,
 {
   window->ParentWindow = parent_window;
   window->RootWindow = window->RootWindowForTitleBarHighlight = window->RootWindowForNav = window;
-  if (parent_window && (flags & ANCHOR_WindowFlags_ChildWindow) &&
-      !(flags & ANCHOR_WindowFlags_Tooltip))
+  if (parent_window && (flags & ANCHOR_WindowFlags_ChildWindow) && !(flags & ANCHOR_WindowFlags_Tooltip))
     window->RootWindow = parent_window->RootWindow;
   if (parent_window && !(flags & ANCHOR_WindowFlags_Modal) &&
       (flags & (ANCHOR_WindowFlags_ChildWindow | ANCHOR_WindowFlags_Popup)))
@@ -6278,11 +6116,10 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
 {
   ANCHOR_Context &g = *G_CTX;
   const ANCHOR_Style &style = g.Style;
-  ANCHOR_ASSERT(name != NULL && name[0] != '\0');  // Window name required
-  ANCHOR_ASSERT(g.WithinFrameScope);               // Forgot to call ANCHOR::NewFrame()
-  ANCHOR_ASSERT(g.FrameCountEnded !=
-                g.FrameCount);  // Called ANCHOR::Render() or ANCHOR::EndFrame() and haven't called
-                                // ANCHOR::NewFrame() again yet
+  ANCHOR_ASSERT(name != NULL && name[0] != '\0');    // Window name required
+  ANCHOR_ASSERT(g.WithinFrameScope);                 // Forgot to call ANCHOR::NewFrame()
+  ANCHOR_ASSERT(g.FrameCountEnded != g.FrameCount);  // Called ANCHOR::Render() or ANCHOR::EndFrame() and
+                                                     // haven't called ANCHOR::NewFrame() again yet
 
   // Find or create
   ANCHOR_Window *window = FindWindowByName(name);
@@ -6299,14 +6136,12 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
 
   const int current_frame = g.FrameCount;
   const bool first_begin_of_the_frame = (window->LastFrameActive != current_frame);
-  window->IsFallbackWindow = (g.CurrentWindowStack.Size == 0 &&
-                              g.WithinFrameScopeWithImplicitWindow);
+  window->IsFallbackWindow = (g.CurrentWindowStack.Size == 0 && g.WithinFrameScopeWithImplicitWindow);
 
   // Update the Appearing flag
   bool window_just_activated_by_user = (window->LastFrameActive <
-                                        current_frame -
-                                          1);  // Not using !WasActive because the implicit
-                                               // "Debug" window would always toggle off->on
+                                        current_frame - 1);  // Not using !WasActive because the implicit
+                                                             // "Debug" window would always toggle off->on
   if (flags & ANCHOR_WindowFlags_Popup) {
     ANCHOR_PopupData &popup_ref = g.OpenPopupStack[g.BeginPopupStack.Size];
     window_just_activated_by_user |=
@@ -6332,12 +6167,9 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
 
   // Parent window is latched only on the first call to Begin() of the frame, so further
   // append-calls can be done from a different window stack
-  ANCHOR_Window *parent_window_in_stack = g.CurrentWindowStack.empty() ?
-                                            NULL :
-                                            g.CurrentWindowStack.back();
+  ANCHOR_Window *parent_window_in_stack = g.CurrentWindowStack.empty() ? NULL : g.CurrentWindowStack.back();
   ANCHOR_Window *parent_window = first_begin_of_the_frame ?
-                                   ((flags &
-                                     (ANCHOR_WindowFlags_ChildWindow | ANCHOR_WindowFlags_Popup)) ?
+                                   ((flags & (ANCHOR_WindowFlags_ChildWindow | ANCHOR_WindowFlags_Popup)) ?
                                       parent_window_in_stack :
                                       NULL) :
                                    window->ParentWindow;
@@ -6386,11 +6218,9 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     }
   }
   if (g.NextWindowData.Flags & ANCHOR_NextWindowDataFlags_HasSize) {
-    window_size_x_set_by_api = (window->SetWindowSizeAllowFlags & g.NextWindowData.SizeCond) !=
-                                 0 &&
+    window_size_x_set_by_api = (window->SetWindowSizeAllowFlags & g.NextWindowData.SizeCond) != 0 &&
                                (g.NextWindowData.SizeVal[0] > 0.0f);
-    window_size_y_set_by_api = (window->SetWindowSizeAllowFlags & g.NextWindowData.SizeCond) !=
-                                 0 &&
+    window_size_y_set_by_api = (window->SetWindowSizeAllowFlags & g.NextWindowData.SizeCond) != 0 &&
                                (g.NextWindowData.SizeVal[1] > 0.0f);
     SetWindowSize(window, g.NextWindowData.SizeVal, g.NextWindowData.SizeCond);
   }
@@ -6438,11 +6268,10 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     // so the ID would stay unchanged). The title bar always display the 'name' parameter, so we
     // only update the string storage if it needs to be visible to the end-user elsewhere.
     bool window_title_visible_elsewhere = false;
-    if (g.NavWindowingListWindow != NULL && (window->Flags & ANCHOR_WindowFlags_NoNavFocus) ==
-                                              0)  // Window titles visible when using CTRL+TAB
+    if (g.NavWindowingListWindow != NULL &&
+        (window->Flags & ANCHOR_WindowFlags_NoNavFocus) == 0)  // Window titles visible when using CTRL+TAB
       window_title_visible_elsewhere = true;
-    if (window_title_visible_elsewhere && !window_just_created &&
-        strcmp(name, window->Name) != 0) {
+    if (window_title_visible_elsewhere && !window_just_created && strcmp(name, window->Name) != 0) {
       size_t buf_len = (size_t)window->NameBufLen;
       window->Name = ImStrdupcpy(window->Name, &buf_len, name);
       window->NameBufLen = (int)buf_len;
@@ -6451,8 +6280,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     // UPDATE CONTENTS SIZE, UPDATE HIDDEN STATUS
 
     // Update contents size from last frame for auto-fitting (or use explicit size)
-    const bool window_just_appearing_after_hidden_for_resize =
-      (window->HiddenFramesCannotSkipItems > 0);
+    const bool window_just_appearing_after_hidden_for_resize = (window->HiddenFramesCannotSkipItems > 0);
     CalcWindowContentSizes(window, &window->ContentSize, &window->ContentSizeIdeal);
     if (window->HiddenFramesCanSkipItems > 0)
       window->HiddenFramesCanSkipItems--;
@@ -6491,8 +6319,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     if (flags & ANCHOR_WindowFlags_ChildWindow)
       window->WindowBorderSize = style.ChildBorderSize;
     else
-      window->WindowBorderSize = ((flags &
-                                   (ANCHOR_WindowFlags_Popup | ANCHOR_WindowFlags_Tooltip)) &&
+      window->WindowBorderSize = ((flags & (ANCHOR_WindowFlags_Popup | ANCHOR_WindowFlags_Tooltip)) &&
                                   !(flags & ANCHOR_WindowFlags_Modal)) ?
                                    style.PopupBorderSize :
                                    style.WindowBorderSize;
@@ -6500,13 +6327,12 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     if ((flags & ANCHOR_WindowFlags_ChildWindow) &&
         !(flags & (ANCHOR_WindowFlags_AlwaysUseWindowPadding | ANCHOR_WindowFlags_Popup)) &&
         window->WindowBorderSize == 0.0f)
-      window->WindowPadding = GfVec2f(
-        0.0f, (flags & ANCHOR_WindowFlags_MenuBar) ? style.WindowPadding[1] : 0.0f);
+      window->WindowPadding = GfVec2f(0.0f,
+                                      (flags & ANCHOR_WindowFlags_MenuBar) ? style.WindowPadding[1] : 0.0f);
 
     // Lock menu offset so size calculation can use it as menu-bar windows need a minimum size.
-    window->DC.MenuBarOffset[0] = AnchorMax(
-      AnchorMax(window->WindowPadding[0], style.ItemSpacing[0]),
-      g.NextWindowData.MenuBarOffsetMinVal[0]);
+    window->DC.MenuBarOffset[0] = AnchorMax(AnchorMax(window->WindowPadding[0], style.ItemSpacing[0]),
+                                            g.NextWindowData.MenuBarOffsetMinVal[0]);
     window->DC.MenuBarOffset[1] = g.NextWindowData.MenuBarOffsetMinVal[1];
 
     // Collapse window by double-clicking on title bar
@@ -6517,8 +6343,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
       // legacy reason, could be fixed), so verify that we don't have items over the title bar.
       ImRect title_bar_rect = window->TitleBarRect();
       if (g.HoveredWindow == window && g.HoveredId == 0 && g.HoveredIdPreviousFrame == 0 &&
-          IsMouseHoveringRect(title_bar_rect.Min, title_bar_rect.Max) &&
-          g.IO.MouseDoubleClicked[0])
+          IsMouseHoveringRect(title_bar_rect.Min, title_bar_rect.Max) && g.IO.MouseDoubleClicked[0])
         window->WantCollapseToggle = true;
       if (window->WantCollapseToggle) {
         window->Collapsed = !window->Collapsed;
@@ -6553,15 +6378,13 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
       // We still process initial auto-fit on collapsed windows to get a window width, but
       // otherwise don't honor ANCHOR_WindowFlags_AlwaysAutoResize when collapsed.
       if (!window_size_x_set_by_api && window->AutoFitFramesX > 0) {
-        window->SizeFull[0] = window->AutoFitOnlyGrows ?
-                                AnchorMax(window->SizeFull[0], size_auto_fit[0]) :
-                                size_auto_fit[0];
+        window->SizeFull[0] = window->AutoFitOnlyGrows ? AnchorMax(window->SizeFull[0], size_auto_fit[0]) :
+                                                         size_auto_fit[0];
         use_current_size_for_scrollbar_x = true;
       }
       if (!window_size_y_set_by_api && window->AutoFitFramesY > 0) {
-        window->SizeFull[1] = window->AutoFitOnlyGrows ?
-                                AnchorMax(window->SizeFull[1], size_auto_fit[1]) :
-                                size_auto_fit[1];
+        window->SizeFull[1] = window->AutoFitOnlyGrows ? AnchorMax(window->SizeFull[1], size_auto_fit[1]) :
+                                                         size_auto_fit[1];
         use_current_size_for_scrollbar_y = true;
       }
       if (!window->Collapsed)
@@ -6592,8 +6415,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
       ANCHOR_ASSERT(parent_window && parent_window->Active);
       window->BeginOrderWithinParent = (short)parent_window->DC.ChildWindows.Size;
       parent_window->DC.ChildWindows.push_back(window);
-      if (!(flags & ANCHOR_WindowFlags_Popup) && !window_pos_set_by_api &&
-          !window_is_child_tooltip)
+      if (!(flags & ANCHOR_WindowFlags_Popup) && !window_pos_set_by_api && !window_is_child_tooltip)
         window->Pos = parent_window->DC.CursorPos;
     }
 
@@ -6602,17 +6424,15 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     if (window_pos_with_pivot)
       /** todo::check_math */
       // Position given a pivot (e.g. for centering)
-      SetWindowPos(
-        window,
-        GfVec2f(window->SetWindowPosVal[0] - window->Size[0] * window->SetWindowPosPivot[0],
-                window->SetWindowPosVal[1] - window->Size[1] * window->SetWindowPosPivot[1]));
+      SetWindowPos(window,
+                   GfVec2f(window->SetWindowPosVal[0] - window->Size[0] * window->SetWindowPosPivot[0],
+                           window->SetWindowPosVal[1] - window->Size[1] * window->SetWindowPosPivot[1]));
     else if ((flags & ANCHOR_WindowFlags_ChildMenu) != 0)
       window->Pos = FindBestWindowPosForPopup(window);
     else if ((flags & ANCHOR_WindowFlags_Popup) != 0 && !window_pos_set_by_api &&
              window_just_appearing_after_hidden_for_resize)
       window->Pos = FindBestWindowPosForPopup(window);
-    else if ((flags & ANCHOR_WindowFlags_Tooltip) != 0 && !window_pos_set_by_api &&
-             !window_is_child_tooltip)
+    else if ((flags & ANCHOR_WindowFlags_Tooltip) != 0 && !window_pos_set_by_api && !window_is_child_tooltip)
       window->Pos = FindBestWindowPosForPopup(window);
 
     // Calculate the range of allowed position for that window (to be movable and visible past safe
@@ -6621,16 +6441,15 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     ANCHORViewportP *viewport = (ANCHORViewportP *)(void *)GetMainViewport();
     ImRect viewport_rect(viewport->GetMainRect());
     ImRect viewport_work_rect(viewport->GetWorkRect());
-    GfVec2f visibility_padding = AnchorMax(style.DisplayWindowPadding,
-                                           style.DisplaySafeAreaPadding);
+    GfVec2f visibility_padding = AnchorMax(style.DisplayWindowPadding, style.DisplaySafeAreaPadding);
     ImRect visibility_rect(viewport_work_rect.Min + visibility_padding,
                            viewport_work_rect.Max - visibility_padding);
 
     // Clamp position/size so window stays visible within its viewport or monitor
     // Ignore zero-sized display explicitly to avoid losing positions if a window manager reports
     // zero-sized window when initializing or minimizing.
-    if (!window_pos_set_by_api && !(flags & ANCHOR_WindowFlags_ChildWindow) &&
-        window->AutoFitFramesX <= 0 && window->AutoFitFramesY <= 0)
+    if (!window_pos_set_by_api && !(flags & ANCHOR_WindowFlags_ChildWindow) && window->AutoFitFramesX <= 0 &&
+        window->AutoFitFramesY <= 0)
       if (viewport_rect.GetWidth() > 0.0f && viewport_rect.GetHeight() > 0.0f)
         ClampWindowRect(window, visibility_rect);
     window->Pos = ImFloor(window->Pos);
@@ -6638,8 +6457,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     // Lock window rounding for the frame (so that altering them doesn't cause inconsistencies)
     // Large values tend to lead to variety of artifacts and are not recommended.
     window->WindowRounding = (flags & ANCHOR_WindowFlags_ChildWindow) ? style.ChildRounding :
-                             ((flags & ANCHOR_WindowFlags_Popup) &&
-                              !(flags & ANCHOR_WindowFlags_Modal)) ?
+                             ((flags & ANCHOR_WindowFlags_Popup) && !(flags & ANCHOR_WindowFlags_Modal)) ?
                                                                         style.PopupRounding :
                                                                         style.WindowRounding;
 
@@ -6669,12 +6487,8 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     const float resize_grip_draw_size = IM_FLOOR(
       AnchorMax(g.FontSize * 1.10f, window->WindowRounding + 1.0f + g.FontSize * 0.2f));
     if (!window->Collapsed)
-      if (UpdateWindowManualResize(window,
-                                   size_auto_fit,
-                                   &border_held,
-                                   resize_grip_count,
-                                   &resize_grip_col[0],
-                                   visibility_rect))
+      if (UpdateWindowManualResize(
+            window, size_auto_fit, &border_held, resize_grip_count, &resize_grip_col[0], visibility_rect))
         use_current_size_for_scrollbar_x = use_current_size_for_scrollbar_y = true;
     window->ResizeBorderHeld = (signed char)border_held;
 
@@ -6692,12 +6506,10 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
       GfVec2f needed_size_from_last_frame = window_just_created ?
                                               GfVec2f(0, 0) :
                                               window->ContentSize + window->WindowPadding * 2.0f;
-      float size_x_for_scrollbars = use_current_size_for_scrollbar_x ?
-                                      avail_size_from_current_frame[0] :
-                                      avail_size_from_last_frame[0];
-      float size_y_for_scrollbars = use_current_size_for_scrollbar_y ?
-                                      avail_size_from_current_frame[1] :
-                                      avail_size_from_last_frame[1];
+      float size_x_for_scrollbars = use_current_size_for_scrollbar_x ? avail_size_from_current_frame[0] :
+                                                                       avail_size_from_last_frame[0];
+      float size_y_for_scrollbars = use_current_size_for_scrollbar_y ? avail_size_from_current_frame[1] :
+                                                                       avail_size_from_last_frame[1];
       // bool scrollbar_y_from_last_frame = window->ScrollbarY; // FIXME: May want to use that in
       // the ScrollbarX expression? How many pros vs cons?
       window->ScrollbarY = (flags & ANCHOR_WindowFlags_AlwaysVerticalScrollbar) ||
@@ -6705,8 +6517,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
                             !(flags & ANCHOR_WindowFlags_NoScrollbar));
       window->ScrollbarX = (flags & ANCHOR_WindowFlags_AlwaysHorizontalScrollbar) ||
                            ((needed_size_from_last_frame[0] >
-                             size_x_for_scrollbars -
-                               (window->ScrollbarY ? style.ScrollbarSize : 0.0f)) &&
+                             size_x_for_scrollbars - (window->ScrollbarY ? style.ScrollbarSize : 0.0f)) &&
                             !(flags & ANCHOR_WindowFlags_NoScrollbar) &&
                             (flags & ANCHOR_WindowFlags_HorizontalScrollbar));
       if (window->ScrollbarX && !window->ScrollbarY)
@@ -6765,8 +6576,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     window->InnerClipRect.Max[0] = ImFloor(
       0.5f + window->InnerRect.Max[0] -
       AnchorMax(ImFloor(window->WindowPadding[0] * 0.5f), window->WindowBorderSize));
-    window->InnerClipRect.Max[1] = ImFloor(0.5f + window->InnerRect.Max[1] -
-                                           window->WindowBorderSize);
+    window->InnerClipRect.Max[1] = ImFloor(0.5f + window->InnerRect.Max[1] - window->WindowBorderSize);
     window->InnerClipRect.ClipWithFull(host_rect);
 
     // Default item width. Make it proportional to window size if window manually resizes
@@ -6782,12 +6592,10 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     // The value of ScrollMax are ahead from ScrollbarX/ScrollbarY which is intentionally using
     // InnerRect from previous rect in order to accommodate for right/bottom aligned items without
     // creating a scrollbar.
-    window->ScrollMax[0] = AnchorMax(0.0f,
-                                     window->ContentSize[0] + window->WindowPadding[0] * 2.0f -
-                                       window->InnerRect.GetWidth());
-    window->ScrollMax[1] = AnchorMax(0.0f,
-                                     window->ContentSize[1] + window->WindowPadding[1] * 2.0f -
-                                       window->InnerRect.GetHeight());
+    window->ScrollMax[0] = AnchorMax(
+      0.0f, window->ContentSize[0] + window->WindowPadding[0] * 2.0f - window->InnerRect.GetWidth());
+    window->ScrollMax[1] = AnchorMax(
+      0.0f, window->ContentSize[1] + window->WindowPadding[1] * 2.0f - window->InnerRect.GetHeight());
 
     // Apply scrolling
     window->Scroll = CalcNextScrollFromScrollTargetAndClamp(window);
@@ -6796,21 +6604,18 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     // DRAWING
 
     // Setup draw list and outer clipping rectangle
-    ANCHOR_ASSERT(window->DrawList->CmdBuffer.Size == 1 &&
-                  window->DrawList->CmdBuffer[0].ElemCount == 0);
+    ANCHOR_ASSERT(window->DrawList->CmdBuffer.Size == 1 && window->DrawList->CmdBuffer[0].ElemCount == 0);
     window->DrawList->PushTextureID(g.Font->ContainerAtlas->TexID);
     PushClipRect(host_rect.Min, host_rect.Max, false);
 
     // Draw modal window background (darkens what is behind them, all viewports)
-    const bool dim_bg_for_modal = (flags & ANCHOR_WindowFlags_Modal) &&
-                                  window == GetTopMostPopupModal() &&
+    const bool dim_bg_for_modal = (flags & ANCHOR_WindowFlags_Modal) && window == GetTopMostPopupModal() &&
                                   window->HiddenFramesCannotSkipItems <= 0;
     const bool dim_bg_for_window_list = g.NavWindowingTargetAnim &&
                                         (window == g.NavWindowingTargetAnim->RootWindow);
     if (dim_bg_for_modal || dim_bg_for_window_list) {
-      const AnchorU32 dim_bg_col = GetColorU32(dim_bg_for_modal ? ANCHOR_Col_ModalWindowDimBg :
-                                                                  ANCHOR_Col_NavWindowingDimBg,
-                                               g.DimBgRatio);
+      const AnchorU32 dim_bg_col = GetColorU32(
+        dim_bg_for_modal ? ANCHOR_Col_ModalWindowDimBg : ANCHOR_Col_NavWindowingDimBg, g.DimBgRatio);
       window->DrawList->AddRectFilled(viewport_rect.Min, viewport_rect.Max, dim_bg_col);
     }
 
@@ -6818,8 +6623,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     if (dim_bg_for_window_list && window == g.NavWindowingTargetAnim) {
       ImRect bb = window->Rect();
       bb.Expand(g.FontSize);
-      if (!bb.Contains(
-            viewport_rect))  // Avoid drawing if the window covers all the viewport anyway
+      if (!bb.Contains(viewport_rect))  // Avoid drawing if the window covers all the viewport anyway
         window->DrawList->AddRectFilled(
           bb.Min,
           bb.Max,
@@ -6839,15 +6643,13 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
       bool render_decorations_in_parent = false;
       if ((flags & ANCHOR_WindowFlags_ChildWindow) && !(flags & ANCHOR_WindowFlags_Popup) &&
           !window_is_child_tooltip)
-        if (window->DrawList->CmdBuffer.back().ElemCount == 0 &&
-            parent_window->DrawList->VtxBuffer.Size > 0)
+        if (window->DrawList->CmdBuffer.back().ElemCount == 0 && parent_window->DrawList->VtxBuffer.Size > 0)
           render_decorations_in_parent = true;
       if (render_decorations_in_parent)
         window->DrawList = parent_window->DrawList;
 
       // Handle title bar, scrollbar, resize grips and resize borders
-      const ANCHOR_Window *window_to_highlight = g.NavWindowingTarget ? g.NavWindowingTarget :
-                                                                        g.NavWindow;
+      const ANCHOR_Window *window_to_highlight = g.NavWindowingTarget ? g.NavWindowingTarget : g.NavWindow;
       const bool title_bar_is_highlight = want_focus ||
                                           (window_to_highlight &&
                                            window->RootWindowForTitleBarHighlight ==
@@ -6868,19 +6670,17 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
       float rounding = AnchorMax(window->WindowRounding, g.Style.WindowRounding);
       ImRect bb = window->Rect();
       bb.Expand(g.FontSize);
-      if (bb.Contains(
-            viewport_rect))  // If a window fits the entire viewport, adjust its highlight inward
+      if (bb.Contains(viewport_rect))  // If a window fits the entire viewport, adjust its highlight inward
       {
         bb.Expand(-g.FontSize - 1.0f);
         rounding = window->WindowRounding;
       }
-      window->DrawList->AddRect(
-        bb.Min,
-        bb.Max,
-        GetColorU32(ANCHOR_Col_NavWindowingHighlight, g.NavWindowingHighlightAlpha),
-        rounding,
-        0,
-        3.0f);
+      window->DrawList->AddRect(bb.Min,
+                                bb.Max,
+                                GetColorU32(ANCHOR_Col_NavWindowingHighlight, g.NavWindowingHighlightAlpha),
+                                rounding,
+                                0,
+                                3.0f);
     }
 
     // UPDATE RECTANGLES (2- THOSE AFFECTED BY SCROLLING)
@@ -6902,14 +6702,11 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
                                       window->ContentSizeExplicit[1] :
                                       AnchorMax(allow_scrollbar_y ? window->ContentSize[1] : 0.0f,
                                                 window->Size[1] - window->WindowPadding[1] * 2.0f -
-                                                  decoration_up_height -
-                                                  window->ScrollbarSizes[1]));
-    window->WorkRect.Min[0] = ImFloor(
-      window->InnerRect.Min[0] - window->Scroll[0] +
-      AnchorMax(window->WindowPadding[0], window->WindowBorderSize));
-    window->WorkRect.Min[1] = ImFloor(
-      window->InnerRect.Min[1] - window->Scroll[1] +
-      AnchorMax(window->WindowPadding[1], window->WindowBorderSize));
+                                                  decoration_up_height - window->ScrollbarSizes[1]));
+    window->WorkRect.Min[0] = ImFloor(window->InnerRect.Min[0] - window->Scroll[0] +
+                                      AnchorMax(window->WindowPadding[0], window->WindowBorderSize));
+    window->WorkRect.Min[1] = ImFloor(window->InnerRect.Min[1] - window->Scroll[1] +
+                                      AnchorMax(window->WindowPadding[1], window->WindowBorderSize));
     window->WorkRect.Max[0] = window->WorkRect.Min[0] + work_rect_size_x;
     window->WorkRect.Max[1] = window->WorkRect.Min[1] + work_rect_size_y;
     window->ParentWorkRect = window->WorkRect;
@@ -6918,10 +6715,9 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     // FIXME-OBSOLETE: window->ContentRegionRect.Max is currently very misleading / partly faulty,
     // but some BeginChild() patterns relies on it. Used by:
     // - Mouse wheel scrolling + many other things
-    window->ContentRegionRect.Min[0] = window->Pos[0] - window->Scroll[0] +
-                                       window->WindowPadding[0];
-    window->ContentRegionRect.Min[1] = window->Pos[1] - window->Scroll[1] +
-                                       window->WindowPadding[1] + decoration_up_height;
+    window->ContentRegionRect.Min[0] = window->Pos[0] - window->Scroll[0] + window->WindowPadding[0];
+    window->ContentRegionRect.Min[1] = window->Pos[1] - window->Scroll[1] + window->WindowPadding[1] +
+                                       decoration_up_height;
     window->ContentRegionRect.Max[0] = window->ContentRegionRect.Min[0] +
                                        (window->ContentSizeExplicit[0] != 0.0f ?
                                           window->ContentSizeExplicit[0] :
@@ -6942,8 +6738,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     window->DC.ColumnsOffset.x = 0.0f;
     window->DC.CursorStartPos = window->Pos +
                                 GfVec2f(window->DC.Indent.x + window->DC.ColumnsOffset.x,
-                                        decoration_up_height + window->WindowPadding[1] -
-                                          window->Scroll[1]);
+                                        decoration_up_height + window->WindowPadding[1] - window->Scroll[1]);
     window->DC.CursorPos = window->DC.CursorStartPos;
     window->DC.CursorPosPrevLine = window->DC.CursorPos;
     window->DC.CursorMaxPos = window->DC.CursorStartPos;
@@ -6965,8 +6760,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     window->DC.StateStorage = &window->StateStorage;
     window->DC.CurrentColumns = NULL;
     window->DC.LayoutType = ANCHOR_LayoutType_Vertical;
-    window->DC.ParentLayoutType = parent_window ? parent_window->DC.LayoutType :
-                                                  ANCHOR_LayoutType_Vertical;
+    window->DC.ParentLayoutType = parent_window ? parent_window->DC.LayoutType : ANCHOR_LayoutType_Vertical;
     window->DC.FocusCounterRegular = window->DC.FocusCounterTabStop = -1;
 
     window->DC.ItemWidth = window->ItemWidthDefault;
@@ -7060,11 +6854,9 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
             window->HiddenFramesCanSkipItems = 1;
 
       // Hide along with parent or if parent is collapsed
-      if (parent_window &&
-          (parent_window->Collapsed || parent_window->HiddenFramesCanSkipItems > 0))
+      if (parent_window && (parent_window->Collapsed || parent_window->HiddenFramesCanSkipItems > 0))
         window->HiddenFramesCanSkipItems = 1;
-      if (parent_window &&
-          (parent_window->Collapsed || parent_window->HiddenFramesCannotSkipItems > 0))
+      if (parent_window && (parent_window->Collapsed || parent_window->HiddenFramesCannotSkipItems > 0))
         window->HiddenFramesCannotSkipItems = 1;
     }
 
@@ -7074,8 +6866,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
       window->HiddenFramesCanSkipItems = 1;
 
     // Update the Hidden flag
-    window->Hidden = (window->HiddenFramesCanSkipItems > 0) ||
-                     (window->HiddenFramesCannotSkipItems > 0) ||
+    window->Hidden = (window->HiddenFramesCanSkipItems > 0) || (window->HiddenFramesCannotSkipItems > 0) ||
                      (window->HiddenFramesForRenderOnly > 0);
 
     // Disable inputs for requested number of frames
@@ -7118,8 +6909,7 @@ void ANCHOR::End()
   PopClipRect();  // Inner window clip rectangle
 
   // Stop logging
-  if (!(window->Flags &
-        ANCHOR_WindowFlags_ChildWindow))  // FIXME: add more options for scope of logging
+  if (!(window->Flags & ANCHOR_WindowFlags_ChildWindow))  // FIXME: add more options for scope of logging
     LogFinish();
 
   // Pop from window stack
@@ -7159,9 +6949,7 @@ void ANCHOR::BringWindowToDisplayFront(ANCHOR_Window *window)
     return;
   for (int i = g.Windows.Size - 2; i >= 0; i--)  // We can ignore the top-most window
     if (g.Windows[i] == window) {
-      memmove(&g.Windows[i],
-              &g.Windows[i + 1],
-              (size_t)(g.Windows.Size - i - 1) * sizeof(ANCHOR_Window *));
+      memmove(&g.Windows[i], &g.Windows[i + 1], (size_t)(g.Windows.Size - i - 1) * sizeof(ANCHOR_Window *));
       g.Windows[g.Windows.Size - 1] = window;
       break;
     }
@@ -7203,9 +6991,9 @@ void ANCHOR::FocusWindow(ANCHOR_Window *window)
 
   // Move the root window to the top of the pile
   ANCHOR_ASSERT(window == NULL || window->RootWindow != NULL);
-  ANCHOR_Window *focus_front_window =
-    window ? window->RootWindow :
-             NULL;  // NB: In docking branch this is window->RootWindowDockStop
+  ANCHOR_Window *focus_front_window = window ?
+                                        window->RootWindow :
+                                        NULL;  // NB: In docking branch this is window->RootWindowDockStop
   ANCHOR_Window *display_front_window = window ? window->RootWindow : NULL;
 
   // Steal active widgets. Some of the cases it triggers includes:
@@ -7223,13 +7011,11 @@ void ANCHOR::FocusWindow(ANCHOR_Window *window)
 
   // Bring to front
   BringWindowToFocusFront(focus_front_window);
-  if (((window->Flags | display_front_window->Flags) & ANCHOR_WindowFlags_NoBringToFrontOnFocus) ==
-      0)
+  if (((window->Flags | display_front_window->Flags) & ANCHOR_WindowFlags_NoBringToFrontOnFocus) == 0)
     BringWindowToDisplayFront(display_front_window);
 }
 
-void ANCHOR::FocusTopMostWindowUnderOne(ANCHOR_Window *under_this_window,
-                                        ANCHOR_Window *ignore_window)
+void ANCHOR::FocusTopMostWindowUnderOne(ANCHOR_Window *under_this_window, ANCHOR_Window *ignore_window)
 {
   ANCHOR_Context &g = *G_CTX;
 
@@ -7305,9 +7091,8 @@ void ANCHOR::PushItemFlag(ANCHOR_ItemFlags option, bool enabled)
 void ANCHOR::PopItemFlag()
 {
   ANCHOR_Context &g = *G_CTX;
-  ANCHOR_ASSERT(
-    g.ItemFlagsStack.Size >
-    1);  // Too many calls to PopItemFlag() - we always leave a 0 at the bottom of the stack.
+  ANCHOR_ASSERT(g.ItemFlagsStack.Size >
+                1);  // Too many calls to PopItemFlag() - we always leave a 0 at the bottom of the stack.
   g.ItemFlagsStack.pop_back();
   g.CurrentItemFlags = g.ItemFlagsStack.back();
 }
@@ -7467,22 +7252,18 @@ void ANCHOR::SetWindowPos(ANCHOR_Window *window, const GfVec2f &pos, ANCHOR_Cond
 
   ANCHOR_ASSERT(
     cond == 0 ||
-    ImIsPowerOfTwo(
-      cond));  // Make sure the user doesn't attempt to combine multiple condition flags.
-  window->SetWindowPosAllowFlags &= ~(ANCHOR_Cond_Once | ANCHOR_Cond_FirstUseEver |
-                                      ANCHOR_Cond_Appearing);
+    ImIsPowerOfTwo(cond));  // Make sure the user doesn't attempt to combine multiple condition flags.
+  window->SetWindowPosAllowFlags &= ~(ANCHOR_Cond_Once | ANCHOR_Cond_FirstUseEver | ANCHOR_Cond_Appearing);
   window->SetWindowPosVal = GfVec2f(FLT_MAX, FLT_MAX);
 
   // Set
   const GfVec2f old_pos = window->Pos;
   window->Pos = ImFloor(pos);
   GfVec2f offset = window->Pos - old_pos;
-  window->DC.CursorPos +=
-    offset;  // As we happen to move the window while it is being appended to (which is a bad
-             // idea - will smear) let's at least offset the cursor
-  window->DC.CursorMaxPos +=
-    offset;  // And more importantly we need to offset CursorMaxPos/CursorStartPos this so
-             // ContentSize calculation doesn't get affected.
+  window->DC.CursorPos += offset;  // As we happen to move the window while it is being appended to (which is
+                                   // a bad idea - will smear) let's at least offset the cursor
+  window->DC.CursorMaxPos += offset;  // And more importantly we need to offset CursorMaxPos/CursorStartPos
+                                      // this so ContentSize calculation doesn't get affected.
   window->DC.IdealMaxPos += offset;
   window->DC.CursorStartPos += offset;
 }
@@ -7513,10 +7294,8 @@ void ANCHOR::SetWindowSize(ANCHOR_Window *window, const GfVec2f &size, ANCHOR_Co
 
   ANCHOR_ASSERT(
     cond == 0 ||
-    ImIsPowerOfTwo(
-      cond));  // Make sure the user doesn't attempt to combine multiple condition flags.
-  window->SetWindowSizeAllowFlags &= ~(ANCHOR_Cond_Once | ANCHOR_Cond_FirstUseEver |
-                                       ANCHOR_Cond_Appearing);
+    ImIsPowerOfTwo(cond));  // Make sure the user doesn't attempt to combine multiple condition flags.
+  window->SetWindowSizeAllowFlags &= ~(ANCHOR_Cond_Once | ANCHOR_Cond_FirstUseEver | ANCHOR_Cond_Appearing);
 
   // Set
   if (size[0] > 0.0f) {
@@ -7562,8 +7341,7 @@ void ANCHOR::SetWindowCollapsed(ANCHOR_Window *window, bool collapsed, ANCHOR_Co
 
 void ANCHOR::SetWindowHitTestHole(ANCHOR_Window *window, const GfVec2f &pos, const GfVec2f &size)
 {
-  ANCHOR_ASSERT(window->HitTestHoleSize[0] ==
-                0);  // We don't support multiple holes/hit test filters
+  ANCHOR_ASSERT(window->HitTestHoleSize[0] == 0);  // We don't support multiple holes/hit test filters
   window->HitTestHoleSize = GfVec2h(size);
   window->HitTestHoleOffset = GfVec2h(pos - window->Pos);
 }
@@ -7612,8 +7390,7 @@ void ANCHOR::SetNextWindowPos(const GfVec2f &pos, ANCHOR_Cond cond, const GfVec2
   ANCHOR_Context &g = *G_CTX;
   ANCHOR_ASSERT(
     cond == 0 ||
-    ImIsPowerOfTwo(
-      cond));  // Make sure the user doesn't attempt to combine multiple condition flags.
+    ImIsPowerOfTwo(cond));  // Make sure the user doesn't attempt to combine multiple condition flags.
   g.NextWindowData.Flags |= ANCHOR_NextWindowDataFlags_HasPos;
   g.NextWindowData.PosVal = pos;
   g.NextWindowData.PosPivotVal = pivot;
@@ -7625,8 +7402,7 @@ void ANCHOR::SetNextWindowSize(const GfVec2f &size, ANCHOR_Cond cond)
   ANCHOR_Context &g = *G_CTX;
   ANCHOR_ASSERT(
     cond == 0 ||
-    ImIsPowerOfTwo(
-      cond));  // Make sure the user doesn't attempt to combine multiple condition flags.
+    ImIsPowerOfTwo(cond));  // Make sure the user doesn't attempt to combine multiple condition flags.
   g.NextWindowData.Flags |= ANCHOR_NextWindowDataFlags_HasSize;
   g.NextWindowData.SizeVal = size;
   g.NextWindowData.SizeCond = cond ? cond : ANCHOR_Cond_Always;
@@ -7666,8 +7442,7 @@ void ANCHOR::SetNextWindowCollapsed(bool collapsed, ANCHOR_Cond cond)
   ANCHOR_Context &g = *G_CTX;
   ANCHOR_ASSERT(
     cond == 0 ||
-    ImIsPowerOfTwo(
-      cond));  // Make sure the user doesn't attempt to combine multiple condition flags.
+    ImIsPowerOfTwo(cond));  // Make sure the user doesn't attempt to combine multiple condition flags.
   g.NextWindowData.Flags |= ANCHOR_NextWindowDataFlags_HasCollapsed;
   g.NextWindowData.CollapsedVal = collapsed;
   g.NextWindowData.CollapsedCond = cond ? cond : ANCHOR_Cond_Always;
@@ -7948,28 +7723,23 @@ static void ANCHOR::ErrorCheckNewFrameSanityChecks()
   ANCHOR_ASSERT((g.IO.DeltaTime > 0.0f || g.FrameCount == 0) && "Need a positive DeltaTime!");
   ANCHOR_ASSERT((g.FrameCount == 0 || g.FrameCountEnded == g.FrameCount) &&
                 "Forgot to call Render() or EndFrame() at the end of the previous frame?");
-  ANCHOR_ASSERT(g.IO.DisplaySize[0] >= 0.0f && g.IO.DisplaySize[1] >= 0.0f &&
-                "Invalid DisplaySize value!");
-  ANCHOR_ASSERT(
-    g.IO.Fonts->Fonts.Size > 0 &&
-    "Font Atlas not built. Did you call io.Fonts->GetTexDataAsRGBA32() / GetTexDataAsAlpha8()?");
-  ANCHOR_ASSERT(
-    g.IO.Fonts->Fonts[0]->IsLoaded() &&
-    "Font Atlas not built. Did you call io.Fonts->GetTexDataAsRGBA32() / GetTexDataAsAlpha8()?");
+  ANCHOR_ASSERT(g.IO.DisplaySize[0] >= 0.0f && g.IO.DisplaySize[1] >= 0.0f && "Invalid DisplaySize value!");
+  ANCHOR_ASSERT(g.IO.Fonts->Fonts.Size > 0 &&
+                "Font Atlas not built. Did you call io.Fonts->GetTexDataAsRGBA32() / GetTexDataAsAlpha8()?");
+  ANCHOR_ASSERT(g.IO.Fonts->Fonts[0]->IsLoaded() &&
+                "Font Atlas not built. Did you call io.Fonts->GetTexDataAsRGBA32() / GetTexDataAsAlpha8()?");
   ANCHOR_ASSERT(g.Style.CurveTessellationTol > 0.0f && "Invalid style setting!");
   ANCHOR_ASSERT(g.Style.CircleTessellationMaxError > 0.0f && "Invalid style setting!");
-  ANCHOR_ASSERT(
-    g.Style.Alpha >= 0.0f && g.Style.Alpha <= 1.0f &&
-    "Invalid style setting!");  // Allows us to avoid a few clamps in color computations
+  ANCHOR_ASSERT(g.Style.Alpha >= 0.0f && g.Style.Alpha <= 1.0f &&
+                "Invalid style setting!");  // Allows us to avoid a few clamps in color computations
   ANCHOR_ASSERT(g.Style.WindowMinSize[0] >= 1.0f && g.Style.WindowMinSize[1] >= 1.0f &&
                 "Invalid style setting.");
   ANCHOR_ASSERT(g.Style.WindowMenuButtonPosition == ANCHOR_Dir_None ||
                 g.Style.WindowMenuButtonPosition == ANCHOR_Dir_Left ||
                 g.Style.WindowMenuButtonPosition == ANCHOR_Dir_Right);
   for (int n = 0; n < ANCHOR_Key_COUNT; n++)
-    ANCHOR_ASSERT(
-      g.IO.KeyMap[n] >= -1 && g.IO.KeyMap[n] < ANCHOR_ARRAYSIZE(g.IO.KeysDown) &&
-      "io.KeyMap[] contains an out of bound value (need to be 0..512, or -1 for unmapped key)");
+    ANCHOR_ASSERT(g.IO.KeyMap[n] >= -1 && g.IO.KeyMap[n] < ANCHOR_ARRAYSIZE(g.IO.KeysDown) &&
+                  "io.KeyMap[] contains an out of bound value (need to be 0..512, or -1 for unmapped key)");
 
   // Check: required key mapping (we intentionally do NOT check all keys to not pressure user into
   // setting up everything, but Space is required and was only added in 1.60 WIP)
@@ -7979,8 +7749,7 @@ static void ANCHOR::ErrorCheckNewFrameSanityChecks()
 
   // Check: the io.ConfigWindowsResizeFromEdges option requires backend to honor mouse cursor
   // changes and set the ANCHORBackendFlags_HasMouseCursors flag accordingly.
-  if (g.IO.ConfigWindowsResizeFromEdges &&
-      !(g.IO.BackendFlags & ANCHORBackendFlags_HasMouseCursors))
+  if (g.IO.ConfigWindowsResizeFromEdges && !(g.IO.BackendFlags & ANCHORBackendFlags_HasMouseCursors))
     g.IO.ConfigWindowsResizeFromEdges = false;
 }
 
@@ -8038,9 +7807,8 @@ void ANCHOR::ErrorCheckEndFrameRecover(ANCHOR_ErrorLogCallback log_callback, voi
     while (g.CurrentTable && (g.CurrentTable->OuterWindow == g.CurrentWindow ||
                               g.CurrentTable->InnerWindow == g.CurrentWindow)) {
       if (log_callback)
-        log_callback(user_data,
-                     "Recovered from missing EndTable() in '%s'",
-                     g.CurrentTable->OuterWindow->Name);
+        log_callback(
+          user_data, "Recovered from missing EndTable() in '%s'", g.CurrentTable->OuterWindow->Name);
       EndTable();
     }
     ANCHOR_Window *window = g.CurrentWindow;
@@ -8126,8 +7894,7 @@ void ANCHOR_StackSizes::CompareWithCurrentState()
   // Window stacks
   // NOT checking: DC.ItemWidth, DC.TextWrapPos (per window) to allow user to conveniently push
   // once and not pop (they are cleared on Begin)
-  ANCHOR_ASSERT(SizeOfIDStack == window->IDStack.Size &&
-                "PushID/PopID or TreeNode/TreePop Mismatch!");
+  ANCHOR_ASSERT(SizeOfIDStack == window->IDStack.Size && "PushID/PopID or TreeNode/TreePop Mismatch!");
 
   // Global stacks
   // For color, style and font stacks there is an incentive to use Push/Begin/Pop/.../End patterns,
@@ -8136,11 +7903,9 @@ void ANCHOR_StackSizes::CompareWithCurrentState()
   ANCHOR_ASSERT(SizeOfBeginPopupStack == g.BeginPopupStack.Size &&
                 "BeginPopup/EndPopup or BeginMenu/EndMenu Mismatch!");
   ANCHOR_ASSERT(SizeOfColorStack >= g.ColorStack.Size && "PushStyleColor/PopStyleColor Mismatch!");
-  ANCHOR_ASSERT(SizeOfStyleVarStack >= g.StyleVarStack.Size &&
-                "PushStyleVar/PopStyleVar Mismatch!");
+  ANCHOR_ASSERT(SizeOfStyleVarStack >= g.StyleVarStack.Size && "PushStyleVar/PopStyleVar Mismatch!");
   ANCHOR_ASSERT(SizeOfFontStack >= g.FontStack.Size && "PushFont/PopFont Mismatch!");
-  ANCHOR_ASSERT(SizeOfFocusScopeStack == g.FocusScopeStack.Size &&
-                "PushFocusScope/PopFocusScope Mismatch!");
+  ANCHOR_ASSERT(SizeOfFocusScopeStack == g.FocusScopeStack.Size && "PushFocusScope/PopFocusScope Mismatch!");
 }
 
 //-----------------------------------------------------------------------------
@@ -8191,11 +7956,11 @@ void ANCHOR::ItemSize(const GfVec2f &size, float text_baseline_y)
   // In theory we should be offsetting the starting position (window->DC.CursorPos), that will be
   // the topic of a larger refactor, but since ItemSize() is not yet an API that moves the cursor
   // (to handle e.g. wrapping) enlarging the height has the same effect.
-  const float offset_to_match_baseline_y =
-    (text_baseline_y >= 0) ? AnchorMax(0.0f, window->DC.CurrLineTextBaseOffset - text_baseline_y) :
-                             0.0f;
-  const float line_height = AnchorMax(window->DC.CurrLineSize[1],
-                                      size[1] + offset_to_match_baseline_y);
+  const float offset_to_match_baseline_y = (text_baseline_y >= 0) ?
+                                             AnchorMax(0.0f,
+                                                       window->DC.CurrLineTextBaseOffset - text_baseline_y) :
+                                             0.0f;
+  const float line_height = AnchorMax(window->DC.CurrLineSize[1], size[1] + offset_to_match_baseline_y);
 
   // Always align ourselves on pixel boundaries
   // if (g.IO.KeyAlt) window->DrawList->AddRect(window->DC.CursorPos, window->DC.CursorPos +
@@ -8206,8 +7971,7 @@ void ANCHOR::ItemSize(const GfVec2f &size, float text_baseline_y)
                                      window->DC.ColumnsOffset.x);  // Next line
   window->DC.CursorPos[1] = IM_FLOOR(window->DC.CursorPos[1] + line_height +
                                      g.Style.ItemSpacing[1]);  // Next line
-  window->DC.CursorMaxPos[0] = AnchorMax(window->DC.CursorMaxPos[0],
-                                         window->DC.CursorPosPrevLine[0]);
+  window->DC.CursorMaxPos[0] = AnchorMax(window->DC.CursorMaxPos[0], window->DC.CursorPosPrevLine[0]);
   window->DC.CursorMaxPos[1] = AnchorMax(window->DC.CursorMaxPos[1],
                                          window->DC.CursorPos[1] - g.Style.ItemSpacing[1]);
   // if (g.IO.KeyAlt) window->DrawList->AddCircle(window->DC.CursorMaxPos, 3.0f,
@@ -8215,8 +7979,7 @@ void ANCHOR::ItemSize(const GfVec2f &size, float text_baseline_y)
 
   window->DC.PrevLineSize[1] = line_height;
   window->DC.CurrLineSize[1] = 0.0f;
-  window->DC.PrevLineTextBaseOffset = AnchorMax(window->DC.CurrLineTextBaseOffset,
-                                                text_baseline_y);
+  window->DC.PrevLineTextBaseOffset = AnchorMax(window->DC.CurrLineTextBaseOffset, text_baseline_y);
   window->DC.CurrLineTextBaseOffset = 0.0f;
 
   // Horizontal layout mode
@@ -8233,10 +7996,7 @@ void ANCHOR::ItemSize(const ImRect &bb, float text_baseline_y)
 // Note that the size can be different than the one provided to ItemSize(). Typically, widgets that
 // spread over available surface declare their minimum size requirement to ItemSize() and provide a
 // larger region to ItemAdd() which is used drawing/interaction.
-bool ANCHOR::ItemAdd(const ImRect &bb,
-                     ANCHOR_ID id,
-                     const ImRect *nav_bb_arg,
-                     ANCHOR_ItemAddFlags flags)
+bool ANCHOR::ItemAdd(const ImRect &bb, ANCHOR_ID id, const ImRect *nav_bb_arg, ANCHOR_ItemAddFlags flags)
 {
   ANCHOR_Context &g = *G_CTX;
   ANCHOR_Window *window = g.CurrentWindow;
@@ -8317,8 +8077,8 @@ void ANCHOR::SameLine(float offset_from_start_x, float spacing_w)
   if (offset_from_start_x != 0.0f) {
     if (spacing_w < 0.0f)
       spacing_w = 0.0f;
-    window->DC.CursorPos[0] = window->Pos[0] - window->Scroll[0] + offset_from_start_x +
-                              spacing_w + window->DC.GroupOffset.x + window->DC.ColumnsOffset.x;
+    window->DC.CursorPos[0] = window->Pos[0] - window->Scroll[0] + offset_from_start_x + spacing_w +
+                              window->DC.GroupOffset.x + window->DC.ColumnsOffset.x;
     window->DC.CursorPos[1] = window->DC.CursorPosPrevLine[1];
   }
   else {
@@ -8644,8 +8404,7 @@ void ANCHOR::EndGroup()
   // an ID itself, in order to be able to handle ActiveId being overwritten during the frame.)
   const bool group_contains_curr_active_id = (group_data.BackupActiveIdIsAlive != g.ActiveId) &&
                                              (g.ActiveIdIsAlive == g.ActiveId) && g.ActiveId;
-  const bool group_contains_prev_active_id = (group_data.BackupActiveIdPreviousFrameIsAlive ==
-                                              false) &&
+  const bool group_contains_prev_active_id = (group_data.BackupActiveIdPreviousFrameIsAlive == false) &&
                                              (g.ActiveIdPreviousFrameIsAlive == true);
   if (group_contains_curr_active_id)
     window->DC.LastItemId = g.ActiveId;
@@ -8705,11 +8464,8 @@ static GfVec2f CalcNextScrollFromScrollTargetAndClamp(ANCHOR_Window *window)
     if (window->ScrollTargetEdgeSnapDist[0] > 0.0f) {
       float snap_x_min = 0.0f;
       float snap_x_max = window->ScrollMax[0] + window->SizeFull[0] - decoration_total_width;
-      scroll_target_x = CalcScrollEdgeSnap(scroll_target_x,
-                                           snap_x_min,
-                                           snap_x_max,
-                                           window->ScrollTargetEdgeSnapDist[0],
-                                           center_x_ratio);
+      scroll_target_x = CalcScrollEdgeSnap(
+        scroll_target_x, snap_x_min, snap_x_max, window->ScrollTargetEdgeSnapDist[0], center_x_ratio);
     }
     scroll[0] = scroll_target_x - center_x_ratio * (window->SizeFull[0] - decoration_total_width);
   }
@@ -8721,11 +8477,8 @@ static GfVec2f CalcNextScrollFromScrollTargetAndClamp(ANCHOR_Window *window)
     if (window->ScrollTargetEdgeSnapDist[1] > 0.0f) {
       float snap_y_min = 0.0f;
       float snap_y_max = window->ScrollMax[1] + window->SizeFull[1] - decoration_total_height;
-      scroll_target_y = CalcScrollEdgeSnap(scroll_target_y,
-                                           snap_y_min,
-                                           snap_y_max,
-                                           window->ScrollTargetEdgeSnapDist[1],
-                                           center_y_ratio);
+      scroll_target_y = CalcScrollEdgeSnap(
+        scroll_target_y, snap_y_min, snap_y_max, window->ScrollTargetEdgeSnapDist[1], center_y_ratio);
     }
     scroll[1] = scroll_target_y - center_y_ratio * (window->SizeFull[1] - decoration_total_height);
   }
@@ -8835,8 +8588,8 @@ void ANCHOR::SetScrollY(float scroll_y)
 void ANCHOR::SetScrollFromPosX(ANCHOR_Window *window, float local_x, float center_x_ratio)
 {
   ANCHOR_ASSERT(center_x_ratio >= 0.0f && center_x_ratio <= 1.0f);
-  window->ScrollTarget[0] = IM_FLOOR(
-    local_x + window->Scroll[0]);  // Convert local position to scroll offset
+  window->ScrollTarget[0] = IM_FLOOR(local_x +
+                                     window->Scroll[0]);  // Convert local position to scroll offset
   window->ScrollTargetCenterRatio[0] = center_x_ratio;
   window->ScrollTargetEdgeSnapDist[0] = 0.0f;
 }
@@ -8845,12 +8598,11 @@ void ANCHOR::SetScrollFromPosY(ANCHOR_Window *window, float local_y, float cente
 {
   ANCHOR_ASSERT(center_y_ratio >= 0.0f && center_y_ratio <= 1.0f);
   const float decoration_up_height =
-    window->TitleBarHeight() +
-    window->MenuBarHeight();  // FIXME: Would be nice to have a more standardized access to our
-                              // scrollable/client rect;
+    window->TitleBarHeight() + window->MenuBarHeight();  // FIXME: Would be nice to have a more standardized
+                                                         // access to our scrollable/client rect;
   local_y -= decoration_up_height;
-  window->ScrollTarget[1] = IM_FLOOR(
-    local_y + window->Scroll[1]);  // Convert local position to scroll offset
+  window->ScrollTarget[1] = IM_FLOOR(local_y +
+                                     window->Scroll[1]);  // Convert local position to scroll offset
   window->ScrollTargetCenterRatio[1] = center_y_ratio;
   window->ScrollTargetEdgeSnapDist[1] = 0.0f;
 }
@@ -8874,9 +8626,8 @@ void ANCHOR::SetScrollHereX(float center_x_ratio)
   ANCHOR_Context &g = *G_CTX;
   ANCHOR_Window *window = g.CurrentWindow;
   float spacing_x = AnchorMax(window->WindowPadding[0], g.Style.ItemSpacing[0]);
-  float target_pos_x = ImLerp(window->DC.LastItemRect.Min[0] - spacing_x,
-                              window->DC.LastItemRect.Max[0] + spacing_x,
-                              center_x_ratio);
+  float target_pos_x = ImLerp(
+    window->DC.LastItemRect.Min[0] - spacing_x, window->DC.LastItemRect.Max[0] + spacing_x, center_x_ratio);
   SetScrollFromPosX(window,
                     target_pos_x - window->Pos[0],
                     center_x_ratio);  // Convert from absolute to local pos
@@ -8893,8 +8644,7 @@ void ANCHOR::SetScrollHereY(float center_y_ratio)
   ANCHOR_Window *window = g.CurrentWindow;
   float spacing_y = AnchorMax(window->WindowPadding[1], g.Style.ItemSpacing[1]);
   float target_pos_y = ImLerp(window->DC.CursorPosPrevLine[1] - spacing_y,
-                              window->DC.CursorPosPrevLine[1] + window->DC.PrevLineSize[1] +
-                                spacing_y,
+                              window->DC.CursorPosPrevLine[1] + window->DC.PrevLineSize[1] + spacing_y,
                               center_y_ratio);
   SetScrollFromPosY(window,
                     target_pos_y - window->Pos[1],
@@ -8934,8 +8684,7 @@ void ANCHOR::BeginTooltipEx(ANCHOR_WindowFlags extra_flags, ANCHOR_TooltipFlags 
   }
 
   char window_name[16];
-  ImFormatString(
-    window_name, ANCHOR_ARRAYSIZE(window_name), "##Tooltip_%02d", g.TooltipOverrideCount);
+  ImFormatString(window_name, ANCHOR_ARRAYSIZE(window_name), "##Tooltip_%02d", g.TooltipOverrideCount);
   if (tooltip_flags & ANCHOR_TooltipFlags_OverridePreviousTooltip)
     if (ANCHOR_Window *window = FindWindowByName(window_name))
       if (window->Active) {
@@ -9016,15 +8765,14 @@ bool ANCHOR::IsPopupOpen(const char *str_id, ANCHORPopupFlags popup_flags)
   ANCHOR_ID id = (popup_flags & ANCHORPopupFlags_AnyPopupId) ? 0 : g.CurrentWindow->GetID(str_id);
   if ((popup_flags & ANCHORPopupFlags_AnyPopupLevel) && id != 0)
     ANCHOR_ASSERT(
-      0 &&
-      "Cannot use IsPopupOpen() with a string id and ANCHORPopupFlags_AnyPopupLevel.");  // But
-                                                                                         // non-string
-                                                                                         // version
-                                                                                         // is
-                                                                                         // legal
-                                                                                         // and
-                                                                                         // used
-                                                                                         // internally
+      0 && "Cannot use IsPopupOpen() with a string id and ANCHORPopupFlags_AnyPopupLevel.");  // But
+                                                                                              // non-string
+                                                                                              // version
+                                                                                              // is
+                                                                                              // legal
+                                                                                              // and
+                                                                                              // used
+                                                                                              // internally
   return IsPopupOpen(id, popup_flags);
 }
 
@@ -9072,8 +8820,7 @@ void ANCHOR::OpenPopupEx(ANCHOR_ID id, ANCHORPopupFlags popup_flags)
   popup_ref.OpenFrameCount = g.FrameCount;
   popup_ref.OpenParentId = parent_window->IDStack.back();
   popup_ref.OpenPopupPos = NavCalcPreferredRefPos();
-  popup_ref.OpenMousePos = IsMousePosValid(&g.IO.MousePos) ? g.IO.MousePos :
-                                                             popup_ref.OpenPopupPos;
+  popup_ref.OpenMousePos = IsMousePosValid(&g.IO.MousePos) ? g.IO.MousePos : popup_ref.OpenPopupPos;
 
   ANCHOR_DEBUG_LOG_POPUP("OpenPopupEx(0x%08X)\n", id);
   if (g.OpenPopupStack.Size < current_stack_size + 1) {
@@ -9106,8 +8853,7 @@ void ANCHOR::OpenPopupEx(ANCHOR_ID id, ANCHORPopupFlags popup_flags)
 
 // When popups are stacked, clicking on a lower level popups puts focus back to it and close popups
 // above it. This function closes any popups that are over 'ref_window'.
-void ANCHOR::ClosePopupsOverWindow(ANCHOR_Window *ref_window,
-                                   bool restore_focus_to_window_under_popup)
+void ANCHOR::ClosePopupsOverWindow(ANCHOR_Window *ref_window, bool restore_focus_to_window_under_popup)
 {
   ANCHOR_Context &g = *G_CTX;
   if (g.OpenPopupStack.Size == 0)
@@ -9143,13 +8889,11 @@ void ANCHOR::ClosePopupsOverWindow(ANCHOR_Window *ref_window,
         break;
     }
   }
-  if (popup_count_to_keep <
-      g.OpenPopupStack.Size)  // This test is not required but it allows to set a convenient
-                              // breakpoint on the statement below
+  if (popup_count_to_keep < g.OpenPopupStack.Size)  // This test is not required but it allows to set a
+                                                    // convenient breakpoint on the statement below
   {
-    ANCHOR_DEBUG_LOG_POPUP("ClosePopupsOverWindow(\"%s\") -> ClosePopupToLevel(%d)\n",
-                           ref_window->Name,
-                           popup_count_to_keep);
+    ANCHOR_DEBUG_LOG_POPUP(
+      "ClosePopupsOverWindow(\"%s\") -> ClosePopupToLevel(%d)\n", ref_window->Name, popup_count_to_keep);
     ClosePopupToLevel(popup_count_to_keep, restore_focus_to_window_under_popup);
   }
 }
@@ -9294,8 +9038,7 @@ void ANCHOR::EndPopup()
 {
   ANCHOR_Context &g = *G_CTX;
   ANCHOR_Window *window = g.CurrentWindow;
-  ANCHOR_ASSERT(window->Flags &
-                ANCHOR_WindowFlags_Popup);  // Mismatched BeginPopup()/EndPopup() calls
+  ANCHOR_ASSERT(window->Flags & ANCHOR_WindowFlags_Popup);  // Mismatched BeginPopup()/EndPopup() calls
   ANCHOR_ASSERT(g.BeginPopupStack.Size > 0);
 
   // Make all menus and popups wrap around for now, may need to expose that policy.
@@ -9317,10 +9060,10 @@ void ANCHOR::OpenPopupOnItemClick(const char *str_id, ANCHORPopupFlags popup_fla
   ANCHOR_Window *window = G_CTX->CurrentWindow;
   int mouse_button = (popup_flags & ANCHORPopupFlags_MouseButtonMask_);
   if (IsMouseReleased(mouse_button) && IsItemHovered(ANCHORHoveredFlags_AllowWhenBlockedByPopup)) {
-    ANCHOR_ID id =
-      str_id ? window->GetID(str_id) :
-               window->DC.LastItemId;  // If user hasn't passed an ID, we can use the LastItemID.
-                                       // Using LastItemID as a Popup ID won't conflict!
+    ANCHOR_ID id = str_id ?
+                     window->GetID(str_id) :
+                     window->DC.LastItemId;  // If user hasn't passed an ID, we can use the LastItemID.
+                                             // Using LastItemID as a Popup ID won't conflict!
     ANCHOR_ASSERT(id != 0);  // You cannot pass a NULL str_id if the last item has no identifier
                              // (e.g. a Text() item)
     OpenPopupEx(id, popup_flags);
@@ -9352,13 +9095,11 @@ bool ANCHOR::BeginPopupContextItem(const char *str_id, ANCHORPopupFlags popup_fl
   ANCHOR_Window *window = G_CTX->CurrentWindow;
   if (window->SkipItems)
     return false;
-  ANCHOR_ID id =
-    str_id ? window->GetID(str_id) :
-             window->DC.LastItemId;  // If user hasn't passed an ID, we can use the LastItemID.
-                                     // Using LastItemID as a Popup ID won't conflict!
-  ANCHOR_ASSERT(
-    id !=
-    0);  // You cannot pass a NULL str_id if the last item has no identifier (e.g. a Text() item)
+  ANCHOR_ID id = str_id ? window->GetID(str_id) :
+                          window->DC.LastItemId;  // If user hasn't passed an ID, we can use the LastItemID.
+                                                  // Using LastItemID as a Popup ID won't conflict!
+  ANCHOR_ASSERT(id !=
+                0);  // You cannot pass a NULL str_id if the last item has no identifier (e.g. a Text() item)
   int mouse_button = (popup_flags & ANCHORPopupFlags_MouseButtonMask_);
   if (IsMouseReleased(mouse_button) && IsItemHovered(ANCHORHoveredFlags_AllowWhenBlockedByPopup))
     OpenPopupEx(id, popup_flags);
@@ -9523,13 +9264,13 @@ GfVec2f ANCHOR::FindBestWindowPosForPopup(ANCHOR_Window *window)
                                     // style.ItemSpacing[0]).
     ImRect r_avoid;
     if (parent_window->DC.MenuBarAppending)
-      r_avoid = ImRect(-FLT_MAX,
-                       parent_window->ClipRect.Min[1],
-                       FLT_MAX,
-                       parent_window->ClipRect
-                         .Max[1]);  // Avoid parent menu-bar. If we wanted multi-line menu-bar,
-                                    // we may instead want to have the calling window setup e.g.
-                                    // a NextWindowData.PosConstraintAvoidRect field
+      r_avoid = ImRect(
+        -FLT_MAX,
+        parent_window->ClipRect.Min[1],
+        FLT_MAX,
+        parent_window->ClipRect.Max[1]);  // Avoid parent menu-bar. If we wanted multi-line menu-bar,
+                                          // we may instead want to have the calling window setup e.g.
+                                          // a NextWindowData.PosConstraintAvoidRect field
     else
       r_avoid = ImRect(parent_window->Pos[0] + horizontal_overlap,
                        -FLT_MAX,
@@ -9544,8 +9285,7 @@ GfVec2f ANCHOR::FindBestWindowPosForPopup(ANCHOR_Window *window)
                                        ANCHORPopupPositionPolicy_Default);
   }
   if (window->Flags & ANCHOR_WindowFlags_Popup) {
-    ImRect r_avoid = ImRect(
-      window->Pos[0] - 1, window->Pos[1] - 1, window->Pos[0] + 1, window->Pos[1] + 1);
+    ImRect r_avoid = ImRect(window->Pos[0] - 1, window->Pos[1] - 1, window->Pos[0] + 1, window->Pos[1] + 1);
     return FindBestWindowPosForPopupEx(window->Pos,
                                        window->Size,
                                        &window->AutoPosLastDirection,
@@ -9704,8 +9444,7 @@ static bool ANCHOR::NavScoreItem(ANCHOR_NavItemData *result, ImRect cand)
   // distances with each other so it doesn't matter)
   float dcx = (cand.Min[0] + cand.Max[0]) - (curr.Min[0] + curr.Max[0]);
   float dcy = (cand.Min[1] + cand.Max[1]) - (curr.Min[1] + curr.Max[1]);
-  float dist_center = ImFabs(dcx) +
-                      ImFabs(dcy);  // L1 metric (need this for our connectedness guarantee)
+  float dist_center = ImFabs(dcx) + ImFabs(dcy);  // L1 metric (need this for our connectedness guarantee)
 
   // Determine which quadrant of 'curr' our candidate item 'cand' lies in based on distance
   ANCHOR_Dir quadrant;
@@ -9751,9 +9490,8 @@ static bool ANCHOR::NavScoreItem(ANCHOR_NavItemData *result, ImRect cand)
     ImDrawList *draw_list = GetForegroundDrawList(window);
     draw_list->AddRect(curr.Min, curr.Max, ANCHOR_COL32(255, 200, 0, 100));
     draw_list->AddRect(cand.Min, cand.Max, ANCHOR_COL32(255, 255, 0, 200));
-    draw_list->AddRectFilled(cand.Max - GfVec2f(4, 4),
-                             cand.Max + CalcTextSize(buf) + GfVec2f(4, 4),
-                             ANCHOR_COL32(40, 0, 0, 150));
+    draw_list->AddRectFilled(
+      cand.Max - GfVec2f(4, 4), cand.Max + CalcTextSize(buf) + GfVec2f(4, 4), ANCHOR_COL32(40, 0, 0, 150));
     draw_list->AddText(g.IO.FontDefault, 13.0f, cand.Max, ~0U, buf);
   }
   else if (g.IO.KeyCtrl)  // Hold to preview score in matching quadrant. Press C to rotate.
@@ -9812,8 +9550,7 @@ static bool ANCHOR::NavScoreItem(ANCHOR_NavItemData *result, ImRect cand)
     if (g.NavLayer == ANCHORNavLayer_Menu && !(g.NavWindow->Flags & ANCHOR_WindowFlags_ChildMenu))
       if ((g.NavMoveDir == ANCHOR_Dir_Left && dax < 0.0f) ||
           (g.NavMoveDir == ANCHOR_Dir_Right && dax > 0.0f) ||
-          (g.NavMoveDir == ANCHOR_Dir_Up && day < 0.0f) ||
-          (g.NavMoveDir == ANCHOR_Dir_Down && day > 0.0f)) {
+          (g.NavMoveDir == ANCHOR_Dir_Up && day < 0.0f) || (g.NavMoveDir == ANCHOR_Dir_Down && day > 0.0f)) {
         result->DistAxial = dist_axial;
         new_best = true;
       }
@@ -9864,8 +9601,7 @@ static void ANCHOR::NavProcessItem(ANCHOR_Window *window, const ImRect &nav_bb, 
   // from a rect wrapped according to current wrapping policy)
   if ((g.NavId != id || (g.NavMoveRequestFlags & ANCHOR_NavMoveFlags_AllowCurrentNavId)) &&
       !(item_flags & (ANCHOR_ItemFlags_Disabled | ANCHOR_ItemFlags_NoNav))) {
-    ANCHOR_NavItemData *result = (window == g.NavWindow) ? &g.NavMoveResultLocal :
-                                                           &g.NavMoveResultOther;
+    ANCHOR_NavItemData *result = (window == g.NavWindow) ? &g.NavMoveResultLocal : &g.NavMoveResultOther;
 #  if ANCHOR_DEBUG_NAV_SCORING
     // [DEBUG] Score all items in NavWindow at all times
     if (!g.NavMoveRequest)
@@ -10036,8 +9772,7 @@ static GfVec2f ANCHOR::NavCalcPreferredRefPos()
     // bottom left of the currently navigated item.
     const ImRect &rect_rel = g.NavWindow->NavRectRel[g.NavLayer];
     GfVec2f pos = g.NavWindow->Pos +
-                  GfVec2f(rect_rel.Min[0] +
-                            ImMin(g.Style.FramePadding[0] * 4, rect_rel.GetWidth()),
+                  GfVec2f(rect_rel.Min[0] + ImMin(g.Style.FramePadding[0] * 4, rect_rel.GetWidth()),
                           rect_rel.Max[1] - ImMin(g.Style.FramePadding[1], rect_rel.GetHeight()));
     ANCHORViewport *viewport = GetMainViewport();
     return ImFloor(
@@ -10083,15 +9818,13 @@ GfVec2f ANCHOR::GetNavInputAmount2d(ANCHOR_NavDirSourceFlags dir_sources,
 {
   GfVec2f delta(0.0f, 0.0f);
   if (dir_sources & ANCHOR_NavDirSourceFlags_Keyboard)
-    delta += GfVec2f(GetNavInputAmount(ANCHOR_NavInput_KeyRight_, mode) -
-                       GetNavInputAmount(ANCHOR_NavInput_KeyLeft_, mode),
-                     GetNavInputAmount(ANCHOR_NavInput_KeyDown_, mode) -
-                       GetNavInputAmount(ANCHOR_NavInput_KeyUp_, mode));
+    delta += GfVec2f(
+      GetNavInputAmount(ANCHOR_NavInput_KeyRight_, mode) - GetNavInputAmount(ANCHOR_NavInput_KeyLeft_, mode),
+      GetNavInputAmount(ANCHOR_NavInput_KeyDown_, mode) - GetNavInputAmount(ANCHOR_NavInput_KeyUp_, mode));
   if (dir_sources & ANCHOR_NavDirSourceFlags_PadDPad)
-    delta += GfVec2f(GetNavInputAmount(ANCHOR_NavInput_DpadRight, mode) -
-                       GetNavInputAmount(ANCHOR_NavInput_DpadLeft, mode),
-                     GetNavInputAmount(ANCHOR_NavInput_DpadDown, mode) -
-                       GetNavInputAmount(ANCHOR_NavInput_DpadUp, mode));
+    delta += GfVec2f(
+      GetNavInputAmount(ANCHOR_NavInput_DpadRight, mode) - GetNavInputAmount(ANCHOR_NavInput_DpadLeft, mode),
+      GetNavInputAmount(ANCHOR_NavInput_DpadDown, mode) - GetNavInputAmount(ANCHOR_NavInput_DpadUp, mode));
   if (dir_sources & ANCHOR_NavDirSourceFlags_PadLStick)
     delta += GfVec2f(GetNavInputAmount(ANCHOR_NavInput_LStickRight, mode) -
                        GetNavInputAmount(ANCHOR_NavInput_LStickLeft, mode),
@@ -10122,13 +9855,10 @@ static void ANCHOR::NavUpdate()
   bool nav_gamepad_active = (io.ConfigFlags & ANCHORConfigFlags_NavEnableGamepad) != 0 &&
                             (io.BackendFlags & ANCHORBackendFlags_HasGamepad) != 0;
   if (nav_gamepad_active && g.NavInputSource != ANCHORInputSource_Gamepad) {
-    if (io.NavInputs[ANCHOR_NavInput_Activate] > 0.0f ||
-        io.NavInputs[ANCHOR_NavInput_Input] > 0.0f ||
+    if (io.NavInputs[ANCHOR_NavInput_Activate] > 0.0f || io.NavInputs[ANCHOR_NavInput_Input] > 0.0f ||
         io.NavInputs[ANCHOR_NavInput_Cancel] > 0.0f || io.NavInputs[ANCHOR_NavInput_Menu] > 0.0f ||
-        io.NavInputs[ANCHOR_NavInput_DpadLeft] > 0.0f ||
-        io.NavInputs[ANCHOR_NavInput_DpadRight] > 0.0f ||
-        io.NavInputs[ANCHOR_NavInput_DpadUp] > 0.0f ||
-        io.NavInputs[ANCHOR_NavInput_DpadDown] > 0.0f)
+        io.NavInputs[ANCHOR_NavInput_DpadLeft] > 0.0f || io.NavInputs[ANCHOR_NavInput_DpadRight] > 0.0f ||
+        io.NavInputs[ANCHOR_NavInput_DpadUp] > 0.0f || io.NavInputs[ANCHOR_NavInput_DpadDown] > 0.0f)
       g.NavInputSource = ANCHORInputSource_Gamepad;
   }
 
@@ -10168,11 +9898,10 @@ static void ANCHOR::NavUpdate()
   }
   memcpy(io.NavInputsDownDurationPrev, io.NavInputsDownDuration, sizeof(io.NavInputsDownDuration));
   for (int i = 0; i < ANCHOR_ARRAYSIZE(io.NavInputs); i++)
-    io.NavInputsDownDuration[i] = (io.NavInputs[i] > 0.0f) ?
-                                    (io.NavInputsDownDuration[i] < 0.0f ?
-                                       0.0f :
-                                       io.NavInputsDownDuration[i] + io.DeltaTime) :
-                                    -1.0f;
+    io.NavInputsDownDuration[i] = (io.NavInputs[i] > 0.0f) ? (io.NavInputsDownDuration[i] < 0.0f ?
+                                                                0.0f :
+                                                                io.NavInputsDownDuration[i] + io.DeltaTime) :
+                                                             -1.0f;
 
   // Process navigation init request (select first/default focus)
   if (g.NavInitResultId != 0)
@@ -10215,8 +9944,7 @@ static void ANCHOR::NavUpdate()
   // step back in our own Layer 0
   if (g.NavWindow)
     NavSaveLastChildNavWindowIntoParent(g.NavWindow);
-  if (g.NavWindow && g.NavWindow->NavLastChildNavWindow != NULL &&
-      g.NavLayer == ANCHORNavLayer_Main)
+  if (g.NavWindow && g.NavWindow->NavLastChildNavWindow != NULL && g.NavLayer == ANCHORNavLayer_Main)
     g.NavWindow->NavLastChildNavWindow = NULL;
 
   // Update CTRL+TAB and Windowing features (hold Square to move/resize/etc.)
@@ -10225,8 +9953,7 @@ static void ANCHOR::NavUpdate()
   // Set output flags for user application
   io.NavActive = (nav_keyboard_active || nav_gamepad_active) && g.NavWindow &&
                  !(g.NavWindow->Flags & ANCHOR_WindowFlags_NoNavInputs);
-  io.NavVisible = (io.NavActive && g.NavId != 0 && !g.NavDisableHighlight) ||
-                  (g.NavWindowingTarget != NULL);
+  io.NavVisible = (io.NavActive && g.NavId != 0 && !g.NavDisableHighlight) || (g.NavWindowingTarget != NULL);
 
   // Process NavCancel input (to close a popup, get back to parent, clear focus)
   if (IsNavInputTest(ANCHOR_NavInput_Cancel, ANCHOR_InputReadMode_Pressed)) {
@@ -10292,20 +10019,17 @@ static void ANCHOR::NavUpdate()
 
   // Process programmatic activation request
   if (g.NavNextActivateId != 0)
-    g.NavActivateId = g.NavActivateDownId = g.NavActivatePressedId = g.NavInputId =
-      g.NavNextActivateId;
+    g.NavActivateId = g.NavActivateDownId = g.NavActivatePressedId = g.NavInputId = g.NavNextActivateId;
   g.NavNextActivateId = 0;
 
   // Initiate directional inputs request
   if (g.NavMoveRequestForward == ANCHORNavForward_None) {
     g.NavMoveDir = ANCHOR_Dir_None;
     g.NavMoveRequestFlags = ANCHOR_NavMoveFlags_None;
-    if (g.NavWindow && !g.NavWindowingTarget &&
-        !(g.NavWindow->Flags & ANCHOR_WindowFlags_NoNavInputs)) {
+    if (g.NavWindow && !g.NavWindowingTarget && !(g.NavWindow->Flags & ANCHOR_WindowFlags_NoNavInputs)) {
       const ANCHOR_InputReadMode read_mode = ANCHOR_InputReadMode_Repeat;
-      if (!IsActiveIdUsingNavDir(ANCHOR_Dir_Left) &&
-          (IsNavInputTest(ANCHOR_NavInput_DpadLeft, read_mode) ||
-           IsNavInputTest(ANCHOR_NavInput_KeyLeft_, read_mode))) {
+      if (!IsActiveIdUsingNavDir(ANCHOR_Dir_Left) && (IsNavInputTest(ANCHOR_NavInput_DpadLeft, read_mode) ||
+                                                      IsNavInputTest(ANCHOR_NavInput_KeyLeft_, read_mode))) {
         g.NavMoveDir = ANCHOR_Dir_Left;
       }
       if (!IsActiveIdUsingNavDir(ANCHOR_Dir_Right) &&
@@ -10313,14 +10037,12 @@ static void ANCHOR::NavUpdate()
            IsNavInputTest(ANCHOR_NavInput_KeyRight_, read_mode))) {
         g.NavMoveDir = ANCHOR_Dir_Right;
       }
-      if (!IsActiveIdUsingNavDir(ANCHOR_Dir_Up) &&
-          (IsNavInputTest(ANCHOR_NavInput_DpadUp, read_mode) ||
-           IsNavInputTest(ANCHOR_NavInput_KeyUp_, read_mode))) {
+      if (!IsActiveIdUsingNavDir(ANCHOR_Dir_Up) && (IsNavInputTest(ANCHOR_NavInput_DpadUp, read_mode) ||
+                                                    IsNavInputTest(ANCHOR_NavInput_KeyUp_, read_mode))) {
         g.NavMoveDir = ANCHOR_Dir_Up;
       }
-      if (!IsActiveIdUsingNavDir(ANCHOR_Dir_Down) &&
-          (IsNavInputTest(ANCHOR_NavInput_DpadDown, read_mode) ||
-           IsNavInputTest(ANCHOR_NavInput_KeyDown_, read_mode))) {
+      if (!IsActiveIdUsingNavDir(ANCHOR_Dir_Down) && (IsNavInputTest(ANCHOR_NavInput_DpadDown, read_mode) ||
+                                                      IsNavInputTest(ANCHOR_NavInput_KeyDown_, read_mode))) {
         g.NavMoveDir = ANCHOR_Dir_Down;
       }
     }
@@ -10362,22 +10084,21 @@ static void ANCHOR::NavUpdate()
   NavUpdateAnyRequestFlag();
 
   // Scrolling
-  if (g.NavWindow && !(g.NavWindow->Flags & ANCHOR_WindowFlags_NoNavInputs) &&
-      !g.NavWindowingTarget) {
+  if (g.NavWindow && !(g.NavWindow->Flags & ANCHOR_WindowFlags_NoNavInputs) && !g.NavWindowingTarget) {
     // *Fallback* manual-scroll with Nav directional keys when window has no navigable item
     ANCHOR_Window *window = g.NavWindow;
-    const float scroll_speed = IM_ROUND(
-      window->CalcFontSize() * 100 * io.DeltaTime);  // We need round the scrolling speed because
-                                                     // sub-pixel scroll isn't reliably supported.
+    const float scroll_speed = IM_ROUND(window->CalcFontSize() * 100 *
+                                        io.DeltaTime);  // We need round the scrolling speed because
+                                                        // sub-pixel scroll isn't reliably supported.
     if (window->DC.NavLayersActiveMask == 0x00 && window->DC.NavHasScroll && g.NavMoveRequest) {
       if (g.NavMoveDir == ANCHOR_Dir_Left || g.NavMoveDir == ANCHOR_Dir_Right)
-        SetScrollX(window,
-                   ImFloor(window->Scroll[0] +
-                           ((g.NavMoveDir == ANCHOR_Dir_Left) ? -1.0f : +1.0f) * scroll_speed));
+        SetScrollX(
+          window,
+          ImFloor(window->Scroll[0] + ((g.NavMoveDir == ANCHOR_Dir_Left) ? -1.0f : +1.0f) * scroll_speed));
       if (g.NavMoveDir == ANCHOR_Dir_Up || g.NavMoveDir == ANCHOR_Dir_Down)
-        SetScrollY(window,
-                   ImFloor(window->Scroll[1] +
-                           ((g.NavMoveDir == ANCHOR_Dir_Up) ? -1.0f : +1.0f) * scroll_speed));
+        SetScrollY(
+          window,
+          ImFloor(window->Scroll[1] + ((g.NavMoveDir == ANCHOR_Dir_Up) ? -1.0f : +1.0f) * scroll_speed));
     }
 
     // *Normal* Manual scroll with NavScrollXXX keys
@@ -10408,11 +10129,10 @@ static void ANCHOR::NavUpdate()
     if (!window_rect_rel.Contains(window->NavRectRel[g.NavLayer])) {
       ANCHOR_DEBUG_LOG_NAV("[nav] NavMoveRequest: clamp NavRectRel\n");
       float pad = window->CalcFontSize() * 0.5f;
-      window_rect_rel.Expand(
-        GfVec2f(-ImMin(window_rect_rel.GetWidth(), pad),
-                -ImMin(window_rect_rel.GetHeight(),
-                       pad)));  // Terrible approximation for the intent of starting navigation
-                                // from first fully visible item
+      window_rect_rel.Expand(GfVec2f(-ImMin(window_rect_rel.GetWidth(), pad),
+                                     -ImMin(window_rect_rel.GetHeight(),
+                                            pad)));  // Terrible approximation for the intent of starting
+                                                     // navigation from first fully visible item
       window->NavRectRel[g.NavLayer].ClipWithFull(window_rect_rel);
       g.NavId = g.NavFocusScopeId = 0;
     }
@@ -10423,16 +10143,15 @@ static void ANCHOR::NavUpdate()
   ImRect nav_rect_rel = g.NavWindow && !g.NavWindow->NavRectRel[g.NavLayer].IsInverted() ?
                           g.NavWindow->NavRectRel[g.NavLayer] :
                           ImRect(0, 0, 0, 0);
-  g.NavScoringRect = g.NavWindow ? ImRect(g.NavWindow->Pos + nav_rect_rel.Min,
-                                          g.NavWindow->Pos + nav_rect_rel.Max) :
-                                   ImRect(0, 0, 0, 0);
+  g.NavScoringRect = g.NavWindow ?
+                       ImRect(g.NavWindow->Pos + nav_rect_rel.Min, g.NavWindow->Pos + nav_rect_rel.Max) :
+                       ImRect(0, 0, 0, 0);
   g.NavScoringRect.TranslateY(nav_scoring_rect_offset_y);
   g.NavScoringRect.Min[0] = ImMin(g.NavScoringRect.Min[0] + 1.0f, g.NavScoringRect.Max[0]);
   g.NavScoringRect.Max[0] = g.NavScoringRect.Min[0];
   ANCHOR_ASSERT(
-    !g.NavScoringRect
-       .IsInverted());  // Ensure if we have a finite, non-inverted bounding box here will
-                        // allows us to remove extraneous ImFabs() calls in NavScoreItem().
+    !g.NavScoringRect.IsInverted());  // Ensure if we have a finite, non-inverted bounding box here will
+                                      // allows us to remove extraneous ImFabs() calls in NavScoreItem().
   // GetForegroundDrawList()->AddRect(g.NavScoringRectScreen.Min, g.NavScoringRectScreen.Max,
   // ANCHOR_COL32(255,200,0,255)); // [DEBUG]
   g.NavScoringCount = 0;
@@ -10446,8 +10165,7 @@ static void ANCHOR::NavUpdate()
                            ANCHOR_COL32(255, 200, 0, 255));
     }  // [DEBUG]
     if (1) {
-      AnchorU32 col = (!g.NavWindow->Hidden) ? ANCHOR_COL32(255, 0, 255, 255) :
-                                               ANCHOR_COL32(255, 0, 0, 255);
+      AnchorU32 col = (!g.NavWindow->Hidden) ? ANCHOR_COL32(255, 0, 255, 255) : ANCHOR_COL32(255, 0, 0, 255);
       GfVec2f p = NavCalcPreferredRefPos();
       char buf[32];
       ImFormatString(buf, 32, "%d", g.NavLayer);
@@ -10569,12 +10287,9 @@ static float ANCHOR::NavUpdatePageUpPageDown()
                             !IsActiveIdUsingKey(ANCHOR_Key_PageUp);
   const bool page_down_held = IsKeyDown(io.KeyMap[ANCHOR_Key_PageDown]) &&
                               !IsActiveIdUsingKey(ANCHOR_Key_PageDown);
-  const bool home_pressed = IsKeyPressed(io.KeyMap[ANCHOR_Key_Home]) &&
-                            !IsActiveIdUsingKey(ANCHOR_Key_Home);
-  const bool end_pressed = IsKeyPressed(io.KeyMap[ANCHOR_Key_End]) &&
-                           !IsActiveIdUsingKey(ANCHOR_Key_End);
-  if (page_up_held != page_down_held ||
-      home_pressed != end_pressed)  // If either (not both) are pressed
+  const bool home_pressed = IsKeyPressed(io.KeyMap[ANCHOR_Key_Home]) && !IsActiveIdUsingKey(ANCHOR_Key_Home);
+  const bool end_pressed = IsKeyPressed(io.KeyMap[ANCHOR_Key_End]) && !IsActiveIdUsingKey(ANCHOR_Key_End);
+  if (page_up_held != page_down_held || home_pressed != end_pressed)  // If either (not both) are pressed
   {
     if (window->DC.NavLayersActiveMask == 0x00 && window->DC.NavHasScroll) {
       // Fallback manual-scroll when window has no navigable item
@@ -10590,8 +10305,7 @@ static float ANCHOR::NavUpdatePageUpPageDown()
     else {
       ImRect &nav_rect_rel = window->NavRectRel[g.NavLayer];
       const float page_offset_y = AnchorMax(
-        0.0f,
-        window->InnerRect.GetHeight() - window->CalcFontSize() * 1.0f + nav_rect_rel.GetHeight());
+        0.0f, window->InnerRect.GetHeight() - window->CalcFontSize() * 1.0f + nav_rect_rel.GetHeight());
       float nav_scoring_rect_offset_y = 0.0f;
       if (IsKeyPressed(io.KeyMap[ANCHOR_Key_PageUp], true)) {
         nav_scoring_rect_offset_y = -page_offset_y;
@@ -10618,8 +10332,7 @@ static float ANCHOR::NavUpdatePageUpPageDown()
         if (nav_rect_rel.IsInverted())
           nav_rect_rel.Min[0] = nav_rect_rel.Max[0] = 0.0f;
         g.NavMoveDir = ANCHOR_Dir_Down;
-        g.NavMoveRequestFlags = ANCHOR_NavMoveFlags_AllowCurrentNavId |
-                                ANCHOR_NavMoveFlags_ScrollToEdge;
+        g.NavMoveRequestFlags = ANCHOR_NavMoveFlags_AllowCurrentNavId | ANCHOR_NavMoveFlags_ScrollToEdge;
       }
       else if (end_pressed) {
         nav_rect_rel.Min[1] = nav_rect_rel.Max[1] = window->ScrollMax[1] + window->SizeFull[1] -
@@ -10627,8 +10340,7 @@ static float ANCHOR::NavUpdatePageUpPageDown()
         if (nav_rect_rel.IsInverted())
           nav_rect_rel.Min[0] = nav_rect_rel.Max[0] = 0.0f;
         g.NavMoveDir = ANCHOR_Dir_Up;
-        g.NavMoveRequestFlags = ANCHOR_NavMoveFlags_AllowCurrentNavId |
-                                ANCHOR_NavMoveFlags_ScrollToEdge;
+        g.NavMoveRequestFlags = ANCHOR_NavMoveFlags_AllowCurrentNavId | ANCHOR_NavMoveFlags_ScrollToEdge;
       }
       return nav_scoring_rect_offset_y;
     }
@@ -10656,8 +10368,7 @@ static void ANCHOR::NavEndFrame()
     if (g.NavMoveDir == ANCHOR_Dir_Left &&
         (move_flags & (ANCHOR_NavMoveFlags_WrapX | ANCHOR_NavMoveFlags_LoopX))) {
       bb_rel.Min[0] = bb_rel.Max[0] = AnchorMax(window->SizeFull[0],
-                                                window->ContentSize[0] +
-                                                  window->WindowPadding[0] * 2.0f) -
+                                                window->ContentSize[0] + window->WindowPadding[0] * 2.0f) -
                                       window->Scroll[0];
       if (move_flags & ANCHOR_NavMoveFlags_WrapX) {
         bb_rel.TranslateY(-bb_rel.GetHeight());
@@ -10677,8 +10388,7 @@ static void ANCHOR::NavEndFrame()
     if (g.NavMoveDir == ANCHOR_Dir_Up &&
         (move_flags & (ANCHOR_NavMoveFlags_WrapY | ANCHOR_NavMoveFlags_LoopY))) {
       bb_rel.Min[1] = bb_rel.Max[1] = AnchorMax(window->SizeFull[1],
-                                                window->ContentSize[1] +
-                                                  window->WindowPadding[1] * 2.0f) -
+                                                window->ContentSize[1] + window->WindowPadding[1] * 2.0f) -
                                       window->Scroll[1];
       if (move_flags & ANCHOR_NavMoveFlags_WrapY) {
         bb_rel.TranslateX(-bb_rel.GetWidth());
@@ -10750,23 +10460,21 @@ static void ANCHOR::NavUpdateWindowing()
 
   // Fade out
   if (g.NavWindowingTargetAnim && g.NavWindowingTarget == NULL) {
-    g.NavWindowingHighlightAlpha = AnchorMax(g.NavWindowingHighlightAlpha - g.IO.DeltaTime * 10.0f,
-                                             0.0f);
+    g.NavWindowingHighlightAlpha = AnchorMax(g.NavWindowingHighlightAlpha - g.IO.DeltaTime * 10.0f, 0.0f);
     if (g.DimBgRatio <= 0.0f && g.NavWindowingHighlightAlpha <= 0.0f)
       g.NavWindowingTargetAnim = NULL;
   }
 
   // Start CTRL-TAB or Square+L/R window selection
   bool start_windowing_with_gamepad = allow_windowing && !g.NavWindowingTarget &&
-                                      IsNavInputTest(ANCHOR_NavInput_Menu,
-                                                     ANCHOR_InputReadMode_Pressed);
+                                      IsNavInputTest(ANCHOR_NavInput_Menu, ANCHOR_InputReadMode_Pressed);
   bool start_windowing_with_keyboard = allow_windowing && !g.NavWindowingTarget && g.IO.KeyCtrl &&
                                        IsKeyPressedMap(ANCHOR_Key_Tab) &&
                                        (g.IO.ConfigFlags & ANCHORConfigFlags_NavEnableKeyboard);
   if (start_windowing_with_gamepad || start_windowing_with_keyboard)
-    if (ANCHOR_Window *window = g.NavWindow ? g.NavWindow :
-                                              FindWindowNavFocusable(
-                                                g.WindowsFocusOrder.Size - 1, -INT_MAX, -1)) {
+    if (ANCHOR_Window *window = g.NavWindow ?
+                                  g.NavWindow :
+                                  FindWindowNavFocusable(g.WindowsFocusOrder.Size - 1, -INT_MAX, -1)) {
       g.NavWindowingTarget = g.NavWindowingTargetAnim =
         window->RootWindow;  // FIXME-DOCK: Will need to use RootWindowDockStop
       g.NavWindowingTimer = g.NavWindowingHighlightAlpha = 0.0f;
@@ -10835,11 +10543,9 @@ static void ANCHOR::NavUpdateWindowing()
   if (g.NavWindowingTarget && !(g.NavWindowingTarget->Flags & ANCHOR_WindowFlags_NoMove)) {
     GfVec2f move_delta;
     if (g.NavInputSource == ANCHORInputSource_Keyboard && !g.IO.KeyShift)
-      move_delta = GetNavInputAmount2d(ANCHOR_NavDirSourceFlags_Keyboard,
-                                       ANCHOR_InputReadMode_Down);
+      move_delta = GetNavInputAmount2d(ANCHOR_NavDirSourceFlags_Keyboard, ANCHOR_InputReadMode_Down);
     if (g.NavInputSource == ANCHORInputSource_Gamepad)
-      move_delta = GetNavInputAmount2d(ANCHOR_NavDirSourceFlags_PadLStick,
-                                       ANCHOR_InputReadMode_Down);
+      move_delta = GetNavInputAmount2d(ANCHOR_NavDirSourceFlags_PadLStick, ANCHOR_InputReadMode_Down);
     if (move_delta[0] != 0.0f || move_delta[1] != 0.0f) {
       const float NAV_MOVE_SPEED = 800.0f;
       const float move_speed = ImFloor(
@@ -10848,16 +10554,14 @@ static void ANCHOR::NavUpdateWindowing()
               g.IO.DisplayFramebufferScale[1]));  // FIXME: Doesn't handle variable framerate
                                                   // very well
       ANCHOR_Window *moving_window = g.NavWindowingTarget->RootWindow;
-      SetWindowPos(
-        moving_window, moving_window->Pos + move_delta * move_speed, ANCHOR_Cond_Always);
+      SetWindowPos(moving_window, moving_window->Pos + move_delta * move_speed, ANCHOR_Cond_Always);
       MarkIniSettingsDirty(moving_window);
       g.NavDisableMouseHover = true;
     }
   }
 
   // Apply final focus
-  if (apply_focus_window &&
-      (g.NavWindow == NULL || apply_focus_window != g.NavWindow->RootWindow)) {
+  if (apply_focus_window && (g.NavWindow == NULL || apply_focus_window != g.NavWindow->RootWindow)) {
     ClearActiveID();
     g.NavDisableHighlight = false;
     g.NavDisableMouseHover = true;
@@ -10889,8 +10593,7 @@ static void ANCHOR::NavUpdateWindowing()
     while (new_nav_window->ParentWindow &&
            (new_nav_window->DC.NavLayersActiveMask & (1 << ANCHORNavLayer_Menu)) == 0 &&
            (new_nav_window->Flags & ANCHOR_WindowFlags_ChildWindow) != 0 &&
-           (new_nav_window->Flags & (ANCHOR_WindowFlags_Popup | ANCHOR_WindowFlags_ChildMenu)) ==
-             0)
+           (new_nav_window->Flags & (ANCHOR_WindowFlags_Popup | ANCHOR_WindowFlags_ChildMenu)) == 0)
       new_nav_window = new_nav_window->ParentWindow;
     if (new_nav_window != g.NavWindow) {
       ANCHOR_Window *old_nav_window = g.NavWindow;
@@ -10901,8 +10604,7 @@ static void ANCHOR::NavUpdateWindowing()
     g.NavDisableMouseHover = true;
 
     // Reinitialize navigation when entering menu bar with the Alt key.
-    const ANCHORNavLayer new_nav_layer = (g.NavWindow->DC.NavLayersActiveMask &
-                                          (1 << ANCHORNavLayer_Menu)) ?
+    const ANCHORNavLayer new_nav_layer = (g.NavWindow->DC.NavLayersActiveMask & (1 << ANCHORNavLayer_Menu)) ?
                                            (ANCHORNavLayer)((int)g.NavLayer ^ 1) :
                                            ANCHORNavLayer_Main;
     if (new_nav_layer == ANCHORNavLayer_Menu)
@@ -10939,9 +10641,9 @@ void ANCHOR::NavUpdateWindowingOverlay()
   PushStyleVar(ANCHOR_StyleVar_WindowPadding, g.Style.WindowPadding * 2.0f);
   Begin("###NavWindowingList",
         NULL,
-        ANCHOR_WindowFlags_NoTitleBar | ANCHOR_WindowFlags_NoFocusOnAppearing |
-          ANCHOR_WindowFlags_NoResize | ANCHOR_WindowFlags_NoMove | ANCHOR_WindowFlags_NoInputs |
-          ANCHOR_WindowFlags_AlwaysAutoResize | ANCHOR_WindowFlags_NoSavedSettings);
+        ANCHOR_WindowFlags_NoTitleBar | ANCHOR_WindowFlags_NoFocusOnAppearing | ANCHOR_WindowFlags_NoResize |
+          ANCHOR_WindowFlags_NoMove | ANCHOR_WindowFlags_NoInputs | ANCHOR_WindowFlags_AlwaysAutoResize |
+          ANCHOR_WindowFlags_NoSavedSettings);
   for (int n = g.WindowsFocusOrder.Size - 1; n >= 0; n--) {
     ANCHOR_Window *window = g.WindowsFocusOrder[n];
     ANCHOR_ASSERT(window != NULL);  // Fix static analyzers
@@ -11078,16 +10780,14 @@ bool ANCHOR::BeginDragDropSource(ANCHORDragDropFlags flags)
       // this request explicit) We unfortunately can't just modify the source flags and skip the
       // call to BeginTooltip, as caller may be emitting contents.
       BeginTooltip();
-      if (g.DragDropAcceptIdPrev &&
-          (g.DragDropAcceptFlags & ANCHORDragDropFlags_AcceptNoPreviewTooltip)) {
+      if (g.DragDropAcceptIdPrev && (g.DragDropAcceptFlags & ANCHORDragDropFlags_AcceptNoPreviewTooltip)) {
         ANCHOR_Window *tooltip_window = g.CurrentWindow;
         tooltip_window->SkipItems = true;
         tooltip_window->HiddenFramesCanSkipItems = 1;
       }
     }
 
-    if (!(flags & ANCHORDragDropFlags_SourceNoDisableHover) &&
-        !(flags & ANCHORDragDropFlags_SourceExtern))
+    if (!(flags & ANCHORDragDropFlags_SourceNoDisableHover) && !(flags & ANCHORDragDropFlags_SourceExtern))
       window->DC.LastItemStatusFlags &= ~ANCHOR_ItemStatusFlags_HoveredRect;
 
     return true;
@@ -11111,10 +10811,7 @@ void ANCHOR::EndDragDropSource()
 }
 
 // Use 'cond' to choose to submit payload on drag start or every frame
-bool ANCHOR::SetDragDropPayload(const char *type,
-                                const void *data,
-                                size_t data_size,
-                                ANCHOR_Cond cond)
+bool ANCHOR::SetDragDropPayload(const char *type, const void *data, size_t data_size, ANCHOR_Cond cond)
 {
   ANCHOR_Context &g = *G_CTX;
   ANCHORPayload &payload = g.DragDropPayload;
@@ -11126,8 +10823,7 @@ bool ANCHOR::SetDragDropPayload(const char *type,
                 "Payload type can be at most 32 characters long");
   ANCHOR_ASSERT((data != NULL && data_size > 0) || (data == NULL && data_size == 0));
   ANCHOR_ASSERT(cond == ANCHOR_Cond_Always || cond == ANCHOR_Cond_Once);
-  ANCHOR_ASSERT(payload.SourceId !=
-                0);  // Not called between BeginDragDropSource() and EndDragDropSource()
+  ANCHOR_ASSERT(payload.SourceId != 0);  // Not called between BeginDragDropSource() and EndDragDropSource()
 
   if (cond == ANCHOR_Cond_Always || payload.DataFrameCount == -1) {
     // Copy payload
@@ -11152,8 +10848,7 @@ bool ANCHOR::SetDragDropPayload(const char *type,
   }
   payload.DataFrameCount = g.FrameCount;
 
-  return (g.DragDropAcceptFrameCount == g.FrameCount) ||
-         (g.DragDropAcceptFrameCount == g.FrameCount - 1);
+  return (g.DragDropAcceptFrameCount == g.FrameCount) || (g.DragDropAcceptFrameCount == g.FrameCount - 1);
 }
 
 bool ANCHOR::BeginDragDropTargetCustom(const ImRect &bb, ANCHOR_ID id)
@@ -11198,8 +10893,7 @@ bool ANCHOR::BeginDragDropTarget()
   if (hovered_window == NULL || window->RootWindow != hovered_window->RootWindow)
     return false;
 
-  const ImRect &display_rect = (window->DC.LastItemStatusFlags &
-                                ANCHOR_ItemStatusFlags_HasDisplayRect) ?
+  const ImRect &display_rect = (window->DC.LastItemStatusFlags & ANCHOR_ItemStatusFlags_HasDisplayRect) ?
                                  window->DC.LastItemDisplayRect :
                                  window->DC.LastItemRect;
   ANCHOR_ID id = window->DC.LastItemId;
@@ -11226,8 +10920,7 @@ const ANCHORPayload *ANCHOR::AcceptDragDropPayload(const char *type, ANCHORDragD
   ANCHOR_Context &g = *G_CTX;
   ANCHOR_Window *window = g.CurrentWindow;
   ANCHORPayload &payload = g.DragDropPayload;
-  ANCHOR_ASSERT(
-    g.DragDropActive);  // Not called between BeginDragDropTarget() and EndDragDropTarget() ?
+  ANCHOR_ASSERT(g.DragDropActive);  // Not called between BeginDragDropTarget() and EndDragDropTarget() ?
   ANCHOR_ASSERT(payload.DataFrameCount != -1);  // Forgot to call EndDragDropTarget() ?
   if (type != NULL && !payload.IsDataType(type))
     return NULL;
@@ -11263,10 +10956,9 @@ const ANCHORPayload *ANCHOR::AcceptDragDropPayload(const char *type, ANCHORDragD
 
   g.DragDropAcceptFrameCount = g.FrameCount;
   payload.Delivery = was_accepted_previously &&
-                     !IsMouseDown(
-                       g.DragDropMouseButton);  // For extern drag sources affecting os window
-                                                // focus, it's easier to just test !IsMouseDown()
-                                                // instead of IsMouseReleased()
+                     !IsMouseDown(g.DragDropMouseButton);  // For extern drag sources affecting os window
+                                                           // focus, it's easier to just test !IsMouseDown()
+                                                           // instead of IsMouseReleased()
   if (!payload.Delivery && !(flags & ANCHORDragDropFlags_AcceptBeforeDelivery))
     return NULL;
 
@@ -11345,8 +11037,7 @@ void ANCHOR::LogRenderedText(const GfVec2f *ref_pos, const char *text, const cha
   if (!text_end)
     text_end = FindRenderedTextEnd(text, text_end);
 
-  const bool log_new_line = ref_pos &&
-                            (ref_pos->data()[1] > g.LogLinePosY + g.Style.FramePadding[1] + 1);
+  const bool log_new_line = ref_pos && (ref_pos->data()[1] > g.LogLinePosY + g.Style.FramePadding[1] + 1);
   if (ref_pos)
     g.LogLinePosY = ref_pos->data()[1];
   if (log_new_line) {
@@ -11357,8 +11048,7 @@ void ANCHOR::LogRenderedText(const GfVec2f *ref_pos, const char *text, const cha
   if (prefix)
     LogRenderedText(ref_pos,
                     prefix,
-                    prefix +
-                      strlen(prefix));  // Calculate end ourself to ensure "##" are included here.
+                    prefix + strlen(prefix));  // Calculate end ourself to ensure "##" are included here.
 
   // Re-adjust padding if we have popped out of our starting depth
   if (g.LogDepthRef > window->DC.TreeDepth)
@@ -11574,9 +11264,8 @@ void ANCHOR::UpdateSettings()
       if (g.IO.IniFilename != NULL)
         SaveIniSettingsToDisk(g.IO.IniFilename);
       else
-        g.IO.WantSaveIniSettings =
-          true;  // Let user know they can call SaveIniSettingsToMemory(). user will need to
-                 // clear io.WantSaveIniSettings themselves.
+        g.IO.WantSaveIniSettings = true;  // Let user know they can call SaveIniSettingsToMemory(). user will
+                                          // need to clear io.WantSaveIniSettings themselves.
       g.SettingsDirtyTimer = 0.0f;
     }
   }
@@ -11777,9 +11466,7 @@ static void WindowSettingsHandler_ClearAll(ANCHOR_Context *ctx, ANCHOR_SettingsH
   g.SettingsWindows.clear();
 }
 
-static void *WindowSettingsHandler_ReadOpen(ANCHOR_Context *,
-                                            ANCHOR_SettingsHandler *,
-                                            const char *name)
+static void *WindowSettingsHandler_ReadOpen(ANCHOR_Context *, ANCHOR_SettingsHandler *, const char *name)
 {
   ANCHOR_WindowSettings *settings = ANCHOR::FindOrCreateWindowSettings(name);
   ANCHOR_ID id = settings->ID;
@@ -11933,8 +11620,7 @@ static const char *GetClipboardTextFn_DefaultImpl(void *)
   if (const WCHAR *wbuf_global = (const WCHAR *)::GlobalLock(wbuf_handle)) {
     int buf_len = ::WideCharToMultiByte(CP_UTF8, 0, wbuf_global, -1, NULL, 0, NULL, NULL);
     g.ClipboardHandlerData.resize(buf_len);
-    ::WideCharToMultiByte(
-      CP_UTF8, 0, wbuf_global, -1, g.ClipboardHandlerData.Data, buf_len, NULL, NULL);
+    ::WideCharToMultiByte(CP_UTF8, 0, wbuf_global, -1, g.ClipboardHandlerData.Data, buf_len, NULL, NULL);
   }
   ::GlobalUnlock(wbuf_handle);
   ::CloseClipboard();
@@ -11960,8 +11646,7 @@ static void SetClipboardTextFn_DefaultImpl(void *, const char *text)
   ::CloseClipboard();
 }
 
-#  elif defined(__APPLE__) && TARGET_OS_OSX && \
-    defined(ANCHOR_ENABLE_OSX_DEFAULT_CLIPBOARD_FUNCTIONS)
+#  elif defined(__APPLE__) && TARGET_OS_OSX && defined(ANCHOR_ENABLE_OSX_DEFAULT_CLIPBOARD_FUNCTIONS)
 
 #    include <Carbon/Carbon.h>  // Use old API to avoid need for separate .mm file
 static PasteboardRef main_clipboard = 0;
@@ -11997,8 +11682,8 @@ static const char *GetClipboardTextFn_DefaultImpl(void *)
     PasteboardCopyItemFlavors(main_clipboard, item_id, &flavor_type_array);
     for (CFIndex j = 0, nj = CFArrayGetCount(flavor_type_array); j < nj; j++) {
       CFDataRef cf_data;
-      if (PasteboardCopyItemFlavorData(
-            main_clipboard, item_id, CFSTR("public.utf8-plain-text"), &cf_data) == noErr) {
+      if (PasteboardCopyItemFlavorData(main_clipboard, item_id, CFSTR("public.utf8-plain-text"), &cf_data) ==
+          noErr) {
         ANCHOR_Context &g = *G_CTX;
         g.ClipboardHandlerData.clear();
         int length = (int)CFDataGetLength(cf_data);
@@ -12085,21 +11770,16 @@ static void ImeSetInputScreenPosFn_DefaultImpl(int, int)
 
 #  ifndef ANCHOR_DISABLE_METRICS_WINDOW
 
-void ANCHOR::DebugRenderViewportThumbnail(ImDrawList *draw_list,
-                                          ANCHORViewportP *viewport,
-                                          const ImRect &bb)
+void ANCHOR::DebugRenderViewportThumbnail(ImDrawList *draw_list, ANCHORViewportP *viewport, const ImRect &bb)
 {
   ANCHOR_Context &g = *G_CTX;
   ANCHOR_Window *window = g.CurrentWindow;
 
   /** todo::check_math */
-  GfVec2f scale = GfVec2f(bb.GetSize()[0] / viewport->Size[0],
-                          bb.GetSize()[1] / viewport->Size[1]);
-  GfVec2f off = GfVec2f(bb.Min[0] - viewport->Pos[0] * scale[0],
-                        bb.Min[1] - viewport->Pos[1] * scale[1]);
+  GfVec2f scale = GfVec2f(bb.GetSize()[0] / viewport->Size[0], bb.GetSize()[1] / viewport->Size[1]);
+  GfVec2f off = GfVec2f(bb.Min[0] - viewport->Pos[0] * scale[0], bb.Min[1] - viewport->Pos[1] * scale[1]);
   float alpha_mul = 1.0f;
-  window->DrawList->AddRectFilled(
-    bb.Min, bb.Max, GetColorU32(ANCHOR_Col_Border, alpha_mul * 0.40f));
+  window->DrawList->AddRectFilled(bb.Min, bb.Max, GetColorU32(ANCHOR_Col_Border, alpha_mul * 0.40f));
   for (int i = 0; i != g.Windows.Size; i++) {
     ANCHOR_Window *thumb_window = g.Windows[i];
     if (!thumb_window->WasActive || (thumb_window->Flags & ANCHOR_WindowFlags_ChildWindow))
@@ -12123,8 +11803,7 @@ void ANCHOR::DebugRenderViewportThumbnail(ImDrawList *draw_list,
     title_r.ClipWithFull(bb);
     const bool window_is_focused = (g.NavWindow && thumb_window->RootWindowForTitleBarHighlight ==
                                                      g.NavWindow->RootWindowForTitleBarHighlight);
-    window->DrawList->AddRectFilled(
-      thumb_r.Min, thumb_r.Max, GetColorU32(ANCHOR_Col_WindowBg, alpha_mul));
+    window->DrawList->AddRectFilled(thumb_r.Min, thumb_r.Max, GetColorU32(ANCHOR_Col_WindowBg, alpha_mul));
     window->DrawList->AddRectFilled(
       title_r.Min,
       title_r.Max,
@@ -12155,8 +11834,7 @@ static void RenderViewportsThumbnails()
   GfVec2f off = p - bb_full.Min * SCALE;
   for (int n = 0; n < g.Viewports.Size; n++) {
     ANCHORViewportP *viewport = g.Viewports[n];
-    ImRect viewport_draw_bb(off + (viewport->Pos) * SCALE,
-                            off + (viewport->Pos + viewport->Size) * SCALE);
+    ImRect viewport_draw_bb(off + (viewport->Pos) * SCALE, off + (viewport->Pos + viewport->Size) * SCALE);
     ANCHOR::DebugRenderViewportThumbnail(window->DrawList, viewport, viewport_draw_bb);
   }
   ANCHOR::Dummy(bb_full.GetSize() * SCALE);
@@ -12375,11 +12053,8 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
     Checkbox("Show windows rectangles", &cfg->ShowWindowsRects);
     SameLine();
     SetNextItemWidth(GetFontSize() * 12);
-    cfg->ShowWindowsRects |= Combo("##show_windows_rect_type",
-                                   &cfg->ShowWindowsRectsType,
-                                   wrt_rects_names,
-                                   WRT_Count,
-                                   WRT_Count);
+    cfg->ShowWindowsRects |= Combo(
+      "##show_windows_rect_type", &cfg->ShowWindowsRectsType, wrt_rects_names, WRT_Count, WRT_Count);
     if (cfg->ShowWindowsRects && g.NavWindow != NULL) {
       BulletText("'%s':", g.NavWindow->Name);
       Indent();
@@ -12411,10 +12086,8 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
             (table->OuterWindow != g.NavWindow && table->InnerWindow != g.NavWindow))
           continue;
 
-        BulletText("Table 0x%08X (%d columns, in '%s')",
-                   table->ID,
-                   table->ColumnsCount,
-                   table->OuterWindow->Name);
+        BulletText(
+          "Table 0x%08X (%d columns, in '%s')", table->ID, table->ColumnsCount, table->OuterWindow->Name);
         if (IsItemHovered())
           GetForegroundDrawList()->AddRect(table->OuterRect.Min - GfVec2f(1, 1),
                                            table->OuterRect.Max + GfVec2f(1, 1),
@@ -12465,12 +12138,8 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
                            trt_rects_names[rect_n]);
             Selectable(buf);
             if (IsItemHovered())
-              GetForegroundDrawList()->AddRect(r.Min - GfVec2f(1, 1),
-                                               r.Max + GfVec2f(1, 1),
-                                               ANCHOR_COL32(255, 255, 0, 255),
-                                               0.0f,
-                                               0,
-                                               2.0f);
+              GetForegroundDrawList()->AddRect(
+                r.Min - GfVec2f(1, 1), r.Max + GfVec2f(1, 1), ANCHOR_COL32(255, 255, 0, 255), 0.0f, 0, 2.0f);
           }
         }
         Unindent();
@@ -12491,12 +12160,10 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
   if (TreeNode("DrawLists", "DrawLists (%d)", drawlist_count)) {
     for (int viewport_i = 0; viewport_i < g.Viewports.Size; viewport_i++) {
       ANCHORViewportP *viewport = g.Viewports[viewport_i];
-      for (int layer_i = 0; layer_i < ANCHOR_ARRAYSIZE(viewport->DrawDataBuilder.Layers);
-           layer_i++)
+      for (int layer_i = 0; layer_i < ANCHOR_ARRAYSIZE(viewport->DrawDataBuilder.Layers); layer_i++)
         for (int draw_list_i = 0; draw_list_i < viewport->DrawDataBuilder.Layers[layer_i].Size;
              draw_list_i++)
-          DebugNodeDrawList(
-            NULL, viewport->DrawDataBuilder.Layers[layer_i][draw_list_i], "DrawList");
+          DebugNodeDrawList(NULL, viewport->DrawDataBuilder.Layers[layer_i][draw_list_i], "DrawList");
     }
     TreePop();
   }
@@ -12575,17 +12242,14 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
         BulletText("%s", g.SettingsHandlers[n].TypeName);
       TreePop();
     }
-    if (TreeNode("SettingsWindows",
-                 "Settings packed data: Windows: %d bytes",
-                 g.SettingsWindows.size())) {
+    if (TreeNode("SettingsWindows", "Settings packed data: Windows: %d bytes", g.SettingsWindows.size())) {
       for (ANCHOR_WindowSettings *settings = g.SettingsWindows.begin(); settings != NULL;
            settings = g.SettingsWindows.next_chunk(settings))
         DebugNodeWindowSettings(settings);
       TreePop();
     }
 
-    if (TreeNode(
-          "SettingsTables", "Settings packed data: Tables: %d bytes", g.SettingsTables.size())) {
+    if (TreeNode("SettingsTables", "Settings packed data: Tables: %d bytes", g.SettingsTables.size())) {
       for (ANCHOR_TableSettings *settings = g.SettingsTables.begin(); settings != NULL;
            settings = g.SettingsTables.next_chunk(settings))
         DebugNodeTableSettings(settings);
@@ -12595,9 +12259,7 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
 #    ifdef ANCHOR_HAS_DOCK
 #    endif  // #ifdef ANCHOR_HAS_DOCK
 
-    if (TreeNode("SettingsIniData",
-                 "Settings unpacked data (.ini): %d bytes",
-                 g.SettingsIniData.size())) {
+    if (TreeNode("SettingsIniData", "Settings unpacked data (.ini): %d bytes", g.SettingsIniData.size())) {
       InputTextMultiline("##Ini",
                          (char *)(void *)g.SettingsIniData.c_str(),
                          g.SettingsIniData.Buf.Size,
@@ -12610,15 +12272,13 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
 
   // Misc Details
   if (TreeNode("Internal state")) {
-    const char *input_source_names[] = {
-      "None", "Mouse", "Keyboard", "Gamepad", "Nav", "Clipboard"};
+    const char *input_source_names[] = {"None", "Mouse", "Keyboard", "Gamepad", "Nav", "Clipboard"};
     ANCHOR_ASSERT(ANCHOR_ARRAYSIZE(input_source_names) == ANCHORInputSource_COUNT);
 
     Text("WINDOWING");
     Indent();
     Text("HoveredWindow: '%s'", g.HoveredWindow ? g.HoveredWindow->Name : "NULL");
-    Text("HoveredWindow->Root: '%s'",
-         g.HoveredWindow ? g.HoveredWindow->RootWindow->Name : "NULL");
+    Text("HoveredWindow->Root: '%s'", g.HoveredWindow ? g.HoveredWindow->RootWindow->Name : "NULL");
     Text("HoveredWindowUnderMovingWindow: '%s'",
          g.HoveredWindowUnderMovingWindow ? g.HoveredWindowUnderMovingWindow->Name : "NULL");
     Text("MovingWindow: '%s'", g.MovingWindow ? g.MovingWindow->Name : "NULL");
@@ -12653,9 +12313,7 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
     Text("NavInputSource: %s", input_source_names[g.NavInputSource]);
     Text("NavActive: %d, NavVisible: %d", g.IO.NavActive, g.IO.NavVisible);
     Text("NavActivateId: 0x%08X, NavInputId: 0x%08X", g.NavActivateId, g.NavInputId);
-    Text("NavDisableHighlight: %d, NavDisableMouseHover: %d",
-         g.NavDisableHighlight,
-         g.NavDisableMouseHover);
+    Text("NavDisableHighlight: %d, NavDisableMouseHover: %d", g.NavDisableHighlight, g.NavDisableMouseHover);
     Text("NavFocusScopeId = 0x%08X", g.NavFocusScopeId);
     Text("NavWindowingTarget: '%s'", g.NavWindowingTarget ? g.NavWindowingTarget->Name : "NULL");
     Unindent();
@@ -12678,9 +12336,8 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
         char buf[32];
         ImFormatString(buf, ANCHOR_ARRAYSIZE(buf), "%d", window->BeginOrderWithinContext);
         float font_size = GetFontSize();
-        draw_list->AddRectFilled(window->Pos,
-                                 window->Pos + GfVec2f(font_size, font_size),
-                                 ANCHOR_COL32(200, 100, 100, 255));
+        draw_list->AddRectFilled(
+          window->Pos, window->Pos + GfVec2f(font_size, font_size), ANCHOR_COL32(200, 100, 100, 255));
         draw_list->AddText(window->Pos, ANCHOR_COL32(255, 255, 255, 255), buf);
       }
     }
@@ -12696,9 +12353,8 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
       if (cfg->ShowTablesRectsType >= TRT_ColumnsRect) {
         for (int column_n = 0; column_n < table->ColumnsCount; column_n++) {
           ImRect r = Funcs::GetTableRect(table, cfg->ShowTablesRectsType, column_n);
-          AnchorU32 col = (table->HoveredColumnBody == column_n) ?
-                            ANCHOR_COL32(255, 255, 128, 255) :
-                            ANCHOR_COL32(255, 0, 128, 255);
+          AnchorU32 col = (table->HoveredColumnBody == column_n) ? ANCHOR_COL32(255, 255, 128, 255) :
+                                                                   ANCHOR_COL32(255, 0, 128, 255);
           float thickness = (table->HoveredColumnBody == column_n) ? 3.0f : 1.0f;
           draw_list->AddRect(r.Min, r.Max, col, 0.0f, 0, thickness);
         }
@@ -12728,8 +12384,7 @@ void ANCHOR::ShowFontAtlas(AnchorFontAtlas *atlas)
     DebugNodeFont(font);
     PopID();
   }
-  if (TreeNode(
-        "Atlas texture", "Atlas texture (%dx%d pixels)", atlas->TexWidth, atlas->TexHeight)) {
+  if (TreeNode("Atlas texture", "Atlas texture (%dx%d pixels)", atlas->TexWidth, atlas->TexHeight)) {
     GfVec4f tint_col = GfVec4f(1.0f, 1.0f, 1.0f, 1.0f);
     GfVec4f border_col = GfVec4f(1.0f, 1.0f, 1.0f, 0.5f);
     Image(atlas->TexID,
@@ -12764,9 +12419,7 @@ void ANCHOR::DebugNodeColumns(ANCHOR_OldColumns *columns)
 }
 
 // [DEBUG] Display contents of ImDrawList
-void ANCHOR::DebugNodeDrawList(ANCHOR_Window *window,
-                               const ImDrawList *draw_list,
-                               const char *label)
+void ANCHOR::DebugNodeDrawList(ANCHOR_Window *window, const ImDrawList *draw_list, const char *label)
 {
   ANCHOR_Context &g = *G_CTX;
   ANCHOR_MetricsConfig *cfg = &g.DebugMetricsConfig;
@@ -12801,8 +12454,7 @@ void ANCHOR::DebugNodeDrawList(ANCHOR_Window *window,
   if (window && !window->WasActive)
     TextDisabled("Warning: owning Window is inactive. This DrawList is not being rendered!");
 
-  for (const ImDrawCmd *pcmd = draw_list->CmdBuffer.Data;
-       pcmd < draw_list->CmdBuffer.Data + cmd_count;
+  for (const ImDrawCmd *pcmd = draw_list->CmdBuffer.Data; pcmd < draw_list->CmdBuffer.Data + cmd_count;
        pcmd++) {
     if (pcmd->UserCallback) {
       BulletText("Callback %p, user_data %p", pcmd->UserCallback, pcmd->UserCallbackData);
@@ -12829,8 +12481,7 @@ void ANCHOR::DebugNodeDrawList(ANCHOR_Window *window,
     // Calculate approximate coverage area (touched pixel count)
     // This will be in pixels squared as long there's no post-scaling happening to the renderer
     // output.
-    const ImDrawIdx *idx_buffer = (draw_list->IdxBuffer.Size > 0) ? draw_list->IdxBuffer.Data :
-                                                                    NULL;
+    const ImDrawIdx *idx_buffer = (draw_list->IdxBuffer.Size > 0) ? draw_list->IdxBuffer.Data : NULL;
     const ImDrawVert *vtx_buffer = draw_list->VtxBuffer.Data + pcmd->VtxOffset;
     float total_area = 0.0f;
     for (unsigned int idx_n = pcmd->IdxOffset; idx_n < pcmd->IdxOffset + pcmd->ElemCount;) {
@@ -12884,8 +12535,7 @@ void ANCHOR::DebugNodeDrawList(ANCHOR_Window *window,
           fg_draw_list->Flags &=
             ~ImDrawListFlags_AntiAliasedLines;  // Disable AA on triangle outlines is more
                                                 // readable for very large and thin triangles.
-          fg_draw_list->AddPolyline(
-            triangle, 3, ANCHOR_COL32(255, 255, 0, 255), ImDrawFlags_Closed, 1.0f);
+          fg_draw_list->AddPolyline(triangle, 3, ANCHOR_COL32(255, 255, 0, 255), ImDrawFlags_Closed, 1.0f);
           fg_draw_list->Flags = backup_flags;
         }
       }
@@ -12909,11 +12559,9 @@ void ANCHOR::DebugNodeDrawCmdShowMeshAndBoundingBox(ImDrawList *out_draw_list,
   ImRect clip_rect = draw_cmd->ClipRect;
   ImRect vtxs_rect(FLT_MAX, FLT_MAX, -FLT_MAX, -FLT_MAX);
   ImDrawListFlags backup_flags = out_draw_list->Flags;
-  out_draw_list->Flags &=
-    ~ImDrawListFlags_AntiAliasedLines;  // Disable AA on triangle outlines is more readable for
-                                        // very large and thin triangles.
-  for (unsigned int idx_n = draw_cmd->IdxOffset;
-       idx_n < draw_cmd->IdxOffset + draw_cmd->ElemCount;) {
+  out_draw_list->Flags &= ~ImDrawListFlags_AntiAliasedLines;  // Disable AA on triangle outlines is more
+                                                              // readable for very large and thin triangles.
+  for (unsigned int idx_n = draw_cmd->IdxOffset; idx_n < draw_cmd->IdxOffset + draw_cmd->ElemCount;) {
     GfVec2f triangle[3];
     for (int n = 0; n < 3; n++, idx_n++)
       vtxs_rect.Add((triangle[n] = vtx_buffer[idx_buffer ? idx_buffer[idx_n] : idx_n].pos));
@@ -12926,10 +12574,9 @@ void ANCHOR::DebugNodeDrawCmdShowMeshAndBoundingBox(ImDrawList *out_draw_list,
   }
   // Draw bounding boxes
   if (show_aabb) {
-    out_draw_list->AddRect(
-      ImFloor(clip_rect.Min),
-      ImFloor(clip_rect.Max),
-      ANCHOR_COL32(255, 0, 255, 255));  // In pink: clipping rectangle submitted to GPU
+    out_draw_list->AddRect(ImFloor(clip_rect.Min),
+                           ImFloor(clip_rect.Max),
+                           ANCHOR_COL32(255, 0, 255, 255));  // In pink: clipping rectangle submitted to GPU
     out_draw_list->AddRect(ImFloor(vtxs_rect.Min),
                            ImFloor(vtxs_rect.Max),
                            ANCHOR_COL32(0, 255, 255, 255));  // In cyan: bounding box of triangles
@@ -12969,20 +12616,12 @@ void ANCHOR::DebugNodeFont(AnchorFont *font)
     "You can also render at multiple sizes and select which one to use at runtime.\n\n"
     "(Glimmer of hope: the atlas system will be rewritten in the future to make scaling more "
     "flexible.)");
-  Text("Ascent: %f, Descent: %f, Height: %f",
-       font->Ascent,
-       font->Descent,
-       font->Ascent - font->Descent);
+  Text("Ascent: %f, Descent: %f, Height: %f", font->Ascent, font->Descent, font->Ascent - font->Descent);
   char c_str[5];
-  Text("Fallback character: '%s' (U+%04X)",
-       ImTextCharToUtf8(c_str, font->FallbackChar),
-       font->FallbackChar);
-  Text("Ellipsis character: '%s' (U+%04X)",
-       ImTextCharToUtf8(c_str, font->EllipsisChar),
-       font->EllipsisChar);
+  Text("Fallback character: '%s' (U+%04X)", ImTextCharToUtf8(c_str, font->FallbackChar), font->FallbackChar);
+  Text("Ellipsis character: '%s' (U+%04X)", ImTextCharToUtf8(c_str, font->EllipsisChar), font->EllipsisChar);
   const int surface_sqrt = (int)ImSqrt((float)font->MetricsTotalSurface);
-  Text(
-    "Texture Area: about %d px ~%dx%d px", font->MetricsTotalSurface, surface_sqrt, surface_sqrt);
+  Text("Texture Area: about %d px ~%dx%d px", font->MetricsTotalSurface, surface_sqrt, surface_sqrt);
   for (int config_i = 0; config_i < font->ConfigDataCount; config_i++)
     if (font->ConfigData)
       if (const AnchorFontConfig *cfg = &font->ConfigData[config_i])
@@ -13035,10 +12674,8 @@ void ANCHOR::DebugNodeFont(AnchorFont *font)
                         base_pos[1] + (n / 16) * (cell_size + cell_spacing));
         GfVec2f cell_p2(cell_p1[0] + cell_size, cell_p1[1] + cell_size);
         const AnchorFontGlyph *glyph = font->FindGlyphNoFallback((AnchorWChar)(base + n));
-        draw_list->AddRect(cell_p1,
-                           cell_p2,
-                           glyph ? ANCHOR_COL32(255, 255, 255, 100) :
-                                   ANCHOR_COL32(255, 255, 255, 50));
+        draw_list->AddRect(
+          cell_p1, cell_p2, glyph ? ANCHOR_COL32(255, 255, 255, 100) : ANCHOR_COL32(255, 255, 255, 50));
         if (glyph)
           font->RenderChar(draw_list, cell_size, cell_p1, glyph_col, (AnchorWChar)(base + n));
         if (glyph && IsMouseHoveringRect(cell_p1, cell_p2)) {
@@ -13063,18 +12700,13 @@ void ANCHOR::DebugNodeFont(AnchorFont *font)
 // [DEBUG] Display contents of ANCHORStorage
 void ANCHOR::DebugNodeStorage(ANCHORStorage *storage, const char *label)
 {
-  if (!TreeNode(label,
-                "%s: %d entries, %d bytes",
-                label,
-                storage->Data.Size,
-                storage->Data.size_in_bytes()))
+  if (!TreeNode(label, "%s: %d entries, %d bytes", label, storage->Data.Size, storage->Data.size_in_bytes()))
     return;
   for (int n = 0; n < storage->Data.Size; n++) {
     const ANCHORStorage::ANCHORStoragePair &p = storage->Data[n];
-    BulletText(
-      "Key 0x%08X Value { i: %d }",
-      p.key,
-      p.val_i);  // Important: we currently don't store a type, real value may not be integer.
+    BulletText("Key 0x%08X Value { i: %d }",
+               p.key,
+               p.val_i);  // Important: we currently don't store a type, real value may not be integer.
   }
   TreePop();
 }
@@ -13161,10 +12793,8 @@ void ANCHOR::DebugNodeViewport(ANCHORViewportP *viewport)
                (flags & ANCHORViewportFlags_IsPlatformMonitor) ? " IsPlatformMonitor" : "",
                (flags & ANCHORViewportFlags_OwnedByApp) ? " OwnedByApp" : "");
     for (int layer_i = 0; layer_i < ANCHOR_ARRAYSIZE(viewport->DrawDataBuilder.Layers); layer_i++)
-      for (int draw_list_i = 0; draw_list_i < viewport->DrawDataBuilder.Layers[layer_i].Size;
-           draw_list_i++)
-        DebugNodeDrawList(
-          NULL, viewport->DrawDataBuilder.Layers[layer_i][draw_list_i], "DrawList");
+      for (int draw_list_i = 0; draw_list_i < viewport->DrawDataBuilder.Layers[layer_i].Size; draw_list_i++)
+        DebugNodeDrawList(NULL, viewport->DrawDataBuilder.Layers[layer_i][draw_list_i], "DrawList");
     TreePop();
   }
 }

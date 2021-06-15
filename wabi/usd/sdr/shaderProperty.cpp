@@ -49,14 +49,14 @@ namespace {
 const TokenToSdfTypeMap &GetTokenTypeToSdfType()
 {
   static const TokenToSdfTypeMap tokenTypeToSdfType = {
-      {SdrPropertyTypes->Int, SdfValueTypeNames->Int},
-      {SdrPropertyTypes->String, SdfValueTypeNames->String},
-      {SdrPropertyTypes->Float, SdfValueTypeNames->Float},
-      {SdrPropertyTypes->Color, SdfValueTypeNames->Color3f},
-      {SdrPropertyTypes->Point, SdfValueTypeNames->Point3f},
-      {SdrPropertyTypes->Normal, SdfValueTypeNames->Normal3f},
-      {SdrPropertyTypes->Vector, SdfValueTypeNames->Vector3f},
-      {SdrPropertyTypes->Matrix, SdfValueTypeNames->Matrix4d}};
+    {SdrPropertyTypes->Int, SdfValueTypeNames->Int},
+    {SdrPropertyTypes->String, SdfValueTypeNames->String},
+    {SdrPropertyTypes->Float, SdfValueTypeNames->Float},
+    {SdrPropertyTypes->Color, SdfValueTypeNames->Color3f},
+    {SdrPropertyTypes->Point, SdfValueTypeNames->Point3f},
+    {SdrPropertyTypes->Normal, SdfValueTypeNames->Normal3f},
+    {SdrPropertyTypes->Vector, SdfValueTypeNames->Vector3f},
+    {SdrPropertyTypes->Matrix, SdfValueTypeNames->Matrix4d}};
   return tokenTypeToSdfType;
 }
 
@@ -64,14 +64,14 @@ const TokenToSdfTypeMap &GetTokenTypeToSdfType()
 const TokenToSdfTypeMap &GetTokenTypeToSdfArrayType()
 {
   static const TokenToSdfTypeMap tokenTypeToSdfArrayType = {
-      {SdrPropertyTypes->Int, SdfValueTypeNames->IntArray},
-      {SdrPropertyTypes->String, SdfValueTypeNames->StringArray},
-      {SdrPropertyTypes->Float, SdfValueTypeNames->FloatArray},
-      {SdrPropertyTypes->Color, SdfValueTypeNames->Color3fArray},
-      {SdrPropertyTypes->Point, SdfValueTypeNames->Point3fArray},
-      {SdrPropertyTypes->Normal, SdfValueTypeNames->Normal3fArray},
-      {SdrPropertyTypes->Vector, SdfValueTypeNames->Vector3fArray},
-      {SdrPropertyTypes->Matrix, SdfValueTypeNames->Matrix4dArray}};
+    {SdrPropertyTypes->Int, SdfValueTypeNames->IntArray},
+    {SdrPropertyTypes->String, SdfValueTypeNames->StringArray},
+    {SdrPropertyTypes->Float, SdfValueTypeNames->FloatArray},
+    {SdrPropertyTypes->Color, SdfValueTypeNames->Color3fArray},
+    {SdrPropertyTypes->Point, SdfValueTypeNames->Point3fArray},
+    {SdrPropertyTypes->Normal, SdfValueTypeNames->Normal3fArray},
+    {SdrPropertyTypes->Vector, SdfValueTypeNames->Vector3fArray},
+    {SdrPropertyTypes->Matrix, SdfValueTypeNames->Matrix4dArray}};
   return tokenTypeToSdfArrayType;
 }
 
@@ -80,8 +80,7 @@ const TokenToSdfTypeMap &GetTokenTypeToSdfArrayType()
 // The following typedefs are only needed to support the table below that
 // indicates how to convert an SdrPropertyType given a particular "role"
 // value
-typedef std::unordered_map<TfToken, std::pair<TfToken, size_t>, TfToken::HashFunctor>
-    TokenToPairTable;
+typedef std::unordered_map<TfToken, std::pair<TfToken, size_t>, TfToken::HashFunctor> TokenToPairTable;
 
 typedef std::unordered_map<TfToken, TokenToPairTable, TfToken::HashFunctor> TokenToMapTable;
 
@@ -92,10 +91,10 @@ typedef std::unordered_map<TfToken, TokenToPairTable, TfToken::HashFunctor> Toke
 const TokenToMapTable &_GetConvertedSdrTypes()
 {
   static const TokenToMapTable convertedSdrTypes = {
-      {SdrPropertyTypes->Color, {{SdrPropertyRole->None, {SdrPropertyTypes->Float, 3}}}},
-      {SdrPropertyTypes->Point, {{SdrPropertyRole->None, {SdrPropertyTypes->Float, 3}}}},
-      {SdrPropertyTypes->Normal, {{SdrPropertyRole->None, {SdrPropertyTypes->Float, 3}}}},
-      {SdrPropertyTypes->Vector, {{SdrPropertyRole->None, {SdrPropertyTypes->Float, 3}}}}};
+    {SdrPropertyTypes->Color, {{SdrPropertyRole->None, {SdrPropertyTypes->Float, 3}}}},
+    {SdrPropertyTypes->Point, {{SdrPropertyRole->None, {SdrPropertyTypes->Float, 3}}}},
+    {SdrPropertyTypes->Normal, {{SdrPropertyRole->None, {SdrPropertyTypes->Float, 3}}}},
+    {SdrPropertyTypes->Vector, {{SdrPropertyRole->None, {SdrPropertyTypes->Float, 3}}}}};
   return convertedSdrTypes;
 }
 
@@ -120,7 +119,7 @@ bool _IsDefaultInput(const NdrTokenMap &metadata)
 const SdfTypeIndicator _GetTypeAsSdfArrayType(const TfToken &type, size_t arraySize)
 {
   SdfValueTypeName convertedType = SdfValueTypeNames->Token;
-  bool conversionSuccessful      = false;
+  bool conversionSuccessful = false;
 
   // We prefer more specific types, so if the array size is 2, 3, or 4,
   // then try to convert to a fixed-dimension float array.
@@ -129,15 +128,15 @@ const SdfTypeIndicator _GetTypeAsSdfArrayType(const TfToken &type, size_t arrayS
   // as well.
   if (type == SdrPropertyTypes->Float) {
     if (arraySize == 2) {
-      convertedType        = SdfValueTypeNames->Float2;
+      convertedType = SdfValueTypeNames->Float2;
       conversionSuccessful = true;
     }
     else if (arraySize == 3) {
-      convertedType        = SdfValueTypeNames->Float3;
+      convertedType = SdfValueTypeNames->Float3;
       conversionSuccessful = true;
     }
     else if (arraySize == 4) {
-      convertedType        = SdfValueTypeNames->Float4;
+      convertedType = SdfValueTypeNames->Float4;
       conversionSuccessful = true;
     }
   }
@@ -146,10 +145,10 @@ const SdfTypeIndicator _GetTypeAsSdfArrayType(const TfToken &type, size_t arrayS
   // type without a fixed dimension
   if (!conversionSuccessful) {
     const TokenToSdfTypeMap &tokenTypeToSdfArrayType = GetTokenTypeToSdfArrayType();
-    TokenToSdfTypeMap::const_iterator it             = tokenTypeToSdfArrayType.find(type);
+    TokenToSdfTypeMap::const_iterator it = tokenTypeToSdfArrayType.find(type);
 
     if (it != tokenTypeToSdfArrayType.end()) {
-      convertedType        = it->second;
+      convertedType = it->second;
       conversionSuccessful = true;
     }
   }
@@ -161,9 +160,7 @@ const SdfTypeIndicator _GetTypeAsSdfArrayType(const TfToken &type, size_t arrayS
 
 // Helper to convert the type to an Sdf type (this will call
 // `_GetTypeAsSdfArrayType()` if an array type is detected)
-const SdfTypeIndicator _GetTypeAsSdfType(const TfToken &type,
-                                         size_t arraySize,
-                                         const NdrTokenMap &metadata)
+const SdfTypeIndicator _GetTypeAsSdfType(const TfToken &type, size_t arraySize, const NdrTokenMap &metadata)
 {
   // There is one Sdf type (Asset) that is not included in the type
   // mapping because it is determined dynamically
@@ -193,10 +190,10 @@ const SdfTypeIndicator _GetTypeAsSdfType(const TfToken &type,
   }
 
   const TokenToSdfTypeMap &tokenTypeToSdfType = GetTokenTypeToSdfType();
-  TokenToSdfTypeMap::const_iterator it        = tokenTypeToSdfType.find(type);
+  TokenToSdfTypeMap::const_iterator it = tokenTypeToSdfType.find(type);
   if (it != tokenTypeToSdfType.end()) {
     conversionSuccessful = true;
-    convertedType        = it->second;
+    convertedType = it->second;
   }
 
   return std::make_pair(convertedType, conversionSuccessful ? TfToken() : type);
@@ -261,14 +258,14 @@ VtValue _ConformDefaultValue(const VtValue &defaultValue,
 
   // Return early if no conformance issue
   const SdfTypeIndicator sdfTypeIndicator = _GetTypeAsSdfType(sdrType, arraySize, metadata);
-  const SdfValueTypeName sdfType          = sdfTypeIndicator.first;
+  const SdfValueTypeName sdfType = sdfTypeIndicator.first;
 
   if (defaultValue.GetType() == sdfType.GetType()) {
     return defaultValue;
   }
 
   bool isDynamicArray = IsTruthy(SdrPropertyMetadata->IsDynamicArray, metadata);
-  bool isArray        = (arraySize > 0) || isDynamicArray;
+  bool isArray = (arraySize > 0) || isDynamicArray;
 
   // ASSET and ASSET ARRAY
   // ---------------------------------------------------------------------
@@ -328,17 +325,16 @@ SdrShaderProperty::SdrShaderProperty(const TfToken &name,
                                      const NdrTokenMap &metadata,
                                      const NdrTokenMap &hints,
                                      const NdrOptionVec &options)
-    : NdrProperty(
-          name,
-          /* type= */ _ConvertSdrPropertyTypeAndArraySize(type, arraySize, metadata).first,
-          _ConformDefaultValue(defaultValue, type, arraySize, metadata),
-          isOutput,
-          /* arraySize= */ _ConvertSdrPropertyTypeAndArraySize(type, arraySize, metadata).second,
-          /* isDynamicArray= */ false,
-          metadata),
+  : NdrProperty(name,
+                /* type= */ _ConvertSdrPropertyTypeAndArraySize(type, arraySize, metadata).first,
+                _ConformDefaultValue(defaultValue, type, arraySize, metadata),
+                isOutput,
+                /* arraySize= */ _ConvertSdrPropertyTypeAndArraySize(type, arraySize, metadata).second,
+                /* isDynamicArray= */ false,
+                metadata),
 
-      _hints(hints),
-      _options(options)
+    _hints(hints),
+    _options(options)
 {
   _isDynamicArray = IsTruthy(SdrPropertyMetadata->IsDynamicArray, _metadata);
 
@@ -349,21 +345,21 @@ SdrShaderProperty::SdrShaderProperty(const TfToken &name,
   }
   else {
     _isConnectable = _metadata.count(SdrPropertyMetadata->Connectable) ?
-                         IsTruthy(SdrPropertyMetadata->Connectable, _metadata) :
-                         true;
+                       IsTruthy(SdrPropertyMetadata->Connectable, _metadata) :
+                       true;
   }
 
   // Indicate a "default" widget if one was not assigned
   _metadata.insert({SdrPropertyMetadata->Widget, "default"});
 
   // Tokenize metadata
-  _label                  = TokenVal(SdrPropertyMetadata->Label, _metadata);
-  _page                   = TokenVal(SdrPropertyMetadata->Page, _metadata);
-  _widget                 = TokenVal(SdrPropertyMetadata->Widget, _metadata);
-  _vstructMemberOf        = TokenVal(SdrPropertyMetadata->VstructMemberOf, _metadata);
-  _vstructMemberName      = TokenVal(SdrPropertyMetadata->VstructMemberName, _metadata);
+  _label = TokenVal(SdrPropertyMetadata->Label, _metadata);
+  _page = TokenVal(SdrPropertyMetadata->Page, _metadata);
+  _widget = TokenVal(SdrPropertyMetadata->Widget, _metadata);
+  _vstructMemberOf = TokenVal(SdrPropertyMetadata->VstructMemberOf, _metadata);
+  _vstructMemberName = TokenVal(SdrPropertyMetadata->VstructMemberName, _metadata);
   _vstructConditionalExpr = TokenVal(SdrPropertyMetadata->VstructConditionalExpr, _metadata);
-  _validConnectionTypes   = TokenVecVal(SdrPropertyMetadata->ValidConnectionTypes, _metadata);
+  _validConnectionTypes = TokenVecVal(SdrPropertyMetadata->ValidConnectionTypes, _metadata);
 }
 
 std::string SdrShaderProperty::GetHelp() const
@@ -378,7 +374,7 @@ std::string SdrShaderProperty::GetImplementationName() const
 
 bool SdrShaderProperty::CanConnectTo(const NdrProperty &other) const
 {
-  NdrPropertyConstPtr input  = !_isOutput ? this : &other;
+  NdrPropertyConstPtr input = !_isOutput ? this : &other;
   NdrPropertyConstPtr output = _isOutput ? this : &other;
 
   // Outputs cannot connect to outputs and vice versa
@@ -386,12 +382,12 @@ bool SdrShaderProperty::CanConnectTo(const NdrProperty &other) const
     return false;
   }
 
-  const TfToken &inputType         = input->GetType();
-  size_t inputArraySize            = input->GetArraySize();
+  const TfToken &inputType = input->GetType();
+  size_t inputArraySize = input->GetArraySize();
   const NdrTokenMap &inputMetadata = input->GetMetadata();
 
-  const TfToken &outputType         = output->GetType();
-  size_t outputArraySize            = output->GetArraySize();
+  const TfToken &outputType = output->GetType();
+  size_t outputArraySize = output->GetArraySize();
   const NdrTokenMap &outputMetadata = output->GetMetadata();
 
   // Connections are always possible if the types match exactly and the
@@ -407,21 +403,16 @@ bool SdrShaderProperty::CanConnectTo(const NdrProperty &other) const
   }
 
   // Convert input/output types to Sdf types
-  const SdfTypeIndicator &sdfInputTypeInd = _GetTypeAsSdfType(
-      inputType, inputArraySize, inputMetadata);
-  const SdfTypeIndicator &sdfOutputTypeInd = _GetTypeAsSdfType(
-      outputType, outputArraySize, outputMetadata);
-  const SdfValueTypeName &sdfInputType  = sdfInputTypeInd.first;
+  const SdfTypeIndicator &sdfInputTypeInd = _GetTypeAsSdfType(inputType, inputArraySize, inputMetadata);
+  const SdfTypeIndicator &sdfOutputTypeInd = _GetTypeAsSdfType(outputType, outputArraySize, outputMetadata);
+  const SdfValueTypeName &sdfInputType = sdfInputTypeInd.first;
   const SdfValueTypeName &sdfOutputType = sdfOutputTypeInd.first;
 
-  bool inputIsFloat3 = (inputType == SdrPropertyTypes->Color) ||
-                       (inputType == SdrPropertyTypes->Point) ||
-                       (inputType == SdrPropertyTypes->Normal) ||
-                       (inputType == SdrPropertyTypes->Vector) ||
+  bool inputIsFloat3 = (inputType == SdrPropertyTypes->Color) || (inputType == SdrPropertyTypes->Point) ||
+                       (inputType == SdrPropertyTypes->Normal) || (inputType == SdrPropertyTypes->Vector) ||
                        (sdfInputType == SdfValueTypeNames->Float3);
 
-  bool outputIsFloat3 = (outputType == SdrPropertyTypes->Color) ||
-                        (outputType == SdrPropertyTypes->Point) ||
+  bool outputIsFloat3 = (outputType == SdrPropertyTypes->Color) || (outputType == SdrPropertyTypes->Point) ||
                         (outputType == SdrPropertyTypes->Normal) ||
                         (outputType == SdrPropertyTypes->Vector) ||
                         (sdfOutputType == SdfValueTypeNames->Float3);

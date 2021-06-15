@@ -29,7 +29,7 @@ enum class ZLT { NONE, DBG, INFO, WARNING, ERROR };
 
 struct ZLogger {
   bool headers = false;
-  ZLT level    = ZLT::WARNING;
+  ZLT level = ZLT::WARNING;
 };
 
 extern ZLogger logger;
@@ -70,7 +70,7 @@ class ZLog {
   static bool disabled;
 
  private:
-  bool opened  = false;
+  bool opened = false;
   ZLT msglevel = ZLT::DBG;
   inline std::string getLabel(ZLT type)
   {

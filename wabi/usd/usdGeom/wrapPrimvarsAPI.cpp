@@ -62,26 +62,24 @@ void wrapUsdGeomPrimvarsAPI()
   class_<This, bases<UsdAPISchemaBase>> cls("PrimvarsAPI");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -135,76 +133,68 @@ static UsdGeomPrimvar _CreateIndexedPrimvar(const UsdGeomPrimvarsAPI &self,
 WRAP_CUSTOM
 {
   _class
-      .def("CreatePrimvar",
-           &UsdGeomPrimvarsAPI::CreatePrimvar,
-           (arg("name"),
-            arg("typeName"),
-            arg("interpolation") = TfToken(),
-            arg("elementSize")   = -1))
-      .def("CreateNonIndexedPrimvar",
-           _CreateNonIndexedPrimvar,
-           (arg("name"),
-            arg("typeName"),
-            arg("value"),
-            arg("interpolation") = TfToken(),
-            arg("elementSize")   = -1,
-            arg("time")          = UsdTimeCode::Default()))
-      .def("CreateIndexedPrimvar",
-           _CreateIndexedPrimvar,
-           (arg("name"),
-            arg("typeName"),
-            arg("value"),
-            arg("indices"),
-            arg("interpolation") = TfToken(),
-            arg("elementSize")   = -1,
-            arg("time")          = UsdTimeCode::Default()))
-      .def("RemovePrimvar", &UsdGeomPrimvarsAPI::RemovePrimvar, arg("name"))
-      .def("BlockPrimvar", &UsdGeomPrimvarsAPI::BlockPrimvar, arg("name"))
-      .def("GetPrimvar", &UsdGeomPrimvarsAPI::GetPrimvar, arg("name"))
-      .def("GetPrimvars",
-           &UsdGeomPrimvarsAPI::GetPrimvars,
-           return_value_policy<TfPySequenceToList>())
-      .def("GetAuthoredPrimvars",
-           &UsdGeomPrimvarsAPI::GetAuthoredPrimvars,
-           return_value_policy<TfPySequenceToList>())
-      .def("GetPrimvarsWithValues",
-           &UsdGeomPrimvarsAPI::GetPrimvarsWithValues,
-           return_value_policy<TfPySequenceToList>())
-      .def("GetPrimvarsWithAuthoredValues",
-           &UsdGeomPrimvarsAPI::GetPrimvarsWithAuthoredValues,
-           return_value_policy<TfPySequenceToList>())
-      .def("FindInheritablePrimvars",
-           &UsdGeomPrimvarsAPI::FindInheritablePrimvars,
-           return_value_policy<TfPySequenceToList>())
-      .def("FindIncrementallyInheritablePrimvars",
-           &UsdGeomPrimvarsAPI::FindIncrementallyInheritablePrimvars,
-           (arg("inheritedFromAncestors")),
-           return_value_policy<TfPySequenceToList>())
-      .def("FindPrimvarWithInheritance",
-           (UsdGeomPrimvar(UsdGeomPrimvarsAPI::*)(const TfToken &) const) &
-               UsdGeomPrimvarsAPI::FindPrimvarWithInheritance,
-           (arg("name")))
-      .def("FindPrimvarWithInheritance",
-           (UsdGeomPrimvar(UsdGeomPrimvarsAPI::*)(const TfToken &,
-                                                  const std::vector<UsdGeomPrimvar> &) const) &
-               UsdGeomPrimvarsAPI::FindPrimvarWithInheritance,
-           (arg("name"), arg("inheritedFromAncestors")))
-      .def("FindPrimvarsWithInheritance",
-           (std::vector<UsdGeomPrimvar>(UsdGeomPrimvarsAPI::*)() const) &
-               UsdGeomPrimvarsAPI::FindPrimvarsWithInheritance,
-           return_value_policy<TfPySequenceToList>())
-      .def("FindPrimvarsWithInheritance",
-           (std::vector<UsdGeomPrimvar>(UsdGeomPrimvarsAPI::*)(const std::vector<UsdGeomPrimvar> &)
-                const) &
-               UsdGeomPrimvarsAPI::FindPrimvarsWithInheritance,
-           (arg("inheritedFromAncestors")),
-           return_value_policy<TfPySequenceToList>())
-      .def("HasPrimvar", &UsdGeomPrimvarsAPI::HasPrimvar, arg("name"))
-      .def("HasPossiblyInheritedPrimvar",
-           &UsdGeomPrimvarsAPI::HasPossiblyInheritedPrimvar,
-           arg("name"))
-      .def("CanContainPropertyName", &UsdGeomPrimvarsAPI::CanContainPropertyName, arg("name"))
-      .staticmethod("CanContainPropertyName");
+    .def("CreatePrimvar",
+         &UsdGeomPrimvarsAPI::CreatePrimvar,
+         (arg("name"), arg("typeName"), arg("interpolation") = TfToken(), arg("elementSize") = -1))
+    .def("CreateNonIndexedPrimvar",
+         _CreateNonIndexedPrimvar,
+         (arg("name"),
+          arg("typeName"),
+          arg("value"),
+          arg("interpolation") = TfToken(),
+          arg("elementSize") = -1,
+          arg("time") = UsdTimeCode::Default()))
+    .def("CreateIndexedPrimvar",
+         _CreateIndexedPrimvar,
+         (arg("name"),
+          arg("typeName"),
+          arg("value"),
+          arg("indices"),
+          arg("interpolation") = TfToken(),
+          arg("elementSize") = -1,
+          arg("time") = UsdTimeCode::Default()))
+    .def("RemovePrimvar", &UsdGeomPrimvarsAPI::RemovePrimvar, arg("name"))
+    .def("BlockPrimvar", &UsdGeomPrimvarsAPI::BlockPrimvar, arg("name"))
+    .def("GetPrimvar", &UsdGeomPrimvarsAPI::GetPrimvar, arg("name"))
+    .def("GetPrimvars", &UsdGeomPrimvarsAPI::GetPrimvars, return_value_policy<TfPySequenceToList>())
+    .def("GetAuthoredPrimvars",
+         &UsdGeomPrimvarsAPI::GetAuthoredPrimvars,
+         return_value_policy<TfPySequenceToList>())
+    .def("GetPrimvarsWithValues",
+         &UsdGeomPrimvarsAPI::GetPrimvarsWithValues,
+         return_value_policy<TfPySequenceToList>())
+    .def("GetPrimvarsWithAuthoredValues",
+         &UsdGeomPrimvarsAPI::GetPrimvarsWithAuthoredValues,
+         return_value_policy<TfPySequenceToList>())
+    .def("FindInheritablePrimvars",
+         &UsdGeomPrimvarsAPI::FindInheritablePrimvars,
+         return_value_policy<TfPySequenceToList>())
+    .def("FindIncrementallyInheritablePrimvars",
+         &UsdGeomPrimvarsAPI::FindIncrementallyInheritablePrimvars,
+         (arg("inheritedFromAncestors")),
+         return_value_policy<TfPySequenceToList>())
+    .def("FindPrimvarWithInheritance",
+         (UsdGeomPrimvar(UsdGeomPrimvarsAPI::*)(const TfToken &) const) &
+           UsdGeomPrimvarsAPI::FindPrimvarWithInheritance,
+         (arg("name")))
+    .def(
+      "FindPrimvarWithInheritance",
+      (UsdGeomPrimvar(UsdGeomPrimvarsAPI::*)(const TfToken &, const std::vector<UsdGeomPrimvar> &) const) &
+        UsdGeomPrimvarsAPI::FindPrimvarWithInheritance,
+      (arg("name"), arg("inheritedFromAncestors")))
+    .def("FindPrimvarsWithInheritance",
+         (std::vector<UsdGeomPrimvar>(UsdGeomPrimvarsAPI::*)() const) &
+           UsdGeomPrimvarsAPI::FindPrimvarsWithInheritance,
+         return_value_policy<TfPySequenceToList>())
+    .def("FindPrimvarsWithInheritance",
+         (std::vector<UsdGeomPrimvar>(UsdGeomPrimvarsAPI::*)(const std::vector<UsdGeomPrimvar> &) const) &
+           UsdGeomPrimvarsAPI::FindPrimvarsWithInheritance,
+         (arg("inheritedFromAncestors")),
+         return_value_policy<TfPySequenceToList>())
+    .def("HasPrimvar", &UsdGeomPrimvarsAPI::HasPrimvar, arg("name"))
+    .def("HasPossiblyInheritedPrimvar", &UsdGeomPrimvarsAPI::HasPossiblyInheritedPrimvar, arg("name"))
+    .def("CanContainPropertyName", &UsdGeomPrimvarsAPI::CanContainPropertyName, arg("name"))
+    .staticmethod("CanContainPropertyName");
 }
 
 }  // namespace

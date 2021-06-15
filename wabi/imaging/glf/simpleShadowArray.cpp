@@ -50,22 +50,20 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(GLF_ENABLE_BINDLESS_SHADOW_TEXTURES,
-                      true,
-                      "Enable use of bindless shadow maps");
+TF_DEFINE_ENV_SETTING(GLF_ENABLE_BINDLESS_SHADOW_TEXTURES, true, "Enable use of bindless shadow maps");
 
 GlfSimpleShadowArray::GlfSimpleShadowArray()
-    :  // bindful state
-      _size(0),
-      _numLayers(0),
-      _bindfulTexture(0),
-      _shadowDepthSampler(0),
-      // common state
-      _framebuffer(0),
-      _shadowCompareSampler(0),
-      _unbindRestoreDrawFramebuffer(0),
-      _unbindRestoreReadFramebuffer(0),
-      _unbindRestoreViewport{0, 0, 0, 0}
+  :  // bindful state
+    _size(0),
+    _numLayers(0),
+    _bindfulTexture(0),
+    _shadowDepthSampler(0),
+    // common state
+    _framebuffer(0),
+    _shadowCompareSampler(0),
+    _unbindRestoreDrawFramebuffer(0),
+    _unbindRestoreReadFramebuffer(0),
+    _unbindRestoreViewport{0, 0, 0, 0}
 {}
 
 GlfSimpleShadowArray::~GlfSimpleShadowArray()
@@ -88,9 +86,9 @@ void GlfSimpleShadowArray::SetSize(GfVec2i const &size)
 {
   if (GetBindlessShadowMapsEnabled()) {
     TF_CODING_ERROR(
-        "Using bindful API %s when bindless "
-        "shadow maps are enabled\n",
-        TF_FUNC_NAME().c_str());
+      "Using bindful API %s when bindless "
+      "shadow maps are enabled\n",
+      TF_FUNC_NAME().c_str());
     return;
   }
   if (_size != size) {
@@ -103,9 +101,9 @@ void GlfSimpleShadowArray::SetNumLayers(size_t numLayers)
 {
   if (GetBindlessShadowMapsEnabled()) {
     TF_CODING_ERROR(
-        "Using bindful API %s when bindless "
-        "shadow maps are enabled\n",
-        TF_FUNC_NAME().c_str());
+      "Using bindful API %s when bindless "
+      "shadow maps are enabled\n",
+      TF_FUNC_NAME().c_str());
     return;
   }
 
@@ -121,9 +119,9 @@ GLuint GlfSimpleShadowArray::GetShadowMapTexture() const
 {
   if (GetBindlessShadowMapsEnabled()) {
     TF_CODING_ERROR(
-        "Using bindful API in %s when bindless "
-        "shadow maps are enabled\n",
-        TF_FUNC_NAME().c_str());
+      "Using bindful API in %s when bindless "
+      "shadow maps are enabled\n",
+      TF_FUNC_NAME().c_str());
     return -1;
   }
   return _bindfulTexture;
@@ -133,9 +131,9 @@ GLuint GlfSimpleShadowArray::GetShadowMapDepthSampler() const
 {
   if (GetBindlessShadowMapsEnabled()) {
     TF_CODING_ERROR(
-        "Using bindful API in %s when bindless "
-        "shadow maps are enabled\n",
-        TF_FUNC_NAME().c_str());
+      "Using bindful API in %s when bindless "
+      "shadow maps are enabled\n",
+      TF_FUNC_NAME().c_str());
     return -1;
   }
   return _shadowDepthSampler;
@@ -145,9 +143,9 @@ GLuint GlfSimpleShadowArray::GetShadowMapCompareSampler() const
 {
   if (GetBindlessShadowMapsEnabled()) {
     TF_CODING_ERROR(
-        "Using bindful API in %s when bindless "
-        "shadow maps are enabled\n",
-        TF_FUNC_NAME().c_str());
+      "Using bindful API in %s when bindless "
+      "shadow maps are enabled\n",
+      TF_FUNC_NAME().c_str());
     return -1;
   }
   return _shadowCompareSampler;
@@ -243,7 +241,7 @@ void GlfSimpleShadowArray::SetProjectionMatrix(size_t index, GfMatrix4d const &m
 
 GfMatrix4d GlfSimpleShadowArray::GetWorldToShadowMatrix(size_t index) const
 {
-  GfMatrix4d size   = GfMatrix4d().SetScale(GfVec3d(0.5, 0.5, 0.5));
+  GfMatrix4d size = GfMatrix4d().SetScale(GfVec3d(0.5, 0.5, 0.5));
   GfMatrix4d center = GfMatrix4d().SetTranslate(GfVec3d(0.5, 0.5, 0.5));
   return GetViewMatrix(index) * GetProjectionMatrix(index) * size * center;
 }
@@ -279,9 +277,9 @@ void GlfSimpleShadowArray::EndCapture(size_t index)
   if (TfDebug::IsEnabled(GLF_DEBUG_DUMP_SHADOW_TEXTURES)) {
     HioImage::StorageSpec storage;
     GfVec2i resolution = GetShadowMapSize(index);
-    storage.width      = resolution[0];
-    storage.height     = resolution[1];
-    storage.format     = HioFormatFloat32;
+    storage.width = resolution[0];
+    storage.height = resolution[1];
+    storage.format = HioFormatFloat32;
 
     // In OpenGL, (0, 0) is the lower left corner.
     storage.flipped = true;
@@ -311,7 +309,7 @@ void GlfSimpleShadowArray::EndCapture(size_t index)
     }
 
     const std::string outputImageFile = ArchNormPath(
-        TfStringPrintf("%s/GlfSimpleShadowArray.index_%zu.tif", ArchGetTmpDir(), index));
+      TfStringPrintf("%s/GlfSimpleShadowArray.index_%zu.tif", ArchGetTmpDir(), index));
     HioImageSharedPtr image = HioImage::OpenForWriting(outputImageFile);
     if (image->Write(storage)) {
       TfDebug::Helper().Msg("Wrote shadow texture: %s\n", outputImageFile.c_str());
@@ -395,10 +393,8 @@ void GlfSimpleShadowArray::_AllocBindfulTextures()
   glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
   TF_DEBUG(GLF_DEBUG_SHADOW_TEXTURES)
-      .Msg("Created bindful shadow map texture array with %lu %dx%d textures\n",
-           _numLayers,
-           _size[0],
-           _size[1]);
+    .Msg(
+      "Created bindful shadow map texture array with %lu %dx%d textures\n", _numLayers, _size[0], _size[1]);
 }
 
 void GlfSimpleShadowArray::_AllocBindlessTextures()
@@ -418,15 +414,8 @@ void GlfSimpleShadowArray::_AllocBindlessTextures()
     GLuint id;
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
-    glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_DEPTH_COMPONENT32F,
-                 size[0],
-                 size[1],
-                 0,
-                 GL_DEPTH_COMPONENT,
-                 GL_FLOAT,
-                 NULL);
+    glTexImage2D(
+      GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, size[0], size[1], 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     _bindlessTextures.push_back(id);
 
     GLuint64 handle = glGetTextureSamplerHandleARB(id, _shadowCompareSampler);
@@ -441,13 +430,13 @@ void GlfSimpleShadowArray::_AllocBindlessTextures()
     }
 
     TF_DEBUG(GLF_DEBUG_SHADOW_TEXTURES)
-        .Msg(
-            "Created bindless shadow map texture of size %dx%d "
-            "(id %#x, handle %#lx)\n",
-            size[0],
-            size[1],
-            id,
-            handle);
+      .Msg(
+        "Created bindless shadow map texture of size %dx%d "
+        "(id %#x, handle %#lx)\n",
+        size[0],
+        size[1],
+        id,
+        handle);
   }
 
   glBindTexture(GL_TEXTURE_2D, 0);

@@ -39,8 +39,8 @@ class Hd_DispatchBufferArrayRange : public HdPhBufferArrayRange {
  public:
   /// Constructor.
   Hd_DispatchBufferArrayRange(HdPhResourceRegistry *resourceRegistry, HdPhDispatchBuffer *buffer)
-      : HdPhBufferArrayRange(resourceRegistry),
-        _buffer(buffer)
+    : HdPhBufferArrayRange(resourceRegistry),
+      _buffer(buffer)
   {}
 
   /// Returns true if this range is valid
@@ -188,26 +188,26 @@ HdPhDispatchBuffer::HdPhDispatchBuffer(HdPhResourceRegistry *resourceRegistry,
                                        TfToken const &role,
                                        int count,
                                        unsigned int commandNumUints)
-    : HdBufferArray(role, TfToken(), HdBufferArrayUsageHint()),
-      _resourceRegistry(resourceRegistry),
-      _count(count),
-      _commandNumUints(commandNumUints)
+  : HdBufferArray(role, TfToken(), HdBufferArrayUsageHint()),
+    _resourceRegistry(resourceRegistry),
+    _count(count),
+    _commandNumUints(commandNumUints)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  size_t stride   = commandNumUints * sizeof(uint32_t);
+  size_t stride = commandNumUints * sizeof(uint32_t);
   size_t dataSize = count * stride;
 
   // just allocate uninitialized
   HgiBufferDesc bufDesc;
-  bufDesc.usage          = HgiBufferUsageUniform;
-  bufDesc.byteSize       = dataSize;
+  bufDesc.usage = HgiBufferUsageUniform;
+  bufDesc.byteSize = dataSize;
   HgiBufferHandle buffer = _resourceRegistry->GetHgi()->CreateBuffer(bufDesc);
 
   // monolithic resource
   _entireResource = std::make_shared<HdPhBufferResource>(
-      role, HdTupleType{HdTypeInt32, 1}, /*offset=*/0, stride);
+    role, HdTupleType{HdTypeInt32, 1}, /*offset=*/0, stride);
   _entireResource->SetAllocation(buffer, dataSize);
 
   // create a buffer array range, which aggregates all views
@@ -224,28 +224,25 @@ HdPhDispatchBuffer::~HdPhDispatchBuffer()
 
 void HdPhDispatchBuffer::CopyData(std::vector<uint32_t> const &data)
 {
-  if (!TF_VERIFY(data.size() * sizeof(uint32_t) ==
-                 static_cast<size_t>(_entireResource->GetSize())))
+  if (!TF_VERIFY(data.size() * sizeof(uint32_t) == static_cast<size_t>(_entireResource->GetSize())))
     return;
 
   HD_PERF_COUNTER_INCR(HdPhPerfTokens->copyBufferCpuToGpu);
 
   // Use blit op to copy over the data.
-  Hgi *hgi                      = _resourceRegistry->GetHgi();
+  Hgi *hgi = _resourceRegistry->GetHgi();
   HgiBlitCmdsUniquePtr blitCmds = hgi->CreateBlitCmds();
   HgiBufferCpuToGpuOp blitOp;
-  blitOp.byteSize              = _entireResource->GetSize();
-  blitOp.cpuSourceBuffer       = data.data();
-  blitOp.sourceByteOffset      = 0;
-  blitOp.gpuDestinationBuffer  = _entireResource->GetHandle();
+  blitOp.byteSize = _entireResource->GetSize();
+  blitOp.cpuSourceBuffer = data.data();
+  blitOp.sourceByteOffset = 0;
+  blitOp.gpuDestinationBuffer = _entireResource->GetHandle();
   blitOp.destinationByteOffset = 0;
   blitCmds->CopyBufferCpuToGpu(blitOp);
   hgi->SubmitCmds(blitCmds.get());
 }
 
-void HdPhDispatchBuffer::AddBufferResourceView(TfToken const &name,
-                                               HdTupleType tupleType,
-                                               int offset)
+void HdPhDispatchBuffer::AddBufferResourceView(TfToken const &name, HdTupleType tupleType, int offset)
 {
   size_t stride = _commandNumUints * sizeof(uint32_t);
 
@@ -287,8 +284,8 @@ HdPhBufferResourceSharedPtr HdPhDispatchBuffer::GetResource() const
     {
       if (it->second->GetHandle() != buffer) {
         TF_CODING_ERROR(
-            "GetResource(void) called on"
-            "HdBufferArray having multiple GPU resources");
+          "GetResource(void) called on"
+          "HdBufferArray having multiple GPU resources");
       }
     }
   }
@@ -303,8 +300,7 @@ HdPhBufferResourceSharedPtr HdPhDispatchBuffer::GetResource(TfToken const &name)
 
   // linear search.
   // The number of buffer resources should be small (<10 or so).
-  for (HdPhBufferResourceNamedList::iterator it = _resourceList.begin(); it != _resourceList.end();
-       ++it) {
+  for (HdPhBufferResourceNamedList::iterator it = _resourceList.begin(); it != _resourceList.end(); ++it) {
     if (it->first == name)
       return it->second;
   }
@@ -327,7 +323,7 @@ HdPhBufferResourceSharedPtr HdPhDispatchBuffer::_AddResource(TfToken const &name
   }
 
   HdPhBufferResourceSharedPtr bufferRes = std::make_shared<HdPhBufferResource>(
-      GetRole(), tupleType, offset, stride);
+    GetRole(), tupleType, offset, stride);
 
   _resourceList.emplace_back(name, bufferRes);
   return bufferRes;

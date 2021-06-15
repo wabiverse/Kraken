@@ -78,8 +78,7 @@ void UsdUtilsCoalescingDiagnosticDelegate::IssueError(const TfError &err)
   // Consider using a TfErrorMark for these cases.
 }
 
-void UsdUtilsCoalescingDiagnosticDelegate::IssueFatalError(const TfCallContext &ctx,
-                                                           const std::string &msg)
+void UsdUtilsCoalescingDiagnosticDelegate::IssueFatalError(const TfCallContext &ctx, const std::string &msg)
 {
   TfLogCrash("FATAL ERROR", msg, std::string() /*additionalInfo*/, ctx, true /*logToDB*/);
   ArchAbort(/*logging=*/false);
@@ -95,14 +94,13 @@ void UsdUtilsCoalescingDiagnosticDelegate::IssueWarning(const TfWarning &warning
   _diagnostics.push(new TfDiagnosticBase(warning));
 }
 
-UsdUtilsCoalescingDiagnosticDelegateVector UsdUtilsCoalescingDiagnosticDelegate::
-    TakeCoalescedDiagnostics()
+UsdUtilsCoalescingDiagnosticDelegateVector UsdUtilsCoalescingDiagnosticDelegate::TakeCoalescedDiagnostics()
 {
   std::unordered_map<UsdUtilsCoalescingDiagnosticDelegateSharedItem,
                      size_t,
                      _CoalescedItemHash,
                      _CoalescedItemEqualTo>
-      existence;
+    existence;
 
   UsdUtilsCoalescingDiagnosticDelegateVector result;
 
@@ -115,9 +113,9 @@ UsdUtilsCoalescingDiagnosticDelegateVector UsdUtilsCoalescingDiagnosticDelegate:
   while (!_diagnostics.empty()) {
     if (_diagnostics.try_pop(handle)) {
       UsdUtilsCoalescingDiagnosticDelegateSharedItem sharedItem{
-          handle->GetSourceLineNumber(),
-          handle->GetSourceFunction(),
-          handle->GetSourceFileName(),
+        handle->GetSourceLineNumber(),
+        handle->GetSourceFunction(),
+        handle->GetSourceFileName(),
       };
 
       UsdUtilsCoalescingDiagnosticDelegateUnsharedItem unsharedItem{handle->GetContext(),
@@ -143,7 +141,7 @@ UsdUtilsCoalescingDiagnosticDelegateVector UsdUtilsCoalescingDiagnosticDelegate:
 }
 
 std::vector<std::unique_ptr<TfDiagnosticBase>> UsdUtilsCoalescingDiagnosticDelegate::
-    TakeUncoalescedDiagnostics()
+  TakeUncoalescedDiagnostics()
 {
   std::vector<std::unique_ptr<TfDiagnosticBase>> items;
 

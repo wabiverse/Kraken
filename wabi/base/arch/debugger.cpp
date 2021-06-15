@@ -69,7 +69,7 @@ WABI_NAMESPACE_BEGIN
 static void Arch_DebuggerInit() ARCH_NOINLINE;
 
 static bool _archDebuggerInitialized = false;
-static bool _archDebuggerEnabled     = false;
+static bool _archDebuggerEnabled = false;
 static std::atomic<bool> _archDebuggerWait(false);
 
 static char **_archDebuggerAttachArgs = 0;
@@ -97,12 +97,12 @@ static void Arch_DebuggerInitPosix()
   // didn't handle this signal then the app would die.
   struct sigaction act;
   sigemptyset(&act.sa_mask);
-  act.sa_flags   = SA_NODEFER;
+  act.sa_flags = SA_NODEFER;
   act.sa_handler = Arch_DebuggerTrapHandler;
   if (sigaction(SIGTRAP, &act, 0)) {
     ARCH_WARNING(
-        "Failed to set SIGTRAP handler;  "
-        "debug trap not enabled");
+      "Failed to set SIGTRAP handler;  "
+      "debug trap not enabled");
     _archDebuggerEnabled = false;
   }
   else {
@@ -131,13 +131,13 @@ static void Arch_DebuggerInit()
   // here, there's nowhere the debugger can look to get them.
   uint64_t rdi, rsi, rdx, rcx;
   asm volatile(
-      "movq %%rdi, %[rdi];\n"
-      "movq %%rsi, %[rsi];\n"
-      "movq %%rdx, %[rdx];\n"
-      "movq %%rcx, %[rcx];\n"
-      : [rdi] "=m"(rdi), [rsi] "=m"(rsi), [rdx] "=m"(rdx), [rcx] "=m"(rcx)
-      :  // input
-      :  // clobbered
+    "movq %%rdi, %[rdi];\n"
+    "movq %%rsi, %[rsi];\n"
+    "movq %%rdx, %[rdx];\n"
+    "movq %%rcx, %[rcx];\n"
+    : [rdi] "=m"(rdi), [rsi] "=m"(rsi), [rdx] "=m"(rdx), [rcx] "=m"(rcx)
+    :  // input
+    :  // clobbered
   );
 #  endif
 
@@ -147,20 +147,20 @@ static void Arch_DebuggerInit()
 #  if defined(ARCH_CPU_INTEL) && defined(ARCH_BITS_64)
   // Restore the saved registers.
   asm volatile(
-      "movq %[rdi], %%rdi;\n"
-      "movq %[rsi], %%rsi;\n"
-      "movq %[rdx], %%rdx;\n"
-      "movq %[rcx], %%rcx;\n"
-      :  // output
-      : [rdi] "m"(rdi), [rsi] "m"(rsi), [rdx] "m"(rdx), [rcx] "m"(rcx)
-      :  // clobbered
+    "movq %[rdi], %%rdi;\n"
+    "movq %[rsi], %%rsi;\n"
+    "movq %[rdx], %%rdx;\n"
+    "movq %[rcx], %%rcx;\n"
+    :  // output
+    : [rdi] "m"(rdi), [rsi] "m"(rsi), [rdx] "m"(rdx), [rcx] "m"(rcx)
+    :  // clobbered
   );
 #  endif
 
 #elif defined(ARCH_OS_WINDOWS)
 
   _archDebuggerInitialized = true;
-  _archDebuggerEnabled     = true;
+  _archDebuggerEnabled = true;
 
 #endif
 }
@@ -346,7 +346,7 @@ static bool Arch_DebuggerIsAttachedPosix()
 {
   // Check for a ptrace based debugger by trying to ptrace.
   pid_t parent = getpid();
-  pid_t pid    = nonLockingFork();
+  pid_t pid = nonLockingFork();
   if (pid < 0) {
     // fork failed.  We'll guess there's no debugger.
     return false;
@@ -468,8 +468,7 @@ static bool Arch_DebuggerAttach()
     // We need to start a process unrelated to this process so the
     // debugger's parent process is init, not this process (you can't
     // debug an ancestor process).
-    if (Arch_DebuggerRunUnrelatedProcessPosix(Arch_DebuggerAttachExecPosix,
-                                              _archDebuggerAttachArgs)) {
+    if (Arch_DebuggerRunUnrelatedProcessPosix(Arch_DebuggerAttachExecPosix, _archDebuggerAttachArgs)) {
       // Give the debugger a chance to attach.  We have no way of
       // blocking to wait for that and we can't be sure the client
       // is even going to start a debugger so we simply sleep for
@@ -525,7 +524,7 @@ void Arch_InitDebuggerAttach()
     }
 
     // Build the argv array.
-    _archDebuggerAttachArgs    = (char **)malloc(4 * sizeof(char *));
+    _archDebuggerAttachArgs = (char **)malloc(4 * sizeof(char *));
     _archDebuggerAttachArgs[0] = strdup("/bin/sh");
     _archDebuggerAttachArgs[1] = strdup("-c");
     _archDebuggerAttachArgs[2] = (char *)malloc(n + 1);
@@ -628,7 +627,7 @@ void ArchAbort(bool logging)
       // Remove signal handler.
       struct sigaction act;
       act.sa_handler = SIG_DFL;
-      act.sa_flags   = 0;
+      act.sa_flags = 0;
       sigemptyset(&act.sa_mask);
       sigaction(SIGABRT, &act, NULL);
 #endif

@@ -78,9 +78,9 @@ HdBufferArrayRangeSharedPtr const &HdxOitBufferAccessor::_GetBar(const TfToken &
 bool HdxOitBufferAccessor::AddOitBufferBindings(const HdPhRenderPassShaderSharedPtr &shader)
 {
   HdBufferArrayRangeSharedPtr const &counterBar = _GetBar(HdxTokens->oitCounterBufferBar);
-  HdBufferArrayRangeSharedPtr const &dataBar    = _GetBar(HdxTokens->oitDataBufferBar);
-  HdBufferArrayRangeSharedPtr const &depthBar   = _GetBar(HdxTokens->oitDepthBufferBar);
-  HdBufferArrayRangeSharedPtr const &indexBar   = _GetBar(HdxTokens->oitIndexBufferBar);
+  HdBufferArrayRangeSharedPtr const &dataBar = _GetBar(HdxTokens->oitDataBufferBar);
+  HdBufferArrayRangeSharedPtr const &depthBar = _GetBar(HdxTokens->oitDepthBufferBar);
+  HdBufferArrayRangeSharedPtr const &indexBar = _GetBar(HdxTokens->oitIndexBufferBar);
   HdBufferArrayRangeSharedPtr const &uniformBar = _GetBar(HdxTokens->oitUniformBar);
 
   if (counterBar && dataBar && depthBar && indexBar && uniformBar) {
@@ -138,31 +138,29 @@ void HdxOitBufferAccessor::InitializeOitBuffersIfNecessary()
   // finding -1 in the counter buffer. We can skip clearing the other buffers.
 
   HdPhBufferArrayRangeSharedPtr stCounterBar = std::dynamic_pointer_cast<HdPhBufferArrayRange>(
-      _GetBar(HdxTokens->oitCounterBufferBar));
+    _GetBar(HdxTokens->oitCounterBufferBar));
 
   if (!stCounterBar) {
     TF_CODING_ERROR("No OIT counter buffer allocateed when trying to clear it");
     return;
   }
 
-  HdPhBufferResourceSharedPtr stCounterResource = stCounterBar->GetResource(
-      HdxTokens->hdxOitCounterBuffer);
+  HdPhBufferResourceSharedPtr stCounterResource = stCounterBar->GetResource(HdxTokens->hdxOitCounterBuffer);
 
   GlfContextCaps const &caps = GlfContextCaps::GetInstance();
-  const GLint clearCounter   = -1;
+  const GLint clearCounter = -1;
 
   // XXX todo add a Clear() fn on HdPhBufferResource so that we do not have
   // to use direct gl calls. below.
   HgiBufferHandle const &buffer = stCounterResource->GetHandle();
-  HgiGLBuffer const *glBuffer   = dynamic_cast<HgiGLBuffer const *>(buffer.Get());
+  HgiGLBuffer const *glBuffer = dynamic_cast<HgiGLBuffer const *>(buffer.Get());
   if (!glBuffer) {
     TF_CODING_ERROR("Todo: Add HdPhBufferResource::Clear");
     return;
   }
 
   if (ARCH_LIKELY(caps.directStateAccessEnabled)) {
-    glClearNamedBufferData(
-        glBuffer->GetBufferId(), GL_R32I, GL_RED_INTEGER, GL_INT, &clearCounter);
+    glClearNamedBufferData(glBuffer->GetBufferId(), GL_R32I, GL_RED_INTEGER, GL_INT, &clearCounter);
   }
   else {
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, glBuffer->GetBufferId());

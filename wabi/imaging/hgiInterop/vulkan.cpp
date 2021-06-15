@@ -35,36 +35,36 @@
 WABI_NAMESPACE_BEGIN
 
 static const char *_vertexFullscreen =
-    "#version 120\n"
-    "attribute vec4 position;\n"
-    "attribute vec2 uvIn;\n"
-    "varying vec2 uv;\n"
-    "void main(void)\n"
-    "{\n"
-    "    gl_Position = position;\n"
-    "    uv = uvIn;\n"
-    "}\n";
+  "#version 120\n"
+  "attribute vec4 position;\n"
+  "attribute vec2 uvIn;\n"
+  "varying vec2 uv;\n"
+  "void main(void)\n"
+  "{\n"
+  "    gl_Position = position;\n"
+  "    uv = uvIn;\n"
+  "}\n";
 
 static const char *_fragmentNoDepthFullscreen =
-    "#version 120\n"
-    "varying vec2 uv;\n"
-    "uniform sampler2D colorIn;\n"
-    "void main(void)\n"
-    "{\n"
-    "    gl_FragColor = texture2D(colorIn, uv);\n"
-    "}\n";
+  "#version 120\n"
+  "varying vec2 uv;\n"
+  "uniform sampler2D colorIn;\n"
+  "void main(void)\n"
+  "{\n"
+  "    gl_FragColor = texture2D(colorIn, uv);\n"
+  "}\n";
 
 static const char *_fragmentDepthFullscreen =
-    "#version 120\n"
-    "varying vec2 uv;\n"
-    "uniform sampler2D colorIn;\n"
-    "uniform sampler2D depthIn;\n"
-    "void main(void)\n"
-    "{\n"
-    "    float depth = texture2D(depthIn, uv).r;\n"
-    "    gl_FragColor = texture2D(colorIn, uv);\n"
-    "    gl_FragDepth = depth;\n"
-    "}\n";
+  "#version 120\n"
+  "varying vec2 uv;\n"
+  "uniform sampler2D colorIn;\n"
+  "uniform sampler2D depthIn;\n"
+  "void main(void)\n"
+  "{\n"
+  "    float depth = texture2D(depthIn, uv).r;\n"
+  "    gl_FragColor = texture2D(colorIn, uv);\n"
+  "    gl_FragDepth = depth;\n"
+  "}\n";
 
 static uint32_t _CompileShader(const char *src, GLenum stage)
 {
@@ -110,7 +110,7 @@ static uint32_t _CreateVertexBuffer()
                                    1,
                                    2,
                                    0};
-  uint32_t vertexBuffer         = 0;
+  uint32_t vertexBuffer = 0;
   glGenBuffers(1, &vertexBuffer);
   glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -128,16 +128,16 @@ static void _ConvertVulkanTextureToOpenGL(HgiVulkan *hgiVulkan,
   // But for now we do a CPU readback of the GPU texels and upload to GPU.
 
   HgiTextureDesc const &texDesc = src->GetDescriptor();
-  const size_t byteSize         = src->GetByteSizeOfResource();
+  const size_t byteSize = src->GetByteSizeOfResource();
 
   std::vector<uint8_t> texels(byteSize, 0);
   HgiTextureGpuToCpuOp readBackOp;
-  readBackOp.cpuDestinationBuffer      = texels.data();
+  readBackOp.cpuDestinationBuffer = texels.data();
   readBackOp.destinationBufferByteSize = byteSize;
-  readBackOp.destinationByteOffset     = 0;
-  readBackOp.gpuSourceTexture          = src;
-  readBackOp.mipLevel                  = 0;
-  readBackOp.sourceTexelOffset         = GfVec3i(0);
+  readBackOp.destinationByteOffset = 0;
+  readBackOp.gpuSourceTexture = src;
+  readBackOp.mipLevel = 0;
+  readBackOp.sourceTexelOffset = GfVec3i(0);
 
   HgiBlitCmdsUniquePtr blitCmds = hgiVulkan->CreateBlitCmds();
   blitCmds->CopyTextureGpuToCpu(readBackOp);
@@ -155,19 +155,17 @@ static void _ConvertVulkanTextureToOpenGL(HgiVulkan *hgiVulkan,
     glBindTexture(GL_TEXTURE_2D, *glDest);
   }
 
-  const int32_t width  = texDesc.dimensions[0];
+  const int32_t width = texDesc.dimensions[0];
   const int32_t height = texDesc.dimensions[1];
 
   if (texDesc.format == HgiFormatFloat32Vec4) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, texels.data());
   }
   else if (texDesc.format == HgiFormatFloat16Vec4) {
-    glTexImage2D(
-        GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_HALF_FLOAT, texels.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_HALF_FLOAT, texels.data());
   }
   else if (texDesc.format == HgiFormatUNorm8Vec4) {
-    glTexImage2D(
-        GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texels.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texels.data());
   }
   else if (texDesc.format == HgiFormatFloat32) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, width, height, 0, GL_RED, GL_FLOAT, texels.data());
@@ -180,21 +178,21 @@ static void _ConvertVulkanTextureToOpenGL(HgiVulkan *hgiVulkan,
 }
 
 HgiInteropVulkan::HgiInteropVulkan(Hgi *hgiVulkan)
-    : _hgiVulkan(static_cast<HgiVulkan *>(hgiVulkan)),
-      _vs(0),
-      _fsNoDepth(0),
-      _fsDepth(0),
-      _prgNoDepth(0),
-      _prgDepth(0),
-      _vertexBuffer(0),
-      _glColorTex(0),
-      _glDepthTex(0)
+  : _hgiVulkan(static_cast<HgiVulkan *>(hgiVulkan)),
+    _vs(0),
+    _fsNoDepth(0),
+    _fsDepth(0),
+    _prgNoDepth(0),
+    _prgDepth(0),
+    _vertexBuffer(0),
+    _glColorTex(0),
+    _glDepthTex(0)
 {
-  _vs           = _CompileShader(_vertexFullscreen, GL_VERTEX_SHADER);
-  _fsNoDepth    = _CompileShader(_fragmentNoDepthFullscreen, GL_FRAGMENT_SHADER);
-  _fsDepth      = _CompileShader(_fragmentDepthFullscreen, GL_FRAGMENT_SHADER);
-  _prgNoDepth   = _LinkProgram(_vs, _fsNoDepth);
-  _prgDepth     = _LinkProgram(_vs, _fsDepth);
+  _vs = _CompileShader(_vertexFullscreen, GL_VERTEX_SHADER);
+  _fsNoDepth = _CompileShader(_fragmentNoDepthFullscreen, GL_FRAGMENT_SHADER);
+  _fsDepth = _CompileShader(_fragmentDepthFullscreen, GL_FRAGMENT_SHADER);
+  _prgNoDepth = _LinkProgram(_vs, _fsNoDepth);
+  _prgDepth = _LinkProgram(_vs, _fsDepth);
   _vertexBuffer = _CreateVertexBuffer();
   TF_VERIFY(glGetError() == GL_NO_ERROR);
 }
@@ -229,7 +227,7 @@ void HgiInteropVulkan::CompositeToInterop(HgiTextureHandle const &color,
   // Verify there were no gl errors coming in.
   TF_VERIFY(glGetError() == GL_NO_ERROR);
 
-  GLint restoreDrawFramebuffer  = 0;
+  GLint restoreDrawFramebuffer = 0;
   bool doRestoreDrawFramebuffer = false;
 
   if (!framebuffer.IsEmpty()) {
@@ -291,12 +289,8 @@ void HgiInteropVulkan::CompositeToInterop(HgiTextureHandle const &color,
   glEnableVertexAttribArray(locPosition);
 
   const GLint locUv = glGetAttribLocation(prg, "uvIn");
-  glVertexAttribPointer(locUv,
-                        2,
-                        GL_FLOAT,
-                        GL_FALSE,
-                        sizeof(float) * 6,
-                        reinterpret_cast<void *>(sizeof(float) * 4));
+  glVertexAttribPointer(
+    locUv, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 6, reinterpret_cast<void *>(sizeof(float) * 4));
   glEnableVertexAttribArray(locUv);
 
   // Since we want to composite over the application's framebuffer contents,
@@ -358,8 +352,7 @@ void HgiInteropVulkan::CompositeToInterop(HgiTextureHandle const &color,
   if (!blendEnabled) {
     glDisable(GL_BLEND);
   }
-  glBlendFuncSeparate(
-      restoreColorSrcFnOp, restoreColorDstFnOp, restoreAlphaSrcFnOp, restoreAlphaDstFnOp);
+  glBlendFuncSeparate(restoreColorSrcFnOp, restoreColorDstFnOp, restoreAlphaSrcFnOp, restoreAlphaDstFnOp);
   glBlendEquationSeparate(restoreColorOp, restoreAlphaOp);
 
   if (!restoreDepthEnabled) {

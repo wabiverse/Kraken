@@ -45,8 +45,7 @@ class HdPhLightingShader : public HdPhShaderCode {
   virtual ~HdPhLightingShader();
 
   /// Sets camera state.
-  virtual void SetCamera(GfMatrix4d const &worldToViewMatrix,
-                         GfMatrix4d const &projectionMatrix) = 0;
+  virtual void SetCamera(GfMatrix4d const &worldToViewMatrix, GfMatrix4d const &projectionMatrix) = 0;
 
  private:
   // No copying

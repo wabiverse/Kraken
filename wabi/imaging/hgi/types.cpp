@@ -88,9 +88,7 @@ size_t HgiGetComponentCount(const HgiFormat f)
   return 0;
 }
 
-size_t HgiGetDataSizeOfFormat(const HgiFormat f,
-                              size_t *const blockWidth,
-                              size_t *const blockHeight)
+size_t HgiGetDataSizeOfFormat(const HgiFormat f, size_t *const blockWidth, size_t *const blockHeight)
 {
   if (blockWidth) {
     *blockWidth = 1;
@@ -218,7 +216,7 @@ std::vector<HgiMipInfo> HgiGetMipInfos(const HgiFormat format,
   result.reserve(numMips);
 
   size_t byteOffset = 0;
-  GfVec3i size      = dimensions;
+  GfVec3i size = dimensions;
 
   for (uint16_t mipLevel = 0; mipLevel < numMips; mipLevel++) {
     const size_t byteSize = HgiGetDataSize(format, size);

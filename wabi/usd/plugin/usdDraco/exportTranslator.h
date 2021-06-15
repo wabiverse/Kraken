@@ -54,7 +54,7 @@ class UsdDracoExportTranslator {
   /// as well as by Python script to check whether a primvar should be kept or
   /// deleted from USD mesh.
   static std::unique_ptr<UsdDracoExportAttributeInterface> CreateAttributeFrom(
-      const UsdGeomPrimvar &primvar);
+    const UsdGeomPrimvar &primvar);
 
  private:
   UsdDracoExportTranslator(const UsdGeomMesh &usdMesh, draco::Mesh *dracoMesh);

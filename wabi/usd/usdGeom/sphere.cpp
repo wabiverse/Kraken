@@ -131,8 +131,7 @@ UsdAttribute UsdGeomSphere::CreateExtentAttr(VtValue const &defaultValue, bool w
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -146,11 +145,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdGeomSphere::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdGeomTokens->radius,
-      UsdGeomTokens->extent,
+    UsdGeomTokens->radius,
+    UsdGeomTokens->extent,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdGeomGprim::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomGprim::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -190,10 +189,10 @@ bool UsdGeomSphere::ComputeExtent(double radius, const GfMatrix4d &transform, Vt
   // Create Sized Extent
   extent->resize(2);
 
-  GfBBox3d bbox   = GfBBox3d(GfRange3d(GfVec3d(-radius), GfVec3d(radius)), transform);
+  GfBBox3d bbox = GfBBox3d(GfRange3d(GfVec3d(-radius), GfVec3d(radius)), transform);
   GfRange3d range = bbox.ComputeAlignedRange();
-  (*extent)[0]    = GfVec3f(range.GetMin());
-  (*extent)[1]    = GfVec3f(range.GetMax());
+  (*extent)[0] = GfVec3f(range.GetMin());
+  (*extent)[1] = GfVec3f(range.GetMax());
 
   return true;
 }

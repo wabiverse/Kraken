@@ -59,23 +59,23 @@ void wrapDebug()
   typedef TfDebug This;
 
   class_<This>("Debug", no_init)
-      .def("SetDebugSymbolsByName", &This::SetDebugSymbolsByName, (arg("pattern"), arg("value")))
-      .staticmethod("SetDebugSymbolsByName")
+    .def("SetDebugSymbolsByName", &This::SetDebugSymbolsByName, (arg("pattern"), arg("value")))
+    .staticmethod("SetDebugSymbolsByName")
 
-      .def("IsDebugSymbolNameEnabled", &This::IsDebugSymbolNameEnabled)
-      .staticmethod("IsDebugSymbolNameEnabled")
+    .def("IsDebugSymbolNameEnabled", &This::IsDebugSymbolNameEnabled)
+    .staticmethod("IsDebugSymbolNameEnabled")
 
-      .def("GetDebugSymbolDescriptions", &This::GetDebugSymbolDescriptions)
-      .staticmethod("GetDebugSymbolDescriptions")
+    .def("GetDebugSymbolDescriptions", &This::GetDebugSymbolDescriptions)
+    .staticmethod("GetDebugSymbolDescriptions")
 
-      .def("GetDebugSymbolNames", &This::GetDebugSymbolNames)
-      .staticmethod("GetDebugSymbolNames")
+    .def("GetDebugSymbolNames", &This::GetDebugSymbolNames)
+    .staticmethod("GetDebugSymbolNames")
 
-      .def("GetDebugSymbolDescription", &This::GetDebugSymbolDescription)
-      .staticmethod("GetDebugSymbolDescription")
+    .def("GetDebugSymbolDescription", &This::GetDebugSymbolDescription)
+    .staticmethod("GetDebugSymbolDescription")
 
-      .def("SetOutputFile", _SetOutputFile)
-      .staticmethod("SetOutputFile")
+    .def("SetOutputFile", _SetOutputFile)
+    .staticmethod("SetOutputFile")
 
-      ;
+    ;
 }

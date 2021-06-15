@@ -49,10 +49,10 @@ static void _Warn(string const &msg,
                   int lineNo)
 {
   TfDiagnosticMgr::WarningHelper(
-      Tf_PythonCallContext(fileName.c_str(), moduleName.c_str(), functionName.c_str(), lineNo),
-      TF_DIAGNOSTIC_WARNING_TYPE,
-      TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_WARNING_TYPE)).c_str())
-      .Post(msg);
+    Tf_PythonCallContext(fileName.c_str(), moduleName.c_str(), functionName.c_str(), lineNo),
+    TF_DIAGNOSTIC_WARNING_TYPE,
+    TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_WARNING_TYPE)).c_str())
+    .Post(msg);
 }
 
 static string TfWarning__repr__(TfWarning const &self)
@@ -76,5 +76,5 @@ void wrapWarning()
 
   scope warningScope = class_<This, bases<TfDiagnosticBase>>("Warning", no_init)
 
-                           .def("__repr__", TfWarning__repr__);
+                         .def("__repr__", TfWarning__repr__);
 }

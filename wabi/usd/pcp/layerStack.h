@@ -269,9 +269,9 @@ class PcpLayerStack : public TfRefBase, public TfWeakBase {
     _SublayerSourceInfo(const SdfLayerHandle &layer_,
                         const std::string &authoredSublayerPath_,
                         const std::string &computedSublayerPath_)
-        : layer(layer_),
-          authoredSublayerPath(authoredSublayerPath_),
-          computedSublayerPath(computedSublayerPath_)
+      : layer(layer_),
+        authoredSublayerPath(authoredSublayerPath_),
+        computedSublayerPath(computedSublayerPath_)
     {}
 
     SdfLayerHandle layer;
@@ -299,8 +299,7 @@ class PcpLayerStack : public TfRefBase, public TfWeakBase {
   /// the current value of relocations given out by
   /// GetExpressionForRelocatesAtPath().  This map is used to update
   /// those values when relocations change.
-  typedef std::map<SdfPath, PcpMapExpression::VariableUniquePtr, SdfPath::FastLessThan>
-      _RelocatesVarMap;
+  typedef std::map<SdfPath, PcpMapExpression::VariableUniquePtr, SdfPath::FastLessThan> _RelocatesVarMap;
   _RelocatesVarMap _relocatesVariables;
   tbb::spin_mutex _relocatesVariablesMutex;
 

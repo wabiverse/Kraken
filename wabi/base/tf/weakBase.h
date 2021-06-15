@@ -79,8 +79,7 @@ class Tf_Remnant : public TfSimpleRefBase {
 
   // Note: this initializes a class member -- the parameter is a non-const
   // reference.
-  template<class T>
-  static TfRefPtr<Tf_Remnant> Register(std::atomic<Tf_Remnant *> &remnantPtr, T *candidate)
+  template<class T> static TfRefPtr<Tf_Remnant> Register(std::atomic<Tf_Remnant *> &remnantPtr, T *candidate)
   {
     Tf_Remnant *existing = nullptr;
     if (remnantPtr.compare_exchange_strong(existing, static_cast<Tf_Remnant *>(candidate))) {

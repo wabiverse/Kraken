@@ -75,11 +75,11 @@ class GlfTexture : public TfRefBase, public TfWeakBase {
   ///
   struct Binding {
     Binding(TfToken name, TfToken role, GLenum target, GLuint textureId, GLuint samplerId)
-        : name(name),
-          role(role),
-          target(target),
-          textureId(textureId),
-          samplerId(samplerId)
+      : name(name),
+        role(role),
+        target(target),
+        textureId(textureId),
+        samplerId(samplerId)
     {}
 
     TfToken name;

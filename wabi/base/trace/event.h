@@ -55,7 +55,7 @@ class TraceEvent {
  public:
   /// Time in "ticks".
   using TimeStamp = uint64_t;
-  using Key       = TraceKey;
+  using Key = TraceKey;
 
   /// \name Tag enums to select constructors
   /// @{
@@ -127,58 +127,54 @@ class TraceEvent {
   /// Constructor for Begin events that will automatically set the
   /// timestamp from the current time.
   TraceEvent(BeginTag, const Key &key, TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _type(_InternalEventType::Begin),
-        _time(ArchGetTickTime())
+    : _key(key),
+      _category(cat),
+      _type(_InternalEventType::Begin),
+      _time(ArchGetTickTime())
   {}
 
   /// Constructor for Begin events that takes a specific TimeStamp \a ts.
   TraceEvent(BeginTag, const Key &key, TimeStamp ts, TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _type(_InternalEventType::Begin),
-        _time(ts)
+    : _key(key),
+      _category(cat),
+      _type(_InternalEventType::Begin),
+      _time(ts)
   {}
 
   /// Constructor for End events that will automatically set the
   /// timestamp from the current time.
   TraceEvent(EndTag, const Key &key, TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _type(_InternalEventType::End),
-        _time(ArchGetTickTime())
+    : _key(key),
+      _category(cat),
+      _type(_InternalEventType::End),
+      _time(ArchGetTickTime())
   {}
 
   /// Constructor for End events that takes a specific TimeStamp \a ts.
   TraceEvent(EndTag, const Key &key, TimeStamp ts, TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _type(_InternalEventType::End),
-        _time(ts)
+    : _key(key),
+      _category(cat),
+      _type(_InternalEventType::End),
+      _time(ts)
   {}
 
   /// Constructor for Timespan events that takes a TimeStamp \a starttime
   /// and automatically sets the end timestamp from the current time.
   TraceEvent(TimespanTag, const Key &key, TimeStamp startTime, TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _type(_InternalEventType::Timespan),
-        _time(ArchGetTickTime())
+    : _key(key),
+      _category(cat),
+      _type(_InternalEventType::Timespan),
+      _time(ArchGetTickTime())
   {
     new (&_payload) TimeStamp(startTime);
   }
 
   /// Constructor for Timespan events that takes the start time and end time.
-  TraceEvent(TimespanTag,
-             const Key &key,
-             TimeStamp startTime,
-             TimeStamp endTime,
-             TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _type(_InternalEventType::Timespan),
-        _time(endTime)
+  TraceEvent(TimespanTag, const Key &key, TimeStamp startTime, TimeStamp endTime, TraceCategoryId cat)
+    : _key(key),
+      _category(cat),
+      _type(_InternalEventType::Timespan),
+      _time(endTime)
   {
     new (&_payload) TimeStamp(startTime);
   }
@@ -186,36 +182,36 @@ class TraceEvent {
   /// Constructor for Marker events that will automatically set the
   /// timestamp from the current time.
   TraceEvent(MarkerTag, const Key &key, TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _type(_InternalEventType::Marker),
-        _time(ArchGetTickTime())
+    : _key(key),
+      _category(cat),
+      _type(_InternalEventType::Marker),
+      _time(ArchGetTickTime())
   {}
 
   /// Constructor for Mark events that takes a specific TimeStamp \a ts.
   TraceEvent(MarkerTag, const Key &key, TimeStamp ts, TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _type(_InternalEventType::Marker),
-        _time(ts)
+    : _key(key),
+      _category(cat),
+      _type(_InternalEventType::Marker),
+      _time(ts)
   {}
 
   /// Constructor for Counter delta events.
   TraceEvent(CounterDeltaTag, const Key &key, double value, TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _type(_InternalEventType::CounterDelta),
-        _time(ArchGetTickTime())
+    : _key(key),
+      _category(cat),
+      _type(_InternalEventType::CounterDelta),
+      _time(ArchGetTickTime())
   {
     new (&_payload) double(value);
   }
 
   /// Constructor for Counter value events.
   TraceEvent(CounterValueTag, const Key &key, double value, TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _type(_InternalEventType::CounterValue),
-        _time(ArchGetTickTime())
+    : _key(key),
+      _category(cat),
+      _type(_InternalEventType::CounterValue),
+      _time(ArchGetTickTime())
   {
     new (&_payload) double(value);
   }
@@ -223,61 +219,61 @@ class TraceEvent {
   /// \name Constructors for data events
   /// @{
   TraceEvent(DataTag, const Key &key, bool data, TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _dataType(DataType::Boolean),
-        _type(_InternalEventType::ScopeData),
-        _time(ArchGetTickTime())
+    : _key(key),
+      _category(cat),
+      _dataType(DataType::Boolean),
+      _type(_InternalEventType::ScopeData),
+      _time(ArchGetTickTime())
   {
     new (&_payload) bool(data);
   }
 
   TraceEvent(DataTag, const Key &key, int data, TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _dataType(DataType::Int),
-        _type(_InternalEventType::ScopeData),
-        _time(ArchGetTickTime())
+    : _key(key),
+      _category(cat),
+      _dataType(DataType::Int),
+      _type(_InternalEventType::ScopeData),
+      _time(ArchGetTickTime())
   {
     new (&_payload) int64_t(data);
   }
 
   TraceEvent(DataTag, const Key &key, int64_t data, TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _dataType(DataType::Int),
-        _type(_InternalEventType::ScopeData),
-        _time(ArchGetTickTime())
+    : _key(key),
+      _category(cat),
+      _dataType(DataType::Int),
+      _type(_InternalEventType::ScopeData),
+      _time(ArchGetTickTime())
   {
     new (&_payload) int64_t(data);
   }
 
   TraceEvent(DataTag, const Key &key, uint64_t data, TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _dataType(DataType::UInt),
-        _type(_InternalEventType::ScopeData),
-        _time(ArchGetTickTime())
+    : _key(key),
+      _category(cat),
+      _dataType(DataType::UInt),
+      _type(_InternalEventType::ScopeData),
+      _time(ArchGetTickTime())
   {
     new (&_payload) uint64_t(data);
   }
 
   TraceEvent(DataTag, const Key &key, double data, TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _dataType(DataType::Float),
-        _type(_InternalEventType::ScopeData),
-        _time(ArchGetTickTime())
+    : _key(key),
+      _category(cat),
+      _dataType(DataType::Float),
+      _type(_InternalEventType::ScopeData),
+      _time(ArchGetTickTime())
   {
     new (&_payload) double(data);
   }
 
   TraceEvent(DataTag, const Key &key, const char *data, TraceCategoryId cat)
-      : _key(key),
-        _category(cat),
-        _dataType(DataType::String),
-        _type(_InternalEventType::ScopeDataLarge),
-        _time(ArchGetTickTime())
+    : _key(key),
+      _category(cat),
+      _dataType(DataType::String),
+      _type(_InternalEventType::ScopeDataLarge),
+      _time(ArchGetTickTime())
   {
     new (&_payload) const char *(data);
   }

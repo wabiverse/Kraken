@@ -37,8 +37,8 @@ WABI_NAMESPACE_BEGIN
 
 class HdSceneDelegate;
 
-using HdRenderPassStateSharedPtr  = std::shared_ptr<class HdRenderPassState>;
-using HdRenderPassSharedPtr       = std::shared_ptr<class HdRenderPass>;
+using HdRenderPassStateSharedPtr = std::shared_ptr<class HdRenderPassState>;
+using HdRenderPassSharedPtr = std::shared_ptr<class HdRenderPass>;
 using HdxRenderSetupTaskSharedPtr = std::shared_ptr<class HdxRenderSetupTask>;
 
 /// \class HdxRenderTask
@@ -118,7 +118,7 @@ class HdxRenderTask : public HdxTask {
   // Inspect the AOV bindings to determine if any of them need to be cleared.
   bool _NeedToClearAovs(HdRenderPassStateSharedPtr const &renderPassState) const;
 
-  HdxRenderTask()                      = delete;
+  HdxRenderTask() = delete;
   HdxRenderTask(const HdxRenderTask &) = delete;
   HdxRenderTask &operator=(const HdxRenderTask &) = delete;
 };

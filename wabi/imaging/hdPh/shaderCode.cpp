@@ -120,8 +120,7 @@ void HdPhShaderCode::ResourceContext::AddComputation(HdBufferArrayRangeSharedPtr
   _registry->AddComputation(range, computation, queue);
 }
 
-HdPhShaderCode::ResourceContext::ResourceContext(HdPhResourceRegistry *const registry)
-    : _registry(registry)
+HdPhShaderCode::ResourceContext::ResourceContext(HdPhResourceRegistry *const registry) : _registry(registry)
 {}
 
 WABI_NAMESPACE_END

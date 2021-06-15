@@ -187,13 +187,12 @@ bool _ComputeClipSetDefinition(const UsdPrim &prim,
   } \
   if (!TfIsValidIdentifier(ClipSetArg)) { \
     TF_CODING_ERROR( \
-        "Clip set name must be a valid identifier " \
-        "(got '%s')", \
-        ClipSetArg.c_str()); \
+      "Clip set name must be a valid identifier " \
+      "(got '%s')", \
+      ClipSetArg.c_str()); \
     return false; \
   } \
-  return GetPrim().SetMetadataByDictKey( \
-      UsdTokens->clips, _MakeKeyPath(ClipSetArg, InfoKey), InArg);
+  return GetPrim().SetMetadataByDictKey(UsdTokens->clips, _MakeKeyPath(ClipSetArg, InfoKey), InArg);
 
 #define USD_CLIPS_API_CLIPSET_GETTER(FnName, OutArg, ClipSetArg, InfoKey) \
   if (GetPath() == SdfPath::AbsoluteRootPath()) { \
@@ -206,13 +205,12 @@ bool _ComputeClipSetDefinition(const UsdPrim &prim,
   } \
   if (!TfIsValidIdentifier(ClipSetArg)) { \
     TF_CODING_ERROR( \
-        "Clip set name must be a valid identifier " \
-        "(got '%s')", \
-        ClipSetArg.c_str()); \
+      "Clip set name must be a valid identifier " \
+      "(got '%s')", \
+      ClipSetArg.c_str()); \
     return false; \
   } \
-  return GetPrim().GetMetadataByDictKey( \
-      UsdTokens->clips, _MakeKeyPath(ClipSetArg, InfoKey), OutArg);
+  return GetPrim().GetMetadataByDictKey(UsdTokens->clips, _MakeKeyPath(ClipSetArg, InfoKey), OutArg);
 
 bool UsdClipsAPI::GetClips(VtDictionary *clips) const
 {
@@ -240,7 +238,7 @@ bool UsdClipsAPI::GetClipSets(SdfStringListOp *clipSets) const
   }
 
   const SdfPrimSpecHandle primSpec = GetPrim().GetStage()->GetEditTarget().GetPrimSpecForScenePath(
-      GetPath());
+    GetPath());
   return primSpec->HasField(UsdTokens->clipSets, clipSets);
 }
 
@@ -258,11 +256,9 @@ bool UsdClipsAPI::SetClipAssetPaths(const VtArray<SdfAssetPath> &assetPaths)
   USD_CLIPS_API_SETTER(SetClipAssetPaths, assetPaths, UsdTokens->clipAssetPaths);
 }
 
-bool UsdClipsAPI::SetClipAssetPaths(const VtArray<SdfAssetPath> &assetPaths,
-                                    const std::string &clipSet)
+bool UsdClipsAPI::SetClipAssetPaths(const VtArray<SdfAssetPath> &assetPaths, const std::string &clipSet)
 {
-  USD_CLIPS_API_CLIPSET_SETTER(
-      SetClipAssetPaths, assetPaths, clipSet, UsdClipsAPIInfoKeys->assetPaths);
+  USD_CLIPS_API_CLIPSET_SETTER(SetClipAssetPaths, assetPaths, clipSet, UsdClipsAPIInfoKeys->assetPaths);
 }
 
 bool UsdClipsAPI::GetClipAssetPaths(VtArray<SdfAssetPath> *assetPaths) const
@@ -288,13 +284,11 @@ VtArray<SdfAssetPath> UsdClipsAPI::ComputeClipAssetPaths(const std::string &clip
   auto &resolver = ArGetResolver();
 
   const SdfLayerRefPtr &sourceLayer =
-      clipSetDef.sourceLayerStack->GetLayers()[clipSetDef.indexOfLayerWhereAssetPathsFound];
-  const ArResolverContextBinder binder(
-      clipSetDef.sourceLayerStack->GetIdentifier().pathResolverContext);
+    clipSetDef.sourceLayerStack->GetLayers()[clipSetDef.indexOfLayerWhereAssetPathsFound];
+  const ArResolverContextBinder binder(clipSetDef.sourceLayerStack->GetIdentifier().pathResolverContext);
 
   for (SdfAssetPath &p : *clipSetDef.clipAssetPaths) {
-    const std::string anchoredPath = SdfComputeAssetPathRelativeToLayer(sourceLayer,
-                                                                        p.GetAssetPath());
+    const std::string anchoredPath = SdfComputeAssetPathRelativeToLayer(sourceLayer, p.GetAssetPath());
     const std::string resolvedPath = resolver.Resolve(anchoredPath);
 
     if (!resolvedPath.empty()) {
@@ -310,11 +304,9 @@ VtArray<SdfAssetPath> UsdClipsAPI::ComputeClipAssetPaths() const
   return ComputeClipAssetPaths(UsdClipsAPISetNames->default_);
 }
 
-bool UsdClipsAPI::GetClipAssetPaths(VtArray<SdfAssetPath> *assetPaths,
-                                    const std::string &clipSet) const
+bool UsdClipsAPI::GetClipAssetPaths(VtArray<SdfAssetPath> *assetPaths, const std::string &clipSet) const
 {
-  USD_CLIPS_API_CLIPSET_GETTER(
-      GetClipAssetPaths, assetPaths, clipSet, UsdClipsAPIInfoKeys->assetPaths);
+  USD_CLIPS_API_CLIPSET_GETTER(GetClipAssetPaths, assetPaths, clipSet, UsdClipsAPIInfoKeys->assetPaths);
 }
 
 bool UsdClipsAPI::SetClipManifestAssetPath(const SdfAssetPath &assetPath)
@@ -322,11 +314,10 @@ bool UsdClipsAPI::SetClipManifestAssetPath(const SdfAssetPath &assetPath)
   USD_CLIPS_API_SETTER(SetClipManifestAssetPath, assetPath, UsdTokens->clipManifestAssetPath);
 }
 
-bool UsdClipsAPI::SetClipManifestAssetPath(const SdfAssetPath &assetPath,
-                                           const std::string &clipSet)
+bool UsdClipsAPI::SetClipManifestAssetPath(const SdfAssetPath &assetPath, const std::string &clipSet)
 {
   USD_CLIPS_API_CLIPSET_SETTER(
-      SetClipManifestAssetPath, assetPath, clipSet, UsdClipsAPIInfoKeys->manifestAssetPath);
+    SetClipManifestAssetPath, assetPath, clipSet, UsdClipsAPIInfoKeys->manifestAssetPath);
 }
 
 bool UsdClipsAPI::GetClipManifestAssetPath(SdfAssetPath *assetPath) const
@@ -334,11 +325,10 @@ bool UsdClipsAPI::GetClipManifestAssetPath(SdfAssetPath *assetPath) const
   USD_CLIPS_API_GETTER(GetClipManifestAssetPath, assetPath, UsdTokens->clipManifestAssetPath);
 }
 
-bool UsdClipsAPI::GetClipManifestAssetPath(SdfAssetPath *assetPath,
-                                           const std::string &clipSet) const
+bool UsdClipsAPI::GetClipManifestAssetPath(SdfAssetPath *assetPath, const std::string &clipSet) const
 {
   USD_CLIPS_API_CLIPSET_GETTER(
-      GetClipManifestAssetPath, assetPath, clipSet, UsdClipsAPIInfoKeys->manifestAssetPath);
+    GetClipManifestAssetPath, assetPath, clipSet, UsdClipsAPIInfoKeys->manifestAssetPath);
 }
 
 SdfLayerRefPtr UsdClipsAPI::GenerateClipManifest(const std::string &clipSetName,
@@ -382,9 +372,8 @@ SdfLayerRefPtr UsdClipsAPI::GenerateClipManifestFromLayers(const SdfLayerHandleV
 
 bool UsdClipsAPI::SetInterpolateMissingClipValues(bool interpolate)
 {
-  USD_CLIPS_API_SETTER(SetInterpolateMissingClipValues,
-                       interpolate,
-                       UsdClipsAPIInfoKeys->interpolateMissingClipValues);
+  USD_CLIPS_API_SETTER(
+    SetInterpolateMissingClipValues, interpolate, UsdClipsAPIInfoKeys->interpolateMissingClipValues);
 }
 
 bool UsdClipsAPI::SetInterpolateMissingClipValues(bool interpolate, const std::string &clipSet)
@@ -397,13 +386,11 @@ bool UsdClipsAPI::SetInterpolateMissingClipValues(bool interpolate, const std::s
 
 bool UsdClipsAPI::GetInterpolateMissingClipValues(bool *interpolate) const
 {
-  USD_CLIPS_API_GETTER(GetInterpolateMissingClipValues,
-                       interpolate,
-                       UsdClipsAPIInfoKeys->interpolateMissingClipValues);
+  USD_CLIPS_API_GETTER(
+    GetInterpolateMissingClipValues, interpolate, UsdClipsAPIInfoKeys->interpolateMissingClipValues);
 }
 
-bool UsdClipsAPI::GetInterpolateMissingClipValues(bool *interpolate,
-                                                  const std::string &clipSet) const
+bool UsdClipsAPI::GetInterpolateMissingClipValues(bool *interpolate, const std::string &clipSet) const
 {
   USD_CLIPS_API_CLIPSET_GETTER(GetInterpolateMissingClipValues,
                                interpolate,
@@ -473,32 +460,26 @@ bool UsdClipsAPI::GetClipTimes(VtVec2dArray *clipTimes, const std::string &clipS
 
 bool UsdClipsAPI::GetClipTemplateAssetPath(std::string *clipTemplateAssetPath) const
 {
-  USD_CLIPS_API_GETTER(
-      GetClipTemplateAssetPath, clipTemplateAssetPath, UsdTokens->clipTemplateAssetPath);
+  USD_CLIPS_API_GETTER(GetClipTemplateAssetPath, clipTemplateAssetPath, UsdTokens->clipTemplateAssetPath);
 }
 
 bool UsdClipsAPI::GetClipTemplateAssetPath(std::string *clipTemplateAssetPath,
                                            const std::string &clipSet) const
 {
-  USD_CLIPS_API_CLIPSET_GETTER(GetClipTemplateAssetPath,
-                               clipTemplateAssetPath,
-                               clipSet,
-                               UsdClipsAPIInfoKeys->templateAssetPath);
+  USD_CLIPS_API_CLIPSET_GETTER(
+    GetClipTemplateAssetPath, clipTemplateAssetPath, clipSet, UsdClipsAPIInfoKeys->templateAssetPath);
 }
 
 bool UsdClipsAPI::SetClipTemplateAssetPath(const std::string &clipTemplateAssetPath)
 {
-  USD_CLIPS_API_SETTER(
-      SetClipTemplateAssetPath, clipTemplateAssetPath, UsdTokens->clipTemplateAssetPath);
+  USD_CLIPS_API_SETTER(SetClipTemplateAssetPath, clipTemplateAssetPath, UsdTokens->clipTemplateAssetPath);
 }
 
 bool UsdClipsAPI::SetClipTemplateAssetPath(const std::string &clipTemplateAssetPath,
                                            const std::string &clipSet)
 {
-  USD_CLIPS_API_CLIPSET_SETTER(SetClipTemplateAssetPath,
-                               clipTemplateAssetPath,
-                               clipSet,
-                               UsdClipsAPIInfoKeys->templateAssetPath);
+  USD_CLIPS_API_CLIPSET_SETTER(
+    SetClipTemplateAssetPath, clipTemplateAssetPath, clipSet, UsdClipsAPIInfoKeys->templateAssetPath);
 }
 
 bool UsdClipsAPI::GetClipTemplateStride(double *clipTemplateStride) const
@@ -506,47 +487,44 @@ bool UsdClipsAPI::GetClipTemplateStride(double *clipTemplateStride) const
   USD_CLIPS_API_GETTER(GetClipTemplateStride, clipTemplateStride, UsdTokens->clipTemplateStride);
 }
 
-bool UsdClipsAPI::GetClipTemplateStride(double *clipTemplateStride,
-                                        const std::string &clipSet) const
+bool UsdClipsAPI::GetClipTemplateStride(double *clipTemplateStride, const std::string &clipSet) const
 {
   USD_CLIPS_API_CLIPSET_GETTER(
-      GetClipTemplateStride, clipTemplateStride, clipSet, UsdClipsAPIInfoKeys->templateStride);
+    GetClipTemplateStride, clipTemplateStride, clipSet, UsdClipsAPIInfoKeys->templateStride);
 }
 
 bool UsdClipsAPI::SetClipTemplateStride(const double clipTemplateStride)
 {
   if (clipTemplateStride <= 0) {
     TF_CODING_ERROR(
-        "Invalid clipTemplateStride %f for prim <%s>. "
-        "clipTemplateStride must be greater than 0.",
-        clipTemplateStride,
-        GetPrim().GetPath().GetText());
+      "Invalid clipTemplateStride %f for prim <%s>. "
+      "clipTemplateStride must be greater than 0.",
+      clipTemplateStride,
+      GetPrim().GetPath().GetText());
     return false;
   }
 
   USD_CLIPS_API_SETTER(SetClipTemplateStride, clipTemplateStride, UsdTokens->clipTemplateStride);
 }
 
-bool UsdClipsAPI::SetClipTemplateStride(const double clipTemplateStride,
-                                        const std::string &clipSet)
+bool UsdClipsAPI::SetClipTemplateStride(const double clipTemplateStride, const std::string &clipSet)
 {
   if (clipTemplateStride <= 0) {
     TF_CODING_ERROR(
-        "Invalid clipTemplateStride %f for prim <%s>. "
-        "clipTemplateStride must be greater than 0.",
-        clipTemplateStride,
-        GetPrim().GetPath().GetText());
+      "Invalid clipTemplateStride %f for prim <%s>. "
+      "clipTemplateStride must be greater than 0.",
+      clipTemplateStride,
+      GetPrim().GetPath().GetText());
     return false;
   }
 
   USD_CLIPS_API_CLIPSET_SETTER(
-      SetClipTemplateStride, clipTemplateStride, clipSet, UsdClipsAPIInfoKeys->templateStride);
+    SetClipTemplateStride, clipTemplateStride, clipSet, UsdClipsAPIInfoKeys->templateStride);
 }
 
 bool UsdClipsAPI::GetClipTemplateActiveOffset(double *clipTemplateActiveOffset) const
 {
-  return GetClipTemplateActiveOffset(clipTemplateActiveOffset,
-                                     UsdClipsAPISetNames->default_.GetString());
+  return GetClipTemplateActiveOffset(clipTemplateActiveOffset, UsdClipsAPISetNames->default_.GetString());
 }
 
 bool UsdClipsAPI::GetClipTemplateActiveOffset(double *clipTemplateActiveOffset,
@@ -560,8 +538,7 @@ bool UsdClipsAPI::GetClipTemplateActiveOffset(double *clipTemplateActiveOffset,
 
 bool UsdClipsAPI::SetClipTemplateActiveOffset(const double clipTemplateActiveOffset)
 {
-  return SetClipTemplateActiveOffset(clipTemplateActiveOffset,
-                                     UsdClipsAPISetNames->default_.GetString());
+  return SetClipTemplateActiveOffset(clipTemplateActiveOffset, UsdClipsAPISetNames->default_.GetString());
 }
 
 bool UsdClipsAPI::SetClipTemplateActiveOffset(const double clipTemplateActiveOffset,
@@ -575,58 +552,46 @@ bool UsdClipsAPI::SetClipTemplateActiveOffset(const double clipTemplateActiveOff
 
 bool UsdClipsAPI::GetClipTemplateStartTime(double *clipTemplateStartTime) const
 {
-  USD_CLIPS_API_GETTER(
-      GetClipTemplateStartTime, clipTemplateStartTime, UsdTokens->clipTemplateStartTime);
+  USD_CLIPS_API_GETTER(GetClipTemplateStartTime, clipTemplateStartTime, UsdTokens->clipTemplateStartTime);
 }
 
-bool UsdClipsAPI::GetClipTemplateStartTime(double *clipTemplateStartTime,
-                                           const std::string &clipSet) const
+bool UsdClipsAPI::GetClipTemplateStartTime(double *clipTemplateStartTime, const std::string &clipSet) const
 {
-  USD_CLIPS_API_CLIPSET_GETTER(GetClipTemplateStartTime,
-                               clipTemplateStartTime,
-                               clipSet,
-                               UsdClipsAPIInfoKeys->templateStartTime);
+  USD_CLIPS_API_CLIPSET_GETTER(
+    GetClipTemplateStartTime, clipTemplateStartTime, clipSet, UsdClipsAPIInfoKeys->templateStartTime);
 }
 
 bool UsdClipsAPI::SetClipTemplateStartTime(const double clipTemplateStartTime)
 {
-  USD_CLIPS_API_SETTER(
-      SetClipTemplateStartTime, clipTemplateStartTime, UsdTokens->clipTemplateStartTime);
+  USD_CLIPS_API_SETTER(SetClipTemplateStartTime, clipTemplateStartTime, UsdTokens->clipTemplateStartTime);
 }
 
-bool UsdClipsAPI::SetClipTemplateStartTime(const double clipTemplateStartTime,
-                                           const std::string &clipSet)
+bool UsdClipsAPI::SetClipTemplateStartTime(const double clipTemplateStartTime, const std::string &clipSet)
 {
-  USD_CLIPS_API_CLIPSET_SETTER(SetClipTemplateStartTime,
-                               clipTemplateStartTime,
-                               clipSet,
-                               UsdClipsAPIInfoKeys->templateStartTime);
+  USD_CLIPS_API_CLIPSET_SETTER(
+    SetClipTemplateStartTime, clipTemplateStartTime, clipSet, UsdClipsAPIInfoKeys->templateStartTime);
 }
 
 bool UsdClipsAPI::GetClipTemplateEndTime(double *clipTemplateEndTime) const
 {
-  USD_CLIPS_API_GETTER(
-      GetClipTemplateEndTime, clipTemplateEndTime, UsdTokens->clipTemplateEndTime);
+  USD_CLIPS_API_GETTER(GetClipTemplateEndTime, clipTemplateEndTime, UsdTokens->clipTemplateEndTime);
 }
 
-bool UsdClipsAPI::GetClipTemplateEndTime(double *clipTemplateEndTime,
-                                         const std::string &clipSet) const
+bool UsdClipsAPI::GetClipTemplateEndTime(double *clipTemplateEndTime, const std::string &clipSet) const
 {
   USD_CLIPS_API_CLIPSET_GETTER(
-      GetClipTemplateEndTime, clipTemplateEndTime, clipSet, UsdClipsAPIInfoKeys->templateEndTime);
+    GetClipTemplateEndTime, clipTemplateEndTime, clipSet, UsdClipsAPIInfoKeys->templateEndTime);
 }
 
 bool UsdClipsAPI::SetClipTemplateEndTime(const double clipTemplateEndTime)
 {
-  USD_CLIPS_API_SETTER(
-      SetClipTemplateEndTime, clipTemplateEndTime, UsdTokens->clipTemplateEndTime);
+  USD_CLIPS_API_SETTER(SetClipTemplateEndTime, clipTemplateEndTime, UsdTokens->clipTemplateEndTime);
 }
 
-bool UsdClipsAPI::SetClipTemplateEndTime(const double clipTemplateEndTime,
-                                         const std::string &clipSet)
+bool UsdClipsAPI::SetClipTemplateEndTime(const double clipTemplateEndTime, const std::string &clipSet)
 {
   USD_CLIPS_API_CLIPSET_SETTER(
-      SetClipTemplateEndTime, clipTemplateEndTime, clipSet, UsdClipsAPIInfoKeys->templateEndTime);
+    SetClipTemplateEndTime, clipTemplateEndTime, clipSet, UsdClipsAPIInfoKeys->templateEndTime);
 }
 
 WABI_NAMESPACE_END

@@ -38,7 +38,7 @@ template<typename Allocator = CrtAllocator> struct GenericMemoryBuffer {
   typedef char Ch;  // byte
 
   GenericMemoryBuffer(Allocator *allocator = 0, size_t capacity = kDefaultCapacity)
-      : stack_(allocator, capacity)
+    : stack_(allocator, capacity)
   {}
 
   void Put(Ch c)

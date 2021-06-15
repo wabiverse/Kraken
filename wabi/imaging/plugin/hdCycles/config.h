@@ -428,9 +428,9 @@ class HdCyclesConfig {
    * @return
    */
   HdCyclesConfig();
-  ~HdCyclesConfig()                      = default;
+  ~HdCyclesConfig() = default;
   HdCyclesConfig(const HdCyclesConfig &) = delete;
-  HdCyclesConfig(HdCyclesConfig &&)      = delete;
+  HdCyclesConfig(HdCyclesConfig &&) = delete;
   HdCyclesConfig &operator=(const HdCyclesConfig &) = delete;
 
   friend class TfSingleton<HdCyclesConfig>;

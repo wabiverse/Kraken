@@ -69,8 +69,8 @@ static int _HandleErrors(const TfErrorMark &m, bool success)
   int rc(100);
   for (TfErrorMark::Iterator i = m.GetBegin(); i != m.GetEnd(); ++i) {
     ++rc;
-    cerr << "*** Error in " << i->GetSourceFileName() << "@line " << i->GetSourceLineNumber()
-         << "\n    " << i->GetCommentary() << "\n";
+    cerr << "*** Error in " << i->GetSourceFileName() << "@line " << i->GetSourceLineNumber() << "\n    "
+         << i->GetCommentary() << "\n";
   }
 
   return (rc);
@@ -86,8 +86,7 @@ void TfRegTest::_PrintTestNames()
   for (_Hash::const_iterator hi = _functionTable.begin(); hi != _functionTable.end(); ++hi)
     names.push_back(hi->first);
 
-  for (_HashWithArgs::const_iterator hi = _functionTableWithArgs.begin();
-       hi != _functionTableWithArgs.end();
+  for (_HashWithArgs::const_iterator hi = _functionTableWithArgs.begin(); hi != _functionTableWithArgs.end();
        ++hi)
     names.push_back(hi->first);
 

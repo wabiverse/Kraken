@@ -159,8 +159,7 @@ class UsdTimeCode {
   /// Equality comparison.
   friend bool operator==(const UsdTimeCode &lhs, const UsdTimeCode &rhs)
   {
-    return lhs.IsDefault() == rhs.IsDefault() &&
-           (lhs.IsDefault() || (lhs.GetValue() == rhs.GetValue()));
+    return lhs.IsDefault() == rhs.IsDefault() && (lhs.IsDefault() || (lhs.GetValue() == rhs.GetValue()));
   }
 
   /// Inequality comparison.

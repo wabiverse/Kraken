@@ -76,8 +76,7 @@ void GlfGLContext::MakeCurrent(const GlfGLContextSharedPtr &context)
   }
 }
 
-bool GlfGLContext::AreSharing(GlfGLContextSharedPtr const &context1,
-                              GlfGLContextSharedPtr const &context2)
+bool GlfGLContext::AreSharing(GlfGLContextSharedPtr const &context1, GlfGLContextSharedPtr const &context2)
 {
   return (context1 && context1->IsSharing(context2));
 }
@@ -114,7 +113,7 @@ bool GlfGLContext::IsSharing(GlfGLContextSharedPtr const &otherContext)
 //
 
 GlfGLContextScopeHolder::GlfGLContextScopeHolder(const GlfGLContextSharedPtr &newContext)
-    : _newContext(newContext)
+  : _newContext(newContext)
 {
   if (_newContext) {
     _oldContext = GlfGLContext::GetCurrentGLContext();

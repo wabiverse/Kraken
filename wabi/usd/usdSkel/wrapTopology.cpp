@@ -58,19 +58,19 @@ void wrapUsdSkelTopology()
   using This = UsdSkelTopology;
 
   class_<This>("Topology", no_init)
-      .def(init<const SdfPathVector &>())
-      .def(init<const VtTokenArray &>())
-      .def(init<VtIntArray>())
+    .def(init<const SdfPathVector &>())
+    .def(init<const VtTokenArray &>())
+    .def(init<VtIntArray>())
 
-      .def("GetParent", &This::GetParent)
+    .def("GetParent", &This::GetParent)
 
-      .def("IsRoot", &This::IsRoot)
+    .def("IsRoot", &This::IsRoot)
 
-      .def("GetParentIndices", &This::GetParentIndices, return_value_policy<return_by_value>())
+    .def("GetParentIndices", &This::GetParentIndices, return_value_policy<return_by_value>())
 
-      .def("GetNumJoints", &This::GetNumJoints)
+    .def("GetNumJoints", &This::GetNumJoints)
 
-      .def("__len__", &This::size)
+    .def("__len__", &This::size)
 
-      .def("Validate", &_Validate);
+    .def("Validate", &_Validate);
 }

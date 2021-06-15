@@ -49,23 +49,23 @@ struct NdrNodeDiscoveryResult {
                          const std::string &uri,
                          const std::string &resolvedUri,
                          const std::string &sourceCode = std::string(),
-                         const NdrTokenMap &metadata   = NdrTokenMap(),
-                         const std::string &blindData  = std::string(),
-                         const TfToken &subIdentifier  = TfToken(),
-                         const NdrTokenVec &aliases    = NdrTokenVec())
-      : identifier(identifier),
-        version(version),
-        name(name),
-        family(family),
-        discoveryType(discoveryType),
-        sourceType(sourceType),
-        uri(uri),
-        resolvedUri(resolvedUri),
-        sourceCode(sourceCode),
-        metadata(metadata),
-        blindData(blindData),
-        subIdentifier(subIdentifier),
-        aliases(aliases)
+                         const NdrTokenMap &metadata = NdrTokenMap(),
+                         const std::string &blindData = std::string(),
+                         const TfToken &subIdentifier = TfToken(),
+                         const NdrTokenVec &aliases = NdrTokenVec())
+    : identifier(identifier),
+      version(version),
+      name(name),
+      family(family),
+      discoveryType(discoveryType),
+      sourceType(sourceType),
+      uri(uri),
+      resolvedUri(resolvedUri),
+      sourceCode(sourceCode),
+      metadata(metadata),
+      blindData(blindData),
+      subIdentifier(subIdentifier),
+      aliases(aliases)
   {}
 
   /// The node's identifier.

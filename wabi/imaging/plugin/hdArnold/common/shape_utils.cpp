@@ -47,21 +47,21 @@ void ArnoldUsdReadCreases(AtNode *node,
     creaseSegmentCount += std::max(0, creaseLength - 1);
   }
 
-  const auto creaseIdxsCount      = cornerIndicesCount * 2 + creaseSegmentCount * 2;
+  const auto creaseIdxsCount = cornerIndicesCount * 2 + creaseSegmentCount * 2;
   const auto creaseSharpnessCount = cornerIndicesCount + creaseSegmentCount;
 
-  auto *creaseIdxsArray      = AiArrayAllocate(creaseIdxsCount, 1, AI_TYPE_UINT);
+  auto *creaseIdxsArray = AiArrayAllocate(creaseIdxsCount, 1, AI_TYPE_UINT);
   auto *creaseSharpnessArray = AiArrayAllocate(creaseSharpnessCount, 1, AI_TYPE_FLOAT);
 
-  auto *creaseIdxs      = static_cast<uint32_t *>(AiArrayMap(creaseIdxsArray));
+  auto *creaseIdxs = static_cast<uint32_t *>(AiArrayMap(creaseIdxsArray));
   auto *creaseSharpness = static_cast<float *>(AiArrayMap(creaseSharpnessArray));
 
   // Corners are creases with duplicated indices.
   uint32_t ii = 0;
   for (auto cornerIndex : cornerIndices) {
-    creaseIdxs[ii * 2]     = cornerIndex;
+    creaseIdxs[ii * 2] = cornerIndex;
     creaseIdxs[ii * 2 + 1] = cornerIndex;
-    creaseSharpness[ii]    = cornerWeights[ii];
+    creaseSharpness[ii] = cornerWeights[ii];
     ++ii;
   }
 
@@ -71,9 +71,9 @@ void ArnoldUsdReadCreases(AtNode *node,
   uint32_t ll = 0;
   for (auto creaseLength : creaseLengths) {
     for (auto k = decltype(creaseLength){1}; k < creaseLength; ++k, ++ii) {
-      creaseIdxs[ii * 2]     = creaseIndices[jj + k - 1];
+      creaseIdxs[ii * 2] = creaseIndices[jj + k - 1];
       creaseIdxs[ii * 2 + 1] = creaseIndices[jj + k];
-      creaseSharpness[ii]    = creaseWeights[ll];
+      creaseSharpness[ii] = creaseWeights[ll];
     }
     jj += creaseLength;
     ll += 1;
@@ -84,10 +84,10 @@ void ArnoldUsdReadCreases(AtNode *node,
 }
 
 ArnoldUsdCurvesData::ArnoldUsdCurvesData(int vmin, int vstep, const VtIntArray &vertexCounts)
-    : _vertexCounts(vertexCounts),
-      _vmin(vmin),
-      _vstep(vstep),
-      _numPerVertex(0)
+  : _vertexCounts(vertexCounts),
+    _vmin(vmin),
+    _vstep(vstep),
+    _numPerVertex(0)
 {}
 
 // We are pre-calculating the per vertex counts for the Arnold curves object, which is different
@@ -122,16 +122,15 @@ void ArnoldUsdCurvesData::SetRadiusFromValue(AtNode *node, const VtValue &value)
   AtArray *arr = nullptr;
   if (value.IsHolding<VtFloatArray>()) {
     const auto &values = value.UncheckedGet<VtFloatArray>();
-    arr                = AiArrayAllocate(values.size(), 1, AI_TYPE_FLOAT);
-    auto *out          = static_cast<float *>(AiArrayMap(arr));
-    std::transform(
-        values.begin(), values.end(), out, [](const float w) -> float { return w * 0.5f; });
+    arr = AiArrayAllocate(values.size(), 1, AI_TYPE_FLOAT);
+    auto *out = static_cast<float *>(AiArrayMap(arr));
+    std::transform(values.begin(), values.end(), out, [](const float w) -> float { return w * 0.5f; });
     AiArrayUnmap(arr);
   }
   else if (value.IsHolding<VtDoubleArray>()) {
     const auto &values = value.UncheckedGet<VtDoubleArray>();
-    arr                = AiArrayAllocate(values.size(), 1, AI_TYPE_FLOAT);
-    auto *out          = static_cast<float *>(AiArrayMap(arr));
+    arr = AiArrayAllocate(values.size(), 1, AI_TYPE_FLOAT);
+    auto *out = static_cast<float *>(AiArrayMap(arr));
     std::transform(values.begin(), values.end(), out, [](const double w) -> float {
       return static_cast<float>(w * 0.5);
     });
@@ -139,8 +138,8 @@ void ArnoldUsdCurvesData::SetRadiusFromValue(AtNode *node, const VtValue &value)
   }
   else if (value.IsHolding<VtHalfArray>()) {
     const auto &values = value.UncheckedGet<VtHalfArray>();
-    arr                = AiArrayAllocate(values.size(), 1, AI_TYPE_FLOAT);
-    auto *out          = static_cast<float *>(AiArrayMap(arr));
+    arr = AiArrayAllocate(values.size(), 1, AI_TYPE_FLOAT);
+    auto *out = static_cast<float *>(AiArrayMap(arr));
     std::transform(values.begin(), values.end(), out, [](const GfHalf w) -> float {
       return static_cast<float>(w) * 0.5f;
     });
@@ -170,8 +169,8 @@ bool ArnoldUsdIgnoreUsdParameter(const TfToken &name)
 
 bool ArnoldUsdIgnoreParameter(const AtString &name)
 {
-  return name == str::matrix || name == str::disp_map || name == str::visibility ||
-         name == str::name || name == str::shader || name == str::id;
+  return name == str::matrix || name == str::disp_map || name == str::visibility || name == str::name ||
+         name == str::shader || name == str::id;
 }
 
 WABI_NAMESPACE_END

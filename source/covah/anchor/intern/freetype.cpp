@@ -40,8 +40,7 @@
 #endif
 
 #if defined(__GNUC__)
-#  pragma GCC diagnostic ignored \
-    "-Wpragmas"  // warning: unknown option after '#pragma GCC diagnostic' kind
+#  pragma GCC diagnostic ignored "-Wpragmas"  // warning: unknown option after '#pragma GCC diagnostic' kind
 #  pragma GCC diagnostic ignored "-Wunused-function"  // warning: 'xxxx' defined but not used
 #endif
 
@@ -64,8 +63,7 @@ static void AnchorFreeTypeDefaultFreeFunc(void *ptr, void *user_data)
 }
 
 // Current memory allocators
-static void *(*GAnchorFreeTypeAllocFunc)(size_t size,
-                                         void *user_data) = AnchorFreeTypeDefaultAllocFunc;
+static void *(*GAnchorFreeTypeAllocFunc)(size_t size, void *user_data) = AnchorFreeTypeDefaultAllocFunc;
 static void (*GAnchorFreeTypeFreeFunc)(void *ptr, void *user_data) = AnchorFreeTypeDefaultFreeFunc;
 static void *GAnchorFreeTypeAllocatorUserData = NULL;
 
@@ -119,15 +117,15 @@ struct GlyphInfo {
 
 // Font parameters and metrics.
 struct FontInfo {
-  uint32_t PixelHeight;  // Size this font was generated with.
-  float Ascender;        // The pixel extents above the baseline in pixels (typically positive).
-  float Descender;       // The extents below the baseline in pixels (typically negative).
-  float LineSpacing;  // The baseline-to-baseline distance. Note that it usually is larger than the
-                      // sum of the ascender and descender taken as absolute values. There is also
-                      // no guarantee that no glyphs extend above or below subsequent baselines
-                      // when using this distance. Think of it as a value the designer of the font
-                      // finds appropriate.
-  float LineGap;      // The spacing in pixels between one row's descent and the next row's ascent.
+  uint32_t PixelHeight;   // Size this font was generated with.
+  float Ascender;         // The pixel extents above the baseline in pixels (typically positive).
+  float Descender;        // The extents below the baseline in pixels (typically negative).
+  float LineSpacing;      // The baseline-to-baseline distance. Note that it usually is larger than the
+                          // sum of the ascender and descender taken as absolute values. There is also
+                          // no guarantee that no glyphs extend above or below subsequent baselines
+                          // when using this distance. Think of it as a value the designer of the font
+                          // finds appropriate.
+  float LineGap;          // The spacing in pixels between one row's descent and the next row's ascent.
   float MaxAdvanceWidth;  // This field gives the maximum horizontal cursor advance for all glyphs
                           // in the font.
 };
@@ -398,8 +396,8 @@ struct AnchorFontBuildSrcDataFT {
                                  // much, e.g. 0x0020..0xFFFF)
   int DstIndex;                  // Index into atlas->Fonts[] and dst_tmp_array[]
   int GlyphsHighest;             // Highest requested codepoint
-  int GlyphsCount;  // Glyph count (excluding missing glyphs and glyphs already set by an earlier
-                    // source font)
+  int GlyphsCount;            // Glyph count (excluding missing glyphs and glyphs already set by an earlier
+                              // source font)
   AnchorBitVector GlyphsSet;  // Glyph bit map (random access, 1-bit per codepoint. This will be a
                               // maximum of 8KB)
   AnchorVector<AnchorFontBuildSrcGlyphFT> GlyphsList;
@@ -444,8 +442,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
     AnchorFontBuildSrcDataFT &src_tmp = src_tmp_array[src_i];
     AnchorFontConfig &cfg = atlas->ConfigData[src_i];
     FreeTypeFont &font_face = src_tmp.Font;
-    ANCHOR_ASSERT(cfg.DstFont &&
-                  (!cfg.DstFont->IsLoaded() || cfg.DstFont->ContainerAtlas == atlas));
+    ANCHOR_ASSERT(cfg.DstFont && (!cfg.DstFont->IsLoaded() || cfg.DstFont->ContainerAtlas == atlas));
 
     // Find index from cfg.DstFont (we allow the user to set cfg.DstFont. Also it makes casual
     // debugging nicer than when storing indices)
@@ -453,8 +450,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
     for (int output_i = 0; output_i < atlas->Fonts.Size && src_tmp.DstIndex == -1; output_i++)
       if (cfg.DstFont == atlas->Fonts[output_i])
         src_tmp.DstIndex = output_i;
-    ANCHOR_ASSERT(src_tmp.DstIndex !=
-                  -1);  // cfg.DstFont not pointing within atlas->Fonts[] array?
+    ANCHOR_ASSERT(src_tmp.DstIndex != -1);  // cfg.DstFont not pointing within atlas->Fonts[] array?
     if (src_tmp.DstIndex == -1)
       return false;
 
@@ -466,8 +462,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
     src_load_color |= (cfg.FontBuilderFlags & AnchorFreeTypeBuilderFlags_LoadColor) != 0;
     AnchorFontBuildDstDataFT &dst_tmp = dst_tmp_array[src_tmp.DstIndex];
     src_tmp.SrcRanges = cfg.GlyphRanges ? cfg.GlyphRanges : atlas->GetGlyphRangesDefault();
-    for (const AnchorWChar *src_range = src_tmp.SrcRanges; src_range[0] && src_range[1];
-         src_range += 2)
+    for (const AnchorWChar *src_range = src_tmp.SrcRanges; src_range[0] && src_range[1]; src_range += 2)
       src_tmp.GlyphsHighest = AnchorMax(src_tmp.GlyphsHighest, (int)src_range[1]);
     dst_tmp.SrcCount++;
     dst_tmp.GlyphsHighest = AnchorMax(dst_tmp.GlyphsHighest, src_tmp.GlyphsHighest);
@@ -483,15 +478,14 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
     if (dst_tmp.GlyphsSet.Storage.empty())
       dst_tmp.GlyphsSet.Create(dst_tmp.GlyphsHighest + 1);
 
-    for (const AnchorWChar *src_range = src_tmp.SrcRanges; src_range[0] && src_range[1];
-         src_range += 2)
+    for (const AnchorWChar *src_range = src_tmp.SrcRanges; src_range[0] && src_range[1]; src_range += 2)
       for (int codepoint = src_range[0]; codepoint <= (int)src_range[1]; codepoint++) {
         if (dst_tmp.GlyphsSet.TestBit(codepoint))  // Don't overwrite existing glyphs. We could
                                                    // make this an option (e.g. MergeOverwrite)
           continue;
-        uint32_t glyph_index = FT_Get_Char_Index(
-          src_tmp.Font.Face, codepoint);  // It is actually in the font? (FIXME-OPT: We are not
-                                          // storing the glyph_index..)
+        uint32_t glyph_index = FT_Get_Char_Index(src_tmp.Font.Face,
+                                                 codepoint);  // It is actually in the font? (FIXME-OPT: We
+                                                              // are not storing the glyph_index..)
         if (glyph_index == 0)
           continue;
 
@@ -587,13 +581,10 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
       }
 
       // Blit rasterized pixels to our temporary buffer and keep a pointer to it.
-      src_glyph.BitmapData = (unsigned int *)(buf_bitmap_buffers.back() +
-                                              buf_bitmap_current_used_bytes);
+      src_glyph.BitmapData = (unsigned int *)(buf_bitmap_buffers.back() + buf_bitmap_current_used_bytes);
       buf_bitmap_current_used_bytes += bitmap_size_in_bytes;
-      src_tmp.Font.BlitGlyph(ft_bitmap,
-                             src_glyph.BitmapData,
-                             src_glyph.Info.Width,
-                             multiply_enabled ? multiply_table : NULL);
+      src_tmp.Font.BlitGlyph(
+        ft_bitmap, src_glyph.BitmapData, src_glyph.Info.Width, multiply_enabled ? multiply_table : NULL);
 
       src_tmp.Rects[glyph_i].w = (stbrp_coord)(src_glyph.Info.Width + padding);
       src_tmp.Rects[glyph_i].h = (stbrp_coord)(src_glyph.Info.Height + padding);
@@ -623,8 +614,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
   AnchorVector<stbrp_node> pack_nodes;
   pack_nodes.resize(num_nodes_for_packing_algorithm);
   stbrp_context pack_context;
-  stbrp_init_target(
-    &pack_context, atlas->TexWidth, TEX_HEIGHT_MAX, pack_nodes.Data, pack_nodes.Size);
+  stbrp_init_target(&pack_context, atlas->TexWidth, TEX_HEIGHT_MAX, pack_nodes.Data, pack_nodes.Size);
   AnchorFontAtlasBuildPackCustomRects(atlas, &pack_context);
 
   // 6. Pack each source font. No rendering yet, we are working with rectangles in an infinitely
@@ -641,8 +631,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
     // or if a single if larger than TexWidth?)
     for (int glyph_i = 0; glyph_i < src_tmp.GlyphsCount; glyph_i++)
       if (src_tmp.Rects[glyph_i].was_packed)
-        atlas->TexHeight = AnchorMax(atlas->TexHeight,
-                                     src_tmp.Rects[glyph_i].y + src_tmp.Rects[glyph_i].h);
+        atlas->TexHeight = AnchorMax(atlas->TexHeight, src_tmp.Rects[glyph_i].y + src_tmp.Rects[glyph_i].h);
   }
 
   // 7. Allocate texture
@@ -699,15 +688,13 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
       unsigned int *blit_src = src_glyph.BitmapData;
       if (atlas->TexPixelsAlpha8 != NULL) {
         unsigned char *blit_dst = atlas->TexPixelsAlpha8 + (ty * blit_dst_stride) + tx;
-        for (int y = 0; y < info.Height;
-             y++, blit_dst += blit_dst_stride, blit_src += blit_src_stride)
+        for (int y = 0; y < info.Height; y++, blit_dst += blit_dst_stride, blit_src += blit_src_stride)
           for (int x = 0; x < info.Width; x++)
             blit_dst[x] = (unsigned char)((blit_src[x] >> ANCHOR_COL32_A_SHIFT) & 0xFF);
       }
       else {
         unsigned int *blit_dst = atlas->TexPixelsRGBA32 + (ty * blit_dst_stride) + tx;
-        for (int y = 0; y < info.Height;
-             y++, blit_dst += blit_dst_stride, blit_src += blit_src_stride)
+        for (int y = 0; y < info.Height; y++, blit_dst += blit_dst_stride, blit_src += blit_src_stride)
           for (int x = 0; x < info.Width; x++)
             blit_dst[x] = blit_src[x];
       }

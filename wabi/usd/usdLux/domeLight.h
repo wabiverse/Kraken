@@ -208,7 +208,7 @@ class UsdLuxDomeLight : public UsdLuxLight {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateTextureFileAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -246,7 +246,7 @@ class UsdLuxDomeLight : public UsdLuxLight {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateTextureFormatAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //

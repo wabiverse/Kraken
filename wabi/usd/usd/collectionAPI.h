@@ -184,7 +184,7 @@ class UsdCollectionAPI : public UsdAPISchemaBase {
    * For a @em valid @p prim, but will not immediately throw an
    * error for an invalid @p prim. */
   explicit UsdCollectionAPI(const UsdPrim &prim = UsdPrim(), const TfToken &name = TfToken())
-      : UsdAPISchemaBase(prim, /*instanceName*/ name)
+    : UsdAPISchemaBase(prim, /*instanceName*/ name)
   {}
 
   /**
@@ -193,7 +193,7 @@ class UsdCollectionAPI : public UsdAPISchemaBase {
    * UsdCollectionAPI(schemaObj.GetPrim(), name), as it
    * preserves SchemaBase state. */
   explicit UsdCollectionAPI(const UsdSchemaBase &schemaObj, const TfToken &name)
-      : UsdAPISchemaBase(schemaObj, /*instanceName*/ name)
+    : UsdAPISchemaBase(schemaObj, /*instanceName*/ name)
   {}
 
   /**
@@ -207,7 +207,7 @@ class UsdCollectionAPI : public UsdAPISchemaBase {
    * the schemas involved. The names returned will have the proper namespace
    * prefix. */
   USD_API
-  static const TfTokenVector &GetSchemaAttributeNames(bool includeInherited      = true,
+  static const TfTokenVector &GetSchemaAttributeNames(bool includeInherited = true,
                                                       const TfToken instanceName = TfToken());
 
   /**
@@ -337,7 +337,7 @@ class UsdCollectionAPI : public UsdAPISchemaBase {
    * is @c false. */
   USD_API
   UsdAttribute CreateExpansionRuleAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   /**
@@ -373,7 +373,7 @@ class UsdCollectionAPI : public UsdAPISchemaBase {
    * is @c false. */
   USD_API
   UsdAttribute CreateIncludeRootAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   /**
@@ -510,9 +510,9 @@ class UsdCollectionAPI : public UsdAPISchemaBase {
    * The results depends on the load state of the UsdStage, @p stage. */
   USD_API
   static std::set<UsdObject> ComputeIncludedObjects(
-      const UsdCollectionMembershipQuery &query,
-      const UsdStageWeakPtr &stage,
-      const Usd_PrimFlagsPredicate &pred = UsdPrimDefaultPredicate);
+    const UsdCollectionMembershipQuery &query,
+    const UsdStageWeakPtr &stage,
+    const Usd_PrimFlagsPredicate &pred = UsdPrimDefaultPredicate);
 
   /**
    * Returns all the paths that satisfy the predicate, @p pred in the
@@ -521,10 +521,9 @@ class UsdCollectionAPI : public UsdAPISchemaBase {
    *
    * The result depends on the load state of the UsdStage, @p stage. */
   USD_API
-  static SdfPathSet ComputeIncludedPaths(
-      const UsdCollectionMembershipQuery &query,
-      const UsdStageWeakPtr &stage,
-      const Usd_PrimFlagsPredicate &pred = UsdPrimDefaultPredicate);
+  static SdfPathSet ComputeIncludedPaths(const UsdCollectionMembershipQuery &query,
+                                         const UsdStageWeakPtr &stage,
+                                         const Usd_PrimFlagsPredicate &pred = UsdPrimDefaultPredicate);
 
   /**
    * @{ */

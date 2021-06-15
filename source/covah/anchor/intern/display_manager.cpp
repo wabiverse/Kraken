@@ -53,8 +53,7 @@ eAnchorStatus ANCHOR_DisplayManager::getNumDisplays(AnchorU8 & /*numDisplays*/) 
   return ANCHOR_ERROR;
 }
 
-eAnchorStatus ANCHOR_DisplayManager::getNumDisplaySettings(AnchorU8 display,
-                                                           AnchorS32 &numSettings) const
+eAnchorStatus ANCHOR_DisplayManager::getNumDisplaySettings(AnchorU8 display, AnchorS32 &numSettings) const
 {
   eAnchorStatus success;
 
@@ -92,16 +91,14 @@ eAnchorStatus ANCHOR_DisplayManager::getDisplaySetting(AnchorU8 display,
   return success;
 }
 
-eAnchorStatus ANCHOR_DisplayManager::getCurrentDisplaySetting(
-  AnchorU8 /*display*/,
-  ANCHOR_DisplaySetting & /*setting*/) const
+eAnchorStatus ANCHOR_DisplayManager::getCurrentDisplaySetting(AnchorU8 /*display*/,
+                                                              ANCHOR_DisplaySetting & /*setting*/) const
 {
   return ANCHOR_ERROR;
 }
 
-eAnchorStatus ANCHOR_DisplayManager::setCurrentDisplaySetting(
-  AnchorU8 /*display*/,
-  const ANCHOR_DisplaySetting & /*setting*/)
+eAnchorStatus ANCHOR_DisplayManager::setCurrentDisplaySetting(AnchorU8 /*display*/,
+                                                              const ANCHOR_DisplaySetting & /*setting*/)
 {
   return ANCHOR_ERROR;
 }
@@ -113,8 +110,7 @@ eAnchorStatus ANCHOR_DisplayManager::findMatch(AnchorU8 display,
   eAnchorStatus success = ANCHOR_SUCCESS;
   ANCHOR_ASSERT(m_settingsInitialized);
 
-  int criteria[4] = {
-    (int)setting.xPixels, (int)setting.yPixels, (int)setting.bpp, (int)setting.frequency};
+  int criteria[4] = {(int)setting.xPixels, (int)setting.yPixels, (int)setting.bpp, (int)setting.frequency};
   int capabilities[4];
   double field, score;
   double best = 1e12; /** A big number. */

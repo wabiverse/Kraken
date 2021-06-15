@@ -117,11 +117,11 @@ void Tf_PyIdHandle::Release() const
   else {
     // CODE_COVERAGE_OFF Can only get here if there's a bug.
     TF_CODING_ERROR(
-        "Acquiring Python identity with "
-        "expired Python object!");
+      "Acquiring Python identity with "
+      "expired Python object!");
     TfLogStackTrace(
-        "Acquiring Python identity with "
-        "expired Python object!");
+      "Acquiring Python identity with "
+      "expired Python object!");
     // CODE_COVERAGE_ON
   }
 }
@@ -142,11 +142,11 @@ void Tf_PyIdHandle::Acquire() const
   else {
     // CODE_COVERAGE_OFF Can only get here if there's a bug.
     TF_CODING_ERROR(
-        "Acquiring Python identity with expired Python "
-        "object!");
+      "Acquiring Python identity with expired Python "
+      "object!");
     TfLogStackTrace(
-        "Acquiring Python identity with expired Python "
-        "object!");
+      "Acquiring Python identity with expired Python "
+      "object!");
     // CODE_COVERAGE_ON
   }
 }
@@ -249,7 +249,7 @@ void Tf_PyIdentityHelper::Set(void const *key, PyObject *obj)
   TfPyLock lock;
 
   _IdentityMap &_identityMap = _GetIdentityMap();
-  _IdentityMap::iterator i   = _identityMap.find(key);
+  _IdentityMap::iterator i = _identityMap.find(key);
 
   if (i == _identityMap.end()) {
     _identityMap[key] = Tf_PyIdHandle(obj);
@@ -258,14 +258,14 @@ void Tf_PyIdentityHelper::Set(void const *key, PyObject *obj)
   else if (i->second.Ptr() != obj) {
     // CODE_COVERAGE_OFF Can only get here if there's a bug.
     TF_CODING_ERROR(
-        "Multiple Python objects for C++ object %p: "
-        "(Existing python object id %p with type %s, "
-        "new python object id %p with type %s)",
-        key,
-        i->second.Ptr(),
-        _GetTypeName(i->second.Ptr()).c_str(),
-        obj,
-        _GetTypeName(obj).c_str());
+      "Multiple Python objects for C++ object %p: "
+      "(Existing python object id %p with type %s, "
+      "new python object id %p with type %s)",
+      key,
+      i->second.Ptr(),
+      _GetTypeName(i->second.Ptr()).c_str(),
+      obj,
+      _GetTypeName(obj).c_str());
     _IssueMultipleIdentityErrorStacks(key);
     i->second = Tf_PyIdHandle(obj);
     // CODE_COVERAGE_ON
@@ -282,7 +282,7 @@ PyObject *Tf_PyIdentityHelper::Get(void const *key)
 
   TfPyLock lock;
   _IdentityMap &_identityMap = _GetIdentityMap();
-  _IdentityMap::iterator i   = _identityMap.find(key);
+  _IdentityMap::iterator i = _identityMap.find(key);
   if (i == _identityMap.end()) {
     return 0;
   }
@@ -308,7 +308,7 @@ void Tf_PyIdentityHelper::Acquire(void const *key)
   TfPyLock lock;
 
   _IdentityMap &_identityMap = _GetIdentityMap();
-  _IdentityMap::iterator i   = _identityMap.find(key);
+  _IdentityMap::iterator i = _identityMap.find(key);
   if (i == _identityMap.end())
     return;
 
@@ -323,7 +323,7 @@ void Tf_PyIdentityHelper::Release(void const *key)
   TfPyLock lock;
 
   _IdentityMap &_identityMap = _GetIdentityMap();
-  _IdentityMap::iterator i   = _identityMap.find(key);
+  _IdentityMap::iterator i = _identityMap.find(key);
   if (i == _identityMap.end())
     return;
 
@@ -354,9 +354,9 @@ void Tf_PyOwnershipPtrMap::Insert(TfRefBase *refBase, void const *uniqueId)
   static std::once_flag once;
   std::call_once(once, []() {
     TfRefBase::UniqueChangedListener l;
-    l.lock   = _LockPython;
+    l.lock = _LockPython;
     l.unlock = _UnlockPython;
-    l.func   = Tf_PyOwnershipRefBaseUniqueChanged;
+    l.func = Tf_PyOwnershipRefBaseUniqueChanged;
     TfRefBase::SetUniqueChangedListener(l);
   });
 

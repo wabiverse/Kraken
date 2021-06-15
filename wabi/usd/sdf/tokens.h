@@ -39,17 +39,17 @@ TF_DECLARE_PUBLIC_TOKENS(SdfTokens, SDF_API, SDF_TOKENS);
 #define SDF_PATH_NS_DELIMITER_STR ":"
 
 #define SDF_PATH_TOKENS \
-  ((menvaStart, "<"))((menvaEnd, ">"))((absoluteIndicator, "/"))((relativeRoot, "."))(( \
-      childDelimiter, "/"))((propertyDelimiter, "."))((relationshipTargetStart, "["))(( \
-      relationshipTargetEnd, "]"))((parentPathElement, ".."))((mapperIndicator, "mapper"))(( \
-      expressionIndicator, "expression"))((mapperArgDelimiter, "."))(( \
-      namespaceDelimiter, SDF_PATH_NS_DELIMITER_STR))((empty, ""))
+  ((menvaStart, "<"))((menvaEnd, ">"))( \
+    (absoluteIndicator, "/"))((relativeRoot, "."))((childDelimiter, "/"))((propertyDelimiter, "."))(( \
+    relationshipTargetStart, "["))((relationshipTargetEnd, "]"))((parentPathElement, ".."))(( \
+    mapperIndicator, "mapper"))((expressionIndicator, "expression"))((mapperArgDelimiter, "."))(( \
+    namespaceDelimiter, SDF_PATH_NS_DELIMITER_STR))((empty, ""))
 
 TF_DECLARE_PUBLIC_TOKENS(SdfPathTokens, SDF_API, SDF_PATH_TOKENS);
 
 #define SDF_METADATA_DISPLAYGROUP_TOKENS \
-  ((core, ""))((internal, "Internal"))((dmanip, "Direct Manip"))((pipeline, "Pipeline"))(( \
-      symmetry, "Symmetry"))((ui, "User Interface"))
+  ((core, ""))((internal, "Internal"))( \
+    (dmanip, "Direct Manip"))((pipeline, "Pipeline"))((symmetry, "Symmetry"))((ui, "User Interface"))
 
 TF_DECLARE_PUBLIC_TOKENS(SdfMetadataDisplayGroupTokens, SDF_API, SDF_METADATA_DISPLAYGROUP_TOKENS);
 

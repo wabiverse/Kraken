@@ -58,7 +58,7 @@ class HdPh_UnitTestGLDrawing {
 
   virtual void InitTest() = 0;
   HDPH_API virtual void UninitTest();
-  virtual void DrawTest()      = 0;  // interactive mode
+  virtual void DrawTest() = 0;       // interactive mode
   virtual void OffscreenTest() = 0;  // offscreen mode (automated test)
 
   HDPH_API

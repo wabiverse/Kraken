@@ -42,29 +42,28 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(
-    _tokens,
-    // texture identifiers
-    (aovIn)(depthIn)(idIn)(normalIn)
+TF_DEFINE_PRIVATE_TOKENS(_tokens,
+                         // texture identifiers
+                         (aovIn)(depthIn)(idIn)(normalIn)
 
-    // shader mixins
-    ((visualizeAovVertex, "VisualizeVertex"))((visualizeAovFragmentDepth,
-                                               "VisualizeFragmentDepth"))((
-        visualizeAovFragmentFallback,
-        "VisualizeFragmentFallback"))((visualizeAovFragmentId,
-                                       "VisualizeFragmentId"))((visualizeAovFragmentNormal,
-                                                                "VisualizeFragmentNormal"))
+                         // shader mixins
+                         ((visualizeAovVertex,
+                           "VisualizeVertex"))((visualizeAovFragmentDepth,
+                                                "VisualizeFragmentDepth"))((visualizeAovFragmentFallback,
+                                                                            "VisualizeFragmentFallback"))((
+                           visualizeAovFragmentId,
+                           "VisualizeFragmentId"))((visualizeAovFragmentNormal, "VisualizeFragmentNormal"))
 
-        ((empty, "")));
+                           ((empty, "")));
 
 HdxVisualizeAovTaskParams::HdxVisualizeAovTaskParams() = default;
 
 HdxVisualizeAovTask::HdxVisualizeAovTask(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdxTask(id),
-      _outputTextureDimensions(0),
-      _screenSize{},
-      _minMaxDepth{},
-      _vizKernel(VizKernelNone)
+  : HdxTask(id),
+    _outputTextureDimensions(0),
+    _screenSize{},
+    _minMaxDepth{},
+    _vizKernel(VizKernelNone)
 {}
 
 HdxVisualizeAovTask::~HdxVisualizeAovTask()
@@ -177,7 +176,7 @@ bool HdxVisualizeAovTask::_CreateShaderResources(HgiTextureDesc const &inputAovT
   {
     std::string vsCode;
     HgiShaderFunctionDesc vertDesc;
-    vertDesc.debugName   = _tokens->visualizeAovVertex.GetString();
+    vertDesc.debugName = _tokens->visualizeAovVertex.GetString();
     vertDesc.shaderStage = HgiShaderStageVertex;
     HgiShaderFunctionAddStageInput(&vertDesc, "position", "vec4");
     HgiShaderFunctionAddStageInput(&vertDesc, "uvIn", "vec2");
@@ -212,7 +211,7 @@ bool HdxVisualizeAovTask::_CreateShaderResources(HgiTextureDesc const &inputAovT
       HgiShaderFunctionAddConstantParam(&fragDesc, "minMaxDepth", "vec2");
     }
     TfToken const &mixin = _GetFragmentMixin();
-    fragDesc.debugName   = mixin.GetString();
+    fragDesc.debugName = mixin.GetString();
     fragDesc.shaderStage = HgiShaderStageFragment;
     if (_hgi->GetAPIName() == HgiTokens->OpenGL || _hgi->GetAPIName() == HgiTokens->Vulkan) {
       fsCode = "#version 450 \n";
@@ -247,28 +246,26 @@ bool HdxVisualizeAovTask::_CreateBufferResources()
   }
 
   // A larger-than screen triangle made to fit the screen.
-  constexpr float vertDataGL[][6] = {
-      {-1, 3, 0, 1, 0, 2}, {-1, -1, 0, 1, 0, 0}, {3, -1, 0, 1, 2, 0}};
+  constexpr float vertDataGL[][6] = {{-1, 3, 0, 1, 0, 2}, {-1, -1, 0, 1, 0, 0}, {3, -1, 0, 1, 2, 0}};
 
-  constexpr float vertDataOther[][6] = {
-      {-1, 3, 0, 1, 0, -1}, {-1, -1, 0, 1, 0, 1}, {3, -1, 0, 1, 2, 1}};
+  constexpr float vertDataOther[][6] = {{-1, 3, 0, 1, 0, -1}, {-1, -1, 0, 1, 0, 1}, {3, -1, 0, 1, 2, 1}};
 
   HgiBufferDesc vboDesc;
-  vboDesc.debugName    = "HdxVisualizeAovTask VertexBuffer";
-  vboDesc.usage        = HgiBufferUsageVertex;
-  vboDesc.initialData  = _hgi->GetAPIName() != HgiTokens->OpenGL ? vertDataOther : vertDataGL;
-  vboDesc.byteSize     = sizeof(vertDataOther);
+  vboDesc.debugName = "HdxVisualizeAovTask VertexBuffer";
+  vboDesc.usage = HgiBufferUsageVertex;
+  vboDesc.initialData = _hgi->GetAPIName() != HgiTokens->OpenGL ? vertDataOther : vertDataGL;
+  vboDesc.byteSize = sizeof(vertDataOther);
   vboDesc.vertexStride = sizeof(vertDataOther[0]);
-  _vertexBuffer        = _GetHgi()->CreateBuffer(vboDesc);
+  _vertexBuffer = _GetHgi()->CreateBuffer(vboDesc);
 
   static const int32_t indices[3] = {0, 1, 2};
 
   HgiBufferDesc iboDesc;
-  iboDesc.debugName   = "HdxVisualizeAovTask IndexBuffer";
-  iboDesc.usage       = HgiBufferUsageIndex32;
+  iboDesc.debugName = "HdxVisualizeAovTask IndexBuffer";
+  iboDesc.usage = HgiBufferUsageIndex32;
   iboDesc.initialData = indices;
-  iboDesc.byteSize    = sizeof(indices);
-  _indexBuffer        = _GetHgi()->CreateBuffer(iboDesc);
+  iboDesc.byteSize = sizeof(indices);
+  _indexBuffer = _GetHgi()->CreateBuffer(iboDesc);
   return true;
 }
 
@@ -280,7 +277,7 @@ bool HdxVisualizeAovTask::_CreateResourceBindings(HgiTextureHandle const &inputA
 
   HgiTextureBindDesc texBind0;
   texBind0.bindingIndex = 0;
-  texBind0.stageUsage   = HgiShaderStageFragment;
+  texBind0.stageUsage = HgiShaderStageFragment;
   texBind0.textures.push_back(inputAovTexture);
   texBind0.samplers.push_back(_sampler);
   resourceDesc.textures.push_back(std::move(texBind0));
@@ -310,18 +307,18 @@ bool HdxVisualizeAovTask::_CreatePipeline(HgiTextureDesc const &outputTextureDes
   _GetHgi()->DestroyGraphicsPipeline(&_pipeline);
 
   HgiGraphicsPipelineDesc desc;
-  desc.debugName     = "AOV Visualiztion Pipeline";
+  desc.debugName = "AOV Visualiztion Pipeline";
   desc.shaderProgram = _shaderProgram;
 
   // Describe the vertex buffer
   HgiVertexAttributeDesc posAttr;
-  posAttr.format             = HgiFormatFloat32Vec3;
-  posAttr.offset             = 0;
+  posAttr.format = HgiFormatFloat32Vec3;
+  posAttr.offset = 0;
   posAttr.shaderBindLocation = 0;
 
   HgiVertexAttributeDesc uvAttr;
-  uvAttr.format             = HgiFormatFloat32Vec2;
-  uvAttr.offset             = sizeof(float) * 4;  // after posAttr
+  uvAttr.format = HgiFormatFloat32Vec2;
+  uvAttr.offset = sizeof(float) * 4;  // after posAttr
   uvAttr.shaderBindLocation = 1;
 
   size_t bindSlots = 0;
@@ -337,7 +334,7 @@ bool HdxVisualizeAovTask::_CreatePipeline(HgiTextureDesc const &outputTextureDes
   desc.vertexBuffers.push_back(std::move(vboDesc));
 
   // Depth test and write can be off since we only colorcorrect the color aov.
-  desc.depthState.depthTestEnabled  = false;
+  desc.depthState.depthTestEnabled = false;
   desc.depthState.depthWriteEnabled = false;
 
   // We don't use the stencil mask in this task.
@@ -349,20 +346,20 @@ bool HdxVisualizeAovTask::_CreatePipeline(HgiTextureDesc const &outputTextureDes
   desc.multiSampleState.alphaToCoverageEnable = false;
 
   // Setup raserization state
-  desc.rasterizationState.cullMode    = HgiCullModeBack;
+  desc.rasterizationState.cullMode = HgiCullModeBack;
   desc.rasterizationState.polygonMode = HgiPolygonModeFill;
-  desc.rasterizationState.winding     = HgiWindingCounterClockwise;
+  desc.rasterizationState.winding = HgiWindingCounterClockwise;
 
   // Setup attachment descriptor
   _outputAttachmentDesc.blendEnabled = false;
-  _outputAttachmentDesc.loadOp       = HgiAttachmentLoadOpDontCare;
-  _outputAttachmentDesc.storeOp      = HgiAttachmentStoreOpStore;
-  _outputAttachmentDesc.format       = outputTextureDesc.format;
-  _outputAttachmentDesc.usage        = outputTextureDesc.usage;
+  _outputAttachmentDesc.loadOp = HgiAttachmentLoadOpDontCare;
+  _outputAttachmentDesc.storeOp = HgiAttachmentStoreOpStore;
+  _outputAttachmentDesc.format = outputTextureDesc.format;
+  _outputAttachmentDesc.usage = outputTextureDesc.usage;
   desc.colorAttachmentDescs.push_back(_outputAttachmentDesc);
 
   desc.shaderConstantsDesc.stageUsage = HgiShaderStageFragment;
-  desc.shaderConstantsDesc.byteSize   = sizeof(_screenSize);
+  desc.shaderConstantsDesc.byteSize = sizeof(_screenSize);
   if (_vizKernel == VizKernelDepth) {
     desc.shaderConstantsDesc.byteSize += sizeof(_minMaxDepth);
   }
@@ -403,14 +400,14 @@ bool HdxVisualizeAovTask::_CreateOutputTexture(GfVec3i const &dimensions)
   _outputTextureDimensions = dimensions;
 
   HgiTextureDesc texDesc;
-  texDesc.debugName   = "Visualize Aov Output Texture";
-  texDesc.dimensions  = dimensions;
-  texDesc.format      = HgiFormatFloat32Vec4;
-  texDesc.layerCount  = 1;
-  texDesc.mipLevels   = 1;
+  texDesc.debugName = "Visualize Aov Output Texture";
+  texDesc.dimensions = dimensions;
+  texDesc.format = HgiFormatFloat32Vec4;
+  texDesc.layerCount = 1;
+  texDesc.mipLevels = 1;
   texDesc.sampleCount = HgiSampleCount1;
-  texDesc.usage       = HgiTextureUsageBitsColorTarget | HgiTextureUsageBitsShaderRead;
-  _outputTexture      = _GetHgi()->CreateTexture(texDesc);
+  texDesc.usage = HgiTextureUsageBitsColorTarget | HgiTextureUsageBitsShaderRead;
+  _outputTexture = _GetHgi()->CreateTexture(texDesc);
 
   return bool(_outputTexture);
 }
@@ -448,30 +445,30 @@ void HdxVisualizeAovTask::_UpdateMinMaxDepth(HgiTextureHandle const &inputAovTex
   }
 
   const size_t formatByteSize = HgiGetDataSizeOfFormat(textureDesc.format);
-  const size_t width          = textureDesc.dimensions[0];
-  const size_t height         = textureDesc.dimensions[1];
-  const size_t dataByteSize   = width * height * formatByteSize;
+  const size_t width = textureDesc.dimensions[0];
+  const size_t height = textureDesc.dimensions[1];
+  const size_t dataByteSize = width * height * formatByteSize;
 
   // For Metal the CPU buffer has to be rounded up to multiple of 4096 bytes.
-  constexpr size_t bitMask     = 4096 - 1;
+  constexpr size_t bitMask = 4096 - 1;
   const size_t alignedByteSize = (dataByteSize + bitMask) & (~bitMask);
   std::vector<uint8_t> buffer(alignedByteSize);
 
   HgiBlitCmdsUniquePtr const blitCmds = _GetHgi()->CreateBlitCmds();
   HgiTextureGpuToCpuOp copyOp;
-  copyOp.gpuSourceTexture          = inputAovTexture;
-  copyOp.sourceTexelOffset         = GfVec3i(0);
-  copyOp.mipLevel                  = 0;
-  copyOp.cpuDestinationBuffer      = buffer.data();
-  copyOp.destinationByteOffset     = 0;
+  copyOp.gpuSourceTexture = inputAovTexture;
+  copyOp.sourceTexelOffset = GfVec3i(0);
+  copyOp.mipLevel = 0;
+  copyOp.cpuDestinationBuffer = buffer.data();
+  copyOp.destinationByteOffset = 0;
   copyOp.destinationBufferByteSize = alignedByteSize;
   blitCmds->CopyTextureGpuToCpu(copyOp);
   _GetHgi()->SubmitCmds(blitCmds.get(), HgiSubmitWaitTypeWaitUntilCompleted);
 
   {
     float *ptr = reinterpret_cast<float *>(&buffer[0]);
-    float min  = std::numeric_limits<float>::max();
-    float max  = std::numeric_limits<float>::min();
+    float min = std::numeric_limits<float>::max();
+    float max = std::numeric_limits<float>::min();
     for (size_t ii = 0; ii < width * height; ii++) {
       float const &val = ptr[ii];
       if (val < min) {
@@ -512,16 +509,15 @@ void HdxVisualizeAovTask::_ApplyVisualizationKernel(HgiTextureHandle const &outp
       float minMaxDepth[2];
     };
     Uniform data;
-    data.screenSize[0]  = _screenSize[0];
-    data.screenSize[1]  = _screenSize[1];
+    data.screenSize[0] = _screenSize[0];
+    data.screenSize[1] = _screenSize[1];
     data.minMaxDepth[0] = _minMaxDepth[0];
     data.minMaxDepth[1] = _minMaxDepth[1];
 
     gfxCmds->SetConstantValues(_pipeline, HgiShaderStageFragment, 0, sizeof(data), &data);
   }
   else {
-    gfxCmds->SetConstantValues(
-        _pipeline, HgiShaderStageFragment, 0, sizeof(_screenSize), &_screenSize);
+    gfxCmds->SetConstantValues(_pipeline, HgiShaderStageFragment, 0, sizeof(_screenSize), &_screenSize);
   }
 
   gfxCmds->SetViewport(vp);
@@ -532,9 +528,7 @@ void HdxVisualizeAovTask::_ApplyVisualizationKernel(HgiTextureHandle const &outp
   _GetHgi()->SubmitCmds(gfxCmds.get());
 }
 
-void HdxVisualizeAovTask::_Sync(HdSceneDelegate *delegate,
-                                HdTaskContext *ctx,
-                                HdDirtyBits *dirtyBits)
+void HdxVisualizeAovTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();

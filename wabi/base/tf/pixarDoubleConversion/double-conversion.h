@@ -46,7 +46,7 @@ class DoubleToStringConverter {
   // or a requested_digits parameter > kMaxFixedDigitsAfterPoint then the
   // function returns false.
   static const int kMaxFixedDigitsBeforePoint = 60;
-  static const int kMaxFixedDigitsAfterPoint  = 60;
+  static const int kMaxFixedDigitsAfterPoint = 60;
 
   // When calling ToExponential with a requested_digits
   // parameter > kMaxExponentialDigits then the function returns false.
@@ -59,11 +59,11 @@ class DoubleToStringConverter {
   static const int kMaxPrecisionDigits = 120;
 
   enum Flags {
-    NO_FLAGS                       = 0,
-    EMIT_POSITIVE_EXPONENT_SIGN    = 1,
-    EMIT_TRAILING_DECIMAL_POINT    = 2,
+    NO_FLAGS = 0,
+    EMIT_POSITIVE_EXPONENT_SIGN = 1,
+    EMIT_TRAILING_DECIMAL_POINT = 2,
     EMIT_TRAILING_ZERO_AFTER_POINT = 4,
-    UNIQUE_ZERO                    = 8
+    UNIQUE_ZERO = 8
   };
 
   // Flags should be a bit-or combination of the possible Flags-enum.
@@ -120,21 +120,18 @@ class DoubleToStringConverter {
                           int decimal_in_shortest_high,
                           int max_leading_padding_zeroes_in_precision_mode,
                           int max_trailing_padding_zeroes_in_precision_mode)
-      : flags_(flags),
-        infinity_symbol_(infinity_symbol),
-        nan_symbol_(nan_symbol),
-        exponent_character_(exponent_character),
-        decimal_in_shortest_low_(decimal_in_shortest_low),
-        decimal_in_shortest_high_(decimal_in_shortest_high),
-        max_leading_padding_zeroes_in_precision_mode_(
-            max_leading_padding_zeroes_in_precision_mode),
-        max_trailing_padding_zeroes_in_precision_mode_(
-            max_trailing_padding_zeroes_in_precision_mode)
+    : flags_(flags),
+      infinity_symbol_(infinity_symbol),
+      nan_symbol_(nan_symbol),
+      exponent_character_(exponent_character),
+      decimal_in_shortest_low_(decimal_in_shortest_low),
+      decimal_in_shortest_high_(decimal_in_shortest_high),
+      max_leading_padding_zeroes_in_precision_mode_(max_leading_padding_zeroes_in_precision_mode),
+      max_trailing_padding_zeroes_in_precision_mode_(max_trailing_padding_zeroes_in_precision_mode)
   {
     // When 'trailing zero after the point' is set, then 'trailing point'
     // must be set too.
-    ASSERT(((flags & EMIT_TRAILING_DECIMAL_POINT) != 0) ||
-           !((flags & EMIT_TRAILING_ZERO_AFTER_POINT) != 0));
+    ASSERT(((flags & EMIT_TRAILING_DECIMAL_POINT) != 0) || !((flags & EMIT_TRAILING_ZERO_AFTER_POINT) != 0));
   }
 
   // Returns a converter following the EcmaScript specification.
@@ -384,12 +381,12 @@ class StringToDoubleConverter {
   // Enumeration for allowing octals and ignoring junk when converting
   // strings to numbers.
   enum Flags {
-    NO_FLAGS                = 0,
-    ALLOW_HEX               = 1,
-    ALLOW_OCTALS            = 2,
-    ALLOW_TRAILING_JUNK     = 4,
-    ALLOW_LEADING_SPACES    = 8,
-    ALLOW_TRAILING_SPACES   = 16,
+    NO_FLAGS = 0,
+    ALLOW_HEX = 1,
+    ALLOW_OCTALS = 2,
+    ALLOW_TRAILING_JUNK = 4,
+    ALLOW_LEADING_SPACES = 8,
+    ALLOW_TRAILING_SPACES = 16,
     ALLOW_SPACES_AFTER_SIGN = 32
   };
 
@@ -490,11 +487,11 @@ class StringToDoubleConverter {
                           double junk_string_value,
                           const char *infinity_symbol,
                           const char *nan_symbol)
-      : flags_(flags),
-        empty_string_value_(empty_string_value),
-        junk_string_value_(junk_string_value),
-        infinity_symbol_(infinity_symbol),
-        nan_symbol_(nan_symbol)
+    : flags_(flags),
+      empty_string_value_(empty_string_value),
+      junk_string_value_(junk_string_value),
+      infinity_symbol_(infinity_symbol),
+      nan_symbol_(nan_symbol)
   {}
 
   // Performs the conversion.

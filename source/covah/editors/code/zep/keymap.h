@@ -172,7 +172,7 @@ struct CommandNode {
 };
 
 struct KeyMap {
-  bool ignoreFinalDigit               = false;
+  bool ignoreFinalDigit = false;
   std::shared_ptr<CommandNode> spRoot = std::make_shared<CommandNode>();
 };
 

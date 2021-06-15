@@ -62,18 +62,17 @@ SdfRelationshipSpecHandle SdfRelationshipSpec::New(const SdfPrimSpecHandle &owne
 
   if (!Sdf_ChildrenUtils<Sdf_RelationshipChildPolicy>::IsValidName(name)) {
     TF_CODING_ERROR(
-        "Cannot create a relationship on %s with "
-        "invalid name: %s",
-        owner->GetPath().GetText(),
-        name.c_str());
+      "Cannot create a relationship on %s with "
+      "invalid name: %s",
+      owner->GetPath().GetText(),
+      name.c_str());
     return TfNullPtr;
   }
 
   SdfPath relPath = owner->GetPath().AppendProperty(TfToken(name));
   if (!relPath.IsPropertyPath()) {
-    TF_CODING_ERROR("Cannot create relationship at invalid path <%s.%s>",
-                    owner->GetPath().GetText(),
-                    name.c_str());
+    TF_CODING_ERROR(
+      "Cannot create relationship at invalid path <%s.%s>", owner->GetPath().GetText(), name.c_str());
     return TfNullPtr;
   }
 
@@ -84,7 +83,7 @@ SdfRelationshipSpecHandle SdfRelationshipSpec::New(const SdfPrimSpecHandle &owne
   SdfChangeBlock block;
 
   if (!Sdf_ChildrenUtils<Sdf_RelationshipChildPolicy>::CreateSpec(
-          owner->GetLayer(), relPath, SdfSpecTypeRelationship, hasOnlyRequiredFields)) {
+        owner->GetLayer(), relPath, SdfSpecTypeRelationship, hasOnlyRequiredFields)) {
     return TfNullPtr;
   }
 
@@ -159,7 +158,7 @@ void SdfRelationshipSpec::ReplaceTargetPath(const SdfPath &oldPath, const SdfPat
     return;
   }
 
-  const SdfPath &relPath      = GetPath();
+  const SdfPath &relPath = GetPath();
   const SdfLayerHandle &layer = GetLayer();
 
   SdfPath oldTargetPath = _CanonicalizeTargetPath(oldPath);
@@ -171,7 +170,7 @@ void SdfRelationshipSpec::ReplaceTargetPath(const SdfPath &oldPath, const SdfPat
 
   // Get the paths of all the existing target specs
   std::vector<SdfPath> siblingPaths = layer->GetFieldAs<std::vector<SdfPath>>(
-      relPath, SdfChildrenKeys->RelationshipTargetChildren);
+    relPath, SdfChildrenKeys->RelationshipTargetChildren);
 
   int oldTargetSpecIndex = -1;
   int newTargetSpecIndex = -1;
@@ -197,12 +196,12 @@ void SdfRelationshipSpec::ReplaceTargetPath(const SdfPath &oldPath, const SdfPat
       for (const TfToken &field : layer->ListFields(newTargetSpecPath)) {
         if (schema.HoldsChildren(field)) {
           TF_CODING_ERROR(
-              "Can't replace target %s with target %s in "
-              "relationship %s: %s",
-              oldPath.GetText(),
-              newPath.GetText(),
-              relPath.GetString().c_str(),
-              "Target already exists");
+            "Can't replace target %s with target %s in "
+            "relationship %s: %s",
+            oldPath.GetText(),
+            newPath.GetText(),
+            relPath.GetString().c_str(),
+            "Target already exists");
           return;
         }
       }
@@ -229,13 +228,12 @@ void SdfRelationshipSpec::ReplaceTargetPath(const SdfPath &oldPath, const SdfPat
   }
 
   // Get the list op.
-  SdfPathListOp targetsListOp = layer->GetFieldAs<SdfPathListOp>(relPath,
-                                                                 SdfFieldKeys->TargetPaths);
+  SdfPathListOp targetsListOp = layer->GetFieldAs<SdfPathListOp>(relPath, SdfFieldKeys->TargetPaths);
 
   // Update the list op.
   if (targetsListOp.HasItem(oldTargetPath)) {
     targetsListOp.ModifyOperations(
-        std::bind(_ReplacePath, oldTargetPath, newTargetPath, std::placeholders::_1));
+      std::bind(_ReplacePath, oldTargetPath, newTargetPath, std::placeholders::_1));
     layer->SetField(relPath, SdfFieldKeys->TargetPaths, targetsListOp);
   }
 }
@@ -250,7 +248,7 @@ void SdfRelationshipSpec::RemoveTargetPath(const SdfPath &path, bool preserveTar
 
   SdfChangeBlock block;
   Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::SetChildren(
-      GetLayer(), targetSpecPath, std::vector<SdfAttributeSpecHandle>());
+    GetLayer(), targetSpecPath, std::vector<SdfAttributeSpecHandle>());
 
   // The SdfTargetsProxy will manage conversion of the SdfPaths and changes to
   // both the list edits and actual object hierarchy underneath.

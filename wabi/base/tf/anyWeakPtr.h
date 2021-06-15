@@ -60,21 +60,18 @@ class TfAnyWeakPtr : boost::totally_ordered<TfAnyWeakPtr> {
   typedef TfAnyWeakPtr This;
 
   /// Construct an AnyWeakPtr watching \a ptr.
-  template<
-      class Ptr,
-      class = typename std::enable_if<Tf_SupportsWeakPtr<typename Ptr::DataType>::value>::type>
+  template<class Ptr,
+           class = typename std::enable_if<Tf_SupportsWeakPtr<typename Ptr::DataType>::value>::type>
   TfAnyWeakPtr(Ptr const &ptr)
   {
-    static_assert(sizeof(_PointerHolder<Ptr>) <= sizeof(_Data),
-                  "Ptr is too big to fit in a TfAnyWeakPtr");
+    static_assert(sizeof(_PointerHolder<Ptr>) <= sizeof(_Data), "Ptr is too big to fit in a TfAnyWeakPtr");
     new (&_ptrStorage) _PointerHolder<Ptr>(ptr);
   }
 
   /// Construct an AnyWeakPtr not watching any \a ptr.
   TfAnyWeakPtr()
   {
-    static_assert(sizeof(_EmptyHolder) <= sizeof(_Data),
-                  "Ptr is too big to fit in a TfAnyWeakPtr");
+    static_assert(sizeof(_EmptyHolder) <= sizeof(_Data), "Ptr is too big to fit in a TfAnyWeakPtr");
     new (&_ptrStorage) _EmptyHolder;
   }
 
@@ -151,25 +148,24 @@ class TfAnyWeakPtr : boost::totally_ordered<TfAnyWeakPtr> {
   boost::python::api::object _GetPythonObject() const;
 #endif  // WITH_PYTHON
 
-  template<class WeakPtr>
-  friend WeakPtr TfAnyWeakPtrDynamicCast(const TfAnyWeakPtr &anyWeak, WeakPtr *);
+  template<class WeakPtr> friend WeakPtr TfAnyWeakPtrDynamicCast(const TfAnyWeakPtr &anyWeak, WeakPtr *);
 
   // This is using the standard type-erasure pattern.
   struct _PointerHolderBase {
     TF_API virtual ~_PointerHolderBase();
-    virtual void Clone(_Data *target) const         = 0;
-    virtual bool IsInvalid() const                  = 0;
+    virtual void Clone(_Data *target) const = 0;
+    virtual bool IsInvalid() const = 0;
     virtual void const *GetUniqueIdentifier() const = 0;
-    virtual TfWeakBase const *GetWeakBase() const   = 0;
-    virtual operator bool() const                   = 0;
-    virtual bool _IsConst() const                   = 0;
+    virtual TfWeakBase const *GetWeakBase() const = 0;
+    virtual operator bool() const = 0;
+    virtual bool _IsConst() const = 0;
 #ifdef WITH_PYTHON
     virtual boost::python::api::object GetPythonObject() const = 0;
 #endif  // WITH_PYTHON
     virtual const std::type_info &GetTypeInfo() const = 0;
-    virtual TfType const &GetType() const             = 0;
-    virtual const void *_GetMostDerivedPtr() const    = 0;
-    virtual bool _IsPolymorphic() const               = 0;
+    virtual TfType const &GetType() const = 0;
+    virtual const void *_GetMostDerivedPtr() const = 0;
+    virtual bool _IsPolymorphic() const = 0;
   };
 
   struct _EmptyHolder : _PointerHolderBase {
@@ -261,8 +257,7 @@ template<class Ptr> TfAnyWeakPtr::_PointerHolder<Ptr>::operator bool() const
 }
 
 #ifdef WITH_PYTHON
-template<class Ptr>
-boost::python::api::object TfAnyWeakPtr::_PointerHolder<Ptr>::GetPythonObject() const
+template<class Ptr> boost::python::api::object TfAnyWeakPtr::_PointerHolder<Ptr>::GetPythonObject() const
 {
   return TfPyObject(_ptr);
 }

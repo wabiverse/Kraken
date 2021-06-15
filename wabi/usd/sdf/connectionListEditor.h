@@ -65,7 +65,7 @@ class Sdf_ConnectionListEditor : public Sdf_ListOpListEditor<SdfPathKeyPolicy> {
 /// List editor implementation for attribute connections.
 ///
 class Sdf_AttributeConnectionListEditor
-    : public Sdf_ConnectionListEditor<Sdf_AttributeConnectionChildPolicy> {
+  : public Sdf_ConnectionListEditor<Sdf_AttributeConnectionChildPolicy> {
  public:
   virtual ~Sdf_AttributeConnectionListEditor();
 
@@ -84,8 +84,7 @@ class Sdf_AttributeConnectionListEditor
 ///
 /// List editor implementation for attribute connections.
 ///
-class Sdf_RelationshipTargetListEditor
-    : public Sdf_ConnectionListEditor<Sdf_RelationshipTargetChildPolicy> {
+class Sdf_RelationshipTargetListEditor : public Sdf_ConnectionListEditor<Sdf_RelationshipTargetChildPolicy> {
  public:
   virtual ~Sdf_RelationshipTargetListEditor();
 

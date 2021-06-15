@@ -119,8 +119,8 @@ bool TfMakeDirs(std::string const &path, int mode = -1, bool existOk = false);
 /// names found in the directory path. The returned value determines whether
 /// the walk should be terminated (\c false), or continue (\c true).
 typedef std::function<
-    bool(std::string const &, std::vector<std::string> *, std::vector<std::string> const &)>
-    TfWalkFunction;
+  bool(std::string const &, std::vector<std::string> *, std::vector<std::string> const &)>
+  TfWalkFunction;
 
 /// TfRmTree error handler function.
 ///
@@ -178,9 +178,9 @@ void TfWalkIgnoreErrorHandler(std::string const &path, std::string const &msg);
 TF_API
 void TfWalkDirs(std::string const &top,
                 TfWalkFunction fn,
-                bool topDown               = true,
+                bool topDown = true,
                 TfWalkErrorHandler onError = 0,
-                bool followLinks           = false);
+                bool followLinks = false);
 
 /// Recursively delete a directory tree rooted at \p path.
 ///

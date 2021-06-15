@@ -47,9 +47,7 @@ TF_DEFINE_ENV_SETTING(HDEMBREE_SAMPLES_TO_CONVERGENCE,
                       100,
                       "Samples per pixel before we stop rendering (must be >= 1)");
 
-TF_DEFINE_ENV_SETTING(HDEMBREE_TILE_SIZE,
-                      8,
-                      "Size (per axis) of threading work units (must be >= 1)");
+TF_DEFINE_ENV_SETTING(HDEMBREE_TILE_SIZE, 8, "Size (per axis) of threading work units (must be >= 1)");
 
 TF_DEFINE_ENV_SETTING(HDEMBREE_AMBIENT_OCCLUSION_SAMPLES,
                       16,
@@ -75,13 +73,12 @@ TF_DEFINE_ENV_SETTING(HDEMBREE_PRINT_CONFIGURATION,
 HdEmbreeConfig::HdEmbreeConfig()
 {
   // Read in values from the environment, clamping them to valid ranges.
-  samplesToConvergence    = std::max(1, TfGetEnvSetting(HDEMBREE_SAMPLES_TO_CONVERGENCE));
-  tileSize                = std::max(1, TfGetEnvSetting(HDEMBREE_TILE_SIZE));
+  samplesToConvergence = std::max(1, TfGetEnvSetting(HDEMBREE_SAMPLES_TO_CONVERGENCE));
+  tileSize = std::max(1, TfGetEnvSetting(HDEMBREE_TILE_SIZE));
   ambientOcclusionSamples = std::max(0, TfGetEnvSetting(HDEMBREE_AMBIENT_OCCLUSION_SAMPLES));
-  jitterCamera            = (TfGetEnvSetting(HDEMBREE_JITTER_CAMERA) > 0);
-  useFaceColors           = (TfGetEnvSetting(HDEMBREE_USE_FACE_COLORS) > 0);
-  cameraLightIntensity    = (std::max(100, TfGetEnvSetting(HDEMBREE_CAMERA_LIGHT_INTENSITY)) /
-                          100.0f);
+  jitterCamera = (TfGetEnvSetting(HDEMBREE_JITTER_CAMERA) > 0);
+  useFaceColors = (TfGetEnvSetting(HDEMBREE_USE_FACE_COLORS) > 0);
+  cameraLightIntensity = (std::max(100, TfGetEnvSetting(HDEMBREE_CAMERA_LIGHT_INTENSITY)) / 100.0f);
 
   if (TfGetEnvSetting(HDEMBREE_PRINT_CONFIGURATION) > 0) {
     std::cout << "HdEmbree Configuration: \n"

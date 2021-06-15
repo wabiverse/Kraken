@@ -73,11 +73,11 @@ static int _GetAPIVersion()
 }
 
 HgiMetal::HgiMetal(id<MTLDevice> device)
-    : _device(device),
-      _currentCmds(nullptr),
-      _frameDepth(0),
-      _apiVersion(_GetAPIVersion()),
-      _workToFlush(false)
+  : _device(device),
+    _currentCmds(nullptr),
+    _frameDepth(0),
+    _apiVersion(_GetAPIVersion()),
+    _workToFlush(false)
 {
   if (!_device) {
     if (TfGetenvBool("HGIMETAL_USE_INTEGRATED_GPU", false)) {
@@ -90,7 +90,7 @@ HgiMetal::HgiMetal(id<MTLDevice> device)
   }
 
   static int const commandBufferPoolSize = 256;
-  _commandQueue  = [_device newCommandQueueWithMaxCommandBufferCount:commandBufferPoolSize];
+  _commandQueue = [_device newCommandQueueWithMaxCommandBufferCount:commandBufferPoolSize];
   _commandBuffer = [_commandQueue commandBuffer];
   [_commandBuffer retain];
 
@@ -98,8 +98,7 @@ HgiMetal::HgiMetal(id<MTLDevice> device)
 
   HgiMetalSetupMetalDebug();
 
-  _captureScopeFullFrame       = [[MTLCaptureManager sharedCaptureManager]
-      newCaptureScopeWithDevice:_device];
+  _captureScopeFullFrame = [[MTLCaptureManager sharedCaptureManager] newCaptureScopeWithDevice:_device];
   _captureScopeFullFrame.label = [NSString stringWithFormat:@"Full Hydra Frame"];
 
   [[MTLCaptureManager sharedCaptureManager] setDefaultCaptureScope:_captureScopeFullFrame];
@@ -313,8 +312,7 @@ HgiMetalCapabilities const &HgiMetal::GetCapabilities() const
   return *_capabilities;
 }
 
-void HgiMetal::CommitPrimaryCommandBuffer(CommitCommandBufferWaitType waitType,
-                                          bool forceNewBuffer)
+void HgiMetal::CommitPrimaryCommandBuffer(CommitCommandBufferWaitType waitType, bool forceNewBuffer)
 {
   if (!_workToFlush && !forceNewBuffer) {
     return;

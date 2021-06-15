@@ -187,8 +187,7 @@ class UsdGeomPoints : public UsdGeomPointBased {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateWidthsAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateWidthsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -215,8 +214,7 @@ class UsdGeomPoints : public UsdGeomPointBased {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateIdsAttr(VtValue const &defaultValue = VtValue(),
-                             bool writeSparsely          = false) const;
+  UsdAttribute CreateIdsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //
@@ -266,9 +264,7 @@ class UsdGeomPoints : public UsdGeomPointBased {
   /// tools, hence it is static and acts outside a specific prim (as in
   /// attribute based methods).
   USDGEOM_API
-  static bool ComputeExtent(const VtVec3fArray &points,
-                            const VtFloatArray &widths,
-                            VtVec3fArray *extent);
+  static bool ComputeExtent(const VtVec3fArray &points, const VtFloatArray &widths, VtVec3fArray *extent);
 
   /// \overload
   /// Computes the extent as if the matrix \p transform was first applied.

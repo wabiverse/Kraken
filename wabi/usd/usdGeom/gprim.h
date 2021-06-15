@@ -160,7 +160,7 @@ class UsdGeomGprim : public UsdGeomBoundable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateDisplayColorAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -186,7 +186,7 @@ class UsdGeomGprim : public UsdGeomBoundable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateDisplayOpacityAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -226,7 +226,7 @@ class UsdGeomGprim : public UsdGeomBoundable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateDoubleSidedAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -255,7 +255,7 @@ class UsdGeomGprim : public UsdGeomBoundable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateOrientationAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //
@@ -281,7 +281,7 @@ class UsdGeomGprim : public UsdGeomBoundable {
   /// \sa CreateDisplayColorAttr(), GetDisplayColorPrimvar()
   USDGEOM_API
   UsdGeomPrimvar CreateDisplayColorPrimvar(const TfToken &interpolation = TfToken(),
-                                           int elementSize              = -1) const;
+                                           int elementSize = -1) const;
 
   /// Convenience function to get the displayOpacity Attribute as a Primvar.
   ///
@@ -295,7 +295,7 @@ class UsdGeomGprim : public UsdGeomBoundable {
   /// \sa CreateDisplayOpacityAttr(), GetDisplayOpacityPrimvar()
   USDGEOM_API
   UsdGeomPrimvar CreateDisplayOpacityPrimvar(const TfToken &interpolation = TfToken(),
-                                             int elementSize              = -1) const;
+                                             int elementSize = -1) const;
 };
 
 WABI_NAMESPACE_END

@@ -140,8 +140,7 @@ template<class T> struct VtIsErasedValueProxy : std::is_base_of<VtErasedValuePro
 // (either typed or type-erased).
 template<class T>
 struct VtIsValueProxy
-    : std::integral_constant<bool,
-                             VtIsTypedValueProxy<T>::value || VtIsErasedValueProxy<T>::value> {
+  : std::integral_constant<bool, VtIsTypedValueProxy<T>::value || VtIsErasedValueProxy<T>::value> {
 };
 
 WABI_NAMESPACE_END

@@ -85,8 +85,8 @@ void HdBufferSpec::Dump(HdBufferSpecVector const &specs)
 {
   std::cout << "BufferSpecVector\n";
   for (int i = 0; i < (int)specs.size(); ++i) {
-    std::cout << i << " : " << specs[i].name << ", " << TfEnum::GetName(specs[i].tupleType.type)
-              << " (" << specs[i].tupleType.type << "), " << specs[i].tupleType.count << "\n";
+    std::cout << i << " : " << specs[i].name << ", " << TfEnum::GetName(specs[i].tupleType.type) << " ("
+              << specs[i].tupleType.type << "), " << specs[i].tupleType.count << "\n";
   }
 }
 

@@ -17,8 +17,8 @@ profile_data globalProfiler;
 uint64_t timer_get_time_now()
 {
   return std::chrono::duration_cast<std::chrono::microseconds>(
-             std::chrono::high_resolution_clock::now().time_since_epoch())
-      .count();
+           std::chrono::high_resolution_clock::now().time_since_epoch())
+    .count();
 }
 
 void timer_start(timer &timer)
@@ -29,15 +29,15 @@ void timer_start(timer &timer)
 void timer_restart(timer &timer)
 {
   timer.startTime = std::chrono::duration_cast<std::chrono::microseconds>(
-                        std::chrono::high_resolution_clock::now().time_since_epoch())
-                        .count();
+                      std::chrono::high_resolution_clock::now().time_since_epoch())
+                      .count();
 }
 
 uint64_t timer_get_elapsed(const timer &timer)
 {
   auto now = std::chrono::duration_cast<std::chrono::microseconds>(
-                 std::chrono::high_resolution_clock::now().time_since_epoch())
-                 .count();
+               std::chrono::high_resolution_clock::now().time_since_epoch())
+               .count();
   return now - timer.startTime;
 }
 

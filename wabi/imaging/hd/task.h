@@ -42,7 +42,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-using HdTaskSharedPtr       = std::shared_ptr<class HdTask>;
+using HdTaskSharedPtr = std::shared_ptr<class HdTask>;
 using HdTaskSharedPtrVector = std::vector<HdTaskSharedPtr>;
 
 // We want to use token as a key not std::string, so use an unordered_map over
@@ -191,14 +191,13 @@ class HdTask {
  private:
   SdfPath _id;
 
-  HdTask()               = delete;
+  HdTask() = delete;
   HdTask(const HdTask &) = delete;
   HdTask &operator=(const HdTask &) = delete;
 };
 
 // Inline template body
-template<class T>
-bool HdTask::_GetTaskContextData(HdTaskContext const *ctx, TfToken const &id, T *outValue)
+template<class T> bool HdTask::_GetTaskContextData(HdTaskContext const *ctx, TfToken const &id, T *outValue)
 {
   TF_DEV_AXIOM(outValue != nullptr);
 

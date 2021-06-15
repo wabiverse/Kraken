@@ -210,8 +210,7 @@ class HdCyclesRenderDelegate : public HdRenderDelegate {
   virtual HdResourceRegistrySharedPtr GetResourceRegistry() const override;
 
   // Render Pass and State
-  HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index,
-                                         HdRprimCollection const &collection) override;
+  HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index, HdRprimCollection const &collection) override;
   HdRenderPassStateSharedPtr CreateRenderPassState() const override;
 
   // Prims

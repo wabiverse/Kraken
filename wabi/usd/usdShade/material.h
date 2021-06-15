@@ -226,8 +226,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDSHADE_API
-  UsdAttribute CreateSurfaceAttr(VtValue const &defaultValue = VtValue(),
-                                 bool writeSparsely          = false) const;
+  UsdAttribute CreateSurfaceAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -251,7 +250,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// the default for \p writeSparsely is \c false.
   USDSHADE_API
   UsdAttribute CreateDisplacementAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -274,8 +273,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDSHADE_API
-  UsdAttribute CreateVolumeAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateVolumeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //
@@ -327,7 +325,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// requested renderContext.
   USDSHADE_API
   UsdShadeOutput CreateSurfaceOutput(
-      const TfToken &renderContext = UsdShadeTokens->universalRenderContext) const;
+    const TfToken &renderContext = UsdShadeTokens->universalRenderContext) const;
 
   /// Returns the "surface" output of this material for the specified
   /// \p renderContext. The returned output will always have the requested
@@ -339,7 +337,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// \sa UsdShadeMaterial::ComputeSurfaceSource()
   USDSHADE_API
   UsdShadeOutput GetSurfaceOutput(
-      const TfToken &renderContext = UsdShadeTokens->universalRenderContext) const;
+    const TfToken &renderContext = UsdShadeTokens->universalRenderContext) const;
 
   /// Returns the "surface" outputs of this material for all available
   /// renderContexts.
@@ -354,7 +352,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// \deprecated Use the form that takes a TfTokenVector or renderContexts.
   USDSHADE_API
   UsdShadeShader ComputeSurfaceSource(const TfToken &renderContext,
-                                      TfToken *sourceName               = nullptr,
+                                      TfToken *sourceName = nullptr,
                                       UsdShadeAttributeType *sourceType = nullptr) const;
 
   /// Computes the resolved "surface" output source for the given
@@ -371,9 +369,9 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// elements (the source surface shader, sourceName, sourceType).
   USDSHADE_API
   UsdShadeShader ComputeSurfaceSource(
-      const TfTokenVector &contextVector = {UsdShadeTokens->universalRenderContext},
-      TfToken *sourceName                = nullptr,
-      UsdShadeAttributeType *sourceType  = nullptr) const;
+    const TfTokenVector &contextVector = {UsdShadeTokens->universalRenderContext},
+    TfToken *sourceName = nullptr,
+    UsdShadeAttributeType *sourceType = nullptr) const;
 
   /// Creates and returns the "displacement" output on this material for the
   /// specified \p renderContext.
@@ -383,7 +381,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// requested renderContext.
   USDSHADE_API
   UsdShadeOutput CreateDisplacementOutput(
-      const TfToken &renderContext = UsdShadeTokens->universalRenderContext) const;
+    const TfToken &renderContext = UsdShadeTokens->universalRenderContext) const;
 
   /// Returns the "displacement" output of this material for the specified
   /// renderContext. The returned output will always have the requested
@@ -395,7 +393,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// \sa UsdShadeMaterial::ComputeDisplacementSource()
   USDSHADE_API
   UsdShadeOutput GetDisplacementOutput(
-      const TfToken &renderContext = UsdShadeTokens->universalRenderContext) const;
+    const TfToken &renderContext = UsdShadeTokens->universalRenderContext) const;
 
   /// Returns the "displacement" outputs of this material for all available
   /// renderContexts.
@@ -410,7 +408,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// \deprecated Use the form that takes a TfTokenVector or renderContexts
   USDSHADE_API
   UsdShadeShader ComputeDisplacementSource(const TfToken &renderContext,
-                                           TfToken *sourceName               = nullptr,
+                                           TfToken *sourceName = nullptr,
                                            UsdShadeAttributeType *sourceType = nullptr) const;
 
   /// Computes the resolved "displacement" output source for the given
@@ -427,9 +425,9 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// elements (the source displacement shader, sourceName, sourceType).
   USDSHADE_API
   UsdShadeShader ComputeDisplacementSource(
-      const TfTokenVector &contextVector = {UsdShadeTokens->universalRenderContext},
-      TfToken *sourceName                = nullptr,
-      UsdShadeAttributeType *sourceType  = nullptr) const;
+    const TfTokenVector &contextVector = {UsdShadeTokens->universalRenderContext},
+    TfToken *sourceName = nullptr,
+    UsdShadeAttributeType *sourceType = nullptr) const;
 
   /// Creates and returns the "volume" output on this material for the
   /// specified \p renderContext.
@@ -439,7 +437,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// requested renderContext.
   USDSHADE_API
   UsdShadeOutput CreateVolumeOutput(
-      const TfToken &renderContext = UsdShadeTokens->universalRenderContext) const;
+    const TfToken &renderContext = UsdShadeTokens->universalRenderContext) const;
 
   /// Returns the "volume" output of this material for the specified
   /// renderContext. The returned output will always have the requested
@@ -451,7 +449,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// \sa UsdShadeMaterial::ComputeVolumeSource()
   USDSHADE_API
   UsdShadeOutput GetVolumeOutput(
-      const TfToken &renderContext = UsdShadeTokens->universalRenderContext) const;
+    const TfToken &renderContext = UsdShadeTokens->universalRenderContext) const;
 
   /// Returns the "volume" outputs of this material for all available
   /// renderContexts.
@@ -465,7 +463,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// \deprecated Use the form that takes a TfTokenVector or renderContexts
   USDSHADE_API
   UsdShadeShader ComputeVolumeSource(const TfToken &renderContext,
-                                     TfToken *sourceName               = nullptr,
+                                     TfToken *sourceName = nullptr,
                                      UsdShadeAttributeType *sourceType = nullptr) const;
 
   /// Computes the resolved "volume" output source for the given
@@ -482,9 +480,9 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// elements (the source volume shader, sourceName, sourceType).
   USDSHADE_API
   UsdShadeShader ComputeVolumeSource(
-      const TfTokenVector &contextVector = {UsdShadeTokens->universalRenderContext},
-      TfToken *sourceName                = nullptr,
-      UsdShadeAttributeType *sourceType  = nullptr) const;
+    const TfTokenVector &contextVector = {UsdShadeTokens->universalRenderContext},
+    TfToken *sourceName = nullptr,
+    UsdShadeAttributeType *sourceType = nullptr) const;
 
   /// @}
 
@@ -599,8 +597,8 @@ class UsdShadeMaterial : public UsdShadeNodeGraph {
   /// \sa UsdVariantSet::GetVariantEditContext()
   USDSHADE_API
   std::pair<UsdStagePtr, UsdEditTarget> GetEditContextForVariant(
-      const TfToken &MaterialVariantName,
-      const SdfLayerHandle &layer = SdfLayerHandle()) const;
+    const TfToken &MaterialVariantName,
+    const SdfLayerHandle &layer = SdfLayerHandle()) const;
 
   /// Return a UsdVariantSet object for interacting with the Material variant
   /// variantSet

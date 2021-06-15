@@ -58,7 +58,7 @@ TfCallContext Tf_PythonCallContext(char const *fileName,
 
   tbb::spin_mutex::scoped_lock lock(cache.lock);
   char const *prettyFunctionPtr = cache.data.insert(fullName).first->c_str();
-  char const *fileNamePtr       = cache.data.insert(fileName).first->c_str();
+  char const *fileNamePtr = cache.data.insert(fileName).first->c_str();
 
   return TfCallContext(fileNamePtr, prettyFunctionPtr, line, prettyFunctionPtr);
 }

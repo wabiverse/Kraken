@@ -32,9 +32,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdRprimCollection::HdRprimCollection()
-    : _forcedRepr(false),
-      _rootPaths(1, SdfPath::AbsoluteRootPath())
+HdRprimCollection::HdRprimCollection() : _forcedRepr(false), _rootPaths(1, SdfPath::AbsoluteRootPath())
 {
   /*NOTHING*/
 }
@@ -43,11 +41,11 @@ HdRprimCollection::HdRprimCollection(TfToken const &name,
                                      HdReprSelector const &reprSelector,
                                      bool forcedRepr,
                                      TfToken const &materialTag)
-    : _name(name),
-      _reprSelector(reprSelector),
-      _forcedRepr(forcedRepr),
-      _materialTag(materialTag),
-      _rootPaths(1, SdfPath::AbsoluteRootPath())
+  : _name(name),
+    _reprSelector(reprSelector),
+    _forcedRepr(forcedRepr),
+    _materialTag(materialTag),
+    _rootPaths(1, SdfPath::AbsoluteRootPath())
 {}
 
 HdRprimCollection::HdRprimCollection(TfToken const &name,
@@ -55,10 +53,10 @@ HdRprimCollection::HdRprimCollection(TfToken const &name,
                                      SdfPath const &rootPath,
                                      bool forcedRepr,
                                      TfToken const &materialTag)
-    : _name(name),
-      _reprSelector(reprSelector),
-      _forcedRepr(forcedRepr),
-      _materialTag(materialTag)
+  : _name(name),
+    _reprSelector(reprSelector),
+    _forcedRepr(forcedRepr),
+    _materialTag(materialTag)
 {
   if (!rootPath.IsAbsolutePath()) {
     TF_CODING_ERROR("Root path must be absolute");
@@ -71,12 +69,12 @@ HdRprimCollection::HdRprimCollection(TfToken const &name,
 
 HdRprimCollection::HdRprimCollection(HdRprimCollection const &col)
 {
-  _name         = col._name;
+  _name = col._name;
   _reprSelector = col._reprSelector;
-  _forcedRepr   = col._forcedRepr;
-  _rootPaths    = col._rootPaths;
+  _forcedRepr = col._forcedRepr;
+  _rootPaths = col._rootPaths;
   _excludePaths = col._excludePaths;
-  _materialTag  = col._materialTag;
+  _materialTag = col._materialTag;
 }
 
 HdRprimCollection::~HdRprimCollection()
@@ -158,9 +156,9 @@ size_t HdRprimCollection::ComputeHash() const
 
 bool HdRprimCollection::operator==(HdRprimCollection const &other) const
 {
-  return _name == other._name && _reprSelector == other._reprSelector &&
-         _forcedRepr == other._forcedRepr && _rootPaths == other._rootPaths &&
-         _excludePaths == other._excludePaths && _materialTag == other._materialTag;
+  return _name == other._name && _reprSelector == other._reprSelector && _forcedRepr == other._forcedRepr &&
+         _rootPaths == other._rootPaths && _excludePaths == other._excludePaths &&
+         _materialTag == other._materialTag;
 }
 
 bool HdRprimCollection::operator!=(HdRprimCollection const &other) const
@@ -174,8 +172,7 @@ bool HdRprimCollection::operator!=(HdRprimCollection const &other) const
 
 std::ostream &operator<<(std::ostream &out, HdRprimCollection const &v)
 {
-  out << "name: " << v._name << ", repr sel: " << v._reprSelector
-      << ", mat tag: " << v._materialTag;
+  out << "name: " << v._name << ", repr sel: " << v._reprSelector << ", mat tag: " << v._materialTag;
   return out;
 }
 

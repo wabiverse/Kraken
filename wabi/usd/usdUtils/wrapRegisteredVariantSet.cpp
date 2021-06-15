@@ -36,16 +36,15 @@ WABI_NAMESPACE_USING
 
 void wrapRegisteredVariantSet()
 {
-  scope registeredVariantSet =
-      class_<UsdUtilsRegisteredVariantSet>(
-          "RegisteredVariantSet", "Info for registered variant set", no_init)
-          .def_readonly("name", &UsdUtilsRegisteredVariantSet::name)
-          .def_readonly("selectionExportPolicy",
-                        &UsdUtilsRegisteredVariantSet::selectionExportPolicy);
+  scope registeredVariantSet = class_<UsdUtilsRegisteredVariantSet>(
+                                 "RegisteredVariantSet", "Info for registered variant set", no_init)
+                                 .def_readonly("name", &UsdUtilsRegisteredVariantSet::name)
+                                 .def_readonly("selectionExportPolicy",
+                                               &UsdUtilsRegisteredVariantSet::selectionExportPolicy);
 
   typedef UsdUtilsRegisteredVariantSet::SelectionExportPolicy SelectionExportPolicy;
   enum_<SelectionExportPolicy>("SelectionExportPolicy")
-      .value("IfAuthored", SelectionExportPolicy::IfAuthored)
-      .value("Always", SelectionExportPolicy::Always)
-      .value("Never", SelectionExportPolicy::Never);
+    .value("IfAuthored", SelectionExportPolicy::IfAuthored)
+    .value("Always", SelectionExportPolicy::Always)
+    .value("Never", SelectionExportPolicy::Never);
 }

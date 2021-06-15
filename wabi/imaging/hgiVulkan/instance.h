@@ -66,8 +66,8 @@ class HgiVulkanInstance final {
 
   /**
    * Instance Extension function pointers. */
-  VkDebugUtilsMessengerEXT vkDebugMessenger                           = 0;
-  PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT   = 0;
+  VkDebugUtilsMessengerEXT vkDebugMessenger = 0;
+  PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT = 0;
   PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessengerEXT = 0;
 
  private:

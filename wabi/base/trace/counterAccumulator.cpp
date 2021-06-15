@@ -72,19 +72,16 @@ void TraceCounterAccumulator::OnEndThread(const TraceThreadId &)
   // Do Nothing
 }
 
-void TraceCounterAccumulator::OnEvent(const TraceThreadId &,
-                                      const TfToken &key,
-                                      const TraceEvent &e)
+void TraceCounterAccumulator::OnEvent(const TraceThreadId &, const TfToken &key, const TraceEvent &e)
 {
   switch (e.GetType()) {
     case TraceEvent::EventType::CounterDelta: {
-      _counterDeltas[key].insert(
-          std::make_pair(e.GetTimeStamp(), _CounterValue{e.GetCounterValue(), true}));
+      _counterDeltas[key].insert(std::make_pair(e.GetTimeStamp(), _CounterValue{e.GetCounterValue(), true}));
       break;
     }
     case TraceEvent::EventType::CounterValue: {
       _counterDeltas[key].insert(
-          std::make_pair(e.GetTimeStamp(), _CounterValue{e.GetCounterValue(), false}));
+        std::make_pair(e.GetTimeStamp(), _CounterValue{e.GetCounterValue(), false}));
       break;
     }
     default:

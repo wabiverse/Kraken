@@ -36,8 +36,7 @@ TF_REGISTRY_FUNCTION(TfDebug)
   TF_DEBUG_ENVIRONMENT_SYMBOL(PCP_CHANGES, "Pcp change processing");
   TF_DEBUG_ENVIRONMENT_SYMBOL(PCP_DEPENDENCIES, "Pcp dependencies");
 
-  TF_DEBUG_ENVIRONMENT_SYMBOL(PCP_PRIM_INDEX,
-                              "Print debug output to terminal during prim indexing");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(PCP_PRIM_INDEX, "Print debug output to terminal during prim indexing");
 
   TF_DEBUG_ENVIRONMENT_SYMBOL(PCP_PRIM_INDEX_GRAPHS,
                               "Write graphviz 'dot' files during prim indexing "

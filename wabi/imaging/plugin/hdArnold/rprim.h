@@ -42,12 +42,10 @@ template<typename HydraType> class HdArnoldRprim : public HydraType {
   /// @param renderDelegate Pointer to the Render Delegate.
   /// @param id Path to the primitive.
   HDARNOLD_API
-  HdArnoldRprim(const AtString &shapeType,
-                HdArnoldRenderDelegate *renderDelegate,
-                const SdfPath &id)
-      : HydraType(id),
-        _renderDelegate(renderDelegate),
-        _shape(shapeType, renderDelegate, id, HydraType::GetPrimId())
+  HdArnoldRprim(const AtString &shapeType, HdArnoldRenderDelegate *renderDelegate, const SdfPath &id)
+    : HydraType(id),
+      _renderDelegate(renderDelegate),
+      _shape(shapeType, renderDelegate, id, HydraType::GetPrimId())
   {}
 #else
   /// Constructor for HdArnoldRprim.
@@ -61,9 +59,9 @@ template<typename HydraType> class HdArnoldRprim : public HydraType {
                 HdArnoldRenderDelegate *renderDelegate,
                 const SdfPath &id,
                 const SdfPath &instancerId)
-      : HydraType(id, instancerId),
-        _shape(shapeType, renderDelegate, id, HydraType::GetPrimId()),
-        _renderDelegate(renderDelegate)
+    : HydraType(id, instancerId),
+      _shape(shapeType, renderDelegate, id, HydraType::GetPrimId()),
+      _renderDelegate(renderDelegate)
   {}
 #endif
 
@@ -120,8 +118,7 @@ template<typename HydraType> class HdArnoldRprim : public HydraType {
     // Newer USD versions need to update the instancer before accessing the instancer id.
     HydraType::_UpdateInstancer(sceneDelegate, &dirtyBits);
     // We also force syncing of the parent instancers.
-    HdInstancer::_SyncInstancerAndParents(sceneDelegate->GetRenderIndex(),
-                                          HydraType::GetInstancerId());
+    HdInstancer::_SyncInstancerAndParents(sceneDelegate->GetRenderIndex(), HydraType::GetInstancerId());
 #endif
     _shape.Sync(this, dirtyBits, _renderDelegate, sceneDelegate, param, force);
   }
@@ -163,7 +160,7 @@ template<typename HydraType> class HdArnoldRprim : public HydraType {
   }
 
  protected:
-  HdArnoldShape _shape;  ///< HdArnoldShape to handle instances and shape creation.
+  HdArnoldShape _shape;                      ///< HdArnoldShape to handle instances and shape creation.
   HdArnoldRenderDelegate *_renderDelegate;   ///< Pointer to the Arnold Render Delegate.
   HdArnoldMaterialTracker _materialTracker;  ///< Utility to track material assignments ot shapes.
 };

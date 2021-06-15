@@ -294,7 +294,7 @@ class UsdProperty : public UsdObject {
               const Usd_PrimDataHandle &prim,
               const SdfPath &proxyPrimPath,
               const TfToken &propName)
-      : UsdObject(objType, prim, proxyPrimPath, propName)
+    : UsdObject(objType, prim, proxyPrimPath, propName)
   {}
 };
 

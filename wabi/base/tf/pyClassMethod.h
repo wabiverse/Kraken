@@ -56,8 +56,7 @@ struct _TfPyClassMethod : def_visitor<_TfPyClassMethod> {
 
     object method(d[_methodName]);
 
-    c.attr(_methodName.c_str()) = object(
-        handle<>(PyClassMethod_New((_CallableCheck)(method.ptr()))));
+    c.attr(_methodName.c_str()) = object(handle<>(PyClassMethod_New((_CallableCheck)(method.ptr()))));
   }
 
  private:

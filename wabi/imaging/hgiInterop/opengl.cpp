@@ -32,36 +32,36 @@
 WABI_NAMESPACE_BEGIN
 
 static const char *_vertexFullscreen =
-    "#version 120\n"
-    "attribute vec4 position;\n"
-    "attribute vec2 uvIn;\n"
-    "varying vec2 uv;\n"
-    "void main(void)\n"
-    "{\n"
-    "    gl_Position = position;\n"
-    "    uv = uvIn;\n"
-    "}\n";
+  "#version 120\n"
+  "attribute vec4 position;\n"
+  "attribute vec2 uvIn;\n"
+  "varying vec2 uv;\n"
+  "void main(void)\n"
+  "{\n"
+  "    gl_Position = position;\n"
+  "    uv = uvIn;\n"
+  "}\n";
 
 static const char *_fragmentNoDepthFullscreen =
-    "#version 120\n"
-    "varying vec2 uv;\n"
-    "uniform sampler2D colorIn;\n"
-    "void main(void)\n"
-    "{\n"
-    "    gl_FragColor = texture2D(colorIn, uv);\n"
-    "}\n";
+  "#version 120\n"
+  "varying vec2 uv;\n"
+  "uniform sampler2D colorIn;\n"
+  "void main(void)\n"
+  "{\n"
+  "    gl_FragColor = texture2D(colorIn, uv);\n"
+  "}\n";
 
 static const char *_fragmentDepthFullscreen =
-    "#version 120\n"
-    "varying vec2 uv;\n"
-    "uniform sampler2D colorIn;\n"
-    "uniform sampler2D depthIn;\n"
-    "void main(void)\n"
-    "{\n"
-    "    float depth = texture2D(depthIn, uv).r;\n"
-    "    gl_FragColor = texture2D(colorIn, uv);\n"
-    "    gl_FragDepth = depth;\n"
-    "}\n";
+  "#version 120\n"
+  "varying vec2 uv;\n"
+  "uniform sampler2D colorIn;\n"
+  "uniform sampler2D depthIn;\n"
+  "void main(void)\n"
+  "{\n"
+  "    float depth = texture2D(depthIn, uv).r;\n"
+  "    gl_FragColor = texture2D(colorIn, uv);\n"
+  "    gl_FragDepth = depth;\n"
+  "}\n";
 
 static uint32_t _CompileShader(const char *src, GLenum stage)
 {
@@ -107,7 +107,7 @@ static uint32_t _CreateVertexBuffer()
                                    1,
                                    2,
                                    0};
-  uint32_t vertexBuffer         = 0;
+  uint32_t vertexBuffer = 0;
   glGenBuffers(1, &vertexBuffer);
   glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices[0], GL_STATIC_DRAW);
@@ -116,18 +116,18 @@ static uint32_t _CreateVertexBuffer()
 }
 
 HgiInteropOpenGL::HgiInteropOpenGL()
-    : _vs(0),
-      _fsNoDepth(0),
-      _fsDepth(0),
-      _prgNoDepth(0),
-      _prgDepth(0),
-      _vertexBuffer(0)
+  : _vs(0),
+    _fsNoDepth(0),
+    _fsDepth(0),
+    _prgNoDepth(0),
+    _prgDepth(0),
+    _vertexBuffer(0)
 {
-  _vs           = _CompileShader(_vertexFullscreen, GL_VERTEX_SHADER);
-  _fsNoDepth    = _CompileShader(_fragmentNoDepthFullscreen, GL_FRAGMENT_SHADER);
-  _fsDepth      = _CompileShader(_fragmentDepthFullscreen, GL_FRAGMENT_SHADER);
-  _prgNoDepth   = _LinkProgram(_vs, _fsNoDepth);
-  _prgDepth     = _LinkProgram(_vs, _fsDepth);
+  _vs = _CompileShader(_vertexFullscreen, GL_VERTEX_SHADER);
+  _fsNoDepth = _CompileShader(_fragmentNoDepthFullscreen, GL_FRAGMENT_SHADER);
+  _fsDepth = _CompileShader(_fragmentDepthFullscreen, GL_FRAGMENT_SHADER);
+  _prgNoDepth = _LinkProgram(_vs, _fsNoDepth);
+  _prgDepth = _LinkProgram(_vs, _fsDepth);
   _vertexBuffer = _CreateVertexBuffer();
   TF_VERIFY(glGetError() == GL_NO_ERROR);
 }
@@ -164,8 +164,8 @@ void HgiInteropOpenGL::CompositeToInterop(HgiTextureHandle const &color,
   const GLuint colorName = static_cast<GLuint>(color->GetRawResource());
   if (!glIsTexture(colorName)) {
     TF_CODING_ERROR(
-        "Hgi color texture handle is not holding a valid OpenGL "
-        "texture.");
+      "Hgi color texture handle is not holding a valid OpenGL "
+      "texture.");
     return;
   }
 
@@ -217,12 +217,8 @@ void HgiInteropOpenGL::CompositeToInterop(HgiTextureHandle const &color,
   glEnableVertexAttribArray(locPosition);
 
   const GLint locUv = glGetAttribLocation(prg, "uvIn");
-  glVertexAttribPointer(locUv,
-                        2,
-                        GL_FLOAT,
-                        GL_FALSE,
-                        sizeof(float) * 6,
-                        reinterpret_cast<void *>(sizeof(float) * 4));
+  glVertexAttribPointer(
+    locUv, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 6, reinterpret_cast<void *>(sizeof(float) * 4));
   glEnableVertexAttribArray(locUv);
 
   // Since we want to composite over the application's framebuffer contents,
@@ -284,8 +280,7 @@ void HgiInteropOpenGL::CompositeToInterop(HgiTextureHandle const &color,
   if (!blendEnabled) {
     glDisable(GL_BLEND);
   }
-  glBlendFuncSeparate(
-      restoreColorSrcFnOp, restoreColorDstFnOp, restoreAlphaSrcFnOp, restoreAlphaDstFnOp);
+  glBlendFuncSeparate(restoreColorSrcFnOp, restoreColorDstFnOp, restoreAlphaSrcFnOp, restoreAlphaDstFnOp);
   glBlendEquationSeparate(restoreColorOp, restoreAlphaOp);
 
   if (!restoreDepthEnabled) {

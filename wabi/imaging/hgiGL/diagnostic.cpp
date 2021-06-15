@@ -71,7 +71,7 @@ void HgiGLPostPendingGLErrors(std::string const &where)
   // is called from an invalid context.
   int watchDogCount = 0;
   while ((watchDogCount++ < 256) && ((error = glGetError()) != GL_NO_ERROR)) {
-    foundError                 = true;
+    foundError = true;
     const GLubyte *errorString = gluErrorString(error);
 
     std::ostringstream errorMessage;
@@ -92,7 +92,7 @@ void HgiGLPostPendingGLErrors(std::string const &where)
   }
   if (foundError) {
     TF_DEBUG(HGIGL_DEBUG_ERROR_STACKTRACE)
-        .Msg(TfStringPrintf("==== GL Error Stack ====\n%s\n", TfGetStackTrace().c_str()));
+      .Msg(TfStringPrintf("==== GL Error Stack ====\n%s\n", TfGetStackTrace().c_str()));
   }
 }
 

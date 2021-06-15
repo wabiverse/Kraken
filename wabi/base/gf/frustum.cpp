@@ -62,12 +62,12 @@ TF_REGISTRY_FUNCTION(TfEnum)
 }
 
 GfFrustum::GfFrustum()
-    : _position(0),
-      _window(GfVec2d(-1.0, -1.0), GfVec2d(1.0, 1.0)),
-      _nearFar(1.0, 10.0),
-      _viewDistance(5.0),
-      _projectionType(GfFrustum::Perspective),
-      _planes(nullptr)
+  : _position(0),
+    _window(GfVec2d(-1.0, -1.0), GfVec2d(1.0, 1.0)),
+    _nearFar(1.0, 10.0),
+    _viewDistance(5.0),
+    _projectionType(GfFrustum::Perspective),
+    _planes(nullptr)
 {
   _rotation.SetIdentity();
 }
@@ -78,13 +78,13 @@ GfFrustum::GfFrustum(const GfVec3d &position,
                      const GfRange1d &nearFar,
                      GfFrustum::ProjectionType projectionType,
                      double viewDistance)
-    : _position(position),
-      _rotation(rotation),
-      _window(window),
-      _nearFar(nearFar),
-      _viewDistance(viewDistance),
-      _projectionType(projectionType),
-      _planes(nullptr)
+  : _position(position),
+    _rotation(rotation),
+    _window(window),
+    _nearFar(nearFar),
+    _viewDistance(viewDistance),
+    _projectionType(projectionType),
+    _planes(nullptr)
 {}
 
 GfFrustum::GfFrustum(const GfMatrix4d &camToWorldXf,
@@ -92,11 +92,11 @@ GfFrustum::GfFrustum(const GfMatrix4d &camToWorldXf,
                      const GfRange1d &nearFar,
                      GfFrustum::ProjectionType projectionType,
                      double viewDistance)
-    : _window(window),
-      _nearFar(nearFar),
-      _viewDistance(viewDistance),
-      _projectionType(projectionType),
-      _planes(nullptr)
+  : _window(window),
+    _nearFar(nearFar),
+    _viewDistance(viewDistance),
+    _projectionType(projectionType),
+    _planes(nullptr)
 {
   SetPositionAndRotationFromMatrix(camToWorldXf);
 }
@@ -179,7 +179,7 @@ bool GfFrustum::GetPerspective(bool isFovVertical,
   *aspectRatio = winSize[0] / winSize[1];
 
   *nearDistance = _nearFar.GetMin();
-  *farDistance  = _nearFar.GetMax();
+  *farDistance = _nearFar.GetMax();
 
   return true;
 }
@@ -226,13 +226,13 @@ bool GfFrustum::GetOrthographic(double *left,
   if (_projectionType != GfFrustum::Orthographic)
     return false;
 
-  *left   = _window.GetMin()[0];
-  *right  = _window.GetMax()[0];
+  *left = _window.GetMin()[0];
+  *right = _window.GetMax()[0];
   *bottom = _window.GetMin()[1];
-  *top    = _window.GetMax()[1];
+  *top = _window.GetMax()[1];
 
   *nearPlane = _nearFar.GetMin();
-  *farPlane  = _nearFar.GetMax();
+  *farPlane = _nearFar.GetMax();
 
   return true;
 }
@@ -366,11 +366,11 @@ GfFrustum &GfFrustum::Transform(const GfMatrix4d &matrix)
 
   // Generate view direction and up vector
   GfVec3d viewDir = ComputeViewDirection();
-  GfVec3d upVec   = ComputeUpVector();
+  GfVec3d upVec = ComputeUpVector();
 
   // Transform by matrix
   GfVec3d viewDirPrime = matrix.TransformDir(viewDir);
-  GfVec3d upVecPrime   = matrix.TransformDir(upVec);
+  GfVec3d upVecPrime = matrix.TransformDir(upVec);
 
   // Normalize. Save the vec size since it will be used to scale near/far.
   double scale = viewDirPrime.Normalize();
@@ -460,11 +460,11 @@ GfFrustum &GfFrustum::Transform(const GfMatrix4d &matrix)
   // -1 as the z coordinate. Add the position of the frustum to generate
   // the actual points in world-space coordinates.
   GfVec3d leftBottom = _position + _rotation.TransformDir(GfVec3d(min[0], min[1], -1.0));
-  GfVec3d rightTop   = _position + _rotation.TransformDir(GfVec3d(max[0], max[1], -1.0));
+  GfVec3d rightTop = _position + _rotation.TransformDir(GfVec3d(max[0], max[1], -1.0));
 
   // Now, transform the corner points by the given matrix
   leftBottom = matrix.Transform(leftBottom);
-  rightTop   = matrix.Transform(rightTop);
+  rightTop = matrix.Transform(rightTop);
 
   // Subtract the transformed frustum position from the transformed
   // corner points. Then, rotate the points using the rotation that would
@@ -474,7 +474,7 @@ GfFrustum &GfFrustum::Transform(const GfMatrix4d &matrix)
   leftBottom -= frustum._position;
   rightTop -= frustum._position;
   leftBottom = frustum._rotation.GetInverse().TransformDir(leftBottom);
-  rightTop   = frustum._rotation.GetInverse().TransformDir(rightTop);
+  rightTop = frustum._rotation.GetInverse().TransformDir(rightTop);
 
   // Finally, use the similar triangles trick to bring the corner
   // points back at one unit away from the point. These scaled x and
@@ -521,7 +521,7 @@ GfVec3d GfFrustum::ComputeUpVector() const
 
 void GfFrustum::ComputeViewFrame(GfVec3d *side, GfVec3d *up, GfVec3d *view) const
 {
-  *up   = ComputeUpVector();
+  *up = ComputeUpVector();
   *view = ComputeViewDirection();
   *side = GfCross(*view, *up);
 }
@@ -590,7 +590,7 @@ GfMatrix4d GfFrustum::ComputeProjectionMatrix() const
 
 double GfFrustum::ComputeAspectRatio() const
 {
-  GfVec2d winSize    = _window.GetSize();
+  GfVec2d winSize = _window.GetSize();
   double aspectRatio = 0.0;
 
   if (winSize[1] != 0.0)
@@ -604,8 +604,8 @@ vector<GfVec3d> GfFrustum::ComputeCorners() const
 {
   const GfVec2d &winMin = _window.GetMin();
   const GfVec2d &winMax = _window.GetMax();
-  double near           = _nearFar.GetMin();
-  double far            = _nearFar.GetMax();
+  double near = _nearFar.GetMin();
+  double far = _nearFar.GetMax();
 
   vector<GfVec3d> corners;
   corners.reserve(8);
@@ -692,8 +692,7 @@ GfFrustum GfFrustum::ComputeNarrowedFrustum(const GfVec2d &point, const GfVec2d 
   return _ComputeNarrowedFrustumSub(windowPoint, halfSize);
 }
 
-GfFrustum GfFrustum::ComputeNarrowedFrustum(const GfVec3d &worldPoint,
-                                            const GfVec2d &halfSize) const
+GfFrustum GfFrustum::ComputeNarrowedFrustum(const GfVec3d &worldPoint, const GfVec2d &halfSize) const
 {
   // Map the point from worldspace onto the frustum's window
   GfVec3d lclPt = ComputeViewMatrix().Transform(worldPoint);
@@ -708,8 +707,7 @@ GfFrustum GfFrustum::ComputeNarrowedFrustum(const GfVec3d &worldPoint,
   return _ComputeNarrowedFrustumSub(windowPoint, halfSize);
 }
 
-GfFrustum GfFrustum::_ComputeNarrowedFrustumSub(const GfVec2d windowPoint,
-                                                const GfVec2d &halfSize) const
+GfFrustum GfFrustum::_ComputeNarrowedFrustumSub(const GfVec2d windowPoint, const GfVec2d &halfSize) const
 {
   // Start with this frustum
   GfFrustum narrowedFrustum = *this;
@@ -777,8 +775,8 @@ GfRay GfFrustum::ComputeRay(const GfVec2d &windowPos) const
 
   // Transform these by the inverse of the view matrix.
   const GfMatrix4d &viewInverse = ComputeViewInverse();
-  GfVec3d rayFrom               = viewInverse.Transform(ray.GetStartPoint());
-  GfVec3d rayDir                = viewInverse.TransformDir(ray.GetDirection());
+  GfVec3d rayFrom = viewInverse.Transform(ray.GetStartPoint());
+  GfVec3d rayDir = viewInverse.TransformDir(ray.GetDirection());
 
   // Build and return the ray
   return GfRay(rayFrom, rayDir);
@@ -809,8 +807,8 @@ GfRay GfFrustum::ComputeRay(const GfVec3d &worldSpacePos) const
 
   // Transform these by the inverse of the view matrix.
   const GfMatrix4d &viewInverse = ComputeViewInverse();
-  GfVec3d rayFrom               = viewInverse.Transform(pos);
-  GfVec3d rayDir                = viewInverse.TransformDir(dir);
+  GfVec3d rayFrom = viewInverse.Transform(pos);
+  GfVec3d rayDir = viewInverse.TransformDir(dir);
 
   // Build and return the ray
   return GfRay(rayFrom, rayDir);
@@ -845,8 +843,8 @@ GfRay GfFrustum::_ComputePickRayOffsetToNearPlane(const GfVec3d &camSpaceFrom,
 
   // Transform these by the inverse of the view matrix.
   const GfMatrix4d &viewInverse = ComputeViewInverse();
-  rayFrom                       = viewInverse.Transform(rayFrom);
-  GfVec3d rayDir                = viewInverse.TransformDir(camSpaceDir);
+  rayFrom = viewInverse.Transform(rayFrom);
+  GfVec3d rayDir = viewInverse.TransformDir(camSpaceDir);
 
   // Build and return the ray
   return GfRay(rayFrom, rayDir);
@@ -862,7 +860,7 @@ bool GfFrustum::Intersects(const GfBBox3d &bbox) const
 
   // Get the bbox in its local space and the matrix that converts
   // world space to that local space.
-  const GfRange3d &localBBox     = bbox.GetRange();
+  const GfRange3d &localBBox = bbox.GetRange();
   const GfMatrix4d &worldToLocal = bbox.GetInverseMatrix();
 
   // Test the bbox against each of the frustum planes, transforming
@@ -894,15 +892,11 @@ bool GfFrustum::Intersects(const GfVec3d &point) const
   return true;
 }
 
-inline static uint32_t _CalcIntersectionBitMask(const std::array<GfPlane, 6> &planes,
-                                                GfVec3d const &p)
+inline static uint32_t _CalcIntersectionBitMask(const std::array<GfPlane, 6> &planes, GfVec3d const &p)
 {
-  return (planes[0].IntersectsPositiveHalfSpace(p) << 0) |
-         (planes[1].IntersectsPositiveHalfSpace(p) << 1) |
-         (planes[2].IntersectsPositiveHalfSpace(p) << 2) |
-         (planes[3].IntersectsPositiveHalfSpace(p) << 3) |
-         (planes[4].IntersectsPositiveHalfSpace(p) << 4) |
-         (planes[5].IntersectsPositiveHalfSpace(p) << 5);
+  return (planes[0].IntersectsPositiveHalfSpace(p) << 0) | (planes[1].IntersectsPositiveHalfSpace(p) << 1) |
+         (planes[2].IntersectsPositiveHalfSpace(p) << 2) | (planes[3].IntersectsPositiveHalfSpace(p) << 3) |
+         (planes[4].IntersectsPositiveHalfSpace(p) << 4) | (planes[5].IntersectsPositiveHalfSpace(p) << 5);
 }
 
 // NOTE! caller must ensure that _CalculateFrustumPlanes() has been called
@@ -937,7 +931,7 @@ bool GfFrustum::_SegmentIntersects(GfVec3d const &p0,
 
   auto const &planes = *_planes;
   for (size_t i = 0; i < planes.size(); ++i) {
-    const GfPlane &plane    = planes[i];
+    const GfPlane &plane = planes[i];
     const uint32_t planeBit = 1 << i;
 
     uint32_t p0Bit = p0Mask & planeBit;
@@ -987,7 +981,7 @@ bool GfFrustum::Intersects(const GfVec3d &p0, const GfVec3d &p1) const
   // in each mask for each of the 6 planes.
   auto const &planes = *_planes;
   return _SegmentIntersects(
-      p0, _CalcIntersectionBitMask(planes, p0), p1, _CalcIntersectionBitMask(planes, p1));
+    p0, _CalcIntersectionBitMask(planes, p0), p1, _CalcIntersectionBitMask(planes, p1));
 }
 
 bool GfFrustum::Intersects(const GfVec3d &p0, const GfVec3d &p1, const GfVec3d &p2) const
@@ -998,9 +992,9 @@ bool GfFrustum::Intersects(const GfVec3d &p0, const GfVec3d &p1, const GfVec3d &
   // Compute the intersection masks for each point. There is one bit
   // in each mask for each of the 6 planes.
   auto const &planes = *_planes;
-  uint32_t p0Mask    = _CalcIntersectionBitMask(planes, p0);
-  uint32_t p1Mask    = _CalcIntersectionBitMask(planes, p1);
-  uint32_t p2Mask    = _CalcIntersectionBitMask(planes, p2);
+  uint32_t p0Mask = _CalcIntersectionBitMask(planes, p0);
+  uint32_t p1Mask = _CalcIntersectionBitMask(planes, p1);
+  uint32_t p2Mask = _CalcIntersectionBitMask(planes, p2);
 
   // If any of the 6 bits is 0 in all masks, then all 3 points are
   // on the bad side of the corresponding plane. This means that
@@ -1043,7 +1037,7 @@ bool GfFrustum::Intersects(const GfVec3d &p0, const GfVec3d &p1, const GfVec3d &
   // XXX Note: 4 & 5 below are highly dependent on
   // _CalculateFrustumPlanes implementation
   uint32_t nearBit = (1 << 4);
-  uint32_t farBit  = (1 << 5);
+  uint32_t farBit = (1 << 5);
   if ((p0Mask & nearBit) && (p1Mask & nearBit) && (p2Mask & nearBit) && (p0Mask & farBit) &&
       (p1Mask & farBit) && (p2Mask & farBit)) {
     numCornersToCheck = 1;
@@ -1054,7 +1048,7 @@ bool GfFrustum::Intersects(const GfVec3d &p0, const GfVec3d &p1, const GfVec3d &
                         (i == 1) ? GfVec2d(-1.0, 1.0) :
                         (i == 2) ? GfVec2d(1.0, 1.0) :
                                    GfVec2d(1.0, -1.0);
-    GfRay pickRay     = ComputePickRay(pickPoint);
+    GfRay pickRay = ComputePickRay(pickPoint);
     double distance;
     if (pickRay.Intersect(p0, p1, p2, &distance, NULL, NULL)) {
       return true;
@@ -1084,9 +1078,9 @@ void GfFrustum::_CalculateFrustumPlanes() const
   // These are values we need to construct the planes.
   const GfVec2d &winMin = _window.GetMin();
   const GfVec2d &winMax = _window.GetMax();
-  double near           = _nearFar.GetMin();
-  double far            = _nearFar.GetMax();
-  GfMatrix4d m          = ComputeViewInverse();
+  double near = _nearFar.GetMin();
+  double far = _nearFar.GetMax();
+  GfMatrix4d m = ComputeViewInverse();
 
   // For a perspective frustum, we use the viewpoint and four
   // corners of the near-plane frustum rectangle to define the 4
@@ -1219,8 +1213,7 @@ void GfFrustum::_CalculateFrustumPlanes() const
   //                         fdistance
   //
   // So, fdistance = - (ndistance + (far - near))
-  newPlanes[5] = GfPlane(-newPlanes[4].GetNormal(),
-                         -(newPlanes[4].GetDistanceFromOrigin() + (far - near)));
+  newPlanes[5] = GfPlane(-newPlanes[4].GetNormal(), -(newPlanes[4].GetDistanceFromOrigin() + (far - near)));
 
   // Now attempt to set the planes.
   if (_planes.compare_exchange_strong(planes, &newPlanes)) {
@@ -1248,14 +1241,14 @@ bool GfFrustum::IntersectsViewVolume(const GfBBox3d &bbox, const GfMatrix4d &vie
   GfVec4d points[8];
   const GfVec3d &localMin = bbox.GetRange().GetMin();
   const GfVec3d &localMax = bbox.GetRange().GetMax();
-  points[0]               = GfVec4d(localMin[0], localMin[1], localMin[2], 1);
-  points[1]               = GfVec4d(localMin[0], localMin[1], localMax[2], 1);
-  points[2]               = GfVec4d(localMin[0], localMax[1], localMin[2], 1);
-  points[3]               = GfVec4d(localMin[0], localMax[1], localMax[2], 1);
-  points[4]               = GfVec4d(localMax[0], localMin[1], localMin[2], 1);
-  points[5]               = GfVec4d(localMax[0], localMin[1], localMax[2], 1);
-  points[6]               = GfVec4d(localMax[0], localMax[1], localMin[2], 1);
-  points[7]               = GfVec4d(localMax[0], localMax[1], localMax[2], 1);
+  points[0] = GfVec4d(localMin[0], localMin[1], localMin[2], 1);
+  points[1] = GfVec4d(localMin[0], localMin[1], localMax[2], 1);
+  points[2] = GfVec4d(localMin[0], localMax[1], localMin[2], 1);
+  points[3] = GfVec4d(localMin[0], localMax[1], localMax[2], 1);
+  points[4] = GfVec4d(localMax[0], localMin[1], localMin[2], 1);
+  points[5] = GfVec4d(localMax[0], localMin[1], localMax[2], 1);
+  points[6] = GfVec4d(localMax[0], localMax[1], localMin[2], 1);
+  points[7] = GfVec4d(localMax[0], localMax[1], localMax[2], 1);
 
   // Transform bbox local space points into clip space
   for (int i = 0; i < 8; ++i) {
@@ -1305,10 +1298,10 @@ void GfFrustum::SetPositionAndRotationFromMatrix(const GfMatrix4d &camToWorldXf)
 
 std::ostream &operator<<(std::ostream &out, const GfFrustum &f)
 {
-  out << '[' << Gf_OstreamHelperP(f.GetPosition()) << " " << Gf_OstreamHelperP(f.GetRotation())
-      << " " << Gf_OstreamHelperP(f.GetWindow()) << " " << Gf_OstreamHelperP(f.GetNearFar()) << " "
-      << Gf_OstreamHelperP(f.GetViewDistance()) << " "
-      << TfEnum::GetName(TfEnum(f.GetProjectionType())) << ']';
+  out << '[' << Gf_OstreamHelperP(f.GetPosition()) << " " << Gf_OstreamHelperP(f.GetRotation()) << " "
+      << Gf_OstreamHelperP(f.GetWindow()) << " " << Gf_OstreamHelperP(f.GetNearFar()) << " "
+      << Gf_OstreamHelperP(f.GetViewDistance()) << " " << TfEnum::GetName(TfEnum(f.GetProjectionType()))
+      << ']';
 
   return out;
 }

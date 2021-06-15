@@ -106,8 +106,7 @@ UsdAttribute UsdLuxShapingAPI::GetShapingFocusAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingFocus);
 }
 
-UsdAttribute UsdLuxShapingAPI::CreateShapingFocusAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdLuxShapingAPI::CreateShapingFocusAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingFocus,
                                     SdfValueTypeNames->Float,
@@ -214,8 +213,7 @@ UsdAttribute UsdLuxShapingAPI::CreateShapingIesNormalizeAttr(VtValue const &defa
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -229,16 +227,16 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdLuxShapingAPI::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdLuxTokens->inputsShapingFocus,
-      UsdLuxTokens->inputsShapingFocusTint,
-      UsdLuxTokens->inputsShapingConeAngle,
-      UsdLuxTokens->inputsShapingConeSoftness,
-      UsdLuxTokens->inputsShapingIesFile,
-      UsdLuxTokens->inputsShapingIesAngleScale,
-      UsdLuxTokens->inputsShapingIesNormalize,
+    UsdLuxTokens->inputsShapingFocus,
+    UsdLuxTokens->inputsShapingFocusTint,
+    UsdLuxTokens->inputsShapingConeAngle,
+    UsdLuxTokens->inputsShapingConeSoftness,
+    UsdLuxTokens->inputsShapingIesFile,
+    UsdLuxTokens->inputsShapingIesAngleScale,
+    UsdLuxTokens->inputsShapingIesNormalize,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdAPISchemaBase::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -262,7 +260,7 @@ WABI_NAMESPACE_END
 WABI_NAMESPACE_BEGIN
 
 UsdLuxShapingAPI::UsdLuxShapingAPI(const UsdShadeConnectableAPI &connectable)
-    : UsdLuxShapingAPI(connectable.GetPrim())
+  : UsdLuxShapingAPI(connectable.GetPrim())
 {}
 
 UsdShadeConnectableAPI UsdLuxShapingAPI::ConnectableAPI() const
@@ -270,8 +268,7 @@ UsdShadeConnectableAPI UsdLuxShapingAPI::ConnectableAPI() const
   return UsdShadeConnectableAPI(GetPrim());
 }
 
-UsdShadeOutput UsdLuxShapingAPI::CreateOutput(const TfToken &name,
-                                              const SdfValueTypeName &typeName)
+UsdShadeOutput UsdLuxShapingAPI::CreateOutput(const TfToken &name, const SdfValueTypeName &typeName)
 {
   return UsdShadeConnectableAPI(GetPrim()).CreateOutput(name, typeName);
 }

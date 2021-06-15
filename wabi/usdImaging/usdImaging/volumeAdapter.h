@@ -56,19 +56,17 @@ class UsdImagingVolumeAdapter : public UsdImagingGprimAdapter {
   /// \name Parallel Setup and Resolve
   // ---------------------------------------------------------------------- //
   /// Thread Safe.
-  virtual void TrackVariability(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      HdDirtyBits *timeVaryingBits,
-      UsdImagingInstancerContext const *instancerContext = NULL) const override;
+  virtual void TrackVariability(UsdPrim const &prim,
+                                SdfPath const &cachePath,
+                                HdDirtyBits *timeVaryingBits,
+                                UsdImagingInstancerContext const *instancerContext = NULL) const override;
 
   /// Thread Safe.
-  virtual void UpdateForTime(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      UsdTimeCode time,
-      HdDirtyBits requestedBits,
-      UsdImagingInstancerContext const *instancerContext = NULL) const override;
+  virtual void UpdateForTime(UsdPrim const &prim,
+                             SdfPath const &cachePath,
+                             UsdTimeCode time,
+                             HdDirtyBits requestedBits,
+                             UsdImagingInstancerContext const *instancerContext = NULL) const override;
 
   virtual HdVolumeFieldDescriptorVector GetVolumeFieldDescriptors(UsdPrim const &usdPrim,
                                                                   SdfPath const &id,

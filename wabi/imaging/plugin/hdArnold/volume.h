@@ -136,12 +136,11 @@ class HdArnoldVolume : public HdVolume {
     }
   }
 
-  HdArnoldRenderDelegate *_renderDelegate;  ///< Pointer to the Render Delegate.
-  HdArnoldMaterialTracker
-      _materialTracker;                   ///< Utility to track material assignments to the volume.
-  std::vector<HdArnoldShape *> _volumes;  ///< Vector storing all the Volumes created.
+  HdArnoldRenderDelegate *_renderDelegate;   ///< Pointer to the Render Delegate.
+  HdArnoldMaterialTracker _materialTracker;  ///< Utility to track material assignments to the volume.
+  std::vector<HdArnoldShape *> _volumes;     ///< Vector storing all the Volumes created.
   std::vector<HdArnoldShape *>
-      _inMemoryVolumes;  ///< Vectoring storing all the Volumes for in-memory VDB storage.
+    _inMemoryVolumes;  ///< Vectoring storing all the Volumes for in-memory VDB storage.
 };
 
 WABI_NAMESPACE_END

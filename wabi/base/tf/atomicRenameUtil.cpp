@@ -115,7 +115,7 @@ int Tf_CreateSiblingTempFile(std::string fileName,
                                         &realPathError);
   if (realFilePath.empty()) {
     *error = TfStringPrintf(
-        "Unable to determine the real path for '%s': %s", fileName.c_str(), realPathError.c_str());
+      "Unable to determine the real path for '%s': %s", fileName.c_str(), realPathError.c_str());
     return result;
   }
 
@@ -132,9 +132,9 @@ int Tf_CreateSiblingTempFile(std::string fileName,
 
   if (ArchFileAccess(dirPath.c_str(), W_OK) != 0) {
     *error = TfStringPrintf(
-        "Insufficient permissions to write to destination "
-        "directory '%s'",
-        dirPath.c_str());
+      "Insufficient permissions to write to destination "
+      "directory '%s'",
+      dirPath.c_str());
     return result;
   }
 
@@ -145,9 +145,9 @@ int Tf_CreateSiblingTempFile(std::string fileName,
   // the file via this object.
   if (ArchFileAccess(realFilePath.c_str(), W_OK) != 0 && errno != ENOENT) {
     *error = TfStringPrintf(
-        "Insufficient permissions to write to destination "
-        "file '%s'",
-        realFilePath.c_str());
+      "Insufficient permissions to write to destination "
+      "file '%s'",
+      realFilePath.c_str());
     return result;
   }
 
@@ -156,7 +156,7 @@ int Tf_CreateSiblingTempFile(std::string fileName,
   result = ArchMakeTmpFile(dirPath, tmpFilePrefix, &tmpFN);
   if (result == -1) {
     *error = TfStringPrintf(
-        "Unable to create temporary file '%s': %s", tmpFN.c_str(), ArchStrerror(errno).c_str());
+      "Unable to create temporary file '%s': %s", tmpFN.c_str(), ArchStrerror(errno).c_str());
     return result;
   }
 

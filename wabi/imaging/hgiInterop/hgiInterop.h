@@ -96,7 +96,7 @@ class HgiInterop final {
 
  private:
   HgiInterop &operator=(const HgiInterop &) = delete;
-  HgiInterop(const HgiInterop &)            = delete;
+  HgiInterop(const HgiInterop &) = delete;
 
 #if defined(WITH_METAL)
   std::unique_ptr<HgiInteropMetal> _metalToOpenGL;

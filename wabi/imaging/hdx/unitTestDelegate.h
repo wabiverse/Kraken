@@ -84,7 +84,7 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate {
 
   /// Instancer
   void AddInstancer(SdfPath const &id,
-                    SdfPath const &parentId         = SdfPath(),
+                    SdfPath const &parentId = SdfPath(),
                     GfMatrix4f const &rootTransform = GfMatrix4f(1));
 
   void SetInstancerProperties(SdfPath const &id,
@@ -104,11 +104,11 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate {
                VtVec3fArray const &points,
                VtIntArray const &numVerts,
                VtIntArray const &verts,
-               bool guide                 = false,
+               bool guide = false,
                SdfPath const &instancerId = SdfPath(),
-               TfToken const &scheme      = PxOsdOpenSubdivTokens->catmullClark,
+               TfToken const &scheme = PxOsdOpenSubdivTokens->catmullClark,
                TfToken const &orientation = HdTokens->rightHanded,
-               bool doubleSided           = false);
+               bool doubleSided = false);
 
   void AddMesh(SdfPath const &id,
                GfMatrix4d const &transform,
@@ -120,32 +120,32 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate {
                HdInterpolation colorInterpolation,
                VtValue const &opacity,
                HdInterpolation opacityInterpolation,
-               bool guide                 = false,
+               bool guide = false,
                SdfPath const &instancerId = SdfPath(),
-               TfToken const &scheme      = PxOsdOpenSubdivTokens->catmullClark,
+               TfToken const &scheme = PxOsdOpenSubdivTokens->catmullClark,
                TfToken const &orientation = HdTokens->rightHanded,
-               bool doubleSided           = false);
+               bool doubleSided = false);
 
   void AddCube(SdfPath const &id,
                GfMatrix4d const &transform,
-               bool guide                           = false,
-               SdfPath const &instancerId           = SdfPath(),
-               TfToken const &scheme                = PxOsdOpenSubdivTokens->catmullClark,
-               VtValue const &color                 = VtValue(GfVec3f(1, 1, 1)),
-               HdInterpolation colorInterpolation   = HdInterpolationConstant,
-               VtValue const &opacity               = VtValue(1.0f),
+               bool guide = false,
+               SdfPath const &instancerId = SdfPath(),
+               TfToken const &scheme = PxOsdOpenSubdivTokens->catmullClark,
+               VtValue const &color = VtValue(GfVec3f(1, 1, 1)),
+               HdInterpolation colorInterpolation = HdInterpolationConstant,
+               VtValue const &opacity = VtValue(1.0f),
                HdInterpolation opacityInterpolation = HdInterpolationConstant);
 
   void AddGrid(SdfPath const &id,
                GfMatrix4d const &transform,
-               bool guide                 = false,
+               bool guide = false,
                SdfPath const &instancerId = SdfPath());
 
   void AddTet(SdfPath const &id,
               GfMatrix4d const &transform,
-              bool guide                 = false,
+              bool guide = false,
               SdfPath const &instancerId = SdfPath(),
-              TfToken const &scheme      = PxOsdOpenSubdivTokens->catmullClark);
+              TfToken const &scheme = PxOsdOpenSubdivTokens->catmullClark);
 
   void SetRefineLevel(SdfPath const &id, int level);
 
@@ -157,8 +157,7 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate {
   bool GetVisible(SdfPath const &id) override;
   HdMeshTopology GetMeshTopology(SdfPath const &id) override;
   VtValue Get(SdfPath const &id, TfToken const &key) override;
-  HdPrimvarDescriptorVector GetPrimvarDescriptors(SdfPath const &id,
-                                                  HdInterpolation interpolation) override;
+  HdPrimvarDescriptorVector GetPrimvarDescriptors(SdfPath const &id, HdInterpolation interpolation) override;
   VtIntArray GetInstanceIndices(SdfPath const &instancerId, SdfPath const &prototypeId) override;
 
   GfMatrix4d GetInstancerTransform(SdfPath const &instancerId) override;
@@ -193,19 +192,19 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate {
           HdInterpolation opacityInterpolation,
           bool guide,
           bool doubleSided)
-        : scheme(scheme),
-          orientation(orientation),
-          transform(transform),
-          points(points),
-          numVerts(numVerts),
-          verts(verts),
-          subdivTags(subdivTags),
-          color(color),
-          colorInterpolation(colorInterpolation),
-          opacity(opacity),
-          opacityInterpolation(opacityInterpolation),
-          guide(guide),
-          doubleSided(doubleSided)
+      : scheme(scheme),
+        orientation(orientation),
+        transform(transform),
+        points(points),
+        numVerts(numVerts),
+        verts(verts),
+        subdivTags(subdivTags),
+        color(color),
+        colorInterpolation(colorInterpolation),
+        opacity(opacity),
+        opacityInterpolation(opacityInterpolation),
+        guide(guide),
+        doubleSided(doubleSided)
     {}
 
     TfToken scheme;
@@ -231,10 +230,10 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate {
                VtVec4fArray const &rotate,
                VtVec3fArray const &translate,
                GfMatrix4f const &rootTransform)
-        : scale(scale),
-          rotate(rotate),
-          translate(translate),
-          rootTransform(rootTransform)
+      : scale(scale),
+        rotate(rotate),
+        translate(translate),
+        rootTransform(rootTransform)
     {}
     VtVec3fArray scale;
     VtVec4fArray rotate;
@@ -257,7 +256,7 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate {
   SdfPathMap _materialBindings;
   SdfPathMap _instancerBindings;
 
-  using _ValueCache    = TfHashMap<TfToken, VtValue, TfToken::HashFunctor>;
+  using _ValueCache = TfHashMap<TfToken, VtValue, TfToken::HashFunctor>;
   using _ValueCacheMap = TfHashMap<SdfPath, _ValueCache, SdfPath::Hash>;
   _ValueCacheMap _valueCacheMap;
 

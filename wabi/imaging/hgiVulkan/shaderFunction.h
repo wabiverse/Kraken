@@ -96,9 +96,9 @@ class HgiVulkanShaderFunction final : public HgiShaderFunction {
   HgiVulkanShaderFunction(HgiVulkanDevice *device, HgiShaderFunctionDesc const &desc);
 
  private:
-  HgiVulkanShaderFunction()        = delete;
+  HgiVulkanShaderFunction() = delete;
   HgiVulkanShaderFunction &operator=(const HgiVulkanShaderFunction &) = delete;
-  HgiVulkanShaderFunction(const HgiVulkanShaderFunction &)            = delete;
+  HgiVulkanShaderFunction(const HgiVulkanShaderFunction &) = delete;
 
   HgiVulkanDevice *_device;
   std::string _errors;

@@ -61,10 +61,10 @@ static void _RaiseCodingError(string const &msg,
                               int lineNo)
 {
   TfDiagnosticMgr::ErrorHelper(
-      Tf_PythonCallContext(fileName.c_str(), moduleName.c_str(), functionName.c_str(), lineNo),
-      TF_DIAGNOSTIC_CODING_ERROR_TYPE,
-      TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_CODING_ERROR_TYPE)).c_str())
-      .Post("Python coding error: " + msg);
+    Tf_PythonCallContext(fileName.c_str(), moduleName.c_str(), functionName.c_str(), lineNo),
+    TF_DIAGNOSTIC_CODING_ERROR_TYPE,
+    TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_CODING_ERROR_TYPE)).c_str())
+    .Post("Python coding error: " + msg);
 }
 
 static void _RaiseRuntimeError(string const &msg,
@@ -74,10 +74,10 @@ static void _RaiseRuntimeError(string const &msg,
                                int lineNo)
 {
   TfDiagnosticMgr::ErrorHelper(
-      Tf_PythonCallContext(fileName.c_str(), moduleName.c_str(), functionName.c_str(), lineNo),
-      TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE,
-      TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE)).c_str())
-      .Post("Python runtime error: " + msg);
+    Tf_PythonCallContext(fileName.c_str(), moduleName.c_str(), functionName.c_str(), lineNo),
+    TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE,
+    TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE)).c_str())
+    .Post("Python runtime error: " + msg);
 }
 
 // CODE_COVERAGE_OFF This will abort the program.
@@ -88,9 +88,9 @@ static void _Fatal(string const &msg,
                    int lineNo)
 {
   TfDiagnosticMgr::FatalHelper(
-      Tf_PythonCallContext(fileName.c_str(), moduleName.c_str(), functionName.c_str(), lineNo),
-      TF_DIAGNOSTIC_FATAL_ERROR_TYPE)
-      .Post("Python Fatal Error: " + msg);
+    Tf_PythonCallContext(fileName.c_str(), moduleName.c_str(), functionName.c_str(), lineNo),
+    TF_DIAGNOSTIC_FATAL_ERROR_TYPE)
+    .Post("Python Fatal Error: " + msg);
 }
 // CODE_COVERAGE_ON
 
@@ -172,8 +172,8 @@ static bool _RepostErrors(boost::python::object exc)
     else {
       if (TF_ERROR_MARK_TRACKING)
         printf(
-            "Tf.RepostErrors: "
-            "failed to get errors from exception\n");
+          "Tf.RepostErrors: "
+          "failed to get errors from exception\n");
     }
   }
   else {
@@ -195,8 +195,7 @@ static void _PythonExceptionDebugTracer(TfPyTraceInfo const &info)
     }
     if (PyErr_Occurred())
       PyErr_Clear();
-    printf(
-        "= PyExc: %s in %s %s:%d\n", excName.c_str(), info.funcName, info.fileName, info.funcLine);
+    printf("= PyExc: %s in %s %s:%d\n", excName.c_str(), info.funcName, info.fileName, info.funcLine);
   }
 }
 
@@ -220,34 +219,30 @@ void wrapError()
   def("_Fatal", &_Fatal);
   def("RepostErrors", &_RepostErrors, arg("exception"));
   def("ReportActiveErrorMarks", TfReportActiveErrorMarks);
-  def("SetPythonExceptionDebugTracingEnabled",
-      _SetPythonExceptionDebugTracingEnabled,
-      arg("enabled"));
+  def("SetPythonExceptionDebugTracingEnabled", _SetPythonExceptionDebugTracingEnabled, arg("enabled"));
   def("__SetErrorExceptionClass", Tf_PySetErrorExceptionClass);
   def("InvokeWithErrorHandling", raw_function(_InvokeWithErrorHandling, 1));
-  TfPyContainerConversions::
-      from_python_sequence<vector<TfError>, TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<vector<TfError>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 
   typedef TfError This;
 
-  scope errorScope = class_<This, bases<TfDiagnosticBase>>("Error", no_init)
-                         .add_property("errorCode",
-                                       &This::GetErrorCode,
-                                       "The error code posted for this error.")
+  scope errorScope =
+    class_<This, bases<TfDiagnosticBase>>("Error", no_init)
+      .add_property("errorCode", &This::GetErrorCode, "The error code posted for this error.")
 
-                         .add_property("errorCodeString",
-                                       make_function(&This::GetErrorCodeAsString,
-                                                     return_value_policy<return_by_value>()),
-                                       "The error code posted for this error, as a string.")
+      .add_property("errorCodeString",
+                    make_function(&This::GetErrorCodeAsString, return_value_policy<return_by_value>()),
+                    "The error code posted for this error, as a string.")
 
-                         .def("__repr__", TfError__repr__);
+      .def("__repr__", TfError__repr__);
 
   class_<TfErrorMark, boost::noncopyable>("Mark")
-      .def("SetMark", &TfErrorMark::SetMark)
-      .def("IsClean", &TfErrorMark::IsClean)
-      .def("Clear", &TfErrorMark::Clear)
-      .def("GetErrors",
-           &_GetErrors,
-           return_value_policy<TfPySequenceToList>(),
-           "A list of the errors held by this mark.");
+    .def("SetMark", &TfErrorMark::SetMark)
+    .def("IsClean", &TfErrorMark::IsClean)
+    .def("Clear", &TfErrorMark::Clear)
+    .def("GetErrors",
+         &_GetErrors,
+         return_value_policy<TfPySequenceToList>(),
+         "A list of the errors held by this mark.");
 }

@@ -106,9 +106,7 @@ class MaterialEditContext {
 
 class HydraMaterialEditContext : public MaterialEditContext {
  public:
-  HydraMaterialEditContext(HdMaterialNetwork &network, HdMaterialNode &node)
-      : _network(network),
-        _node(node)
+  HydraMaterialEditContext(HdMaterialNetwork &network, HdMaterialNode &node) : _network(network), _node(node)
   {}
 
   VtValue GetParam(const TfToken &paramName) override
@@ -283,8 +281,8 @@ RemapNodeFunc transform2dRemap = [](MaterialEditContext *ctx) {
   ctx->SetNodeId(str::t_matrix_multiply_vector);
   ctx->RenameParam(str::t_in, str::t_input);
   const auto translateValue = ctx->GetParam(str::t_translation);
-  const auto scaleValue     = ctx->GetParam(str::t_scale);
-  const auto rotateValue    = ctx->GetParam(str::t_rotation);
+  const auto scaleValue = ctx->GetParam(str::t_scale);
+  const auto rotateValue = ctx->GetParam(str::t_rotation);
 
   GfMatrix4f texCoordTransfromMatrix(1.0);
   GfMatrix4f m;
@@ -310,18 +308,18 @@ using NodeRemapFuncs = std::unordered_map<TfToken, RemapNodeFunc, TfToken::HashF
 const NodeRemapFuncs &_NodeRemapFuncs()
 {
   static const NodeRemapFuncs nodeRemapFuncs{
-      {str::t_UsdPreviewSurface, previewSurfaceRemap},
-      {str::t_UsdUVTexture, uvTextureRemap},
-      {str::t_UsdPrimvarReader_float, floatPrimvarRemap},
-      {str::t_UsdPrimvarReader_float2, float2PrimvarRemap},
-      {str::t_UsdPrimvarReader_float3, float3PrimvarRemap},
-      {str::t_UsdPrimvarReader_point, float3PrimvarRemap},
-      {str::t_UsdPrimvarReader_normal, float3PrimvarRemap},
-      {str::t_UsdPrimvarReader_vector, float3PrimvarRemap},
-      {str::t_UsdPrimvarReader_float4, float4PrimvarRemap},
-      {str::t_UsdPrimvarReader_int, intPrimvarRemap},
-      {str::t_UsdPrimvarReader_string, stringPrimvarRemap},
-      {str::t_UsdTransform2d, transform2dRemap},
+    {str::t_UsdPreviewSurface, previewSurfaceRemap},
+    {str::t_UsdUVTexture, uvTextureRemap},
+    {str::t_UsdPrimvarReader_float, floatPrimvarRemap},
+    {str::t_UsdPrimvarReader_float2, float2PrimvarRemap},
+    {str::t_UsdPrimvarReader_float3, float3PrimvarRemap},
+    {str::t_UsdPrimvarReader_point, float3PrimvarRemap},
+    {str::t_UsdPrimvarReader_normal, float3PrimvarRemap},
+    {str::t_UsdPrimvarReader_vector, float3PrimvarRemap},
+    {str::t_UsdPrimvarReader_float4, float4PrimvarRemap},
+    {str::t_UsdPrimvarReader_int, intPrimvarRemap},
+    {str::t_UsdPrimvarReader_string, stringPrimvarRemap},
+    {str::t_UsdTransform2d, transform2dRemap},
   };
   return nodeRemapFuncs;
 }
@@ -453,11 +451,11 @@ void _RemapNetwork(HdMaterialNetwork &network, bool isDisplacement)
 }  // namespace
 
 HdArnoldMaterial::HdArnoldMaterial(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id)
-    : HdMaterial(id),
-      _renderDelegate(renderDelegate)
+  : HdMaterial(id),
+    _renderDelegate(renderDelegate)
 {
   _surface = _renderDelegate->GetFallbackShader();
-  _volume  = _renderDelegate->GetFallbackVolumeShader();
+  _volume = _renderDelegate->GetFallbackVolumeShader();
 }
 
 HdArnoldMaterial::~HdArnoldMaterial()
@@ -475,19 +473,18 @@ void HdArnoldMaterial::Sync(HdSceneDelegate *sceneDelegate,
   const auto id = GetId();
   if ((*dirtyBits & HdMaterial::DirtyResource) && !id.IsEmpty()) {
     HdArnoldRenderParamInterrupt param(renderParam);
-    const auto *oldSurface      = _surface;
+    const auto *oldSurface = _surface;
     const auto *oldDisplacement = _displacement;
-    const auto *oldVolume       = _volume;
-    auto value                  = sceneDelegate->GetMaterialResource(GetId());
-    AtNode *surfaceEntry        = nullptr;
-    AtNode *displacementEntry   = nullptr;
-    AtNode *volumeEntry         = nullptr;
+    const auto *oldVolume = _volume;
+    auto value = sceneDelegate->GetMaterialResource(GetId());
+    AtNode *surfaceEntry = nullptr;
+    AtNode *displacementEntry = nullptr;
+    AtNode *volumeEntry = nullptr;
     if (value.IsHolding<HdMaterialNetworkMap>()) {
-      const auto &map                 = value.UncheckedGet<HdMaterialNetworkMap>();
-      const auto *surfaceNetwork      = TfMapLookupPtr(map.map, HdMaterialTerminalTokens->surface);
-      const auto *displacementNetwork = TfMapLookupPtr(map.map,
-                                                       HdMaterialTerminalTokens->displacement);
-      const auto *volumeNetwork       = TfMapLookupPtr(map.map, HdMaterialTerminalTokens->volume);
+      const auto &map = value.UncheckedGet<HdMaterialNetworkMap>();
+      const auto *surfaceNetwork = TfMapLookupPtr(map.map, HdMaterialTerminalTokens->surface);
+      const auto *displacementNetwork = TfMapLookupPtr(map.map, HdMaterialTerminalTokens->displacement);
+      const auto *volumeNetwork = TfMapLookupPtr(map.map, HdMaterialTerminalTokens->volume);
       SetNodesUnused();
       auto readNetwork = [&](const HdMaterialNetwork *network, bool isDisplacement) -> AtNode * {
         if (network == nullptr) {
@@ -503,12 +500,12 @@ void HdArnoldMaterial::Sync(HdSceneDelegate *sceneDelegate,
         _RemapNetwork(remappedNetwork, isDisplacement);
         return ReadMaterialNetwork(remappedNetwork);
       };
-      surfaceEntry      = readNetwork(surfaceNetwork, false);
+      surfaceEntry = readNetwork(surfaceNetwork, false);
       displacementEntry = readNetwork(displacementNetwork, true);
-      volumeEntry       = readNetwork(volumeNetwork, false);
+      volumeEntry = readNetwork(volumeNetwork, false);
       ClearUnusedNodes(surfaceEntry, displacementEntry, volumeEntry);
     }
-    _surface      = surfaceEntry == nullptr ? _renderDelegate->GetFallbackShader() : surfaceEntry;
+    _surface = surfaceEntry == nullptr ? _renderDelegate->GetFallbackShader() : surfaceEntry;
     _displacement = displacementEntry;
     _volume = volumeEntry == nullptr ? _renderDelegate->GetFallbackVolumeShader() : volumeEntry;
     // We only mark the material dirty if one of the terminals have changed, but ignore the initial
@@ -519,7 +516,7 @@ void HdArnoldMaterial::Sync(HdSceneDelegate *sceneDelegate,
       }
     }
   }
-  *dirtyBits     = HdMaterial::Clean;
+  *dirtyBits = HdMaterial::Clean;
   _wasSyncedOnce = true;
 }
 
@@ -582,7 +579,7 @@ AtNode *HdArnoldMaterial::ReadMaterialNetwork(const HdMaterialNetwork &network)
     bool useInputName = false;
     if (relationship.inputName.size() == 1) {
       const auto *inputNodeEntry = AiNodeGetNodeEntry(inputNode);
-      auto inputType             = AiNodeEntryGetOutputType(inputNodeEntry);
+      auto inputType = AiNodeEntryGetOutputType(inputNodeEntry);
       if (relationship.inputName == _tokens->x || relationship.inputName == _tokens->y) {
         useInputName = (inputType == AI_TYPE_VECTOR || inputType == AI_TYPE_VECTOR2);
       }
@@ -598,10 +595,8 @@ AtNode *HdArnoldMaterial::ReadMaterialNetwork(const HdMaterialNetwork &network)
       }
     }
     if (useInputName) {
-      AiNodeLinkOutput(inputNode,
-                       relationship.inputName.GetText(),
-                       outputNode,
-                       relationship.outputName.GetText());
+      AiNodeLinkOutput(
+        inputNode, relationship.inputName.GetText(), outputNode, relationship.outputName.GetText());
     }
     else {
       AiNodeLink(inputNode, relationship.outputName.GetText(), outputNode);
@@ -617,9 +612,7 @@ AtNode *HdArnoldMaterial::ReadMaterial(const HdMaterialNode &material)
   const auto *nodeTypeStr = material.identifier.GetText();
   const AtString nodeType(strncmp(nodeTypeStr, "arnold:", 7) == 0 ? nodeTypeStr + 7 : nodeTypeStr);
   TF_DEBUG(HDARNOLD_MATERIAL)
-      .Msg("HdArnoldMaterial::ReadMaterial - node %s - type %s\n",
-           material.path.GetText(),
-           nodeType.c_str());
+    .Msg("HdArnoldMaterial::ReadMaterial - node %s - type %s\n", material.path.GetText(), nodeType.c_str());
   auto *ret = GetLocalNode(material.path, nodeType);
   if (Ai_unlikely(ret == nullptr)) {
     return nullptr;
@@ -631,7 +624,7 @@ AtNode *HdArnoldMaterial::ReadMaterial(const HdMaterialNode &material)
     const auto param = material.parameters.find(str::t_code);
     if (param != material.parameters.end()) {
       HdArnoldSetParameter(
-          ret, AiNodeEntryLookUpParameter(AiNodeGetNodeEntry(ret), str::code), param->second);
+        ret, AiNodeEntryLookUpParameter(AiNodeGetNodeEntry(ret), str::code), param->second);
     }
   }
   // We need to query the node entry AFTER setting the code parameter on the node.
@@ -677,8 +670,7 @@ AtNode *HdArnoldMaterial::GetLocalNode(const SdfPath &path, const AtString &node
   // render index around for longer times, like Maya to Hydra.
   if (nodeIt != _nodes.end()) {
     if (AiNodeEntryGetNameAtString(AiNodeGetNodeEntry(nodeIt->second.node)) != nodeType) {
-      TF_DEBUG(HDARNOLD_MATERIAL)
-          .Msg("  existing node found, but type mismatch - deleting old node\n");
+      TF_DEBUG(HDARNOLD_MATERIAL).Msg("  existing node found, but type mismatch - deleting old node\n");
       if (nodeIt->second.node != nullptr) {
         AiNodeDestroy(nodeIt->second.node);
       }
@@ -696,8 +688,7 @@ AtNode *HdArnoldMaterial::GetLocalNode(const SdfPath &path, const AtString &node
   auto *ret = AiNode(_renderDelegate->GetUniverse(), nodeType);
   _nodes.emplace(path, MaterialData{ret, true});
   if (ret == nullptr) {
-    TF_DEBUG(HDARNOLD_MATERIAL)
-        .Msg("  unable to create node of type %s - aborting\n", nodeType.c_str());
+    TF_DEBUG(HDARNOLD_MATERIAL).Msg("  unable to create node of type %s - aborting\n", nodeType.c_str());
     return nullptr;
   }
   const auto nodeName = GetLocalNodeName(path);

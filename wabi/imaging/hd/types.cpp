@@ -135,7 +135,7 @@ template<class T> static void const *_GetSingleData(VtValue const &v)
 {
   return &v.UncheckedGet<T>();
 }
-using GetDataFunc        = void const *(*)(VtValue const &);
+using GetDataFunc = void const *(*)(VtValue const &);
 using ValueDataGetterMap = std::unordered_map<std::type_index, GetDataFunc>;
 static inline ValueDataGetterMap _MakeValueDataGetterMap()
 {
@@ -146,15 +146,15 @@ static inline ValueDataGetterMap _MakeValueDataGetterMap()
   }
 
   return ValueDataGetterMap{
-      ELEM(GfHalf),     ELEM(GfMatrix3d), ELEM(GfMatrix3f),
-      ELEM(GfMatrix4d), ELEM(GfMatrix4f), ELEM(GfVec2d),
-      ELEM(GfVec2f),    ELEM(GfVec2h),    ELEM(GfVec2i),
-      ELEM(GfVec3d),    ELEM(GfVec3f),    ELEM(GfVec3h),
-      ELEM(GfVec3i),    ELEM(GfVec4d),    ELEM(GfVec4f),
-      ELEM(GfVec4h),    ELEM(GfVec4i),    ELEM(HdVec4f_2_10_10_10_REV),
-      ELEM(bool),       ELEM(char),       ELEM(double),
-      ELEM(float),      ELEM(int16_t),    ELEM(int32_t),
-      ELEM(uint16_t),   ELEM(uint32_t),   ELEM(unsigned char),
+    ELEM(GfHalf),     ELEM(GfMatrix3d), ELEM(GfMatrix3f),
+    ELEM(GfMatrix4d), ELEM(GfMatrix4f), ELEM(GfVec2d),
+    ELEM(GfVec2f),    ELEM(GfVec2h),    ELEM(GfVec2i),
+    ELEM(GfVec3d),    ELEM(GfVec3f),    ELEM(GfVec3h),
+    ELEM(GfVec3i),    ELEM(GfVec4d),    ELEM(GfVec4f),
+    ELEM(GfVec4h),    ELEM(GfVec4i),    ELEM(HdVec4f_2_10_10_10_REV),
+    ELEM(bool),       ELEM(char),       ELEM(double),
+    ELEM(float),      ELEM(int16_t),    ELEM(int32_t),
+    ELEM(uint16_t),   ELEM(uint32_t),   ELEM(unsigned char),
   };
 #undef ELEM
 }
@@ -162,7 +162,7 @@ static inline ValueDataGetterMap _MakeValueDataGetterMap()
 const void *HdGetValueData(const VtValue &value)
 {
   static ValueDataGetterMap const getterMap = _MakeValueDataGetterMap();
-  auto const iter                           = getterMap.find(value.GetTypeid());
+  auto const iter = getterMap.find(value.GetTypeid());
   if (ARCH_UNLIKELY(iter == getterMap.end())) {
     return nullptr;
   }
@@ -173,33 +173,33 @@ using TupleTypeMap = std::unordered_map<std::type_index, HdType>;
 static inline TupleTypeMap _MakeTupleTypeMap()
 {
   return TupleTypeMap{
-      {typeid(GfHalf), HdTypeHalfFloat},
-      {typeid(GfMatrix3d), HdTypeDoubleMat3},
-      {typeid(GfMatrix3f), HdTypeFloatMat3},
-      {typeid(GfMatrix4d), HdTypeDoubleMat4},
-      {typeid(GfMatrix4f), HdTypeFloatMat4},
-      {typeid(GfVec2d), HdTypeDoubleVec2},
-      {typeid(GfVec2f), HdTypeFloatVec2},
-      {typeid(GfVec2h), HdTypeHalfFloatVec2},
-      {typeid(GfVec2i), HdTypeInt32Vec2},
-      {typeid(GfVec3d), HdTypeDoubleVec3},
-      {typeid(GfVec3f), HdTypeFloatVec3},
-      {typeid(GfVec3h), HdTypeHalfFloatVec3},
-      {typeid(GfVec3i), HdTypeInt32Vec3},
-      {typeid(GfVec4d), HdTypeDoubleVec4},
-      {typeid(GfVec4f), HdTypeFloatVec4},
-      {typeid(GfVec4h), HdTypeHalfFloatVec4},
-      {typeid(GfVec4i), HdTypeInt32Vec4},
-      {typeid(HdVec4f_2_10_10_10_REV), HdTypeInt32_2_10_10_10_REV},
-      {typeid(bool), HdTypeBool},
-      {typeid(char), HdTypeInt8},
-      {typeid(double), HdTypeDouble},
-      {typeid(float), HdTypeFloat},
-      {typeid(int16_t), HdTypeInt16},
-      {typeid(int32_t), HdTypeInt32},
-      {typeid(uint16_t), HdTypeUInt16},
-      {typeid(uint32_t), HdTypeUInt32},
-      {typeid(unsigned char), HdTypeUInt8},
+    {typeid(GfHalf), HdTypeHalfFloat},
+    {typeid(GfMatrix3d), HdTypeDoubleMat3},
+    {typeid(GfMatrix3f), HdTypeFloatMat3},
+    {typeid(GfMatrix4d), HdTypeDoubleMat4},
+    {typeid(GfMatrix4f), HdTypeFloatMat4},
+    {typeid(GfVec2d), HdTypeDoubleVec2},
+    {typeid(GfVec2f), HdTypeFloatVec2},
+    {typeid(GfVec2h), HdTypeHalfFloatVec2},
+    {typeid(GfVec2i), HdTypeInt32Vec2},
+    {typeid(GfVec3d), HdTypeDoubleVec3},
+    {typeid(GfVec3f), HdTypeFloatVec3},
+    {typeid(GfVec3h), HdTypeHalfFloatVec3},
+    {typeid(GfVec3i), HdTypeInt32Vec3},
+    {typeid(GfVec4d), HdTypeDoubleVec4},
+    {typeid(GfVec4f), HdTypeFloatVec4},
+    {typeid(GfVec4h), HdTypeHalfFloatVec4},
+    {typeid(GfVec4i), HdTypeInt32Vec4},
+    {typeid(HdVec4f_2_10_10_10_REV), HdTypeInt32_2_10_10_10_REV},
+    {typeid(bool), HdTypeBool},
+    {typeid(char), HdTypeInt8},
+    {typeid(double), HdTypeDouble},
+    {typeid(float), HdTypeFloat},
+    {typeid(int16_t), HdTypeInt16},
+    {typeid(int32_t), HdTypeInt32},
+    {typeid(uint16_t), HdTypeUInt16},
+    {typeid(uint32_t), HdTypeUInt32},
+    {typeid(unsigned char), HdTypeUInt8},
   };
 }
 

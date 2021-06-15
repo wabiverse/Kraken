@@ -31,7 +31,7 @@
 WABI_NAMESPACE_BEGIN
 
 PcpDynamicFileFormatDependencyData::PcpDynamicFileFormatDependencyData(
-    const PcpDynamicFileFormatDependencyData &other)
+  const PcpDynamicFileFormatDependencyData &other)
 {
   // Have to copy the contents of the unique pointer if it's non-null.
   if (other._data) {
@@ -40,9 +40,9 @@ PcpDynamicFileFormatDependencyData::PcpDynamicFileFormatDependencyData(
 }
 
 void PcpDynamicFileFormatDependencyData::AddDependencyContext(
-    const PcpDynamicFileFormatInterface *dynamicFileFormat,
-    VtValue &&dependencyContextData,
-    TfToken::Set &&composedFieldNames)
+  const PcpDynamicFileFormatInterface *dynamicFileFormat,
+  VtValue &&dependencyContextData,
+  TfToken::Set &&composedFieldNames)
 {
   // Create the data now if it was empty before this call..
   if (!_data) {
@@ -56,7 +56,7 @@ void PcpDynamicFileFormatDependencyData::AddDependencyContext(
 }
 
 void PcpDynamicFileFormatDependencyData::AppendDependencyData(
-    PcpDynamicFileFormatDependencyData &&dependencyData)
+  PcpDynamicFileFormatDependencyData &&dependencyData)
 {
   if (!dependencyData._data) {
     return;
@@ -77,9 +77,9 @@ void PcpDynamicFileFormatDependencyData::AppendDependencyData(
 }
 
 bool PcpDynamicFileFormatDependencyData::CanFieldChangeAffectFileFormatArguments(
-    const TfToken &fieldName,
-    const VtValue &oldValue,
-    const VtValue &newValue) const
+  const TfToken &fieldName,
+  const VtValue &oldValue,
+  const VtValue &newValue) const
 {
   if (!_data) {
     return false;
@@ -101,7 +101,7 @@ bool PcpDynamicFileFormatDependencyData::CanFieldChangeAffectFileFormatArguments
     // Return true if any context's file format can be affect by this
     // field change.
     if (contextData.first->CanFieldChangeAffectFileFormatArguments(
-            fieldName, oldValue, newValue, contextData.second)) {
+          fieldName, oldValue, newValue, contextData.second)) {
       return true;
     }
   }

@@ -185,10 +185,10 @@ class UsdRiSplineAPI : public UsdAPISchemaBase {
                           const TfToken &splineName,
                           const SdfValueTypeName &valuesTypeName,
                           bool doesDuplicateBSplineEndpoints)
-      : UsdAPISchemaBase(prim),
-        _splineName(splineName),
-        _valuesTypeName(valuesTypeName),
-        _duplicateBSplineEndpoints(doesDuplicateBSplineEndpoints)
+    : UsdAPISchemaBase(prim),
+      _splineName(splineName),
+      _valuesTypeName(valuesTypeName),
+      _duplicateBSplineEndpoints(doesDuplicateBSplineEndpoints)
   {}
 
   /// Construct a UsdRiSplineAPI with the given \p splineName on
@@ -197,10 +197,10 @@ class UsdRiSplineAPI : public UsdAPISchemaBase {
                           const TfToken &splineName,
                           const SdfValueTypeName &valuesTypeName,
                           bool doesDuplicateBSplineEndpoints)
-      : UsdAPISchemaBase(schemaObj.GetPrim()),
-        _splineName(splineName),
-        _valuesTypeName(valuesTypeName),
-        _duplicateBSplineEndpoints(doesDuplicateBSplineEndpoints)
+    : UsdAPISchemaBase(schemaObj.GetPrim()),
+      _splineName(splineName),
+      _valuesTypeName(valuesTypeName),
+      _duplicateBSplineEndpoints(doesDuplicateBSplineEndpoints)
   {}
 
   /// Returns true if this UsdRiSplineAPI is configured to ensure
@@ -241,7 +241,7 @@ class UsdRiSplineAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateInterpolationAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
   // --------------------------------------------------------------------- //
   // POSITIONS
@@ -262,7 +262,7 @@ class UsdRiSplineAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreatePositionsAttr(VtValue const &defaultValue = VtValue(),
-                                   bool writeSparsely          = false) const;
+                                   bool writeSparsely = false) const;
 
   // --------------------------------------------------------------------- //
   // VALUES
@@ -282,8 +282,7 @@ class UsdRiSplineAPI : public UsdAPISchemaBase {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateValuesAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateValuesAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
   /// \anchor UsdRiSplineAPI_Validation
   /// \name Spline Validation API

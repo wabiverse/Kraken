@@ -56,9 +56,9 @@ WABI_NAMESPACE_BEGIN
 ///
 class TraceCounterAccumulator : private TraceCollection::Visitor {
  public:
-  using CounterValues    = std::vector<std::pair<TraceEvent::TimeStamp, double>>;
+  using CounterValues = std::vector<std::pair<TraceEvent::TimeStamp, double>>;
   using CounterValuesMap = std::unordered_map<TfToken, CounterValues, TfToken::HashFunctor>;
-  using CounterMap       = std::unordered_map<TfToken, double, TfToken::HashFunctor>;
+  using CounterMap = std::unordered_map<TfToken, double, TfToken::HashFunctor>;
 
   /// Constructor.
   TraceCounterAccumulator() = default;
@@ -101,7 +101,7 @@ class TraceCounterAccumulator : private TraceCollection::Visitor {
   };
 
   using _CounterDeltaValues = std::multimap<TraceEvent::TimeStamp, _CounterValue>;
-  using _CounterDeltaMap    = std::map<TfToken, _CounterDeltaValues>;
+  using _CounterDeltaMap = std::map<TfToken, _CounterDeltaValues>;
 
   _CounterDeltaMap _counterDeltas;
   CounterValuesMap _counterValuesOverTime;

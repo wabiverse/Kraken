@@ -39,13 +39,12 @@ WABI_NAMESPACE_BEGIN
 class Hd_UnitTestNullRenderPass : public HdRenderPass {
  public:
   Hd_UnitTestNullRenderPass(HdRenderIndex *index, HdRprimCollection const &collection)
-      : HdRenderPass(index, collection)
+    : HdRenderPass(index, collection)
   {}
   virtual ~Hd_UnitTestNullRenderPass()
   {}
 
-  void _Execute(HdRenderPassStateSharedPtr const &renderPassState,
-                TfTokenVector const &renderTags) override
+  void _Execute(HdRenderPassStateSharedPtr const &renderPassState, TfTokenVector const &renderTags) override
   {}
 };
 

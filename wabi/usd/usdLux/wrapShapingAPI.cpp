@@ -54,9 +54,7 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateShapingFocusAttr(UsdLuxShapingAPI &self,
-                                            object defaultVal,
-                                            bool writeSparsely)
+static UsdAttribute _CreateShapingFocusAttr(UsdLuxShapingAPI &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateShapingFocusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                      writeSparsely);
@@ -66,8 +64,8 @@ static UsdAttribute _CreateShapingFocusTintAttr(UsdLuxShapingAPI &self,
                                                 object defaultVal,
                                                 bool writeSparsely)
 {
-  return self.CreateShapingFocusTintAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f), writeSparsely);
+  return self.CreateShapingFocusTintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
+                                         writeSparsely);
 }
 
 static UsdAttribute _CreateShapingConeAngleAttr(UsdLuxShapingAPI &self,
@@ -82,13 +80,11 @@ static UsdAttribute _CreateShapingConeSoftnessAttr(UsdLuxShapingAPI &self,
                                                    object defaultVal,
                                                    bool writeSparsely)
 {
-  return self.CreateShapingConeSoftnessAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateShapingConeSoftnessAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                            writeSparsely);
 }
 
-static UsdAttribute _CreateShapingIesFileAttr(UsdLuxShapingAPI &self,
-                                              object defaultVal,
-                                              bool writeSparsely)
+static UsdAttribute _CreateShapingIesFileAttr(UsdLuxShapingAPI &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateShapingIesFileAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
                                        writeSparsely);
@@ -98,16 +94,16 @@ static UsdAttribute _CreateShapingIesAngleScaleAttr(UsdLuxShapingAPI &self,
                                                     object defaultVal,
                                                     bool writeSparsely)
 {
-  return self.CreateShapingIesAngleScaleAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateShapingIesAngleScaleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                             writeSparsely);
 }
 
 static UsdAttribute _CreateShapingIesNormalizeAttr(UsdLuxShapingAPI &self,
                                                    object defaultVal,
                                                    bool writeSparsely)
 {
-  return self.CreateShapingIesNormalizeAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
+  return self.CreateShapingIesNormalizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                            writeSparsely);
 }
 
 static std::string _Repr(const UsdLuxShapingAPI &self)
@@ -125,64 +121,62 @@ void wrapUsdLuxShapingAPI()
   class_<This, bases<UsdAPISchemaBase>> cls("ShapingAPI");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Apply", &This::Apply, (arg("prim")))
-      .staticmethod("Apply")
+    .def("Apply", &This::Apply, (arg("prim")))
+    .staticmethod("Apply")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetShapingFocusAttr", &This::GetShapingFocusAttr)
-      .def("CreateShapingFocusAttr",
-           &_CreateShapingFocusAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetShapingFocusAttr", &This::GetShapingFocusAttr)
+    .def("CreateShapingFocusAttr",
+         &_CreateShapingFocusAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetShapingFocusTintAttr", &This::GetShapingFocusTintAttr)
-      .def("CreateShapingFocusTintAttr",
-           &_CreateShapingFocusTintAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetShapingFocusTintAttr", &This::GetShapingFocusTintAttr)
+    .def("CreateShapingFocusTintAttr",
+         &_CreateShapingFocusTintAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetShapingConeAngleAttr", &This::GetShapingConeAngleAttr)
-      .def("CreateShapingConeAngleAttr",
-           &_CreateShapingConeAngleAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetShapingConeAngleAttr", &This::GetShapingConeAngleAttr)
+    .def("CreateShapingConeAngleAttr",
+         &_CreateShapingConeAngleAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetShapingConeSoftnessAttr", &This::GetShapingConeSoftnessAttr)
-      .def("CreateShapingConeSoftnessAttr",
-           &_CreateShapingConeSoftnessAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetShapingConeSoftnessAttr", &This::GetShapingConeSoftnessAttr)
+    .def("CreateShapingConeSoftnessAttr",
+         &_CreateShapingConeSoftnessAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetShapingIesFileAttr", &This::GetShapingIesFileAttr)
-      .def("CreateShapingIesFileAttr",
-           &_CreateShapingIesFileAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetShapingIesFileAttr", &This::GetShapingIesFileAttr)
+    .def("CreateShapingIesFileAttr",
+         &_CreateShapingIesFileAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetShapingIesAngleScaleAttr", &This::GetShapingIesAngleScaleAttr)
-      .def("CreateShapingIesAngleScaleAttr",
-           &_CreateShapingIesAngleScaleAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetShapingIesAngleScaleAttr", &This::GetShapingIesAngleScaleAttr)
+    .def("CreateShapingIesAngleScaleAttr",
+         &_CreateShapingIesAngleScaleAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetShapingIesNormalizeAttr", &This::GetShapingIesNormalizeAttr)
-      .def("CreateShapingIesNormalizeAttr",
-           &_CreateShapingIesNormalizeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetShapingIesNormalizeAttr", &This::GetShapingIesNormalizeAttr)
+    .def("CreateShapingIesNormalizeAttr",
+         &_CreateShapingIesNormalizeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -213,21 +207,21 @@ namespace {
 WRAP_CUSTOM
 {
   _class.def(init<UsdShadeConnectableAPI>(arg("connectable")))
-      .def("ConnectableAPI", &UsdLuxShapingAPI::ConnectableAPI)
+    .def("ConnectableAPI", &UsdLuxShapingAPI::ConnectableAPI)
 
-      .def("CreateOutput", &UsdLuxShapingAPI::CreateOutput, (arg("name"), arg("type")))
-      .def("GetOutput", &UsdLuxShapingAPI::GetOutput, arg("name"))
-      .def("GetOutputs",
-           &UsdLuxShapingAPI::GetOutputs,
-           (arg("onlyAuthored") = true),
-           return_value_policy<TfPySequenceToList>())
+    .def("CreateOutput", &UsdLuxShapingAPI::CreateOutput, (arg("name"), arg("type")))
+    .def("GetOutput", &UsdLuxShapingAPI::GetOutput, arg("name"))
+    .def("GetOutputs",
+         &UsdLuxShapingAPI::GetOutputs,
+         (arg("onlyAuthored") = true),
+         return_value_policy<TfPySequenceToList>())
 
-      .def("CreateInput", &UsdLuxShapingAPI::CreateInput, (arg("name"), arg("type")))
-      .def("GetInput", &UsdLuxShapingAPI::GetInput, arg("name"))
-      .def("GetInputs",
-           &UsdLuxShapingAPI::GetInputs,
-           (arg("onlyAuthored") = true),
-           return_value_policy<TfPySequenceToList>());
+    .def("CreateInput", &UsdLuxShapingAPI::CreateInput, (arg("name"), arg("type")))
+    .def("GetInput", &UsdLuxShapingAPI::GetInput, arg("name"))
+    .def("GetInputs",
+         &UsdLuxShapingAPI::GetInputs,
+         (arg("onlyAuthored") = true),
+         return_value_policy<TfPySequenceToList>());
 }
 
 }  // namespace

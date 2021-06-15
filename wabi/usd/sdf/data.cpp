@@ -153,7 +153,7 @@ const VtValue *SdfData::_GetSpecTypeAndFieldValue(const SdfPath &path,
   }
   else {
     const _SpecData &spec = i->second;
-    *specType             = spec.specType;
+    *specType = spec.specType;
     for (auto const &f : spec.fields) {
       if (f.first == field) {
         return &f.second;
@@ -214,9 +214,7 @@ void SdfData::Set(const SdfPath &path, const TfToken &field, const VtValue &valu
   }
 }
 
-void SdfData::Set(const SdfPath &path,
-                  const TfToken &field,
-                  const SdfAbstractDataConstValue &value)
+void SdfData::Set(const SdfPath &path, const TfToken &field, const SdfAbstractDataConstValue &value)
 {
   TfAutoMallocTag2 tag("Sdf", "SdfData::Set");
 
@@ -243,8 +241,7 @@ VtValue *SdfData::_GetOrCreateFieldValue(const SdfPath &path, const TfToken &fie
     }
   }
 
-  spec.fields.emplace_back(
-      std::piecewise_construct, std::forward_as_tuple(field), std::forward_as_tuple());
+  spec.fields.emplace_back(std::piecewise_construct, std::forward_as_tuple(field), std::forward_as_tuple());
 
   return &spec.fields.back().second;
 }
@@ -356,7 +353,7 @@ static bool _GetBracketingTimeSamples(const std::set<double> &samples,
                                       double *tUpper)
 {
   return _GetBracketingTimeSamplesImpl(
-      samples, [](double t) { return t; }, time, tLower, tUpper);
+    samples, [](double t) { return t; }, time, tLower, tUpper);
 }
 
 static bool _GetBracketingTimeSamples(const SdfTimeSampleMap &samples,
@@ -365,11 +362,7 @@ static bool _GetBracketingTimeSamples(const SdfTimeSampleMap &samples,
                                       double *tUpper)
 {
   return _GetBracketingTimeSamplesImpl(
-      samples,
-      [](SdfTimeSampleMap::value_type const &p) { return p.first; },
-      time,
-      tLower,
-      tUpper);
+    samples, [](SdfTimeSampleMap::value_type const &p) { return p.first; }, time, tLower, tUpper);
 }
 
 bool SdfData::GetBracketingTimeSamples(double time, double *tLower, double *tUpper) const
@@ -405,7 +398,7 @@ bool SdfData::QueryTimeSample(const SdfPath &path, double time, VtValue *value) 
   const VtValue *fval = _GetFieldValue(path, SdfDataTokens->TimeSamples);
   if (fval && fval->IsHolding<SdfTimeSampleMap>()) {
     auto const &tsmap = fval->UncheckedGet<SdfTimeSampleMap>();
-    auto iter         = tsmap.find(time);
+    auto iter = tsmap.find(time);
     if (iter != tsmap.end()) {
       if (value)
         *value = iter->second;
@@ -420,7 +413,7 @@ bool SdfData::QueryTimeSample(const SdfPath &path, double time, SdfAbstractDataV
   const VtValue *fval = _GetFieldValue(path, SdfDataTokens->TimeSamples);
   if (fval && fval->IsHolding<SdfTimeSampleMap>()) {
     auto const &tsmap = fval->UncheckedGet<SdfTimeSampleMap>();
-    auto iter         = tsmap.find(time);
+    auto iter = tsmap.find(time);
     if (iter != tsmap.end()) {
       return !value || value->StoreValue(iter->second);
     }

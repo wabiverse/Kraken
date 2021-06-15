@@ -14,7 +14,7 @@ void PrintAvalancheDiagram(int x, int y, int reps, double scale, int *bins)
       int bin = bins[k + (j * y)];
 
       double b = double(bin) / double(reps);
-      b        = fabs(b * 2 - 1);
+      b = fabs(b * 2 - 1);
 
       b *= scale;
 

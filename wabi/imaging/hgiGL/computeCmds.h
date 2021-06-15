@@ -83,9 +83,9 @@ class HgiGLComputeCmds final : public HgiComputeCmds {
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
-  HgiGLComputeCmds()        = delete;
+  HgiGLComputeCmds() = delete;
   HgiGLComputeCmds &operator=(const HgiGLComputeCmds &) = delete;
-  HgiGLComputeCmds(const HgiGLComputeCmds &)            = delete;
+  HgiGLComputeCmds(const HgiGLComputeCmds &) = delete;
 
   HgiGLOpsVector _ops;
   int _pushStack;

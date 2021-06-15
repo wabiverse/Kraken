@@ -78,8 +78,8 @@ class TraceDataBuffer {
   const char *StoreData(const char *str)
   {
     const size_t strLen = std::strlen(str) + 1;
-    void *mem           = _alloc.Allocate(alignof(char), strLen);
-    char *cstr          = reinterpret_cast<char *>(mem);
+    void *mem = _alloc.Allocate(alignof(char), strLen);
+    char *cstr = reinterpret_cast<char *>(mem);
     std::memcpy(cstr, str, strLen);
     return cstr;
   }
@@ -100,11 +100,11 @@ class TraceDataBuffer {
     void *Allocate(const size_t align, const size_t size)
     {
       Byte *alignedNext = AlignPointer(_next, align);
-      Byte *end         = alignedNext + size;
+      Byte *end = alignedNext + size;
       if (ARCH_UNLIKELY(end > _blockEnd)) {
         AllocateBlock(align, size);
         alignedNext = AlignPointer(_next, align);
-        end         = _next + size;
+        end = _next + size;
       }
       _next = end;
       return alignedNext;
@@ -122,8 +122,8 @@ class TraceDataBuffer {
     TRACE_API void AllocateBlock(const size_t align, const size_t desiredSize);
 
     Byte *_blockEnd = nullptr;
-    Byte *_next     = nullptr;
-    using BlockPtr  = std::unique_ptr<Byte[]>;
+    Byte *_next = nullptr;
+    using BlockPtr = std::unique_ptr<Byte[]>;
     std::deque<BlockPtr> _blocks;
     size_t _desiredBlockSize;
   };

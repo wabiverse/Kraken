@@ -98,8 +98,8 @@ struct Vt_DefaultValueHolder {
 
  private:
   Vt_DefaultValueHolder(TfAnyUniquePtr &&ptr, std::type_info const &type)
-      : _ptr(std::move(ptr)),
-        _type(&type)
+    : _ptr(std::move(ptr)),
+      _type(&type)
   {}
 
   TfAnyUniquePtr _ptr;
@@ -171,9 +171,9 @@ template<class T> struct Vt_ValueGetStored : Vt_ValueStoredType<std::decay_t<T>>
 /// themselves.  This includes VtArray, even VtArray<T> for T in scalar types
 /// that are range-checked when held singly.
 class VtValue {
-  static const unsigned int _LocalFlag       = 1 << 0;
+  static const unsigned int _LocalFlag = 1 << 0;
   static const unsigned int _TrivialCopyFlag = 1 << 1;
-  static const unsigned int _ProxyFlag       = 1 << 2;
+  static const unsigned int _ProxyFlag = 1 << 2;
 
   template<class T> struct _Counted {
     explicit _Counted(T const &obj) : _obj(obj)
@@ -215,48 +215,47 @@ class VtValue {
   // space).
   static const size_t _MaxLocalSize = sizeof(void *);
   typedef std::aligned_storage<
-      /* size */ _MaxLocalSize,
-      /* alignment */ _MaxLocalSize>::type _Storage;
+    /* size */ _MaxLocalSize,
+    /* alignment */ _MaxLocalSize>::type _Storage;
 
   template<class T>
-  using _IsTriviallyCopyable = std::integral_constant<
-      bool,
-      boost::has_trivial_constructor<T>::value && boost::has_trivial_copy<T>::value &&
-          boost::has_trivial_assign<T>::value && boost::has_trivial_destructor<T>::value>;
+  using _IsTriviallyCopyable =
+    std::integral_constant<bool,
+                           boost::has_trivial_constructor<T>::value && boost::has_trivial_copy<T>::value &&
+                             boost::has_trivial_assign<T>::value && boost::has_trivial_destructor<T>::value>;
 
   // Metafunction that returns true if T should be stored locally, false if it
   // should be stored remotely.
   template<class T>
   using _UsesLocalStore = std::integral_constant<
-      bool,
-      (sizeof(T) <= sizeof(_Storage)) && VtValueTypeHasCheapCopy<T>::value &&
-          std::is_nothrow_move_constructible<T>::value &&
-          std::is_nothrow_move_assignable<T>::value>;
+    bool,
+    (sizeof(T) <= sizeof(_Storage)) && VtValueTypeHasCheapCopy<T>::value &&
+      std::is_nothrow_move_constructible<T>::value && std::is_nothrow_move_assignable<T>::value>;
 
   // Type information base class.
   struct _TypeInfo {
    private:
-    using _CopyInitFunc    = void (*)(_Storage const &, _Storage &);
-    using _DestroyFunc     = void (*)(_Storage &);
-    using _MoveFunc        = void (*)(_Storage &, _Storage &);
-    using _CanHashFunc     = bool (*)(_Storage const &);
-    using _HashFunc        = size_t (*)(_Storage const &);
-    using _EqualFunc       = bool (*)(_Storage const &, _Storage const &);
-    using _EqualPtrFunc    = bool (*)(_Storage const &, void const *);
+    using _CopyInitFunc = void (*)(_Storage const &, _Storage &);
+    using _DestroyFunc = void (*)(_Storage &);
+    using _MoveFunc = void (*)(_Storage &, _Storage &);
+    using _CanHashFunc = bool (*)(_Storage const &);
+    using _HashFunc = size_t (*)(_Storage const &);
+    using _EqualFunc = bool (*)(_Storage const &, _Storage const &);
+    using _EqualPtrFunc = bool (*)(_Storage const &, void const *);
     using _MakeMutableFunc = void (*)(_Storage &);
 #ifdef WITH_PYTHON
     using _GetPyObjFunc = TfPyObjWrapper (*)(_Storage const &);
 #endif  // WITH_PYTHON
-    using _StreamOutFunc           = std::ostream &(*)(_Storage const &, std::ostream &);
-    using _GetTypeidFunc           = std::type_info const &(*)(_Storage const &);
-    using _IsArrayValuedFunc       = bool (*)(_Storage const &);
-    using _GetElementTypeidFunc    = std::type_info const &(*)(_Storage const &);
-    using _GetShapeDataFunc        = const Vt_ShapeData *(*)(_Storage const &);
-    using _GetNumElementsFunc      = size_t (*)(_Storage const &);
-    using _ProxyHoldsTypeFunc      = bool (*)(_Storage const &, std::type_info const &);
-    using _GetProxiedTypeFunc      = TfType (*)(_Storage const &);
-    using _GetProxiedTypeidFunc    = std::type_info const &(*)(_Storage const &);
-    using _GetProxiedObjPtrFunc    = void const *(*)(_Storage const &);
+    using _StreamOutFunc = std::ostream &(*)(_Storage const &, std::ostream &);
+    using _GetTypeidFunc = std::type_info const &(*)(_Storage const &);
+    using _IsArrayValuedFunc = bool (*)(_Storage const &);
+    using _GetElementTypeidFunc = std::type_info const &(*)(_Storage const &);
+    using _GetShapeDataFunc = const Vt_ShapeData *(*)(_Storage const &);
+    using _GetNumElementsFunc = size_t (*)(_Storage const &);
+    using _ProxyHoldsTypeFunc = bool (*)(_Storage const &, std::type_info const &);
+    using _GetProxiedTypeFunc = TfType (*)(_Storage const &);
+    using _GetProxiedTypeidFunc = std::type_info const &(*)(_Storage const &);
+    using _GetProxiedObjPtrFunc = void const *(*)(_Storage const &);
     using _GetProxiedAsVtValueFunc = VtValue (*)(_Storage const &);
 
    protected:
@@ -287,37 +286,37 @@ class VtValue {
                         _GetProxiedTypeidFunc getProxiedTypeid,
                         _GetProxiedObjPtrFunc getProxiedObjPtr,
                         _GetProxiedAsVtValueFunc getProxiedAsVtValue)
-        : typeInfo(ti),
-          elementTypeInfo(elementTi),
-          isProxy(isProxy),
-          isArray(isArray),
-          isHashable(isHashable)
-          // Function table
-          ,
-          _copyInit(copyInit),
-          _destroy(destroy),
-          _move(move),
-          _canHash(canHash),
-          _hash(hash),
-          _equal(equal),
-          _equalPtr(equalPtr),
-          _makeMutable(makeMutable)
+      : typeInfo(ti),
+        elementTypeInfo(elementTi),
+        isProxy(isProxy),
+        isArray(isArray),
+        isHashable(isHashable)
+        // Function table
+        ,
+        _copyInit(copyInit),
+        _destroy(destroy),
+        _move(move),
+        _canHash(canHash),
+        _hash(hash),
+        _equal(equal),
+        _equalPtr(equalPtr),
+        _makeMutable(makeMutable)
 #ifdef WITH_PYTHON
-          ,
-          _getPyObj(getPyObj)
+        ,
+        _getPyObj(getPyObj)
 #endif  // WITH_PYTHON
-          ,
-          _streamOut(streamOut),
-          _getTypeid(getTypeid),
-          _isArrayValued(isArrayValued),
-          _getElementTypeid(getElementTypeid),
-          _getShapeData(getShapeData),
-          _getNumElements(getNumElements),
-          _proxyHoldsType(proxyHoldsType),
-          _getProxiedType(getProxiedType),
-          _getProxiedTypeid(getProxiedTypeid),
-          _getProxiedObjPtr(getProxiedObjPtr),
-          _getProxiedAsVtValue(getProxiedAsVtValue)
+        ,
+        _streamOut(streamOut),
+        _getTypeid(getTypeid),
+        _isArrayValued(isArrayValued),
+        _getElementTypeid(getElementTypeid),
+        _getShapeData(getShapeData),
+        _getNumElements(getNumElements),
+        _proxyHoldsType(proxyHoldsType),
+        _getProxiedType(getProxiedType),
+        _getProxiedTypeid(getProxiedTypeid),
+        _getProxiedObjPtr(getProxiedObjPtr),
+        _getProxiedAsVtValue(getProxiedAsVtValue)
     {}
 
    public:
@@ -452,8 +451,7 @@ class VtValue {
       return typeid(void);
     }
   };
-  template<class Array>
-  struct _ArrayHelper<Array, typename std::enable_if<VtIsArray<Array>::value>::type> {
+  template<class Array> struct _ArrayHelper<Array, typename std::enable_if<VtIsArray<Array>::value>::type> {
     static const Vt_ShapeData *GetShapeData(Array const &obj)
     {
       return obj._GetShapeData();
@@ -564,8 +562,7 @@ class VtValue {
   };
 
   template<class ErasedProxy>
-  struct _ProxyHelper<ErasedProxy,
-                      typename std::enable_if<VtIsErasedValueProxy<ErasedProxy>::value>::type> {
+  struct _ProxyHelper<ErasedProxy, typename std::enable_if<VtIsErasedValueProxy<ErasedProxy>::value>::type> {
     static bool CanHash(ErasedProxy const &proxy)
     {
       return VtGetErasedProxiedVtValue(proxy)->CanHash();
@@ -638,47 +635,47 @@ class VtValue {
   // _LocalTypeInfo and _RemoteTypeInfo types derive.  It wraps their
   // type-specific implementations with type-generic interfaces.
   template<class T, class Container, class Derived> struct _TypeInfoImpl : public _TypeInfo {
-    static const bool IsLocal        = _UsesLocalStore<T>::value;
+    static const bool IsLocal = _UsesLocalStore<T>::value;
     static const bool HasTrivialCopy = _IsTriviallyCopyable<T>::value;
-    static const bool IsProxy        = VtIsValueProxy<T>::value;
+    static const bool IsProxy = VtIsValueProxy<T>::value;
 
     using ProxyHelper = _ProxyHelper<T>;
 
     using This = _TypeInfoImpl;
 
     constexpr _TypeInfoImpl()
-        : _TypeInfo(typeid(T),
-                    _ArrayHelper<T>::GetElementTypeid(),
-                    VtIsArray<T>::value,
-                    VtIsHashable<T>(),
-                    IsProxy,
-                    &This::_CopyInit,
-                    &This::_Destroy,
-                    &This::_Move,
-                    &This::_CanHash,
-                    &This::_Hash,
-                    &This::_Equal,
-                    &This::_EqualPtr,
-                    &This::_MakeMutable,
+      : _TypeInfo(typeid(T),
+                  _ArrayHelper<T>::GetElementTypeid(),
+                  VtIsArray<T>::value,
+                  VtIsHashable<T>(),
+                  IsProxy,
+                  &This::_CopyInit,
+                  &This::_Destroy,
+                  &This::_Move,
+                  &This::_CanHash,
+                  &This::_Hash,
+                  &This::_Equal,
+                  &This::_EqualPtr,
+                  &This::_MakeMutable,
 #ifdef WITH_PYTHON
-                    &This::_GetPyObj,
+                  &This::_GetPyObj,
 #endif  // WITH_PYTHON
-                    &This::_StreamOut,
+                  &This::_StreamOut,
 
-                    &This::_GetTypeid,
+                  &This::_GetTypeid,
 
-                    // Array support.
-                    &This::_IsArrayValued,
-                    &This::_GetElementTypeid,
-                    &This::_GetShapeData,
-                    &This::_GetNumElements,
+                  // Array support.
+                  &This::_IsArrayValued,
+                  &This::_GetElementTypeid,
+                  &This::_GetShapeData,
+                  &This::_GetNumElements,
 
-                    // Proxy support.
-                    &This::_ProxyHoldsType,
-                    &This::_GetProxiedType,
-                    &This::_GetProxiedTypeid,
-                    &This::_GetProxiedObjPtr,
-                    &This::_GetProxiedAsVtValue)
+                  // Proxy support.
+                  &This::_ProxyHoldsType,
+                  &This::_GetProxiedType,
+                  &This::_GetProxiedTypeid,
+                  &This::_GetProxiedObjPtr,
+                  &This::_GetProxiedAsVtValue)
     {}
 
     ////////////////////////////////////////////////////////////////////
@@ -699,8 +696,7 @@ class VtValue {
     }
 
    private:
-    static_assert(sizeof(Container) <= sizeof(_Storage),
-                  "Container size cannot exceed storage size.");
+    static_assert(sizeof(Container) <= sizeof(_Storage), "Container size cannot exceed storage size.");
 
     ////////////////////////////////////////////////////////////////////
     // _TypeInfo interface function implementations.
@@ -863,8 +859,7 @@ class VtValue {
                                          boost::intrusive_ptr<_Counted<T>>,  // container
                                          _RemoteTypeInfo<T>                  // CRTP
                                          > {
-    constexpr _RemoteTypeInfo()
-        : _TypeInfoImpl<T, boost::intrusive_ptr<_Counted<T>>, _RemoteTypeInfo<T>>()
+    constexpr _RemoteTypeInfo() : _TypeInfoImpl<T, boost::intrusive_ptr<_Counted<T>>, _RemoteTypeInfo<T>>()
     {}
 
     typedef boost::intrusive_ptr<_Counted<T>> Ptr;
@@ -889,8 +884,7 @@ class VtValue {
   // Metafunction that returns the specific _TypeInfo subclass for T.
   template<class T> struct _TypeInfoFor {
     // return _UsesLocalStore(T) ? _LocalTypeInfo<T> : _RemoteTypeInfo<T>;
-    typedef std::conditional_t<_UsesLocalStore<T>::value, _LocalTypeInfo<T>, _RemoteTypeInfo<T>>
-        Type;
+    typedef std::conditional_t<_UsesLocalStore<T>::value, _LocalTypeInfo<T>, _RemoteTypeInfo<T>> Type;
   };
 
   // Make sure char[N] is treated as a string.
@@ -918,9 +912,8 @@ class VtValue {
   friend struct _HoldAside;
   struct _HoldAside {
     explicit _HoldAside(VtValue *val)
-        : info((val->IsEmpty() || val->_IsLocalAndTriviallyCopyable()) ?
-                   static_cast<_TypeInfo const *>(NULL) :
-                   val->_info.Get())
+      : info((val->IsEmpty() || val->_IsLocalAndTriviallyCopyable()) ? static_cast<_TypeInfo const *>(NULL) :
+                                                                       val->_info.Get())
     {
       if (info)
         info->Move(val->_storage, storage);
@@ -943,8 +936,7 @@ class VtValue {
   }
 
   template<class T>
-  std::enable_if_t<!std::is_same<T, typename Vt_ValueGetStored<T>::Type>::value> _Init(
-      T const &obj)
+  std::enable_if_t<!std::is_same<T, typename Vt_ValueGetStored<T>::Type>::value> _Init(T const &obj)
   {
     _Init(typename Vt_ValueGetStored<T>::Type(obj));
   }
@@ -1026,8 +1018,7 @@ class VtValue {
 
 #ifndef doxygen
   template<class T>
-  inline std::enable_if_t<_TypeInfoFor<T>::Type::IsLocal && _TypeInfoFor<T>::Type::HasTrivialCopy,
-                          VtValue &>
+  inline std::enable_if_t<_TypeInfoFor<T>::Type::IsLocal && _TypeInfoFor<T>::Type::HasTrivialCopy, VtValue &>
   operator=(T obj)
   {
     _Clear();
@@ -1041,8 +1032,7 @@ class VtValue {
   template<class T> VtValue &operator=(T const &obj);
 #else
   template<class T>
-  std::enable_if_t<!_TypeInfoFor<T>::Type::IsLocal || !_TypeInfoFor<T>::Type::HasTrivialCopy,
-                   VtValue &>
+  std::enable_if_t<!_TypeInfoFor<T>::Type::IsLocal || !_TypeInfoFor<T>::Type::HasTrivialCopy, VtValue &>
   operator=(T const &obj)
   {
     _HoldAside tmp(this);
@@ -1109,8 +1099,7 @@ class VtValue {
   template<class T> void UncheckedSwap(T &rhs);
 #else
   template<class T>
-  std::enable_if_t<std::is_same<T, typename Vt_ValueGetStored<T>::Type>::value> UncheckedSwap(
-      T &rhs)
+  std::enable_if_t<std::is_same<T, typename Vt_ValueGetStored<T>::Type>::value> UncheckedSwap(T &rhs)
   {
     using std::swap;
     swap(_GetMutable<T>(), rhs);
@@ -1439,7 +1428,7 @@ class VtValue {
   template<class T> inline bool _TypeIs() const
   {
     std::type_info const &t = typeid(T);
-    bool cmp                = TfSafeTypeCompare(_info->typeInfo, t);
+    bool cmp = TfSafeTypeCompare(_info->typeInfo, t);
     return ARCH_UNLIKELY(_IsProxy() && !cmp) ? _TypeIsImpl(t) : cmp;
   }
 
@@ -1485,8 +1474,7 @@ class VtValue {
 
   // Helper invoked in case Get fails.  Reports an error and returns a default
   // value for \a queryType.
-  VT_API void const *_FailGet(Vt_DefaultValueHolder (*factory)(),
-                              std::type_info const &queryType) const;
+  VT_API void const *_FailGet(Vt_DefaultValueHolder (*factory)(), std::type_info const &queryType) const;
 
   inline void _Clear()
   {

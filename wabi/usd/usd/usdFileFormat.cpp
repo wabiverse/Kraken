@@ -96,12 +96,11 @@ static SdfFileFormatConstPtr _GetUnderlyingFileFormat(const SdfAbstractDataConst
 static SdfFileFormatConstPtr _GetDefaultFileFormat()
 {
   TfToken defaultFormatId(TfGetEnvSetting(USD_DEFAULT_FILE_FORMAT));
-  if (defaultFormatId != UsdUsdaFileFormatTokens->Id &&
-      defaultFormatId != UsdUsdcFileFormatTokens->Id) {
+  if (defaultFormatId != UsdUsdaFileFormatTokens->Id && defaultFormatId != UsdUsdcFileFormatTokens->Id) {
     TF_WARN(
-        "Default file format '%s' set in USD_DEFAULT_FILE_FORMAT "
-        "must be either 'usda' or 'usdc'. Falling back to 'usdc'",
-        defaultFormatId.GetText());
+      "Default file format '%s' set in USD_DEFAULT_FILE_FORMAT "
+      "must be either 'usda' or 'usdc'. Falling back to 'usdc'",
+      defaultFormatId.GetText());
     defaultFormatId = UsdUsdcFileFormatTokens->Id;
   }
 
@@ -122,8 +121,7 @@ static TfToken _GetFormatArgumentForFileFormat(const SdfFileFormatConstPtr &file
 }
 
 // Returns the file format associated with the given arguments, or nullptr.
-static SdfFileFormatConstPtr _GetFileFormatForArguments(
-    const SdfFileFormat::FileFormatArguments &args)
+static SdfFileFormatConstPtr _GetFileFormatForArguments(const SdfFileFormat::FileFormatArguments &args)
 {
   auto it = args.find(UsdUsdFileFormatTokens->FormatArg.GetString());
   if (it != args.end()) {
@@ -135,13 +133,13 @@ static SdfFileFormatConstPtr _GetFileFormatForArguments(
       return _GetFileFormat(UsdUsdcFileFormatTokens->Id);
     }
     TF_CODING_ERROR(
-        "'%s' argument was '%s', must be '%s' or '%s'. "
-        "Defaulting to '%s'.",
-        UsdUsdFileFormatTokens->FormatArg.GetText(),
-        format.c_str(),
-        UsdUsdaFileFormatTokens->Id.GetText(),
-        UsdUsdcFileFormatTokens->Id.GetText(),
-        _GetFormatArgumentForFileFormat(_GetDefaultFileFormat()).GetText());
+      "'%s' argument was '%s', must be '%s' or '%s'. "
+      "Defaulting to '%s'.",
+      UsdUsdFileFormatTokens->FormatArg.GetText(),
+      format.c_str(),
+      UsdUsdaFileFormatTokens->Id.GetText(),
+      UsdUsdcFileFormatTokens->Id.GetText(),
+      _GetFormatArgumentForFileFormat(_GetDefaultFileFormat()).GetText());
   }
   return TfNullPtr;
 }
@@ -154,10 +152,10 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 UsdUsdFileFormat::UsdUsdFileFormat()
-    : SdfFileFormat(UsdUsdFileFormatTokens->Id,
-                    UsdUsdFileFormatTokens->Version,
-                    UsdUsdFileFormatTokens->Target,
-                    UsdUsdFileFormatTokens->Id)
+  : SdfFileFormat(UsdUsdFileFormatTokens->Id,
+                  UsdUsdFileFormatTokens->Version,
+                  UsdUsdFileFormatTokens->Target,
+                  UsdUsdFileFormatTokens->Id)
 {}
 
 UsdUsdFileFormat::~UsdUsdFileFormat()
@@ -184,8 +182,8 @@ bool UsdUsdFileFormat::Read(SdfLayer *layer, const string &resolvedPath, bool me
 
   // Try binary usdc format first, since that's most common, then usda text.
   static auto formats = {
-      _GetFileFormat(UsdUsdcFileFormatTokens->Id),
-      _GetFileFormat(UsdUsdaFileFormatTokens->Id),
+    _GetFileFormat(UsdUsdcFileFormatTokens->Id),
+    _GetFileFormat(UsdUsdaFileFormatTokens->Id),
   };
 
   // Network-friendly path -- just try to read the file and if we get one that
@@ -242,9 +240,9 @@ bool UsdUsdFileFormat::WriteToFile(const SdfLayer &layer,
     // it does not follow symlinks. Hence, we use TfRealPath to determine
     // if the source and destination files are the same. If so, we know
     // we're saving the layer, not exporting it to a new location.
-    auto layerRealPath       = TfRealPath(layer.GetRealPath(),
+    auto layerRealPath = TfRealPath(layer.GetRealPath(),
                                     /* allowInaccessibleSuffix = */ true);
-    auto destRealPath        = TfRealPath(filePath, /* allowInaccessibleSuffix = */ true);
+    auto destRealPath = TfRealPath(filePath, /* allowInaccessibleSuffix = */ true);
     const bool isSavingLayer = (layerRealPath == destRealPath);
     if (isSavingLayer) {
       fileFormat = _GetUnderlyingFileFormatForLayer(layer);
@@ -270,12 +268,10 @@ bool UsdUsdFileFormat::WriteToString(const SdfLayer &layer,
   return _GetUnderlyingFileFormatForLayer(layer)->WriteToString(layer, str, comment);
 }
 
-bool UsdUsdFileFormat::WriteToStream(const SdfSpecHandle &spec,
-                                     std::ostream &out,
-                                     size_t indent) const
+bool UsdUsdFileFormat::WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const
 {
   return _GetUnderlyingFileFormatForLayer(*boost::get_pointer(spec->GetLayer()))
-      ->WriteToStream(spec, out, indent);
+    ->WriteToStream(spec, out, indent);
 }
 
 WABI_NAMESPACE_END

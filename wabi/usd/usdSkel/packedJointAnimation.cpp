@@ -55,8 +55,7 @@ UsdSkelPackedJointAnimation::~UsdSkelPackedJointAnimation()
 {}
 
 /* static */
-UsdSkelPackedJointAnimation UsdSkelPackedJointAnimation::Get(const UsdStagePtr &stage,
-                                                             const SdfPath &path)
+UsdSkelPackedJointAnimation UsdSkelPackedJointAnimation::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
   if (!stage) {
     TF_CODING_ERROR("Invalid stage");

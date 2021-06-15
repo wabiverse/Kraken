@@ -62,7 +62,7 @@ class Hd_SceneExtCompInputSource : public Hd_ExtCompInputSource {
   VtValue _value;
 
   // No copying, assignment or default construction.
-  Hd_SceneExtCompInputSource()                                   = delete;
+  Hd_SceneExtCompInputSource() = delete;
   Hd_SceneExtCompInputSource(const Hd_SceneExtCompInputSource &) = delete;
   Hd_SceneExtCompInputSource &operator=(const Hd_SceneExtCompInputSource &) = delete;
 };

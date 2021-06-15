@@ -57,9 +57,9 @@ class HgiGLComputePipeline final : public HgiComputePipeline {
   HgiGLComputePipeline(HgiComputePipelineDesc const &desc);
 
  private:
-  HgiGLComputePipeline()        = delete;
+  HgiGLComputePipeline() = delete;
   HgiGLComputePipeline &operator=(const HgiGLComputePipeline &) = delete;
-  HgiGLComputePipeline(const HgiGLComputePipeline &)            = delete;
+  HgiGLComputePipeline(const HgiGLComputePipeline &) = delete;
 };
 
 WABI_NAMESPACE_END

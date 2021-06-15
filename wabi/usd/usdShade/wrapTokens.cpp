@@ -49,19 +49,18 @@ class _WrapStaticToken {
 
 template<typename T> void _AddToken(T &cls, const char *name, const TfToken &token)
 {
-  cls.add_static_property(name,
-                          boost::python::make_function(
-                              _WrapStaticToken(&token),
-                              boost::python::return_value_policy<boost::python::return_by_value>(),
-                              boost::mpl::vector1<std::string>()));
+  cls.add_static_property(
+    name,
+    boost::python::make_function(_WrapStaticToken(&token),
+                                 boost::python::return_value_policy<boost::python::return_by_value>(),
+                                 boost::mpl::vector1<std::string>()));
 }
 
 }  // namespace
 
 void wrapUsdShadeTokens()
 {
-  boost::python::class_<UsdShadeTokensType, boost::noncopyable> cls("Tokens",
-                                                                    boost::python::no_init);
+  boost::python::class_<UsdShadeTokensType, boost::noncopyable> cls("Tokens", boost::python::no_init);
   _AddToken(cls, "allPurpose", UsdShadeTokens->allPurpose);
   _AddToken(cls, "bindMaterialAs", UsdShadeTokens->bindMaterialAs);
   _AddToken(cls, "coordSys", UsdShadeTokens->coordSys);

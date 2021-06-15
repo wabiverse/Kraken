@@ -53,9 +53,8 @@ static size_t __hash__(UsdStagePopulationMask const &self)
   return hash_value(self);
 }
 
-static std::pair<bool, std::vector<TfToken>> _GetIncludedChildNames(
-    UsdStagePopulationMask const &self,
-    SdfPath const &path)
+static std::pair<bool, std::vector<TfToken>> _GetIncludedChildNames(UsdStagePopulationMask const &self,
+                                                                    SdfPath const &path)
 {
   TfTokenVector names;
   const bool result = self.GetIncludedChildNames(path, &names);
@@ -67,70 +66,64 @@ static std::pair<bool, std::vector<TfToken>> _GetIncludedChildNames(
 void wrapUsdStagePopulationMask()
 {
   class_<UsdStagePopulationMask>("StagePopulationMask")
-      .def(init<std::vector<SdfPath>>())
+    .def(init<std::vector<SdfPath>>())
 
-      .def("All", &UsdStagePopulationMask::All)
-      .staticmethod("All")
+    .def("All", &UsdStagePopulationMask::All)
+    .staticmethod("All")
 
-      .def("Union", &UsdStagePopulationMask::Union)
-      .staticmethod("Union")
+    .def("Union", &UsdStagePopulationMask::Union)
+    .staticmethod("Union")
 
-      .def("GetUnion",
-           (UsdStagePopulationMask(UsdStagePopulationMask::*)(UsdStagePopulationMask const &)
-                const) &
-               UsdStagePopulationMask::GetUnion,
-           arg("other"))
-      .def("GetUnion",
-           (UsdStagePopulationMask(UsdStagePopulationMask::*)(SdfPath const &) const) &
-               UsdStagePopulationMask::GetUnion,
-           arg("path"))
+    .def("GetUnion",
+         (UsdStagePopulationMask(UsdStagePopulationMask::*)(UsdStagePopulationMask const &) const) &
+           UsdStagePopulationMask::GetUnion,
+         arg("other"))
+    .def("GetUnion",
+         (UsdStagePopulationMask(UsdStagePopulationMask::*)(SdfPath const &) const) &
+           UsdStagePopulationMask::GetUnion,
+         arg("path"))
 
-      .def("Intersection", &UsdStagePopulationMask::Intersection)
-      .staticmethod("Intersection")
+    .def("Intersection", &UsdStagePopulationMask::Intersection)
+    .staticmethod("Intersection")
 
-      .def("GetIntersection",
-           (UsdStagePopulationMask(UsdStagePopulationMask::*)(UsdStagePopulationMask const &)
-                const) &
-               UsdStagePopulationMask::GetIntersection,
-           arg("other"))
+    .def("GetIntersection",
+         (UsdStagePopulationMask(UsdStagePopulationMask::*)(UsdStagePopulationMask const &) const) &
+           UsdStagePopulationMask::GetIntersection,
+         arg("other"))
 
-      .def("Includes",
-           (bool (UsdStagePopulationMask::*)(UsdStagePopulationMask const &) const) &
-               UsdStagePopulationMask::Includes,
-           arg("other"))
-      .def("Includes",
-           (bool (UsdStagePopulationMask::*)(SdfPath const &) const) &
-               UsdStagePopulationMask::Includes,
-           arg("path"))
+    .def("Includes",
+         (bool (UsdStagePopulationMask::*)(UsdStagePopulationMask const &) const) &
+           UsdStagePopulationMask::Includes,
+         arg("other"))
+    .def("Includes",
+         (bool (UsdStagePopulationMask::*)(SdfPath const &) const) & UsdStagePopulationMask::Includes,
+         arg("path"))
 
-      .def("IncludesSubtree", &UsdStagePopulationMask::IncludesSubtree, arg("path"))
+    .def("IncludesSubtree", &UsdStagePopulationMask::IncludesSubtree, arg("path"))
 
-      .def("IsEmpty", &UsdStagePopulationMask::IsEmpty)
+    .def("IsEmpty", &UsdStagePopulationMask::IsEmpty)
 
-      .def("Add",
-           (UsdStagePopulationMask &
-            (UsdStagePopulationMask::*)(UsdStagePopulationMask const &other)) &
-               UsdStagePopulationMask::Add,
-           return_self<>())
+    .def("Add",
+         (UsdStagePopulationMask & (UsdStagePopulationMask::*)(UsdStagePopulationMask const &other)) &
+           UsdStagePopulationMask::Add,
+         return_self<>())
 
-      .def("Add",
-           (UsdStagePopulationMask & (UsdStagePopulationMask::*)(SdfPath const &path)) &
-               UsdStagePopulationMask::Add,
-           return_self<>())
+    .def("Add",
+         (UsdStagePopulationMask & (UsdStagePopulationMask::*)(SdfPath const &path)) &
+           UsdStagePopulationMask::Add,
+         return_self<>())
 
-      .def("GetIncludedChildNames",
-           &_GetIncludedChildNames,
-           arg("path"),
-           return_value_policy<TfPyPairToTuple>())
+    .def(
+      "GetIncludedChildNames", &_GetIncludedChildNames, arg("path"), return_value_policy<TfPyPairToTuple>())
 
-      .def("GetPaths", &UsdStagePopulationMask::GetPaths)
+    .def("GetPaths", &UsdStagePopulationMask::GetPaths)
 
-      .def(self == self)
-      .def(self != self)
+    .def(self == self)
+    .def(self != self)
 
-      .def("__str__", __str__)
-      .def("__repr__", __repr__)
-      .def("__hash__", __hash__)
+    .def("__str__", __str__)
+    .def("__repr__", __repr__)
+    .def("__hash__", __hash__)
 
-      ;
+    ;
 }

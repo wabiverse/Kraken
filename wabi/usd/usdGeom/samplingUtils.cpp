@@ -43,11 +43,11 @@ static bool _GetAttrForTransforms(const UsdAttribute &attr,
 
   if (baseTime.IsNumeric()) {
 
-    double sampleTimeValue      = 0.0;
+    double sampleTimeValue = 0.0;
     double sampleUpperTimeValue = 0.0;
     bool hasSamples;
     if (!attr.GetBracketingTimeSamples(
-            baseTime.GetValue(), &sampleTimeValue, &sampleUpperTimeValue, &hasSamples)) {
+          baseTime.GetValue(), &sampleTimeValue, &sampleUpperTimeValue, &hasSamples)) {
       return false;
     }
 
@@ -65,10 +65,10 @@ static bool _GetAttrForTransforms(const UsdAttribute &attr,
     // time sample values again
 
     if (GfIsClose(sampleTimeValue, sampleUpperTimeValue, std::numeric_limits<double>::epsilon())) {
-      double timeValueEpsilon     = baseTime.GetValue() + UsdTimeCode::SafeStep();
+      double timeValueEpsilon = baseTime.GetValue() + UsdTimeCode::SafeStep();
       UsdTimeCode baseTimeEpsilon = UsdTimeCode(timeValueEpsilon);
       if (!attr.GetBracketingTimeSamples(
-              baseTimeEpsilon.GetValue(), &sampleTimeValue, &sampleUpperTimeValue, &hasSamples)) {
+            baseTimeEpsilon.GetValue(), &sampleTimeValue, &sampleUpperTimeValue, &hasSamples)) {
         return false;
       }
     }
@@ -110,15 +110,12 @@ static bool _CheckSampleAlignment(bool attribute1HasSamples,
 {
   // boolean value indicating whether or not the bracketing time samples for
   // position and velocity are equivalent
-  bool bracketingTimeSamplesAligned = attribute1HasSamples &&
-                                      GfIsClose(attribute1LowerTimeValue,
-                                                attribute2LowerTimeValue,
-                                                std::numeric_limits<double>::epsilon()) &&
-                                      GfIsClose(attribute1UpperTimeValue,
-                                                attribute2UpperTimeValue,
-                                                std::numeric_limits<double>::epsilon());
+  bool bracketingTimeSamplesAligned =
+    attribute1HasSamples &&
+    GfIsClose(attribute1LowerTimeValue, attribute2LowerTimeValue, std::numeric_limits<double>::epsilon()) &&
+    GfIsClose(attribute1UpperTimeValue, attribute2UpperTimeValue, std::numeric_limits<double>::epsilon());
 
-  *alignmentValid    = true;
+  *alignmentValid = true;
   *attrCorrectLength = true;
 
   if (!bracketingTimeSamplesAligned || !GfIsClose(attribute1SampleTime.GetValue(),
@@ -184,7 +181,7 @@ bool UsdGeom_GetPositionsVelocitiesAndAccelerations(const UsdAttribute &position
 
   double velocitiesLowerTimeValue = 0.0;
   double velocitiesUpperTimeValue = 0.0;
-  bool velocitiesHasSamples       = true;
+  bool velocitiesHasSamples = true;
   bool velocitiesAlignmentValid;
   bool velocitiesCorrectLength;
 
@@ -209,8 +206,7 @@ bool UsdGeom_GetPositionsVelocitiesAndAccelerations(const UsdAttribute &position
                              &velocitiesAlignmentValid,
                              &velocitiesCorrectLength)) {
     if (!velocities->empty() && !velocitiesAlignmentValid) {
-      TF_WARN("%s -- velocity samples are not aligned with position samples",
-              prim.GetPath().GetText());
+      TF_WARN("%s -- velocity samples are not aligned with position samples", prim.GetPath().GetText());
     }
     if (!velocities->empty() && velocitiesAlignmentValid && !velocitiesCorrectLength) {
       TF_WARN("%s -- found [%zu] velocities, but expected [%zu]",
@@ -227,7 +223,7 @@ bool UsdGeom_GetPositionsVelocitiesAndAccelerations(const UsdAttribute &position
   UsdTimeCode accelerationsSampleTime;
   double accelerationsLowerTimeValue = 0.0;
   double accelerationsUpperTimeValue = 0.0;
-  bool accelerationsHasSamples       = true;
+  bool accelerationsHasSamples = true;
   bool accelerationsAlignmentValid;
   bool accelerationsCorrectLength;
 
@@ -253,8 +249,7 @@ bool UsdGeom_GetPositionsVelocitiesAndAccelerations(const UsdAttribute &position
                              &accelerationsAlignmentValid,
                              &accelerationsCorrectLength)) {
     if (!accelerations->empty() && !accelerationsAlignmentValid) {
-      TF_WARN("%s -- acceleration samples are not aligned with velocity samples",
-              prim.GetPath().GetText());
+      TF_WARN("%s -- acceleration samples are not aligned with velocity samples", prim.GetPath().GetText());
     }
     if (!accelerations->empty() && accelerationsAlignmentValid && !accelerationsCorrectLength) {
       TF_WARN("%s -- found [%zu] accelerations, but expected [%zu]",
@@ -284,7 +279,7 @@ bool UsdGeom_GetOrientationsAndAngularVelocities(const UsdAttribute &orientation
   UsdTimeCode orientationsSampleTime;
   double orientationsLowerTimeValue = 0.0;
   double orientationsUpperTimeValue = 0.0;
-  bool orientationsHasSamples       = true;
+  bool orientationsHasSamples = true;
 
   if (!_GetAttrForTransforms<VtQuathArray>(orientationsAttr,
                                            baseTime,
@@ -313,18 +308,17 @@ bool UsdGeom_GetOrientationsAndAngularVelocities(const UsdAttribute &orientation
 
   double angularVelocitiesLowerTimeValue = 0.0;
   double angularVelocitiesUpperTimeValue = 0.0;
-  bool angularVelocitiesHasSamples       = true;
+  bool angularVelocitiesHasSamples = true;
   bool angularVelocitiesAlignmentValid;
   bool angularVelocitiesCorrectLength;
 
-  if (!orientationsHasSamples ||
-      !_GetAttrForTransforms<VtVec3fArray>(angularVelocitiesAttr,
-                                           baseTime,
-                                           angularVelocitiesSampleTime,
-                                           &angularVelocitiesLowerTimeValue,
-                                           &angularVelocitiesUpperTimeValue,
-                                           &angularVelocitiesHasSamples,
-                                           angularVelocities)) {
+  if (!orientationsHasSamples || !_GetAttrForTransforms<VtVec3fArray>(angularVelocitiesAttr,
+                                                                      baseTime,
+                                                                      angularVelocitiesSampleTime,
+                                                                      &angularVelocitiesLowerTimeValue,
+                                                                      &angularVelocitiesUpperTimeValue,
+                                                                      &angularVelocitiesHasSamples,
+                                                                      angularVelocities)) {
     angularVelocities->clear();
   }
   if (!_CheckSampleAlignment(angularVelocitiesHasSamples,
@@ -342,8 +336,7 @@ bool UsdGeom_GetOrientationsAndAngularVelocities(const UsdAttribute &orientation
       TF_WARN("%s -- angular velocity samples are not aligned with orientation samples",
               prim.GetPath().GetText());
     }
-    if (!angularVelocities->empty() && angularVelocitiesAlignmentValid &&
-        !angularVelocitiesCorrectLength) {
+    if (!angularVelocities->empty() && angularVelocitiesAlignmentValid && !angularVelocitiesCorrectLength) {
       TF_WARN("%s -- found [%zu] angular velocities, but expected [%zu]",
               prim.GetPath().GetText(),
               angularVelocities->size(),
@@ -401,8 +394,7 @@ float UsdGeom_CalculateTimeDelta(const float velocityScale,
                                  const UsdTimeCode sampleTime,
                                  const double timeCodesPerSecond)
 {
-  return velocityScale *
-         static_cast<float>((time.GetValue() - sampleTime.GetValue()) / timeCodesPerSecond);
+  return velocityScale * static_cast<float>((time.GetValue() - sampleTime.GetValue()) / timeCodesPerSecond);
 }
 
 WABI_NAMESPACE_END

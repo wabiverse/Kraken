@@ -40,18 +40,18 @@ WABI_NAMESPACE_BEGIN
 
 class HdPhDrawItem;
 
-using HdPhBufferResourceSharedPtr   = std::shared_ptr<class HdPhBufferResource>;
+using HdPhBufferResourceSharedPtr = std::shared_ptr<class HdPhBufferResource>;
 using HdPhBufferArrayRangeSharedPtr = std::shared_ptr<class HdPhBufferArrayRange>;
 
-using HdPhShaderCodeSharedPtr       = std::shared_ptr<class HdPhShaderCode>;
+using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
 using HdPhShaderCodeSharedPtrVector = std::vector<HdPhShaderCodeSharedPtr>;
-using HdBindingRequestVector        = std::vector<class HdBindingRequest>;
+using HdBindingRequestVector = std::vector<class HdBindingRequest>;
 
 /// Suffixes appended to material param names for a binding name.
 ///
 #define HDPH_RESOURCE_BINDING_SUFFIX_TOKENS \
   ((fallback, "_fallback"))((samplingTransform, "_samplingTransform"))( \
-      (layout, "_layout"))((texture, "_texture"))((valid, "_valid"))
+    (layout, "_layout"))((texture, "_texture"))((valid, "_valid"))
 
 TF_DECLARE_PUBLIC_TOKENS(HdPh_ResourceBindingSuffixTokens, HDPH_RESOURCE_BINDING_SUFFIX_TOKENS);
 
@@ -153,10 +153,10 @@ class HdPh_ResourceBinder {
     // for a primvar in interleaved buffer array (Constant, ShaderData)
     struct StructEntry {
       StructEntry(TfToken const &name, TfToken const &dataType, int offset, int arraySize)
-          : name(name),
-            dataType(dataType),
-            offset(offset),
-            arraySize(arraySize)
+        : name(name),
+          dataType(dataType),
+          offset(offset),
+          arraySize(arraySize)
       {}
 
       TfToken name;
@@ -195,8 +195,8 @@ class HdPh_ResourceBinder {
       FvarPrimvar() : channel(0)
       {}
       FvarPrimvar(TfToken const &name, TfToken const &dataType, int channel)
-          : Primvar(name, dataType),
-            channel(channel)
+        : Primvar(name, dataType),
+          channel(channel)
       {}
       int channel;
     };
@@ -208,9 +208,9 @@ class HdPh_ResourceBinder {
       NestedPrimvar()
       {}
       NestedPrimvar(TfToken const &name, TfToken const &dataType, int level)
-          : name(name),
-            dataType(dataType),
-            level(level)
+        : name(name),
+          dataType(dataType),
+          level(level)
       {}
       TfToken name;
       TfToken dataType;
@@ -225,16 +225,16 @@ class HdPh_ResourceBinder {
       {}
       ShaderParameterAccessor(TfToken const &name,
                               TfToken const &dataType,
-                              std::string const &swizzle             = std::string(),
-                              TfTokenVector const &inPrimvars        = TfTokenVector(),
-                              bool const isPremultiplied             = false,
+                              std::string const &swizzle = std::string(),
+                              TfTokenVector const &inPrimvars = TfTokenVector(),
+                              bool const isPremultiplied = false,
                               bool const processTextureFallbackValue = false)
-          : name(name),
-            dataType(dataType),
-            swizzle(swizzle),
-            inPrimvars(inPrimvars),
-            isPremultiplied(isPremultiplied),
-            processTextureFallbackValue(processTextureFallbackValue)
+        : name(name),
+          dataType(dataType),
+          swizzle(swizzle),
+          inPrimvars(inPrimvars),
+          isPremultiplied(isPremultiplied),
+          processTextureFallbackValue(processTextureFallbackValue)
       {}
       TfToken name;                      // e.g. Kd
       TfToken dataType;                  // e.g. vec4
@@ -259,9 +259,9 @@ class HdPh_ResourceBinder {
       BindingDeclaration()
       {}
       BindingDeclaration(TfToken const &name, TfToken const &dataType, HdBinding binding)
-          : name(name),
-            dataType(dataType),
-            binding(binding)
+        : name(name),
+          dataType(dataType),
+          binding(binding)
       {}
       TfToken name;
       TfToken dataType;
@@ -347,11 +347,9 @@ class HdPh_ResourceBinder {
 
   /// bind/unbind interleaved buffer
   HDPH_API
-  void BindInterleavedBuffer(HdPhBufferArrayRangeSharedPtr const &constantBar,
-                             TfToken const &name) const;
+  void BindInterleavedBuffer(HdPhBufferArrayRangeSharedPtr const &constantBar, TfToken const &name) const;
   HDPH_API
-  void UnbindInterleavedBuffer(HdPhBufferArrayRangeSharedPtr const &constantBar,
-                               TfToken const &name) const;
+  void UnbindInterleavedBuffer(HdPhBufferArrayRangeSharedPtr const &constantBar, TfToken const &name) const;
 
   /// bind/unbind nested instance BufferArray
   HDPH_API
@@ -375,9 +373,7 @@ class HdPh_ResourceBinder {
                   int offset,
                   int level = -1) const;
   HDPH_API
-  void UnbindBuffer(TfToken const &name,
-                    HdPhBufferResourceSharedPtr const &resource,
-                    int level = -1) const;
+  void UnbindBuffer(TfToken const &name, HdPhBufferResourceSharedPtr const &resource, int level = -1) const;
 
   /// bind(update) a standalone uniform (unsigned int)
   HDPH_API

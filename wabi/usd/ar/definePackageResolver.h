@@ -80,7 +80,7 @@ template<class T> class Ar_PackageResolverFactory : public Ar_PackageResolverFac
 template<class PackageResolver, class... Bases> void Ar_DefinePackageResolver()
 {
   TfType::Define<PackageResolver, TfType::Bases<Bases...>>()
-      .template SetFactory<Ar_PackageResolverFactory<PackageResolver>>();
+    .template SetFactory<Ar_PackageResolverFactory<PackageResolver>>();
 }
 
 #endif  // doxygen

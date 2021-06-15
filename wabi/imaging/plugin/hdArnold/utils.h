@@ -51,10 +51,9 @@
 WABI_NAMESPACE_BEGIN
 
 constexpr unsigned int HD_ARNOLD_MAX_PRIMVAR_SAMPLES = 3;
-template<typename T>
-using HdArnoldSampledType            = HdTimeSampleArray<T, HD_ARNOLD_MAX_PRIMVAR_SAMPLES>;
-using HdArnoldSampledPrimvarType     = HdArnoldSampledType<VtValue>;
-using HdArnoldSampledMatrixType      = HdArnoldSampledType<GfMatrix4d>;
+template<typename T> using HdArnoldSampledType = HdTimeSampleArray<T, HD_ARNOLD_MAX_PRIMVAR_SAMPLES>;
+using HdArnoldSampledPrimvarType = HdArnoldSampledType<VtValue>;
+using HdArnoldSampledMatrixType = HdArnoldSampledType<GfMatrix4d>;
 using HdArnoldSampledMatrixArrayType = HdArnoldSampledType<VtMatrix4dArray>;
 
 using HdArnoldSubsets = std::vector<SdfPath>;
@@ -166,10 +165,7 @@ void HdArnoldSetConstantPrimvar(AtNode *node,
 /// @param role Role of the primvar.
 /// @param value Value of the primvar.
 HDARNOLD_API
-void HdArnoldSetUniformPrimvar(AtNode *node,
-                               const TfToken &name,
-                               const TfToken &role,
-                               const VtValue &value);
+void HdArnoldSetUniformPrimvar(AtNode *node, const TfToken &name, const TfToken &role, const VtValue &value);
 /// Sets a Uniform scope Primvar on an Arnold node from a Hydra Primitive.
 ///
 /// @param node Pointer to an Arnold Node.
@@ -188,10 +184,7 @@ void HdArnoldSetUniformPrimvar(AtNode *node,
 /// @param role Role of the primvar.
 /// @param value Value of the primvar.
 HDARNOLD_API
-void HdArnoldSetVertexPrimvar(AtNode *node,
-                              const TfToken &name,
-                              const TfToken &role,
-                              const VtValue &value);
+void HdArnoldSetVertexPrimvar(AtNode *node, const TfToken &name, const TfToken &role, const VtValue &value);
 /// Sets a Vertex scope Primvar on an Arnold node from a Hydra Primitive.
 ///
 /// @param node Pointer to an Arnold Node.
@@ -222,7 +215,7 @@ void HdArnoldSetFaceVaryingPrimvar(AtNode *node,
                                    const TfToken &role,
                                    const VtValue &value,
                                    const VtIntArray *vertexCounts = nullptr,
-                                   const size_t *vertexCountSum   = nullptr);
+                                   const size_t *vertexCountSum = nullptr);
 /// Sets a Face-Varying scope Primvar on an Arnold node from a Hydra Primitive. If @p vertexCounts
 /// is not a nullptr and it is not empty, it is used to reverse the order of the generated face
 /// vertex indices, to support left handed topologies. The total sum of the @p vertexCounts array
@@ -242,7 +235,7 @@ void HdArnoldSetFaceVaryingPrimvar(AtNode *node,
                                    HdSceneDelegate *sceneDelegate,
                                    const HdPrimvarDescriptor &primvarDesc,
                                    const VtIntArray *vertexCounts = nullptr,
-                                   const size_t *vertexCountSum   = nullptr);
+                                   const size_t *vertexCountSum = nullptr);
 /// Sets instance primvars on an instancer node.
 ///
 /// @param node Pointer to the Arnold instancer node.
@@ -299,7 +292,7 @@ void HdArnoldSetRadiusFromPrimvar(AtNode *node, const SdfPath &id, HdSceneDelega
 HDARNOLD_API
 AtArray *HdArnoldGenerateIdxs(unsigned int numIdxs,
                               const VtIntArray *vertexCounts = nullptr,
-                              const size_t *vertexCountSum   = nullptr);
+                              const size_t *vertexCountSum = nullptr);
 
 /// Struct storing the cached primvars.
 struct HdArnoldPrimvar {
@@ -313,10 +306,10 @@ struct HdArnoldPrimvar {
   /// @param _value Value to be stored for the primvar.
   /// @param _interpolation Interpolation type for the primvar.
   HdArnoldPrimvar(const VtValue &_value, const TfToken &_role, HdInterpolation _interpolation)
-      : value(_value),
-        role(_role),
-        interpolation(_interpolation),
-        dirtied(true)
+    : value(_value),
+      role(_role),
+      interpolation(_interpolation),
+      dirtied(true)
   {}
 
   bool NeedsUpdate()
@@ -383,8 +376,6 @@ void HdArnoldGetPrimvars(HdSceneDelegate *delegate,
 /// geometry subset. The ordering
 ///  of the materials matches the ordering of the shader indices in the returned array.
 /// @return Arnold array of uint8_t, with the shader indices for each face.
-AtArray *HdArnoldGetShidxs(const HdGeomSubsets &subsets,
-                           int numFaces,
-                           HdArnoldSubsets &arnoldSubsets);
+AtArray *HdArnoldGetShidxs(const HdGeomSubsets &subsets, int numFaces, HdArnoldSubsets &arnoldSubsets);
 
 WABI_NAMESPACE_END

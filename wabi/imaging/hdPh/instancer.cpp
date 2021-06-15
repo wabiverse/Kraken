@@ -34,13 +34,11 @@
 WABI_NAMESPACE_BEGIN
 
 HdPhInstancer::HdPhInstancer(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdInstancer(delegate, id),
-      _instancePrimvarNumElements(0)
+  : HdInstancer(delegate, id),
+    _instancePrimvarNumElements(0)
 {}
 
-void HdPhInstancer::Sync(HdSceneDelegate *sceneDelegate,
-                         HdRenderParam *renderParam,
-                         HdDirtyBits *dirtyBits)
+void HdPhInstancer::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -75,8 +73,7 @@ void HdPhInstancer::_SyncPrimvars(HdSceneDelegate *sceneDelegate, HdDirtyBits *d
         // Explicitly invoke the c'tor taking a
         // VtArray<GfMatrix4d> to ensure we properly convert to
         // the appropriate floating-point matrix type.
-        source.reset(
-            new HdVtBufferSource(primvar.name, value.UncheckedGet<VtArray<GfMatrix4d>>()));
+        source.reset(new HdVtBufferSource(primvar.name, value.UncheckedGet<VtArray<GfMatrix4d>>()));
       }
       else {
         source.reset(new HdVtBufferSource(primvar.name, value));
@@ -105,12 +102,12 @@ void HdPhInstancer::_SyncPrimvars(HdSceneDelegate *sceneDelegate, HdDirtyBits *d
         // This is recovery code; the scene delegate shouldn't let
         // us get here...
         TF_WARN(
-            "Inconsistent number of '%s' values "
-            "(%zu vs %zu) for <%s>.",
-            primvar.name.GetText(),
-            source->GetNumElements(),
-            _instancePrimvarNumElements,
-            instancerId.GetText());
+          "Inconsistent number of '%s' values "
+          "(%zu vs %zu) for <%s>.",
+          primvar.name.GetText(),
+          source->GetNumElements(),
+          _instancePrimvarNumElements,
+          instancerId.GetText());
         _instancePrimvarNumElements = std::min(numElements, _instancePrimvarNumElements);
       }
 
@@ -125,23 +122,18 @@ void HdPhInstancer::_SyncPrimvars(HdSceneDelegate *sceneDelegate, HdDirtyBits *d
     if (hasDirtyPrimvarDesc) {
       TfTokenVector internallyGeneratedPrimvars;  // none
       removedSpecs = HdPhGetRemovedPrimvarBufferSpecs(
-          _instancePrimvarRange, primvars, internallyGeneratedPrimvars, instancerId);
+        _instancePrimvarRange, primvars, internallyGeneratedPrimvars, instancerId);
     }
 
     HdBufferSpecVector bufferSpecs;
     HdBufferSpec::GetBufferSpecs(sources, &bufferSpecs);
 
-    HdPhResourceRegistrySharedPtr const &resourceRegistry =
-        std::static_pointer_cast<HdPhResourceRegistry>(
-            sceneDelegate->GetRenderIndex().GetResourceRegistry());
+    HdPhResourceRegistrySharedPtr const &resourceRegistry = std::static_pointer_cast<HdPhResourceRegistry>(
+      sceneDelegate->GetRenderIndex().GetResourceRegistry());
 
     // Update local primvar range.
     _instancePrimvarRange = resourceRegistry->UpdateNonUniformBufferArrayRange(
-        HdTokens->primvar,
-        _instancePrimvarRange,
-        bufferSpecs,
-        removedSpecs,
-        HdBufferArrayUsageHint());
+      HdTokens->primvar, _instancePrimvarRange, bufferSpecs, removedSpecs, HdBufferArrayUsageHint());
 
     TF_VERIFY(_instancePrimvarRange->IsValid());
 
@@ -163,11 +155,11 @@ void HdPhInstancer::_GetInstanceIndices(SdfPath const &prototypeId,
   for (auto it = instanceIndices.cbegin(); it != instanceIndices.cend(); ++it) {
     if (*it >= (int)_instancePrimvarNumElements) {
       TF_WARN(
-          "Instance index exceeds the element count of instance "
-          "primvars (%d >= %zu) for <%s>",
-          *it,
-          _instancePrimvarNumElements,
-          instancerId.GetText());
+        "Instance index exceeds the element count of instance "
+        "primvars (%d >= %zu) for <%s>",
+        *it,
+        _instancePrimvarNumElements,
+        instancerId.GetText());
       instanceIndices.clear();
       // insert 0-th index as placeholder (0th should always exist, since
       // we don't populate instance primvars with numElements == 0).
@@ -182,21 +174,20 @@ void HdPhInstancer::_GetInstanceIndices(SdfPath const &prototypeId,
     std::stringstream ss;
     ss << instanceIndices;
     TF_DEBUG(HD_INSTANCER_UPDATED)
-        .Msg(
-            "GetInstanceIndices for proto <%s> "
-            "instancer <%s> (parent: <%s>): %s\n",
-            prototypeId.GetText(),
-            instancerId.GetText(),
-            GetParentId().GetText(),
-            ss.str().c_str());
+      .Msg(
+        "GetInstanceIndices for proto <%s> "
+        "instancer <%s> (parent: <%s>): %s\n",
+        prototypeId.GetText(),
+        instancerId.GetText(),
+        GetParentId().GetText(),
+        ss.str().c_str());
   }
 
   // backtrace the instancer hierarchy to gather all instance indices.
   if (!GetParentId().IsEmpty()) {
     HdInstancer *parentInstancer = GetDelegate()->GetRenderIndex().GetInstancer(GetParentId());
     if (TF_VERIFY(parentInstancer)) {
-      static_cast<HdPhInstancer *>(parentInstancer)
-          ->_GetInstanceIndices(instancerId, instanceIndicesArray);
+      static_cast<HdPhInstancer *>(parentInstancer)->_GetInstanceIndices(instancerId, instanceIndicesArray);
     }
   }
 }
@@ -233,8 +224,7 @@ VtIntArray HdPhInstancer::GetInstanceIndices(SdfPath const &prototypeId)
   for (size_t j = 0; j < nTotal; ++j) {
     instanceIndices[j * instanceIndexWidth] = j;  // global idx
     for (int i = 0; i < instancerNumLevels; ++i) {
-      instanceIndices[j * instanceIndexWidth + i + 1] =
-          instanceIndicesArray[i].cdata()[currents[i]];
+      instanceIndices[j * instanceIndexWidth + i + 1] = instanceIndicesArray[i].cdata()[currents[i]];
     }
     ++currents[0];
     for (int i = 0; i < instancerNumLevels - 1; ++i) {
@@ -249,7 +239,7 @@ VtIntArray HdPhInstancer::GetInstanceIndices(SdfPath const &prototypeId)
     std::stringstream ss;
     ss << instanceIndices;
     TF_DEBUG(HD_INSTANCER_UPDATED)
-        .Msg("Flattened indices <%s>: %s\n", prototypeId.GetText(), ss.str().c_str());
+      .Msg("Flattened indices <%s>: %s\n", prototypeId.GetText(), ss.str().c_str());
   }
 
   return instanceIndices;

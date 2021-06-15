@@ -20,7 +20,7 @@ WABI_NAMESPACE_BEGIN
 
 class HdRprPlugin final : public HdRendererPlugin {
  public:
-  HdRprPlugin()           = default;
+  HdRprPlugin() = default;
   ~HdRprPlugin() override = default;
 
   HdRprPlugin(const HdRprPlugin &) = delete;

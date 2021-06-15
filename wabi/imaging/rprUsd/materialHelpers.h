@@ -26,9 +26,7 @@ WABI_NAMESPACE_BEGIN
 
 using RprMaterialNodePtr = std::shared_ptr<rpr::MaterialNode>;
 
-inline rpr::Status SetRprInput(rpr::MaterialNode *node,
-                               rpr::MaterialNodeInput input,
-                               VtValue const &value)
+inline rpr::Status SetRprInput(rpr::MaterialNode *node, rpr::MaterialNodeInput input, VtValue const &value)
 {
   rpr::Status status;
   if (value.IsHolding<uint32_t>()) {
@@ -39,7 +37,7 @@ inline rpr::Status SetRprInput(rpr::MaterialNode *node,
   }
   else if (value.IsHolding<bool>()) {
     rpr_uint v = value.UncheckedGet<bool>() ? 1 : 0;
-    status     = node->SetInput(input, v);
+    status = node->SetInput(input, v);
   }
   else if (value.IsHolding<float>()) {
     auto v = value.UncheckedGet<float>();
@@ -47,29 +45,27 @@ inline rpr::Status SetRprInput(rpr::MaterialNode *node,
   }
   else if (value.IsHolding<GfVec3f>()) {
     auto &v = value.UncheckedGet<GfVec3f>();
-    status  = node->SetInput(input, v[0], v[1], v[2], 1.0f);
+    status = node->SetInput(input, v[0], v[1], v[2], 1.0f);
   }
   else if (value.IsHolding<GfVec2f>()) {
     auto &v = value.UncheckedGet<GfVec2f>();
-    status  = node->SetInput(input, v[0], v[1], 1.0f, 1.0f);
+    status = node->SetInput(input, v[0], v[1], 1.0f, 1.0f);
   }
   else if (value.IsHolding<GfVec4f>()) {
     auto &v = value.UncheckedGet<GfVec4f>();
-    status  = node->SetInput(input, v[0], v[1], v[2], v[3]);
+    status = node->SetInput(input, v[0], v[1], v[2], v[3]);
   }
   else if (value.IsHolding<RprMaterialNodePtr>()) {
     status = node->SetInput(input, value.UncheckedGet<RprMaterialNodePtr>().get());
   }
   else {
-    TF_RUNTIME_ERROR("Failed to set material input %d: unsupported VtValue type - %s",
-                     input,
-                     value.GetTypeName().c_str());
+    TF_RUNTIME_ERROR(
+      "Failed to set material input %d: unsupported VtValue type - %s", input, value.GetTypeName().c_str());
     return RPR_ERROR_INVALID_PARAMETER_TYPE;
   }
 
   if (status != RPR_SUCCESS) {
-    auto errMsg = TfStringPrintf(
-        "Failed to set material input %d(%s)", input, value.GetTypeName().c_str());
+    auto errMsg = TfStringPrintf("Failed to set material input %d(%s)", input, value.GetTypeName().c_str());
     RPR_ERROR_CHECK(status, errMsg.c_str());
   }
 

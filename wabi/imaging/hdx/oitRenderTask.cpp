@@ -39,12 +39,11 @@
 WABI_NAMESPACE_BEGIN
 
 HdxOitRenderTask::HdxOitRenderTask(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdxRenderTask(delegate, id),
-      _oitTranslucentRenderPassShader(
-          std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassOitShader())),
-      _oitOpaqueRenderPassShader(
-          std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassOitOpaqueShader())),
-      _isOitEnabled(HdxOitBufferAccessor::IsOitEnabled())
+  : HdxRenderTask(delegate, id),
+    _oitTranslucentRenderPassShader(std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassOitShader())),
+    _oitOpaqueRenderPassShader(
+      std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassOitOpaqueShader())),
+    _isOitEnabled(HdxOitBufferAccessor::IsOitEnabled())
 {}
 
 HdxOitRenderTask::~HdxOitRenderTask() = default;

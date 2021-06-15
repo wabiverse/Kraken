@@ -80,9 +80,9 @@ class HdExtCompCpuComputation final : public HdNullBufferSource {
   /// The scene delegate identifies which delegate to pull scene inputs from.
   HD_API
   static HdExtCompCpuComputationSharedPtr CreateComputation(
-      HdSceneDelegate *sceneDelegate,
-      const HdExtComputation &computation,
-      HdBufferSourceSharedPtrVector *computationSources);
+    HdSceneDelegate *sceneDelegate,
+    const HdExtComputation &computation,
+    HdBufferSourceSharedPtrVector *computationSources);
 
   HD_API
   virtual ~HdExtCompCpuComputation() = default;
@@ -122,7 +122,7 @@ class HdExtCompCpuComputation final : public HdNullBufferSource {
 
   std::vector<VtValue> _outputValues;
 
-  HdExtCompCpuComputation()                                = delete;
+  HdExtCompCpuComputation() = delete;
   HdExtCompCpuComputation(const HdExtCompCpuComputation &) = delete;
   HdExtCompCpuComputation &operator=(const HdExtCompCpuComputation &) = delete;
 };

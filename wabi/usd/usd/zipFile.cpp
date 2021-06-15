@@ -55,9 +55,9 @@ template<class T> struct _IsBitwiseReadWrite {
 
 struct _InputStream {
   _InputStream(const char *buffer, size_t size, size_t offset = 0)
-      : _cur(buffer + offset),
-        _size(size),
-        _buffer(buffer)
+    : _cur(buffer + offset),
+      _size(size),
+      _buffer(buffer)
   {}
 
   size_t RemainingSize() const
@@ -387,7 +387,7 @@ struct _ExtraFieldHeader {
   uint16_t dataSize;
 };
 
-constexpr size_t _HeaderSize    = sizeof(uint16_t) * 2;
+constexpr size_t _HeaderSize = sizeof(uint16_t) * 2;
 constexpr size_t _DataAlignment = 64;
 
 // Maximum size of buffer needed for padding bytes.
@@ -411,8 +411,7 @@ uint16_t _ComputeExtraFieldPaddingSize(size_t offset)
 
 // Fill the given extraFieldBuffer to accommodate the specified number of
 // padding bytes. For convenience, returns extraFieldBuffer.
-const char *_PrepareExtraFieldPadding(char (&extraFieldBuffer)[_PaddingBufferSize],
-                                      uint16_t numPaddingBytes)
+const char *_PrepareExtraFieldPadding(char (&extraFieldBuffer)[_PaddingBufferSize], uint16_t numPaddingBytes)
 {
   if (numPaddingBytes == 0) {
     return nullptr;
@@ -438,9 +437,9 @@ const char *_PrepareExtraFieldPadding(char (&extraFieldBuffer)[_PaddingBufferSiz
 class UsdZipFile::_Impl {
  public:
   _Impl(std::shared_ptr<const char> &&buffer_, size_t size_)
-      : storage(std::move(buffer_)),
-        buffer(storage.get()),
-        size(size_)
+    : storage(std::move(buffer_)),
+      buffer(storage.get()),
+      size(size_)
   {}
 
   std::shared_ptr<const char> storage;
@@ -494,11 +493,7 @@ void UsdZipFile::DumpContents() const
   size_t n = 0;
   for (auto it = begin(), e = end(); it != e; ++it, ++n) {
     const FileInfo info = it.GetFileInfo();
-    printf("%10zu\t%10zu\t%10zu\t%s\n",
-           info.dataOffset,
-           info.size,
-           info.uncompressedSize,
-           it->c_str());
+    printf("%10zu\t%10zu\t%10zu\t%s\n", info.dataOffset, info.size, info.uncompressedSize, it->c_str());
   }
 
   printf("----------\n");
@@ -551,7 +546,7 @@ UsdZipFile::Iterator &UsdZipFile::Iterator::operator++()
   _InputStream src(_impl->buffer, _impl->size, _offset);
   _ReadLocalFileHeader(src);
 
-  size_t newOffset                 = src.Tell();
+  size_t newOffset = src.Tell();
   const _LocalFileHeader newHeader = _ReadLocalFileHeader(src);
   if (newHeader.IsValid()) {
     _offset = newOffset;
@@ -592,11 +587,11 @@ UsdZipFile::FileInfo UsdZipFile::Iterator::GetFileInfo() const
   const _LocalFileHeader h = _ReadLocalFileHeader(src);
 
   FileInfo f;
-  f.dataOffset        = h.dataStart - _impl->buffer;
-  f.size              = h.f.compressedSize;
-  f.uncompressedSize  = h.f.uncompressedSize;
+  f.dataOffset = h.dataStart - _impl->buffer;
+  f.size = h.f.compressedSize;
+  f.uncompressedSize = h.f.uncompressedSize;
   f.compressionMethod = h.f.compressionMethod;
-  f.encrypted         = h.f.bits & 0x1;  // Per 4.4.4, bit 0 is set if encrypted
+  f.encrypted = h.f.bits & 0x1;  // Per 4.4.4, bit 0 is set if encrypted
   return f;
 }
 
@@ -609,7 +604,7 @@ std::pair<uint16_t, uint16_t> _ModTimeAndDate(const std::string &filename)
   double mtime = 0;
   ArchGetModificationTime(filename.c_str(), &mtime);
 
-  const std::time_t t      = static_cast<std::time_t>(mtime);
+  const std::time_t t = static_cast<std::time_t>(mtime);
   const std::tm *localTime = std::localtime(&t);
 
   // MS-DOS time encoding is a 16-bit value where:
@@ -711,16 +706,14 @@ UsdZipFileWriter::~UsdZipFileWriter()
   }
 }
 
-std::string UsdZipFileWriter::AddFile(const std::string &filePath,
-                                      const std::string &filePathInArchiveIn)
+std::string UsdZipFileWriter::AddFile(const std::string &filePath, const std::string &filePathInArchiveIn)
 {
   if (!_impl) {
     TF_CODING_ERROR("File is not open for writing");
     return std::string();
   }
 
-  const std::string &filePathInArchive = filePathInArchiveIn.empty() ? filePath :
-                                                                       filePathInArchiveIn;
+  const std::string &filePathInArchive = filePathInArchiveIn.empty() ? filePath : filePathInArchiveIn;
 
   // Conform the file path we're writing into the archive to make sure
   // it follows zip file specifications.
@@ -728,11 +721,10 @@ std::string UsdZipFileWriter::AddFile(const std::string &filePath,
 
   // Check if this file has already been written to this zip archive; if so,
   // just skip it.
-  if (std::find_if(_impl->addedFiles.begin(),
-                   _impl->addedFiles.end(),
-                   [&zipFilePath](const _Impl::_Record &r) {
-                     return std::get<0>(r) == zipFilePath;
-                   }) != _impl->addedFiles.end()) {
+  if (std::find_if(
+        _impl->addedFiles.begin(), _impl->addedFiles.end(), [&zipFilePath](const _Impl::_Record &r) {
+          return std::get<0>(r) == zipFilePath;
+        }) != _impl->addedFiles.end()) {
     return zipFilePath;
   }
 
@@ -747,19 +739,19 @@ std::string UsdZipFileWriter::AddFile(const std::string &filePath,
 
   // Set up local file header
   _LocalFileHeader h;
-  h.f.signature                              = _LocalFileHeader::Signature;
-  h.f.versionForExtract                      = 10;  // Default value
-  h.f.bits                                   = 0;
-  h.f.compressionMethod                      = 0;  // No compression
+  h.f.signature = _LocalFileHeader::Signature;
+  h.f.versionForExtract = 10;  // Default value
+  h.f.bits = 0;
+  h.f.compressionMethod = 0;  // No compression
   std::tie(h.f.lastModTime, h.f.lastModDate) = _ModTimeAndDate(filePath);
-  h.f.crc32                                  = _Crc32(mapping);
-  h.f.compressedSize                         = ArchGetFileMappingLength(mapping);
-  h.f.uncompressedSize                       = ArchGetFileMappingLength(mapping);
-  h.f.filenameLength                         = zipFilePath.length();
+  h.f.crc32 = _Crc32(mapping);
+  h.f.compressedSize = ArchGetFileMappingLength(mapping);
+  h.f.uncompressedSize = ArchGetFileMappingLength(mapping);
+  h.f.filenameLength = zipFilePath.length();
 
-  const uint32_t offset   = outStream.Tell();
+  const uint32_t offset = outStream.Tell();
   const size_t dataOffset = offset + _LocalFileHeader::FixedSize + h.f.filenameLength;
-  h.f.extraFieldLength    = _ComputeExtraFieldPaddingSize(dataOffset);
+  h.f.extraFieldLength = _ComputeExtraFieldPaddingSize(dataOffset);
 
   h.filenameStart = zipFilePath.data();
 
@@ -787,29 +779,29 @@ bool UsdZipFileWriter::Save()
   const long centralDirectoryStart = outStream.Tell();
 
   for (const _Impl::_Record &record : _impl->addedFiles) {
-    const std::string &fileToZip               = std::get<0>(record);
+    const std::string &fileToZip = std::get<0>(record);
     const _LocalFileHeader::Fixed &localHeader = std::get<1>(record);
-    uint32_t offset                            = std::get<2>(record);
+    uint32_t offset = std::get<2>(record);
 
     _CentralDirectoryHeader h;
-    h.f.signature         = _CentralDirectoryHeader::Signature;
-    h.f.versionMadeBy     = 0;
+    h.f.signature = _CentralDirectoryHeader::Signature;
+    h.f.versionMadeBy = 0;
     h.f.versionForExtract = localHeader.versionForExtract;
-    h.f.bits              = localHeader.bits;
+    h.f.bits = localHeader.bits;
     h.f.compressionMethod = localHeader.compressionMethod;
-    h.f.lastModTime       = localHeader.lastModTime;
-    h.f.lastModDate       = localHeader.lastModDate;
-    h.f.crc32             = localHeader.crc32;
-    h.f.compressedSize    = localHeader.compressedSize;
-    h.f.uncompressedSize  = localHeader.uncompressedSize;
-    h.f.filenameLength    = localHeader.filenameLength;
-    h.f.extraFieldLength  = localHeader.extraFieldLength;
-    h.f.commentLength     = 0;
-    h.f.diskNumberStart   = 0;
-    h.f.internalAttrs     = 0;
-    h.f.externalAttrs     = 0;
+    h.f.lastModTime = localHeader.lastModTime;
+    h.f.lastModDate = localHeader.lastModDate;
+    h.f.crc32 = localHeader.crc32;
+    h.f.compressedSize = localHeader.compressedSize;
+    h.f.uncompressedSize = localHeader.uncompressedSize;
+    h.f.filenameLength = localHeader.filenameLength;
+    h.f.extraFieldLength = localHeader.extraFieldLength;
+    h.f.commentLength = 0;
+    h.f.diskNumberStart = 0;
+    h.f.internalAttrs = 0;
+    h.f.externalAttrs = 0;
     h.f.localHeaderOffset = offset;
-    h.filenameStart       = fileToZip.data();
+    h.filenameStart = fileToZip.data();
 
     char extraFieldBuffer[_PaddingBufferSize] = {0};
     h.extraFieldStart = _PrepareExtraFieldPadding(extraFieldBuffer, h.f.extraFieldLength);
@@ -824,15 +816,15 @@ bool UsdZipFileWriter::Save()
   // Write the end of central directory record.
   {
     _EndOfCentralDirectoryRecord r;
-    r.f.signature                  = _EndOfCentralDirectoryRecord::Signature;
-    r.f.diskNumber                 = 0;
-    r.f.diskNumberForCentralDir    = 0;
+    r.f.signature = _EndOfCentralDirectoryRecord::Signature;
+    r.f.diskNumber = 0;
+    r.f.diskNumberForCentralDir = 0;
     r.f.numCentralDirEntriesOnDisk = _impl->addedFiles.size();
-    r.f.numCentralDirEntries       = _impl->addedFiles.size();
-    r.f.centralDirLength           = (centralDirectoryEnd - centralDirectoryStart);
-    r.f.centralDirOffset           = centralDirectoryStart;
-    r.f.commentLength              = 0;
-    r.commentStart                 = nullptr;
+    r.f.numCentralDirEntries = _impl->addedFiles.size();
+    r.f.centralDirLength = (centralDirectoryEnd - centralDirectoryStart);
+    r.f.centralDirOffset = centralDirectoryStart;
+    r.f.commentLength = 0;
+    r.commentStart = nullptr;
 
     _WriteEndOfCentralDirectoryRecord(outStream, r);
   }

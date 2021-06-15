@@ -51,8 +51,8 @@ WABI_NAMESPACE_BEGIN
 // ------------------------------------------------------------
 
 UsdSkel_CacheImpl::WriteScope::WriteScope(UsdSkel_CacheImpl *cache)
-    : _cache(cache),
-      _lock(cache->_mutex, /*write*/ true)
+  : _cache(cache),
+    _lock(cache->_mutex, /*write*/ true)
 {}
 
 void UsdSkel_CacheImpl::WriteScope::Clear()
@@ -68,8 +68,8 @@ void UsdSkel_CacheImpl::WriteScope::Clear()
 // ------------------------------------------------------------
 
 UsdSkel_CacheImpl::ReadScope::ReadScope(UsdSkel_CacheImpl *cache)
-    : _cache(cache),
-      _lock(cache->_mutex, /*write*/ false)
+  : _cache(cache),
+    _lock(cache->_mutex, /*write*/ false)
 {}
 
 UsdSkelAnimQuery UsdSkel_CacheImpl::ReadScope::FindOrCreateAnimQuery(const UsdPrim &prim)
@@ -98,8 +98,7 @@ UsdSkelAnimQuery UsdSkel_CacheImpl::ReadScope::FindOrCreateAnimQuery(const UsdPr
   return UsdSkelAnimQuery();
 }
 
-UsdSkel_SkelDefinitionRefPtr UsdSkel_CacheImpl::ReadScope::FindOrCreateSkelDefinition(
-    const UsdPrim &prim)
+UsdSkel_SkelDefinitionRefPtr UsdSkel_CacheImpl::ReadScope::FindOrCreateSkelDefinition(const UsdPrim &prim)
 {
   TRACE_FUNCTION();
 
@@ -140,7 +139,7 @@ UsdSkelSkeletonQuery UsdSkel_CacheImpl::ReadScope::FindOrCreateSkelQuery(const U
     if (_cache->_skelQueryCache.insert(a, prim)) {
 
       UsdSkelAnimQuery animQuery = FindOrCreateAnimQuery(
-          UsdSkelBindingAPI(prim).GetInheritedAnimationSource());
+        UsdSkelBindingAPI(prim).GetInheritedAnimationSource());
 
       a->second = UsdSkelSkeletonQuery(skelDef, animQuery);
     }
@@ -157,11 +156,10 @@ UsdSkelSkinningQuery UsdSkel_CacheImpl::ReadScope::GetSkinningQuery(const UsdPri
   return UsdSkelSkinningQuery();
 }
 
-UsdSkelSkinningQuery UsdSkel_CacheImpl::ReadScope::_FindOrCreateSkinningQuery(
-    const UsdPrim &skinnedPrim,
-    const _SkinningQueryKey &key)
+UsdSkelSkinningQuery UsdSkel_CacheImpl::ReadScope::_FindOrCreateSkinningQuery(const UsdPrim &skinnedPrim,
+                                                                              const _SkinningQueryKey &key)
 {
-  UsdSkelSkeletonQuery skelQuery    = FindOrCreateSkelQuery(key.skel);
+  UsdSkelSkeletonQuery skelQuery = FindOrCreateSkelQuery(key.skel);
   const UsdSkelAnimQuery &animQuery = skelQuery.GetAnimQuery();
 
   // TODO: Consider some form of deduplication.
@@ -188,11 +186,11 @@ void _DeprecatedBindingCheck(bool hasBindingAPI, const UsdProperty &prop)
 {
   if (!hasBindingAPI) {
     TF_WARN(
-        "Found binding property <%s>, but the SkelBindingAPI was not "
-        "applied on the owning prim. In the future, binding properties "
-        "will be ignored unless the SkelBindingAPI is applied "
-        "(see UsdSkelBindingAPI::Apply)",
-        prop.GetPath().GetText());
+      "Found binding property <%s>, but the SkelBindingAPI was not "
+      "applied on the owning prim. In the future, binding properties "
+      "will be ignored unless the SkelBindingAPI is applied "
+      "(see UsdSkelBindingAPI::Apply)",
+      prop.GetPath().GetText());
   }
 }
 
@@ -218,13 +216,11 @@ UsdRelationship _GetRelInPrototype(const UsdRelationship &rel)
 
 }  // namespace
 
-bool UsdSkel_CacheImpl::ReadScope::Populate(const UsdSkelRoot &root,
-                                            Usd_PrimFlagsPredicate predicate)
+bool UsdSkel_CacheImpl::ReadScope::Populate(const UsdSkelRoot &root, Usd_PrimFlagsPredicate predicate)
 {
   TRACE_FUNCTION();
 
-  TF_DEBUG(USDSKEL_CACHE)
-      .Msg("[UsdSkelCache] Populate map from <%s>\n", root.GetPrim().GetPath().GetText());
+  TF_DEBUG(USDSKEL_CACHE).Msg("[UsdSkelCache] Populate map from <%s>\n", root.GetPrim().GetPath().GetText());
 
   if (!root) {
     TF_CODING_ERROR("'root' is invalid.");
@@ -246,11 +242,11 @@ bool UsdSkel_CacheImpl::ReadScope::Populate(const UsdSkelRoot &root,
 
     if (ARCH_UNLIKELY(!it->IsA<UsdGeomImageable>())) {
       TF_DEBUG(USDSKEL_CACHE)
-          .Msg(
-              "[UsdSkelCache]  %sPruning traversal at <%s> "
-              "(prim is not UsdGeomImageable)\n",
-              _MakeIndent(stack.size()).c_str(),
-              it->GetPath().GetText());
+        .Msg(
+          "[UsdSkelCache]  %sPruning traversal at <%s> "
+          "(prim is not UsdGeomImageable)\n",
+          _MakeIndent(stack.size()).c_str(),
+          it->GetPath().GetText());
 
       it.PruneChildren();
       continue;
@@ -333,9 +329,9 @@ bool UsdSkel_CacheImpl::ReadScope::Populate(const UsdSkelRoot &root,
       }
 
       TF_DEBUG(USDSKEL_CACHE)
-          .Msg("[UsdSkelCache] %sAdded skinning query for prim <%s>\n",
-               _MakeIndent(stack.size()).c_str(),
-               it->GetPath().GetText());
+        .Msg("[UsdSkelCache] %sAdded skinning query for prim <%s>\n",
+             _MakeIndent(stack.size()).c_str(),
+             it->GetPath().GetText());
 
       // Don't allow skinnable prims to be nested.
       it.PruneChildren();

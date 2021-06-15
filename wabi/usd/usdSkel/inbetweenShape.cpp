@@ -34,8 +34,7 @@
 WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(_tokens,
-                         ((inbetweensPrefix, "inbetweens:"))((normalOffsetsSuffix,
-                                                              ":normalOffsets")));
+                         ((inbetweensPrefix, "inbetweens:"))((normalOffsetsSuffix, ":normalOffsets")));
 
 UsdSkelInbetweenShape::UsdSkelInbetweenShape(const UsdAttribute &attr) : _attr(attr)
 {}
@@ -109,8 +108,7 @@ const TfToken &UsdSkelInbetweenShape::_GetNamespacePrefix()
 
 UsdAttribute UsdSkelInbetweenShape::_GetNormalOffsetsAttr(bool create) const
 {
-  const TfToken normalOffsetsName(_attr.GetName().GetString() +
-                                  _tokens->normalOffsetsSuffix.GetString());
+  const TfToken normalOffsetsName(_attr.GetName().GetString() + _tokens->normalOffsetsSuffix.GetString());
 
   if (!create) {
     return _attr.GetPrim().GetAttribute(normalOffsetsName);

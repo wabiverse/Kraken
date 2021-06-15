@@ -191,9 +191,7 @@ bool UsdStageLoadRules::IsLoadedWithNoDescendants(SdfPath const &path) const
   }
 
   // Look for \p path in _rules.  It must be present and must be an OnlyRule.
-  auto compareFn = [](std::pair<SdfPath, Rule> const &entry, SdfPath const &p) {
-    return entry.first < p;
-  };
+  auto compareFn = [](std::pair<SdfPath, Rule> const &entry, SdfPath const &p) { return entry.first < p; };
   auto iter = std::lower_bound(_rules.begin(), _rules.end(), path, compareFn);
 
   if (iter == _rules.end() || iter->first != path || iter->second != OnlyRule) {
@@ -276,24 +274,22 @@ bool UsdStageLoadRules::operator==(UsdStageLoadRules const &other) const
   return _rules == other._rules;
 }
 
-std::vector<std::pair<SdfPath, UsdStageLoadRules::Rule>>::const_iterator UsdStageLoadRules::
-    _LowerBound(SdfPath const &path) const
+std::vector<std::pair<SdfPath, UsdStageLoadRules::Rule>>::const_iterator UsdStageLoadRules::_LowerBound(
+  SdfPath const &path) const
 {
   return std::lower_bound(
-      _rules.begin(),
-      _rules.end(),
-      path,
-      [](std::pair<SdfPath, Rule> const &elem, SdfPath const &path) { return elem.first < path; });
+    _rules.begin(), _rules.end(), path, [](std::pair<SdfPath, Rule> const &elem, SdfPath const &path) {
+      return elem.first < path;
+    });
 }
 
 std::vector<std::pair<SdfPath, UsdStageLoadRules::Rule>>::iterator UsdStageLoadRules::_LowerBound(
-    SdfPath const &path)
+  SdfPath const &path)
 {
   return std::lower_bound(
-      _rules.begin(),
-      _rules.end(),
-      path,
-      [](std::pair<SdfPath, Rule> const &elem, SdfPath const &path) { return elem.first < path; });
+    _rules.begin(), _rules.end(), path, [](std::pair<SdfPath, Rule> const &elem, SdfPath const &path) {
+      return elem.first < path;
+    });
 }
 
 std::ostream &operator<<(std::ostream &os, std::pair<SdfPath, UsdStageLoadRules::Rule> const &p)

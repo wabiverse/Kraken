@@ -38,14 +38,14 @@ WABI_NAMESPACE_BEGIN
 /// passed in on the task context.
 struct HdxPickFromRenderBufferTaskParams {
   HdxPickFromRenderBufferTaskParams()
-      : primIdBufferPath(),
-        instanceIdBufferPath(),
-        elementIdBufferPath(),
-        normalBufferPath(),
-        depthBufferPath(),
-        cameraId(),
-        overrideWindowPolicy{false, CameraUtilFit},
-        viewport()
+    : primIdBufferPath(),
+      instanceIdBufferPath(),
+      elementIdBufferPath(),
+      normalBufferPath(),
+      depthBufferPath(),
+      cameraId(),
+      overrideWindowPolicy{false, CameraUtilFit},
+      viewport()
   {}
 
   SdfPath primIdBufferPath;
@@ -117,7 +117,7 @@ class HdxPickFromRenderBufferTask : public HdxTask {
 
   bool _converged;
 
-  HdxPickFromRenderBufferTask()                                    = delete;
+  HdxPickFromRenderBufferTask() = delete;
   HdxPickFromRenderBufferTask(const HdxPickFromRenderBufferTask &) = delete;
   HdxPickFromRenderBufferTask &operator=(const HdxPickFromRenderBufferTask &) = delete;
 };
@@ -126,11 +126,9 @@ class HdxPickFromRenderBufferTask : public HdxTask {
 HDX_API
 std::ostream &operator<<(std::ostream &out, const HdxPickFromRenderBufferTaskParams &pv);
 HDX_API
-bool operator==(const HdxPickFromRenderBufferTaskParams &lhs,
-                const HdxPickFromRenderBufferTaskParams &rhs);
+bool operator==(const HdxPickFromRenderBufferTaskParams &lhs, const HdxPickFromRenderBufferTaskParams &rhs);
 HDX_API
-bool operator!=(const HdxPickFromRenderBufferTaskParams &lhs,
-                const HdxPickFromRenderBufferTaskParams &rhs);
+bool operator!=(const HdxPickFromRenderBufferTaskParams &lhs, const HdxPickFromRenderBufferTaskParams &rhs);
 
 WABI_NAMESPACE_END
 

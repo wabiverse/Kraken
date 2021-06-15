@@ -98,16 +98,16 @@ class GfBBox3d {
   {
     _matrix.SetIdentity();
     _inverse.SetIdentity();
-    _isDegenerate          = false;
+    _isDegenerate = false;
     _hasZeroAreaPrimitives = false;
   }
 
   /// Copy constructor
   GfBBox3d(const GfBBox3d &rhs) : _box(rhs._box)
   {
-    _matrix                = rhs._matrix;
-    _inverse               = rhs._inverse;
-    _isDegenerate          = rhs._isDegenerate;
+    _matrix = rhs._matrix;
+    _inverse = rhs._inverse;
+    _isDegenerate = rhs._isDegenerate;
     _hasZeroAreaPrimitives = rhs._hasZeroAreaPrimitives;
   }
 
@@ -116,7 +116,7 @@ class GfBBox3d {
   {
     _matrix.SetIdentity();
     _inverse.SetIdentity();
-    _isDegenerate          = false;
+    _isDegenerate = false;
     _hasZeroAreaPrimitives = false;
   }
 

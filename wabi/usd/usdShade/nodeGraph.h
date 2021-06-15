@@ -348,13 +348,11 @@ class UsdShadeNodeGraph : public UsdTyped {
   /// Map of interface inputs to corresponding vectors of inputs that
   /// consume their values.
   typedef std::unordered_map<UsdShadeInput, std::vector<UsdShadeInput>, UsdShadeInput::Hash>
-      InterfaceInputConsumersMap;
+    InterfaceInputConsumersMap;
 
   /// Map of node-graphs to their associated input-consumers map.
-  typedef std::unordered_map<UsdShadeNodeGraph,
-                             InterfaceInputConsumersMap,
-                             NodeGraphHasher,
-                             NodeGraphEqualFn>
+  typedef std::
+    unordered_map<UsdShadeNodeGraph, InterfaceInputConsumersMap, NodeGraphHasher, NodeGraphEqualFn>
       NodeGraphInputConsumersMap;
 
   /// Walks the namespace subtree below the node-graph and computes a map
@@ -374,7 +372,7 @@ class UsdShadeNodeGraph : public UsdTyped {
   ///
   USDSHADE_API
   InterfaceInputConsumersMap ComputeInterfaceInputConsumersMap(
-      bool computeTransitiveConsumers = false) const;
+    bool computeTransitiveConsumers = false) const;
 
   /// @}
 

@@ -64,8 +64,7 @@ std::ostream &operator<<(std::ostream &out, {
   }
 } const &v)
 {
-  return out << '(' << {{LIST("Gf_OstreamHelperP(v[%(i)s])", sep = ' << \", \" \n        << ')}}
-             << ')';
+  return out << '(' << {{LIST("Gf_OstreamHelperP(v[%(i)s])", sep = ' << \", \" \n        << ')}} << ')';
 }
 
 {% for S in SCALARS if S != SCL %
@@ -243,18 +242,18 @@ bool GfOrthogonalizeBasis({{VEC}} * tx, {{VEC}} * ty, {{VEC}} * tz, bool normali
  * length L/eps.
  */
 void GfBuildOrthonormalFrame(
+  {
     {
-      {
-        VEC
-      }
-    } const &v0,
-    {{VEC}} * v1,
-    {{VEC}} * v2,
+      VEC
+    }
+  } const &v0,
+  {{VEC}} * v1,
+  {{VEC}} * v2,
+  {
     {
-      {
-        SCL
-      }
-    } eps)
+      SCL
+    }
+  } eps)
 {
   {
     {
@@ -273,7 +272,7 @@ void GfBuildOrthonormalFrame(
       }
     }
     unitDir = v0 / len;
-    *v1     = { {VEC} } ::XAxis() ^ unitDir;
+    *v1 = { {VEC} } ::XAxis() ^ unitDir;
 
     if (GfSqr(*v1) < GfSqr(1e-4))
       *v1 = { {VEC} } ::YAxis() ^ unitDir;
@@ -335,8 +334,7 @@ GfSlerp(double alpha, const {{VEC}} & v0, const {{VEC}} & v1)
   // interpolate
   double oneOverSinAngle = 1.0 / sinAngle;
 
-  return v0 * (sin((1.0 - alpha) * angle) * oneOverSinAngle) +
-         v1 * (sin(alpha * angle) * oneOverSinAngle);
+  return v0 * (sin((1.0 - alpha) * angle) * oneOverSinAngle) + v1 * (sin(alpha * angle) * oneOverSinAngle);
 }
 
 { % endif % }

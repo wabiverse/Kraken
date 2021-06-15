@@ -98,8 +98,7 @@ template<typename Fn> void WorkParallelForN(size_t n, Fn &&callback, size_t grai
     // In most cases we do not want to inherit cancellation state from the
     // parent context, so we create an isolated task group context.
     tbb::task_group_context ctx(tbb::task_group_context::isolated);
-    tbb::parallel_for(
-        tbb::blocked_range<size_t>(0, n, grainSize), Work_ParallelForN_TBB(callback), ctx);
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, n, grainSize), Work_ParallelForN_TBB(callback), ctx);
   }
   else {
 

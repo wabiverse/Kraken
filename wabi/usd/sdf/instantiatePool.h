@@ -46,32 +46,31 @@ SDF_API bool Sdf_PoolCommitRange(char *start, char *end);
 
 template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpan>
 typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_ThreadData
-    Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_threadData;
+  Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_threadData;
 
 template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpan>
 char *Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_regionStarts[NumRegions + 1];
 
 template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpan>
 std::atomic<typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_RegionState>
-    Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_regionState;
+  Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_regionState;
 
 template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpan>
-TfStaticData<
-    tbb::concurrent_queue<typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_FreeList>>
-    Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_sharedFreeLists;
+TfStaticData<tbb::concurrent_queue<typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_FreeList>>
+  Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_sharedFreeLists;
 
 template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpan>
 typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_RegionState Sdf_Pool<
-    Tag,
-    ElemSize,
-    RegionBits,
-    ElemsPerSpan>::_RegionState::Reserve(unsigned num) const
+  Tag,
+  ElemSize,
+  RegionBits,
+  ElemsPerSpan>::_RegionState::Reserve(unsigned num) const
 {
   // Make a new state.  If reserving \p num leaves no free elements, then
   // return the LockedState, since a new region will need to be allocated.
-  uint32_t index  = GetIndex();
+  uint32_t index = GetIndex();
   unsigned region = GetRegion();
-  uint32_t avail  = MaxIndex - index + 1;
+  uint32_t avail = MaxIndex - index + 1;
   _RegionState ret;
   if (ARCH_UNLIKELY(avail <= num)) {
     ret._state = LockedState;
@@ -83,11 +82,10 @@ typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_RegionState Sdf_Poo
 }
 
 template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpan>
-typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::Handle Sdf_Pool<
-    Tag,
-    ElemSize,
-    RegionBits,
-    ElemsPerSpan>::Allocate()
+typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::Handle Sdf_Pool<Tag,
+                                                                            ElemSize,
+                                                                            RegionBits,
+                                                                            ElemsPerSpan>::Allocate()
 {
   _PerThreadData &threadData = _threadData.Get();
 
@@ -189,13 +187,13 @@ void Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_ReserveSpan(_PoolSpan &
   // Now our span space is indicated by state & newState.  Update the
   // \p out span and ensure the span space is committed (think
   // mprotect(PROT_READ | PROT_WRITE) on posixes.
-  out.region     = state.GetRegion();
+  out.region = state.GetRegion();
   out.beginIndex = state.GetIndex();
-  out.endIndex   = newState.GetRegion() == out.region ? newState.GetIndex() : MaxIndex;
+  out.endIndex = newState.GetRegion() == out.region ? newState.GetIndex() : MaxIndex;
 
   // Ensure the new span is committed & read/writable.
   char *startAddr = _GetPtr(out.region, out.beginIndex);
-  char *endAddr   = _GetPtr(out.region, out.endIndex);
+  char *endAddr = _GetPtr(out.region, out.endIndex);
   Sdf_PoolCommitRange(startAddr, endAddr);
 }
 

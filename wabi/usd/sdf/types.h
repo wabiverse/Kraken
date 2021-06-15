@@ -189,10 +189,7 @@ enum SdfVariability {
 ///            not recognized by the layer's schema.
 /// </ul>
 ///
-enum SdfAuthoringError {
-  SdfAuthoringErrorUnrecognizedFields,
-  SdfAuthoringErrorUnrecognizedSpecType
-};
+enum SdfAuthoringError { SdfAuthoringErrorUnrecognizedFields, SdfAuthoringErrorUnrecognizedSpecType };
 
 // Each category of compatible units of measurement is defined by a
 // preprocessor sequence of tuples.  Each such sequence gives rise to an enum
@@ -211,8 +208,8 @@ enum SdfAuthoringError {
 // represented by the enum SdfDimensionlessUnit.
 #define _SDF_LENGTH_UNITS \
   ((Millimeter, "mm", 0.001))((Centimeter, "cm", 0.01))( \
-      (Decimeter, "dm", 0.1))((Meter, "m", 1.0))((Kilometer, "km", 1000.0))(( \
-      Inch, "in", 0.0254))((Foot, "ft", 0.3048))((Yard, "yd", 0.9144))((Mile, "mi", 1609.344))
+    (Decimeter, "dm", 0.1))((Meter, "m", 1.0))((Kilometer, "km", 1000.0))((Inch, "in", 0.0254))(( \
+    Foot, "ft", 0.3048))((Yard, "yd", 0.9144))((Mile, "mi", 1609.344))
 
 #define _SDF_ANGULAR_UNITS ((Degrees, "deg", 1.0))((Radians, "rad", 57.2957795130823208768))
 
@@ -228,16 +225,14 @@ enum SdfAuthoringError {
 
 #define _SDF_UNITSLIST_CATEGORY(tup) BOOST_PP_TUPLE_ELEM(2, 0, tup)
 #define _SDF_UNITSLIST_TUPLES(tup) BOOST_PP_TUPLE_ELEM(2, 1, tup)
-#define _SDF_UNITSLIST_ENUM(elem) \
-  BOOST_PP_CAT(BOOST_PP_CAT(Sdf, _SDF_UNITSLIST_CATEGORY(elem)), Unit)
+#define _SDF_UNITSLIST_ENUM(elem) BOOST_PP_CAT(BOOST_PP_CAT(Sdf, _SDF_UNITSLIST_CATEGORY(elem)), Unit)
 
-#define _SDF_DECLARE_UNIT_ENUMERANT(r, tag, elem) \
-  BOOST_PP_CAT(Sdf##tag##Unit, _SDF_UNIT_TAG(elem)),
+#define _SDF_DECLARE_UNIT_ENUMERANT(r, tag, elem) BOOST_PP_CAT(Sdf##tag##Unit, _SDF_UNIT_TAG(elem)),
 
 #define _SDF_DECLARE_UNIT_ENUM(r, unused, elem) \
   enum _SDF_UNITSLIST_ENUM(elem) { \
     BOOST_PP_SEQ_FOR_EACH( \
-        _SDF_DECLARE_UNIT_ENUMERANT, _SDF_UNITSLIST_CATEGORY(elem), _SDF_UNITSLIST_TUPLES(elem)) \
+      _SDF_DECLARE_UNIT_ENUMERANT, _SDF_UNITSLIST_CATEGORY(elem), _SDF_UNITSLIST_TUPLES(elem)) \
   };
 BOOST_PP_LIST_FOR_EACH(_SDF_DECLARE_UNIT_ENUM, ~, _SDF_UNITS)
 
@@ -320,22 +315,19 @@ SDF_API TfToken SdfGetRoleNameForValueTypeName(TfToken const &typeName);
 // SdfSchema::_RegisterValueType(s).
 #define _SDF_SCALAR_VALUE_TYPES \
   ((Bool, bool, bool, ()))((UChar, uchar, unsigned char, ()))( \
-      (Int, int, int, ()))((UInt, uint, unsigned int, ()))((Int64, int64, int64_t, ()))(( \
-      UInt64, uint64, uint64_t, ()))((Half, half, GfHalf, ()))((Float, float, float, ()))(( \
-      Double, double, double, ()))((TimeCode, timecode, SdfTimeCode, ()))(( \
-      String, string, std::string, ()))((Token, token, TfToken, ()))(( \
-      Asset, asset, SdfAssetPath, ()))
+    (Int, int, int, ()))((UInt, uint, unsigned int, ()))((Int64, int64, int64_t, ()))(( \
+    UInt64, uint64, uint64_t, ()))((Half, half, GfHalf, ()))((Float, float, float, ()))(( \
+    Double, double, double, ()))((TimeCode, timecode, SdfTimeCode, ()))(( \
+    String, string, std::string, ()))((Token, token, TfToken, ()))((Asset, asset, SdfAssetPath, ()))
 
 #define _SDF_DIMENSIONED_VALUE_TYPES \
   ((Matrix2d, matrix2d, GfMatrix2d, (2, 2)))((Matrix3d, matrix3d, GfMatrix3d, (3, 3)))( \
-      (Matrix4d, matrix4d, GfMatrix4d, (4, 4)))((Quath, quath, GfQuath, (4)))(( \
-      Quatf, quatf, GfQuatf, (4)))((Quatd, quatd, GfQuatd, (4)))((Int2, int2, GfVec2i, (2)))(( \
-      Half2, half2, GfVec2h, (2)))((Float2, float2, GfVec2f, (2)))(( \
-      Double2, double2, GfVec2d, (2)))((Int3, int3, GfVec3i, (3)))(( \
-      Half3, half3, GfVec3h, (3)))((Float3, float3, GfVec3f, (3)))(( \
-      Double3, double3, GfVec3d, (3)))((Int4, int4, GfVec4i, (4)))(( \
-      Half4, half4, GfVec4h, (4)))((Float4, float4, GfVec4f, (4)))(( \
-      Double4, double4, GfVec4d, (4)))
+    (Matrix4d, matrix4d, GfMatrix4d, (4, 4)))((Quath, quath, GfQuath, (4)))((Quatf, quatf, GfQuatf, (4)))(( \
+    Quatd, quatd, GfQuatd, (4)))((Int2, int2, GfVec2i, (2)))((Half2, half2, GfVec2h, (2)))(( \
+    Float2, float2, GfVec2f, (2)))((Double2, double2, GfVec2d, (2)))((Int3, int3, GfVec3i, (3)))(( \
+    Half3, half3, GfVec3h, (3)))((Float3, float3, GfVec3f, (3)))((Double3, double3, GfVec3d, (3)))(( \
+    Int4, int4, GfVec4i, (4)))((Half4, half4, GfVec4h, (4)))((Float4, float4, GfVec4f, (4)))(( \
+    Double4, double4, GfVec4d, (4)))
 
 #define SDF_VALUE_TYPES _SDF_SCALAR_VALUE_TYPES _SDF_DIMENSIONED_VALUE_TYPES
 
@@ -388,8 +380,7 @@ SDF_API
 bool SdfConvertToValidMetadataDictionary(VtDictionary *dict, std::string *errMsg);
 
 #define SDF_VALUE_ROLE_NAME_TOKENS \
-  (Point)(Normal)( \
-      Vector)(Color)(Frame)(Transform)(PointIndex)(EdgeIndex)(FaceIndex)(TextureCoordinate)
+  (Point)(Normal)(Vector)(Color)(Frame)(Transform)(PointIndex)(EdgeIndex)(FaceIndex)(TextureCoordinate)
 
 TF_DECLARE_PUBLIC_TOKENS(SdfValueRoleNames, SDF_API, SDF_VALUE_ROLE_NAME_TOKENS);
 
@@ -519,8 +510,7 @@ class Sdf_ValueTypeNamesType : boost::noncopyable {
   Sdf_ValueTypeNamesType();
 };
 
-extern SDF_API TfStaticData<const Sdf_ValueTypeNamesType, Sdf_ValueTypeNamesType::_Init>
-    SdfValueTypeNames;
+extern SDF_API TfStaticData<const Sdf_ValueTypeNamesType, Sdf_ValueTypeNamesType::_Init> SdfValueTypeNames;
 
 /// \class SdfValueBlock
 /// A special value type that can be used to explicitly author an

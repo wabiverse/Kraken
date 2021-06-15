@@ -97,10 +97,10 @@ per integer (6.25% the original size), in the worst possible case it is
 namespace {
 
 template<class Int>
-inline typename std::enable_if<std::is_integral<Int>::value && std::is_unsigned<Int>::value &&
-                                   sizeof(Int) == 4,
-                               int32_t>::type
-_Signed(Int x)
+inline
+  typename std::enable_if<std::is_integral<Int>::value && std::is_unsigned<Int>::value && sizeof(Int) == 4,
+                          int32_t>::type
+  _Signed(Int x)
 {
   if (x <= static_cast<uint32_t>(INT32_MAX))
     return static_cast<int32_t>(x);
@@ -113,19 +113,19 @@ _Signed(Int x)
 }
 
 template<class Int>
-inline typename std::enable_if<std::is_integral<Int>::value && std::is_signed<Int>::value &&
-                                   sizeof(Int) == 4,
-                               int32_t>::type
-_Signed(Int x)
+inline
+  typename std::enable_if<std::is_integral<Int>::value && std::is_signed<Int>::value && sizeof(Int) == 4,
+                          int32_t>::type
+  _Signed(Int x)
 {
   return x;
 }
 
 template<class Int>
-inline typename std::enable_if<std::is_integral<Int>::value && std::is_unsigned<Int>::value &&
-                                   sizeof(Int) == 8,
-                               int64_t>::type
-_Signed(Int x)
+inline
+  typename std::enable_if<std::is_integral<Int>::value && std::is_unsigned<Int>::value && sizeof(Int) == 8,
+                          int64_t>::type
+  _Signed(Int x)
 {
   if (x <= static_cast<uint64_t>(INT64_MAX))
     return static_cast<int64_t>(x);
@@ -138,10 +138,10 @@ _Signed(Int x)
 }
 
 template<class Int>
-inline typename std::enable_if<std::is_integral<Int>::value && std::is_signed<Int>::value &&
-                                   sizeof(Int) == 8,
-                               int64_t>::type
-_Signed(Int x)
+inline
+  typename std::enable_if<std::is_integral<Int>::value && std::is_signed<Int>::value && sizeof(Int) == 8,
+                          int64_t>::type
+  _Signed(Int x)
 {
   return x;
 }
@@ -164,10 +164,10 @@ template<class Int> constexpr size_t _GetEncodedBufferSize(size_t numInts)
 {
   // Calculate encoded integer size.
   return numInts ?
-             /* commonValue */ (sizeof(Int)) +
-                 /* numCodesBytes */ ((numInts * 2 + 7) / 8) +
-                 /* maxIntBytes */ (numInts * sizeof(Int)) :
-             0;
+           /* commonValue */ (sizeof(Int)) +
+             /* numCodesBytes */ ((numInts * 2 + 7) / 8) +
+             /* maxIntBytes */ (numInts * sizeof(Int)) :
+           0;
 }
 
 template<class Int> struct _SmallTypes {
@@ -177,16 +177,16 @@ template<class Int> struct _SmallTypes {
 
 template<int N, class Iterator>
 void _EncodeNHelper(
-    Iterator &cur,
-    typename std::iterator_traits<Iterator>::value_type commonValue,
-    typename std::make_signed<typename std::iterator_traits<Iterator>::value_type>::type &prevVal,
-    char *&codesOut,
-    char *&vintsOut)
+  Iterator &cur,
+  typename std::iterator_traits<Iterator>::value_type commonValue,
+  typename std::make_signed<typename std::iterator_traits<Iterator>::value_type>::type &prevVal,
+  char *&codesOut,
+  char *&vintsOut)
 {
 
-  using Int       = typename std::iterator_traits<Iterator>::value_type;
-  using SInt      = typename std::make_signed<Int>::type;
-  using SmallInt  = typename _SmallTypes<Int>::SmallInt;
+  using Int = typename std::iterator_traits<Iterator>::value_type;
+  using SInt = typename std::make_signed<Int>::type;
+  using SmallInt = typename _SmallTypes<Int>::SmallInt;
   using MediumInt = typename _SmallTypes<Int>::MediumInt;
 
   static_assert(1 <= N && N <= 4, "");
@@ -210,8 +210,8 @@ void _EncodeNHelper(
 
   uint8_t codeByte = 0;
   for (int i = 0; i != N; ++i) {
-    SInt val  = _Signed(*cur) - prevVal;
-    prevVal   = _Signed(*cur++);
+    SInt val = _Signed(*cur) - prevVal;
+    prevVal = _Signed(*cur++);
     Code code = getCode(val);
     codeByte |= (code << (2 * i));
     switch (code) {
@@ -234,15 +234,15 @@ void _EncodeNHelper(
 
 template<int N, class Iterator>
 void _DecodeNHelper(
-    char const *&codesIn,
-    char const *&vintsIn,
-    typename std::iterator_traits<Iterator>::value_type commonValue,
-    typename std::make_signed<typename std::iterator_traits<Iterator>::value_type>::type &prevVal,
-    Iterator &output)
+  char const *&codesIn,
+  char const *&vintsIn,
+  typename std::iterator_traits<Iterator>::value_type commonValue,
+  typename std::make_signed<typename std::iterator_traits<Iterator>::value_type>::type &prevVal,
+  Iterator &output)
 {
-  using Int       = typename std::iterator_traits<Iterator>::value_type;
-  using SInt      = typename std::make_signed<Int>::type;
-  using SmallInt  = typename _SmallTypes<Int>::SmallInt;
+  using Int = typename std::iterator_traits<Iterator>::value_type;
+  using SInt = typename std::make_signed<Int>::type;
+  using SmallInt = typename _SmallTypes<Int>::SmallInt;
   using MediumInt = typename _SmallTypes<Int>::MediumInt;
 
   enum Code { Common, Small, Medium, Large };
@@ -282,7 +282,7 @@ template<class Int> size_t _EncodeIntegers(Int const *begin, size_t numInts, cha
     std::unordered_map<SInt, size_t> counts;
     SInt prevVal = 0;
     for (Int const *cur = begin, *end = begin + numInts; cur != end; ++cur) {
-      SInt val           = _Signed(*cur) - prevVal;
+      SInt val = _Signed(*cur) - prevVal;
       const size_t count = ++counts[val];
       if (count > commonCount) {
         commonValue = val;
@@ -300,12 +300,12 @@ template<class Int> size_t _EncodeIntegers(Int const *begin, size_t numInts, cha
   // Now code the values.
 
   // Write most common value.
-  char *p        = _WriteBits(output, commonValue);
+  char *p = _WriteBits(output, commonValue);
   char *codesOut = p;
   char *vintsOut = p + (numInts * 2 + 7) / 8;
 
   Int const *cur = begin;
-  SInt prevVal   = 0;
+  SInt prevVal = 0;
   while (numInts >= 4) {
     _EncodeNHelper<4>(cur, commonValue, prevVal, codesOut, vintsOut);
     numInts -= 4;
@@ -335,10 +335,10 @@ template<class Int> size_t _DecodeIntegers(char const *data, size_t numInts, Int
   auto commonValue = _ReadBits<SInt>(data);
 
   size_t numCodesBytes = (numInts * 2 + 7) / 8;
-  char const *codesIn  = data;
-  char const *vintsIn  = data + numCodesBytes;
+  char const *codesIn = data;
+  char const *vintsIn = data + numCodesBytes;
 
-  SInt prevVal  = 0;
+  SInt prevVal = 0;
   auto intsLeft = numInts;
   while (intsLeft >= 4) {
     _DecodeNHelper<4>(codesIn, vintsIn, commonValue, prevVal, result);
@@ -390,7 +390,7 @@ size_t _DecompressIntegers(char const *compressed,
   }
 
   size_t decompSz = TfFastCompression::DecompressFromBuffer(
-      compressed, workingSpace, compressedSize, workingSpaceSize);
+    compressed, workingSpace, compressedSize, workingSpaceSize);
 
   if (decompSz == 0)
     return 0;
@@ -413,16 +413,12 @@ size_t Usd_IntegerCompression::GetDecompressionWorkingSpaceSize(size_t numInts)
   return _GetEncodedBufferSize<int32_t>(numInts);
 }
 
-size_t Usd_IntegerCompression::CompressToBuffer(int32_t const *ints,
-                                                size_t numInts,
-                                                char *compressed)
+size_t Usd_IntegerCompression::CompressToBuffer(int32_t const *ints, size_t numInts, char *compressed)
 {
   return _CompressIntegers(ints, numInts, compressed);
 }
 
-size_t Usd_IntegerCompression::CompressToBuffer(uint32_t const *ints,
-                                                size_t numInts,
-                                                char *compressed)
+size_t Usd_IntegerCompression::CompressToBuffer(uint32_t const *ints, size_t numInts, char *compressed)
 {
   return _CompressIntegers(ints, numInts, compressed);
 }
@@ -458,16 +454,12 @@ size_t Usd_IntegerCompression64::GetDecompressionWorkingSpaceSize(size_t numInts
   return _GetEncodedBufferSize<int64_t>(numInts);
 }
 
-size_t Usd_IntegerCompression64::CompressToBuffer(int64_t const *ints,
-                                                  size_t numInts,
-                                                  char *compressed)
+size_t Usd_IntegerCompression64::CompressToBuffer(int64_t const *ints, size_t numInts, char *compressed)
 {
   return _CompressIntegers(ints, numInts, compressed);
 }
 
-size_t Usd_IntegerCompression64::CompressToBuffer(uint64_t const *ints,
-                                                  size_t numInts,
-                                                  char *compressed)
+size_t Usd_IntegerCompression64::CompressToBuffer(uint64_t const *ints, size_t numInts, char *compressed)
 {
   return _CompressIntegers(ints, numInts, compressed);
 }

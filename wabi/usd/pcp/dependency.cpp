@@ -95,7 +95,7 @@ PcpDependencyFlags PcpClassifyNodeDependency(const PcpNodeRef &node)
   // Classify as ancestral or direct: if there is any non-ancestral
   // arc in the path to the root node, the node is considered a
   // direct dependency.
-  bool anyDirect    = false;
+  bool anyDirect = false;
   bool anyAncestral = false;
   for (PcpNodeRef p = node; p.GetParentNode(); p = p.GetParentNode()) {
     if (p.IsDueToAncestor()) {

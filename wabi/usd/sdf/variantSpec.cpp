@@ -41,8 +41,7 @@ WABI_NAMESPACE_BEGIN
 
 SDF_DEFINE_SPEC(SdfSchema, SdfSpecTypeVariant, SdfVariantSpec, SdfSpec);
 
-SdfVariantSpecHandle SdfVariantSpec::New(const SdfVariantSetSpecHandle &owner,
-                                         const std::string &name)
+SdfVariantSpecHandle SdfVariantSpec::New(const SdfVariantSetSpecHandle &owner, const std::string &name)
 {
   TRACE_FUNCTION();
 
@@ -59,8 +58,7 @@ SdfVariantSpecHandle SdfVariantSpec::New(const SdfVariantSetSpecHandle &owner,
   SdfPath childPath = Sdf_VariantChildPolicy::GetChildPath(owner->GetPath(), TfToken(name));
 
   SdfLayerHandle layer = owner->GetLayer();
-  if (!Sdf_ChildrenUtils<Sdf_VariantChildPolicy>::CreateSpec(
-          layer, childPath, SdfSpecTypeVariant)) {
+  if (!Sdf_ChildrenUtils<Sdf_VariantChildPolicy>::CreateSpec(layer, childPath, SdfSpecTypeVariant)) {
     return TfNullPtr;
   }
 
@@ -100,19 +98,18 @@ SdfPrimSpecHandle SdfVariantSpec::GetPrimSpec() const
 
 SdfVariantSetsProxy SdfVariantSpec::GetVariantSets() const
 {
-  return SdfVariantSetsProxy(
-      SdfVariantSetView(GetLayer(), GetPath(), SdfChildrenKeys->VariantSetChildren),
-      "variant sets",
-      SdfVariantSetsProxy::CanErase);
+  return SdfVariantSetsProxy(SdfVariantSetView(GetLayer(), GetPath(), SdfChildrenKeys->VariantSetChildren),
+                             "variant sets",
+                             SdfVariantSetsProxy::CanErase);
 }
 
 std::vector<std::string> SdfVariantSpec::GetVariantNames(const std::string &name) const
 {
   std::vector<std::string> variantNames;
 
-  SdfPath variantSetPath                 = GetPath().AppendVariantSelection(name, "");
+  SdfPath variantSetPath = GetPath().AppendVariantSelection(name, "");
   std::vector<TfToken> variantNameTokens = GetLayer()->GetFieldAs<std::vector<TfToken>>(
-      variantSetPath, SdfChildrenKeys->VariantChildren);
+    variantSetPath, SdfChildrenKeys->VariantChildren);
 
   variantNames.reserve(variantNameTokens.size());
   TF_FOR_ALL(i, variantNameTokens)

@@ -99,8 +99,7 @@ WABI_NAMESPACE_BEGIN
 class TfWeakPtrFacadeBase {
 };
 
-template<template<class> class PtrTemplate, class Type>
-class TfWeakPtrFacade : public TfWeakPtrFacadeBase {
+template<template<class> class PtrTemplate, class Type> class TfWeakPtrFacade : public TfWeakPtrFacadeBase {
 
  public:
   friend class TfWeakPtrFacadeAccess;
@@ -336,8 +335,7 @@ inline bool operator>=(std::nullptr_t, TfWeakPtrFacade<X, Y> const &p)
 
 ///@}
 
-template<class ToPtr, template<class> class X, class Y>
-ToPtr TfDynamic_cast(TfWeakPtrFacade<X, Y> const &p)
+template<class ToPtr, template<class> class X, class Y> ToPtr TfDynamic_cast(TfWeakPtrFacade<X, Y> const &p)
 {
   return ToPtr(dynamic_cast<typename ToPtr::DataType *>(get_pointer(p)));
 }
@@ -348,14 +346,12 @@ ToPtr TfSafeDynamic_cast(TfWeakPtrFacade<X, Y> const &p)
   return ToPtr(TfSafeDynamic_cast<typename ToPtr::DataType *>(get_pointer(p)));
 }
 
-template<class ToPtr, template<class> class X, class Y>
-ToPtr TfStatic_cast(TfWeakPtrFacade<X, Y> const &p)
+template<class ToPtr, template<class> class X, class Y> ToPtr TfStatic_cast(TfWeakPtrFacade<X, Y> const &p)
 {
   return ToPtr(static_cast<typename ToPtr::DataType *>(get_pointer(p)));
 }
 
-template<class ToPtr, template<class> class X, class Y>
-ToPtr TfConst_cast(TfWeakPtrFacade<X, Y> const &p)
+template<class ToPtr, template<class> class X, class Y> ToPtr TfConst_cast(TfWeakPtrFacade<X, Y> const &p)
 {
   return ToPtr(const_cast<typename ToPtr::DataType *>(get_pointer(p)));
 }
@@ -369,10 +365,9 @@ ToPtr TfConst_cast(TfWeakPtrFacade<X, Y> const &p)
 
 template<class T>
 template<template<class> class X, class U>
-inline TfRefPtr<T>::TfRefPtr(
-    const TfWeakPtrFacade<X, U> &p,
-    typename boost::enable_if<boost::is_convertible<U *, T *>>::type *dummy)
-    : _refBase(get_pointer(p))
+inline TfRefPtr<T>::TfRefPtr(const TfWeakPtrFacade<X, U> &p,
+                             typename boost::enable_if<boost::is_convertible<U *, T *>>::type *dummy)
+  : _refBase(get_pointer(p))
 {
   _AddRef();
   Tf_RefPtrTracker_New(this, _GetObjectForTracking());
@@ -382,9 +377,8 @@ inline TfRefPtr<T>::TfRefPtr(
 // See typeFunctions.h for documention.
 //
 template<template<class> class Ptr, class T>
-struct TfTypeFunctions<
-    Ptr<T>,
-    typename boost::enable_if<boost::is_base_of<TfWeakPtrFacadeBase, Ptr<T>>>::type> {
+struct TfTypeFunctions<Ptr<T>,
+                       typename boost::enable_if<boost::is_base_of<TfWeakPtrFacadeBase, Ptr<T>>>::type> {
   static T *GetRawPtr(const Ptr<T> &t)
   {
     return get_pointer(t);
@@ -408,8 +402,8 @@ struct TfTypeFunctions<
 
 template<template<class> class Ptr, class T>
 struct TfTypeFunctions<
-    Ptr<const T>,
-    typename boost::enable_if<boost::is_base_of<TfWeakPtrFacadeBase, Ptr<const T>>>::type> {
+  Ptr<const T>,
+  typename boost::enable_if<boost::is_base_of<TfWeakPtrFacadeBase, Ptr<const T>>>::type> {
   static const T *GetRawPtr(const Ptr<const T> &t)
   {
     return get_pointer(t);
@@ -437,8 +431,7 @@ inline void TfHashAppend(HashState &h, TfWeakPtrFacade<X, T> const &ptr)
 }
 
 // Extend boost::hash to support TfWeakPtrFacade.
-template<template<class> class X, class T>
-inline size_t hash_value(TfWeakPtrFacade<X, T> const &ptr)
+template<template<class> class X, class T> inline size_t hash_value(TfWeakPtrFacade<X, T> const &ptr)
 {
   // Make the boost::hash type depend on T so that we don't have to always
   // include boost/functional/hash.hpp in this header for the definition of

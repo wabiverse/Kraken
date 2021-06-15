@@ -64,8 +64,7 @@ static PcpNamespaceEdits::LayerStackSites &_GetLayerStackSitesForEdit(PcpNamespa
   // Catch any invalid fixups that have been requested here and
   // store them away in invalidLayerStackSites so that consumers
   // can be informed about them.
-  return _IsInvalidEdit(oldPath, newPath) ? result->invalidLayerStackSites :
-                                            result->layerStackSites;
+  return _IsInvalidEdit(oldPath, newPath) ? result->invalidLayerStackSites : result->layerStackSites;
 }
 
 static bool _RelocatesMapContainsPrimOrDescendant(const SdfRelocatesMapProxy &reloMap,
@@ -114,16 +113,16 @@ static void _AddRelocateEditsForLayerStack(PcpNamespaceEdits *result,
       if (_RelocatesMapContainsPrimOrDescendant(prim->GetRelocates(), oldRelocatePath)) {
 
         PcpNamespaceEdits::LayerStackSites &layerStackSites = _GetLayerStackSitesForEdit(
-            result, oldRelocatePath, newRelocatePath);
+          result, oldRelocatePath, newRelocatePath);
 
         layerStackSites.resize(layerStackSites.size() + 1);
         PcpNamespaceEdits::LayerStackSite &site = layerStackSites.back();
-        site.cacheIndex                         = cacheIndex;
-        site.type                               = PcpNamespaceEdits::EditRelocate;
-        site.sitePath                           = *pathIt;
-        site.oldPath                            = oldRelocatePath;
-        site.newPath                            = newRelocatePath;
-        site.layerStack                         = layerStack;
+        site.cacheIndex = cacheIndex;
+        site.type = PcpNamespaceEdits::EditRelocate;
+        site.sitePath = *pathIt;
+        site.oldPath = oldRelocatePath;
+        site.newPath = newRelocatePath;
+        site.layerStack = layerStack;
 
         // Since we record edits at the granularity of layer stacks,
         // we can bail out once we've determined that at least one
@@ -211,10 +210,8 @@ static void _TranslatePathsAndEditRelocates(PcpNamespaceEdits *result,
     // Un-relocate oldParentPath and newParentPath.
     // We will use these paths to decide how to fix the
     // relocation that applied to them.
-    const SdfPath unrelocatedOldParentPath = oldParentPath.ReplacePrefix(reloTargetPath,
-                                                                         reloSourcePath);
-    const SdfPath unrelocatedNewParentPath = newParentPath.ReplacePrefix(reloTargetPath,
-                                                                         reloSourcePath);
+    const SdfPath unrelocatedOldParentPath = oldParentPath.ReplacePrefix(reloTargetPath, reloSourcePath);
+    const SdfPath unrelocatedNewParentPath = newParentPath.ReplacePrefix(reloTargetPath, reloSourcePath);
 
     bool reloTargetNeedsEdit = true;
 
@@ -233,7 +230,7 @@ static void _TranslatePathsAndEditRelocates(PcpNamespaceEdits *result,
       // Reparenting within the arc's root.  We'll fix the
       // relocation source but not the target.
       _AddRelocateEditsForLayerStack(
-          result, layerStack, cacheIndex, unrelocatedOldParentPath, unrelocatedNewParentPath);
+        result, layerStack, cacheIndex, unrelocatedOldParentPath, unrelocatedNewParentPath);
 
       reloTargetNeedsEdit = false;
     }
@@ -242,7 +239,7 @@ static void _TranslatePathsAndEditRelocates(PcpNamespaceEdits *result,
       // and potentially also the relocation target path
       // (if the relocation keeps the prim name).
       _AddRelocateEditsForLayerStack(
-          result, layerStack, cacheIndex, unrelocatedOldParentPath, unrelocatedNewParentPath);
+        result, layerStack, cacheIndex, unrelocatedOldParentPath, unrelocatedNewParentPath);
 
       // If the prim being renamed was the target of a relocation
       // in this layer stack (i.e., oldParentPath == reloTargetPath)
@@ -255,8 +252,7 @@ static void _TranslatePathsAndEditRelocates(PcpNamespaceEdits *result,
         // Relocate the new path.
         newParentPath = reloTargetPath.ReplaceName(newNodePath->GetNameToken());
 
-        _AddRelocateEditsForLayerStack(
-            result, layerStack, cacheIndex, reloTargetPath, newParentPath);
+        _AddRelocateEditsForLayerStack(result, layerStack, cacheIndex, reloTargetPath, newParentPath);
       }
       else {
         // The relocation changes the prim name.  We've no
@@ -352,7 +348,7 @@ static bool _AddLayerStackSite(PcpNamespaceEdits *result,
   }
   else {
     // NamespaceEditPath the parent.
-    type    = PcpNamespaceEdits::EditPath;
+    type = PcpNamespaceEdits::EditPath;
     oldPath = *oldNodePath;
     newPath = *newNodePath;
   }
@@ -360,23 +356,21 @@ static bool _AddLayerStackSite(PcpNamespaceEdits *result,
   if (result) {
     // Add a new layer stack site element at the end.
     PcpNamespaceEdits::LayerStackSites &layerStackSites = _GetLayerStackSitesForEdit(
-        result, oldPath, newPath);
+      result, oldPath, newPath);
 
     layerStackSites.resize(layerStackSites.size() + 1);
     PcpNamespaceEdits::LayerStackSite &site = layerStackSites.back();
 
     // Fill in the site.
     site.cacheIndex = cacheIndex;
-    site.type       = type;
-    site.sitePath   = sitePath;
-    site.oldPath    = oldPath;
-    site.newPath    = newPath;
+    site.type = type;
+    site.sitePath = sitePath;
+    site.oldPath = oldPath;
+    site.newPath = newPath;
     site.layerStack = node.GetParentNode().GetLayerStack();
 
     TF_DEBUG(PCP_NAMESPACE_EDIT)
-        .Msg("  - adding layer stack edit <%s> -> <%s>\n",
-             site.oldPath.GetText(),
-             site.newPath.GetText());
+      .Msg("  - adding layer stack edit <%s> -> <%s>\n", site.oldPath.GetText(), site.newPath.GetText());
   }
 
   return final;
@@ -437,9 +431,7 @@ PcpNamespaceEdits PcpComputeNamespaceEdits(const PcpCache *primaryCache,
   std::set<CacheNodePair> nodes, descendantNodes;
 
   struct _CacheNodeHelper {
-    static void InsertCacheNodePair(size_t cacheIdx,
-                                    PcpNodeRef node,
-                                    std::set<CacheNodePair> *nodes)
+    static void InsertCacheNodePair(size_t cacheIdx, PcpNodeRef node, std::set<CacheNodePair> *nodes)
     {
       // If a dependency on primPath was introduced via a variant
       // node (e.g., a prim authored locally in a variant), we store
@@ -470,7 +462,7 @@ PcpNamespaceEdits PcpComputeNamespaceEdits(const PcpCache *primaryCache,
                                                              /* recurseOnSite */ true,
                                                              /* recurseOnIndex */ true,
                                                              /* filter */ true);
-      auto visitNodeFn         = [&](const SdfPath &depIndexPath, const PcpNodeRef &node) {
+      auto visitNodeFn = [&](const SdfPath &depIndexPath, const PcpNodeRef &node) {
         _CacheNodeHelper::InsertCacheNodePair(cacheIndex, node, &nodes);
       };
       for (const PcpDependency &dep : deps) {
@@ -491,17 +483,16 @@ PcpNamespaceEdits PcpComputeNamespaceEdits(const PcpCache *primaryCache,
                                                                /* recurseOnSite */ false,
                                                                /* recurseOnIndex */ false,
                                                                /* filter */ true);
-        auto visitNodeFn         = [&](const SdfPath &depIndexPath, const PcpNodeRef &node) {
+        auto visitNodeFn = [&](const SdfPath &depIndexPath, const PcpNodeRef &node) {
           TF_DEBUG(PCP_NAMESPACE_EDIT)
-              .Msg(" found dep node: <%s> -> <%s> %s\n",
-                   depIndexPath.GetText(),
-                   node.GetPath().GetText(),
-                   PcpDependencyFlagsToString(PcpClassifyNodeDependency(node)).c_str());
+            .Msg(" found dep node: <%s> -> <%s> %s\n",
+                 depIndexPath.GetText(),
+                 node.GetPath().GetText(),
+                 PcpDependencyFlagsToString(PcpClassifyNodeDependency(node)).c_str());
           _CacheNodeHelper::InsertCacheNodePair(cacheIndex, node, &nodes);
         };
         for (const PcpDependency &dep : deps) {
-          Pcp_ForEachDependentNode(
-              dep.sitePath, primSite.layer, dep.indexPath, *cache, visitNodeFn);
+          Pcp_ForEachDependentNode(dep.sitePath, primSite.layer, dep.indexPath, *cache, visitNodeFn);
         }
       }
 
@@ -522,26 +513,24 @@ PcpNamespaceEdits PcpComputeNamespaceEdits(const PcpCache *primaryCache,
 
         // Get all of the direct dependents on the namespace edited
         // site and anything below.
-        for (const PcpDependency &dep :
-             primaryCache->FindSiteDependencies(primaryLayerStack,
-                                                primPath,
-                                                depMask,
-                                                /* recurseOnSite */ true,
-                                                /* recurseOnIndex */ false,
-                                                /* filter */ true)) {
+        for (const PcpDependency &dep : primaryCache->FindSiteDependencies(primaryLayerStack,
+                                                                           primPath,
+                                                                           depMask,
+                                                                           /* recurseOnSite */ true,
+                                                                           /* recurseOnIndex */ false,
+                                                                           /* filter */ true)) {
           if (dep.indexPath.IsPrimPath()) {
             descendentPrimPaths.insert(dep.indexPath);
           }
         }
 
         // Remove the direct dependents on the site itself.
-        for (const PcpDependency &dep :
-             primaryCache->FindSiteDependencies(primaryLayerStack,
-                                                primPath,
-                                                depMask,
-                                                /* recurseOnSite */ false,
-                                                /* recurseOnIndex */ false,
-                                                /* filter */ true)) {
+        for (const PcpDependency &dep : primaryCache->FindSiteDependencies(primaryLayerStack,
+                                                                           primPath,
+                                                                           depMask,
+                                                                           /* recurseOnSite */ false,
+                                                                           /* recurseOnIndex */ false,
+                                                                           /* filter */ true)) {
           descendentPrimPaths.erase(dep.indexPath);
         }
 
@@ -671,32 +660,32 @@ PcpNamespaceEdits PcpComputeNamespaceEdits(const PcpCache *primaryCache,
   typedef PcpNamespaceEdits::CacheSite CacheSite;
   std::set<PcpLayerStackSite> sites;
   for (const auto &cacheAndNode : nodes) {
-    size_t cacheIndex   = cacheAndNode.first;
-    PcpNodeRef node     = cacheAndNode.second;
+    size_t cacheIndex = cacheAndNode.first;
+    PcpNodeRef node = cacheAndNode.second;
     SdfPath oldNodePath = curPath;
     SdfPath newNodePath = newPath;
 
     TF_DEBUG(PCP_NAMESPACE_EDIT)
-        .Msg(
-            "\n processing node:\n"
-            "  cache:           %s\n"
-            "  node.type:       %s\n"
-            "  node.path:       <%s>\n"
-            "  node.rootPath:   <%s>\n"
-            "  node.layerStack: %s\n"
-            "  curPath:         <%s>\n"
-            "  newPath:         <%s>\n"
-            "  oldNodePath:     <%s>\n"
-            "  newNodePath:     <%s>\n",
-            TfStringify(caches[cacheIndex]->GetLayerStack()->GetIdentifier()).c_str(),
-            TfStringify(node.GetArcType()).c_str(),
-            node.GetPath().GetText(),
-            node.GetRootNode().GetPath().GetText(),
-            TfStringify(node.GetLayerStack()->GetIdentifier()).c_str(),
-            curPath.GetText(),
-            newPath.GetText(),
-            oldNodePath.GetText(),
-            newNodePath.GetText());
+      .Msg(
+        "\n processing node:\n"
+        "  cache:           %s\n"
+        "  node.type:       %s\n"
+        "  node.path:       <%s>\n"
+        "  node.rootPath:   <%s>\n"
+        "  node.layerStack: %s\n"
+        "  curPath:         <%s>\n"
+        "  newPath:         <%s>\n"
+        "  oldNodePath:     <%s>\n"
+        "  newNodePath:     <%s>\n",
+        TfStringify(caches[cacheIndex]->GetLayerStack()->GetIdentifier()).c_str(),
+        TfStringify(node.GetArcType()).c_str(),
+        node.GetPath().GetText(),
+        node.GetRootNode().GetPath().GetText(),
+        TfStringify(node.GetLayerStack()->GetIdentifier()).c_str(),
+        curPath.GetText(),
+        newPath.GetText(),
+        oldNodePath.GetText(),
+        newNodePath.GetText());
 
     // Handle the node itself.  Note that the node, although representing
     // the namespace edited site, can appear in different layer stacks.
@@ -704,39 +693,36 @@ PcpNamespaceEdits PcpComputeNamespaceEdits(const PcpCache *primaryCache,
     // in the shared layer then we must do the corresponding edit in each
     // of the scene's layer stacks.
     if (sites.insert(node.GetSite()).second) {
-      LayerStackSites &layerStackSites = _GetLayerStackSitesForEdit(
-          &result, oldNodePath, newNodePath);
+      LayerStackSites &layerStackSites = _GetLayerStackSitesForEdit(&result, oldNodePath, newNodePath);
       layerStackSites.resize(layerStackSites.size() + 1);
       {
         LayerStackSite &site = layerStackSites.back();
-        site.cacheIndex      = cacheIndex;
-        site.type            = PcpNamespaceEdits::EditPath;
-        site.sitePath        = oldNodePath;
-        site.oldPath         = oldNodePath;
-        site.newPath         = newNodePath;
-        site.layerStack      = node.GetLayerStack();
+        site.cacheIndex = cacheIndex;
+        site.type = PcpNamespaceEdits::EditPath;
+        site.sitePath = oldNodePath;
+        site.oldPath = oldNodePath;
+        site.newPath = newNodePath;
+        site.layerStack = node.GetLayerStack();
         // Drop the 'site' reference here since the call to
         // _AddRelocateEditsForLayerStack can invalidate the reference
         // from layerStackSites, when it resizes the vector.
       }
-      _AddRelocateEditsForLayerStack(
-          &result, node.GetLayerStack(), cacheIndex, oldNodePath, newNodePath);
+      _AddRelocateEditsForLayerStack(&result, node.GetLayerStack(), cacheIndex, oldNodePath, newNodePath);
     }
 
     // Handle each arc from node to the root.
     while (node.GetParentNode()) {
       TF_DEBUG(PCP_NAMESPACE_EDIT)
-          .Msg("  - traverse to parent of <%s>.  <%s> -> <%s>\n",
-               node.GetPath().GetText(),
-               oldNodePath.GetText(),
-               newNodePath.GetText());
+        .Msg("  - traverse to parent of <%s>.  <%s> -> <%s>\n",
+             node.GetPath().GetText(),
+             oldNodePath.GetText(),
+             newNodePath.GetText());
 
       // Add site to result if we haven't handled it before, and
       // translate paths to parent node.
       const bool newSite = sites.insert(node.GetParentNode().GetSite()).second;
 
-      if (_AddLayerStackSite(
-              newSite ? &result : nullptr, node, cacheIndex, &oldNodePath, &newNodePath)) {
+      if (_AddLayerStackSite(newSite ? &result : nullptr, node, cacheIndex, &oldNodePath, &newNodePath)) {
         // Reached a direct arc, so we don't have to continue.
         // The composed object will continue to exist at the
         // same path, with the arc target updated.
@@ -752,14 +738,12 @@ PcpNamespaceEdits PcpComputeNamespaceEdits(const PcpCache *primaryCache,
     if (!node.GetParentNode()) {
       if (!_IsInvalidEdit(oldNodePath, newNodePath)) {
         TF_DEBUG(PCP_NAMESPACE_EDIT)
-            .Msg("  - adding cacheSite <%s> -> <%s>\n",
-                 oldNodePath.GetText(),
-                 newNodePath.GetText());
+          .Msg("  - adding cacheSite <%s> -> <%s>\n", oldNodePath.GetText(), newNodePath.GetText());
         result.cacheSites.resize(result.cacheSites.size() + 1);
         CacheSite &cacheSite = result.cacheSites.back();
         cacheSite.cacheIndex = cacheIndex;
-        cacheSite.oldPath    = oldNodePath;
-        cacheSite.newPath    = newNodePath;
+        cacheSite.oldPath = oldNodePath;
+        cacheSite.newPath = newNodePath;
       }
     }
   }
@@ -767,8 +751,7 @@ PcpNamespaceEdits PcpComputeNamespaceEdits(const PcpCache *primaryCache,
   // Helper functions.
   struct _Helper {
     // Returns true if sites contains site or any ancestor of site.
-    static bool HasSite(const std::map<PcpLayerStackSite, size_t> &sites,
-                        const PcpLayerStackSite &site)
+    static bool HasSite(const std::map<PcpLayerStackSite, size_t> &sites, const PcpLayerStackSite &site)
     {
       std::map<PcpLayerStackSite, size_t>::const_iterator i = sites.lower_bound(site);
       if (i != sites.end() && i->first == site) {
@@ -811,12 +794,11 @@ PcpNamespaceEdits PcpComputeNamespaceEdits(const PcpCache *primaryCache,
       PcpCache *cache = caches[cacheIndex];
 
       TF_DEBUG(PCP_NAMESPACE_EDIT)
-          .Msg("- dep cache: %s\n", TfStringify(cache->GetLayerStack()->GetIdentifier()).c_str());
+        .Msg("- dep cache: %s\n", TfStringify(cache->GetLayerStack()->GetIdentifier()).c_str());
 
       std::set<PcpLayerStackPtr> layerStacks;
       for (const SdfSite &site : primSites) {
-        const PcpLayerStackPtrVector &layerStackVec = cache->FindAllLayerStacksUsingLayer(
-            site.layer);
+        const PcpLayerStackPtrVector &layerStackVec = cache->FindAllLayerStacksUsingLayer(site.layer);
         layerStacks.insert(layerStackVec.begin(), layerStackVec.end());
       }
 
@@ -830,7 +812,7 @@ PcpNamespaceEdits PcpComputeNamespaceEdits(const PcpCache *primaryCache,
                                                                /* recurseOnSite */ true,
                                                                /* recurseOnIndex */ true,
                                                                /* filter */ true);
-        auto visitNodeFn         = [&](const SdfPath &depIndexPath, const PcpNodeRef &node) {
+        auto visitNodeFn = [&](const SdfPath &depIndexPath, const PcpNodeRef &node) {
           if (!depIndexPath.IsPrimPath() || node.GetPath() != curPath) {
             descendantPathsAndNodes[depIndexPath] = node;
           }
@@ -859,9 +841,9 @@ PcpNamespaceEdits PcpComputeNamespaceEdits(const PcpCache *primaryCache,
       // to other arcs and not affected by the namespace edit.
       TF_FOR_ALL(i, descendantPathsAndNodes)
       {
-        PcpNodeRef node               = i->second;
+        PcpNodeRef node = i->second;
         const SdfPath &descendantPath = i->first;
-        SdfPath descendantPrimPath    = descendantPath.GetPrimPath();
+        SdfPath descendantPrimPath = descendantPath.GetPrimPath();
 
         for (; node; node = node.GetParentNode()) {
           SdfPath path = descendantPath.ReplacePrefix(descendantPrimPath, node.GetPath());
@@ -883,22 +865,22 @@ PcpNamespaceEdits PcpComputeNamespaceEdits(const PcpCache *primaryCache,
     {
       result.layerStackSites.resize(result.layerStackSites.size() + 1);
       LayerStackSite &site = result.layerStackSites.back();
-      site.cacheIndex      = j->second;
-      site.type            = PcpNamespaceEdits::EditPath;
-      site.sitePath        = j->first.path;
-      site.oldPath         = j->first.path;
-      site.newPath         = newPath;  // This is the empty path.
-      site.layerStack      = j->first.layerStack;
+      site.cacheIndex = j->second;
+      site.type = PcpNamespaceEdits::EditPath;
+      site.sitePath = j->first.path;
+      site.oldPath = j->first.path;
+      site.newPath = newPath;  // This is the empty path.
+      site.layerStack = j->first.layerStack;
     }
   }
 
   // Fix up all direct inherits to a descendant site.
   if (!descendantNodes.empty()) {
     for (const auto &cacheAndNode : descendantNodes) {
-      size_t cacheIndex      = cacheAndNode.first;
+      size_t cacheIndex = cacheAndNode.first;
       const PcpNodeRef &node = cacheAndNode.second;
-      SdfPath oldNodePath    = node.GetPath();
-      SdfPath newNodePath    = oldNodePath.ReplacePrefix(curPath, newPath);
+      SdfPath oldNodePath = node.GetPath();
+      SdfPath newNodePath = oldNodePath.ReplacePrefix(curPath, newPath);
       _AddLayerStackSite(&result, node, cacheIndex, &oldNodePath, &newNodePath);
     }
   }
@@ -910,63 +892,61 @@ PcpNamespaceEdits PcpComputeNamespaceEdits(const PcpCache *primaryCache,
   // in diagnostics.cpp.
   if (TfDebug::IsEnabled(PCP_NAMESPACE_EDIT)) {
     TF_DEBUG(PCP_NAMESPACE_EDIT)
-        .Msg(
-            "PcpComputeNamespaceEdits():\n"
-            "  cache:   %s\n"
-            "  curPath: <%s>\n"
-            "  newPath: <%s>\n",
-            TfStringify(primaryLayerStack->GetIdentifier()).c_str(),
-            curPath.GetText(),
-            newPath.GetText());
+      .Msg(
+        "PcpComputeNamespaceEdits():\n"
+        "  cache:   %s\n"
+        "  curPath: <%s>\n"
+        "  newPath: <%s>\n",
+        TfStringify(primaryLayerStack->GetIdentifier()).c_str(),
+        curPath.GetText(),
+        newPath.GetText());
     TF_FOR_ALL(cacheSite, result.cacheSites)
     {
       TF_DEBUG(PCP_NAMESPACE_EDIT)
-          .Msg(
-              " cacheSite:\n"
-              "  cache:   %s\n"
-              "  oldPath: <%s>\n"
-              "  newPath: <%s>\n",
-              TfStringify(caches[cacheSite->cacheIndex]->GetLayerStack()->GetIdentifier()).c_str(),
-              cacheSite->oldPath.GetText(),
-              cacheSite->newPath.GetText());
+        .Msg(
+          " cacheSite:\n"
+          "  cache:   %s\n"
+          "  oldPath: <%s>\n"
+          "  newPath: <%s>\n",
+          TfStringify(caches[cacheSite->cacheIndex]->GetLayerStack()->GetIdentifier()).c_str(),
+          cacheSite->oldPath.GetText(),
+          cacheSite->newPath.GetText());
     }
     TF_FOR_ALL(layerStackSite, result.layerStackSites)
     {
       TF_DEBUG(PCP_NAMESPACE_EDIT)
-          .Msg(
-              " layerStackSite:\n"
-              "  cache:      %s\n"
-              "  type:       %s\n"
-              "  layerStack: %s\n"
-              "  sitePath:   <%s>\n"
-              "  oldPath:    <%s>\n"
-              "  newPath:    <%s>\n",
-              TfStringify(caches[layerStackSite->cacheIndex]->GetLayerStack()->GetIdentifier())
-                  .c_str(),
-              TfStringify(layerStackSite->type).c_str(),
-              TfStringify(layerStackSite->layerStack->GetIdentifier()).c_str(),
-              layerStackSite->sitePath.GetText(),
-              layerStackSite->oldPath.GetText(),
-              layerStackSite->newPath.GetText());
+        .Msg(
+          " layerStackSite:\n"
+          "  cache:      %s\n"
+          "  type:       %s\n"
+          "  layerStack: %s\n"
+          "  sitePath:   <%s>\n"
+          "  oldPath:    <%s>\n"
+          "  newPath:    <%s>\n",
+          TfStringify(caches[layerStackSite->cacheIndex]->GetLayerStack()->GetIdentifier()).c_str(),
+          TfStringify(layerStackSite->type).c_str(),
+          TfStringify(layerStackSite->layerStack->GetIdentifier()).c_str(),
+          layerStackSite->sitePath.GetText(),
+          layerStackSite->oldPath.GetText(),
+          layerStackSite->newPath.GetText());
     }
     TF_FOR_ALL(layerStackSite, result.invalidLayerStackSites)
     {
       TF_DEBUG(PCP_NAMESPACE_EDIT)
-          .Msg(
-              " invalidLayerStackSite:\n"
-              "  cache:      %s\n"
-              "  type:       %s\n"
-              "  layerStack: %s\n"
-              "  sitePath:   <%s>\n"
-              "  oldPath:    <%s>\n"
-              "  newPath:    <%s>\n",
-              TfStringify(caches[layerStackSite->cacheIndex]->GetLayerStack()->GetIdentifier())
-                  .c_str(),
-              TfStringify(layerStackSite->type).c_str(),
-              TfStringify(layerStackSite->layerStack->GetIdentifier()).c_str(),
-              layerStackSite->sitePath.GetText(),
-              layerStackSite->oldPath.GetText(),
-              layerStackSite->newPath.GetText());
+        .Msg(
+          " invalidLayerStackSite:\n"
+          "  cache:      %s\n"
+          "  type:       %s\n"
+          "  layerStack: %s\n"
+          "  sitePath:   <%s>\n"
+          "  oldPath:    <%s>\n"
+          "  newPath:    <%s>\n",
+          TfStringify(caches[layerStackSite->cacheIndex]->GetLayerStack()->GetIdentifier()).c_str(),
+          TfStringify(layerStackSite->type).c_str(),
+          TfStringify(layerStackSite->layerStack->GetIdentifier()).c_str(),
+          layerStackSite->sitePath.GetText(),
+          layerStackSite->oldPath.GetText(),
+          layerStackSite->newPath.GetText());
     }
   }
 

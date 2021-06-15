@@ -50,7 +50,7 @@ struct HdArnoldConfig {
   static const HdArnoldConfig &GetInstance();
 
   HdArnoldConfig(const HdArnoldConfig &) = delete;
-  HdArnoldConfig(HdArnoldConfig &&)      = delete;
+  HdArnoldConfig(HdArnoldConfig &&) = delete;
   HdArnoldConfig &operator=(const HdArnoldConfig &) = delete;
 
   /// Use HDARNOLD_bucket_size to set the value.

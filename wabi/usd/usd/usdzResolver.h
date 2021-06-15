@@ -41,8 +41,7 @@ class Usd_UsdzResolver : public ArPackageResolver {
  public:
   Usd_UsdzResolver();
 
-  virtual std::string Resolve(const std::string &packagePath,
-                              const std::string &packagedPath) override;
+  virtual std::string Resolve(const std::string &packagePath, const std::string &packagedPath) override;
 
   virtual std::shared_ptr<ArAsset> OpenAsset(const std::string &packagePath,
                                              const std::string &packagedPath) override;
@@ -87,7 +86,7 @@ class Usd_UsdzResolverCache {
 
   struct _Cache;
   using _ThreadLocalCaches = ArThreadLocalScopedCache<_Cache>;
-  using _CachePtr          = _ThreadLocalCaches::CachePtr;
+  using _CachePtr = _ThreadLocalCaches::CachePtr;
   _CachePtr _GetCurrentCache();
 
   AssetAndZipFile _OpenZipFile(const std::string &packagePath);

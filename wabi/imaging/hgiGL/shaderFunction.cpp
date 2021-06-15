@@ -39,8 +39,8 @@
 WABI_NAMESPACE_BEGIN
 
 HgiGLShaderFunction::HgiGLShaderFunction(HgiShaderFunctionDesc const &desc)
-    : HgiShaderFunction(desc),
-      _shaderId(0)
+  : HgiShaderFunction(desc),
+    _shaderId(0)
 {
   std::vector<GLenum> stages = HgiGLConversions::GetShaderStages(desc.shaderStage);
 
@@ -57,7 +57,7 @@ HgiGLShaderFunction::HgiGLShaderFunction(HgiShaderFunctionDesc const &desc)
   std::stringstream ss;
   shaderGenerator.Execute(ss);
   std::string shaderStr = ss.str();
-  const char *src       = shaderStr.c_str();
+  const char *src = shaderStr.c_str();
   glShaderSource(_shaderId, 1, &src, nullptr);
   glCompileShader(_shaderId);
 

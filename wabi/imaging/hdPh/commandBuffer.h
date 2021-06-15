@@ -41,10 +41,10 @@ WABI_NAMESPACE_BEGIN
 class HdPhDrawItem;
 class HdPhDrawItemInstance;
 
-using HdPhRenderPassStateSharedPtr  = std::shared_ptr<class HdPhRenderPassState>;
+using HdPhRenderPassStateSharedPtr = std::shared_ptr<class HdPhRenderPassState>;
 using HdPhResourceRegistrySharedPtr = std::shared_ptr<class HdPhResourceRegistry>;
 
-using HdPh_DrawBatchSharedPtr       = std::shared_ptr<class HdPh_DrawBatch>;
+using HdPh_DrawBatchSharedPtr = std::shared_ptr<class HdPh_DrawBatch>;
 using HdPh_DrawBatchSharedPtrVector = std::vector<HdPh_DrawBatchSharedPtr>;
 
 /// \class HdPhCommandBuffer

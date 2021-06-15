@@ -33,10 +33,10 @@ TfPatternMatcher::TfPatternMatcher() : _caseSensitive(false), _isGlob(false), _r
 {}
 
 TfPatternMatcher::TfPatternMatcher(const string &pattern, bool caseSensitive, bool isGlob)
-    : _caseSensitive(caseSensitive),
-      _isGlob(isGlob),
-      _pattern(pattern),
-      _recompile(true)
+  : _caseSensitive(caseSensitive),
+    _isGlob(isGlob),
+    _pattern(pattern),
+    _recompile(true)
 {}
 
 TfPatternMatcher::~TfPatternMatcher()
@@ -76,7 +76,7 @@ bool TfPatternMatcher::Match(const string &query, string *errorMsg) const
 void TfPatternMatcher::SetIsCaseSensitive(bool sensitive)
 {
   if (sensitive != _caseSensitive) {
-    _recompile     = true;
+    _recompile = true;
     _caseSensitive = sensitive;
   }
 }
@@ -85,7 +85,7 @@ void TfPatternMatcher::SetIsGlobPattern(bool isGlob)
 {
   if (isGlob != _isGlob) {
     _recompile = true;
-    _isGlob    = isGlob;
+    _isGlob = isGlob;
   }
 }
 
@@ -93,7 +93,7 @@ void TfPatternMatcher::SetPattern(const string &pattern)
 {
   if (pattern != _pattern) {
     _recompile = true;
-    _pattern   = pattern;
+    _pattern = pattern;
   }
 }
 

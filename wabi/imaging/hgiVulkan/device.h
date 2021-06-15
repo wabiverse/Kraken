@@ -92,18 +92,18 @@ class HgiVulkanDevice final {
   void WaitForIdle();
 
   /// Device extension function pointers
-  PFN_vkCreateRenderPass2KHR vkCreateRenderPass2KHR                 = 0;
-  PFN_vkCmdBeginDebugUtilsLabelEXT vkCmdBeginDebugUtilsLabelEXT     = 0;
-  PFN_vkCmdEndDebugUtilsLabelEXT vkCmdEndDebugUtilsLabelEXT         = 0;
-  PFN_vkCmdInsertDebugUtilsLabelEXT vkCmdInsertDebugUtilsLabelEXT   = 0;
-  PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT     = 0;
+  PFN_vkCreateRenderPass2KHR vkCreateRenderPass2KHR = 0;
+  PFN_vkCmdBeginDebugUtilsLabelEXT vkCmdBeginDebugUtilsLabelEXT = 0;
+  PFN_vkCmdEndDebugUtilsLabelEXT vkCmdEndDebugUtilsLabelEXT = 0;
+  PFN_vkCmdInsertDebugUtilsLabelEXT vkCmdInsertDebugUtilsLabelEXT = 0;
+  PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT = 0;
   PFN_vkQueueBeginDebugUtilsLabelEXT vkQueueBeginDebugUtilsLabelEXT = 0;
-  PFN_vkQueueEndDebugUtilsLabelEXT vkQueueEndDebugUtilsLabelEXT     = 0;
+  PFN_vkQueueEndDebugUtilsLabelEXT vkQueueEndDebugUtilsLabelEXT = 0;
 
  private:
-  HgiVulkanDevice()        = delete;
+  HgiVulkanDevice() = delete;
   HgiVulkanDevice &operator=(const HgiVulkanDevice &) = delete;
-  HgiVulkanDevice(const HgiVulkanDevice &)            = delete;
+  HgiVulkanDevice(const HgiVulkanDevice &) = delete;
 
   // Returns true if the provided extension is supported by the device
   bool _IsSupportedExtension(const char *extensionName) const;

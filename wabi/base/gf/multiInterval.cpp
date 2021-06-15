@@ -68,7 +68,7 @@ GfInterval GfMultiInterval::GetBounds() const
 {
   if (!_set.empty()) {
     const GfInterval &first = *_set.begin();
-    const GfInterval &last  = *_set.rbegin();
+    const GfInterval &last = *_set.rbegin();
     return GfInterval(first.GetMin(), last.GetMax(), first.IsMinClosed(), last.IsMaxClosed());
   }
   else {
@@ -207,7 +207,7 @@ void GfMultiInterval::Add(const GfInterval &interval)
 
   // Merge  interval with neighboring overlapping intervals.
   GfInterval merged = interval;
-  const_iterator i  = _set.lower_bound(merged);
+  const_iterator i = _set.lower_bound(merged);
 
   // Merge with subsequent intervals.
   while (i != _set.end() && merged.Intersects(*i)) {
@@ -218,8 +218,7 @@ void GfMultiInterval::Add(const GfInterval &interval)
   // matches the max of the merged interval if either of these intervals
   // has that boundary open.  So we need to merge in the next interval if our
   // end points match up and either of the these end points is closed
-  if (i != _set.end() && merged.GetMax() == (*i).GetMin() &&
-      !(merged.IsMaxOpen() && (*i).IsMinOpen())) {
+  if (i != _set.end() && merged.GetMax() == (*i).GetMin() && !(merged.IsMaxOpen() && (*i).IsMinOpen())) {
     merged |= *i;
     _set.erase(i++);
   }

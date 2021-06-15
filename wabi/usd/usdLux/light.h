@@ -176,7 +176,7 @@ class UsdLuxLight : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateIntensityAttr(VtValue const &defaultValue = VtValue(),
-                                   bool writeSparsely          = false) const;
+                                   bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -200,8 +200,7 @@ class UsdLuxLight : public UsdGeomXformable {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
-  UsdAttribute CreateExposureAttr(VtValue const &defaultValue = VtValue(),
-                                  bool writeSparsely          = false) const;
+  UsdAttribute CreateExposureAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -224,8 +223,7 @@ class UsdLuxLight : public UsdGeomXformable {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
-  UsdAttribute CreateDiffuseAttr(VtValue const &defaultValue = VtValue(),
-                                 bool writeSparsely          = false) const;
+  UsdAttribute CreateDiffuseAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -248,8 +246,7 @@ class UsdLuxLight : public UsdGeomXformable {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
-  UsdAttribute CreateSpecularAttr(VtValue const &defaultValue = VtValue(),
-                                  bool writeSparsely          = false) const;
+  UsdAttribute CreateSpecularAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -275,7 +272,7 @@ class UsdLuxLight : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateNormalizeAttr(VtValue const &defaultValue = VtValue(),
-                                   bool writeSparsely          = false) const;
+                                   bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -297,8 +294,7 @@ class UsdLuxLight : public UsdGeomXformable {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
-  UsdAttribute CreateColorAttr(VtValue const &defaultValue = VtValue(),
-                               bool writeSparsely          = false) const;
+  UsdAttribute CreateColorAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -321,7 +317,7 @@ class UsdLuxLight : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateEnableColorTemperatureAttr(VtValue const &defaultValue = VtValue(),
-                                                bool writeSparsely          = false) const;
+                                                bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -350,7 +346,7 @@ class UsdLuxLight : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateColorTemperatureAttr(VtValue const &defaultValue = VtValue(),
-                                          bool writeSparsely          = false) const;
+                                          bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //

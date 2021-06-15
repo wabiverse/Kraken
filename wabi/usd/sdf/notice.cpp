@@ -37,8 +37,7 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<SdfNotice::LayerInfoDidChange, TfType::Bases<SdfNotice::Base>>();
   TfType::Define<SdfNotice::LayerIdentifierDidChange, TfType::Bases<SdfNotice::Base>>();
   TfType::Define<SdfNotice::LayerDidReplaceContent, TfType::Bases<SdfNotice::Base>>();
-  TfType::Define<SdfNotice::LayerDidReloadContent,
-                 TfType::Bases<SdfNotice::LayerDidReplaceContent>>();
+  TfType::Define<SdfNotice::LayerDidReloadContent, TfType::Bases<SdfNotice::LayerDidReplaceContent>>();
   TfType::Define<SdfNotice::LayerDidSaveLayerToFile, TfType::Bases<SdfNotice::Base>>();
   TfType::Define<SdfNotice::LayerDirtinessChanged, TfType::Bases<SdfNotice::Base>>();
   TfType::Define<SdfNotice::LayerMutenessChanged, TfType::Bases<SdfNotice::Base>>();
@@ -59,8 +58,8 @@ SdfLayerHandleVector SdfNotice::BaseLayersDidChange::GetLayers() const
 
 SdfNotice::LayerIdentifierDidChange::LayerIdentifierDidChange(const std::string &oldIdentifier,
                                                               const std::string &newIdentifier)
-    : _oldId(oldIdentifier),
-      _newId(newIdentifier)
+  : _oldId(oldIdentifier),
+    _newId(newIdentifier)
 {}
 
 SdfNotice::Base::~Base()

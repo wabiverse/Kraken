@@ -53,8 +53,8 @@ class UsdSkelBinding {
   {}
 
   UsdSkelBinding(const UsdSkelSkeleton &skel, const VtArray<UsdSkelSkinningQuery> &skinningQueries)
-      : _skel(skel),
-        _skinningQueries(skinningQueries)
+    : _skel(skel),
+      _skinningQueries(skinningQueries)
   {}
 
   /// Returns the bound skeleton.

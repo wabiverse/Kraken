@@ -163,9 +163,8 @@ template<typename T> std::string TfPyRepr(const std::vector<T> &v)
 /// imported under their standard names. Additional globals may be provided in
 /// the \p extraGlobals dictionary.
 TF_API
-boost::python::object TfPyEvaluate(
-    std::string const &expr,
-    boost::python::dict const &extraGlobals = boost::python::dict());
+boost::python::object TfPyEvaluate(std::string const &expr,
+                                   boost::python::dict const &extraGlobals = boost::python::dict());
 
 /// Return a positive index in the range [0,size).  If \a throwError is true,
 /// this will throw an index error if the resulting index is out of range.

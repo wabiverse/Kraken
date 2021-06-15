@@ -52,11 +52,11 @@ GfTransform &GfTransform::Set(const GfVec3d &scale,
                               const GfVec3d &pivotPosition,
                               const GfVec3d &translation)
 {
-  _scale            = scale;
+  _scale = scale;
   _pivotOrientation = pivotOrientation;
-  _rotation         = rotation;
-  _pivotPosition    = pivotPosition;
-  _translation      = translation;
+  _rotation = rotation;
+  _pivotPosition = pivotPosition;
+  _translation = translation;
 
   return *this;
 }
@@ -101,19 +101,19 @@ GfTransform &GfTransform::SetIdentity()
   _pivotOrientation.SetIdentity();
   _rotation.SetIdentity();
   _pivotPosition = GfVec3d(0);
-  _translation   = GfVec3d(0);
+  _translation = GfVec3d(0);
 
   return *this;
 }
 
 GfMatrix4d GfTransform::GetMatrix() const
 {
-  bool doPivot       = (_pivotPosition != GfVec3d(0));
-  bool doScale       = (_scale != GfVec3d(1.0, 1.0, 1.0));
+  bool doPivot = (_pivotPosition != GfVec3d(0));
+  bool doScale = (_scale != GfVec3d(1.0, 1.0, 1.0));
   bool doScaleOrient = (_pivotOrientation.GetAngle() != 0.0);
-  bool doRotation    = (_rotation.GetAngle() != 0.0);
+  bool doRotation = (_rotation.GetAngle() != 0.0);
   bool doTranslation = (_translation != GfVec3d(0));
-  bool anySet        = false;
+  bool anySet = false;
   GfMatrix4d mtx;
 
   //
@@ -183,16 +183,16 @@ std::ostream &operator<<(std::ostream &out, const GfTransform &xf)
   const GfVec3d &t = xf.GetTranslation();
 
   const GfRotation &rotation = xf.GetRotation();
-  const GfVec3d &rax         = rotation.GetAxis();
-  double rang                = rotation.GetAngle();
+  const GfVec3d &rax = rotation.GetAxis();
+  double rang = rotation.GetAngle();
 
   const GfVec3d &s = xf.GetScale();
 
   const GfVec3d &c = xf.GetPivotPosition();
 
   const GfRotation &pivotOrientation = xf.GetPivotOrientation();
-  const GfVec3d &pax                 = pivotOrientation.GetAxis();
-  double pang                        = pivotOrientation.GetAngle();
+  const GfVec3d &pax = pivotOrientation.GetAxis();
+  double pang = pivotOrientation.GetAngle();
 
   // This class doesn't use the same precision helper that everyone
   // else uses (see Gf_OstreamHelperP) for some reason.

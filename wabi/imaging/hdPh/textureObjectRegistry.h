@@ -36,7 +36,7 @@
 WABI_NAMESPACE_BEGIN
 
 using HdPhTextureObjectSharedPtr = std::shared_ptr<class HdPhTextureObject>;
-using HdPhTextureObjectPtr       = std::weak_ptr<class HdPhTextureObject>;
+using HdPhTextureObjectPtr = std::weak_ptr<class HdPhTextureObject>;
 using HdPhTextureObjectPtrVector = std::vector<HdPhTextureObjectPtr>;
 class HdPhResourceRegistry;
 class HdPhTextureIdentifier;
@@ -120,8 +120,7 @@ class HdPh_TextureObjectRegistry final {
 
   // Map file paths to texture objects for quick invalidation
   // by file path.
-  std::unordered_map<TfToken, HdPhTextureObjectPtrVector, TfToken::HashFunctor>
-      _filePathToTextureObjects;
+  std::unordered_map<TfToken, HdPhTextureObjectPtrVector, TfToken::HashFunctor> _filePathToTextureObjects;
 
   // File paths for which GPU resources need to be (re-)loaded
   tbb::concurrent_vector<TfToken> _dirtyFilePaths;

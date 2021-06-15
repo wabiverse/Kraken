@@ -14,9 +14,9 @@ bool VerificationTest(pfHash hash, const int hashbits, uint32_t expected, bool v
 {
   const int hashbytes = hashbits / 8;
 
-  uint8_t *key    = new uint8_t[256];
+  uint8_t *key = new uint8_t[256];
   uint8_t *hashes = new uint8_t[hashbytes * 256];
-  uint8_t *final  = new uint8_t[hashbytes];
+  uint8_t *final = new uint8_t[hashbytes];
 
   memset(key, 0, 256);
   memset(hashes, 0, hashbytes * 256);
@@ -79,10 +79,10 @@ bool SanityTest(pfHash hash, const int hashbits)
   bool result = true;
 
   const int hashbytes = hashbits / 8;
-  const int reps      = 10;
-  const int keymax    = 256;
-  const int pad       = 16;
-  const int buflen    = keymax + pad * 3;
+  const int reps = 10;
+  const int keymax = 256;
+  const int pad = 16;
+  const int buflen = keymax + pad * 3;
 
   uint8_t *buffer1 = new uint8_t[buflen];
   uint8_t *buffer2 = new uint8_t[buflen];

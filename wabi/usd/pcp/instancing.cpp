@@ -86,7 +86,7 @@ bool Pcp_PrimIndexIsInstanceable(const PcpPrimIndex &primIndex)
 
   // Compose the value of the 'instanceable' metadata to see if this
   // prim has been tagged as instanceable.
-  bool isInstance                    = false;
+  bool isInstance = false;
   static const TfToken instanceField = SdfFieldKeys->Instanceable;
   // Stack of nodes left to visit, in strong-to-weak order.
   // Strongest open node is top of the stack.

@@ -35,11 +35,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPh_TriangleIndexBuilderComputation::HdPh_TriangleIndexBuilderComputation(
-    HdPh_MeshTopology *topology,
-    SdfPath const &id)
-    : _id(id),
-      _topology(topology)
+HdPh_TriangleIndexBuilderComputation::HdPh_TriangleIndexBuilderComputation(HdPh_MeshTopology *topology,
+                                                                           SdfPath const &id)
+  : _id(id),
+    _topology(topology)
 {}
 
 void HdPh_TriangleIndexBuilderComputation::GetBufferSpecs(HdBufferSpecVector *specs) const
@@ -63,16 +62,13 @@ bool HdPh_TriangleIndexBuilderComputation::Resolve()
   VtIntArray trianglesEdgeIndices;
 
   HdMeshUtil meshUtil(_topology, _id);
-  meshUtil.ComputeTriangleIndices(
-      &trianglesFaceVertexIndices, &primitiveParam, &trianglesEdgeIndices);
+  meshUtil.ComputeTriangleIndices(&trianglesFaceVertexIndices, &primitiveParam, &trianglesEdgeIndices);
 
-  _SetResult(
-      std::make_shared<HdVtBufferSource>(HdTokens->indices, VtValue(trianglesFaceVertexIndices)));
+  _SetResult(std::make_shared<HdVtBufferSource>(HdTokens->indices, VtValue(trianglesFaceVertexIndices)));
 
   _primitiveParam.reset(new HdVtBufferSource(HdTokens->primitiveParam, VtValue(primitiveParam)));
 
-  _trianglesEdgeIndices.reset(
-      new HdVtBufferSource(HdTokens->edgeIndices, VtValue(trianglesEdgeIndices)));
+  _trianglesEdgeIndices.reset(new HdVtBufferSource(HdTokens->edgeIndices, VtValue(trianglesEdgeIndices)));
 
   _SetResolved();
   return true;
@@ -96,12 +92,12 @@ bool HdPh_TriangleIndexBuilderComputation::_CheckValid() const
 // ---------------------------------------------------------------------------
 
 HdPh_TriangulateFaceVaryingComputation::HdPh_TriangulateFaceVaryingComputation(
-    HdPh_MeshTopology *topology,
-    HdBufferSourceSharedPtr const &source,
-    SdfPath const &id)
-    : _id(id),
-      _topology(topology),
-      _source(source)
+  HdPh_MeshTopology *topology,
+  HdBufferSourceSharedPtr const &source,
+  SdfPath const &id)
+  : _id(id),
+    _topology(topology),
+    _source(source)
 {}
 
 bool HdPh_TriangulateFaceVaryingComputation::Resolve()
@@ -120,7 +116,7 @@ bool HdPh_TriangulateFaceVaryingComputation::Resolve()
   VtValue result;
   HdMeshUtil meshUtil(_topology, _id);
   if (meshUtil.ComputeTriangulatedFaceVaryingPrimvar(
-          _source->GetData(), _source->GetNumElements(), _source->GetTupleType().type, &result)) {
+        _source->GetData(), _source->GetNumElements(), _source->GetTupleType().type, &result)) {
     _SetResult(std::make_shared<HdVtBufferSource>(_source->GetName(), result));
   }
   else {

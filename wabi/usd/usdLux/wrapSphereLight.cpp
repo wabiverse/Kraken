@@ -54,20 +54,14 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateRadiusAttr(UsdLuxSphereLight &self,
-                                      object defaultVal,
-                                      bool writeSparsely)
+static UsdAttribute _CreateRadiusAttr(UsdLuxSphereLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                               writeSparsely);
+  return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
-static UsdAttribute _CreateTreatAsPointAttr(UsdLuxSphereLight &self,
-                                            object defaultVal,
-                                            bool writeSparsely)
+static UsdAttribute _CreateTreatAsPointAttr(UsdLuxSphereLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateTreatAsPointAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                     writeSparsely);
+  return self.CreateTreatAsPointAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
 }
 
 static std::string _Repr(const UsdLuxSphereLight &self)
@@ -85,39 +79,36 @@ void wrapUsdLuxSphereLight()
   class_<This, bases<UsdLuxLight>> cls("SphereLight");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetRadiusAttr", &This::GetRadiusAttr)
-      .def("CreateRadiusAttr",
-           &_CreateRadiusAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRadiusAttr", &This::GetRadiusAttr)
+    .def(
+      "CreateRadiusAttr", &_CreateRadiusAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetTreatAsPointAttr", &This::GetTreatAsPointAttr)
-      .def("CreateTreatAsPointAttr",
-           &_CreateTreatAsPointAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTreatAsPointAttr", &This::GetTreatAsPointAttr)
+    .def("CreateTreatAsPointAttr",
+         &_CreateTreatAsPointAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

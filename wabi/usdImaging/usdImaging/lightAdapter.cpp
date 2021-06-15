@@ -75,17 +75,14 @@ void UsdImagingLightAdapter::_RemovePrim(SdfPath const &cachePath, UsdImagingInd
   index->RemoveSprim(HdPrimTypeTokens->light, cachePath);
 }
 
-void UsdImagingLightAdapter::TrackVariability(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    HdDirtyBits *timeVaryingBits,
-    UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingLightAdapter::TrackVariability(UsdPrim const &prim,
+                                              SdfPath const &cachePath,
+                                              HdDirtyBits *timeVaryingBits,
+                                              UsdImagingInstancerContext const *instancerContext) const
 {
   // Discover time-varying transforms.
-  _IsTransformVarying(prim,
-                      HdLight::DirtyBits::DirtyTransform,
-                      UsdImagingTokens->usdVaryingXform,
-                      timeVaryingBits);
+  _IsTransformVarying(
+    prim, HdLight::DirtyBits::DirtyTransform, UsdImagingTokens->usdVaryingXform, timeVaryingBits);
 
   // Discover time-varying visibility.
   _IsVarying(prim,
@@ -133,7 +130,7 @@ void UsdImagingLightAdapter::TrackVariability(
     // Compile a list of primvars to check.
     std::vector<UsdGeomPrimvar> primvars;
     UsdImaging_InheritedPrimvarStrategy::value_type inheritedPrimvarRecord = _GetInheritedPrimvars(
-        prim.GetParent());
+      prim.GetParent());
     if (inheritedPrimvarRecord) {
       primvars = inheritedPrimvarRecord->primvars;
     }
@@ -149,12 +146,11 @@ void UsdImagingLightAdapter::TrackVariability(
 
 // Thread safe.
 //  * Populate dirty bits for the given \p time.
-void UsdImagingLightAdapter::UpdateForTime(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    UsdTimeCode time,
-    HdDirtyBits requestedBits,
-    UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingLightAdapter::UpdateForTime(UsdPrim const &prim,
+                                           SdfPath const &cachePath,
+                                           UsdTimeCode time,
+                                           HdDirtyBits requestedBits,
+                                           UsdImagingInstancerContext const *instancerContext) const
 {}
 
 HdDirtyBits UsdImagingLightAdapter::ProcessPropertyChange(UsdPrim const &prim,
@@ -207,10 +203,10 @@ VtValue UsdImagingLightAdapter::GetMaterialResource(UsdPrim const &prim,
   UsdLuxLight light(prim);
   if (!light) {
     TF_RUNTIME_ERROR(
-        "Expected light prim at <%s> to be a subclass of type "
-        "'UsdLuxLight', not type '%s'; ignoring",
-        prim.GetPath().GetText(),
-        prim.GetTypeName().GetText());
+      "Expected light prim at <%s> to be a subclass of type "
+      "'UsdLuxLight', not type '%s'; ignoring",
+      prim.GetPath().GetText(),
+      prim.GetTypeName().GetText());
     return VtValue();
   }
 
@@ -221,7 +217,7 @@ VtValue UsdImagingLightAdapter::GetMaterialResource(UsdPrim const &prim,
   HdMaterialNetworkMap networkMap;
 
   UsdImaging_BuildHdMaterialNetworkFromTerminal(
-      prim, HdMaterialTerminalTokens->light, _GetShaderSourceTypes(), &networkMap, time);
+    prim, HdMaterialTerminalTokens->light, _GetShaderSourceTypes(), &networkMap, time);
 
   return VtValue(networkMap);
 }

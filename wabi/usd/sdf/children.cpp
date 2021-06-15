@@ -42,11 +42,11 @@ template<class ChildPolicy> Sdf_Children<ChildPolicy>::Sdf_Children() : _childNa
 
 template<class ChildPolicy>
 Sdf_Children<ChildPolicy>::Sdf_Children(const Sdf_Children<ChildPolicy> &other)
-    : _layer(other._layer),
-      _parentPath(other._parentPath),
-      _childrenKey(other._childrenKey),
-      _keyPolicy(other._keyPolicy),
-      _childNamesValid(false)
+  : _layer(other._layer),
+    _parentPath(other._parentPath),
+    _childrenKey(other._childrenKey),
+    _keyPolicy(other._keyPolicy),
+    _childNamesValid(false)
 {}
 
 template<class ChildPolicy>
@@ -54,11 +54,11 @@ Sdf_Children<ChildPolicy>::Sdf_Children(const SdfLayerHandle &layer,
                                         const SdfPath &parentPath,
                                         const TfToken &childrenKey,
                                         const KeyPolicy &keyPolicy)
-    : _layer(layer),
-      _parentPath(parentPath),
-      _childrenKey(childrenKey),
-      _keyPolicy(keyPolicy),
-      _childNamesValid(false)
+  : _layer(layer),
+    _parentPath(parentPath),
+    _childrenKey(childrenKey),
+    _keyPolicy(keyPolicy),
+    _childNamesValid(false)
 {}
 
 template<class ChildPolicy> size_t Sdf_Children<ChildPolicy>::GetSize() const
@@ -69,8 +69,7 @@ template<class ChildPolicy> size_t Sdf_Children<ChildPolicy>::GetSize() const
 }
 
 template<class ChildPolicy>
-typename Sdf_Children<ChildPolicy>::ValueType Sdf_Children<ChildPolicy>::GetChild(
-    size_t index) const
+typename Sdf_Children<ChildPolicy>::ValueType Sdf_Children<ChildPolicy>::GetChild(size_t index) const
 {
   if (!TF_VERIFY(IsValid())) {
     return ValueType();
@@ -108,8 +107,7 @@ template<class ChildPolicy> size_t Sdf_Children<ChildPolicy>::Find(const KeyType
 }
 
 template<class ChildPolicy>
-typename Sdf_Children<ChildPolicy>::KeyType Sdf_Children<ChildPolicy>::FindKey(
-    const ValueType &x) const
+typename Sdf_Children<ChildPolicy>::KeyType Sdf_Children<ChildPolicy>::FindKey(const ValueType &x) const
 {
   if (!TF_VERIFY(IsValid())) {
     return KeyType();
@@ -135,8 +133,7 @@ bool Sdf_Children<ChildPolicy>::IsEqualTo(const Sdf_Children<ChildPolicy> &other
 {
   // Return true if this and other refer to the same set of children
   // on the same object in the same layer.
-  return (_layer == other._layer && _parentPath == other._parentPath &&
-          _childrenKey == other._childrenKey);
+  return (_layer == other._layer && _parentPath == other._parentPath && _childrenKey == other._childrenKey);
 }
 
 template<class ChildPolicy>
@@ -152,9 +149,7 @@ bool Sdf_Children<ChildPolicy>::Copy(const std::vector<ValueType> &values, const
 }
 
 template<class ChildPolicy>
-bool Sdf_Children<ChildPolicy>::Insert(const ValueType &value,
-                                       size_t index,
-                                       const std::string &type)
+bool Sdf_Children<ChildPolicy>::Insert(const ValueType &value, size_t index, const std::string &type)
 {
   _childNamesValid = false;
 

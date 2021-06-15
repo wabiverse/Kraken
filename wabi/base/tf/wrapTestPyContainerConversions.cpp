@@ -73,12 +73,12 @@ void wrapTf_TestPyContainerConversions()
   typedef Tf_TestPyContainerConversions This;
 
   class_<This, boost::noncopyable>("Tf_TestPyContainerConversions")
-      .def("GetVectorTimesTwo", &This::GetVectorTimesTwo)
-      .staticmethod("GetVectorTimesTwo")
+    .def("GetVectorTimesTwo", &This::GetVectorTimesTwo)
+    .staticmethod("GetVectorTimesTwo")
 
-      .def("GetPairTimesTwo", &This::GetPairTimesTwo)
-      .staticmethod("GetPairTimesTwo")
+    .def("GetPairTimesTwo", &This::GetPairTimesTwo)
+    .staticmethod("GetPairTimesTwo")
 
-      .def("GetTokens", &This::GetTokens)
-      .staticmethod("GetTokens");
+    .def("GetTokens", &This::GetTokens)
+    .staticmethod("GetTokens");
 }

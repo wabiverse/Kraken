@@ -38,16 +38,15 @@
 
 WABI_NAMESPACE_BEGIN
 
-typedef GLXContext (
-    *GLXCREATECONTEXTATTRIBSARBPROC)(Display *, GLXFBConfig, GLXContext, Bool, const int *);
+typedef GLXContext (*GLXCREATECONTEXTATTRIBSARBPROC)(Display *, GLXFBConfig, GLXContext, Bool, const int *);
 
 // ---------------------------------------------------------------------------
 
 Garch_GLPlatformDebugWindow::Garch_GLPlatformDebugWindow(GarchGLDebugWindow *w)
-    : _running(false),
-      _callback(w),
-      _display(NULL),
-      _glContext(NULL)
+  : _running(false),
+    _callback(w),
+    _display(NULL),
+    _glContext(NULL)
 {}
 
 void Garch_GLPlatformDebugWindow::Init(const char *title, int width, int height, int nSamples)
@@ -72,8 +71,8 @@ void Garch_GLPlatformDebugWindow::Init(const char *title, int width, int height,
                   nSamples,
                   None};
 
-  _display    = XOpenDisplay(NULL);
-  int screen  = DefaultScreen(_display);
+  _display = XOpenDisplay(NULL);
+  int screen = DefaultScreen(_display);
   Window root = RootWindow(_display, screen);
 
   // X window
@@ -92,10 +91,10 @@ void Garch_GLPlatformDebugWindow::Init(const char *title, int width, int height,
 
   XSetWindowAttributes attr;
   attr.background_pixel = 0;
-  attr.border_pixel     = 0;
-  attr.colormap         = XCreateColormap(_display, root, visinfo->visual, AllocNone);
-  attr.event_mask       = StructureNotifyMask | ExposureMask | KeyPressMask | KeyReleaseMask |
-                    PointerMotionMask | ButtonPressMask | ButtonReleaseMask;
+  attr.border_pixel = 0;
+  attr.colormap = XCreateColormap(_display, root, visinfo->visual, AllocNone);
+  attr.event_mask = StructureNotifyMask | ExposureMask | KeyPressMask | KeyReleaseMask | PointerMotionMask |
+                    ButtonPressMask | ButtonReleaseMask;
 
   _window = XCreateWindow(_display,
                           root,
@@ -113,9 +112,9 @@ void Garch_GLPlatformDebugWindow::Init(const char *title, int width, int height,
 
   // GL context
   GLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = (GLXCREATECONTEXTATTRIBSARBPROC)
-      glXGetProcAddress((const GLubyte *)"glXCreateContextAttribsARB");
+    glXGetProcAddress((const GLubyte *)"glXCreateContextAttribsARB");
 
-  int attribs[]     = {0};
+  int attribs[] = {0};
   GLXContext tmpCtx = glXCreateContextAttribsARB(_display, fbc[0], 0, true, attribs);
   glXMakeCurrent(_display, _window, tmpCtx);
 
@@ -191,7 +190,7 @@ void Garch_GLPlatformDebugWindow::Run()
           break;
         case MotionNotify:
           _callback->OnMouseMove(
-              event.xmotion.x, event.xmotion.y, Garch_GetModifierKeys(event.xbutton.state));
+            event.xmotion.x, event.xmotion.y, Garch_GetModifierKeys(event.xbutton.state));
           break;
         case KeyRelease: {
           char key;

@@ -59,9 +59,9 @@ TF_DECLARE_REF_PTRS(TraceEventNode);
 
 class TraceEventNode : public TfRefBase {
  public:
-  using TimeStamp     = TraceEvent::TimeStamp;
+  using TimeStamp = TraceEvent::TimeStamp;
   using AttributeData = TraceEventData;
-  using AttributeMap  = std::multimap<TfToken, AttributeData>;
+  using AttributeMap = std::multimap<TfToken, AttributeData>;
 
   /// Creates a new root node.
   ///
@@ -79,8 +79,8 @@ class TraceEventNode : public TfRefBase {
                                   TraceEventNodeRefPtrVector &&children,
                                   const bool separateEvents)
   {
-    return TfCreateRefPtr(new TraceEventNode(
-        key, category, beginTime, endTime, std::move(children), separateEvents));
+    return TfCreateRefPtr(
+      new TraceEventNode(key, category, beginTime, endTime, std::move(children), separateEvents));
   }
 
   /// Appends a new child node with \p key, \p category, \p beginTime and
@@ -162,12 +162,12 @@ class TraceEventNode : public TfRefBase {
                  TraceEventNodeRefPtrVector &&children,
                  bool separateEvents)
 
-      : _key(key),
-        _category(category),
-        _beginTime(beginTime),
-        _endTime(endTime),
-        _children(std::move(children)),
-        _fromSeparateEvents(separateEvents)
+    : _key(key),
+      _category(category),
+      _beginTime(beginTime),
+      _endTime(endTime),
+      _children(std::move(children)),
+      _fromSeparateEvents(separateEvents)
   {}
 
   TfToken _key;

@@ -69,10 +69,7 @@ template<class TypePolicy> class Sdf_ListOpListEditor : public Sdf_ListEditor<Ty
   typedef typename Parent::ApplyCallback ApplyCallback;
   virtual void ApplyEditsToList(value_vector_type *vec, const ApplyCallback &cb);
 
-  virtual bool ReplaceEdits(SdfListOpType op,
-                            size_t index,
-                            size_t n,
-                            const value_vector_type &elems);
+  virtual bool ReplaceEdits(SdfListOpType op, size_t index, size_t n, const value_vector_type &elems);
 
   virtual void ApplyList(SdfListOpType opType, const Sdf_ListEditor<TypePolicy> &rhs);
 
@@ -121,7 +118,7 @@ template<class TypePolicy> class Sdf_ListOpListEditor : public Sdf_ListEditor<Ty
                                                                 {SdfListOpTypeOrdered, false},
                                                                 {SdfListOpTypePrepended, false},
                                                                 {SdfListOpTypeAppended, false}};
-    bool anyChanged                                          = false;
+    bool anyChanged = false;
 
     for (auto &opTypeAndChanged : opTypesAndChanged) {
       // If the consumer has specified that only a single op type has
@@ -179,7 +176,7 @@ template<class TP>
 Sdf_ListOpListEditor<TP>::Sdf_ListOpListEditor(const SdfSpecHandle &owner,
                                                const TfToken &listField,
                                                const TP &typePolicy)
-    : Parent(owner, listField, typePolicy)
+  : Parent(owner, listField, typePolicy)
 {
   if (owner) {
     _listOp = owner->GetFieldAs<ListOpType>(_GetField());
@@ -229,7 +226,7 @@ template<class TP> void Sdf_ListOpListEditor<TP>::ModifyItemEdits(const ModifyCa
 {
   ListOpType modifiedListOp = _listOp;
   modifiedListOp.ModifyOperations(
-      [this, &cb](const value_type &t) { return _ModifyCallbackHelper(cb, _GetTypePolicy(), t); });
+    [this, &cb](const value_type &t) { return _ModifyCallbackHelper(cb, _GetTypePolicy(), t); });
 
   _UpdateListOp(modifiedListOp);
 }
@@ -272,8 +269,8 @@ void Sdf_ListOpListEditor<TP>::ApplyList(SdfListOpType opType, const Sdf_ListEdi
 }
 
 template<class TP>
-const typename Sdf_ListOpListEditor<TP>::value_vector_type &Sdf_ListOpListEditor<
-    TP>::_GetOperations(SdfListOpType op) const
+const typename Sdf_ListOpListEditor<TP>::value_vector_type &Sdf_ListOpListEditor<TP>::_GetOperations(
+  SdfListOpType op) const
 {
   return _listOp.GetItems(op);
 }

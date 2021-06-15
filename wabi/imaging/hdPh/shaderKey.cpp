@@ -40,11 +40,11 @@ HdPh_ShaderKey::ID HdPh_ShaderKey::ComputeHash() const
 {
   ID hash = GetGlslfxFilename().Hash();
 
-  TfToken const *VS  = GetVS();
+  TfToken const *VS = GetVS();
   TfToken const *TCS = GetTCS();
   TfToken const *TES = GetTES();
-  TfToken const *GS  = GetGS();
-  TfToken const *FS  = GetFS();
+  TfToken const *GS = GetGS();
+  TfToken const *FS = GetFS();
 
   while (VS && (!VS->IsEmpty())) {
     boost::hash_combine(hash, VS->Hash());

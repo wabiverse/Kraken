@@ -83,7 +83,7 @@ class UsdStageLoadRules {
   static UsdStageLoadRules LoadNone();
 
   UsdStageLoadRules(UsdStageLoadRules const &) = default;
-  UsdStageLoadRules(UsdStageLoadRules &&)      = default;
+  UsdStageLoadRules(UsdStageLoadRules &&) = default;
   UsdStageLoadRules &operator=(UsdStageLoadRules const &) = default;
   UsdStageLoadRules &operator=(UsdStageLoadRules &&) = default;
 

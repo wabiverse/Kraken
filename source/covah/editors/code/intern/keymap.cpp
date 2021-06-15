@@ -114,10 +114,7 @@ bool keymap_add(const std::vector<KeyMap *> &maps,
   return ret;
 }
 
-bool keymap_add(KeyMap &map,
-                const std::string &strCommand,
-                const StringId &commandId,
-                KeyMapAdd option)
+bool keymap_add(KeyMap &map, const std::string &strCommand, const StringId &commandId, KeyMapAdd option)
 {
   auto spCurrent = map.spRoot;
 
@@ -128,10 +125,10 @@ bool keymap_add(KeyMap &map,
 
     auto itrRoot = spCurrent->children.find(search);
     if (itrRoot == spCurrent->children.end()) {
-      auto spNode                 = std::make_shared<CommandNode>();
-      spNode->token               = search;
+      auto spNode = std::make_shared<CommandNode>();
+      spNode->token = search;
       spCurrent->children[search] = spNode;
-      spCurrent                   = spNode;
+      spCurrent = spNode;
     }
     else {
       spCurrent = itrRoot->second;
@@ -258,14 +255,14 @@ void keymap_find(const KeyMap &map, const std::string &strCommand, KeyMapResult 
                      std::string::const_iterator,
                      const Captures &captures,
                      KeyMapResult &)>
-      fnSearch;
+    fnSearch;
   fnSearch = [&](std::shared_ptr<CommandNode> spNode,
                  std::string::const_iterator itrChar,
                  std::string::const_iterator itrEnd,
                  const Captures &captures,
                  KeyMapResult &result) {
     for (auto &child : spNode->children) {
-      auto spChildNode                = child.second;
+      auto spChildNode = child.second;
       std::string::const_iterator itr = itrChar;
 
       Captures nodeCaptures;
@@ -277,8 +274,7 @@ void keymap_find(const KeyMap &map, const std::string &strCommand, KeyMapResult 
       if (consumeDigits(spChildNode, itr, itrEnd, nodeCaptures.captureNumbers, strCaptures)) {
         token = spChildNode->token;
       }
-      else if (consumeRegister(
-                   spChildNode, itr, itrEnd, nodeCaptures.captureRegisters, strCaptures)) {
+      else if (consumeRegister(spChildNode, itr, itrEnd, nodeCaptures.captureRegisters, strCaptures)) {
         token = spChildNode->token;
       }
       else if (consumeChar(spChildNode, itr, itrEnd, nodeCaptures.captureChars, strCaptures)) {
@@ -294,8 +290,7 @@ void keymap_find(const KeyMap &map, const std::string &strCommand, KeyMapResult 
         }
       }
 
-      if (token.empty() && child.second->commandId == StringId() &&
-          !spChildNode->children.empty()) {
+      if (token.empty() && child.second->commandId == StringId() && !spChildNode->children.empty()) {
         result.searchPath += "(...)";
         result.needMoreChars = true;
         continue;
@@ -310,12 +305,10 @@ void keymap_find(const KeyMap &map, const std::string &strCommand, KeyMapResult 
         result.foundMapping = spChildNode->commandId;
 
         // Append our capture groups to the current hierarchy level
-        nodeCaptures.captureChars.insert(nodeCaptures.captureChars.end(),
-                                         captures.captureChars.begin(),
-                                         captures.captureChars.end());
-        nodeCaptures.captureNumbers.insert(nodeCaptures.captureNumbers.end(),
-                                           captures.captureNumbers.begin(),
-                                           captures.captureNumbers.end());
+        nodeCaptures.captureChars.insert(
+          nodeCaptures.captureChars.end(), captures.captureChars.begin(), captures.captureChars.end());
+        nodeCaptures.captureNumbers.insert(
+          nodeCaptures.captureNumbers.end(), captures.captureNumbers.begin(), captures.captureNumbers.end());
         nodeCaptures.captureRegisters.insert(nodeCaptures.captureRegisters.end(),
                                              captures.captureRegisters.begin(),
                                              captures.captureRegisters.end());
@@ -335,10 +328,10 @@ void keymap_find(const KeyMap &map, const std::string &strCommand, KeyMapResult 
         else {
           // This is the find result, note it and record the capture groups for the find
           result.searchPath += " : " + spChildNode->commandId.ToString();
-          result.captureChars     = nodeCaptures.captureChars;
-          result.captureNumbers   = nodeCaptures.captureNumbers;
+          result.captureChars = nodeCaptures.captureChars;
+          result.captureNumbers = nodeCaptures.captureNumbers;
           result.captureRegisters = nodeCaptures.captureRegisters;
-          result.needMoreChars    = false;
+          result.needMoreChars = false;
           return true;
         }
       }
@@ -360,7 +353,7 @@ void keymap_find(const KeyMap &map, const std::string &strCommand, KeyMapResult 
       // Special case where the user typed a j followed by _not_ a k.
       // Return it as an insert command
       if (strCommand.size() == 2 && strCommand[0] == 'j') {
-        findResult.needMoreChars        = false;
+        findResult.needMoreChars = false;
         findResult.commandWithoutGroups = strCommand;
         findResult.searchPath += "(j.)";
       }
@@ -368,7 +361,7 @@ void keymap_find(const KeyMap &map, const std::string &strCommand, KeyMapResult 
         findResult.searchPath += "(Unknown)";
 
         // Didn't find anything, return sanitized text for possible input
-        auto itr   = strCommand.begin();
+        auto itr = strCommand.begin();
         auto token = string_slurp_if(itr, strCommand.end(), '<', '>');
         if (token.empty()) {
           token = strCommand;

@@ -12,7 +12,7 @@ struct SelectRegion {
   // For vertical select, we will have a list of spans...
   GlyphIterator start;
   GlyphIterator end;
-  bool visible  = true;
+  bool visible = true;
   bool vertical = false;  // Not yet supported
 };
 
@@ -26,7 +26,7 @@ class ZepFont {
   {}
 
   // Implemented in API specific ways
-  virtual void SetPixelHeight(int height)                                                = 0;
+  virtual void SetPixelHeight(int height) = 0;
   virtual NVec2f GetTextSize(const uint8_t *pBegin, const uint8_t *pEnd = nullptr) const = 0;
 
   virtual int GetPixelHeight() const
@@ -62,14 +62,14 @@ class ZepDisplay {
   virtual void DrawLine(const NVec2f &start,
                         const NVec2f &end,
                         const NVec4f &color = NVec4f(1.0f),
-                        float width         = 1.0f) const                                       = 0;
+                        float width = 1.0f) const = 0;
   virtual void DrawChars(ZepFont &font,
                          const NVec2f &pos,
                          const NVec4f &col,
                          const uint8_t *text_begin,
-                         const uint8_t *text_end = nullptr) const                       = 0;
+                         const uint8_t *text_end = nullptr) const = 0;
   virtual void DrawRectFilled(const NRectf &rc, const NVec4f &col = NVec4f(1.0f)) const = 0;
-  virtual void SetClipRect(const NRectf &rc)                                            = 0;
+  virtual void SetClipRect(const NRectf &rc) = 0;
 
   virtual uint32_t GetCodePointCount(const uint8_t *pCh, const uint8_t *pEnd) const;
   virtual void DrawRect(const NRectf &rc, const NVec4f &col = NVec4f(1.0f)) const;
@@ -117,7 +117,7 @@ class ZepDisplayNull : public ZepDisplay {
   virtual void DrawLine(const NVec2f &start,
                         const NVec2f &end,
                         const NVec4f &color = NVec4f(1.0f),
-                        float width         = 1.0f) const override
+                        float width = 1.0f) const override
   {
     (void)start;
     (void)end;

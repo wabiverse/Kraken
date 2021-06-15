@@ -116,9 +116,9 @@ void HioRankedTypeMap::Add(const mapped_type &baseType,
     PlugPluginPtr plugin = plugReg.GetPluginForType(type);
     if (!plugin) {
       TF_DEBUG(debugType).Msg(
-          "[PluginDiscover] Plugin could not be loaded "
-          "for TfType '%s'\n",
-          type.GetTypeName().c_str());
+        "[PluginDiscover] Plugin could not be loaded "
+        "for TfType '%s'\n",
+        type.GetTypeName().c_str());
       continue;
     }
 
@@ -142,10 +142,10 @@ void HioRankedTypeMap::Add(const mapped_type &baseType,
     JsObject::const_iterator keyIt = metadata.find(keyMetadataName);
     if (keyIt == metadata.end()) {
       TF_RUNTIME_ERROR(
-          "[PluginDiscover] '%s' metadata "
-          "was not present for plugin '%s'\n",
-          keyMetadataName.c_str(),
-          type.GetTypeName().c_str());
+        "[PluginDiscover] '%s' metadata "
+        "was not present for plugin '%s'\n",
+        keyMetadataName.c_str(),
+        type.GetTypeName().c_str());
       continue;
     }
 
@@ -157,17 +157,16 @@ void HioRankedTypeMap::Add(const mapped_type &baseType,
     if (precedenceIt != metadata.end()) {
       if (!precedenceIt->second.Is<int>()) {
         TF_RUNTIME_ERROR(
-            "[PluginDiscover] 'precedence' metadata "
-            "can not be read for plugin '%s'\n",
-            type.GetTypeName().c_str());
+          "[PluginDiscover] 'precedence' metadata "
+          "can not be read for plugin '%s'\n",
+          type.GetTypeName().c_str());
       }
       else {
         precedence = precedenceIt->second.Get<int>();
       }
     }
 
-    TF_DEBUG(debugType).Msg("[PluginDiscover] Plugin discovered '%s'\n",
-                            type.GetTypeName().c_str());
+    TF_DEBUG(debugType).Msg("[PluginDiscover] Plugin discovered '%s'\n", type.GetTypeName().c_str());
 
     typedef std::string Name;
     if (keyIt->second.Is<Name>()) {

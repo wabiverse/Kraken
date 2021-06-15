@@ -57,16 +57,12 @@ class Usd_CrateData : public SdfAbstractData {
   virtual void MoveSpec(const SdfPath &oldPath, const SdfPath &newPath);
   virtual SdfSpecType GetSpecType(const SdfPath &path) const;
 
-  virtual bool Has(const SdfPath &path,
-                   const TfToken &fieldName,
-                   SdfAbstractDataValue *value) const;
+  virtual bool Has(const SdfPath &path, const TfToken &fieldName, SdfAbstractDataValue *value) const;
   virtual bool Has(const SdfPath &path, const TfToken &fieldName, VtValue *value = nullptr) const;
   virtual VtValue Get(const SdfPath &path, const TfToken &fieldName) const;
   virtual std::type_info const &GetTypeid(const SdfPath &path, const TfToken &fieldname) const;
   virtual void Set(const SdfPath &path, const TfToken &fieldName, const VtValue &value);
-  virtual void Set(const SdfPath &path,
-                   const TfToken &fieldName,
-                   const SdfAbstractDataConstValue &value);
+  virtual void Set(const SdfPath &path, const TfToken &fieldName, const SdfAbstractDataConstValue &value);
   virtual void Erase(const SdfPath &path, const TfToken &fieldName);
   virtual std::vector<TfToken> List(const SdfPath &path) const;
 
@@ -86,9 +82,7 @@ class Usd_CrateData : public SdfAbstractData {
                                                double *tLower,
                                                double *tUpper) const;
 
-  virtual bool QueryTimeSample(const SdfPath &path,
-                               double time,
-                               SdfAbstractDataValue *value) const;
+  virtual bool QueryTimeSample(const SdfPath &path, double time, SdfAbstractDataValue *value) const;
   virtual bool QueryTimeSample(const SdfPath &path, double time, VtValue *value) const;
 
   virtual void SetTimeSample(const SdfPath &path, double time, const VtValue &value);

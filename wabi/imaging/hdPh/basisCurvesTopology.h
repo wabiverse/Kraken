@@ -53,7 +53,7 @@ class HdPh_BasisCurvesTopology final : public HdBasisCurvesTopology {
   explicit HdPh_BasisCurvesTopology(const HdBasisCurvesTopology &src);
 
   // No default construction or copying.
-  HdPh_BasisCurvesTopology()                                 = delete;
+  HdPh_BasisCurvesTopology() = delete;
   HdPh_BasisCurvesTopology(const HdPh_BasisCurvesTopology &) = delete;
   HdPh_BasisCurvesTopology &operator=(const HdPh_BasisCurvesTopology &) = delete;
 };

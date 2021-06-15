@@ -21,14 +21,14 @@ limitations under the License.
 WABI_NAMESPACE_BEGIN
 
 void HdRprFillPrimvarDescsPerInterpolation(
-    HdSceneDelegate *sceneDelegate,
-    SdfPath const &id,
-    std::map<HdInterpolation, HdPrimvarDescriptorVector> *primvarDescsPerInterpolation);
+  HdSceneDelegate *sceneDelegate,
+  SdfPath const &id,
+  std::map<HdInterpolation, HdPrimvarDescriptorVector> *primvarDescsPerInterpolation);
 
 bool HdRprIsPrimvarExists(
-    TfToken const &primvarName,
-    std::map<HdInterpolation, HdPrimvarDescriptorVector> const &primvarDescsPerInterpolation,
-    HdInterpolation *interpolation = nullptr);
+  TfToken const &primvarName,
+  std::map<HdInterpolation, HdPrimvarDescriptorVector> const &primvarDescsPerInterpolation,
+  HdInterpolation *interpolation = nullptr);
 
 bool HdRprIsValidPrimvarSize(size_t primvarSize,
                              HdInterpolation primvarInterpolation,
@@ -36,10 +36,10 @@ bool HdRprIsValidPrimvarSize(size_t primvarSize,
                              size_t vertexInterpolationSize);
 
 struct HdRprGeometrySettings {
-  int id                  = -1;
-  int subdivisionLevel    = 0;
+  int id = -1;
+  int subdivisionLevel = 0;
   uint32_t visibilityMask = 0;
-  bool ignoreContour      = false;
+  bool ignoreContour = false;
   std::string cryptomatteName;
   int numGeometrySamples = 1;
 };
@@ -50,10 +50,10 @@ void HdRprParseGeometrySettings(HdSceneDelegate *sceneDelegate,
                                 HdRprGeometrySettings *geomSettings);
 
 inline void HdRprParseGeometrySettings(
-    HdSceneDelegate *sceneDelegate,
-    SdfPath const &id,
-    std::map<HdInterpolation, HdPrimvarDescriptorVector> const &primvarDescsPerInterpolation,
-    HdRprGeometrySettings *geomSettings)
+  HdSceneDelegate *sceneDelegate,
+  SdfPath const &id,
+  std::map<HdInterpolation, HdPrimvarDescriptorVector> const &primvarDescsPerInterpolation,
+  HdRprGeometrySettings *geomSettings)
 {
   auto constantPrimvarDescIt = primvarDescsPerInterpolation.find(HdInterpolationConstant);
   if (constantPrimvarDescIt == primvarDescsPerInterpolation.end()) {
@@ -95,7 +95,7 @@ bool HdRprSamplePrimvar(SdfPath const &id,
   std::vector<VtValue> sampleVtValues(maxSampleCount);
 
   size_t authoredSampleCount = sceneDelegate->SamplePrimvar(
-      id, key, maxSampleCount, sampleTimes.data(), sampleVtValues.data());
+    id, key, maxSampleCount, sampleTimes.data(), sampleVtValues.data());
   if (!authoredSampleCount) {
     return false;
   }
@@ -112,8 +112,7 @@ bool HdRprSamplePrimvar(SdfPath const &id,
       if (std::abs(baselineTimeStep - timeStep) > 1e-6f) {
         // Definitely an issue but we can at least use such data with the current API, so just log
         // a warning
-        TF_WARN("[%s] RPR does not support non-linear in time sub-frame primvar samples",
-                id.GetText());
+        TF_WARN("[%s] RPR does not support non-linear in time sub-frame primvar samples", id.GetText());
         break;
       }
     }
@@ -131,9 +130,8 @@ bool HdRprSamplePrimvar(SdfPath const &id,
         baselineSize = sampleValues[i].size();
       }
       else if (baselineSize != sampleValues[i].size()) {
-        TF_RUNTIME_ERROR("[%s] RPR does not support non-uniform sub-frame samples - %s",
-                         id.GetText(),
-                         key.GetText());
+        TF_RUNTIME_ERROR(
+          "[%s] RPR does not support non-uniform sub-frame samples - %s", id.GetText(), key.GetText());
         return false;
       }
     }
@@ -151,13 +149,13 @@ bool HdRprSamplePrimvar(SdfPath const &id,
 
 template<typename T>
 bool HdRprSamplePrimvar(
-    SdfPath const &id,
-    TfToken const &key,
-    HdSceneDelegate *sceneDelegate,
-    std::map<HdInterpolation, HdPrimvarDescriptorVector> const &primvarDescsPerInterpolation,
-    size_t maxSampleCount,
-    VtArray<T> *sampleValues,
-    HdInterpolation *interpolation)
+  SdfPath const &id,
+  TfToken const &key,
+  HdSceneDelegate *sceneDelegate,
+  std::map<HdInterpolation, HdPrimvarDescriptorVector> const &primvarDescsPerInterpolation,
+  size_t maxSampleCount,
+  VtArray<T> *sampleValues,
+  HdInterpolation *interpolation)
 {
 
   for (auto &primvarDescsEntry : primvarDescsPerInterpolation) {

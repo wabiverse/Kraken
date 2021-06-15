@@ -41,14 +41,13 @@ WABI_NAMESPACE_USING
 
 namespace {
 
-NdrNodeDiscoveryResultVec _WrapFsHelpersDiscoverNodes(
-    const NdrStringVec &searchPaths,
-    const NdrStringVec &allowedExtensions,
-    bool followSymlinks,
-    const TfWeakPtr<NdrDiscoveryPluginContext> &context)
+NdrNodeDiscoveryResultVec _WrapFsHelpersDiscoverNodes(const NdrStringVec &searchPaths,
+                                                      const NdrStringVec &allowedExtensions,
+                                                      bool followSymlinks,
+                                                      const TfWeakPtr<NdrDiscoveryPluginContext> &context)
 {
   return NdrFsHelpersDiscoverNodes(
-      searchPaths, allowedExtensions, followSymlinks, boost::get_pointer(context));
+    searchPaths, allowedExtensions, followSymlinks, boost::get_pointer(context));
 }
 
 }  // namespace
@@ -60,5 +59,5 @@ void wrapFilesystemDiscoveryHelpers()
       (args("searchPaths"),
        args("allowedExtensions"),
        args("followSymlinks") = true,
-       args("context")        = TfWeakPtr<NdrDiscoveryPluginContext>()));
+       args("context") = TfWeakPtr<NdrDiscoveryPluginContext>()));
 }

@@ -37,7 +37,7 @@ HdPh_BasisCurvesTopologySharedPtr HdPh_BasisCurvesTopology::New(const HdBasisCur
 
 // explicit
 HdPh_BasisCurvesTopology::HdPh_BasisCurvesTopology(const HdBasisCurvesTopology &src)
-    : HdBasisCurvesTopology(src)
+  : HdBasisCurvesTopology(src)
 {}
 
 HdPh_BasisCurvesTopology::~HdPh_BasisCurvesTopology()
@@ -48,7 +48,7 @@ HdBufferSourceSharedPtr HdPh_BasisCurvesTopology::GetPointsIndexBuilderComputati
   // This is simple enough to return the result right away, instead of
   // using a computed buffer source.
   const VtIntArray &vertexCounts = GetCurveVertexCounts();
-  int numVerts                   = 0;
+  int numVerts = 0;
   std::vector<int> indices;
   for (int count : vertexCounts) {
     numVerts += count;

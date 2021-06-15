@@ -36,14 +36,13 @@ void HdRprDistantLight::Sync(HdSceneDelegate *sceneDelegate,
 {
 
   auto rprRenderParam = static_cast<HdRprRenderParam *>(renderParam);
-  auto rprApi         = rprRenderParam->AcquireRprApiForEdit();
+  auto rprApi = rprRenderParam->AcquireRprApiForEdit();
 
   HdDirtyBits bits = *dirtyBits;
-  auto &id         = GetId();
+  auto &id = GetId();
 
   if (bits & HdLight::DirtyTransform) {
-    m_transform = GfMatrix4f(
-        sceneDelegate->GetLightParamValue(id, HdTokens->transform).Get<GfMatrix4d>());
+    m_transform = GfMatrix4f(sceneDelegate->GetLightParamValue(id, HdTokens->transform).Get<GfMatrix4d>());
   }
 
   bool newLight = false;
@@ -60,14 +59,13 @@ void HdRprDistantLight::Sync(HdSceneDelegate *sceneDelegate,
     }
 
     float intensity = sceneDelegate->GetLightParamValue(id, HdLightTokens->intensity).Get<float>();
-    float exposure  = sceneDelegate->GetLightParamValue(id, HdLightTokens->exposure).Get<float>();
+    float exposure = sceneDelegate->GetLightParamValue(id, HdLightTokens->exposure).Get<float>();
     float computedIntensity = computeLightIntensity(intensity, exposure);
 
-    GfVec3f color =
-        sceneDelegate->GetLightParamValue(id, HdPrimvarRoleTokens->color).Get<GfVec3f>();
+    GfVec3f color = sceneDelegate->GetLightParamValue(id, HdPrimvarRoleTokens->color).Get<GfVec3f>();
     if (sceneDelegate->GetLightParamValue(id, HdLightTokens->enableColorTemperature).Get<bool>()) {
       GfVec3f temperatureColor = UsdLuxBlackbodyTemperatureAsRgb(
-          sceneDelegate->GetLightParamValue(id, HdLightTokens->colorTemperature).Get<float>());
+        sceneDelegate->GetLightParamValue(id, HdLightTokens->colorTemperature).Get<float>());
       color[0] *= temperatureColor[0];
       color[1] *= temperatureColor[1];
       color[2] *= temperatureColor[2];
@@ -88,8 +86,7 @@ void HdRprDistantLight::Sync(HdSceneDelegate *sceneDelegate,
 
     float angle = sceneDelegate->GetLightParamValue(id, _tokens->angle).Get<float>();
 
-    rprApi->SetDirectionalLightAttributes(
-        m_rprLight, color * computedIntensity, angle * (M_PI / 180.0));
+    rprApi->SetDirectionalLightAttributes(m_rprLight, color * computedIntensity, angle * (M_PI / 180.0));
 
     newLight = true;
   }

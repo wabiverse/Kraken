@@ -44,9 +44,9 @@ void wrapPlatformDebugContext()
   typedef GarchGLPlatformDebugContext This;
 
   class_<This, TfWeakPtr<This>, boost::noncopyable>("GLPlatformDebugContext", no_init)
-      .def(TfPyRefAndWeakPtr())
-      .def(TfMakePyConstructor(GarchGLPlatformDebugContext::New))
-      .def("makeCurrent", &This::makeCurrent);
+    .def(TfPyRefAndWeakPtr())
+    .def(TfMakePyConstructor(GarchGLPlatformDebugContext::New))
+    .def("makeCurrent", &This::makeCurrent);
 }
 
 TF_REFPTR_CONST_VOLATILE_GET(GarchGLPlatformDebugContext)

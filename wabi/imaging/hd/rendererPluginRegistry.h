@@ -82,9 +82,8 @@ class HdRendererPluginRegistry final : public HfPluginRegistry {
   /// dropping the handle.
   ///
   HD_API
-  HdPluginRenderDelegateUniqueHandle CreateRenderDelegate(
-      const TfToken &pluginId,
-      const HdRenderSettingsMap &settingsMap = {});
+  HdPluginRenderDelegateUniqueHandle CreateRenderDelegate(const TfToken &pluginId,
+                                                          const HdRenderSettingsMap &settingsMap = {});
 
  private:
   // Friend required by TfSingleton to access constructor (as it is private).

@@ -34,15 +34,15 @@ static std::atomic_size_t _uniqueVersion(0);
 HdBufferArray::HdBufferArray(TfToken const &role,
                              TfToken const garbageCollectionPerfToken,
                              HdBufferArrayUsageHint usageHint)
-    : _needsReallocation(false),
-      _rangeList(),
-      _rangeCount(0),
-      _rangeListLock(),
-      _role(role),
-      _garbageCollectionPerfToken(garbageCollectionPerfToken),
-      _version(_uniqueVersion++),  // Atomic
-      _maxNumRanges(1),
-      _usageHint(usageHint)
+  : _needsReallocation(false),
+    _rangeList(),
+    _rangeCount(0),
+    _rangeListLock(),
+    _role(role),
+    _garbageCollectionPerfToken(garbageCollectionPerfToken),
+    _version(_uniqueVersion++),  // Atomic
+    _maxNumRanges(1),
+    _usageHint(usageHint)
 {
   /*NOTHING*/
 }
@@ -99,7 +99,7 @@ void HdBufferArray::RemoveUnusedRanges()
 {
   // Local copy, because we don't want to perform atomic ops
   size_t numRanges = _rangeCount;
-  size_t idx       = 0;
+  size_t idx = 0;
   while (idx < numRanges) {
     if (_rangeList[idx].expired()) {
       // Order of range objects doesn't matter so use range at end to fill

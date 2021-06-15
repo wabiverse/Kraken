@@ -52,7 +52,7 @@ HgiVulkanCapabilities::HgiVulkanCapabilities(HgiVulkanDevice *device) : supports
   // The last queue we grabbed the properties of is our gfx queue.
   if (TF_VERIFY(gfxQueueIndex < queues.size())) {
     VkQueueFamilyProperties const &gfxQueue = queues[gfxQueueIndex];
-    supportsTimeStamps                      = gfxQueue.timestampValidBits > 0;
+    supportsTimeStamps = gfxQueue.timestampValidBits > 0;
   }
 
   vkGetPhysicalDeviceProperties(physicalDevice, &vkDeviceProperties);

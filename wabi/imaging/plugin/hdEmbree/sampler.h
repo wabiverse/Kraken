@@ -163,17 +163,12 @@ class HdEmbreePrimvarSampler {
   /// \param value The memory to write the value to (only written on success).
   /// \param dataType The HdTupleType describing element values.
   /// \return True if the value was successfully sampled.
-  virtual bool Sample(unsigned int element,
-                      float u,
-                      float v,
-                      void *value,
-                      HdTupleType dataType) const = 0;
+  virtual bool Sample(unsigned int element, float u, float v, void *value, HdTupleType dataType) const = 0;
 
   // Convenient, templated frontend for Sample().
   template<typename T> bool Sample(unsigned int element, float u, float v, T *value) const
   {
-    return Sample(
-        element, u, v, static_cast<void *>(value), HdEmbreeTypeHelper::GetTupleType<T>());
+    return Sample(element, u, v, static_cast<void *>(value), HdEmbreeTypeHelper::GetTupleType<T>());
   }
 
  protected:

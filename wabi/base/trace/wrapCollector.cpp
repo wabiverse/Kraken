@@ -83,25 +83,24 @@ static bool IsEnabledHelper(const TraceCollectorPtr &self)
 
 void wrapCollector()
 {
-  using This    = TraceCollector;
+  using This = TraceCollector;
   using ThisPtr = TfWeakPtr<TraceCollector>;
 
   class_<This, ThisPtr, boost::noncopyable>("Collector", no_init)
-      .def(TfPySingleton())
+    .def(TfPySingleton())
 
-      .def("BeginEvent", BeginEventHelper)
-      .def("EndEvent", EndEventHelper)
+    .def("BeginEvent", BeginEventHelper)
+    .def("EndEvent", EndEventHelper)
 
-      .def("BeginEventAtTime", BeginEventAtTimeHelper)
-      .def("EndEventAtTime", EndEventAtTimeHelper)
+    .def("BeginEventAtTime", BeginEventAtTimeHelper)
+    .def("EndEventAtTime", EndEventAtTimeHelper)
 
-      .def("GetLabel", &This::GetLabel, return_value_policy<return_by_value>())
+    .def("GetLabel", &This::GetLabel, return_value_policy<return_by_value>())
 
-      .def("Clear", &This::Clear)
+    .def("Clear", &This::Clear)
 
-      .add_property("enabled", IsEnabledHelper, &This::SetEnabled)
-      .add_property(
-          "pythonTracingEnabled", &This::IsPythonTracingEnabled, &This::SetPythonTracingEnabled);
+    .add_property("enabled", IsEnabledHelper, &This::SetEnabled)
+    .add_property("pythonTracingEnabled", &This::IsPythonTracingEnabled, &This::SetPythonTracingEnabled);
 
   def("GetElapsedSeconds", GetElapsedSeconds);
 };

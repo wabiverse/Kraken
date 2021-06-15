@@ -61,15 +61,15 @@ template<> struct Sdf_ListEditorProxyTraits<SdfPathEditorProxy> {
   {
     if (n == SdfFieldKeys->TargetPaths) {
       return boost::shared_ptr<Sdf_ListEditor<TypePolicy>>(
-          new Sdf_RelationshipTargetListEditor(o, TypePolicy(o)));
+        new Sdf_RelationshipTargetListEditor(o, TypePolicy(o)));
     }
     else if (n == SdfFieldKeys->ConnectionPaths) {
       return boost::shared_ptr<Sdf_ListEditor<TypePolicy>>(
-          new Sdf_AttributeConnectionListEditor(o, TypePolicy(o)));
+        new Sdf_AttributeConnectionListEditor(o, TypePolicy(o)));
     }
 
     return boost::shared_ptr<Sdf_ListEditor<TypePolicy>>(
-        new Sdf_ListOpListEditor<TypePolicy>(o, n, TypePolicy(o)));
+      new Sdf_ListOpListEditor<TypePolicy>(o, n, TypePolicy(o)));
   }
 };
 
@@ -80,7 +80,7 @@ template<> struct Sdf_ListEditorProxyTraits<SdfReferenceEditorProxy> {
                                                                      const TfToken &n)
   {
     return boost::shared_ptr<Sdf_ListEditor<TypePolicy>>(
-        new Sdf_ListOpListEditor<SdfReferenceTypePolicy>(o, n));
+      new Sdf_ListOpListEditor<SdfReferenceTypePolicy>(o, n));
   }
 };
 
@@ -91,7 +91,7 @@ template<> struct Sdf_ListEditorProxyTraits<SdfPayloadEditorProxy> {
                                                                      const TfToken &n)
   {
     return boost::shared_ptr<Sdf_ListEditor<TypePolicy>>(
-        new Sdf_ListOpListEditor<SdfPayloadTypePolicy>(o, n));
+      new Sdf_ListOpListEditor<SdfPayloadTypePolicy>(o, n));
   }
 };
 
@@ -123,7 +123,7 @@ SdfNameOrderProxy SdfGetNameOrderProxy(const SdfSpecHandle &spec, const TfToken 
   }
 
   boost::shared_ptr<Sdf_ListEditor<SdfNameTokenKeyPolicy>> editor(
-      new Sdf_VectorListEditor<SdfNameTokenKeyPolicy>(spec, orderField, SdfListOpTypeOrdered));
+    new Sdf_VectorListEditor<SdfNameTokenKeyPolicy>(spec, orderField, SdfListOpTypeOrdered));
   return SdfNameOrderProxy(editor, SdfListOpTypeOrdered);
 }
 

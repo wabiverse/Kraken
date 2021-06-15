@@ -49,15 +49,15 @@ template<class T> void wrap_TestPlugBase(const std::string &name)
   typedef T This;
   typedef TfWeakPtr<T> ThisPtr;
   class_<This, ThisPtr, boost::noncopyable>(name.c_str(), no_init)
-      .def(TfPyRefAndWeakPtr())
-      .def(TfMakePyConstructor(&This::New))
+    .def(TfPyRefAndWeakPtr())
+    .def(TfMakePyConstructor(&This::New))
 
-      // Expose Manufacture as another initializer.
-      .def(TfMakePyConstructor(&This::Manufacture))
+    // Expose Manufacture as another initializer.
+    .def(TfMakePyConstructor(&This::Manufacture))
 
-      .def("GetTypeName", &This::GetTypeName)
+    .def("GetTypeName", &This::GetTypeName)
 
-      ;
+    ;
 }
 
 }  // anonymous namespace

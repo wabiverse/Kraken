@@ -62,8 +62,8 @@ namespace {
 
 static string __repr__(GfQuath const &self)
 {
-  return TF_PY_REPR_PREFIX + "Quath(" + TfPyRepr(self.GetReal()) + ", " +
-         TfPyRepr(self.GetImaginary()) + ")";
+  return TF_PY_REPR_PREFIX + "Quath(" + TfPyRepr(self.GetReal()) + ", " + TfPyRepr(self.GetImaginary()) +
+         ")";
 }
 
 #if PY_MAJOR_VERSION == 2
@@ -88,14 +88,11 @@ static GfQuath *__init__()
 
 void wrapQuath()
 {
-  object getImaginary = make_function(&GfQuath::GetImaginary,
-                                      return_value_policy<return_by_value>());
+  object getImaginary = make_function(&GfQuath::GetImaginary, return_value_policy<return_by_value>());
 
-  object setImaginaryVec = make_function((void (GfQuath::*)(const GfVec3h &)) &
-                                         GfQuath::SetImaginary);
+  object setImaginaryVec = make_function((void (GfQuath::*)(const GfVec3h &)) & GfQuath::SetImaginary);
 
-  object setImaginaryScl = make_function((void (GfQuath::*)(GfHalf, GfHalf, GfHalf)) &
-                                             GfQuath::SetImaginary,
+  object setImaginaryScl = make_function((void (GfQuath::*)(GfHalf, GfHalf, GfHalf)) & GfQuath::SetImaginary,
                                          default_call_policies(),
                                          (arg("i"), arg("j"), arg("k")));
 
@@ -104,65 +101,65 @@ void wrapQuath()
   def("Dot", (GfHalf(*)(const GfQuath &, const GfQuath &))GfDot);
 
   class_<GfQuath>("Quath", no_init)
-      .def("__init__", make_constructor(__init__))
+    .def("__init__", make_constructor(__init__))
 
-      .def(TfTypePythonClass())
+    .def(TfTypePythonClass())
 
-      .def(init<GfQuath>())
-      .def(init<GfHalf>(arg("real")))
-      .def(init<GfHalf, const GfVec3h &>((arg("real"), arg("imaginary"))))
-      .def(init<GfHalf, GfHalf, GfHalf, GfHalf>((arg("real"), arg("i"), arg("j"), arg("k"))))
-      .def(init<const GfQuatd &>())
-      .def(init<const GfQuatf &>())
+    .def(init<GfQuath>())
+    .def(init<GfHalf>(arg("real")))
+    .def(init<GfHalf, const GfVec3h &>((arg("real"), arg("imaginary"))))
+    .def(init<GfHalf, GfHalf, GfHalf, GfHalf>((arg("real"), arg("i"), arg("j"), arg("k"))))
+    .def(init<const GfQuatd &>())
+    .def(init<const GfQuatf &>())
 
-      .def("GetIdentity", &GfQuath::GetIdentity)
-      .staticmethod("GetIdentity")
+    .def("GetIdentity", &GfQuath::GetIdentity)
+    .staticmethod("GetIdentity")
 
-      .def("GetReal", &GfQuath::GetReal)
-      .def("SetReal", &GfQuath::SetReal)
-      .add_property("real", &GfQuath::GetReal, &GfQuath::SetReal)
+    .def("GetReal", &GfQuath::GetReal)
+    .def("SetReal", &GfQuath::SetReal)
+    .add_property("real", &GfQuath::GetReal, &GfQuath::SetReal)
 
-      .def("GetImaginary", getImaginary)
-      .def("SetImaginary", setImaginaryVec)
-      .def("SetImaginary", setImaginaryScl)
-      .add_property("imaginary", getImaginary, setImaginaryVec)
+    .def("GetImaginary", getImaginary)
+    .def("SetImaginary", setImaginaryVec)
+    .def("SetImaginary", setImaginaryScl)
+    .add_property("imaginary", getImaginary, setImaginaryVec)
 
-      .def("GetLength", &GfQuath::GetLength)
+    .def("GetLength", &GfQuath::GetLength)
 
-      .def("GetNormalized", &GfQuath::GetNormalized, (arg("eps") = GF_MIN_VECTOR_LENGTH))
-      .def("Normalize", &GfQuath::Normalize, (arg("eps") = GF_MIN_VECTOR_LENGTH), return_self<>())
+    .def("GetNormalized", &GfQuath::GetNormalized, (arg("eps") = GF_MIN_VECTOR_LENGTH))
+    .def("Normalize", &GfQuath::Normalize, (arg("eps") = GF_MIN_VECTOR_LENGTH), return_self<>())
 
-      .def("GetConjugate", &GfQuath::GetConjugate)
-      .def("GetInverse", &GfQuath::GetInverse)
+    .def("GetConjugate", &GfQuath::GetConjugate)
+    .def("GetInverse", &GfQuath::GetInverse)
 
-      .def("Transform", &GfQuath::Transform)
+    .def("Transform", &GfQuath::Transform)
 
-      .def(str(self))
-      .def(-self)
-      .def(self == self)
-      .def(self != self)
-      .def(self *= self)
-      .def(self *= GfHalf())
-      .def(self /= GfHalf())
-      .def(self += self)
-      .def(self -= self)
-      .def(self + self)
-      .def(self - self)
-      .def(self * self)
-      .def(self * GfHalf())
-      .def(GfHalf() * self)
-      .def(self / GfHalf())
+    .def(str(self))
+    .def(-self)
+    .def(self == self)
+    .def(self != self)
+    .def(self *= self)
+    .def(self *= GfHalf())
+    .def(self /= GfHalf())
+    .def(self += self)
+    .def(self -= self)
+    .def(self + self)
+    .def(self - self)
+    .def(self * self)
+    .def(self * GfHalf())
+    .def(GfHalf() * self)
+    .def(self / GfHalf())
 
 #if PY_MAJOR_VERSION == 2
-      // Needed only to support "from __future__ import division" in
-      // python 2. In python 3 builds boost::python adds this for us.
-      .def("__truediv__", __truediv__)
-      .def("__itruediv__", __itruediv__)
+    // Needed only to support "from __future__ import division" in
+    // python 2. In python 3 builds boost::python adds this for us.
+    .def("__truediv__", __truediv__)
+    .def("__itruediv__", __itruediv__)
 #endif
 
-      .def("__repr__", __repr__)
+    .def("__repr__", __repr__)
 
-      ;
+    ;
 
   to_python_converter<std::vector<GfQuath>, TfPySequenceToPython<std::vector<GfQuath>>>();
 }

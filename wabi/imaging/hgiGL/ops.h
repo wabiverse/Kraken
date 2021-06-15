@@ -104,8 +104,7 @@ class HgiGLOps {
   static HgiGLOpsFn CopyBufferToTexture(HgiBufferToTextureOp const &copyOp);
 
   HGIGL_API
-  static HgiGLOpsFn ResolveFramebuffer(HgiGLDevice *device,
-                                       HgiGraphicsCmdsDesc const &graphicsCmds);
+  static HgiGLOpsFn ResolveFramebuffer(HgiGLDevice *device, HgiGraphicsCmdsDesc const &graphicsCmds);
 
   HGIGL_API
   static HgiGLOpsFn SetViewport(GfVec4i const &vp);

@@ -59,8 +59,8 @@ class UsdUtilsStageCache {
   /// session layer with those opinions.
   USDUTILS_API
   static SdfLayerRefPtr GetSessionLayerForVariantSelections(
-      const TfToken &modelName,
-      const std::vector<std::pair<std::string, std::string>> &variantSelections);
+    const TfToken &modelName,
+    const std::vector<std::pair<std::string, std::string>> &variantSelections);
 };
 
 WABI_NAMESPACE_END

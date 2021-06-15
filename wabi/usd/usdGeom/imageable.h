@@ -170,7 +170,7 @@ class UsdGeomImageable : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateVisibilityAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -199,8 +199,7 @@ class UsdGeomImageable : public UsdTyped {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreatePurposeAttr(VtValue const &defaultValue = VtValue(),
-                                 bool writeSparsely          = false) const;
+  UsdAttribute CreatePurposeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -257,7 +256,7 @@ class UsdGeomImageable : public UsdTyped {
   UsdGeomPrimvar CreatePrimvar(const TfToken &attrName,
                                const SdfValueTypeName &typeName,
                                const TfToken &interpolation = TfToken(),
-                               int elementSize              = -1) const;
+                               int elementSize = -1) const;
 
   /// \deprecated Please use UsdGeomPrimvarsAPI::GetPrimvar() instead.
   USDGEOM_API
@@ -395,8 +394,8 @@ class UsdGeomImageable : public UsdTyped {
     constexpr PurposeInfo() = default;
 
     PurposeInfo(const TfToken &purpose_, bool isInheritable_)
-        : purpose(purpose_),
-          isInheritable(isInheritable_)
+      : purpose(purpose_),
+        isInheritable(isInheritable_)
     {}
 
     /// The computed purpose. An empty purpose indicates that this

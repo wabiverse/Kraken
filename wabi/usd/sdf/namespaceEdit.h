@@ -63,9 +63,9 @@ struct SdfNamespaceEdit : boost::equality_comparable<SdfNamespaceEdit> {
 
   /// The fully general edit.
   SdfNamespaceEdit(const Path &currentPath_, const Path &newPath_, Index index_ = AtEnd)
-      : currentPath(currentPath_),
-        newPath(newPath_),
-        index(index_)
+    : currentPath(currentPath_),
+      newPath(newPath_),
+      index(index_)
   {}
 
   /// Returns a namespace edit that removes the object at \p currentPath.
@@ -92,8 +92,7 @@ struct SdfNamespaceEdit : boost::equality_comparable<SdfNamespaceEdit> {
   /// \p currentPath to be under \p newParentPath at index \p index.
   static This Reparent(const Path &currentPath, const Path &newParentPath, Index index)
   {
-    return This(
-        currentPath, currentPath.ReplacePrefix(currentPath.GetParentPath(), newParentPath), index);
+    return This(currentPath, currentPath.ReplacePrefix(currentPath.GetParentPath(), newParentPath), index);
   }
 
   /// Returns a namespace edit to reparent the prim or property at
@@ -104,10 +103,9 @@ struct SdfNamespaceEdit : boost::equality_comparable<SdfNamespaceEdit> {
                                 const TfToken &name,
                                 Index index)
   {
-    return This(
-        currentPath,
-        currentPath.ReplacePrefix(currentPath.GetParentPath(), newParentPath).ReplaceName(name),
-        index);
+    return This(currentPath,
+                currentPath.ReplacePrefix(currentPath.GetParentPath(), newParentPath).ReplaceName(name),
+                index);
   }
 
   SDF_API bool operator==(const This &rhs) const;
@@ -278,7 +276,7 @@ class SdfBatchNamespaceEdit {
                const HasObjectAtPath &hasObjectAtPath,
                const CanEdit &canEdit,
                SdfNamespaceEditDetailVector *details = NULL,
-               bool fixBackpointers                  = true) const;
+               bool fixBackpointers = true) const;
 
  private:
   SdfNamespaceEditVector _edits;

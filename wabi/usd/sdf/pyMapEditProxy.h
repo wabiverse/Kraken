@@ -78,10 +78,10 @@ template<class T> class SdfPyWrapMapEditProxy {
   template<class E> class _Iterator {
    public:
     _Iterator(const boost::python::object &object)
-        : _object(object),
-          _owner(boost::python::extract<const Type &>(object)),
-          _cur(_owner.begin()),
-          _end(_owner.end())
+      : _object(object),
+        _owner(boost::python::extract<const Type &>(object)),
+        _cur(_owner.begin()),
+        _end(_owner.end())
     {
       // Do nothing
     }
@@ -115,62 +115,62 @@ template<class T> class SdfPyWrapMapEditProxy {
     std::string name = _GetName();
 
     scope thisScope = class_<Type>(name.c_str())
-                          .def("__repr__", &This::_GetRepr)
-                          .def("__str__", &This::_GetStr)
-                          .def("__len__", &Type::size)
-                          .def("__getitem__", &This::_GetItem)
-                          .def("__setitem__", &This::_SetItem)
-                          .def("__delitem__", &This::_DelItem)
-                          .def("__contains__", &This::_HasKey)
-                          .def("__iter__", &This::_GetKeyIterator)
+                        .def("__repr__", &This::_GetRepr)
+                        .def("__str__", &This::_GetStr)
+                        .def("__len__", &Type::size)
+                        .def("__getitem__", &This::_GetItem)
+                        .def("__setitem__", &This::_SetItem)
+                        .def("__delitem__", &This::_DelItem)
+                        .def("__contains__", &This::_HasKey)
+                        .def("__iter__", &This::_GetKeyIterator)
 #if PY_MAJOR_VERSION < 3
-                          .def("itervalues", &This::_GetValueIterator)
-                          .def("iterkeys", &This::_GetKeyIterator)
-                          .def("iteritems", &This::_GetItemIterator)
-                          .def("values", &This::_GetValues)
-                          .def("keys", &This::_GetKeys)
-                          .def("items", &This::_GetItems)
-                          .def("has_key", &This::_HasKey)
+                        .def("itervalues", &This::_GetValueIterator)
+                        .def("iterkeys", &This::_GetKeyIterator)
+                        .def("iteritems", &This::_GetItemIterator)
+                        .def("values", &This::_GetValues)
+                        .def("keys", &This::_GetKeys)
+                        .def("items", &This::_GetItems)
+                        .def("has_key", &This::_HasKey)
 #else
-                          .def("values", &This::_GetValueIterator)
-                          .def("keys", &This::_GetKeyIterator)
-                          .def("items", &This::_GetItemIterator)
+                        .def("values", &This::_GetValueIterator)
+                        .def("keys", &This::_GetKeyIterator)
+                        .def("items", &This::_GetItemIterator)
 #endif
-                          .def("clear", &Type::clear)
-                          .def("get", &This::_PyGet)
-                          .def("get", &This::_PyGetDefault)
-                          .def("pop", &This::_Pop)
-                          .def("popitem", &This::_PopItem)
-                          .def("setdefault", &This::_SetDefault)
-                          .def("update", &This::_UpdateDict)
-                          .def("update", &This::_UpdateList)
-                          .def("copy", &This::_Copy)
-                          .add_property("expired", &Type::IsExpired)
-                          .def(TfPyBoolBuiltinFuncName, &This::_NonZero)
-                          .def(self == self)
-                          .def(self != self);
+                        .def("clear", &Type::clear)
+                        .def("get", &This::_PyGet)
+                        .def("get", &This::_PyGetDefault)
+                        .def("pop", &This::_Pop)
+                        .def("popitem", &This::_PopItem)
+                        .def("setdefault", &This::_SetDefault)
+                        .def("update", &This::_UpdateDict)
+                        .def("update", &This::_UpdateList)
+                        .def("copy", &This::_Copy)
+                        .add_property("expired", &Type::IsExpired)
+                        .def(TfPyBoolBuiltinFuncName, &This::_NonZero)
+                        .def(self == self)
+                        .def(self != self);
 
     class_<_Iterator<_ExtractItem>>((name + "_Iterator").c_str(), no_init)
-        .def("__iter__", &This::template _Iterator<_ExtractItem>::GetCopy)
-        .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractItem>::GetNext);
+      .def("__iter__", &This::template _Iterator<_ExtractItem>::GetCopy)
+      .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractItem>::GetNext);
 
     class_<_Iterator<_ExtractKey>>((name + "_KeyIterator").c_str(), no_init)
-        .def("__iter__", &This::template _Iterator<_ExtractKey>::GetCopy)
-        .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractKey>::GetNext);
+      .def("__iter__", &This::template _Iterator<_ExtractKey>::GetCopy)
+      .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractKey>::GetNext);
 
     class_<_Iterator<_ExtractValue>>((name + "_ValueIterator").c_str(), no_init)
-        .def("__iter__", &This::template _Iterator<_ExtractValue>::GetCopy)
-        .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractValue>::GetNext);
+      .def("__iter__", &This::template _Iterator<_ExtractValue>::GetCopy)
+      .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractValue>::GetNext);
   }
 
   static std::string _GetName()
   {
     std::string name = "MapEditProxy_" + ArchGetDemangled<typename Type::Type>();
-    name             = TfStringReplace(name, " ", "_");
-    name             = TfStringReplace(name, ",", "_");
-    name             = TfStringReplace(name, "::", "_");
-    name             = TfStringReplace(name, "<", "_");
-    name             = TfStringReplace(name, ">", "_");
+    name = TfStringReplace(name, " ", "_");
+    name = TfStringReplace(name, ",", "_");
+    name = TfStringReplace(name, "::", "_");
+    name = TfStringReplace(name, "<", "_");
+    name = TfStringReplace(name, ">", "_");
     return name;
   }
 
@@ -304,7 +304,7 @@ template<class T> class SdfPyWrapMapEditProxy {
       return boost::python::tuple();
     }
     else {
-      iterator i        = x.begin();
+      iterator i = x.begin();
       value_type result = *i;
       x.erase(i);
       return boost::python::make_tuple(result.first, result.second);
@@ -342,8 +342,7 @@ template<class T> class SdfPyWrapMapEditProxy {
 
     std::vector<pair_type> values;
     for (int i = 0, n = len(pairs); i != n; ++i) {
-      values.push_back(
-          pair_type(extract<key_type>(pairs[i][0])(), extract<mapped_type>(pairs[i][1])()));
+      values.push_back(pair_type(extract<key_type>(pairs[i][0])(), extract<mapped_type>(pairs[i][1])()));
     }
     _Update(x, values);
   }

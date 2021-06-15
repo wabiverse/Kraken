@@ -122,9 +122,9 @@ bool UsdUtilsStitchClips(const SdfLayerHandle &resultLayer,
                          const std::vector<std::string> &clipLayerFiles,
                          const SdfPath &clipPath,
                          const double startTimeCode = std::numeric_limits<double>::max(),
-                         const double endTimeCode   = std::numeric_limits<double>::max(),
+                         const double endTimeCode = std::numeric_limits<double>::max(),
                          const bool interpolateMissingClipValues = false,
-                         const TfToken &clipSet                  = UsdClipsAPISetNames->default_);
+                         const TfToken &clipSet = UsdClipsAPISetNames->default_);
 
 /// A function which aggregates the topology of a set of \p clipLayerFiles
 /// for use in USD's Value Clips system. This aggregated scene topology

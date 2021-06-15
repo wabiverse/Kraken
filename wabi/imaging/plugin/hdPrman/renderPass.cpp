@@ -26,7 +26,7 @@
 WABI_NAMESPACE_BEGIN
 
 HdPrman_RenderPass::HdPrman_RenderPass(HdRenderIndex *index, HdRprimCollection const &collection)
-    : HdRenderPass(index, collection)
+  : HdRenderPass(index, collection)
 {}
 
 HdPrman_RenderPass::~HdPrman_RenderPass()

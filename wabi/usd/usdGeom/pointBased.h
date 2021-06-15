@@ -148,8 +148,7 @@ class UsdGeomPointBased : public UsdGeomGprim {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreatePointsAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreatePointsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -183,7 +182,7 @@ class UsdGeomPointBased : public UsdGeomGprim {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateVelocitiesAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -211,7 +210,7 @@ class UsdGeomPointBased : public UsdGeomGprim {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateAccelerationsAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -240,8 +239,7 @@ class UsdGeomPointBased : public UsdGeomGprim {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateNormalsAttr(VtValue const &defaultValue = VtValue(),
-                                 bool writeSparsely          = false) const;
+  UsdAttribute CreateNormalsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //
@@ -298,9 +296,7 @@ class UsdGeomPointBased : public UsdGeomGprim {
   /// \overload
   /// Computes the extent as if the matrix \p transform was first applied.
   USDGEOM_API
-  static bool ComputeExtent(const VtVec3fArray &points,
-                            const GfMatrix4d &transform,
-                            VtVec3fArray *extent);
+  static bool ComputeExtent(const VtVec3fArray &points, const GfMatrix4d &transform, VtVec3fArray *extent);
 
  public:
   /// Compute points given the positions, velocities and accelerations

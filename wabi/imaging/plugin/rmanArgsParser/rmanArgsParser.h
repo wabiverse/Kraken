@@ -153,9 +153,7 @@ class RmanArgsParserPlugin : public NdrParserPlugin {
   void _injectParserMetadata(NdrTokenMap &metadata, const TfToken &typeName) const;
 
   // Recursively builds up the shaderRep as the shader is parsed
-  void _Parse(SdrShaderRepresentation &shaderRep,
-              pugi::xml_node parent,
-              const std::string &parentPage);
+  void _Parse(SdrShaderRepresentation &shaderRep, pugi::xml_node parent, const std::string &parentPage);
 
   // For each child under the specified parent, get the value of the
   // specified attribute

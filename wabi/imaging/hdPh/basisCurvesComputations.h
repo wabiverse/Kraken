@@ -62,9 +62,7 @@ class HdPh_BasisCurvesIndexBuilderComputation : public HdComputedBufferSource {
     IndexAndPrimIndex()
     {}
 
-    IndexAndPrimIndex(VtValue indices, VtValue primIndices)
-        : _indices(indices),
-          _primIndices(primIndices)
+    IndexAndPrimIndex(VtValue indices, VtValue primIndices) : _indices(indices), _primIndices(primIndices)
     {}
 
     VtValue _indices;
@@ -130,7 +128,7 @@ VtArray<T> HdPh_ExpandVarying(size_t numVerts,
       // shaders can choose to access value[1] and value[2] when linearly
       // interpolating a value, which happens to match up with the
       // indexing to use for catmullRom and bSpline basis.
-      const int vStep        = 3;
+      const int vStep = 3;
       outputValues[dstIndex] = authoredValues[srcIndex];
       ++dstIndex;  // don't increment the srcIndex
       outputValues[dstIndex] = authoredValues[srcIndex];
@@ -165,8 +163,7 @@ VtArray<T> HdPh_ExpandVarying(size_t numVerts,
 
 /// Verify the number of authored vertex or varying primvars, expanding the
 /// number of varying values when necessary
-template<typename T>
-class HdPh_BasisCurvesPrimvarInterpolaterComputation : public HdComputedBufferSource {
+template<typename T> class HdPh_BasisCurvesPrimvarInterpolaterComputation : public HdComputedBufferSource {
  public:
   HdPh_BasisCurvesPrimvarInterpolaterComputation(HdPh_BasisCurvesTopologySharedPtr topology,
                                                  const VtArray<T> &authoredPrimvar,
@@ -174,12 +171,12 @@ class HdPh_BasisCurvesPrimvarInterpolaterComputation : public HdComputedBufferSo
                                                  HdInterpolation interpolation,
                                                  const T fallbackValue,
                                                  HdType hdType)
-      : _topology(topology),
-        _authoredPrimvar(authoredPrimvar),
-        _name(name),
-        _interpolation(interpolation),
-        _fallbackValue(fallbackValue),
-        _hdType(hdType)
+    : _topology(topology),
+      _authoredPrimvar(authoredPrimvar),
+      _name(name),
+      _interpolation(interpolation),
+      _fallbackValue(fallbackValue),
+      _hdType(hdType)
   {}
 
   virtual bool Resolve() override
@@ -219,9 +216,9 @@ class HdPh_BasisCurvesPrimvarInterpolaterComputation : public HdComputedBufferSo
           primvars[i] = _fallbackValue;
         }
         TF_WARN(
-            "Incorrect number of primvar %s for vertex "
-            "interpolation, using fallback value for rendering",
-            _name.GetText());
+          "Incorrect number of primvar %s for vertex "
+          "interpolation, using fallback value for rendering",
+          _name.GetText());
       }
     }
     else if (_interpolation == HdInterpolationVarying) {
@@ -245,9 +242,9 @@ class HdPh_BasisCurvesPrimvarInterpolaterComputation : public HdComputedBufferSo
           primvars[i] = _fallbackValue;
         }
         TF_WARN(
-            "Incorrect number of primvar %s for varying "
-            "interpolation, using fallback value for rendering",
-            _name.GetText());
+          "Incorrect number of primvar %s for varying "
+          "interpolation, using fallback value for rendering",
+          _name.GetText());
       }
     }
 

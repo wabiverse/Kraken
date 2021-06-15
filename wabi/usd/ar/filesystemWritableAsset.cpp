@@ -43,14 +43,13 @@
 WABI_NAMESPACE_BEGIN
 
 std::shared_ptr<ArFilesystemWritableAsset> ArFilesystemWritableAsset::Create(
-    const ArResolvedPath &resolvedPath,
-    ArResolver::WriteMode writeMode)
+  const ArResolvedPath &resolvedPath,
+  ArResolver::WriteMode writeMode)
 {
   const std::string dir = TfGetPathName(resolvedPath);
   if (!dir.empty() && !TfIsDir(dir) && !TfMakeDirs(dir)) {
-    TF_RUNTIME_ERROR("Could not create directory '%s' for asset '%s'",
-                     dir.c_str(),
-                     resolvedPath.GetPathString().c_str());
+    TF_RUNTIME_ERROR(
+      "Could not create directory '%s' for asset '%s'", dir.c_str(), resolvedPath.GetPathString().c_str());
     return nullptr;
   }
 
@@ -73,8 +72,7 @@ std::shared_ptr<ArFilesystemWritableAsset> ArFilesystemWritableAsset::Create(
   return std::make_shared<ArFilesystemWritableAsset>(std::move(f));
 }
 
-ArFilesystemWritableAsset::ArFilesystemWritableAsset(TfSafeOutputFile &&file)
-    : _file(std::move(file))
+ArFilesystemWritableAsset::ArFilesystemWritableAsset(TfSafeOutputFile &&file) : _file(std::move(file))
 {
   if (!_file.Get()) {
     TF_CODING_ERROR("Invalid output file");

@@ -63,14 +63,13 @@ class GlyphIterator {
   GlyphIterator &Clamp();
 
   GlyphIterator Peek(long count) const;
-  GlyphIterator PeekLineClamped(long count,
-                                LineLocation clamp = LineLocation::LineLastNonCR) const;
+  GlyphIterator PeekLineClamped(long count, LineLocation clamp = LineLocation::LineLastNonCR) const;
   GlyphIterator PeekByteOffset(long count) const;
   GlyphIterator Clamped() const;
 
  private:
   const ZepBuffer *m_pBuffer = nullptr;
-  long m_index               = -1;
+  long m_index = -1;
 };
 
 inline long CodePointDistance(const GlyphIterator &itr1, const GlyphIterator &itr2)

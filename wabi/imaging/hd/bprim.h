@@ -75,9 +75,7 @@ class HdBprim {
   ///                             On output specifies which bits are still
   ///                             dirty and were not cleaned by the sync.
   ///
-  virtual void Sync(HdSceneDelegate *sceneDelegate,
-                    HdRenderParam *renderParam,
-                    HdDirtyBits *dirtyBits) = 0;
+  virtual void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) = 0;
 
   /// Finalizes object resources. This function might not delete resources,
   /// but it should deal with resource ownership so that the sprim is

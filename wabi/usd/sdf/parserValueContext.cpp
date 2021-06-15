@@ -47,9 +47,9 @@ static void ReportCodingError(const std::string &text)
 }
 
 Sdf_ParserValueContext::Sdf_ParserValueContext()
-    : valueTypeIsValid(false),
-      valueIsShaped(false),
-      errorReporter(ReportCodingError)
+  : valueTypeIsValid(false),
+    valueIsShaped(false),
+    errorReporter(ReportCodingError)
 {
   Clear();
 }
@@ -57,19 +57,19 @@ Sdf_ParserValueContext::Sdf_ParserValueContext()
 bool Sdf_ParserValueContext::SetupFactory(const std::string &typeName)
 {
   if (typeName != lastTypeName) {
-    const Sdf_ParserHelpers::ValueFactory &factory =
-        Sdf_ParserHelpers::GetValueFactoryForMenvaName(typeName, &valueTypeIsValid);
+    const Sdf_ParserHelpers::ValueFactory &factory = Sdf_ParserHelpers::GetValueFactoryForMenvaName(
+      typeName, &valueTypeIsValid);
 
     valueTypeName = typeName;
 
     if (!valueTypeIsValid) {
-      valueFunc            = Sdf_ParserHelpers::ValueFactoryFunc();
-      valueIsShaped        = false;
+      valueFunc = Sdf_ParserHelpers::ValueFactoryFunc();
+      valueIsShaped = false;
       valueTupleDimensions = SdfTupleDimensions();
     }
     else {
-      valueFunc            = factory.func;
-      valueIsShaped        = factory.isShaped;
+      valueFunc = factory.func;
+      valueIsShaped = factory.isShaped;
       valueTupleDimensions = factory.dimensions;
     }
 
@@ -97,7 +97,7 @@ VtValue Sdf_ParserValueContext::ProduceValue(std::string *errStrPtr)
     }
 
     size_t index = 0;
-    ret          = valueFunc(shape, vars, index, errStrPtr);
+    ret = valueFunc(shape, vars, index, errStrPtr);
   }
 
   Clear();
@@ -106,7 +106,7 @@ VtValue Sdf_ParserValueContext::ProduceValue(std::string *errStrPtr)
 
 void Sdf_ParserValueContext::Clear()
 {
-  dim     = 0;
+  dim = 0;
   pushDim = -1;
   shape.clear();
 
@@ -133,7 +133,7 @@ void Sdf_ParserValueContext::Clear()
   workingShape.clear();
 
   _isRecordingString = false;
-  _needComma         = false;
+  _needComma = false;
 }
 
 void Sdf_ParserValueContext::AppendValue(const Value &value)
@@ -252,10 +252,10 @@ void Sdf_ParserValueContext::BeginTuple()
 
   if (static_cast<size_t>(tupleDepth) >= valueTupleDimensions.size) {
     errorReporter(
-        TfStringPrintf("Tuple nesting too deep! Should not be "
-                       "deeper than %d for attribute of type %s.",
-                       tupleDepth,
-                       valueTypeName.c_str()));
+      TfStringPrintf("Tuple nesting too deep! Should not be "
+                     "deeper than %d for attribute of type %s.",
+                     tupleDepth,
+                     valueTypeName.c_str()));
     return;
   }
   tupleDimensions.d[tupleDepth] = valueTupleDimensions.d[tupleDepth];
@@ -274,9 +274,9 @@ void Sdf_ParserValueContext::EndTuple()
     // CODE_COVERAGE_OFF
     // This can't happen unless there's a bug in the parser
     errorReporter(
-        TfStringPrintf("Mismatched ( ) for attribute "
-                       "of type %s.",
-                       valueTypeName.c_str()));
+      TfStringPrintf("Mismatched ( ) for attribute "
+                     "of type %s.",
+                     valueTypeName.c_str()));
     return;
     // CODE_COVERAGE_ON
   }
@@ -285,9 +285,9 @@ void Sdf_ParserValueContext::EndTuple()
 
   if (tupleDimensions.d[tupleDepth] != 0) {
     errorReporter(
-        TfStringPrintf("Tuple dimensions error for "
-                       "attribute of type %s.",
-                       valueTypeName.c_str()));
+      TfStringPrintf("Tuple dimensions error for "
+                     "attribute of type %s.",
+                     valueTypeName.c_str()));
     return;
   }
   if (tupleDepth > 0) {
@@ -301,7 +301,7 @@ void Sdf_ParserValueContext::EndTuple()
 
 void Sdf_ParserValueContext::StartRecordingString()
 {
-  _needComma         = false;
+  _needComma = false;
   _isRecordingString = true;
   _recordedString.clear();
 }

@@ -62,12 +62,11 @@ static NdrTokenMap _GetSdrMetadata(const UsdShadeConnectableAPI &connectable,
 {
   NdrTokenMap metadata = discoveryResultMetadata;
 
-  metadata[SdrNodeMetadata->Help] = TfStringPrintf(
-      "Fallback shader node generated from the USD %s schema",
-      connectable.GetPrim().GetTypeName().GetText());
+  metadata[SdrNodeMetadata->Help] = TfStringPrintf("Fallback shader node generated from the USD %s schema",
+                                                   connectable.GetPrim().GetTypeName().GetText());
 
-  metadata[SdrNodeMetadata->Primvars] = UsdShadeShaderDefUtils::GetPrimvarNamesMetadataString(
-      metadata, connectable);
+  metadata[SdrNodeMetadata->Primvars] = UsdShadeShaderDefUtils::GetPrimvarNamesMetadataString(metadata,
+                                                                                              connectable);
 
   return metadata;
 }
@@ -111,25 +110,24 @@ NdrNodeUniquePtr UsdLux_LightDefParserPlugin::Parse(const NdrNodeDiscoveryResult
   }
   else {
     TF_CODING_ERROR(
-        "Cannot parse a USD shader node for schema type '%s'; "
-        "schema type '%s' is not a light or light filter.",
-        discoveryResult.identifier.GetText(),
-        discoveryResult.identifier.GetText());
+      "Cannot parse a USD shader node for schema type '%s'; "
+      "schema type '%s' is not a light or light filter.",
+      discoveryResult.identifier.GetText(),
+      discoveryResult.identifier.GetText());
     return nullptr;
   }
 
-  return NdrNodeUniquePtr(
-      new SdrShaderNode(discoveryResult.identifier,
-                        discoveryResult.version,
-                        discoveryResult.name,
-                        discoveryResult.family,
-                        context,
-                        discoveryResult.sourceType,
-                        /*nodeUriAssetPath=*/std::string(),
-                        /*resolvedImplementationUri=*/std::string(),
-                        UsdShadeShaderDefUtils::GetShaderProperties(connectable),
-                        _GetSdrMetadata(connectable, discoveryResult.metadata),
-                        discoveryResult.sourceCode));
+  return NdrNodeUniquePtr(new SdrShaderNode(discoveryResult.identifier,
+                                            discoveryResult.version,
+                                            discoveryResult.name,
+                                            discoveryResult.family,
+                                            context,
+                                            discoveryResult.sourceType,
+                                            /*nodeUriAssetPath=*/std::string(),
+                                            /*resolvedImplementationUri=*/std::string(),
+                                            UsdShadeShaderDefUtils::GetShaderProperties(connectable),
+                                            _GetSdrMetadata(connectable, discoveryResult.metadata),
+                                            discoveryResult.sourceCode));
 }
 
 const NdrTokenVec &UsdLux_LightDefParserPlugin::GetDiscoveryTypes() const

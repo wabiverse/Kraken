@@ -72,7 +72,7 @@ std::istream &operator>>(std::istream &is, UsdTimeCode &time)
   else {
     try {
       const double value = std::stod(valueString);
-      time               = UsdTimeCode(value);
+      time = UsdTimeCode(value);
     }
     catch (const std::exception & /* e */) {
       // Leave time unchanged on error.

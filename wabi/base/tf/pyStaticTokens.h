@@ -48,8 +48,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// \hideinitializer
 #define TF_PY_WRAP_PUBLIC_TOKENS(name, key, seq) \
-  boost::python::class_<_TF_TOKENS_STRUCT_NAME(key), boost::noncopyable>( \
-      name, boost::python::no_init) _TF_PY_TOKENS_WRAP_SEQ(key, _TF_PY_TOKENS_EXPAND(seq))
+  boost::python::class_<_TF_TOKENS_STRUCT_NAME(key), boost::noncopyable>(name, boost::python::no_init) \
+    _TF_PY_TOKENS_WRAP_SEQ(key, _TF_PY_TOKENS_EXPAND(seq))
 
 /// Macro to wrap static tokens defined with \c TF_DEFINE_PUBLIC_TOKENS to
 /// Python. This wraps tokens in \p seq in the static tokens named by \p key
@@ -83,11 +83,11 @@ class _TfPyWrapStaticToken {
   boost::python::scope().attr(TF_PP_STRINGIZE(name)) = key->name.GetString();
 
 #define _TF_PY_TOKENS_WRAP_MEMBER(r, key, name) \
-  .add_static_property(TF_PP_STRINGIZE(name), \
-                       boost::python::make_function( \
-                           _TfPyWrapStaticToken((&key->name)), \
-                           boost::python::return_value_policy<boost::python::return_by_value>(), \
-                           boost::mpl::vector1<std::string>()))
+  .add_static_property( \
+    TF_PP_STRINGIZE(name), \
+    boost::python::make_function(_TfPyWrapStaticToken((&key->name)), \
+                                 boost::python::return_value_policy<boost::python::return_by_value>(), \
+                                 boost::mpl::vector1<std::string>()))
 
 #define _TF_PY_TOKENS_EXPAND(seq) \
   BOOST_PP_SEQ_FILTER(_TF_TOKENS_IS_NOT_ARRAY, ~, seq) \
@@ -100,12 +100,10 @@ class _TfPyWrapStaticToken {
 #define _TF_PY_TOKENS_WRAP_ATTR_ELEMENT(r, key, elem) \
   _TF_PY_TOKENS_WRAP_ATTR_MEMBER(r, key, _TF_PY_TOKEN_GET_ELEM(elem))
 
-#define _TF_PY_TOKEN_GET_ELEM(elem) \
-  BOOST_PP_IIF(TF_PP_IS_TUPLE(elem), BOOST_PP_TUPLE_ELEM(2, 0, elem), elem)
+#define _TF_PY_TOKEN_GET_ELEM(elem) BOOST_PP_IIF(TF_PP_IS_TUPLE(elem), BOOST_PP_TUPLE_ELEM(2, 0, elem), elem)
 
 // Private macros to wrap a sequence.
-#define _TF_PY_TOKENS_WRAP_SEQ(key, seq) \
-  BOOST_PP_SEQ_FOR_EACH(_TF_PY_TOKENS_WRAP_ELEMENT, key, seq)
+#define _TF_PY_TOKENS_WRAP_SEQ(key, seq) BOOST_PP_SEQ_FOR_EACH(_TF_PY_TOKENS_WRAP_ELEMENT, key, seq)
 
 #define _TF_PY_TOKENS_WRAP_ATTR_SEQ(key, seq) \
   BOOST_PP_SEQ_FOR_EACH(_TF_PY_TOKENS_WRAP_ATTR_ELEMENT, key, seq)

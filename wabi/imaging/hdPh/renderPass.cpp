@@ -64,7 +64,7 @@ void _ExecuteDraw(HdPhCommandBuffer *cmdBuffer,
 unsigned int _GetDrawBatchesVersion(HdRenderIndex *renderIndex)
 {
   HdPhRenderParam *stRenderParam = static_cast<HdPhRenderParam *>(
-      renderIndex->GetRenderDelegate()->GetRenderParam());
+    renderIndex->GetRenderDelegate()->GetRenderParam());
 
   return stRenderParam->GetDrawBatchesVersion();
 }
@@ -72,24 +72,23 @@ unsigned int _GetDrawBatchesVersion(HdRenderIndex *renderIndex)
 unsigned int _GetMaterialTagsVersion(HdRenderIndex *renderIndex)
 {
   HdPhRenderParam *stRenderParam = static_cast<HdPhRenderParam *>(
-      renderIndex->GetRenderDelegate()->GetRenderParam());
+    renderIndex->GetRenderDelegate()->GetRenderParam());
 
   return stRenderParam->GetMaterialTagsVersion();
 }
 
 HdPh_RenderPass::HdPh_RenderPass(HdRenderIndex *index, HdRprimCollection const &collection)
-    : HdRenderPass(index, collection),
-      _lastSettingsVersion(0),
-      _useTinyPrimCulling(false),
-      _collectionVersion(0),
-      _materialTagsVersion(0),
-      _collectionChanged(false),
-      _drawItemCount(0),
-      _drawItemsChanged(false),
-      _hgi(nullptr)
+  : HdRenderPass(index, collection),
+    _lastSettingsVersion(0),
+    _useTinyPrimCulling(false),
+    _collectionVersion(0),
+    _materialTagsVersion(0),
+    _collectionChanged(false),
+    _drawItemCount(0),
+    _drawItemsChanged(false),
+    _hgi(nullptr)
 {
-  HdPhRenderDelegate *renderDelegate = static_cast<HdPhRenderDelegate *>(
-      index->GetRenderDelegate());
+  HdPhRenderDelegate *renderDelegate = static_cast<HdPhRenderDelegate *>(index->GetRenderDelegate());
   _hgi = renderDelegate->GetHgi();
 }
 
@@ -175,7 +174,7 @@ void HdPh_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassState
 
   // Downcast render pass state
   HdPhRenderPassStateSharedPtr stRenderPassState = std::dynamic_pointer_cast<HdPhRenderPassState>(
-      renderPassState);
+    renderPassState);
   TF_VERIFY(stRenderPassState);
 
   // Validate and update draw batches.
@@ -185,14 +184,14 @@ void HdPh_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassState
   _FrustumCullCPU(stRenderPassState);
 
   // Downcast the resource registry
-  HdPhResourceRegistrySharedPtr const &resourceRegistry =
-      std::dynamic_pointer_cast<HdPhResourceRegistry>(GetRenderIndex()->GetResourceRegistry());
+  HdPhResourceRegistrySharedPtr const &resourceRegistry = std::dynamic_pointer_cast<HdPhResourceRegistry>(
+    GetRenderIndex()->GetResourceRegistry());
   TF_VERIFY(resourceRegistry);
 
   _cmdBuffer.PrepareDraw(stRenderPassState, resourceRegistry);
 
   // Create graphics work to render into aovs.
-  const HgiGraphicsCmdsDesc desc   = stRenderPassState->MakeGraphicsCmdsDesc(GetRenderIndex());
+  const HgiGraphicsCmdsDesc desc = stRenderPassState->MakeGraphicsCmdsDesc(GetRenderIndex());
   HgiGraphicsCmdsUniquePtr gfxCmds = _hgi->CreateGraphicsCmds(desc);
   if (!TF_VERIFY(gfxCmds)) {
     return;
@@ -243,7 +242,7 @@ void HdPh_RenderPass::_PrepareDrawItems(TfTokenVector const &renderTags)
 {
   HD_TRACE_FUNCTION();
 
-  HdChangeTracker const &tracker      = GetRenderIndex()->GetChangeTracker();
+  HdChangeTracker const &tracker = GetRenderIndex()->GetChangeTracker();
   HdRprimCollection const &collection = GetRprimCollection();
 
   const int collectionVersion = tracker.GetCollectionVersion(collection.GetName());
@@ -272,23 +271,22 @@ void HdPh_RenderPass::_PrepareDrawItems(TfTokenVector const &renderTags)
 
       if (renderTagsChanged) {
         TfDebug::Helper::Msg(
-            "RenderTagsChanged (version = %d -> %d)\n", _renderTagVersion, renderTagVersion);
+          "RenderTagsChanged (version = %d -> %d)\n", _renderTagVersion, renderTagVersion);
       }
       if (materialTagsChanged) {
-        TfDebug::Helper::Msg("MaterialTagsChanged (version = %d -> %d)\n",
-                             _materialTagsVersion,
-                             materialTagsVersion);
+        TfDebug::Helper::Msg(
+          "MaterialTagsChanged (version = %d -> %d)\n", _materialTagsVersion, materialTagsVersion);
       }
     }
 
-    _drawItems        = GetRenderIndex()->GetDrawItems(collection, renderTags);
-    _drawItemCount    = _drawItems.size();
+    _drawItems = GetRenderIndex()->GetDrawItems(collection, renderTags);
+    _drawItemCount = _drawItems.size();
     _drawItemsChanged = true;
 
     _collectionVersion = collectionVersion;
     _collectionChanged = false;
 
-    _renderTagVersion    = renderTagVersion;
+    _renderTagVersion = renderTagVersion;
     _materialTagsVersion = materialTagsVersion;
   }
 }
@@ -313,12 +311,12 @@ void HdPh_RenderPass::_PrepareCommandBuffer(TfTokenVector const &renderTags)
   // Rebuild draw batches based on new draw items
   if (_drawItemsChanged) {
     _cmdBuffer.SwapDrawItems(
-        // Downcast the HdDrawItem entries to HdPhDrawItems:
-        reinterpret_cast<std::vector<HdPhDrawItem const *> *>(&_drawItems),
-        batchVersion);
+      // Downcast the HdDrawItem entries to HdPhDrawItems:
+      reinterpret_cast<std::vector<HdPhDrawItem const *> *>(&_drawItems),
+      batchVersion);
 
     _drawItemsChanged = false;
-    size_t itemCount  = _cmdBuffer.GetTotalSize();
+    size_t itemCount = _cmdBuffer.GetTotalSize();
     HD_PERF_COUNTER_SET(HdTokens->totalItemCount, itemCount);
   }
   else {
@@ -331,11 +329,11 @@ void HdPh_RenderPass::_PrepareCommandBuffer(TfTokenVector const &renderTags)
   // RENDER SETTINGS
   // -------------------------------------------------------------------
   HdRenderDelegate *renderDelegate = GetRenderIndex()->GetRenderDelegate();
-  int currentSettingsVersion       = renderDelegate->GetRenderSettingsVersion();
+  int currentSettingsVersion = renderDelegate->GetRenderSettingsVersion();
   if (_lastSettingsVersion != currentSettingsVersion) {
     _lastSettingsVersion = currentSettingsVersion;
-    _useTinyPrimCulling  = renderDelegate->GetRenderSetting<bool>(
-        HdPhRenderSettingsTokens->enableTinyPrimCulling, false);
+    _useTinyPrimCulling = renderDelegate->GetRenderSetting<bool>(
+      HdPhRenderSettingsTokens->enableTinyPrimCulling, false);
   }
 
   _cmdBuffer.SetEnableTinyPrimCulling(_useTinyPrimCulling);
@@ -346,7 +344,7 @@ void HdPh_RenderPass::_FrustumCullCPU(HdPhRenderPassStateSharedPtr const &render
   // This process should be moved to HdPh_DrawBatch::PrepareDraw
   // to be consistent with GPU culling.
 
-  GlfContextCaps const &caps     = GlfContextCaps::GetInstance();
+  GlfContextCaps const &caps = GlfContextCaps::GetInstance();
   HdChangeTracker const &tracker = GetRenderIndex()->GetChangeTracker();
 
   const bool skipCulling = TfDebug::IsEnabled(HDPH_DISABLE_FRUSTUM_CULLING) ||

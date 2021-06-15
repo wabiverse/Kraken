@@ -44,8 +44,7 @@ WABI_NAMESPACE_BEGIN
 
 class HdEmbreeRenderParam;
 
-#define HDEMBREE_RENDER_SETTINGS_TOKENS \
-  (enableAmbientOcclusion)(enableSceneColors)(ambientOcclusionSamples)
+#define HDEMBREE_RENDER_SETTINGS_TOKENS (enableAmbientOcclusion)(enableSceneColors)(ambientOcclusionSamples)
 
 // Also: HdRenderSettingsTokens->convergedSamplesPerPixel
 

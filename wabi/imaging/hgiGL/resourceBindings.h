@@ -61,9 +61,9 @@ class HgiGLResourceBindings final : public HgiResourceBindings {
   HgiGLResourceBindings(HgiResourceBindingsDesc const &desc);
 
  private:
-  HgiGLResourceBindings()        = delete;
+  HgiGLResourceBindings() = delete;
   HgiGLResourceBindings &operator=(const HgiGLResourceBindings &) = delete;
-  HgiGLResourceBindings(const HgiGLResourceBindings &)            = delete;
+  HgiGLResourceBindings(const HgiGLResourceBindings &) = delete;
 };
 
 WABI_NAMESPACE_END

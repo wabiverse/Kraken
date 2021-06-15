@@ -40,12 +40,12 @@ WABI_NAMESPACE_BEGIN
 class HdPhDrawItem;
 class HdPhDrawItemInstance;
 
-using HdPh_DrawBatchSharedPtr       = std::shared_ptr<class HdPh_DrawBatch>;
+using HdPh_DrawBatchSharedPtr = std::shared_ptr<class HdPh_DrawBatch>;
 using HdPh_DrawBatchSharedPtrVector = std::vector<HdPh_DrawBatchSharedPtr>;
 using HdPh_GeometricShaderSharedPtr = std::shared_ptr<class HdPh_GeometricShader>;
-using HdPhGLSLProgramSharedPtr      = std::shared_ptr<class HdPhGLSLProgram>;
+using HdPhGLSLProgramSharedPtr = std::shared_ptr<class HdPhGLSLProgram>;
 
-using HdPhRenderPassStateSharedPtr  = std::shared_ptr<class HdPhRenderPassState>;
+using HdPhRenderPassStateSharedPtr = std::shared_ptr<class HdPhRenderPassState>;
 using HdPhResourceRegistrySharedPtr = std::shared_ptr<class HdPhResourceRegistry>;
 
 /// \class HdPh_DrawBatch
@@ -189,8 +189,7 @@ class HdPh_DrawBatch {
     // will be used to determine if glVertexAttribDivisor needs to be
     // enabled or not.
     HDPH_API
-    virtual void _GetCustomBindings(HdBindingRequestVector *customBindings,
-                                    bool *enableInstanceDraw) const;
+    virtual void _GetCustomBindings(HdBindingRequestVector *customBindings, bool *enableInstanceDraw) const;
 
     HDPH_API
     virtual bool _Link(HdPhGLSLProgramSharedPtr const &glslProgram);

@@ -41,8 +41,7 @@ TraceEventNodeRefPtr TraceEventNode::Append(const TfToken &key,
                                             TimeStamp endTime,
                                             bool separateEvents)
 {
-  TraceEventNodeRefPtr n = TraceEventNode::New(
-      key, category, beginTime, endTime, {}, separateEvents);
+  TraceEventNodeRefPtr n = TraceEventNode::New(key, category, beginTime, endTime, {}, separateEvents);
   _children.push_back(n);
   return n;
 }
@@ -56,16 +55,16 @@ void TraceEventNode::SetBeginAndEndTimesFromChildren()
 {
   if (_children.empty()) {
     _beginTime = 0;
-    _endTime   = 0;
+    _endTime = 0;
     return;
   }
 
   _beginTime = std::numeric_limits<TimeStamp>::max();
-  _endTime   = std::numeric_limits<TimeStamp>::min();
+  _endTime = std::numeric_limits<TimeStamp>::min();
 
   for (const TraceEventNodeRefPtr &c : _children) {
     _beginTime = std::min(_beginTime, c->GetBeginTime());
-    _endTime   = std::max(_endTime, c->GetEndTime());
+    _endTime = std::max(_endTime, c->GetEndTime());
   }
 }
 

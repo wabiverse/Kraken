@@ -49,11 +49,7 @@ WABI_NAMESPACE_BEGIN
 /// \warning This differs from a TfHashMap in so far that inserting and
 /// removing elements invalidate all iterators of the container.
 ///
-template<class Key,
-         class Data,
-         class HashFn,
-         class EqualKey     = std::equal_to<Key>,
-         unsigned Threshold = 128>
+template<class Key, class Data, class HashFn, class EqualKey = std::equal_to<Key>, unsigned Threshold = 128>
 class TfDenseHashMap {
  public:
   typedef std::pair<const Key, Data> value_type;
@@ -138,10 +134,9 @@ class TfDenseHashMap {
   // the map's value_type as externally visible type.
   //
   template<class ElementType, class UnderlyingIterator>
-  class _IteratorBase
-      : public boost::iterator_facade<_IteratorBase<ElementType, UnderlyingIterator>,
-                                      ElementType,
-                                      boost::bidirectional_traversal_tag> {
+  class _IteratorBase : public boost::iterator_facade<_IteratorBase<ElementType, UnderlyingIterator>,
+                                                      ElementType,
+                                                      boost::bidirectional_traversal_tag> {
    public:
     // Empty ctor.
     _IteratorBase()
@@ -212,7 +207,7 @@ class TfDenseHashMap {
   explicit TfDenseHashMap(const HashFn &hashFn = HashFn(), const EqualKey &equalKey = EqualKey())
   {
     _hash() = hashFn;
-    _equ()  = equalKey;
+    _equ() = equalKey;
   }
 
   /// Construct with range.
@@ -398,8 +393,7 @@ class TfDenseHashMap {
     if (_h) {
       // Attempt to insert the new index.  If this fails, we can't insert
       // v.
-      std::pair<typename _HashMap::iterator, bool> res = _h->insert(
-          std::make_pair(v.first, size()));
+      std::pair<typename _HashMap::iterator, bool> res = _h->insert(std::make_pair(v.first, size()));
 
       if (!res.second)
         return insert_result(_vec().begin() + res.first->second, false);
@@ -596,8 +590,8 @@ class TfDenseHashMap {
   // Helper to linear-search the vector for a key.
   inline iterator _FindInVec(const key_type &k)
   {
-    _Vector &vec                    = _vec();
-    EqualKey &equ                   = _equ();
+    _Vector &vec = _vec();
+    EqualKey &equ = _equ();
     typename _Vector::iterator iter = vec.begin(), end = vec.end();
     for (; iter != end; ++iter) {
       if (equ(iter->GetValue().first, k))
@@ -609,8 +603,8 @@ class TfDenseHashMap {
   // Helper to linear-search the vector for a key.
   inline const_iterator _FindInVec(const key_type &k) const
   {
-    _Vector const &vec                    = _vec();
-    EqualKey const &equ                   = _equ();
+    _Vector const &vec = _vec();
+    EqualKey const &equ = _equ();
     typename _Vector::const_iterator iter = vec.begin(), end = vec.end();
     for (; iter != end; ++iter) {
       if (equ(iter->GetValue().first, k))
@@ -642,8 +636,7 @@ class TfDenseHashMap {
   // sizeof(EqualKey) == 0 in many cases we use a compressed_pair to not
   // pay a size penalty.
 
-  typedef boost::compressed_pair<boost::compressed_pair<_Vector, HashFn>, EqualKey>
-      _VectorHashFnEqualFn;
+  typedef boost::compressed_pair<boost::compressed_pair<_Vector, HashFn>, EqualKey> _VectorHashFnEqualFn;
 
   _VectorHashFnEqualFn _vectorHashFnEqualFn;
 

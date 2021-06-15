@@ -63,16 +63,16 @@ namespace wabi_half {
 
 GF_API const half::uif half::_toFloat[1 << 16] =
 #include "wabi/base/gf/ilmbase_toFloat.h"
-    GF_API const unsigned short half::_eLut[1 << 9] =
+  GF_API const unsigned short half::_eLut[1 << 9] =
 #include "wabi/base/gf/ilmbase_eLut.h"
 
-        //-----------------------------------------------
-        // Overflow handler for float-to-half conversion;
-        // generates a hardware floating-point overflow,
-        // which may be trapped by the operating system.
-        //-----------------------------------------------
+    //-----------------------------------------------
+    // Overflow handler for float-to-half conversion;
+    // generates a hardware floating-point overflow,
+    // which may be trapped by the operating system.
+    //-----------------------------------------------
 
-    GF_API float half::overflow()
+  GF_API float half::overflow()
 {
   volatile float f = 1e10;
 

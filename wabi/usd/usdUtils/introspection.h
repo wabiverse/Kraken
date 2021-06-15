@@ -46,8 +46,8 @@ SDF_DECLARE_HANDLES(SdfLayer);
 
 #define USDUTILS_USDSTAGE_STATS \
   (approxMemoryInMb)(totalPrimCount)( \
-      modelCount)(instancedModelCount)(assetCount)(prototypeCount)(totalInstanceCount)(usedLayerCount)(primary)(prototypes)(primCounts) /*(totalPrimCount)*/ \
-      (activePrimCount)(inactivePrimCount)(pureOverCount)(instanceCount)(primCountsByType)(untyped)
+    modelCount)(instancedModelCount)(assetCount)(prototypeCount)(totalInstanceCount)(usedLayerCount)(primary)(prototypes)(primCounts) /*(totalPrimCount)*/ \
+    (activePrimCount)(inactivePrimCount)(pureOverCount)(instanceCount)(primCountsByType)(untyped)
 
 TF_DECLARE_PUBLIC_TOKENS(UsdUtilsUsdStageStatsKeys, USDUTILS_API, USDUTILS_USDSTAGE_STATS);
 

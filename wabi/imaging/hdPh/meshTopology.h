@@ -38,7 +38,7 @@ class HdPh_Subdivision;
 struct HdQuadInfo;
 class SdfPath;
 
-using HdBufferSourceWeakPtr   = std::weak_ptr<class HdBufferSource>;
+using HdBufferSourceWeakPtr = std::weak_ptr<class HdBufferSource>;
 using HdBufferSourceSharedPtr = std::shared_ptr<class HdBufferSource>;
 
 using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
@@ -48,8 +48,7 @@ using HdComputationSharedPtr = std::shared_ptr<class HdComputation>;
 using HdPh_AdjacencyBuilderComputationPtr = std::weak_ptr<class HdPh_AdjacencyBuilderComputation>;
 
 using HdPh_QuadInfoBuilderComputationPtr = std::weak_ptr<class HdPh_QuadInfoBuilderComputation>;
-using HdPh_QuadInfoBuilderComputationSharedPtr =
-    std::shared_ptr<class HdPh_QuadInfoBuilderComputation>;
+using HdPh_QuadInfoBuilderComputationSharedPtr = std::shared_ptr<class HdPh_QuadInfoBuilderComputation>;
 
 using HdPh_MeshTopologySharedPtr = std::shared_ptr<class HdPh_MeshTopology>;
 
@@ -85,9 +84,8 @@ class HdPh_MeshTopology final : public HdMeshTopology {
   HdBufferSourceSharedPtr GetTriangleIndexBuilderComputation(SdfPath const &id);
 
   /// Returns the CPU face-varying triangulate computation
-  HdBufferSourceSharedPtr GetTriangulateFaceVaryingComputation(
-      HdBufferSourceSharedPtr const &source,
-      SdfPath const &id);
+  HdBufferSourceSharedPtr GetTriangulateFaceVaryingComputation(HdBufferSourceSharedPtr const &source,
+                                                               SdfPath const &id);
 
   /// @}
 
@@ -100,9 +98,9 @@ class HdPh_MeshTopology final : public HdMeshTopology {
   /// If gpu is true, the quadrangulate table will be transferred to GPU
   /// via the resource registry.
   HdPh_QuadInfoBuilderComputationSharedPtr GetQuadInfoBuilderComputation(
-      bool gpu,
-      SdfPath const &id,
-      HdPhResourceRegistry *resourceRegistry = nullptr);
+    bool gpu,
+    SdfPath const &id,
+    HdPhResourceRegistry *resourceRegistry = nullptr);
 
   /// Returns the quad indices (for drawing) buffer source computation.
   HdBufferSourceSharedPtr GetQuadIndexBuilderComputation(SdfPath const &id);
@@ -117,9 +115,8 @@ class HdPh_MeshTopology final : public HdMeshTopology {
                                                         SdfPath const &id);
 
   /// Returns the CPU face-varying quadrangulate computation
-  HdBufferSourceSharedPtr GetQuadrangulateFaceVaryingComputation(
-      HdBufferSourceSharedPtr const &source,
-      SdfPath const &id);
+  HdBufferSourceSharedPtr GetQuadrangulateFaceVaryingComputation(HdBufferSourceSharedPtr const &source,
+                                                                 SdfPath const &id);
 
   /// Returns the quadrangulation table range on GPU
   HdBufferArrayRangeSharedPtr const &GetQuadrangulateTableRange() const
@@ -240,7 +237,7 @@ class HdPh_MeshTopology final : public HdMeshTopology {
   explicit HdPh_MeshTopology(const HdMeshTopology &src, int refineLevel, RefineMode refineMode);
 
   // No default construction or copying.
-  HdPh_MeshTopology()                          = delete;
+  HdPh_MeshTopology() = delete;
   HdPh_MeshTopology(const HdPh_MeshTopology &) = delete;
   HdPh_MeshTopology &operator=(const HdPh_MeshTopology &) = delete;
 };

@@ -52,17 +52,14 @@
 WABI_NAMESPACE_BEGIN
 
 template<typename T>
-VtValue _CreateVtArray(int numElements,
-                       int arraySize,
-                       int stride,
-                       std::vector<unsigned char> const &data)
+VtValue _CreateVtArray(int numElements, int arraySize, int stride, std::vector<unsigned char> const &data)
 {
   VtArray<T> array(numElements * arraySize);
   if (numElements == 0)
     return VtValue(array);
 
   const unsigned char *src = &data[0];
-  unsigned char *dst       = (unsigned char *)array.data();
+  unsigned char *dst = (unsigned char *)array.data();
 
   TF_VERIFY(data.size() == stride * (numElements - 1) + arraySize * sizeof(T));
 
@@ -80,18 +77,14 @@ VtValue _CreateVtArray(int numElements,
   return VtValue(array);
 }
 
-VtValue HdPhGLUtils::ReadBuffer(uint64_t vbo,
-                                HdTupleType tupleType,
-                                int vboOffset,
-                                int stride,
-                                int numElems)
+VtValue HdPhGLUtils::ReadBuffer(uint64_t vbo, HdTupleType tupleType, int vboOffset, int stride, int numElems)
 {
   if (glBufferSubData == NULL)
     return VtValue();
 
   // HdTupleType represents scalar, vector, matrix, and array types.
   const int bytesPerElement = HdDataSizeOfTupleType(tupleType);
-  const int arraySize       = tupleType.count;
+  const int arraySize = tupleType.count;
 
   // Stride is the byte distance between subsequent elements.
   // If stride was not provided (aka 0), we assume elements are
@@ -186,13 +179,13 @@ void HdPhBufferRelocator::AddRange(ptrdiff_t readOffset, ptrdiff_t writeOffset, 
 void HdPhBufferRelocator::Commit(HgiBlitCmds *blitCmds)
 {
   HgiBufferGpuToGpuOp blitOp;
-  blitOp.gpuSourceBuffer      = _srcBuffer;
+  blitOp.gpuSourceBuffer = _srcBuffer;
   blitOp.gpuDestinationBuffer = _dstBuffer;
 
   TF_FOR_ALL(it, _queue)
   {
-    blitOp.sourceByteOffset      = it->readOffset;
-    blitOp.byteSize              = it->copySize;
+    blitOp.sourceByteOffset = it->readOffset;
+    blitOp.byteSize = it->copySize;
     blitOp.destinationByteOffset = it->writeOffset;
 
     blitCmds->CopyBufferGpuToGpu(blitOp);

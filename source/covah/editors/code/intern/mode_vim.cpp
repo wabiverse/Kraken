@@ -196,10 +196,10 @@ void ZepMode_Vim::PreDisplay(ZepWindow &window)
   // put the j in.
   // We can do better than this and fix the keymapper to handle timed key events.
   // This is an easier fix for now
-  if (timer_get_elapsed_seconds(m_lastKeyPressTimer) > .25f &&
-      m_currentMode == EditorMode::Insert && m_currentCommand == "j") {
+  if (timer_get_elapsed_seconds(m_lastKeyPressTimer) > .25f && m_currentMode == EditorMode::Insert &&
+      m_currentCommand == "j") {
     auto cmd = std::make_shared<ZepCommand_Insert>(
-        window.GetBuffer(), window.GetBufferCursor(), m_currentCommand);
+      window.GetBuffer(), window.GetBufferCursor(), m_currentCommand);
     AddCommand(cmd);
 
     m_currentCommand = "";

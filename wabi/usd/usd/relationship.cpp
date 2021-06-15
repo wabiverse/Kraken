@@ -57,10 +57,9 @@ static SdfPath _MapTargetPath(const UsdStage *stage, const SdfPath &anchor, cons
   }
   else {
     const SdfPath anchorPrim = anchor.GetPrimPath();
-    const SdfPath translatedAnchorPrim =
-        editTarget.MapToSpecPath(anchorPrim).StripAllVariantSelections();
+    const SdfPath translatedAnchorPrim = editTarget.MapToSpecPath(anchorPrim).StripAllVariantSelections();
     const SdfPath translatedTarget =
-        editTarget.MapToSpecPath(target.MakeAbsolutePath(anchorPrim)).StripAllVariantSelections();
+      editTarget.MapToSpecPath(target.MakeAbsolutePath(anchorPrim)).StripAllVariantSelections();
     return translatedTarget.MakeRelativePath(translatedAnchorPrim);
   }
 }
@@ -72,22 +71,22 @@ SdfPath UsdRelationship::_GetTargetForAuthoring(const SdfPath &target, std::stri
     if (Usd_InstanceCache::IsPathInPrototype(absTarget)) {
       if (whyNot) {
         *whyNot =
-            "Cannot target a prototype or an object within a "
-            "prototype.";
+          "Cannot target a prototype or an object within a "
+          "prototype.";
       }
       return SdfPath();
     }
   }
 
-  UsdStage *stage    = _GetStage();
+  UsdStage *stage = _GetStage();
   SdfPath mappedPath = _MapTargetPath(stage, GetPath(), target);
   if (mappedPath.IsEmpty()) {
     if (whyNot) {
       *whyNot = TfStringPrintf(
-          "Cannot map <%s> to layer @%s@ via stage's "
-          "EditTarget",
-          target.GetText(),
-          stage->GetEditTarget().GetLayer()->GetIdentifier().c_str());
+        "Cannot map <%s> to layer @%s@ via stage's "
+        "EditTarget",
+        target.GetText(),
+        stage->GetEditTarget().GetLayer()->GetIdentifier().c_str());
     }
   }
 
@@ -244,7 +243,7 @@ bool UsdRelationship::_GetForwardedTargetsImpl(SdfPathSet *visited,
           // Only do this rel if we've not yet seen it.
           if (visited->insert(rel.GetPath()).second) {
             success |= rel._GetForwardedTargetsImpl(
-                visited, uniqueTargets, targets, foundAnyErrors, includeForwardingRels);
+              visited, uniqueTargets, targets, foundAnyErrors, includeForwardingRels);
           }
           if (!includeForwardingRels)
             continue;
@@ -264,13 +263,12 @@ bool UsdRelationship::_GetForwardedTargetsImpl(SdfPathSet *visited,
   return success;
 }
 
-bool UsdRelationship::_GetForwardedTargets(SdfPathVector *targets,
-                                           bool includeForwardingRels) const
+bool UsdRelationship::_GetForwardedTargets(SdfPathVector *targets, bool includeForwardingRels) const
 {
   SdfPathSet visited, uniqueTargets;
   bool foundAnyErrors = false;
   return _GetForwardedTargetsImpl(
-             &visited, &uniqueTargets, targets, &foundAnyErrors, includeForwardingRels) &&
+           &visited, &uniqueTargets, targets, &foundAnyErrors, includeForwardingRels) &&
          !foundAnyErrors;
 }
 

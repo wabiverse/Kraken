@@ -50,30 +50,28 @@ static object _GetBaseNameAndType(const TfToken &fullName)
 void wrapUsdShadeUtils()
 {
   UsdShadeAttributeVector (*GetValueProducingAttributes_Input)(
-      const UsdShadeInput &input,
-      bool includeAuthoredValues) = &UsdShadeUtils::GetValueProducingAttributes;
+    const UsdShadeInput &input, bool includeAuthoredValues) = &UsdShadeUtils::GetValueProducingAttributes;
   UsdShadeAttributeVector (*GetValueProducingAttributes_Output)(
-      const UsdShadeOutput &output,
-      bool includeAuthoredValues) = &UsdShadeUtils::GetValueProducingAttributes;
+    const UsdShadeOutput &output, bool includeAuthoredValues) = &UsdShadeUtils::GetValueProducingAttributes;
 
   scope thisScope = class_<UsdShadeUtils>("Utils", no_init)
-                        .def("GetPrefixForAttributeType", UsdShadeUtils::GetPrefixForAttributeType)
-                        .staticmethod("GetPrefixForAttributeType")
+                      .def("GetPrefixForAttributeType", UsdShadeUtils::GetPrefixForAttributeType)
+                      .staticmethod("GetPrefixForAttributeType")
 
-                        .def("GetBaseNameAndType", _GetBaseNameAndType)
-                        .staticmethod("GetBaseNameAndType")
+                      .def("GetBaseNameAndType", _GetBaseNameAndType)
+                      .staticmethod("GetBaseNameAndType")
 
-                        .def("GetType", UsdShadeUtils::GetType)
-                        .staticmethod("GetType")
+                      .def("GetType", UsdShadeUtils::GetType)
+                      .staticmethod("GetType")
 
-                        .def("GetFullName", UsdShadeUtils::GetFullName)
-                        .staticmethod("GetFullName")
+                      .def("GetFullName", UsdShadeUtils::GetFullName)
+                      .staticmethod("GetFullName")
 
-                        .def("GetValueProducingAttributes",
-                             GetValueProducingAttributes_Input,
-                             (arg("input"), arg("shaderOutputsOnly") = false))
-                        .def("GetValueProducingAttributes",
-                             GetValueProducingAttributes_Output,
-                             (arg("output"), arg("shaderOutputsOnly") = false))
-                        .staticmethod("GetValueProducingAttributes");
+                      .def("GetValueProducingAttributes",
+                           GetValueProducingAttributes_Input,
+                           (arg("input"), arg("shaderOutputsOnly") = false))
+                      .def("GetValueProducingAttributes",
+                           GetValueProducingAttributes_Output,
+                           (arg("output"), arg("shaderOutputsOnly") = false))
+                      .staticmethod("GetValueProducingAttributes");
 }

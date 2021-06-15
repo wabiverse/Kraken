@@ -44,13 +44,13 @@
 WABI_NAMESPACE_BEGIN
 
 HdCyclesPoints::HdCyclesPoints(HdCyclesRenderDelegate *renderDelegate, const SdfPath &id)
-    : HdPoints(id),
-      m_cyclesPointCloud(nullptr),
-      m_cyclesObject(nullptr),
-      m_visibilityFlags(ccl::PATH_RAY_ALL_VISIBILITY),
-      m_point_display_color_shader(nullptr),
-      m_motionBlur(false),
-      m_renderDelegate(renderDelegate)
+  : HdPoints(id),
+    m_cyclesPointCloud(nullptr),
+    m_cyclesObject(nullptr),
+    m_visibilityFlags(ccl::PATH_RAY_ALL_VISIBILITY),
+    m_point_display_color_shader(nullptr),
+    m_motionBlur(false),
+    m_renderDelegate(renderDelegate)
 {
   static const HdCyclesConfig &config = HdCyclesConfig::GetInstance();
   config.motion_blur.eval(m_motionBlur, true);
@@ -110,11 +110,10 @@ void HdCyclesPoints::_InitializeNewCyclesPointCloud()
 
   // when time comes to switch object management to resource registry we need to switch off
   // reference
-  const SdfPath &id      = GetId();
+  const SdfPath &id = GetId();
   auto resource_registry = dynamic_cast<HdCyclesResourceRegistry *>(
-      m_renderDelegate->GetResourceRegistry().get());
-  HdInstance<HdCyclesObjectSourceSharedPtr> object_instance = resource_registry->GetObjectInstance(
-      id);
+    m_renderDelegate->GetResourceRegistry().get());
+  HdInstance<HdCyclesObjectSourceSharedPtr> object_instance = resource_registry->GetObjectInstance(id);
   object_instance.SetValue(std::make_shared<HdCyclesObjectSource>(m_cyclesObject, id, true));
   m_objectSource = object_instance.GetValue();
 }
@@ -125,16 +124,15 @@ void HdCyclesPoints::_ReadObjectFlags(HdSceneDelegate *sceneDelegate,
 {
   assert(m_cyclesObject);
 
-  m_motionBlur           = true;
+  m_motionBlur = true;
   m_motionTransformSteps = 3;
-  m_motionDeformSteps    = 3;
+  m_motionDeformSteps = 3;
 
   std::map<HdInterpolation, HdPrimvarDescriptorVector> primvarDescsPerInterpolation = {
-      {HdInterpolationFaceVarying,
-       sceneDelegate->GetPrimvarDescriptors(id, HdInterpolationFaceVarying)},
-      {HdInterpolationVertex, sceneDelegate->GetPrimvarDescriptors(id, HdInterpolationVertex)},
-      {HdInterpolationConstant, sceneDelegate->GetPrimvarDescriptors(id, HdInterpolationConstant)},
-      {HdInterpolationUniform, sceneDelegate->GetPrimvarDescriptors(id, HdInterpolationUniform)},
+    {HdInterpolationFaceVarying, sceneDelegate->GetPrimvarDescriptors(id, HdInterpolationFaceVarying)},
+    {HdInterpolationVertex, sceneDelegate->GetPrimvarDescriptors(id, HdInterpolationVertex)},
+    {HdInterpolationConstant, sceneDelegate->GetPrimvarDescriptors(id, HdInterpolationConstant)},
+    {HdInterpolationUniform, sceneDelegate->GetPrimvarDescriptors(id, HdInterpolationUniform)},
   };
 
   for (auto &primvarDescsEntry : primvarDescsPerInterpolation) {
@@ -149,20 +147,18 @@ void HdCyclesPoints::_ReadObjectFlags(HdSceneDelegate *sceneDelegate,
 
       if (primvar_name == HdCyclesTokens->primvarsCyclesObjectMblur) {
         VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesObjectMblur);
-        m_motionBlur  = value.Get<bool>();
+        m_motionBlur = value.Get<bool>();
         continue;
       }
 
       if (primvar_name == HdCyclesTokens->primvarsCyclesObjectTransformSamples) {
-        VtValue value          = GetPrimvar(sceneDelegate,
-                                   HdCyclesTokens->primvarsCyclesObjectTransformSamples);
+        VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesObjectTransformSamples);
         m_motionTransformSteps = value.Get<int>();
         continue;
       }
 
       if (primvar_name == HdCyclesTokens->primvarsCyclesObjectDeformSamples) {
-        VtValue value       = GetPrimvar(sceneDelegate,
-                                   HdCyclesTokens->primvarsCyclesObjectDeformSamples);
+        VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesObjectDeformSamples);
         m_motionDeformSteps = value.Get<int>();
         continue;
       }
@@ -170,91 +166,65 @@ void HdCyclesPoints::_ReadObjectFlags(HdSceneDelegate *sceneDelegate,
       // Object Generic
 
       m_cyclesObject->is_shadow_catcher = _HdCyclesGetPointsParam<bool>(
-          pv,
-          dirtyBits,
-          id,
-          this,
-          sceneDelegate,
-          HdCyclesTokens->primvarsCyclesObjectIsShadowCatcher,
-          m_cyclesObject->is_shadow_catcher);
+        pv,
+        dirtyBits,
+        id,
+        this,
+        sceneDelegate,
+        HdCyclesTokens->primvarsCyclesObjectIsShadowCatcher,
+        m_cyclesObject->is_shadow_catcher);
 
-      m_cyclesObject->pass_id = _HdCyclesGetPointsParam<bool>(
-          pv,
-          dirtyBits,
-          id,
-          this,
-          sceneDelegate,
-          HdCyclesTokens->primvarsCyclesObjectPassId,
-          m_cyclesObject->pass_id);
+      m_cyclesObject->pass_id = _HdCyclesGetPointsParam<bool>(pv,
+                                                              dirtyBits,
+                                                              id,
+                                                              this,
+                                                              sceneDelegate,
+                                                              HdCyclesTokens->primvarsCyclesObjectPassId,
+                                                              m_cyclesObject->pass_id);
 
       m_cyclesObject->use_holdout = _HdCyclesGetPointsParam<bool>(
-          pv,
-          dirtyBits,
-          id,
-          this,
-          sceneDelegate,
-          HdCyclesTokens->primvarsCyclesObjectUseHoldout,
-          m_cyclesObject->use_holdout);
+        pv,
+        dirtyBits,
+        id,
+        this,
+        sceneDelegate,
+        HdCyclesTokens->primvarsCyclesObjectUseHoldout,
+        m_cyclesObject->use_holdout);
 
       // Visibility
       m_visibilityFlags = 0;
 
       bool bit = true;
-      _HdCyclesGetPointsParam<bool>(pv,
-                                    dirtyBits,
-                                    id,
-                                    this,
-                                    sceneDelegate,
-                                    HdCyclesTokens->primvarsCyclesObjectVisibilityCamera,
-                                    bit);
+      _HdCyclesGetPointsParam<bool>(
+        pv, dirtyBits, id, this, sceneDelegate, HdCyclesTokens->primvarsCyclesObjectVisibilityCamera, bit);
       if (bit) {
         m_visibilityFlags |= ccl::PATH_RAY_CAMERA;
       }
 
       bit = true;
-      _HdCyclesGetPointsParam<bool>(pv,
-                                    dirtyBits,
-                                    id,
-                                    this,
-                                    sceneDelegate,
-                                    HdCyclesTokens->primvarsCyclesObjectVisibilityDiffuse,
-                                    bit);
+      _HdCyclesGetPointsParam<bool>(
+        pv, dirtyBits, id, this, sceneDelegate, HdCyclesTokens->primvarsCyclesObjectVisibilityDiffuse, bit);
       if (bit) {
         m_visibilityFlags |= ccl::PATH_RAY_DIFFUSE;
       }
 
       bit = true;
-      _HdCyclesGetPointsParam<bool>(pv,
-                                    dirtyBits,
-                                    id,
-                                    this,
-                                    sceneDelegate,
-                                    HdCyclesTokens->primvarsCyclesObjectVisibilityGlossy,
-                                    bit);
+      _HdCyclesGetPointsParam<bool>(
+        pv, dirtyBits, id, this, sceneDelegate, HdCyclesTokens->primvarsCyclesObjectVisibilityGlossy, bit);
       if (bit) {
         m_visibilityFlags |= ccl::PATH_RAY_GLOSSY;
       }
 
       bit = true;
-      _HdCyclesGetPointsParam<bool>(pv,
-                                    dirtyBits,
-                                    id,
-                                    this,
-                                    sceneDelegate,
-                                    HdCyclesTokens->primvarsCyclesObjectVisibilityScatter,
-                                    bit);
+      _HdCyclesGetPointsParam<bool>(
+        pv, dirtyBits, id, this, sceneDelegate, HdCyclesTokens->primvarsCyclesObjectVisibilityScatter, bit);
       if (bit) {
         m_visibilityFlags |= ccl::PATH_RAY_VOLUME_SCATTER;
       }
 
       bit = true;
-      _HdCyclesGetPointsParam<bool>(pv,
-                                    dirtyBits,
-                                    id,
-                                    this,
-                                    sceneDelegate,
-                                    HdCyclesTokens->primvarsCyclesObjectVisibilityShadow,
-                                    bit);
+      _HdCyclesGetPointsParam<bool>(
+        pv, dirtyBits, id, this, sceneDelegate, HdCyclesTokens->primvarsCyclesObjectVisibilityShadow, bit);
       if (bit) {
         m_visibilityFlags |= ccl::PATH_RAY_SHADOW;
       }
@@ -377,9 +347,9 @@ void HdCyclesPoints::_PopulateColors(HdSceneDelegate *sceneDelegate,
   ccl::AttributeSet *attributes = &m_cyclesPointCloud->attributes;
   ccl::ustring attrib_name("displayColor");
   ccl::Attribute *attr_C = attributes->find(attrib_name);
-  bool reset_opacity     = false;
+  bool reset_opacity = false;
   if (!attr_C) {
-    attr_C        = attributes->add(attrib_name, ccl::TypeRGBA, ccl::ATTR_ELEMENT_VERTEX);
+    attr_C = attributes->add(attrib_name, ccl::TypeRGBA, ccl::ATTR_ELEMENT_VERTEX);
     reset_opacity = true;
   }
 
@@ -561,7 +531,7 @@ void HdCyclesPoints::_PopulateVelocities(HdSceneDelegate *sceneDelegate,
   // Skipping velocities if positions already exist
   // This is safe to check here as the points are a special primvar
   ccl::AttributeSet *attributes = &m_cyclesPointCloud->attributes;
-  ccl::Attribute *attr_mP       = attributes->find(ccl::ATTR_STD_MOTION_VERTEX_POSITION);
+  ccl::Attribute *attr_mP = attributes->find(ccl::ATTR_STD_MOTION_VERTEX_POSITION);
   if (attr_mP) {
     TF_WARN("Velocities will be ignored since motion positions already exist");
     return;
@@ -592,7 +562,7 @@ void HdCyclesPoints::_PopulateVelocities(HdSceneDelegate *sceneDelegate,
 
   // Enabling motion blur on the geometry
   m_cyclesPointCloud->use_motion_blur = true;
-  m_cyclesPointCloud->motion_steps    = HD_CYCLES_MOTION_STEPS;
+  m_cyclesPointCloud->motion_steps = HD_CYCLES_MOTION_STEPS;
 }
 
 void HdCyclesPoints::_PopulateAccelerations(HdSceneDelegate *sceneDelegate,
@@ -623,7 +593,7 @@ void HdCyclesPoints::_PopulateAccelerations(HdSceneDelegate *sceneDelegate,
   // Skipping accelerations if positions already exist
   // This is safe to check here as the points are a special primvar
   ccl::AttributeSet *attributes = &m_cyclesPointCloud->attributes;
-  ccl::Attribute *attr_mP       = attributes->find(ccl::ATTR_STD_MOTION_VERTEX_POSITION);
+  ccl::Attribute *attr_mP = attributes->find(ccl::ATTR_STD_MOTION_VERTEX_POSITION);
   if (attr_mP) {
     TF_WARN("Acclerations will be ignored since motion positions already exist");
     return;
@@ -654,7 +624,7 @@ void HdCyclesPoints::_PopulateAccelerations(HdSceneDelegate *sceneDelegate,
 
   // Enabling motion blur on the geometry
   m_cyclesPointCloud->use_motion_blur = true;
-  m_cyclesPointCloud->motion_steps    = HD_CYCLES_MOTION_STEPS;
+  m_cyclesPointCloud->motion_steps = HD_CYCLES_MOTION_STEPS;
 }
 
 void HdCyclesPoints::_PopulateGenerated(ccl::Scene *scene, const SdfPath &id)
@@ -664,7 +634,7 @@ void HdCyclesPoints::_PopulateGenerated(ccl::Scene *scene, const SdfPath &id)
     HdCyclesMeshTextureSpace(m_cyclesPointCloud, loc, size);
 
     ccl::AttributeSet *attributes = &m_cyclesPointCloud->attributes;
-    ccl::Attribute *attr          = attributes->add(ccl::ATTR_STD_GENERATED);
+    ccl::Attribute *attr = attributes->add(ccl::ATTR_STD_GENERATED);
 
     ccl::float3 *generated = attr->data_float3();
     for (size_t i = 0; i < m_cyclesPointCloud->points.size(); ++i) {
@@ -699,7 +669,7 @@ void HdCyclesPoints::_PopulateObjectMaterial(HdSceneDelegate *sceneDelegate, con
 
   // search for state primitive that contains cycles shader
   const HdSprim *material = render_index.GetSprim(HdPrimTypeTokens->material, material_id);
-  auto cycles_material    = dynamic_cast<const HdCyclesMaterial *>(material);
+  auto cycles_material = dynamic_cast<const HdCyclesMaterial *>(material);
   if (!cycles_material) {
     TF_WARN("Invalid HdCycles material %s", material_id.GetText());
     return;
@@ -738,7 +708,7 @@ void HdCyclesPoints::Sync(HdSceneDelegate *sceneDelegate,
                           HdDirtyBits *dirtyBits,
                           TfToken const &reprSelector)
 {
-  auto param        = dynamic_cast<HdCyclesRenderParam *>(renderParam);
+  auto param = dynamic_cast<HdCyclesRenderParam *>(renderParam);
   const SdfPath &id = GetId();
 
   m_point_display_color_shader = param->default_vcol_display_color_surface;
@@ -754,18 +724,16 @@ void HdCyclesPoints::Sync(HdSceneDelegate *sceneDelegate,
   // -------------------------------------
   // -- Resolve Drawstyles
   // todo: what do we do with PointDPI exactly? check other render delegates
-  if (HdChangeTracker::IsPrimvarDirty(
-          *dirtyBits, id, HdCyclesTokens->cyclesObjectPointResolution)) {
+  if (HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, HdCyclesTokens->cyclesObjectPointResolution)) {
     needsRebuildBVH = true;
 
     HdTimeSampleArray<VtValue, 1> xf;
     sceneDelegate->SamplePrimvar(id, HdCyclesTokens->cyclesObjectPointResolution, &xf);
     if (xf.count > 0) {
       const int &resolutions = xf.values[0].Get<int>();
-      m_pointResolution      = std::max(resolutions, 10);
-      TF_WARN(
-          "Point resolution for geometry %s is currently unused, please create an issue for this!",
-          id.GetText());
+      m_pointResolution = std::max(resolutions, 10);
+      TF_WARN("Point resolution for geometry %s is currently unused, please create an issue for this!",
+              id.GetText());
     }
   }
 
@@ -796,11 +764,11 @@ void HdCyclesPoints::Sync(HdSceneDelegate *sceneDelegate,
     if (m_motionBlur && m_motionTransformSteps > 1) {
       sceneDelegate->SampleTransform(id, &xf);
       transform_source = std::make_shared<HdCyclesTransformSource>(
-          m_objectSource->GetObject(), xf, fallback, m_motionTransformSteps);
+        m_objectSource->GetObject(), xf, fallback, m_motionTransformSteps);
     }
     else {
       transform_source = std::make_shared<HdCyclesTransformSource>(
-          m_objectSource->GetObject(), xf, fallback);
+        m_objectSource->GetObject(), xf, fallback);
     }
     if (transform_source->IsValid()) {
       transform_source->Resolve();
@@ -820,11 +788,11 @@ void HdCyclesPoints::Sync(HdSceneDelegate *sceneDelegate,
 
   // Loop through all the other primvars
   std::array<std::pair<HdInterpolation, HdPrimvarDescriptorVector>, 5> primvars_desc{
-      std::make_pair(HdInterpolationConstant, HdPrimvarDescriptorVector{}),
-      std::make_pair(HdInterpolationUniform, HdPrimvarDescriptorVector{}),
-      std::make_pair(HdInterpolationVertex, HdPrimvarDescriptorVector{}),
-      std::make_pair(HdInterpolationVarying, HdPrimvarDescriptorVector{}),
-      std::make_pair(HdInterpolationFaceVarying, HdPrimvarDescriptorVector{}),
+    std::make_pair(HdInterpolationConstant, HdPrimvarDescriptorVector{}),
+    std::make_pair(HdInterpolationUniform, HdPrimvarDescriptorVector{}),
+    std::make_pair(HdInterpolationVertex, HdPrimvarDescriptorVector{}),
+    std::make_pair(HdInterpolationVarying, HdPrimvarDescriptorVector{}),
+    std::make_pair(HdInterpolationFaceVarying, HdPrimvarDescriptorVector{}),
   };
 
   for (auto &info : primvars_desc) {
@@ -842,12 +810,11 @@ void HdCyclesPoints::Sync(HdSceneDelegate *sceneDelegate,
       }
 
       auto interpolation = interpolation_description.first;
-      auto value         = GetPrimvar(sceneDelegate, description.name);
+      auto value = GetPrimvar(sceneDelegate, description.name);
 
       if (value.IsEmpty()) {
-        TF_WARN("Primvar %s is empty with interpolation %s",
-                description.name,
-                _HdInterpolationStr(interpolation));
+        TF_WARN(
+          "Primvar %s is empty with interpolation %s", description.name, _HdInterpolationStr(interpolation));
         continue;
       }
 
@@ -867,9 +834,7 @@ void HdCyclesPoints::Sync(HdSceneDelegate *sceneDelegate,
             m_cyclesPointCloud->point_style = ccl::POINT_CLOUD_POINT_DISC_ORIENTED;
           }
           else {
-            TF_WARN("Unrecognized point style %s for point cloud %s",
-                    point_style.GetText(),
-                    id.GetText());
+            TF_WARN("Unrecognized point style %s for point cloud %s", point_style.GetText(), id.GetText());
           }
           needsRebuildBVH = true;
           styleHasChanged = true;
@@ -899,7 +864,7 @@ void HdCyclesPoints::Sync(HdSceneDelegate *sceneDelegate,
         // attribute when resources are committed
         if (m_objectSource) {
           m_objectSource->CreateAttributeSource<HdCyclesPointCloudAttributeSource>(
-              description.name, description.role, value, m_cyclesPointCloud, interpolation);
+            description.name, description.role, value, m_cyclesPointCloud, interpolation);
         }
       }
     }
@@ -915,9 +880,8 @@ void HdCyclesPoints::Sync(HdSceneDelegate *sceneDelegate,
 
 HdDirtyBits HdCyclesPoints::GetInitialDirtyBitsMask() const
 {
-  return HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyTransform |
-         HdChangeTracker::DirtyVisibility | HdChangeTracker::DirtyPrimvar |
-         HdChangeTracker::DirtyWidths | HdChangeTracker::DirtyMaterialId |
+  return HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyVisibility |
+         HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyWidths | HdChangeTracker::DirtyMaterialId |
          HdChangeTracker::DirtyInstanceIndex | HdChangeTracker::DirtyNormals;
 }
 
@@ -954,7 +918,7 @@ void HdCyclesPoints::_CheckIntegrity(HdCyclesRenderParam *param)
     ccl::Attribute *attr_colors = m_cyclesPointCloud->attributes.find(attr_color_name);
     if (!attr_colors) {
       attr_colors = m_cyclesPointCloud->attributes.add(
-          attr_color_name, ccl::TypeRGBA, ccl::ATTR_ELEMENT_VERTEX);
+        attr_color_name, ccl::TypeRGBA, ccl::ATTR_ELEMENT_VERTEX);
       ccl::float4 *colors = attr_colors->data_float4();
 
       for (size_t i = 0; i < m_cyclesPointCloud->points.size(); ++i) {
@@ -964,11 +928,9 @@ void HdCyclesPoints::_CheckIntegrity(HdCyclesRenderParam *param)
   }
 
   {
-    ccl::Attribute *attr_mP = m_cyclesPointCloud->attributes.find(
-        ccl::ATTR_STD_MOTION_VERTEX_POSITION);
+    ccl::Attribute *attr_mP = m_cyclesPointCloud->attributes.find(ccl::ATTR_STD_MOTION_VERTEX_POSITION);
     ccl::Attribute *attr_V = m_cyclesPointCloud->attributes.find(ccl::ATTR_STD_VERTEX_VELOCITY);
-    ccl::Attribute *attr_A = m_cyclesPointCloud->attributes.find(
-        ccl::ATTR_STD_VERTEX_ACCELERATION);
+    ccl::Attribute *attr_A = m_cyclesPointCloud->attributes.find(ccl::ATTR_STD_VERTEX_ACCELERATION);
     if (attr_mP) {
       assert(!attr_V && !attr_A);
     }

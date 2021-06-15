@@ -99,7 +99,7 @@ class HdxPresentTask : public HdxTask {
   HdxPresentTaskParams _params;
   HgiInterop _interop;
 
-  HdxPresentTask()                       = delete;
+  HdxPresentTask() = delete;
   HdxPresentTask(const HdxPresentTask &) = delete;
   HdxPresentTask &operator=(const HdxPresentTask &) = delete;
 };

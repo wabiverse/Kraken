@@ -37,7 +37,7 @@ WABI_NAMESPACE_BEGIN
 
 class HdPhDrawTarget;
 class HdPhDrawTargetRenderPassState;
-using HdPhRenderPassStateSharedPtr      = std::shared_ptr<class HdPhRenderPassState>;
+using HdPhRenderPassStateSharedPtr = std::shared_ptr<class HdPhRenderPassState>;
 using HdPhSimpleLightingShaderSharedPtr = std::shared_ptr<class HdPhSimpleLightingShader>;
 TF_DECLARE_REF_PTRS(GlfSimpleLightingContext);
 
@@ -75,8 +75,7 @@ class HdxDrawTargetTask : public HdTask {
 
   static _RenderPassInfoVector _ComputeRenderPassInfos(HdRenderIndex *renderIndex);
 
-  static _CameraInfo _ComputeCameraInfo(const HdRenderIndex &renderIndex,
-                                        const HdPhDrawTarget *drawTarget);
+  static _CameraInfo _ComputeCameraInfo(const HdRenderIndex &renderIndex, const HdPhDrawTarget *drawTarget);
   static void _UpdateLightingContext(const _CameraInfo &cameraInfo,
                                      GlfSimpleLightingContextConstRefPtr const &srcContext,
                                      GlfSimpleLightingContextRefPtr const &ctx);
@@ -115,27 +114,27 @@ class HdxDrawTargetTask : public HdTask {
   bool _enableSampleAlphaToCoverage;
   TfTokenVector _renderTags;
 
-  HdxDrawTargetTask()                          = delete;
+  HdxDrawTargetTask() = delete;
   HdxDrawTargetTask(const HdxDrawTargetTask &) = delete;
   HdxDrawTargetTask &operator=(const HdxDrawTargetTask &) = delete;
 };
 
 struct HdxDrawTargetTaskParams {
   HdxDrawTargetTaskParams()
-      : overrideColor(0.0),
-        wireframeColor(0.0),
-        enableLighting(false),
-        alphaThreshold(0.0),
-        depthBiasUseDefault(true),
-        depthBiasEnable(false),
-        depthBiasConstantFactor(0.0f),
-        depthBiasSlopeFactor(1.0f),
-        depthFunc(HdCmpFuncLEqual)
-        // XXX: When rendering draw targets we need alpha to coverage
-        // at least until we support a transparency pass
-        ,
-        enableAlphaToCoverage(true),
-        cullStyle(HdCullStyleBackUnlessDoubleSided)
+    : overrideColor(0.0),
+      wireframeColor(0.0),
+      enableLighting(false),
+      alphaThreshold(0.0),
+      depthBiasUseDefault(true),
+      depthBiasEnable(false),
+      depthBiasConstantFactor(0.0f),
+      depthBiasSlopeFactor(1.0f),
+      depthFunc(HdCmpFuncLEqual)
+      // XXX: When rendering draw targets we need alpha to coverage
+      // at least until we support a transparency pass
+      ,
+      enableAlphaToCoverage(true),
+      cullStyle(HdCullStyleBackUnlessDoubleSided)
   {}
 
   //    ClipPlanesVector clipPlanes;

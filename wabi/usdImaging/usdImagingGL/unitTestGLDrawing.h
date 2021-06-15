@@ -161,7 +161,7 @@ class UsdImagingGL_UnitTestGLDrawing {
 
   void RunTest(int argc, char *argv[]);
 
-  virtual void InitTest()               = 0;
+  virtual void InitTest() = 0;
   virtual void DrawTest(bool offscreen) = 0;
   virtual void ShutdownTest()
   {}

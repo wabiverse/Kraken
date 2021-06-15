@@ -78,9 +78,9 @@ class TraceStaticKeyData {
   constexpr TraceStaticKeyData(const StringLiteral func,
                                const StringLiteral prettyFunc,
                                const StringLiteral name = StringLiteral())
-      : _funcName(func.str),
-        _prettyFuncName(prettyFunc.str),
-        _name(name.str)
+    : _funcName(func.str),
+      _prettyFuncName(prettyFunc.str),
+      _name(name.str)
   {}
 
   /// Equality comparison.  Inequality is also defined.
@@ -100,9 +100,9 @@ class TraceStaticKeyData {
   TraceStaticKeyData()
   {}
 
-  const char *_funcName       = nullptr;
+  const char *_funcName = nullptr;
   const char *_prettyFuncName = nullptr;
-  const char *_name           = nullptr;
+  const char *_name = nullptr;
 
   friend class TraceDynamicKey;
 };

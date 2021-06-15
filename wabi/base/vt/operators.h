@@ -132,8 +132,8 @@ WABI_NAMESPACE_BEGIN
 // VTOPERATOR_CPPSCALAR above) so we can't do it again!
 #define VTOPERATOR_CPPSCALAR_DOUBLE(op) \
   template<typename ElemType> \
-  typename boost::disable_if<boost::is_same<ElemType, double>, VtArray<ElemType>>::type \
-  operator op(double const &scalar, VtArray<ElemType> const &vec) \
+  typename boost::disable_if<boost::is_same<ElemType, double>, VtArray<ElemType>>::type operator op( \
+    double const &scalar, VtArray<ElemType> const &vec) \
   { \
     VtArray<ElemType> ret(vec.size()); \
     for (size_t i = 0; i < vec.size(); ++i) { \
@@ -142,8 +142,8 @@ WABI_NAMESPACE_BEGIN
     return ret; \
   } \
   template<typename ElemType> \
-  typename boost::disable_if<boost::is_same<ElemType, double>, VtArray<ElemType>>::type \
-  operator op(VtArray<ElemType> const &vec, double const &scalar) \
+  typename boost::disable_if<boost::is_same<ElemType, double>, VtArray<ElemType>>::type operator op( \
+    VtArray<ElemType> const &vec, double const &scalar) \
   { \
     VtArray<ElemType> ret(vec.size()); \
     for (size_t i = 0; i < vec.size(); ++i) { \

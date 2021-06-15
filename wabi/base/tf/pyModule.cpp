@@ -108,9 +108,7 @@ class Tf_ModuleProcessor {
   }
 
  private:
-  void _WalkModule(object const &obj,
-                   WalkCallbackFn callback,
-                   TfHashSet<PyObject *, TfHash> *visitedObjs)
+  void _WalkModule(object const &obj, WalkCallbackFn callback, TfHashSet<PyObject *, TfHash> *visitedObjs)
   {
     if (PyObject_HasAttrString(obj.ptr(), "__dict__")) {
 #if PY_MAJOR_VERSION >= 3
@@ -131,7 +129,7 @@ class Tf_ModuleProcessor {
         object value = items[i][1];
         if (!visitedObjs->count(value.ptr())) {
           const std::string name = TfPyString_AsString(object(items[i][0]).ptr());
-          bool keepGoing         = (this->*callback)(name.c_str(), obj, value);
+          bool keepGoing = (this->*callback)(name.c_str(), obj, value);
           visitedObjs->insert(value.ptr());
           if (IsBoostPythonClass(value) && keepGoing) {
             _WalkModule(value, callback, visitedObjs);
@@ -151,9 +149,9 @@ class Tf_ModuleProcessor {
   class _InvokeWithErrorHandling {
    public:
     _InvokeWithErrorHandling(object const &fn, string const &funcName, string const &fileName)
-        : _fn(fn),
-          _funcName(funcName),
-          _fileName(fileName)
+      : _fn(fn),
+        _funcName(funcName),
+        _fileName(fileName)
     {}
 
     handle<> operator()(tuple const &args, dict const &kw) const
@@ -162,7 +160,7 @@ class Tf_ModuleProcessor {
       // Fabricate a python tracing event to record the python -> c++ ->
       // python transition.
       TfPyTraceInfo info;
-      info.arg      = NULL;
+      info.arg = NULL;
       info.funcName = _funcName.c_str();
       info.fileName = _fileName.c_str();
       info.funcLine = 0;
@@ -214,16 +212,14 @@ class Tf_ModuleProcessor {
       string *fullNamePrefix = &_newModuleName;
       string localPrefix;
       if (PyObject_HasAttrString(owner.ptr(), "__module__")) {
-        char const *ownerName = TfPyString_AsString(
-            PyObject_GetAttrString(owner.ptr(), "__name__"));
+        char const *ownerName = TfPyString_AsString(PyObject_GetAttrString(owner.ptr(), "__name__"));
         localPrefix.append(_newModuleName);
         localPrefix.push_back('.');
         localPrefix.append(ownerName);
         fullNamePrefix = &localPrefix;
       }
 
-      ret = raw_function(
-          _InvokeWithErrorHandling(fn, *fullNamePrefix + "." + name, *fullNamePrefix));
+      ret = raw_function(_InvokeWithErrorHandling(fn, *fullNamePrefix + "." + name, *fullNamePrefix));
 
       ret.attr("__doc__") = fn.attr("__doc__");
     }
@@ -332,14 +328,11 @@ class Tf_ModuleProcessor {
     WalkModule(_module, &This::FixModuleAttrsCB);
   }
 
-  Tf_ModuleProcessor(object const &module)
-      : _module(module),
-        _cachedBPFuncType(0),
-        _cachedBPClassType(0)
+  Tf_ModuleProcessor(object const &module) : _module(module), _cachedBPFuncType(0), _cachedBPClassType(0)
   {
-    auto obj          = object(module.attr("__name__"));
-    _oldModuleName    = TfPyString_AsString(obj.ptr());
-    _newModuleName    = TfStringGetBeforeSuffix(_oldModuleName);
+    auto obj = object(module.attr("__name__"));
+    _oldModuleName = TfPyString_AsString(obj.ptr());
+    _newModuleName = TfStringGetBeforeSuffix(_oldModuleName);
     _newModuleNameObj = object(_newModuleName);
   }
 

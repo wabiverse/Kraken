@@ -13,7 +13,7 @@ enum { None = (0), IsFolder = (1 << 0) };
 
 class ZepTreeNode {
  public:
-  using TNode     = std::shared_ptr<ZepTreeNode>;
+  using TNode = std::shared_ptr<ZepTreeNode>;
   using TChildren = std::vector<TNode>;
 
   ZepTreeNode(const std::string &strName, uint32_t flags = ZepTreeNodeFlags::None);
@@ -80,7 +80,7 @@ class ZepTreeNode {
 
   virtual void ExpandAll(bool expand)
   {
-    using fnVisit   = std::function<void(ZepTreeNode * pNode, bool ex)>;
+    using fnVisit = std::function<void(ZepTreeNode * pNode, bool ex)>;
     fnVisit visitor = [&](ZepTreeNode *pNode, bool ex) {
       pNode->Expand(ex);
       if (pNode->HasChildren()) {
@@ -98,7 +98,7 @@ class ZepTreeNode {
   }
 
  protected:
-  bool m_expanded        = false;
+  bool m_expanded = false;
   ZepTreeNode *m_pParent = nullptr;
   TChildren m_children;
   std::string m_strName;
@@ -118,8 +118,7 @@ class ZepTree {
 
 class ZepFileNode : public ZepTreeNode {
  public:
-  ZepFileNode(const std::string &name, uint32_t flags = ZepTreeNodeFlags::None)
-      : ZepTreeNode(name, flags)
+  ZepFileNode(const std::string &name, uint32_t flags = ZepTreeNodeFlags::None) : ZepTreeNode(name, flags)
   {}
 };
 

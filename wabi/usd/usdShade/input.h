@@ -344,7 +344,7 @@ class UsdShadeInput {
   bool ConnectToSource(UsdShadeConnectableAPI const &source,
                        TfToken const &sourceName,
                        UsdShadeAttributeType const sourceType = UsdShadeAttributeType::Output,
-                       SdfValueTypeName typeName              = SdfValueTypeName()) const;
+                       SdfValueTypeName typeName = SdfValueTypeName()) const;
 
   /// Authors a connection for this Input to the source at the given path.
   ///

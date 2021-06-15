@@ -109,8 +109,7 @@ class WorkDispatcher {
     _rootTask->spawn(_MakeInvokerTask(std::forward<Callable>(c)));
   }
 
-  template<class Callable, class A0, class... Args>
-  inline void Run(Callable &&c, A0 &&a0, Args &&...args)
+  template<class Callable, class A0, class... Args> inline void Run(Callable &&c, A0 &&a0, Args &&...args)
   {
     Run(std::bind(std::forward<Callable>(c), std::forward<A0>(a0), std::forward<Args>(args)...));
   }
@@ -160,11 +159,10 @@ class WorkDispatcher {
   };
 
   // Make an _InvokerTask instance, letting the function template deduce Fn.
-  template<class Fn>
-  _InvokerTask<typename std::remove_reference<Fn>::type> &_MakeInvokerTask(Fn &&fn)
+  template<class Fn> _InvokerTask<typename std::remove_reference<Fn>::type> &_MakeInvokerTask(Fn &&fn)
   {
     return *new (_rootTask->allocate_additional_child_of(*_rootTask))
-        _InvokerTask<typename std::remove_reference<Fn>::type>(std::forward<Fn>(fn), &_errors);
+      _InvokerTask<typename std::remove_reference<Fn>::type>(std::forward<Fn>(fn), &_errors);
   }
 
   // Helper function that removes errors from \p m and stores them in a new

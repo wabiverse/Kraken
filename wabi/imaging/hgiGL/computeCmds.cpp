@@ -98,7 +98,7 @@ bool HgiGLComputeCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
 
   TF_VERIFY(_pushStack == 0, "Push and PopDebugGroup do not even out");
 
-  HgiGL *hgiGL        = static_cast<HgiGL *>(hgi);
+  HgiGL *hgiGL = static_cast<HgiGL *>(hgi);
   HgiGLDevice *device = hgiGL->GetPrimaryDevice();
   device->SubmitOps(_ops);
   return true;

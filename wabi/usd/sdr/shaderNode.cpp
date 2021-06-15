@@ -52,17 +52,17 @@ SdrShaderNode::SdrShaderNode(const NdrIdentifier &identifier,
                              NdrPropertyUniquePtrVec &&properties,
                              const NdrTokenMap &metadata,
                              const std::string &sourceCode)
-    : NdrNode(identifier,
-              version,
-              name,
-              family,
-              context,
-              sourceType,
-              definitionURI,
-              implementationURI,
-              std::move(properties),
-              metadata,
-              sourceCode)
+  : NdrNode(identifier,
+            version,
+            name,
+            family,
+            context,
+            sourceType,
+            definitionURI,
+            implementationURI,
+            std::move(properties),
+            metadata,
+            sourceCode)
 {
   // Cast inputs to shader inputs
   for (const auto &input : _inputs) {
@@ -78,10 +78,10 @@ SdrShaderNode::SdrShaderNode(const NdrIdentifier &identifier,
   _PostProcessProperties();
 
   // Tokenize metadata
-  _label       = TokenVal(SdrNodeMetadata->Label, _metadata);
-  _category    = TokenVal(SdrNodeMetadata->Category, _metadata);
+  _label = TokenVal(SdrNodeMetadata->Label, _metadata);
+  _category = TokenVal(SdrNodeMetadata->Category, _metadata);
   _departments = TokenVecVal(SdrNodeMetadata->Departments, _metadata);
-  _pages       = _ComputePages();
+  _pages = _ComputePages();
 }
 
 void SdrShaderNode::_PostProcessProperties()
@@ -174,7 +174,7 @@ NdrTokenVec SdrShaderNode::GetPropertyNamesForPage(const std::string &pageName) 
 
   for (const NdrPropertyUniquePtr &property : _properties) {
     const SdrShaderPropertyConstPtr shaderProperty = dynamic_cast<const SdrShaderPropertyConstPtr>(
-        property.get());
+      property.get());
 
     if (shaderProperty->GetPage() == pageName) {
       propertyNames.push_back(shaderProperty->GetName());
@@ -227,7 +227,7 @@ void SdrShaderNode::_InitializePrimvars()
 
   for (const std::string &primvar : rawPrimvars) {
     if (TfStringStartsWith(primvar, "$")) {
-      const std::string propertyName        = TfStringTrimLeft(primvar, "$");
+      const std::string propertyName = TfStringTrimLeft(primvar, "$");
       const SdrShaderPropertyConstPtr input = GetShaderInput(TfToken(propertyName));
 
       if (input && (input->GetType() == SdrPropertyTypes->String)) {
@@ -235,12 +235,12 @@ void SdrShaderNode::_InitializePrimvars()
       }
       else {
         TF_DEBUG(NDR_PARSING)
-            .Msg(
-                "Found a node [%s] whose metadata "
-                "indicates a primvar naming property [%s] "
-                "but the property's type is not string; ignoring.",
-                GetName().c_str(),
-                primvar.c_str());
+          .Msg(
+            "Found a node [%s] whose metadata "
+            "indicates a primvar naming property [%s] "
+            "but the property's type is not string; ignoring.",
+            GetName().c_str(),
+            primvar.c_str());
       }
     }
     else {
@@ -248,7 +248,7 @@ void SdrShaderNode::_InitializePrimvars()
     }
   }
 
-  _primvars                = primvars;
+  _primvars = primvars;
   _primvarNamingProperties = primvarNamingProperties;
 }
 
@@ -257,7 +257,7 @@ NdrTokenVec SdrShaderNode::_ComputePages() const
   NdrTokenVec pages;
 
   for (const NdrPropertyUniquePtr &property : _properties) {
-    auto sdrProperty    = static_cast<SdrShaderPropertyPtr>(property.get());
+    auto sdrProperty = static_cast<SdrShaderPropertyPtr>(property.get());
     const TfToken &page = sdrProperty->GetPage();
 
     // Exclude duplicate pages

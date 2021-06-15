@@ -87,8 +87,7 @@ UsdAttribute UsdGeomBoundable::GetExtentAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->extent);
 }
 
-UsdAttribute UsdGeomBoundable::CreateExtentAttr(VtValue const &defaultValue,
-                                                bool writeSparsely) const
+UsdAttribute UsdGeomBoundable::CreateExtentAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->extent,
                                     SdfValueTypeNames->Float3Array,
@@ -99,8 +98,7 @@ UsdAttribute UsdGeomBoundable::CreateExtentAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -114,10 +112,10 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdGeomBoundable::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdGeomTokens->extent,
+    UsdGeomTokens->extent,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdGeomXformable::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomXformable::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

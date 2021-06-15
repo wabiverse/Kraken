@@ -83,7 +83,7 @@ void ZepRegressExCommand::Tick()
   float fRand3 = rand() / (float)RAND_MAX;
 
   auto &tabWindows = GetEditor().GetTabWindows();
-  auto &buffer     = GetEditor().GetActiveTabWindow()->GetActiveWindow()->GetBuffer();
+  auto &buffer = GetEditor().GetActiveTabWindow()->GetActiveWindow()->GetBuffer();
 
   if (fRand3 > .5f && tabWindows.size() < MaxTabWindows) {
     auto pNewTab = GetEditor().AddTabWindow();
@@ -96,8 +96,8 @@ void ZepRegressExCommand::Tick()
     }
   }
 
-  auto pTab          = GetEditor().GetActiveTabWindow();
-  auto &windows      = pTab->GetWindows();
+  auto pTab = GetEditor().GetActiveTabWindow();
+  auto &windows = pTab->GetWindows();
   auto pActiveWindow = pTab->GetActiveWindow();
 
   if (fRand1 > .5f && windows.size() > 1) {

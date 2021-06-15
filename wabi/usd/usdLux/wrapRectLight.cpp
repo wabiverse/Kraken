@@ -56,22 +56,17 @@ WRAP_CUSTOM;
 
 static UsdAttribute _CreateWidthAttr(UsdLuxRectLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateWidthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                              writeSparsely);
+  return self.CreateWidthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
 static UsdAttribute _CreateHeightAttr(UsdLuxRectLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                               writeSparsely);
+  return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
-static UsdAttribute _CreateTextureFileAttr(UsdLuxRectLight &self,
-                                           object defaultVal,
-                                           bool writeSparsely)
+static UsdAttribute _CreateTextureFileAttr(UsdLuxRectLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateTextureFileAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
-                                    writeSparsely);
+  return self.CreateTextureFileAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
 }
 
 static std::string _Repr(const UsdLuxRectLight &self)
@@ -89,44 +84,40 @@ void wrapUsdLuxRectLight()
   class_<This, bases<UsdLuxLight>> cls("RectLight");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetWidthAttr", &This::GetWidthAttr)
-      .def("CreateWidthAttr",
-           &_CreateWidthAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetWidthAttr", &This::GetWidthAttr)
+    .def(
+      "CreateWidthAttr", &_CreateWidthAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetHeightAttr", &This::GetHeightAttr)
-      .def("CreateHeightAttr",
-           &_CreateHeightAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetHeightAttr", &This::GetHeightAttr)
+    .def(
+      "CreateHeightAttr", &_CreateHeightAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetTextureFileAttr", &This::GetTextureFileAttr)
-      .def("CreateTextureFileAttr",
-           &_CreateTextureFileAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTextureFileAttr", &This::GetTextureFileAttr)
+    .def("CreateTextureFileAttr",
+         &_CreateTextureFileAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

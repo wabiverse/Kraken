@@ -129,8 +129,7 @@ UsdRelationship UsdLuxListAPI::CreateLightListRel() const
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -144,10 +143,10 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdLuxListAPI::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdLuxTokens->lightListCacheBehavior,
+    UsdLuxTokens->lightListCacheBehavior,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdAPISchemaBase::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -174,8 +173,7 @@ WABI_NAMESPACE_BEGIN
 
 TF_REGISTRY_FUNCTION(TfEnum)
 {
-  TF_ADD_ENUM_NAME(UsdLuxListAPI::ComputeModeConsultModelHierarchyCache,
-                   "Consult lightList cache");
+  TF_ADD_ENUM_NAME(UsdLuxListAPI::ComputeModeConsultModelHierarchyCache, "Consult lightList cache");
   TF_ADD_ENUM_NAME(UsdLuxListAPI::ComputeModeIgnoreCache, "Ignore lightList cache");
 }
 

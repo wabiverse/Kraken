@@ -154,9 +154,7 @@ class HdInstancer {
   static TfTokenVector const &GetBuiltinPrimvarNames();
 
   HD_API
-  virtual void Sync(HdSceneDelegate *sceneDelegate,
-                    HdRenderParam *renderParam,
-                    HdDirtyBits *dirtyBits);
+  virtual void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits);
 
   HD_API
   virtual void Finalize(HdRenderParam *renderParam);

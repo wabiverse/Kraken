@@ -42,11 +42,10 @@ static SdfPath _ComputeCameraId(HdRenderIndex *renderIndex, SdfPath const &deleg
   return delegateId.AppendChild(_tokens->camera);
 }
 
-HdxFreeCameraSceneDelegate::HdxFreeCameraSceneDelegate(HdRenderIndex *renderIndex,
-                                                       SdfPath const &delegateId)
-    : HdSceneDelegate(renderIndex, delegateId),
-      _cameraId(_ComputeCameraId(renderIndex, delegateId)),
-      _policy(CameraUtilFit)
+HdxFreeCameraSceneDelegate::HdxFreeCameraSceneDelegate(HdRenderIndex *renderIndex, SdfPath const &delegateId)
+  : HdSceneDelegate(renderIndex, delegateId),
+    _cameraId(_ComputeCameraId(renderIndex, delegateId)),
+    _policy(CameraUtilFit)
 {
   if (_cameraId.IsEmpty()) {
     return;
@@ -105,8 +104,7 @@ void HdxFreeCameraSceneDelegate::SetWindowPolicy(const CameraUtilConformWindowPo
   _MarkDirty(HdCamera::DirtyWindowPolicy);
 }
 
-void HdxFreeCameraSceneDelegate::SetMatrices(GfMatrix4d const &viewMatrix,
-                                             GfMatrix4d const &projMatrix)
+void HdxFreeCameraSceneDelegate::SetMatrices(GfMatrix4d const &viewMatrix, GfMatrix4d const &projMatrix)
 {
   GfCamera cam;
   cam.SetFromViewAndProjectionMatrix(viewMatrix, projMatrix);

@@ -64,19 +64,18 @@ UsdStageRefPtr UsdUtilsComputeUsdStageStats(const std::string &rootLayerPath, Vt
   return stage;
 }
 
-static void _UpdateCountsHelper(
-    const UsdPrim &prim,
-    std::set<string> *seenAssetNames,
-    size_t *totalPrimCount,
-    size_t *subTotalPrimCount,
-    size_t *modelCount,
-    size_t *instancedModelCount,
-    size_t *assetCount,
-    size_t *activePrimCount,
-    size_t *inactivePrimCount,
-    size_t *pureOverCount,
-    size_t *instanceCount,
-    std::unordered_map<TfToken, size_t, TfToken::HashFunctor> *primCountsByType)
+static void _UpdateCountsHelper(const UsdPrim &prim,
+                                std::set<string> *seenAssetNames,
+                                size_t *totalPrimCount,
+                                size_t *subTotalPrimCount,
+                                size_t *modelCount,
+                                size_t *instancedModelCount,
+                                size_t *assetCount,
+                                size_t *activePrimCount,
+                                size_t *inactivePrimCount,
+                                size_t *pureOverCount,
+                                size_t *instanceCount,
+                                std::unordered_map<TfToken, size_t, TfToken::HashFunctor> *primCountsByType)
 {
   if (!prim)
     return;
@@ -108,8 +107,7 @@ static void _UpdateCountsHelper(
   (*inactivePrimCount) += !prim.IsActive();
   (*pureOverCount) += !prim.HasDefiningSpecifier();
 
-  TfToken typeName = prim.GetTypeName().IsEmpty() ? UsdUtilsUsdStageStatsKeys->untyped :
-                                                    prim.GetTypeName();
+  TfToken typeName = prim.GetTypeName().IsEmpty() ? UsdUtilsUsdStageStatsKeys->untyped : prim.GetTypeName();
   if (primCountsByType->find(typeName) == primCountsByType->end()) {
     (*primCountsByType)[typeName] = 0;
   }
@@ -122,8 +120,8 @@ size_t UsdUtilsComputeUsdStageStats(const UsdStageWeakPtr &stage, VtDictionary *
 
   (*stats)[UsdUtilsUsdStageStatsKeys->usedLayerCount] = usedLayerCount;
 
-  size_t totalPrimCount = 0, modelCount = 0, instancedModelCount = 0, assetCount = 0,
-         prototypeCount = 0, totalInstanceCount = 0;
+  size_t totalPrimCount = 0, modelCount = 0, instancedModelCount = 0, assetCount = 0, prototypeCount = 0,
+         totalInstanceCount = 0;
 
   size_t primaryPrimCount = 0, primaryActivePrimCount = 0, primaryInactivePrimCount = 0,
          primaryPureOverCount = 0, primaryInstanceCount = 0;
@@ -149,7 +147,7 @@ size_t UsdUtilsComputeUsdStageStats(const UsdStageWeakPtr &stage, VtDictionary *
   totalInstanceCount = primaryInstanceCount;
 
   std::vector<UsdPrim> prototypes = stage->GetPrototypes();
-  prototypeCount                  = prototypes.size();
+  prototypeCount = prototypes.size();
   if (prototypeCount > 0) {
     size_t prototypesPrimCount = 0, prototypesActivePrimCount = 0, prototypesInactivePrimCount = 0,
            prototypesPureOverCount = 0, prototypesInstanceCount = 0;
@@ -178,11 +176,11 @@ size_t UsdUtilsComputeUsdStageStats(const UsdStageWeakPtr &stage, VtDictionary *
     VtDictionary prototypesDict;
 
     VtDictionary primCounts;
-    primCounts[UsdUtilsUsdStageStatsKeys->totalPrimCount]    = prototypesPrimCount;
-    primCounts[UsdUtilsUsdStageStatsKeys->activePrimCount]   = prototypesActivePrimCount;
+    primCounts[UsdUtilsUsdStageStatsKeys->totalPrimCount] = prototypesPrimCount;
+    primCounts[UsdUtilsUsdStageStatsKeys->activePrimCount] = prototypesActivePrimCount;
     primCounts[UsdUtilsUsdStageStatsKeys->inactivePrimCount] = prototypesInactivePrimCount;
-    primCounts[UsdUtilsUsdStageStatsKeys->pureOverCount]     = prototypesPureOverCount;
-    primCounts[UsdUtilsUsdStageStatsKeys->instanceCount]     = prototypesInstanceCount;
+    primCounts[UsdUtilsUsdStageStatsKeys->pureOverCount] = prototypesPureOverCount;
+    primCounts[UsdUtilsUsdStageStatsKeys->instanceCount] = prototypesInstanceCount;
 
     prototypesDict[UsdUtilsUsdStageStatsKeys->primCounts] = primCounts;
 
@@ -195,22 +193,22 @@ size_t UsdUtilsComputeUsdStageStats(const UsdStageWeakPtr &stage, VtDictionary *
     (*stats)[UsdUtilsUsdStageStatsKeys->prototypes] = prototypesDict;
   }
 
-  (*stats)[UsdUtilsUsdStageStatsKeys->totalPrimCount]      = totalPrimCount;
-  (*stats)[UsdUtilsUsdStageStatsKeys->modelCount]          = modelCount;
+  (*stats)[UsdUtilsUsdStageStatsKeys->totalPrimCount] = totalPrimCount;
+  (*stats)[UsdUtilsUsdStageStatsKeys->modelCount] = modelCount;
   (*stats)[UsdUtilsUsdStageStatsKeys->instancedModelCount] = instancedModelCount;
-  (*stats)[UsdUtilsUsdStageStatsKeys->assetCount]          = assetCount;
-  (*stats)[UsdUtilsUsdStageStatsKeys->prototypeCount]      = prototypeCount;
-  (*stats)[UsdUtilsUsdStageStatsKeys->totalInstanceCount]  = totalInstanceCount;
+  (*stats)[UsdUtilsUsdStageStatsKeys->assetCount] = assetCount;
+  (*stats)[UsdUtilsUsdStageStatsKeys->prototypeCount] = prototypeCount;
+  (*stats)[UsdUtilsUsdStageStatsKeys->totalInstanceCount] = totalInstanceCount;
 
   // VtDictionary does not support initialization using an initializer list.
   VtDictionary primaryDict;
 
   VtDictionary primCounts;
-  primCounts[UsdUtilsUsdStageStatsKeys->totalPrimCount]    = primaryPrimCount;
-  primCounts[UsdUtilsUsdStageStatsKeys->activePrimCount]   = primaryActivePrimCount;
+  primCounts[UsdUtilsUsdStageStatsKeys->totalPrimCount] = primaryPrimCount;
+  primCounts[UsdUtilsUsdStageStatsKeys->activePrimCount] = primaryActivePrimCount;
   primCounts[UsdUtilsUsdStageStatsKeys->inactivePrimCount] = primaryInactivePrimCount;
-  primCounts[UsdUtilsUsdStageStatsKeys->pureOverCount]     = primaryPureOverCount;
-  primCounts[UsdUtilsUsdStageStatsKeys->instanceCount]     = primaryInstanceCount;
+  primCounts[UsdUtilsUsdStageStatsKeys->pureOverCount] = primaryPureOverCount;
+  primCounts[UsdUtilsUsdStageStatsKeys->instanceCount] = primaryInstanceCount;
 
   primaryDict[UsdUtilsUsdStageStatsKeys->primCounts] = primCounts;
 

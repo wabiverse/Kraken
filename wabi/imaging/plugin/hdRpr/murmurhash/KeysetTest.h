@@ -158,7 +158,7 @@ void SparseKeygenRecurse(pfHash hash,
                          std::vector<hashtype> &hashes)
 {
   const int nbytes = sizeof(keytype);
-  const int nbits  = nbytes * 8;
+  const int nbits = nbytes * 8;
 
   hashtype h;
 
@@ -232,7 +232,7 @@ bool WindowedKeyTest(hashfunc<hashtype> hash,
                      bool testDistribution,
                      bool drawDiagram)
 {
-  const int keybits  = sizeof(keytype) * 8;
+  const int keybits = sizeof(keytype) * 8;
   const int keycount = 1 << windowbits;
 
   std::vector<hashtype> hashes;
@@ -291,7 +291,7 @@ bool CyclicKeyTest(pfHash hash, int cycleLen, int cycleReps, const int keycount,
   int keyLen = cycleLen * cycleReps;
 
   uint8_t *cycle = new uint8_t[cycleLen + 16];
-  uint8_t *key   = new uint8_t[keyLen];
+  uint8_t *key = new uint8_t[keyLen];
 
   //----------
 
@@ -445,7 +445,7 @@ template<typename hashtype> bool SeedTest(pfHash hash, int keycount, bool drawDi
   printf("Keyset 'Seed' - %d keys\n", keycount);
 
   const char *text = "The quick brown fox jumps over the lazy dog";
-  const int len    = (int)strlen(text);
+  const int len = (int)strlen(text);
 
   //----------
 

@@ -82,8 +82,7 @@ class UsdSkelPackedJointAnimation : public UsdSkelAnimation {
   /// Construct a UsdSkelPackedJointAnimation on the prim held by \p schemaObj .
   /// Should be preferred over UsdSkelPackedJointAnimation(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdSkelPackedJointAnimation(const UsdSchemaBase &schemaObj)
-      : UsdSkelAnimation(schemaObj)
+  explicit UsdSkelPackedJointAnimation(const UsdSchemaBase &schemaObj) : UsdSkelAnimation(schemaObj)
   {}
 
   /// Destructor.

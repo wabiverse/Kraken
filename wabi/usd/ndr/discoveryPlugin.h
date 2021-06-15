@@ -51,7 +51,7 @@ WABI_NAMESPACE_BEGIN
   TF_REGISTRY_FUNCTION(TfType) \
   { \
     TfType::Define<DiscoveryPluginClass, TfType::Bases<NdrDiscoveryPlugin>>() \
-        .SetFactory<NdrDiscoveryPluginFactory<DiscoveryPluginClass>>(); \
+      .SetFactory<NdrDiscoveryPluginFactory<DiscoveryPluginClass>>(); \
   }
 
 TF_DECLARE_WEAK_AND_REF_PTRS(NdrDiscoveryPluginContext);

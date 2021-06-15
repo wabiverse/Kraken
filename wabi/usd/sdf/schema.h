@@ -71,9 +71,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
   ///
   class FieldDefinition {
    public:
-    FieldDefinition(const SdfSchemaBase &schema,
-                    const TfToken &name,
-                    const VtValue &fallbackValue);
+    FieldDefinition(const SdfSchemaBase &schema, const TfToken &name, const VtValue &fallbackValue);
 
     typedef std::vector<std::pair<TfToken, JsValue>> InfoVec;
 
@@ -96,8 +94,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
 
     template<class T> SdfAllowed IsValidListValue(const T &value) const
     {
-      return (_listValueValidator ? _listValueValidator(_schema, VtValue(value)) :
-                                    SdfAllowed(true));
+      return (_listValueValidator ? _listValueValidator(_schema, VtValue(value)) : SdfAllowed(true));
     }
 
     template<class T> SdfAllowed IsValidMapKey(const T &value) const
@@ -343,9 +340,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
 
     _SpecDefiner &Field(const TfToken &name, bool required = false);
     _SpecDefiner &MetadataField(const TfToken &name, bool required = false);
-    _SpecDefiner &MetadataField(const TfToken &name,
-                                const TfToken &displayGroup,
-                                bool required = false);
+    _SpecDefiner &MetadataField(const TfToken &name, const TfToken &displayGroup, bool required = false);
 
     _SpecDefiner &CopyFrom(const SpecDefinition &other);
 
@@ -353,8 +348,8 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
    private:
     friend class SdfSchemaBase;
     explicit _SpecDefiner(SdfSchemaBase *schema, SpecDefinition *definition)
-        : _schema(schema),
-          _definition(definition)
+      : _schema(schema),
+        _definition(definition)
     {}
     SdfSchemaBase *_schema;
     SpecDefinition *_definition;
@@ -373,11 +368,11 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
       // array value of VtArray<T>.
       template<class T>
       Type(const TfToken &name, const T &defaultValue)
-          : Type(name, VtValue(defaultValue), VtValue(VtArray<T>()))
+        : Type(name, VtValue(defaultValue), VtValue(VtArray<T>()))
       {}
       template<class T>
       Type(char const *name, const T &defaultValue)
-          : Type(TfToken(name), VtValue(defaultValue), VtValue(VtArray<T>()))
+        : Type(TfToken(name), VtValue(defaultValue), VtValue(VtArray<T>()))
       {}
 
       // Specify a type with the given name and underlying C++ type.
@@ -476,9 +471,9 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
   /// Registers all metadata fields specified in the given plugins
   /// under the given metadata tag.
   const std::vector<const SdfSchemaBase::FieldDefinition *> _UpdateMetadataFromPlugins(
-      const PlugPluginPtrVector &plugins,
-      const std::string &metadataTag           = std::string(),
-      const _DefaultValueFactoryFn &defFactory = _DefaultValueFactoryFn());
+    const PlugPluginPtrVector &plugins,
+    const std::string &metadataTag = std::string(),
+    const _DefaultValueFactoryFn &defFactory = _DefaultValueFactoryFn());
 
  private:
   friend class _SpecDefiner;
@@ -496,9 +491,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
   const SpecDefinition *_CheckAndGetSpecDefinition(SdfSpecType type) const;
 
   friend struct Sdf_SchemaFieldTypeRegistrar;
-  FieldDefinition &_CreateField(const TfToken &fieldKey,
-                                const VtValue &fallback,
-                                bool plugin = false);
+  FieldDefinition &_CreateField(const TfToken &fieldKey, const VtValue &fallback, bool plugin = false);
 
   template<class T> FieldDefinition &_DoRegisterField(const TfToken &fieldKey, const T &fallback)
   {
@@ -508,8 +501,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
   FieldDefinition &_DoRegisterField(const TfToken &fieldKey, const VtValue &fallback);
 
  private:
-  typedef TfHashMap<TfToken, SdfSchemaBase::FieldDefinition, TfToken::HashFunctor>
-      _FieldDefinitionMap;
+  typedef TfHashMap<TfToken, SdfSchemaBase::FieldDefinition, TfToken::HashFunctor> _FieldDefinitionMap;
   _FieldDefinitionMap _fieldDefinitions;
 
   // Pair of definition and flag indicating validity.
@@ -544,40 +536,36 @@ SDF_API_TEMPLATE_CLASS(TfSingleton<SdfSchema>);
 /// The following fields are pre-registered by Sdf.
 /// \showinitializer
 #define SDF_FIELD_KEYS \
-  ((Active, "active"))((AllowedTokens, "allowedTokens"))( \
-      (AssetInfo, "assetInfo"))((ColorConfiguration, "colorConfiguration"))(( \
-      ColorManagementSystem, "colorManagementSystem"))((ColorSpace, "colorSpace"))(( \
-      Comment, "comment"))((ConnectionPaths, "connectionPaths"))((Custom, "custom"))(( \
-      CustomData, "customData"))((CustomLayerData, "customLayerData"))((Default, "default"))(( \
-      DefaultPrim, "defaultPrim"))((DisplayGroup, "displayGroup"))(( \
-      DisplayGroupOrder, "displayGroupOrder"))((DisplayName, "displayName"))(( \
-      DisplayUnit, "displayUnit"))((Documentation, "documentation"))(( \
-      EndTimeCode, "endTimeCode"))((FramePrecision, "framePrecision"))(( \
-      FramesPerSecond, "framesPerSecond"))((Hidden, "hidden"))((HasOwnedSubLayers, \
-                                                                "hasOwnedSubLayers"))(( \
-      InheritPaths, "inheritPaths"))((Instanceable, "instanceable"))((Kind, "kind"))(( \
-      PrimOrder, "primOrder"))((NoLoadHint, "noLoadHint"))((Owner, "owner"))(( \
-      Payload, "payload"))((Permission, "permission"))((Prefix, "prefix"))(( \
-      PrefixSubstitutions, "prefixSubstitutions"))((PropertyOrder, "propertyOrder"))(( \
-      References, "references"))((Relocates, "relocates"))((SessionOwner, "sessionOwner"))(( \
-      Specializes, "specializes"))((Specifier, "specifier"))((StartTimeCode, "startTimeCode"))(( \
-      SubLayers, "subLayers"))((SubLayerOffsets, "subLayerOffsets"))((Suffix, "suffix"))(( \
-      SuffixSubstitutions, "suffixSubstitutions"))((SymmetricPeer, "symmetricPeer"))(( \
-      SymmetryArgs, "symmetryArgs"))((SymmetryArguments, "symmetryArguments"))(( \
-      SymmetryFunction, "symmetryFunction"))((TargetPaths, "targetPaths"))(( \
-      TimeSamples, "timeSamples"))((TimeCodesPerSecond, "timeCodesPerSecond"))(( \
-      TypeName, "typeName"))((VariantSelection, "variantSelection"))(( \
-      Variability, "variability"))((VariantSetNames, "variantSetNames")) \
+  ((Active, "active"))((AllowedTokens, "allowedTokens"))((AssetInfo, "assetInfo"))(( \
+    ColorConfiguration, "colorConfiguration"))((ColorManagementSystem, "colorManagementSystem"))(( \
+    ColorSpace, "colorSpace"))((Comment, "comment"))((ConnectionPaths, "connectionPaths"))(( \
+    Custom, "custom"))((CustomData, "customData"))((CustomLayerData, "customLayerData"))(( \
+    Default, "default"))((DefaultPrim, "defaultPrim"))((DisplayGroup, "displayGroup"))(( \
+    DisplayGroupOrder, "displayGroupOrder"))((DisplayName, "displayName"))((DisplayUnit, "displayUnit"))(( \
+    Documentation, "documentation"))((EndTimeCode, "endTimeCode"))((FramePrecision, "framePrecision"))(( \
+    FramesPerSecond, "framesPerSecond"))((Hidden, "hidden"))((HasOwnedSubLayers, "hasOwnedSubLayers"))(( \
+    InheritPaths, "inheritPaths"))((Instanceable, "instanceable"))((Kind, "kind"))(( \
+    PrimOrder, "primOrder"))((NoLoadHint, "noLoadHint"))((Owner, "owner"))((Payload, "payload"))(( \
+    Permission, "permission"))((Prefix, "prefix"))((PrefixSubstitutions, "prefixSubstitutions"))(( \
+    PropertyOrder, "propertyOrder"))((References, "references"))((Relocates, "relocates"))(( \
+    SessionOwner, "sessionOwner"))((Specializes, "specializes"))((Specifier, "specifier"))(( \
+    StartTimeCode, "startTimeCode"))((SubLayers, "subLayers"))((SubLayerOffsets, "subLayerOffsets"))(( \
+    Suffix, "suffix"))((SuffixSubstitutions, "suffixSubstitutions"))((SymmetricPeer, "symmetricPeer"))(( \
+    SymmetryArgs, "symmetryArgs"))((SymmetryArguments, "symmetryArguments"))(( \
+    SymmetryFunction, "symmetryFunction"))((TargetPaths, "targetPaths"))((TimeSamples, "timeSamples"))(( \
+    TimeCodesPerSecond, "timeCodesPerSecond"))((TypeName, "typeName"))(( \
+    VariantSelection, "variantSelection"))((Variability, "variability"))((VariantSetNames, \
+                                                                          "variantSetNames")) \
 \
-      /* XXX: These fields should move into Sd. See bug 123508. */ \
-      ((EndFrame, "endFrame"))((StartFrame, "startFrame"))
+    /* XXX: These fields should move into Sd. See bug 123508. */ \
+    ((EndFrame, "endFrame"))((StartFrame, "startFrame"))
 
 #define SDF_CHILDREN_KEYS \
   ((ConnectionChildren, "connectionChildren"))((ExpressionChildren, "expressionChildren"))( \
-      (MapperArgChildren, "mapperArgChildren"))((MapperChildren, "mapperChildren"))(( \
-      PrimChildren, "primChildren"))((PropertyChildren, "properties"))(( \
-      RelationshipTargetChildren, "targetChildren"))((VariantChildren, "variantChildren"))(( \
-      VariantSetChildren, "variantSetChildren"))
+    (MapperArgChildren, "mapperArgChildren"))((MapperChildren, "mapperChildren"))(( \
+    PrimChildren, "primChildren"))((PropertyChildren, "properties"))((RelationshipTargetChildren, \
+                                                                      "targetChildren"))(( \
+    VariantChildren, "variantChildren"))((VariantSetChildren, "variantSetChildren"))
 
 TF_DECLARE_PUBLIC_TOKENS(SdfFieldKeys, SDF_API, SDF_FIELD_KEYS);
 TF_DECLARE_PUBLIC_TOKENS(SdfChildrenKeys, SDF_API, SDF_CHILDREN_KEYS);

@@ -387,7 +387,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateProtoIndicesAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -414,8 +414,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateIdsAttr(VtValue const &defaultValue = VtValue(),
-                             bool writeSparsely          = false) const;
+  UsdAttribute CreateIdsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -439,7 +438,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreatePositionsAttr(VtValue const &defaultValue = VtValue(),
-                                   bool writeSparsely          = false) const;
+                                   bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -473,7 +472,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateOrientationsAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -498,8 +497,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateScalesAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateScalesAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -532,7 +530,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateVelocitiesAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -560,7 +558,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateAccelerationsAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -590,7 +588,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateAngularVelocitiesAttr(VtValue const &defaultValue = VtValue(),
-                                           bool writeSparsely          = false) const;
+                                           bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -614,7 +612,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateInvisibleIdsAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -874,7 +872,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable {
                                        const UsdTimeCode time,
                                        const UsdTimeCode baseTime,
                                        const ProtoXformInclusion doProtoXforms = IncludeProtoXform,
-                                       const MaskApplication applyMask         = ApplyMask) const;
+                                       const MaskApplication applyMask = ApplyMask) const;
 
   /// Compute the per-instance transforms as in
   /// ComputeInstanceTransformsAtTime, but using multiple sample times. An
@@ -884,12 +882,11 @@ class UsdGeomPointInstancer : public UsdGeomBoundable {
   /// \param times - A vector containing the UsdTimeCodes at which we want to
   ///                sample.
   USDGEOM_API
-  bool ComputeInstanceTransformsAtTimes(
-      std::vector<VtArray<GfMatrix4d>> *xformsArray,
-      const std::vector<UsdTimeCode> &times,
-      const UsdTimeCode baseTime,
-      const ProtoXformInclusion doProtoXforms = IncludeProtoXform,
-      const MaskApplication applyMask         = ApplyMask) const;
+  bool ComputeInstanceTransformsAtTimes(std::vector<VtArray<GfMatrix4d>> *xformsArray,
+                                        const std::vector<UsdTimeCode> &times,
+                                        const UsdTimeCode baseTime,
+                                        const ProtoXformInclusion doProtoXforms = IncludeProtoXform,
+                                        const MaskApplication applyMask = ApplyMask) const;
 
   /// \overload
   /// Perform the per-instance transform computation as described in
@@ -1016,9 +1013,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable {
   ///                   When \p baseTime is less than or equal to \p time,
   ///                   we will choose the lower bracketing timeSample.
   USDGEOM_API
-  bool ComputeExtentAtTime(VtVec3fArray *extent,
-                           const UsdTimeCode time,
-                           const UsdTimeCode baseTime) const;
+  bool ComputeExtentAtTime(VtVec3fArray *extent, const UsdTimeCode time, const UsdTimeCode baseTime) const;
 
   /// \overload
   /// Computes the extent as if the matrix \p transform was first applied.
@@ -1105,16 +1100,16 @@ bool UsdGeomPointInstancer::ApplyMaskToArray(std::vector<bool> const &mask,
   }
   else if ((maskSize * elementSize) != dataArray->size()) {
     TF_WARN(
-        "Input mask's size (%zu) is not compatible with the "
-        "input dataArray (%zu) and elementSize (%d).",
-        maskSize,
-        dataArray->size(),
-        elementSize);
+      "Input mask's size (%zu) is not compatible with the "
+      "input dataArray (%zu) and elementSize (%d).",
+      maskSize,
+      dataArray->size(),
+      elementSize);
     return false;
   }
 
-  T *beginData        = dataArray->data();
-  T *currData         = beginData;
+  T *beginData = dataArray->data();
+  T *currData = beginData;
   size_t numPreserved = 0;
   for (size_t i = 0; i < maskSize; ++i) {
     // XXX Could add a fast-path for elementSize == 1 ?

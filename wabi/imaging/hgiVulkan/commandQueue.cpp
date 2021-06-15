@@ -39,7 +39,7 @@ WABI_NAMESPACE_BEGIN
 static HgiVulkanCommandQueue::HgiVulkan_CommandPool *_CreateCommandPool(HgiVulkanDevice *device)
 {
   VkCommandPoolCreateInfo poolCreateInfo = {VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO};
-  poolCreateInfo.flags                   = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT |  // short lived
+  poolCreateInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT |            // short lived
                          VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;  // reset individually
 
   // If Graphics and Compute were to come from different queue families we
@@ -48,19 +48,16 @@ static HgiVulkanCommandQueue::HgiVulkan_CommandPool *_CreateCommandPool(HgiVulka
 
   VkCommandPool pool = nullptr;
 
-  TF_VERIFY(vkCreateCommandPool(
-                device->GetVulkanDevice(), &poolCreateInfo, HgiVulkanAllocator(), &pool) ==
+  TF_VERIFY(vkCreateCommandPool(device->GetVulkanDevice(), &poolCreateInfo, HgiVulkanAllocator(), &pool) ==
             VK_SUCCESS);
 
-  HgiVulkanCommandQueue::HgiVulkan_CommandPool *newPool =
-      new HgiVulkanCommandQueue::HgiVulkan_CommandPool();
+  HgiVulkanCommandQueue::HgiVulkan_CommandPool *newPool = new HgiVulkanCommandQueue::HgiVulkan_CommandPool();
 
   newPool->vkCommandPool = pool;
   return newPool;
 }
 
-static void _DestroyCommandPool(HgiVulkanDevice *device,
-                                HgiVulkanCommandQueue::HgiVulkan_CommandPool *pool)
+static void _DestroyCommandPool(HgiVulkanDevice *device, HgiVulkanCommandQueue::HgiVulkan_CommandPool *pool)
 {
   for (HgiVulkanCommandBuffer *cb : pool->commandBuffers) {
     delete cb;
@@ -74,19 +71,17 @@ static void _DestroyCommandPool(HgiVulkanDevice *device,
 }
 
 HgiVulkanCommandQueue::HgiVulkanCommandQueue(HgiVulkanDevice *device)
-    : _device(device),
-      _vkGfxQueue(nullptr),
-      _inflightBits(0),
-      _inflightCounter(0),
-      _threadId(std::this_thread::get_id()),
-      _resourceCommandBuffer(nullptr)
+  : _device(device),
+    _vkGfxQueue(nullptr),
+    _inflightBits(0),
+    _inflightCounter(0),
+    _threadId(std::this_thread::get_id()),
+    _resourceCommandBuffer(nullptr)
 {
   // Acquire the graphics queue
   const uint32_t firstQueueInFamily = 0;
-  vkGetDeviceQueue(device->GetVulkanDevice(),
-                   device->GetGfxQueueFamilyIndex(),
-                   firstQueueInFamily,
-                   &_vkGfxQueue);
+  vkGetDeviceQueue(
+    device->GetVulkanDevice(), device->GetGfxQueueFamilyIndex(), firstQueueInFamily, &_vkGfxQueue);
 }
 
 HgiVulkanCommandQueue::~HgiVulkanCommandQueue()
@@ -109,14 +104,14 @@ void HgiVulkanCommandQueue::SubmitToQueue(HgiVulkanCommandBuffer *cb, HgiSubmitW
   if (_resourceCommandBuffer) {
     _resourceCommandBuffer->EndCommandBuffer();
     VkCommandBuffer rcb = _resourceCommandBuffer->GetVulkanCommandBuffer();
-    semaphore           = _resourceCommandBuffer->GetVulkanSemaphore();
-    VkFence rFence      = _resourceCommandBuffer->GetVulkanFence();
+    semaphore = _resourceCommandBuffer->GetVulkanSemaphore();
+    VkFence rFence = _resourceCommandBuffer->GetVulkanFence();
 
-    VkSubmitInfo resourceInfo         = {VK_STRUCTURE_TYPE_SUBMIT_INFO};
-    resourceInfo.commandBufferCount   = 1;
-    resourceInfo.pCommandBuffers      = &rcb;
+    VkSubmitInfo resourceInfo = {VK_STRUCTURE_TYPE_SUBMIT_INFO};
+    resourceInfo.commandBufferCount = 1;
+    resourceInfo.pCommandBuffers = &rcb;
     resourceInfo.signalSemaphoreCount = 1;
-    resourceInfo.pSignalSemaphores    = &semaphore;
+    resourceInfo.pSignalSemaphores = &semaphore;
 
     TF_VERIFY(vkQueueSubmit(_vkGfxQueue, 1, &resourceInfo, rFence) == VK_SUCCESS);
 
@@ -128,16 +123,16 @@ void HgiVulkanCommandQueue::SubmitToQueue(HgiVulkanCommandBuffer *cb, HgiSubmitW
   // a 'EndRecording' function on its Hgi*Cmds that clients must call.
   cb->EndCommandBuffer();
   VkCommandBuffer wcb = cb->GetVulkanCommandBuffer();
-  VkFence wFence      = cb->GetVulkanFence();
+  VkFence wFence = cb->GetVulkanFence();
 
-  VkSubmitInfo workInfo       = {VK_STRUCTURE_TYPE_SUBMIT_INFO};
+  VkSubmitInfo workInfo = {VK_STRUCTURE_TYPE_SUBMIT_INFO};
   workInfo.commandBufferCount = 1;
-  workInfo.pCommandBuffers    = &wcb;
+  workInfo.pCommandBuffers = &wcb;
   if (semaphore) {
-    workInfo.waitSemaphoreCount   = 1;
-    workInfo.pWaitSemaphores      = &semaphore;
+    workInfo.waitSemaphoreCount = 1;
+    workInfo.pWaitSemaphores = &semaphore;
     VkPipelineStageFlags waitMask = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-    workInfo.pWaitDstStageMask    = &waitMask;
+    workInfo.pWaitDstStageMask = &waitMask;
   }
 
   // Submit provided command buffers to GPU queue.
@@ -149,7 +144,7 @@ void HgiVulkanCommandQueue::SubmitToQueue(HgiVulkanCommandBuffer *cb, HgiSubmitW
   // Optional blocking wait
   if (wait == HgiSubmitWaitTypeWaitUntilCompleted) {
     static const uint64_t timeOut = 100000000000;
-    VkDevice vkDevice             = _device->GetVulkanDevice();
+    VkDevice vkDevice = _device->GetVulkanDevice();
     TF_VERIFY(vkWaitForFences(vkDevice, 1, &wFence, VK_TRUE, timeOut) == VK_SUCCESS);
     // When the client waits for the cmd buf to finish on GPU they will
     // expect to have the CompletedHandlers run. For example when the
@@ -234,7 +229,7 @@ void HgiVulkanCommandQueue::ResetConsumedCommandBuffers()
 
 /* Multi threaded */
 HgiVulkanCommandQueue::HgiVulkan_CommandPool *HgiVulkanCommandQueue::_AcquireThreadCommandPool(
-    std::thread::id const &threadId)
+  std::thread::id const &threadId)
 {
   // Lock the command pool map from concurrent access since we may insert.
   std::lock_guard<std::mutex> guard(_commandPoolsMutex);
@@ -242,7 +237,7 @@ HgiVulkanCommandQueue::HgiVulkan_CommandPool *HgiVulkanCommandQueue::_AcquireThr
   auto it = _commandPools.find(threadId);
   if (it == _commandPools.end()) {
     HgiVulkan_CommandPool *newPool = _CreateCommandPool(_device);
-    _commandPools[threadId]        = newPool;
+    _commandPools[threadId] = newPool;
     return newPool;
   }
   else {

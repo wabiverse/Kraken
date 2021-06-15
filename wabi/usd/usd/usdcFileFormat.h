@@ -55,7 +55,7 @@ class UsdUsdcFileFormat : public SdfFileFormat {
 
   virtual bool WriteToFile(const SdfLayer &layer,
                            const string &filePath,
-                           const string &comment           = string(),
+                           const string &comment = string(),
                            const FileFormatArguments &args = FileFormatArguments()) const override;
 
   virtual bool ReadFromString(SdfLayer *layer, const string &str) const override;
@@ -64,9 +64,7 @@ class UsdUsdcFileFormat : public SdfFileFormat {
                              string *str,
                              const string &comment = string()) const override;
 
-  virtual bool WriteToStream(const SdfSpecHandle &spec,
-                             std::ostream &out,
-                             size_t indent) const override;
+  virtual bool WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const override;
 
  protected:
   SDF_FILE_FORMAT_FACTORY_ACCESS;

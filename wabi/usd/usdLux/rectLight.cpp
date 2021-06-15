@@ -112,8 +112,7 @@ UsdAttribute UsdLuxRectLight::GetWidthAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsWidth);
 }
 
-UsdAttribute UsdLuxRectLight::CreateWidthAttr(VtValue const &defaultValue,
-                                              bool writeSparsely) const
+UsdAttribute UsdLuxRectLight::CreateWidthAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsWidth,
                                     SdfValueTypeNames->Float,
@@ -128,8 +127,7 @@ UsdAttribute UsdLuxRectLight::GetHeightAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsHeight);
 }
 
-UsdAttribute UsdLuxRectLight::CreateHeightAttr(VtValue const &defaultValue,
-                                               bool writeSparsely) const
+UsdAttribute UsdLuxRectLight::CreateHeightAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsHeight,
                                     SdfValueTypeNames->Float,
@@ -144,8 +142,7 @@ UsdAttribute UsdLuxRectLight::GetTextureFileAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsTextureFile);
 }
 
-UsdAttribute UsdLuxRectLight::CreateTextureFileAttr(VtValue const &defaultValue,
-                                                    bool writeSparsely) const
+UsdAttribute UsdLuxRectLight::CreateTextureFileAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsTextureFile,
                                     SdfValueTypeNames->Asset,
@@ -156,8 +153,7 @@ UsdAttribute UsdLuxRectLight::CreateTextureFileAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -171,12 +167,12 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdLuxRectLight::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdLuxTokens->inputsWidth,
-      UsdLuxTokens->inputsHeight,
-      UsdLuxTokens->inputsTextureFile,
+    UsdLuxTokens->inputsWidth,
+    UsdLuxTokens->inputsHeight,
+    UsdLuxTokens->inputsTextureFile,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdLuxLight::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdLuxLight::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

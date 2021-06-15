@@ -175,7 +175,7 @@ class UsdRiTextureAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiTextureGammaAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -198,7 +198,7 @@ class UsdRiTextureAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiTextureSaturationAttr(VtValue const &defaultValue = VtValue(),
-                                             bool writeSparsely          = false) const;
+                                             bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

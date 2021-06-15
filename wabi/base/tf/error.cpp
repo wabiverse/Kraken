@@ -39,7 +39,7 @@ TfError::TfError(TfEnum errorCode,
                  const string &commentary,
                  TfDiagnosticInfo info,
                  bool quiet)
-    : TfDiagnosticBase(errorCode, errorCodeString, context, commentary, info, quiet)
+  : TfDiagnosticBase(errorCode, errorCodeString, context, commentary, info, quiet)
 {
   _serial = TfDiagnosticMgr::GetInstance()._nextSerial.fetch_add(1);
 }

@@ -65,8 +65,7 @@ UsdRiPxrRodLightFilter UsdRiPxrRodLightFilter::Get(const UsdStagePtr &stage, con
 }
 
 /* static */
-UsdRiPxrRodLightFilter UsdRiPxrRodLightFilter::Define(const UsdStagePtr &stage,
-                                                      const SdfPath &path)
+UsdRiPxrRodLightFilter UsdRiPxrRodLightFilter::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("wabiRodLightFilter");
   if (!stage) {
@@ -113,8 +112,7 @@ UsdAttribute UsdRiPxrRodLightFilter::GetWidthAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->width);
 }
 
-UsdAttribute UsdRiPxrRodLightFilter::CreateWidthAttr(VtValue const &defaultValue,
-                                                     bool writeSparsely) const
+UsdAttribute UsdRiPxrRodLightFilter::CreateWidthAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->width,
                                     SdfValueTypeNames->Float,
@@ -129,8 +127,7 @@ UsdAttribute UsdRiPxrRodLightFilter::GetHeightAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->height);
 }
 
-UsdAttribute UsdRiPxrRodLightFilter::CreateHeightAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdRiPxrRodLightFilter::CreateHeightAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->height,
                                     SdfValueTypeNames->Float,
@@ -145,8 +142,7 @@ UsdAttribute UsdRiPxrRodLightFilter::GetDepthAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->depth);
 }
 
-UsdAttribute UsdRiPxrRodLightFilter::CreateDepthAttr(VtValue const &defaultValue,
-                                                     bool writeSparsely) const
+UsdAttribute UsdRiPxrRodLightFilter::CreateDepthAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->depth,
                                     SdfValueTypeNames->Float,
@@ -161,8 +157,7 @@ UsdAttribute UsdRiPxrRodLightFilter::GetRadiusAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->radius);
 }
 
-UsdAttribute UsdRiPxrRodLightFilter::CreateRadiusAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdRiPxrRodLightFilter::CreateRadiusAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->radius,
                                     SdfValueTypeNames->Float,
@@ -449,8 +444,7 @@ UsdAttribute UsdRiPxrRodLightFilter::GetFalloffAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->falloff);
 }
 
-UsdAttribute UsdRiPxrRodLightFilter::CreateFalloffAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdRiPxrRodLightFilter::CreateFalloffAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->falloff,
                                     SdfValueTypeNames->Int,
@@ -573,8 +567,7 @@ UsdAttribute UsdRiPxrRodLightFilter::CreateColorRampInterpolationAttr(VtValue co
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -588,38 +581,38 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRiPxrRodLightFilter::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRiTokens->width,
-      UsdRiTokens->height,
-      UsdRiTokens->depth,
-      UsdRiTokens->radius,
-      UsdRiTokens->edgeThickness,
-      UsdRiTokens->scaleWidth,
-      UsdRiTokens->scaleHeight,
-      UsdRiTokens->scaleDepth,
-      UsdRiTokens->refineTop,
-      UsdRiTokens->refineBottom,
-      UsdRiTokens->refineLeft,
-      UsdRiTokens->refineRight,
-      UsdRiTokens->refineFront,
-      UsdRiTokens->refineBack,
-      UsdRiTokens->edgeScaleTop,
-      UsdRiTokens->edgeScaleBottom,
-      UsdRiTokens->edgeScaleLeft,
-      UsdRiTokens->edgeScaleRight,
-      UsdRiTokens->edgeScaleFront,
-      UsdRiTokens->edgeScaleBack,
-      UsdRiTokens->colorSaturation,
-      UsdRiTokens->falloff,
-      UsdRiTokens->falloffKnots,
-      UsdRiTokens->falloffFloats,
-      UsdRiTokens->falloffInterpolation,
-      UsdRiTokens->colorRamp,
-      UsdRiTokens->colorRampKnots,
-      UsdRiTokens->colorRampColors,
-      UsdRiTokens->colorRampInterpolation,
+    UsdRiTokens->width,
+    UsdRiTokens->height,
+    UsdRiTokens->depth,
+    UsdRiTokens->radius,
+    UsdRiTokens->edgeThickness,
+    UsdRiTokens->scaleWidth,
+    UsdRiTokens->scaleHeight,
+    UsdRiTokens->scaleDepth,
+    UsdRiTokens->refineTop,
+    UsdRiTokens->refineBottom,
+    UsdRiTokens->refineLeft,
+    UsdRiTokens->refineRight,
+    UsdRiTokens->refineFront,
+    UsdRiTokens->refineBack,
+    UsdRiTokens->edgeScaleTop,
+    UsdRiTokens->edgeScaleBottom,
+    UsdRiTokens->edgeScaleLeft,
+    UsdRiTokens->edgeScaleRight,
+    UsdRiTokens->edgeScaleFront,
+    UsdRiTokens->edgeScaleBack,
+    UsdRiTokens->colorSaturation,
+    UsdRiTokens->falloff,
+    UsdRiTokens->falloffKnots,
+    UsdRiTokens->falloffFloats,
+    UsdRiTokens->falloffInterpolation,
+    UsdRiTokens->colorRamp,
+    UsdRiTokens->colorRampKnots,
+    UsdRiTokens->colorRampColors,
+    UsdRiTokens->colorRampInterpolation,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdLuxLightFilter::GetSchemaAttributeNames(true), localNames);
+    UsdLuxLightFilter::GetSchemaAttributeNames(true), localNames);
 
   if (includeInherited)
     return allNames;

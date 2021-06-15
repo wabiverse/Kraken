@@ -96,10 +96,10 @@ struct HdDisplayStyle {
   /// - flatShading is disabled.
   /// - displacement is enabled.
   HdDisplayStyle()
-      : refineLevel(0),
-        flatShadingEnabled(false),
-        displacementEnabled(true),
-        occludedSelectionShowsThrough(false)
+    : refineLevel(0),
+      flatShadingEnabled(false),
+      displacementEnabled(true),
+      occludedSelectionShowsThrough(false)
   {}
 
   /// Creates a DisplayStyle.
@@ -110,13 +110,13 @@ struct HdDisplayStyle {
   /// \param occludedSelectionShowsThrough controls whether the prim lets
   ///        occluded selection show through it, defaults to false.
   HdDisplayStyle(int refineLevel_,
-                 bool flatShading                    = false,
-                 bool displacement                   = true,
+                 bool flatShading = false,
+                 bool displacement = true,
                  bool occludedSelectionShowsThrough_ = false)
-      : refineLevel(std::max(0, refineLevel_)),
-        flatShadingEnabled(flatShading),
-        displacementEnabled(displacement),
-        occludedSelectionShowsThrough(occludedSelectionShowsThrough_)
+    : refineLevel(std::max(0, refineLevel_)),
+      flatShadingEnabled(flatShading),
+      displacementEnabled(displacement),
+      occludedSelectionShowsThrough(occludedSelectionShowsThrough_)
   {
     if (refineLevel_ < 0) {
       TF_CODING_ERROR("negative refine level is not supported");
@@ -127,7 +127,7 @@ struct HdDisplayStyle {
   }
 
   HdDisplayStyle(HdDisplayStyle const &rhs) = default;
-  ~HdDisplayStyle()                         = default;
+  ~HdDisplayStyle() = default;
 
   bool operator==(HdDisplayStyle const &rhs) const
   {
@@ -162,11 +162,11 @@ struct HdPrimvarDescriptor {
   HdPrimvarDescriptor(TfToken const &name_,
                       HdInterpolation interp_,
                       TfToken const &role_ = HdPrimvarRoleTokens->none,
-                      bool indexed_        = false)
-      : name(name_),
-        interpolation(interp_),
-        role(role_),
-        indexed(indexed_)
+                      bool indexed_ = false)
+    : name(name_),
+      interpolation(interp_),
+      role(role_),
+      indexed(indexed_)
   {}
   bool operator==(HdPrimvarDescriptor const &rhs) const
   {
@@ -202,17 +202,15 @@ struct HdExtComputationPrimvarDescriptor : public HdPrimvarDescriptor {
                                     SdfPath const &sourceComputationId_,
                                     TfToken const &sourceComputationOutputName_,
                                     HdTupleType const &valueType_)
-      : HdPrimvarDescriptor(name_, interp_, role_, false),
-        sourceComputationId(sourceComputationId_),
-        sourceComputationOutputName(sourceComputationOutputName_),
-        valueType(valueType_)
+    : HdPrimvarDescriptor(name_, interp_, role_, false),
+      sourceComputationId(sourceComputationId_),
+      sourceComputationOutputName(sourceComputationOutputName_),
+      valueType(valueType_)
   {}
   bool operator==(HdExtComputationPrimvarDescriptor const &rhs) const
   {
-    return HdPrimvarDescriptor::operator==(rhs) &&
-           sourceComputationId == rhs.sourceComputationId &&
-           sourceComputationOutputName == rhs.sourceComputationOutputName &&
-           valueType == rhs.valueType;
+    return HdPrimvarDescriptor::operator==(rhs) && sourceComputationId == rhs.sourceComputationId &&
+           sourceComputationOutputName == rhs.sourceComputationOutputName && valueType == rhs.valueType;
   }
   bool operator!=(HdExtComputationPrimvarDescriptor const &rhs) const
   {
@@ -240,9 +238,9 @@ struct HdExtComputationInputDescriptor {
   HdExtComputationInputDescriptor(TfToken const &name_,
                                   SdfPath const &sourceComputationId_,
                                   TfToken const &sourceComputationOutputName_)
-      : name(name_),
-        sourceComputationId(sourceComputationId_),
-        sourceComputationOutputName(sourceComputationOutputName_)
+    : name(name_),
+      sourceComputationId(sourceComputationId_),
+      sourceComputationOutputName(sourceComputationOutputName_)
   {}
 
   bool operator==(HdExtComputationInputDescriptor const &rhs) const
@@ -271,8 +269,8 @@ struct HdExtComputationOutputDescriptor {
   HdExtComputationOutputDescriptor()
   {}
   HdExtComputationOutputDescriptor(TfToken const &name_, HdTupleType const &valueType_)
-      : name(name_),
-        valueType(valueType_)
+    : name(name_),
+      valueType(valueType_)
   {}
 
   bool operator==(HdExtComputationOutputDescriptor const &rhs) const
@@ -298,12 +296,10 @@ struct HdVolumeFieldDescriptor {
 
   HdVolumeFieldDescriptor()
   {}
-  HdVolumeFieldDescriptor(TfToken const &fieldName_,
-                          TfToken const &fieldPrimType_,
-                          SdfPath const &fieldId_)
-      : fieldName(fieldName_),
-        fieldPrimType(fieldPrimType_),
-        fieldId(fieldId_)
+  HdVolumeFieldDescriptor(TfToken const &fieldName_, TfToken const &fieldPrimType_, SdfPath const &fieldId_)
+    : fieldName(fieldName_),
+      fieldPrimType(fieldPrimType_),
+      fieldId(fieldId_)
   {}
 };
 
@@ -466,7 +462,7 @@ class HdSceneDelegate {
     if (authoredSamples > CAPACITY) {
       sa->Resize(authoredSamples);
       size_t authoredSamplesSecondAttempt = SampleTransform(
-          id, authoredSamples, sa->times.data(), sa->values.data());
+        id, authoredSamples, sa->times.data(), sa->values.data());
       // Number of samples should be consisntent through multiple
       // invokations of the sampling function.
       TF_VERIFY(authoredSamples == authoredSamplesSecondAttempt);
@@ -492,15 +488,14 @@ class HdSceneDelegate {
   /// This function returns the union of the authored samples
   /// and the boundaries of the current camera shutter interval.
   template<unsigned int CAPACITY>
-  void SampleInstancerTransform(SdfPath const &instancerId,
-                                HdTimeSampleArray<GfMatrix4d, CAPACITY> *sa)
+  void SampleInstancerTransform(SdfPath const &instancerId, HdTimeSampleArray<GfMatrix4d, CAPACITY> *sa)
   {
     size_t authoredSamples = SampleInstancerTransform(
-        instancerId, CAPACITY, sa->times.data(), sa->values.data());
+      instancerId, CAPACITY, sa->times.data(), sa->values.data());
     if (authoredSamples > CAPACITY) {
       sa->Resize(authoredSamples);
       size_t authoredSamplesSecondAttempt = SampleInstancerTransform(
-          instancerId, authoredSamples, sa->times.data(), sa->values.data());
+        instancerId, authoredSamples, sa->times.data(), sa->values.data());
       // Number of samples should be consisntent through multiple
       // invokations of the sampling function.
       TF_VERIFY(authoredSamples == authoredSamplesSecondAttempt);
@@ -536,9 +531,7 @@ class HdSceneDelegate {
   /// This function returns the union of the authored samples
   /// and the boundaries of the current camera shutter interval.
   template<unsigned int CAPACITY>
-  void SamplePrimvar(SdfPath const &id,
-                     TfToken const &key,
-                     HdTimeSampleArray<VtValue, CAPACITY> *sa);
+  void SamplePrimvar(SdfPath const &id, TfToken const &key, HdTimeSampleArray<VtValue, CAPACITY> *sa);
 
   /// SamplePrimvar() for getting an unflattened primvar and its indices. If
   /// \a *sampleIndices is not nullptr and the primvar has indices, it will
@@ -673,7 +666,7 @@ class HdSceneDelegate {
   /// See HdExtComputationInputDecriptor
   HD_API
   virtual HdExtComputationInputDescriptorVector GetExtComputationInputDescriptors(
-      SdfPath const &computationId);
+    SdfPath const &computationId);
 
   /// For the given computation id, returns a list of computation
   /// output descriptors.
@@ -681,7 +674,7 @@ class HdSceneDelegate {
   /// See HdExtComputationOutputDescriptor
   HD_API
   virtual HdExtComputationOutputDescriptorVector GetExtComputationOutputDescriptors(
-      SdfPath const &computationId);
+    SdfPath const &computationId);
 
   /// Returns a list of primvar names that should be bound to
   /// a generated output from  an ExtComputation for the given prim id and
@@ -692,8 +685,8 @@ class HdSceneDelegate {
   /// for the expected information to be returned.
   HD_API
   virtual HdExtComputationPrimvarDescriptorVector GetExtComputationPrimvarDescriptors(
-      SdfPath const &id,
-      HdInterpolation interpolationMode);
+    SdfPath const &id,
+    HdInterpolation interpolationMode);
 
   /// Returns a single value for a given computation id and input token.
   /// The token may be a computation input or a computation config parameter.
@@ -724,12 +717,12 @@ class HdSceneDelegate {
                                  HdTimeSampleArray<VtValue, CAPACITY> *sa)
   {
     size_t authoredSamples = SampleExtComputationInput(
-        computationId, input, CAPACITY, sa->times.data(), sa->values.data());
+      computationId, input, CAPACITY, sa->times.data(), sa->values.data());
 
     if (authoredSamples > CAPACITY) {
       sa->Resize(authoredSamples);
       size_t authoredSamplesSecondAttempt = SampleExtComputationInput(
-          computationId, input, authoredSamples, sa->times.data(), sa->values.data());
+        computationId, input, authoredSamples, sa->times.data(), sa->values.data());
       // Number of samples should be consisntent through multiple
       // invokations of the sampling function.
       TF_VERIFY(authoredSamples == authoredSamplesSecondAttempt);
@@ -754,8 +747,7 @@ class HdSceneDelegate {
   /// what HdEngine::Execute() was called on.  It may also invoke
   /// many computations in parallel.
   HD_API
-  virtual void InvokeExtComputation(SdfPath const &computationId,
-                                    HdExtComputationContext *context);
+  virtual void InvokeExtComputation(SdfPath const &computationId, HdExtComputationContext *context);
 
   // -----------------------------------------------------------------------//
   /// \name Primitive Variables
@@ -763,8 +755,7 @@ class HdSceneDelegate {
 
   /// Returns descriptors for all primvars of the given interpolation type.
   HD_API
-  virtual HdPrimvarDescriptorVector GetPrimvarDescriptors(SdfPath const &id,
-                                                          HdInterpolation interpolation);
+  virtual HdPrimvarDescriptorVector GetPrimvarDescriptors(SdfPath const &id, HdInterpolation interpolation);
 
   // -----------------------------------------------------------------------//
   /// \name Task Aspects
@@ -776,7 +767,7 @@ class HdSceneDelegate {
   HdRenderIndex *_index;
   SdfPath _delegateID;
 
-  HdSceneDelegate()                  = delete;
+  HdSceneDelegate() = delete;
   HdSceneDelegate(HdSceneDelegate &) = delete;
   HdSceneDelegate &operator=(HdSceneDelegate &) = delete;
 };
@@ -790,7 +781,7 @@ void HdSceneDelegate::SamplePrimvar(SdfPath const &id,
   if (authoredSamples > CAPACITY) {
     sa->Resize(authoredSamples);
     size_t authoredSamplesSecondAttempt = SamplePrimvar(
-        id, key, authoredSamples, sa->times.data(), sa->values.data());
+      id, key, authoredSamples, sa->times.data(), sa->values.data());
     // Number of samples should be consistent through multiple
     // invocations of the sampling function.
     TF_VERIFY(authoredSamples == authoredSamplesSecondAttempt);
@@ -804,11 +795,11 @@ void HdSceneDelegate::SampleIndexedPrimvar(SdfPath const &id,
                                            HdIndexedTimeSampleArray<VtValue, CAPACITY> *sa)
 {
   size_t authoredSamples = SampleIndexedPrimvar(
-      id, key, CAPACITY, sa->times.data(), sa->values.data(), sa->indices.data());
+    id, key, CAPACITY, sa->times.data(), sa->values.data(), sa->indices.data());
   if (authoredSamples > CAPACITY) {
     sa->Resize(authoredSamples);
     size_t authoredSamplesSecondAttempt = SampleIndexedPrimvar(
-        id, key, authoredSamples, sa->times.data(), sa->values.data(), sa->indices.data());
+      id, key, authoredSamples, sa->times.data(), sa->values.data(), sa->indices.data());
     // Number of samples should be consistent through multiple
     // invocations of the sampling function.
     TF_VERIFY(authoredSamples == authoredSamplesSecondAttempt);

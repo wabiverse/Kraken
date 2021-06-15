@@ -185,7 +185,7 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
   UsdAttribute CreateGeomBindTransformAttr(VtValue const &defaultValue = VtValue(),
-                                           bool writeSparsely          = false) const;
+                                           bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -212,8 +212,7 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
-  UsdAttribute CreateJointsAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateJointsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -243,7 +242,7 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
   UsdAttribute CreateJointIndicesAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -271,7 +270,7 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
   UsdAttribute CreateJointWeightsAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -300,7 +299,7 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
   UsdAttribute CreateBlendShapesAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //

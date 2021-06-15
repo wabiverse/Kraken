@@ -122,7 +122,7 @@ bool HgiGLBlitCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
   // not set and restore all relevant gl state.
   HgiGL_ScopedStateHolder openglStateGuard;
 
-  HgiGL *hgiGL        = static_cast<HgiGL *>(hgi);
+  HgiGL *hgiGL = static_cast<HgiGL *>(hgi);
   HgiGLDevice *device = hgiGL->GetPrimaryDevice();
   device->SubmitOps(_ops);
   return true;

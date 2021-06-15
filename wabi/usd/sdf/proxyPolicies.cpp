@@ -33,8 +33,8 @@ WABI_NAMESPACE_BEGIN
 //
 
 SdfRelocatesMapProxyValuePolicy::Type SdfRelocatesMapProxyValuePolicy::CanonicalizeType(
-    const SdfSpecHandle &spec,
-    const Type &x)
+  const SdfSpecHandle &spec,
+  const Type &x)
 {
   if (!TF_VERIFY(spec)) {
     return x;
@@ -50,22 +50,22 @@ SdfRelocatesMapProxyValuePolicy::Type SdfRelocatesMapProxyValuePolicy::Canonical
 }
 
 SdfRelocatesMapProxyValuePolicy::key_type SdfRelocatesMapProxyValuePolicy::CanonicalizeKey(
-    const SdfSpecHandle &spec,
-    const key_type &x)
+  const SdfSpecHandle &spec,
+  const key_type &x)
 {
   return (TF_VERIFY(spec) ? x.MakeAbsolutePath(spec->GetPath()) : x);
 }
 
 SdfRelocatesMapProxyValuePolicy::mapped_type SdfRelocatesMapProxyValuePolicy::CanonicalizeValue(
-    const SdfSpecHandle &spec,
-    const mapped_type &x)
+  const SdfSpecHandle &spec,
+  const mapped_type &x)
 {
   return (TF_VERIFY(spec) ? x.MakeAbsolutePath(spec->GetPath()) : x);
 }
 
 SdfRelocatesMapProxyValuePolicy::value_type SdfRelocatesMapProxyValuePolicy::CanonicalizePair(
-    const SdfSpecHandle &spec,
-    const value_type &x)
+  const SdfSpecHandle &spec,
+  const value_type &x)
 {
   if (!TF_VERIFY(spec)) {
     return x;
@@ -79,8 +79,7 @@ SdfRelocatesMapProxyValuePolicy::value_type SdfRelocatesMapProxyValuePolicy::Can
 // SdfAttributeViewPredicate
 //
 
-SdfAttributeViewPredicate::SdfAttributeViewPredicate()
-    : SdfGenericSpecViewPredicate(SdfSpecTypeAttribute)
+SdfAttributeViewPredicate::SdfAttributeViewPredicate() : SdfGenericSpecViewPredicate(SdfSpecTypeAttribute)
 {
   // Do nothing.
 }
@@ -90,7 +89,7 @@ SdfAttributeViewPredicate::SdfAttributeViewPredicate()
 //
 
 SdfRelationshipViewPredicate::SdfRelationshipViewPredicate()
-    : SdfGenericSpecViewPredicate(SdfSpecTypeRelationship)
+  : SdfGenericSpecViewPredicate(SdfSpecTypeRelationship)
 {
   // Do nothing.
 }

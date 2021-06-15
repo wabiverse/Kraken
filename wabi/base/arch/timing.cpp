@@ -162,12 +162,11 @@ void Arch_InitTickTimer()
   const auto t2 = ArchGetTickTime();
 
   // Total time take during the loop in seconds.
-  const auto durationInSeconds = static_cast<double>(qpcEnd.QuadPart - qpcStart.QuadPart) /
-                                 qpcFreq.QuadPart;
+  const auto durationInSeconds = static_cast<double>(qpcEnd.QuadPart - qpcStart.QuadPart) / qpcFreq.QuadPart;
 
   // Nanoseconds per tick.
   constexpr auto nanosPerSecond = 1.0e9;
-  Arch_NanosecondsPerTick       = nanosPerSecond * durationInSeconds / (t2 - t1);
+  Arch_NanosecondsPerTick = nanosPerSecond * durationInSeconds / (t2 - t1);
 }
 
 #else

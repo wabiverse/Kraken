@@ -27,9 +27,9 @@
 WABI_NAMESPACE_BEGIN
 
 HdPhRenderParam::HdPhRenderParam()
-    : _drawBatchesVersion(1),
-      _materialTagsVersion(1),
-      _needsGarbageCollection(false)
+  : _drawBatchesVersion(1),
+    _materialTagsVersion(1),
+    _needsGarbageCollection(false)
 {}
 
 HdPhRenderParam::~HdPhRenderParam() = default;

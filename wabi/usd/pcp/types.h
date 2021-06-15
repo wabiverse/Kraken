@@ -152,8 +152,8 @@ struct Pcp_SdSiteRef : boost::totally_ordered<Pcp_SdSiteRef> {
 // Internal type for Sd sites.
 struct Pcp_CompressedSdSite {
   Pcp_CompressedSdSite(size_t nodeIndex_, size_t layerIndex_)
-      : nodeIndex(static_cast<uint16_t>(nodeIndex_)),
-        layerIndex(static_cast<uint16_t>(layerIndex_))
+    : nodeIndex(static_cast<uint16_t>(nodeIndex_)),
+      layerIndex(static_cast<uint16_t>(layerIndex_))
   {
     TF_VERIFY(nodeIndex_ < (size_t(1) << 16));
     TF_VERIFY(layerIndex_ < (size_t(1) << 16));

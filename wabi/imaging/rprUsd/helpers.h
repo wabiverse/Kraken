@@ -23,8 +23,7 @@ WABI_NAMESPACE_BEGIN
 template<typename T, typename U, typename R> T RprUsdGetInfo(U *object, R info)
 {
   T value = {};
-  RPR_ERROR_CHECK_THROW(object->GetInfo(info, sizeof(value), &value, nullptr),
-                        "Failed to get object info");
+  RPR_ERROR_CHECK_THROW(object->GetInfo(info, sizeof(value), &value, nullptr), "Failed to get object info");
   return value;
 }
 
@@ -48,7 +47,7 @@ template<typename T, typename GetInfoFunc> Buffer<T> RprUsdGetListInfo(GetInfoFu
   }
 
   size_t numElements = size / sizeof(T);
-  auto buffer        = std::make_unique<T[]>(numElements);
+  auto buffer = std::make_unique<T[]>(numElements);
   RPR_ERROR_CHECK_THROW(getInfoFunc(size, buffer.get(), nullptr), "Failed to get object info");
 
   return {std::move(buffer), numElements};

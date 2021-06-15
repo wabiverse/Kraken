@@ -175,12 +175,12 @@ class HgiResourceBindings {
   HgiResourceBindingsDesc _descriptor;
 
  private:
-  HgiResourceBindings()        = delete;
+  HgiResourceBindings() = delete;
   HgiResourceBindings &operator=(const HgiResourceBindings &) = delete;
-  HgiResourceBindings(const HgiResourceBindings &)            = delete;
+  HgiResourceBindings(const HgiResourceBindings &) = delete;
 };
 
-using HgiResourceBindingsHandle       = HgiHandle<HgiResourceBindings>;
+using HgiResourceBindingsHandle = HgiHandle<HgiResourceBindings>;
 using HgiResourceBindingsHandleVector = std::vector<HgiResourceBindingsHandle>;
 
 WABI_NAMESPACE_END

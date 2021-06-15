@@ -40,8 +40,7 @@ template<class PrimType> Hd_PrimTypeIndex<PrimType>::Hd_PrimTypeIndex() : _entri
 template<class PrimType> Hd_PrimTypeIndex<PrimType>::~Hd_PrimTypeIndex()
 {}
 
-template<class PrimType>
-void Hd_PrimTypeIndex<PrimType>::InitPrimTypes(const TfTokenVector &primTypes)
+template<class PrimType> void Hd_PrimTypeIndex<PrimType>::InitPrimTypes(const TfTokenVector &primTypes)
 {
   size_t primTypeCount = primTypes.size();
   _entries.resize(primTypeCount);
@@ -61,8 +60,7 @@ void Hd_PrimTypeIndex<PrimType>::Clear(HdChangeTracker &tracker, HdRenderDelegat
   for (size_t typeIdx = 0; typeIdx < primTypeCount; ++typeIdx) {
     _PrimTypeEntry &typeEntry = _entries[typeIdx];
 
-    for (typename _PrimMap::iterator primIt = typeEntry.primMap.begin();
-         primIt != typeEntry.primMap.end();
+    for (typename _PrimMap::iterator primIt = typeEntry.primMap.begin(); primIt != typeEntry.primMap.end();
          ++primIt) {
       _TrackerRemovePrim(tracker, primIt->first);
       _PrimInfo &primInfo = primIt->second;
@@ -92,9 +90,8 @@ void Hd_PrimTypeIndex<PrimType>::InsertPrim(const TfToken &typeId,
 
   SdfPath const &sceneDelegateId = sceneDelegate->GetDelegateID();
   if (!primId.HasPrefix(sceneDelegateId)) {
-    TF_CODING_ERROR("Scene Delegate Id (%s) must prefix prim Id (%s)",
-                    sceneDelegateId.GetText(),
-                    primId.GetText());
+    TF_CODING_ERROR(
+      "Scene Delegate Id (%s) must prefix prim Id (%s)", sceneDelegateId.GetText(), primId.GetText());
     return;
   }
 
@@ -248,8 +245,7 @@ PrimType *Hd_PrimTypeIndex<PrimType>::GetPrim(const TfToken &typeId, const SdfPa
   return nullptr;
 }
 
-template<class PrimType>
-PrimType *Hd_PrimTypeIndex<PrimType>::GetFallbackPrim(const TfToken &typeId) const
+template<class PrimType> PrimType *Hd_PrimTypeIndex<PrimType>::GetFallbackPrim(const TfToken &typeId) const
 {
   HD_TRACE_FUNCTION();
 
@@ -328,8 +324,7 @@ void Hd_PrimTypeIndex<PrimType>::SyncPrims(HdChangeTracker &tracker, HdRenderPar
   for (size_t typeIdx = 0; typeIdx < numTypes; ++typeIdx) {
     _PrimTypeEntry &typeEntry = _entries[typeIdx];
 
-    for (typename _PrimMap::iterator primIt = typeEntry.primMap.begin();
-         primIt != typeEntry.primMap.end();
+    for (typename _PrimMap::iterator primIt = typeEntry.primMap.begin(); primIt != typeEntry.primMap.end();
          ++primIt) {
       const SdfPath &primPath = primIt->first;
 
@@ -412,17 +407,15 @@ HdSprim *Hd_PrimTypeIndex<HdSprim>::_RenderDelegateCreatePrim(HdRenderDelegate *
 
 template<>
 // static
-HdSprim *Hd_PrimTypeIndex<HdSprim>::_RenderDelegateCreateFallbackPrim(
-    HdRenderDelegate *renderDelegate,
-    const TfToken &typeId)
+HdSprim *Hd_PrimTypeIndex<HdSprim>::_RenderDelegateCreateFallbackPrim(HdRenderDelegate *renderDelegate,
+                                                                      const TfToken &typeId)
 {
   return renderDelegate->CreateFallbackSprim(typeId);
 }
 
 template<>
 // static
-void Hd_PrimTypeIndex<HdSprim>::_RenderDelegateDestroyPrim(HdRenderDelegate *renderDelegate,
-                                                           HdSprim *prim)
+void Hd_PrimTypeIndex<HdSprim>::_RenderDelegateDestroyPrim(HdRenderDelegate *renderDelegate, HdSprim *prim)
 {
   if (prim != nullptr) {
     prim->Finalize(renderDelegate->GetRenderParam());
@@ -479,17 +472,15 @@ HdBprim *Hd_PrimTypeIndex<HdBprim>::_RenderDelegateCreatePrim(HdRenderDelegate *
 
 template<>
 // static
-HdBprim *Hd_PrimTypeIndex<HdBprim>::_RenderDelegateCreateFallbackPrim(
-    HdRenderDelegate *renderDelegate,
-    const TfToken &typeId)
+HdBprim *Hd_PrimTypeIndex<HdBprim>::_RenderDelegateCreateFallbackPrim(HdRenderDelegate *renderDelegate,
+                                                                      const TfToken &typeId)
 {
   return renderDelegate->CreateFallbackBprim(typeId);
 }
 
 template<>
 // static
-void Hd_PrimTypeIndex<HdBprim>::_RenderDelegateDestroyPrim(HdRenderDelegate *renderDelegate,
-                                                           HdBprim *prim)
+void Hd_PrimTypeIndex<HdBprim>::_RenderDelegateDestroyPrim(HdRenderDelegate *renderDelegate, HdBprim *prim)
 {
   if (prim != nullptr) {
     prim->Finalize(renderDelegate->GetRenderParam());

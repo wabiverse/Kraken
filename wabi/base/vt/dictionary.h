@@ -75,8 +75,8 @@ class VtDictionary {
   // VtDictionary is empty, or the Iterator is at the end of a VtDictionary
   // that contains values).
   template<class UnderlyingMapPtr, class UnderlyingIterator>
-  class Iterator : public boost::iterator_adaptor<Iterator<UnderlyingMapPtr, UnderlyingIterator>,
-                                                  UnderlyingIterator> {
+  class Iterator
+    : public boost::iterator_adaptor<Iterator<UnderlyingMapPtr, UnderlyingIterator>, UnderlyingIterator> {
    public:
     // Default constructor creates an Iterator equivalent to end() (i.e.
     // UnderlyingMapPtr is null)
@@ -86,16 +86,14 @@ class VtDictionary {
     // Copy constructor (also allows for converting non-const to const).
     template<class OtherUnderlyingMapPtr, class OtherUnderlyingIterator>
     Iterator(Iterator<OtherUnderlyingMapPtr, OtherUnderlyingIterator> const &other)
-        : Iterator::iterator_adaptor_(other.base()),
-          _underlyingMap(other._underlyingMap)
+      : Iterator::iterator_adaptor_(other.base()),
+        _underlyingMap(other._underlyingMap)
     {}
 
    private:
     // Private constructor allowing the find, begin and insert methods
     // to create and return the proper Iterator.
-    Iterator(UnderlyingMapPtr m, UnderlyingIterator i)
-        : Iterator::iterator_adaptor_(i),
-          _underlyingMap(m)
+    Iterator(UnderlyingMapPtr m, UnderlyingIterator i) : Iterator::iterator_adaptor_(i), _underlyingMap(m)
     {
       if (m && i == m->end())
         _underlyingMap = 0;
@@ -120,8 +118,8 @@ class VtDictionary {
     {
       if (!_underlyingMap) {
         TF_FATAL_ERROR(
-            "Attempted invalid increment operation on a "
-            "VtDictionary iterator");
+          "Attempted invalid increment operation on a "
+          "VtDictionary iterator");
         return;
       }
       if (++this->base_reference() == _underlyingMap->end()) {
@@ -317,9 +315,7 @@ class VtDictionary {
   /// \p keyPath.  If \p keyPath identifies a full sub-dictionary, replace the
   /// entire sub-dictionary with \p value.
   VT_API
-  void SetValueAtPath(std::string const &keyPath,
-                      VtValue const &value,
-                      char const *delimiters = ":");
+  void SetValueAtPath(std::string const &keyPath, VtValue const &value, char const *delimiters = ":");
 
   /// Set the value at \p keyPath to \p value.  Create sub-dictionaries as
   /// necessary according to the path elements in \p keyPath.  If \p keyPath
@@ -370,8 +366,7 @@ VT_API VtDictionary const &VtGetEmptyDictionary();
 /// is of type \p T.
 /// \ingroup group_vtdict_functions
 ///
-template<typename T>
-bool VtDictionaryIsHolding(const VtDictionary &dictionary, const std::string &key)
+template<typename T> bool VtDictionaryIsHolding(const VtDictionary &dictionary, const std::string &key)
 {
   VtDictionary::const_iterator i = dictionary.find(key);
   if (i == dictionary.end()) {
@@ -402,13 +397,11 @@ template<typename T> bool VtDictionaryIsHolding(const VtDictionary &dictionary, 
 /// VtDictionaryIsHolding first.
 ///
 /// \ingroup group_vtdict_functions
-template<typename T>
-const T &VtDictionaryGet(const VtDictionary &dictionary, const std::string &key)
+template<typename T> const T &VtDictionaryGet(const VtDictionary &dictionary, const std::string &key)
 {
   VtDictionary::const_iterator i = dictionary.find(key);
   if (ARCH_UNLIKELY(i == dictionary.end())) {
-    TF_FATAL_ERROR("Attempted to get value for key '" + key +
-                   "', which is not in the dictionary.");
+    TF_FATAL_ERROR("Attempted to get value for key '" + key + "', which is not in the dictionary.");
   }
 
   return i->second.Get<T>();
@@ -420,9 +413,9 @@ template<typename T> const T &VtDictionaryGet(const VtDictionary &dictionary, co
   VtDictionary::const_iterator i = dictionary.find(key);
   if (ARCH_UNLIKELY(i == dictionary.end())) {
     TF_FATAL_ERROR(
-        "Attempted to get value for key '%s', "
-        "which is not in the dictionary.",
-        key);
+      "Attempted to get value for key '%s', "
+      "which is not in the dictionary.",
+      key);
   }
 
   return i->second.Get<T>();
@@ -463,9 +456,7 @@ extern VT_API Vt_DefaultGenerator VtDefault;
 ///
 /// \ingroup group_vtdict_functions
 template<class T, class U>
-T VtDictionaryGet(const VtDictionary &dictionary,
-                  const std::string &key,
-                  Vt_DefaultHolder<U> const &def)
+T VtDictionaryGet(const VtDictionary &dictionary, const std::string &key, Vt_DefaultHolder<U> const &def)
 {
   VtDictionary::const_iterator i = dictionary.find(key);
   if (i == dictionary.end() || !i->second.IsHolding<T>())

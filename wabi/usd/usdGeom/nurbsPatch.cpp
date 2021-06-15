@@ -105,8 +105,7 @@ UsdAttribute UsdGeomNurbsPatch::GetUVertexCountAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->uVertexCount);
 }
 
-UsdAttribute UsdGeomNurbsPatch::CreateUVertexCountAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdGeomNurbsPatch::CreateUVertexCountAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->uVertexCount,
                                     SdfValueTypeNames->Int,
@@ -121,8 +120,7 @@ UsdAttribute UsdGeomNurbsPatch::GetVVertexCountAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->vVertexCount);
 }
 
-UsdAttribute UsdGeomNurbsPatch::CreateVVertexCountAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdGeomNurbsPatch::CreateVVertexCountAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->vVertexCount,
                                     SdfValueTypeNames->Int,
@@ -137,8 +135,7 @@ UsdAttribute UsdGeomNurbsPatch::GetUOrderAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->uOrder);
 }
 
-UsdAttribute UsdGeomNurbsPatch::CreateUOrderAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdGeomNurbsPatch::CreateUOrderAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->uOrder,
                                     SdfValueTypeNames->Int,
@@ -153,8 +150,7 @@ UsdAttribute UsdGeomNurbsPatch::GetVOrderAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->vOrder);
 }
 
-UsdAttribute UsdGeomNurbsPatch::CreateVOrderAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdGeomNurbsPatch::CreateVOrderAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->vOrder,
                                     SdfValueTypeNames->Int,
@@ -169,8 +165,7 @@ UsdAttribute UsdGeomNurbsPatch::GetUKnotsAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->uKnots);
 }
 
-UsdAttribute UsdGeomNurbsPatch::CreateUKnotsAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdGeomNurbsPatch::CreateUKnotsAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->uKnots,
                                     SdfValueTypeNames->DoubleArray,
@@ -185,8 +180,7 @@ UsdAttribute UsdGeomNurbsPatch::GetVKnotsAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->vKnots);
 }
 
-UsdAttribute UsdGeomNurbsPatch::CreateVKnotsAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdGeomNurbsPatch::CreateVKnotsAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->vKnots,
                                     SdfValueTypeNames->DoubleArray,
@@ -201,8 +195,7 @@ UsdAttribute UsdGeomNurbsPatch::GetUFormAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->uForm);
 }
 
-UsdAttribute UsdGeomNurbsPatch::CreateUFormAttr(VtValue const &defaultValue,
-                                                bool writeSparsely) const
+UsdAttribute UsdGeomNurbsPatch::CreateUFormAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->uForm,
                                     SdfValueTypeNames->Token,
@@ -217,8 +210,7 @@ UsdAttribute UsdGeomNurbsPatch::GetVFormAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->vForm);
 }
 
-UsdAttribute UsdGeomNurbsPatch::CreateVFormAttr(VtValue const &defaultValue,
-                                                bool writeSparsely) const
+UsdAttribute UsdGeomNurbsPatch::CreateVFormAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->vForm,
                                     SdfValueTypeNames->Token,
@@ -233,8 +225,7 @@ UsdAttribute UsdGeomNurbsPatch::GetURangeAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->uRange);
 }
 
-UsdAttribute UsdGeomNurbsPatch::CreateURangeAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdGeomNurbsPatch::CreateURangeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->uRange,
                                     SdfValueTypeNames->Double2,
@@ -249,8 +240,7 @@ UsdAttribute UsdGeomNurbsPatch::GetVRangeAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->vRange);
 }
 
-UsdAttribute UsdGeomNurbsPatch::CreateVRangeAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdGeomNurbsPatch::CreateVRangeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->vRange,
                                     SdfValueTypeNames->Double2,
@@ -265,8 +255,7 @@ UsdAttribute UsdGeomNurbsPatch::GetPointWeightsAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->pointWeights);
 }
 
-UsdAttribute UsdGeomNurbsPatch::CreatePointWeightsAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdGeomNurbsPatch::CreatePointWeightsAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->pointWeights,
                                     SdfValueTypeNames->DoubleArray,
@@ -373,8 +362,7 @@ UsdAttribute UsdGeomNurbsPatch::CreateTrimCurvePointsAttr(VtValue const &default
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -388,26 +376,26 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdGeomNurbsPatch::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdGeomTokens->uVertexCount,
-      UsdGeomTokens->vVertexCount,
-      UsdGeomTokens->uOrder,
-      UsdGeomTokens->vOrder,
-      UsdGeomTokens->uKnots,
-      UsdGeomTokens->vKnots,
-      UsdGeomTokens->uForm,
-      UsdGeomTokens->vForm,
-      UsdGeomTokens->uRange,
-      UsdGeomTokens->vRange,
-      UsdGeomTokens->pointWeights,
-      UsdGeomTokens->trimCurveCounts,
-      UsdGeomTokens->trimCurveOrders,
-      UsdGeomTokens->trimCurveVertexCounts,
-      UsdGeomTokens->trimCurveKnots,
-      UsdGeomTokens->trimCurveRanges,
-      UsdGeomTokens->trimCurvePoints,
+    UsdGeomTokens->uVertexCount,
+    UsdGeomTokens->vVertexCount,
+    UsdGeomTokens->uOrder,
+    UsdGeomTokens->vOrder,
+    UsdGeomTokens->uKnots,
+    UsdGeomTokens->vKnots,
+    UsdGeomTokens->uForm,
+    UsdGeomTokens->vForm,
+    UsdGeomTokens->uRange,
+    UsdGeomTokens->vRange,
+    UsdGeomTokens->pointWeights,
+    UsdGeomTokens->trimCurveCounts,
+    UsdGeomTokens->trimCurveOrders,
+    UsdGeomTokens->trimCurveVertexCounts,
+    UsdGeomTokens->trimCurveKnots,
+    UsdGeomTokens->trimCurveRanges,
+    UsdGeomTokens->trimCurvePoints,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdGeomPointBased::GetSchemaAttributeNames(true), localNames);
+    UsdGeomPointBased::GetSchemaAttributeNames(true), localNames);
 
   if (includeInherited)
     return allNames;

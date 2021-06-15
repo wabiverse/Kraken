@@ -54,29 +54,28 @@ class UsdPayloads {
   /// errors to expect, and \ref Usd_OM_ListOps for details on list editing
   /// and composition of listOps.
   USD_API
-  bool AddPayload(const SdfPayload &payload,
-                  UsdListPosition position = UsdListPositionBackOfPrependList);
+  bool AddPayload(const SdfPayload &payload, UsdListPosition position = UsdListPositionBackOfPrependList);
 
   /// \overload
   USD_API
   bool AddPayload(const std::string &identifier,
                   const SdfPath &primPath,
                   const SdfLayerOffset &layerOffset = SdfLayerOffset(),
-                  UsdListPosition position          = UsdListPositionBackOfPrependList);
+                  UsdListPosition position = UsdListPositionBackOfPrependList);
 
   /// \overload
   /// \sa \ref Usd_DefaultPrim_References "Payloads Without Prim Paths"
   USD_API
   bool AddPayload(const std::string &identifier,
                   const SdfLayerOffset &layerOffset = SdfLayerOffset(),
-                  UsdListPosition position          = UsdListPositionBackOfPrependList);
+                  UsdListPosition position = UsdListPositionBackOfPrependList);
 
   /// Add an internal payload to the specified prim.
   /// \sa \ref Usd_Internal_References "Internal Payloads"
   USD_API
   bool AddInternalPayload(const SdfPath &primPath,
                           const SdfLayerOffset &layerOffset = SdfLayerOffset(),
-                          UsdListPosition position          = UsdListPositionBackOfPrependList);
+                          UsdListPosition position = UsdListPositionBackOfPrependList);
 
   /// Removes the specified payload from the payloads listOp at the
   /// current EditTarget.  This does not necessarily eliminate the payload

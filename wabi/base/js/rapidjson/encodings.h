@@ -145,7 +145,7 @@ template<typename CharType = char> struct UTF8 {
   template<typename InputStream> static bool Decode(InputStream &is, unsigned *codepoint)
   {
 #define COPY() \
-  c          = is.Take(); \
+  c = is.Take(); \
   *codepoint = (*codepoint << 6) | (static_cast<unsigned char>(c) & 0x3Fu)
 #define TRANS(mask) result &= ((GetRange(static_cast<unsigned char>(c)) & mask) != 0)
 #define TAIL() \
@@ -158,8 +158,8 @@ template<typename CharType = char> struct UTF8 {
     }
 
     unsigned char type = GetRange(static_cast<unsigned char>(c));
-    *codepoint         = (0xFF >> type) & static_cast<unsigned char>(c);
-    bool result        = true;
+    *codepoint = (0xFF >> type) & static_cast<unsigned char>(c);
+    bool result = true;
     switch (type) {
       case 2:
         TAIL();
@@ -266,24 +266,22 @@ template<typename CharType = char> struct UTF8 {
     // With new mapping 1 -> 0x10, 7 -> 0x20, 9 -> 0x40, such that AND operation can test multiple
     // types.
     static const unsigned char type[] = {
-        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,    0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10,
-        0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40,
-        0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x20, 0x20, 0x20, 0x20, 0x20,
-        0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
-        0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 8,    8,    2,
-        2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,
-        2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    10,
-        3,    3,    3,    3,    3,    3,    3,    3,    3,    3,    3,    3,    4,    3,    3,
-        11,   6,    6,    6,    5,    8,    8,    8,    8,    8,    8,    8,    8,    8,    8,
-        8,
+      0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+      0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+      0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+      0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+      0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+      0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+      0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+      0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+      0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10,
+      0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40,
+      0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+      0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+      8,    8,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,
+      2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,    2,
+      10,   3,    3,    3,    3,    3,    3,    3,    3,    3,    3,    3,    3,    4,    3,    3,
+      11,   6,    6,    6,    5,    8,    8,    8,    8,    8,    8,    8,    8,    8,    8,    8,
     };
     return type[c];
   }
@@ -386,7 +384,7 @@ template<typename CharType = wchar_t> struct UTF16 {
     }
     else if (c <= 0xDBFF) {
       *codepoint = (static_cast<unsigned>(c) & 0x3FF) << 10;
-      c          = is.Take();
+      c = is.Take();
       *codepoint |= (static_cast<unsigned>(c) & 0x3FF);
       *codepoint += 0x10000;
       return c >= 0xDC00 && c <= 0xDFFF;
@@ -510,7 +508,7 @@ template<typename CharType = unsigned> struct UTF32 {
   template<typename InputStream> static bool Decode(InputStream &is, unsigned *codepoint)
   {
     RAPIDJSON_STATIC_ASSERT(sizeof(typename InputStream::Ch) >= 4);
-    Ch c       = is.Take();
+    Ch c = is.Take();
     *codepoint = c;
     return c <= 0x10FFFF;
   }
@@ -628,7 +626,7 @@ template<typename CharType = char> struct ASCII {
 
   template<typename InputStream> static bool Decode(InputStream &is, unsigned *codepoint)
   {
-    uint8_t c  = static_cast<uint8_t>(is.Take());
+    uint8_t c = static_cast<uint8_t>(is.Take());
     *codepoint = c;
     return c <= 0X7F;
   }
@@ -672,7 +670,7 @@ template<typename CharType = char> struct ASCII {
 
 //! Runtime-specified UTF encoding type of a stream.
 enum UTFType {
-  kUTF8    = 0,  //!< UTF-8.
+  kUTF8 = 0,     //!< UTF-8.
   kUTF16LE = 1,  //!< UTF-16 little endian.
   kUTF16BE = 2,  //!< UTF-16 big endian.
   kUTF32LE = 3,  //!< UTF-32 little endian.

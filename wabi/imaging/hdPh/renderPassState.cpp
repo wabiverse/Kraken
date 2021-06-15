@@ -55,18 +55,17 @@ WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(_tokens, (renderPassState));
 
-HdPhRenderPassState::HdPhRenderPassState()
-    : HdPhRenderPassState(std::make_shared<HdPhRenderPassShader>())
+HdPhRenderPassState::HdPhRenderPassState() : HdPhRenderPassState(std::make_shared<HdPhRenderPassShader>())
 {}
 
 HdPhRenderPassState::HdPhRenderPassState(HdPhRenderPassShaderSharedPtr const &renderPassShader)
-    : HdRenderPassState(),
-      _renderPassShader(renderPassShader),
-      _fallbackLightingShader(std::make_shared<HdPh_FallbackLightingShader>()),
-      _clipPlanesBufferSize(0),
-      _alphaThresholdCurrent(0),
-      _resolveMultiSampleAov(true),
-      _useSceneMaterials(true)
+  : HdRenderPassState(),
+    _renderPassShader(renderPassShader),
+    _fallbackLightingShader(std::make_shared<HdPh_FallbackLightingShader>()),
+    _clipPlanesBufferSize(0),
+    _alphaThresholdCurrent(0),
+    _resolveMultiSampleAov(true),
+    _useSceneMaterials(true)
 {
   _lightingShader = _fallbackLightingShader;
 }
@@ -78,13 +77,12 @@ bool HdPhRenderPassState::_UseAlphaMask() const
   return (_alphaThreshold > 0.0f);
 }
 
-static GfVec4f _ComputeDataWindow(const CameraUtilFraming &framing,
-                                  const GfVec4f &fallbackViewport)
+static GfVec4f _ComputeDataWindow(const CameraUtilFraming &framing, const GfVec4f &fallbackViewport)
 {
   if (framing.IsValid()) {
     const GfRect2i &dataWindow = framing.dataWindow;
     return GfVec4f(
-        dataWindow.GetMinX(), dataWindow.GetMinY(), dataWindow.GetWidth(), dataWindow.GetHeight());
+      dataWindow.GetMinX(), dataWindow.GetMinY(), dataWindow.GetWidth(), dataWindow.GetHeight());
   }
 
   return fallbackViewport;
@@ -98,8 +96,8 @@ void HdPhRenderPassState::Prepare(HdResourceRegistrySharedPtr const &resourceReg
 
   HdRenderPassState::Prepare(resourceRegistry);
 
-  HdPhResourceRegistrySharedPtr const &hdPhResourceRegistry =
-      std::static_pointer_cast<HdPhResourceRegistry>(resourceRegistry);
+  HdPhResourceRegistrySharedPtr const &hdPhResourceRegistry = std::static_pointer_cast<HdPhResourceRegistry>(
+    resourceRegistry);
 
   VtVec4fArray clipPlanes;
   TF_FOR_ALL(it, GetClipPlanes())
@@ -144,21 +142,20 @@ void HdPhRenderPassState::Prepare(HdResourceRegistrySharedPtr const &resourceReg
     bufferSpecs.emplace_back(HdShaderTokens->viewport, HdTupleType{HdTypeFloatVec4, 1});
 
     if (clipPlanes.size() > 0) {
-      bufferSpecs.emplace_back(HdShaderTokens->clipPlanes,
-                               HdTupleType{HdTypeFloatVec4, clipPlanes.size()});
+      bufferSpecs.emplace_back(HdShaderTokens->clipPlanes, HdTupleType{HdTypeFloatVec4, clipPlanes.size()});
     }
     _clipPlanesBufferSize = clipPlanes.size();
 
     // allocate interleaved buffer
     _renderPassStateBar = hdPhResourceRegistry->AllocateUniformBufferArrayRange(
-        HdTokens->drawingShader, bufferSpecs, HdBufferArrayUsageHint());
+      HdTokens->drawingShader, bufferSpecs, HdBufferArrayUsageHint());
 
-    HdPhBufferArrayRangeSharedPtr _renderPassStateBar_ =
-        std::static_pointer_cast<HdPhBufferArrayRange>(_renderPassStateBar);
+    HdPhBufferArrayRangeSharedPtr _renderPassStateBar_ = std::static_pointer_cast<HdPhBufferArrayRange>(
+      _renderPassStateBar);
 
     // add buffer binding request
     _renderPassShader->AddBufferBinding(HdBindingRequest(
-        HdBinding::UBO, _tokens->renderPassState, _renderPassStateBar_, /*interleaved=*/true));
+      HdBinding::UBO, _tokens->renderPassState, _renderPassStateBar_, /*interleaved=*/true));
   }
 
   // Lighting hack supports different blending amounts, but we are currently
@@ -166,39 +163,36 @@ void HdPhRenderPassState::Prepare(HdResourceRegistrySharedPtr const &resourceReg
   float lightingBlendAmount = (_lightingEnabled ? 1.0f : 0.0f);
 
   GfMatrix4d const &worldToViewMatrix = GetWorldToViewMatrix();
-  GfMatrix4d projMatrix               = GetProjectionMatrix();
+  GfMatrix4d projMatrix = GetProjectionMatrix();
 
   HdBufferSourceSharedPtrVector sources = {
-      std::make_shared<HdVtBufferSource>(HdShaderTokens->worldToViewMatrix, worldToViewMatrix),
-      std::make_shared<HdVtBufferSource>(HdShaderTokens->worldToViewInverseMatrix,
-                                         worldToViewMatrix.GetInverse()),
-      std::make_shared<HdVtBufferSource>(HdShaderTokens->projectionMatrix, projMatrix),
-      // Override color alpha component is used as the amount to blend in the
-      // override color over the top of the regular fragment color.
-      std::make_shared<HdVtBufferSource>(HdShaderTokens->overrideColor, VtValue(_overrideColor)),
-      std::make_shared<HdVtBufferSource>(HdShaderTokens->wireframeColor, VtValue(_wireframeColor)),
-      std::make_shared<HdVtBufferSource>(HdShaderTokens->maskColor, VtValue(_maskColor)),
-      std::make_shared<HdVtBufferSource>(HdShaderTokens->indicatorColor, VtValue(_indicatorColor)),
-      std::make_shared<HdVtBufferSource>(HdShaderTokens->pointColor, VtValue(_pointColor)),
-      std::make_shared<HdVtBufferSource>(HdShaderTokens->pointSize, VtValue(_pointSize)),
-      std::make_shared<HdVtBufferSource>(HdShaderTokens->pointSelectedSize,
-                                         VtValue(_pointSelectedSize)),
-      std::make_shared<HdVtBufferSource>(HdShaderTokens->lightingBlendAmount,
-                                         VtValue(lightingBlendAmount))};
+    std::make_shared<HdVtBufferSource>(HdShaderTokens->worldToViewMatrix, worldToViewMatrix),
+    std::make_shared<HdVtBufferSource>(HdShaderTokens->worldToViewInverseMatrix,
+                                       worldToViewMatrix.GetInverse()),
+    std::make_shared<HdVtBufferSource>(HdShaderTokens->projectionMatrix, projMatrix),
+    // Override color alpha component is used as the amount to blend in the
+    // override color over the top of the regular fragment color.
+    std::make_shared<HdVtBufferSource>(HdShaderTokens->overrideColor, VtValue(_overrideColor)),
+    std::make_shared<HdVtBufferSource>(HdShaderTokens->wireframeColor, VtValue(_wireframeColor)),
+    std::make_shared<HdVtBufferSource>(HdShaderTokens->maskColor, VtValue(_maskColor)),
+    std::make_shared<HdVtBufferSource>(HdShaderTokens->indicatorColor, VtValue(_indicatorColor)),
+    std::make_shared<HdVtBufferSource>(HdShaderTokens->pointColor, VtValue(_pointColor)),
+    std::make_shared<HdVtBufferSource>(HdShaderTokens->pointSize, VtValue(_pointSize)),
+    std::make_shared<HdVtBufferSource>(HdShaderTokens->pointSelectedSize, VtValue(_pointSelectedSize)),
+    std::make_shared<HdVtBufferSource>(HdShaderTokens->lightingBlendAmount, VtValue(lightingBlendAmount))};
 
   if (_UseAlphaMask()) {
-    sources.push_back(std::make_shared<HdVtBufferSource>(HdShaderTokens->alphaThreshold,
-                                                         VtValue(_alphaThreshold)));
+    sources.push_back(
+      std::make_shared<HdVtBufferSource>(HdShaderTokens->alphaThreshold, VtValue(_alphaThreshold)));
   }
 
-  sources.push_back(
-      std::make_shared<HdVtBufferSource>(HdShaderTokens->tessLevel, VtValue(_tessLevel)));
-  sources.push_back(std::make_shared<HdVtBufferSource>(
-      HdShaderTokens->viewport, VtValue(_ComputeDataWindow(_framing, _viewport))));
+  sources.push_back(std::make_shared<HdVtBufferSource>(HdShaderTokens->tessLevel, VtValue(_tessLevel)));
+  sources.push_back(std::make_shared<HdVtBufferSource>(HdShaderTokens->viewport,
+                                                       VtValue(_ComputeDataWindow(_framing, _viewport))));
 
   if (clipPlanes.size() > 0) {
     sources.push_back(std::make_shared<HdVtBufferSource>(
-        HdShaderTokens->clipPlanes, VtValue(clipPlanes), clipPlanes.size()));
+      HdShaderTokens->clipPlanes, VtValue(clipPlanes), clipPlanes.size()));
   }
 
   hdPhResourceRegistry->AddSources(_renderPassStateBar, std::move(sources));
@@ -232,8 +226,7 @@ void HdPhRenderPassState::SetLightingShader(HdPhLightingShaderSharedPtr const &l
   }
 }
 
-void HdPhRenderPassState::SetRenderPassShader(
-    HdPhRenderPassShaderSharedPtr const &renderPassShader)
+void HdPhRenderPassState::SetRenderPassShader(HdPhRenderPassShaderSharedPtr const &renderPassShader)
 {
   if (_renderPassShader == renderPassShader)
     return;
@@ -241,11 +234,11 @@ void HdPhRenderPassState::SetRenderPassShader(
   _renderPassShader = renderPassShader;
   if (_renderPassStateBar) {
 
-    HdPhBufferArrayRangeSharedPtr _renderPassStateBar_ =
-        std::static_pointer_cast<HdPhBufferArrayRange>(_renderPassStateBar);
+    HdPhBufferArrayRangeSharedPtr _renderPassStateBar_ = std::static_pointer_cast<HdPhBufferArrayRange>(
+      _renderPassStateBar);
 
     _renderPassShader->AddBufferBinding(HdBindingRequest(
-        HdBinding::UBO, _tokens->renderPassState, _renderPassStateBar_, /*interleaved=*/true));
+      HdBinding::UBO, _tokens->renderPassState, _renderPassStateBar_, /*interleaved=*/true));
   }
 }
 
@@ -308,8 +301,7 @@ void _SetColorMask(int drawBufferIndex, HdRenderPassState::ColorMask const &mask
     glColorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
   }
   else {
-    glColorMaski(
-        (uint32_t)drawBufferIndex, colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
+    glColorMaski((uint32_t)drawBufferIndex, colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
   }
 }
 
@@ -382,10 +374,8 @@ void HdPhRenderPassState::Bind()
                         HdPhGLConversions::GetGlBlendFactor(_blendColorDstFactor),
                         HdPhGLConversions::GetGlBlendFactor(_blendAlphaSrcFactor),
                         HdPhGLConversions::GetGlBlendFactor(_blendAlphaDstFactor));
-    glBlendColor(_blendConstantColor[0],
-                 _blendConstantColor[1],
-                 _blendConstantColor[2],
-                 _blendConstantColor[3]);
+    glBlendColor(
+      _blendConstantColor[0], _blendConstantColor[1], _blendConstantColor[2], _blendConstantColor[3]);
   }
   else {
     glDisable(GL_BLEND);
@@ -470,9 +460,8 @@ void HdPhRenderPassState::SetCameraFramingState(GfMatrix4d const &worldToViewMat
   }
 
   _worldToViewMatrix = worldToViewMatrix;
-  _projectionMatrix  = projectionMatrix;
-  _viewport          = GfVec4f(
-      (float)viewport[0], (float)viewport[1], (float)viewport[2], (float)viewport[3]);
+  _projectionMatrix = projectionMatrix;
+  _viewport = GfVec4f((float)viewport[0], (float)viewport[1], (float)viewport[2], (float)viewport[3]);
   _clipPlanes = clipPlanes;
 }
 
@@ -498,7 +487,7 @@ static HdRenderBuffer *_GetRenderBuffer(const HdRenderPassAovBinding &aov,
   }
 
   return dynamic_cast<HdRenderBuffer *>(
-      renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, aov.renderBufferId));
+    renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, aov.renderBufferId));
 }
 
 // Clear values are always vec4f in HgiGraphicsCmdDesc.
@@ -539,14 +528,13 @@ static GfVec4f _ToVec4f(const VtValue &v)
   return GfVec4f(0.0);
 }
 
-HgiGraphicsCmdsDesc HdPhRenderPassState::MakeGraphicsCmdsDesc(
-    const HdRenderIndex *const renderIndex) const
+HgiGraphicsCmdsDesc HdPhRenderPassState::MakeGraphicsCmdsDesc(const HdRenderIndex *const renderIndex) const
 {
   const HdRenderPassAovBindingVector &aovBindings = GetAovBindings();
 
   static const size_t maxColorTex = 8;
-  const bool useMultiSample       = GetUseAovMultiSample();
-  const bool resolveMultiSample   = GetResolveAovMultiSample();
+  const bool useMultiSample = GetUseAovMultiSample();
+  const bool resolveMultiSample = GetResolveAovMultiSample();
 
   HgiGraphicsCmdsDesc desc;
 
@@ -563,7 +551,7 @@ HgiGraphicsCmdsDesc HdPhRenderPassState::MakeGraphicsCmdsDesc(
     }
 
     const bool multiSampled = useMultiSample && renderBuffer->IsMultiSampled();
-    const VtValue rv        = renderBuffer->GetResource(multiSampled);
+    const VtValue rv = renderBuffer->GetResource(multiSampled);
 
     if (!TF_VERIFY(rv.IsHolding<HgiTextureHandle>(), "Invalid render buffer texture")) {
       continue;
@@ -585,7 +573,7 @@ HgiGraphicsCmdsDesc HdPhRenderPassState::MakeGraphicsCmdsDesc(
     HgiAttachmentDesc attachmentDesc;
 
     attachmentDesc.format = hgiTexHandle->GetDescriptor().format;
-    attachmentDesc.usage  = hgiTexHandle->GetDescriptor().usage;
+    attachmentDesc.usage = hgiTexHandle->GetDescriptor().usage;
 
     // We need to use LoadOpLoad instead of DontCare because we can have
     // multiple render passes that use the same attachments.
@@ -607,17 +595,17 @@ HgiGraphicsCmdsDesc HdPhRenderPassState::MakeGraphicsCmdsDesc(
 
     // HdPh expresses blending per RenderPassState, where Hgi expresses
     // blending per-attachment. Transfer pass blend state to attachments.
-    attachmentDesc.blendEnabled        = _blendEnabled;
+    attachmentDesc.blendEnabled = _blendEnabled;
     attachmentDesc.srcColorBlendFactor = HgiBlendFactor(_blendColorSrcFactor);
     attachmentDesc.dstColorBlendFactor = HgiBlendFactor(_blendColorDstFactor);
-    attachmentDesc.colorBlendOp        = HgiBlendOp(_blendColorOp);
+    attachmentDesc.colorBlendOp = HgiBlendOp(_blendColorOp);
     attachmentDesc.srcAlphaBlendFactor = HgiBlendFactor(_blendAlphaSrcFactor);
     attachmentDesc.dstAlphaBlendFactor = HgiBlendFactor(_blendAlphaDstFactor);
-    attachmentDesc.alphaBlendOp        = HgiBlendOp(_blendAlphaOp);
+    attachmentDesc.alphaBlendOp = HgiBlendOp(_blendAlphaOp);
 
     if (HdAovHasDepthSemantic(aov.aovName)) {
       desc.depthAttachmentDesc = std::move(attachmentDesc);
-      desc.depthTexture        = hgiTexHandle;
+      desc.depthTexture = hgiTexHandle;
       if (hgiResolveHandle) {
         desc.depthResolveTexture = hgiResolveHandle;
       }

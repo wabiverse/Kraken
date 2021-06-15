@@ -88,7 +88,7 @@ static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
     return -1;
   }
   {{VEC}} &vec = extract<{{VEC}} &>(self);
-  *ptrptr      = static_cast<void *>(vec.data());
+  *ptrptr = static_cast<void *>(vec.data());
   // Return size in bytes.
   return sizeof({{VEC}});
 }
@@ -134,9 +134,9 @@ static int getbuffer(PyObject *self, Py_buffer *view, int flags)
 
   {{VEC}} &vec = extract<{{VEC}} &>(self);
 
-  view->obj      = self;
-  view->buf      = static_cast<void *>(vec.data());
-  view->len      = sizeof({{VEC}});
+  view->obj = self;
+  view->buf = static_cast<void *>(vec.data());
+  view->len = sizeof({{VEC}});
   view->readonly = 0;
   view->itemsize = sizeof({{SCL}});
   if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT) {
@@ -146,23 +146,23 @@ static int getbuffer(PyObject *self, Py_buffer *view, int flags)
     view->format = NULL;
   }
   if ((flags & PyBUF_ND) == PyBUF_ND) {
-    view->ndim              = 1;
+    view->ndim = 1;
     static Py_ssize_t shape = {{DIM}};
-    view->shape             = &shape;
+    view->shape = &shape;
   }
   else {
-    view->ndim  = 0;
+    view->ndim = 0;
     view->shape = NULL;
   }
   if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES) {
     static Py_ssize_t strides = sizeof({{SCL}});
-    view->strides             = &strides;
+    view->strides = &strides;
   }
   else {
     view->strides = NULL;
   }
   view->suboffsets = NULL;
-  view->internal   = NULL;
+  view->internal = NULL;
 
   Py_INCREF(self);  // need to retain a reference to self.
   return 0;
@@ -172,13 +172,13 @@ static int getbuffer(PyObject *self, Py_buffer *view, int flags)
 // to the right buffer protocol functions.
 static PyBufferProcs bufferProcs = {
 #if PY_MAJOR_VERSION == 2
-    (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
-    (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
-    (segcountproc)getsegcount,    /*bf_getsegcount*/
-    (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
+  (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
+  (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
+  (segcountproc)getsegcount,    /*bf_getsegcount*/
+  (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
 #endif
-    (getbufferproc)getbuffer,
-    (releasebufferproc)0,
+  (getbufferproc)getbuffer,
+  (releasebufferproc)0,
 };
 
 // End python buffer protocol support.
@@ -267,7 +267,7 @@ static tuple BuildOrthonormalFrameHelper(const {{VEC}} & self, double eps = {{EP
 
 BOOST_PYTHON_FUNCTION_OVERLOADS(BuildOrthonormalFrame_overloads, BuildOrthonormalFrameHelper, 1, 2)
 
-    { % endif % }
+  { % endif % }
 {
 #DIM == 3 and IS_FLOATING_POINT(SCL) #
 }
@@ -300,7 +300,7 @@ static list __getslice__(const {{VEC}} & self, slice indices)
   list result;
 
   const {{SCL}} *begin = self.data();
-  const {{SCL}} *end   = begin + {{DIM}};
+  const {{SCL}} *end = begin + {{DIM}};
 
   slice::range<const {{SCL}} *> bounds;
   try {
@@ -366,7 +366,7 @@ static void __setslice__({{VEC}} & self, slice indices, object values)
   }
 
   {{SCL}} *begin = self.data();
-  {{SCL}} *end   = begin + {{DIM}};
+  {{SCL}} *end = begin + {{DIM}};
 
   Py_ssize_t sliceLength = -1;
 
@@ -375,8 +375,8 @@ static void __setslice__({{VEC}} & self, slice indices, object values)
   // Convince g++ that we're not using uninitialized values.
   //
   bounds.start = 0;
-  bounds.stop  = 0;
-  bounds.step  = 0;
+  bounds.stop = 0;
+  bounds.step = 0;
 
   try {
     // This appears to be a typo in the boost headers.  The method
@@ -396,10 +396,9 @@ static void __setslice__({{VEC}} & self, slice indices, object values)
   }
 
   if (PySequence_Length(valuesObj) != sliceLength) {
-    TfPyThrowValueError(
-        TfStringPrintf("attempt to assign sequence of size %zd to slice of size %zd",
-                       PySequence_Length(valuesObj),
-                       sliceLength));
+    TfPyThrowValueError(TfStringPrintf("attempt to assign sequence of size %zd to slice of size %zd",
+                                       PySequence_Length(valuesObj),
+                                       sliceLength));
   }
 
   // Short circuit for empty slices
@@ -512,8 +511,7 @@ struct FromPythonTuple {
     }
     Scalar;
     void *storage = ((converter::rvalue_from_python_storage<{{VEC}}> *)data)->storage.bytes;
-    new (storage){{VEC}}(
-        {{LIST("_SequenceGetItem(obj_ptr, %(i)s)", sep = ",\n                ")}});
+    new (storage){{VEC}}({{LIST("_SequenceGetItem(obj_ptr, %(i)s)", sep = ",\n                ")}});
     data->convertible = storage;
   }
 };
@@ -548,7 +546,7 @@ void wrapVec{{SUFFIX}}()
   Scalar;
 
   static const size_t _dimension = {{DIM}};
-  static const bool _true        = true;
+  static const bool _true = true;
 
   def("Dot", (Scalar(*)(const Vec &, const Vec &))GfDot);
 
@@ -558,9 +556,7 @@ void wrapVec{{SUFFIX}}()
   def("CompDiv", (Vec(*)(const Vec &v1, const Vec &v2))GfCompDiv);
   def("CompMult", (Vec(*)(const Vec &v1, const Vec &v2))GfCompMult);
   def("GetLength", (Scalar(*)(const Vec &v))GfGetLength);
-  def("GetNormalized",
-      (Vec(*)(const Vec &v, Scalar eps))GfGetNormalized,
-      GetNormalized_overloads());
+  def("GetNormalized", (Vec(*)(const Vec &v, Scalar eps))GfGetNormalized, GetNormalized_overloads());
   def("GetProjection", (Vec(*)(const Vec &a, const Vec &b))GfGetProjection);
   def("GetComplement", (Vec(*)(const Vec &a, const Vec &b))GfGetComplement);
   def("IsClose", (bool (*)(const Vec &v1, const Vec &v2, double))GfIsClose);
@@ -576,13 +572,14 @@ void wrapVec{{SUFFIX}}()
   { % endif % } {#IS_FLOATING_POINT(SCL) #}
 
   class_<{{VEC}}>
-      cls("Vec{{ SUFFIX }}", no_init);
-  cls.def("__init__", make_constructor(__init__<Vec>))
+    cls("Vec{{ SUFFIX }}", no_init);
+  cls
+    .def("__init__", make_constructor(__init__<Vec>))
 
-      // A tag indicating that this is a GfVec class, for internal use.
-      .def_readonly("__isGfVec", _true)
+    // A tag indicating that this is a GfVec class, for internal use.
+    .def_readonly("__isGfVec", _true)
 
-      .def_pickle(PickleSuite())
+    .def_pickle(PickleSuite())
 
   {
     % if IS_FLOATING_POINT (SCL) %
@@ -592,20 +589,20 @@ void wrapVec{{SUFFIX}}()
   }
   .def(init<{{VECNAME(DIM, S)}}>()){ % endfor % } { % endif % }
 
-      .def(init<Vec>())
-      .def(init<Scalar>())
-      .def(init<{{LIST("Scalar")}}>())
+    .def(init<Vec>())
+    .def(init<Scalar>())
+    .def(init<{{LIST("Scalar")}}>())
 
-      .def(TfTypePythonClass())
+    .def(TfTypePythonClass())
 
-      .def("__len__", __len__)
-      .def("__getitem__", __getitem__)
-      .def("__getitem__", __getslice__)
-      .def("__setitem__", __setitem__)
-      .def("__setitem__", __setslice__)
-      .def("__contains__", __contains__)
+    .def("__len__", __len__)
+    .def("__getitem__", __getitem__)
+    .def("__getitem__", __getslice__)
+    .def("__setitem__", __setitem__)
+    .def("__setitem__", __setslice__)
+    .def("__contains__", __contains__)
 
-      .def_readonly("dimension", _dimension)
+    .def_readonly("dimension", _dimension)
 
   {
     % if IS_FLOATING_POINT (SCL) %
@@ -614,75 +611,74 @@ void wrapVec{{SUFFIX}}()
   {% for S in SCALARS if S != SCL and ALLOW_IMPLICIT_CONVERSION(S, SCL) %
   }
   .def(self == {{VECNAME(DIM, S)}}())
-      .def(self != {{VECNAME(DIM, S)}}()){ % endfor % } { % endif % }
+    .def(self != {{VECNAME(DIM, S)}}()){ % endfor % } { % endif % }
 
-      .def(self == self)
-      .def(self != self)
-      .def(self += self)
-      .def(self -= self)
-      .def(self *= double())
-      .def(self * double())
-      .def(double() * self)
-      .def(self /= {{SCL}}())
-      .def(self / {{SCL}}())
-      .def(-self)
-      .def(self + self)
-      .def(self - self)
-      .def(self * self)
-      .def(str(self))
+    .def(self == self)
+    .def(self != self)
+    .def(self += self)
+    .def(self -= self)
+    .def(self *= double())
+    .def(self * double())
+    .def(double() * self)
+    .def(self /= {{SCL}}())
+    .def(self / {{SCL}}())
+    .def(-self)
+    .def(self + self)
+    .def(self - self)
+    .def(self * self)
+    .def(str(self))
 
 #if PY_MAJOR_VERSION == 2
-      // Needed only to support "from __future__ import division" in
-      // python 2. In python 3 builds boost::python adds this for us.
-      .def("__truediv__", __truediv__)
-      .def("__itruediv__", __itruediv__)
+    // Needed only to support "from __future__ import division" in
+    // python 2. In python 3 builds boost::python adds this for us.
+    .def("__truediv__", __truediv__)
+    .def("__itruediv__", __itruediv__)
 #endif
 
-      .def("Axis", &Vec::Axis)
-      .staticmethod("Axis")
+    .def("Axis", &Vec::Axis)
+    .staticmethod("Axis")
 
   {% for X in 'XYZW'[:DIM] %
   }
   .def(
-      "{{ X }}Axis",
-      &Vec::{
-        {
-          X
-        }
-      } Axis)
-      .staticmethod("{{ X }}Axis"){ % endfor % }
+    "{{ X }}Axis",
+    &Vec::{
+      {
+        X
+      }
+    } Axis)
+    .staticmethod("{{ X }}Axis"){ % endfor % }
 
-      .def("GetDot", (Scalar(*)(const Vec &, const Vec &))GfDot)
+    .def("GetDot", (Scalar(*)(const Vec &, const Vec &))GfDot)
 
   {
     % if IS_FLOATING_POINT (SCL) %
   }
   .def("GetComplement", &Vec::GetComplement)
-      .def("GetLength", &Vec::GetLength)
-      .def("GetNormalized", &Vec::GetNormalized, VecGetNormalized_overloads())
-      .def("GetProjection", &Vec::GetProjection)
-      .def("Normalize", &Vec::Normalize, VecNormalize_overloads())
+    .def("GetLength", &Vec::GetLength)
+    .def("GetNormalized", &Vec::GetNormalized, VecGetNormalized_overloads())
+    .def("GetProjection", &Vec::GetProjection)
+    .def("Normalize", &Vec::Normalize, VecNormalize_overloads())
   {
     % if DIM == 3 %
   }
   .def(self ^ self)
-      .def("GetCross", (Vec(*)(const Vec &v1, const Vec &v2))GfCross)
-      .def("OrthogonalizeBasis", OrthogonalizeBasisHelper, OrthogonalizeBasis_overloads())
-      .staticmethod("OrthogonalizeBasis")
+    .def("GetCross", (Vec(*)(const Vec &v1, const Vec &v2))GfCross)
+    .def("OrthogonalizeBasis", OrthogonalizeBasisHelper, OrthogonalizeBasis_overloads())
+    .staticmethod("OrthogonalizeBasis")
 
-      .def("BuildOrthonormalFrame",
-           BuildOrthonormalFrameHelper,
-           BuildOrthonormalFrame_overloads()){ % endif % } { % endif % }
+    .def("BuildOrthonormalFrame", BuildOrthonormalFrameHelper, BuildOrthonormalFrame_overloads()){
+      % endif % } { % endif % }
 
-      .def("__repr__", __repr__)
-      .def("__hash__", __hash__);
+    .def("__repr__", __repr__)
+    .def("__hash__", __hash__);
   to_python_converter<std::vector<{{VEC}}>, TfPySequenceToPython<std::vector<{{VEC}}>>>();
 
   // Install buffer protocol: set the tp_as_buffer slot to point to a
   // structure of function pointers that implement the buffer protocol for
   // this type, and set the type flags to indicate that this type supports the
   // buffer protocol.
-  auto *typeObj         = reinterpret_cast<PyTypeObject *>(cls.ptr());
+  auto *typeObj = reinterpret_cast<PyTypeObject *>(cls.ptr());
   typeObj->tp_as_buffer = &bufferProcs;
   typeObj->tp_flags |= (TfPy_TPFLAGS_HAVE_NEWBUFFER | TfPy_TPFLAGS_HAVE_GETCHARBUFFER);
 
@@ -690,7 +686,6 @@ void wrapVec{{SUFFIX}}()
   FromPythonTuple();
 
   // Allow conversion of lists of {{ VEC }} to std::vector<{{ VEC }}>
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<{{VEC}}>,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<{{VEC}}>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 }

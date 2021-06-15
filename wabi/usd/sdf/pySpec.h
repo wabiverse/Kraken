@@ -178,9 +178,9 @@ template<typename SIG> struct CtorBase {
     else {
       // CODE_COVERAGE_OFF
       TF_CODING_ERROR(
-          "Ctor with signature '%s' is already registered.  "
-          "Duplicate will be ignored.",
-          ArchGetDemangled(typeid(Sig)).c_str());
+        "Ctor with signature '%s' is already registered.  "
+        "Duplicate will be ignored.",
+        ArchGetDemangled(typeid(Sig)).c_str());
       // CODE_COVERAGE_ON
     }
   }
@@ -194,8 +194,8 @@ template<typename SIG> struct NewCtor;
 
 template<typename T>
 Sdf_PySpecDetail::NewVisitor<typename Sdf_PySpecDetail::NewCtor<T>> SdfMakePySpecConstructor(
-    T *func,
-    const std::string &doc = std::string())
+  T *func,
+  const std::string &doc = std::string())
 {
   // Instantiate to set static constructor pointer, then return the visitor.
   Sdf_PySpecDetail::NewCtor<T> Ctor(func);
@@ -254,23 +254,21 @@ template<class _SpecType, class _Held, class _Holder> struct _HandleToPython {
   }
 
   template<class T>
-  static bp::converter::to_python_function_t _RegisterConverter(
-      bp::converter::to_python_function_t f)
+  static bp::converter::to_python_function_t _RegisterConverter(bp::converter::to_python_function_t f)
   {
     // Replace the old converter, installed automatically when we
     // registered the class.  WBN if boost python let us do this
     // without playing games.
     bp::converter::registration *r = const_cast<bp::converter::registration *>(
-        bp::converter::registry::query(bp::type_id<T>()));
+      bp::converter::registry::query(bp::type_id<T>()));
     if (r) {
       bp::converter::to_python_function_t old = r->m_to_python;
-      r->m_to_python                          = f;
+      r->m_to_python = f;
       return old;
     }
     else {
       // CODE_COVERAGE_OFF Can only happen if there's a bug.
-      TF_CODING_ERROR("No python registration for '%s'!",
-                      ArchGetDemangled(typeid(Handle)).c_str());
+      TF_CODING_ERROR("No python registration for '%s'!", ArchGetDemangled(typeid(Handle)).c_str());
       return 0;
       // CODE_COVERAGE_ON
     }
@@ -286,8 +284,7 @@ template<class _SpecType, class _Held, class _Holder> struct _HandleToPython {
   static bp::converter::to_python_function_t _originalConverter;
 };
 template<class SpecType, class Held, class Holder>
-bp::converter::to_python_function_t _HandleToPython<SpecType, Held, Holder>::_originalConverter =
-    0;
+bp::converter::to_python_function_t _HandleToPython<SpecType, Held, Holder>::_originalConverter = 0;
 
 template<class _SpecType> struct _HandleFromPython {
   typedef _SpecType SpecType;
@@ -303,15 +300,13 @@ template<class _SpecType> struct _HandleFromPython {
   {
     if (p == Py_None)
       return p;
-    void *result = bp::converter::get_lvalue_from_python(
-        p, bp::converter::registered<SpecType>::converters);
+    void *result = bp::converter::get_lvalue_from_python(p, bp::converter::registered<SpecType>::converters);
     return result;
   }
 
   static void construct(PyObject *source, bp::converter::rvalue_from_python_stage1_data *data)
   {
-    void *const storage =
-        ((bp::converter::rvalue_from_python_storage<Handle> *)data)->storage.bytes;
+    void *const storage = ((bp::converter::rvalue_from_python_storage<Handle> *)data)->storage.bytes;
     // Deal with the "None" case.
     if (data->convertible == source)
       new (storage) Handle();

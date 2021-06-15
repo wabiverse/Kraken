@@ -39,9 +39,9 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 UsdUsdaFileFormat::UsdUsdaFileFormat()
-    : SdfTextFileFormat(UsdUsdaFileFormatTokens->Id,
-                        UsdUsdaFileFormatTokens->Version,
-                        UsdUsdFileFormatTokens->Target)
+  : SdfTextFileFormat(UsdUsdaFileFormatTokens->Id,
+                      UsdUsdaFileFormatTokens->Version,
+                      UsdUsdFileFormatTokens->Target)
 {
   // Do Nothing.
 }

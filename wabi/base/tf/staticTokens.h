@@ -117,7 +117,7 @@ WABI_NAMESPACE_BEGIN
 /// \hideinitializer
 #define TF_DECLARE_PUBLIC_TOKENS(...) \
   _TF_DECLARE_PUBLIC_TOKENS_EXPAND(_TF_DECLARE_PUBLIC_TOKENS_EVAL( \
-      _TF_DECLARE_PUBLIC_TOKENS_EXPAND(TF_NUM_ARGS(__VA_ARGS__)))(__VA_ARGS__))
+    _TF_DECLARE_PUBLIC_TOKENS_EXPAND(TF_NUM_ARGS(__VA_ARGS__)))(__VA_ARGS__))
 
 /// Macro to define public tokens.  Use in conjunction with
 /// TF_DECLARE_PUBLIC_TOKENS.
@@ -133,12 +133,12 @@ WABI_NAMESPACE_BEGIN
   struct _TF_TOKENS_STRUCT_NAME_PRIVATE(key) { \
     _TF_TOKENS_STRUCT_NAME_PRIVATE(key) \
     () \
-        : _TF_TOKENS_INITIALIZE_SEQ(BOOST_PP_SEQ_FILTER(_TF_TOKENS_IS_NOT_ARRAY, ~, seq) \
-                                        _TF_TOKENS_EXPAND_ARRAY_ELEMENTS(seq)){ \
-              _TF_TOKENS_ASSIGN_ARRAY_SEQ(BOOST_PP_SEQ_FILTER(_TF_TOKENS_IS_ARRAY, ~, seq)) \
-                  _TF_TOKENS_BUILD_ALLTOKENS_VECTOR( \
-                      BOOST_PP_SEQ_FILTER(_TF_TOKENS_IS_NOT_ARRAY, ~, seq) \
-                          _TF_TOKENS_EXPAND_ARRAY_ELEMENTS(seq))} _TF_TOKENS_DECLARE_MEMBERS(seq) \
+      : _TF_TOKENS_INITIALIZE_SEQ(BOOST_PP_SEQ_FILTER(_TF_TOKENS_IS_NOT_ARRAY, ~, seq) \
+                                    _TF_TOKENS_EXPAND_ARRAY_ELEMENTS(seq)){ \
+          _TF_TOKENS_ASSIGN_ARRAY_SEQ(BOOST_PP_SEQ_FILTER(_TF_TOKENS_IS_ARRAY, ~, seq)) \
+            _TF_TOKENS_BUILD_ALLTOKENS_VECTOR( \
+              BOOST_PP_SEQ_FILTER(_TF_TOKENS_IS_NOT_ARRAY, ~, seq) \
+                _TF_TOKENS_EXPAND_ARRAY_ELEMENTS(seq))} _TF_TOKENS_DECLARE_MEMBERS(seq) \
   }; \
   } \
   static TfStaticData<_TF_TOKENS_STRUCT_NAME_PRIVATE(key)> key
@@ -166,9 +166,8 @@ WABI_NAMESPACE_BEGIN
 //
 #define _TF_TOKENS_DECLARE_MEMBER(r, data, elem) \
   TfToken BOOST_PP_IIF(TF_PP_IS_TUPLE(elem), BOOST_PP_TUPLE_ELEM(2, 0, elem), elem) \
-      BOOST_PP_EXPR_IIF( \
-          TF_PP_IS_TUPLE(BOOST_PP_TUPLE_ELEM(2, 1, elem)), \
-          [BOOST_PP_SEQ_SIZE(BOOST_PP_TUPLE_ELEM(1, 0, BOOST_PP_TUPLE_ELEM(2, 1, elem)))]);
+    BOOST_PP_EXPR_IIF(TF_PP_IS_TUPLE(BOOST_PP_TUPLE_ELEM(2, 1, elem)), \
+                      [BOOST_PP_SEQ_SIZE(BOOST_PP_TUPLE_ELEM(1, 0, BOOST_PP_TUPLE_ELEM(2, 1, elem)))]);
 
 // Private macro used to declare the list of members as TfTokens
 //
@@ -181,7 +180,7 @@ WABI_NAMESPACE_BEGIN
 //
 #define _TF_TOKENS_EXPAND_ARRAY_ELEMENTS(seq) \
   BOOST_PP_SEQ_FOR_EACH( \
-      _TF_TOKENS_APPEND_ARRAY_ELEMENTS, ~, BOOST_PP_SEQ_FILTER(_TF_TOKENS_IS_ARRAY, ~, seq))
+    _TF_TOKENS_APPEND_ARRAY_ELEMENTS, ~, BOOST_PP_SEQ_FILTER(_TF_TOKENS_IS_ARRAY, ~, seq))
 
 // Private macro used to generate a struct of TfTokens.
 //
@@ -229,15 +228,13 @@ WABI_NAMESPACE_BEGIN
 
 #define _TF_TOKENS_APPEND_MEMBER_BODY(r, data, elem) allTokens.push_back(elem);
 
-#define _TF_TOKENS_BUILD_ALLTOKENS_VECTOR(seq) \
-  BOOST_PP_SEQ_FOR_EACH_I(_TF_TOKENS_APPEND_MEMBER, ~, seq)
+#define _TF_TOKENS_BUILD_ALLTOKENS_VECTOR(seq) BOOST_PP_SEQ_FOR_EACH_I(_TF_TOKENS_APPEND_MEMBER, ~, seq)
 
 // Private macros to generate the list of initialized members.
 //
 #define _TF_TOKENS_INITIALIZE_SEQ(seq) BOOST_PP_SEQ_FOR_EACH_I(_TF_TOKENS_DEFINE_MEMBER, ~, seq)
 
-#define _TF_TOKENS_ASSIGN_ARRAY_SEQ(seq) \
-  BOOST_PP_SEQ_FOR_EACH(_TF_TOKENS_DEFINE_ARRAY_MEMBERS, ~, seq)
+#define _TF_TOKENS_ASSIGN_ARRAY_SEQ(seq) BOOST_PP_SEQ_FOR_EACH(_TF_TOKENS_DEFINE_ARRAY_MEMBERS, ~, seq)
 
 #define _TF_TOKENS_DEFINE_ARRAY_MEMBERS(r, data, elem) \
   BOOST_PP_SEQ_FOR_EACH_I(_TF_TOKENS_DEFINE_ARRAY_MEMBER, \
@@ -269,12 +266,12 @@ WABI_NAMESPACE_BEGIN
 #define _TF_DEFINE_TOKENS(key, seq) \
   _TF_TOKENS_STRUCT_NAME(key)::~_TF_TOKENS_STRUCT_NAME(key)() = default; \
   _TF_TOKENS_STRUCT_NAME(key)::_TF_TOKENS_STRUCT_NAME(key)() \
-      : _TF_TOKENS_INITIALIZE_SEQ(BOOST_PP_SEQ_FILTER(_TF_TOKENS_IS_NOT_ARRAY, ~, seq) \
-                                      _TF_TOKENS_EXPAND_ARRAY_ELEMENTS(seq)) \
+    : _TF_TOKENS_INITIALIZE_SEQ(BOOST_PP_SEQ_FILTER(_TF_TOKENS_IS_NOT_ARRAY, ~, seq) \
+                                  _TF_TOKENS_EXPAND_ARRAY_ELEMENTS(seq)) \
   { \
     _TF_TOKENS_ASSIGN_ARRAY_SEQ(BOOST_PP_SEQ_FILTER(_TF_TOKENS_IS_ARRAY, ~, seq)) \
     _TF_TOKENS_BUILD_ALLTOKENS_VECTOR(BOOST_PP_SEQ_FILTER(_TF_TOKENS_IS_NOT_ARRAY, ~, seq) \
-                                          _TF_TOKENS_EXPAND_ARRAY_ELEMENTS(seq)) \
+                                        _TF_TOKENS_EXPAND_ARRAY_ELEMENTS(seq)) \
   }
 
 WABI_NAMESPACE_END

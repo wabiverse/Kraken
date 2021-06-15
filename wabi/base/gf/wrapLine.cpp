@@ -53,8 +53,8 @@ namespace {
 
 static string _Repr(GfLine const &self)
 {
-  return TF_PY_REPR_PREFIX + "Line(" + TfPyRepr(self.GetPoint(0.0)) + ", " +
-         TfPyRepr(self.GetDirection()) + ")";
+  return TF_PY_REPR_PREFIX + "Line(" + TfPyRepr(self.GetPoint(0.0)) + ", " + TfPyRepr(self.GetDirection()) +
+         ")";
 }
 
 static tuple FindClosestPointsHelper(const GfLine &l1, const GfLine &l2)
@@ -99,28 +99,27 @@ void wrapLine()
       "----------------------------------------------------------------------");
 
   class_<This>("Line", "Line class", init<>())
-      .def(init<const GfVec3d &, const GfVec3d &>())
+    .def(init<const GfVec3d &, const GfVec3d &>())
 
-      .def(TfTypePythonClass())
+    .def(TfTypePythonClass())
 
-      .def("Set", &This::Set, return_self<>())
+    .def("Set", &This::Set, return_self<>())
 
-      .def("GetPoint", &This::GetPoint)
+    .def("GetPoint", &This::GetPoint)
 
-      .def("GetDirection", &This::GetDirection, return_value_policy<copy_const_reference>())
+    .def("GetDirection", &This::GetDirection, return_value_policy<copy_const_reference>())
 
-      .add_property(
-          "direction",
-          make_function(&This::GetDirection, return_value_policy<copy_const_reference>()),
-          SetDirectionHelper)
+    .add_property("direction",
+                  make_function(&This::GetDirection, return_value_policy<copy_const_reference>()),
+                  SetDirectionHelper)
 
-      .def("FindClosestPoint", FindClosestPointHelper)
+    .def("FindClosestPoint", FindClosestPointHelper)
 
-      .def(str(self))
-      .def(self == self)
-      .def(self != self)
+    .def(str(self))
+    .def(self == self)
+    .def(self != self)
 
-      .def("__repr__", _Repr)
+    .def("__repr__", _Repr)
 
-      ;
+    ;
 }

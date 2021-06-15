@@ -72,12 +72,12 @@ template<class MapType> class Sdf_MapEditor {
   /// \name Editing Operations
   /// @{
 
-  virtual void Copy(const MapType &other)                           = 0;
-  virtual void Set(const key_type &key, const mapped_type &other)   = 0;
+  virtual void Copy(const MapType &other) = 0;
+  virtual void Set(const key_type &key, const mapped_type &other) = 0;
   virtual std::pair<iterator, bool> Insert(const value_type &value) = 0;
-  virtual bool Erase(const key_type &key)                           = 0;
+  virtual bool Erase(const key_type &key) = 0;
 
-  virtual SdfAllowed IsValidKey(const key_type &key) const        = 0;
+  virtual SdfAllowed IsValidKey(const key_type &key) const = 0;
   virtual SdfAllowed IsValidValue(const mapped_type &value) const = 0;
 
   /// @}
@@ -87,8 +87,7 @@ template<class MapType> class Sdf_MapEditor {
 };
 
 template<class T>
-boost::shared_ptr<Sdf_MapEditor<T>> Sdf_CreateMapEditor(const SdfSpecHandle &owner,
-                                                        const TfToken &field);
+boost::shared_ptr<Sdf_MapEditor<T>> Sdf_CreateMapEditor(const SdfSpecHandle &owner, const TfToken &field);
 
 WABI_NAMESPACE_END
 

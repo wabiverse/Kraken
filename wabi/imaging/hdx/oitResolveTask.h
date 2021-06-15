@@ -37,7 +37,7 @@ class HdSceneDelegate;
 
 using HdPhRenderPassStateSharedPtr = std::shared_ptr<class HdPhRenderPassState>;
 
-using HdRenderPassSharedPtr         = std::shared_ptr<class HdRenderPass>;
+using HdRenderPassSharedPtr = std::shared_ptr<class HdRenderPass>;
 using HdPhRenderPassShaderSharedPtr = std::shared_ptr<class HdPhRenderPassShader>;
 
 /// \class HdxOitResolveTask
@@ -77,13 +77,11 @@ class HdxOitResolveTask : public HdTask {
   void Execute(HdTaskContext *ctx) override;
 
  private:
-  HdxOitResolveTask()                          = delete;
+  HdxOitResolveTask() = delete;
   HdxOitResolveTask(const HdxOitResolveTask &) = delete;
   HdxOitResolveTask &operator=(const HdxOitResolveTask &) = delete;
 
-  void _PrepareOitBuffers(HdTaskContext *ctx,
-                          HdRenderIndex *renderIndex,
-                          GfVec2i const &screenSize);
+  void _PrepareOitBuffers(HdTaskContext *ctx, HdRenderIndex *renderIndex, GfVec2i const &screenSize);
 
   GfVec2i _ComputeScreenSize(HdTaskContext *ctx, HdRenderIndex *renderIndex) const;
 

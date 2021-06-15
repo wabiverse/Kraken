@@ -27,14 +27,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdBufferResource::HdBufferResource(TfToken const &role,
-                                   HdTupleType tupleType,
-                                   int offset,
-                                   int stride)
-    : HdResource(role),
-      _tupleType(tupleType),
-      _offset(offset),
-      _stride(stride)
+HdBufferResource::HdBufferResource(TfToken const &role, HdTupleType tupleType, int offset, int stride)
+  : HdResource(role),
+    _tupleType(tupleType),
+    _offset(offset),
+    _stride(stride)
 {
   /*NOTHING*/
 }

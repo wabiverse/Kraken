@@ -62,21 +62,21 @@ NDR_REGISTER_PARSER_PLUGIN(RmanArgsParserPlugin)
 
 namespace {
 // Pre-constructed xml char strings to make things easier to read
-const char *nameStr        = "name";
-const char *paramStr       = "param";
-const char *outputStr      = "output";
-const char *helpStr        = "help";
-const char *hintdictStr    = "hintdict";
-const char *hintlistStr    = "hintlist";
-const char *optionsStr     = "options";
-const char *valueStr       = "value";
-const char *tagStr         = "tag";
-const char *tagsStr        = "tags";
-const char *pageStr        = "page";
-const char *primvarsStr    = "primvars";
+const char *nameStr = "name";
+const char *paramStr = "param";
+const char *outputStr = "output";
+const char *helpStr = "help";
+const char *hintdictStr = "hintdict";
+const char *hintlistStr = "hintlist";
+const char *optionsStr = "options";
+const char *valueStr = "value";
+const char *tagStr = "tag";
+const char *tagsStr = "tags";
+const char *pageStr = "page";
+const char *primvarsStr = "primvars";
 const char *departmentsStr = "departments";
-const char *shaderTypeStr  = "shaderType";
-const char *typeTagStr     = "typeTag";
+const char *shaderTypeStr = "shaderType";
+const char *typeTagStr = "typeTag";
 
 // Helper to make comparisons of `const char*` easier to read; there are
 // lots of these comparisons
@@ -118,8 +118,7 @@ TF_DEFINE_PRIVATE_TOKENS(
 // args file parsing happens recursively, and this is used to pass around a
 // shader node being incrementally constructed.
 struct SdrShaderRepresentation {
-  SdrShaderRepresentation(const NdrNodeDiscoveryResult &discoveryResult)
-      : name(discoveryResult.name)
+  SdrShaderRepresentation(const NdrNodeDiscoveryResult &discoveryResult) : name(discoveryResult.name)
   {}
 
   std::string name;
@@ -163,31 +162,30 @@ NdrNodeUniquePtr RmanArgsParserPlugin::Parse(const NdrNodeDiscoveryResult &disco
 #if AR_VERSION == 1
     // Get the resolved URI to a location that it can be read by the Args
     // parser
-    bool localFetchSuccessful = ArGetResolver().FetchToLocalResolvedPath(
-        discoveryResult.uri, discoveryResult.resolvedUri);
+    bool localFetchSuccessful = ArGetResolver().FetchToLocalResolvedPath(discoveryResult.uri,
+                                                                         discoveryResult.resolvedUri);
 
     if (!localFetchSuccessful) {
       TF_WARN(
-          "Could not localize the args file at URI [%s] into a local "
-          "path. An invalid Sdr node definition will be created.",
-          discoveryResult.uri.c_str());
+        "Could not localize the args file at URI [%s] into a local "
+        "path. An invalid Sdr node definition will be created.",
+        discoveryResult.uri.c_str());
 
       return NdrParserPlugin::GetInvalidNode(discoveryResult);
     }
 #endif
     std::shared_ptr<const char> buffer;
-    std::shared_ptr<ArAsset> asset = ArGetResolver().OpenAsset(
-        ArResolvedPath(discoveryResult.resolvedUri));
+    std::shared_ptr<ArAsset> asset = ArGetResolver().OpenAsset(ArResolvedPath(discoveryResult.resolvedUri));
     if (asset) {
       buffer = asset->GetBuffer();
     }
 
     if (!buffer) {
       TF_WARN(
-          "Could not open the args file at URI [%s] (%s). "
-          "An invalid Sdr node definition will be created.",
-          discoveryResult.uri.c_str(),
-          discoveryResult.resolvedUri.c_str());
+        "Could not open the args file at URI [%s] (%s). "
+        "An invalid Sdr node definition will be created.",
+        discoveryResult.uri.c_str(),
+        discoveryResult.resolvedUri.c_str());
 
       return NdrParserPlugin::GetInvalidNode(discoveryResult);
     }
@@ -196,11 +194,11 @@ NdrNodeUniquePtr RmanArgsParserPlugin::Parse(const NdrNodeDiscoveryResult &disco
 
     if (!result) {
       TF_WARN(
-          "Could not parse args file at URI [%s] because the file "
-          "could not be opened or was malformed. An invalid Sdr node "
-          "definition will be created. (Error: %s)",
-          discoveryResult.uri.c_str(),
-          result.description());
+        "Could not parse args file at URI [%s] because the file "
+        "could not be opened or was malformed. An invalid Sdr node "
+        "definition will be created. (Error: %s)",
+        discoveryResult.uri.c_str(),
+        result.description());
 
       return NdrParserPlugin::GetInvalidNode(discoveryResult);
     }
@@ -210,19 +208,19 @@ NdrNodeUniquePtr RmanArgsParserPlugin::Parse(const NdrNodeDiscoveryResult &disco
 
     if (!result) {
       TF_WARN(
-          "Could not parse given source code for node with identifier"
-          "'%s' because it was malformed. An invalid Sdr node "
-          "definition will be created. (Error: %s)",
-          discoveryResult.identifier.GetText(),
-          result.description());
+        "Could not parse given source code for node with identifier"
+        "'%s' because it was malformed. An invalid Sdr node "
+        "definition will be created. (Error: %s)",
+        discoveryResult.identifier.GetText(),
+        result.description());
       return NdrParserPlugin::GetInvalidNode(discoveryResult);
     }
   }
   else {
     TF_WARN(
-        "Invalid NdrNodeDiscoveryResult with identifier '%s': both "
-        "resolvedUri and sourceCode fields are empty.",
-        discoveryResult.identifier.GetText());
+      "Invalid NdrNodeDiscoveryResult with identifier '%s': both "
+      "resolvedUri and sourceCode fields are empty.",
+      discoveryResult.identifier.GetText());
     return NdrParserPlugin::GetInvalidNode(discoveryResult);
   }
 
@@ -236,8 +234,7 @@ NdrNodeUniquePtr RmanArgsParserPlugin::Parse(const NdrNodeDiscoveryResult &disco
 
   NdrTokenMap metadata = discoveryResult.metadata;
   if (!shaderRepresentation.departments.empty()) {
-    metadata[SdrNodeMetadata->Departments] = CreateStringFromStringVec(
-        shaderRepresentation.departments);
+    metadata[SdrNodeMetadata->Departments] = CreateStringFromStringVec(shaderRepresentation.departments);
   }
 
   if (!shaderRepresentation.pages.empty()) {
@@ -252,18 +249,17 @@ NdrNodeUniquePtr RmanArgsParserPlugin::Parse(const NdrNodeDiscoveryResult &disco
     metadata[SdrNodeMetadata->Help] = shaderRepresentation.helpText;
   }
 
-  return SdrShaderNodeUniquePtr(
-      new SdrShaderNode(discoveryResult.identifier,
-                        discoveryResult.version,
-                        shaderRepresentation.name,
-                        discoveryResult.family,
-                        shaderRepresentation.type,
-                        _tokens->sourceType,
-                        discoveryResult.resolvedUri,
-                        _GetDsoPathFromArgsPath(discoveryResult.resolvedUri),
-                        std::move(shaderRepresentation.properties),
-                        metadata,
-                        discoveryResult.sourceCode));
+  return SdrShaderNodeUniquePtr(new SdrShaderNode(discoveryResult.identifier,
+                                                  discoveryResult.version,
+                                                  shaderRepresentation.name,
+                                                  discoveryResult.family,
+                                                  shaderRepresentation.type,
+                                                  _tokens->sourceType,
+                                                  discoveryResult.resolvedUri,
+                                                  _GetDsoPathFromArgsPath(discoveryResult.resolvedUri),
+                                                  std::move(shaderRepresentation.properties),
+                                                  metadata,
+                                                  discoveryResult.sourceCode));
 }
 
 std::string RmanArgsParserPlugin::_GetDsoPathFromArgsPath(const std::string &argsPath)
@@ -283,9 +279,9 @@ std::string RmanArgsParserPlugin::_GetDsoPathFromArgsPath(const std::string &arg
   if (pathElts.size() < 3 || !TfStringEndsWith(argsPath, argsExt) ||
       pathElts[pathElts.size() - 2] != "Args") {
     TF_WARN(
-        "Unexpected path for RenderMan args file: %s - "
-        "expected a form like /path/to/plugins/Args/somePlugin.args",
-        argsPath.c_str());
+      "Unexpected path for RenderMan args file: %s - "
+      "expected a form like /path/to/plugins/Args/somePlugin.args",
+      argsPath.c_str());
     return std::string();
   }
 
@@ -296,11 +292,10 @@ std::string RmanArgsParserPlugin::_GetDsoPathFromArgsPath(const std::string &arg
   return TfStringJoin(pathElts, ARCH_PATH_SEP);
 }
 
-SdrShaderPropertyUniquePtr RmanArgsParserPlugin::_ParseChildElem(
-    const SdrShaderRepresentation &shaderRep,
-    bool isOutput,
-    xml_node childElement,
-    const std::string &parentPage) const
+SdrShaderPropertyUniquePtr RmanArgsParserPlugin::_ParseChildElem(const SdrShaderRepresentation &shaderRep,
+                                                                 bool isOutput,
+                                                                 xml_node childElement,
+                                                                 const std::string &parentPage) const
 {
   // The bits of data that will later be turned into the shader property
   NdrTokenMap attributes;
@@ -463,7 +458,7 @@ void RmanArgsParserPlugin::_Parse(SdrShaderRepresentation &shaderRep,
   // Iterate over all children elements
   // -------------------------------------------------------------------------
   while (childElement) {
-    bool isInput  = EQUALS(paramStr, childElement.name());
+    bool isInput = EQUALS(paramStr, childElement.name());
     bool isOutput = EQUALS(outputStr, childElement.name());
 
     // Handle input/output elements first. They can have sub-elements that
@@ -472,8 +467,7 @@ void RmanArgsParserPlugin::_Parse(SdrShaderRepresentation &shaderRep,
     // <param> and <output>
     // ---------------------------------------------------------------------
     if (isInput || isOutput) {
-      shaderRep.properties.emplace_back(
-          _ParseChildElem(shaderRep, isOutput, childElement, parentPage));
+      shaderRep.properties.emplace_back(_ParseChildElem(shaderRep, isOutput, childElement, parentPage));
     }
 
     // Page
@@ -497,7 +491,7 @@ void RmanArgsParserPlugin::_Parse(SdrShaderRepresentation &shaderRep,
     // ---------------------------------------------------------------------
     else if (EQUALS(helpStr, childElement.name())) {
       const char *helpText = childElement.child_value();
-      shaderRep.helpText   = helpText;
+      shaderRep.helpText = helpText;
     }
 
     // Primvars
@@ -528,7 +522,7 @@ void RmanArgsParserPlugin::_Parse(SdrShaderRepresentation &shaderRep,
         xml_node attrChild = childElement.first_child();
 
         if (attrChild && EQUALS(tagStr, attrChild.name())) {
-          nameAttr       = attrChild.attribute(valueStr);
+          nameAttr = attrChild.attribute(valueStr);
           shaderRep.type = TfToken(nameAttr.value());
         }
       }
@@ -542,7 +536,7 @@ void RmanArgsParserPlugin::_Parse(SdrShaderRepresentation &shaderRep,
 
       if (attrChild && EQUALS(tagStr, attrChild.name())) {
         xml_attribute attr = attrChild.attribute(valueStr);
-        shaderRep.type     = TfToken(attr.value());
+        shaderRep.type = TfToken(attr.value());
 
         TF_DEBUG(NDR_PARSING).Msg("Deprecated 'typeTag' on shader [%s]", shaderRep.name.c_str());
       }
@@ -583,7 +577,7 @@ VtValue RmanArgsParserPlugin::_GetVtValue(const std::string &stringValue,
   // Determine array-ness
   // -------------------------------------------------------------------------
   int isDynamicArray = IsTruthy(SdrPropertyMetadata->IsDynamicArray, metadata);
-  bool isArray       = (arraySize > 0) || isDynamicArray;
+  bool isArray = (arraySize > 0) || isDynamicArray;
 
   // INT and INT ARRAY
   // -------------------------------------------------------------------------
@@ -594,7 +588,7 @@ VtValue RmanArgsParserPlugin::_GetVtValue(const std::string &stringValue,
     }
     else {
       NdrStringVec parts = TfStringTokenize(stringValue, " ,");
-      int numValues      = parts.size();
+      int numValues = parts.size();
       VtIntArray ints(numValues);
 
       for (int i = 0; i < numValues; ++i) {
@@ -635,7 +629,7 @@ VtValue RmanArgsParserPlugin::_GetVtValue(const std::string &stringValue,
     }
     else {
       NdrStringVec parts = TfStringTokenize(stringValue, " ,");
-      int numValues      = parts.size();
+      int numValues = parts.size();
 
       VtFloatArray floats(numValues);
       for (int i = 0; i < numValues; ++i) {
@@ -655,16 +649,15 @@ VtValue RmanArgsParserPlugin::_GetVtValue(const std::string &stringValue,
 
     if (!isArray) {
       if (parts.size() == 3) {
-        return VtValue(
-            GfVec3f(atof(parts[0].c_str()), atof(parts[1].c_str()), atof(parts[2].c_str())));
+        return VtValue(GfVec3f(atof(parts[0].c_str()), atof(parts[1].c_str()), atof(parts[2].c_str())));
       }
       else {
         TF_DEBUG(NDR_PARSING)
-            .Msg(
-                "float3 default value [%s] has %zd values; should "
-                "have three.",
-                stringValue.c_str(),
-                parts.size());
+          .Msg(
+            "float3 default value [%s] has %zd values; should "
+            "have three.",
+            stringValue.c_str(),
+            parts.size());
 
         return VtValue(GfVec3f(0.0, 0.0, 0.0));
       }
@@ -674,9 +667,8 @@ VtValue RmanArgsParserPlugin::_GetVtValue(const std::string &stringValue,
       VtVec3fArray array(numElements);
 
       for (int i = 0; i < numElements; ++i) {
-        array[i] = GfVec3f(atof(parts[3 * i + 0].c_str()),
-                           atof(parts[3 * i + 1].c_str()),
-                           atof(parts[3 * i + 2].c_str()));
+        array[i] = GfVec3f(
+          atof(parts[3 * i + 0].c_str()), atof(parts[3 * i + 1].c_str()), atof(parts[3 * i + 2].c_str()));
       }
 
       return VtValue::Take(array);
@@ -721,18 +713,17 @@ void RmanArgsParserPlugin::_OutputDeprecationWarning(const TfToken &attrName,
                                                      const TfToken &propName) const
 {
   TF_DEBUG(NDR_PARSING)
-      .Msg("Deprecated '%s' attribute on shader [%s] on property [%s]",
-           attrName.GetText(),
-           shaderRep.name.c_str(),
-           propName.GetText());
+    .Msg("Deprecated '%s' attribute on shader [%s] on property [%s]",
+         attrName.GetText(),
+         shaderRep.name.c_str(),
+         propName.GetText());
 }
 
-SdrShaderPropertyUniquePtr RmanArgsParserPlugin::_CreateProperty(
-    const SdrShaderRepresentation &shaderRep,
-    bool isOutput,
-    NdrTokenMap &attributes,
-    NdrStringVec &validConnectionTypes,
-    NdrOptionVec &options) const
+SdrShaderPropertyUniquePtr RmanArgsParserPlugin::_CreateProperty(const SdrShaderRepresentation &shaderRep,
+                                                                 bool isOutput,
+                                                                 NdrTokenMap &attributes,
+                                                                 NdrStringVec &validConnectionTypes,
+                                                                 NdrOptionVec &options) const
 {
   TfToken propName = _Get(attributes, _xmlAttributeNames->nameAttr, TfToken("NAME UNSPECIFIED"));
   TfToken definitionName;
@@ -746,10 +737,10 @@ SdrShaderPropertyUniquePtr RmanArgsParserPlugin::_CreateProperty(
     typeName = SdrPropertyTypes->Unknown;
 
     TF_DEBUG(NDR_PARSING)
-        .Msg(
-            "Property [%s] doesn't have a valid type. "
-            "Neither an explicit type nor a validConnectionType was specified.",
-            propName.GetText());
+      .Msg(
+        "Property [%s] doesn't have a valid type. "
+        "Neither an explicit type nor a validConnectionType was specified.",
+        propName.GetText());
   }
   else {
     if (isOutput) {
@@ -764,7 +755,7 @@ SdrShaderPropertyUniquePtr RmanArgsParserPlugin::_CreateProperty(
 
     // Rename to 'validConnectionTypes'
     attributes.insert(
-        {SdrPropertyMetadata->ValidConnectionTypes, attributes.at(_xmlAttributeNames->tagAttr)});
+      {SdrPropertyMetadata->ValidConnectionTypes, attributes.at(_xmlAttributeNames->tagAttr)});
     attributes.erase(_xmlAttributeNames->tagAttr);
   }
 
@@ -790,15 +781,14 @@ SdrShaderPropertyUniquePtr RmanArgsParserPlugin::_CreateProperty(
         attributes.insert({SdrPropertyMetadata->VstructMemberOf, vstructMember.substr(0, dotPos)});
 
         // Add member name to attributes
-        attributes.insert(
-            {SdrPropertyMetadata->VstructMemberName, vstructMember.substr(dotPos + 1)});
+        attributes.insert({SdrPropertyMetadata->VstructMemberName, vstructMember.substr(dotPos + 1)});
       }
       else {
         TF_DEBUG(NDR_PARSING)
-            .Msg("Bad virtual structure member in %s.%s:%s",
-                 shaderRep.name.c_str(),
-                 propName.GetText(),
-                 vstructMember.c_str());
+          .Msg("Bad virtual structure member in %s.%s:%s",
+               shaderRep.name.c_str(),
+               propName.GetText(),
+               vstructMember.c_str());
       }
     }
   }
@@ -809,7 +799,7 @@ SdrShaderPropertyUniquePtr RmanArgsParserPlugin::_CreateProperty(
     TfToken definitionName = TfToken(attributes.at(_xmlAttributeNames->sdrDefinitionNameAttr));
 
     attributes[SdrPropertyMetadata->ImplementationName] = propName;
-    propName                                            = definitionName;
+    propName = definitionName;
     attributes.erase(_xmlAttributeNames->sdrDefinitionNameAttr);
   }
 
@@ -817,18 +807,16 @@ SdrShaderPropertyUniquePtr RmanArgsParserPlugin::_CreateProperty(
   // -------------------------------------------------------------------------
   NdrTokenMap hints;
   for (const auto &pair : attributes) {
-    const TfToken attrName      = pair.first;
+    const TfToken attrName = pair.first;
     const std::string attrValue = pair.second;
 
-    if (std::find(SdrPropertyMetadata->allTokens.begin(),
-                  SdrPropertyMetadata->allTokens.end(),
-                  attrName) != SdrPropertyMetadata->allTokens.end()) {
+    if (std::find(SdrPropertyMetadata->allTokens.begin(), SdrPropertyMetadata->allTokens.end(), attrName) !=
+        SdrPropertyMetadata->allTokens.end()) {
       continue;
     }
 
-    if (std::find(_xmlAttributeNames->allTokens.begin(),
-                  _xmlAttributeNames->allTokens.end(),
-                  attrName) != _xmlAttributeNames->allTokens.end()) {
+    if (std::find(_xmlAttributeNames->allTokens.begin(), _xmlAttributeNames->allTokens.end(), attrName) !=
+        _xmlAttributeNames->allTokens.end()) {
       continue;
     }
 
@@ -842,18 +830,17 @@ SdrShaderPropertyUniquePtr RmanArgsParserPlugin::_CreateProperty(
   // Determine the default value; leave empty if a default isn't found
   // -------------------------------------------------------------------------
   const VtValue defaultValue = attributes.count(_xmlAttributeNames->defaultAttr) ?
-                                   _GetVtValue(attributes.at(_xmlAttributeNames->defaultAttr),
-                                               typeName,
-                                               arraySize,
-                                               attributes) :
-                                   VtValue();
+                                 _GetVtValue(attributes.at(_xmlAttributeNames->defaultAttr),
+                                             typeName,
+                                             arraySize,
+                                             attributes) :
+                                 VtValue();
 
   return SdrShaderPropertyUniquePtr(new SdrShaderProperty(
-      propName, typeName, defaultValue, isOutput, arraySize, attributes, hints, options));
+    propName, typeName, defaultValue, isOutput, arraySize, attributes, hints, options));
 }
 
-void RmanArgsParserPlugin::_injectParserMetadata(NdrTokenMap &metadata,
-                                                 const TfToken &typeName) const
+void RmanArgsParserPlugin::_injectParserMetadata(NdrTokenMap &metadata, const TfToken &typeName) const
 {
   if (typeName == SdrPropertyTypes->String) {
     if (IsPropertyAnAssetIdentifier(metadata)) {
@@ -891,9 +878,7 @@ std::string RmanArgsParserPlugin::_Get(const NdrTokenMap &map,
   return defaultValue;
 }
 
-TfToken RmanArgsParserPlugin::_Get(const NdrTokenMap &map,
-                                   const TfToken &key,
-                                   TfToken defaultValue) const
+TfToken RmanArgsParserPlugin::_Get(const NdrTokenMap &map, const TfToken &key, TfToken defaultValue) const
 {
   typename NdrTokenMap::const_iterator it = map.find(key);
 
@@ -916,11 +901,11 @@ int RmanArgsParserPlugin::_Get(const NdrTokenMap &map, const TfToken &key, int d
     }
     catch (...) {
       TF_DEBUG(NDR_PARSING)
-          .Msg(
-              "Attribute [%s] with string value [%s] "
-              "couldn't be converted to int.",
-              key.GetText(),
-              it->second.c_str());
+        .Msg(
+          "Attribute [%s] with string value [%s] "
+          "couldn't be converted to int.",
+          key.GetText(),
+          it->second.c_str());
     }
 
     return value;
@@ -929,9 +914,7 @@ int RmanArgsParserPlugin::_Get(const NdrTokenMap &map, const TfToken &key, int d
   return defaultValue;
 }
 
-float RmanArgsParserPlugin::_Get(const NdrTokenMap &map,
-                                 const TfToken &key,
-                                 float defaultValue) const
+float RmanArgsParserPlugin::_Get(const NdrTokenMap &map, const TfToken &key, float defaultValue) const
 {
   typename NdrTokenMap::const_iterator it = map.find(key);
 
@@ -943,11 +926,11 @@ float RmanArgsParserPlugin::_Get(const NdrTokenMap &map,
     }
     catch (...) {
       TF_DEBUG(NDR_PARSING)
-          .Msg(
-              "Attribute [%s] with string value [%s] "
-              "couldn't be converted to float.",
-              key.GetText(),
-              it->second.c_str());
+        .Msg(
+          "Attribute [%s] with string value [%s] "
+          "couldn't be converted to float.",
+          key.GetText(),
+          it->second.c_str());
     }
 
     return value;

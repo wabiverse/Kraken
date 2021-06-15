@@ -52,16 +52,15 @@ static PcpMapFunction _ComposeMappingForNode(const SdfLayerHandle layer, const P
   const SdfPath &path = node.GetPath();
   if (path.ContainsPrimVariantSelection()) {
     PcpMapFunction::PathMap pathMap = PcpMapFunction::IdentityPathMap();
-    pathMap[path]                   = path.StripAllVariantSelections();
-    PcpMapFunction varMap           = PcpMapFunction::Create(pathMap, SdfLayerOffset());
-    result                          = result.Compose(varMap);
+    pathMap[path] = path.StripAllVariantSelections();
+    PcpMapFunction varMap = PcpMapFunction::Create(pathMap, SdfLayerOffset());
+    result = result.Compose(varMap);
   }
 
   // Pick up any layer offset to the given layer.
   if (const SdfLayerOffset *layerOffset = node.GetLayerStack()->GetLayerOffsetForLayer(layer)) {
-    PcpMapFunction offsetMap = PcpMapFunction::Create(PcpMapFunction::IdentityPathMap(),
-                                                      *layerOffset);
-    result                   = result.Compose(offsetMap);
+    PcpMapFunction offsetMap = PcpMapFunction::Create(PcpMapFunction::IdentityPathMap(), *layerOffset);
+    result = result.Compose(offsetMap);
   }
 
   return result;
@@ -81,8 +80,8 @@ UsdEditTarget::UsdEditTarget(const SdfLayerHandle &layer, SdfLayerOffset offset)
 }
 
 UsdEditTarget::UsdEditTarget(const SdfLayerHandle &layer, const PcpNodeRef &node)
-    : _layer(layer),
-      _mapping(_ComposeMappingForNode(layer, node))
+  : _layer(layer),
+    _mapping(_ComposeMappingForNode(layer, node))
 {}
 
 UsdEditTarget::UsdEditTarget(const SdfLayerRefPtr &layer, SdfLayerOffset offset) : _layer(layer)
@@ -96,31 +95,30 @@ UsdEditTarget::UsdEditTarget(const SdfLayerRefPtr &layer, SdfLayerOffset offset)
 }
 
 UsdEditTarget::UsdEditTarget(const SdfLayerRefPtr &layer, const PcpNodeRef &node)
-    : _layer(layer),
-      _mapping(_ComposeMappingForNode(layer, node))
+  : _layer(layer),
+    _mapping(_ComposeMappingForNode(layer, node))
 {}
 
 /* private */
 UsdEditTarget::UsdEditTarget(const SdfLayerHandle &layer, const PcpMapFunction &mapping)
-    : _layer(layer),
-      _mapping(mapping)
+  : _layer(layer),
+    _mapping(mapping)
 {}
 
-UsdEditTarget UsdEditTarget::ForLocalDirectVariant(const SdfLayerHandle &layer,
-                                                   const SdfPath &varSelPath)
+UsdEditTarget UsdEditTarget::ForLocalDirectVariant(const SdfLayerHandle &layer, const SdfPath &varSelPath)
 {
   if (!varSelPath.IsPrimVariantSelectionPath()) {
     TF_CODING_ERROR(
-        "Provided varSelPath <%s> must be a prim variant "
-        "selection path.",
-        varSelPath.GetText());
+      "Provided varSelPath <%s> must be a prim variant "
+      "selection path.",
+      varSelPath.GetText());
     return UsdEditTarget();
   }
 
   // Create a map function that represents the variant selections.
   PcpMapFunction::PathMap pathMap = PcpMapFunction::IdentityPathMap();
-  pathMap[varSelPath]             = varSelPath.StripAllVariantSelections();
-  PcpMapFunction mapping          = PcpMapFunction::Create(pathMap, SdfLayerOffset());
+  pathMap[varSelPath] = varSelPath.StripAllVariantSelections();
+  PcpMapFunction mapping = PcpMapFunction::Create(pathMap, SdfLayerOffset());
 
   return UsdEditTarget(layer, mapping);
 }
@@ -140,7 +138,7 @@ SdfPath UsdEditTarget::MapToSpecPath(const SdfPath &scenePath) const
     result.GetAllTargetPathsRecursively(&targetPaths);
     for (const SdfPath &targetPath : targetPaths) {
       const SdfPath translatedTargetPath =
-          _mapping.MapTargetToSource(targetPath).StripAllVariantSelections();
+        _mapping.MapTargetToSource(targetPath).StripAllVariantSelections();
       if (translatedTargetPath.IsEmpty()) {
         return SdfPath();
       }

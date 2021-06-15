@@ -154,8 +154,7 @@ UsdAttribute UsdRiLightAPI::GetRiLightGroupAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->riLightGroup);
 }
 
-UsdAttribute UsdRiLightAPI::CreateRiLightGroupAttr(VtValue const &defaultValue,
-                                                   bool writeSparsely) const
+UsdAttribute UsdRiLightAPI::CreateRiLightGroupAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->riLightGroup,
                                     SdfValueTypeNames->String,
@@ -198,8 +197,7 @@ UsdAttribute UsdRiLightAPI::CreateRiTraceLightPathsAttr(VtValue const &defaultVa
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -213,15 +211,15 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRiLightAPI::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRiTokens->riSamplingFixedSampleCount,
-      UsdRiTokens->riSamplingImportanceMultiplier,
-      UsdRiTokens->riIntensityNearDist,
-      UsdRiTokens->riLightGroup,
-      UsdRiTokens->riShadowThinShadow,
-      UsdRiTokens->riTraceLightPaths,
+    UsdRiTokens->riSamplingFixedSampleCount,
+    UsdRiTokens->riSamplingImportanceMultiplier,
+    UsdRiTokens->riIntensityNearDist,
+    UsdRiTokens->riLightGroup,
+    UsdRiTokens->riShadowThinShadow,
+    UsdRiTokens->riTraceLightPaths,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdAPISchemaBase::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

@@ -25,10 +25,9 @@ WABI_NAMESPACE_BEGIN
 /// Wrapper over RPR_MATERIAL_NODE_ARITHMETIC
 class RprUsd_RprArithmeticNode : public RprUsd_MaterialNode {
  public:
-  static std::unique_ptr<RprUsd_RprArithmeticNode> Create(
-      rpr::MaterialNodeArithmeticOperation operation,
-      RprUsd_MaterialBuilderContext *ctx,
-      std::map<TfToken, VtValue> const &parameters = {});
+  static std::unique_ptr<RprUsd_RprArithmeticNode> Create(rpr::MaterialNodeArithmeticOperation operation,
+                                                          RprUsd_MaterialBuilderContext *ctx,
+                                                          std::map<TfToken, VtValue> const &parameters = {});
 
   ~RprUsd_RprArithmeticNode() override = default;
 
@@ -50,8 +49,8 @@ class RprUsd_RprArithmeticNode : public RprUsd_MaterialNode {
   {}
 
   // Provided by concrete operation node
-  virtual int GetNumArguments() const                        = 0;
-  virtual VtValue EvalOperation() const                      = 0;
+  virtual int GetNumArguments() const = 0;
+  virtual VtValue EvalOperation() const = 0;
   virtual rpr::MaterialNodeArithmeticOperation GetOp() const = 0;
 
  protected:

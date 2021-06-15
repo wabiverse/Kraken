@@ -132,8 +132,8 @@ WABI_NAMESPACE_BEGIN
 TfToken UsdRiSplineAPI::_GetScopedPropertyName(const TfToken &baseName) const
 {
   return TfToken(SdfPath::JoinIdentifier(
-      SdfPath::JoinIdentifier(_splineName.GetString(), UsdRiTokens->spline.GetString()),
-      baseName.GetString()));
+    SdfPath::JoinIdentifier(_splineName.GetString(), UsdRiTokens->spline.GetString()),
+    baseName.GetString()));
 }
 
 UsdAttribute UsdRiSplineAPI::GetInterpolationAttr() const
@@ -142,8 +142,7 @@ UsdAttribute UsdRiSplineAPI::GetInterpolationAttr() const
   return GetPrim().GetAttribute(name);
 }
 
-UsdAttribute UsdRiSplineAPI::CreateInterpolationAttr(VtValue const &defaultValue,
-                                                     bool writeSparsely) const
+UsdAttribute UsdRiSplineAPI::CreateInterpolationAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   TfToken name = _GetScopedPropertyName(UsdRiTokens->interpolation);
   return UsdSchemaBase::_CreateAttr(name,
@@ -160,8 +159,7 @@ UsdAttribute UsdRiSplineAPI::GetPositionsAttr() const
   return GetPrim().GetAttribute(name);
 }
 
-UsdAttribute UsdRiSplineAPI::CreatePositionsAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdRiSplineAPI::CreatePositionsAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   TfToken name = _GetScopedPropertyName(UsdRiTokens->positions);
   return UsdSchemaBase::_CreateAttr(name,
@@ -178,8 +176,7 @@ UsdAttribute UsdRiSplineAPI::GetValuesAttr() const
   return GetPrim().GetAttribute(name);
 }
 
-UsdAttribute UsdRiSplineAPI::CreateValuesAttr(VtValue const &defaultValue,
-                                              bool writeSparsely) const
+UsdAttribute UsdRiSplineAPI::CreateValuesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   TfToken name = _GetScopedPropertyName(UsdRiTokens->values);
   return UsdSchemaBase::_CreateAttr(name,
@@ -198,8 +195,8 @@ bool UsdRiSplineAPI::Validate(std::string *reason) const
   }
 
   UsdAttribute interpAttr = GetInterpolationAttr();
-  UsdAttribute posAttr    = GetPositionsAttr();
-  UsdAttribute valAttr    = GetValuesAttr();
+  UsdAttribute posAttr = GetPositionsAttr();
+  UsdAttribute valAttr = GetValuesAttr();
 
   if (_valuesTypeName != SdfValueTypeNames->FloatArray &&
       _valuesTypeName != SdfValueTypeNames->Color3fArray) {
@@ -253,8 +250,8 @@ bool UsdRiSplineAPI::Validate(std::string *reason) const
   }
   if (positions.size() != numValues) {
     *reason +=
-        "Values attribute and positions attribute must "
-        "have the same number of entries";
+      "Values attribute and positions attribute must "
+      "have the same number of entries";
     return false;
   }
 

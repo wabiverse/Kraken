@@ -38,8 +38,8 @@ namespace {
 
 static string _DependencyRepr(const PcpDependency &dep)
 {
-  return TF_PY_REPR_PREFIX + "Cache.Dependency(" + TfPyRepr(dep.indexPath) + ", " +
-         TfPyRepr(dep.sitePath) + ", " + TfPyRepr(dep.mapFunc) + ")";
+  return TF_PY_REPR_PREFIX + "Cache.Dependency(" + TfPyRepr(dep.indexPath) + ", " + TfPyRepr(dep.sitePath) +
+         ", " + TfPyRepr(dep.mapFunc) + ")";
 }
 
 static PcpDependency *_DependencyInit(const SdfPath &indexPath,
@@ -54,13 +54,13 @@ static PcpDependency *_DependencyInit(const SdfPath &indexPath,
 void wrapDependency()
 {
   class_<PcpDependency>("Dependency", no_init)
-      .def_readwrite("indexPath", &PcpDependency::indexPath)
-      .def_readwrite("sitePath", &PcpDependency::sitePath)
-      .def_readwrite("mapFunc", &PcpDependency::mapFunc)
-      .def("__repr__", &_DependencyRepr)
-      .def("__init__", make_constructor(_DependencyInit))
-      .def(self == self)
-      .def(self != self);
+    .def_readwrite("indexPath", &PcpDependency::indexPath)
+    .def_readwrite("sitePath", &PcpDependency::sitePath)
+    .def_readwrite("mapFunc", &PcpDependency::mapFunc)
+    .def("__repr__", &_DependencyRepr)
+    .def("__init__", make_constructor(_DependencyInit))
+    .def(self == self)
+    .def(self != self);
 
   TfPyWrapEnum<PcpDependencyType>();
 }

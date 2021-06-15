@@ -168,8 +168,7 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase {
   // for the first node for which p(node) is true and the first subsequent
   // node where p(node) is false. Returns the indexes of the resulting
   // nodes.
-  template<class Predicate>
-  std::pair<size_t, size_t> _FindRootChildRange(const Predicate &p) const;
+  template<class Predicate> std::pair<size_t, size_t> _FindRootChildRange(const Predicate &p) const;
 
   // Helper functions to compute a mapping between node indexes and
   // the strength order of the corresponding node.
@@ -180,10 +179,9 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase {
   //
   // nodeIndexToStrengthOrder[i] => strength order of node at index i.
   bool _ComputeStrengthOrderIndexMapping(std::vector<size_t> *nodeIndexToStrengthOrder) const;
-  bool _ComputeStrengthOrderIndexMappingRecursively(
-      size_t nodeIdx,
-      size_t *strengthIdx,
-      std::vector<size_t> *nodeIndexToStrengthOrder) const;
+  bool _ComputeStrengthOrderIndexMappingRecursively(size_t nodeIdx,
+                                                    size_t *strengthIdx,
+                                                    std::vector<size_t> *nodeIndexToStrengthOrder) const;
 
   // Helper function to compute a node index mapping that erases nodes
   // that have been marked for culling.
@@ -236,8 +234,8 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase {
 
   struct _Node {
     static const size_t _nodeIndexSize = 15;
-    static const size_t _childrenSize  = 10;
-    static const size_t _depthSize     = 10;
+    static const size_t _childrenSize = 10;
+    static const size_t _depthSize = 10;
     // These types should be just large enough to hold the above sizes.
     // This allows this structure to be packed into less space.
     typedef unsigned short _NodeIndexType;
@@ -262,10 +260,10 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase {
     */
     {
       memset(&smallInts, 0, sizeof(smallInts));
-      smallInts.arcParentIndex   = _invalidNodeIndex;
-      smallInts.arcOriginIndex   = _invalidNodeIndex;
-      smallInts.firstChildIndex  = _invalidNodeIndex;
-      smallInts.lastChildIndex   = _invalidNodeIndex;
+      smallInts.arcParentIndex = _invalidNodeIndex;
+      smallInts.arcOriginIndex = _invalidNodeIndex;
+      smallInts.firstChildIndex = _invalidNodeIndex;
+      smallInts.lastChildIndex = _invalidNodeIndex;
       smallInts.prevSiblingIndex = _invalidNodeIndex;
       smallInts.nextSiblingIndex = _invalidNodeIndex;
     }

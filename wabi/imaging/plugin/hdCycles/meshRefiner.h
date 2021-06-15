@@ -61,16 +61,10 @@ class HdCyclesMeshRefiner {
   /// @{ \brief Refine/approximate primvar data.
   virtual VtValue RefineConstantData(const TfToken &name,
                                      const TfToken &role,
-                                     const VtValue &data) const    = 0;
-  virtual VtValue RefineUniformData(const TfToken &name,
-                                    const TfToken &role,
-                                    const VtValue &data) const     = 0;
-  virtual VtValue RefineVaryingData(const TfToken &name,
-                                    const TfToken &role,
-                                    const VtValue &data) const     = 0;
-  virtual VtValue RefineVertexData(const TfToken &name,
-                                   const TfToken &role,
-                                   const VtValue &data) const      = 0;
+                                     const VtValue &data) const = 0;
+  virtual VtValue RefineUniformData(const TfToken &name, const TfToken &role, const VtValue &data) const = 0;
+  virtual VtValue RefineVaryingData(const TfToken &name, const TfToken &role, const VtValue &data) const = 0;
+  virtual VtValue RefineVertexData(const TfToken &name, const TfToken &role, const VtValue &data) const = 0;
   virtual VtValue RefineFaceVaryingData(const TfToken &name,
                                         const TfToken &role,
                                         const VtValue &data) const = 0;
@@ -88,7 +82,7 @@ class HdCyclesMeshRefiner {
                              VtFloat3Array &limit_du,
                              VtFloat3Array &limit_dv) const = 0;
 
-  HdCyclesMeshRefiner(const HdCyclesMeshRefiner &)     = delete;
+  HdCyclesMeshRefiner(const HdCyclesMeshRefiner &) = delete;
   HdCyclesMeshRefiner(HdCyclesMeshRefiner &&) noexcept = delete;
 
   HdCyclesMeshRefiner &operator=(const HdCyclesMeshRefiner &) = delete;

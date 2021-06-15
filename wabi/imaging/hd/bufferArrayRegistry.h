@@ -133,8 +133,7 @@ class HdBufferArrayRegistry {
     const _Entry &_entry;
   };
 
-  typedef tbb::concurrent_unordered_map<HdAggregationStrategy::AggregationId, _Entry>
-      _BufferArrayIndex;
+  typedef tbb::concurrent_unordered_map<HdAggregationStrategy::AggregationId, _Entry> _BufferArrayIndex;
 
   _BufferArrayIndex _entries;
 

@@ -53,9 +53,9 @@ VtValue UsdImagingField3DAssetAdapter::Get(UsdPrim const &prim,
                                            UsdTimeCode time,
                                            VtIntArray *outIndices) const
 {
-  if (key == UsdVolTokens->filePath || key == UsdVolTokens->fieldName ||
-      key == UsdVolTokens->fieldIndex || key == UsdVolTokens->fieldPurpose ||
-      key == UsdVolTokens->fieldDataType || key == UsdVolTokens->vectorDataRoleHint) {
+  if (key == UsdVolTokens->filePath || key == UsdVolTokens->fieldName || key == UsdVolTokens->fieldIndex ||
+      key == UsdVolTokens->fieldPurpose || key == UsdVolTokens->fieldDataType ||
+      key == UsdVolTokens->vectorDataRoleHint) {
 
     if (UsdAttribute const &attr = prim.GetAttribute(key)) {
       VtValue value;

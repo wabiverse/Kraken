@@ -223,7 +223,7 @@ template<class T> class Usd_LinearInterpolator : public Usd_InterpolatorBase {
     }
 
     const double parametricTime = (time - lower) / (upper - lower);
-    *_result                    = Usd_Lerp(parametricTime, lowerValue, upperValue);
+    *_result = Usd_Lerp(parametricTime, lowerValue, upperValue);
     return true;
   }
 

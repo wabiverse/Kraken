@@ -17,20 +17,19 @@ limitations under the License.
 WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(
-    HdRprGeometryPrimvarTokens,
-    ((id, "rpr:id"))((subdivisionLevel, "rpr:subdivisionLevel"))((ignoreContour,
-                                                                  "rpr:ignoreContour"))((
-        cryptomatteName,
-        "rpr:cryptomatteName"))((geomSamples, "rpr:geomSamples"))((visibilityPrimary,
-                                                                   "rpr:visibilityPrimary"))((
-        visibilityShadow,
-        "rpr:visibilityShadow"))((visibilityReflection, "rpr:visibilityReflection"))((
-        visibilityGlossyReflection,
-        "rpr:visibilityGlossyReflection"))((visibilityRefraction, "rpr:visibilityRefraction"))((
-        visibilityGlossyRefraction,
-        "rpr:visibilityGlossyRefraction"))((visibilityDiffuse, "rpr:visibilityDiffuse"))((
-        visibilityTransparent,
-        "rpr:visibilityTransparent"))((visibilityLight, "rpr:visibilityLight")));
+  HdRprGeometryPrimvarTokens,
+  ((id, "rpr:id"))((subdivisionLevel, "rpr:subdivisionLevel"))((ignoreContour, "rpr:ignoreContour"))((
+    cryptomatteName,
+    "rpr:cryptomatteName"))((geomSamples, "rpr:geomSamples"))((visibilityPrimary, "rpr:visibilityPrimary"))((
+    visibilityShadow,
+    "rpr:visibilityShadow"))((visibilityReflection, "rpr:visibilityReflection"))((
+    visibilityGlossyReflection,
+    "rpr:visibilityGlossyReflection"))((visibilityRefraction,
+                                        "rpr:visibilityRefraction"))((visibilityGlossyRefraction,
+                                                                      "rpr:visibilityGlossyRefraction"))((
+    visibilityDiffuse,
+    "rpr:visibilityDiffuse"))((visibilityTransparent,
+                               "rpr:visibilityTransparent"))((visibilityLight, "rpr:visibilityLight")));
 
 void HdRprParseGeometrySettings(HdSceneDelegate *sceneDelegate,
                                 SdfPath const &id,
@@ -55,35 +54,26 @@ void HdRprParseGeometrySettings(HdSceneDelegate *sceneDelegate,
 
   for (auto &desc : constantPrimvarDescs) {
     if (desc.name == HdRprGeometryPrimvarTokens->id) {
-      HdRprGetConstantPrimvar(
-          HdRprGeometryPrimvarTokens->id, sceneDelegate, id, &geomSettings->id);
+      HdRprGetConstantPrimvar(HdRprGeometryPrimvarTokens->id, sceneDelegate, id, &geomSettings->id);
     }
     else if (desc.name == HdRprGeometryPrimvarTokens->subdivisionLevel) {
       int subdivisionLevel;
-      if (HdRprGetConstantPrimvar(HdRprGeometryPrimvarTokens->subdivisionLevel,
-                                  sceneDelegate,
-                                  id,
-                                  &subdivisionLevel)) {
+      if (HdRprGetConstantPrimvar(
+            HdRprGeometryPrimvarTokens->subdivisionLevel, sceneDelegate, id, &subdivisionLevel)) {
         geomSettings->subdivisionLevel = std::max(0, std::min(subdivisionLevel, 7));
       }
     }
     else if (desc.name == HdRprGeometryPrimvarTokens->ignoreContour) {
-      HdRprGetConstantPrimvar(HdRprGeometryPrimvarTokens->ignoreContour,
-                              sceneDelegate,
-                              id,
-                              &geomSettings->ignoreContour);
+      HdRprGetConstantPrimvar(
+        HdRprGeometryPrimvarTokens->ignoreContour, sceneDelegate, id, &geomSettings->ignoreContour);
     }
     else if (desc.name == HdRprGeometryPrimvarTokens->cryptomatteName) {
-      HdRprGetConstantPrimvar(HdRprGeometryPrimvarTokens->cryptomatteName,
-                              sceneDelegate,
-                              id,
-                              &geomSettings->cryptomatteName);
+      HdRprGetConstantPrimvar(
+        HdRprGeometryPrimvarTokens->cryptomatteName, sceneDelegate, id, &geomSettings->cryptomatteName);
     }
     else if (desc.name == HdRprGeometryPrimvarTokens->geomSamples) {
-      HdRprGetConstantPrimvar(HdRprGeometryPrimvarTokens->geomSamples,
-                              sceneDelegate,
-                              id,
-                              &geomSettings->numGeometrySamples);
+      HdRprGetConstantPrimvar(
+        HdRprGeometryPrimvarTokens->geomSamples, sceneDelegate, id, &geomSettings->numGeometrySamples);
       geomSettings->numGeometrySamples = std::max(1, geomSettings->numGeometrySamples);
     }
     else if (desc.name == HdRprGeometryPrimvarTokens->visibilityPrimary) {
@@ -96,15 +86,13 @@ void HdRprParseGeometrySettings(HdSceneDelegate *sceneDelegate,
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityReflection, kVisibleReflection);
     }
     else if (desc.name == HdRprGeometryPrimvarTokens->visibilityGlossyReflection) {
-      setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityGlossyReflection,
-                        kVisibleGlossyReflection);
+      setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityGlossyReflection, kVisibleGlossyReflection);
     }
     else if (desc.name == HdRprGeometryPrimvarTokens->visibilityRefraction) {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityRefraction, kVisibleRefraction);
     }
     else if (desc.name == HdRprGeometryPrimvarTokens->visibilityGlossyRefraction) {
-      setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityGlossyRefraction,
-                        kVisibleGlossyRefraction);
+      setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityGlossyRefraction, kVisibleGlossyRefraction);
     }
     else if (desc.name == HdRprGeometryPrimvarTokens->visibilityDiffuse) {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityDiffuse, kVisibleDiffuse);
@@ -119,21 +107,21 @@ void HdRprParseGeometrySettings(HdSceneDelegate *sceneDelegate,
 }
 
 void HdRprFillPrimvarDescsPerInterpolation(
-    HdSceneDelegate *sceneDelegate,
-    SdfPath const &id,
-    std::map<HdInterpolation, HdPrimvarDescriptorVector> *primvarDescsPerInterpolation)
+  HdSceneDelegate *sceneDelegate,
+  SdfPath const &id,
+  std::map<HdInterpolation, HdPrimvarDescriptorVector> *primvarDescsPerInterpolation)
 {
   if (!primvarDescsPerInterpolation->empty()) {
     return;
   }
 
   auto interpolations = {
-      HdInterpolationConstant,
-      HdInterpolationUniform,
-      HdInterpolationVarying,
-      HdInterpolationVertex,
-      HdInterpolationFaceVarying,
-      HdInterpolationInstance,
+    HdInterpolationConstant,
+    HdInterpolationUniform,
+    HdInterpolationVarying,
+    HdInterpolationVertex,
+    HdInterpolationFaceVarying,
+    HdInterpolationInstance,
   };
   for (auto &interpolation : interpolations) {
     auto primvarDescs = sceneDelegate->GetPrimvarDescriptors(id, interpolation);
@@ -151,9 +139,9 @@ void HdRprFillPrimvarDescsPerInterpolation(
 }
 
 bool HdRprIsPrimvarExists(
-    TfToken const &primvarName,
-    std::map<HdInterpolation, HdPrimvarDescriptorVector> const &primvarDescsPerInterpolation,
-    HdInterpolation *interpolation)
+  TfToken const &primvarName,
+  std::map<HdInterpolation, HdPrimvarDescriptorVector> const &primvarDescsPerInterpolation,
+  HdInterpolation *interpolation)
 {
   for (auto &entry : primvarDescsPerInterpolation) {
     for (auto &pv : entry.second) {

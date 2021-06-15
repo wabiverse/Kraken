@@ -80,10 +80,10 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 SdfTextFileFormat::SdfTextFileFormat()
-    : SdfFileFormat(SdfTextFileFormatTokens->Id,
-                    SdfTextFileFormatTokens->Version,
-                    SdfTextFileFormatTokens->Target,
-                    SdfTextFileFormatTokens->Id.GetString())
+  : SdfFileFormat(SdfTextFileFormatTokens->Id,
+                  SdfTextFileFormatTokens->Version,
+                  SdfTextFileFormatTokens->Target,
+                  SdfTextFileFormatTokens->Id.GetString())
 {
   // Do Nothing.
 }
@@ -91,10 +91,10 @@ SdfTextFileFormat::SdfTextFileFormat()
 SdfTextFileFormat::SdfTextFileFormat(const TfToken &formatId,
                                      const TfToken &versionString,
                                      const TfToken &target)
-    : SdfFileFormat(formatId,
-                    (versionString.IsEmpty() ? SdfTextFileFormatTokens->Version : versionString),
-                    (target.IsEmpty() ? SdfTextFileFormatTokens->Target : target),
-                    formatId)
+  : SdfFileFormat(formatId,
+                  (versionString.IsEmpty() ? SdfTextFileFormatTokens->Version : versionString),
+                  (target.IsEmpty() ? SdfTextFileFormatTokens->Target : target),
+                  formatId)
 {
   // Do Nothing.
 }
@@ -146,13 +146,12 @@ bool SdfTextFileFormat::Read(SdfLayer *layer, const string &resolvedPath, bool m
   // Quick check to see if the file has the magic cookie before spinning up
   // the parser.
   if (!_CanReadImpl(asset, GetFileCookie())) {
-    TF_RUNTIME_ERROR(
-        "<%s> is not a valid %s layer", resolvedPath.c_str(), GetFormatId().GetText());
+    TF_RUNTIME_ERROR("<%s> is not a valid %s layer", resolvedPath.c_str(), GetFormatId().GetText());
     return false;
   }
 
   const int fileSizeWarning = TfGetEnvSetting(SDF_TEXTFILE_SIZE_WARNING_MB);
-  const size_t toMB         = 1048576;
+  const size_t toMB = 1048576;
 
   if (fileSizeWarning > 0 && asset->GetSize() > (fileSizeWarning * toMB)) {
     TF_WARN("Performance warning: reading %lu MB text-based layer <%s>.",
@@ -216,9 +215,9 @@ static bool _WriteLayer(const SdfLayer *l,
 
   // Partition this layer's fields so that all fields to write out are
   // in the range [fields.begin(), metadataFieldsEnd).
-  TfTokenVector fields                      = pseudoRoot->ListFields();
+  TfTokenVector fields = pseudoRoot->ListFields();
   TfTokenVector::iterator metadataFieldsEnd = std::partition(
-      fields.begin(), fields.end(), Sdf_IsLayerMetadataField());
+    fields.begin(), fields.end(), Sdf_IsLayerMetadataField());
 
   // Write comment at the top of the metadata section for readability.
   const std::string comment = commentOverride.empty() ? l->GetComment() : commentOverride;
@@ -231,8 +230,7 @@ static bool _WriteLayer(const SdfLayer *l,
   // Write out remaining fields in the metadata section in alphabetical
   // order.
   std::sort(fields.begin(), metadataFieldsEnd);
-  for (TfTokenVector::const_iterator fieldIt = fields.begin(); fieldIt != metadataFieldsEnd;
-       ++fieldIt) {
+  for (TfTokenVector::const_iterator fieldIt = fields.begin(); fieldIt != metadataFieldsEnd; ++fieldIt) {
 
     const TfToken &field = *fieldIt;
 
@@ -249,8 +247,7 @@ static bool _WriteLayer(const SdfLayer *l,
       size_t c = l->GetSubLayerPaths().size();
       for (size_t i = 0; i < c; i++) {
         _WriteAssetPath(header, 2, l->GetSubLayerPaths()[i]);
-        _WriteLayerOffset(
-            header, 0, false /* multiLine */, l->GetSubLayerOffset(static_cast<int>(i)));
+        _WriteLayerOffset(header, 0, false /* multiLine */, l->GetSubLayerOffset(static_cast<int>(i)));
         _Write(header, 0, (i < c - 1) ? ",\n" : "\n");
       }
       _Write(header, 1, "]\n");
@@ -318,8 +315,8 @@ bool SdfTextFileFormat::WriteToFile(const SdfLayer &layer,
     return false;
   }
 #else
-  std::shared_ptr<ArWritableAsset> asset = ArGetResolver().OpenAssetForWrite(
-      ArResolvedPath(filePath), ArResolver::WriteMode::Replace);
+  std::shared_ptr<ArWritableAsset> asset = ArGetResolver().OpenAssetForWrite(ArResolvedPath(filePath),
+                                                                             ArResolver::WriteMode::Replace);
   if (!asset) {
     TF_RUNTIME_ERROR("Unable to open %s for write", filePath.c_str());
     return false;
@@ -342,7 +339,7 @@ bool SdfTextFileFormat::ReadFromString(SdfLayer *layer, const std::string &str) 
   SdfLayerHints hints;
   SdfAbstractDataRefPtr data = InitData(layer->GetFileFormatArguments());
   if (!Sdf_ParseLayerFromString(
-          str, GetFormatId(), GetVersionString(), TfDynamic_cast<SdfDataRefPtr>(data), &hints)) {
+        str, GetFormatId(), GetVersionString(), TfDynamic_cast<SdfDataRefPtr>(data), &hints)) {
     return false;
   }
 
@@ -364,9 +361,7 @@ bool SdfTextFileFormat::WriteToString(const SdfLayer &layer,
   return true;
 }
 
-bool SdfTextFileFormat::WriteToStream(const SdfSpecHandle &spec,
-                                      std::ostream &out,
-                                      size_t indent) const
+bool SdfTextFileFormat::WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const
 {
   return Sdf_WriteToStream(spec.GetSpec(), out, indent);
 }

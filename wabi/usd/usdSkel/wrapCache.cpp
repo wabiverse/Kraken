@@ -80,29 +80,26 @@ void wrapUsdSkelCache()
 
   class_<This>("Cache", init<>())
 
-      .def("Clear", &This::Clear)
+    .def("Clear", &This::Clear)
 
-      .def("Populate", &This::Populate, (arg("skelRoot"), arg("predicate")))
+    .def("Populate", &This::Populate, (arg("skelRoot"), arg("predicate")))
 
-      .def("GetSkelQuery", &This::GetSkelQuery)
+    .def("GetSkelQuery", &This::GetSkelQuery)
 
-      .def("GetSkinningQuery", &This::GetSkinningQuery)
+    .def("GetSkinningQuery", &This::GetSkinningQuery)
 
-      .def("GetAnimQuery",
-           (UsdSkelAnimQuery(UsdSkelCache::*)(const UsdPrim &) const) & This::GetAnimQuery,
-           (arg("prim")))
+    .def("GetAnimQuery",
+         (UsdSkelAnimQuery(UsdSkelCache::*)(const UsdPrim &) const) & This::GetAnimQuery,
+         (arg("prim")))
 
-      .def("GetAnimQuery",
-           (UsdSkelAnimQuery(UsdSkelCache::*)(const UsdSkelAnimation &) const) &
-               This::GetAnimQuery,
-           (arg("anim")))
+    .def("GetAnimQuery",
+         (UsdSkelAnimQuery(UsdSkelCache::*)(const UsdSkelAnimation &) const) & This::GetAnimQuery,
+         (arg("anim")))
 
-      .def("ComputeSkelBindings",
-           &_ComputeSkelBindings,
-           return_value_policy<TfPySequenceToList>(),
-           (arg("skelRoot"), arg("predicate")))
+    .def("ComputeSkelBindings",
+         &_ComputeSkelBindings,
+         return_value_policy<TfPySequenceToList>(),
+         (arg("skelRoot"), arg("predicate")))
 
-      .def("ComputeSkelBinding",
-           &_ComputeSkelBinding,
-           (arg("skelRoot"), arg("skel"), arg("predicate")));
+    .def("ComputeSkelBinding", &_ComputeSkelBinding, (arg("skelRoot"), arg("skel"), arg("predicate")));
 }

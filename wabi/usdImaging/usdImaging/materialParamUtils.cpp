@@ -36,9 +36,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-static const char UDIM_PATTERN[]                            = "<UDIM>";
-static const int UDIM_START_TILE                            = 1001;
-static const int UDIM_END_TILE                              = 1100;
+static const char UDIM_PATTERN[] = "<UDIM>";
+static const int UDIM_START_TILE = 1001;
+static const int UDIM_END_TILE = 1100;
 static const std::string::size_type UDIM_TILE_NUMBER_LENGTH = 4;
 
 // We need to find the first layer that changes the value
@@ -46,8 +46,7 @@ static const std::string::size_type UDIM_TILE_NUMBER_LENGTH = 4;
 static SdfLayerHandle _FindLayerHandle(const UsdAttribute &attr, const UsdTimeCode &time)
 {
   for (const auto &spec : attr.GetPropertyStack(time)) {
-    if (spec->HasDefaultValue() ||
-        spec->GetLayer()->GetNumTimeSamplesForPath(spec->GetPath()) > 0) {
+    if (spec->HasDefaultValue() || spec->GetLayer()->GetNumTimeSamplesForPath(spec->GetPath()) > 0) {
       return spec->GetLayer();
     }
   }
@@ -148,8 +147,7 @@ static SdfAssetPath _ResolveAssetAttribute(const SdfAssetPath &assetPath,
   TRACE_FUNCTION();
 
   // See whether the asset path contains UDIM pattern.
-  const std::pair<std::string, std::string> splitPath = _SplitUdimPattern(
-      assetPath.GetAssetPath());
+  const std::pair<std::string, std::string> splitPath = _SplitUdimPattern(assetPath.GetAssetPath());
 
   if (splitPath.first.empty() && splitPath.second.empty()) {
     // Not a UDIM, resolve symlinks and exit.
@@ -157,8 +155,7 @@ static SdfAssetPath _ResolveAssetAttribute(const SdfAssetPath &assetPath,
   }
 
   // Find first tile.
-  const std::string firstTilePath = _ResolvedPathForFirstTile(splitPath,
-                                                              _FindLayerHandle(attr, time));
+  const std::string firstTilePath = _ResolvedPathForFirstTile(splitPath, _FindLayerHandle(attr, time));
 
   if (firstTilePath.empty()) {
     return assetPath;
@@ -173,16 +170,15 @@ static SdfAssetPath _ResolveAssetAttribute(const SdfAssetPath &assetPath,
   // Sanity check that the part after <UDIM> did not change.
   if (!TfStringEndsWith(firstTilePath, suffix)) {
     TF_WARN(
-        "Resolution of first udim tile gave ambigious result. "
-        "First tile for '%s' is '%s'.",
-        assetPath.GetAssetPath().c_str(),
-        firstTilePath.c_str());
+      "Resolution of first udim tile gave ambigious result. "
+      "First tile for '%s' is '%s'.",
+      assetPath.GetAssetPath().c_str(),
+      firstTilePath.c_str());
     return assetPath;
   }
 
   // Length of the part /filePath/myImage.<UDIM>.exr.
-  const std::string::size_type prefixLength = firstTilePath.size() - suffix.size() -
-                                              UDIM_TILE_NUMBER_LENGTH;
+  const std::string::size_type prefixLength = firstTilePath.size() - suffix.size() - UDIM_TILE_NUMBER_LENGTH;
 
   return SdfAssetPath(assetPath.GetAssetPath(),
                       firstTilePath.substr(0, prefixLength) + UDIM_PATTERN + suffix);
@@ -241,16 +237,14 @@ static void _ExtractPrimvarsFromNode(HdMaterialNode const &node,
                                      HdMaterialNetwork *materialNetwork,
                                      TfTokenVector const &shaderSourceTypes)
 {
-  SdrRegistry &shaderReg        = SdrRegistry::GetInstance();
-  SdrShaderNodeConstPtr sdrNode = shaderReg.GetShaderNodeByIdentifier(node.identifier,
-                                                                      shaderSourceTypes);
+  SdrRegistry &shaderReg = SdrRegistry::GetInstance();
+  SdrShaderNodeConstPtr sdrNode = shaderReg.GetShaderNodeByIdentifier(node.identifier, shaderSourceTypes);
 
   if (sdrNode) {
     // GetPrimvars and GetAdditionalPrimvarProperties together give us the
     // complete set of primvars needed by this shader node.
     NdrTokenVec const &primvars = sdrNode->GetPrimvars();
-    materialNetwork->primvars.insert(
-        materialNetwork->primvars.end(), primvars.begin(), primvars.end());
+    materialNetwork->primvars.insert(materialNetwork->primvars.end(), primvars.begin(), primvars.end());
 
     for (TfToken const &p : sdrNode->GetAdditionalPrimvarProperties()) {
       TfToken name = _GetPrimvarNameAttributeValue(sdrNode, node, p);
@@ -259,8 +253,7 @@ static void _ExtractPrimvarsFromNode(HdMaterialNode const &node,
   }
 }
 
-static TfToken _GetNodeId(UsdShadeConnectableAPI const &shadeNode,
-                          TfTokenVector const &shaderSourceTypes)
+static TfToken _GetNodeId(UsdShadeConnectableAPI const &shadeNode, TfTokenVector const &shaderSourceTypes)
 {
   UsdShadeNodeDefAPI nodeDef(shadeNode.GetPrim());
   if (nodeDef) {
@@ -326,17 +319,14 @@ static void _WalkGraph(UsdShadeConnectableAPI const &shadeNode,
     if (attrType == UsdShadeAttributeType::Output) {
       // If it is an output on a shading node we visit the node and also
       // create a relationship in the network
-      _WalkGraph(UsdShadeConnectableAPI(attr.GetPrim()),
-                 materialNetwork,
-                 visitedNodes,
-                 shaderSourceTypes,
-                 time);
+      _WalkGraph(
+        UsdShadeConnectableAPI(attr.GetPrim()), materialNetwork, visitedNodes, shaderSourceTypes, time);
 
       HdMaterialRelationship relationship;
-      relationship.outputId   = node.path;
+      relationship.outputId = node.path;
       relationship.outputName = inputName;
-      relationship.inputId    = attr.GetPrim().GetPath();
-      relationship.inputName  = UsdShadeOutput(attr).GetBaseName();
+      relationship.inputId = attr.GetPrim().GetPath();
+      relationship.inputName = UsdShadeOutput(attr).GetBaseName();
       materialNetwork->relationships.push_back(relationship);
     }
     else if (attrType == UsdShadeAttributeType::Input) {
@@ -377,12 +367,11 @@ void UsdImaging_BuildHdMaterialNetworkFromTerminal(UsdPrim const &usdTerminal,
                                                    HdMaterialNetworkMap *materialNetworkMap,
                                                    UsdTimeCode time)
 {
-  HdMaterialNetwork &network         = materialNetworkMap->map[terminalIdentifier];
+  HdMaterialNetwork &network = materialNetworkMap->map[terminalIdentifier];
   std::vector<HdMaterialNode> &nodes = network.nodes;
   _PathSet visitedNodes;
 
-  _WalkGraph(
-      UsdShadeConnectableAPI(usdTerminal), &network, &visitedNodes, shaderSourceTypes, time);
+  _WalkGraph(UsdShadeConnectableAPI(usdTerminal), &network, &visitedNodes, shaderSourceTypes, time);
 
   if (!TF_VERIFY(!nodes.empty()))
     return;
@@ -397,9 +386,7 @@ void UsdImaging_BuildHdMaterialNetworkFromTerminal(UsdPrim const &usdTerminal,
   // Return empty network if it fails so backend can use fallback material.
   SdrRegistry &shaderReg = SdrRegistry::GetInstance();
   if (!shaderReg.GetNodeByIdentifier(terminalNode.identifier)) {
-    TF_WARN("Invalid info:id %s node: %s",
-            terminalNode.identifier.GetText(),
-            terminalNode.path.GetText());
+    TF_WARN("Invalid info:id %s node: %s", terminalNode.identifier.GetText(), terminalNode.path.GetText());
     *materialNetworkMap = HdMaterialNetworkMap();
   }
 };

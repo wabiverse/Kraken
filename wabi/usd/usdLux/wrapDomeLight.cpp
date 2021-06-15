@@ -54,17 +54,12 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateTextureFileAttr(UsdLuxDomeLight &self,
-                                           object defaultVal,
-                                           bool writeSparsely)
+static UsdAttribute _CreateTextureFileAttr(UsdLuxDomeLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateTextureFileAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
-                                    writeSparsely);
+  return self.CreateTextureFileAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
 }
 
-static UsdAttribute _CreateTextureFormatAttr(UsdLuxDomeLight &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
+static UsdAttribute _CreateTextureFormatAttr(UsdLuxDomeLight &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateTextureFormatAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
                                       writeSparsely);
@@ -85,41 +80,39 @@ void wrapUsdLuxDomeLight()
   class_<This, bases<UsdLuxLight>> cls("DomeLight");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetTextureFileAttr", &This::GetTextureFileAttr)
-      .def("CreateTextureFileAttr",
-           &_CreateTextureFileAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTextureFileAttr", &This::GetTextureFileAttr)
+    .def("CreateTextureFileAttr",
+         &_CreateTextureFileAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetTextureFormatAttr", &This::GetTextureFormatAttr)
-      .def("CreateTextureFormatAttr",
-           &_CreateTextureFormatAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTextureFormatAttr", &This::GetTextureFormatAttr)
+    .def("CreateTextureFormatAttr",
+         &_CreateTextureFormatAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetPortalsRel", &This::GetPortalsRel)
-      .def("CreatePortalsRel", &This::CreatePortalsRel)
-      .def("__repr__", ::_Repr);
+    .def("GetPortalsRel", &This::GetPortalsRel)
+    .def("CreatePortalsRel", &This::CreatePortalsRel)
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

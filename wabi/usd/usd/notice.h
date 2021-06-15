@@ -112,9 +112,9 @@ class UsdNotice {
     ObjectsChanged(const UsdStageWeakPtr &stage,
                    const _PathsToChangesMap *resyncChanges,
                    const _PathsToChangesMap *infoChanges)
-        : StageNotice(stage),
-          _resyncChanges(resyncChanges),
-          _infoChanges(infoChanges)
+      : StageNotice(stage),
+        _resyncChanges(resyncChanges),
+        _infoChanges(infoChanges)
     {}
 
    public:
@@ -149,11 +149,10 @@ class UsdNotice {
     class PathRange {
      public:
       /// \class iterator
-      class iterator
-          : public boost::iterator_adaptor<iterator,                            // crtp base,
-                                           _PathsToChangesMap::const_iterator,  // base iterator
-                                           const SdfPath &                      // value type
-                                           > {
+      class iterator : public boost::iterator_adaptor<iterator,                            // crtp base,
+                                                      _PathsToChangesMap::const_iterator,  // base iterator
+                                                      const SdfPath &                      // value type
+                                                      > {
        public:
         iterator() : iterator_adaptor_(base_type())
         {}
@@ -320,9 +319,9 @@ class UsdNotice {
     explicit LayerMutingChanged(const UsdStageWeakPtr &stage,
                                 const std::vector<std::string> &mutedLayers,
                                 const std::vector<std::string> &unmutedLayers)
-        : StageNotice(stage),
-          _mutedLayers(mutedLayers),
-          _unMutedLayers(unmutedLayers)
+      : StageNotice(stage),
+        _mutedLayers(mutedLayers),
+        _unMutedLayers(unmutedLayers)
     {}
 
     USD_API virtual ~LayerMutingChanged();

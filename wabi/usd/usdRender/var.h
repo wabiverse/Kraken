@@ -194,8 +194,7 @@ class UsdRenderVar : public UsdTyped {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRENDER_API
-  UsdAttribute CreateDataTypeAttr(VtValue const &defaultValue = VtValue(),
-                                  bool writeSparsely          = false) const;
+  UsdAttribute CreateDataTypeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -220,7 +219,7 @@ class UsdRenderVar : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDRENDER_API
   UsdAttribute CreateSourceNameAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -263,7 +262,7 @@ class UsdRenderVar : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDRENDER_API
   UsdAttribute CreateSourceTypeAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

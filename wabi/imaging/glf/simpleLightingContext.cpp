@@ -61,13 +61,12 @@
 WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(
-    _tokens,
-    ((lightingUB, "Lighting"))((shadowUB, "Shadow"))((bindlessShadowUB,
-                                                      "BindlessShadowSamplers"))((materialUB,
-                                                                                  "Material"))((
-        postSurfaceShaderUB,
-        "PostSurfaceShaderParams"))((shadowSampler, "shadowTexture"))((shadowCompareSampler,
-                                                                       "shadowCompareTexture")));
+  _tokens,
+  ((lightingUB, "Lighting"))((shadowUB, "Shadow"))((bindlessShadowUB,
+                                                    "BindlessShadowSamplers"))((materialUB, "Material"))((
+    postSurfaceShaderUB,
+    "PostSurfaceShaderParams"))((shadowSampler, "shadowTexture"))((shadowCompareSampler,
+                                                                   "shadowCompareTexture")));
 
 // XXX:
 // currently max number of lights are limited to 16 by
@@ -83,17 +82,17 @@ GlfSimpleLightingContextRefPtr GlfSimpleLightingContext::New()
 }
 
 GlfSimpleLightingContext::GlfSimpleLightingContext()
-    : _shadows(TfCreateRefPtr(new GlfSimpleShadowArray())),
-      _worldToViewMatrix(1.0),
-      _projectionMatrix(1.0),
-      _sceneAmbient(0.01, 0.01, 0.01, 1.0),
-      _useLighting(false),
-      _useShadows(false),
-      _useColorMaterialDiffuse(false),
-      _lightingUniformBlockValid(false),
-      _shadowUniformBlockValid(false),
-      _materialUniformBlockValid(false),
-      _postSurfaceShaderStateValid(false)
+  : _shadows(TfCreateRefPtr(new GlfSimpleShadowArray())),
+    _worldToViewMatrix(1.0),
+    _projectionMatrix(1.0),
+    _sceneAmbient(0.01, 0.01, 0.01, 1.0),
+    _useLighting(false),
+    _useShadows(false),
+    _useColorMaterialDiffuse(false),
+    _lightingUniformBlockValid(false),
+    _shadowUniformBlockValid(false),
+    _materialUniformBlockValid(false),
+    _postSurfaceShaderStateValid(false)
 {}
 
 GlfSimpleLightingContext::~GlfSimpleLightingContext()
@@ -101,9 +100,9 @@ GlfSimpleLightingContext::~GlfSimpleLightingContext()
 
 void GlfSimpleLightingContext::SetLights(GlfSimpleLightVector const &lights)
 {
-  _lights                      = lights;
-  _lightingUniformBlockValid   = false;
-  _shadowUniformBlockValid     = false;
+  _lights = lights;
+  _lightingUniformBlockValid = false;
+  _shadowUniformBlockValid = false;
   _postSurfaceShaderStateValid = false;
 
   int numLights = GetNumLightsUsed();
@@ -140,7 +139,7 @@ int GlfSimpleLightingContext::ComputeNumShadowsUsed() const
 
 void GlfSimpleLightingContext::SetShadows(GlfSimpleShadowArrayRefPtr const &shadows)
 {
-  _shadows                 = shadows;
+  _shadows = shadows;
   _shadowUniformBlockValid = false;
 }
 
@@ -152,7 +151,7 @@ GlfSimpleShadowArrayRefPtr const &GlfSimpleLightingContext::GetShadows() const
 void GlfSimpleLightingContext::SetMaterial(GlfSimpleMaterial const &material)
 {
   if (_material != material) {
-    _material                  = material;
+    _material = material;
     _materialUniformBlockValid = false;
   }
 }
@@ -165,7 +164,7 @@ GlfSimpleMaterial const &GlfSimpleLightingContext::GetMaterial() const
 void GlfSimpleLightingContext::SetSceneAmbient(GfVec4f const &sceneAmbient)
 {
   if (_sceneAmbient != sceneAmbient) {
-    _sceneAmbient              = sceneAmbient;
+    _sceneAmbient = sceneAmbient;
     _materialUniformBlockValid = false;
   }
 }
@@ -179,9 +178,9 @@ void GlfSimpleLightingContext::SetCamera(GfMatrix4d const &worldToViewMatrix,
                                          GfMatrix4d const &projectionMatrix)
 {
   if (_worldToViewMatrix != worldToViewMatrix) {
-    _worldToViewMatrix         = worldToViewMatrix;
+    _worldToViewMatrix = worldToViewMatrix;
     _lightingUniformBlockValid = false;
-    _shadowUniformBlockValid   = false;
+    _shadowUniformBlockValid = false;
   }
   _projectionMatrix = projectionMatrix;
 }
@@ -189,7 +188,7 @@ void GlfSimpleLightingContext::SetCamera(GfMatrix4d const &worldToViewMatrix,
 void GlfSimpleLightingContext::SetUseLighting(bool val)
 {
   if (_useLighting != val) {
-    _useLighting               = val;
+    _useLighting = val;
     _lightingUniformBlockValid = false;
   }
 }
@@ -208,7 +207,7 @@ void GlfSimpleLightingContext::SetUseColorMaterialDiffuse(bool val)
 {
   if (_useColorMaterialDiffuse != val) {
     _lightingUniformBlockValid = false;
-    _useColorMaterialDiffuse   = val;
+    _useColorMaterialDiffuse = val;
   }
 }
 
@@ -279,7 +278,7 @@ void GlfSimpleLightingContext::BindUniformBlocks(GlfBindingMapPtr const &binding
 
   bool shadowExists = false;
   if ((!_lightingUniformBlockValid || !_shadowUniformBlockValid) && _lights.size() > 0) {
-    int numLights  = GetNumLightsUsed();
+    int numLights = GetNumLightsUsed();
     int numShadows = ComputeNumShadowsUsed();
 
     // 16byte aligned
@@ -345,15 +344,15 @@ void GlfSimpleLightingContext::BindUniformBlocks(GlfBindingMapPtr const &binding
       ARCH_PRAGMA_POP
     };
 
-    size_t lightingSize    = sizeof(Lighting) + sizeof(LightSource) * numLights;
-    size_t shadowSize      = sizeof(ShadowMatrix) * numShadows;
+    size_t lightingSize = sizeof(Lighting) + sizeof(LightSource) * numLights;
+    size_t shadowSize = sizeof(ShadowMatrix) * numShadows;
     Lighting *lightingData = (Lighting *)alloca(lightingSize);
-    Shadow *shadowData     = (Shadow *)alloca(shadowSize);
+    Shadow *shadowData = (Shadow *)alloca(shadowSize);
     memset(shadowData, 0, shadowSize);
     memset(lightingData, 0, lightingSize);
 
     BindlessShadowSamplers *bindlessHandlesData = nullptr;
-    size_t bindlessHandlesSize                  = 0;
+    size_t bindlessHandlesSize = 0;
     if (usingBindlessShadowMaps) {
       bindlessHandlesSize = sizeof(PaddedHandle) * numShadows;
       bindlessHandlesData = (BindlessShadowSamplers *)alloca(bindlessHandlesSize);
@@ -362,7 +361,7 @@ void GlfSimpleLightingContext::BindUniformBlocks(GlfBindingMapPtr const &binding
 
     GfMatrix4d viewToWorldMatrix = _worldToViewMatrix.GetInverse();
 
-    lightingData->useLighting             = _useLighting;
+    lightingData->useLighting = _useLighting;
     lightingData->useColorMaterialDiffuse = _useColorMaterialDiffuse;
 
     for (int i = 0; _useLighting && i < numLights; ++i) {
@@ -375,22 +374,20 @@ void GlfSimpleLightingContext::BindUniformBlocks(GlfBindingMapPtr const &binding
       setVec3(lightingData->lightSource[i].spotDirection,
               _worldToViewMatrix.TransformDir(light.GetSpotDirection()));
       setVec3(lightingData->lightSource[i].attenuation, light.GetAttenuation());
-      lightingData->lightSource[i].spotCutoff  = light.GetSpotCutoff();
+      lightingData->lightSource[i].spotCutoff = light.GetSpotCutoff();
       lightingData->lightSource[i].spotFalloff = light.GetSpotFalloff();
-      setMatrix(lightingData->lightSource[i].worldToLightTransform,
-                light.GetTransform().GetInverse());
-      lightingData->lightSource[i].hasShadow       = light.HasShadow();
+      setMatrix(lightingData->lightSource[i].worldToLightTransform, light.GetTransform().GetInverse());
+      lightingData->lightSource[i].hasShadow = light.HasShadow();
       lightingData->lightSource[i].isIndirectLight = light.IsDomeLight();
 
       if (lightingData->lightSource[i].hasShadow) {
-        int shadowIndexStart                          = light.GetShadowIndexStart();
+        int shadowIndexStart = light.GetShadowIndexStart();
         lightingData->lightSource[i].shadowIndexStart = shadowIndexStart;
-        int shadowIndexEnd                            = light.GetShadowIndexEnd();
-        lightingData->lightSource[i].shadowIndexEnd   = shadowIndexEnd;
+        int shadowIndexEnd = light.GetShadowIndexEnd();
+        lightingData->lightSource[i].shadowIndexEnd = shadowIndexEnd;
 
         for (int shadowIndex = shadowIndexStart; shadowIndex <= shadowIndexEnd; ++shadowIndex) {
-          GfMatrix4d viewToShadowMatrix = viewToWorldMatrix *
-                                          _shadows->GetWorldToShadowMatrix(shadowIndex);
+          GfMatrix4d viewToShadowMatrix = viewToWorldMatrix * _shadows->GetWorldToShadowMatrix(shadowIndex);
           GfMatrix4d shadowToViewMatrix = viewToShadowMatrix.GetInverse();
 
           shadowData->shadow[shadowIndex].bias = light.GetShadowBias();
@@ -470,7 +467,7 @@ void GlfSimpleLightingContext::BindSamplers(GlfBindingMapPtr const &bindingMap)
     return;
   }
 
-  int shadowSampler        = bindingMap->GetSamplerUnit(_tokens->shadowSampler);
+  int shadowSampler = bindingMap->GetSamplerUnit(_tokens->shadowSampler);
   int shadowCompareSampler = bindingMap->GetSamplerUnit(_tokens->shadowCompareSampler);
 
   glActiveTexture(GL_TEXTURE0 + shadowSampler);
@@ -491,7 +488,7 @@ void GlfSimpleLightingContext::UnbindSamplers(GlfBindingMapPtr const &bindingMap
     return;
   }
 
-  int shadowSampler        = bindingMap->GetSamplerUnit(_tokens->shadowSampler);
+  int shadowSampler = bindingMap->GetSamplerUnit(_tokens->shadowSampler);
   int shadowCompareSampler = bindingMap->GetSamplerUnit(_tokens->shadowCompareSampler);
 
   glActiveTexture(GL_TEXTURE0 + shadowSampler);
@@ -655,8 +652,8 @@ void GlfSimpleLightingContext::_PostSurfaceShaderState::_Init(GlfSimpleLightVect
   size_t activeShaders = 0;
   for (GlfSimpleLight const &light : lights) {
 
-    TfToken const &shaderIdentifier  = light.GetPostSurfaceIdentifier();
-    std::string const &shaderSource  = light.GetPostSurfaceShaderSource();
+    TfToken const &shaderIdentifier = light.GetPostSurfaceIdentifier();
+    std::string const &shaderSource = light.GetPostSurfaceShaderSource();
     VtUCharArray const &shaderParams = light.GetPostSurfaceShaderParams();
 
     if (shaderIdentifier.IsEmpty() || shaderSource.empty() || shaderParams.empty()) {
@@ -668,16 +665,16 @@ void GlfSimpleLightingContext::_PostSurfaceShaderState::_Init(GlfSimpleLightVect
     size_t const std140Alignment = 4 * sizeof(float);
     if ((shaderParams.size() % std140Alignment) != 0) {
       TF_CODING_ERROR(
-          "Invalid shader params size (%zd bytes) "
-          "for %s (must be a multiple of %zd)\n",
-          shaderParams.size(),
-          light.GetID().GetText(),
-          std140Alignment);
+        "Invalid shader params size (%zd bytes) "
+        "for %s (must be a multiple of %zd)\n",
+        shaderParams.size(),
+        light.GetID().GetText(),
+        std140Alignment);
       continue;
     }
 
     TF_DEBUG(GLF_DEBUG_POST_SURFACE_LIGHTING)
-        .Msg("PostSurfaceLight: %s: %s\n", shaderIdentifier.GetText(), light.GetID().GetText());
+      .Msg("PostSurfaceLight: %s: %s\n", shaderIdentifier.GetText(), light.GetID().GetText());
 
     ++activeShaders;
 
@@ -711,16 +708,16 @@ void GlfSimpleLightingContext::_PostSurfaceShaderState::_Init(GlfSimpleLightVect
   _shaderSource += "} postSurface;\n\n";
 
   _shaderSource +=
-      "MAT4 GetWorldToViewInverseMatrix();\n"
-      "vec4 postSurfaceShader(vec4 Peye, vec3 Neye, vec4 color)\n"
-      "{\n"
-      "    vec4 Pworld = vec4(GetWorldToViewInverseMatrix() * Peye);\n"
-      "    color.rgb /= color.a;\n";
+    "MAT4 GetWorldToViewInverseMatrix();\n"
+    "vec4 postSurfaceShader(vec4 Peye, vec3 Neye, vec4 color)\n"
+    "{\n"
+    "    vec4 Pworld = vec4(GetWorldToViewInverseMatrix() * Peye);\n"
+    "    color.rgb /= color.a;\n";
   _shaderSource += applySourceStr.str();
   _shaderSource +=
-      "    color.rgb *= color.a;\n"
-      "    return color;\n"
-      "}\n\n";
+    "    color.rgb *= color.a;\n"
+    "    return color;\n"
+    "}\n\n";
 
   _uniformBlock = GlfUniformBlock::New("_postSurfaceShaderUniformBlock");
   _uniformBlock->Update(uniformData.data(), uniformData.size());
@@ -733,7 +730,7 @@ static size_t _ComputeHash(GlfSimpleLightVector const &lights)
   // hash includes light type and shader source but not parameter values
   size_t hash = 0;
   for (GlfSimpleLight const &light : lights) {
-    TfToken const &identifier       = light.GetPostSurfaceIdentifier();
+    TfToken const &identifier = light.GetPostSurfaceIdentifier();
     std::string const &shaderSource = light.GetPostSurfaceShaderSource();
 
     hash = ArchHash64(identifier.GetText(), identifier.size(), hash);

@@ -37,8 +37,7 @@ WABI_NAMESPACE_BEGIN
 /// Convert the Python dictionary \p dict to a PcpVariantFallbackMap
 /// object and return it via \p result, returning true if successful.
 PCP_API
-bool PcpVariantFallbackMapFromPython(const boost::python::dict &dict,
-                                     PcpVariantFallbackMap *result);
+bool PcpVariantFallbackMapFromPython(const boost::python::dict &dict, PcpVariantFallbackMap *result);
 
 WABI_NAMESPACE_END
 

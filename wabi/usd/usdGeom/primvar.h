@@ -614,8 +614,7 @@ class UsdGeomPrimvar {
   /// \ref Get(). Hence, it's safe to call ComputeFlattened() on non-indexed
   /// primvars.
   template<typename ScalarType>
-  bool ComputeFlattened(VtArray<ScalarType> *value,
-                        UsdTimeCode time = UsdTimeCode::Default()) const;
+  bool ComputeFlattened(VtArray<ScalarType> *value, UsdTimeCode time = UsdTimeCode::Default()) const;
 
   /// \overload
   /// Computes the flattened value of the primvar at \p time as a VtValue.
@@ -861,12 +860,12 @@ bool UsdGeomPrimvar::_ComputeFlattenedHelper(const VtArray<ScalarType> &authored
 
     if (errString) {
       *errString = TfStringPrintf(
-          "Found %ld invalid indices at positions [%s%s] that are out of "
-          "range [0,%ld).",
-          invalidIndexPositions.size(),
-          TfStringJoin(invalidPositionsStrVec, ", ").c_str(),
-          invalidIndexPositions.size() > 5 ? ", ..." : "",
-          authored.size());
+        "Found %ld invalid indices at positions [%s%s] that are out of "
+        "range [0,%ld).",
+        invalidIndexPositions.size(),
+        TfStringJoin(invalidPositionsStrVec, ", ").c_str(),
+        invalidIndexPositions.size() > 5 ? ", ..." : "",
+        authored.size());
     }
   }
 

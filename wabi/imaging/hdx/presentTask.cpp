@@ -33,9 +33,8 @@ WABI_NAMESPACE_BEGIN
 
 bool _IsIntegerFormat(HgiFormat format)
 {
-  return (format == HgiFormatUInt16 || format == HgiFormatUInt16Vec2 ||
-          format == HgiFormatUInt16Vec3 || format == HgiFormatUInt16Vec4 ||
-          format == HgiFormatInt32 || format == HgiFormatInt32Vec2 ||
+  return (format == HgiFormatUInt16 || format == HgiFormatUInt16Vec2 || format == HgiFormatUInt16Vec3 ||
+          format == HgiFormatUInt16Vec4 || format == HgiFormatInt32 || format == HgiFormatInt32Vec2 ||
           format == HgiFormatInt32Vec3 || format == HgiFormatInt32Vec4);
 }
 
@@ -91,9 +90,9 @@ void HdxPresentTask::Execute(HdTaskContext *ctx)
       if (!IsFormatSupported(texDesc.format)) {
         // Warn, but don't bail.
         TF_WARN(
-            "Aov texture format %d may not be correctly supported "
-            "for presentation via HgiInterop.",
-            texDesc.format);
+          "Aov texture format %d may not be correctly supported "
+          "for presentation via HgiInterop.",
+          texDesc.format);
       }
     }
 
@@ -107,7 +106,7 @@ void HdxPresentTask::Execute(HdTaskContext *ctx)
     // Eg. This allows us to render with HgiMetal and present the images
     // into a opengl based application (such as usdview).
     _interop.TransferToApp(
-        _hgi, aovTexture, depthTexture, _params.dstApi, _params.dstFramebuffer, _params.dstRegion);
+      _hgi, aovTexture, depthTexture, _params.dstApi, _params.dstFramebuffer, _params.dstRegion);
   }
 
   // Wrap one HdEngine::Execute frame with Hgi StartFrame and EndFrame.

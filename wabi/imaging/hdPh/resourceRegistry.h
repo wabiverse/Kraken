@@ -47,25 +47,25 @@
 
 WABI_NAMESPACE_BEGIN
 
-using HdComputationSharedPtr      = std::shared_ptr<class HdComputation>;
+using HdComputationSharedPtr = std::shared_ptr<class HdComputation>;
 using HdPhDispatchBufferSharedPtr = std::shared_ptr<class HdPhDispatchBuffer>;
-using HdPhGLSLProgramSharedPtr    = std::shared_ptr<class HdPhGLSLProgram>;
-using HioGlslfxSharedPtr          = std::shared_ptr<class HioGlslfx>;
+using HdPhGLSLProgramSharedPtr = std::shared_ptr<class HdPhGLSLProgram>;
+using HioGlslfxSharedPtr = std::shared_ptr<class HioGlslfx>;
 
 using HdPh_BasisCurvesTopologySharedPtr = std::shared_ptr<class HdPh_BasisCurvesTopology>;
 
-using HdPhShaderCodePtr             = std::weak_ptr<class HdPhShaderCode>;
+using HdPhShaderCodePtr = std::weak_ptr<class HdPhShaderCode>;
 using HdPh_GeometricShaderSharedPtr = std::shared_ptr<class HdPh_GeometricShader>;
 
-using HdPhTextureHandleSharedPtr    = std::shared_ptr<class HdPhTextureHandle>;
-using HdPhTextureObjectSharedPtr    = std::shared_ptr<class HdPhTextureObject>;
-using HdPhBufferResourceSharedPtr   = std::shared_ptr<class HdPhBufferResource>;
+using HdPhTextureHandleSharedPtr = std::shared_ptr<class HdPhTextureHandle>;
+using HdPhTextureObjectSharedPtr = std::shared_ptr<class HdPhTextureObject>;
+using HdPhBufferResourceSharedPtr = std::shared_ptr<class HdPhBufferResource>;
 using HdPhResourceRegistrySharedPtr = std::shared_ptr<class HdPhResourceRegistry>;
-using Hd_VertexAdjacencySharedPtr   = std::shared_ptr<class Hd_VertexAdjacency>;
-using HdPh_MeshTopologySharedPtr    = std::shared_ptr<class HdPh_MeshTopology>;
-using HgiResourceBindingsSharedPtr  = std::shared_ptr<HgiResourceBindingsHandle>;
-using HgiGraphicsPipelineSharedPtr  = std::shared_ptr<HgiGraphicsPipelineHandle>;
-using HgiComputePipelineSharedPtr   = std::shared_ptr<HgiComputePipelineHandle>;
+using Hd_VertexAdjacencySharedPtr = std::shared_ptr<class Hd_VertexAdjacency>;
+using HdPh_MeshTopologySharedPtr = std::shared_ptr<class HdPh_MeshTopology>;
+using HgiResourceBindingsSharedPtr = std::shared_ptr<HgiResourceBindingsHandle>;
+using HgiGraphicsPipelineSharedPtr = std::shared_ptr<HgiGraphicsPipelineHandle>;
+using HgiComputePipelineSharedPtr = std::shared_ptr<HgiComputePipelineHandle>;
 
 class HdPhTextureIdentifier;
 class HdSamplerParameters;
@@ -91,8 +91,7 @@ enum HdPhComputeQueue {
   HdPhComputeQueueCount
 };
 
-using HdPhComputationSharedPtrVector =
-    std::vector<std::pair<HdComputationSharedPtr, HdPhComputeQueue>>;
+using HdPhComputationSharedPtrVector = std::vector<std::pair<HdComputationSharedPtr, HdPhComputeQueue>>;
 
 /// \class HdPhResourceRegistry
 ///
@@ -135,28 +134,28 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
   /// until the commit phase.
   HDPH_API
   HdPhTextureHandleSharedPtr AllocateTextureHandle(
-      /// Path to file and information to identify a texture if the
-      /// file is a container for several textures (e.g., OpenVDB
-      /// file containing several grids, movie file containing frames).
-      const HdPhTextureIdentifier &textureId,
-      /// Texture type, e.g., uv, ptex, ...
-      HdTextureType textureType,
-      /// Sampling parameters such as wrapS, ...
-      /// wrapS, wrapT, wrapR mode, min filer, mag filter
-      const HdSamplerParameters &samplerParams,
-      /// Memory request. The texture is down-sampled to meet the
-      /// target memory which is the maximum of all memory requests
-      /// associated to the texture.
-      /// If all memory requests are 0, no down-sampling will happen.
-      size_t memoryRequest,
-      /// Also create a GL texture sampler handle for bindless
-      /// textures.
-      bool createBindlessHandle,
-      /// After the texture is committed (or after it has been
-      /// changed) the given shader code can add additional buffer
-      /// sources and computations using the texture metadata with
-      /// AddResourcesFromTextures.
-      HdPhShaderCodePtr const &shaderCode);
+    /// Path to file and information to identify a texture if the
+    /// file is a container for several textures (e.g., OpenVDB
+    /// file containing several grids, movie file containing frames).
+    const HdPhTextureIdentifier &textureId,
+    /// Texture type, e.g., uv, ptex, ...
+    HdTextureType textureType,
+    /// Sampling parameters such as wrapS, ...
+    /// wrapS, wrapT, wrapR mode, min filer, mag filter
+    const HdSamplerParameters &samplerParams,
+    /// Memory request. The texture is down-sampled to meet the
+    /// target memory which is the maximum of all memory requests
+    /// associated to the texture.
+    /// If all memory requests are 0, no down-sampling will happen.
+    size_t memoryRequest,
+    /// Also create a GL texture sampler handle for bindless
+    /// textures.
+    bool createBindlessHandle,
+    /// After the texture is committed (or after it has been
+    /// changed) the given shader code can add additional buffer
+    /// sources and computations using the texture metadata with
+    /// AddResourcesFromTextures.
+    HdPhShaderCodePtr const &shaderCode);
 
   /// Allocate texture object.
   ///
@@ -165,12 +164,12 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
   /// until the commit phase.
   HDPH_API
   HdPhTextureObjectSharedPtr AllocateTextureObject(
-      /// Path to file and information to identify a texture if the
-      /// file is a container for several textures (e.g., OpenVDB
-      /// file containing several grids, movie file containing frames).
-      const HdPhTextureIdentifier &textureId,
-      /// Texture type, e.g., uv, ptex, ...
-      HdTextureType textureType);
+    /// Path to file and information to identify a texture if the
+    /// file is a container for several textures (e.g., OpenVDB
+    /// file containing several grids, movie file containing frames).
+    const HdPhTextureIdentifier &textureId,
+    /// Texture type, e.g., uv, ptex, ...
+    HdTextureType textureType);
 
   /// Sets how much memory a single texture can consume in bytes by
   /// texture type.
@@ -190,28 +189,25 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
   /// specs using the chosen aggregation strategy.
 
   HDPH_API
-  HdBufferArrayRangeSharedPtr AllocateNonUniformBufferArrayRange(
-      TfToken const &role,
-      HdBufferSpecVector const &bufferSpecs,
-      HdBufferArrayUsageHint usageHint);
+  HdBufferArrayRangeSharedPtr AllocateNonUniformBufferArrayRange(TfToken const &role,
+                                                                 HdBufferSpecVector const &bufferSpecs,
+                                                                 HdBufferArrayUsageHint usageHint);
 
   HDPH_API
   HdBufferArrayRangeSharedPtr AllocateNonUniformImmutableBufferArrayRange(
-      TfToken const &role,
-      HdBufferSpecVector const &bufferSpecs,
-      HdBufferArrayUsageHint usageHint);
+    TfToken const &role,
+    HdBufferSpecVector const &bufferSpecs,
+    HdBufferArrayUsageHint usageHint);
 
   HDPH_API
-  HdBufferArrayRangeSharedPtr AllocateUniformBufferArrayRange(
-      TfToken const &role,
-      HdBufferSpecVector const &bufferSpecs,
-      HdBufferArrayUsageHint usageHint);
+  HdBufferArrayRangeSharedPtr AllocateUniformBufferArrayRange(TfToken const &role,
+                                                              HdBufferSpecVector const &bufferSpecs,
+                                                              HdBufferArrayUsageHint usageHint);
 
   HDPH_API
-  HdBufferArrayRangeSharedPtr AllocateShaderStorageBufferArrayRange(
-      TfToken const &role,
-      HdBufferSpecVector const &bufferSpecs,
-      HdBufferArrayUsageHint usageHint);
+  HdBufferArrayRangeSharedPtr AllocateShaderStorageBufferArrayRange(TfToken const &role,
+                                                                    HdBufferSpecVector const &bufferSpecs,
+                                                                    HdBufferArrayUsageHint usageHint);
 
   HDPH_API
   HdBufferArrayRangeSharedPtr AllocateSingleBufferArrayRange(TfToken const &role,
@@ -235,36 +231,34 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
   /// Otherwise, just return the same range.
 
   HDPH_API
-  HdBufferArrayRangeSharedPtr UpdateNonUniformBufferArrayRange(
-      TfToken const &role,
-      HdBufferArrayRangeSharedPtr const &curRange,
-      HdBufferSpecVector const &updatedOrAddedSpecs,
-      HdBufferSpecVector const &removedSpecs,
-      HdBufferArrayUsageHint usageHint);
+  HdBufferArrayRangeSharedPtr UpdateNonUniformBufferArrayRange(TfToken const &role,
+                                                               HdBufferArrayRangeSharedPtr const &curRange,
+                                                               HdBufferSpecVector const &updatedOrAddedSpecs,
+                                                               HdBufferSpecVector const &removedSpecs,
+                                                               HdBufferArrayUsageHint usageHint);
 
   HDPH_API
   HdBufferArrayRangeSharedPtr UpdateNonUniformImmutableBufferArrayRange(
-      TfToken const &role,
-      HdBufferArrayRangeSharedPtr const &curRange,
-      HdBufferSpecVector const &updatedOrAddedSpecs,
-      HdBufferSpecVector const &removedSpecs,
-      HdBufferArrayUsageHint usageHint);
+    TfToken const &role,
+    HdBufferArrayRangeSharedPtr const &curRange,
+    HdBufferSpecVector const &updatedOrAddedSpecs,
+    HdBufferSpecVector const &removedSpecs,
+    HdBufferArrayUsageHint usageHint);
 
   HDPH_API
-  HdBufferArrayRangeSharedPtr UpdateUniformBufferArrayRange(
-      TfToken const &role,
-      HdBufferArrayRangeSharedPtr const &curRange,
-      HdBufferSpecVector const &updatedOrAddedSpecs,
-      HdBufferSpecVector const &removedSpecs,
-      HdBufferArrayUsageHint usageHint);
+  HdBufferArrayRangeSharedPtr UpdateUniformBufferArrayRange(TfToken const &role,
+                                                            HdBufferArrayRangeSharedPtr const &curRange,
+                                                            HdBufferSpecVector const &updatedOrAddedSpecs,
+                                                            HdBufferSpecVector const &removedSpecs,
+                                                            HdBufferArrayUsageHint usageHint);
 
   HDPH_API
   HdBufferArrayRangeSharedPtr UpdateShaderStorageBufferArrayRange(
-      TfToken const &role,
-      HdBufferArrayRangeSharedPtr const &curRange,
-      HdBufferSpecVector const &updatedOrAddedSpecs,
-      HdBufferSpecVector const &removedSpecs,
-      HdBufferArrayUsageHint usageHint);
+    TfToken const &role,
+    HdBufferArrayRangeSharedPtr const &curRange,
+    HdBufferSpecVector const &updatedOrAddedSpecs,
+    HdBufferSpecVector const &removedSpecs,
+    HdBufferArrayUsageHint usageHint);
 
   /// ------------------------------------------------------------------------
   /// Resource update & computation queuing API
@@ -272,8 +266,7 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
 
   /// Append source data for given range to be committed later.
   HDPH_API
-  void AddSources(HdBufferArrayRangeSharedPtr const &range,
-                  HdBufferSourceSharedPtrVector &&sources);
+  void AddSources(HdBufferArrayRangeSharedPtr const &range, HdBufferSourceSharedPtrVector &&sources);
 
   /// Append a source data for given range to be committed later.
   HDPH_API
@@ -301,9 +294,7 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
   /// Register a buffer allocated with \a count * \a commandNumUints *
   /// sizeof(uint32_t) to be used as an indirect dispatch buffer.
   HDPH_API
-  HdPhDispatchBufferSharedPtr RegisterDispatchBuffer(TfToken const &role,
-                                                     int count,
-                                                     int commandNumUints);
+  HdPhDispatchBufferSharedPtr RegisterDispatchBuffer(TfToken const &role, int count, int commandNumUints);
 
   /// Register a misc buffer resource.
   /// Usually buffers are part of a buffer array (buffer aggregation) and are
@@ -338,16 +329,15 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
 
   /// Topology instancing
   HDPH_API
-  HdInstance<HdPh_MeshTopologySharedPtr> RegisterMeshTopology(
-      HdInstance<HdPh_MeshTopologySharedPtr>::ID id);
+  HdInstance<HdPh_MeshTopologySharedPtr> RegisterMeshTopology(HdInstance<HdPh_MeshTopologySharedPtr>::ID id);
 
   HDPH_API
   HdInstance<HdPh_BasisCurvesTopologySharedPtr> RegisterBasisCurvesTopology(
-      HdInstance<HdPh_BasisCurvesTopologySharedPtr>::ID id);
+    HdInstance<HdPh_BasisCurvesTopologySharedPtr>::ID id);
 
   HDPH_API
   HdInstance<Hd_VertexAdjacencySharedPtr> RegisterVertexAdjacency(
-      HdInstance<Hd_VertexAdjacencySharedPtr>::ID id);
+    HdInstance<Hd_VertexAdjacencySharedPtr>::ID id);
 
   /// Topology Index buffer array range instancing
   /// Returns the HdInstance points to shared HdBufferArrayRange,
@@ -355,13 +345,13 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
   /// *Refer the comment on RegisterTopology for the same consideration.
   HDPH_API
   HdInstance<HdBufferArrayRangeSharedPtr> RegisterMeshIndexRange(
-      HdInstance<HdBufferArrayRangeSharedPtr>::ID id,
-      TfToken const &name);
+    HdInstance<HdBufferArrayRangeSharedPtr>::ID id,
+    TfToken const &name);
 
   HDPH_API
   HdInstance<HdBufferArrayRangeSharedPtr> RegisterBasisCurvesIndexRange(
-      HdInstance<HdBufferArrayRangeSharedPtr>::ID id,
-      TfToken const &name);
+    HdInstance<HdBufferArrayRangeSharedPtr>::ID id,
+    TfToken const &name);
 
   /// Primvar array range instancing
   /// Returns the HdInstance pointing to shared HdBufferArrayRange,
@@ -369,7 +359,7 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
   /// *Refer the comment on RegisterTopology for the same consideration.
   HDPH_API
   HdInstance<HdBufferArrayRangeSharedPtr> RegisterPrimvarRange(
-      HdInstance<HdBufferArrayRangeSharedPtr>::ID id);
+    HdInstance<HdBufferArrayRangeSharedPtr>::ID id);
 
   /// ExtComputation data array range instancing
   /// Returns the HdInstance pointing to shared HdBufferArrayRange,
@@ -377,17 +367,16 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
   /// *Refer the comment on RegisterTopology for the same consideration.
   HDPH_API
   HdInstance<HdBufferArrayRangeSharedPtr> RegisterExtComputationDataRange(
-      HdInstance<HdBufferArrayRangeSharedPtr>::ID id);
+    HdInstance<HdBufferArrayRangeSharedPtr>::ID id);
 
   /// Register a geometric shader.
   HDPH_API
   HdInstance<HdPh_GeometricShaderSharedPtr> RegisterGeometricShader(
-      HdInstance<HdPh_GeometricShaderSharedPtr>::ID id);
+    HdInstance<HdPh_GeometricShaderSharedPtr>::ID id);
 
   /// Register a GLSL program into the program registry.
   HDPH_API
-  HdInstance<HdPhGLSLProgramSharedPtr> RegisterGLSLProgram(
-      HdInstance<HdPhGLSLProgramSharedPtr>::ID id);
+  HdInstance<HdPhGLSLProgramSharedPtr> RegisterGLSLProgram(HdInstance<HdPhGLSLProgramSharedPtr>::ID id);
 
   /// Register a GLSLFX file.
   HDPH_API
@@ -396,17 +385,17 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
   /// Register a Hgi resource bindings into the registry.
   HDPH_API
   HdInstance<HgiResourceBindingsSharedPtr> RegisterResourceBindings(
-      HdInstance<HgiResourceBindingsSharedPtr>::ID id);
+    HdInstance<HgiResourceBindingsSharedPtr>::ID id);
 
   /// Register a Hgi graphics pipeline into the registry.
   HDPH_API
   HdInstance<HgiGraphicsPipelineSharedPtr> RegisterGraphicsPipeline(
-      HdInstance<HgiGraphicsPipelineSharedPtr>::ID id);
+    HdInstance<HgiGraphicsPipelineSharedPtr>::ID id);
 
   /// Register a Hgi compute pipeline into the registry.
   HDPH_API
   HdInstance<HgiComputePipelineSharedPtr> RegisterComputePipeline(
-      HdInstance<HgiComputePipelineSharedPtr>::ID id);
+    HdInstance<HgiComputePipelineSharedPtr>::ID id);
 
   /// Returns the global hgi blit command queue for recording blitting work.
   /// When using this global cmd instead of creating a new HgiBlitCmds we
@@ -500,14 +489,13 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
                                                         HdBufferArrayUsageHint usageHint);
 
   /// Wrapper function for BAR allocation/reallocation-migration.
-  HdBufferArrayRangeSharedPtr _UpdateBufferArrayRange(
-      HdAggregationStrategy *strategy,
-      HdBufferArrayRegistry &bufferArrayRegistry,
-      TfToken const &role,
-      HdBufferArrayRangeSharedPtr const &curRange,
-      HdBufferSpecVector const &updatedOrAddedSpecs,
-      HdBufferSpecVector const &removedSpecs,
-      HdBufferArrayUsageHint usageHint);
+  HdBufferArrayRangeSharedPtr _UpdateBufferArrayRange(HdAggregationStrategy *strategy,
+                                                      HdBufferArrayRegistry &bufferArrayRegistry,
+                                                      TfToken const &role,
+                                                      HdBufferArrayRangeSharedPtr const &curRange,
+                                                      HdBufferSpecVector const &updatedOrAddedSpecs,
+                                                      HdBufferSpecVector const &removedSpecs,
+                                                      HdBufferArrayUsageHint usageHint);
 
   // Tally resources by key into the given dictionary. Any additions should
   // be cumulative with the existing key values.
@@ -520,14 +508,13 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
     {}
 
     _PendingSource(HdBufferArrayRangeSharedPtr const &range, HdBufferSourceSharedPtr const &source)
-        : range(range),
-          sources(1, source)
+      : range(range),
+        sources(1, source)
     {}
 
-    _PendingSource(HdBufferArrayRangeSharedPtr const &range,
-                   HdBufferSourceSharedPtrVector &&sources)
-        : range(range),
-          sources(std::move(sources))
+    _PendingSource(HdBufferArrayRangeSharedPtr const &range, HdBufferSourceSharedPtrVector &&sources)
+      : range(range),
+        sources(std::move(sources))
     {}
 
     HdBufferArrayRangeSharedPtr range;
@@ -541,10 +528,9 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
   std::atomic_size_t _numBufferSourcesToResolve;
 
   struct _PendingComputation {
-    _PendingComputation(HdBufferArrayRangeSharedPtr const &range,
-                        HdComputationSharedPtr const &computation)
-        : range(range),
-          computation(computation)
+    _PendingComputation(HdBufferArrayRangeSharedPtr const &range, HdComputationSharedPtr const &computation)
+      : range(range),
+        computation(computation)
     {}
     HdBufferArrayRangeSharedPtr range;
     HdComputationSharedPtr computation;
@@ -587,9 +573,8 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
 
   // Register topology index buffers.
   typedef HdInstanceRegistry<HdBufferArrayRangeSharedPtr> _TopologyIndexRangeInstanceRegistry;
-  typedef tbb::
-      concurrent_unordered_map<TfToken, _TopologyIndexRangeInstanceRegistry, TfToken::HashFunctor>
-          _TopologyIndexRangeInstanceRegMap;
+  typedef tbb::concurrent_unordered_map<TfToken, _TopologyIndexRangeInstanceRegistry, TfToken::HashFunctor>
+    _TopologyIndexRangeInstanceRegMap;
 
   _TopologyIndexRangeInstanceRegMap _meshTopologyIndexRangeRegistry;
   _TopologyIndexRangeInstanceRegMap _basisCurvesTopologyIndexRangeRegistry;

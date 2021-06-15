@@ -20,7 +20,7 @@ bool HdRprShowMessage(std::string const &title, std::string const &message)
 {
   NSString *titleText = [NSString stringWithCString:title.c_str()
                                            encoding:[NSString defaultCStringEncoding]];
-  NSString *msgText   = [NSString stringWithCString:message.c_str()
+  NSString *msgText = [NSString stringWithCString:message.c_str()
                                          encoding:[NSString defaultCStringEncoding]];
 
   NSAlert *alert = [[NSAlert alloc] init];

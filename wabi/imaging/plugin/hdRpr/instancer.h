@@ -33,7 +33,7 @@ class HdSceneDelegate;
 class HdRprInstancer : public HdInstancer {
  public:
   HdRprInstancer(HdSceneDelegate *delegate, SdfPath const &id HDRPR_INSTANCER_ID_ARG_DECL)
-      : HdInstancer(delegate, id HDRPR_INSTANCER_ID_ARG)
+    : HdInstancer(delegate, id HDRPR_INSTANCER_ID_ARG)
   {}
 
   VtMatrix4dArray ComputeTransforms(SdfPath const &prototypeId);

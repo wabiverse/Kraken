@@ -66,12 +66,12 @@ WABI_NAMESPACE_BEGIN
 ///
 struct HgiGraphicsCmdsDesc {
   HgiGraphicsCmdsDesc()
-      : colorAttachmentDescs(),
-        depthAttachmentDesc(),
-        colorTextures(),
-        colorResolveTextures(),
-        depthTexture(),
-        depthResolveTexture()
+    : colorAttachmentDescs(),
+      depthAttachmentDesc(),
+      colorTextures(),
+      colorResolveTextures(),
+      depthTexture(),
+      depthResolveTexture()
   {}
 
   inline bool HasAttachments() const

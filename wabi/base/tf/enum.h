@@ -144,9 +144,8 @@ class TfEnum : boost::totally_ordered<TfEnum> {
 
   /// Initializes value to enum variable \c value of enum type \c T.
   template<class T>
-  TfEnum(T value, std::enable_if_t<std::is_enum<T>::value> * = 0)
-      : _typeInfo(&typeid(T)),
-        _value(int(value))
+  TfEnum(T value, std::enable_if_t<std::is_enum<T>::value> * = 0) : _typeInfo(&typeid(T)),
+                                                                    _value(int(value))
   {}
 
   /// Initializes value to integral value \p value with enum type \c ti.
@@ -169,8 +168,7 @@ class TfEnum : boost::totally_ordered<TfEnum> {
   /// may vary between program runs.
   bool operator<(const TfEnum &t) const
   {
-    return _typeInfo->before(*t._typeInfo) ||
-           (!t._typeInfo->before(*_typeInfo) && _value < t._value);
+    return _typeInfo->before(*t._typeInfo) || (!t._typeInfo->before(*_typeInfo) && _value < t._value);
   }
 
   /// True if \c *this has been assigned with \c value.
@@ -186,15 +184,13 @@ class TfEnum : boost::totally_ordered<TfEnum> {
   }
 
   /// Compare a literal enum value \a val of enum type \a T with TfEnum \a e.
-  template<class T>
-  friend std::enable_if_t<std::is_enum<T>::value, bool> operator==(T val, TfEnum const &e)
+  template<class T> friend std::enable_if_t<std::is_enum<T>::value, bool> operator==(T val, TfEnum const &e)
   {
     return e.operator==(val);
   }
 
   /// Compare a literal enum value \a val of enum type \a T with TfEnum \a e.
-  template<class T>
-  friend std::enable_if_t<std::is_enum<T>::value, bool> operator!=(T val, TfEnum const &e)
+  template<class T> friend std::enable_if_t<std::is_enum<T>::value, bool> operator!=(T val, TfEnum const &e)
   {
     return !(e == val);
   }
@@ -245,8 +241,7 @@ class TfEnum : boost::totally_ordered<TfEnum> {
 
   /// Conversion operator for enum and integral types only.
   template<typename T,
-           typename =
-               typename std::enable_if<std::is_integral<T>::value || std::is_enum<T>::value>::type>
+           typename = typename std::enable_if<std::is_integral<T>::value || std::is_enum<T>::value>::type>
   operator T() const
   {
     return T(_value);
@@ -330,9 +325,7 @@ class TfEnum : boost::totally_ordered<TfEnum> {
   ///
   /// This is a template-independent version of \c GetValueFromName().
   TF_API
-  static TfEnum GetValueFromName(const std::type_info &ti,
-                                 const std::string &name,
-                                 bool *foundIt = NULL);
+  static TfEnum GetValueFromName(const std::type_info &ti, const std::string &name, bool *foundIt = NULL);
 
   /// Returns the enumerated value for a fully-qualified name.
   ///
@@ -361,9 +354,7 @@ class TfEnum : boost::totally_ordered<TfEnum> {
   /// should NOT be called directly. Instead, call AddName(), which does
   /// exactly the same thing.
   TF_API
-  static void _AddName(TfEnum val,
-                       const std::string &valName,
-                       const std::string &displayName = "");
+  static void _AddName(TfEnum val, const std::string &valName, const std::string &displayName = "");
 
   /// Associates a name with an enumerated value.
   /// \see _AddName().
@@ -376,7 +367,7 @@ class TfEnum : boost::totally_ordered<TfEnum> {
   {
     TfEnum e;
     e._typeInfo = &typeid(T);
-    e._value    = int(value);
+    e._value = int(value);
     return e;
   }
 
@@ -436,8 +427,7 @@ TF_API std::ostream &operator<<(std::ostream &out, const TfEnum &e);
 /// \ingroup group_tf_RuntimeTyping
 /// \hideinitializer
 #define TF_ADD_ENUM_NAME(VAL, ...) \
-  TfEnum::_AddName(VAL, \
-                   TF_PP_STRINGIZE(VAL) BOOST_PP_COMMA_IF(TF_NUM_ARGS(__VA_ARGS__)) __VA_ARGS__)
+  TfEnum::_AddName(VAL, TF_PP_STRINGIZE(VAL) BOOST_PP_COMMA_IF(TF_NUM_ARGS(__VA_ARGS__)) __VA_ARGS__)
 
 WABI_NAMESPACE_END
 

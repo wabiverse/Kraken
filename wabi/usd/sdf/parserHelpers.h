@@ -68,8 +68,7 @@ template<class T, class Enable = void> struct _GetImpl {
 // throw bad_get for non-finite doubles.  Throw bad_get for out-of-range
 // integral values.
 template<class T>
-struct _GetImpl<T, std::enable_if_t<std::is_integral<T>::value>>
-    : public boost::static_visitor<T> {
+struct _GetImpl<T, std::enable_if_t<std::is_integral<T>::value>> : public boost::static_visitor<T> {
   typedef T ResultType;
 
   T Visit(_Variant const &variant)
@@ -119,8 +118,7 @@ struct _GetImpl<T, std::enable_if_t<std::is_integral<T>::value>>
 // Also handles strings like "inf", "-inf", and "nan" to produce +/- infinity
 // and a quiet NaN.
 template<class T>
-struct _GetImpl<T, std::enable_if_t<std::is_floating_point<T>::value>>
-    : public boost::static_visitor<T> {
+struct _GetImpl<T, std::enable_if_t<std::is_floating_point<T>::value>> : public boost::static_visitor<T> {
   typedef T ResultType;
 
   T Visit(_Variant const &variant)
@@ -211,7 +209,7 @@ template<> struct _GetImpl<bool> : public boost::static_visitor<bool> {
   bool operator()(const std::string &str)
   {
     bool parseOK = false;
-    bool result  = Sdf_BoolFromString(str, &parseOK);
+    bool result = Sdf_BoolFromString(str, &parseOK);
     if (!parseOK)
       throw boost::bad_get();
     return result;
@@ -224,8 +222,7 @@ template<> struct _GetImpl<bool> : public boost::static_visitor<bool> {
   }
 
   // For numbers, return true if not zero.
-  template<class Number>
-  std::enable_if_t<std::is_arithmetic<Number>::value, bool> operator()(Number val)
+  template<class Number> std::enable_if_t<std::is_arithmetic<Number>::value, bool> operator()(Number val)
   {
     return val != static_cast<Number>(0);
   }
@@ -282,7 +279,7 @@ struct Value {
   // resulting value holds a double internally.
   template<class Flt>
   Value(Flt in, std::enable_if_t<std::is_floating_point<Flt>::value> * = 0)
-      : _variant(static_cast<double>(in))
+    : _variant(static_cast<double>(in))
   {}
 
   // Construct and implicitly convert from std::string.
@@ -331,24 +328,19 @@ struct Value {
   _Variant _variant;
 };
 
-typedef std::function<VtValue(std::vector<unsigned int> const &,
-                              std::vector<Value> const &,
-                              size_t &,
-                              std::string *)>
-    ValueFactoryFunc;
+typedef std::function<
+  VtValue(std::vector<unsigned int> const &, std::vector<Value> const &, size_t &, std::string *)>
+  ValueFactoryFunc;
 
 struct ValueFactory {
   ValueFactory()
   {}
 
-  ValueFactory(std::string typeName_,
-               SdfTupleDimensions dimensions_,
-               bool isShaped_,
-               ValueFactoryFunc func_)
-      : typeName(typeName_),
-        dimensions(dimensions_),
-        isShaped(isShaped_),
-        func(func_)
+  ValueFactory(std::string typeName_, SdfTupleDimensions dimensions_, bool isShaped_, ValueFactoryFunc func_)
+    : typeName(typeName_),
+      dimensions(dimensions_),
+      isShaped(isShaped_),
+      func(func_)
   {}
 
   std::string typeName;

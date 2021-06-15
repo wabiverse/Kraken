@@ -49,10 +49,10 @@ struct Rand {
   void mix(void)
   {
     uint32_t t = x ^ (x << 11);
-    x          = y;
-    y          = z;
-    z          = w;
-    w          = w ^ (w >> 19) ^ t ^ (t >> 8);
+    x = y;
+    y = z;
+    z = w;
+    w = w ^ (w >> 19) ^ t ^ (t >> 8);
   }
 
   uint32_t rand_u32(void)

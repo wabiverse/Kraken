@@ -91,7 +91,7 @@ class GfMatrix3d {
  public:
   typedef double ScalarType;
 
-  static const size_t numRows    = 3;
+  static const size_t numRows = 3;
   static const size_t numColumns = 3;
 
   /// Default constructor. Leaves the matrix component values undefined.
@@ -310,8 +310,8 @@ class GfMatrix3d {
   /// Hash.
   friend inline size_t hash_value(GfMatrix3d const &m)
   {
-    int nElems      = 3 * 3;
-    size_t h        = 0;
+    int nElems = 3 * 3;
+    size_t h = 0;
     const double *p = m.GetArray();
     while (nElems--)
       boost::hash_combine(h, *p++);
@@ -518,9 +518,7 @@ class GfMatrix3d {
   /// This is a convenience method that is equivalent to calling
   /// ExtractRotation().Decompose().
   GF_API
-  GfVec3d DecomposeRotation(const GfVec3d &axis0,
-                            const GfVec3d &axis1,
-                            const GfVec3d &axis2) const;
+  GfVec3d DecomposeRotation(const GfVec3d &axis0, const GfVec3d &axis1, const GfVec3d &axis2) const;
 
   /// Returns the quaternion corresponding to this matrix. This works
   /// well only if the matrix represents a rotation.

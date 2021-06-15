@@ -25,12 +25,11 @@
 #include "ANCHOR_api.h"
 #include "ANCHOR_event_consumer.h"
 
-ANCHOR_CallbackEventConsumer::ANCHOR_CallbackEventConsumer(
-    ANCHOR_EventCallbackProcPtr eventCallback,
-    ANCHOR_UserPtr userData)
+ANCHOR_CallbackEventConsumer::ANCHOR_CallbackEventConsumer(ANCHOR_EventCallbackProcPtr eventCallback,
+                                                           ANCHOR_UserPtr userData)
 {
   m_eventCallback = eventCallback;
-  m_userData      = userData;
+  m_userData = userData;
 }
 
 bool ANCHOR_CallbackEventConsumer::processEvent(ANCHOR_IEvent *event)

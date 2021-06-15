@@ -66,22 +66,20 @@ class HdPhDrawTarget : public HdSprim {
   /// bits are ignored.
   ///
   enum DirtyBits : HdDirtyBits {
-    Clean                = 0,
-    DirtyDTEnable        = 1 << 0,
-    DirtyDTCamera        = 1 << 1,
-    DirtyDTResolution    = 1 << 2,
-    DirtyDTAovBindings   = 1 << 4,
+    Clean = 0,
+    DirtyDTEnable = 1 << 0,
+    DirtyDTCamera = 1 << 1,
+    DirtyDTResolution = 1 << 2,
+    DirtyDTAovBindings = 1 << 4,
     DirtyDTDepthPriority = 1 << 6,
-    DirtyDTCollection    = 1 << 7,
+    DirtyDTCollection = 1 << 7,
     AllDirty = (DirtyDTEnable | DirtyDTCamera | DirtyDTResolution | DirtyDTAovBindings |
                 DirtyDTDepthPriority | DirtyDTCollection)
   };
 
   /// Synchronizes state from the delegate to this object.
   HDPH_API
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   /// Returns the minimal set of dirty bits to place in the
   /// change tracker for use in the first sync of this prim.
@@ -129,7 +127,7 @@ class HdPhDrawTarget : public HdSprim {
   HdPhDrawTargetRenderPassState _drawTargetRenderPassState;
 
   // No copy
-  HdPhDrawTarget()                       = delete;
+  HdPhDrawTarget() = delete;
   HdPhDrawTarget(const HdPhDrawTarget &) = delete;
   HdPhDrawTarget &operator=(const HdPhDrawTarget &) = delete;
 };

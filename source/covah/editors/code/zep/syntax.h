@@ -29,7 +29,7 @@ enum { CaseInsensitive = (1 << 0), IgnoreLineHighlight = (1 << 1), LispLike = (1
 struct SyntaxData {
   ThemeColor foreground = ThemeColor::Normal;
   ThemeColor background = ThemeColor::None;
-  bool underline        = false;
+  bool underline = false;
 };
 
 struct SyntaxResult : SyntaxData {
@@ -41,9 +41,9 @@ class ZepSyntaxAdorn;
 class ZepSyntax : public ZepComponent {
  public:
   ZepSyntax(ZepBuffer &buffer,
-            const std::unordered_set<std::string> &keywords    = std::unordered_set<std::string>{},
+            const std::unordered_set<std::string> &keywords = std::unordered_set<std::string>{},
             const std::unordered_set<std::string> &identifiers = std::unordered_set<std::string>{},
-            uint32_t flags                                     = 0);
+            uint32_t flags = 0);
   virtual ~ZepSyntax();
 
   virtual SyntaxResult GetSyntaxAt(const GlyphIterator &index) const;
@@ -74,7 +74,7 @@ class ZepSyntax : public ZepComponent {
   std::vector<SyntaxData> m_syntax;
   std::future<void> m_syntaxResult;
   std::atomic<long> m_processedChar = {0};
-  std::atomic<long> m_targetChar    = {0};
+  std::atomic<long> m_targetChar = {0};
   std::vector<uint32_t> m_multiCommentStarts;
   std::vector<uint32_t> m_multiCommentEnds;
   std::unordered_set<std::string> m_keywords;
@@ -89,9 +89,9 @@ class ZepSyntax : public ZepComponent {
 class ZepSyntaxAdorn : public ZepComponent {
  public:
   ZepSyntaxAdorn(ZepSyntax &syntax, ZepBuffer &buffer)
-      : ZepComponent(syntax.GetEditor()),
-        m_buffer(buffer),
-        m_syntax(syntax)
+    : ZepComponent(syntax.GetEditor()),
+      m_buffer(buffer),
+      m_syntax(syntax)
   {}
 
   virtual SyntaxResult GetSyntaxAt(const GlyphIterator &offset, bool &found) const = 0;

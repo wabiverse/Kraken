@@ -69,25 +69,21 @@ TF_DEFINE_ENV_SETTING(USD_ABC_WARN_ALL_UNSUPPORTED_VALUES,
                       false,
                       "Issue warnings for all unsupported values encountered.");
 
-TF_DEFINE_ENV_SETTING(
-    USD_ABC_NUM_OGAWA_STREAMS,
-    4,
-    "The number of threads available for reading ogawa-backed files via UsdAbc.");
+TF_DEFINE_ENV_SETTING(USD_ABC_NUM_OGAWA_STREAMS,
+                      4,
+                      "The number of threads available for reading ogawa-backed files via UsdAbc.");
 
 TF_DEFINE_ENV_SETTING(USD_ABC_WRITE_UV_AS_ST_TEXCOORD2FARRAY,
                       true,
                       "Switch to false to disable writing Alembic uv sets as primvars:st with "
                       "type texCoord2fArray to USD");
 
-TF_DEFINE_ENV_SETTING(
-    USD_ABC_XFORM_PRIM_COLLAPSE,
-    true,
-    "Collapse Xforms containing a single geometry into a single geom Prim in USD");
+TF_DEFINE_ENV_SETTING(USD_ABC_XFORM_PRIM_COLLAPSE,
+                      true,
+                      "Collapse Xforms containing a single geometry into a single geom Prim in USD");
 
 #if ALEMBIC_LIBRARY_VERSION >= 10709
-TF_DEFINE_ENV_SETTING(USD_ABC_READ_ARCHIVE_USE_MMAP,
-                      false,
-                      "Use mmap when reading from an Ogawa archive.");
+TF_DEFINE_ENV_SETTING(USD_ABC_READ_ARCHIVE_USE_MMAP, false, "Use mmap when reading from an Ogawa archive.");
 #endif
 
 namespace {
@@ -97,26 +93,23 @@ using namespace UsdAbc_AlembicUtil;
 
 static const TfToken &_GetUVPropertyName()
 {
-  static const TfToken uvUsdAbcPropertyName = (TfGetEnvSetting(
-                                                  USD_ABC_WRITE_UV_AS_ST_TEXCOORD2FARRAY)) ?
-                                                  (UsdAbcPropertyNames->st) :
-                                                  (UsdAbcPropertyNames->uv);
+  static const TfToken uvUsdAbcPropertyName = (TfGetEnvSetting(USD_ABC_WRITE_UV_AS_ST_TEXCOORD2FARRAY)) ?
+                                                (UsdAbcPropertyNames->st) :
+                                                (UsdAbcPropertyNames->uv);
   return uvUsdAbcPropertyName;
 }
 
 static const SdfValueTypeName &_GetUVTypeName()
 {
-  static const SdfValueTypeName uvTypeName = (TfGetEnvSetting(
-                                                 USD_ABC_WRITE_UV_AS_ST_TEXCOORD2FARRAY)) ?
-                                                 (SdfValueTypeNames->TexCoord2fArray) :
-                                                 (SdfValueTypeNames->Float2Array);
+  static const SdfValueTypeName uvTypeName = (TfGetEnvSetting(USD_ABC_WRITE_UV_AS_ST_TEXCOORD2FARRAY)) ?
+                                               (SdfValueTypeNames->TexCoord2fArray) :
+                                               (SdfValueTypeNames->Float2Array);
   return uvTypeName;
 }
 
 static size_t _GetNumOgawaStreams()
 {
-  return std::min(TfGetEnvSetting(USD_ABC_NUM_OGAWA_STREAMS),
-                  static_cast<int>(WorkGetConcurrencyLimit()));
+  return std::min(TfGetEnvSetting(USD_ABC_NUM_OGAWA_STREAMS), static_cast<int>(WorkGetConcurrencyLimit()));
 }
 
 #if WITH_ALEMBIC_HDF5 && !H5_HAVE_THREADSAFE
@@ -189,19 +182,19 @@ static void _PostUnsupportedValueWarning(const IScalarProperty &property,
                                          const std::string &authoredValue,
                                          const std::string &replacementValue)
 {
-  const IObject object          = property.getObject();
+  const IObject object = property.getObject();
   const std::string archiveName = object.getArchive().getName();
 
   if (TfGetEnvSetting(USD_ABC_WARN_ALL_UNSUPPORTED_VALUES)) {
     TF_WARN(
-        "Unsupported %s '%s' for <%s> at %s in archive '%s'. "
-        "Using '%s' instead.",
-        _WarningNames[warning],
-        authoredValue.c_str(),
-        _GetAlembicPath(property).c_str(),
-        _GetSampleSelectorDescription(iss).c_str(),
-        archiveName.c_str(),
-        replacementValue.c_str());
+      "Unsupported %s '%s' for <%s> at %s in archive '%s'. "
+      "Using '%s' instead.",
+      _WarningNames[warning],
+      authoredValue.c_str(),
+      _GetAlembicPath(property).c_str(),
+      _GetSampleSelectorDescription(iss).c_str(),
+      archiveName.c_str(),
+      replacementValue.c_str());
     return;
   }
 
@@ -278,7 +271,7 @@ static std::string _CleanName(const std::string &inName,
   // Now check against usedNames.
   if (usedNames.find(name) != usedNames.end()) {
     // Just number the tries.
-    int i               = 0;
+    int i = 0;
     std::string attempt = TfStringPrintf("%s_%d", name.c_str(), ++i);
     while (usedNames.find(attempt) != usedNames.end()) {
       attempt = TfStringPrintf("%s_%d", name.c_str(), ++i);
@@ -302,9 +295,7 @@ static std::string _AmdName(const std::string &name)
   return "Usd:" + name;
 }
 
-static void _GetBoolMetadata(const MetaData &alembicMetadata,
-                             MetadataMap &usdMetadata,
-                             const TfToken &field)
+static void _GetBoolMetadata(const MetaData &alembicMetadata, MetadataMap &usdMetadata, const TfToken &field)
 {
   std::string value = alembicMetadata.get(_AmdName(field));
   if (!value.empty()) {
@@ -477,19 +468,17 @@ class AlembicProperty {
 };
 
 AlembicProperty::AlembicProperty(const SdfPath &path, const std::string &name)
-    : _path(path),
-      _parent(),
-      _name(name)
+  : _path(path),
+    _parent(),
+    _name(name)
 {
   // Do nothing
 }
 
-AlembicProperty::AlembicProperty(const SdfPath &path,
-                                 const std::string &name,
-                                 const IObject &parent)
-    : _path(path),
-      _parent(parent.getProperties()),
-      _name(name)
+AlembicProperty::AlembicProperty(const SdfPath &path, const std::string &name, const IObject &parent)
+  : _path(path),
+    _parent(parent.getProperties()),
+    _name(name)
 {
   // Do nothing
 }
@@ -497,9 +486,9 @@ AlembicProperty::AlembicProperty(const SdfPath &path,
 AlembicProperty::AlembicProperty(const SdfPath &path,
                                  const std::string &name,
                                  const ICompoundProperty &parent)
-    : _path(path),
-      _parent(parent),
-      _name(name)
+  : _path(path),
+    _parent(parent),
+    _name(name)
 {
   // Do nothing
 }
@@ -587,8 +576,7 @@ _ReaderSchema::_ReaderSchema()
   // Do nothing
 }
 
-const _ReaderSchema::PrimReaderVector &_ReaderSchema::GetPrimReaders(
-    const std::string &schema) const
+const _ReaderSchema::PrimReaderVector &_ReaderSchema::GetPrimReaders(const std::string &schema) const
 {
   _ReaderMap::const_iterator i = _readers.find(schema);
   if (i != _readers.end()) {
@@ -723,9 +711,7 @@ class _ReaderContext {
 
   /// Test for the existence of and optionally return the value at
   /// (\p path,\p fieldName).
-  bool HasField(const SdfPath &path,
-                const TfToken &fieldName,
-                const UsdAbc_AlembicDataAny &value) const;
+  bool HasField(const SdfPath &path, const TfToken &fieldName, const UsdAbc_AlembicDataAny &value) const;
 
   /// Test for the existence of and optionally return the value of the
   /// property at \p id at index \p index.
@@ -754,8 +740,7 @@ class _ReaderContext {
   static void _FindInstances(const IObject &parent, _SourceToInstancesMap *instances);
 
   // Add to promotable those instance sources that are promotable.
-  static void _FindPromotable(const _SourceToInstancesMap &instances,
-                              _ObjectReaderSet *promotable);
+  static void _FindPromotable(const _SourceToInstancesMap &instances, _ObjectReaderSet *promotable);
 
   // Store instancing state.
   void _SetupInstancing(const _SourceToInstancesMap &instances,
@@ -767,9 +752,7 @@ class _ReaderContext {
 
   const Prim *_GetPrim(const SdfPath &path) const;
   const Property *_GetProperty(const Prim &, const SdfPath &path) const;
-  bool _HasField(const Prim *prim,
-                 const TfToken &fieldName,
-                 const UsdAbc_AlembicDataAny &value) const;
+  bool _HasField(const Prim *prim, const TfToken &fieldName, const UsdAbc_AlembicDataAny &value) const;
   bool _HasField(const Property *property,
                  const TfToken &fieldName,
                  const UsdAbc_AlembicDataAny &value) const;
@@ -840,10 +823,10 @@ static void _ReadPrimChildren(_ReaderContext &context,
                               _ReaderContext::Prim &prim);
 
 _ReaderContext::_ReaderContext()
-    : _mutex(NULL),
-      _timeScale(24.0),  // Usd is frames, Alembic is seconds.
-      _timeOffset(0.0),  // Time 0.0 to frame 0.
-      _schema(NULL)
+  : _mutex(NULL),
+    _timeScale(24.0),  // Usd is frames, Alembic is seconds.
+    _timeOffset(0.0),  // Time 0.0 to frame 0.
+    _schema(NULL)
 {
   // Do nothing
 }
@@ -926,8 +909,8 @@ bool _ReaderContext::Open(const std::string &filePath,
   _archive = std::move(archive);
 
   // Fill pseudo-root in the cache.
-  const SdfPath rootPath                             = SdfPath::AbsoluteRootPath();
-  _pseudoRoot                                        = &_prims[rootPath];
+  const SdfPath rootPath = SdfPath::AbsoluteRootPath();
+  _pseudoRoot = &_prims[rootPath];
   _pseudoRoot->metadata[SdfFieldKeys->Documentation] = comment;
 
   // Gather the names of the root prims.  Instancing will want to create
@@ -939,14 +922,14 @@ bool _ReaderContext::Open(const std::string &filePath,
   for (size_t i = 0, n = root.getNumChildren(); i != n; ++i) {
     IObject child(root, root.getChildHeader(i).getName());
     std::string name = _CleanName(
-        child.getName(), " _", usedRootNames, _AlembicFixName(), &SdfPath::IsValidIdentifier);
+      child.getName(), " _", usedRootNames, _AlembicFixName(), &SdfPath::IsValidIdentifier);
     usedRootNames.insert(name);
   }
 
   // Fetch authored timeCodesPerSecond early so that we can use it
   // for rescaling timeSamples.
   if (const PropertyHeader *property = root.getProperties().getPropertyHeader("Usd")) {
-    const MetaData &metadata                                = property->getMetaData();
+    const MetaData &metadata = property->getMetaData();
     _pseudoRoot->metadata[SdfFieldKeys->TimeCodesPerSecond] = 24.0;
     _GetDoubleMetadata(metadata, _pseudoRoot->metadata, SdfFieldKeys->TimeCodesPerSecond);
     _timeScale = _pseudoRoot->metadata[SdfFieldKeys->TimeCodesPerSecond].Get<double>();
@@ -977,10 +960,10 @@ bool _ReaderContext::Open(const std::string &filePath,
     if (reRoot != args.end()) {
       if (!TfIsValidIdentifier(reRoot->second)) {
         TF_WARN(
-            "[usdAbc] Ignoring re-root because identifer '%s' is"
-            " not valid (%s).",
-            reRoot->second.c_str(),
-            filePath.c_str());
+          "[usdAbc] Ignoring re-root because identifer '%s' is"
+          " not valid (%s).",
+          reRoot->second.c_str(),
+          filePath.c_str());
       }
       else
         abcReRoot = TfToken(reRoot->second);
@@ -990,9 +973,9 @@ bool _ReaderContext::Open(const std::string &filePath,
   // Fill rest of the cache.
   if (!abcReRoot.IsEmpty()) {
     SdfPath compPath = rootPath.AppendChild(abcReRoot);
-    auto &xform      = _prims[compPath];
-    xform.typeName   = UsdAbcPrimTypeNames->Xform;
-    xform.specifier  = SdfSpecifierDef;
+    auto &xform = _prims[compPath];
+    xform.typeName = UsdAbcPrimTypeNames->Xform;
+    xform.specifier = SdfSpecifierDef;
     _ReadPrimChildren(*this, root, compPath, xform);
     _pseudoRoot->children.emplace_back(std::move(abcReRoot));
   }
@@ -1013,14 +996,14 @@ bool _ReaderContext::Open(const std::string &filePath,
       const SdfPath &name = prototype.first;
       _pseudoRoot->children.push_back(name.GetNameToken());
       _prims[name].instanceSource = prototype.second;
-      _prims[name].instanceable   = instanceable;
+      _prims[name].instanceable = instanceable;
     }
   }
 
   // Guess the start and end timeCode using the sample times.
   if (!_allTimeSamples.empty()) {
     _pseudoRoot->metadata[SdfFieldKeys->StartTimeCode] = *_allTimeSamples.begin();
-    _pseudoRoot->metadata[SdfFieldKeys->EndTimeCode]   = *_allTimeSamples.rbegin();
+    _pseudoRoot->metadata[SdfFieldKeys->EndTimeCode] = *_allTimeSamples.rbegin();
   }
 
   // If no upAxis is authored, pretend that it was authored as 'Y'.  This
@@ -1062,7 +1045,7 @@ void _ReaderContext::Close()
 
   _Lock lock(_mutex);
   _archive = IArchive();
-  _mutex   = NULL;
+  _mutex = NULL;
 }
 
 void _ReaderContext::SetFlag(const TfToken &flagName, bool set)
@@ -1100,8 +1083,8 @@ _ReaderContext::Prim &_ReaderContext::AddInstance(const SdfPath &path, const IOb
   const auto i = _instances.find(object.getFullName());
   if (i != _instances.end()) {
     const _PrototypeInfo &info = _instanceSources.find(i->second)->second;
-    result.prototype           = info.path;
-    result.promoted            = info.promoted;
+    result.prototype = info.path;
+    result.promoted = info.promoted;
   }
   return result;
 }
@@ -1123,8 +1106,7 @@ const _ReaderContext::Property *_ReaderContext::FindProperty(const SdfPath &path
   return NULL;
 }
 
-_ReaderContext::TimeSamples _ReaderContext::ConvertSampleTimes(
-    const _AlembicTimeSamples &alembicTimes) const
+_ReaderContext::TimeSamples _ReaderContext::ConvertSampleTimes(const _AlembicTimeSamples &alembicTimes) const
 {
   std::vector<double> result;
   result.resize(alembicTimes.size());
@@ -1138,7 +1120,7 @@ _ReaderContext::TimeSamples _ReaderContext::ConvertSampleTimes(
       // Round the result so we get exact frames in the common
       // case of times stored in seconds and _timeScale = 1/24.
       static const double P = 1.0e+10;
-      result[i]             = GfRound(P * (alembicTimes[i] * _timeScale + _timeOffset)) / P;
+      result[i] = GfRound(P * (alembicTimes[i] * _timeScale + _timeOffset)) / P;
     }
   }
 
@@ -1195,9 +1177,7 @@ bool _ReaderContext::HasField(const SdfPath &path,
   return false;
 }
 
-bool _ReaderContext::HasValue(const SdfPath &path,
-                              Index index,
-                              const UsdAbc_AlembicDataAny &value) const
+bool _ReaderContext::HasValue(const SdfPath &path, Index index, const UsdAbc_AlembicDataAny &value) const
 {
   TRACE_FUNCTION();
 
@@ -1211,8 +1191,7 @@ bool _ReaderContext::HasValue(const SdfPath &path,
   return false;
 }
 
-void _ReaderContext::VisitSpecs(const SdfAbstractData &owner,
-                                SdfAbstractDataSpecVisitor *visitor) const
+void _ReaderContext::VisitSpecs(const SdfAbstractData &owner, SdfAbstractDataSpecVisitor *visitor) const
 {
   // Visit prims in path sorted order.
   for (const auto &v : _prims) {
@@ -1301,8 +1280,7 @@ const std::set<double> &_ReaderContext::ListAllTimeSamples() const
   return _allTimeSamples;
 }
 
-const _ReaderContext::TimeSamples &_ReaderContext::ListTimeSamplesForPath(
-    const SdfPath &path) const
+const _ReaderContext::TimeSamples &_ReaderContext::ListTimeSamplesForPath(const SdfPath &path) const
 {
   TRACE_FUNCTION();
 
@@ -1338,8 +1316,7 @@ void _ReaderContext::_FindInstances(const IObject &parent, _SourceToInstancesMap
   }
 }
 
-void _ReaderContext::_FindPromotable(const _SourceToInstancesMap &instances,
-                                     _ObjectReaderSet *promotable)
+void _ReaderContext::_FindPromotable(const _SourceToInstancesMap &instances, _ObjectReaderSet *promotable)
 {
   // We want to use the parent of the source (and the parents of the
   // corresponging instances) where possible.  Since Usd can't share
@@ -1386,8 +1363,8 @@ void _ReaderContext::_SetupInstancing(const _SourceToInstancesMap &instances,
   // prim path.  We can no longer use Alembic to answer these questions
   // since it doesn't know about promoted prototypes/instances.
   for (const auto &value : instances) {
-    const _ObjectPtr &source          = value.first;
-    const bool promoted               = (promotable.find(source) != promotable.end());
+    const _ObjectPtr &source = value.first;
+    const bool promoted = (promotable.find(source) != promotable.end());
     const std::string &sourceFullName = promoted ? source->getParent()->getFullName() :
                                                    source->getFullName();
     if (promoted) {
@@ -1409,13 +1386,13 @@ void _ReaderContext::_SetupInstancing(const _SourceToInstancesMap &instances,
 
     // Construct a unique name.  Start by getting the name
     // portion of the instance source's path.
-    const std::string::size_type j  = sourceFullName.rfind('/');
+    const std::string::size_type j = sourceFullName.rfind('/');
     const std::string prototypeName = (j != std::string::npos) ? sourceFullName.substr(j + 1) :
                                                                  sourceFullName;
 
     // Now mangle/uniquify the name and make a root prim path.
-    const SdfPath prototypePath = SdfPath::AbsoluteRootPath().AppendChild(TfToken(_CleanName(
-        prototypeName, " _", *usedNames, _AlembicFixName(), &SdfPath::IsValidIdentifier)));
+    const SdfPath prototypePath = SdfPath::AbsoluteRootPath().AppendChild(
+      TfToken(_CleanName(prototypeName, " _", *usedNames, _AlembicFixName(), &SdfPath::IsValidIdentifier)));
 
     // Save the source/prototype info.
     _PrototypeInfo prototypeInfo = {prototypePath, promoted};
@@ -1438,8 +1415,7 @@ const _ReaderContext::Prim *_ReaderContext::_GetPrim(const SdfPath &path) const
   return i == _prims.end() ? NULL : &i->second;
 }
 
-const _ReaderContext::Property *_ReaderContext::_GetProperty(const Prim &prim,
-                                                             const SdfPath &path) const
+const _ReaderContext::Property *_ReaderContext::_GetProperty(const Prim &prim, const SdfPath &path) const
 {
   // The alembic reader does not support relational attributes; only prim
   // properties.
@@ -1753,9 +1729,7 @@ class _PrimReaderContext {
   /// conforms to the \c IsValid, \c Converter, \c GetSampleTimes and
   /// \c GetMetaData types.  If \p convert is invalid then this does nothing.
   template<class T>
-  void AddUniformProperty(const TfToken &name,
-                          const SdfValueTypeName &typeName,
-                          const T &converter);
+  void AddUniformProperty(const TfToken &name, const SdfValueTypeName &typeName, const T &converter);
 
   /// Add an out-of-schema property, which uses the default conversion
   /// for whatever Alembic type the property is.  If \p property is a
@@ -1827,12 +1801,10 @@ class _PrimReaderContext {
   std::set<std::string> _usedNames;
 };
 
-_PrimReaderContext::_PrimReaderContext(_ReaderContext &context,
-                                       const IObject &prim,
-                                       const SdfPath &path)
-    : _context(context),
-      _prim(prim),
-      _path(path)
+_PrimReaderContext::_PrimReaderContext(_ReaderContext &context, const IObject &prim, const SdfPath &path)
+  : _context(context),
+    _prim(prim),
+    _path(path)
 {
   // Fill _unextracted with all of the property names.
   ICompoundProperty properties = _prim.getProperties();
@@ -1858,7 +1830,7 @@ const SdfPath &_PrimReaderContext::GetPath() const
 std::string _PrimReaderContext::GetUsdName(const std::string &name) const
 {
   return _CleanName(
-      name, " .", _usedNames, _AlembicFixNamespacedName(), &SdfPath::IsValidNamespacedIdentifier);
+    name, " .", _usedNames, _AlembicFixNamespacedName(), &SdfPath::IsValidNamespacedIdentifier);
 }
 
 _PrimReaderContext::Prim &_PrimReaderContext::GetPrim()
@@ -1895,7 +1867,7 @@ AlembicProperty _PrimReaderContext::Extract(const std::string &name)
 AlembicProperty _PrimReaderContext::ExtractSchema(const std::string &name)
 {
   std::vector<std::string>::iterator i = std::find(
-      _unextractedSchema.begin(), _unextractedSchema.end(), name);
+    _unextractedSchema.begin(), _unextractedSchema.end(), name);
   if (i != _unextractedSchema.end()) {
     _unextractedSchema.erase(i);
     return AlembicProperty(GetPath(), name, _schema);
@@ -1924,15 +1896,14 @@ void _PrimReaderContext::AddUniformProperty(const TfToken &name,
                                             const T &converter)
 {
   if (converter(IsValidTag())) {
-    Property &prop   = _AddProperty(name, typeName, converter, converter, false);
-    prop.converter   = converter;
-    prop.uniform     = true;
+    Property &prop = _AddProperty(name, typeName, converter, converter, false);
+    prop.converter = converter;
+    prop.uniform = true;
     prop.timeSampled = false;
   }
 }
 
-void _PrimReaderContext::AddOutOfSchemaProperty(const std::string &name,
-                                                const AlembicProperty &property)
+void _PrimReaderContext::AddOutOfSchemaProperty(const std::string &name, const AlembicProperty &property)
 {
   // Get property info.
   const PropertyHeader *header = property.GetHeader();
@@ -1953,11 +1924,11 @@ void _PrimReaderContext::AddOutOfSchemaProperty(const std::string &name,
 
     // Recurse.
     for (size_t i = 0, n = compound.getNumProperties(); i != n; ++i) {
-      const std::string rawName   = compound.getPropertyHeader(i).getName();
+      const std::string rawName = compound.getPropertyHeader(i).getName();
       const std::string cleanName = _CleanName(
-          rawName, " .", usedNames, _AlembicFixName(), &SdfPath::IsValidIdentifier);
+        rawName, " .", usedNames, _AlembicFixName(), &SdfPath::IsValidIdentifier);
       const std::string namespacedName = SdfPath::JoinIdentifier(name, cleanName);
-      const SdfPath childPath          = GetPath().AppendProperty(TfToken(namespacedName));
+      const SdfPath childPath = GetPath().AppendProperty(TfToken(namespacedName));
       AddOutOfSchemaProperty(namespacedName, AlembicProperty(childPath, rawName, compound));
     }
 
@@ -1976,25 +1947,19 @@ void _PrimReaderContext::AddOutOfSchemaProperty(const std::string &name,
   // Get the converter and add the property.
   const bool isOutOfSchema = true;
   const UsdAbc_AlembicType alembicType(*header);
-  const SdfValueTypeName usdTypeName = _context.GetSchema().GetConversions().FindConverter(
-      alembicType);
+  const SdfValueTypeName usdTypeName = _context.GetSchema().GetConversions().FindConverter(alembicType);
   if (usdTypeName) {
     _PrimReaderContext::Property &prop =
-        (TfGetEnvSetting(USD_ABC_WRITE_UV_AS_ST_TEXCOORD2FARRAY) &&
-         name == UsdAbcPropertyNames->uvIndices) ?
-            (_AddProperty(UsdAbcPropertyNames->stIndices,
-                          usdTypeName,
-                          header->getMetaData(),
-                          sampleTimes,
-                          isOutOfSchema)) :
-            (_AddProperty(
-                TfToken(name), usdTypeName, header->getMetaData(), sampleTimes, isOutOfSchema));
+      (TfGetEnvSetting(USD_ABC_WRITE_UV_AS_ST_TEXCOORD2FARRAY) && name == UsdAbcPropertyNames->uvIndices) ?
+        (_AddProperty(
+          UsdAbcPropertyNames->stIndices, usdTypeName, header->getMetaData(), sampleTimes, isOutOfSchema)) :
+        (_AddProperty(TfToken(name), usdTypeName, header->getMetaData(), sampleTimes, isOutOfSchema));
     prop.converter = std::bind(
-        _context.GetSchema().GetConversions().GetToUsdConverter(alembicType, prop.typeName),
-        property.GetParent(),
-        property.GetName(),
-        std::placeholders::_2,
-        std::placeholders::_1);
+      _context.GetSchema().GetConversions().GetToUsdConverter(alembicType, prop.typeName),
+      property.GetParent(),
+      property.GetName(),
+      std::placeholders::_2,
+      std::placeholders::_1);
   }
   else {
     TF_WARN("No conversion for \"%s\" of type \"%s\" at <%s>",
@@ -2027,19 +1992,15 @@ _PrimReaderContext::Property &_PrimReaderContext::_AddProperty(const TfToken &na
                                                                const GetSampleTimes &sampleTimes,
                                                                bool isOutOfSchemaProperty)
 {
-  return _AddProperty(name,
-                      typeName,
-                      metadata(MetaDataTag()),
-                      sampleTimes(SampleTimesTag()),
-                      isOutOfSchemaProperty);
+  return _AddProperty(
+    name, typeName, metadata(MetaDataTag()), sampleTimes(SampleTimesTag()), isOutOfSchemaProperty);
 }
 
-_PrimReaderContext::Property &_PrimReaderContext::_AddProperty(
-    const TfToken &name,
-    const SdfValueTypeName &typeName,
-    const MetaData &metadata,
-    const _AlembicTimeSamples &sampleTimes,
-    bool isOutOfSchemaProperty)
+_PrimReaderContext::Property &_PrimReaderContext::_AddProperty(const TfToken &name,
+                                                               const SdfValueTypeName &typeName,
+                                                               const MetaData &metadata,
+                                                               const _AlembicTimeSamples &sampleTimes,
+                                                               bool isOutOfSchemaProperty)
 {
   // Make the property.
   Property &property = _AddProperty(name);
@@ -2093,7 +2054,7 @@ void _PrimReaderContext::_GetPropertyMetadata(const MetaData &alembicMetadata,
   // Type name.
   if (!property->typeName) {
     property->typeName = SdfSchema::GetInstance().FindType(
-        alembicMetadata.get(_AmdName(SdfFieldKeys->TypeName)));
+      alembicMetadata.get(_AmdName(SdfFieldKeys->TypeName)));
   }
 
   // If there's only one timeSample and we've indicated it should be
@@ -2204,7 +2165,7 @@ template<class T, class UsdValueType = void, bool expand = true> struct _CopyGen
 
   PropertyType object;
   _CopyGeneric(const AlembicProperty &object_, SchemaInterpMatching matching = kStrictMatching)
-      : object(object_.Cast<PropertyType>(matching))
+    : object(object_.Cast<PropertyType>(matching))
   {}
 
   bool operator()(_IsValidTag) const
@@ -2311,7 +2272,7 @@ template<class GeomParamType> struct _CopyIndices {
 /// Copy hermite points from interleaved IP3fArrayProperty.
 struct _CopyHermitePoints : _CopyGeneric<IP3fArrayProperty, GfVec3f> {
   _CopyHermitePoints(const AlembicProperty &object_)
-      : _CopyGeneric<IP3fArrayProperty, GfVec3f>(object_, kStrictMatching)
+    : _CopyGeneric<IP3fArrayProperty, GfVec3f>(object_, kStrictMatching)
   {}
 
   using _CopyGeneric<IP3fArrayProperty, GfVec3f>::operator();
@@ -2322,9 +2283,9 @@ struct _CopyHermitePoints : _CopyGeneric<IP3fArrayProperty, GfVec3f> {
     typedef typename IP3fArrayProperty::traits_type AlembicTraits;
     SamplePtr samplePtr;
     object.get(samplePtr, iss);
-    VtValue value            = _CopyGenericValue<AlembicTraits, GfVec3f>(samplePtr);
+    VtValue value = _CopyGenericValue<AlembicTraits, GfVec3f>(samplePtr);
     VtVec3fArray interleaved = value.Get<VtVec3fArray>();
-    auto separated           = UsdGeomHermiteCurves::PointAndTangentArrays::Separate(interleaved);
+    auto separated = UsdGeomHermiteCurves::PointAndTangentArrays::Separate(interleaved);
     return dst.Set(VtValue(separated.GetPoints()));
   }
 };
@@ -2332,7 +2293,7 @@ struct _CopyHermitePoints : _CopyGeneric<IP3fArrayProperty, GfVec3f> {
 /// Copy hermite points from interleaved IP3fArrayProperty.
 struct _CopyHermiteTangents : _CopyGeneric<IP3fArrayProperty, GfVec3f> {
   _CopyHermiteTangents(const AlembicProperty &object_)
-      : _CopyGeneric<IP3fArrayProperty, GfVec3f>(object_, kStrictMatching)
+    : _CopyGeneric<IP3fArrayProperty, GfVec3f>(object_, kStrictMatching)
   {}
 
   using _CopyGeneric<IP3fArrayProperty, GfVec3f>::operator();
@@ -2343,9 +2304,9 @@ struct _CopyHermiteTangents : _CopyGeneric<IP3fArrayProperty, GfVec3f> {
     typedef typename IP3fArrayProperty::traits_type AlembicTraits;
     SamplePtr samplePtr;
     object.get(samplePtr, iss);
-    VtValue value            = _CopyGenericValue<AlembicTraits, GfVec3f>(samplePtr);
+    VtValue value = _CopyGenericValue<AlembicTraits, GfVec3f>(samplePtr);
     VtVec3fArray interleaved = value.Get<VtVec3fArray>();
-    auto separated           = UsdGeomHermiteCurves::PointAndTangentArrays::Separate(interleaved);
+    auto separated = UsdGeomHermiteCurves::PointAndTangentArrays::Separate(interleaved);
     return dst.Set(VtValue(separated.GetTangents()));
   }
 };
@@ -2401,7 +2362,7 @@ struct _CopyVisibility : _CopyGeneric<ICharProperty> {
                                                                        TfStringify(vis));
         // Usd doesn't support this.
         _PostUnsupportedValueWarning(
-            object, iss, WarningVisibility, authoredValue.c_str(), "kVisibilityDeferred");
+          object, iss, WarningVisibility, authoredValue.c_str(), "kVisibilityDeferred");
         // Fall through
       }
       case kVisibilityDeferred:
@@ -2441,7 +2402,7 @@ struct _CopyXform {
   {
     // Extract any metadata provided by the Usd Alembic writer.
     if (!_metadata) {
-      _metadata                   = MetaData();
+      _metadata = MetaData();
       const MetaData &srcMetadata = object.getMetaData();
       for (MetaData::const_iterator i = srcMetadata.begin(); i != srcMetadata.end(); ++i) {
         if (!i->second.empty() && i->first.compare(0, 14, "Usd.transform:") == 0) {
@@ -2501,7 +2462,7 @@ struct _CopyCameraFocalLength : _CopyCameraBase {
     // Focal Length is just copied into USD.
     // Both use mm as unit.
     const CameraSample sample = object.getSchema().getValue(iss);
-    const float focalLength   = sample.getFocalLength();
+    const float focalLength = sample.getFocalLength();
     return dst.Set(focalLength);
   }
 };
@@ -2518,8 +2479,7 @@ struct _CopyCameraHorizontalAperture : _CopyCameraBase {
 
     // USD uses mm, alembic uses cm
 
-    const float horizontalAperture = sample.getHorizontalAperture() *
-                                     sample.getLensSqueezeRatio() * 10.0;
+    const float horizontalAperture = sample.getHorizontalAperture() * sample.getLensSqueezeRatio() * 10.0;
 
     return dst.Set(horizontalAperture);
   }
@@ -2537,8 +2497,7 @@ struct _CopyCameraVerticalAperture : _CopyCameraBase {
 
     // USD uses mm, alembic uses cm
 
-    const float verticalAperture = sample.getVerticalAperture() * sample.getLensSqueezeRatio() *
-                                   10.0;
+    const float verticalAperture = sample.getVerticalAperture() * sample.getLensSqueezeRatio() * 10.0;
 
     return dst.Set(verticalAperture);
   }
@@ -2556,8 +2515,8 @@ struct _CopyCameraHorizontalApertureOffset : _CopyCameraBase {
 
     // USD uses mm, alembic uses cm
 
-    const float horizontalApertureOffset = sample.getHorizontalFilmOffset() *
-                                           sample.getLensSqueezeRatio() * 10.0;
+    const float horizontalApertureOffset = sample.getHorizontalFilmOffset() * sample.getLensSqueezeRatio() *
+                                           10.0;
 
     return dst.Set(horizontalApertureOffset);
   }
@@ -2575,8 +2534,8 @@ struct _CopyCameraVerticalApertureOffset : _CopyCameraBase {
 
     // USD uses mm, alembic uses cm
 
-    const float verticalApertureOffset = sample.getVerticalFilmOffset() *
-                                         sample.getLensSqueezeRatio() * 10.0;
+    const float verticalApertureOffset = sample.getVerticalFilmOffset() * sample.getLensSqueezeRatio() *
+                                         10.0;
     return dst.Set(verticalApertureOffset);
   }
 };
@@ -2637,11 +2596,8 @@ struct _CopyInterpolateBoundary : _CopyGeneric<IInt32Property> {
         return dst.Set(UsdGeomTokens->edgeOnly);
 
       default:
-        _PostUnsupportedValueWarning(object,
-                                     iss,
-                                     WarningInterpolateBoundary,
-                                     TfStringify(object.getValue(iss)).c_str(),
-                                     "0");
+        _PostUnsupportedValueWarning(
+          object, iss, WarningInterpolateBoundary, TfStringify(object.getValue(iss)).c_str(), "0");
         // Fall-through
       case 0:
         return dst.Set(UsdGeomTokens->none);
@@ -2651,8 +2607,7 @@ struct _CopyInterpolateBoundary : _CopyGeneric<IInt32Property> {
 
 /// Copy a face varying interpolate boundary from an IInt32Property.
 struct _CopyFaceVaryingInterpolateBoundary : _CopyGeneric<IInt32Property> {
-  _CopyFaceVaryingInterpolateBoundary(const AlembicProperty &object_)
-      : _CopyGeneric<IInt32Property>(object_)
+  _CopyFaceVaryingInterpolateBoundary(const AlembicProperty &object_) : _CopyGeneric<IInt32Property>(object_)
   {}
 
   using _CopyGeneric<IInt32Property>::operator();
@@ -2752,13 +2707,13 @@ static TfToken _ConvertCurveBasis(BasisType value)
       return UsdGeomTokens->catmullRom;
     case kHermiteBasis:
       TF_WARN(
-          "'hermite' basis is no longer an allowed token for "
-          "UsdGeomBasisCurves.");
+        "'hermite' basis is no longer an allowed token for "
+        "UsdGeomBasisCurves.");
       return UsdGeomTokens->hermite;
     case kPowerBasis:
       TF_WARN(
-          "'power' basis is no longer an allowed token for "
-          "UsdGeomBasisCurves.");
+        "'power' basis is no longer an allowed token for "
+        "UsdGeomBasisCurves.");
       return UsdGeomTokens->power;
   }
 }
@@ -2803,8 +2758,7 @@ static void _ReadGprim(_PrimReaderContext *context)
 static void _ReadArbGeomParams(_PrimReaderContext *context)
 {
   // Add primvars.
-  context->AddOutOfSchemaProperty(UsdAbcPropertyNames->primvars,
-                                  context->ExtractSchema(".arbGeomParams"));
+  context->AddOutOfSchemaProperty(UsdAbcPropertyNames->primvars, context->ExtractSchema(".arbGeomParams"));
 }
 
 static void _ReadUserProperties(_PrimReaderContext *context)
@@ -2867,15 +2821,14 @@ static void _ReadOrientation(_PrimReaderContext *context)
   AlembicProperty orientation = context->Extract(_AmdName(UsdGeomTokens->orientation));
   if (orientation.Cast<IStringProperty>().valid()) {
     context->AddProperty(
-        UsdGeomTokens->orientation, SdfValueTypeNames->Token, _CopyOrientation(orientation));
+      UsdGeomTokens->orientation, SdfValueTypeNames->Token, _CopyOrientation(orientation));
   }
   else {
     // Alembic is effectively hardcoded to a left-handed orientation.
     // UsdGeomGprim's fallback is right-handed, so we need to provide
     // a value if none is authored.
-    context->AddUniformProperty(UsdGeomTokens->orientation,
-                                SdfValueTypeNames->Token,
-                                _CopySynthetic(UsdGeomTokens->leftHanded));
+    context->AddUniformProperty(
+      UsdGeomTokens->orientation, SdfValueTypeNames->Token, _CopySynthetic(UsdGeomTokens->leftHanded));
   }
 }
 
@@ -2887,8 +2840,7 @@ static void _ReadUnknown(_PrimReaderContext *context)
 {
   // Set prim type.
   _PrimReaderContext::Prim &prim = context->GetPrim();
-  prim.typeName                  = TfToken(
-      context->GetObject().getMetaData().get(_AmdName(SdfFieldKeys->TypeName)));
+  prim.typeName = TfToken(context->GetObject().getMetaData().get(_AmdName(SdfFieldKeys->TypeName)));
   if (prim.typeName.IsEmpty()) {
     // No type specified.  If we're a def then use Scope for lack of
     // anything better.
@@ -2927,10 +2879,10 @@ static void _ReadXform(_PrimReaderContext *context)
   for (index_t i = 0; i < nSamples; ++i) {
     if (!schema.getInheritsXforms(ISampleSelector(i))) {
       TF_WARN(
-          "Ignoring transform that doesn't inherit at "
-          "samples at time %f at <%s>",
-          schema.getTimeSampling()->getSampleTime(i),
-          context->GetPath().GetText());
+        "Ignoring transform that doesn't inherit at "
+        "samples at time %f at <%s>",
+        schema.getTimeSampling()->getSampleTime(i),
+        context->GetPath().GetText());
       return;
     }
   }
@@ -2948,13 +2900,12 @@ static void _ReadXform(_PrimReaderContext *context)
     // For now, we're exporting the composed transform value, until
     // we figure out a solution to the round-tripping problem.
     //
-    context->AddProperty(
-        _tokens->xformOpTransform, SdfValueTypeNames->Matrix4d, _CopyXform(object));
+    context->AddProperty(_tokens->xformOpTransform, SdfValueTypeNames->Matrix4d, _CopyXform(object));
 
     VtTokenArray opOrderVec(1);
     opOrderVec[0] = _tokens->xformOpTransform;
     context->AddUniformProperty(
-        UsdGeomTokens->xformOpOrder, SdfValueTypeNames->TokenArray, _CopySynthetic(opOrderVec));
+      UsdGeomTokens->xformOpOrder, SdfValueTypeNames->TokenArray, _CopySynthetic(opOrderVec));
   }
 
   // Consume properties implicitly handled above.
@@ -2978,34 +2929,29 @@ static void _ReadPolyMesh(_PrimReaderContext *context)
   context->SetSchema(Type::schema_type::info_type::defaultName());
 
   // Add properties.
-  context->AddProperty(
-      UsdGeomTokens->points,
-      SdfValueTypeNames->Point3fArray,
-      _CopyGeneric<IP3fArrayProperty, GfVec3f>(context->ExtractSchema("P"), kNoMatching));
-  context->AddProperty(
-      UsdGeomTokens->velocities,
-      SdfValueTypeNames->Vector3fArray,
-      _CopyGeneric<IV3fArrayProperty, GfVec3f>(context->ExtractSchema(".velocities")));
+  context->AddProperty(UsdGeomTokens->points,
+                       SdfValueTypeNames->Point3fArray,
+                       _CopyGeneric<IP3fArrayProperty, GfVec3f>(context->ExtractSchema("P"), kNoMatching));
+  context->AddProperty(UsdGeomTokens->velocities,
+                       SdfValueTypeNames->Vector3fArray,
+                       _CopyGeneric<IV3fArrayProperty, GfVec3f>(context->ExtractSchema(".velocities")));
   context->AddProperty(UsdGeomTokens->normals,
                        SdfValueTypeNames->Normal3fArray,
                        _CopyGeneric<IN3fGeomParam, GfVec3f>(context->ExtractSchema("N")));
-  context->AddProperty(
-      UsdGeomTokens->faceVertexIndices,
-      SdfValueTypeNames->IntArray,
-      _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".faceIndices")));
-  context->AddProperty(
-      UsdGeomTokens->faceVertexCounts,
-      SdfValueTypeNames->IntArray,
-      _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".faceCounts")));
+  context->AddProperty(UsdGeomTokens->faceVertexIndices,
+                       SdfValueTypeNames->IntArray,
+                       _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".faceIndices")));
+  context->AddProperty(UsdGeomTokens->faceVertexCounts,
+                       SdfValueTypeNames->IntArray,
+                       _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".faceCounts")));
 
   // Read texture coordinates
   _ReadProperty<IV2fGeomParam, GfVec2f>(context, "uv", _GetUVPropertyName(), _GetUVTypeName());
 
   // Custom subdivisionScheme property.  Alembic doesn't have this since
   // the Alembic schema is PolyMesh.  Usd needs "none" as the scheme.
-  context->AddUniformProperty(UsdGeomTokens->subdivisionScheme,
-                              SdfValueTypeNames->Token,
-                              _CopySynthetic(UsdGeomTokens->none));
+  context->AddUniformProperty(
+    UsdGeomTokens->subdivisionScheme, SdfValueTypeNames->Token, _CopySynthetic(UsdGeomTokens->none));
 }
 
 static void _ReadSubD(_PrimReaderContext *context)
@@ -3025,55 +2971,48 @@ static void _ReadSubD(_PrimReaderContext *context)
   context->SetSchema(Type::schema_type::info_type::defaultName());
 
   // Add properties.
-  context->AddProperty(
-      UsdGeomTokens->points,
-      SdfValueTypeNames->Point3fArray,
-      _CopyGeneric<IP3fArrayProperty, GfVec3f>(context->ExtractSchema("P"), kNoMatching));
-  context->AddProperty(
-      UsdGeomTokens->velocities,
-      SdfValueTypeNames->Vector3fArray,
-      _CopyGeneric<IV3fArrayProperty, GfVec3f>(context->ExtractSchema(".velocities")));
-  context->AddProperty(
-      UsdGeomTokens->faceVertexIndices,
-      SdfValueTypeNames->IntArray,
-      _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".faceIndices")));
-  context->AddProperty(
-      UsdGeomTokens->faceVertexCounts,
-      SdfValueTypeNames->IntArray,
-      _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".faceCounts")));
+  context->AddProperty(UsdGeomTokens->points,
+                       SdfValueTypeNames->Point3fArray,
+                       _CopyGeneric<IP3fArrayProperty, GfVec3f>(context->ExtractSchema("P"), kNoMatching));
+  context->AddProperty(UsdGeomTokens->velocities,
+                       SdfValueTypeNames->Vector3fArray,
+                       _CopyGeneric<IV3fArrayProperty, GfVec3f>(context->ExtractSchema(".velocities")));
+  context->AddProperty(UsdGeomTokens->faceVertexIndices,
+                       SdfValueTypeNames->IntArray,
+                       _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".faceIndices")));
+  context->AddProperty(UsdGeomTokens->faceVertexCounts,
+                       SdfValueTypeNames->IntArray,
+                       _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".faceCounts")));
   context->AddUniformProperty(UsdGeomTokens->subdivisionScheme,
                               SdfValueTypeNames->Token,
                               _CopySubdivisionScheme(context->ExtractSchema(".scheme")));
   context->AddProperty(UsdGeomTokens->interpolateBoundary,
                        SdfValueTypeNames->Token,
                        _CopyInterpolateBoundary(context->ExtractSchema(".interpolateBoundary")));
-  context->AddProperty(UsdGeomTokens->faceVaryingLinearInterpolation,
-                       SdfValueTypeNames->Token,
-                       _CopyFaceVaryingInterpolateBoundary(
-                           context->ExtractSchema(".faceVaryingInterpolateBoundary")));
+  context->AddProperty(
+    UsdGeomTokens->faceVaryingLinearInterpolation,
+    SdfValueTypeNames->Token,
+    _CopyFaceVaryingInterpolateBoundary(context->ExtractSchema(".faceVaryingInterpolateBoundary")));
   context->AddProperty(UsdGeomTokens->holeIndices,
                        SdfValueTypeNames->IntArray,
                        _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".holes")));
+  context->AddProperty(UsdGeomTokens->cornerIndices,
+                       SdfValueTypeNames->IntArray,
+                       _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".cornerIndices")));
   context->AddProperty(
-      UsdGeomTokens->cornerIndices,
-      SdfValueTypeNames->IntArray,
-      _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".cornerIndices")));
+    UsdGeomTokens->cornerSharpnesses,
+    SdfValueTypeNames->FloatArray,
+    _CopyGeneric<IFloatArrayProperty, float>(context->ExtractSchema(".cornerSharpnesses")));
+  context->AddProperty(UsdGeomTokens->creaseIndices,
+                       SdfValueTypeNames->IntArray,
+                       _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".creaseIndices")));
+  context->AddProperty(UsdGeomTokens->creaseLengths,
+                       SdfValueTypeNames->IntArray,
+                       _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".creaseLengths")));
   context->AddProperty(
-      UsdGeomTokens->cornerSharpnesses,
-      SdfValueTypeNames->FloatArray,
-      _CopyGeneric<IFloatArrayProperty, float>(context->ExtractSchema(".cornerSharpnesses")));
-  context->AddProperty(
-      UsdGeomTokens->creaseIndices,
-      SdfValueTypeNames->IntArray,
-      _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".creaseIndices")));
-  context->AddProperty(
-      UsdGeomTokens->creaseLengths,
-      SdfValueTypeNames->IntArray,
-      _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".creaseLengths")));
-  context->AddProperty(
-      UsdGeomTokens->creaseSharpnesses,
-      SdfValueTypeNames->FloatArray,
-      _CopyGeneric<IFloatArrayProperty, float>(context->ExtractSchema(".creaseSharpnesses")));
+    UsdGeomTokens->creaseSharpnesses,
+    SdfValueTypeNames->FloatArray,
+    _CopyGeneric<IFloatArrayProperty, float>(context->ExtractSchema(".creaseSharpnesses")));
 
   // Read texture coordinates
   _ReadProperty<IV2fGeomParam, GfVec2f>(context, "uv", _GetUVPropertyName(), _GetUVTypeName());
@@ -3107,7 +3046,7 @@ static void _ReadFaceSet(_PrimReaderContext *context)
                        SdfValueTypeNames->IntArray,
                        _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".faces")));
   context->AddUniformProperty(
-      UsdGeomTokens->elementType, SdfValueTypeNames->Token, _CopySynthetic(UsdGeomTokens->face));
+    UsdGeomTokens->elementType, SdfValueTypeNames->Token, _CopySynthetic(UsdGeomTokens->face));
 
   context->AddUniformProperty(UsdGeomTokens->familyName,
                               SdfValueTypeNames->Token,
@@ -3150,25 +3089,20 @@ static void _ReadCurves(_PrimReaderContext *context)
   // Set prim type.  This depends on the CurveType of the curve.
   if (sample.getType() == kVariableOrder) {
     context->GetPrim().typeName = UsdAbcPrimTypeNames->NurbsCurves;
-    context->AddProperty(
-        UsdGeomTokens->order,
-        SdfValueTypeNames->IntArray,
-        _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".orders")));
-    context->AddProperty(
-        UsdGeomTokens->knots,
-        SdfValueTypeNames->DoubleArray,
-        _CopyGeneric<IFloatArrayProperty, double>(context->ExtractSchema(".knots")));
+    context->AddProperty(UsdGeomTokens->order,
+                         SdfValueTypeNames->IntArray,
+                         _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema(".orders")));
+    context->AddProperty(UsdGeomTokens->knots,
+                         SdfValueTypeNames->DoubleArray,
+                         _CopyGeneric<IFloatArrayProperty, double>(context->ExtractSchema(".knots")));
   }
   else if ((sample.getType() == kCubic) && (sample.getBasis() == kHermiteBasis)) {
     context->GetPrim().typeName = UsdAbcPrimTypeNames->HermiteCurves;
     if (_ConvertCurveWrap(sample.getWrap()) != UsdGeomTokens->nonperiodic) {
-      TF_WARN("Wrap mode is not supported for cubic hermite curves: '%s'",
-              context->GetPath().GetText());
+      TF_WARN("Wrap mode is not supported for cubic hermite curves: '%s'", context->GetPath().GetText());
     }
-    if (_CopyGeneric<IV3fArrayProperty, GfVec3f>(context->ExtractSchema(".velocities"))(
-            _IsValidTag())) {
-      TF_WARN("Velocities are not supported for cubic hermite curves: '%s'",
-              context->GetPath().GetText());
+    if (_CopyGeneric<IV3fArrayProperty, GfVec3f>(context->ExtractSchema(".velocities"))(_IsValidTag())) {
+      TF_WARN("Velocities are not supported for cubic hermite curves: '%s'", context->GetPath().GetText());
     }
     // The Usd representation separates points and tangents
     // The Alembic representation interleaves them as (P0, T0, ... Pn, Tn)
@@ -3181,36 +3115,30 @@ static void _ReadCurves(_PrimReaderContext *context)
   }
   else {
     context->GetPrim().typeName = UsdAbcPrimTypeNames->BasisCurves;
-    context->AddUniformProperty(UsdGeomTokens->type,
-                                SdfValueTypeNames->Token,
-                                _CopySynthetic(_ConvertCurveType(sample.getType())));
-    context->AddUniformProperty(UsdGeomTokens->basis,
-                                SdfValueTypeNames->Token,
-                                _CopySynthetic(_ConvertCurveBasis(sample.getBasis())));
-    context->AddUniformProperty(UsdGeomTokens->wrap,
-                                SdfValueTypeNames->Token,
-                                _CopySynthetic(_ConvertCurveWrap(sample.getWrap())));
+    context->AddUniformProperty(
+      UsdGeomTokens->type, SdfValueTypeNames->Token, _CopySynthetic(_ConvertCurveType(sample.getType())));
+    context->AddUniformProperty(
+      UsdGeomTokens->basis, SdfValueTypeNames->Token, _CopySynthetic(_ConvertCurveBasis(sample.getBasis())));
+    context->AddUniformProperty(
+      UsdGeomTokens->wrap, SdfValueTypeNames->Token, _CopySynthetic(_ConvertCurveWrap(sample.getWrap())));
   }
 
   if ((context->GetPrim().typeName == UsdAbcPrimTypeNames->BasisCurves) ||
       (context->GetPrim().typeName == UsdAbcPrimTypeNames->NurbsCurves)) {
-    context->AddProperty(
-        UsdGeomTokens->points,
-        SdfValueTypeNames->Point3fArray,
-        _CopyGeneric<IP3fArrayProperty, GfVec3f>(context->ExtractSchema("P"), kNoMatching));
-    context->AddProperty(
-        UsdGeomTokens->velocities,
-        SdfValueTypeNames->Vector3fArray,
-        _CopyGeneric<IV3fArrayProperty, GfVec3f>(context->ExtractSchema(".velocities")));
+    context->AddProperty(UsdGeomTokens->points,
+                         SdfValueTypeNames->Point3fArray,
+                         _CopyGeneric<IP3fArrayProperty, GfVec3f>(context->ExtractSchema("P"), kNoMatching));
+    context->AddProperty(UsdGeomTokens->velocities,
+                         SdfValueTypeNames->Vector3fArray,
+                         _CopyGeneric<IV3fArrayProperty, GfVec3f>(context->ExtractSchema(".velocities")));
   }
 
   context->AddProperty(UsdGeomTokens->normals,
                        SdfValueTypeNames->Normal3fArray,
                        _CopyGeneric<IN3fGeomParam, GfVec3f>(context->ExtractSchema("N")));
-  context->AddProperty(
-      UsdGeomTokens->curveVertexCounts,
-      SdfValueTypeNames->IntArray,
-      _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema("nVertices")));
+  context->AddProperty(UsdGeomTokens->curveVertexCounts,
+                       SdfValueTypeNames->IntArray,
+                       _CopyGeneric<IInt32ArrayProperty, int>(context->ExtractSchema("nVertices")));
   context->AddProperty(UsdGeomTokens->widths,
                        SdfValueTypeNames->FloatArray,
                        _CopyGeneric<IFloatGeomParam, float>(context->ExtractSchema("width")));
@@ -3233,21 +3161,18 @@ static void _ReadPoints(_PrimReaderContext *context)
   context->SetSchema(Type::schema_type::info_type::defaultName());
 
   // Add properties.
-  context->AddProperty(
-      UsdGeomTokens->points,
-      SdfValueTypeNames->Point3fArray,
-      _CopyGeneric<IP3fArrayProperty, GfVec3f>(context->ExtractSchema("P"), kNoMatching));
-  context->AddProperty(
-      UsdGeomTokens->velocities,
-      SdfValueTypeNames->Vector3fArray,
-      _CopyGeneric<IV3fArrayProperty, GfVec3f>(context->ExtractSchema(".velocities")));
+  context->AddProperty(UsdGeomTokens->points,
+                       SdfValueTypeNames->Point3fArray,
+                       _CopyGeneric<IP3fArrayProperty, GfVec3f>(context->ExtractSchema("P"), kNoMatching));
+  context->AddProperty(UsdGeomTokens->velocities,
+                       SdfValueTypeNames->Vector3fArray,
+                       _CopyGeneric<IV3fArrayProperty, GfVec3f>(context->ExtractSchema(".velocities")));
   context->AddProperty(UsdGeomTokens->widths,
                        SdfValueTypeNames->FloatArray,
                        _CopyGeneric<IFloatGeomParam, float>(context->ExtractSchema(".widths")));
-  context->AddProperty(
-      UsdGeomTokens->ids,
-      SdfValueTypeNames->Int64Array,
-      _CopyGeneric<IUInt64ArrayProperty, int64_t>(context->ExtractSchema(".pointIds")));
+  context->AddProperty(UsdGeomTokens->ids,
+                       SdfValueTypeNames->Int64Array,
+                       _CopyGeneric<IUInt64ArrayProperty, int64_t>(context->ExtractSchema(".pointIds")));
 }
 
 static void _ReadCameraParameters(_PrimReaderContext *context)
@@ -3269,14 +3194,11 @@ static void _ReadCameraParameters(_PrimReaderContext *context)
 
   // Add the minimal set of properties to set up the
   // camera frustum.
+  context->AddProperty(UsdGeomTokens->focalLength, SdfValueTypeNames->Float, _CopyCameraFocalLength(object));
   context->AddProperty(
-      UsdGeomTokens->focalLength, SdfValueTypeNames->Float, _CopyCameraFocalLength(object));
-  context->AddProperty(UsdGeomTokens->horizontalAperture,
-                       SdfValueTypeNames->Float,
-                       _CopyCameraHorizontalAperture(object));
-  context->AddProperty(UsdGeomTokens->verticalAperture,
-                       SdfValueTypeNames->Float,
-                       _CopyCameraVerticalAperture(object));
+    UsdGeomTokens->horizontalAperture, SdfValueTypeNames->Float, _CopyCameraHorizontalAperture(object));
+  context->AddProperty(
+    UsdGeomTokens->verticalAperture, SdfValueTypeNames->Float, _CopyCameraVerticalAperture(object));
   context->AddProperty(UsdGeomTokens->horizontalApertureOffset,
                        SdfValueTypeNames->Float,
                        _CopyCameraHorizontalApertureOffset(object));
@@ -3284,7 +3206,7 @@ static void _ReadCameraParameters(_PrimReaderContext *context)
                        SdfValueTypeNames->Float,
                        _CopyCameraVerticalApertureOffset(object));
   context->AddProperty(
-      UsdGeomTokens->clippingRange, SdfValueTypeNames->Float2, _CopyCameraClippingRange(object));
+    UsdGeomTokens->clippingRange, SdfValueTypeNames->Float2, _CopyCameraClippingRange(object));
 
   // Extract all other alembic camera properties so that they don't show up
   // in USD.
@@ -3293,8 +3215,7 @@ static void _ReadCameraParameters(_PrimReaderContext *context)
   context->Extract(Type::schema_type::info_type::defaultName());
 }
 
-static _ReaderContext::Ordering _GetOrderingMetadata(const MetaData &alembicMetadata,
-                                                     const TfToken &field)
+static _ReaderContext::Ordering _GetOrderingMetadata(const MetaData &alembicMetadata, const TfToken &field)
 {
   const std::string &value = alembicMetadata.get(_AmdName(field));
   if (!value.empty()) {
@@ -3353,9 +3274,8 @@ static std::string _ComputeSchemaName(const _ReaderContext &context, const IObje
 
 template<typename TYPE> static ICompoundProperty _GetSchemaProperty(const IObject &object)
 {
-  return ICompoundProperty(object.getProperties(),
-                           TYPE::schema_type::info_type::defaultName(),
-                           ErrorHandler::kQuietNoopPolicy);
+  return ICompoundProperty(
+    object.getProperties(), TYPE::schema_type::info_type::defaultName(), ErrorHandler::kQuietNoopPolicy);
 }
 
 static std::string _ReadPrim(_ReaderContext &context,
@@ -3365,7 +3285,7 @@ static std::string _ReadPrim(_ReaderContext &context,
 {
   // Choose the name.
   std::string name = _CleanName(
-      object.getName(), " _", *usedSiblingNames, _AlembicFixName(), &SdfPath::IsValidIdentifier);
+    object.getName(), " _", *usedSiblingNames, _AlembicFixName(), &SdfPath::IsValidIdentifier);
   usedSiblingNames->insert(name);
   SdfPath path = parentPath.AppendChild(TfToken(name));
 
@@ -3442,13 +3362,11 @@ static std::string _ReadPrim(_ReaderContext &context,
       path = instance->prototype;
     }
     else {
-      instance                        = nullptr;
-      const std::string prototypePath = object.isInstanceRoot() ?
-                                            IObject(object).instanceSourcePath() :
-                                            object.getFullName();
-      TF_CODING_ERROR("Instance %s has no prototype at %s.",
-                      object.getFullName().c_str(),
-                      prototypePath.c_str());
+      instance = nullptr;
+      const std::string prototypePath = object.isInstanceRoot() ? IObject(object).instanceSourcePath() :
+                                                                  object.getFullName();
+      TF_CODING_ERROR(
+        "Instance %s has no prototype at %s.", object.getFullName().c_str(), prototypePath.c_str());
       // Continue and we'll simply expand the instance.
     }
   }
@@ -3544,7 +3462,7 @@ static std::string _ReadPrim(_ReaderContext &context,
   // Modify the metadata for an instance.  We wait until now because we
   // want to get the prototype's type name.
   if (instance) {
-    instance->typeName  = prim.typeName;
+    instance->typeName = prim.typeName;
     instance->specifier = SdfSpecifierDef;
   }
 
@@ -3589,71 +3507,71 @@ struct _ReaderSchemaBuilder {
 _ReaderSchemaBuilder::_ReaderSchemaBuilder()
 {
   schema.AddType(GeomBaseSchemaInfo::title())
-      .AppendReader(_ReadGeomBase)
-      .AppendReader(_ReadMayaColor)
-      .AppendReader(_ReadGprim)
-      .AppendReader(_ReadImageable)
-      .AppendReader(_ReadArbGeomParams)
-      .AppendReader(_ReadUserProperties)
-      .AppendReader(_ReadOther);
+    .AppendReader(_ReadGeomBase)
+    .AppendReader(_ReadMayaColor)
+    .AppendReader(_ReadGprim)
+    .AppendReader(_ReadImageable)
+    .AppendReader(_ReadArbGeomParams)
+    .AppendReader(_ReadUserProperties)
+    .AppendReader(_ReadOther);
   schema.AddType(XformSchemaInfo::title())
-      .AppendReader(_ReadXform)
-      .AppendReader(_ReadImageable)
-      .AppendReader(_ReadArbGeomParams)
-      .AppendReader(_ReadUserProperties)
-      .AppendReader(_ReadOther);
+    .AppendReader(_ReadXform)
+    .AppendReader(_ReadImageable)
+    .AppendReader(_ReadArbGeomParams)
+    .AppendReader(_ReadUserProperties)
+    .AppendReader(_ReadOther);
   schema.AddType(SubDSchemaInfo::title())
-      .AppendReader(_ReadOrientation)
-      .AppendReader(_ReadSubD)
-      .AppendReader(_ReadMayaColor)
-      .AppendReader(_ReadGprim)
-      .AppendReader(_ReadImageable)
-      .AppendReader(_ReadArbGeomParams)
-      .AppendReader(_ReadUserProperties)
-      .AppendReader(_ReadOther);
+    .AppendReader(_ReadOrientation)
+    .AppendReader(_ReadSubD)
+    .AppendReader(_ReadMayaColor)
+    .AppendReader(_ReadGprim)
+    .AppendReader(_ReadImageable)
+    .AppendReader(_ReadArbGeomParams)
+    .AppendReader(_ReadUserProperties)
+    .AppendReader(_ReadOther);
   schema.AddType(PolyMeshSchemaInfo::title())
-      .AppendReader(_ReadOrientation)
-      .AppendReader(_ReadPolyMesh)
-      .AppendReader(_ReadMayaColor)
-      .AppendReader(_ReadGprim)
-      .AppendReader(_ReadImageable)
-      .AppendReader(_ReadArbGeomParams)
-      .AppendReader(_ReadUserProperties)
-      .AppendReader(_ReadOther);
+    .AppendReader(_ReadOrientation)
+    .AppendReader(_ReadPolyMesh)
+    .AppendReader(_ReadMayaColor)
+    .AppendReader(_ReadGprim)
+    .AppendReader(_ReadImageable)
+    .AppendReader(_ReadArbGeomParams)
+    .AppendReader(_ReadUserProperties)
+    .AppendReader(_ReadOther);
   schema.AddType(FaceSetSchemaInfo::title()).AppendReader(_ReadFaceSet);
   schema.AddType(CurvesSchemaInfo::title())
-      .AppendReader(_ReadOrientation)
-      .AppendReader(_ReadCurves)
-      .AppendReader(_ReadMayaColor)
-      .AppendReader(_ReadGprim)
-      .AppendReader(_ReadImageable)
-      .AppendReader(_ReadArbGeomParams)
-      .AppendReader(_ReadUserProperties)
-      .AppendReader(_ReadOther);
+    .AppendReader(_ReadOrientation)
+    .AppendReader(_ReadCurves)
+    .AppendReader(_ReadMayaColor)
+    .AppendReader(_ReadGprim)
+    .AppendReader(_ReadImageable)
+    .AppendReader(_ReadArbGeomParams)
+    .AppendReader(_ReadUserProperties)
+    .AppendReader(_ReadOther);
   schema.AddType(PointsSchemaInfo::title())
-      .AppendReader(_ReadOrientation)
-      .AppendReader(_ReadPoints)
-      .AppendReader(_ReadMayaColor)
-      .AppendReader(_ReadGprim)
-      .AppendReader(_ReadImageable)
-      .AppendReader(_ReadArbGeomParams)
-      .AppendReader(_ReadUserProperties)
-      .AppendReader(_ReadOther);
+    .AppendReader(_ReadOrientation)
+    .AppendReader(_ReadPoints)
+    .AppendReader(_ReadMayaColor)
+    .AppendReader(_ReadGprim)
+    .AppendReader(_ReadImageable)
+    .AppendReader(_ReadArbGeomParams)
+    .AppendReader(_ReadUserProperties)
+    .AppendReader(_ReadOther);
   schema.AddType(CameraSchemaInfo::title())
-      .AppendReader(_ReadCameraParameters)
-      .AppendReader(_ReadArbGeomParams)
-      .AppendReader(_ReadUserProperties)
-      .AppendReader(_ReadOther);
+    .AppendReader(_ReadCameraParameters)
+    .AppendReader(_ReadArbGeomParams)
+    .AppendReader(_ReadUserProperties)
+    .AppendReader(_ReadOther);
 
   // This handles overs with no type and any unknown prim type.
   schema.AddFallbackType()
-      .AppendReader(_ReadGeomBase)  // Assume GeomBase.
-      .AppendReader(_ReadMayaColor)
-      .AppendReader(_ReadGprim)
-      .AppendReader(_ReadImageable)
-      .AppendReader(_ReadArbGeomParams)
-      .AppendReader(_ReadUserProperties)
-      .AppendReader(_ReadOther);
+    .AppendReader(_ReadGeomBase)  // Assume GeomBase.
+    .AppendReader(_ReadMayaColor)
+    .AppendReader(_ReadGprim)
+    .AppendReader(_ReadImageable)
+    .AppendReader(_ReadArbGeomParams)
+    .AppendReader(_ReadUserProperties)
+    .AppendReader(_ReadOther);
 }
 
 }  // anonymous namespace
@@ -3673,8 +3591,7 @@ UsdAbc_AlembicDataReader::TimeSamples::TimeSamples()
   // Do nothing
 }
 
-UsdAbc_AlembicDataReader::TimeSamples::TimeSamples(const std::vector<double> &times)
-    : _times(times)
+UsdAbc_AlembicDataReader::TimeSamples::TimeSamples(const std::vector<double> &times) : _times(times)
 {
   // Do nothing
 }
@@ -3727,8 +3644,7 @@ static typename std::vector<T>::const_iterator UsdAbc_lower_bound(const std::vec
   return std::lower_bound(c.begin(), c.end(), x);
 }
 
-template<class T>
-static typename std::set<T>::const_iterator UsdAbc_lower_bound(const std::set<T> &c, T x)
+template<class T> static typename std::set<T>::const_iterator UsdAbc_lower_bound(const std::set<T> &c, T x)
 {
   return c.lower_bound(x);
 }
@@ -3766,9 +3682,7 @@ template bool UsdAbc_AlembicDataReader::TimeSamples::Bracket(const UsdAbc_TimeSa
                                                              double *tLower,
                                                              double *tUpper);
 
-bool UsdAbc_AlembicDataReader::TimeSamples::Bracket(double usdTime,
-                                                    double *tLower,
-                                                    double *tUpper) const
+bool UsdAbc_AlembicDataReader::TimeSamples::Bracket(double usdTime, double *tLower, double *tUpper) const
 {
   return Bracket(_times, usdTime, tLower, tUpper);
 }
@@ -3840,16 +3754,12 @@ bool UsdAbc_AlembicDataReader::HasField(const SdfPath &path,
   return _impl->HasField(path, fieldName, UsdAbc_AlembicDataAny(value));
 }
 
-bool UsdAbc_AlembicDataReader::HasField(const SdfPath &path,
-                                        const TfToken &fieldName,
-                                        VtValue *value) const
+bool UsdAbc_AlembicDataReader::HasField(const SdfPath &path, const TfToken &fieldName, VtValue *value) const
 {
   return _impl->HasField(path, fieldName, UsdAbc_AlembicDataAny(value));
 }
 
-bool UsdAbc_AlembicDataReader::HasValue(const SdfPath &path,
-                                        Index index,
-                                        SdfAbstractDataValue *value) const
+bool UsdAbc_AlembicDataReader::HasValue(const SdfPath &path, Index index, SdfAbstractDataValue *value) const
 {
   return _impl->HasValue(path, index, UsdAbc_AlembicDataAny(value));
 }
@@ -3876,7 +3786,7 @@ const std::set<double> &UsdAbc_AlembicDataReader::ListAllTimeSamples() const
 }
 
 const UsdAbc_AlembicDataReader::TimeSamples &UsdAbc_AlembicDataReader::ListTimeSamplesForPath(
-    const SdfPath &path) const
+  const SdfPath &path) const
 {
   return _impl->ListTimeSamplesForPath(path);
 }

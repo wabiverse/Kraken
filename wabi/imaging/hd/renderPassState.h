@@ -45,7 +45,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-using HdRenderPassStateSharedPtr  = std::shared_ptr<class HdRenderPassState>;
+using HdRenderPassStateSharedPtr = std::shared_ptr<class HdRenderPassState>;
 using HdResourceRegistrySharedPtr = std::shared_ptr<class HdResourceRegistry>;
 
 class HdCamera;
@@ -86,10 +86,9 @@ class HdRenderPassState {
   /// Note: using std::pair<bool, ...> here instead of std::optional<...>
   /// since the latter is only available in C++17 or later.
   HD_API
-  void SetCameraAndFraming(
-      HdCamera const *camera,
-      CameraUtilFraming const &framing,
-      const std::pair<bool, CameraUtilConformWindowPolicy> &overrideWindowPolicy);
+  void SetCameraAndFraming(HdCamera const *camera,
+                           CameraUtilFraming const &framing,
+                           const std::pair<bool, CameraUtilConformWindowPolicy> &overrideWindowPolicy);
 
   /// Get camera
   HdCamera const *GetCamera() const

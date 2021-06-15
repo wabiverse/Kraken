@@ -59,8 +59,8 @@ using fnMatch = std::function<bool>(const char);
 
 }  // namespace
 ZepBuffer::ZepBuffer(ZepEditor &editor, const std::string &strName)
-    : ZepComponent(editor),
-      m_strName(strName)
+  : ZepComponent(editor),
+    m_strName(strName)
 {
   Clear();
 }
@@ -91,7 +91,7 @@ long ZepBuffer::GetBufferLine(GlyphIterator location) const
     itrLine++;
   }
   long line = long(itrLine - m_lineEnds.begin());
-  line      = std::min(std::max(0l, line), long(m_lineEnds.size() - 1));
+  line = std::min(std::max(0l, line), long(m_lineEnds.size() - 1));
   return line;
 }
 
@@ -133,8 +133,8 @@ bool ZepBuffer::Skip(fnMatch IsToken, GlyphIterator &start, Direction dir) const
     return false;
   }
 
-  bool found    = false;
-  auto itrEnd   = End();
+  bool found = false;
+  auto itrEnd = End();
   auto itrBegin = Begin();
 
   while (IsToken(start.Char())) {
@@ -224,7 +224,7 @@ GlyphRange ZepBuffer::StandardCtrlMotion(GlyphIterator cursor, Direction searchD
   auto current = std::min(lineEnd, cursor.Clamp());
 
   GlyphRange r;
-  r.first  = current;
+  r.first = current;
   r.second = current;
 
   if (searchDir == Direction::Forward) {
@@ -259,7 +259,7 @@ GlyphRange ZepBuffer::StandardCtrlMotion(GlyphIterator cursor, Direction searchD
 GlyphRange ZepBuffer::InnerWordMotion(GlyphIterator start, uint32_t searchType) const
 {
   auto IsWordOrSpace = searchType == SearchType::Word ? IsWordOrSepChar : IsWORDOrSepChar;
-  auto IsWord        = searchType == SearchType::Word ? IsWordChar : IsWORDChar;
+  auto IsWord = searchType == SearchType::Word ? IsWordChar : IsWORDChar;
   MotionBegin(start);
 
   GlyphRange r;
@@ -314,7 +314,7 @@ GlyphIterator ZepBuffer::Find(GlyphIterator start,
   }
 
   auto itrBuffer = start;
-  auto itrEnd    = End();
+  auto itrEnd = End();
   while (itrBuffer != itrEnd) {
     auto itrNext = itrBuffer;
 
@@ -339,11 +339,9 @@ GlyphIterator ZepBuffer::Find(GlyphIterator start,
   return GlyphIterator();
 }
 
-GlyphIterator ZepBuffer::FindOnLineMotion(GlyphIterator start,
-                                          const uint8_t *pCh,
-                                          Direction dir) const
+GlyphIterator ZepBuffer::FindOnLineMotion(GlyphIterator start, const uint8_t *pCh, Direction dir) const
 {
-  auto entry   = start;
+  auto entry = start;
   auto IsMatch = [pCh](const char ch) {
     if (*pCh == ch)
       return true;
@@ -412,9 +410,7 @@ GlyphIterator ZepBuffer::WordMotion(GlyphIterator start, uint32_t searchType, Di
   return start;
 }
 
-GlyphIterator ZepBuffer::EndWordMotion(GlyphIterator start,
-                                       uint32_t searchType,
-                                       Direction dir) const
+GlyphIterator ZepBuffer::EndWordMotion(GlyphIterator start, uint32_t searchType, Direction dir) const
 {
   auto IsWord = searchType == SearchType::Word ? IsWordChar : IsWORDChar;
 
@@ -457,9 +453,7 @@ GlyphIterator ZepBuffer::EndWordMotion(GlyphIterator start,
   return start;
 }
 
-GlyphIterator ZepBuffer::ChangeWordMotion(GlyphIterator start,
-                                          uint32_t searchType,
-                                          Direction dir) const
+GlyphIterator ZepBuffer::ChangeWordMotion(GlyphIterator start, uint32_t searchType, Direction dir) const
 {
   // Change word is different to work skipping; it will change a string of spaces, for example.
   // Essentially it changes 'what you are over', based on the word rule
@@ -474,9 +468,9 @@ GlyphIterator ZepBuffer::ChangeWordMotion(GlyphIterator start,
 
 GlyphIterator ZepBuffer::ClampToVisibleLine(GlyphIterator in) const
 {
-  in       = in.Clamp();
+  in = in.Clamp();
   auto loc = GetLinePos(in, LineLocation::LineLastNonCR);
-  in       = std::min(loc, in);
+  in = std::min(loc, in);
   return in;
 }
 
@@ -485,14 +479,14 @@ bool ZepBuffer::GetLineOffsets(const long line, ByteRange &range) const
 {
   // Not valid
   if ((long)m_lineEnds.size() <= line) {
-    range.first  = 0;
+    range.first = 0;
     range.second = 0;
     return false;
   }
 
   // Find the line bounds - we know the end, find the start from the previous
   range.second = m_lineEnds[line];
-  range.first  = line == 0 ? 0 : m_lineEnds[line - 1];
+  range.first = line == 0 ? 0 : m_lineEnds[line - 1];
   return true;
 }
 
@@ -503,7 +497,7 @@ std::string ZepBuffer::GetFileExtension() const
     ext = string_tolower(GetFilePath().filename().extension().string());
   }
   else {
-    auto str       = GetName();
+    auto str = GetName();
     size_t dot_pos = str.find_last_of(".");
     if (dot_pos != std::string::npos) {
       ext = string_tolower(str.substr(dot_pos, str.length() - dot_pos));
@@ -530,7 +524,7 @@ void ZepBuffer::Load(const ZepPath &path)
 
   if (GetEditor().GetFileSystem().Exists(path)) {
     m_filePath = GetEditor().GetFileSystem().Canonical(path);
-    auto read  = GetEditor().GetFileSystem().Read(path);
+    auto read = GetEditor().GetFileSystem().Read(path);
 
     // Always set text, to ensure we prepare the buffer with 0 terminator,
     // even if string is empty
@@ -634,8 +628,8 @@ void ZepBuffer::Clear()
   }
 
   // Inform clients we are about to change the buffer
-  GetEditor().Broadcast(std::make_shared<BufferMessage>(
-      this, BufferMessageType::PreBufferChange, GlyphIterator(this), End()));
+  GetEditor().Broadcast(
+    std::make_shared<BufferMessage>(this, BufferMessageType::PreBufferChange, GlyphIterator(this), End()));
 
   m_workingBuffer.clear();
   m_workingBuffer.push_back(0);
@@ -645,8 +639,8 @@ void ZepBuffer::Clear()
 
   {
     MarkUpdate();
-    GetEditor().Broadcast(std::make_shared<BufferMessage>(
-        this, BufferMessageType::TextDeleted, GlyphIterator(this), End()));
+    GetEditor().Broadcast(
+      std::make_shared<BufferMessage>(this, BufferMessageType::TextDeleted, GlyphIterator(this), End()));
   }
 }
 
@@ -714,15 +708,14 @@ void ZepBuffer::SetText(const std::string &text, bool initFromFile)
   // When loading a file, send the Loaded message to distinguish it from adding to a buffer, and
   // remember that the buffer is not dirty in this case
   if (initFromFile) {
-    GetEditor().Broadcast(
-        std::make_shared<BufferMessage>(this, BufferMessageType::Loaded, Begin(), End()));
+    GetEditor().Broadcast(std::make_shared<BufferMessage>(this, BufferMessageType::Loaded, Begin(), End()));
 
     // Doc is not dirty
     m_fileFlags = ZClearFlags(m_fileFlags, FileFlags::Dirty);
   }
   else {
     GetEditor().Broadcast(
-        std::make_shared<BufferMessage>(this, BufferMessageType::TextAdded, Begin(), End()));
+      std::make_shared<BufferMessage>(this, BufferMessageType::TextAdded, Begin(), End()));
   }
 }
 
@@ -742,9 +735,9 @@ GlyphIterator ZepBuffer::GetLinePos(GlyphIterator bufferLocation, LineLocation l
     return bufferLocation;
   }
 
-  GlyphIterator itr      = bufferLocation;
+  GlyphIterator itr = bufferLocation;
   GlyphIterator itrBegin = Begin();
-  GlyphIterator itrEnd   = End();
+  GlyphIterator itrEnd = End();
 
   GlyphIterator itrLineStart(itr);
 
@@ -829,13 +822,10 @@ GlyphIterator ZepBuffer::GetLinePos(GlyphIterator bufferLocation, LineLocation l
 
 std::string ZepBuffer::GetBufferText(const GlyphIterator &start, const GlyphIterator &end) const
 {
-  return std::string(m_workingBuffer.begin() + start.Index(),
-                     m_workingBuffer.begin() + end.Index());
+  return std::string(m_workingBuffer.begin() + start.Index(), m_workingBuffer.begin() + end.Index());
 }
 
-bool ZepBuffer::Insert(const GlyphIterator &startIndex,
-                       const std::string &str,
-                       ChangeRecord &changeRecord)
+bool ZepBuffer::Insert(const GlyphIterator &startIndex, const std::string &str, ChangeRecord &changeRecord)
 {
   if (!startIndex.Valid()) {
     return false;
@@ -849,8 +839,8 @@ bool ZepBuffer::Insert(const GlyphIterator &startIndex,
   // TODO: Is this correct, and/or useful in any way??
   // We aren't changing this range at all; we are shifting those characters forward and replacing
   // the area
-  GetEditor().Broadcast(std::make_shared<BufferMessage>(
-      this, BufferMessageType::PreBufferChange, startIndex, endIndex));
+  GetEditor().Broadcast(
+    std::make_shared<BufferMessage>(this, BufferMessageType::PreBufferChange, startIndex, endIndex));
 
   // abcdef\r\nabc<insert>dfdf\r\n
   auto itrLine = std::lower_bound(m_lineEnds.begin(), m_lineEnds.end(), startIndex.Index());
@@ -859,9 +849,9 @@ bool ZepBuffer::Insert(const GlyphIterator &startIndex,
     itrLine++;
   }
 
-  auto itrEnd   = str.end();
+  auto itrEnd = str.end();
   auto itrBegin = str.begin();
-  auto itr      = str.begin();
+  auto itr = str.begin();
 
   // Make a list of lines to 'insert'
   std::vector<long> lines;
@@ -898,7 +888,7 @@ bool ZepBuffer::Insert(const GlyphIterator &startIndex,
 
   // This is the range we added (not valid any more in the buffer)
   GetEditor().Broadcast(
-      std::make_shared<BufferMessage>(this, BufferMessageType::TextAdded, startIndex, endIndex));
+    std::make_shared<BufferMessage>(this, BufferMessageType::TextAdded, startIndex, endIndex));
 
   return true;
 }
@@ -926,8 +916,8 @@ bool ZepBuffer::Replace(const GlyphIterator &startIndex,
   changeRecord.strDeleted = GetBufferText(startIndex, endIndex);
 
   // We are about to modify this range
-  GetEditor().Broadcast(std::make_shared<BufferMessage>(
-      this, BufferMessageType::PreBufferChange, startIndex, endIndex));
+  GetEditor().Broadcast(
+    std::make_shared<BufferMessage>(this, BufferMessageType::PreBufferChange, startIndex, endIndex));
 
   // Perform a fill
   for (auto loc = startIndex; loc < endIndex; loc++) {
@@ -940,7 +930,7 @@ bool ZepBuffer::Replace(const GlyphIterator &startIndex,
 
   // This is the range we added (not valid any more in the buffer)
   GetEditor().Broadcast(
-      std::make_shared<BufferMessage>(this, BufferMessageType::TextChanged, startIndex, endIndex));
+    std::make_shared<BufferMessage>(this, BufferMessageType::TextChanged, startIndex, endIndex));
 
   return true;
 }
@@ -961,8 +951,8 @@ bool ZepBuffer::Delete(const GlyphIterator &startIndex,
   assert(endIndex.Valid());
 
   // We are about to modify this range
-  GetEditor().Broadcast(std::make_shared<BufferMessage>(
-      this, BufferMessageType::PreBufferChange, startIndex, endIndex));
+  GetEditor().Broadcast(
+    std::make_shared<BufferMessage>(this, BufferMessageType::PreBufferChange, startIndex, endIndex));
 
   changeRecord.strDeleted = GetBufferText(startIndex, endIndex);
 
@@ -974,7 +964,7 @@ bool ZepBuffer::Delete(const GlyphIterator &startIndex,
   }
 
   auto itrLastLine = std::upper_bound(itrLine, m_lineEnds.end(), endIndex.Index());
-  auto offsetDiff  = endIndex.Index() - startIndex.Index();
+  auto offsetDiff = endIndex.Index() - startIndex.Index();
 
   if (*itrLine <= startIndex.Index()) {
     itrLine++;
@@ -997,7 +987,7 @@ bool ZepBuffer::Delete(const GlyphIterator &startIndex,
 
   // This is the range we deleted (not valid any more in the buffer)
   GetEditor().Broadcast(
-      std::make_shared<BufferMessage>(this, BufferMessageType::TextDeleted, startIndex, endIndex));
+    std::make_shared<BufferMessage>(this, BufferMessageType::TextDeleted, startIndex, endIndex));
 
   return true;
 }
@@ -1022,7 +1012,7 @@ bool ZepBuffer::HasSelection() const
 
 void ZepBuffer::ClearSelection()
 {
-  m_selection.first  = Begin();
+  m_selection.first = Begin();
   m_selection.second = Begin();
 }
 
@@ -1045,7 +1035,7 @@ void ZepBuffer::AddRangeMarker(std::shared_ptr<RangeMarker> spMarker)
 
   // TODO: Why is this necessary; marks the whole buffer
   GetEditor().Broadcast(
-      std::make_shared<BufferMessage>(this, BufferMessageType::MarkersChanged, Begin(), End()));
+    std::make_shared<BufferMessage>(this, BufferMessageType::MarkersChanged, Begin(), End()));
 }
 
 void ZepBuffer::ClearRangeMarker(std::shared_ptr<RangeMarker> spMarker)
@@ -1060,7 +1050,7 @@ void ZepBuffer::ClearRangeMarker(std::shared_ptr<RangeMarker> spMarker)
 
   // TODO: Why is this necessary; marks the whole buffer
   GetEditor().Broadcast(
-      std::make_shared<BufferMessage>(this, BufferMessageType::MarkersChanged, Begin(), End()));
+    std::make_shared<BufferMessage>(this, BufferMessageType::MarkersChanged, Begin(), End()));
 }
 
 void ZepBuffer::ClearRangeMarkers(const std::set<std::shared_ptr<RangeMarker>> &markers)
@@ -1069,27 +1059,24 @@ void ZepBuffer::ClearRangeMarkers(const std::set<std::shared_ptr<RangeMarker>> &
     ClearRangeMarker(marker);
   }
   GetEditor().Broadcast(
-      std::make_shared<BufferMessage>(this, BufferMessageType::MarkersChanged, Begin(), End()));
+    std::make_shared<BufferMessage>(this, BufferMessageType::MarkersChanged, Begin(), End()));
 }
 
 void ZepBuffer::ClearRangeMarkers(uint32_t markerType)
 {
   std::set<std::shared_ptr<RangeMarker>> markers;
-  ForEachMarker(markerType,
-                Direction::Forward,
-                Begin(),
-                End(),
-                [&](const std::shared_ptr<RangeMarker> &pMarker) {
-                  markers.insert(pMarker);
-                  return true;
-                });
+  ForEachMarker(
+    markerType, Direction::Forward, Begin(), End(), [&](const std::shared_ptr<RangeMarker> &pMarker) {
+      markers.insert(pMarker);
+      return true;
+    });
 
   for (auto &victim : markers) {
     ClearRangeMarker(victim);
   }
 
   GetEditor().Broadcast(
-      std::make_shared<BufferMessage>(this, BufferMessageType::MarkersChanged, Begin(), End()));
+    std::make_shared<BufferMessage>(this, BufferMessageType::MarkersChanged, Begin(), End()));
 }
 
 bool OverlapInclusive(ByteRange r1, ByteRange r2)
@@ -1143,7 +1130,7 @@ void ZepBuffer::ForEachMarker(uint32_t markerType,
     }
   }
   else {
-    auto itrREnd   = std::make_reverse_iterator(m_rangeMarkers.begin());
+    auto itrREnd = std::make_reverse_iterator(m_rangeMarkers.begin());
     auto itrRStart = std::make_reverse_iterator(m_rangeMarkers.end());
 
     for (auto itr = itrRStart; itr != itrREnd; itr++) {
@@ -1161,45 +1148,36 @@ void ZepBuffer::ForEachMarker(uint32_t markerType,
 
 void ZepBuffer::HideMarkers(uint32_t markerType)
 {
-  ForEachMarker(markerType,
-                Direction::Forward,
-                Begin(),
-                End(),
-                [&](const std::shared_ptr<RangeMarker> &spMarker) {
-                  if ((spMarker->markerType & markerType) != 0) {
-                    spMarker->displayType = RangeMarkerDisplayType::Hidden;
-                  }
-                  return true;
-                });
+  ForEachMarker(
+    markerType, Direction::Forward, Begin(), End(), [&](const std::shared_ptr<RangeMarker> &spMarker) {
+      if ((spMarker->markerType & markerType) != 0) {
+        spMarker->displayType = RangeMarkerDisplayType::Hidden;
+      }
+      return true;
+    });
 }
 
 void ZepBuffer::ShowMarkers(uint32_t markerType, uint32_t displayType)
 {
-  ForEachMarker(markerType,
-                Direction::Forward,
-                Begin(),
-                End(),
-                [&](const std::shared_ptr<RangeMarker> &spMarker) {
-                  if ((spMarker->markerType & markerType) != 0) {
-                    spMarker->displayType = displayType;
-                  }
-                  return true;
-                });
+  ForEachMarker(
+    markerType, Direction::Forward, Begin(), End(), [&](const std::shared_ptr<RangeMarker> &spMarker) {
+      if ((spMarker->markerType & markerType) != 0) {
+        spMarker->displayType = displayType;
+      }
+      return true;
+    });
 }
 
 tRangeMarkers ZepBuffer::GetRangeMarkers(uint32_t markerType) const
 {
   tRangeMarkers markers;
-  ForEachMarker(markerType,
-                Direction::Forward,
-                Begin(),
-                End(),
-                [&](const std::shared_ptr<RangeMarker> &spMarker) {
-                  if ((spMarker->markerType & markerType) != 0) {
-                    markers[spMarker->GetRange().first].insert(spMarker);
-                  }
-                  return true;
-                });
+  ForEachMarker(
+    markerType, Direction::Forward, Begin(), End(), [&](const std::shared_ptr<RangeMarker> &spMarker) {
+      if ((spMarker->markerType & markerType) != 0) {
+        markers[spMarker->GetRange().first].insert(spMarker);
+      }
+      return true;
+    });
   return markers;
 }
 
@@ -1211,22 +1189,21 @@ std::shared_ptr<RangeMarker> ZepBuffer::FindNextMarker(GlyphIterator start,
 
   std::shared_ptr<RangeMarker> spFound;
   auto search = [&]() {
-    ForEachMarker(
-        markerType, dir, Begin(), End(), [&](const std::shared_ptr<RangeMarker> &marker) {
-          if (dir == Direction::Forward) {
-            if (marker->GetRange().first <= start.Index()) {
-              return true;
-            }
-          }
-          else {
-            if (marker->GetRange().first >= start.Index()) {
-              return true;
-            }
-          }
+    ForEachMarker(markerType, dir, Begin(), End(), [&](const std::shared_ptr<RangeMarker> &marker) {
+      if (dir == Direction::Forward) {
+        if (marker->GetRange().first <= start.Index()) {
+          return true;
+        }
+      }
+      else {
+        if (marker->GetRange().first >= start.Index()) {
+          return true;
+        }
+      }
 
-          spFound = marker;
-          return false;
-        });
+      spFound = marker;
+      return false;
+    });
   };
 
   search();
@@ -1322,7 +1299,7 @@ GlyphRange ZepBuffer::GetExpression(ExpressionType type,
                                     const std::vector<char> &beginExpression,
                                     const std::vector<char> &endExpression) const
 {
-  GlyphIterator itr    = Begin();
+  GlyphIterator itr = Begin();
   GlyphIterator itrEnd = End();
 
   int maxDepth = -1;
@@ -1336,7 +1313,7 @@ GlyphRange ZepBuffer::GetExpression(ExpressionType type,
   std::vector<std::shared_ptr<Expression>> topLevel;
 
   Expression *pCurrent = nullptr;
-  Expression *pInner   = nullptr;
+  Expression *pInner = nullptr;
 
   while (itr != itrEnd) {
     auto ch = itr.Char();
@@ -1347,12 +1324,12 @@ GlyphRange ZepBuffer::GetExpression(ExpressionType type,
         if (pCurrent) {
           pCurrent->children.push_back(spChild);
           spChild->pParent = pCurrent;
-          spChild->depth   = pCurrent->depth + 1;
+          spChild->depth = pCurrent->depth + 1;
         }
         else {
           topLevel.push_back(spChild);
         }
-        pCurrent              = spChild.get();
+        pCurrent = spChild.get();
         pCurrent->range.first = itr;
       }
     }
@@ -1366,7 +1343,7 @@ GlyphRange ZepBuffer::GetExpression(ExpressionType type,
           if ((pCurrent->range.first <= location) && (pCurrent->range.second > location)) {
             if (pCurrent->depth > maxDepth) {
               maxDepth = pCurrent->depth;
-              pInner   = pCurrent;
+              pInner = pCurrent;
             }
           }
           pCurrent = pCurrent->pParent;
@@ -1385,22 +1362,22 @@ GlyphRange ZepBuffer::GetExpression(ExpressionType type,
   }
 
   Expression *pBest = nullptr;
-  int dist          = std::numeric_limits<int>::max();
+  int dist = std::numeric_limits<int>::max();
 
   for (auto &outer : topLevel) {
     if (location >= outer->range.first && location < outer->range.second) {
       return outer->range;
     }
     else {
-      auto leftDist  = std::abs(outer->range.first.Index() - location.Index());
+      auto leftDist = std::abs(outer->range.first.Index() - location.Index());
       auto rightDist = std::abs(location.Index() - outer->range.second.Index());
       if (leftDist < dist) {
         pBest = outer.get();
-        dist  = leftDist;
+        dist = leftDist;
       }
       if (rightDist < dist) {
         pBest = outer.get();
-        dist  = rightDist;
+        dist = rightDist;
       }
     }
   }
@@ -1447,9 +1424,9 @@ void ZepBuffer::BeginFlash(float seconds, FlashType flashType, const GlyphRange 
   spMarker->SetRange(ByteRange(range.first.Index(), range.second.Index()));
   spMarker->SetBackgroundColor(ThemeColor::FlashColor);
   spMarker->displayType = RangeMarkerDisplayType::Timed | RangeMarkerDisplayType::Background;
-  spMarker->markerType  = RangeMarkerType::Mark;
-  spMarker->duration    = seconds;
-  spMarker->flashType   = flashType;
+  spMarker->markerType = RangeMarkerType::Mark;
+  spMarker->duration = seconds;
+  spMarker->flashType = flashType;
   timer_restart(spMarker->timer);
 
   GetEditor().SetFlags(ZSetFlags(GetEditor().GetFlags(), ZepEditorFlags::FastUpdate));

@@ -32,14 +32,13 @@ TF_DEFINE_PUBLIC_TOKENS(RprUsdRprMaterialXNodeTokens, RPRUSD_RPR_MATERIALX_NODE_
 static rpr_material_node ReleaseOutputNodeOwnership(RPRMtlxLoader::Result *mtlx,
                                                     RPRMtlxLoader::OutputType outputType)
 {
-  auto idx         = mtlx->rootNodeIndices[outputType];
-  auto ret         = mtlx->nodes[idx];
+  auto idx = mtlx->rootNodeIndices[outputType];
+  auto ret = mtlx->nodes[idx];
   mtlx->nodes[idx] = nullptr;
   return ret;
 }
 
-template<typename T>
-static bool ReadInput(TfToken const &inputId, VtValue const &inputValue, T *dst)
+template<typename T> static bool ReadInput(TfToken const &inputId, VtValue const &inputValue, T *dst)
 {
   if (inputValue.IsHolding<T>()) {
     *dst = inputValue.UncheckedGet<T>();
@@ -177,17 +176,15 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode {
         mtlxDoc->importLibrary(m_ctx->mtlxLoader->GetStdlib());
 
         rpr_material_system matSys;
-        if (RPR_ERROR_CHECK(
-                m_ctx->rprContext->GetInfo(
-                    RPR_CONTEXT_LIST_CREATED_MATERIALSYSTEM, sizeof(matSys), &matSys, nullptr),
-                "Failed to get rpr material system")) {
+        if (RPR_ERROR_CHECK(m_ctx->rprContext->GetInfo(
+                              RPR_CONTEXT_LIST_CREATED_MATERIALSYSTEM, sizeof(matSys), &matSys, nullptr),
+                            "Failed to get rpr material system")) {
           return false;
         }
 
-        bool hasAnySelectedElement = std::any_of(
-            std::begin(m_selectedRenderElements),
-            std::end(m_selectedRenderElements),
-            [](std::string const &elem) { return !elem.empty(); });
+        bool hasAnySelectedElement = std::any_of(std::begin(m_selectedRenderElements),
+                                                 std::end(m_selectedRenderElements),
+                                                 [](std::string const &elem) { return !elem.empty(); });
         std::string *selectedElements = hasAnySelectedElement ? m_selectedRenderElements : nullptr;
 
         MaterialX::FileSearchPath searchPath(basePath);
@@ -197,8 +194,7 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode {
         fprintf(stderr, "Failed to parse %s: %s\n", m_mtlxFilepath.c_str(), e.what());
       }
       catch (MaterialX::ExceptionFileMissing &e) {
-        fprintf(
-            stderr, "Failed to parse %s: no such file - %s\n", m_mtlxFilepath.c_str(), e.what());
+        fprintf(stderr, "Failed to parse %s: no such file - %s\n", m_mtlxFilepath.c_str(), e.what());
       }
 
       if (!mtlx.nodes) {
@@ -233,18 +229,18 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode {
             RPRMtlxLoader::Release(&mtlx);
           }
         };
-        auto sharedData   = std::make_shared<SharedData>();
-        sharedData->mtlx  = mtlx;
+        auto sharedData = std::make_shared<SharedData>();
+        sharedData->mtlx = mtlx;
         retainedImagesPtr = &sharedData->retainedImages;
-        mtlxPtr           = &sharedData->mtlx;
+        mtlxPtr = &sharedData->mtlx;
 
         class OutputWrapNode : public rpr::MaterialNode {
          public:
           OutputWrapNode(rpr::Context &ctx,
                          std::shared_ptr<SharedData> sharedData,
                          RPRMtlxLoader::OutputType output)
-              : rpr::MaterialNode(ctx, ReleaseOutputNodeOwnership(&sharedData->mtlx, output)),
-                _sharedData(std::move(sharedData))
+            : rpr::MaterialNode(ctx, ReleaseOutputNodeOwnership(&sharedData->mtlx, output)),
+              _sharedData(std::move(sharedData))
           {}
           ~OutputWrapNode() override = default;
 
@@ -253,15 +249,13 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode {
         };
 
         auto createOutputWrapNode =
-            [&sharedData,
-             this](RPRMtlxLoader::OutputType outputType) -> std::unique_ptr<OutputWrapNode> {
-          if (sharedData->mtlx.rootNodeIndices[outputType] ==
-              RPRMtlxLoader::Result::kInvalidRootNodeIndex) {
+          [&sharedData, this](RPRMtlxLoader::OutputType outputType) -> std::unique_ptr<OutputWrapNode> {
+          if (sharedData->mtlx.rootNodeIndices[outputType] == RPRMtlxLoader::Result::kInvalidRootNodeIndex) {
             return nullptr;
           }
           return std::make_unique<OutputWrapNode>(*m_ctx->rprContext, sharedData, outputType);
         };
-        m_surfaceNode      = createOutputWrapNode(RPRMtlxLoader::kOutputSurface);
+        m_surfaceNode = createOutputWrapNode(RPRMtlxLoader::kOutputSurface);
         m_displacementNode = createOutputWrapNode(RPRMtlxLoader::kOutputDisplacement);
       }
       else {
@@ -275,11 +269,9 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode {
         }
 
         struct OutputWrapNode : public rpr::MaterialNode {
-          OutputWrapNode(rpr::Context &ctx,
-                         RPRMtlxLoader::Result mtlx,
-                         RPRMtlxLoader::OutputType output)
-              : rpr::MaterialNode(ctx, ReleaseOutputNodeOwnership(&mtlx, output)),
-                mtlx(mtlx)
+          OutputWrapNode(rpr::Context &ctx, RPRMtlxLoader::Result mtlx, RPRMtlxLoader::OutputType output)
+            : rpr::MaterialNode(ctx, ReleaseOutputNodeOwnership(&mtlx, output)),
+              mtlx(mtlx)
           {}
           ~OutputWrapNode() override
           {
@@ -289,9 +281,9 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode {
           RPRMtlxLoader::Result mtlx;
           std::vector<std::shared_ptr<RprUsdCoreImage>> retainedImages;
         };
-        auto wrapNode     = std::make_unique<OutputWrapNode>(*m_ctx->rprContext, mtlx, outputType);
+        auto wrapNode = std::make_unique<OutputWrapNode>(*m_ctx->rprContext, mtlx, outputType);
         retainedImagesPtr = &wrapNode->retainedImages;
-        mtlxPtr           = &wrapNode->mtlx;
+        mtlxPtr = &wrapNode->mtlx;
 
         if (outputType == RPRMtlxLoader::kOutputSurface) {
           m_surfaceNode = std::move(wrapNode);
@@ -310,16 +302,15 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode {
 
           textureCommit.filepath = std::move(mtlxImageNode.file);
 
-          std::string &addressmode = !mtlxImageNode.uaddressmode.empty() ?
-                                         mtlxImageNode.uaddressmode :
-                                         mtlxImageNode.vaddressmode;
+          std::string &addressmode = !mtlxImageNode.uaddressmode.empty() ? mtlxImageNode.uaddressmode :
+                                                                           mtlxImageNode.vaddressmode;
           if (!addressmode.empty()) {
             if (mtlxImageNode.uaddressmode != mtlxImageNode.vaddressmode) {
               TF_WARN(
-                  "RPR does not support different address modes on an image. Using %s for %s "
-                  "image",
-                  addressmode.c_str(),
-                  textureCommit.filepath.c_str());
+                "RPR does not support different address modes on an image. Using %s for %s "
+                "image",
+                addressmode.c_str(),
+                textureCommit.filepath.c_str());
             }
 
             textureCommit.wrapType = RPR_IMAGE_WRAP_TYPE_REPEAT;
@@ -355,24 +346,24 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode {
           }
 
           rpr_material_node rprImageNode = mtlxImageNode.rprNode;
-          textureCommit.setTextureCallback =
-              [retainedImagesPtr, rprImageNode](std::shared_ptr<RprUsdCoreImage> const &image) {
-                if (!image)
-                  return;
+          textureCommit.setTextureCallback = [retainedImagesPtr,
+                                              rprImageNode](std::shared_ptr<RprUsdCoreImage> const &image) {
+            if (!image)
+              return;
 
-                auto imageData = rpr::GetRprObject(image->GetRootImage());
-                if (!RPR_ERROR_CHECK(rprMaterialNodeSetInputImageDataByKey(
-                                         rprImageNode, RPR_MATERIAL_INPUT_DATA, imageData),
-                                     "Failed to set material node image data input")) {
-                  retainedImagesPtr->push_back(image);
-                }
-              };
+            auto imageData = rpr::GetRprObject(image->GetRootImage());
+            if (!RPR_ERROR_CHECK(
+                  rprMaterialNodeSetInputImageDataByKey(rprImageNode, RPR_MATERIAL_INPUT_DATA, imageData),
+                  "Failed to set material node image data input")) {
+              retainedImagesPtr->push_back(image);
+            }
+          };
 
           RprUsdMaterialRegistry::GetInstance().CommitTexture(std::move(textureCommit));
         }
 
         delete[] mtlxPtr->imageNodes;
-        mtlxPtr->imageNodes    = nullptr;
+        mtlxPtr->imageNodes = nullptr;
         mtlxPtr->numImageNodes = 0;
       }
 
@@ -382,7 +373,7 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode {
     rpr::Status status;
     if (!m_mtlxString.empty()) {
       m_surfaceNode.reset(m_ctx->rprContext->CreateMaterialXNode(
-          m_mtlxString.c_str(), basePath.c_str(), 0, nullptr, nullptr, &status));
+        m_mtlxString.c_str(), basePath.c_str(), 0, nullptr, nullptr, &status));
     }
     else {
       std::ifstream mtlxFile(m_mtlxFilepath);
@@ -403,7 +394,7 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode {
       mtlxFile.read(&xmlData[0], fileSize);
 
       m_surfaceNode.reset(m_ctx->rprContext->CreateMaterialXNode(
-          xmlData.get(), basePath.c_str(), 0, nullptr, nullptr, &status));
+        xmlData.get(), basePath.c_str(), 0, nullptr, nullptr, &status));
     }
 
     if (!m_surfaceNode) {
@@ -414,41 +405,41 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode {
 
   static RprUsd_RprNodeInfo *GetInfo()
   {
-    auto ret       = new RprUsd_RprNodeInfo;
+    auto ret = new RprUsd_RprNodeInfo;
     auto &nodeInfo = *ret;
 
-    nodeInfo.name     = RprUsdRprMaterialXNodeTokens->rpr_materialx_node.GetText();
-    nodeInfo.uiName   = "RPR MaterialX";
+    nodeInfo.name = RprUsdRprMaterialXNodeTokens->rpr_materialx_node.GetText();
+    nodeInfo.uiName = "RPR MaterialX";
     nodeInfo.uiFolder = "Shaders";
 
     RprUsd_RprNodeInput fileInput(RprUsdMaterialNodeElement::kFilepath);
-    fileInput.name   = RprUsdRprMaterialXNodeTokens->file;
+    fileInput.name = RprUsdRprMaterialXNodeTokens->file;
     fileInput.uiName = "File";
     nodeInfo.inputs.push_back(fileInput);
 
     RprUsd_RprNodeInput stringInput(RprUsdMaterialNodeElement::kString);
-    stringInput.name   = RprUsdRprMaterialXNodeTokens->string;
+    stringInput.name = RprUsdRprMaterialXNodeTokens->string;
     stringInput.uiName = "";  // hide from UI
     nodeInfo.inputs.push_back(stringInput);
 
     RprUsd_RprNodeInput basePathInput(RprUsdMaterialNodeElement::kString);
-    basePathInput.name   = RprUsdRprMaterialXNodeTokens->basePath;
+    basePathInput.name = RprUsdRprMaterialXNodeTokens->basePath;
     basePathInput.uiName = "";  // hide from UI
     nodeInfo.inputs.push_back(basePathInput);
 
     RprUsd_RprNodeInput stPrimvarNameInput(RprUsdMaterialNodeElement::kString);
-    stPrimvarNameInput.name        = RprUsdRprMaterialXNodeTokens->stPrimvarName;
-    stPrimvarNameInput.uiName      = "UV Primvar Name";
+    stPrimvarNameInput.name = RprUsdRprMaterialXNodeTokens->stPrimvarName;
+    stPrimvarNameInput.uiName = "UV Primvar Name";
     stPrimvarNameInput.valueString = "st";
     nodeInfo.inputs.push_back(stPrimvarNameInput);
 
     RprUsd_RprNodeInput surfaceElementInput(RprUsdMaterialNodeElement::kString);
-    surfaceElementInput.name   = RprUsdRprMaterialXNodeTokens->surfaceElement;
+    surfaceElementInput.name = RprUsdRprMaterialXNodeTokens->surfaceElement;
     surfaceElementInput.uiName = "Surface Element";
     nodeInfo.inputs.push_back(surfaceElementInput);
 
     RprUsd_RprNodeInput displacementElementInput(RprUsdMaterialNodeElement::kString);
-    displacementElementInput.name   = RprUsdRprMaterialXNodeTokens->displacementElement;
+    displacementElementInput.name = RprUsdRprMaterialXNodeTokens->displacementElement;
     displacementElementInput.uiName = "Displacement Element";
     nodeInfo.inputs.push_back(displacementElementInput);
 
@@ -479,14 +470,14 @@ ARCH_CONSTRUCTOR(RprUsd_InitMaterialXNode, 255, void)
 {
   auto nodeInfo = RprUsd_RprMaterialXNode::GetInfo();
   RprUsdMaterialRegistry::GetInstance().Register(
-      RprUsdRprMaterialXNodeTokens->rpr_materialx_node,
-      [](RprUsd_MaterialBuilderContext *context, std::map<TfToken, VtValue> const &parameters) {
-        auto node = new RprUsd_RprMaterialXNode(context);
-        for (auto &entry : parameters)
-          node->SetInput(entry.first, entry.second);
-        return node;
-      },
-      nodeInfo);
+    RprUsdRprMaterialXNodeTokens->rpr_materialx_node,
+    [](RprUsd_MaterialBuilderContext *context, std::map<TfToken, VtValue> const &parameters) {
+      auto node = new RprUsd_RprMaterialXNode(context);
+      for (auto &entry : parameters)
+        node->SetInput(entry.first, entry.second);
+      return node;
+    },
+    nodeInfo);
 }
 
 WABI_NAMESPACE_END

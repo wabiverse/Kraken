@@ -76,7 +76,7 @@ int ArchCloseAllFiles(int nExcept, const int *exceptFds)
   }
 
   retStatus = 0;
-  retErrno  = 0;
+  retErrno = 0;
 
   for (i = 0; i < maxfd; ++i) {
     // Check if we should skip this file descriptor.
@@ -100,7 +100,7 @@ int ArchCloseAllFiles(int nExcept, const int *exceptFds)
     do {
       // Close the file, repeat if interrupted.
       //
-      errno  = 0;
+      errno = 0;
       status = close(i);
     } while (status != 0 && errno == EINTR);
 
@@ -108,7 +108,7 @@ int ArchCloseAllFiles(int nExcept, const int *exceptFds)
       // We got some real error.  Remember it but keep going.
       //
       retStatus = status;
-      retErrno  = errno;
+      retErrno = errno;
     }
   }
 

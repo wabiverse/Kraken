@@ -59,26 +59,25 @@ class GfMatrix3 {
 };
 { % endblock % }
 
-{ % block classDocs % }
-/// <h3>3D Transformations</h3>
-///
-/// The following methods interpret a {{ MAT }} as a 3D
-/// transformation: SetRotate(), SetScale(), SetTranslate(), SetLookAt(),
-/// Factor(), ExtractTranslation(), ExtractRotation(), Transform(), TransformDir().
-/// By convention, vectors are treated primarily as row vectors,
-/// implying the following:
-/// \li Transformation matrices are organized to deal with row
-///        vectors, not column vectors. For example, the last row of a matrix
-///        contains the translation amounts.
-/// \li Each of the Set() methods below completely rewrites the
-///        matrix; for example, SetTranslate() yields a matrix
-///        which does nothing but translate.
-/// \li When multiplying two transformation matrices, the matrix
-///        on the left applies a more local transformation to a row
-///        vector. For example, if R represents a rotation
-///        matrix and T represents a translation matrix, the
-///        product R*T will rotate a row vector, then translate
-///        it.
+{ % block classDocs % }  /// <h3>3D Transformations</h3>
+                         ///
+                         /// The following methods interpret a {{ MAT }} as a 3D
+                         /// transformation: SetRotate(), SetScale(), SetTranslate(), SetLookAt(),
+                         /// Factor(), ExtractTranslation(), ExtractRotation(), Transform(), TransformDir().
+                         /// By convention, vectors are treated primarily as row vectors,
+                         /// implying the following:
+                         /// \li Transformation matrices are organized to deal with row
+                         ///        vectors, not column vectors. For example, the last row of a matrix
+                         ///        contains the translation amounts.
+                         /// \li Each of the Set() methods below completely rewrites the
+                         ///        matrix; for example, SetTranslate() yields a matrix
+                         ///        which does nothing but translate.
+                         /// \li When multiplying two transformation matrices, the matrix
+                         ///        on the left applies a more local transformation to a row
+                         ///        vector. For example, if R represents a rotation
+                         ///        matrix and T represents a translation matrix, the
+                         ///        product R*T will rotate a row vector, then translate
+                         ///        it.
 { % endblock classDocs % }
 
 { % block customConstructors % } {% for S in SCALARS %
@@ -196,14 +195,13 @@ bool IsLeftHanded() const
 }
 { % endblock customFunctions % }
 
-    { % block customXformFunctions % }
-    /// Sets matrix to specify a uniform scaling by \e scaleFactor.
-    GF_API{{MAT}} &
-    SetScale({
-      {
-        SCL
-      }
-    } scaleFactor);
+  { % block customXformFunctions % }  /// Sets matrix to specify a uniform scaling by \e scaleFactor.
+  GF_API{{MAT}} &
+  SetScale({
+    {
+      SCL
+    }
+  } scaleFactor);
 
 /// Returns the matrix with any scaling or shearing removed,
 /// leaving only the rotation and translation.
@@ -261,8 +259,7 @@ GF_API{{MAT}} & SetTransform(const GfRotation &rotate, const GfVec3{{SCL[0]}} & 
 
 /// Sets matrix to specify a rotation by \e rotmx and a
 /// translation by \e translate.
-GF_API{{MAT}} &
-    SetTransform(const GfMatrix3{{SCL[0]}} & rotmx, const GfVec3{{SCL[0]}} & translate);
+GF_API{{MAT}} & SetTransform(const GfMatrix3{{SCL[0]}} & rotmx, const GfVec3{{SCL[0]}} & translate);
 
 /// Sets the matrix to specify a viewing matrix from parameters
 /// similar to those used by <c>gluLookAt(3G)</c>. \e eyePoint
@@ -296,16 +293,16 @@ GF_API{{MAT}} & SetLookAt(const GfVec3{{SCL[0]}} & eyePoint, const GfRotation &o
 /// to allow computation of \e u.
 GF_API
 bool Factor(
-    {{MAT}} * r,
-    GfVec3{{SCL[0]}} * s,
-    {{MAT}} * u,
-    GfVec3{{SCL[0]}} * t,
-    {{MAT}} * p,
-    { % if SCL == 'double' % } {
-      {
-        SCL
-      }
-    } eps = 1e-10) const;
+  {{MAT}} * r,
+  GfVec3{{SCL[0]}} * s,
+  {{MAT}} * u,
+  GfVec3{{SCL[0]}} * t,
+  {{MAT}} * p,
+  { % if SCL == 'double' % } {
+    {
+      SCL
+    }
+  } eps = 1e-10) const;
 { % else % } {
   {
     SCL
@@ -383,11 +380,10 @@ ExtractRotationMatrix() const;
 /// is 1.
 GfVec3d Transform(const GfVec3d &vec) const
 {
-  return GfProject(
-      GfVec4d({{LIST("vec[%(i)s] * _mtx[%(i)s][0]", sep = " + ", num = 3)}} + _mtx[3][0],
-              {{LIST("vec[%(i)s] * _mtx[%(i)s][1]", sep = " + ", num = 3)}} + _mtx[3][1],
-              {{LIST("vec[%(i)s] * _mtx[%(i)s][2]", sep = " + ", num = 3)}} + _mtx[3][2],
-              {{LIST("vec[%(i)s] * _mtx[%(i)s][3]", sep = " + ", num = 3)}} + _mtx[3][3]));
+  return GfProject(GfVec4d({{LIST("vec[%(i)s] * _mtx[%(i)s][0]", sep = " + ", num = 3)}} + _mtx[3][0],
+                           {{LIST("vec[%(i)s] * _mtx[%(i)s][1]", sep = " + ", num = 3)}} + _mtx[3][1],
+                           {{LIST("vec[%(i)s] * _mtx[%(i)s][2]", sep = " + ", num = 3)}} + _mtx[3][2],
+                           {{LIST("vec[%(i)s] * _mtx[%(i)s][3]", sep = " + ", num = 3)}} + _mtx[3][3]));
 }
 
 /// Transforms the row vector \e vec by the matrix, returning the result.
@@ -461,12 +457,7 @@ private:
 /// Returns the determinant of the 3x3 submatrix specified by the three
 /// given row and column indices (0-3 for each).
 GF_API
-double _GetDeterminant3(size_t row1,
-                        size_t row2,
-                        size_t row3,
-                        size_t col1,
-                        size_t col2,
-                        size_t col3) const;
+double _GetDeterminant3(size_t row1, size_t row2, size_t row3, size_t col1, size_t col2, size_t col3) const;
 
 /// Diagonalizes the upper 3x3 matrix of a matrix known to be symmetric.
 void _Jacobi3(GfVec3d *eigenvalues, GfVec3d eigenvectors[3]) const;
@@ -474,12 +465,12 @@ void _Jacobi3(GfVec3d *eigenvalues, GfVec3d eigenvectors[3]) const;
 /// Set the 3x3 submatrix to the rotation given by a quaternion,
 /// defined by the real component \p r and imaginary components \p i.
 void _SetRotateFromQuat(
+  {
     {
-      {
-        SCL
-      }
-    } r,
-    const GfVec3{{SCL[0]}} & i);
+      SCL
+    }
+  } r,
+  const GfVec3{{SCL[0]}} & i);
 
 {
   % endblock customXformFunctions %

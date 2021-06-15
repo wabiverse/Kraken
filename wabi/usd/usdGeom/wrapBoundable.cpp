@@ -47,9 +47,7 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateExtentAttr(UsdGeomBoundable &self,
-                                      object defaultVal,
-                                      bool writeSparsely)
+static UsdAttribute _CreateExtentAttr(UsdGeomBoundable &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateExtentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float3Array),
                                writeSparsely);
@@ -70,31 +68,28 @@ void wrapUsdGeomBoundable()
   class_<This, bases<UsdGeomXformable>> cls("Boundable");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetExtentAttr", &This::GetExtentAttr)
-      .def("CreateExtentAttr",
-           &_CreateExtentAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetExtentAttr", &This::GetExtentAttr)
+    .def(
+      "CreateExtentAttr", &_CreateExtentAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -142,12 +137,11 @@ static object _ComputeExtentFromPluginsWithTransform(const UsdGeomBoundable &bou
 
 WRAP_CUSTOM
 {
-  _class
-      .def("ComputeExtentFromPlugins", &_ComputeExtentFromPlugins, (arg("boundable"), arg("time")))
-      .def("ComputeExtentFromPlugins",
-           &_ComputeExtentFromPluginsWithTransform,
-           (arg("boundable"), arg("time"), arg("transform")))
-      .staticmethod("ComputeExtentFromPlugins");
+  _class.def("ComputeExtentFromPlugins", &_ComputeExtentFromPlugins, (arg("boundable"), arg("time")))
+    .def("ComputeExtentFromPlugins",
+         &_ComputeExtentFromPluginsWithTransform,
+         (arg("boundable"), arg("time"), arg("transform")))
+    .staticmethod("ComputeExtentFromPlugins");
 }
 
 }  // anonymous namespace

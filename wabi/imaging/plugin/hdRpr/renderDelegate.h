@@ -48,15 +48,13 @@ class HdRprDelegate final : public HdRenderDelegate {
   HdRenderParam *GetRenderParam() const override;
   HdResourceRegistrySharedPtr GetResourceRegistry() const override;
 
-  HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index,
-                                         HdRprimCollection const &collection) override;
+  HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index, HdRprimCollection const &collection) override;
 
   HdInstancer *CreateInstancer(HdSceneDelegate *delegate,
                                SdfPath const &id HDRPR_INSTANCER_ID_ARG_DECL) override;
   void DestroyInstancer(HdInstancer *instancer) override;
 
-  HdRprim *CreateRprim(TfToken const &typeId,
-                       SdfPath const &rprimId HDRPR_INSTANCER_ID_ARG_DECL) override;
+  HdRprim *CreateRprim(TfToken const &typeId, SdfPath const &rprimId HDRPR_INSTANCER_ID_ARG_DECL) override;
   void DestroyRprim(HdRprim *rPrim) override;
 
   HdSprim *CreateSprim(TfToken const &typeId, SdfPath const &sprimId) override;
@@ -103,8 +101,7 @@ class HdRprDelegate final : public HdRenderDelegate {
   HdRprRenderThread m_renderThread;
 
   using DiagnostMgrDelegatePtr =
-      std::unique_ptr<HdRprDiagnosticMgrDelegate,
-                      std::function<void(HdRprDiagnosticMgrDelegate *)>>;
+    std::unique_ptr<HdRprDiagnosticMgrDelegate, std::function<void(HdRprDiagnosticMgrDelegate *)>>;
   DiagnostMgrDelegatePtr m_diagnosticMgrDelegate;
 };
 

@@ -39,17 +39,17 @@ static size_t _Hash(HdBufferSpecVector const &specs)
 }
 
 HdPhExtCompGpuComputationResource::HdPhExtCompGpuComputationResource(
-    HdBufferSpecVector const &outputBufferSpecs,
-    HdPh_ExtCompComputeShaderSharedPtr const &kernel,
-    HdBufferArrayRangeSharedPtrVector const &inputs,
-    HdPhResourceRegistrySharedPtr const &registry)
-    : _outputBufferSpecs(outputBufferSpecs),
-      _kernel(kernel),
-      _registry(registry),
-      _shaderSourceHash(),
-      _inputs(inputs),
-      _computeProgram(),
-      _resourceBinder()
+  HdBufferSpecVector const &outputBufferSpecs,
+  HdPh_ExtCompComputeShaderSharedPtr const &kernel,
+  HdBufferArrayRangeSharedPtrVector const &inputs,
+  HdPhResourceRegistrySharedPtr const &registry)
+  : _outputBufferSpecs(outputBufferSpecs),
+    _kernel(kernel),
+    _registry(registry),
+    _shaderSourceHash(),
+    _inputs(inputs),
+    _computeProgram(),
+    _resourceBinder()
 {}
 
 bool HdPhExtCompGpuComputationResource::Resolve()
@@ -94,14 +94,13 @@ bool HdPhExtCompGpuComputationResource::Resolve()
     // let resourcebinder resolve bindings and populate metadata
     // which is owned by codegen.
     _resourceBinder.ResolveComputeBindings(
-        _outputBufferSpecs, inputBufferSpecs, shaders, codeGen.GetMetaData());
+      _outputBufferSpecs, inputBufferSpecs, shaders, codeGen.GetMetaData());
 
     HdPhGLSLProgram::ID registryID = codeGen.ComputeHash();
 
     {
       // ask registry to see if there's already compiled program
-      HdInstance<HdPhGLSLProgramSharedPtr> programInstance = _registry->RegisterGLSLProgram(
-          registryID);
+      HdInstance<HdPhGLSLProgramSharedPtr> programInstance = _registry->RegisterGLSLProgram(registryID);
 
       if (programInstance.IsFirstInstance()) {
         HdPhGLSLProgramSharedPtr glslProgram = codeGen.CompileComputeProgram(_registry.get());
@@ -119,8 +118,8 @@ bool HdPhExtCompGpuComputationResource::Resolve()
         programInstance.SetValue(glslProgram);
 
         TF_DEBUG(HD_EXT_COMPUTATION_UPDATED)
-            .Msg("Compiled and linked compute program for computation %s\n ",
-                 _kernel->GetExtComputationId().GetText());
+          .Msg("Compiled and linked compute program for computation %s\n ",
+               _kernel->GetExtComputationId().GetText());
       }
 
       _computeProgram = programInstance.GetValue();

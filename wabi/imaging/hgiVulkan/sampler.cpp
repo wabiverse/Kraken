@@ -40,36 +40,34 @@
 WABI_NAMESPACE_BEGIN
 
 HgiVulkanSampler::HgiVulkanSampler(HgiVulkanDevice *device, HgiSamplerDesc const &desc)
-    : HgiSampler(desc),
-      _vkSampler(nullptr),
-      _device(device),
-      _inflightBits(0)
+  : HgiSampler(desc),
+    _vkSampler(nullptr),
+    _device(device),
+    _inflightBits(0)
 {
   VkSamplerCreateInfo sampler = {VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO};
-  sampler.magFilter           = HgiVulkanConversions::GetMinMagFilter(desc.magFilter);
-  sampler.minFilter           = HgiVulkanConversions::GetMinMagFilter(desc.minFilter);
-  sampler.addressModeU        = HgiVulkanConversions::GetSamplerAddressMode(desc.addressModeU);
-  sampler.addressModeV        = HgiVulkanConversions::GetSamplerAddressMode(desc.addressModeV);
-  sampler.addressModeW        = HgiVulkanConversions::GetSamplerAddressMode(desc.addressModeW);
+  sampler.magFilter = HgiVulkanConversions::GetMinMagFilter(desc.magFilter);
+  sampler.minFilter = HgiVulkanConversions::GetMinMagFilter(desc.minFilter);
+  sampler.addressModeU = HgiVulkanConversions::GetSamplerAddressMode(desc.addressModeU);
+  sampler.addressModeV = HgiVulkanConversions::GetSamplerAddressMode(desc.addressModeV);
+  sampler.addressModeW = HgiVulkanConversions::GetSamplerAddressMode(desc.addressModeW);
 
   sampler.compareEnable = VK_FALSE;  // Eg. Percentage-closer filtering
-  sampler.compareOp     = VK_COMPARE_OP_ALWAYS;
+  sampler.compareOp = VK_COMPARE_OP_ALWAYS;
 
   sampler.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK;
-  sampler.mipLodBias  = 0.0f;
-  sampler.mipmapMode  = HgiVulkanConversions::GetMipFilter(desc.mipFilter);
-  sampler.minLod      = 0.0f;
-  sampler.maxLod      = FLT_MAX;
+  sampler.mipLodBias = 0.0f;
+  sampler.mipmapMode = HgiVulkanConversions::GetMipFilter(desc.mipFilter);
+  sampler.minLod = 0.0f;
+  sampler.maxLod = FLT_MAX;
 
   HgiVulkanCapabilities const &caps = device->GetDeviceCapabilities();
-  sampler.anisotropyEnable          = caps.vkDeviceFeatures.samplerAnisotropy;
-  sampler.maxAnisotropy             = sampler.anisotropyEnable ?
-                                          caps.vkDeviceProperties.limits.maxSamplerAnisotropy :
-                                          1.0f;
+  sampler.anisotropyEnable = caps.vkDeviceFeatures.samplerAnisotropy;
+  sampler.maxAnisotropy = sampler.anisotropyEnable ? caps.vkDeviceProperties.limits.maxSamplerAnisotropy :
+                                                     1.0f;
 
-  TF_VERIFY(
-      vkCreateSampler(device->GetVulkanDevice(), &sampler, HgiVulkanAllocator(), &_vkSampler) ==
-      VK_SUCCESS);
+  TF_VERIFY(vkCreateSampler(device->GetVulkanDevice(), &sampler, HgiVulkanAllocator(), &_vkSampler) ==
+            VK_SUCCESS);
 }
 
 HgiVulkanSampler::~HgiVulkanSampler()

@@ -36,10 +36,10 @@ namespace Vt_HashDetail {
 void _IssueUnimplementedHashError(std::type_info const &t)
 {
   TF_CODING_ERROR(
-      "Invoked VtHashValue on an object of type <%s>, which "
-      "is not hashable by boost::hash<>() or TfHash().  Consider "
-      "providing an overload of hash_value().",
-      ArchGetDemangled(t).c_str());
+    "Invoked VtHashValue on an object of type <%s>, which "
+    "is not hashable by boost::hash<>() or TfHash().  Consider "
+    "providing an overload of hash_value().",
+    ArchGetDemangled(t).c_str());
 }
 
 }  // namespace Vt_HashDetail

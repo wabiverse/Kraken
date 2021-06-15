@@ -38,10 +38,10 @@
 WABI_NAMESPACE_BEGIN
 
 #define USDRIIMAGING_TOKENS \
-  ( \
-      (infoSource, "info:source"))(faceIndexPrimvar)(faceOffsetPrimvar)((primvarsNormals, \
-                                                                         "primvars:normals"))((primvarsWidths, \
-                                                                                               "primvars:widths"))(ptexFaceIndex)(ptexFaceOffset)(usdPopulatedPrimCount)(usdVaryingExtent)(usdVaryingPrimvar)(usdVaryingTopology)(usdVaryingVisibility)(usdVaryingWidths)(usdVaryingNormals)(usdVaryingXform)(usdVaryingTexture)(uvPrimvar)(UsdPreviewSurface)(UsdUVTexture)(UsdPrimvarReader_float)(UsdPrimvarReader_float2)(UsdPrimvarReader_float3)(UsdPrimvarReader_float4)(UsdPrimvarReader_int)(UsdTransform2d)(pxrBarnLightFilter)(pxrIntMultLightFilter)(pxrRodLightFilter)
+  ((infoSource, "info:source"))(faceIndexPrimvar)(faceOffsetPrimvar)(( \
+    primvarsNormals, \
+    "primvars:normals"))((primvarsWidths, \
+                          "primvars:widths"))(ptexFaceIndex)(ptexFaceOffset)(usdPopulatedPrimCount)(usdVaryingExtent)(usdVaryingPrimvar)(usdVaryingTopology)(usdVaryingVisibility)(usdVaryingWidths)(usdVaryingNormals)(usdVaryingXform)(usdVaryingTexture)(uvPrimvar)(UsdPreviewSurface)(UsdUVTexture)(UsdPrimvarReader_float)(UsdPrimvarReader_float2)(UsdPrimvarReader_float3)(UsdPrimvarReader_float4)(UsdPrimvarReader_int)(UsdTransform2d)(pxrBarnLightFilter)(pxrIntMultLightFilter)(pxrRodLightFilter)
 
 TF_DECLARE_PUBLIC_TOKENS(UsdRiImagingTokens, USDRIIMAGING_API, USDRIIMAGING_TOKENS);
 

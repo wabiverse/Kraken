@@ -36,23 +36,22 @@
 WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(_tokens,
-                         ((outlineFrag,
-                           "OutlineFragment"))(colorIn)(enableOutline)(radius)(texelSize));
+                         ((outlineFrag, "OutlineFragment"))(colorIn)(enableOutline)(radius)(texelSize));
 
 HdxColorizeSelectionTask::HdxColorizeSelectionTask(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdxTask(id),
-      _params(),
-      _lastVersion(-1),
-      _hasSelection(false),
-      _selectionOffsets(),
-      _primId(nullptr),
-      _instanceId(nullptr),
-      _elementId(nullptr),
-      _outputBuffer(nullptr),
-      _outputBufferSize(0),
-      _converged(false),
-      _compositor(),
-      _pipelineCreated(false)
+  : HdxTask(id),
+    _params(),
+    _lastVersion(-1),
+    _hasSelection(false),
+    _selectionOffsets(),
+    _primId(nullptr),
+    _instanceId(nullptr),
+    _elementId(nullptr),
+    _outputBuffer(nullptr),
+    _outputBufferSize(0),
+    _converged(false),
+    _compositor(),
+    _pipelineCreated(false)
 {}
 
 HdxColorizeSelectionTask::~HdxColorizeSelectionTask()
@@ -69,9 +68,7 @@ bool HdxColorizeSelectionTask::IsConverged() const
   return _converged;
 }
 
-void HdxColorizeSelectionTask::_Sync(HdSceneDelegate *delegate,
-                                     HdTaskContext *ctx,
-                                     HdDirtyBits *dirtyBits)
+void HdxColorizeSelectionTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -97,16 +94,15 @@ void HdxColorizeSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *render
   }
 
   _primId = static_cast<HdRenderBuffer *>(
-      renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, _params.primIdBufferPath));
+    renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, _params.primIdBufferPath));
   _instanceId = static_cast<HdRenderBuffer *>(
-      renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, _params.instanceIdBufferPath));
+    renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, _params.instanceIdBufferPath));
   _elementId = static_cast<HdRenderBuffer *>(
-      renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, _params.elementIdBufferPath));
+    renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, _params.elementIdBufferPath));
 
   if (sel && sel->GetVersion() != _lastVersion) {
-    _lastVersion  = sel->GetVersion();
-    _hasSelection = sel->GetSelectionOffsetBuffer(
-        renderIndex, _params.enableSelection, &_selectionOffsets);
+    _lastVersion = sel->GetVersion();
+    _hasSelection = sel->GetSelectionOffsetBuffer(renderIndex, _params.enableSelection, &_selectionOffsets);
   }
 }
 
@@ -139,7 +135,7 @@ void HdxColorizeSelectionTask::Execute(HdTaskContext *ctx)
   }
 
   _primId->Resolve();
-  _converged  = _primId->IsConverged();
+  _converged = _primId->IsConverged();
   size_t size = _primId->GetWidth() * _primId->GetHeight();
 
   if (_instanceId) {
@@ -147,10 +143,10 @@ void HdxColorizeSelectionTask::Execute(HdTaskContext *ctx)
     size_t iidSize = _instanceId->GetWidth() * _instanceId->GetHeight();
     if (iidSize != size) {
       TF_WARN(
-          "Instance Id buffer %s has different dimensions "
-          "than Prim Id buffer %s",
-          _params.instanceIdBufferPath.GetText(),
-          _params.primIdBufferPath.GetText());
+        "Instance Id buffer %s has different dimensions "
+        "than Prim Id buffer %s",
+        _params.instanceIdBufferPath.GetText(),
+        _params.primIdBufferPath.GetText());
       return;
     }
     _converged = _converged && _instanceId->IsConverged();
@@ -160,10 +156,10 @@ void HdxColorizeSelectionTask::Execute(HdTaskContext *ctx)
     size_t eidSize = _elementId->GetWidth() * _elementId->GetHeight();
     if (eidSize != size) {
       TF_WARN(
-          "Element Id buffer %s has different dimensions "
-          "than Prim Id buffer %s",
-          _params.elementIdBufferPath.GetText(),
-          _params.primIdBufferPath.GetText());
+        "Element Id buffer %s has different dimensions "
+        "than Prim Id buffer %s",
+        _params.elementIdBufferPath.GetText(),
+        _params.primIdBufferPath.GetText());
       return;
     }
     _converged = _converged && _elementId->IsConverged();
@@ -172,7 +168,7 @@ void HdxColorizeSelectionTask::Execute(HdTaskContext *ctx)
   // Allocate the scratch space, if needed.
   if (!_outputBuffer || _outputBufferSize != size) {
     delete[] _outputBuffer;
-    _outputBuffer     = new uint8_t[size * 4];
+    _outputBuffer = new uint8_t[size * 4];
     _outputBufferSize = size;
   }
 
@@ -183,7 +179,7 @@ void HdxColorizeSelectionTask::Execute(HdTaskContext *ctx)
   // Make set program take
 
   HgiShaderFunctionDesc fragDesc;
-  fragDesc.debugName   = _tokens->outlineFrag.GetString();
+  fragDesc.debugName = _tokens->outlineFrag.GetString();
   fragDesc.shaderStage = HgiShaderStageFragment;
   HgiShaderFunctionAddStageInput(&fragDesc, "uvOut", "vec2");
   HgiShaderFunctionAddTexture(&fragDesc, "colorIn");
@@ -217,21 +213,21 @@ void HdxColorizeSelectionTask::Execute(HdTaskContext *ctx)
   // GL_ONE, GL_SRC_ALPHA, GL_ZERO, GL_ONE.
   if (!_pipelineCreated) {
     HgiDepthStencilState depthState;
-    depthState.depthTestEnabled   = false;
-    depthState.depthWriteEnabled  = false;
+    depthState.depthTestEnabled = false;
+    depthState.depthWriteEnabled = false;
     depthState.stencilTestEnabled = false;
 
     _compositor->SetDepthState(depthState);
     _pipelineCreated = true;
 
     _compositor->SetBlendState(
-        /*enable blending*/ true,
-        HgiBlendFactorOne,
-        HgiBlendFactorSrcAlpha,
-        HgiBlendOpAdd,
-        HgiBlendFactorZero,
-        HgiBlendFactorOne,
-        HgiBlendOpAdd);
+      /*enable blending*/ true,
+      HgiBlendFactorOne,
+      HgiBlendFactorSrcAlpha,
+      HgiBlendOpAdd,
+      HgiBlendFactorZero,
+      HgiBlendFactorOne,
+      HgiBlendOpAdd);
   }
 
   _compositor->Draw(aovTexture, /*no depth*/ HgiTextureHandle());
@@ -263,9 +259,9 @@ void HdxColorizeSelectionTask::_ColorizeSelection()
   for (size_t i = 0; i < _outputBufferSize; ++i) {
     GfVec4f output = GfVec4f(0, 0, 0, 1);
 
-    int primId     = piddata ? piddata[i] : -1;
+    int primId = piddata ? piddata[i] : -1;
     int instanceId = iiddata ? iiddata[i] : -1;
-    int elementId  = eiddata ? eiddata[i] : -1;
+    int elementId = eiddata ? eiddata[i] : -1;
 
     for (int mode = 0; mode < _selectionOffsets[0]; ++mode) {
       if (primId == -1) {
@@ -281,10 +277,10 @@ void HdxColorizeSelectionTask::_ColorizeSelection()
       int smax = _selectionOffsets[modeOffset + 1];
 
       if (primId >= smin && primId < smax) {
-        int offset        = modeOffset + 2 + primId - smin;
+        int offset = modeOffset + 2 + primId - smin;
         int selectionData = _selectionOffsets[offset];
-        bool sel          = bool(selectionData & 0x1);
-        int nextOffset    = selectionData >> 1;
+        bool sel = bool(selectionData & 0x1);
+        int nextOffset = selectionData >> 1;
 
         if (nextOffset != 0 && !sel) {
           int subprimType = _selectionOffsets[nextOffset];
@@ -292,10 +288,10 @@ void HdxColorizeSelectionTask::_ColorizeSelection()
             int imin = _selectionOffsets[nextOffset + 1];
             int imax = _selectionOffsets[nextOffset + 2];
             if (instanceId >= imin && instanceId < imax) {
-              offset        = nextOffset + 3 + instanceId - imin;
+              offset = nextOffset + 3 + instanceId - imin;
               selectionData = _selectionOffsets[offset];
-              sel           = sel || bool(selectionData & 0x1);
-              nextOffset    = selectionData >> 1;
+              sel = sel || bool(selectionData & 0x1);
+              nextOffset = selectionData >> 1;
             }
           }
           subprimType = _selectionOffsets[nextOffset];
@@ -303,10 +299,10 @@ void HdxColorizeSelectionTask::_ColorizeSelection()
             int emin = _selectionOffsets[nextOffset + 1];
             int emax = _selectionOffsets[nextOffset + 2];
             if (elementId >= emin && elementId < emax) {
-              offset        = nextOffset + 3 + elementId - emin;
+              offset = nextOffset + 3 + elementId - emin;
               selectionData = _selectionOffsets[offset];
-              sel           = sel || bool(selectionData & 0x1);
-              nextOffset    = selectionData >> 1;
+              sel = sel || bool(selectionData & 0x1);
+              nextOffset = selectionData >> 1;
             }
           }
         }
@@ -315,10 +311,10 @@ void HdxColorizeSelectionTask::_ColorizeSelection()
           // dst.rgb = mix(dst.rgb, selection.rgb, selection.a)
           // dst.a = mix(dst.a, 0, selection.a);
           GfVec4f modeColor = _GetColorForMode(mode);
-          output[0]         = modeColor[3] * modeColor[0] + (1 - modeColor[3]) * output[0];
-          output[1]         = modeColor[3] * modeColor[1] + (1 - modeColor[3]) * output[1];
-          output[2]         = modeColor[3] * modeColor[2] + (1 - modeColor[3]) * output[2];
-          output[3]         = (1 - modeColor[3]) * output[3];
+          output[0] = modeColor[3] * modeColor[0] + (1 - modeColor[3]) * output[0];
+          output[1] = modeColor[3] * modeColor[1] + (1 - modeColor[3]) * output[1];
+          output[2] = modeColor[3] * modeColor[2] + (1 - modeColor[3]) * output[2];
+          output[3] = (1 - modeColor[3]) * output[3];
         }
       }
     }
@@ -347,7 +343,7 @@ bool HdxColorizeSelectionTask::_UpdateParameterBuffer()
   }
 
   pb.enableOutline = (int)_params.enableOutline;
-  pb.radius        = (int)_params.outlineRadius;
+  pb.radius = (int)_params.outlineRadius;
 
   // All data is still the same, no need to update the compositor
   if (pb == _parameterData) {
@@ -376,16 +372,16 @@ void HdxColorizeSelectionTask::_CreateTexture(int width, int height, HdFormat fo
   const size_t pixelByteSize = HdDataSizeOfFormat(format);
 
   HgiTextureDesc texDesc;
-  texDesc.debugName      = "HdxColorizeSelectionTask texture";
-  texDesc.dimensions     = GfVec3i(width, height, 1);
-  texDesc.format         = HdxHgiConversions::GetHgiFormat(format);
-  texDesc.initialData    = data;
-  texDesc.layerCount     = 1;
-  texDesc.mipLevels      = 1;
+  texDesc.debugName = "HdxColorizeSelectionTask texture";
+  texDesc.dimensions = GfVec3i(width, height, 1);
+  texDesc.format = HdxHgiConversions::GetHgiFormat(format);
+  texDesc.initialData = data;
+  texDesc.layerCount = 1;
+  texDesc.mipLevels = 1;
   texDesc.pixelsByteSize = width * height * pixelByteSize;
-  texDesc.sampleCount    = HgiSampleCount1;
-  texDesc.usage          = HgiTextureUsageBitsShaderRead;
-  _texture               = _hgi->CreateTexture(texDesc);
+  texDesc.sampleCount = HgiSampleCount1;
+  texDesc.usage = HgiTextureUsageBitsShaderRead;
+  _texture = _hgi->CreateTexture(texDesc);
 }
 
 // -------------------------------------------------------------------------- //
@@ -394,14 +390,13 @@ void HdxColorizeSelectionTask::_CreateTexture(int width, int height, HdFormat fo
 
 std::ostream &operator<<(std::ostream &out, const HdxColorizeSelectionTaskParams &pv)
 {
-  out << "ColorizeSelectionTask Params: (...) " << pv.enableSelection << " " << pv.selectionColor
-      << " " << pv.locateColor << " " << pv.primIdBufferPath << " " << pv.instanceIdBufferPath
-      << " " << pv.elementIdBufferPath;
+  out << "ColorizeSelectionTask Params: (...) " << pv.enableSelection << " " << pv.selectionColor << " "
+      << pv.locateColor << " " << pv.primIdBufferPath << " " << pv.instanceIdBufferPath << " "
+      << pv.elementIdBufferPath;
   return out;
 }
 
-bool operator==(const HdxColorizeSelectionTaskParams &lhs,
-                const HdxColorizeSelectionTaskParams &rhs)
+bool operator==(const HdxColorizeSelectionTaskParams &lhs, const HdxColorizeSelectionTaskParams &rhs)
 {
   return lhs.enableSelection == rhs.enableSelection && lhs.selectionColor == rhs.selectionColor &&
          lhs.locateColor == rhs.locateColor && lhs.primIdBufferPath == rhs.primIdBufferPath &&
@@ -409,8 +404,7 @@ bool operator==(const HdxColorizeSelectionTaskParams &lhs,
          lhs.elementIdBufferPath == rhs.elementIdBufferPath;
 }
 
-bool operator!=(const HdxColorizeSelectionTaskParams &lhs,
-                const HdxColorizeSelectionTaskParams &rhs)
+bool operator!=(const HdxColorizeSelectionTaskParams &lhs, const HdxColorizeSelectionTaskParams &rhs)
 {
   return !(lhs == rhs);
 }

@@ -103,9 +103,9 @@ class half {
   half() = default;  // no initialization
   half(float f);
   // rule of 5
-  ~half()                               = default;
+  ~half() = default;
   constexpr half(const half &) noexcept = default;
-  constexpr half(half &&) noexcept      = default;
+  constexpr half(half &&) noexcept = default;
 
   //--------------------
   // Conversion to float
@@ -125,7 +125,7 @@ class half {
 
   half &operator=(const half &h) = default;
   half &operator=(half &&h) noexcept = default;
-  half &operator                     =(float f);
+  half &operator=(float f);
 
   half &operator+=(half h);
   half &operator+=(float f);
@@ -462,7 +462,7 @@ inline half::half(float f)
       //
 
       int m = x.i & 0x007fffff;
-      _h    = e + ((m + 0x00000fff + ((m >> 13) & 1)) >> 13);
+      _h = e + ((m + 0x00000fff + ((m >> 13) & 1)) >> 13);
     }
     else {
       //

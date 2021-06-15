@@ -91,9 +91,9 @@ class HgiMetalBlitCmds final : public HgiBlitCmds {
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
-  HgiMetalBlitCmds()        = delete;
+  HgiMetalBlitCmds() = delete;
   HgiMetalBlitCmds &operator=(const HgiMetalBlitCmds &) = delete;
-  HgiMetalBlitCmds(const HgiMetalBlitCmds &)            = delete;
+  HgiMetalBlitCmds(const HgiMetalBlitCmds &) = delete;
 
   void _CreateEncoder();
 

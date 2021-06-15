@@ -55,9 +55,9 @@ void Pcp_GetArgumentsForFileFormatTarget(const std::string &identifier,
 // \p defaultArgs. This lets us avoid making a copy of \p defaultArgs unless
 // needed.
 const SdfLayer::FileFormatArguments &Pcp_GetArgumentsForFileFormatTarget(
-    const std::string &identifier,
-    const SdfLayer::FileFormatArguments *defaultArgs,
-    SdfLayer::FileFormatArguments *localArgs);
+  const std::string &identifier,
+  const SdfLayer::FileFormatArguments *defaultArgs,
+  SdfLayer::FileFormatArguments *localArgs);
 
 WABI_NAMESPACE_END
 

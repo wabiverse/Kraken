@@ -62,9 +62,7 @@ TF_DEFINE_ENV_SETTING(HDARNOLD_GI_diffuse_samples, 1, "Number of diffuse samples
 
 TF_DEFINE_ENV_SETTING(HDARNOLD_GI_specular_samples, 1, "Number of specular samples by default.");
 
-TF_DEFINE_ENV_SETTING(HDARNOLD_GI_transmission_samples,
-                      1,
-                      "Number of transmission samples by default.");
+TF_DEFINE_ENV_SETTING(HDARNOLD_GI_transmission_samples, 1, "Number of transmission samples by default.");
 
 TF_DEFINE_ENV_SETTING(HDARNOLD_GI_sss_samples, 1, "Number of sss samples by default.");
 
@@ -99,9 +97,7 @@ TF_DEFINE_ENV_SETTING(HDARNOLD_interactive_target_fps_min,
                       "20.0",
                       "Min interactive target fps for progressive rendering.");
 
-TF_DEFINE_ENV_SETTING(HDARNOLD_interactive_fps_min,
-                      "5.0",
-                      "Minimum fps for progressive rendering.");
+TF_DEFINE_ENV_SETTING(HDARNOLD_interactive_fps_min, "5.0", "Minimum fps for progressive rendering.");
 
 TF_DEFINE_ENV_SETTING(HDARNOLD_profile_file, "", "Output file for profiling information.")
 
@@ -115,40 +111,38 @@ TF_DEFINE_ENV_SETTING(HDARNOLD_osl_includepath, "", "OSL include path.");
 
 HdArnoldConfig::HdArnoldConfig()
 {
-  bucket_size                = std::max(1, TfGetEnvSetting(HDARNOLD_bucket_size));
-  abort_on_error             = TfGetEnvSetting(HDARNOLD_abort_on_error);
-  log_verbosity              = std::max(0, std::min(7, TfGetEnvSetting(HDARNOLD_log_verbosity)));
-  log_file                   = TfGetEnvSetting(HDARNOLD_log_file);
-  log_flags_console          = TfGetEnvSetting(HDARNOLD_log_flags_console);
-  log_flags_file             = TfGetEnvSetting(HDARNOLD_log_flags_file);
-  threads                    = TfGetEnvSetting(HDARNOLD_threads);
-  AA_samples                 = TfGetEnvSetting(HDARNOLD_AA_samples);
-  GI_diffuse_samples         = std::max(0, TfGetEnvSetting(HDARNOLD_GI_diffuse_samples));
-  GI_specular_samples        = std::max(0, TfGetEnvSetting(HDARNOLD_GI_specular_samples));
-  GI_transmission_samples    = std::max(0, TfGetEnvSetting(HDARNOLD_GI_transmission_samples));
-  GI_sss_samples             = std::max(0, TfGetEnvSetting(HDARNOLD_GI_sss_samples));
-  GI_volume_samples          = std::max(0, TfGetEnvSetting(HDARNOLD_GI_volume_samples));
-  GI_diffuse_depth           = std::max(0, TfGetEnvSetting(HDARNOLD_GI_diffuse_depth));
-  GI_specular_depth          = std::max(0, TfGetEnvSetting(HDARNOLD_GI_specular_depth));
-  enable_progressive_render  = TfGetEnvSetting(HDARNOLD_enable_progressive_render);
+  bucket_size = std::max(1, TfGetEnvSetting(HDARNOLD_bucket_size));
+  abort_on_error = TfGetEnvSetting(HDARNOLD_abort_on_error);
+  log_verbosity = std::max(0, std::min(7, TfGetEnvSetting(HDARNOLD_log_verbosity)));
+  log_file = TfGetEnvSetting(HDARNOLD_log_file);
+  log_flags_console = TfGetEnvSetting(HDARNOLD_log_flags_console);
+  log_flags_file = TfGetEnvSetting(HDARNOLD_log_flags_file);
+  threads = TfGetEnvSetting(HDARNOLD_threads);
+  AA_samples = TfGetEnvSetting(HDARNOLD_AA_samples);
+  GI_diffuse_samples = std::max(0, TfGetEnvSetting(HDARNOLD_GI_diffuse_samples));
+  GI_specular_samples = std::max(0, TfGetEnvSetting(HDARNOLD_GI_specular_samples));
+  GI_transmission_samples = std::max(0, TfGetEnvSetting(HDARNOLD_GI_transmission_samples));
+  GI_sss_samples = std::max(0, TfGetEnvSetting(HDARNOLD_GI_sss_samples));
+  GI_volume_samples = std::max(0, TfGetEnvSetting(HDARNOLD_GI_volume_samples));
+  GI_diffuse_depth = std::max(0, TfGetEnvSetting(HDARNOLD_GI_diffuse_depth));
+  GI_specular_depth = std::max(0, TfGetEnvSetting(HDARNOLD_GI_specular_depth));
+  enable_progressive_render = TfGetEnvSetting(HDARNOLD_enable_progressive_render);
   progressive_min_AA_samples = TfGetEnvSetting(HDARNOLD_progressive_min_AA_samples);
-  enable_adaptive_sampling   = TfGetEnvSetting(HDARNOLD_enable_adaptive_sampling);
-  enable_gpu_rendering       = TfGetEnvSetting(HDARNOLD_enable_gpu_rendering);
+  enable_adaptive_sampling = TfGetEnvSetting(HDARNOLD_enable_adaptive_sampling);
+  enable_gpu_rendering = TfGetEnvSetting(HDARNOLD_enable_gpu_rendering);
   shutter_start = static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_shutter_start).c_str()));
-  shutter_end   = static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_shutter_end).c_str()));
+  shutter_end = static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_shutter_end).c_str()));
   interactive_target_fps = std::max(
-      1.0f,
-      static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_interactive_target_fps).c_str())));
+    1.0f, static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_interactive_target_fps).c_str())));
   interactive_target_fps_min = std::max(
-      1.0f,
-      static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_interactive_target_fps_min).c_str())));
+    1.0f, static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_interactive_target_fps_min).c_str())));
   interactive_fps_min = std::max(
-      1.0f, static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_interactive_fps_min).c_str())));
-  profile_file          = TfGetEnvSetting(HDARNOLD_profile_file);
-  texture_searchpath    = TfGetEnvSetting(HDARNOLD_texture_searchpath);
-  plugin_searchpath     = TfGetEnvSetting(HDARNOLD_plugin_searchpath);
+    1.0f, static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_interactive_fps_min).c_str())));
+  profile_file = TfGetEnvSetting(HDARNOLD_profile_file);
+  texture_searchpath = TfGetEnvSetting(HDARNOLD_texture_searchpath);
+  plugin_searchpath = TfGetEnvSetting(HDARNOLD_plugin_searchpath);
   procedural_searchpath = TfGetEnvSetting(HDARNOLD_procedural_searchpath);
-  osl_includepath       = TfGetEnvSetting(HDARNOLD_osl_includepath);
+  osl_includepath = TfGetEnvSetting(HDARNOLD_osl_includepath);
 }
 
 const HdArnoldConfig &HdArnoldConfig::GetInstance()

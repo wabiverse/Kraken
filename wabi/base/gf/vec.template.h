@@ -120,7 +120,7 @@ class {
       SCL
     }
   } value)
-      : _data{{{LIST("value")}}}
+    : _data{{{LIST("value")}}}
   {}
 
   /// Initialize all elements with explicit arguments.
@@ -327,16 +327,16 @@ class {
     }
   }
   operator+(
+    {
       {
-        {
-          VEC
-        }
-      } const &l,
+        VEC
+      }
+    } const &l,
+    {
       {
-        {
-          VEC
-        }
-      } const &r)
+        VEC
+      }
+    } const &r)
   {
     return {{VEC}}(l) += r;
   }
@@ -362,16 +362,16 @@ class {
     }
   }
   operator-(
+    {
       {
-        {
-          VEC
-        }
-      } const &l,
+        VEC
+      }
+    } const &l,
+    {
       {
-        {
-          VEC
-        }
-      } const &r)
+        VEC
+      }
+    } const &r)
   {
     return {{VEC}}(l) -= r;
   }
@@ -604,11 +604,8 @@ class {
   /// iteration limit. Colinear vectors will be unaltered, and the method
   /// will return false.
   GF_API
-  static bool OrthogonalizeBasis({{VEC}} * tx,
-                                 {{VEC}} * ty,
-                                 {{VEC}} * tz,
-                                 const bool normalize,
-                                 double eps = GF_MIN_ORTHO_TOLERANCE);
+  static bool OrthogonalizeBasis(
+    {{VEC}} * tx, {{VEC}} * ty, {{VEC}} * tz, const bool normalize, double eps = GF_MIN_ORTHO_TOLERANCE);
 
   /// Sets \c v1 and \c v2 to unit vectors such that v1, v2 and *this are
   /// mutually orthogonal.  If the length L of *this is smaller than \c eps,
@@ -680,16 +677,16 @@ inline
   }
 }
 GfCompMult(
+  {
     {
-      {
-        VEC
-      }
-    } const &v1,
+      VEC
+    }
+  } const &v1,
+  {
     {
-      {
-        VEC
-      }
-    } const &v2)
+      VEC
+    }
+  } const &v2)
 {
   return {{VEC}}({{LIST("v1[%(i)s] * v2[%(i)s]", sep = ",\n        ")}});
 }
@@ -702,16 +699,16 @@ inline
   }
 }
 GfCompDiv(
+  {
     {
-      {
-        VEC
-      }
-    } const &v1,
+      VEC
+    }
+  } const &v1,
+  {
     {
-      {
-        VEC
-      }
-    } const &v2)
+      VEC
+    }
+  } const &v2)
 {
   return {{VEC}}({{LIST("v1[%(i)s] / v2[%(i)s]", sep = ",\n        ")}});
 }
@@ -724,16 +721,16 @@ inline
   }
 }
 GfDot(
+  {
     {
-      {
-        VEC
-      }
-    } const &v1,
+      VEC
+    }
+  } const &v1,
+  {
     {
-      {
-        VEC
-      }
-    } const &v2)
+      VEC
+    }
+  } const &v2)
 {
   return v1 * v2;
 }
@@ -786,16 +783,16 @@ inline
   }
 }
 GfGetNormalized(
+  {
     {
-      {
-        VEC
-      }
-    } const &v,
+      VEC
+    }
+  } const &v,
+  {
     {
-      {
-        SCL
-      }
-    } eps = {{EPS}})
+      SCL
+    }
+  } eps = {{EPS}})
 {
   return v.GetNormalized(eps);
 }
@@ -811,16 +808,16 @@ inline
   }
 }
 GfGetProjection(
+  {
     {
-      {
-        VEC
-      }
-    } const &a,
+      VEC
+    }
+  } const &a,
+  {
     {
-      {
-        VEC
-      }
-    } const &b)
+      VEC
+    }
+  } const &b)
 {
   return a.GetProjection(b);
 }
@@ -836,16 +833,16 @@ inline
   }
 }
 GfGetComplement(
+  {
     {
-      {
-        VEC
-      }
-    } const &a,
+      VEC
+    }
+  } const &a,
+  {
     {
-      {
-        VEC
-      }
-    } const &b)
+      VEC
+    }
+  } const &b)
 {
   return a.GetComplement(b);
 }
@@ -853,17 +850,17 @@ GfGetComplement(
 /// Tests for equality within a given tolerance, returning \c true if the
 /// length of the difference vector is less than or equal to \p tolerance.
 inline bool GfIsClose(
+  {
     {
-      {
-        VEC
-      }
-    } const &v1,
+      VEC
+    }
+  } const &v1,
+  {
     {
-      {
-        VEC
-      }
-    } const &v2,
-    double tolerance)
+      VEC
+    }
+  } const &v2,
+  double tolerance)
 {
   {
     {
@@ -885,18 +882,18 @@ GF_API bool GfOrthogonalizeBasis({{VEC}} * tx,
                                  double eps = GF_MIN_ORTHO_TOLERANCE);
 
 GF_API void GfBuildOrthonormalFrame(
+  {
     {
-      {
-        VEC
-      }
-    } const &v0,
-    {{VEC}} * v1,
-    {{VEC}} * v2,
+      VEC
+    }
+  } const &v0,
+  {{VEC}} * v1,
+  {{VEC}} * v2,
+  {
     {
-      {
-        SCL
-      }
-    } eps = {{EPS}});
+      SCL
+    }
+  } eps = {{EPS}});
 
 /// Returns the cross product of \p v1 and \p v2.
 inline
@@ -906,19 +903,19 @@ inline
   }
 }
 GfCross(
+  {
     {
-      {
-        VEC
-      }
-    } const &v1,
+      VEC
+    }
+  } const &v1,
+  {
     {
-      {
-        VEC
-      }
-    } const &v2)
+      VEC
+    }
+  } const &v2)
 {
   return {{VEC}}(
-      v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2], v1[0] * v2[1] - v1[1] * v2[0]);
+    v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2], v1[0] * v2[1] - v1[1] * v2[0]);
 }
 
 /// Returns the cross product of \p v1 and \p v2.
@@ -930,16 +927,16 @@ inline
   }
 }
 operator^(
+  {
     {
-      {
-        VEC
-      }
-    } const &v1,
+      VEC
+    }
+  } const &v1,
+  {
     {
-      {
-        VEC
-      }
-    } const &v2)
+      VEC
+    }
+  } const &v2)
 {
   return GfCross(v1, v2);
 }
@@ -952,17 +949,17 @@ GF_API
   }
 }
 GfSlerp(
-    double alpha,
+  double alpha,
+  {
     {
-      {
-        VEC
-      }
-    } const &v0,
+      VEC
+    }
+  } const &v0,
+  {
     {
-      {
-        VEC
-      }
-    } const &v1);
+      VEC
+    }
+  } const &v1);
 
 { % endif % } {#DIM == 3 #}
 

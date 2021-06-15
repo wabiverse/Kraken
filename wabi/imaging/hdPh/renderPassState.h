@@ -33,16 +33,16 @@
 
 WABI_NAMESPACE_BEGIN
 
-using HdResourceRegistrySharedPtr  = std::shared_ptr<class HdResourceRegistry>;
+using HdResourceRegistrySharedPtr = std::shared_ptr<class HdResourceRegistry>;
 using HdPhRenderPassStateSharedPtr = std::shared_ptr<class HdPhRenderPassState>;
 
 using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 
-using HdPhShaderCodeSharedPtr              = std::shared_ptr<class HdPhShaderCode>;
-using HdPhLightingShaderSharedPtr          = std::shared_ptr<class HdPhLightingShader>;
-using HdPhRenderPassShaderSharedPtr        = std::shared_ptr<class HdPhRenderPassShader>;
+using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
+using HdPhLightingShaderSharedPtr = std::shared_ptr<class HdPhLightingShader>;
+using HdPhRenderPassShaderSharedPtr = std::shared_ptr<class HdPhRenderPassShader>;
 using HdPh_FallbackLightingShaderSharedPtr = std::shared_ptr<class HdPh_FallbackLightingShader>;
-using HdPhShaderCodeSharedPtrVector        = std::vector<HdPhShaderCodeSharedPtr>;
+using HdPhShaderCodeSharedPtrVector = std::vector<HdPhShaderCodeSharedPtr>;
 class HdRenderIndex;
 
 /// \class HdPhRenderPassState

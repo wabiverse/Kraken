@@ -52,7 +52,7 @@ std::vector<TfToken> UsdGetClipRelatedFields();
 
 /// Sentinel values authored on the edges of a clipTimes range.
 constexpr double Usd_ClipTimesEarliest = -std::numeric_limits<double>::max();
-constexpr double Usd_ClipTimesLatest   = std::numeric_limits<double>::max();
+constexpr double Usd_ClipTimesLatest = std::numeric_limits<double>::max();
 
 /// \class Usd_Clip
 ///
@@ -96,9 +96,9 @@ struct Usd_Clip {
     TimeMapping()
     {}
     TimeMapping(const ExternalTime e, const InternalTime i)
-        : externalTime(e),
-          internalTime(i),
-          isJumpDiscontinuity(false)
+      : externalTime(e),
+        internalTime(i),
+        isJumpDiscontinuity(false)
     {}
   };
 
@@ -207,8 +207,7 @@ struct Usd_Clip {
                                                      ExternalTime *tLower,
                                                      ExternalTime *tUpper) const;
 
-  void _ListTimeSamplesForPathFromClipLayer(const SdfPath &path,
-                                            std::set<ExternalTime> *samples) const;
+  void _ListTimeSamplesForPathFromClipLayer(const SdfPath &path, std::set<ExternalTime> *samples) const;
 
   SdfPath _TranslatePathToClip(const SdfPath &path) const;
 

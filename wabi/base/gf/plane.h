@@ -99,7 +99,7 @@ class GfPlane {
   /// length first.
   void Set(const GfVec3d &normal, double distanceToOrigin)
   {
-    _normal   = normal.GetNormalized();
+    _normal = normal.GetNormalized();
     _distance = distanceToOrigin;
   }
 
@@ -175,7 +175,7 @@ class GfPlane {
   void Reorient(const GfVec3d &p)
   {
     if (GetDistance(p) < 0) {
-      _normal   = -_normal;
+      _normal = -_normal;
       _distance = -_distance;
     }
   }

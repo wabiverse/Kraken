@@ -14,7 +14,7 @@ ZepSyntax_Tree::ZepSyntax_Tree(ZepBuffer &buffer,
                                const std::unordered_set<std::string> &keywords,
                                const std::unordered_set<std::string> &identifiers,
                                uint32_t flags)
-    : ZepSyntax(buffer, keywords, identifiers, flags)
+  : ZepSyntax(buffer, keywords, identifiers, flags)
 {
   // Don't need default
   m_adornments.clear();
@@ -22,9 +22,9 @@ ZepSyntax_Tree::ZepSyntax_Tree(ZepBuffer &buffer,
 
 void ZepSyntax_Tree::UpdateSyntax()
 {
-  auto &buffer    = m_buffer.GetWorkingBuffer();
+  auto &buffer = m_buffer.GetWorkingBuffer();
   auto itrCurrent = buffer.begin();
-  auto itrEnd     = buffer.end();
+  auto itrEnd = buffer.end();
 
   assert(std::distance(itrCurrent, itrEnd) <= int(m_syntax.size()));
   assert(m_syntax.size() == buffer.size());
@@ -39,11 +39,10 @@ void ZepSyntax_Tree::UpdateSyntax()
               SyntaxData{type, background});
   };
 
-  auto markSingle =
-      [&](GapBuffer<uint8_t>::const_iterator itrA, ThemeColor type, ThemeColor background) {
-        (m_syntax.begin() + (itrA - buffer.begin()))->foreground = type;
-        (m_syntax.begin() + (itrA - buffer.begin()))->background = background;
-      };
+  auto markSingle = [&](GapBuffer<uint8_t>::const_iterator itrA, ThemeColor type, ThemeColor background) {
+    (m_syntax.begin() + (itrA - buffer.begin()))->foreground = type;
+    (m_syntax.begin() + (itrA - buffer.begin()))->background = background;
+  };
 
   // Walk backwards to previous delimiter
   while (itrCurrent != itrEnd) {
@@ -70,7 +69,7 @@ void ZepSyntax_Tree::UpdateSyntax()
 
   // If we got here, we sucessfully completed
   // Reset the target to the beginning
-  m_targetChar    = long(0);
+  m_targetChar = long(0);
   m_processedChar = long(buffer.size() - 1);
 }
 

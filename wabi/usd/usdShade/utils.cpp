@@ -52,11 +52,9 @@ string UsdShadeUtils::GetPrefixForAttributeType(UsdShadeAttributeType sourceType
 }
 
 /* static */
-std::pair<TfToken, UsdShadeAttributeType> UsdShadeUtils::GetBaseNameAndType(
-    const TfToken &fullName)
+std::pair<TfToken, UsdShadeAttributeType> UsdShadeUtils::GetBaseNameAndType(const TfToken &fullName)
 {
-  std::pair<std::string, bool> res = SdfPath::StripPrefixNamespace(fullName,
-                                                                   UsdShadeTokens->inputs);
+  std::pair<std::string, bool> res = SdfPath::StripPrefixNamespace(fullName, UsdShadeTokens->inputs);
   if (res.second) {
     return std::make_pair(TfToken(res.first), UsdShadeAttributeType::Input);
   }
@@ -72,8 +70,7 @@ std::pair<TfToken, UsdShadeAttributeType> UsdShadeUtils::GetBaseNameAndType(
 /* static */
 UsdShadeAttributeType UsdShadeUtils::GetType(const TfToken &fullName)
 {
-  std::pair<std::string, bool> res = SdfPath::StripPrefixNamespace(fullName,
-                                                                   UsdShadeTokens->inputs);
+  std::pair<std::string, bool> res = SdfPath::StripPrefixNamespace(fullName, UsdShadeTokens->inputs);
   if (res.second) {
     return UsdShadeAttributeType::Input;
   }
@@ -122,7 +119,7 @@ bool _FollowConnectionSourceRecursive(UsdShadeConnectionSourceInfo const &source
     }
     else {
       return _GetValueProducingAttributesRecursive(
-          connectedOutput, foundAttributes, attrs, shaderOutputsOnly);
+        connectedOutput, foundAttributes, attrs, shaderOutputsOnly);
     }
   }
   else {  // sourceType == UsdShadeAttributeType::Input
@@ -135,7 +132,7 @@ bool _FollowConnectionSourceRecursive(UsdShadeConnectionSourceInfo const &source
     }
     else {
       return _GetValueProducingAttributesRecursive(
-          connectedInput, foundAttributes, attrs, shaderOutputsOnly);
+        connectedInput, foundAttributes, attrs, shaderOutputsOnly);
     }
   }
 
@@ -156,8 +153,7 @@ bool _GetValueProducingAttributesRecursive(UsdShadeInOutput const &inoutput,
   // error, since this means we have a loop in the chain
   const SdfPath &thisAttrPath = inoutput.GetAttr().GetPath();
   if (!foundAttributes->empty() &&
-      std::find(foundAttributes->begin(), foundAttributes->end(), thisAttrPath) !=
-          foundAttributes->end()) {
+      std::find(foundAttributes->begin(), foundAttributes->end(), thisAttrPath) != foundAttributes->end()) {
     TF_WARN("GetValueProducingAttributes: Found cycle with attribute %s", thisAttrPath.GetText());
     return false;
   }
@@ -186,14 +182,14 @@ bool _GetValueProducingAttributesRecursive(UsdShadeInOutput const &inoutput,
       _SmallSdfPathVector localFoundAttrs = *foundAttributes;
 
       foundValidAttr |= _FollowConnectionSourceRecursive(
-          sourceInfo, &localFoundAttrs, attrs, shaderOutputsOnly);
+        sourceInfo, &localFoundAttrs, attrs, shaderOutputsOnly);
     }
   }
   else if (!sourceInfos.empty()) {
     // Follow the one connection it until we reach an output attribute on an
     // actual shader node or an input attribute with a value
     foundValidAttr = _FollowConnectionSourceRecursive(
-        sourceInfos[0], foundAttributes, attrs, shaderOutputsOnly);
+      sourceInfos[0], foundAttributes, attrs, shaderOutputsOnly);
   }
 
   // If our trace should accept attributes with authored values, check if this
@@ -224,8 +220,7 @@ UsdShadeAttributeVector UsdShadeUtils::GetValueProducingAttributes(UsdShadeInput
   _SmallSdfPathVector foundAttributes;
 
   UsdShadeAttributeVector valueAttributes;
-  _GetValueProducingAttributesRecursive(
-      input, &foundAttributes, valueAttributes, shaderOutputsOnly);
+  _GetValueProducingAttributesRecursive(input, &foundAttributes, valueAttributes, shaderOutputsOnly);
 
   return valueAttributes;
 }
@@ -241,8 +236,7 @@ UsdShadeAttributeVector UsdShadeUtils::GetValueProducingAttributes(UsdShadeOutpu
   _SmallSdfPathVector foundAttributes;
 
   UsdShadeAttributeVector valueAttributes;
-  _GetValueProducingAttributesRecursive(
-      output, &foundAttributes, valueAttributes, shaderOutputsOnly);
+  _GetValueProducingAttributesRecursive(output, &foundAttributes, valueAttributes, shaderOutputsOnly);
 
   return valueAttributes;
 }

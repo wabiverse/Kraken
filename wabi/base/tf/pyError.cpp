@@ -101,7 +101,7 @@ void TfPyConvertPythonExceptionToTfErrors()
     if (exc.GetType().get() == Tf_PyGetErrorExceptionClass().get() && exc.GetValue()) {
       // Replace the errors in m with errors pulled out of exc.
       object exception = object(exc.GetValue());
-      object args      = exception.attr("args");
+      object args = exception.attr("args");
       extract<vector<TfError>> extractor(args);
       if (extractor.check()) {
         vector<TfError> errs = extractor();

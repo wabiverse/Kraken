@@ -37,9 +37,8 @@ void wrapDynamicFileFormatDependencyData()
 {
   using This = PcpDynamicFileFormatDependencyData;
   class_<This>("DynamicFileFormatDependencyData", no_init)
-      .def("GetRelevantFieldNames",
-           make_function(&This::GetRelevantFieldNames, return_value_policy<TfPySequenceToList>()))
-      .def("CanFieldChangeAffectFileFormatArguments",
-           &This::CanFieldChangeAffectFileFormatArguments)
-      .def("IsEmpty", &This::IsEmpty);
+    .def("GetRelevantFieldNames",
+         make_function(&This::GetRelevantFieldNames, return_value_policy<TfPySequenceToList>()))
+    .def("CanFieldChangeAffectFileFormatArguments", &This::CanFieldChangeAffectFileFormatArguments)
+    .def("IsEmpty", &This::IsEmpty);
 }

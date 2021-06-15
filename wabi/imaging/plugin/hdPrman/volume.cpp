@@ -42,14 +42,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPrman_Field::HdPrman_Field(TfToken const &typeId, SdfPath const &id)
-    : HdField(id),
-      _typeId(typeId)
+HdPrman_Field::HdPrman_Field(TfToken const &typeId, SdfPath const &id) : HdField(id), _typeId(typeId)
 {}
 
-void HdPrman_Field::Sync(HdSceneDelegate *sceneDelegate,
-                         HdRenderParam *renderParam,
-                         HdDirtyBits *dirtyBits)
+void HdPrman_Field::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
   if (*dirtyBits & DirtyParams) {
     // Force volume prim to pick up the new field resources -
@@ -72,9 +68,8 @@ HdDirtyBits HdPrman_Field::GetInitialDirtyBitsMask() const
   // The initial dirty bits control what data is available on the first
   // run through _PopulateRtVolume(), so it should list every data item
   // that _PopluateRtVolume requests.
-  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyTransform |
-             HdChangeTracker::DirtyVisibility | HdChangeTracker::DirtyPrimvar |
-             HdChangeTracker::DirtyMaterialId;
+  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyVisibility |
+             HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyMaterialId;
   return (HdDirtyBits)mask;
 }
 
@@ -86,24 +81,23 @@ HdDirtyBits HdPrman_Volume::GetInitialDirtyBitsMask() const
   // The initial dirty bits control what data is available on the first
   // run through _PopulateRtVolume(), so it should list every data item
   // that _PopluateRtVolume requests.
-  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyTransform |
-             HdChangeTracker::DirtyVisibility | HdChangeTracker::DirtyPrimvar |
-             HdChangeTracker::DirtyMaterialId | HdChangeTracker::DirtyInstancer;
+  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyVisibility |
+             HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyMaterialId |
+             HdChangeTracker::DirtyInstancer;
 
   return (HdDirtyBits)mask;
 }
 
 namespace {  // anonymous namespace
 
-HdPrman_Volume::FieldType _DetermineOpenVDBFieldType(HdSceneDelegate *sceneDelegate,
-                                                     SdfPath const &fieldId)
+HdPrman_Volume::FieldType _DetermineOpenVDBFieldType(HdSceneDelegate *sceneDelegate, SdfPath const &fieldId)
 {
   VtValue fieldDataTypeValue = sceneDelegate->Get(fieldId, UsdVolTokens->fieldDataType);
   if (!fieldDataTypeValue.IsHolding<TfToken>()) {
     TF_WARN(
-        "Missing fieldDataType attribute on volume field prim %s. "
-        "Assuming float.",
-        fieldId.GetText());
+      "Missing fieldDataType attribute on volume field prim %s. "
+      "Assuming float.",
+      fieldId.GetText());
     return HdPrman_Volume::FieldType::FloatType;
   }
   const TfToken &fieldDataType = fieldDataTypeValue.UncheckedGet<TfToken>();
@@ -157,10 +151,10 @@ HdPrman_Volume::FieldType _DetermineOpenVDBFieldType(HdSceneDelegate *sceneDeleg
     }
     else if (!vectorDataRoleHint.IsEmpty()) {
       TF_WARN(
-          "Unknown vectorDataRoleHint value '%s' on volume field prim"
-          " %s. Treating it as a regular float3 field.",
-          vectorDataRoleHint.GetText(),
-          fieldId.GetText());
+        "Unknown vectorDataRoleHint value '%s' on volume field prim"
+        " %s. Treating it as a regular float3 field.",
+        vectorDataRoleHint.GetText(),
+        fieldId.GetText());
     }
 
     return HdPrman_Volume::FieldType::Float3Type;
@@ -192,10 +186,10 @@ HdPrman_Volume::FieldType _DetermineOpenVDBFieldType(HdSceneDelegate *sceneDeleg
   }
 
   TF_WARN(
-      "Unsupported OpenVDB fieldDataType value '%s' on volume field "
-      "prim %s. Assuming float.",
-      fieldDataType.GetText(),
-      fieldId.GetText());
+    "Unsupported OpenVDB fieldDataType value '%s' on volume field "
+    "prim %s. Assuming float.",
+    fieldDataType.GetText(),
+    fieldId.GetText());
 
   return HdPrman_Volume::FieldType::FloatType;
 }
@@ -216,7 +210,7 @@ void _EmitOpenVDBVolume(HdSceneDelegate *sceneDelegate,
   // There is an implicit assumption that all the fields on this volume are
   // extracted from the same .vdb file, which is determined once from the
   // first field.
-  VtValue filePath           = sceneDelegate->Get(firstfield.fieldId, HdFieldTokens->filePath);
+  VtValue filePath = sceneDelegate->Get(firstfield.fieldId, HdFieldTokens->filePath);
   SdfAssetPath fileAssetPath = filePath.Get<SdfAssetPath>();
 
   std::string volumeAssetPath = fileAssetPath.GetResolvedPath();
@@ -226,8 +220,7 @@ void _EmitOpenVDBVolume(HdSceneDelegate *sceneDelegate,
 
   primvars->SetString(RixStr.k_Ri_type, blobbydsoImplOpenVDB);
 
-  RtUString sa[2] = {RtUString(volumeAssetPath.c_str()),
-                     RtUString(firstfield.fieldName.GetText())};
+  RtUString sa[2] = {RtUString(volumeAssetPath.c_str()), RtUString(firstfield.fieldName.GetText())};
   primvars->SetStringArray(RixStr.k_blobbydso_stringargs, sa, 2);
 
   // The individual fields of this volume need to be declared as primvars
@@ -248,7 +241,7 @@ TfToken _DetermineConsistentFieldPrimType(const HdVolumeFieldDescriptorVector &f
   }
 
   HdVolumeFieldDescriptorVector::const_iterator iter = fields.begin();
-  TfToken const &fieldPrimType                       = iter->fieldPrimType;
+  TfToken const &fieldPrimType = iter->fieldPrimType;
   ++iter;
 
   for (; iter != fields.end(); ++iter) {
@@ -270,8 +263,8 @@ HdPrman_Volume::_VolumeEmitterMap &HdPrman_Volume::_GetVolumeEmitterMap()
   // Initialization of static members of classes or globals is less clearly
   // defined.
   static _VolumeEmitterMap volumeEmitters = {
-      // Pre-populate the map with the default implementation for OpenVDB
-      {UsdVolImagingTokens->openvdbAsset, _EmitOpenVDBVolume}};
+    // Pre-populate the map with the default implementation for OpenVDB
+    {UsdVolImagingTokens->openvdbAsset, _EmitOpenVDBVolume}};
 
   return volumeEmitters;
 }
@@ -292,9 +285,7 @@ bool HdPrman_Volume::AddVolumeTypeEmitter(TfToken const &fieldPrimType,
 }
 
 /* static */
-void HdPrman_Volume::DeclareFieldPrimvar(RtParamList *primvars,
-                                         RtUString const &fieldName,
-                                         FieldType type)
+void HdPrman_Volume::DeclareFieldPrimvar(RtParamList *primvars, RtUString const &fieldName, FieldType type)
 {
   RtDetailType detailType = RtDetailType::k_varying;
 
@@ -359,27 +350,27 @@ RtParamList HdPrman_Volume::_ConvertGeometry(HdPrman_Context *context,
   TfToken fieldPrimType = _DetermineConsistentFieldPrimType(fields);
   if (fieldPrimType.IsEmpty()) {
     TF_WARN(
-        "The fields on volume %s have inconsistent types and can't be "
-        "emitted as a single volume",
-        id.GetText());
+      "The fields on volume %s have inconsistent types and can't be "
+      "emitted as a single volume",
+      id.GetText());
     return RtParamList();
   }
 
   // Based on the field type we determine the function to emit the volume to
   // Prman
   _VolumeEmitterMap const &volumeEmitters = _GetVolumeEmitterMap();
-  auto const iter                         = volumeEmitters.find(fieldPrimType);
+  auto const iter = volumeEmitters.find(fieldPrimType);
   if (iter == volumeEmitters.end()) {
     TF_WARN(
-        "No volume emitter registered for field type '%s' "
-        "on prim %s",
-        fieldPrimType.GetText(),
-        id.GetText());
+      "No volume emitter registered for field type '%s' "
+      "on prim %s",
+      fieldPrimType.GetText(),
+      id.GetText());
     return RtParamList();
   }
 
   int32_t const dims[] = {0, 0, 0};
-  uint64_t const dim   = dims[0] * dims[1] * dims[2];
+  uint64_t const dim = dims[0] * dims[1] * dims[2];
 
   RtParamList primvars(1, dim, dim, dim);
   primvars.SetIntegerArray(RixStr.k_Ri_dimensions, dims, 3);

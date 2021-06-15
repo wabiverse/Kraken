@@ -37,10 +37,8 @@ WABI_NAMESPACE_BEGIN
 bool operator==(const HgiGraphicsCmdsDesc &lhs, const HgiGraphicsCmdsDesc &rhs)
 {
   return lhs.depthAttachmentDesc == rhs.depthAttachmentDesc &&
-         lhs.colorAttachmentDescs == rhs.colorAttachmentDescs &&
-         lhs.depthTexture == rhs.depthTexture &&
-         lhs.depthResolveTexture == rhs.depthResolveTexture &&
-         lhs.colorTextures == rhs.colorTextures &&
+         lhs.colorAttachmentDescs == rhs.colorAttachmentDescs && lhs.depthTexture == rhs.depthTexture &&
+         lhs.depthResolveTexture == rhs.depthResolveTexture && lhs.colorTextures == rhs.colorTextures &&
          lhs.colorResolveTextures == rhs.colorResolveTextures;
 }
 

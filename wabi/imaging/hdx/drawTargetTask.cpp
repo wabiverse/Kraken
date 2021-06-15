@@ -56,50 +56,50 @@ static HdCompareFunction HdxDrawTargetTask_GetResolvedDepthFunc(HdCompareFunctio
                                                                 HdDepthPriority priority)
 {
   static const HdCompareFunction ResolvedDepthFunc[HdDepthPriorityCount][HdCmpFuncLast] = {
-      // HdDepthPriorityNearest
-      {
-          HdCmpFuncNever,     // HdCmpFuncNever
-          HdCmpFuncLess,      // HdCmpFuncLess
-          HdCmpFuncEqual,     // HdCmpFuncEqual
-          HdCmpFuncLEqual,    // HdCmpFuncLEqual
-          HdCmpFuncGreater,   // HdCmpFuncGreater
-          HdCmpFuncNotEqual,  // HdCmpFuncNotEqual
-          HdCmpFuncGEqual,    // HdCmpFuncGEqual
-          HdCmpFuncAlways,    // HdCmpFuncAlways
-      },
+    // HdDepthPriorityNearest
+    {
+      HdCmpFuncNever,     // HdCmpFuncNever
+      HdCmpFuncLess,      // HdCmpFuncLess
+      HdCmpFuncEqual,     // HdCmpFuncEqual
+      HdCmpFuncLEqual,    // HdCmpFuncLEqual
+      HdCmpFuncGreater,   // HdCmpFuncGreater
+      HdCmpFuncNotEqual,  // HdCmpFuncNotEqual
+      HdCmpFuncGEqual,    // HdCmpFuncGEqual
+      HdCmpFuncAlways,    // HdCmpFuncAlways
+    },
 
-      // HdDepthPriorityFarthest
-      {
-          HdCmpFuncNever,     // HdCmpFuncNever
-          HdCmpFuncGEqual,    // HdCmpFuncLess
-          HdCmpFuncEqual,     // HdCmpFuncEqual
-          HdCmpFuncGreater,   // HdCmpFuncLEqual
-          HdCmpFuncLEqual,    // HdCmpFuncGreater
-          HdCmpFuncNotEqual,  // HdCmpFuncNotEqual
-          HdCmpFuncLess,      // HdCmpFuncGEqual
-          HdCmpFuncAlways,    // HdCmpFuncAlways
-      },
+    // HdDepthPriorityFarthest
+    {
+      HdCmpFuncNever,     // HdCmpFuncNever
+      HdCmpFuncGEqual,    // HdCmpFuncLess
+      HdCmpFuncEqual,     // HdCmpFuncEqual
+      HdCmpFuncGreater,   // HdCmpFuncLEqual
+      HdCmpFuncLEqual,    // HdCmpFuncGreater
+      HdCmpFuncNotEqual,  // HdCmpFuncNotEqual
+      HdCmpFuncLess,      // HdCmpFuncGEqual
+      HdCmpFuncAlways,    // HdCmpFuncAlways
+    },
   };
 
   return ResolvedDepthFunc[priority][depthFunc];
 }
 
 HdxDrawTargetTask::HdxDrawTargetTask(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdTask(id),
-      _currentDrawTargetSetVersion(0),
-      _renderPassesInfo(),
-      _overrideColor(),
-      _wireframeColor(),
-      _enableLighting(false),
-      _alphaThreshold(0.0f),
-      _depthBiasUseDefault(true),
-      _depthBiasEnable(false),
-      _depthBiasConstantFactor(0.0f),
-      _depthBiasSlopeFactor(1.0f),
-      _depthFunc(HdCmpFuncLEqual),
-      _cullStyle(HdCullStyleBackUnlessDoubleSided),
-      _enableSampleAlphaToCoverage(true),
-      _renderTags()
+  : HdTask(id),
+    _currentDrawTargetSetVersion(0),
+    _renderPassesInfo(),
+    _overrideColor(),
+    _wireframeColor(),
+    _enableLighting(false),
+    _alphaThreshold(0.0f),
+    _depthBiasUseDefault(true),
+    _depthBiasEnable(false),
+    _depthBiasConstantFactor(0.0f),
+    _depthBiasSlopeFactor(1.0f),
+    _depthFunc(HdCmpFuncLEqual),
+    _cullStyle(HdCullStyleBackUnlessDoubleSided),
+    _enableSampleAlphaToCoverage(true),
+    _renderTags()
 {}
 
 HdxDrawTargetTask::~HdxDrawTargetTask() = default;
@@ -154,8 +154,7 @@ struct _DrawTargetEntry {
 using _DrawTargetEntryVector = std::vector<_DrawTargetEntry>;
 
 // Topologically sort draw targets.
-static void _SortDrawTargets(HdPhDrawTargetPtrVector const &drawTargets,
-                             _DrawTargetEntryVector *result)
+static void _SortDrawTargets(HdPhDrawTargetPtrVector const &drawTargets, _DrawTargetEntryVector *result)
 {
   TRACE_FUNCTION();
 
@@ -246,7 +245,7 @@ void _GetSortedDrawTargets(HdRenderIndex *renderIndex, _DrawTargetEntryVector *r
 }  // namespace
 
 HdxDrawTargetTask::_RenderPassInfoVector HdxDrawTargetTask::_ComputeRenderPassInfos(
-    HdRenderIndex *const renderIndex)
+  HdRenderIndex *const renderIndex)
 {
   HdxDrawTargetTask::_RenderPassInfoVector result;
 
@@ -270,9 +269,8 @@ HdxDrawTargetTask::_RenderPassInfoVector HdxDrawTargetTask::_ComputeRenderPassIn
   return result;
 }
 
-HdxDrawTargetTask::_CameraInfo HdxDrawTargetTask::_ComputeCameraInfo(
-    const HdRenderIndex &renderIndex,
-    const HdPhDrawTarget *const drawTarget)
+HdxDrawTargetTask::_CameraInfo HdxDrawTargetTask::_ComputeCameraInfo(const HdRenderIndex &renderIndex,
+                                                                     const HdPhDrawTarget *const drawTarget)
 {
   // Update camera/framing state
   // XXX Since we flip the projection matrix below, we can't set the
@@ -288,7 +286,7 @@ HdxDrawTargetTask::_CameraInfo HdxDrawTargetTask::_ComputeCameraInfo(
   // XXX: Need to detect when camera changes and only update if
   // needed
   const HdCamera *const camera = static_cast<const HdCamera *>(
-      renderIndex.GetSprim(HdPrimTypeTokens->camera, cameraId));
+    renderIndex.GetSprim(HdPrimTypeTokens->camera, cameraId));
 
   if (!camera) {
     // Render pass should not have been added to task list.
@@ -298,20 +296,18 @@ HdxDrawTargetTask::_CameraInfo HdxDrawTargetTask::_ComputeCameraInfo(
 
   static const GfMatrix4d yflip = GfMatrix4d().SetScale(GfVec3d(1.0, -1.0, 1.0));
 
-  const GfMatrix4d projectionMatrix = CameraUtilConformedWindow(camera->GetProjectionMatrix(),
-                                                                camera->GetWindowPolicy(),
-                                                                aspect) *
+  const GfMatrix4d projectionMatrix = CameraUtilConformedWindow(
+                                        camera->GetProjectionMatrix(), camera->GetWindowPolicy(), aspect) *
                                       yflip;
 
   return {camera->GetViewMatrix(), projectionMatrix, viewport, camera->GetClipPlanes()};
 }
 
-void HdxDrawTargetTask::_UpdateRenderPassState(
-    const HdRenderIndex &renderIndex,
-    const _CameraInfo &cameraInfo,
-    HdPhSimpleLightingShaderSharedPtr const &lightingShader,
-    const HdPhDrawTargetRenderPassState *const srcState,
-    HdPhRenderPassStateSharedPtr const &state) const
+void HdxDrawTargetTask::_UpdateRenderPassState(const HdRenderIndex &renderIndex,
+                                               const _CameraInfo &cameraInfo,
+                                               HdPhSimpleLightingShaderSharedPtr const &lightingShader,
+                                               const HdPhDrawTargetRenderPassState *const srcState,
+                                               HdPhRenderPassStateSharedPtr const &state) const
 {
   // Update Raster States
   state->SetOverrideColor(_overrideColor);
@@ -321,25 +317,21 @@ void HdxDrawTargetTask::_UpdateRenderPassState(
   state->SetAlphaToCoverageEnabled(_enableSampleAlphaToCoverage);
   state->SetCullStyle(_cullStyle);
 
-  state->SetDepthFunc(
-      HdxDrawTargetTask_GetResolvedDepthFunc(_depthFunc, srcState->GetDepthPriority()));
+  state->SetDepthFunc(HdxDrawTargetTask_GetResolvedDepthFunc(_depthFunc, srcState->GetDepthPriority()));
 
   state->SetAovBindings(srcState->GetAovBindings());
 
   state->SetLightingShader(lightingShader);
 
-  state->SetCameraFramingState(cameraInfo.viewMatrix,
-                               cameraInfo.projectionMatrix,
-                               cameraInfo.viewport,
-                               cameraInfo.clipPlanes);
+  state->SetCameraFramingState(
+    cameraInfo.viewMatrix, cameraInfo.projectionMatrix, cameraInfo.viewport, cameraInfo.clipPlanes);
 
   state->Prepare(renderIndex.GetResourceRegistry());
 }
 
-void HdxDrawTargetTask::_UpdateLightingContext(
-    const _CameraInfo &cameraInfo,
-    GlfSimpleLightingContextConstRefPtr const &srcContext,
-    GlfSimpleLightingContextRefPtr const &ctx)
+void HdxDrawTargetTask::_UpdateLightingContext(const _CameraInfo &cameraInfo,
+                                               GlfSimpleLightingContextConstRefPtr const &srcContext,
+                                               GlfSimpleLightingContextRefPtr const &ctx)
 {
   ctx->SetCamera(cameraInfo.viewMatrix, cameraInfo.projectionMatrix);
 
@@ -358,7 +350,7 @@ void HdxDrawTargetTask::_UpdateLightingContext(
 void HdxDrawTargetTask::_UpdateRenderPass(_RenderPassInfo *info)
 {
   const HdPhDrawTargetRenderPassState *const state = info->target->GetDrawTargetRenderPassState();
-  const unsigned newCollectionVersion              = state->GetRprimCollectionVersion();
+  const unsigned newCollectionVersion = state->GetRprimCollectionVersion();
 
   if (info->collectionVersion != newCollectionVersion) {
     info->renderPass->SetRprimCollection(state->GetRprimCollection());
@@ -382,35 +374,34 @@ void HdxDrawTargetTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDi
 
     // Raster State
     // XXX: Update master raster state that is used by all passes?
-    _wireframeColor              = params.wireframeColor;
-    _enableLighting              = params.enableLighting;
-    _overrideColor               = params.overrideColor;
-    _alphaThreshold              = params.alphaThreshold;
+    _wireframeColor = params.wireframeColor;
+    _enableLighting = params.enableLighting;
+    _overrideColor = params.overrideColor;
+    _alphaThreshold = params.alphaThreshold;
     _enableSampleAlphaToCoverage = params.enableAlphaToCoverage &&
                                    !TfDebug::IsEnabled(HDX_DISABLE_ALPHA_TO_COVERAGE);
     _cullStyle = params.cullStyle;
 
     // Depth
     // XXX: Should be in raster state?
-    _depthBiasUseDefault     = params.depthBiasUseDefault;
-    _depthBiasEnable         = params.depthBiasEnable;
+    _depthBiasUseDefault = params.depthBiasUseDefault;
+    _depthBiasEnable = params.depthBiasEnable;
     _depthBiasConstantFactor = params.depthBiasConstantFactor;
-    _depthBiasSlopeFactor    = params.depthBiasSlopeFactor;
-    _depthFunc               = params.depthFunc;
+    _depthBiasSlopeFactor = params.depthBiasSlopeFactor;
+    _depthFunc = params.depthFunc;
   }
 
   if ((*dirtyBits) & HdChangeTracker::DirtyRenderTags) {
     _renderTags = _GetTaskRenderTags(delegate);
   }
 
-  HdRenderIndex &renderIndex           = delegate->GetRenderIndex();
+  HdRenderIndex &renderIndex = delegate->GetRenderIndex();
   const HdChangeTracker &changeTracker = renderIndex.GetChangeTracker();
 
-  const unsigned drawTargetVersion = changeTracker.GetStateVersion(
-      HdPhDrawTargetTokens->drawTargetSet);
+  const unsigned drawTargetVersion = changeTracker.GetStateVersion(HdPhDrawTargetTokens->drawTargetSet);
 
   if (_currentDrawTargetSetVersion != drawTargetVersion) {
-    _renderPassesInfo            = _ComputeRenderPassInfos(&renderIndex);
+    _renderPassesInfo = _ComputeRenderPassInfos(&renderIndex);
     _currentDrawTargetSetVersion = drawTargetVersion;
   }
 
@@ -425,7 +416,7 @@ void HdxDrawTargetTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDi
     const _CameraInfo cameraInfo = _ComputeCameraInfo(renderIndex, renderPassInfo.target);
 
     _UpdateLightingContext(
-        cameraInfo, srcLightingContext, renderPassInfo.simpleLightingShader->GetLightingContext());
+      cameraInfo, srcLightingContext, renderPassInfo.simpleLightingShader->GetLightingContext());
 
     _UpdateRenderPassState(renderIndex,
                            cameraInfo,
@@ -518,8 +509,7 @@ bool operator==(const HdxDrawTargetTaskParams &lhs, const HdxDrawTargetTaskParam
 {
   return lhs.overrideColor == rhs.overrideColor && lhs.wireframeColor == rhs.wireframeColor &&
          lhs.enableLighting == rhs.enableLighting && lhs.alphaThreshold == rhs.alphaThreshold &&
-         lhs.depthBiasUseDefault == rhs.depthBiasUseDefault &&
-         lhs.depthBiasEnable == rhs.depthBiasEnable &&
+         lhs.depthBiasUseDefault == rhs.depthBiasUseDefault && lhs.depthBiasEnable == rhs.depthBiasEnable &&
          lhs.depthBiasConstantFactor == rhs.depthBiasConstantFactor &&
          lhs.depthBiasSlopeFactor == rhs.depthBiasSlopeFactor && lhs.depthFunc == rhs.depthFunc &&
          lhs.cullStyle == rhs.cullStyle;

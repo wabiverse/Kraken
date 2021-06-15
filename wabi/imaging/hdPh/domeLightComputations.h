@@ -34,7 +34,7 @@ WABI_NAMESPACE_BEGIN
 ///
 ///
 using HdPh_DomeLightComputationGPUSharedPtr = std::shared_ptr<class HdPh_DomeLightComputationGPU>;
-using HdPhSimpleLightingShaderPtr           = std::weak_ptr<class HdPhSimpleLightingShader>;
+using HdPhSimpleLightingShaderPtr = std::weak_ptr<class HdPhSimpleLightingShader>;
 
 ////
 //// \class HdPh_DomeLightComputationGPU
@@ -53,24 +53,23 @@ class HdPh_DomeLightComputationGPU : public HdComputation {
   /// Constructor
   HDPH_API
   HdPh_DomeLightComputationGPU(
-      // Name of computation shader to use, also used as
-      // key when setting the GL name on the lighting shader
-      const TfToken &shaderToken,
-      // Lighting shader that remembers the GL texture names
-      HdPhSimpleLightingShaderPtr const &lightingShader,
-      // Number of mip levels.
-      unsigned int numLevels = 1,
-      // Level to be filled (0 means also to allocate texture)
-      unsigned int level = 0,
-      float roughness    = -1.0);
+    // Name of computation shader to use, also used as
+    // key when setting the GL name on the lighting shader
+    const TfToken &shaderToken,
+    // Lighting shader that remembers the GL texture names
+    HdPhSimpleLightingShaderPtr const &lightingShader,
+    // Number of mip levels.
+    unsigned int numLevels = 1,
+    // Level to be filled (0 means also to allocate texture)
+    unsigned int level = 0,
+    float roughness = -1.0);
 
   HDPH_API
   void GetBufferSpecs(HdBufferSpecVector *specs) const override
   {}
 
   HDPH_API
-  void Execute(HdBufferArrayRangeSharedPtr const &range,
-               HdResourceRegistry *resourceRegistry) override;
+  void Execute(HdBufferArrayRangeSharedPtr const &range, HdResourceRegistry *resourceRegistry) override;
 
   /// This computation doesn't generate buffer source (i.e. 2nd phase)
   /// This is a gpu computation, but no need to resize the destination

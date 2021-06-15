@@ -71,8 +71,8 @@ void TfPyInitialize()
       // main thread before creating a second thread or engaging in any
       // other thread operations."  So we'll issue a warning here.
       TF_WARN(
-          "Calling PyEval_InitThreads() for the first time outside "
-          "the 'main thread'.  Python doc says not to do this.");
+        "Calling PyEval_InitThreads() for the first time outside "
+        "the 'main thread'.  Python doc says not to do this.");
     }
 
     const std::string s = ArchGetExecutablePath();
@@ -124,10 +124,10 @@ void TfPyInitialize()
 
 #if PY_MAJOR_VERSION == 2
     char emptyArg[] = {'\0'};
-    char *empty[]   = {emptyArg};
+    char *empty[] = {emptyArg};
 #else
     wchar_t emptyArg[] = {'\0'};
-    wchar_t *empty[]   = {emptyArg};
+    wchar_t *empty[] = {emptyArg};
 #endif
     PySys_SetArgv(1, empty);
 
@@ -175,7 +175,7 @@ boost::python::handle<> TfPyRunString(const std::string &cmd,
     handle<> defaultGlobalsHandle(borrowed(PyModule_GetDict(mainModule.get())));
 
     PyObject *pyGlobals = TfPyIsNone(globals) ? defaultGlobalsHandle.get() : globals.ptr();
-    PyObject *pyLocals  = TfPyIsNone(locals) ? pyGlobals : locals.ptr();
+    PyObject *pyLocals = TfPyIsNone(locals) ? pyGlobals : locals.ptr();
 
     // used passed-in objects for globals and locals, or default
     // to globals from main module if no locals/globals passed in.
@@ -208,10 +208,9 @@ boost::python::handle<> TfPyRunFile(const std::string &filename,
     // used passed-in objects for globals and locals, or default
     // to globals from main module if no locals/globals passed in.
     PyObject *pyGlobals = TfPyIsNone(globals) ? defaultGlobalsHandle.get() : globals.ptr();
-    PyObject *pyLocals  = TfPyIsNone(locals) ? pyGlobals : locals.ptr();
+    PyObject *pyLocals = TfPyIsNone(locals) ? pyGlobals : locals.ptr();
 
-    return handle<>(
-        PyRun_FileEx(f, filename.c_str(), start, pyGlobals, pyLocals, 1 /* close file */));
+    return handle<>(PyRun_FileEx(f, filename.c_str(), start, pyGlobals, pyLocals, 1 /* close file */));
   }
   catch (error_already_set const &) {
     TfPyConvertPythonExceptionToTfErrors();

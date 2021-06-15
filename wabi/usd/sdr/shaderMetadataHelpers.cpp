@@ -77,9 +77,7 @@ bool IsTruthy(const TfToken &propName, const NdrTokenMap &metadata)
 
 // -------------------------------------------------------------------------
 
-std::string StringVal(const TfToken &propName,
-                      const NdrTokenMap &metadata,
-                      const std::string &defaultValue)
+std::string StringVal(const TfToken &propName, const NdrTokenMap &metadata, const std::string &defaultValue)
 {
   const NdrTokenMap::const_iterator search = metadata.find(propName);
 
@@ -151,7 +149,7 @@ NdrOptionVec OptionVecVal(const std::string &optionStr)
 
     if (colonPos != std::string::npos) {
       options.emplace_back(
-          std::make_pair(TfToken(token.substr(0, colonPos)), TfToken(token.substr(colonPos + 1))));
+        std::make_pair(TfToken(token.substr(0, colonPos)), TfToken(token.substr(colonPos + 1))));
     }
     else {
       options.emplace_back(std::make_pair(TfToken(token), TfToken()));
@@ -190,8 +188,7 @@ bool IsPropertyAnAssetIdentifier(const NdrTokenMap &metadata)
 
 bool IsPropertyATerminal(const NdrTokenMap &metadata)
 {
-  const NdrTokenMap::const_iterator renderTypeSearch = metadata.find(
-      SdrPropertyMetadata->RenderType);
+  const NdrTokenMap::const_iterator renderTypeSearch = metadata.find(SdrPropertyMetadata->RenderType);
 
   if (renderTypeSearch != metadata.end()) {
     // If the property is a SdrPropertyTypes->Terminal, then the

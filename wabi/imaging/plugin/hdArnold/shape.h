@@ -53,7 +53,7 @@ class HdArnoldShape {
   ~HdArnoldShape();
 
   HdArnoldShape(const HdArnoldShape &) = delete;
-  HdArnoldShape(HdArnoldShape &&)      = delete;
+  HdArnoldShape(HdArnoldShape &&) = delete;
 
   /// Gets the Arnold Shape.
   ///

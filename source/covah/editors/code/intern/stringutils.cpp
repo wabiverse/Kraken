@@ -19,14 +19,11 @@ std::unordered_map<uint32_t, std::string> &StringId::GetStringLookup()
 std::string string_tolower(const std::string &str)
 {
   std::string copy = str;
-  std::transform(
-      copy.begin(), copy.end(), copy.begin(), [](char ch) { return (char)::tolower(int(ch)); });
+  std::transform(copy.begin(), copy.end(), copy.begin(), [](char ch) { return (char)::tolower(int(ch)); });
   return copy;
 }
 
-std::string string_replace(std::string subject,
-                           const std::string &search,
-                           const std::string &replace)
+std::string string_replace(std::string subject, const std::string &search, const std::string &replace)
 {
   size_t pos = 0;
   while ((pos = subject.find(search, pos)) != std::string::npos) {
@@ -36,9 +33,7 @@ std::string string_replace(std::string subject,
   return subject;
 }
 
-void string_replace_in_place(std::string &subject,
-                             const std::string &search,
-                             const std::string &replace)
+void string_replace_in_place(std::string &subject, const std::string &search, const std::string &replace)
 {
   size_t pos = 0;
   while ((pos = subject.find(search, pos)) != std::string::npos) {
@@ -67,7 +62,7 @@ uint32_t murmur_hash(const void *key, int len, uint32_t seed)
   // 'm' and 'r' are mixing constants generated offline.
   // They're not really 'magic', they just happen to work well.
   const unsigned int m = 0x5bd1e995;
-  const int r          = 24;
+  const int r = 24;
 
   // Initialize the hash to a 'random' value
   unsigned int h = seed ^ len;
@@ -133,9 +128,9 @@ unsigned int invert_shift_xor(unsigned int hs, unsigned int s)
 
 unsigned int murmur_hash_inverse(unsigned int h, unsigned int seed)
 {
-  const unsigned int m    = 0x5bd1e995;
+  const unsigned int m = 0x5bd1e995;
   const unsigned int minv = 0xe59b19bd;  // Multiplicative inverse of m under % 2^32
-  const int r             = 24;
+  const int r = 24;
 
   h = invert_shift_xor(h, 15);
   h *= minv;
@@ -150,7 +145,7 @@ unsigned int murmur_hash_inverse(unsigned int h, unsigned int seed)
 
 #ifdef PLATFORM_BIG_ENDIAN
   char *data = (char *)&k;
-  k          = (data[0]) + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
+  k = (data[0]) + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
 #endif
 
   return k;
@@ -164,27 +159,27 @@ uint64_t murmur_hash_64(const void *key, uint32_t len, uint64_t seed)
   uint64_t h = seed ^ (len * m);
 
   const uint64_t *data = (const uint64_t *)key;
-  const uint64_t *end  = data + (len / 8);
+  const uint64_t *end = data + (len / 8);
 
   while (data != end) {
 #ifdef PLATFORM_BIG_ENDIAN
     uint64 k = *data++;
-    char *p  = (char *)&k;
+    char *p = (char *)&k;
     char c;
-    c    = p[0];
+    c = p[0];
     p[0] = p[7];
     p[7] = c;
-    c    = p[1];
+    c = p[1];
     p[1] = p[6];
     p[6] = c;
-    c    = p[2];
+    c = p[2];
     p[2] = p[5];
     p[5] = c;
-    c    = p[3];
+    c = p[3];
     p[3] = p[4];
     p[4] = c;
 #else
-    uint64_t k     = *data++;
+    uint64_t k = *data++;
 #endif
 
     k *= m;
@@ -244,9 +239,7 @@ void string_split(const std::string &text, const char *delims, std::vector<std::
     tokens.push_back(text.substr(start));
 }
 
-void string_split_each(const std::string &text,
-                       const char *delims,
-                       std::function<bool(size_t, size_t)> fn)
+void string_split_each(const std::string &text, const char *delims, std::function<bool(size_t, size_t)> fn)
 {
   std::size_t start = text.find_first_not_of(delims), end = 0;
 
@@ -262,7 +255,7 @@ void string_split_each(const std::string &text,
 size_t string_first_not_of(const char *text, size_t start, size_t end, const char *delims)
 {
   for (auto index = start; index < end; index++) {
-    bool found  = false;
+    bool found = false;
     auto pDelim = delims;
     while (*pDelim != 0) {
       if (text[index] == *pDelim++) {
@@ -339,7 +332,7 @@ std::string string_slurp_if(std::string::const_iterator &itr,
     if ((itrCurrent != itrEnd) && *itrCurrent == last) {
       itrCurrent++;
       auto ret = std::string(itr, itrCurrent);
-      itr      = itrCurrent;
+      itr = itrCurrent;
       return ret;
     }
   }
@@ -361,7 +354,7 @@ std::string string_slurp_if(std::string::const_iterator &itr,
 
   if (itrCurrent != itr) {
     auto ret = std::string(itr, itrCurrent);
-    itr      = itrCurrent;
+    itr = itrCurrent;
 
     return ret;
   }
@@ -370,26 +363,26 @@ std::string string_slurp_if(std::string::const_iterator &itr,
 
 StringId::StringId(const char *pszString)
 {
-  id                              = murmur_hash(pszString, (int)strlen(pszString), 0);
+  id = murmur_hash(pszString, (int)strlen(pszString), 0);
   StringId::GetStringLookup()[id] = pszString;
 }
 
 StringId::StringId(const std::string &str)
 {
-  id                              = murmur_hash(str.c_str(), (int)str.length(), 0);
+  id = murmur_hash(str.c_str(), (int)str.length(), 0);
   StringId::GetStringLookup()[id] = str;
 }
 
 const StringId &StringId::operator=(const char *pszString)
 {
-  id                              = murmur_hash(pszString, (int)strlen(pszString), 0);
+  id = murmur_hash(pszString, (int)strlen(pszString), 0);
   StringId::GetStringLookup()[id] = pszString;
   return *this;
 }
 
 const StringId &StringId::operator=(const std::string &str)
 {
-  id                              = murmur_hash(str.c_str(), (int)str.length(), 0);
+  id = murmur_hash(str.c_str(), (int)str.length(), 0);
   StringId::GetStringLookup()[id] = str;
   return *this;
 }

@@ -9,7 +9,7 @@ ZepPath path_get_relative(const ZepPath &from, const ZepPath &to)
   // diverge take the remainder of the two path and replace the entire from path with ".."
   // segments.
   ZepPath::const_iterator fromIter = from.begin();
-  ZepPath::const_iterator toIter   = to.begin();
+  ZepPath::const_iterator toIter = to.begin();
 
   // Loop through both
   while (fromIter != from.end() && toIter != to.end() && (*toIter) == (*fromIter)) {

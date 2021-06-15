@@ -72,7 +72,7 @@ struct _MessageWriter {
     char *start = cur;
     do {
       size_t dig = num % 10;
-      *cur++     = '0' + dig;
+      *cur++ = '0' + dig;
       num /= 10;
     } while (num && cur != end);
     std::reverse(start, cur);
@@ -101,14 +101,14 @@ struct _StackRegistry {
     inline StackLock(StackLock &&o) : _stack(o._stack), _reg(o._reg)
     {
       o._stack = nullptr;
-      o._reg   = nullptr;
+      o._reg = nullptr;
     }
     inline StackLock &operator=(StackLock &&o)
     {
-      _stack   = o._stack;
-      _reg     = o._reg;
+      _stack = o._stack;
+      _reg = o._reg;
       o._stack = nullptr;
-      o._reg   = nullptr;
+      o._reg = nullptr;
       return *this;
     }
     inline ~StackLock()
@@ -144,9 +144,8 @@ struct _StackRegistry {
   void Remove(_Stack *stack)
   {
     tbb::spin_mutex::scoped_lock lock(_stacksMutex);
-    auto it = std::find_if(_stacks.begin(), _stacks.end(), [stack](_StackEntry const &e) {
-      return e.stack == stack;
-    });
+    auto it = std::find_if(
+      _stacks.begin(), _stacks.end(), [stack](_StackEntry const &e) { return e.stack == stack; });
     TF_AXIOM(it != _stacks.end());
     std::swap(*it, _stacks.back());
     _stacks.pop_back();
@@ -158,7 +157,7 @@ struct _StackRegistry {
   {
     _stacksMutex.lock();
     auto it = std::find_if(
-        _stacks.begin(), _stacks.end(), [id](_StackEntry const &e) { return e.id == id; });
+      _stacks.begin(), _stacks.end(), [id](_StackEntry const &e) { return e.id == id; });
     return StackLock(it == _stacks.end() ? nullptr : it->stack, this);
   }
 
@@ -221,22 +220,20 @@ template<class T> struct _FastThreadLocalBase {
 struct _LocalStack : _FastThreadLocalBase<_Stack> {
 };
 
-static bool _TimedTryAcquire(tbb::spin_mutex::scoped_lock &lock,
-                             tbb::spin_mutex &mutex,
-                             int msecToTry = 10)
+static bool _TimedTryAcquire(tbb::spin_mutex::scoped_lock &lock, tbb::spin_mutex &mutex, int msecToTry = 10)
 {
   if (lock.try_acquire(mutex))
     return true;
 
   auto start = std::chrono::high_resolution_clock::now();
-  int msec   = 0;
+  int msec = 0;
   do {
     std::this_thread::yield();
     if (lock.try_acquire(mutex))
       return true;
-    msec = std::chrono::duration_cast<std::chrono::milliseconds>(
-               std::chrono::high_resolution_clock::now() - start)
-               .count();
+    msec = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() -
+                                                                 start)
+             .count();
   } while (msec < msecToTry);
   return false;
 }
@@ -253,8 +250,8 @@ char const *_ComputeAndLockScopeDescriptionStackMsg()
   tbb::spin_mutex::scoped_lock regLock;
   if (!_TimedTryAcquire(regLock, reg._stacksMutex)) {
     writer.Write(
-        "Error: cannot generate TfScopeDescription stacks - "
-        "failed to acquire lock on stack registry mutex.\n");
+      "Error: cannot generate TfScopeDescription stacks - "
+      "failed to acquire lock on stack registry mutex.\n");
     return message;
   }
 
@@ -287,8 +284,8 @@ char const *_ComputeAndLockScopeDescriptionStackMsg()
     tbb::spin_mutex::scoped_lock stackLock;
     if (!_TimedTryAcquire(stackLock, e->stack->mutex)) {
       writer.Write(
-          "Error: cannot write TfScopeDescription stack "
-          "for thread ");
+        "Error: cannot write TfScopeDescription stack "
+        "for thread ");
       writer.Write(e->idStr.c_str());
       writer.Write(" - failed to acquire stack lock.\n\n");
     }
@@ -303,7 +300,7 @@ char const *_ComputeAndLockScopeDescriptionStackMsg()
     }
     writer.Write(" Scope Descriptions\n");
 
-    size_t frame                 = 1;
+    size_t frame = 1;
     TfScopeDescription *curScope = e->stack->head;
     while (curScope) {
       writer.Write("#");
@@ -334,8 +331,8 @@ void TfScopeDescription::_Push()
   // No other thread can modify head, so we can read it without the lock
   // safely here.
   _Stack &stack = _LocalStack::Get();
-  _prev         = stack.head;
-  _localStack   = &stack;
+  _prev = stack.head;
+  _localStack = &stack;
   tbb::spin_mutex::scoped_lock lock(stack.mutex);
   stack.head = this;
 }
@@ -351,23 +348,23 @@ void TfScopeDescription::_Pop() const
 }
 
 TfScopeDescription::TfScopeDescription(std::string const &msg, TfCallContext const &ctx)
-    : _description(msg.c_str()),
-      _context(ctx)
+  : _description(msg.c_str()),
+    _context(ctx)
 {
   _Push();
 }
 
 TfScopeDescription::TfScopeDescription(std::string &&msg, TfCallContext const &ctx)
-    : _ownedString(std::move(msg)),
-      _description(_ownedString->c_str()),
-      _context(ctx)
+  : _ownedString(std::move(msg)),
+    _description(_ownedString->c_str()),
+    _context(ctx)
 {
   _Push();
 }
 
 TfScopeDescription::TfScopeDescription(char const *msg, TfCallContext const &ctx)
-    : _description(msg),
-      _context(ctx)
+  : _description(msg),
+    _context(ctx)
 {
   _Push();
 }
@@ -435,7 +432,7 @@ vector<string> TfGetThisThreadScopeDescriptionStack()
 // From scopeDescriptionPrivate.h
 
 Tf_ScopeDescriptionStackReportLock::Tf_ScopeDescriptionStackReportLock()
-    : _msg(_ComputeAndLockScopeDescriptionStackMsg())
+  : _msg(_ComputeAndLockScopeDescriptionStackMsg())
 {}
 
 Tf_ScopeDescriptionStackReportLock::~Tf_ScopeDescriptionStackReportLock()

@@ -72,8 +72,8 @@ enum UsdInterpolationType {
 /// \hideinitializer
 #define USD_LINEAR_INTERPOLATION_TYPES \
   (GfHalf)(VtArray<GfHalf>)( \
-      float)(VtArray<float>)(double)(VtArray<double>)(SdfTimeCode)(VtArray< \
-                                                                   SdfTimeCode>)(GfMatrix2d)(VtArray<GfMatrix2d>)(GfMatrix3d)(VtArray<GfMatrix3d>)(GfMatrix4d)(VtArray<GfMatrix4d>)(GfVec2d)(VtArray<GfVec2d>)(GfVec2f)(VtArray<GfVec2f>)(GfVec2h)(VtArray<GfVec2h>)(GfVec3d)(VtArray<GfVec3d>)(GfVec3f)(VtArray<GfVec3f>)(GfVec3h)(VtArray<GfVec3h>)(GfVec4d)(VtArray<GfVec4d>)(GfVec4f)(VtArray<GfVec4f>)(GfVec4h)(VtArray<GfVec4h>)(GfQuatd)(VtArray<GfQuatd>)(GfQuatf)(VtArray<GfQuatf>)(GfQuath)(VtArray<GfQuath>)
+    float)(VtArray<float>)(double)(VtArray<double>)(SdfTimeCode)(VtArray<SdfTimeCode>)(GfMatrix2d)(VtArray<GfMatrix2d>)(GfMatrix3d)(VtArray<GfMatrix3d>)(GfMatrix4d)(VtArray<GfMatrix4d>)(GfVec2d)(VtArray<GfVec2d>)(GfVec2f)(VtArray<GfVec2f>)(GfVec2h)(VtArray<GfVec2h>)(GfVec3d)(VtArray<GfVec3d>)(GfVec3f)(VtArray<GfVec3f>)(GfVec3h)(VtArray<GfVec3h>)(GfVec4d)(VtArray<GfVec4d>)(GfVec4f)(VtArray<GfVec4f>)(GfVec4h)(VtArray<GfVec4h>)(GfQuatd)(VtArray<GfQuatd>)(GfQuatf)(VtArray<GfQuatf>)(GfQuath)(VtArray< \
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            GfQuath>)
 
 /// \struct UsdLinearInterpolationTraits
 ///

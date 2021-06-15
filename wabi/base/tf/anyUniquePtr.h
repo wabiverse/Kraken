@@ -66,8 +66,8 @@ class TfAnyUniquePtr {
   {
     if (this != &other) {
       _delete(_ptr);
-      _ptr       = other._ptr;
-      _delete    = other._delete;
+      _ptr = other._ptr;
+      _delete = other._delete;
       other._ptr = nullptr;
     }
     return *this;

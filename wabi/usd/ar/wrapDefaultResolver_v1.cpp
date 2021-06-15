@@ -45,6 +45,6 @@ void wrapDefaultResolver()
 
   class_<This, bases<ArResolver>, boost::noncopyable>("DefaultResolver", no_init)
 
-      .def("SetDefaultSearchPath", &This::SetDefaultSearchPath, args("searchPath"))
-      .staticmethod("SetDefaultSearchPath");
+    .def("SetDefaultSearchPath", &This::SetDefaultSearchPath, args("searchPath"))
+    .staticmethod("SetDefaultSearchPath");
 }

@@ -50,18 +50,17 @@ static NdrTokenMap _GetSdrMetadata(const UsdShadeShader &shaderDef,
   metadata.insert(shaderDefMetadata.begin(), shaderDefMetadata.end());
 
   metadata[SdrNodeMetadata->Primvars] = UsdShadeShaderDefUtils::GetPrimvarNamesMetadataString(
-      metadata, shaderDef.ConnectableAPI());
+    metadata, shaderDef.ConnectableAPI());
 
   return metadata;
 }
 
-NdrNodeUniquePtr UsdShadeShaderDefParserPlugin::Parse(
-    const NdrNodeDiscoveryResult &discoveryResult)
+NdrNodeUniquePtr UsdShadeShaderDefParserPlugin::Parse(const NdrNodeDiscoveryResult &discoveryResult)
 {
   const std::string &rootLayerPath = discoveryResult.resolvedUri;
 
   SdfLayerRefPtr rootLayer = SdfLayer::FindOrOpen(rootLayerPath);
-  UsdStageRefPtr stage     = UsdShadeShaderDefParserPlugin::_cache.FindOneMatching(rootLayer);
+  UsdStageRefPtr stage = UsdShadeShaderDefParserPlugin::_cache.FindOneMatching(rootLayer);
   if (!stage) {
     stage = UsdStage::Open(rootLayer);
     UsdShadeShaderDefParserPlugin::_cache.Insert(stage);
@@ -78,7 +77,7 @@ NdrNodeUniquePtr UsdShadeShaderDefParserPlugin::Parse(
   TfTokenVector identifiers = {discoveryResult.identifier, discoveryResult.subIdentifier};
   for (const TfToken &identifier : identifiers) {
     SdfPath shaderDefPath = SdfPath::AbsoluteRootPath().AppendChild(identifier);
-    shaderDefPrim         = stage->GetPrimAtPath(shaderDefPath);
+    shaderDefPrim = stage->GetPrimAtPath(shaderDefPath);
 
     if (shaderDefPrim) {
       break;
@@ -104,25 +103,25 @@ NdrNodeUniquePtr UsdShadeShaderDefParserPlugin::Parse(
   const std::string &resolvedImplementationUri = nodeUriAssetPath.GetResolvedPath();
   if (resolvedImplementationUri.empty()) {
     TF_RUNTIME_ERROR(
-        "Unable to resolve path @%s@ in shader "
-        "definition file '%s'",
-        nodeUriAssetPath.GetAssetPath().c_str(),
-        rootLayerPath.c_str());
+      "Unable to resolve path @%s@ in shader "
+      "definition file '%s'",
+      nodeUriAssetPath.GetAssetPath().c_str(),
+      rootLayerPath.c_str());
     return NdrParserPlugin::GetInvalidNode(discoveryResult);
   }
 
   return NdrNodeUniquePtr(
-      new SdrShaderNode(discoveryResult.identifier,
-                        discoveryResult.version,
-                        discoveryResult.name,
-                        discoveryResult.family,
-                        discoveryResult.discoveryType, /* discoveryType */
-                        discoveryResult.sourceType,    /* sourceType */
-                        rootLayerPath,
-                        resolvedImplementationUri,
-                        UsdShadeShaderDefUtils::GetShaderProperties(shaderDef.ConnectableAPI()),
-                        _GetSdrMetadata(shaderDef, discoveryResult.metadata),
-                        discoveryResult.sourceCode));
+    new SdrShaderNode(discoveryResult.identifier,
+                      discoveryResult.version,
+                      discoveryResult.name,
+                      discoveryResult.family,
+                      discoveryResult.discoveryType, /* discoveryType */
+                      discoveryResult.sourceType,    /* sourceType */
+                      rootLayerPath,
+                      resolvedImplementationUri,
+                      UsdShadeShaderDefUtils::GetShaderProperties(shaderDef.ConnectableAPI()),
+                      _GetSdrMetadata(shaderDef, discoveryResult.metadata),
+                      discoveryResult.sourceCode));
 }
 
 const NdrTokenVec &UsdShadeShaderDefParserPlugin::GetDiscoveryTypes() const

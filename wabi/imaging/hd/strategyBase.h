@@ -37,7 +37,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-using HdBufferArraySharedPtr      = std::shared_ptr<class HdBufferArray>;
+using HdBufferArraySharedPtr = std::shared_ptr<class HdBufferArray>;
 using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 
 /// \class HdAggregationStrategy

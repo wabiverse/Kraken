@@ -40,7 +40,7 @@ Tf_PyNoticeObjectGenerator::MakeObjectFunc Tf_PyNoticeObjectGenerator::_Lookup(T
 {
   if (!_generators.IsInitialized())
     return 0;
-  string typeName                         = typeid(n).name();
+  string typeName = typeid(n).name();
   map<string, MakeObjectFunc>::iterator i = _generators->find(typeName);
   return i == _generators->end() ? 0 : i->second;
 }
@@ -53,6 +53,6 @@ object Tf_PyNoticeObjectGenerator::Invoke(TfNotice const &n)
 }
 
 TfStaticData<map<string, Tf_PyNoticeObjectGenerator::MakeObjectFunc>>
-    Tf_PyNoticeObjectGenerator::_generators;
+  Tf_PyNoticeObjectGenerator::_generators;
 
 WABI_NAMESPACE_END

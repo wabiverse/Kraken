@@ -71,9 +71,9 @@ class TfToken;
 TF_API
 std::string TfStringPrintf(const char *fmt, ...)
 #ifndef doxygen
-    ARCH_PRINTF_FUNCTION(1, 2)
+  ARCH_PRINTF_FUNCTION(1, 2)
 #endif /* doxygen */
-        ;
+    ;
 
 /// Returns a string formed by a printf()-like specification.
 ///
@@ -92,9 +92,9 @@ std::string TfVStringPrintf(const std::string &fmt, va_list ap);
 TF_API
 std::string TfVStringPrintf(const char *fmt, va_list ap)
 #ifndef doxygen
-    ARCH_PRINTF_FUNCTION(1, 0)
+  ARCH_PRINTF_FUNCTION(1, 0)
 #endif /* doxygen */
-        ;
+    ;
 
 /// Safely create a std::string from a (possibly NULL) char*.
 ///
@@ -343,9 +343,7 @@ std::string TfGetPathName(const std::string &fileName);
 /// every occurrence of \p from with \p to. Correctly handles the case in which
 /// \p to contains \p from.
 TF_API
-std::string TfStringReplace(const std::string &source,
-                            const std::string &from,
-                            const std::string &to);
+std::string TfStringReplace(const std::string &source, const std::string &from, const std::string &to);
 
 /// Concatenates the strings (\p begin, \p end), with default separator.
 ///
@@ -364,7 +362,7 @@ std::string TfStringJoin(ForwardIterator begin, ForwardIterator end, const char 
 
   std::string retVal;
 
-  size_t sum        = 0;
+  size_t sum = 0;
   ForwardIterator i = begin;
   for (i = begin; i != end; ++i)
     sum += i->size();
@@ -412,15 +410,13 @@ std::vector<std::string> TfStringSplit(std::string const &src, std::string const
 /// consecutive delimiters are treated as though they were one, and an empty
 /// input will result in an empty return vector.
 TF_API
-std::vector<std::string> TfStringTokenize(const std::string &source,
-                                          const char *delimiters = " \t\n");
+std::vector<std::string> TfStringTokenize(const std::string &source, const char *delimiters = " \t\n");
 
 /// Breaks the given string apart, returning a set of strings.
 ///
 /// Same as TfStringTokenize, except this one returns a set.
 TF_API
-std::set<std::string> TfStringTokenizeToSet(const std::string &source,
-                                            const char *delimiters = " \t\n");
+std::set<std::string> TfStringTokenizeToSet(const std::string &source, const char *delimiters = " \t\n");
 
 /// Breaks the given quoted string apart, returning a vector of strings.
 ///
@@ -434,7 +430,7 @@ std::set<std::string> TfStringTokenizeToSet(const std::string &source,
 TF_API
 std::vector<std::string> TfQuotedStringTokenize(const std::string &source,
                                                 const char *delimiters = " \t\n",
-                                                std::string *errors    = NULL);
+                                                std::string *errors = NULL);
 
 /// Breaks the given string apart by matching delimiters.
 ///
@@ -451,7 +447,7 @@ std::vector<std::string> TfMatchedStringTokenize(const std::string &source,
                                                  char openDelimiter,
                                                  char closeDelimiter,
                                                  char escapeCharacter = '\0',
-                                                 std::string *errors  = NULL);
+                                                 std::string *errors = NULL);
 
 /// This overloaded version of \c TfMatchedStringTokenize does not take an \c
 /// escapeCharacter parameter but does take \param errors.  It allows \c
@@ -643,10 +639,10 @@ std::string TfStringCatPaths(const std::string &prefix, const std::string &suffi
 inline bool TfIsValidIdentifier(std::string const &identifier)
 {
   char const *p = identifier.c_str();
-  auto letter   = [](unsigned c) { return ((c - 'A') < 26) || ((c - 'a') < 26); };
-  auto number   = [](unsigned c) { return (c - '0') < 10; };
-  auto under    = [](unsigned c) { return c == '_'; };
-  unsigned x    = *p;
+  auto letter = [](unsigned c) { return ((c - 'A') < 26) || ((c - 'a') < 26); };
+  auto number = [](unsigned c) { return (c - '0') < 10; };
+  auto under = [](unsigned c) { return c == '_'; };
+  unsigned x = *p;
   if (!x || number(x)) {
     return false;
   }

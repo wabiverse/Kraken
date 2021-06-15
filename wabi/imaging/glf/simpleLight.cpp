@@ -37,26 +37,26 @@
 WABI_NAMESPACE_BEGIN
 
 GlfSimpleLight::GlfSimpleLight(GfVec4f const &position)
-    : _ambient(0.2, 0.2, 0.2, 1.0),
-      _diffuse(1.0, 1.0, 1.0, 1.0),
-      _specular(1.0, 1.0, 1.0, 1.0),
-      _position(position[0], position[1], position[2], 1.0),
-      _spotDirection(0.0, 0.0, -1.0),
-      _spotCutoff(180.0),
-      _spotFalloff(0.0),
-      _attenuation(1.0, 0.0, 0.0),
-      _isCameraSpaceLight(false),
-      _hasIntensity(true),
-      _hasShadow(false),
-      _shadowResolution(512),
-      _shadowBias(0.0),
-      _shadowBlur(0.0),
-      _shadowIndexStart(0),
-      _shadowIndexEnd(0),
-      _transform(GfMatrix4d().SetIdentity()),
-      _shadowMatrices(std::vector<GfMatrix4d>(1, GfMatrix4d().SetIdentity())),
-      _isDomeLight(false),
-      _id()
+  : _ambient(0.2, 0.2, 0.2, 1.0),
+    _diffuse(1.0, 1.0, 1.0, 1.0),
+    _specular(1.0, 1.0, 1.0, 1.0),
+    _position(position[0], position[1], position[2], 1.0),
+    _spotDirection(0.0, 0.0, -1.0),
+    _spotCutoff(180.0),
+    _spotFalloff(0.0),
+    _attenuation(1.0, 0.0, 0.0),
+    _isCameraSpaceLight(false),
+    _hasIntensity(true),
+    _hasShadow(false),
+    _shadowResolution(512),
+    _shadowBias(0.0),
+    _shadowBlur(0.0),
+    _shadowIndexStart(0),
+    _shadowIndexEnd(0),
+    _transform(GfMatrix4d().SetIdentity()),
+    _shadowMatrices(std::vector<GfMatrix4d>(1, GfMatrix4d().SetIdentity())),
+    _isDomeLight(false),
+    _id()
 {}
 
 GlfSimpleLight::~GlfSimpleLight() = default;
@@ -290,7 +290,7 @@ void GlfSimpleLight::SetPostSurfaceParams(TfToken const &identifier,
                                           std::string const &shaderSource,
                                           VtUCharArray const &shaderParams)
 {
-  _postSurfaceIdentifier   = identifier;
+  _postSurfaceIdentifier = identifier;
   _postSurfaceShaderSource = shaderSource;
   _postSurfaceShaderParams = shaderParams;
 }
@@ -301,15 +301,14 @@ void GlfSimpleLight::SetPostSurfaceParams(TfToken const &identifier,
 
 bool GlfSimpleLight::operator==(const GlfSimpleLight &other) const
 {
-  return _ambient == other._ambient && _diffuse == other._diffuse &&
-         _specular == other._specular && _position == other._position &&
-         _spotDirection == other._spotDirection && _spotCutoff == other._spotCutoff &&
-         _spotFalloff == other._spotFalloff && _attenuation == other._attenuation &&
-         _hasIntensity == other._hasIntensity && _hasShadow == other._hasShadow &&
-         _shadowResolution == other._shadowResolution && _shadowBias == other._shadowBias &&
-         _shadowBlur == other._shadowBlur && _shadowIndexStart == other._shadowIndexStart &&
-         _shadowIndexEnd == other._shadowIndexEnd && _transform == other._transform &&
-         _shadowMatrices == other._shadowMatrices &&
+  return _ambient == other._ambient && _diffuse == other._diffuse && _specular == other._specular &&
+         _position == other._position && _spotDirection == other._spotDirection &&
+         _spotCutoff == other._spotCutoff && _spotFalloff == other._spotFalloff &&
+         _attenuation == other._attenuation && _hasIntensity == other._hasIntensity &&
+         _hasShadow == other._hasShadow && _shadowResolution == other._shadowResolution &&
+         _shadowBias == other._shadowBias && _shadowBlur == other._shadowBlur &&
+         _shadowIndexStart == other._shadowIndexStart && _shadowIndexEnd == other._shadowIndexEnd &&
+         _transform == other._transform && _shadowMatrices == other._shadowMatrices &&
          _isCameraSpaceLight == other._isCameraSpaceLight && _isDomeLight == other._isDomeLight &&
          _domeLightTextureFile == other._domeLightTextureFile &&
          _postSurfaceIdentifier == other._postSurfaceIdentifier &&
@@ -324,12 +323,11 @@ bool GlfSimpleLight::operator!=(const GlfSimpleLight &other) const
 
 std::ostream &operator<<(std::ostream &out, const GlfSimpleLight &v)
 {
-  out << v._ambient << v._diffuse << v._specular << v._position << v._spotDirection
-      << v._spotCutoff << v._spotFalloff << v._attenuation << v._hasIntensity << v._hasShadow
-      << v._shadowResolution << v._shadowBias << v._shadowBlur << v._shadowIndexStart
-      << v._shadowIndexEnd << v._transform << v._isCameraSpaceLight << v._isDomeLight
-      << v._domeLightTextureFile << v._postSurfaceIdentifier << v._postSurfaceShaderSource
-      << v._postSurfaceShaderParams << v._id;
+  out << v._ambient << v._diffuse << v._specular << v._position << v._spotDirection << v._spotCutoff
+      << v._spotFalloff << v._attenuation << v._hasIntensity << v._hasShadow << v._shadowResolution
+      << v._shadowBias << v._shadowBlur << v._shadowIndexStart << v._shadowIndexEnd << v._transform
+      << v._isCameraSpaceLight << v._isDomeLight << v._domeLightTextureFile << v._postSurfaceIdentifier
+      << v._postSurfaceShaderSource << v._postSurfaceShaderParams << v._id;
   for (auto const &m : v._shadowMatrices) {
     out << m;
   }

@@ -48,7 +48,7 @@ class HdCyclesInstancer : public HdInstancer {
   VtMatrix4dArray ComputeTransforms(SdfPath const &prototypeId);
 
   HdTimeSampleArray<VtMatrix4dArray, HD_CYCLES_MOTION_STEPS> SampleInstanceTransforms(
-      SdfPath const &prototypeId);
+    SdfPath const &prototypeId);
 
  private:
   void Sync();

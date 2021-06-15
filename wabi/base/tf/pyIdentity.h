@@ -126,10 +126,10 @@ template<class Ptr, typename Enable = void> struct Tf_PyOwnershipHelper {
 };
 
 template<typename Ptr>
-struct Tf_PyOwnershipHelper<Ptr,
-                            typename boost::enable_if<boost::mpl::and_<
-                                boost::is_same<TfRefPtr<typename Ptr::DataType>, Ptr>,
-                                boost::is_base_of<TfRefBase, typename Ptr::DataType>>>::type> {
+struct Tf_PyOwnershipHelper<
+  Ptr,
+  typename boost::enable_if<boost::mpl::and_<boost::is_same<TfRefPtr<typename Ptr::DataType>, Ptr>,
+                                             boost::is_base_of<TfRefBase, typename Ptr::DataType>>>::type> {
   struct _RefPtrHolder {
     static boost::python::object Get(Ptr const &refptr)
     {
@@ -141,8 +141,7 @@ struct Tf_PyOwnershipHelper<Ptr,
     {
       TfPyLock pyLock;
       if (TfPyIsNone(TfPyGetClassObject<_RefPtrHolder>())) {
-        std::string name = "__" + ArchGetDemangled(typeid(typename Ptr::DataType)) +
-                           "__RefPtrHolder";
+        std::string name = "__" + ArchGetDemangled(typeid(typename Ptr::DataType)) + "__RefPtrHolder";
         name = TfStringReplace(name, "<", "_");
         name = TfStringReplace(name, ">", "_");
         name = TfStringReplace(name, "::", "_");
@@ -221,8 +220,7 @@ typename boost::enable_if<Tf_PyIsRefPtr<Ptr>>::type Tf_PySetPythonIdentity(Ptr c
 {}
 
 template<class Ptr>
-typename boost::disable_if<Tf_PyIsRefPtr<Ptr>>::type Tf_PySetPythonIdentity(Ptr const &ptr,
-                                                                            PyObject *obj)
+typename boost::disable_if<Tf_PyIsRefPtr<Ptr>>::type Tf_PySetPythonIdentity(Ptr const &ptr, PyObject *obj)
 {
   if (ptr.GetUniqueIdentifier()) {
     Tf_PyIdentityHelper::Set(ptr.GetUniqueIdentifier(), obj);

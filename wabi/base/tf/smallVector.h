@@ -46,7 +46,7 @@ WABI_NAMESPACE_BEGIN
 // *all* of TfSmallVector's template parameters.
 class TfSmallVectorBase {
  public:
-  using size_type       = std::uint32_t;
+  using size_type = std::uint32_t;
   using difference_type = std::int32_t;
 
   // Returns the local capacity that may be used without increasing the size
@@ -61,8 +61,7 @@ class TfSmallVectorBase {
  protected:
   // Invoke std::uninitialized_copy that either moves or copies entries,
   // depending on whether the type is move constructible or not.
-  template<typename Iterator>
-  static void _UninitializedMove(Iterator first, Iterator last, Iterator dest)
+  template<typename Iterator> static void _UninitializedMove(Iterator first, Iterator last, Iterator dest)
   {
     std::uninitialized_copy(std::make_move_iterator(first), std::make_move_iterator(last), dest);
   }
@@ -189,7 +188,7 @@ template<typename T, uint32_t N> class TfSmallVector : public TfSmallVectorBase 
   /// \name Iterator Support.
   /// @{
 
-  using iterator       = T *;
+  using iterator = T *;
   using const_iterator = const T *;
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
@@ -268,8 +267,8 @@ template<typename T, uint32_t N> class TfSmallVector : public TfSmallVectorBase 
 
   template<typename _ForwardIterator>
   using _EnableIfForwardIterator = typename std::enable_if<
-      std::is_convertible<typename std::iterator_traits<_ForwardIterator>::iterator_category,
-                          std::forward_iterator_tag>::value>::type;
+    std::is_convertible<typename std::iterator_traits<_ForwardIterator>::iterator_category,
+                        std::forward_iterator_tag>::value>::type;
 
   /// Creates a new vector containing copies of the data between
   /// \p first and \p last.
@@ -323,7 +322,7 @@ template<typename T, uint32_t N> class TfSmallVector : public TfSmallVectorBase 
     // Both this vector and rhs are stored locally.
     if (_IsLocal() && rhs._IsLocal()) {
       TfSmallVector *smaller = size() < rhs.size() ? this : &rhs;
-      TfSmallVector *larger  = size() < rhs.size() ? &rhs : this;
+      TfSmallVector *larger = size() < rhs.size() ? &rhs : this;
 
       // Swap all the entries up to the size of the smaller vector.
       std::swap_ranges(smaller->begin(), smaller->end(), larger->begin());
@@ -354,7 +353,7 @@ template<typename T, uint32_t N> class TfSmallVector : public TfSmallVectorBase 
     // one is stored locally.
     else {
       TfSmallVector *remote = _IsLocal() ? &rhs : this;
-      TfSmallVector *local  = _IsLocal() ? this : &rhs;
+      TfSmallVector *local = _IsLocal() ? this : &rhs;
 
       // Get a pointer to the remote storage. We'll be overwriting the
       // pointer value below, so gotta retain it first.
@@ -520,22 +519,20 @@ template<typename T, uint32_t N> class TfSmallVector : public TfSmallVectorBase 
   /// Copy the range denoted by [\p first, \p last) into this vector
   /// before \p pos.
   ///
-  template<typename ForwardIterator>
-  void insert(iterator pos, ForwardIterator first, ForwardIterator last)
+  template<typename ForwardIterator> void insert(iterator pos, ForwardIterator first, ForwardIterator last)
   {
-    static_assert(
-        std::is_convertible<typename std::iterator_traits<ForwardIterator>::iterator_category,
-                            std::forward_iterator_tag>::value,
-        "Input Iterators not supported.");
+    static_assert(std::is_convertible<typename std::iterator_traits<ForwardIterator>::iterator_category,
+                                      std::forward_iterator_tag>::value,
+                  "Input Iterators not supported.");
 
     // Check for the insert-at-end special case as the very first thing so
     // that we give the compiler the best possible opportunity to
     // eliminate the general case code.
     const bool insertAtEnd = pos == end();
 
-    const long numNewElems         = std::distance(first, last);
+    const long numNewElems = std::distance(first, last);
     const size_type neededCapacity = size() + numNewElems;
-    const size_type nextCapacity   = std::max(_NextCapacity(), neededCapacity);
+    const size_type nextCapacity = std::max(_NextCapacity(), neededCapacity);
 
     // Insertions at the end would be handled correctly by the code below
     // without this special case.  However, insert(end(), f, l) is an
@@ -559,11 +556,11 @@ template<typename T, uint32_t N> class TfSmallVector : public TfSmallVectorBase 
       // each range, [begin(), pos), [first, last), [pos, end()), into
       // the new storage.
 
-      const size_type posI   = std::distance(begin(), pos);
+      const size_type posI = std::distance(begin(), pos);
       value_type *newStorage = _Allocate(nextCapacity);
 
       iterator newPrefixBegin = iterator(newStorage);
-      iterator newPos         = newPrefixBegin + posI;
+      iterator newPos = newPrefixBegin + posI;
       iterator newSuffixBegin = newPos + numNewElems;
       _UninitializedMove(begin(), pos, newPrefixBegin);
       std::uninitialized_copy(first, last, newPos);
@@ -586,11 +583,11 @@ template<typename T, uint32_t N> class TfSmallVector : public TfSmallVectorBase 
       // elements or there is a non-empty suffix of [first, last) that
       // needs to be placed in uninitialized storage.
 
-      const long numMoveElems   = std::distance(pos, end());
+      const long numMoveElems = std::distance(pos, end());
       const long numUninitMoves = std::min(numNewElems, numMoveElems);
-      const long numInitMoves   = numMoveElems - numUninitMoves;
-      const long numUninitNews  = numNewElems - numUninitMoves;
-      const long numInitNews    = numNewElems - numUninitNews;
+      const long numInitMoves = numMoveElems - numUninitMoves;
+      const long numUninitNews = numNewElems - numUninitMoves;
+      const long numInitNews = numNewElems - numUninitNews;
 
       // Move our existing elements out of the way of new elements.
       iterator umSrc = pos + numInitMoves;
@@ -908,7 +905,7 @@ template<typename T, uint32_t N> class TfSmallVector : public TfSmallVectorBase 
     // iterator.
     else if (size() == capacity()) {
       const size_type newCapacity = _NextCapacity();
-      value_type *newStorage      = _Allocate(newCapacity);
+      value_type *newStorage = _Allocate(newCapacity);
 
       value_type *i = const_cast<value_type *>(&*it);
       value_type *d = newStorage;

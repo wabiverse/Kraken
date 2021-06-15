@@ -10,9 +10,7 @@ GlyphIterator::GlyphIterator(const ZepBuffer *buffer, unsigned long offset) : m_
   }
 }
 
-GlyphIterator::GlyphIterator(const GlyphIterator &itr)
-    : m_pBuffer(itr.m_pBuffer),
-      m_index(itr.m_index)
+GlyphIterator::GlyphIterator(const GlyphIterator &itr) : m_pBuffer(itr.m_pBuffer), m_index(itr.m_index)
 {}
 
 long GlyphIterator::Index() const
@@ -68,7 +66,7 @@ bool GlyphIterator::operator!=(const GlyphIterator &rhs) const
 GlyphIterator &GlyphIterator::operator=(const GlyphIterator &rhs)
 {
   m_pBuffer = rhs.m_pBuffer;
-  m_index   = rhs.m_index;
+  m_index = rhs.m_index;
   return *this;
 }
 
@@ -162,7 +160,7 @@ GlyphIterator &GlyphIterator::Clamp()
 
 void GlyphIterator::Invalidate()
 {
-  m_index   = -1;
+  m_index = -1;
   m_pBuffer = nullptr;
 }
 
@@ -227,8 +225,8 @@ GlyphRange::GlyphRange(GlyphIterator a, GlyphIterator b) : first(a), second(b)
 {}
 
 GlyphRange::GlyphRange(const ZepBuffer *pBuffer, ByteRange range)
-    : first(pBuffer, range.first),
-      second(pBuffer, range.second)
+  : first(pBuffer, range.first),
+    second(pBuffer, range.second)
 {}
 
 GlyphRange::GlyphRange()

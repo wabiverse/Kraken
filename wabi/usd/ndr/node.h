@@ -65,7 +65,7 @@ class NdrNode {
           const std::string &definitionURI,
           const std::string &implementationURI,
           NdrPropertyUniquePtrVec &&properties,
-          const NdrTokenMap &metadata   = NdrTokenMap(),
+          const NdrTokenMap &metadata = NdrTokenMap(),
           const std::string &sourceCode = std::string());
 
   /// Destructor.

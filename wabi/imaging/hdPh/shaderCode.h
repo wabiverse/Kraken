@@ -42,15 +42,15 @@ WABI_NAMESPACE_BEGIN
 
 using HdBindingRequestVector = std::vector<class HdBindingRequest>;
 
-using HdPhShaderCodeSharedPtr       = std::shared_ptr<class HdPhShaderCode>;
+using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
 using HdPhShaderCodeSharedPtrVector = std::vector<HdPhShaderCodeSharedPtr>;
 
-using HdPh_MaterialParamVector      = std::vector<class HdPh_MaterialParam>;
-using HdBufferSourceSharedPtr       = std::shared_ptr<class HdBufferSource>;
+using HdPh_MaterialParamVector = std::vector<class HdPh_MaterialParam>;
+using HdBufferSourceSharedPtr = std::shared_ptr<class HdBufferSource>;
 using HdBufferSourceSharedPtrVector = std::vector<HdBufferSourceSharedPtr>;
-using HdBufferArrayRangeSharedPtr   = std::shared_ptr<class HdBufferArrayRange>;
-using HdPhTextureHandleSharedPtr    = std::shared_ptr<class HdPhTextureHandle>;
-using HdComputationSharedPtr        = std::shared_ptr<class HdComputation>;
+using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
+using HdPhTextureHandleSharedPtr = std::shared_ptr<class HdPhTextureHandle>;
+using HdComputationSharedPtr = std::shared_ptr<class HdComputation>;
 
 class HdRenderPassState;
 class HdPh_ResourceBinder;
@@ -186,12 +186,10 @@ class HdPhShaderCode : public std::enable_shared_from_this<HdPhShaderCode> {
   class ResourceContext {
    public:
     HDPH_API
-    void AddSource(HdBufferArrayRangeSharedPtr const &range,
-                   HdBufferSourceSharedPtr const &source);
+    void AddSource(HdBufferArrayRangeSharedPtr const &range, HdBufferSourceSharedPtr const &source);
 
     HDPH_API
-    void AddSources(HdBufferArrayRangeSharedPtr const &range,
-                    HdBufferSourceSharedPtrVector &&sources);
+    void AddSources(HdBufferArrayRangeSharedPtr const &range, HdBufferSourceSharedPtrVector &&sources);
 
     HDPH_API
     void AddComputation(HdBufferArrayRangeSharedPtr const &range,

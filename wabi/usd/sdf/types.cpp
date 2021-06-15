@@ -59,8 +59,8 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<SdfTimeSampleMap>().Alias(TfType::GetRoot(), "SdfTimeSampleMap");
   TfType::Define<SdfVariantSelectionMap>();
   TfType::Define<SdfRelocatesMap>()
-      .Alias(TfType::GetRoot(), "SdfRelocatesMap")
-      .Alias(TfType::GetRoot(), "map<SdfPath, SdfPath>");
+    .Alias(TfType::GetRoot(), "SdfRelocatesMap")
+    .Alias(TfType::GetRoot(), "map<SdfPath, SdfPath>");
   ;
   TfType::Define<SdfUnregisteredValue>();
   TfType::Define<SdfValueBlock>();
@@ -136,7 +136,7 @@ static void _AddToUnitsMaps(_UnitsInfo &info,
                             double scale,
                             const string &category)
 {
-  const char *enumTypeName    = unit.GetType().name();
+  const char *enumTypeName = unit.GetType().name();
   map<int, double> *scalesMap = info._UnitsMap[enumTypeName];
 
   if (!scalesMap) {
@@ -144,8 +144,8 @@ static void _AddToUnitsMaps(_UnitsInfo &info,
   }
   (*scalesMap)[unit.GetValueAsInt()] = scale;
   if (scale == 1.0) {
-    info._DefaultUnitsMap[enumTypeName]                        = unit;
-    info._UnitCategoryToDefaultUnitMap[category]               = unit;
+    info._DefaultUnitsMap[enumTypeName] = unit;
+    info._UnitCategoryToDefaultUnitMap[category] = unit;
     info._UnitTypeNameToUnitCategoryMap[unit.GetType().name()] = category;
   }
 
@@ -159,8 +159,8 @@ static void _AddToUnitsMaps(_UnitsInfo &info,
     typeIndex = i->second;
   }
   info._UnitIndicesTable[typeIndex][unit.GetValueAsInt()] = unit;
-  info._UnitNameTable[typeIndex][unit.GetValueAsInt()]    = unitName;
-  info._UnitNameToUnitMap[unitName]                       = unit;
+  info._UnitNameTable[typeIndex][unit.GetValueAsInt()] = unitName;
+  info._UnitNameToUnitMap[unitName] = unit;
 }
 
 #define _ADD_UNIT_ENUM(r, category, elem) \
@@ -169,8 +169,7 @@ static void _AddToUnitsMaps(_UnitsInfo &info,
 #define _REGISTRY_FUNCTION(r, unused, elem) \
   TF_REGISTRY_FUNCTION_WITH_TAG(TfEnum, _SDF_UNITSLIST_CATEGORY(elem)) \
   { \
-    BOOST_PP_SEQ_FOR_EACH( \
-        _ADD_UNIT_ENUM, _SDF_UNITSLIST_CATEGORY(elem), _SDF_UNITSLIST_TUPLES(elem)); \
+    BOOST_PP_SEQ_FOR_EACH(_ADD_UNIT_ENUM, _SDF_UNITSLIST_CATEGORY(elem), _SDF_UNITSLIST_TUPLES(elem)); \
   }
 
 BOOST_PP_LIST_FOR_EACH(_REGISTRY_FUNCTION, ~, _SDF_UNITS)
@@ -183,8 +182,7 @@ BOOST_PP_LIST_FOR_EACH(_REGISTRY_FUNCTION, ~, _SDF_UNITS)
                   #category);
 
 #define _POPULATE_UNIT_MAPS(r, unused, elem) \
-  BOOST_PP_SEQ_FOR_EACH( \
-      _ADD_UNIT_TO_MAPS, _SDF_UNITSLIST_CATEGORY(elem), _SDF_UNITSLIST_TUPLES(elem))
+  BOOST_PP_SEQ_FOR_EACH(_ADD_UNIT_TO_MAPS, _SDF_UNITSLIST_CATEGORY(elem), _SDF_UNITSLIST_TUPLES(elem))
 
 static _UnitsInfo *_MakeUnitsMaps()
 {
@@ -222,7 +220,7 @@ TfEnum SdfDefaultUnit(const TfToken &typeName)
 const TfEnum &SdfDefaultUnit(const TfEnum &unit)
 {
   static TfEnum empty;
-  _UnitsInfo &info                       = _GetUnitsInfo();
+  _UnitsInfo &info = _GetUnitsInfo();
   map<string, TfEnum>::const_iterator it = info._DefaultUnitsMap.find(unit.GetType().name());
 
   if (it == info._DefaultUnitsMap.end()) {
@@ -235,9 +233,8 @@ const TfEnum &SdfDefaultUnit(const TfEnum &unit)
 const string &SdfUnitCategory(const TfEnum &unit)
 {
   static string empty;
-  _UnitsInfo &info                       = _GetUnitsInfo();
-  map<string, string>::const_iterator it = info._UnitTypeNameToUnitCategoryMap.find(
-      unit.GetType().name());
+  _UnitsInfo &info = _GetUnitsInfo();
+  map<string, string>::const_iterator it = info._UnitTypeNameToUnitCategoryMap.find(unit.GetType().name());
 
   if (it == info._UnitTypeNameToUnitCategoryMap.end()) {
     TF_WARN("Unsupported unit '%s'.", ArchGetDemangled(unit.GetType()).c_str());
@@ -262,8 +259,7 @@ double SdfConvertUnit(const TfEnum &fromUnit, const TfEnum &toUnit)
             TfEnum::GetFullName(toUnit).c_str());
     return 0.0;
   }
-  map<string, map<int, double> *>::const_iterator it = info._UnitsMap.find(
-      fromUnit.GetType().name());
+  map<string, map<int, double> *>::const_iterator it = info._UnitsMap.find(fromUnit.GetType().name());
 
   if (it == info._UnitsMap.end()) {
     TF_WARN("Unsupported unit '%s'.", ArchGetDemangled(fromUnit.GetType()).c_str());
@@ -278,8 +274,7 @@ const string &SdfGetNameForUnit(const TfEnum &unit)
   _UnitsInfo &info = _GetUnitsInfo();
 
   // first check if this is a known type
-  map<string, uint32_t>::const_iterator it = info._UnitTypeIndicesTable.find(
-      unit.GetType().name());
+  map<string, uint32_t>::const_iterator it = info._UnitTypeIndicesTable.find(unit.GetType().name());
   if (it == info._UnitTypeIndicesTable.end()) {
     TF_WARN("Unsupported unit '%s'.", ArchGetDemangled(unit.GetType()).c_str());
     return empty;
@@ -294,7 +289,7 @@ const string &SdfGetNameForUnit(const TfEnum &unit)
 const TfEnum &SdfGetUnitFromName(const std::string &name)
 {
   static TfEnum empty;
-  _UnitsInfo &info                       = _GetUnitsInfo();
+  _UnitsInfo &info = _GetUnitsInfo();
   map<string, TfEnum>::const_iterator it = info._UnitNameToUnitMap.find(name);
 
   if (it == info._UnitNameToUnitMap.end()) {
@@ -357,11 +352,11 @@ static void _AddInvalidTypeError(char const *prefix,
                                  std::vector<std::string> const *keyPath)
 {
   errMsgs->push_back(
-      TfStringPrintf("%s%s%s is not a valid scene description "
-                     "datatype",
-                     prefix,
-                     _GetDiagnosticStringForValue(value).c_str(),
-                     _GetKeyPathText(*keyPath).c_str()));
+    TfStringPrintf("%s%s%s is not a valid scene description "
+                   "datatype",
+                   prefix,
+                   _GetDiagnosticStringForValue(value).c_str(),
+                   _GetKeyPathText(*keyPath).c_str()));
 }
 
 // Function pointer type for converting VtValue holding std::vector<VtValue> to
@@ -392,12 +387,12 @@ bool _ValueVectorToVtArray(VtValue *value,
     VtValue cast = VtValue::Cast<T>(*begin);
     if (cast.IsEmpty()) {
       errMsgs->push_back(
-          TfStringPrintf("failed to cast array element "
-                         "%zu: %s%s to <%s>",
-                         std::distance(valVec.begin(), begin),
-                         _GetDiagnosticStringForValue(*begin).c_str(),
-                         _GetKeyPathText(*keyPath).c_str(),
-                         ArchGetDemangled<T>().c_str()));
+        TfStringPrintf("failed to cast array element "
+                       "%zu: %s%s to <%s>",
+                       std::distance(valVec.begin(), begin),
+                       _GetDiagnosticStringForValue(*begin).c_str(),
+                       _GetKeyPathText(*keyPath).c_str(),
+                       ArchGetDemangled<T>().c_str()));
       allValid = false;
     }
     else {
@@ -422,8 +417,7 @@ static _ValueVectorToVtArrayFn _GetTypedValueVectorToVtArrayFn(TfType const &typ
 
 // Add conversion functions for all SDF_VALUE_TYPES.
 #define _ADD_FN(r, unused, elem) \
-  ret->emplace(TfType::Find<SDF_VALUE_CPP_TYPE(elem)>(), \
-               _ValueVectorToVtArray<SDF_VALUE_CPP_TYPE(elem)>);
+  ret->emplace(TfType::Find<SDF_VALUE_CPP_TYPE(elem)>(), _ValueVectorToVtArray<SDF_VALUE_CPP_TYPE(elem)>);
 
     BOOST_PP_SEQ_FOR_EACH(_ADD_FN, ~, SDF_VALUE_TYPES)
 #undef _ADD_FN
@@ -452,9 +446,9 @@ static bool _ValueVectorToAnyVtArray(VtValue *value,
   // VtArray.  Error.
   if (valVec.empty()) {
     errMsgs->push_back(
-        TfStringPrintf("cannot infer type from empty vector/list%s -- use "
-                       "an empty typed array like VtIntArray/VtStringArray instead",
-                       _GetKeyPathText(*keyPath).c_str()));
+      TfStringPrintf("cannot infer type from empty vector/list%s -- use "
+                     "an empty typed array like VtIntArray/VtStringArray instead",
+                     _GetKeyPathText(*keyPath).c_str()));
     *value = VtValue();
     return false;
   }
@@ -473,9 +467,7 @@ static bool _ValueVectorToAnyVtArray(VtValue *value,
 
 #ifdef WITH_PYTHON
 
-using _PySeqToVtArrayFn = bool (*)(VtValue *,
-                                   std::vector<std::string> *,
-                                   std::vector<std::string> const *);
+using _PySeqToVtArrayFn = bool (*)(VtValue *, std::vector<std::string> *, std::vector<std::string> const *);
 
 template<class T>
 bool _PySeqToVtArray(VtValue *value,
@@ -483,10 +475,10 @@ bool _PySeqToVtArray(VtValue *value,
                      std::vector<std::string> const *keyPath)
 {
   using ElemType = T;
-  bool allValid  = true;
+  bool allValid = true;
   TfPyLock lock;
   TfPyObjWrapper obj = value->UncheckedGet<TfPyObjWrapper>();
-  Py_ssize_t len     = PySequence_Length(obj.ptr());
+  Py_ssize_t len = PySequence_Length(obj.ptr());
   VtArray<T> result(len);
   ElemType *elem = result.data();
   for (Py_ssize_t i = 0; i != len; ++i) {
@@ -502,13 +494,13 @@ bool _PySeqToVtArray(VtValue *value,
     }
     boost::python::extract<ElemType> e(h.get());
     if (!e.check()) {
-      errMsgs->push_back(TfStringPrintf(
-          "failed to cast sequence element "
-          "%s: %s%s to <%s>",
-          TfStringify(i).c_str(),
-          _GetDiagnosticStringForValue(boost::python::extract<VtValue>(h.get())).c_str(),
-          _GetKeyPathText(*keyPath).c_str(),
-          ArchGetDemangled<ElemType>().c_str()));
+      errMsgs->push_back(
+        TfStringPrintf("failed to cast sequence element "
+                       "%s: %s%s to <%s>",
+                       TfStringify(i).c_str(),
+                       _GetDiagnosticStringForValue(boost::python::extract<VtValue>(h.get())).c_str(),
+                       _GetKeyPathText(*keyPath).c_str(),
+                       ArchGetDemangled<ElemType>().c_str()));
       allValid = false;
     }
     else {
@@ -525,14 +517,13 @@ bool _PySeqToVtArray(VtValue *value,
 
 static _PySeqToVtArrayFn _GetTypedPySeqToVtArrayFn(TfType const &type)
 {
-  using FnMap                       = std::unordered_map<TfType, _PySeqToVtArrayFn, TfHash>;
+  using FnMap = std::unordered_map<TfType, _PySeqToVtArrayFn, TfHash>;
   static FnMap *pySeqToVtArrayFnMap = []() {
     FnMap *ret = new FnMap(BOOST_PP_SEQ_SIZE(SDF_VALUE_TYPES));
 
 // Add conversion functions for all SDF_VALUE_TYPES.
 #  define _ADD_FN(r, unused, elem) \
-    ret->emplace(TfType::Find<SDF_VALUE_CPP_TYPE(elem)>(), \
-                 _PySeqToVtArray<SDF_VALUE_CPP_TYPE(elem)>);
+    ret->emplace(TfType::Find<SDF_VALUE_CPP_TYPE(elem)>(), _PySeqToVtArray<SDF_VALUE_CPP_TYPE(elem)>);
 
     BOOST_PP_SEQ_FOR_EACH(_ADD_FN, ~, SDF_VALUE_TYPES)
 #  undef _ADD_FN
@@ -558,8 +549,8 @@ static bool _PyObjToAnyVtArray(VtValue *value,
   TfPyObjWrapper obj = value->UncheckedGet<TfPyObjWrapper>();
 
   if (!PySequence_Check(obj.ptr())) {
-    errMsgs->push_back(TfStringPrintf("cannot convert python object as sequence%s",
-                                      _GetKeyPathText(*keyPath).c_str()));
+    errMsgs->push_back(
+      TfStringPrintf("cannot convert python object as sequence%s", _GetKeyPathText(*keyPath).c_str()));
     *value = VtValue();
     return false;
   }
@@ -569,9 +560,9 @@ static bool _PyObjToAnyVtArray(VtValue *value,
   // VtArray.  Error.
   if (len == 0) {
     errMsgs->push_back(
-        TfStringPrintf("cannot infer type from empty sequence%s -- use"
-                       "an empty typed array like VtIntArray/VtStringArray instead",
-                       _GetKeyPathText(*keyPath).c_str()));
+      TfStringPrintf("cannot infer type from empty sequence%s -- use"
+                     "an empty typed array like VtIntArray/VtStringArray instead",
+                     _GetKeyPathText(*keyPath).c_str()));
     *value = VtValue();
     return false;
   }
@@ -582,15 +573,15 @@ static bool _PyObjToAnyVtArray(VtValue *value,
     if (PyErr_Occurred()) {
       PyErr_Clear();
     }
-    errMsgs->push_back(TfStringPrintf("failed to obtain first element from sequence%s",
-                                      _GetKeyPathText(*keyPath).c_str()));
+    errMsgs->push_back(
+      TfStringPrintf("failed to obtain first element from sequence%s", _GetKeyPathText(*keyPath).c_str()));
     *value = VtValue();
     return false;
   }
   boost::python::extract<VtValue> e(h.get());
   if (!e.check()) {
-    errMsgs->push_back(TfStringPrintf("failed to obtain first element from sequence%s",
-                                      _GetKeyPathText(*keyPath).c_str()));
+    errMsgs->push_back(
+      TfStringPrintf("failed to obtain first element from sequence%s", _GetKeyPathText(*keyPath).c_str()));
     *value = VtValue();
     return false;
   }
@@ -635,7 +626,7 @@ static bool _ConvertToValidMetadataDictValueInternal(VtValue *value,
 #endif  // WITH_PYTHON
   else if (!SdfValueHasValidType(*value)) {
     allValid = false;
-    *value   = VtValue();
+    *value = VtValue();
   }
   return allValid;
 }

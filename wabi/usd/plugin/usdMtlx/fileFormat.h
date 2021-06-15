@@ -53,7 +53,7 @@ class UsdMtlxFileFormat : public SdfFileFormat {
   bool Read(SdfLayer *layer, const std::string &resolvedPath, bool metadataOnly) const override;
   bool WriteToFile(const SdfLayer &layer,
                    const std::string &filePath,
-                   const std::string &comment      = std::string(),
+                   const std::string &comment = std::string(),
                    const FileFormatArguments &args = FileFormatArguments()) const override;
   bool ReadFromString(SdfLayer *layer, const std::string &str) const override;
   bool WriteToString(const SdfLayer &layer,

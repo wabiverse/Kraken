@@ -36,14 +36,12 @@ WABI_NAMESPACE_USING
 
 namespace {
 
-static SdfPath TranslatePathFromNodeToRoot(const PcpNodeRef &sourceNode,
-                                           const SdfPath &pathInNodeNamespace)
+static SdfPath TranslatePathFromNodeToRoot(const PcpNodeRef &sourceNode, const SdfPath &pathInNodeNamespace)
 {
   return PcpTranslatePathFromNodeToRoot(sourceNode, pathInNodeNamespace);
 }
 
-static SdfPath TranslatePathFromRootToNode(const PcpNodeRef &destNode,
-                                           const SdfPath &pathInRootNamespace)
+static SdfPath TranslatePathFromRootToNode(const PcpNodeRef &destNode, const SdfPath &pathInRootNamespace)
 {
   return PcpTranslatePathFromRootToNode(destNode, pathInRootNamespace);
 }
@@ -57,8 +55,6 @@ void wrapPathTranslation()
       arg("sourceNode"),
       arg("pathInNodeNamespace"));
 
-  def("TranslatePathFromRootToNode",
-      TranslatePathFromRootToNode,
-      arg("destNode"),
-      arg("pathInRootNamespace"));
+  def(
+    "TranslatePathFromRootToNode", TranslatePathFromRootToNode, arg("destNode"), arg("pathInRootNamespace"));
 }

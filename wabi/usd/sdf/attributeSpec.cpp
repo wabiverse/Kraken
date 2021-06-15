@@ -73,9 +73,8 @@ SdfAttributeSpecHandle SdfAttributeSpec::New(const SdfPrimSpecHandle &owner,
       TF_CODING_ERROR("Cannot create attribute spec '%s' on the pseudo-root '/'", name.c_str());
     }
     else {
-      TF_CODING_ERROR("Cannot create attribute spec '%s' on <%s>",
-                      name.c_str(),
-                      ownerPtr->GetPath().GetText());
+      TF_CODING_ERROR(
+        "Cannot create attribute spec '%s' on <%s>", name.c_str(), ownerPtr->GetPath().GetText());
     }
     return result;
   }
@@ -87,8 +86,7 @@ SdfAttributeSpecHandle SdfAttributeSpec::New(const SdfPrimSpecHandle &owner,
 
   const SdfLayerHandle layer = ownerPtr->GetLayer();
   if (layer->_ValidateAuthoring()) {
-    const SdfValueTypeName typeInSchema = layer->GetSchema().FindType(
-        typeName.GetAsToken().GetString());
+    const SdfValueTypeName typeInSchema = layer->GetSchema().FindType(typeName.GetAsToken().GetString());
     if (!typeInSchema) {
       TF_CODING_ERROR("Cannot create attribute spec <%s> with invalid type", attrPath.GetText());
       return result;
@@ -102,7 +100,7 @@ SdfAttributeSpecHandle SdfAttributeSpec::New(const SdfPrimSpecHandle &owner,
   const bool hasOnlyRequiredFields = (!custom);
 
   if (!Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::CreateSpec(
-          layer, attrPath, SdfSpecTypeAttribute, hasOnlyRequiredFields)) {
+        layer, attrPath, SdfSpecTypeAttribute, hasOnlyRequiredFields)) {
     return result;
   }
 
@@ -190,9 +188,9 @@ bool SdfJustCreatePrimAttributeInLayer(const SdfLayerHandle &layer,
 {
   if (!attrPath.IsPrimPropertyPath()) {
     TF_CODING_ERROR(
-        "Cannot create prim attribute at path '%s' because "
-        "it is not a prim property path",
-        attrPath.GetText());
+      "Cannot create prim attribute at path '%s' because "
+      "it is not a prim property path",
+      attrPath.GetText());
     return false;
   }
 
@@ -204,16 +202,15 @@ bool SdfJustCreatePrimAttributeInLayer(const SdfLayerHandle &layer,
     return false;
   }
 
-  if (!Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::CreateSpec(
-          layer,
-          attrPath,
-          SdfSpecTypeAttribute,
-          /*hasOnlyRequiredFields=*/!isCustom)) {
+  if (!Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::CreateSpec(layer,
+                                                               attrPath,
+                                                               SdfSpecTypeAttribute,
+                                                               /*hasOnlyRequiredFields=*/!isCustom)) {
     TF_RUNTIME_ERROR(
-        "Failed to create attribute at path '%s' in "
-        "layer @%s@",
-        attrPath.GetText(),
-        layerPtr->GetIdentifier().c_str());
+      "Failed to create attribute at path '%s' in "
+      "layer @%s@",
+      attrPath.GetText(),
+      layerPtr->GetIdentifier().c_str());
     return false;
   }
 

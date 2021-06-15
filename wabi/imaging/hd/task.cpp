@@ -50,8 +50,7 @@ const TfTokenVector &HdTask::GetRenderTags() const
 /// Typically this would be all dirty bits.
 HdDirtyBits HdTask::GetInitialDirtyBitsMask() const
 {
-  return HdChangeTracker::DirtyParams | HdChangeTracker::DirtyCollection |
-         HdChangeTracker::DirtyRenderTags;
+  return HdChangeTracker::DirtyParams | HdChangeTracker::DirtyCollection | HdChangeTracker::DirtyRenderTags;
 }
 
 bool HdTask::_HasTaskContextData(HdTaskContext const *ctx, TfToken const &id)

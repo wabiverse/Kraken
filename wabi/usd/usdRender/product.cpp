@@ -112,8 +112,7 @@ UsdAttribute UsdRenderProduct::GetProductTypeAttr() const
   return GetPrim().GetAttribute(UsdRenderTokens->productType);
 }
 
-UsdAttribute UsdRenderProduct::CreateProductTypeAttr(VtValue const &defaultValue,
-                                                     bool writeSparsely) const
+UsdAttribute UsdRenderProduct::CreateProductTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRenderTokens->productType,
                                     SdfValueTypeNames->Token,
@@ -128,8 +127,7 @@ UsdAttribute UsdRenderProduct::GetProductNameAttr() const
   return GetPrim().GetAttribute(UsdRenderTokens->productName);
 }
 
-UsdAttribute UsdRenderProduct::CreateProductNameAttr(VtValue const &defaultValue,
-                                                     bool writeSparsely) const
+UsdAttribute UsdRenderProduct::CreateProductNameAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRenderTokens->productName,
                                     SdfValueTypeNames->Token,
@@ -151,8 +149,7 @@ UsdRelationship UsdRenderProduct::CreateOrderedVarsRel() const
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -166,11 +163,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRenderProduct::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRenderTokens->productType,
-      UsdRenderTokens->productName,
+    UsdRenderTokens->productType,
+    UsdRenderTokens->productName,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdRenderSettingsBase::GetSchemaAttributeNames(true), localNames);
+    UsdRenderSettingsBase::GetSchemaAttributeNames(true), localNames);
 
   if (includeInherited)
     return allNames;

@@ -94,12 +94,12 @@ class HgiShaderFunction {
   HgiShaderFunctionDesc _descriptor;
 
  private:
-  HgiShaderFunction()        = delete;
+  HgiShaderFunction() = delete;
   HgiShaderFunction &operator=(const HgiShaderFunction &) = delete;
-  HgiShaderFunction(const HgiShaderFunction &)            = delete;
+  HgiShaderFunction(const HgiShaderFunction &) = delete;
 };
 
-using HgiShaderFunctionHandle       = HgiHandle<class HgiShaderFunction>;
+using HgiShaderFunctionHandle = HgiHandle<class HgiShaderFunction>;
 using HgiShaderFunctionHandleVector = std::vector<HgiShaderFunctionHandle>;
 
 WABI_NAMESPACE_END

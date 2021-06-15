@@ -44,8 +44,8 @@ TraceEvent::TimeStamp TraceEvent::GetTimeStamp() const
 double TraceEvent::GetCounterValue() const
 {
   return (_type == _InternalEventType::CounterDelta || _type == _InternalEventType::CounterValue) ?
-             *reinterpret_cast<const double *>(&_payload) :
-             0.0;
+           *reinterpret_cast<const double *>(&_payload) :
+           0.0;
 }
 
 TraceEventData TraceEvent::GetData() const
@@ -62,8 +62,8 @@ TraceEventData TraceEvent::GetData() const
 
   if (_type == _InternalEventType::ScopeData || _type == _InternalEventType::ScopeDataLarge) {
     const void *data = _type == _InternalEventType::ScopeData ?
-                           &_payload :
-                           *reinterpret_cast<const void *const *>(&_payload);
+                         &_payload :
+                         *reinterpret_cast<const void *const *>(&_payload);
     switch (_dataType) {
       case DataType::Boolean:
         return TraceEventData(*reinterpret_cast<const bool *>(data));
@@ -84,8 +84,7 @@ TraceEventData TraceEvent::GetData() const
 
 TraceEvent::TimeStamp TraceEvent::GetStartTimeStamp() const
 {
-  return _type != _InternalEventType::Timespan ? 0 :
-                                                 *reinterpret_cast<const TimeStamp *>(&_payload);
+  return _type != _InternalEventType::Timespan ? 0 : *reinterpret_cast<const TimeStamp *>(&_payload);
 }
 
 TraceEvent::TimeStamp TraceEvent::GetEndTimeStamp() const

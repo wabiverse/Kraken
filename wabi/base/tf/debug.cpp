@@ -49,27 +49,26 @@ WABI_NAMESPACE_BEGIN
 
 static std::atomic<FILE *> &_GetOutputFile()
 {
-  static std::atomic<FILE *> _outputFile{TfGetenv("TF_DEBUG_OUTPUT_FILE") == "stderr" ? stderr :
-                                                                                        stdout};
+  static std::atomic<FILE *> _outputFile{TfGetenv("TF_DEBUG_OUTPUT_FILE") == "stderr" ? stderr : stdout};
   return _outputFile;
 }
 
 static std::atomic<bool> _initialized{false};
 
 static const char *_helpMsg =
-    "Valid options for the TF_DEBUG environment variable are:\n"
-    "\n"
-    "      help               display this help message and exit\n"
-    "      SYM1 [... SYMn]    enable SYM1 through SYMn for debugging\n"
-    "\n"
-    "To disable a symbol for debugging, prepend a '-'; to match all symbols\n"
-    "beginning with a prefix, use 'PREFIX*' (this is the only matching supported).\n"
-    "Note that the order of processing matters.  For example, setting TF_DEBUG to\n"
-    "\n"
-    "      STAF_* SIC_* -SIC_REGISTRY_ENUMS GPT_IK\n"
-    "\n"
-    "enables debugging for any symbol in STAF, all symbols in SIC except for\n"
-    "SIC_REGISTRY_ENUMS and the symbol GPT_IK.\n";
+  "Valid options for the TF_DEBUG environment variable are:\n"
+  "\n"
+  "      help               display this help message and exit\n"
+  "      SYM1 [... SYMn]    enable SYM1 through SYMn for debugging\n"
+  "\n"
+  "To disable a symbol for debugging, prepend a '-'; to match all symbols\n"
+  "beginning with a prefix, use 'PREFIX*' (this is the only matching supported).\n"
+  "Note that the order of processing matters.  For example, setting TF_DEBUG to\n"
+  "\n"
+  "      STAF_* SIC_* -SIC_REGISTRY_ENUMS GPT_IK\n"
+  "\n"
+  "enables debugging for any symbol in STAF, all symbols in SIC except for\n"
+  "SIC_REGISTRY_ENUMS and the symbol GPT_IK.\n";
 
 namespace {
 struct _CheckResult {
@@ -78,8 +77,7 @@ struct _CheckResult {
 };
 }  // namespace
 
-static _CheckResult _CheckSymbolAgainstPatterns(char const *enumName,
-                                                TfSpan<const std::string> patterns)
+static _CheckResult _CheckSymbolAgainstPatterns(char const *enumName, TfSpan<const std::string> patterns)
 {
   _CheckResult result;
 
@@ -126,9 +124,7 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry {
     return TfSingleton<Tf_DebugSymbolRegistry>::GetInstance();
   }
 
-  void _Register(const std::string &name,
-                 TfDebug::_Node *symbolAddr,
-                 const std::string &description)
+  void _Register(const std::string &name, TfDebug::_Node *symbolAddr, const std::string &description)
   {
     TF_DEBUG(TF_DEBUG_REGISTRY).Msg("%s: %s\n", TF_FUNC_NAME().c_str(), name.c_str());
 
@@ -136,12 +132,12 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry {
     if (!_registeredNames.emplace(name, description).second) {
       lock.release();
       TF_FATAL_ERROR(
-          "[TF_DEBUG_ENVIRONMENT_SYMBOL] multiple debug symbol "
-          "definitions for '%s'.  This is usually due to software "
-          "misconfiguration, such as multiple versions of the same "
-          "shared library loaded simultaneously in the process.  "
-          "Please check your build configuration.",
-          name.c_str());
+        "[TF_DEBUG_ENVIRONMENT_SYMBOL] multiple debug symbol "
+        "definitions for '%s'.  This is usually due to software "
+        "misconfiguration, such as multiple versions of the same "
+        "shared library loaded simultaneously in the process.  "
+        "Please check your build configuration.",
+        name.c_str());
     }
 
     // Ensure that the symbol address is known.  We don't need to check
@@ -209,16 +205,15 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry {
           matches->push_back(nameAndNodes.first);
         }
         _namesToExplicitEnabledState[nameAndNodes.first] = check.enabled;
-        TfDebug::_NodeState nodeState                    = check.enabled ? TfDebug::_NodeEnabled :
-                                                                           TfDebug::_NodeDisabled;
+        TfDebug::_NodeState nodeState = check.enabled ? TfDebug::_NodeEnabled : TfDebug::_NodeDisabled;
         for (TfDebug::_Node *n : nameAndNodes.second) {
           n->state.store(nodeState);
         }
         TF_DEBUG(TF_DEBUG_REGISTRY)
-            .Msg("%s: set %s %s\n",
-                 TF_FUNC_NAME().c_str(),
-                 nameAndNodes.first.c_str(),
-                 check.enabled ? "true" : "false");
+          .Msg("%s: set %s %s\n",
+               TF_FUNC_NAME().c_str(),
+               nameAndNodes.first.c_str(),
+               check.enabled ? "true" : "false");
       }
     }
 
@@ -262,10 +257,8 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry {
     for (auto const &nameAndDescr : _registeredNames) {
       if (nameAndDescr.first.size() < 25) {
         std::string padding(25 - nameAndDescr.first.size(), ' ');
-        result += TfStringPrintf("%s%s: %s\n",
-                                 nameAndDescr.first.c_str(),
-                                 padding.c_str(),
-                                 nameAndDescr.second.c_str());
+        result += TfStringPrintf(
+          "%s%s: %s\n", nameAndDescr.first.c_str(), padding.c_str(), nameAndDescr.second.c_str());
       }
       else {
         result += TfStringPrintf("%s:\n%s  %s\n",
@@ -364,8 +357,7 @@ TF_INSTANTIATE_SINGLETON(Tf_DebugSymbolRegistry);
 std::vector<std::string> TfDebug::SetDebugSymbolsByName(const std::string &pattern, bool value)
 {
   std::vector<std::string> matches;
-  Tf_DebugSymbolRegistry::_GetInstance()._SetByPattern(std::string(value ? "" : "-") + pattern,
-                                                       &matches);
+  Tf_DebugSymbolRegistry::_GetInstance()._SetByPattern(std::string(value ? "" : "-") + pattern, &matches);
   return matches;
 }
 
@@ -455,15 +447,15 @@ void TfDebug::_RegisterDebugSymbolImpl(_Node *addr, char const *enumNameCstr, ch
 
   if (!descrip) {
     TF_FATAL_ERROR(
-        "description argument for '%s' "
-        "is NULL",
-        enumName.c_str());
+      "description argument for '%s' "
+      "is NULL",
+      enumName.c_str());
   }
   else if (descrip[0] == '\0') {
     TF_FATAL_ERROR(
-        "description argument for '%s' is empty -- "
-        "add description!",
-        enumName.c_str());
+      "description argument for '%s' is empty -- "
+      "add description!",
+      enumName.c_str());
   }
 
   Tf_DebugSymbolRegistry::_GetInstance()._Register(enumName, addr, descrip);
@@ -472,9 +464,9 @@ void TfDebug::_RegisterDebugSymbolImpl(_Node *addr, char const *enumNameCstr, ch
 void TfDebug::_ComplainAboutInvalidSymbol(const char *name)
 {
   TF_CODING_ERROR(
-      "TF_DEBUG_ENVIRONMENT_SYMBOL(): symbol '%s' "
-      "invalid.  (Check the TF_DEBUG_CODES() macro.)",
-      name);
+    "TF_DEBUG_ENVIRONMENT_SYMBOL(): symbol '%s' "
+    "invalid.  (Check the TF_DEBUG_CODES() macro.)",
+    name);
 }
 
 template<bool B> TfDebug::TimedScopeHelper<B>::TimedScopeHelper(bool enabled, const char *fmt, ...)
@@ -496,8 +488,7 @@ template<bool B> TfDebug::TimedScopeHelper<B>::~TimedScopeHelper()
   if (active) {
     stopwatch.Stop();
 
-    const std::string endStr = TfStringPrintf(
-        "%s: %.3f ms", str.c_str(), stopwatch.GetSeconds() * 1000.0);
+    const std::string endStr = TfStringPrintf("%s: %.3f ms", str.c_str(), stopwatch.GetSeconds() * 1000.0);
     TfDebug::_ScopedOutput(/* start = */ false, endStr.c_str());
   }
 }

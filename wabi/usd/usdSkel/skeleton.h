@@ -190,8 +190,7 @@ class UsdSkelSkeleton : public UsdGeomBoundable {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
-  UsdAttribute CreateJointsAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateJointsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -217,7 +216,7 @@ class UsdSkelSkeleton : public UsdGeomBoundable {
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
   UsdAttribute CreateJointNamesAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -242,7 +241,7 @@ class UsdSkelSkeleton : public UsdGeomBoundable {
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
   UsdAttribute CreateBindTransformsAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -270,7 +269,7 @@ class UsdSkelSkeleton : public UsdGeomBoundable {
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
   UsdAttribute CreateRestTransformsAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

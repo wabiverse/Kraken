@@ -67,11 +67,9 @@ void wrapUsdSkelBinding()
 
   class_<This>("Binding", init<>())
 
-      .def("__init__", make_constructor(&_New))
+    .def("__init__", make_constructor(&_New))
 
-      .def("GetSkeleton", &This::GetSkeleton, return_value_policy<return_by_value>())
+    .def("GetSkeleton", &This::GetSkeleton, return_value_policy<return_by_value>())
 
-      .def("GetSkinningTargets",
-           &This::GetSkinningTargets,
-           return_value_policy<TfPySequenceToList>());
+    .def("GetSkinningTargets", &This::GetSkinningTargets, return_value_policy<TfPySequenceToList>());
 }

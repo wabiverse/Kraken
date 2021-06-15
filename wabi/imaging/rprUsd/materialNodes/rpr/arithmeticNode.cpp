@@ -20,7 +20,7 @@ RprUsd_MaterialNode *RprUsd_CreateRprNode(RprUsd_MaterialBuilderContext *ctx,
 
 template<typename Node> RprUsd_RprNodeInfo *GetNodeInfo()
 {
-  auto ret       = new RprUsd_RprNodeInfo;
+  auto ret = new RprUsd_RprNodeInfo;
   auto &nodeInfo = *ret;
 
   // Take `RPR_MATERIAL_NODE_OP_OPERATION`-like name and convert it into `operation`
@@ -29,22 +29,22 @@ template<typename Node> RprUsd_RprNodeInfo *GetNodeInfo()
     name[i] = std::tolower(name[i], std::locale());
   }
 
-  nodeInfo.name     = "rpr_arithmetic_" + name;
-  nodeInfo.uiName   = std::string("RPR ") + Node::kUiName;
+  nodeInfo.name = "rpr_arithmetic_" + name;
+  nodeInfo.uiName = std::string("RPR ") + Node::kUiName;
   nodeInfo.uiFolder = "Arithmetics";
 
   for (int i = 0; i < Node::kArity; ++i) {
     RprUsd_RprNodeInput input(RprUsd_RprNodeInput::kColor3);
-    input.name        = _tokens->allTokens[i];
-    input.uiName      = TfStringPrintf("Color %d", i);
+    input.name = _tokens->allTokens[i];
+    input.uiName = TfStringPrintf("Color %d", i);
     input.valueString = "0,0,0";
-    input.uiSoftMin   = "0";
-    input.uiSoftMax   = "1";
+    input.uiSoftMin = "0";
+    input.uiSoftMax = "1";
     nodeInfo.inputs.push_back(std::move(input));
   }
 
   RprUsd_RprNodeOutput output(RprUsdMaterialNodeElement::kColor3);
-  output.name   = "out";
+  output.name = "out";
   output.uiName = "out";
   nodeInfo.outputs.push_back(std::move(output));
 
@@ -72,13 +72,12 @@ class RprUsd_RprArithmeticNodeRegistry {
 
     m_lookupOp[op] = m_descs.size();
     m_descs.emplace_back();
-    auto &desc   = m_descs.back();
+    auto &desc = m_descs.back();
     desc.factory = &RprUsd_CreateRprNode<T>;
-    desc.info    = GetNodeInfo<T>();
+    desc.info = GetNodeInfo<T>();
 
     // Register this node in the general node registry
-    RprUsdMaterialRegistry::GetInstance().Register(
-        TfToken(desc.info->name), desc.factory, desc.info);
+    RprUsdMaterialRegistry::GetInstance().Register(TfToken(desc.info->name), desc.factory, desc.info);
   }
 
   RprUsd_RprArithmeticNode *Create(rpr::MaterialNodeArithmeticOperation op,
@@ -126,17 +125,16 @@ namespace {
 #define DEFINE_ARITHMETIC_NODE(op, arity, eval, uiName, doc) \
   class RprUsd_##op##Node : public RprUsd_RprArithmeticNode { \
    public: \
-    RprUsd_##op##Node(RprUsd_MaterialBuilderContext *ctx, \
-                      std::map<TfToken, VtValue> const &parameters) \
-        : RprUsd_RprArithmeticNode(ctx) \
+    RprUsd_##op##Node(RprUsd_MaterialBuilderContext *ctx, std::map<TfToken, VtValue> const &parameters) \
+      : RprUsd_RprArithmeticNode(ctx) \
     { \
       for (auto &entry : parameters) \
         SetInput(entry.first, entry.second); \
     } \
-    static constexpr int kArity                               = arity; \
+    static constexpr int kArity = arity; \
     static constexpr rpr::MaterialNodeArithmeticOperation kOp = op; \
-    static constexpr const char *kOpName                      = #op; \
-    static constexpr const char *kUiName                      = uiName; \
+    static constexpr const char *kOpName = #op; \
+    static constexpr const char *kUiName = uiName; \
     /*static constexpr const char* kDoc = doc;*/ \
    protected: \
     int GetNumArguments() const final \
@@ -158,93 +156,93 @@ namespace {
   }
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_SUB,
-    2,
-    { return VtValue(GetRprFloat(m_args[0]) - GetRprFloat(m_args[1])); },
-    "Subtraction",
-    "Subtraction.");
+  RPR_MATERIAL_NODE_OP_SUB,
+  2,
+  { return VtValue(GetRprFloat(m_args[0]) - GetRprFloat(m_args[1])); },
+  "Subtraction",
+  "Subtraction.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_ADD,
-    2,
-    { return VtValue(GetRprFloat(m_args[0]) + GetRprFloat(m_args[1])); },
-    "Addition",
-    "Addition.");
+  RPR_MATERIAL_NODE_OP_ADD,
+  2,
+  { return VtValue(GetRprFloat(m_args[0]) + GetRprFloat(m_args[1])); },
+  "Addition",
+  "Addition.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_MUL,
-    2,
-    { return VtValue(GfCompMult(GetRprFloat(m_args[0]), GetRprFloat(m_args[1]))); },
-    "Multiplication",
-    "Multiplication.");
+  RPR_MATERIAL_NODE_OP_MUL,
+  2,
+  { return VtValue(GfCompMult(GetRprFloat(m_args[0]), GetRprFloat(m_args[1]))); },
+  "Multiplication",
+  "Multiplication.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_DIV,
-    2,
-    {
-      auto lhs = GetRprFloat(m_args[0]);
-      auto rhs = GetRprFloat(m_args[1]);
-      decltype(lhs) out;
-      for (size_t i = 0; i < out.dimension; ++i) {
-        out[i] = lhs[i] / rhs[i];
-      }
-      return VtValue(out);
-    },
-    "Division",
-    "Division.");
+  RPR_MATERIAL_NODE_OP_DIV,
+  2,
+  {
+    auto lhs = GetRprFloat(m_args[0]);
+    auto rhs = GetRprFloat(m_args[1]);
+    decltype(lhs) out;
+    for (size_t i = 0; i < out.dimension; ++i) {
+      out[i] = lhs[i] / rhs[i];
+    }
+    return VtValue(out);
+  },
+  "Division",
+  "Division.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_NORMALIZE3,
-    1,
-    {
-      auto in = GetRprFloat(m_args[0]);
-      return VtValue(GfVec3f(in[0], in[1], in[2]).GetNormalized());
-    },
-    "Normalize",
-    "Normalize output of color0");
+  RPR_MATERIAL_NODE_OP_NORMALIZE3,
+  1,
+  {
+    auto in = GetRprFloat(m_args[0]);
+    return VtValue(GfVec3f(in[0], in[1], in[2]).GetNormalized());
+  },
+  "Normalize",
+  "Normalize output of color0");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_LENGTH3,
-    1,
-    {
-      auto in = GetRprFloat(m_args[0]);
-      return VtValue(GfVec3f(in[0], in[1], in[2]).GetLength());
-    },
-    "Length",
-    "Length of color0");
+  RPR_MATERIAL_NODE_OP_LENGTH3,
+  1,
+  {
+    auto in = GetRprFloat(m_args[0]);
+    return VtValue(GfVec3f(in[0], in[1], in[2]).GetLength());
+  },
+  "Length",
+  "Length of color0");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_DOT3,
-    2,
-    {
-      auto in0 = GetRprFloat(m_args[0]);
-      auto in1 = GetRprFloat(m_args[1]);
-      return VtValue(GfDot(GfVec3f(in0.data()), GfVec3f(in1.data())));
-    },
-    "Dot",
-    "Dot product of two rgb vectors.");
+  RPR_MATERIAL_NODE_OP_DOT3,
+  2,
+  {
+    auto in0 = GetRprFloat(m_args[0]);
+    auto in1 = GetRprFloat(m_args[1]);
+    return VtValue(GfDot(GfVec3f(in0.data()), GfVec3f(in1.data())));
+  },
+  "Dot",
+  "Dot product of two rgb vectors.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_DOT4,
-    2,
-    {
-      auto in0 = GetRprFloat(m_args[0]);
-      auto in1 = GetRprFloat(m_args[1]);
-      return VtValue(GfDot(in0, in1));
-    },
-    "Dot4",
-    "Dot product of two rgba vectors.");
+  RPR_MATERIAL_NODE_OP_DOT4,
+  2,
+  {
+    auto in0 = GetRprFloat(m_args[0]);
+    auto in1 = GetRprFloat(m_args[1]);
+    return VtValue(GfDot(in0, in1));
+  },
+  "Dot4",
+  "Dot product of two rgba vectors.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_CROSS3,
-    2,
-    {
-      auto in0 = GetRprFloat(m_args[0]);
-      auto in1 = GetRprFloat(m_args[1]);
-      return VtValue(GfCross(GfVec3f(in0.data()), GfVec3f(in1.data())));
-    },
-    "Cross",
-    "Cross product.");
+  RPR_MATERIAL_NODE_OP_CROSS3,
+  2,
+  {
+    auto in0 = GetRprFloat(m_args[0]);
+    auto in1 = GetRprFloat(m_args[1]);
+    return VtValue(GfCross(GfVec3f(in0.data()), GfVec3f(in1.data())));
+  },
+  "Cross",
+  "Cross product.");
 
 #define PER_COMPONENT_UNARY_IMPL(mathFunc) \
   auto in = GetRprFloat(m_args[0]); \
@@ -253,77 +251,77 @@ DEFINE_ARITHMETIC_NODE(
   return VtValue(in);
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_SIN,
-    1,
-    { PER_COMPONENT_UNARY_IMPL(std::sin); },
-    "Sin",
-    "Trigometric sine (in radians).");
+  RPR_MATERIAL_NODE_OP_SIN,
+  1,
+  { PER_COMPONENT_UNARY_IMPL(std::sin); },
+  "Sin",
+  "Trigometric sine (in radians).");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_COS,
-    1,
-    { PER_COMPONENT_UNARY_IMPL(std::cos); },
-    "Cos",
-    "Trigometric cosine (in radians).");
+  RPR_MATERIAL_NODE_OP_COS,
+  1,
+  { PER_COMPONENT_UNARY_IMPL(std::cos); },
+  "Cos",
+  "Trigometric cosine (in radians).");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_TAN,
-    1,
-    { PER_COMPONENT_UNARY_IMPL(std::tan); },
-    "Tan",
-    "Trigometric tangent (in radians).");
+  RPR_MATERIAL_NODE_OP_TAN,
+  1,
+  { PER_COMPONENT_UNARY_IMPL(std::tan); },
+  "Tan",
+  "Trigometric tangent (in radians).");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_LOG,
-    1,
-    { PER_COMPONENT_UNARY_IMPL(std::log); },
-    "Log",
-    "Log() function.");
+  RPR_MATERIAL_NODE_OP_LOG,
+  1,
+  { PER_COMPONENT_UNARY_IMPL(std::log); },
+  "Log",
+  "Log() function.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_ATAN,
-    1,
-    { PER_COMPONENT_UNARY_IMPL(std::atan); },
-    "Atan",
-    "Trigometric arctangent (in radians).");
+  RPR_MATERIAL_NODE_OP_ATAN,
+  1,
+  { PER_COMPONENT_UNARY_IMPL(std::atan); },
+  "Atan",
+  "Trigometric arctangent (in radians).");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_ASIN,
-    1,
-    { PER_COMPONENT_UNARY_IMPL(std::asin); },
-    "Asin",
-    "Trigometric arcsine (in radians).");
+  RPR_MATERIAL_NODE_OP_ASIN,
+  1,
+  { PER_COMPONENT_UNARY_IMPL(std::asin); },
+  "Asin",
+  "Trigometric arcsine (in radians).");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_ACOS,
-    1,
-    { PER_COMPONENT_UNARY_IMPL(std::acos); },
-    "Acos",
-    "Trigometric arccosine (in radians).");
+  RPR_MATERIAL_NODE_OP_ACOS,
+  1,
+  { PER_COMPONENT_UNARY_IMPL(std::acos); },
+  "Acos",
+  "Trigometric arccosine (in radians).");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_ABS,
-    1,
-    { PER_COMPONENT_UNARY_IMPL(std::abs); },
-    "Abs",
-    "Absolute value.");
+  RPR_MATERIAL_NODE_OP_ABS,
+  1,
+  { PER_COMPONENT_UNARY_IMPL(std::abs); },
+  "Abs",
+  "Absolute value.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_FLOOR,
-    1,
-    { PER_COMPONENT_UNARY_IMPL(std::floor); },
-    "Floor",
-    "Mathematical floor value of color0.");
+  RPR_MATERIAL_NODE_OP_FLOOR,
+  1,
+  { PER_COMPONENT_UNARY_IMPL(std::floor); },
+  "Floor",
+  "Mathematical floor value of color0.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_AVERAGE_XYZ,
-    1,
-    {
-      auto in = GetRprFloat(m_args[0]);
-      return VtValue(GfVec4f((in[0] + in[1] + in[2]) / 3.0f));
-    },
-    "Average XYZ",
-    "Average of color0 RGB values.");
+  RPR_MATERIAL_NODE_OP_AVERAGE_XYZ,
+  1,
+  {
+    auto in = GetRprFloat(m_args[0]);
+    return VtValue(GfVec4f((in[0] + in[1] + in[2]) / 3.0f));
+  },
+  "Average XYZ",
+  "Average of color0 RGB values.");
 
 #define PER_COMPONENT_BINARY_IMPL(mathFunc) \
   auto in0 = GetRprFloat(m_args[0]); \
@@ -339,39 +337,39 @@ static float GetAverage(float v0, float v1)
 }
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_AVERAGE,
-    2,
-    { PER_COMPONENT_BINARY_IMPL(GetAverage); },
-    "Average",
-    "Average of color0 and color1.");
+  RPR_MATERIAL_NODE_OP_AVERAGE,
+  2,
+  { PER_COMPONENT_BINARY_IMPL(GetAverage); },
+  "Average",
+  "Average of color0 and color1.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_MIN,
-    2,
-    { PER_COMPONENT_BINARY_IMPL(std::min); },
-    "Min",
-    "Minimum of two inputs.");
+  RPR_MATERIAL_NODE_OP_MIN,
+  2,
+  { PER_COMPONENT_BINARY_IMPL(std::min); },
+  "Min",
+  "Minimum of two inputs.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_MAX,
-    2,
-    { PER_COMPONENT_BINARY_IMPL(std::max); },
-    "Max",
-    "Maximum of two inputs.");
+  RPR_MATERIAL_NODE_OP_MAX,
+  2,
+  { PER_COMPONENT_BINARY_IMPL(std::max); },
+  "Max",
+  "Maximum of two inputs.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_MOD,
-    2,
-    { PER_COMPONENT_BINARY_IMPL(std::fmod); },
-    "Mod",
-    "Modulus of two values.");
+  RPR_MATERIAL_NODE_OP_MOD,
+  2,
+  { PER_COMPONENT_BINARY_IMPL(std::fmod); },
+  "Mod",
+  "Modulus of two values.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_POW,
-    2,
-    { PER_COMPONENT_BINARY_IMPL(std::pow); },
-    "Pow",
-    "Power (color0 ^ color1).");
+  RPR_MATERIAL_NODE_OP_POW,
+  2,
+  { PER_COMPONENT_BINARY_IMPL(std::pow); },
+  "Pow",
+  "Power (color0 ^ color1).");
 
 #define LOGICAL_OPERATION_IMPL(OP) \
   auto lhs = GetRprFloat(m_args[0]); \
@@ -383,181 +381,181 @@ DEFINE_ARITHMETIC_NODE(
   return VtValue(out);
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_LOWER_OR_EQUAL,
-    2,
-    { LOGICAL_OPERATION_IMPL(<=); },
-    "Lower or Equal",
-    "Return 1 if color0 <= color1 else 0.");
+  RPR_MATERIAL_NODE_OP_LOWER_OR_EQUAL,
+  2,
+  { LOGICAL_OPERATION_IMPL(<=); },
+  "Lower or Equal",
+  "Return 1 if color0 <= color1 else 0.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_LOWER,
-    2,
-    { LOGICAL_OPERATION_IMPL(<); },
-    "Lower",
-    "Return 1 if color0 < color1 else 0.");
+  RPR_MATERIAL_NODE_OP_LOWER,
+  2,
+  { LOGICAL_OPERATION_IMPL(<); },
+  "Lower",
+  "Return 1 if color0 < color1 else 0.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_GREATER_OR_EQUAL,
-    2,
-    { LOGICAL_OPERATION_IMPL(>=); },
-    "Greater or Equal",
-    "Return 1 if color0 >= color1 else 0.");
+  RPR_MATERIAL_NODE_OP_GREATER_OR_EQUAL,
+  2,
+  { LOGICAL_OPERATION_IMPL(>=); },
+  "Greater or Equal",
+  "Return 1 if color0 >= color1 else 0.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_GREATER,
-    2,
-    { LOGICAL_OPERATION_IMPL(>); },
-    "Greater",
-    "Return 1 if color0 > color1 else 0.");
+  RPR_MATERIAL_NODE_OP_GREATER,
+  2,
+  { LOGICAL_OPERATION_IMPL(>); },
+  "Greater",
+  "Return 1 if color0 > color1 else 0.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_EQUAL,
-    2,
-    { LOGICAL_OPERATION_IMPL(==); },
-    "Equal",
-    "Return 1 if color0 == color1 else 0.");
+  RPR_MATERIAL_NODE_OP_EQUAL,
+  2,
+  { LOGICAL_OPERATION_IMPL(==); },
+  "Equal",
+  "Return 1 if color0 == color1 else 0.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_NOT_EQUAL,
-    2,
-    { LOGICAL_OPERATION_IMPL(!=); },
-    "Not Equal",
-    "Return 1 if color0 != color1 else 0.");
+  RPR_MATERIAL_NODE_OP_NOT_EQUAL,
+  2,
+  { LOGICAL_OPERATION_IMPL(!=); },
+  "Not Equal",
+  "Return 1 if color0 != color1 else 0.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_AND,
-    2,
-    { LOGICAL_OPERATION_IMPL(&&); },
-    "And",
-    "Return 1 if color0 and color1 are not 0.");
+  RPR_MATERIAL_NODE_OP_AND,
+  2,
+  { LOGICAL_OPERATION_IMPL(&&); },
+  "And",
+  "Return 1 if color0 and color1 are not 0.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_OR,
-    2,
-    { LOGICAL_OPERATION_IMPL(||); },
-    "Or",
-    "Return 1 if color0 or color1 are not 0");
+  RPR_MATERIAL_NODE_OP_OR,
+  2,
+  { LOGICAL_OPERATION_IMPL(||); },
+  "Or",
+  "Return 1 if color0 or color1 are not 0");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_TERNARY,
-    3,
-    {
-      auto in0 = GetRprFloat(m_args[0]);
-      auto in1 = GetRprFloat(m_args[1]);
-      auto in2 = GetRprFloat(m_args[2]);
-      decltype(in0) out;
-      for (size_t i = 0; i < in0.dimension; ++i) {
-        out[i] = in0[i] ? in1[i] : in2[i];
-      }
-      return VtValue(out);
-    },
-    "Ternary",
-    "Return color1 if color0 is 0 else color2.");
+  RPR_MATERIAL_NODE_OP_TERNARY,
+  3,
+  {
+    auto in0 = GetRprFloat(m_args[0]);
+    auto in1 = GetRprFloat(m_args[1]);
+    auto in2 = GetRprFloat(m_args[2]);
+    decltype(in0) out;
+    for (size_t i = 0; i < in0.dimension; ++i) {
+      out[i] = in0[i] ? in1[i] : in2[i];
+    }
+    return VtValue(out);
+  },
+  "Ternary",
+  "Return color1 if color0 is 0 else color2.");
 
 #define SELECT_OPERATION_IMPL(component_index) \
   auto value = GetRprFloat(m_args[0]); \
   return VtValue(GfVec4f(value[component_index]));
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_SELECT_X,
-    1,
-    { SELECT_OPERATION_IMPL(0); },
-    "Select X",
-    "Select the X component.");
+  RPR_MATERIAL_NODE_OP_SELECT_X,
+  1,
+  { SELECT_OPERATION_IMPL(0); },
+  "Select X",
+  "Select the X component.");
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_SELECT_Y,
-    1,
-    { SELECT_OPERATION_IMPL(1); },
-    "Select Y",
-    "Select the Y component.");
+  RPR_MATERIAL_NODE_OP_SELECT_Y,
+  1,
+  { SELECT_OPERATION_IMPL(1); },
+  "Select Y",
+  "Select the Y component.");
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_SELECT_Z,
-    1,
-    { SELECT_OPERATION_IMPL(2); },
-    "Select Z",
-    "Select the Z component.");
+  RPR_MATERIAL_NODE_OP_SELECT_Z,
+  1,
+  { SELECT_OPERATION_IMPL(2); },
+  "Select Z",
+  "Select the Z component.");
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_SELECT_W,
-    1,
-    { SELECT_OPERATION_IMPL(3); },
-    "Select W",
-    "Select the W component.");
+  RPR_MATERIAL_NODE_OP_SELECT_W,
+  1,
+  { SELECT_OPERATION_IMPL(3); },
+  "Select W",
+  "Select the W component.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_SHUFFLE_YZWX,
-    1,
-    {
-      auto in = GetRprFloat(m_args[0]);
-      return VtValue(GfVec4f(in[1], in[2], in[3], in[0]));
-    },
-    "Shuffle YZWX",
-    "Shuffle channels of color0.");
+  RPR_MATERIAL_NODE_OP_SHUFFLE_YZWX,
+  1,
+  {
+    auto in = GetRprFloat(m_args[0]);
+    return VtValue(GfVec4f(in[1], in[2], in[3], in[0]));
+  },
+  "Shuffle YZWX",
+  "Shuffle channels of color0.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_SHUFFLE_ZWXY,
-    1,
-    {
-      auto in = GetRprFloat(m_args[0]);
-      return VtValue(GfVec4f(in[2], in[3], in[0], in[1]));
-    },
-    "Shuffle ZWXY",
-    "Shuffle channels of color0.");
+  RPR_MATERIAL_NODE_OP_SHUFFLE_ZWXY,
+  1,
+  {
+    auto in = GetRprFloat(m_args[0]);
+    return VtValue(GfVec4f(in[2], in[3], in[0], in[1]));
+  },
+  "Shuffle ZWXY",
+  "Shuffle channels of color0.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_SHUFFLE_WXYZ,
-    1,
-    {
-      auto in = GetRprFloat(m_args[0]);
-      return VtValue(GfVec4f(in[3], in[0], in[1], in[2]));
-    },
-    "Shuffle WXYZ",
-    "Shuffle channels of color0.");
+  RPR_MATERIAL_NODE_OP_SHUFFLE_WXYZ,
+  1,
+  {
+    auto in = GetRprFloat(m_args[0]);
+    return VtValue(GfVec4f(in[3], in[0], in[1], in[2]));
+  },
+  "Shuffle WXYZ",
+  "Shuffle channels of color0.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_MAT_MUL,
-    4,
-    {
-      GfMatrix3f mat;
-      for (size_t i = 0; i < mat.numRows; ++i) {
-        auto input = GetRprFloat(m_args[i]);
-        for (size_t j = 0; j < mat.numColumns; ++j) {
-          mat[i][j] = input[j];
-        }
+  RPR_MATERIAL_NODE_OP_MAT_MUL,
+  4,
+  {
+    GfMatrix3f mat;
+    for (size_t i = 0; i < mat.numRows; ++i) {
+      auto input = GetRprFloat(m_args[i]);
+      for (size_t j = 0; j < mat.numColumns; ++j) {
+        mat[i][j] = input[j];
       }
+    }
 
-      auto input = GetRprFloat(m_args[3]);
+    auto input = GetRprFloat(m_args[3]);
 
-      GfVec3f vec(input.data());
-      return VtValue(mat * vec);
-    },
-    "Matrix multiply",
-    "color0,1,2 make a 3x3 matrix, multiply by color3.");
+    GfVec3f vec(input.data());
+    return VtValue(mat * vec);
+  },
+  "Matrix multiply",
+  "color0,1,2 make a 3x3 matrix, multiply by color3.");
 
 DEFINE_ARITHMETIC_NODE(
-    RPR_MATERIAL_NODE_OP_COMBINE,
-    4,
-    {
-      auto in0 = GetRprFloat(m_args[0]);
-      auto in1 = GetRprFloat(m_args[1]);
-      auto in2 = GetRprFloat(m_args[2]);
-      decltype(in0) out(in0[0], in1[1], in2[2], 1.0f);
+  RPR_MATERIAL_NODE_OP_COMBINE,
+  4,
+  {
+    auto in0 = GetRprFloat(m_args[0]);
+    auto in1 = GetRprFloat(m_args[1]);
+    auto in2 = GetRprFloat(m_args[2]);
+    decltype(in0) out(in0[0], in1[1], in2[2], 1.0f);
 
-      if (!m_args[3].IsEmpty()) {
-        auto in3 = GetRprFloat(m_args[3]);
-        out[3]   = in3[3];
-      }
-      return VtValue(out);
-    },
-    "Combine",
-    "Combine to (color0.r, color1.g, color2.b, 1) with three inputs. Combine to (color0.r, "
-    "color1.g, color2.b, color3.a) with four inputs.");
+    if (!m_args[3].IsEmpty()) {
+      auto in3 = GetRprFloat(m_args[3]);
+      out[3] = in3[3];
+    }
+    return VtValue(out);
+  },
+  "Combine",
+  "Combine to (color0.r, color1.g, color2.b, 1) with three inputs. Combine to (color0.r, "
+  "color1.g, color2.b, color3.a) with four inputs.");
 
 }  // namespace
 
 std::unique_ptr<RprUsd_RprArithmeticNode> RprUsd_RprArithmeticNode::Create(
-    rpr::MaterialNodeArithmeticOperation operation,
-    RprUsd_MaterialBuilderContext *ctx,
-    std::map<TfToken, VtValue> const &parameters)
+  rpr::MaterialNodeArithmeticOperation operation,
+  RprUsd_MaterialBuilderContext *ctx,
+  std::map<TfToken, VtValue> const &parameters)
 {
   auto node = RprUsd_RprArithmeticNodeRegistry::GetInstance().Create(operation, ctx, parameters);
   return std::unique_ptr<RprUsd_RprArithmeticNode>(node);
@@ -632,16 +630,15 @@ VtValue RprUsd_RprArithmeticNode::GetOutput()
         }
 
         static const rpr::MaterialNodeInput s_arithmeticNodeInputs[] = {
-            RPR_MATERIAL_INPUT_COLOR0,
-            RPR_MATERIAL_INPUT_COLOR1,
-            RPR_MATERIAL_INPUT_COLOR2,
-            RPR_MATERIAL_INPUT_COLOR3,
+          RPR_MATERIAL_INPUT_COLOR0,
+          RPR_MATERIAL_INPUT_COLOR1,
+          RPR_MATERIAL_INPUT_COLOR2,
+          RPR_MATERIAL_INPUT_COLOR3,
         };
         for (int i = 0; i < numArgs; ++i) {
           if (m_args[i].IsEmpty()) {
-            if (RPR_ERROR_CHECK(
-                    rprNode->SetInput(s_arithmeticNodeInputs[i], 0.0f, 0.0f, 0.0f, 0.0f),
-                    "Failed to set arithmetic node input")) {
+            if (RPR_ERROR_CHECK(rprNode->SetInput(s_arithmeticNodeInputs[i], 0.0f, 0.0f, 0.0f, 0.0f),
+                                "Failed to set arithmetic node input")) {
               return m_output;
             }
           }
@@ -655,11 +652,10 @@ VtValue RprUsd_RprArithmeticNode::GetOutput()
         m_output = VtValue(rprNode);
       }
       else {
-        TF_RUNTIME_ERROR("%s",
-                         RPR_GET_ERROR_MESSAGE(status,
-                                               "Failed to create arithmetic material node",
-                                               m_ctx->rprContext)
-                             .c_str());
+        TF_RUNTIME_ERROR(
+          "%s",
+          RPR_GET_ERROR_MESSAGE(status, "Failed to create arithmetic material node", m_ctx->rprContext)
+            .c_str());
       }
     }
   }

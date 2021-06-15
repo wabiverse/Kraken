@@ -14,7 +14,7 @@ ZepSyntax_Markdown::ZepSyntax_Markdown(ZepBuffer &buffer,
                                        const std::unordered_set<std::string> &keywords,
                                        const std::unordered_set<std::string> &identifiers,
                                        uint32_t flags)
-    : ZepSyntax(buffer, keywords, identifiers, flags)
+  : ZepSyntax(buffer, keywords, identifiers, flags)
 {
   // Don't need default
   m_adornments.clear();
@@ -22,9 +22,9 @@ ZepSyntax_Markdown::ZepSyntax_Markdown(ZepBuffer &buffer,
 
 void ZepSyntax_Markdown::UpdateSyntax()
 {
-  auto &buffer    = m_buffer.GetWorkingBuffer();
+  auto &buffer = m_buffer.GetWorkingBuffer();
   auto itrCurrent = buffer.begin();
-  auto itrEnd     = buffer.end();
+  auto itrEnd = buffer.end();
 
   assert(std::distance(itrCurrent, itrEnd) <= int(m_syntax.size()));
   assert(m_syntax.size() == buffer.size());
@@ -39,11 +39,10 @@ void ZepSyntax_Markdown::UpdateSyntax()
               SyntaxData{type, background});
   };
 
-  auto markSingle =
-      [&](GapBuffer<uint8_t>::const_iterator itrA, ThemeColor type, ThemeColor background) {
-        (m_syntax.begin() + (itrA - buffer.begin()))->foreground = type;
-        (m_syntax.begin() + (itrA - buffer.begin()))->background = background;
-      };
+  auto markSingle = [&](GapBuffer<uint8_t>::const_iterator itrA, ThemeColor type, ThemeColor background) {
+    (m_syntax.begin() + (itrA - buffer.begin()))->foreground = type;
+    (m_syntax.begin() + (itrA - buffer.begin()))->background = background;
+  };
 
   bool lineBegin = true;
 
@@ -57,7 +56,7 @@ void ZepSyntax_Markdown::UpdateSyntax()
     m_processedChar = long(itrCurrent - buffer.begin());
 
     if (*itrCurrent == '#' && lineBegin) {
-      lineBegin     = false;
+      lineBegin = false;
       auto itrStart = itrCurrent;
       while (itrCurrent != itrEnd && *itrCurrent != '\n' && *itrCurrent != 0) {
         itrCurrent++;
@@ -66,7 +65,7 @@ void ZepSyntax_Markdown::UpdateSyntax()
     }
     else {
       if (*itrCurrent == '[') {
-        int inCount   = 0;
+        int inCount = 0;
         auto itrStart = itrCurrent;
         while (itrCurrent != itrEnd && *itrCurrent != '\n' && *itrCurrent != 0) {
           if (*itrCurrent == '[') {
@@ -92,7 +91,7 @@ void ZepSyntax_Markdown::UpdateSyntax()
 
   // If we got here, we sucessfully completed
   // Reset the target to the beginning
-  m_targetChar    = long(0);
+  m_targetChar = long(0);
   m_processedChar = long(buffer.size() - 1);
 }
 

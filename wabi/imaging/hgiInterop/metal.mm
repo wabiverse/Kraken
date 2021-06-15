@@ -50,7 +50,7 @@ static bool _ProcessGLErrors(bool silent = false)
   // is called from an invalid context.
   int watchDogCount = 0;
   while ((watchDogCount++ < 256) && ((error = glGetError()) != GL_NO_ERROR)) {
-    foundError                 = true;
+    foundError = true;
     const GLubyte *errorString = gluErrorString(error);
 
     std::ostringstream errorMessage;
@@ -93,7 +93,7 @@ static GLuint _compileShader(GLchar const *const shaderSource, GLenum shaderType
   GLchar versionString[sizeof(versionTemplate) + 8];
   snprintf(versionString, sizeof(versionString), versionTemplate, version);
 
-  GLuint s                           = glCreateShader(shaderType);
+  GLuint s = glCreateShader(shaderType);
   GLchar const *const sourceArray[2] = {versionString, shaderSource};
   glShaderSource(s, 2, sourceArray, NULL);
   glCompileShader(s);
@@ -148,8 +148,8 @@ void HgiInteropMetal::_CreateShaderContext(int32_t vertexSource,
   shader.posAttrib = glGetAttribLocation(program, "inPosition");
   shader.texAttrib = glGetAttribLocation(program, "inTexCoord");
 
-  shader.samplerColorLoc    = glGetUniformLocation(program, "interopTexture");
-  shader.samplerDepthLoc    = glGetUniformLocation(program, "depthTexture");
+  shader.samplerColorLoc = glGetUniformLocation(program, "interopTexture");
+  shader.samplerDepthLoc = glGetUniformLocation(program, "depthTexture");
   shader.blitTexSizeUniform = glGetUniformLocation(program, "texSize");
 
   shader.vao = 0;
@@ -163,15 +163,11 @@ void HgiInteropMetal::_CreateShaderContext(int32_t vertexSource,
 
   if (shader.vao) {
     glEnableVertexAttribArray(shader.posAttrib);
-    glVertexAttribPointer(shader.posAttrib,
-                          2,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          sizeof(Vertex),
-                          (void *)(offsetof(Vertex, position)));
+    glVertexAttribPointer(
+      shader.posAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(offsetof(Vertex, position)));
     glEnableVertexAttribArray(shader.texAttrib);
     glVertexAttribPointer(
-        shader.texAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(offsetof(Vertex, uv)));
+      shader.texAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(offsetof(Vertex, uv)));
   }
 
   Vertex v[12] = {{{-1, -1}, {0, 0}},
@@ -201,7 +197,7 @@ void HgiInteropMetal::_CreateShaderContext(int32_t vertexSource,
 HgiInteropMetal::HgiInteropMetal(Hgi *hgi) : _hgiMetal(nullptr)
 {
   _hgiMetal = static_cast<HgiMetal *>(hgi);
-  _device   = _hgiMetal->GetPrimaryDevice();
+  _device = _hgiMetal->GetPrimaryDevice();
 
   NSError *error = NULL;
 
@@ -215,86 +211,86 @@ HgiInteropMetal::HgiInteropMetal(Hgi *hgi) : _hgiMetal(nullptr)
   // Load our common vertex shader. This is used by both the fragment shaders
   // below
   static GLchar const *const vertexShader =
-      "#if __VERSION__ >= 140\n"
-      "in vec2 inPosition;\n"
-      "in vec2 inTexCoord;\n"
-      "out vec2 texCoord;\n"
-      "#else\n"
-      "attribute vec2 inPosition;\n"
-      "attribute vec2 inTexCoord;\n"
-      "varying vec2 texCoord;\n"
-      "#endif\n"
-      "\n"
-      "void main()\n"
-      "{\n"
-      "    texCoord = inTexCoord;\n"
-      "    gl_Position = vec4(inPosition, 0.0, 1.0);\n"
-      "}\n";
+    "#if __VERSION__ >= 140\n"
+    "in vec2 inPosition;\n"
+    "in vec2 inTexCoord;\n"
+    "out vec2 texCoord;\n"
+    "#else\n"
+    "attribute vec2 inPosition;\n"
+    "attribute vec2 inTexCoord;\n"
+    "varying vec2 texCoord;\n"
+    "#endif\n"
+    "\n"
+    "void main()\n"
+    "{\n"
+    "    texCoord = inTexCoord;\n"
+    "    gl_Position = vec4(inPosition, 0.0, 1.0);\n"
+    "}\n";
 
   GLuint vs = _compileShader(vertexShader, GL_VERTEX_SHADER);
 
   static GLchar const *const fragmentShaderColor =
-      "#if __VERSION__ >= 140\n"
-      "in vec2         texCoord;\n"
-      "out vec4        fragColor;\n"
-      "#else\n"
-      "varying vec2    texCoord;\n"
-      "#endif\n"
-      "\n"
-      // A GL_TEXTURE_RECTANGLE
-      "uniform sampler2DRect interopTexture;\n"
-      "\n"
-      // The dimensions of the source texture. The sampler coordinates for
-      // a GL_TEXTURE_RECTANGLE are in pixels,
-      // rather than the usual normalised 0..1 range.
-      "uniform vec2 texSize;\n"
-      "\n"
-      "void main(void)\n"
-      "{\n"
-      "    vec2 uv = vec2(texCoord.x, 1.0 - texCoord.y) * texSize;\n"
-      "#if __VERSION__ >= 140\n"
-      "    fragColor = texture(interopTexture, uv.st);\n"
-      "#else\n"
-      "    gl_FragColor = texture2DRect(interopTexture, uv.st);\n"
-      "#endif\n"
-      "}\n";
+    "#if __VERSION__ >= 140\n"
+    "in vec2         texCoord;\n"
+    "out vec4        fragColor;\n"
+    "#else\n"
+    "varying vec2    texCoord;\n"
+    "#endif\n"
+    "\n"
+    // A GL_TEXTURE_RECTANGLE
+    "uniform sampler2DRect interopTexture;\n"
+    "\n"
+    // The dimensions of the source texture. The sampler coordinates for
+    // a GL_TEXTURE_RECTANGLE are in pixels,
+    // rather than the usual normalised 0..1 range.
+    "uniform vec2 texSize;\n"
+    "\n"
+    "void main(void)\n"
+    "{\n"
+    "    vec2 uv = vec2(texCoord.x, 1.0 - texCoord.y) * texSize;\n"
+    "#if __VERSION__ >= 140\n"
+    "    fragColor = texture(interopTexture, uv.st);\n"
+    "#else\n"
+    "    gl_FragColor = texture2DRect(interopTexture, uv.st);\n"
+    "#endif\n"
+    "}\n";
 
   static GLchar const *const fragmentShaderColorDepth =
-      "#if __VERSION__ >= 140\n"
-      "in vec2         texCoord;\n"
-      "out vec4        fragColor;\n"
-      "#else\n"
-      "varying vec2    texCoord;\n"
-      "#endif\n"
-      "\n"
-      // A GL_TEXTURE_RECTANGLE
-      "uniform sampler2DRect interopTexture;\n"
-      "uniform sampler2DRect depthTexture;\n"
-      "\n"
-      // The dimensions of the source texture. The sampler coordinates for
-      // a GL_TEXTURE_RECTANGLE are in pixels,
-      // rather than the usual normalised 0..1 range.
-      "uniform vec2 texSize;\n"
-      "\n"
-      "void main(void)\n"
-      "{\n"
-      "    vec2 uv = vec2(texCoord.x, 1.0 - texCoord.y) * texSize;\n"
-      "#if __VERSION__ >= 140\n"
-      "    vec4 encodedDepth = texture(depthTexture, uv.st);\n"
-      "#else\n"
-      "    vec4 encodedDepth = texture2DRect(depthTexture, uv.st);\n"
-      "#endif\n"
-      "    float depth = dot(encodedDepth,\n"
-      "        vec4(1.0, 1 / 255.0, 1 / 65025.0, 1 / 16581375.0) );\n"
-      "#if __VERSION__ >= 140\n"
-      "    fragColor = texture(interopTexture, uv.st);\n"
-      "#else\n"
-      "    gl_FragColor = texture2DRect(interopTexture, uv.st);\n"
-      "#endif\n"
-      "    gl_FragDepth = depth;\n"
-      "}\n";
+    "#if __VERSION__ >= 140\n"
+    "in vec2         texCoord;\n"
+    "out vec4        fragColor;\n"
+    "#else\n"
+    "varying vec2    texCoord;\n"
+    "#endif\n"
+    "\n"
+    // A GL_TEXTURE_RECTANGLE
+    "uniform sampler2DRect interopTexture;\n"
+    "uniform sampler2DRect depthTexture;\n"
+    "\n"
+    // The dimensions of the source texture. The sampler coordinates for
+    // a GL_TEXTURE_RECTANGLE are in pixels,
+    // rather than the usual normalised 0..1 range.
+    "uniform vec2 texSize;\n"
+    "\n"
+    "void main(void)\n"
+    "{\n"
+    "    vec2 uv = vec2(texCoord.x, 1.0 - texCoord.y) * texSize;\n"
+    "#if __VERSION__ >= 140\n"
+    "    vec4 encodedDepth = texture(depthTexture, uv.st);\n"
+    "#else\n"
+    "    vec4 encodedDepth = texture2DRect(depthTexture, uv.st);\n"
+    "#endif\n"
+    "    float depth = dot(encodedDepth,\n"
+    "        vec4(1.0, 1 / 255.0, 1 / 65025.0, 1 / 16581375.0) );\n"
+    "#if __VERSION__ >= 140\n"
+    "    fragColor = texture(interopTexture, uv.st);\n"
+    "#else\n"
+    "    gl_FragColor = texture2DRect(interopTexture, uv.st);\n"
+    "#endif\n"
+    "    gl_FragDepth = depth;\n"
+    "}\n";
 
-  GLuint fsColor      = _compileShader(fragmentShaderColor, GL_FRAGMENT_SHADER);
+  GLuint fsColor = _compileShader(fragmentShaderColor, GL_FRAGMENT_SHADER);
   GLuint fsColorDepth = _compileShader(fragmentShaderColorDepth, GL_FRAGMENT_SHADER);
 
   _CreateShaderContext(vs, fsColor, _shaderProgramContext[ShaderContextColor]);
@@ -312,44 +308,44 @@ HgiInteropMetal::HgiInteropMetal(Hgi *hgi) : _hgiMetal(nullptr)
 
   // Load all the default shader files
   NSString *shaderSource =
-      @"#include <metal_stdlib>\n"
-       "#include <simd/simd.h>\n"
-       "\n"
-       "using namespace metal;\n"
-       "\n"
-       // Depth buffer copy function
-       "kernel void copyDepth(depth2d<float, access::read> texIn,\n"
-       "                      texture2d<float, access::write> texOut,\n"
-       "                      uint2 gid [[thread_position_in_grid]])\n"
-       "{\n"
-       "    if(gid.x >= texOut.get_width() || gid.y >= texOut.get_height())\n"
-       "        return;\n"
-       "    float depth = texIn.read(gid);\n"
-       // This works around an issue with AMD Vega incorrectly resolving
-       // depth buffers when there's an empty render target performing the
-       // load/resolve
-       "    float maxDepth = 1.0f - FLT_EPSILON;\n"
-       "    depth = depth == 0.0f?maxDepth:min(maxDepth, depth);\n"
-       "    float4 encodedDepth =\n"
-       "        float4(1.0f, 255.0f, 65025.0f, 16581375.0f) * depth;\n"
-       "    encodedDepth = fract(encodedDepth);\n"
-       "    encodedDepth -= encodedDepth.yzww *\n"
-       "        float4(1.0 / 255.0, 1.0 / 255.0, 1.0 / 255.0, 0.0);\n"
-       "    texOut.write(encodedDepth, gid);\n"
-       "}\n"
-       "\n"
-       "kernel void copyColour(\n"
-       "    texture2d<float, access::read> texIn,\n"
-       "    texture2d<float, access::write> texOut,\n"
-       "    uint2 gid [[thread_position_in_grid]])\n"
-       "{\n"
-       "    if(gid.x >= texOut.get_width() || gid.y >= texOut.get_height())\n"
-       "        return;\n"
-       "    texOut.write(texIn.read(gid), gid);\n"
-       "}\n";
+    @"#include <metal_stdlib>\n"
+     "#include <simd/simd.h>\n"
+     "\n"
+     "using namespace metal;\n"
+     "\n"
+     // Depth buffer copy function
+     "kernel void copyDepth(depth2d<float, access::read> texIn,\n"
+     "                      texture2d<float, access::write> texOut,\n"
+     "                      uint2 gid [[thread_position_in_grid]])\n"
+     "{\n"
+     "    if(gid.x >= texOut.get_width() || gid.y >= texOut.get_height())\n"
+     "        return;\n"
+     "    float depth = texIn.read(gid);\n"
+     // This works around an issue with AMD Vega incorrectly resolving
+     // depth buffers when there's an empty render target performing the
+     // load/resolve
+     "    float maxDepth = 1.0f - FLT_EPSILON;\n"
+     "    depth = depth == 0.0f?maxDepth:min(maxDepth, depth);\n"
+     "    float4 encodedDepth =\n"
+     "        float4(1.0f, 255.0f, 65025.0f, 16581375.0f) * depth;\n"
+     "    encodedDepth = fract(encodedDepth);\n"
+     "    encodedDepth -= encodedDepth.yzww *\n"
+     "        float4(1.0 / 255.0, 1.0 / 255.0, 1.0 / 255.0, 0.0);\n"
+     "    texOut.write(encodedDepth, gid);\n"
+     "}\n"
+     "\n"
+     "kernel void copyColour(\n"
+     "    texture2d<float, access::read> texIn,\n"
+     "    texture2d<float, access::write> texOut,\n"
+     "    uint2 gid [[thread_position_in_grid]])\n"
+     "{\n"
+     "    if(gid.x >= texOut.get_width() || gid.y >= texOut.get_height())\n"
+     "        return;\n"
+     "    texOut.write(texIn.read(gid), gid);\n"
+     "}\n";
 
   MTLCompileOptions *options = [[MTLCompileOptions alloc] init];
-  options.fastMathEnabled    = YES;
+  options.fastMathEnabled = YES;
 
   _defaultLibrary = [_device newLibraryWithSource:shaderSource options:options error:&error];
 
@@ -367,40 +363,35 @@ HgiInteropMetal::HgiInteropMetal(Hgi *hgi) : _hgiMetal(nullptr)
 
   MTLAutoreleasedComputePipelineReflection *reflData = 0;
 
-  MTLComputePipelineDescriptor *computePipelineStateDescriptor =
-      [[MTLComputePipelineDescriptor alloc] init];
+  MTLComputePipelineDescriptor *computePipelineStateDescriptor = [[MTLComputePipelineDescriptor alloc] init];
 
   computePipelineStateDescriptor.computeFunction = _computeDepthCopyProgram;
   HGIMETAL_DEBUG_LABEL(computePipelineStateDescriptor, "Interop depth blit");
 
   // Create a new Compute pipeline state object
-  _computePipelineStateDepth = [_device
-      newComputePipelineStateWithDescriptor:computePipelineStateDescriptor
-                                    options:MTLPipelineOptionNone
-                                 reflection:reflData
-                                      error:&error];
+  _computePipelineStateDepth = [_device newComputePipelineStateWithDescriptor:computePipelineStateDescriptor
+                                                                      options:MTLPipelineOptionNone
+                                                                   reflection:reflData
+                                                                        error:&error];
 
   if (!_computePipelineStateDepth) {
     NSString *errStr = [error localizedDescription];
-    TF_FATAL_CODING_ERROR("Failed to create compute pipeline state, error %s",
-                          [errStr UTF8String]);
+    TF_FATAL_CODING_ERROR("Failed to create compute pipeline state, error %s", [errStr UTF8String]);
   }
 
   computePipelineStateDescriptor.computeFunction = _computeColorCopyProgram;
   HGIMETAL_DEBUG_LABEL(computePipelineStateDescriptor, "Interop color blit");
 
   // Create a new Compute pipeline state object
-  _computePipelineStateColor = [_device
-      newComputePipelineStateWithDescriptor:computePipelineStateDescriptor
-                                    options:MTLPipelineOptionNone
-                                 reflection:reflData
-                                      error:&error];
+  _computePipelineStateColor = [_device newComputePipelineStateWithDescriptor:computePipelineStateDescriptor
+                                                                      options:MTLPipelineOptionNone
+                                                                   reflection:reflData
+                                                                        error:&error];
   [computePipelineStateDescriptor release];
 
   if (!_computePipelineStateColor) {
     NSString *errStr = [error localizedDescription];
-    TF_FATAL_CODING_ERROR("Failed to create compute pipeline state, error %s",
-                          [errStr UTF8String]);
+    TF_FATAL_CODING_ERROR("Failed to create compute pipeline state, error %s", [errStr UTF8String]);
   }
 
   CVReturn cvret;
@@ -414,13 +405,12 @@ HgiInteropMetal::HgiInteropMetal(Hgi *hgi) : _hgiMetal(nullptr)
   _cvmtlColorTexture = nil;
   _cvmtlDepthTexture = nil;
 
-  _mtlAliasedColorTexture             = nil;
+  _mtlAliasedColorTexture = nil;
   _mtlAliasedDepthRegularFloatTexture = nil;
 
-  CGLContextObj glctx             = [_currentOpenGLContext CGLContextObj];
-  CGLPixelFormatObj glPixelFormat = [[[NSOpenGLContext currentContext] pixelFormat]
-      CGLPixelFormatObj];
-  cvret                           = CVOpenGLTextureCacheCreate(kCFAllocatorDefault,
+  CGLContextObj glctx = [_currentOpenGLContext CGLContextObj];
+  CGLPixelFormatObj glPixelFormat = [[[NSOpenGLContext currentContext] pixelFormat] CGLPixelFormatObj];
+  cvret = CVOpenGLTextureCacheCreate(kCFAllocatorDefault,
                                      nil,
                                      (__bridge CGLContextObj _Nonnull)(glctx),
                                      glPixelFormat,
@@ -430,12 +420,12 @@ HgiInteropMetal::HgiInteropMetal(Hgi *hgi) : _hgiMetal(nullptr)
     TF_FATAL_CODING_ERROR("Failed to create an OpenGL texture cache for Metal/GL interop");
   }
 
-  _pixelBuffer      = nil;
-  _depthBuffer      = nil;
+  _pixelBuffer = nil;
+  _depthBuffer = nil;
   _cvglColorTexture = nil;
   _cvglDepthTexture = nil;
-  _glColorTexture   = 0;
-  _glDepthTexture   = 0;
+  _glColorTexture = 0;
+  _glDepthTexture = 0;
 
   _SetAttachmentSize(256, 256);
 }
@@ -494,8 +484,8 @@ void HgiInteropMetal::_ValidateGLContext()
 {
   if (_currentOpenGLContext != [NSOpenGLContext currentContext]) {
     TF_FATAL_CODING_ERROR(
-        "Current OpenGL context does not match that when HgiInteropMetal "
-        "was created");
+      "Current OpenGL context does not match that when HgiInteropMetal "
+      "was created");
   }
 }
 
@@ -536,21 +526,21 @@ void HgiInteropMetal::_SetAttachmentSize(int width, int height)
 
   // Create the OpenGL texture for the color buffer
   cvret = CVOpenGLTextureCacheCreateTextureFromImage(
-      kCFAllocatorDefault, _cvglTextureCache, _pixelBuffer, nil, &_cvglColorTexture);
+    kCFAllocatorDefault, _cvglTextureCache, _pixelBuffer, nil, &_cvglColorTexture);
   if (cvret != kCVReturnSuccess) {
     TF_FATAL_CODING_ERROR(
-        "Failed to create the shared OpenGL color texture "
-        "for Metal/GL interop");
+      "Failed to create the shared OpenGL color texture "
+      "for Metal/GL interop");
   }
   _glColorTexture = CVOpenGLTextureGetName(_cvglColorTexture);
 
   // Create the OpenGL texture for the depth buffer
   cvret = CVOpenGLTextureCacheCreateTextureFromImage(
-      kCFAllocatorDefault, _cvglTextureCache, _depthBuffer, nil, &_cvglDepthTexture);
+    kCFAllocatorDefault, _cvglTextureCache, _depthBuffer, nil, &_cvglDepthTexture);
   if (cvret != kCVReturnSuccess) {
     TF_FATAL_CODING_ERROR(
-        "Failed to create the shared OpenGL depth texture "
-        "for Metal/GL interop");
+      "Failed to create the shared OpenGL depth texture "
+      "for Metal/GL interop");
   }
   _glDepthTexture = CVOpenGLTextureGetName(_cvglDepthTexture);
 
@@ -558,49 +548,46 @@ void HgiInteropMetal::_SetAttachmentSize(int width, int height)
   NSDictionary *metalTextureProperties = @{
     (__bridge NSString *)kCVMetalTextureCacheMaximumTextureAgeKey : @0,
   };
-  cvret = CVMetalTextureCacheCreateTextureFromImage(
-      kCFAllocatorDefault,
-      _cvmtlTextureCache,
-      _pixelBuffer,
-      (__bridge CFDictionaryRef)metalTextureProperties,
-      MTLPixelFormatBGRA8Unorm,
-      width,
-      height,
-      0,
-      &_cvmtlColorTexture);
+  cvret = CVMetalTextureCacheCreateTextureFromImage(kCFAllocatorDefault,
+                                                    _cvmtlTextureCache,
+                                                    _pixelBuffer,
+                                                    (__bridge CFDictionaryRef)metalTextureProperties,
+                                                    MTLPixelFormatBGRA8Unorm,
+                                                    width,
+                                                    height,
+                                                    0,
+                                                    &_cvmtlColorTexture);
   if (cvret != kCVReturnSuccess) {
     TF_FATAL_CODING_ERROR(
-        "Failed to create the shared Metal color texture "
-        "for Metal/GL interop");
+      "Failed to create the shared Metal color texture "
+      "for Metal/GL interop");
   }
   _mtlAliasedColorTexture = CVMetalTextureGetTexture(_cvmtlColorTexture);
 
   // Create the Metal texture for the depth buffer
-  cvret = CVMetalTextureCacheCreateTextureFromImage(
-      kCFAllocatorDefault,
-      _cvmtlTextureCache,
-      _depthBuffer,
-      (__bridge CFDictionaryRef)metalTextureProperties,
-      MTLPixelFormatBGRA8Unorm,
-      width,
-      height,
-      0,
-      &_cvmtlDepthTexture);
+  cvret = CVMetalTextureCacheCreateTextureFromImage(kCFAllocatorDefault,
+                                                    _cvmtlTextureCache,
+                                                    _depthBuffer,
+                                                    (__bridge CFDictionaryRef)metalTextureProperties,
+                                                    MTLPixelFormatBGRA8Unorm,
+                                                    width,
+                                                    height,
+                                                    0,
+                                                    &_cvmtlDepthTexture);
   if (cvret != kCVReturnSuccess) {
     TF_FATAL_CODING_ERROR(
-        "Failed to create the shared Metal depth texture "
-        "for Metal/GL interop");
+      "Failed to create the shared Metal depth texture "
+      "for Metal/GL interop");
   }
   _mtlAliasedDepthRegularFloatTexture = CVMetalTextureGetTexture(_cvmtlDepthTexture);
 
   MTLTextureDescriptor *depthTexDescriptor = [MTLTextureDescriptor
-      texture2DDescriptorWithPixelFormat:MTLPixelFormatR32Float
-                                   width:width
-                                  height:height
-                               mipmapped:false];
-  depthTexDescriptor.usage           = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
-  depthTexDescriptor.resourceOptions = MTLResourceCPUCacheModeDefaultCache |
-                                       MTLResourceStorageModePrivate;
+    texture2DDescriptorWithPixelFormat:MTLPixelFormatR32Float
+                                 width:width
+                                height:height
+                             mipmapped:false];
+  depthTexDescriptor.usage = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
+  depthTexDescriptor.resourceOptions = MTLResourceCPUCacheModeDefaultCache | MTLResourceStorageModePrivate;
 
   // Flush the caches
   CVOpenGLTextureCacheFlush(_cvglTextureCache, 0);
@@ -662,7 +649,7 @@ void HgiInteropMetal::_RestoreOpenGlState()
   }
 
   glBlendFuncSeparate(
-      _restoreColorSrcFnOp, _restoreColorDstFnOp, _restoreAlphaSrcFnOp, _restoreAlphaDstFnOp);
+    _restoreColorSrcFnOp, _restoreColorDstFnOp, _restoreAlphaSrcFnOp, _restoreAlphaDstFnOp);
   glBlendEquationSeparate(_restoreColorOp, _restoreAlphaOp);
 
   if (_restoreblendEnabled) {
@@ -703,12 +690,8 @@ void HgiInteropMetal::_RestoreOpenGlState()
     for (int i = 0; i < 2; i++) {
       VertexAttribState &state(_restoreVertexAttribState[i]);
       if (state.enabled) {
-        glVertexAttribPointer(state.bufferBinding,
-                              state.size,
-                              state.type,
-                              state.normalized,
-                              state.stride,
-                              state.pointer);
+        glVertexAttribPointer(
+          state.bufferBinding, state.size, state.type, state.normalized, state.stride, state.pointer);
         glEnableVertexAttribArray(state.bufferBinding);
       }
       else {
@@ -776,15 +759,11 @@ void HgiInteropMetal::_BlitToOpenGL(VtValue const &framebuffer,
     glBindBuffer(GL_ARRAY_BUFFER, shader.vbo);
 
     glEnableVertexAttribArray(shader.posAttrib);
-    glVertexAttribPointer(shader.posAttrib,
-                          2,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          sizeof(Vertex),
-                          (void *)(offsetof(Vertex, position)));
+    glVertexAttribPointer(
+      shader.posAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(offsetof(Vertex, position)));
     glEnableVertexAttribArray(shader.texAttrib);
     glVertexAttribPointer(
-        shader.texAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(offsetof(Vertex, uv)));
+      shader.texAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(offsetof(Vertex, uv)));
   }
 
   GLint unit = 0;
@@ -799,8 +778,7 @@ void HgiInteropMetal::_BlitToOpenGL(VtValue const &framebuffer,
     glUniform1i(shader.samplerDepthLoc, unit);
   }
 
-  glUniform2f(
-      shader.blitTexSizeUniform, _mtlAliasedColorTexture.width, _mtlAliasedColorTexture.height);
+  glUniform2f(shader.blitTexSizeUniform, _mtlAliasedColorTexture.width, _mtlAliasedColorTexture.height);
 
   // Region of the framebuffer over which to composite.
   glViewport(compRegion[0], compRegion[1], compRegion[2], compRegion[3]);
@@ -857,8 +835,7 @@ void HgiInteropMetal::CompositeToInterop(HgiTextureHandle const &color,
   id<MTLComputeCommandEncoder> computeEncoder;
 
   if (_hgiMetal->GetCapabilities().concurrentDispatchSupported) {
-    computeEncoder = [commandBuffer
-        computeCommandEncoderWithDispatchType:MTLDispatchTypeConcurrent];
+    computeEncoder = [commandBuffer computeCommandEncoderWithDispatchType:MTLDispatchTypeConcurrent];
   }
   else {
     computeEncoder = [commandBuffer computeCommandEncoder];
@@ -870,16 +847,13 @@ void HgiInteropMetal::CompositeToInterop(HgiTextureHandle const &color,
   //
   if (depthTexture) {
     NSUInteger exeWidth = [_computePipelineStateDepth threadExecutionWidth];
-    NSUInteger maxThreadsPerThreadgroup =
-        [_computePipelineStateDepth maxTotalThreadsPerThreadgroup];
+    NSUInteger maxThreadsPerThreadgroup = [_computePipelineStateDepth maxTotalThreadsPerThreadgroup];
 
     MTLSize threadgroupCount = MTLSizeMake(exeWidth, maxThreadsPerThreadgroup / exeWidth, 1);
-    MTLSize threadsPerGrid   = MTLSizeMake(
-        (_mtlAliasedDepthRegularFloatTexture.width + (threadgroupCount.width - 1)) /
-            threadgroupCount.width,
-        (_mtlAliasedDepthRegularFloatTexture.height + (threadgroupCount.height - 1)) /
-            threadgroupCount.height,
-        1);
+    MTLSize threadsPerGrid = MTLSizeMake(
+      (_mtlAliasedDepthRegularFloatTexture.width + (threadgroupCount.width - 1)) / threadgroupCount.width,
+      (_mtlAliasedDepthRegularFloatTexture.height + (threadgroupCount.height - 1)) / threadgroupCount.height,
+      1);
 
     [computeEncoder setComputePipelineState:_computePipelineStateDepth];
     [computeEncoder setTexture:depthTexture atIndex:0];
@@ -893,14 +867,13 @@ void HgiInteropMetal::CompositeToInterop(HgiTextureHandle const &color,
   //
   if (colorTexture) {
     NSUInteger exeWidth = [_computePipelineStateColor threadExecutionWidth];
-    NSUInteger maxThreadsPerThreadgroup =
-        [_computePipelineStateColor maxTotalThreadsPerThreadgroup];
+    NSUInteger maxThreadsPerThreadgroup = [_computePipelineStateColor maxTotalThreadsPerThreadgroup];
 
     MTLSize threadgroupCount = MTLSizeMake(exeWidth, maxThreadsPerThreadgroup / exeWidth, 1);
-    MTLSize threadsPerGrid   = MTLSizeMake(
-        (_mtlAliasedColorTexture.width + (threadgroupCount.width - 1)) / threadgroupCount.width,
-        (_mtlAliasedColorTexture.height + (threadgroupCount.height - 1)) / threadgroupCount.height,
-        1);
+    MTLSize threadsPerGrid = MTLSizeMake(
+      (_mtlAliasedColorTexture.width + (threadgroupCount.width - 1)) / threadgroupCount.width,
+      (_mtlAliasedColorTexture.height + (threadgroupCount.height - 1)) / threadgroupCount.height,
+      1);
 
     [computeEncoder setComputePipelineState:_computePipelineStateColor];
     [computeEncoder setTexture:colorTexture atIndex:0];

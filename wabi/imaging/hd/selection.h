@@ -79,14 +79,10 @@ class HdSelection {
                    VtIntArray const &elementIndices);
 
   HD_API
-  void AddEdges(HighlightMode const &mode,
-                SdfPath const &renderIndexPath,
-                VtIntArray const &edgeIndices);
+  void AddEdges(HighlightMode const &mode, SdfPath const &renderIndexPath, VtIntArray const &edgeIndices);
 
   HD_API
-  void AddPoints(HighlightMode const &mode,
-                 SdfPath const &renderIndexPath,
-                 VtIntArray const &pointIndices);
+  void AddPoints(HighlightMode const &mode, SdfPath const &renderIndexPath, VtIntArray const &pointIndices);
 
   // Special handling for points: we allow a set of selected point indices to
   // also specify a color to use for highlighting.

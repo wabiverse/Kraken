@@ -40,15 +40,15 @@ CameraUtilFraming::CameraUtilFraming() : pixelAspectRatio(1.0f)
 CameraUtilFraming::CameraUtilFraming(const GfRange2f &displayWindow,
                                      const GfRect2i &dataWindow,
                                      const float pixelAspectRatio)
-    : displayWindow(displayWindow),
-      dataWindow(dataWindow),
-      pixelAspectRatio(pixelAspectRatio)
+  : displayWindow(displayWindow),
+    dataWindow(dataWindow),
+    pixelAspectRatio(pixelAspectRatio)
 {}
 
 CameraUtilFraming::CameraUtilFraming(const GfRect2i &dataWindow)
-    : CameraUtilFraming(GfRange2f(GfVec2f(dataWindow.GetMinX(), dataWindow.GetMinY()),
-                                  GfVec2f(dataWindow.GetMaxX() + 1, dataWindow.GetMaxY() + 1)),
-                        dataWindow)
+  : CameraUtilFraming(GfRange2f(GfVec2f(dataWindow.GetMinX(), dataWindow.GetMinY()),
+                                GfVec2f(dataWindow.GetMaxX() + 1, dataWindow.GetMaxY() + 1)),
+                      dataWindow)
 {}
 
 bool CameraUtilFraming::IsValid() const
@@ -80,31 +80,30 @@ static double _SafeDiv(const double a, const double b)
   return a / b;
 }
 
-GfMatrix4d CameraUtilFraming::ApplyToProjectionMatrix(
-    const GfMatrix4d &projectionMatrix,
-    const CameraUtilConformWindowPolicy windowPolicy) const
+GfMatrix4d CameraUtilFraming::ApplyToProjectionMatrix(const GfMatrix4d &projectionMatrix,
+                                                      const CameraUtilConformWindowPolicy windowPolicy) const
 {
   const GfVec2f &dispSize = displayWindow.GetSize();
-  const GfVec2f dataSize  = dataWindow.GetSize();
-  const double aspect     = pixelAspectRatio * _SafeDiv(dispSize[0], dispSize[1]);
+  const GfVec2f dataSize = dataWindow.GetSize();
+  const double aspect = pixelAspectRatio * _SafeDiv(dispSize[0], dispSize[1]);
 
   const GfVec2f t = 2.0f * (_ComputeCenter(displayWindow) - _ComputeCenter(dataWindow));
 
   return
-      // Conform frustum to display window aspect ratio.
-      CameraUtilConformedWindow(projectionMatrix, windowPolicy, aspect) *
+    // Conform frustum to display window aspect ratio.
+    CameraUtilConformedWindow(projectionMatrix, windowPolicy, aspect) *
 
-      // Transform NDC with respect to conformed frustum to space
-      // where unit is two pixels.
-      GfMatrix4d(GfVec4d(dispSize[0], dispSize[1], 1.0, 1.0)) *
+    // Transform NDC with respect to conformed frustum to space
+    // where unit is two pixels.
+    GfMatrix4d(GfVec4d(dispSize[0], dispSize[1], 1.0, 1.0)) *
 
-      // Apply appropriate translation.
-      // Note that the coordinate system of eye space is y-Up but
-      // for the data and display window is y-Down.
-      GfMatrix4d().SetTranslate(GfVec3d(t[0], -t[1], 0.0)) *
+    // Apply appropriate translation.
+    // Note that the coordinate system of eye space is y-Up but
+    // for the data and display window is y-Down.
+    GfMatrix4d().SetTranslate(GfVec3d(t[0], -t[1], 0.0)) *
 
-      // From pixel to NDC with respect to the data window.
-      GfMatrix4d(GfVec4d(1.0 / dataSize[0], 1.0 / dataSize[1], 1.0, 1.0));
+    // From pixel to NDC with respect to the data window.
+    GfMatrix4d(GfVec4d(1.0 / dataSize[0], 1.0 / dataSize[1], 1.0, 1.0));
 }
 
 WABI_NAMESPACE_END

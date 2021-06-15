@@ -37,13 +37,13 @@ WABI_NAMESPACE_USING
 void wrapUsdTyped()
 {
   class_<UsdTyped, bases<UsdSchemaBase>>("Typed", init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
-      .def("GetSchemaAttributeNames",
-           &UsdSchemaBase::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
+    .def("GetSchemaAttributeNames",
+         &UsdSchemaBase::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      ;
+    ;
 }

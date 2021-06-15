@@ -56,7 +56,7 @@ class ArResolvedPath {
   ArResolvedPath() = default;
 
   ArResolvedPath(const ArResolvedPath &rhs) = default;
-  ArResolvedPath(ArResolvedPath &&rhs)      = default;
+  ArResolvedPath(ArResolvedPath &&rhs) = default;
 
   ArResolvedPath &operator=(const ArResolvedPath &rhs) = default;
   ArResolvedPath &operator=(ArResolvedPath &&rhs) = default;

@@ -59,8 +59,7 @@
     return out << "( ("
     {% for ROW in range(DIM) %
     }
-    {{LIST("<< Gf_OstreamHelperP(m[%(ROW)s][%%(i)s])" % {'ROW' : ROW},
-           sep = " << \", \"\n        ")}} {
+    {{LIST("<< Gf_OstreamHelperP(m[%(ROW)s][%%(i)s])" % {'ROW' : ROW}, sep = " << \", \"\n        ")}} {
       % if not loop.last %
     }
     << "), (" { % endif % } { % endfor % } << ") )";
@@ -162,10 +161,8 @@
   {
     {
       {
-        MATRIX(fmt     = "_mtx[%(i)s][%(j)s] = 0.0;",
-               diagFmt = "_mtx[%(i)s][%(j)s] = s;",
-               sep     = "\n    ",
-               indent  = 4)
+        MATRIX(
+          fmt = "_mtx[%(i)s][%(j)s] = 0.0;", diagFmt = "_mtx[%(i)s][%(j)s] = s;", sep = "\n    ", indent = 4)
       }
     }
     return *this;
@@ -181,10 +178,10 @@
   {
     {
       {
-        MATRIX(fmt     = "_mtx[%(i)s][%(j)s] = 0.0;",
+        MATRIX(fmt = "_mtx[%(i)s][%(j)s] = 0.0;",
                diagFmt = "_mtx[%(i)s][%(j)s] = v[%(i)s];",
-               sep     = " ",
-               indent  = 4)
+               sep = " ",
+               indent = 4)
       }
     }
     return *this;
@@ -220,8 +217,8 @@
   }
   ::operator==(const GfMatrix{{DIM}} {{S[0]}} & m) const
   {
-    return ({{MATRIX(
-        "_mtx[%(i)s][%(j)s] == m._mtx[%(i)s][%(j)s]", sep = " &&\n            ", indent = 12)}});
+    return (
+      {{MATRIX("_mtx[%(i)s][%(j)s] == m._mtx[%(i)s][%(j)s]", sep = " &&\n            ", indent = 12)}});
   }
 
   { % endfor % }
@@ -341,8 +338,8 @@
     {% for COL in range(DIM) -%
     }
     _mtx[{{ROW}}][{{COL}}] = {
-        {LIST("tmp._mtx[%(ROW)s][%%(i)s] * m._mtx[%%(i)s][%(COL)s]" % {"ROW" : ROW, "COL" : COL},
-              sep = " +\n                 ")}};
+      {LIST("tmp._mtx[%(ROW)s][%%(i)s] * m._mtx[%%(i)s][%(COL)s]" % {"ROW" : ROW, "COL" : COL},
+            sep = " +\n                 ")}};
 
     { % endfor - % } {
       % endfor - %
@@ -364,12 +361,12 @@
     }
   }
   f operator*(
-      const GfVec {
-        {
-          DIM
-        }
-      } f &vec,
-      const {{MAT}} & m)
+    const GfVec {
+      {
+        DIM
+      }
+    } f &vec,
+    const {{MAT}} & m)
   {
     return GfVec
     {
@@ -390,11 +387,11 @@
     }
   }
   f operator*(
-      const {{MAT}} & m, const GfVec {
-        {
-          DIM
-        }
-      } f &vec)
+    const {{MAT}} & m, const GfVec {
+      {
+        DIM
+      }
+    } f &vec)
   {
     return GfVec
     {
@@ -414,17 +411,17 @@
   }
 
   bool GfIsClose(
+    {
       {
-        {
-          MAT
-        }
-      } const &m1,
+        MAT
+      }
+    } const &m1,
+    {
       {
-        {
-          MAT
-        }
-      } const &m2,
-      double tolerance)
+        MAT
+      }
+    } const &m2,
+    double tolerance)
   {
     for (size_t row = 0; row < {{DIM}}; ++row) {
       for (size_t col = 0; col < {{DIM}}; ++col) {

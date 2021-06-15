@@ -69,7 +69,7 @@ _FieldTextureDataFactoryRegistry::_FieldTextureDataFactoryRegistry()
 }
 
 HioFieldTextureDataFactoryBase const *_FieldTextureDataFactoryRegistry::GetFactory(
-    std::string const &filePath) const
+  std::string const &filePath) const
 {
   TfToken const fileExtension(TfStringToLower(ArGetResolver().GetExtension(filePath)));
 
@@ -80,15 +80,14 @@ HioFieldTextureDataFactoryBase const *_FieldTextureDataFactoryRegistry::GetFacto
     return nullptr;
   }
 
-  HioFieldTextureDataFactoryBase const *factory =
-      pluginType.GetFactory<HioFieldTextureDataFactoryBase>();
+  HioFieldTextureDataFactoryBase const *factory = pluginType.GetFactory<HioFieldTextureDataFactoryBase>();
   if (!factory) {
     TF_CODING_ERROR(
-        "[PluginLoad] Cannot get factory for type '%s' "
-        "for field data type '%s' for file '%s'\n",
-        pluginType.GetTypeName().c_str(),
-        fileExtension.GetText(),
-        filePath.c_str());
+      "[PluginLoad] Cannot get factory for type '%s' "
+      "for field data type '%s' for file '%s'\n",
+      pluginType.GetTypeName().c_str(),
+      fileExtension.GetText(),
+      filePath.c_str());
     return nullptr;
   }
 
@@ -121,7 +120,7 @@ HioFieldTextureDataSharedPtr HioFieldTextureData::New(std::string const &filePat
   }
 
   HioFieldTextureDataSharedPtr fieldTextureData = factory->_New(
-      filePath, fieldName, fieldIndex, fieldPurpose, targetMemory);
+    filePath, fieldName, fieldIndex, fieldPurpose, targetMemory);
 
   if (!fieldTextureData) {
     TF_CODING_ERROR("Cannot get construct field texture data for file '%s'\n", filePath.c_str());

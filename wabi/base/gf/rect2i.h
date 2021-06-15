@@ -77,9 +77,7 @@ class GfRect2i {
 
   /// Constructs a rectangle with \p min corner and the indicated \p width
   /// and \p height.
-  GfRect2i(const GfVec2i &min, int width, int height)
-      : _min(min),
-        _max(min + GfVec2i(width - 1, height - 1))
+  GfRect2i(const GfVec2i &min, int width, int height) : _min(min), _max(min + GfVec2i(width - 1, height - 1))
   {}
 
   /// Returns true if the rectangle is a null rectangle.

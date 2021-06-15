@@ -39,10 +39,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPhCopyComputationGPU::HdPhCopyComputationGPU(HdBufferArrayRangeSharedPtr const &src,
-                                               TfToken const &name)
-    : _src(src),
-      _name(name)
+HdPhCopyComputationGPU::HdPhCopyComputationGPU(HdBufferArrayRangeSharedPtr const &src, TfToken const &name)
+  : _src(src),
+    _name(name)
 {}
 
 void HdPhCopyComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &range_,
@@ -72,17 +71,17 @@ void HdPhCopyComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &range_,
     // One example is during mesh refinement when migration is necessary,
     // and we copy only the unrefined data over.
     TF_CODING_ERROR(
-        "Migration error for %s: Source resource (%d) size is "
-        "larger than destination resource size (%d)\n",
-        _name.GetText(),
-        srcResSize,
-        dstResSize);
+      "Migration error for %s: Source resource (%d) size is "
+      "larger than destination resource size (%d)\n",
+      _name.GetText(),
+      srcResSize,
+      dstResSize);
     return;
   }
 
-  size_t readOffset  = srcRange->GetByteOffset(_name) + srcRes->GetOffset();
+  size_t readOffset = srcRange->GetByteOffset(_name) + srcRes->GetOffset();
   size_t writeOffset = dstRange->GetByteOffset(_name) + dstRes->GetOffset();
-  size_t copySize    = srcResSize;
+  size_t copySize = srcResSize;
 
   // Unfortunately at the time the copy computation is added, we don't
   // know if the source buffer has 0 length.  So we can get here with
@@ -102,14 +101,13 @@ void HdPhCopyComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &range_,
 
     HD_PERF_COUNTER_INCR(HdPhPerfTokens->copyBufferGpuToGpu);
 
-    HdPhResourceRegistry *hdPhResourceRegistry = static_cast<HdPhResourceRegistry *>(
-        resourceRegistry);
+    HdPhResourceRegistry *hdPhResourceRegistry = static_cast<HdPhResourceRegistry *>(resourceRegistry);
 
     HgiBufferGpuToGpuOp blitOp;
-    blitOp.gpuSourceBuffer       = srcRes->GetHandle();
-    blitOp.gpuDestinationBuffer  = dstRes->GetHandle();
-    blitOp.sourceByteOffset      = readOffset;
-    blitOp.byteSize              = copySize;
+    blitOp.gpuSourceBuffer = srcRes->GetHandle();
+    blitOp.gpuDestinationBuffer = dstRes->GetHandle();
+    blitOp.sourceByteOffset = readOffset;
+    blitOp.byteSize = copySize;
     blitOp.destinationByteOffset = writeOffset;
 
     HgiBlitCmds *blitCmds = hdPhResourceRegistry->GetGlobalBlitCmds();

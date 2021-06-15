@@ -47,7 +47,7 @@ int _GetParentIndex(const _PathIndexMap &pathMap, const SdfPath &path)
     // For instance, if the map includes only paths 'a' and 'a/b/c',
     // 'a' will be treated as the parent of 'a/b/c'.
     const auto range = path.GetAncestorsRange();
-    auto it          = range.begin();
+    auto it = range.begin();
     for (++it; it != range.end(); ++it) {
       const auto mapIt = pathMap.find(*it);
       if (mapIt != pathMap.end()) {
@@ -93,11 +93,11 @@ VtIntArray _ComputeParentIndicesFromTokens(TfSpan<const TfToken> tokens)
 /// do we require any common methods to handle the token->path
 /// conversion?
 UsdSkelTopology::UsdSkelTopology(TfSpan<const TfToken> paths)
-    : UsdSkelTopology(_ComputeParentIndicesFromTokens(paths))
+  : UsdSkelTopology(_ComputeParentIndicesFromTokens(paths))
 {}
 
 UsdSkelTopology::UsdSkelTopology(TfSpan<const SdfPath> paths)
-    : UsdSkelTopology(_ComputeParentIndicesFromPaths(paths))
+  : UsdSkelTopology(_ComputeParentIndicesFromPaths(paths))
 {}
 
 UsdSkelTopology::UsdSkelTopology(const VtIntArray &parentIndices) : _parentIndices(parentIndices)
@@ -120,11 +120,11 @@ bool UsdSkelTopology::Validate(std::string *reason) const
 
         if (reason) {
           *reason = TfStringPrintf(
-              "Joint %zu has mis-ordered parent %d. Joints are "
-              "expected to be ordered with parent joints always "
-              "coming before children.",
-              i,
-              parent);
+            "Joint %zu has mis-ordered parent %d. Joints are "
+            "expected to be ordered with parent joints always "
+            "coming before children.",
+            i,
+            parent);
 
           // XXX: Note that this ordering restriction is a schema
           // requirement primarily because it simplifies hierarchy

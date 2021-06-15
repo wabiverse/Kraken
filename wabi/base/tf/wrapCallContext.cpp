@@ -56,8 +56,8 @@ void wrapCallContext()
   typedef TfCallContext This;
 
   class_<This>("CallContext", no_init)
-      .add_property("file", &_GetFileString)
-      .add_property("function", &_GetFunctionString)
-      .add_property("line", &This::GetLine)
-      .add_property("prettyFunction", &_GetPrettyFunctionString);
+    .add_property("file", &_GetFileString)
+    .add_property("function", &_GetFunctionString)
+    .add_property("line", &This::GetLine)
+    .add_property("prettyFunction", &_GetPrettyFunctionString);
 }

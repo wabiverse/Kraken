@@ -43,8 +43,7 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
                                      TfToken("usd"),
                                      TfToken("vt"),
                                      TfToken("work")};
-  TfScriptModuleLoader::GetInstance().RegisterLibrary(
-      TfToken("usdGeom"), TfToken("wabi.UsdGeom"), reqs);
+  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("usdGeom"), TfToken("wabi.UsdGeom"), reqs);
 }
 
 WABI_NAMESPACE_END

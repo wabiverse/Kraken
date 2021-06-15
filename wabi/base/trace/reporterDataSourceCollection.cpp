@@ -36,12 +36,11 @@
 WABI_NAMESPACE_BEGIN
 
 TraceReporterDataSourceCollection::TraceReporterDataSourceCollection(CollectionPtr collection)
-    : _data({collection})
+  : _data({collection})
 {}
 
-TraceReporterDataSourceCollection::TraceReporterDataSourceCollection(
-    std::vector<CollectionPtr> collections)
-    : _data(std::move(collections))
+TraceReporterDataSourceCollection::TraceReporterDataSourceCollection(std::vector<CollectionPtr> collections)
+  : _data(std::move(collections))
 {}
 
 void TraceReporterDataSourceCollection::Clear()
@@ -51,8 +50,7 @@ void TraceReporterDataSourceCollection::Clear()
   swap(_data, newData);
 }
 
-std::vector<TraceReporterDataSourceBase::CollectionPtr> TraceReporterDataSourceCollection::
-    ConsumeData()
+std::vector<TraceReporterDataSourceBase::CollectionPtr> TraceReporterDataSourceCollection::ConsumeData()
 {
   using std::swap;
   std::vector<CollectionPtr> result;

@@ -121,7 +121,7 @@ std::string ArchExpandEnvironmentVariables(const std::string &value)
     // NOTE: g++'s standard library's replace() wants non-const iterators
     //       in violation of the standard.  We work around this by using
     //       indexes.
-    const std::string::size_type pos   = match[0].first - result.begin();
+    const std::string::size_type pos = match[0].first - result.begin();
     const std::string::size_type count = match[0].second - match[0].first;
     result.replace(pos, count, ArchGetEnv(match[1].str()));
   }

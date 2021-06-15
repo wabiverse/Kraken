@@ -115,17 +115,16 @@ static std::unordered_set<std::string> cpp_keywords = {"alignas",
                                                        "uint16_t"};
 
 static std::unordered_set<std::string> cpp_identifiers = {
-    "abort",         "abs",      "acos",          "asin",    "atan",    "atexit",  "atof",
-    "atoi",          "atol",     "ceil",          "clock",   "cosh",    "ctime",   "div",
-    "exit",          "fabs",     "floor",         "fmod",    "getchar", "getenv",  "isalnum",
-    "isalpha",       "isdigit",  "isgraph",       "ispunct", "isspace", "isupper", "kbhit",
-    "log10",         "log2",     "log",           "memcmp",  "modf",    "pow",     "printf",
-    "sprintf",       "snprintf", "putchar",       "putenv",  "puts",    "rand",    "remove",
-    "rename",        "sinh",     "sqrt",          "srand",   "strcat",  "strcmp",  "strerror",
-    "time",          "tolower",  "toupper",       "std",     "string",  "vector",  "map",
-    "unordered_map", "set",      "unordered_set", "min",     "max"};
+  "abort",         "abs",     "acos",          "asin",    "atan",     "atexit",  "atof",    "atoi",
+  "atol",          "ceil",    "clock",         "cosh",    "ctime",    "div",     "exit",    "fabs",
+  "floor",         "fmod",    "getchar",       "getenv",  "isalnum",  "isalpha", "isdigit", "isgraph",
+  "ispunct",       "isspace", "isupper",       "kbhit",   "log10",    "log2",    "log",     "memcmp",
+  "modf",          "pow",     "printf",        "sprintf", "snprintf", "putchar", "putenv",  "puts",
+  "rand",          "remove",  "rename",        "sinh",    "sqrt",     "srand",   "strcat",  "strcmp",
+  "strerror",      "time",    "tolower",       "toupper", "std",      "string",  "vector",  "map",
+  "unordered_map", "set",     "unordered_set", "min",     "max"};
 
-static std::unordered_set<std::string> toml_keywords    = {};
+static std::unordered_set<std::string> toml_keywords = {};
 static std::unordered_set<std::string> toml_identifiers = {};
 
 static std::unordered_set<std::string> hlsl_keywords = {"CompileShader",
@@ -547,32 +546,30 @@ static std::unordered_set<std::string> glsl_keywords{"void",
                                                      "usamplerCubeArray"};
 
 static std::unordered_set<std::string> glsl_identifiers = {
-    "abort",   "abs",        "acos",    "asin",   "atan",    "atexit",   "atof",    "atoi",
-    "atol",    "ceil",       "clock",   "cosh",   "ctime",   "div",      "exit",    "fabs",
-    "floor",   "fmod",       "getchar", "getenv", "isalnum", "isalpha",  "isdigit", "isgraph",
-    "ispunct", "isspace",    "isupper", "kbhit",  "log10",   "log2",     "log",     "memcmp",
-    "modf",    "pow",        "putchar", "putenv", "puts",    "rand",     "remove",  "rename",
-    "sinh",    "sqrt",       "srand",   "strcat", "strcmp",  "strerror", "time",    "tolower",
-    "toupper", "gl_Position"};
+  "abort",    "abs",    "acos",    "asin",    "atan",       "atexit",  "atof",    "atoi",    "atol",
+  "ceil",     "clock",  "cosh",    "ctime",   "div",        "exit",    "fabs",    "floor",   "fmod",
+  "getchar",  "getenv", "isalnum", "isalpha", "isdigit",    "isgraph", "ispunct", "isspace", "isupper",
+  "kbhit",    "log10",  "log2",    "log",     "memcmp",     "modf",    "pow",     "putchar", "putenv",
+  "puts",     "rand",   "remove",  "rename",  "sinh",       "sqrt",    "srand",   "strcat",  "strcmp",
+  "strerror", "time",   "tolower", "toupper", "gl_Position"};
 
 static std::unordered_set<std::string> c_keywords = {
-    "auto",           "break",        "case",     "char",     "const",      "continue",
-    "default",        "do",           "double",   "else",     "enum",       "extern",
-    "float",          "for",          "goto",     "if",       "inline",     "int",
-    "long",           "register",     "restrict", "return",   "short",      "signed",
-    "sizeof",         "static",       "struct",   "switch",   "typedef",    "union",
-    "unsigned",       "void",         "volatile", "while",    "_Alignas",   "_Alignof",
-    "_Atomic",        "_Bool",        "_Complex", "_Generic", "_Imaginary", "_Noreturn",
-    "_Static_assert", "_Thread_local"};
+  "auto",           "break",        "case",     "char",     "const",      "continue",
+  "default",        "do",           "double",   "else",     "enum",       "extern",
+  "float",          "for",          "goto",     "if",       "inline",     "int",
+  "long",           "register",     "restrict", "return",   "short",      "signed",
+  "sizeof",         "static",       "struct",   "switch",   "typedef",    "union",
+  "unsigned",       "void",         "volatile", "while",    "_Alignas",   "_Alignof",
+  "_Atomic",        "_Bool",        "_Complex", "_Generic", "_Imaginary", "_Noreturn",
+  "_Static_assert", "_Thread_local"};
 
 static std::unordered_set<std::string> c_identifiers = {
-    "abort",   "abs",     "acos",    "asin",     "atan",    "atexit",  "atof",
-    "atoi",    "atol",    "ceil",    "clock",    "cosh",    "ctime",   "div",
-    "exit",    "fabs",    "floor",   "fmod",     "getchar", "getenv",  "isalnum",
-    "isalpha", "isdigit", "isgraph", "ispunct",  "isspace", "isupper", "kbhit",
-    "log10",   "log2",    "log",     "memcmp",   "modf",    "pow",     "putchar",
-    "putenv",  "puts",    "rand",    "remove",   "rename",  "sinh",    "sqrt",
-    "srand",   "strcat",  "strcmp",  "strerror", "time",    "tolower", "toupper"};
+  "abort",    "abs",    "acos",    "asin",    "atan",    "atexit",  "atof",    "atoi",    "atol",
+  "ceil",     "clock",  "cosh",    "ctime",   "div",     "exit",    "fabs",    "floor",   "fmod",
+  "getchar",  "getenv", "isalnum", "isalpha", "isdigit", "isgraph", "ispunct", "isspace", "isupper",
+  "kbhit",    "log10",  "log2",    "log",     "memcmp",  "modf",    "pow",     "putchar", "putenv",
+  "puts",     "rand",   "remove",  "rename",  "sinh",    "sqrt",    "srand",   "strcat",  "strcmp",
+  "strerror", "time",   "tolower", "toupper"};
 static std::unordered_set<std::string> sql_keywords = {"ADD",
                                                        "EXCEPT",
                                                        "PERCENT",
@@ -774,9 +771,8 @@ static std::unordered_set<std::string> cmake_keywords = {"option",
 static std::unordered_set<std::string> cmake_identifiers = {};
 
 static std::unordered_set<std::string> lua_keywords = {
-    "and", "break",    "do",     "",     "else", "elseif", "end",  "false",
-    "for", "function", "if",     "in",   "",     "local",  "nil",  "not",
-    "or",  "repeat",   "return", "then", "true", "until",  "while"};
+  "and", "break", "do",  "",    "else", "elseif", "end",    "false", "for",  "function", "if",   "in",
+  "",    "local", "nil", "not", "or",   "repeat", "return", "then",  "true", "until",    "while"};
 
 static std::unordered_set<std::string> lua_identifiers = {"assert",       "collectgarbage",
                                                           "dofile",       "error",
@@ -872,18 +868,8 @@ static std::unordered_set<std::string> lisp_keywords = {"+", "-", "eval"};
 
 static std::unordered_set<std::string> lisp_identifiers = {"cdr", "car"};
 
-static std::unordered_set<std::string> janet_keywords = {"if",
-                                                         "do",
-                                                         "fn",
-                                                         "while",
-                                                         "def",
-                                                         "var",
-                                                         "quote",
-                                                         "quasiquote",
-                                                         "unquote",
-                                                         "splice",
-                                                         "set",
-                                                         "break"};
+static std::unordered_set<std::string> janet_keywords =
+  {"if", "do", "fn", "while", "def", "var", "quote", "quasiquote", "unquote", "splice", "set", "break"};
 
 static std::unordered_set<std::string> janet_identifiers = {"%",
                                                             "*",
@@ -1354,9 +1340,9 @@ static std::unordered_set<std::string> janet_identifiers = {"%",
                                                             "with-syms",
                                                             "with-vars"};
 
-static std::unordered_set<std::string> tree_keywords        = {};
-static std::unordered_set<std::string> tree_identifiers     = {};
-static std::unordered_set<std::string> markdown_keywords    = {};
+static std::unordered_set<std::string> tree_keywords = {};
+static std::unordered_set<std::string> tree_identifiers = {};
+static std::unordered_set<std::string> markdown_keywords = {};
 static std::unordered_set<std::string> markdown_identifiers = {};
 
 void RegisterSyntaxProviders(ZepEditor &editor)
@@ -1364,78 +1350,70 @@ void RegisterSyntaxProviders(ZepEditor &editor)
   editor.RegisterSyntaxFactory({".vert", ".frag"},
                                SyntaxProvider{"gl_shader", tSyntaxFactory([](ZepBuffer *pBuffer) {
                                                 return std::make_shared<ZepSyntax>(
-                                                    *pBuffer, glsl_keywords, glsl_identifiers);
+                                                  *pBuffer, glsl_keywords, glsl_identifiers);
                                               })});
 
-  editor.RegisterSyntaxFactory(
-      {".hlsl", ".hlsli", ".vs", ".ps"},
-      SyntaxProvider{"hlsl_shader", tSyntaxFactory([](ZepBuffer *pBuffer) {
-                       return std::make_shared<ZepSyntax>(
-                           *pBuffer, hlsl_keywords, hlsl_identifiers);
-                     })});
+  editor.RegisterSyntaxFactory({".hlsl", ".hlsli", ".vs", ".ps"},
+                               SyntaxProvider{"hlsl_shader", tSyntaxFactory([](ZepBuffer *pBuffer) {
+                                                return std::make_shared<ZepSyntax>(
+                                                  *pBuffer, hlsl_keywords, hlsl_identifiers);
+                                              })});
 
   editor.RegisterSyntaxFactory({".cpp", ".cxx", ".h", ".c"},
                                SyntaxProvider{"cpp", tSyntaxFactory([](ZepBuffer *pBuffer) {
                                                 return std::make_shared<ZepSyntax>(
-                                                    *pBuffer, cpp_keywords, cpp_identifiers);
+                                                  *pBuffer, cpp_keywords, cpp_identifiers);
+                                              })});
+
+  editor.RegisterSyntaxFactory({".lisp", ".lsp"},
+                               SyntaxProvider{"lisp", tSyntaxFactory([](ZepBuffer *pBuffer) {
+                                                return std::make_shared<ZepSyntax>(*pBuffer,
+                                                                                   lisp_keywords,
+                                                                                   lisp_identifiers,
+                                                                                   ZepSyntaxFlags::LispLike);
                                               })});
 
   editor.RegisterSyntaxFactory(
-      {".lisp", ".lsp"},
-      SyntaxProvider{"lisp", tSyntaxFactory([](ZepBuffer *pBuffer) {
-                       return std::make_shared<ZepSyntax>(
-                           *pBuffer, lisp_keywords, lisp_identifiers, ZepSyntaxFlags::LispLike);
-                     })});
+    {".janet"}, SyntaxProvider{"janet", tSyntaxFactory([](ZepBuffer *pBuffer) {
+                                 return std::make_shared<ZepSyntax>(
+                                   *pBuffer, janet_keywords, janet_identifiers, ZepSyntaxFlags::LispLike);
+                               })});
+
+  editor.RegisterSyntaxFactory({".scm", ".scheme", ".sps", ".sls", ".sld", ".ss", ".sch"},
+                               SyntaxProvider{"lisp", tSyntaxFactory([](ZepBuffer *pBuffer) {
+                                                return std::make_shared<ZepSyntax>(*pBuffer,
+                                                                                   lisp_keywords,
+                                                                                   lisp_identifiers,
+                                                                                   ZepSyntaxFlags::LispLike);
+                                              })});
 
   editor.RegisterSyntaxFactory(
-      {".janet"},
-      SyntaxProvider{"janet", tSyntaxFactory([](ZepBuffer *pBuffer) {
-                       return std::make_shared<ZepSyntax>(
-                           *pBuffer, janet_keywords, janet_identifiers, ZepSyntaxFlags::LispLike);
-                     })});
+    {".cmake", "CMakeLists.txt"},
+    SyntaxProvider{"cmake", tSyntaxFactory([](ZepBuffer *pBuffer) {
+                     return std::make_shared<ZepSyntax>(
+                       *pBuffer, cmake_keywords, cmake_identifiers, ZepSyntaxFlags::CaseInsensitive);
+                   })});
 
   editor.RegisterSyntaxFactory(
-      {".scm", ".scheme", ".sps", ".sls", ".sld", ".ss", ".sch"},
-      SyntaxProvider{"lisp", tSyntaxFactory([](ZepBuffer *pBuffer) {
-                       return std::make_shared<ZepSyntax>(
-                           *pBuffer, lisp_keywords, lisp_identifiers, ZepSyntaxFlags::LispLike);
-                     })});
+    {".toml"},
+    SyntaxProvider{"cpp", tSyntaxFactory([](ZepBuffer *pBuffer) {
+                     return std::make_shared<ZepSyntax>(
+                       *pBuffer, toml_keywords, toml_identifiers, ZepSyntaxFlags::CaseInsensitive);
+                   })});
 
-  editor.RegisterSyntaxFactory({".cmake", "CMakeLists.txt"},
-                               SyntaxProvider{"cmake", tSyntaxFactory([](ZepBuffer *pBuffer) {
-                                                return std::make_shared<ZepSyntax>(
-                                                    *pBuffer,
-                                                    cmake_keywords,
-                                                    cmake_identifiers,
-                                                    ZepSyntaxFlags::CaseInsensitive);
-                                              })});
+  editor.RegisterSyntaxFactory(
+    {".tree"},
+    SyntaxProvider{"tree", tSyntaxFactory([](ZepBuffer *pBuffer) {
+                     return std::make_shared<ZepSyntax_Tree>(
+                       *pBuffer, tree_keywords, tree_identifiers, ZepSyntaxFlags::CaseInsensitive);
+                   })});
 
-  editor.RegisterSyntaxFactory({".toml"},
-                               SyntaxProvider{"cpp", tSyntaxFactory([](ZepBuffer *pBuffer) {
-                                                return std::make_shared<ZepSyntax>(
-                                                    *pBuffer,
-                                                    toml_keywords,
-                                                    toml_identifiers,
-                                                    ZepSyntaxFlags::CaseInsensitive);
-                                              })});
-
-  editor.RegisterSyntaxFactory({".tree"},
-                               SyntaxProvider{"tree", tSyntaxFactory([](ZepBuffer *pBuffer) {
-                                                return std::make_shared<ZepSyntax_Tree>(
-                                                    *pBuffer,
-                                                    tree_keywords,
-                                                    tree_identifiers,
-                                                    ZepSyntaxFlags::CaseInsensitive);
-                                              })});
-
-  editor.RegisterSyntaxFactory({".md", ".markdown"},
-                               SyntaxProvider{"markdown", tSyntaxFactory([](ZepBuffer *pBuffer) {
-                                                return std::make_shared<ZepSyntax_Markdown>(
-                                                    *pBuffer,
-                                                    markdown_keywords,
-                                                    markdown_identifiers,
-                                                    ZepSyntaxFlags::CaseInsensitive);
-                                              })});
+  editor.RegisterSyntaxFactory(
+    {".md", ".markdown"},
+    SyntaxProvider{"markdown", tSyntaxFactory([](ZepBuffer *pBuffer) {
+                     return std::make_shared<ZepSyntax_Markdown>(
+                       *pBuffer, markdown_keywords, markdown_identifiers, ZepSyntaxFlags::CaseInsensitive);
+                   })});
 }
 
 }  // namespace Zep

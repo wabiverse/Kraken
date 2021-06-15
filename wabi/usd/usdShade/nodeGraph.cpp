@@ -130,7 +130,7 @@ WABI_NAMESPACE_END
 WABI_NAMESPACE_BEGIN
 
 UsdShadeNodeGraph::UsdShadeNodeGraph(const UsdShadeConnectableAPI &connectable)
-    : UsdShadeNodeGraph(connectable.GetPrim())
+  : UsdShadeNodeGraph(connectable.GetPrim())
 {}
 
 UsdShadeConnectableAPI UsdShadeNodeGraph::ConnectableAPI() const
@@ -138,8 +138,7 @@ UsdShadeConnectableAPI UsdShadeNodeGraph::ConnectableAPI() const
   return UsdShadeConnectableAPI(GetPrim());
 }
 
-UsdShadeOutput UsdShadeNodeGraph::CreateOutput(const TfToken &name,
-                                               const SdfValueTypeName &typeName) const
+UsdShadeOutput UsdShadeNodeGraph::CreateOutput(const TfToken &name, const SdfValueTypeName &typeName) const
 {
   return UsdShadeConnectableAPI(GetPrim()).CreateOutput(name, typeName);
 }
@@ -172,15 +171,15 @@ UsdShadeShader UsdShadeNodeGraph::ComputeOutputSource(const TfToken &outputName,
 
   if (valueAttrs.size() > 1) {
     TF_WARN(
-        "Found multiple upstream attributes for output %s on NodeGraph "
-        "%s. ComputeOutputSource will only report the first upsteam "
-        "UsdShadeShader. Please use GetValueProducingAttributes to "
-        "retrieve all.",
-        outputName.GetText(),
-        GetPath().GetText());
+      "Found multiple upstream attributes for output %s on NodeGraph "
+      "%s. ComputeOutputSource will only report the first upsteam "
+      "UsdShadeShader. Please use GetValueProducingAttributes to "
+      "retrieve all.",
+      outputName.GetText(),
+      GetPath().GetText());
   }
 
-  UsdAttribute attr                  = valueAttrs[0];
+  UsdAttribute attr = valueAttrs[0];
   std::tie(*sourceName, *sourceType) = UsdShadeUtils::GetBaseNameAndType(attr.GetName());
 
   UsdShadeShader shader(attr.GetPrim());
@@ -192,8 +191,7 @@ UsdShadeShader UsdShadeNodeGraph::ComputeOutputSource(const TfToken &outputName,
   return shader;
 }
 
-UsdShadeInput UsdShadeNodeGraph::CreateInput(const TfToken &name,
-                                             const SdfValueTypeName &typeName) const
+UsdShadeInput UsdShadeNodeGraph::CreateInput(const TfToken &name, const SdfValueTypeName &typeName) const
 {
   return UsdShadeConnectableAPI(GetPrim()).CreateInput(name, typeName);
 }
@@ -213,14 +211,13 @@ std::vector<UsdShadeInput> UsdShadeNodeGraph::GetInterfaceInputs() const
   return GetInputs();
 }
 
-static bool _IsValidInput(UsdShadeConnectableAPI const &source,
-                          UsdShadeAttributeType const sourceType)
+static bool _IsValidInput(UsdShadeConnectableAPI const &source, UsdShadeAttributeType const sourceType)
 {
   return (sourceType == UsdShadeAttributeType::Input);
 }
 
 static UsdShadeNodeGraph::InterfaceInputConsumersMap _ComputeNonTransitiveInputConsumersMap(
-    const UsdShadeNodeGraph &nodeGraph)
+  const UsdShadeNodeGraph &nodeGraph)
 {
   UsdShadeNodeGraph::InterfaceInputConsumersMap result;
 
@@ -241,8 +238,7 @@ static UsdShadeNodeGraph::InterfaceInputConsumersMap _ComputeNonTransitiveInputC
       UsdShadeConnectableAPI source;
       TfToken sourceName;
       UsdShadeAttributeType sourceType;
-      if (UsdShadeConnectableAPI::GetConnectedSource(
-              internalInput, &source, &sourceName, &sourceType)) {
+      if (UsdShadeConnectableAPI::GetConnectedSource(internalInput, &source, &sourceName, &sourceType)) {
         if (source.GetPrim() == nodeGraph.GetPrim() && _IsValidInput(source, sourceType)) {
           result[nodeGraph.GetInput(sourceName)].push_back(internalInput);
         }
@@ -254,8 +250,8 @@ static UsdShadeNodeGraph::InterfaceInputConsumersMap _ComputeNonTransitiveInputC
 }
 
 static void _RecursiveComputeNodeGraphInterfaceInputConsumers(
-    const UsdShadeNodeGraph::InterfaceInputConsumersMap &inputConsumersMap,
-    UsdShadeNodeGraph::NodeGraphInputConsumersMap *nodeGraphInputConsumers)
+  const UsdShadeNodeGraph::InterfaceInputConsumersMap &inputConsumersMap,
+  UsdShadeNodeGraph::NodeGraphInputConsumersMap *nodeGraphInputConsumers)
 {
   for (const auto &inputAndConsumers : inputConsumersMap) {
     const std::vector<UsdShadeInput> &consumers = inputAndConsumers.second;
@@ -264,8 +260,7 @@ static void _RecursiveComputeNodeGraphInterfaceInputConsumers(
       if (connectable.GetPrim().IsA<UsdShadeNodeGraph>()) {
         if (!nodeGraphInputConsumers->count(connectable)) {
 
-          const auto &irMap = _ComputeNonTransitiveInputConsumersMap(
-              UsdShadeNodeGraph(connectable));
+          const auto &irMap = _ComputeNonTransitiveInputConsumersMap(UsdShadeNodeGraph(connectable));
           (*nodeGraphInputConsumers)[connectable] = irMap;
 
           _RecursiveComputeNodeGraphInterfaceInputConsumers(irMap, nodeGraphInputConsumers);
@@ -275,10 +270,9 @@ static void _RecursiveComputeNodeGraphInterfaceInputConsumers(
   }
 }
 
-static void _ResolveConsumers(
-    const UsdShadeInput &consumer,
-    const UsdShadeNodeGraph::NodeGraphInputConsumersMap &nodeGraphInputConsumers,
-    std::vector<UsdShadeInput> *resolvedConsumers)
+static void _ResolveConsumers(const UsdShadeInput &consumer,
+                              const UsdShadeNodeGraph::NodeGraphInputConsumersMap &nodeGraphInputConsumers,
+                              std::vector<UsdShadeInput> *resolvedConsumers)
 {
   UsdShadeNodeGraph consumerNodeGraph(consumer.GetAttr().GetPrim());
   if (!consumerNodeGraph) {
@@ -311,7 +305,7 @@ static void _ResolveConsumers(
 }
 
 UsdShadeNodeGraph::InterfaceInputConsumersMap UsdShadeNodeGraph::ComputeInterfaceInputConsumersMap(
-    bool computeTransitiveConsumers) const
+  bool computeTransitiveConsumers) const
 {
   InterfaceInputConsumersMap result = _ComputeNonTransitiveInputConsumersMap(*this);
 
@@ -335,8 +329,7 @@ UsdShadeNodeGraph::InterfaceInputConsumersMap UsdShadeNodeGraph::ComputeInterfac
       std::vector<UsdShadeInput> nestedConsumers;
       _ResolveConsumers(consumer, nodeGraphInputConsumers, &nestedConsumers);
 
-      resolvedConsumers.insert(
-          resolvedConsumers.end(), nestedConsumers.begin(), nestedConsumers.end());
+      resolvedConsumers.insert(resolvedConsumers.end(), nestedConsumers.begin(), nestedConsumers.end());
     }
 
     resolved[inputAndConsumers.first] = resolvedConsumers;
@@ -345,10 +338,9 @@ UsdShadeNodeGraph::InterfaceInputConsumersMap UsdShadeNodeGraph::ComputeInterfac
   return resolved;
 }
 
-bool UsdShadeNodeGraph::ConnectableAPIBehavior::CanConnectOutputToSource(
-    const UsdShadeOutput &output,
-    const UsdAttribute &source,
-    std::string *reason)
+bool UsdShadeNodeGraph::ConnectableAPIBehavior::CanConnectOutputToSource(const UsdShadeOutput &output,
+                                                                         const UsdAttribute &source,
+                                                                         std::string *reason)
 {
   return UsdShadeConnectableAPIBehavior::_CanConnectOutputToSource(output, source, reason);
 }
@@ -361,8 +353,7 @@ bool UsdShadeNodeGraph::ConnectableAPIBehavior::IsContainer() const
 
 TF_REGISTRY_FUNCTION(UsdShadeConnectableAPI)
 {
-  UsdShadeRegisterConnectableAPIBehavior<UsdShadeNodeGraph,
-                                         UsdShadeNodeGraph::ConnectableAPIBehavior>();
+  UsdShadeRegisterConnectableAPIBehavior<UsdShadeNodeGraph, UsdShadeNodeGraph::ConnectableAPIBehavior>();
 }
 
 WABI_NAMESPACE_END

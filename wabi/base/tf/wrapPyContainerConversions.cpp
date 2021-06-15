@@ -49,8 +49,7 @@ template<typename CONTAINER_TYPE> struct Set_ToPython {
 template<typename T> void _RegisterToAndFromSetConversions()
 {
   boost::python::to_python_converter<std::set<T>, Set_ToPython<std::set<T>>>();
-  TfPyContainerConversions::from_python_sequence<std::set<T>,
-                                                 TfPyContainerConversions::set_policy>();
+  TfPyContainerConversions::from_python_sequence<std::set<T>, TfPyContainerConversions::set_policy>();
 }
 
 }  // anonymous namespace
@@ -66,84 +65,60 @@ void wrapPyContainerConversions()
   boost::python::to_python_converter<std::vector<int>, TfPySequenceToPython<std::vector<int>>>();
   boost::python::to_python_converter<std::vector<unsigned int>,
                                      TfPySequenceToPython<std::vector<unsigned int>>>();
-  boost::python::to_python_converter<std::vector<int64_t>,
-                                     TfPySequenceToPython<std::vector<int64_t>>>();
-  boost::python::to_python_converter<std::vector<uint64_t>,
-                                     TfPySequenceToPython<std::vector<uint64_t>>>();
-  boost::python::to_python_converter<std::vector<float>,
-                                     TfPySequenceToPython<std::vector<float>>>();
-  boost::python::to_python_converter<std::vector<double>,
-                                     TfPySequenceToPython<std::vector<double>>>();
+  boost::python::to_python_converter<std::vector<int64_t>, TfPySequenceToPython<std::vector<int64_t>>>();
+  boost::python::to_python_converter<std::vector<uint64_t>, TfPySequenceToPython<std::vector<uint64_t>>>();
+  boost::python::to_python_converter<std::vector<float>, TfPySequenceToPython<std::vector<float>>>();
+  boost::python::to_python_converter<std::vector<double>, TfPySequenceToPython<std::vector<double>>>();
   boost::python::to_python_converter<std::vector<std::string>,
                                      TfPySequenceToPython<std::vector<std::string>>>();
   boost::python::to_python_converter<std::vector<_StringPair>,
                                      TfPySequenceToPython<std::vector<_StringPair>>>();
 
-  TfPyContainerConversions::
-      from_python_sequence<std::vector<int>, TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<unsigned int>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<int64_t>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<uint64_t>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<float>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<double>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<size_t>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<unsigned long>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<std::string>,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<int>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<unsigned int>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<int64_t>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<uint64_t>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<float>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<double>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<size_t>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<unsigned long>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<std::string>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<std::vector<int>>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<std::vector<unsigned int>>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<std::vector<int64_t>>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<std::vector<uint64_t>>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<std::vector<float>>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<std::vector<double>>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<std::vector<size_t>>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<std::vector<unsigned long>>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<std::vector<std::string>>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<_StringPair>,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<std::vector<int>>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<std::vector<unsigned int>>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<std::vector<int64_t>>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<std::vector<uint64_t>>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<std::vector<float>>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<std::vector<double>>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<std::vector<size_t>>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<std::vector<unsigned long>>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<std::vector<std::string>>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<_StringPair>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 
   boost::python::to_python_converter<_IntPair, TfPyContainerConversions::to_tuple<_IntPair>>();
   boost::python::to_python_converter<_LongPair, TfPyContainerConversions::to_tuple<_LongPair>>();
   boost::python::to_python_converter<_FloatPair, TfPyContainerConversions::to_tuple<_FloatPair>>();
-  boost::python::to_python_converter<_DoublePair,
-                                     TfPyContainerConversions::to_tuple<_DoublePair>>();
-  boost::python::to_python_converter<_StringPair,
-                                     TfPyContainerConversions::to_tuple<_StringPair>>();
+  boost::python::to_python_converter<_DoublePair, TfPyContainerConversions::to_tuple<_DoublePair>>();
+  boost::python::to_python_converter<_StringPair, TfPyContainerConversions::to_tuple<_StringPair>>();
 
   TfPyContainerConversions::from_python_tuple_pair<_IntPair>();
   TfPyContainerConversions::from_python_tuple_pair<_LongPair>();

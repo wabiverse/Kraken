@@ -125,7 +125,7 @@ class PcpDynamicFileFormatDependencyData {
  private:
   // Struct containing the entire contents of the dependency.
   struct _Data {
-    using _ContextData       = std::pair<const PcpDynamicFileFormatInterface *, VtValue>;
+    using _ContextData = std::pair<const PcpDynamicFileFormatInterface *, VtValue>;
     using _ContextDataVector = std::vector<_ContextData>;
 
     _ContextDataVector dependencyContexts;

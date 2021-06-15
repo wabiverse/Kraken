@@ -42,8 +42,7 @@ WABI_NAMESPACE_BEGIN
 class HdSceneDelegate;
 class HdExtComputation;
 using HdPhGLSLProgramSharedPtr = std::shared_ptr<class HdPhGLSLProgram>;
-using HdExtComputationPrimvarDescriptorVector =
-    std::vector<struct HdExtComputationPrimvarDescriptor>;
+using HdExtComputationPrimvarDescriptorVector = std::vector<struct HdExtComputationPrimvarDescriptor>;
 
 using HdPhExtCompGpuComputationSharedPtr = std::shared_ptr<class HdPhExtCompGpuComputation>;
 
@@ -112,9 +111,9 @@ class HdPhExtCompGpuComputation final : public HdComputation {
   /// \see HdExtComputation
   HDPH_API
   static HdPhExtCompGpuComputationSharedPtr CreateGpuComputation(
-      HdSceneDelegate *sceneDelegate,
-      HdExtComputation const *sourceComp,
-      HdExtComputationPrimvarDescriptorVector const &compPrimvars);
+    HdSceneDelegate *sceneDelegate,
+    HdExtComputation const *sourceComp,
+    HdExtComputationPrimvarDescriptorVector const &compPrimvars);
 
   HDPH_API
   virtual ~HdPhExtCompGpuComputation() = default;
@@ -165,7 +164,7 @@ class HdPhExtCompGpuComputation final : public HdComputation {
   int _dispatchCount;
   int _elementCount;
 
-  HdPhExtCompGpuComputation()                                  = delete;
+  HdPhExtCompGpuComputation() = delete;
   HdPhExtCompGpuComputation(const HdPhExtCompGpuComputation &) = delete;
   HdPhExtCompGpuComputation &operator=(const HdPhExtCompGpuComputation &) = delete;
 };
@@ -196,14 +195,14 @@ class HdPhExtCompGpuComputation final : public HdComputation {
 /// computation is needed.
 HDPH_API
 void HdPh_GetExtComputationPrimvarsComputations(
-    const SdfPath &id,
-    HdSceneDelegate *sceneDelegate,
-    HdExtComputationPrimvarDescriptorVector const &allCompPrimvars,
-    HdDirtyBits dirtyBits,
-    HdBufferSourceSharedPtrVector *sources,
-    HdBufferSourceSharedPtrVector *reserveOnlySources,
-    HdBufferSourceSharedPtrVector *separateComputationSources,
-    HdPhComputationSharedPtrVector *computations);
+  const SdfPath &id,
+  HdSceneDelegate *sceneDelegate,
+  HdExtComputationPrimvarDescriptorVector const &allCompPrimvars,
+  HdDirtyBits dirtyBits,
+  HdBufferSourceSharedPtrVector *sources,
+  HdBufferSourceSharedPtrVector *reserveOnlySources,
+  HdBufferSourceSharedPtrVector *separateComputationSources,
+  HdPhComputationSharedPtrVector *computations);
 
 WABI_NAMESPACE_END
 

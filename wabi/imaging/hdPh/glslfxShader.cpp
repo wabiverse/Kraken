@@ -28,9 +28,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPhGLSLFXShader::HdPhGLSLFXShader(HioGlslfxSharedPtr const &glslfx)
-    : HdPhSurfaceShader(),
-      _glslfx(glslfx)
+HdPhGLSLFXShader::HdPhGLSLFXShader(HioGlslfxSharedPtr const &glslfx) : HdPhSurfaceShader(), _glslfx(glslfx)
 {
   _SetSource(HdShaderTokens->fragmentShader, _glslfx->GetSurfaceSource());
   _SetSource(HdShaderTokens->geometryShader, _glslfx->GetDisplacementSource());

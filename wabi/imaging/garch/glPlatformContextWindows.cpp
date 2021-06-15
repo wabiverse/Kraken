@@ -49,13 +49,12 @@ class GarchWGLContextState::_Detail {
 //
 
 GarchWGLContextState::GarchWGLContextState()
-    : _detail(std::make_shared<_Detail>(wglGetCurrentDC(), wglGetCurrentContext()))
+  : _detail(std::make_shared<_Detail>(wglGetCurrentDC(), wglGetCurrentContext()))
 {
   // Do nothing
 }
 
-GarchWGLContextState::GarchWGLContextState(NullState)
-    : _detail(std::make_shared<_Detail>(HDC(0), HGLRC(0)))
+GarchWGLContextState::GarchWGLContextState(NullState) : _detail(std::make_shared<_Detail>(HDC(0), HGLRC(0)))
 {
   // Do nothing
 }

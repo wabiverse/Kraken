@@ -28,7 +28,7 @@
 WABI_NAMESPACE_BEGIN
 
 static std::unique_ptr<const HdPhSubtextureIdentifier> _CloneSubtextureId(
-    std::unique_ptr<const HdPhSubtextureIdentifier> const &subtextureId)
+  std::unique_ptr<const HdPhSubtextureIdentifier> const &subtextureId)
 {
   if (subtextureId) {
     return subtextureId->Clone();
@@ -41,24 +41,22 @@ HdPhTextureIdentifier::HdPhTextureIdentifier() = default;
 HdPhTextureIdentifier::HdPhTextureIdentifier(const TfToken &filePath) : _filePath(filePath)
 {}
 
-HdPhTextureIdentifier::HdPhTextureIdentifier(
-    const TfToken &filePath,
-    std::unique_ptr<const HdPhSubtextureIdentifier> &&subtextureId)
-    : _filePath(filePath),
-      _subtextureId(std::move(subtextureId))
+HdPhTextureIdentifier::HdPhTextureIdentifier(const TfToken &filePath,
+                                             std::unique_ptr<const HdPhSubtextureIdentifier> &&subtextureId)
+  : _filePath(filePath),
+    _subtextureId(std::move(subtextureId))
 {}
 
 HdPhTextureIdentifier::HdPhTextureIdentifier(const HdPhTextureIdentifier &textureId)
-    : _filePath(textureId._filePath),
-      _subtextureId(_CloneSubtextureId(textureId._subtextureId))
+  : _filePath(textureId._filePath),
+    _subtextureId(_CloneSubtextureId(textureId._subtextureId))
 {}
 
-HdPhTextureIdentifier &HdPhTextureIdentifier::operator=(HdPhTextureIdentifier &&textureId) =
-    default;
+HdPhTextureIdentifier &HdPhTextureIdentifier::operator=(HdPhTextureIdentifier &&textureId) = default;
 
 HdPhTextureIdentifier &HdPhTextureIdentifier::operator=(const HdPhTextureIdentifier &textureId)
 {
-  _filePath     = textureId._filePath;
+  _filePath = textureId._filePath;
   _subtextureId = _CloneSubtextureId(textureId._subtextureId);
 
   return *this;
@@ -66,8 +64,7 @@ HdPhTextureIdentifier &HdPhTextureIdentifier::operator=(const HdPhTextureIdentif
 
 HdPhTextureIdentifier::~HdPhTextureIdentifier() = default;
 
-static std::pair<bool, HdPhTextureIdentifier::ID> _OptionalSubidentifierHash(
-    const HdPhTextureIdentifier &id)
+static std::pair<bool, HdPhTextureIdentifier::ID> _OptionalSubidentifierHash(const HdPhTextureIdentifier &id)
 {
   if (const HdPhSubtextureIdentifier *subId = id.GetSubtextureIdentifier()) {
     return {true, TfHash()(*subId)};

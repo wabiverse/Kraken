@@ -40,9 +40,9 @@ Hd_SortedIds::Hd_SortedIds() : _ids(), _sortedCount(0), _afterLastDeletePoint(IN
 {}
 
 Hd_SortedIds::Hd_SortedIds(Hd_SortedIds &&other)
-    : _ids(std::move(other._ids)),
-      _sortedCount(other._sortedCount),
-      _afterLastDeletePoint(other._afterLastDeletePoint)
+  : _ids(std::move(other._ids)),
+    _sortedCount(other._sortedCount),
+    _afterLastDeletePoint(other._afterLastDeletePoint)
 {}
 
 const SdfPathVector &Hd_SortedIds::GetIds()
@@ -112,9 +112,9 @@ void Hd_SortedIds::Remove(const SdfPath &id)
           // so lower_bound should return an iterator between
           // begin and endSortedElements - 1.
           TF_CODING_ERROR(
-              "Id (%s) greater than all items in "
-              " sorted list",
-              id.GetText());
+            "Id (%s) greater than all items in "
+            " sorted list",
+            id.GetText());
           idToRemove = _ids.end();
         }
       }
@@ -168,7 +168,7 @@ void Hd_SortedIds::Remove(const SdfPath &id)
 HD_API
 void Hd_SortedIds::RemoveRange(size_t start, size_t end)
 {
-  size_t numIds      = _ids.size();
+  size_t numIds = _ids.size();
   size_t numToRemove = (end - start + 1);
 
   if (_sortedCount != numIds) {
@@ -182,7 +182,7 @@ void Hd_SortedIds::RemoveRange(size_t start, size_t end)
   }
 
   SdfPathVector::iterator itStart = _ids.begin() + start;
-  SdfPathVector::iterator itEnd   = _ids.begin() + (end + 1);
+  SdfPathVector::iterator itEnd = _ids.begin() + (end + 1);
 
   _ids.erase(itStart, itEnd);
   _sortedCount -= numToRemove;
@@ -192,7 +192,7 @@ void Hd_SortedIds::RemoveRange(size_t start, size_t end)
 void Hd_SortedIds::Clear()
 {
   _ids.clear();
-  _sortedCount          = 0;
+  _sortedCount = 0;
   _afterLastDeletePoint = INVALID_DELETE_POINT;
 }
 
@@ -233,7 +233,7 @@ void Hd_SortedIds::_Sort()
     _FullSort();
   }
 
-  _sortedCount          = numIds;
+  _sortedCount = numIds;
   _afterLastDeletePoint = INVALID_DELETE_POINT;
 }
 

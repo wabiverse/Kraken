@@ -83,16 +83,14 @@ std::enable_if_t<std::is_floating_point<T>::value> TfHashAppend(HashState &h, T 
 }
 
 // Support std::pair.
-template<class HashState, class T, class U>
-inline void TfHashAppend(HashState &h, std::pair<T, U> const &p)
+template<class HashState, class T, class U> inline void TfHashAppend(HashState &h, std::pair<T, U> const &p)
 {
   h.Append(p.first);
   h.Append(p.second);
 }
 
 // Support std::vector.
-template<class HashState, class T>
-inline void TfHashAppend(HashState &h, std::vector<T> const &vec)
+template<class HashState, class T> inline void TfHashAppend(HashState &h, std::vector<T> const &vec)
 {
   h.AppendContiguous(vec.data(), vec.size());
 }
@@ -117,7 +115,7 @@ template<class HashState, class T> inline void TfHashAppend(HashState &h, const 
 // really want to hash the pointer then use static_cast<const void*>(ptr) or
 // TfHashCharPtr.
 template<class HashState> inline void TfHashAppend(HashState &h, char const *ptr) = delete;
-template<class HashState> inline void TfHashAppend(HashState &h, char *ptr)       = delete;
+template<class HashState> inline void TfHashAppend(HashState &h, char *ptr) = delete;
 
 /// A structure that wraps a char pointer, indicating intent that it should be
 /// hashed as a c-style null terminated string.  See TfhashAsCStr().
@@ -167,8 +165,7 @@ inline auto Tf_HashImpl(HashState &h, T &&obj, ...)
 
 // hash_value, attempted second.
 template<class HashState, class T>
-inline auto Tf_HashImpl(HashState &h, T &&obj, long)
-    -> decltype(hash_value(std::forward<T>(obj)), void())
+inline auto Tf_HashImpl(HashState &h, T &&obj, long) -> decltype(hash_value(std::forward<T>(obj)), void())
 {
   TfHashAppend(h, hash_value(std::forward<T>(obj)));
 }
@@ -176,7 +173,7 @@ inline auto Tf_HashImpl(HashState &h, T &&obj, long)
 // TfHashAppend, attempted first.
 template<class HashState, class T>
 inline auto Tf_HashImpl(HashState &h, T &&obj, int)
-    -> decltype(TfHashAppend(h, std::forward<T>(obj)), void())
+  -> decltype(TfHashAppend(h, std::forward<T>(obj)), void())
 {
   TfHashAppend(h, std::forward<T>(obj));
 }
@@ -246,7 +243,7 @@ class Tf_HashState : public Tf_HashStateAPI<Tf_HashState> {
   template<class T> std::enable_if_t<std::is_integral<T>::value> _Append(T i)
   {
     if (!_didOne) {
-      _state  = i;
+      _state = i;
       _didOne = true;
     }
     else {
@@ -341,7 +338,7 @@ class Tf_HashState : public Tf_HashStateAPI<Tf_HashState> {
   }
 
   size_t _state = 0;
-  bool _didOne  = false;
+  bool _didOne = false;
 };
 
 /// \class TfHash
@@ -441,7 +438,7 @@ class TfHash {
   /// details.
   template<class T>
   auto operator()(T &&obj) const
-      -> decltype(Tf_HashImpl(std::declval<Tf_HashState &>(), std::forward<T>(obj), 0), size_t())
+    -> decltype(Tf_HashImpl(std::declval<Tf_HashState &>(), std::forward<T>(obj), 0), size_t())
   {
     Tf_HashState h;
     Tf_HashImpl(h, std::forward<T>(obj), 0);

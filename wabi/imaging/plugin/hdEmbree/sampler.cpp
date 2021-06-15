@@ -43,7 +43,7 @@ bool HdEmbreeBufferSampler::Sample(int index, void *value, HdTupleType dataType)
 
   // Calculate the element's byte offset in the array.
   size_t elemSize = HdDataSizeOfTupleType(dataType);
-  size_t offset   = elemSize * index;
+  size_t offset = elemSize * index;
 
   // Equivalent to:
   // *static_cast<ElementType*>(value) =

@@ -62,8 +62,8 @@ namespace {
 struct _ReentrancyGuard {
  public:
   _ReentrancyGuard(bool *reentrancyGuardValue)
-      : _reentrancyGuardValue(reentrancyGuardValue),
-        _scopeWasReentered(false)
+    : _reentrancyGuardValue(reentrancyGuardValue),
+      _scopeWasReentered(false)
   {
     if (!*_reentrancyGuardValue) {
       *_reentrancyGuardValue = true;
@@ -259,8 +259,7 @@ void TfDiagnosticMgr::_ReportError(const TfError &err)
   }
 
   if (!dispatchedToDelegate && !err.GetQuiet()) {
-    _PrintDiagnostic(
-        stderr, err.GetDiagnosticCode(), err.GetContext(), err.GetCommentary(), err._info);
+    _PrintDiagnostic(stderr, err.GetDiagnosticCode(), err.GetContext(), err.GetCommentary(), err._info);
   }
 }
 
@@ -450,20 +449,18 @@ TfDiagnosticMgr::ErrorIterator TfDiagnosticMgr::EraseRange(ErrorIterator first, 
 
 void TfDiagnosticMgr::ErrorHelper::PostWithInfo(const string &msg, TfDiagnosticInfo info) const
 {
-  TfDiagnosticMgr::GetInstance().PostError(
-      _errorCode, _errorCodeString, _context, msg, info, false);
+  TfDiagnosticMgr::GetInstance().PostError(_errorCode, _errorCodeString, _context, msg, info, false);
 }
 
 void TfDiagnosticMgr::ErrorHelper::Post(const string &msg) const
 {
   TfDiagnosticMgr::GetInstance().PostError(
-      _errorCode, _errorCodeString, _context, msg, TfDiagnosticInfo(), false);
+    _errorCode, _errorCodeString, _context, msg, TfDiagnosticInfo(), false);
 }
 
 void TfDiagnosticMgr::ErrorHelper::PostQuietly(const string &msg, TfDiagnosticInfo info) const
 {
-  TfDiagnosticMgr::GetInstance().PostError(
-      _errorCode, _errorCodeString, _context, msg, info, true);
+  TfDiagnosticMgr::GetInstance().PostError(_errorCode, _errorCodeString, _context, msg, info, true);
 }
 
 void TfDiagnosticMgr::ErrorHelper::Post(const char *fmt, ...) const
@@ -493,13 +490,12 @@ void TfDiagnosticMgr::WarningHelper::Post(const char *fmt, ...) const
 void TfDiagnosticMgr::WarningHelper::Post(const string &msg) const
 {
   TfDiagnosticMgr::GetInstance().PostWarning(
-      _warningCode, _warningCodeString, _context, msg, TfDiagnosticInfo(), false);
+    _warningCode, _warningCodeString, _context, msg, TfDiagnosticInfo(), false);
 }
 
 void TfDiagnosticMgr::WarningHelper::PostWithInfo(const string &msg, TfDiagnosticInfo info) const
 {
-  TfDiagnosticMgr::GetInstance().PostWarning(
-      _warningCode, _warningCodeString, _context, msg, info, false);
+  TfDiagnosticMgr::GetInstance().PostWarning(_warningCode, _warningCodeString, _context, msg, info, false);
 }
 
 void TfDiagnosticMgr::StatusHelper::Post(const char *fmt, ...) const
@@ -513,13 +509,12 @@ void TfDiagnosticMgr::StatusHelper::Post(const char *fmt, ...) const
 void TfDiagnosticMgr::StatusHelper::Post(const string &msg) const
 {
   TfDiagnosticMgr::GetInstance().PostStatus(
-      _statusCode, _statusCodeString, _context, msg, TfDiagnosticInfo(), false);
+    _statusCode, _statusCodeString, _context, msg, TfDiagnosticInfo(), false);
 }
 
 void TfDiagnosticMgr::StatusHelper::PostWithInfo(const string &msg, TfDiagnosticInfo info) const
 {
-  TfDiagnosticMgr::GetInstance().PostStatus(
-      _statusCode, _statusCodeString, _context, msg, info, false);
+  TfDiagnosticMgr::GetInstance().PostStatus(_statusCode, _statusCodeString, _context, msg, info, false);
 }
 
 /* statuc */
@@ -527,17 +522,16 @@ std::string TfDiagnosticMgr::GetCodeName(const TfEnum &code)
 {
   string codeName = TfEnum::GetDisplayName(code);
   if (codeName.empty()) {
-    codeName = TfStringPrintf(
-        "(%s)%d", ArchGetDemangled(code.GetType()).c_str(), code.GetValueAsInt());
+    codeName = TfStringPrintf("(%s)%d", ArchGetDemangled(code.GetType()).c_str(), code.GetValueAsInt());
   }
   return codeName;
 }
 
 void TfDiagnosticMgr::_SetLogInfoForErrors(std::vector<std::string> const &logText) const
 {
-  ArchSetExtraLogInfoForErrors(TfStringPrintf("Thread %s Pending Diagnostics",
-                                              TfStringify(std::this_thread::get_id()).c_str()),
-                               logText.empty() ? nullptr : &logText);
+  ArchSetExtraLogInfoForErrors(
+    TfStringPrintf("Thread %s Pending Diagnostics", TfStringify(std::this_thread::get_id()).c_str()),
+    logText.empty() ? nullptr : &logText);
 }
 
 void TfDiagnosticMgr::_LogText::AppendAndPublish(ErrorIterator begin, ErrorIterator end)
@@ -550,9 +544,7 @@ void TfDiagnosticMgr::_LogText::RebuildAndPublish(ErrorIterator begin, ErrorIter
   return _AppendAndPublishImpl(/*clear=*/true, begin, end);
 }
 
-void TfDiagnosticMgr::_LogText::_AppendAndPublishImpl(bool clear,
-                                                      ErrorIterator begin,
-                                                      ErrorIterator end)
+void TfDiagnosticMgr::_LogText::_AppendAndPublishImpl(bool clear, ErrorIterator begin, ErrorIterator end)
 {
   // The requirement at the Arch level for ArchSetExtraLogInfoForErrors is
   // that the pointer we hand it must remain valid, and we can't mutate the
@@ -562,7 +554,7 @@ void TfDiagnosticMgr::_LogText::_AppendAndPublishImpl(bool clear,
   // swapping out the old copy.  Then we update the old copy to match.  Next
   // time through we do it again but with the data structures swapped, which
   // is tracked by 'parity'.
-  auto *first  = &texts.first;
+  auto *first = &texts.first;
   auto *second = &texts.second;
   if (parity)
     std::swap(first, second);
@@ -575,9 +567,9 @@ void TfDiagnosticMgr::_LogText::_AppendAndPublishImpl(bool clear,
   }
 
   // Publish.
-  ArchSetExtraLogInfoForErrors(TfStringPrintf("Thread %s Pending Diagnostics",
-                                              TfStringify(std::this_thread::get_id()).c_str()),
-                               first->empty() ? nullptr : first);
+  ArchSetExtraLogInfoForErrors(
+    TfStringPrintf("Thread %s Pending Diagnostics", TfStringify(std::this_thread::get_id()).c_str()),
+    first->empty() ? nullptr : first);
 
   // Update second to match, arch is no longer looking at it.
   if (clear)
@@ -635,8 +627,7 @@ std::string TfDiagnosticMgr::FormatDiagnostic(const TfEnum &code,
 
 static std::string _FormatDiagnostic(const TfDiagnosticBase &d, const TfDiagnosticInfo &info)
 {
-  return TfDiagnosticMgr::FormatDiagnostic(
-      d.GetDiagnosticCode(), d.GetContext(), d.GetCommentary(), info);
+  return TfDiagnosticMgr::FormatDiagnostic(d.GetDiagnosticCode(), d.GetContext(), d.GetCommentary(), info);
 }
 
 static void _PrintDiagnostic(FILE *fout,

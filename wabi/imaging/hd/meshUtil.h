@@ -290,8 +290,7 @@ class HdMeshEdgeIndexTable {
   struct _CompareEdgeVertices {
     bool operator()(_Edge const &lhs, _Edge const &rhs) const
     {
-      return (lhs.verts[0] < rhs.verts[0] ||
-              (lhs.verts[0] == rhs.verts[0] && lhs.verts[1] < rhs.verts[1]));
+      return (lhs.verts[0] < rhs.verts[0] || (lhs.verts[0] == rhs.verts[0] && lhs.verts[1] < rhs.verts[1]));
     }
   };
 

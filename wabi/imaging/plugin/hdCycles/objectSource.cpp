@@ -27,12 +27,10 @@
 
 WABI_NAMESPACE_USING
 
-HdCyclesObjectSource::HdCyclesObjectSource(ccl::Object *object,
-                                           const SdfPath &id,
-                                           bool isReference)
-    : m_object{object},
-      m_id{id},
-      m_isReference{isReference}
+HdCyclesObjectSource::HdCyclesObjectSource(ccl::Object *object, const SdfPath &id, bool isReference)
+  : m_object{object},
+    m_id{id},
+    m_isReference{isReference}
 {
   m_object->name = ccl::ustring{m_id.GetToken().GetText(), m_id.GetToken().size()};
 }
@@ -60,16 +58,16 @@ bool HdCyclesObjectSource::Resolve()
 }
 
 HdBbbObjectPropertiesSource *HdCyclesObjectSource::AddObjectPropertiesSource(
-    HdBbbObjectPropertiesSourceSharedPtr source)
+  HdBbbObjectPropertiesSourceSharedPtr source)
 {
-  const TfToken &name        = source->GetName();
+  const TfToken &name = source->GetName();
   m_pending_properties[name] = std::move(source);
   return m_pending_properties[name].get();
 }
 
 HdBbAttributeSource *HdCyclesObjectSource::AddAttributeSource(HdBbAttributeSourceSharedPtr source)
 {
-  const TfToken &name        = source->GetName();
+  const TfToken &name = source->GetName();
   m_pending_attributes[name] = std::move(source);
   return m_pending_attributes[name].get();
 }

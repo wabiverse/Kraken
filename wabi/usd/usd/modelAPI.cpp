@@ -231,8 +231,7 @@ bool UsdModelAPI::GetPayloadAssetDependencies(VtArray<SdfAssetPath> *assetDeps) 
 
 void UsdModelAPI::SetPayloadAssetDependencies(const VtArray<SdfAssetPath> &assetDeps) const
 {
-  GetPrim().SetAssetInfoByKey(UsdModelAPIAssetInfoKeys->payloadAssetDependencies,
-                              VtValue(assetDeps));
+  GetPrim().SetAssetInfoByKey(UsdModelAPIAssetInfoKeys->payloadAssetDependencies, VtValue(assetDeps));
 }
 
 bool UsdModelAPI::GetAssetInfo(VtDictionary *info) const

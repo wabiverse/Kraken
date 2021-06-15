@@ -58,10 +58,8 @@ HdMeshTopology build_triangulated_topology(const VtVec3iArray &triangle_indices)
     face_vertex_indices.push_back(triangle[2]);
   }
 
-  return {PxOsdOpenSubdivTokens->none,
-          PxOsdOpenSubdivTokens->rightHanded,
-          face_vertex_count,
-          face_vertex_indices};
+  return {
+    PxOsdOpenSubdivTokens->none, PxOsdOpenSubdivTokens->rightHanded, face_vertex_count, face_vertex_indices};
 }
 
 ///
@@ -78,9 +76,7 @@ class HdCyclesTriangleRefiner final : public HdCyclesMeshRefiner {
     m_triangulated_topology = build_triangulated_topology(triangle_indices);
   }
 
-  VtValue RefineConstantData(const TfToken &name,
-                             const TfToken &role,
-                             const VtValue &data) const override
+  VtValue RefineConstantData(const TfToken &name, const TfToken &role, const VtValue &data) const override
   {
     return data;
   }
@@ -110,8 +106,7 @@ class HdCyclesTriangleRefiner final : public HdCyclesMeshRefiner {
     VtArray<T> fine_array(m_primitive_param.size());
 
     for (size_t fine_id = 0; fine_id < fine_array.size(); ++fine_id) {
-      size_t coarse_id = HdMeshUtil::DecodeFaceIndexFromCoarseFaceParam(
-          m_primitive_param[fine_id]);
+      size_t coarse_id = HdMeshUtil::DecodeFaceIndexFromCoarseFaceParam(m_primitive_param[fine_id]);
       assert(coarse_id < input.size());
 
       fine_array[fine_id] = input[coarse_id];
@@ -120,9 +115,7 @@ class HdCyclesTriangleRefiner final : public HdCyclesMeshRefiner {
     return VtValue{fine_array};
   }
 
-  VtValue RefineUniformData(const TfToken &name,
-                            const TfToken &role,
-                            const VtValue &data) const override
+  VtValue RefineUniformData(const TfToken &name, const TfToken &role, const VtValue &data) const override
   {
     switch (HdGetValueTupleType(data).type) {
       case HdTypeInt32: {
@@ -146,9 +139,7 @@ class HdCyclesTriangleRefiner final : public HdCyclesMeshRefiner {
     }
   }
 
-  VtValue RefineVaryingData(const TfToken &name,
-                            const TfToken &role,
-                            const VtValue &data) const override
+  VtValue RefineVaryingData(const TfToken &name, const TfToken &role, const VtValue &data) const override
   {
     if (data.GetArraySize() != static_cast<size_t>(m_topology->GetNumPoints())) {
       TF_WARN("Unsupported input data size for varying refinement for primvar %s at %s",
@@ -160,9 +151,7 @@ class HdCyclesTriangleRefiner final : public HdCyclesMeshRefiner {
     return data;
   }
 
-  VtValue RefineVertexData(const TfToken &name,
-                           const TfToken &role,
-                           const VtValue &data) const override
+  VtValue RefineVertexData(const TfToken &name, const TfToken &role, const VtValue &data) const override
   {
     if (data.GetArraySize() != static_cast<size_t>(m_topology->GetNumPoints())) {
       TF_WARN("Unsupported input data size for vertex refinement for primvar %s at %s",
@@ -174,9 +163,7 @@ class HdCyclesTriangleRefiner final : public HdCyclesMeshRefiner {
     return data;
   }
 
-  VtValue RefineFaceVaryingData(const TfToken &name,
-                                const TfToken &role,
-                                const VtValue &data) const override
+  VtValue RefineFaceVaryingData(const TfToken &name, const TfToken &role, const VtValue &data) const override
   {
     if (data.GetArraySize() != static_cast<size_t>(m_topology->GetNumFaceVaryings())) {
       TF_WARN("Unsupported input data size for face varying refinement for primvar %s at %s",
@@ -225,9 +212,8 @@ template<typename T> class RawCpuBuffer {
 ///
 class SubdUniformRefiner {
  public:
-  explicit SubdUniformRefiner(const Far::TopologyRefiner &refiner,
-                              const Osd::CpuPatchTable *patch_table)
-      : m_patch_table{patch_table}
+  explicit SubdUniformRefiner(const Far::TopologyRefiner &refiner, const Osd::CpuPatchTable *patch_table)
+    : m_patch_table{patch_table}
   {
     int face_size = Sdc::SchemeTypeTraits::GetRegularFaceSize(refiner.GetSchemeType());
     const Far::TopologyLevel &base_level = refiner.GetLevel(0);
@@ -235,7 +221,7 @@ class SubdUniformRefiner {
 
     for (int base_face = 0; base_face < base_level.GetNumFaces(); ++base_face) {
       int num_base_vertices = base_level.GetFaceVertices(base_face).size();
-      int num_ptex_faces    = (num_base_vertices == face_size) ? 1 : num_base_vertices;
+      int num_ptex_faces = (num_base_vertices == face_size) ? 1 : num_base_vertices;
       for (int i = 0; i < num_ptex_faces; ++i) {
         m_ptex_index_to_base_index.push_back(base_face);
       }
@@ -269,8 +255,7 @@ class SubdUniformRefiner {
   }
 
  private:
-  template<typename T>
-  VtArray<T> RefineArray(const VtArray<T> &input, const VtIntArray &prim_param) const
+  template<typename T> VtArray<T> RefineArray(const VtArray<T> &input, const VtIntArray &prim_param) const
   {
     VtArray<T> refined_data(prim_param.size());
 
@@ -278,13 +263,12 @@ class SubdUniformRefiner {
 
     for (size_t triangle_index = 0; triangle_index < refined_data.size(); ++triangle_index) {
       // triangle -> patch
-      const int patch_index = HdMeshUtil::DecodeFaceIndexFromCoarseFaceParam(
-          prim_param[triangle_index]);
+      const int patch_index = HdMeshUtil::DecodeFaceIndexFromCoarseFaceParam(prim_param[triangle_index]);
       assert(static_cast<size_t>(patch_index) < m_patch_table->GetPatchParamSize());
 
       // patch -> ptex face
       const Far::PatchParam &patch_param = patch_param_table[patch_index];
-      Far::Index ptex_face_index         = patch_param.GetFaceId();
+      Far::Index ptex_face_index = patch_param.GetFaceId();
       assert(static_cast<size_t>(ptex_face_index) < m_ptex_index_to_base_index.size());
 
       // ptex face -> base face
@@ -321,24 +305,20 @@ VtArray<T> RefineArrayWithStencils(const VtArray<T> &input,
 VtValue RefineWithStencils(const VtValue &input, const Far::StencilTable *stencil_table)
 {
   HdTupleType value_tuple_type = HdGetValueTupleType(input);
-  int stride                   = static_cast<int>(HdGetComponentCount(value_tuple_type.type));
+  int stride = static_cast<int>(HdGetComponentCount(value_tuple_type.type));
 
   switch (value_tuple_type.type) {
     case HdTypeFloat: {
-      return VtValue{
-          RefineArrayWithStencils(input.UncheckedGet<VtArray<float>>(), stencil_table, stride)};
+      return VtValue{RefineArrayWithStencils(input.UncheckedGet<VtArray<float>>(), stencil_table, stride)};
     }
     case HdTypeFloatVec2: {
-      return VtValue{
-          RefineArrayWithStencils(input.UncheckedGet<VtArray<GfVec2f>>(), stencil_table, stride)};
+      return VtValue{RefineArrayWithStencils(input.UncheckedGet<VtArray<GfVec2f>>(), stencil_table, stride)};
     }
     case HdTypeFloatVec3: {
-      return VtValue{
-          RefineArrayWithStencils(input.UncheckedGet<VtArray<GfVec3f>>(), stencil_table, stride)};
+      return VtValue{RefineArrayWithStencils(input.UncheckedGet<VtArray<GfVec3f>>(), stencil_table, stride)};
     }
     case HdTypeFloatVec4: {
-      return VtValue{
-          RefineArrayWithStencils(input.UncheckedGet<VtArray<GfVec4f>>(), stencil_table, stride)};
+      return VtValue{RefineArrayWithStencils(input.UncheckedGet<VtArray<GfVec4f>>(), stencil_table, stride)};
     }
     default:
       TF_CODING_ERROR("Unsupported osd refinement");
@@ -354,8 +334,8 @@ class SubdVertexRefiner {
   SubdVertexRefiner(const Far::TopologyRefiner &refiner, Far::StencilTableFactory::Options options)
   {
     options.interpolationMode = Far::StencilTableFactory::INTERPOLATE_VERTEX;
-    auto table                = Far::StencilTableFactory::Create(refiner, options);
-    m_stencils                = std::unique_ptr<const Far::StencilTable>(table);
+    auto table = Far::StencilTableFactory::Create(refiner, options);
+    m_stencils = std::unique_ptr<const Far::StencilTable>(table);
   }
 
   VtValue RefineArray(const VtValue &input) const
@@ -377,12 +357,11 @@ class SubdVertexRefiner {
 ///
 class SubdVaryingRefiner {
  public:
-  SubdVaryingRefiner(const Far::TopologyRefiner &refiner,
-                     Far::StencilTableFactory::Options options)
+  SubdVaryingRefiner(const Far::TopologyRefiner &refiner, Far::StencilTableFactory::Options options)
   {
     options.interpolationMode = Far::StencilTableFactory::INTERPOLATE_VARYING;
-    auto table                = Far::StencilTableFactory::Create(refiner, options);
-    m_stencils                = std::unique_ptr<const Far::StencilTable>{table};
+    auto table = Far::StencilTableFactory::Create(refiner, options);
+    m_stencils = std::unique_ptr<const Far::StencilTable>{table};
   }
 
   VtValue RefineArray(const VtValue &input) const
@@ -402,17 +381,17 @@ class SubdFVarRefiner {
   SubdFVarRefiner(const Far::TopologyRefiner &refiner,
                   const Osd::CpuPatchTable *patch_table,
                   Far::StencilTableFactory::Options options)
-      : m_patch_table{patch_table}
+    : m_patch_table{patch_table}
   {
     options.interpolationMode = Far::StencilTableFactory::INTERPOLATE_FACE_VARYING;
-    auto table                = Far::StencilTableFactory::Create(refiner, options);
-    m_stencils                = std::unique_ptr<const Far::StencilTable>(table);
+    auto table = Far::StencilTableFactory::Create(refiner, options);
+    m_stencils = std::unique_ptr<const Far::StencilTable>(table);
   }
 
   VtValue RefineArray(const VtValue &input) const
   {
     HdTupleType value_tuple_type = HdGetValueTupleType(input);
-    auto stride                  = static_cast<int>(HdGetComponentCount(value_tuple_type.type));
+    auto stride = static_cast<int>(HdGetComponentCount(value_tuple_type.type));
 
     switch (value_tuple_type.type) {
       case HdTypeFloat: {
@@ -445,15 +424,14 @@ class SubdFVarRefiner {
       RawCpuBuffer<const float> src_buffer(reinterpret_cast<const float *>(input.data()));
       RawCpuBuffer<float> dst_buffer(reinterpret_cast<float *>(refined_data.data()));
 
-      EVALUATOR::EvalStencils(
-          &src_buffer, src_descriptor, &dst_buffer, dst_descriptor, m_stencils.get());
+      EVALUATOR::EvalStencils(&src_buffer, src_descriptor, &dst_buffer, dst_descriptor, m_stencils.get());
     }
 
     // TODO: Data evaluation should happen through EvalPatchesPrimVar
     VtArray<T> eval_data(m_patch_table->GetPatchIndexSize());
     {
       for (size_t fvert = 0; fvert < m_patch_table->GetFVarPatchIndexSize(); ++fvert) {
-        int index        = m_patch_table->GetFVarPatchIndexBuffer()[fvert];
+        int index = m_patch_table->GetFVarPatchIndexBuffer()[fvert];
         eval_data[fvert] = refined_data[index];
       }
     }
@@ -516,12 +494,11 @@ class SubdLimitRefiner {
                      VtFloat3Array &limit_dv) const
   {
     auto refined_ps_primvar = reinterpret_cast<const Float3fPrimvar *>(refined_vertices.data());
-    auto limit_ps_primvar   = reinterpret_cast<Float3fPrimvar *>(limit_ps.data());
-    auto limit_du_primvar   = reinterpret_cast<Float3fPrimvar *>(limit_du.data());
-    auto limit_dv_primvar   = reinterpret_cast<Float3fPrimvar *>(limit_dv.data());
+    auto limit_ps_primvar = reinterpret_cast<Float3fPrimvar *>(limit_ps.data());
+    auto limit_du_primvar = reinterpret_cast<Float3fPrimvar *>(limit_du.data());
+    auto limit_dv_primvar = reinterpret_cast<Float3fPrimvar *>(limit_dv.data());
 
-    m_primvar_refiner.Limit(
-        refined_ps_primvar, limit_ps_primvar, limit_du_primvar, limit_dv_primvar);
+    m_primvar_refiner.Limit(refined_ps_primvar, limit_ps_primvar, limit_du_primvar, limit_dv_primvar);
   }
 
  private:
@@ -569,16 +546,16 @@ class HdCyclesSubdRefiner final : public HdCyclesMeshRefiner {
       // for uniform subdivision only
       Far::PatchTableFactory::Options patch_options(m_topology->GetRefineLevel());
       patch_options.generateAllLevels = false;
-      patch_options.useInfSharpPatch  = true;
+      patch_options.useInfSharpPatch = true;
 
       // only if face varying is present
       patch_options.generateFVarTables = true;
-      patch_options.numFVarChannels    = m_refiner->GetNumFVarChannels();
-      int channel                      = 0;
+      patch_options.numFVarChannels = m_refiner->GetNumFVarChannels();
+      int channel = 0;
       patch_options.fvarChannelIndices = &channel;
 
       std::unique_ptr<Far::PatchTable> far_patch_table{
-          Far::PatchTableFactory::Create(*m_refiner, patch_options)};
+        Far::PatchTableFactory::Create(*m_refiner, patch_options)};
       m_patch_table = std::make_unique<Osd::CpuPatchTable>(far_patch_table.get());
     }
 
@@ -589,14 +566,14 @@ class HdCyclesSubdRefiner final : public HdCyclesMeshRefiner {
       // Shared options for all stencils
       Far::StencilTableFactory::Options stencil_options;
       stencil_options.generateIntermediateLevels = false;
-      stencil_options.generateOffsets            = true;
+      stencil_options.generateOffsets = true;
 
       // required stencils for vertex and normal computation
-      m_vertex  = std::make_unique<SubdVertexRefiner>(*m_refiner, stencil_options);
+      m_vertex = std::make_unique<SubdVertexRefiner>(*m_refiner, stencil_options);
       m_uniform = std::make_unique<SubdUniformRefiner>(*m_refiner, m_patch_table.get());
 
       // optional refiners depending on presence of PrimVars
-      m_limit   = std::make_unique<SubdLimitRefiner>(*m_refiner);
+      m_limit = std::make_unique<SubdLimitRefiner>(*m_refiner);
       m_varying = std::make_unique<SubdVaryingRefiner>(*m_refiner, stencil_options);
       m_fvar = std::make_unique<SubdFVarRefiner>(*m_refiner, m_patch_table.get(), stencil_options);
     }
@@ -615,8 +592,7 @@ class HdCyclesSubdRefiner final : public HdCyclesMeshRefiner {
       for (Far::Index face = 0; face < last_level.GetNumFaces(); ++face) {
         Far::ConstIndexArray face_vertices = last_level.GetFaceVertices(face);
         patch_vertex_count.push_back(face_vertices.size());
-        std::copy(
-            face_vertices.begin(), face_vertices.end(), std::back_inserter(patch_vertex_indices));
+        std::copy(face_vertices.begin(), face_vertices.end(), std::back_inserter(patch_vertex_indices));
       }
 
       m_osd_topology = HdMeshTopology{PxOsdOpenSubdivTokens->none,
@@ -647,16 +623,12 @@ class HdCyclesSubdRefiner final : public HdCyclesMeshRefiner {
     m_limit->EvaluateLimit(refined_vertices, limit_ps, limit_du, limit_dv);
   }
 
-  VtValue RefineConstantData(const TfToken &name,
-                             const TfToken &role,
-                             const VtValue &data) const override
+  VtValue RefineConstantData(const TfToken &name, const TfToken &role, const VtValue &data) const override
   {
     return {data};
   }
 
-  VtValue RefineUniformData(const TfToken &name,
-                            const TfToken &role,
-                            const VtValue &data) const override
+  VtValue RefineUniformData(const TfToken &name, const TfToken &role, const VtValue &data) const override
   {
     if (data.GetArraySize() != static_cast<size_t>(m_topology->GetNumFaces())) {
       TF_WARN("Unsupported input data size for uniform refinement for primvar %s at %s",
@@ -668,9 +640,7 @@ class HdCyclesSubdRefiner final : public HdCyclesMeshRefiner {
     return m_uniform->RefineArray(data, m_prim_param);
   }
 
-  VtValue RefineVertexData(const TfToken &name,
-                           const TfToken &role,
-                           const VtValue &data) const override
+  VtValue RefineVertexData(const TfToken &name, const TfToken &role, const VtValue &data) const override
   {
     if (data.GetArraySize() != static_cast<size_t>(m_topology->GetNumPoints())) {
       TF_WARN("Unsupported input data size for vertex refinement for primvar %s at %s",
@@ -682,9 +652,7 @@ class HdCyclesSubdRefiner final : public HdCyclesMeshRefiner {
     return m_vertex->RefineArray(data);
   }
 
-  VtValue RefineVaryingData(const TfToken &name,
-                            const TfToken &role,
-                            const VtValue &data) const override
+  VtValue RefineVaryingData(const TfToken &name, const TfToken &role, const VtValue &data) const override
   {
     if (data.GetArraySize() != static_cast<size_t>(m_topology->GetNumPoints())) {
       TF_WARN("Unsupported input data size for varying refinement for primvar %s at %s",
@@ -713,11 +681,10 @@ class HdCyclesSubdRefiner final : public HdCyclesMeshRefiner {
     // triangulate refinement for Cycles
     HdMeshUtil mesh_util{&m_osd_topology, m_topology->GetId()};
     VtValue triangulated;
-    if (!mesh_util.ComputeTriangulatedFaceVaryingPrimvar(
-            HdGetValueData(refined_value),
-            static_cast<int>(refined_value.GetArraySize()),
-            HdGetValueTupleType(refined_value).type,
-            &triangulated)) {
+    if (!mesh_util.ComputeTriangulatedFaceVaryingPrimvar(HdGetValueData(refined_value),
+                                                         static_cast<int>(refined_value.GetArraySize()),
+                                                         HdGetValueTupleType(refined_value).type,
+                                                         &triangulated)) {
       TF_CODING_ERROR("Unsupported uniform refinement");
       return {};
     }
@@ -751,8 +718,8 @@ HdCyclesMeshRefiner::HdCyclesMeshRefiner() = default;
 HdCyclesMeshRefiner::~HdCyclesMeshRefiner() = default;
 
 HdBbMeshTopology::HdBbMeshTopology(const SdfPath &id, const HdMeshTopology &src, int refine_level)
-    : HdMeshTopology{src, refine_level},
-      m_id{id}
+  : HdMeshTopology{src, refine_level},
+    m_id{id}
 {
   if (GetScheme() == PxOsdOpenSubdivTokens->catmullClark && GetRefineLevel() > 0) {
     m_refiner = std::make_unique<HdCyclesSubdRefiner>(*this);

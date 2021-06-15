@@ -38,11 +38,7 @@ class HdPhGLUtils {
   /// Reads the content of VBO back to VtArray.
   /// The \p vboOffset is expressed in bytes.
   HDPH_API
-  static VtValue ReadBuffer(uint64_t vbo,
-                            HdTupleType tupleType,
-                            int vboOffset,
-                            int stride,
-                            int numElements);
+  static VtValue ReadBuffer(uint64_t vbo, HdTupleType tupleType, int vboOffset, int stride, int numElements);
 };
 
 /// \class HdPhBufferRelocator
@@ -52,8 +48,8 @@ class HdPhGLUtils {
 class HdPhBufferRelocator {
  public:
   HdPhBufferRelocator(HgiBufferHandle const &srcBuffer, HgiBufferHandle const &dstBuffer)
-      : _srcBuffer(srcBuffer),
-        _dstBuffer(dstBuffer)
+    : _srcBuffer(srcBuffer),
+      _dstBuffer(dstBuffer)
   {}
 
   /// Schedule the range to be copied. The consecutive ranges could be
@@ -68,9 +64,9 @@ class HdPhBufferRelocator {
  private:
   struct _CopyUnit {
     _CopyUnit(ptrdiff_t read, ptrdiff_t write, ptrdiff_t size)
-        : readOffset(read),
-          writeOffset(write),
-          copySize(size)
+      : readOffset(read),
+        writeOffset(write),
+        copySize(size)
     {}
 
     bool Concat(_CopyUnit const &next)

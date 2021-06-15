@@ -19,9 +19,7 @@ WABI_NAMESPACE_BEGIN
 HdRprField::HdRprField(SdfPath const &id) : HdField(id)
 {}
 
-void HdRprField::Sync(HdSceneDelegate *sceneDelegate,
-                      HdRenderParam *renderParam,
-                      HdDirtyBits *dirtyBits)
+void HdRprField::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
   if (*dirtyBits & DirtyParams) {
     auto rprRenderParam = static_cast<HdRprRenderParam *>(renderParam);

@@ -78,7 +78,7 @@ class TfMallocTag {
     /// the path.
     struct PathNode {
       size_t nBytes,                   ///< Allocated bytes by this or descendant nodes.
-          nBytesDirect;                ///< Allocated bytes (only for this node).
+        nBytesDirect;                  ///< Allocated bytes (only for this node).
       size_t nAllocations;             ///< The number of allocations for this node.
       std::string siteName;            ///< Tag name.
       std::vector<PathNode> children;  ///< Children nodes.
@@ -127,8 +127,7 @@ class TfMallocTag {
     ///
     /// \b %%Totl : (%% Total). BytesExcl / TotalBytes * 100
     TF_API
-    std::string GetPrettyPrintString(PrintSetting setting   = BOTH,
-                                     size_t maxPrintedNodes = 100000) const;
+    std::string GetPrettyPrintString(PrintSetting setting = BOTH, size_t maxPrintedNodes = 100000) const;
 
     /// Generates a report to the ostream \p out.
     ///

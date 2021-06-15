@@ -59,7 +59,7 @@ static HdRenderPassStateSharedPtr _InitIdRenderPassState(HdRenderIndex *index)
 
   if (HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(rps.get())) {
     extendedState->SetRenderPassShader(
-        std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassPickingShader()));
+      std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassPickingShader()));
   }
 
   return rps;
@@ -78,9 +78,9 @@ static bool _IsPhoenixRenderer(HdRenderDelegate *renderDelegate)
 // HdxPickTask
 // -------------------------------------------------------------------------- //
 HdxPickTask::HdxPickTask(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdTask(id),
-      _renderTags(),
-      _index(nullptr)
+  : HdTask(id),
+    _renderTags(),
+    _index(nullptr)
 {}
 
 HdxPickTask::~HdxPickTask() = default;
@@ -145,16 +145,14 @@ void HdxPickTask::_InitIfNeeded(GfVec2i const &size)
     _drawTarget->AddAttachment("edgeId", GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA8);
     _drawTarget->AddAttachment("pointId", GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA8);
     _drawTarget->AddAttachment("neye", GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA8);
-    _drawTarget->AddAttachment(
-        "depth", GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, GL_DEPTH24_STENCIL8);
+    _drawTarget->AddAttachment("depth", GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, GL_DEPTH24_STENCIL8);
     //"depth", GL_DEPTH_COMPONENT, GL_FLOAT, GL_DEPTH_COMPONENT32F);
 
     _drawTarget->Unbind();
   }
 }
 
-void HdxPickTask::_ConditionStencilWithGLCallback(
-    HdxPickTaskContextParams::DepthMaskCallback maskCallback)
+void HdxPickTask::_ConditionStencilWithGLCallback(HdxPickTaskContextParams::DepthMaskCallback maskCallback)
 {
   // Setup stencil state and prevent writes to color buffer.
   // We don't use the pickable/unpickable render pass state below, since
@@ -188,8 +186,7 @@ void HdxPickTask::_ConditionStencilWithGLCallback(
 
 bool HdxPickTask::_UseOcclusionPass() const
 {
-  return _contextParams.doUnpickablesOcclude &&
-         !_contextParams.collection.GetExcludePaths().empty();
+  return _contextParams.doUnpickablesOcclude && !_contextParams.collection.GetExcludePaths().empty();
 }
 
 void HdxPickTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits)
@@ -273,10 +270,8 @@ void HdxPickTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBit
     // If scene materials are disabled in this environment then
     // let's setup the override shader
     if (HdPhRenderPassState *extState = dynamic_cast<HdPhRenderPassState *>(state.get())) {
-      extState->SetCameraFramingState(_contextParams.viewMatrix,
-                                      _contextParams.projectionMatrix,
-                                      viewport,
-                                      _contextParams.clipPlanes);
+      extState->SetCameraFramingState(
+        _contextParams.viewMatrix, _contextParams.projectionMatrix, viewport, _contextParams.clipPlanes);
       extState->SetUseSceneMaterials(_params.enableSceneMaterials);
     }
   }
@@ -499,18 +494,18 @@ HdxPickResult::HdxPickResult(int const *primIds,
                              GfVec2f const &depthRange,
                              GfVec2i const &bufferSize,
                              GfVec4i const &subRect)
-    : _primIds(primIds),
-      _instanceIds(instanceIds),
-      _elementIds(elementIds),
-      _edgeIds(edgeIds),
-      _pointIds(pointIds),
-      _neyes(neyes),
-      _depths(depths),
-      _index(index),
-      _pickTarget(pickTarget),
-      _depthRange(depthRange),
-      _bufferSize(bufferSize),
-      _subRect(subRect)
+  : _primIds(primIds),
+    _instanceIds(instanceIds),
+    _elementIds(elementIds),
+    _edgeIds(edgeIds),
+    _pointIds(pointIds),
+    _neyes(neyes),
+    _depths(depths),
+    _index(index),
+    _pickTarget(pickTarget),
+    _depthRange(depthRange),
+    _bufferSize(bufferSize),
+    _subRect(subRect)
 {
   // Clamp _subRect [x,y,w,h] to render buffer [0,0,w,h]
   _subRect[0] = std::max(0, _subRect[0]);
@@ -543,14 +538,14 @@ GfVec3f HdxPickResult::_GetNormal(int index) const
   GfVec3f normal = GfVec3f(0);
   if (_neyes != nullptr) {
     GfVec3f neye = HdVec4f_2_10_10_10_REV(_neyes[index]).GetAsVec<GfVec3f>();
-    normal       = _eyeToWorld.TransformDir(neye);
+    normal = _eyeToWorld.TransformDir(neye);
   }
   return normal;
 }
 
 bool HdxPickResult::_ResolveHit(int index, int x, int y, float z, HdxPickHit *hit) const
 {
-  int primId    = _GetPrimId(index);
+  int primId = _GetPrimId(index);
   hit->objectId = _index->GetRprimPathFromPrimId(primId);
 
   if (!hit->IsValid()) {
@@ -558,7 +553,7 @@ bool HdxPickResult::_ResolveHit(int index, int x, int y, float z, HdxPickHit *hi
   }
 
   bool rprimValid = _index->GetSceneDelegateAndInstancerIds(
-      hit->objectId, &(hit->delegateId), &(hit->instancerId));
+    hit->objectId, &(hit->delegateId), &(hit->instancerId));
 
   if (!TF_VERIFY(rprimValid, "%s\n", hit->objectId.GetText())) {
     return false;
@@ -568,14 +563,14 @@ bool HdxPickResult::_ResolveHit(int index, int x, int y, float z, HdxPickHit *hi
   GfVec3d ndcHit(((double)x / _bufferSize[0]) * 2.0 - 1.0,
                  ((double)y / _bufferSize[1]) * 2.0 - 1.0,
                  ((z - _depthRange[0]) / (_depthRange[1] - _depthRange[0])) * 2.0 - 1.0);
-  hit->worldSpaceHitPoint  = GfVec3f(_ndcToWorld.Transform(ndcHit));
+  hit->worldSpaceHitPoint = GfVec3f(_ndcToWorld.Transform(ndcHit));
   hit->worldSpaceHitNormal = _GetNormal(index);
-  hit->normalizedDepth     = (z - _depthRange[0]) / (_depthRange[1] - _depthRange[0]);
+  hit->normalizedDepth = (z - _depthRange[0]) / (_depthRange[1] - _depthRange[0]);
 
   hit->instanceIndex = _GetInstanceId(index);
-  hit->elementIndex  = _GetElementId(index);
-  hit->edgeIndex     = _GetEdgeId(index);
-  hit->pointIndex    = _GetPointId(index);
+  hit->elementIndex = _GetElementId(index);
+  hit->edgeIndex = _GetEdgeId(index);
+  hit->pointIndex = _GetPointId(index);
 
   if (TfDebug::IsEnabled(HDX_INTERSECT)) {
     std::cout << *hit << std::endl;
@@ -606,11 +601,9 @@ bool HdxPickResult::_IsValidHit(int index) const
   // Inspect the id buffers to determine if the pixel index is a valid hit
   // by accounting for the pick target when picking points and edges.
   // This allows the hit(s) returned to be relevant.
-  bool validPrim             = (_GetPrimId(index) != -1);
-  bool invalidTargetEdgePick = (_pickTarget == HdxPickTokens->pickEdges) &&
-                               (_GetEdgeId(index) == -1);
-  bool invalidTargetPointPick = (_pickTarget == HdxPickTokens->pickPoints) &&
-                                (_GetPointId(index) == -1);
+  bool validPrim = (_GetPrimId(index) != -1);
+  bool invalidTargetEdgePick = (_pickTarget == HdxPickTokens->pickEdges) && (_GetEdgeId(index) == -1);
+  bool invalidTargetPointPick = (_pickTarget == HdxPickTokens->pickPoints) && (_GetPointId(index) == -1);
 
   return validPrim && !invalidTargetEdgePick && !invalidTargetPointPick;
 }
@@ -623,9 +616,9 @@ void HdxPickResult::ResolveNearestToCamera(HdxPickHitVector *allHits) const
     return;
   }
 
-  int xMin      = 0;
-  int yMin      = 0;
-  double zMin   = 0;
+  int xMin = 0;
+  int yMin = 0;
+  double zMin = 0;
   int zMinIndex = -1;
 
   // Find the smallest value (nearest pixel) in the z buffer that is a valid
@@ -636,9 +629,9 @@ void HdxPickResult::ResolveNearestToCamera(HdxPickHitVector *allHits) const
     for (int x = _subRect[0]; x < _subRect[0] + _subRect[2]; ++x) {
       int i = y * _bufferSize[0] + x;
       if (_IsValidHit(i) && (zMinIndex == -1 || _depths[i] < zMin)) {
-        xMin      = x;
-        yMin      = y;
-        zMin      = _depths[i];
+        xMin = x;
+        yMin = y;
+        zMin = _depths[i];
         zMinIndex = i;
       }
     }
@@ -663,7 +656,7 @@ void HdxPickResult::ResolveNearestToCenter(HdxPickHitVector *allHits) const
     return;
   }
 
-  int width  = _subRect[2];
+  int width = _subRect[2];
   int height = _subRect[3];
 
   int midH = height / 2;
@@ -808,8 +801,7 @@ bool operator==(HdxPickHit const &lhs, HdxPickHit const &rhs)
          lhs.instancerId == rhs.instancerId && lhs.instanceIndex == rhs.instanceIndex &&
          lhs.elementIndex == rhs.elementIndex && lhs.edgeIndex == rhs.edgeIndex &&
          lhs.pointIndex == rhs.pointIndex && lhs.worldSpaceHitPoint == rhs.worldSpaceHitPoint &&
-         lhs.worldSpaceHitNormal == rhs.worldSpaceHitNormal &&
-         lhs.normalizedDepth == rhs.normalizedDepth;
+         lhs.worldSpaceHitNormal == rhs.worldSpaceHitNormal && lhs.normalizedDepth == rhs.normalizedDepth;
 }
 
 bool operator!=(HdxPickHit const &lhs, HdxPickHit const &rhs)
@@ -851,16 +843,13 @@ std::ostream &operator<<(std::ostream &out, HdxPickTaskParams const &p)
 bool operator==(HdxPickTaskContextParams const &lhs, HdxPickTaskContextParams const &rhs)
 {
   using RawDepthMaskCallback = void (*)();
-  const RawDepthMaskCallback *lhsDepthMaskPtr =
-      lhs.depthMaskCallback.target<RawDepthMaskCallback>();
-  const RawDepthMaskCallback *rhsDepthMaskPtr =
-      rhs.depthMaskCallback.target<RawDepthMaskCallback>();
+  const RawDepthMaskCallback *lhsDepthMaskPtr = lhs.depthMaskCallback.target<RawDepthMaskCallback>();
+  const RawDepthMaskCallback *rhsDepthMaskPtr = rhs.depthMaskCallback.target<RawDepthMaskCallback>();
   const RawDepthMaskCallback lhsDepthMask = lhsDepthMaskPtr ? *lhsDepthMaskPtr : nullptr;
   const RawDepthMaskCallback rhsDepthMask = rhsDepthMaskPtr ? *rhsDepthMaskPtr : nullptr;
 
   return lhs.resolution == rhs.resolution && lhs.pickTarget == rhs.pickTarget &&
-         lhs.resolveMode == rhs.resolveMode &&
-         lhs.doUnpickablesOcclude == rhs.doUnpickablesOcclude &&
+         lhs.resolveMode == rhs.resolveMode && lhs.doUnpickablesOcclude == rhs.doUnpickablesOcclude &&
          lhs.viewMatrix == rhs.viewMatrix && lhs.projectionMatrix == rhs.projectionMatrix &&
          lhs.clipPlanes == rhs.clipPlanes && lhsDepthMask == rhsDepthMask &&
          lhs.collection == rhs.collection && lhs.outHits == rhs.outHits;
@@ -873,13 +862,13 @@ bool operator!=(HdxPickTaskContextParams const &lhs, HdxPickTaskContextParams co
 
 std::ostream &operator<<(std::ostream &out, HdxPickTaskContextParams const &p)
 {
-  using RawDepthMaskCallback               = void (*)();
+  using RawDepthMaskCallback = void (*)();
   const RawDepthMaskCallback *depthMaskPtr = p.depthMaskCallback.target<RawDepthMaskCallback>();
-  const RawDepthMaskCallback depthMask     = depthMaskPtr ? *depthMaskPtr : nullptr;
+  const RawDepthMaskCallback depthMask = depthMaskPtr ? *depthMaskPtr : nullptr;
 
-  out << "PickTask Context Params: (...) " << p.resolution << " " << p.pickTarget << " "
-      << p.resolveMode << " " << p.doUnpickablesOcclude << " " << p.viewMatrix << " "
-      << p.projectionMatrix << " " << depthMask << " " << p.collection << " " << p.outHits;
+  out << "PickTask Context Params: (...) " << p.resolution << " " << p.pickTarget << " " << p.resolveMode
+      << " " << p.doUnpickablesOcclude << " " << p.viewMatrix << " " << p.projectionMatrix << " "
+      << depthMask << " " << p.collection << " " << p.outHits;
   for (auto const &a : p.clipPlanes) {
     out << a << " ";
   }

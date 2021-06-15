@@ -58,11 +58,11 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 UsdAbcAlembicFileFormat::UsdAbcAlembicFileFormat()
-    : SdfFileFormat(UsdAbcAlembicFileFormatTokens->Id,
-                    UsdAbcAlembicFileFormatTokens->Version,
-                    UsdAbcAlembicFileFormatTokens->Target,
-                    UsdAbcAlembicFileFormatTokens->Id),
-      _usda(SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id))
+  : SdfFileFormat(UsdAbcAlembicFileFormatTokens->Id,
+                  UsdAbcAlembicFileFormatTokens->Version,
+                  UsdAbcAlembicFileFormatTokens->Target,
+                  UsdAbcAlembicFileFormatTokens->Id),
+    _usda(SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id))
 {}
 
 UsdAbcAlembicFileFormat::~UsdAbcAlembicFileFormat()
@@ -84,13 +84,11 @@ bool UsdAbcAlembicFileFormat::CanRead(const string &filePath) const
   return extension == this->GetFormatId();
 }
 
-bool UsdAbcAlembicFileFormat::Read(SdfLayer *layer,
-                                   const string &resolvedPath,
-                                   bool metadataOnly) const
+bool UsdAbcAlembicFileFormat::Read(SdfLayer *layer, const string &resolvedPath, bool metadataOnly) const
 {
   TRACE_FUNCTION();
 
-  SdfAbstractDataRefPtr data       = InitData(layer->GetFileFormatArguments());
+  SdfAbstractDataRefPtr data = InitData(layer->GetFileFormatArguments());
   UsdAbc_AlembicDataRefPtr abcData = TfStatic_cast<UsdAbc_AlembicDataRefPtr>(data);
   if (!abcData->Open(resolvedPath)) {
     return false;

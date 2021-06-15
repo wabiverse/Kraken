@@ -75,8 +75,7 @@ static std::string _Repr(const NdrNodeDiscoveryResult &x)
 
 #undef ADD_KW_ARG
 
-  return TF_PY_REPR_PREFIX +
-         TfStringPrintf("NodeDiscoveryResult(%s)", TfStringJoin(args, ", ").c_str());
+  return TF_PY_REPR_PREFIX + TfStringPrintf("NodeDiscoveryResult(%s)", TfStringJoin(args, ", ").c_str());
 }
 
 // XXX: WBN if Tf provided this sort of converter for stl maps.
@@ -90,8 +89,7 @@ template<typename MAP> struct MapConverter {
     boost::python::type_info info = boost::python::type_id<Map>();
     boost::python::converter::registry::push_back(&convertible, &construct, info);
 
-    const boost::python::converter::registration *reg = boost::python::converter::registry::query(
-        info);
+    const boost::python::converter::registration *reg = boost::python::converter::registry::query(info);
     if (reg == NULL || reg->m_to_python == NULL) {
       boost::python::to_python_converter<Map, MapConverter<Map>>();
     }
@@ -111,8 +109,8 @@ template<typename MAP> struct MapConverter {
       return nullptr;
     }
 
-    boost::python::dict map    = boost::python::extract<boost::python::dict>(obj_ptr);
-    boost::python::list keys   = map.keys();
+    boost::python::dict map = boost::python::extract<boost::python::dict>(obj_ptr);
+    boost::python::list keys = map.keys();
     boost::python::list values = map.values();
     for (int i = 0; i < len(keys); ++i) {
 
@@ -129,22 +127,20 @@ template<typename MAP> struct MapConverter {
 
     return obj_ptr;
   }
-  static void construct(PyObject *obj_ptr,
-                        boost::python::converter::rvalue_from_python_stage1_data *data)
+  static void construct(PyObject *obj_ptr, boost::python::converter::rvalue_from_python_stage1_data *data)
   {
-    void *storage =
-        ((boost::python::converter::rvalue_from_python_storage<Map> *)data)->storage.bytes;
+    void *storage = ((boost::python::converter::rvalue_from_python_storage<Map> *)data)->storage.bytes;
     new (storage) Map();
     data->convertible = storage;
 
     Map &result = *((Map *)storage);
 
-    boost::python::dict map    = boost::python::extract<boost::python::dict>(obj_ptr);
-    boost::python::list keys   = map.keys();
+    boost::python::dict map = boost::python::extract<boost::python::dict>(obj_ptr);
+    boost::python::list keys = map.keys();
     boost::python::list values = map.values();
     for (int i = 0; i < len(keys); ++i) {
 
-      boost::python::object keyObj   = keys[i];
+      boost::python::object keyObj = keys[i];
       boost::python::object valueObj = values[i];
       result.emplace(boost::python::extract<Key>(keyObj), boost::python::extract<Value>(valueObj));
     }
@@ -161,54 +157,47 @@ void wrapNodeDiscoveryResult()
 
   typedef NdrNodeDiscoveryResult This;
   class_<This>("NodeDiscoveryResult", no_init)
-      .def(init<NdrIdentifier,
-                NdrVersion,
-                std::string,
-                TfToken,
-                TfToken,
-                TfToken,
-                std::string,
-                std::string,
-                std::string,
-                NdrTokenMap,
-                std::string,
-                TfToken,
-                NdrTokenVec>((arg("identifier"),
-                              arg("version"),
-                              arg("name"),
-                              arg("family"),
-                              arg("discoveryType"),
-                              arg("sourceType"),
-                              arg("uri"),
-                              arg("resolvedUri"),
-                              arg("sourceCode")    = std::string(),
-                              arg("metadata")      = NdrTokenMap(),
-                              arg("blindData")     = std::string(),
-                              arg("subIdentifier") = TfToken(),
-                              arg("aliases")       = NdrTokenVec())))
-      .add_property("identifier",
-                    make_getter(&This::identifier, return_value_policy<return_by_value>()))
-      .add_property("version", &This::version)
-      .add_property("name", &This::name)
-      .add_property("family", make_getter(&This::family, return_value_policy<return_by_value>()))
-      .add_property("discoveryType",
-                    make_getter(&This::discoveryType, return_value_policy<return_by_value>()))
-      .add_property("sourceType",
-                    make_getter(&This::sourceType, return_value_policy<return_by_value>()))
-      .add_property("uri", &This::uri)
-      .add_property("resolvedUri", &This::resolvedUri)
-      .add_property("sourceCode", &This::sourceCode)
-      .add_property("metadata",
-                    make_getter(&This::metadata, return_value_policy<TfPyMapToDictionary>()))
-      .add_property("blindData", &This::blindData)
-      .add_property("subIdentifier",
-                    make_getter(&This::subIdentifier, return_value_policy<return_by_value>()))
-      .add_property("aliases",
-                    make_getter(&This::aliases, return_value_policy<TfPySequenceToList>()))
-      .def("__repr__", _Repr);
+    .def(init<NdrIdentifier,
+              NdrVersion,
+              std::string,
+              TfToken,
+              TfToken,
+              TfToken,
+              std::string,
+              std::string,
+              std::string,
+              NdrTokenMap,
+              std::string,
+              TfToken,
+              NdrTokenVec>((arg("identifier"),
+                            arg("version"),
+                            arg("name"),
+                            arg("family"),
+                            arg("discoveryType"),
+                            arg("sourceType"),
+                            arg("uri"),
+                            arg("resolvedUri"),
+                            arg("sourceCode") = std::string(),
+                            arg("metadata") = NdrTokenMap(),
+                            arg("blindData") = std::string(),
+                            arg("subIdentifier") = TfToken(),
+                            arg("aliases") = NdrTokenVec())))
+    .add_property("identifier", make_getter(&This::identifier, return_value_policy<return_by_value>()))
+    .add_property("version", &This::version)
+    .add_property("name", &This::name)
+    .add_property("family", make_getter(&This::family, return_value_policy<return_by_value>()))
+    .add_property("discoveryType", make_getter(&This::discoveryType, return_value_policy<return_by_value>()))
+    .add_property("sourceType", make_getter(&This::sourceType, return_value_policy<return_by_value>()))
+    .add_property("uri", &This::uri)
+    .add_property("resolvedUri", &This::resolvedUri)
+    .add_property("sourceCode", &This::sourceCode)
+    .add_property("metadata", make_getter(&This::metadata, return_value_policy<TfPyMapToDictionary>()))
+    .add_property("blindData", &This::blindData)
+    .add_property("subIdentifier", make_getter(&This::subIdentifier, return_value_policy<return_by_value>()))
+    .add_property("aliases", make_getter(&This::aliases, return_value_policy<TfPySequenceToList>()))
+    .def("__repr__", _Repr);
 
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<This>,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<This>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
   boost::python::to_python_converter<std::vector<This>, TfPySequenceToPython<std::vector<This>>>();
 }

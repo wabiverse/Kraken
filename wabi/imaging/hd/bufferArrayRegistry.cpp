@@ -29,11 +29,10 @@ WABI_NAMESPACE_BEGIN
 HdBufferArrayRegistry::HdBufferArrayRegistry() : _entries()
 {}
 
-HdBufferArrayRangeSharedPtr HdBufferArrayRegistry::AllocateRange(
-    HdAggregationStrategy *strategy,
-    TfToken const &role,
-    HdBufferSpecVector const &bufferSpecs,
-    HdBufferArrayUsageHint usageHint)
+HdBufferArrayRangeSharedPtr HdBufferArrayRegistry::AllocateRange(HdAggregationStrategy *strategy,
+                                                                 TfToken const &role,
+                                                                 HdBufferSpecVector const &bufferSpecs,
+                                                                 HdBufferArrayUsageHint usageHint)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -49,12 +48,10 @@ HdBufferArrayRangeSharedPtr HdBufferArrayRegistry::AllocateRange(
   }
 
   // compute an aggregation Id on current aggregation strategy
-  HdAggregationStrategy::AggregationId aggrId = strategy->ComputeAggregationId(bufferSpecs,
-                                                                               usageHint);
+  HdAggregationStrategy::AggregationId aggrId = strategy->ComputeAggregationId(bufferSpecs, usageHint);
 
   // We use insert to do a find and insert operation
-  std::pair<_BufferArrayIndex::iterator, bool> result = _entries.insert(
-      std::make_pair(aggrId, _Entry()));
+  std::pair<_BufferArrayIndex::iterator, bool> result = _entries.insert(std::make_pair(aggrId, _Entry()));
 
   _Entry &entry = (result.first)->second;
 
@@ -140,13 +137,13 @@ void HdBufferArrayRegistry::ReallocateAll(HdAggregationStrategy *strategy)
         if (numElements > maxTotalElements) {
           // Issue a warning and reset number of elements in the BAR.
           TF_WARN(
-              "Number of elements in the buffer array range "
-              "(0x%lx) is _larger_ than the maximum number of "
-              "elements in the buffer array (0x%lx). 0x%lx bytes "
-              "of data will be skipped.",
-              numElements,
-              maxTotalElements,
-              numElements - maxTotalElements);
+            "Number of elements in the buffer array range "
+            "(0x%lx) is _larger_ than the maximum number of "
+            "elements in the buffer array (0x%lx). 0x%lx bytes "
+            "of data will be skipped.",
+            numElements,
+            maxTotalElements,
+            numElements - maxTotalElements);
 
           range->Resize(maxTotalElements);
         }
@@ -154,11 +151,11 @@ void HdBufferArrayRegistry::ReallocateAll(HdAggregationStrategy *strategy)
         // over aggregation check of non-uniform buffer
         if (numTotalElements + numElements > maxTotalElements) {
           // create new BufferArray with same specification
-          HdBufferSpecVector bufferSpecs   = strategy->GetBufferSpecs(bufferArray);
+          HdBufferSpecVector bufferSpecs = strategy->GetBufferSpecs(bufferArray);
           HdBufferArrayUsageHint usageHint = bufferArray->GetUsageHint();
 
           HdBufferArraySharedPtr newBufferArray = strategy->CreateBufferArray(
-              bufferArray->GetRole(), bufferSpecs, usageHint);
+            bufferArray->GetRole(), bufferSpecs, usageHint);
           newBufferArray->Reallocate(ranges, bufferArray);
 
           // bufferArrays is std::list

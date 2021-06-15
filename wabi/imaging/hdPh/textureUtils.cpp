@@ -37,13 +37,12 @@ template<typename T> constexpr T _OpaqueAlpha()
   return std::numeric_limits<T>::is_integer ? std::numeric_limits<T>::max() : T(1);
 }
 
-template<typename T>
-void _ConvertRGBToRGBA(const void *const src, const size_t numTexels, void *const dst)
+template<typename T> void _ConvertRGBToRGBA(const void *const src, const size_t numTexels, void *const dst)
 {
   TRACE_FUNCTION();
 
   const T *const typedSrc = reinterpret_cast<const T *>(src);
-  T *const typedDst       = reinterpret_cast<T *>(dst);
+  T *const typedDst = reinterpret_cast<T *>(dst);
 
   for (size_t i = 0; i < numTexels; i++) {
     typedDst[4 * i + 0] = typedSrc[3 * i + 0];
@@ -88,7 +87,7 @@ void _PremultiplyAlpha(const void *const src, const size_t numTexels, void *cons
   static_assert(std::numeric_limits<T>::is_integer, "Requires integral type");
 
   const T *const typedSrc = reinterpret_cast<const T *>(src);
-  T *const typedDst       = reinterpret_cast<T *>(dst);
+  T *const typedDst = reinterpret_cast<T *>(dst);
 
   // Perform all operations using floats.
   constexpr float max = static_cast<float>(std::numeric_limits<T>::max());
@@ -129,7 +128,7 @@ void _PremultiplyAlphaFloat(const void *const src, const size_t numTexels, void 
   static_assert(GfIsFloatingPoint<T>::value, "Requires floating point type");
 
   const T *const typedSrc = reinterpret_cast<const T *>(src);
-  T *const typedDst       = reinterpret_cast<T *>(dst);
+  T *const typedDst = reinterpret_cast<T *>(dst);
 
   for (size_t i = 0; i < numTexels; i++) {
     const T alpha = typedSrc[4 * i + 3];
@@ -143,8 +142,8 @@ void _PremultiplyAlphaFloat(const void *const src, const size_t numTexels, void 
 }
 
 std::pair<HgiFormat, HdPhTextureUtils::ConversionFunction> _GetHgiFormatAndConversion(
-    const HioFormat hioFormat,
-    const bool premultiplyAlpha)
+  const HioFormat hioFormat,
+  const bool premultiplyAlpha)
 {
   // Format dispatch, mostly we can just use the CPU buffer from
   // the texture data provided.
@@ -241,8 +240,8 @@ std::pair<HgiFormat, HdPhTextureUtils::ConversionFunction> _GetHgiFormatAndConve
     case HioFormatInt16Vec3:
     case HioFormatInt16Vec4:
       TF_WARN(
-          "Signed 16-bit integer texture formats "
-          "not supported by Phoenix");
+        "Signed 16-bit integer texture formats "
+        "not supported by Phoenix");
       return {HgiFormatInvalid, nullptr};
 
     // UInt32
@@ -251,8 +250,8 @@ std::pair<HgiFormat, HdPhTextureUtils::ConversionFunction> _GetHgiFormatAndConve
     case HioFormatUInt32Vec3:
     case HioFormatUInt32Vec4:
       TF_WARN(
-          "Unsigned 32-bit integer texture formats "
-          "not supported by Phoenix");
+        "Unsigned 32-bit integer texture formats "
+        "not supported by Phoenix");
       return {HgiFormatInvalid, nullptr};
 
     // Int32
@@ -280,8 +279,8 @@ std::pair<HgiFormat, HdPhTextureUtils::ConversionFunction> _GetHgiFormatAndConve
     case HioFormatUNorm8srgb:
     case HioFormatUNorm8Vec2srgb:
       TF_WARN(
-          "One and two channel srgb texture formats "
-          "not supported by Phoenix");
+        "One and two channel srgb texture formats "
+        "not supported by Phoenix");
       return {HgiFormatInvalid, nullptr};
     case HioFormatUNorm8Vec3srgb:
       // RGB (24bit) is not supported on MTL, so we need to convert it.
@@ -328,42 +327,41 @@ HgiFormat HdPhTextureUtils::GetHgiFormat(HioFormat hioFormat, const bool premult
   return _GetHgiFormatAndConversion(hioFormat, premultiplyAlpha).first;
 }
 
-HdPhTextureUtils::ConversionFunction HdPhTextureUtils::GetHioToHgiConversion(
-    HioFormat hioFormat,
-    const bool premultiplyAlpha)
+HdPhTextureUtils::ConversionFunction HdPhTextureUtils::GetHioToHgiConversion(HioFormat hioFormat,
+                                                                             const bool premultiplyAlpha)
 {
   return _GetHgiFormatAndConversion(hioFormat, premultiplyAlpha).second;
 }
 std::vector<HioImageSharedPtr> HdPhTextureUtils::GetAllMipImages(
-    const std::string &filePath,
-    const HioImage::SourceColorSpace sourceColorSpace)
+  const std::string &filePath,
+  const HioImage::SourceColorSpace sourceColorSpace)
 {
   TRACE_FUNCTION();
 
   constexpr int maxMipReads = 32;
   std::vector<HioImageSharedPtr> result;
 
-  unsigned int prevWidth  = std::numeric_limits<unsigned int>::max();
+  unsigned int prevWidth = std::numeric_limits<unsigned int>::max();
   unsigned int prevHeight = std::numeric_limits<unsigned int>::max();
 
   // Ignoring image->GetNumMipLevels() since it can be unreliable.
   for (int mip = 0; mip < maxMipReads; ++mip) {
     HioImageSharedPtr const image = HioImage::OpenForReading(
-        filePath, /* subimage = */ 0, mip, sourceColorSpace);
+      filePath, /* subimage = */ 0, mip, sourceColorSpace);
 
     if (!image) {
       break;
     }
 
     const unsigned int currHeight = image->GetWidth();
-    const unsigned int currWidth  = image->GetHeight();
+    const unsigned int currWidth = image->GetHeight();
     if (!(currWidth < prevWidth || currHeight < prevHeight)) {
       break;
     }
 
     result.push_back(std::move(image));
 
-    prevWidth  = currWidth;
+    prevWidth = currWidth;
     prevHeight = currHeight;
   }
 
@@ -375,12 +373,11 @@ static GfVec3i _GetDimensions(HioImageSharedPtr const &image)
   return GfVec3i(image->GetWidth(), image->GetHeight(), 1);
 }
 
-GfVec3i HdPhTextureUtils::ComputeDimensionsFromTargetMemory(
-    const std::vector<HioImageSharedPtr> &mips,
-    const HgiFormat targetFormat,
-    const size_t tileCount,
-    const size_t targetMemory,
-    size_t *const mipIndex)
+GfVec3i HdPhTextureUtils::ComputeDimensionsFromTargetMemory(const std::vector<HioImageSharedPtr> &mips,
+                                                            const HgiFormat targetFormat,
+                                                            const size_t tileCount,
+                                                            const size_t targetMemory,
+                                                            size_t *const mipIndex)
 {
   TRACE_FUNCTION();
 
@@ -396,7 +393,7 @@ GfVec3i HdPhTextureUtils::ComputeDimensionsFromTargetMemory(
   // memory.
   for (size_t i = 0; i < mips.size(); i++) {
     HioImageSharedPtr const &image = mips[i];
-    const GfVec3i dim              = _GetDimensions(image);
+    const GfVec3i dim = _GetDimensions(image);
     // The factor of 4/3 = 1 + 1/4 + 1/16 + ... accounts for all the
     // lower mipmaps.
     const size_t totalMem = HgiGetDataSize(targetFormat, dim) * tileCount * 4 / 3;
@@ -414,7 +411,7 @@ GfVec3i HdPhTextureUtils::ComputeDimensionsFromTargetMemory(
 
   // If none of the mips fit, take the last one and compute
   // mip chain from it.
-  const GfVec3i dim                      = _GetDimensions(mips.back());
+  const GfVec3i dim = _GetDimensions(mips.back());
   const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(targetFormat, dim, tileCount);
 
   // Iterate through mip chain until one is found that fits into the
@@ -440,26 +437,25 @@ bool HdPhTextureUtils::ReadAndConvertImage(HioImageSharedPtr const &image,
 {
   TRACE_FUNCTION();
 
-  const ConversionFunction conversionFunction = GetHioToHgiConversion(image->GetFormat(),
-                                                                      premultiplyAlpha);
+  const ConversionFunction conversionFunction = GetHioToHgiConversion(image->GetFormat(), premultiplyAlpha);
 
   // Given the start of the buffer containing all mips
   // and layers, compute where the desired mip and layer
   // starts.
-  unsigned char *const mipLayerStart = static_cast<unsigned char *>(bufferStart) +
-                                       mipInfo.byteOffset + layer * mipInfo.byteSizePerLayer;
+  unsigned char *const mipLayerStart = static_cast<unsigned char *>(bufferStart) + mipInfo.byteOffset +
+                                       layer * mipInfo.byteSizePerLayer;
 
   HioImage::StorageSpec spec;
-  spec.width   = mipInfo.dimensions[0];
-  spec.height  = mipInfo.dimensions[1];
-  spec.format  = image->GetFormat();
+  spec.width = mipInfo.dimensions[0];
+  spec.height = mipInfo.dimensions[1];
+  spec.format = image->GetFormat();
   spec.flipped = flipped;
   if (conversionFunction) {
     // This part is a bit tricky: the RGB to RGBA conversion
     // is in place. To make sure we do not write over data
     // that have not been read yet, we need to align the ends.
     const size_t hioSize = HioGetDataSize(image->GetFormat(), mipInfo.dimensions);
-    spec.data            = mipLayerStart + mipInfo.byteSizePerLayer - hioSize;
+    spec.data = mipLayerStart + mipInfo.byteSizePerLayer - hioSize;
   }
   else {
     spec.data = mipLayerStart;

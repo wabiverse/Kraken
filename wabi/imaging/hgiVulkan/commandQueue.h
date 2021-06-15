@@ -74,8 +74,7 @@ class HgiVulkanCommandQueue final {
   /// After submission the command buffer must not be re-used by client.
   /// Thread safety: Submission must be externally synchronized. Clients
   /// should call HgiVulkan::SubmitToQueue.
-  void SubmitToQueue(HgiVulkanCommandBuffer *cmdBuffer,
-                     HgiSubmitWaitType wait = HgiSubmitWaitTypeNoWait);
+  void SubmitToQueue(HgiVulkanCommandBuffer *cmdBuffer, HgiSubmitWaitType wait = HgiSubmitWaitTypeNoWait);
 
   /// Returns a command buffer that is ready to record commands.
   /// The ownership of the command buffer (ptr) remains with this queue. The
@@ -114,9 +113,9 @@ class HgiVulkanCommandQueue final {
   void ResetConsumedCommandBuffers();
 
  private:
-  HgiVulkanCommandQueue()        = delete;
+  HgiVulkanCommandQueue() = delete;
   HgiVulkanCommandQueue &operator=(const HgiVulkanCommandQueue &) = delete;
-  HgiVulkanCommandQueue(const HgiVulkanCommandQueue &)            = delete;
+  HgiVulkanCommandQueue(const HgiVulkanCommandQueue &) = delete;
 
   // Returns the command pool for a thread.
   // Thread safety: This call is thread safe.

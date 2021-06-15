@@ -61,12 +61,12 @@ static float uint32_to_float(uint32_t d32)
 // Helper functions for doubles.
 class Double {
  public:
-  static const uint64_t kSignMask           = UINT64_2PART_C(0x80000000, 00000000);
-  static const uint64_t kExponentMask       = UINT64_2PART_C(0x7FF00000, 00000000);
-  static const uint64_t kSignificandMask    = UINT64_2PART_C(0x000FFFFF, FFFFFFFF);
-  static const uint64_t kHiddenBit          = UINT64_2PART_C(0x00100000, 00000000);
+  static const uint64_t kSignMask = UINT64_2PART_C(0x80000000, 00000000);
+  static const uint64_t kExponentMask = UINT64_2PART_C(0x7FF00000, 00000000);
+  static const uint64_t kSignificandMask = UINT64_2PART_C(0x000FFFFF, FFFFFFFF);
+  static const uint64_t kHiddenBit = UINT64_2PART_C(0x00100000, 00000000);
   static const int kPhysicalSignificandSize = 52;  // Excludes the hidden bit.
-  static const int kSignificandSize         = 53;
+  static const int kSignificandSize = 53;
 
   Double() : d64_(0)
   {}
@@ -91,7 +91,7 @@ class Double {
   {
     ASSERT(value() > 0.0);
     uint64_t f = Significand();
-    int e      = Exponent();
+    int e = Exponent();
 
     // The current double could be a denormal.
     while ((f & kHiddenBit) == 0) {
@@ -153,7 +153,7 @@ class Double {
 
   uint64_t Significand() const
   {
-    uint64_t d64         = AsUint64();
+    uint64_t d64 = AsUint64();
     uint64_t significand = d64 & kSignificandMask;
     if (!IsDenormal()) {
       return significand + kHiddenBit;
@@ -211,7 +211,7 @@ class Double {
   void NormalizedBoundaries(DiyFp *out_m_minus, DiyFp *out_m_plus) const
   {
     ASSERT(value() > 0.0);
-    DiyFp v      = this->AsDiyFp();
+    DiyFp v = this->AsDiyFp();
     DiyFp m_plus = DiyFp::Normalize(DiyFp((v.f() << 1) + 1, v.e() - 1));
     DiyFp m_minus;
     if (LowerBoundaryIsCloser()) {
@@ -222,7 +222,7 @@ class Double {
     }
     m_minus.set_f(m_minus.f() << (m_minus.e() - m_plus.e()));
     m_minus.set_e(m_plus.e());
-    *out_m_plus  = m_plus;
+    *out_m_plus = m_plus;
     *out_m_minus = m_minus;
   }
 
@@ -272,18 +272,18 @@ class Double {
   }
 
  private:
-  static const int kExponentBias     = 0x3FF + kPhysicalSignificandSize;
+  static const int kExponentBias = 0x3FF + kPhysicalSignificandSize;
   static const int kDenormalExponent = -kExponentBias + 1;
-  static const int kMaxExponent      = 0x7FF - kExponentBias;
-  static const uint64_t kInfinity    = UINT64_2PART_C(0x7FF00000, 00000000);
-  static const uint64_t kNaN         = UINT64_2PART_C(0x7FF80000, 00000000);
+  static const int kMaxExponent = 0x7FF - kExponentBias;
+  static const uint64_t kInfinity = UINT64_2PART_C(0x7FF00000, 00000000);
+  static const uint64_t kNaN = UINT64_2PART_C(0x7FF80000, 00000000);
 
   const uint64_t d64_;
 
   static uint64_t DiyFpToUint64(DiyFp diy_fp)
   {
     uint64_t significand = diy_fp.f();
-    int exponent         = diy_fp.e();
+    int exponent = diy_fp.e();
     while (significand > kHiddenBit + kSignificandMask) {
       significand >>= 1;
       exponent++;
@@ -313,12 +313,12 @@ class Double {
 
 class Single {
  public:
-  static const uint32_t kSignMask           = 0x80000000;
-  static const uint32_t kExponentMask       = 0x7F800000;
-  static const uint32_t kSignificandMask    = 0x007FFFFF;
-  static const uint32_t kHiddenBit          = 0x00800000;
+  static const uint32_t kSignMask = 0x80000000;
+  static const uint32_t kExponentMask = 0x7F800000;
+  static const uint32_t kSignificandMask = 0x007FFFFF;
+  static const uint32_t kHiddenBit = 0x00800000;
   static const int kPhysicalSignificandSize = 23;  // Excludes the hidden bit.
-  static const int kSignificandSize         = 24;
+  static const int kSignificandSize = 24;
 
   Single() : d32_(0)
   {}
@@ -354,7 +354,7 @@ class Single {
 
   uint32_t Significand() const
   {
-    uint32_t d32         = AsUint32();
+    uint32_t d32 = AsUint32();
     uint32_t significand = d32 & kSignificandMask;
     if (!IsDenormal()) {
       return significand + kHiddenBit;
@@ -404,7 +404,7 @@ class Single {
   void NormalizedBoundaries(DiyFp *out_m_minus, DiyFp *out_m_plus) const
   {
     ASSERT(value() > 0.0);
-    DiyFp v      = this->AsDiyFp();
+    DiyFp v = this->AsDiyFp();
     DiyFp m_plus = DiyFp::Normalize(DiyFp((v.f() << 1) + 1, v.e() - 1));
     DiyFp m_minus;
     if (LowerBoundaryIsCloser()) {
@@ -415,7 +415,7 @@ class Single {
     }
     m_minus.set_f(m_minus.f() << (m_minus.e() - m_plus.e()));
     m_minus.set_e(m_plus.e());
-    *out_m_plus  = m_plus;
+    *out_m_plus = m_plus;
     *out_m_minus = m_minus;
   }
 
@@ -457,11 +457,11 @@ class Single {
   }
 
  private:
-  static const int kExponentBias     = 0x7F + kPhysicalSignificandSize;
+  static const int kExponentBias = 0x7F + kPhysicalSignificandSize;
   static const int kDenormalExponent = -kExponentBias + 1;
-  static const int kMaxExponent      = 0xFF - kExponentBias;
-  static const uint32_t kInfinity    = 0x7F800000;
-  static const uint32_t kNaN         = 0x7FC00000;
+  static const int kMaxExponent = 0xFF - kExponentBias;
+  static const uint32_t kInfinity = 0x7F800000;
+  static const uint32_t kNaN = 0x7FC00000;
 
   const uint32_t d32_;
 

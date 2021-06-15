@@ -73,6 +73,6 @@ void wrapResolverContextBinder()
   typedef _PyResolverContextBinder This;
 
   class_<This, boost::noncopyable>("ResolverContextBinder", init<const ArResolverContext &>())
-      .def("__enter__", &This::Enter)
-      .def("__exit__", &This::Exit);
+    .def("__enter__", &This::Enter)
+    .def("__exit__", &This::Exit);
 }

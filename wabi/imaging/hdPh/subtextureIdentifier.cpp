@@ -41,8 +41,8 @@ size_t hash_value(const HdPhSubtextureIdentifier &subId)
 // HdPhFieldBaseSubtextureIdentifier
 HdPhFieldBaseSubtextureIdentifier::HdPhFieldBaseSubtextureIdentifier(TfToken const &fieldName,
                                                                      const int fieldIndex)
-    : _fieldName(fieldName),
-      _fieldIndex(fieldIndex)
+  : _fieldName(fieldName),
+    _fieldIndex(fieldIndex)
 {}
 
 HdPhFieldBaseSubtextureIdentifier::~HdPhFieldBaseSubtextureIdentifier() = default;
@@ -58,9 +58,9 @@ HdPhSubtextureIdentifier::ID HdPhFieldBaseSubtextureIdentifier::_Hash() const
 HdPhAssetUvSubtextureIdentifier::HdPhAssetUvSubtextureIdentifier(const bool flipVertically,
                                                                  const bool premultiplyAlpha,
                                                                  const TfToken &sourceColorSpace)
-    : _flipVertically(flipVertically),
-      _premultiplyAlpha(premultiplyAlpha),
-      _sourceColorSpace(sourceColorSpace)
+  : _flipVertically(flipVertically),
+    _premultiplyAlpha(premultiplyAlpha),
+    _sourceColorSpace(sourceColorSpace)
 {}
 
 HdPhAssetUvSubtextureIdentifier::~HdPhAssetUvSubtextureIdentifier() = default;
@@ -68,15 +68,14 @@ HdPhAssetUvSubtextureIdentifier::~HdPhAssetUvSubtextureIdentifier() = default;
 std::unique_ptr<HdPhSubtextureIdentifier> HdPhAssetUvSubtextureIdentifier::Clone() const
 {
   return std::make_unique<HdPhAssetUvSubtextureIdentifier>(
-      GetFlipVertically(), GetPremultiplyAlpha(), GetSourceColorSpace());
+    GetFlipVertically(), GetPremultiplyAlpha(), GetSourceColorSpace());
 }
 
 HdPhSubtextureIdentifier::ID HdPhAssetUvSubtextureIdentifier::_Hash() const
 {
   static ID typeHash = TfHash()(std::string("HdPhAssetUvSubtextureIdentifier"));
 
-  return TfHash::Combine(
-      typeHash, GetFlipVertically(), GetPremultiplyAlpha(), GetSourceColorSpace());
+  return TfHash::Combine(typeHash, GetFlipVertically(), GetPremultiplyAlpha(), GetSourceColorSpace());
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -97,8 +96,7 @@ HdPhSubtextureIdentifier::ID HdPhDynamicUvSubtextureIdentifier::_Hash() const
   return typeHash;
 }
 
-HdPhDynamicUvTextureImplementation *HdPhDynamicUvSubtextureIdentifier::GetTextureImplementation()
-    const
+HdPhDynamicUvTextureImplementation *HdPhDynamicUvSubtextureIdentifier::GetTextureImplementation() const
 {
   return nullptr;
 }
@@ -108,16 +106,15 @@ HdPhDynamicUvTextureImplementation *HdPhDynamicUvSubtextureIdentifier::GetTextur
 
 HdPhUdimSubtextureIdentifier::HdPhUdimSubtextureIdentifier(const bool premultiplyAlpha,
                                                            const TfToken &sourceColorSpace)
-    : _premultiplyAlpha(premultiplyAlpha),
-      _sourceColorSpace(sourceColorSpace)
+  : _premultiplyAlpha(premultiplyAlpha),
+    _sourceColorSpace(sourceColorSpace)
 {}
 
 HdPhUdimSubtextureIdentifier::~HdPhUdimSubtextureIdentifier() = default;
 
 std::unique_ptr<HdPhSubtextureIdentifier> HdPhUdimSubtextureIdentifier::Clone() const
 {
-  return std::make_unique<HdPhUdimSubtextureIdentifier>(GetPremultiplyAlpha(),
-                                                        GetSourceColorSpace());
+  return std::make_unique<HdPhUdimSubtextureIdentifier>(GetPremultiplyAlpha(), GetSourceColorSpace());
 }
 
 HdPhSubtextureIdentifier::ID HdPhUdimSubtextureIdentifier::_Hash() const
@@ -131,7 +128,7 @@ HdPhSubtextureIdentifier::ID HdPhUdimSubtextureIdentifier::_Hash() const
 // HdPhPtexSubtextureIdentifier
 
 HdPhPtexSubtextureIdentifier::HdPhPtexSubtextureIdentifier(const bool premultiplyAlpha)
-    : _premultiplyAlpha(premultiplyAlpha)
+  : _premultiplyAlpha(premultiplyAlpha)
 {}
 
 HdPhPtexSubtextureIdentifier::~HdPhPtexSubtextureIdentifier() = default;

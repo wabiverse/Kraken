@@ -61,12 +61,12 @@ class Hd_ExtCompInputSource : public HdNullBufferSource {
  private:
   TfToken _inputName;
 
-  Hd_ExtCompInputSource()                              = delete;
+  Hd_ExtCompInputSource() = delete;
   Hd_ExtCompInputSource(const Hd_ExtCompInputSource &) = delete;
   Hd_ExtCompInputSource &operator=(const Hd_ExtCompInputSource &) = delete;
 };
 
-using Hd_ExtCompInputSourceSharedPtr       = std::shared_ptr<Hd_ExtCompInputSource>;
+using Hd_ExtCompInputSourceSharedPtr = std::shared_ptr<Hd_ExtCompInputSource>;
 using Hd_ExtCompInputSourceSharedPtrVector = std::vector<Hd_ExtCompInputSourceSharedPtr>;
 
 WABI_NAMESPACE_END

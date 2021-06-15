@@ -34,10 +34,10 @@
 WABI_NAMESPACE_BEGIN
 
 HdPh_BasisCurvesIndexBuilderComputation::HdPh_BasisCurvesIndexBuilderComputation(
-    HdBasisCurvesTopology *topology,
-    bool forceLines)
-    : _topology(topology),
-      _forceLines(forceLines)
+  HdBasisCurvesTopology *topology,
+  bool forceLines)
+  : _topology(topology),
+    _forceLines(forceLines)
 {}
 
 void HdPh_BasisCurvesIndexBuilderComputation::GetBufferSpecs(HdBufferSpecVector *specs) const
@@ -56,15 +56,15 @@ void HdPh_BasisCurvesIndexBuilderComputation::GetBufferSpecs(HdBufferSpecVector 
   specs->emplace_back(HdTokens->primitiveParam, HdTupleType{HdTypeInt32, 1});
 }
 
-HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex
-HdPh_BasisCurvesIndexBuilderComputation::_BuildLinesIndexArray()
+HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex HdPh_BasisCurvesIndexBuilderComputation::
+  _BuildLinesIndexArray()
 {
   std::vector<GfVec2i> indices;
   std::vector<int> primIndices;
   VtArray<int> vertexCounts = _topology->GetCurveVertexCounts();
 
   int vertexIndex = 0;
-  int curveIndex  = 0;
+  int curveIndex = 0;
   TF_FOR_ALL(itCounts, vertexCounts)
   {
     for (int i = 0; i < *itCounts; i += 2) {
@@ -84,8 +84,8 @@ HdPh_BasisCurvesIndexBuilderComputation::_BuildLinesIndexArray()
   }
   else {
     VtIntArray const &curveIndices = _topology->GetCurveIndices();
-    size_t lineCount               = indices.size();
-    int maxIndex                   = curveIndices.size() - 1;
+    size_t lineCount = indices.size();
+    int maxIndex = curveIndices.size() - 1;
 
     for (size_t lineNum = 0; lineNum < lineCount; ++lineNum) {
       const GfVec2i &line = indices[lineNum];
@@ -106,19 +106,19 @@ HdPh_BasisCurvesIndexBuilderComputation::_BuildLinesIndexArray()
   return IndexAndPrimIndex(VtValue(finalIndices), VtValue(finalPrimIndices));
 }
 
-HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex
-HdPh_BasisCurvesIndexBuilderComputation::_BuildLineSegmentIndexArray()
+HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex HdPh_BasisCurvesIndexBuilderComputation::
+  _BuildLineSegmentIndexArray()
 {
-  const TfToken basis             = _topology->GetCurveBasis();
+  const TfToken basis = _topology->GetCurveBasis();
   const bool skipFirstAndLastSegs = (basis == HdTokens->catmullRom);
 
   std::vector<GfVec2i> indices;
   // primIndices stores the curve index that generated each line segment.
   std::vector<int> primIndices;
   const VtArray<int> vertexCounts = _topology->GetCurveVertexCounts();
-  bool wrap                       = _topology->GetCurveWrap() == HdTokens->periodic;
-  int vertexIndex                 = 0;  // Index of next vertex to emit
-  int curveIndex                  = 0;  // Index of next curve to emit
+  bool wrap = _topology->GetCurveWrap() == HdTokens->periodic;
+  int vertexIndex = 0;  // Index of next vertex to emit
+  int curveIndex = 0;   // Index of next curve to emit
   // For each curve
   TF_FOR_ALL(itCounts, vertexCounts)
   {
@@ -153,8 +153,8 @@ HdPh_BasisCurvesIndexBuilderComputation::_BuildLineSegmentIndexArray()
   }
   else {
     VtIntArray const &curveIndices = _topology->GetCurveIndices();
-    size_t lineCount               = indices.size();
-    int maxIndex                   = curveIndices.size() - 1;
+    size_t lineCount = indices.size();
+    int maxIndex = curveIndices.size() - 1;
 
     for (size_t lineNum = 0; lineNum < lineCount; ++lineNum) {
       const GfVec2i &line = indices[lineNum];
@@ -175,8 +175,8 @@ HdPh_BasisCurvesIndexBuilderComputation::_BuildLineSegmentIndexArray()
   return IndexAndPrimIndex(VtValue(finalIndices), VtValue(finalPrimIndices));
 }
 
-HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex
-HdPh_BasisCurvesIndexBuilderComputation::_BuildCubicIndexArray()
+HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex HdPh_BasisCurvesIndexBuilderComputation::
+  _BuildCubicIndexArray()
 {
 
   /*
@@ -220,7 +220,7 @@ HdPh_BasisCurvesIndexBuilderComputation::_BuildCubicIndexArray()
   std::vector<int> primIndices;
 
   const VtArray<int> vertexCounts = _topology->GetCurveVertexCounts();
-  bool wrap                       = _topology->GetCurveWrap() == HdTokens->periodic;
+  bool wrap = _topology->GetCurveWrap() == HdTokens->periodic;
   int vStep;
   TfToken basis = _topology->GetCurveBasis();
   if (basis == HdTokens->bezier) {
@@ -231,7 +231,7 @@ HdPh_BasisCurvesIndexBuilderComputation::_BuildCubicIndexArray()
   }
 
   int vertexIndex = 0;
-  int curveIndex  = 0;
+  int curveIndex = 0;
   TF_FOR_ALL(itCounts, vertexCounts)
   {
     int count = *itCounts;
@@ -275,8 +275,8 @@ HdPh_BasisCurvesIndexBuilderComputation::_BuildCubicIndexArray()
   }
   else {
     VtIntArray const &curveIndices = _topology->GetCurveIndices();
-    size_t lineCount               = indices.size();
-    int maxIndex                   = curveIndices.size() - 1;
+    size_t lineCount = indices.size();
+    int maxIndex = curveIndices.size() - 1;
 
     for (size_t lineNum = 0; lineNum < lineCount; ++lineNum) {
       const GfVec4i &line = indices[lineNum];
@@ -327,8 +327,7 @@ bool HdPh_BasisCurvesIndexBuilderComputation::Resolve()
   // the primitive param buffer is used only when the basis curve
   // has uniform primvars.
   // XXX: we currently create it even when the curve has no uniform primvars
-  _primitiveParam.reset(
-      new HdVtBufferSource(HdTokens->primitiveParam, VtValue(result._primIndices)));
+  _primitiveParam.reset(new HdVtBufferSource(HdTokens->primitiveParam, VtValue(result._primIndices)));
 
   _SetResolved();
   return true;

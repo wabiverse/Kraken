@@ -98,14 +98,13 @@ enum class UsdUtilsStitchValueStatus {
 /// desired behavior. Note that if the callback returns UseSuppliedValue and
 /// supplies an empty VtValue in \p stitchedValue, the field will be removed
 /// from the destination spec.
-using UsdUtilsStitchValueFn =
-    std::function<UsdUtilsStitchValueStatus(const TfToken &field,
-                                            const SdfPath &path,
-                                            const SdfLayerHandle &strongLayer,
-                                            bool fieldInStrongLayer,
-                                            const SdfLayerHandle &weakLayer,
-                                            bool fieldInWeakLayer,
-                                            VtValue *stitchedValue)>;
+using UsdUtilsStitchValueFn = std::function<UsdUtilsStitchValueStatus(const TfToken &field,
+                                                                      const SdfPath &path,
+                                                                      const SdfLayerHandle &strongLayer,
+                                                                      bool fieldInStrongLayer,
+                                                                      const SdfLayerHandle &weakLayer,
+                                                                      bool fieldInWeakLayer,
+                                                                      VtValue *stitchedValue)>;
 
 /// Advanced version of UsdUtilsStitchLayers that accepts a \p stitchValueFn
 /// callback to customize how fields in \p strongLayer and \p weakLayer are

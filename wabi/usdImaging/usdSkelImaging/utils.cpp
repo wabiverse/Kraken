@@ -60,11 +60,11 @@ namespace {
      the face vertex counts array.
 */
 
-const int _boneVerts[]         = {0, 2, 1, 0, 3, 2, 0, 4, 3, 0, 1, 4};
-const int _boneNumVerts        = 12;
+const int _boneVerts[] = {0, 2, 1, 0, 3, 2, 0, 4, 3, 0, 1, 4};
+const int _boneNumVerts = 12;
 const int _boneNumVertsPerFace = 3;
-const int _boneNumFaces        = 4;
-const int _boneNumPoints       = 5;
+const int _boneNumFaces = 4;
+const int _boneNumPoints = 5;
 
 size_t _ComputeBoneCount(const UsdSkelTopology &topology)
 {
@@ -107,7 +107,7 @@ bool UsdSkelImagingComputeBoneTopology(const UsdSkelTopology &skelTopology,
   }
 
   *meshTopology = HdMeshTopology(
-      PxOsdOpenSubdivTokens->none, HdTokens->rightHanded, faceVertexCounts, faceVertexIndices);
+    PxOsdOpenSubdivTokens->none, HdTokens->rightHanded, faceVertexCounts, faceVertexIndices);
 
   *numPoints = numBones * _boneNumPoints;
 
@@ -148,11 +148,9 @@ int _FindBestAlignedBasis(const GfMatrix4d &mx, const GfVec3d &dir)
   return 2;
 }
 
-void _ComputePointsForSingleBone(GfVec3f *points,
-                                 const GfMatrix4d &xform,
-                                 const GfMatrix4d &parentXform)
+void _ComputePointsForSingleBone(GfVec3f *points, const GfMatrix4d &xform, const GfMatrix4d &parentXform)
 {
-  GfVec3f end   = GfVec3f(xform.ExtractTranslation());
+  GfVec3f end = GfVec3f(xform.ExtractTranslation());
   GfVec3f start = GfVec3f(parentXform.ExtractTranslation());
 
   // Need local basis vectors along which to displace the
@@ -199,8 +197,7 @@ bool UsdSkelImagingComputeBonePoints(const UsdSkelTopology &topology,
 
     points->resize(numPoints);
 
-    return UsdSkelImagingComputeBonePoints(
-        topology, jointSkelXforms.cdata(), points->data(), numPoints);
+    return UsdSkelImagingComputeBonePoints(topology, jointSkelXforms.cdata(), points->data(), numPoints);
   }
   else {
     TF_WARN("jointSkelXforms.size() [%zu] != number of joints [%zu].",
@@ -224,7 +221,7 @@ bool UsdSkelImagingComputeBonePoints(const UsdSkelTopology &topology,
 
   // Compute bone indices per joint.
   std::vector<int> boneIndices(topology.GetNumJoints(), -1);
-  int boneIndex          = 0;
+  int boneIndex = 0;
   size_t actualNumPoints = 0;
   for (size_t i = 0; i < topology.GetNumJoints(); ++i) {
     int parent = topology.GetParent(i);
@@ -235,10 +232,10 @@ bool UsdSkelImagingComputeBonePoints(const UsdSkelTopology &topology,
   }
   if (actualNumPoints != numPoints) {
     TF_WARN(
-        "number of points [%zu] does not match the size of "
-        "the input point array [%zu].",
-        actualNumPoints,
-        numPoints);
+      "number of points [%zu] does not match the size of "
+      "the input point array [%zu].",
+      actualNumPoints,
+      numPoints);
     return false;
   }
 
@@ -310,9 +307,9 @@ bool UsdSkelImagingComputeBoneJointIndices(const UsdSkelTopology &topology,
       }
       else {
         TF_WARN(
-            "Incorrect number of points for bone "
-            "mesh [%zu].",
-            numPoints);
+          "Incorrect number of points for bone "
+          "mesh [%zu].",
+          numPoints);
         return false;
       }
     }

@@ -56,8 +56,7 @@ SdfPath UsdImagingSphereLightAdapter::Populate(UsdPrim const &prim,
   return prim.GetPath();
 }
 
-void UsdImagingSphereLightAdapter::_RemovePrim(SdfPath const &cachePath,
-                                               UsdImagingIndexProxy *index)
+void UsdImagingSphereLightAdapter::_RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index)
 {
   index->RemoveSprim(HdPrimTypeTokens->sphereLight, cachePath);
 }

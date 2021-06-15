@@ -91,7 +91,7 @@ class HgiGLBlitCmds final : public HgiBlitCmds {
 
  private:
   HgiGLBlitCmds &operator=(const HgiGLBlitCmds &) = delete;
-  HgiGLBlitCmds(const HgiGLBlitCmds &)            = delete;
+  HgiGLBlitCmds(const HgiGLBlitCmds &) = delete;
 
   HgiGLOpsVector _ops;
   int _pushStack;

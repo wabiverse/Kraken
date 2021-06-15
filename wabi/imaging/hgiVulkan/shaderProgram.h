@@ -83,9 +83,9 @@ class HgiVulkanShaderProgram final : public HgiShaderProgram {
   HgiVulkanShaderProgram(HgiVulkanDevice *device, HgiShaderProgramDesc const &desc);
 
  private:
-  HgiVulkanShaderProgram()        = delete;
+  HgiVulkanShaderProgram() = delete;
   HgiVulkanShaderProgram &operator=(const HgiVulkanShaderProgram &) = delete;
-  HgiVulkanShaderProgram(const HgiVulkanShaderProgram &)            = delete;
+  HgiVulkanShaderProgram(const HgiVulkanShaderProgram &) = delete;
 
   HgiVulkanDevice *_device;
   uint64_t _inflightBits;

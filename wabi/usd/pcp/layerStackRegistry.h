@@ -50,7 +50,7 @@ class Pcp_LayerStackRegistry : public TfRefBase, public TfWeakBase {
  public:
   /// Create a new Pcp_LayerStackRegistry.
   static Pcp_LayerStackRegistryRefPtr New(const std::string &fileFormatTarget = std::string(),
-                                          bool isUsd                          = false);
+                                          bool isUsd = false);
 
   /// Adds layers specified in \p layersToMute and removes layers
   /// specified in \p layersToUnmute from the registry's set of muted
@@ -78,8 +78,7 @@ class Pcp_LayerStackRegistry : public TfRefBase, public TfWeakBase {
   /// Returns the layer stack for \p identifier if it exists, otherwise
   /// creates a new layer stack for \p identifier.  This returns \c NULL
   /// if \p identifier is invalid (i.e. its root layer is \c NULL).
-  PcpLayerStackRefPtr FindOrCreate(const PcpLayerStackIdentifier &identifier,
-                                   PcpErrorVector *allErrors);
+  PcpLayerStackRefPtr FindOrCreate(const PcpLayerStackIdentifier &identifier, PcpErrorVector *allErrors);
 
   /// Returns the layer stack for \p identifier if it exists, otherwise
   /// returns \c NULL.

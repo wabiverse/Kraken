@@ -108,19 +108,19 @@ bool operator!=(const HgiComponentMapping &lhs, const HgiComponentMapping &rhs);
 ///
 struct HgiTextureDesc {
   HgiTextureDesc()
-      : usage(0),
-        format(HgiFormatInvalid),
-        componentMapping{HgiComponentSwizzleR,
-                         HgiComponentSwizzleG,
-                         HgiComponentSwizzleB,
-                         HgiComponentSwizzleA},
-        type(HgiTextureType2D),
-        dimensions(0),
-        layerCount(1),
-        mipLevels(1),
-        sampleCount(HgiSampleCount1),
-        pixelsByteSize(0),
-        initialData(nullptr)
+    : usage(0),
+      format(HgiFormatInvalid),
+      componentMapping{HgiComponentSwizzleR,
+                       HgiComponentSwizzleG,
+                       HgiComponentSwizzleB,
+                       HgiComponentSwizzleA},
+      type(HgiTextureType2D),
+      dimensions(0),
+      layerCount(1),
+      mipLevels(1),
+      sampleCount(HgiSampleCount1),
+      pixelsByteSize(0),
+      initialData(nullptr)
   {}
 
   std::string debugName;
@@ -190,12 +190,12 @@ class HgiTexture {
   HgiTextureDesc _descriptor;
 
  private:
-  HgiTexture()        = delete;
+  HgiTexture() = delete;
   HgiTexture &operator=(const HgiTexture &) = delete;
-  HgiTexture(const HgiTexture &)            = delete;
+  HgiTexture(const HgiTexture &) = delete;
 };
 
-using HgiTextureHandle       = HgiHandle<class HgiTexture>;
+using HgiTextureHandle = HgiHandle<class HgiTexture>;
 using HgiTextureHandleVector = std::vector<HgiTextureHandle>;
 
 /// \struct HgiTextureViewDesc
@@ -228,12 +228,12 @@ using HgiTextureHandleVector = std::vector<HgiTextureHandle>;
 ///
 struct HgiTextureViewDesc {
   HgiTextureViewDesc()
-      : format(HgiFormatInvalid),
-        layerCount(1),
-        mipLevels(1),
-        sourceTexture(),
-        sourceFirstLayer(0),
-        sourceFirstMip(0)
+    : format(HgiFormatInvalid),
+      layerCount(1),
+      mipLevels(1),
+      sourceTexture(),
+      sourceFirstLayer(0),
+      sourceFirstMip(0)
   {}
 
   std::string debugName;
@@ -289,12 +289,12 @@ class HgiTextureView {
   HgiTextureHandle _viewTexture;
 
  private:
-  HgiTextureView()        = delete;
+  HgiTextureView() = delete;
   HgiTextureView &operator=(const HgiTextureView &) = delete;
-  HgiTextureView(const HgiTextureView &)            = delete;
+  HgiTextureView(const HgiTextureView &) = delete;
 };
 
-using HgiTextureViewHandle       = HgiHandle<class HgiTextureView>;
+using HgiTextureViewHandle = HgiHandle<class HgiTextureView>;
 using HgiTextureViewHandleVector = std::vector<HgiTextureViewHandle>;
 
 WABI_NAMESPACE_END

@@ -63,8 +63,7 @@ class TraceSerialization {
   /// Returns a pointer to the created collection if it was successful.
   /// If there is an error reading \p istr, \p error will be populated with a
   /// description.
-  TRACE_API static std::unique_ptr<TraceCollection> Read(std::istream &istr,
-                                                         std::string *error = nullptr);
+  TRACE_API static std::unique_ptr<TraceCollection> Read(std::istream &istr, std::string *error = nullptr);
 };
 
 WABI_NAMESPACE_END

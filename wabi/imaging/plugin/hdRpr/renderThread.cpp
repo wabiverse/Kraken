@@ -18,14 +18,13 @@ limitations under the License.
 WABI_NAMESPACE_BEGIN
 
 HdRprRenderThread::HdRprRenderThread()
-    : m_stopCallback([]() {}),
-      m_renderCallback(
-          []() { TF_CODING_ERROR("StartThread() called without a render callback set"); }),
-      m_shutdownCallback([]() {}),
-      m_requestedState(StateInitial),
-      m_stopRequested(false),
-      m_pauseRender(false),
-      m_rendering(false)
+  : m_stopCallback([]() {}),
+    m_renderCallback([]() { TF_CODING_ERROR("StartThread() called without a render callback set"); }),
+    m_shutdownCallback([]() {}),
+    m_requestedState(StateInitial),
+    m_stopRequested(false),
+    m_pauseRender(false),
+    m_rendering(false)
 {}
 
 HdRprRenderThread::~HdRprRenderThread()
@@ -62,7 +61,7 @@ void HdRprRenderThread::StartThread()
   }
 
   m_requestedState = StateIdle;
-  m_renderThread   = std::thread(&HdRprRenderThread::RenderLoop, this);
+  m_renderThread = std::thread(&HdRprRenderThread::RenderLoop, this);
 }
 
 void HdRprRenderThread::StopThread()

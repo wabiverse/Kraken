@@ -54,12 +54,9 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateRampModeAttr(UsdRiPxrRampLightFilter &self,
-                                        object defaultVal,
-                                        bool writeSparsely)
+static UsdAttribute _CreateRampModeAttr(UsdRiPxrRampLightFilter &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateRampModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                 writeSparsely);
+  return self.CreateRampModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
 static UsdAttribute _CreateBeginDistanceAttr(UsdRiPxrRampLightFilter &self,
@@ -74,16 +71,12 @@ static UsdAttribute _CreateEndDistanceAttr(UsdRiPxrRampLightFilter &self,
                                            object defaultVal,
                                            bool writeSparsely)
 {
-  return self.CreateEndDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                    writeSparsely);
+  return self.CreateEndDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
-static UsdAttribute _CreateFalloffAttr(UsdRiPxrRampLightFilter &self,
-                                       object defaultVal,
-                                       bool writeSparsely)
+static UsdAttribute _CreateFalloffAttr(UsdRiPxrRampLightFilter &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateFalloffAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int),
-                                writeSparsely);
+  return self.CreateFalloffAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
 }
 
 static UsdAttribute _CreateFalloffKnotsAttr(UsdRiPxrRampLightFilter &self,
@@ -98,48 +91,47 @@ static UsdAttribute _CreateFalloffFloatsAttr(UsdRiPxrRampLightFilter &self,
                                              object defaultVal,
                                              bool writeSparsely)
 {
-  return self.CreateFalloffFloatsAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray), writeSparsely);
+  return self.CreateFalloffFloatsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
+                                      writeSparsely);
 }
 
 static UsdAttribute _CreateFalloffInterpolationAttr(UsdRiPxrRampLightFilter &self,
                                                     object defaultVal,
                                                     bool writeSparsely)
 {
-  return self.CreateFalloffInterpolationAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  return self.CreateFalloffInterpolationAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                             writeSparsely);
 }
 
 static UsdAttribute _CreateColorRampAttr(UsdRiPxrRampLightFilter &self,
                                          object defaultVal,
                                          bool writeSparsely)
 {
-  return self.CreateColorRampAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int),
-                                  writeSparsely);
+  return self.CreateColorRampAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
 }
 
 static UsdAttribute _CreateColorRampKnotsAttr(UsdRiPxrRampLightFilter &self,
                                               object defaultVal,
                                               bool writeSparsely)
 {
-  return self.CreateColorRampKnotsAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray), writeSparsely);
+  return self.CreateColorRampKnotsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
+                                       writeSparsely);
 }
 
 static UsdAttribute _CreateColorRampColorsAttr(UsdRiPxrRampLightFilter &self,
                                                object defaultVal,
                                                bool writeSparsely)
 {
-  return self.CreateColorRampColorsAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3fArray), writeSparsely);
+  return self.CreateColorRampColorsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3fArray),
+                                        writeSparsely);
 }
 
 static UsdAttribute _CreateColorRampInterpolationAttr(UsdRiPxrRampLightFilter &self,
                                                       object defaultVal,
                                                       bool writeSparsely)
 {
-  return self.CreateColorRampInterpolationAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  return self.CreateColorRampInterpolationAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                               writeSparsely);
 }
 
 static std::string _Repr(const UsdRiPxrRampLightFilter &self)
@@ -157,84 +149,82 @@ void wrapUsdRiPxrRampLightFilter()
   class_<This, bases<UsdLuxLightFilter>> cls("wabiRampLightFilter");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetRampModeAttr", &This::GetRampModeAttr)
-      .def("CreateRampModeAttr",
-           &_CreateRampModeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRampModeAttr", &This::GetRampModeAttr)
+    .def("CreateRampModeAttr",
+         &_CreateRampModeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetBeginDistanceAttr", &This::GetBeginDistanceAttr)
-      .def("CreateBeginDistanceAttr",
-           &_CreateBeginDistanceAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetBeginDistanceAttr", &This::GetBeginDistanceAttr)
+    .def("CreateBeginDistanceAttr",
+         &_CreateBeginDistanceAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetEndDistanceAttr", &This::GetEndDistanceAttr)
-      .def("CreateEndDistanceAttr",
-           &_CreateEndDistanceAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetEndDistanceAttr", &This::GetEndDistanceAttr)
+    .def("CreateEndDistanceAttr",
+         &_CreateEndDistanceAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetFalloffAttr", &This::GetFalloffAttr)
-      .def("CreateFalloffAttr",
-           &_CreateFalloffAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetFalloffAttr", &This::GetFalloffAttr)
+    .def("CreateFalloffAttr",
+         &_CreateFalloffAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetFalloffKnotsAttr", &This::GetFalloffKnotsAttr)
-      .def("CreateFalloffKnotsAttr",
-           &_CreateFalloffKnotsAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetFalloffKnotsAttr", &This::GetFalloffKnotsAttr)
+    .def("CreateFalloffKnotsAttr",
+         &_CreateFalloffKnotsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetFalloffFloatsAttr", &This::GetFalloffFloatsAttr)
-      .def("CreateFalloffFloatsAttr",
-           &_CreateFalloffFloatsAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetFalloffFloatsAttr", &This::GetFalloffFloatsAttr)
+    .def("CreateFalloffFloatsAttr",
+         &_CreateFalloffFloatsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetFalloffInterpolationAttr", &This::GetFalloffInterpolationAttr)
-      .def("CreateFalloffInterpolationAttr",
-           &_CreateFalloffInterpolationAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetFalloffInterpolationAttr", &This::GetFalloffInterpolationAttr)
+    .def("CreateFalloffInterpolationAttr",
+         &_CreateFalloffInterpolationAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetColorRampAttr", &This::GetColorRampAttr)
-      .def("CreateColorRampAttr",
-           &_CreateColorRampAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetColorRampAttr", &This::GetColorRampAttr)
+    .def("CreateColorRampAttr",
+         &_CreateColorRampAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetColorRampKnotsAttr", &This::GetColorRampKnotsAttr)
-      .def("CreateColorRampKnotsAttr",
-           &_CreateColorRampKnotsAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetColorRampKnotsAttr", &This::GetColorRampKnotsAttr)
+    .def("CreateColorRampKnotsAttr",
+         &_CreateColorRampKnotsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetColorRampColorsAttr", &This::GetColorRampColorsAttr)
-      .def("CreateColorRampColorsAttr",
-           &_CreateColorRampColorsAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetColorRampColorsAttr", &This::GetColorRampColorsAttr)
+    .def("CreateColorRampColorsAttr",
+         &_CreateColorRampColorsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetColorRampInterpolationAttr", &This::GetColorRampInterpolationAttr)
-      .def("CreateColorRampInterpolationAttr",
-           &_CreateColorRampInterpolationAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetColorRampInterpolationAttr", &This::GetColorRampInterpolationAttr)
+    .def("CreateColorRampInterpolationAttr",
+         &_CreateColorRampInterpolationAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -263,7 +253,7 @@ namespace {
 WRAP_CUSTOM
 {
   _class.def("GetFalloffRampAPI", &UsdRiPxrRampLightFilter::GetFalloffRampAPI)
-      .def("GetColorRampAPI", &UsdRiPxrRampLightFilter::GetColorRampAPI);
+    .def("GetColorRampAPI", &UsdRiPxrRampLightFilter::GetColorRampAPI);
 }
 
 }  // namespace

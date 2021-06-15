@@ -68,7 +68,7 @@ class GfLine {
 
   double Set(const GfVec3d &p0, const GfVec3d &dir)
   {
-    _p0  = p0;
+    _p0 = p0;
     _dir = dir;
     return _dir.Normalize();
   }
@@ -108,12 +108,7 @@ class GfLine {
 
  private:
   GF_API
-  friend bool GfFindClosestPoints(const GfLine &,
-                                  const GfLine &,
-                                  GfVec3d *,
-                                  GfVec3d *,
-                                  double *,
-                                  double *);
+  friend bool GfFindClosestPoints(const GfLine &, const GfLine &, GfVec3d *, GfVec3d *, double *, double *);
   // Parametric description:
   //  l(t) = _p0 + t * _length * _dir;
   GfVec3d _p0;
@@ -133,8 +128,8 @@ bool GfFindClosestPoints(const GfLine &l1,
                          const GfLine &l2,
                          GfVec3d *p1 = nullptr,
                          GfVec3d *p2 = nullptr,
-                         double *t1  = nullptr,
-                         double *t2  = nullptr);
+                         double *t1 = nullptr,
+                         double *t2 = nullptr);
 
 /// Output a GfLine.
 /// \ingroup group_gf_DebuggingOutput

@@ -121,11 +121,10 @@ bool UsdPythonToMetadataValue(const TfToken &key,
 
   if (!keyPath.IsEmpty() && fallback.IsHolding<VtDictionary>()) {
     if (!fieldDef->IsValidMapValue(value)) {
-      TfPyThrowValueError(
-          TfStringPrintf("Invalid value type for dictionary key-path '%s:%s': '%s'.",
-                         key.GetString().c_str(),
-                         keyPath.GetText(),
-                         TfPyRepr(pyVal.Get()).c_str()));
+      TfPyThrowValueError(TfStringPrintf("Invalid value type for dictionary key-path '%s:%s': '%s'.",
+                                         key.GetString().c_str(),
+                                         keyPath.GetText(),
+                                         TfPyRepr(pyVal.Get()).c_str()));
     }
     // Clear out the fallback here, since we allow any scene desc type in
     // dicts.
@@ -146,7 +145,7 @@ bool UsdPythonToMetadataValue(const TfToken &key,
       }
       else if (getStringArray.check()) {
         VtStringArray a = getStringArray();
-        value           = std::vector<std::string>(a.begin(), a.end());
+        value = std::vector<std::string>(a.begin(), a.end());
       }
     }
     else {
@@ -160,15 +159,14 @@ bool UsdPythonToMetadataValue(const TfToken &key,
       (fallback.IsEmpty() && (!fieldDef->IsValidValue(value) || !schema.IsValidValue(value)))) {
     VtValue origValue = extract<VtValue>(pyVal.Get())();
     TfPyThrowValueError(TfStringPrintf(
-        "Invalid value '%s' (type '%s') for key '%s%s'.%s",
-        TfPyRepr(pyVal.Get()).c_str(),
-        origValue.GetTypeName().c_str(),
-        key.GetText(),
-        keyPath.IsEmpty() ? "" : TfStringPrintf(":%s", keyPath.GetText()).c_str(),
-        fallback.IsEmpty() ?
-            "" :
-            TfStringPrintf(" Expected type '%s'", fallback.GetType().GetTypeName().c_str())
-                .c_str()));
+      "Invalid value '%s' (type '%s') for key '%s%s'.%s",
+      TfPyRepr(pyVal.Get()).c_str(),
+      origValue.GetTypeName().c_str(),
+      key.GetText(),
+      keyPath.IsEmpty() ? "" : TfStringPrintf(":%s", keyPath.GetText()).c_str(),
+      fallback.IsEmpty() ?
+        "" :
+        TfStringPrintf(" Expected type '%s'", fallback.GetType().GetTypeName().c_str()).c_str()));
   }
   result->Swap(value);
   return true;

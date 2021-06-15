@@ -71,7 +71,7 @@ class HgiGLDevice final {
 
  private:
   HgiGLDevice &operator=(const HgiGLDevice &) = delete;
-  HgiGLDevice(const HgiGLDevice &)            = delete;
+  HgiGLDevice(const HgiGLDevice &) = delete;
 
   friend std::ofstream &operator<<(std::ofstream &out, const HgiGLDevice &dev);
 

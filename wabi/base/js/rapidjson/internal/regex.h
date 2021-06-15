@@ -42,7 +42,7 @@ namespace internal {
 // GenericRegex
 
 static const SizeType kRegexInvalidState = ~SizeType(
-    0);  //!< Represents an invalid index in GenericRegex::State::out, out1
+  0);  //!< Represents an invalid index in GenericRegex::State::out, out1
 static const SizeType kRegexInvalidRange = ~SizeType(0);
 
 //! Regular expression engine with subset of ECMAscript grammar.
@@ -82,16 +82,16 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericRege
   typedef typename Encoding::Ch Ch;
 
   GenericRegex(const Ch *source, Allocator *allocator = 0)
-      : states_(allocator, 256),
-        ranges_(allocator, 256),
-        root_(kRegexInvalidState),
-        stateCount_(),
-        rangeCount_(),
-        stateSet_(),
-        state0_(allocator, 0),
-        state1_(allocator, 0),
-        anchorBegin_(),
-        anchorEnd_()
+    : states_(allocator, 256),
+      ranges_(allocator, 256),
+      root_(kRegexInvalidState),
+      stateCount_(),
+      rangeCount_(),
+      stateSet_(),
+      state0_(allocator, 0),
+      state1_(allocator, 0),
+      anchorBegin_(),
+      anchorEnd_()
   {
     GenericStringStream<Encoding> ss(source);
     DecodedStream<GenericStringStream<Encoding>> ds(ss);
@@ -131,18 +131,11 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericRege
   }
 
  private:
-  enum Operator {
-    kZeroOrOne,
-    kZeroOrMore,
-    kOneOrMore,
-    kConcatenation,
-    kAlternation,
-    kLeftParenthesis
-  };
+  enum Operator { kZeroOrOne, kZeroOrMore, kOneOrMore, kConcatenation, kAlternation, kLeftParenthesis };
 
-  static const unsigned kAnyCharacterClass   = 0xFFFFFFFF;  //!< For '.'
+  static const unsigned kAnyCharacterClass = 0xFFFFFFFF;  //!< For '.'
   static const unsigned kRangeCharacterClass = 0xFFFFFFFE;
-  static const unsigned kRangeNegationFlag   = 0x80000000;
+  static const unsigned kRangeNegationFlag = 0x80000000;
 
   struct Range {
     unsigned start;  //
@@ -247,13 +240,12 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericRege
           break;
 
         case '(':
-          *operatorStack.template Push<Operator>()  = kLeftParenthesis;
+          *operatorStack.template Push<Operator>() = kLeftParenthesis;
           *atomCountStack.template Push<unsigned>() = 0;
           break;
 
         case ')':
-          while (!operatorStack.Empty() &&
-                 *operatorStack.template Top<Operator>() != kLeftParenthesis)
+          while (!operatorStack.Empty() && *operatorStack.template Top<Operator>() != kLeftParenthesis)
             if (!Eval(operandStack, *operatorStack.template Pop<Operator>(1)))
               return;
           if (operatorStack.Empty())
@@ -308,7 +300,7 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericRege
           if (!ParseRange(ds, &range))
             return;
           SizeType s = NewState(kRegexInvalidState, kRegexInvalidState, kRangeCharacterClass);
-          GetState(s).rangeStart              = range;
+          GetState(s).rangeStart = range;
           *operandStack.template Push<Frag>() = Frag(s, s, s);
         }
           ImplicitConcatenation(atomCountStack, operatorStack);
@@ -356,10 +348,10 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericRege
 
   SizeType NewState(SizeType out, SizeType out1, unsigned codepoint)
   {
-    State *s      = states_.template Push<State>();
-    s->out        = out;
-    s->out1       = out1;
-    s->codepoint  = codepoint;
+    State *s = states_.template Push<State>();
+    s->out = out;
+    s->out1 = out1;
+    s->codepoint = codepoint;
     s->rangeStart = kRegexInvalidRange;
     return stateCount_++;
   }
@@ -389,7 +381,7 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericRege
   void Patch(SizeType l, SizeType s)
   {
     for (SizeType next; l != kRegexInvalidState; l = next) {
-      next            = GetState(l).out;
+      next = GetState(l).out;
       GetState(l).out = s;
     }
   }
@@ -402,27 +394,26 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericRege
           Frag e2 = *operandStack.template Pop<Frag>(1);
           Frag e1 = *operandStack.template Pop<Frag>(1);
           Patch(e1.out, e2.start);
-          *operandStack.template Push<Frag>() = Frag(
-              e1.start, e2.out, Min(e1.minIndex, e2.minIndex));
+          *operandStack.template Push<Frag>() = Frag(e1.start, e2.out, Min(e1.minIndex, e2.minIndex));
           return true;
         }
         return false;
 
       case kAlternation:
         if (operandStack.GetSize() >= sizeof(Frag) * 2) {
-          Frag e2                             = *operandStack.template Pop<Frag>(1);
-          Frag e1                             = *operandStack.template Pop<Frag>(1);
-          SizeType s                          = NewState(e1.start, e2.start, 0);
+          Frag e2 = *operandStack.template Pop<Frag>(1);
+          Frag e1 = *operandStack.template Pop<Frag>(1);
+          SizeType s = NewState(e1.start, e2.start, 0);
           *operandStack.template Push<Frag>() = Frag(
-              s, Append(e1.out, e2.out), Min(e1.minIndex, e2.minIndex));
+            s, Append(e1.out, e2.out), Min(e1.minIndex, e2.minIndex));
           return true;
         }
         return false;
 
       case kZeroOrOne:
         if (operandStack.GetSize() >= sizeof(Frag)) {
-          Frag e                              = *operandStack.template Pop<Frag>(1);
-          SizeType s                          = NewState(kRegexInvalidState, e.start, 0);
+          Frag e = *operandStack.template Pop<Frag>(1);
+          SizeType s = NewState(kRegexInvalidState, e.start, 0);
           *operandStack.template Push<Frag>() = Frag(s, Append(e.out, s), e.minIndex);
           return true;
         }
@@ -430,7 +421,7 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericRege
 
       case kZeroOrMore:
         if (operandStack.GetSize() >= sizeof(Frag)) {
-          Frag e     = *operandStack.template Pop<Frag>(1);
+          Frag e = *operandStack.template Pop<Frag>(1);
           SizeType s = NewState(kRegexInvalidState, e.start, 0);
           Patch(e.out, s);
           *operandStack.template Push<Frag>() = Frag(s, s, e.minIndex);
@@ -440,7 +431,7 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericRege
 
       case kOneOrMore:
         if (operandStack.GetSize() >= sizeof(Frag)) {
-          Frag e     = *operandStack.template Pop<Frag>(1);
+          Frag e = *operandStack.template Pop<Frag>(1);
           SizeType s = NewState(kRegexInvalidState, e.start, 0);
           Patch(e.out, s);
           *operandStack.template Push<Frag>() = Frag(e.start, s, e.minIndex);
@@ -502,9 +493,8 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericRege
   void CloneTopOperand(Stack<Allocator> &operandStack)
   {
     const Frag *src = operandStack.template Top<Frag>();
-    SizeType count =
-        stateCount_ -
-        src->minIndex;  // Assumes top operand contains states in [src->minIndex, stateCount_)
+    SizeType count = stateCount_ -
+                     src->minIndex;  // Assumes top operand contains states in [src->minIndex, stateCount_)
     State *s = states_.template Push<State>(count);
     memcpy(s, &GetState(src->minIndex), count * sizeof(State));
     for (SizeType j = 0; j < count; j++) {
@@ -513,8 +503,7 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericRege
       if (s[j].out1 != kRegexInvalidState)
         s[j].out1 += count;
     }
-    *operandStack.template Push<Frag>() = Frag(
-        src->start + count, src->out + count, src->minIndex + count);
+    *operandStack.template Push<Frag>() = Frag(src->start + count, src->out + count, src->minIndex + count);
     stateCount_ += count;
   }
 
@@ -534,10 +523,10 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericRege
 
   template<typename InputStream> bool ParseRange(DecodedStream<InputStream> &ds, SizeType *range)
   {
-    bool isBegin     = true;
-    bool negate      = false;
-    int step         = 0;
-    SizeType start   = kRegexInvalidRange;
+    bool isBegin = true;
+    bool negate = false;
+    int step = 0;
+    SizeType start = kRegexInvalidRange;
     SizeType current = kRegexInvalidRange;
     unsigned codepoint;
     while ((codepoint = ds.Take()) != 0) {
@@ -595,7 +584,7 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericRege
             default:
               RAPIDJSON_ASSERT(step == 2);
               GetRange(current).end = codepoint;
-              step                  = 0;
+              step = 0;
           }
       }
     }
@@ -606,7 +595,7 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericRege
   {
     Range *r = ranges_.template Push<Range>();
     r->start = r->end = codepoint;
-    r->next           = kRegexInvalidRange;
+    r->next = kRegexInvalidRange;
     return rangeCount_++;
   }
 
@@ -668,8 +657,7 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericRege
       std::memset(stateSet_, 0, stateSetSize);
       next->Clear();
       matched = false;
-      for (const SizeType *s = current->template Bottom<SizeType>();
-           s != current->template End<SizeType>();
+      for (const SizeType *s = current->template Bottom<SizeType>(); s != current->template End<SizeType>();
            ++s) {
         const State &sr = GetState(*s);
         if (sr.codepoint == codepoint || sr.codepoint == kAnyCharacterClass ||

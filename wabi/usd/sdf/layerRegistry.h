@@ -66,8 +66,7 @@ class Sdf_LayerRegistry : boost::noncopyable {
   /// cannot be found, a null layer handle is returned. If the \p layerPath
   /// is relative, it is made absolute by anchoring to the current working
   /// directory.
-  SdfLayerHandle Find(const std::string &layerPath,
-                      const std::string &resolvedPath = std::string()) const;
+  SdfLayerHandle Find(const std::string &layerPath, const std::string &resolvedPath = std::string()) const;
 
   /// Returns a layer from the registry, consulting the by_identifier index
   /// with the \p layerPath as provided.
@@ -116,30 +115,28 @@ class Sdf_LayerRegistry : boost::noncopyable {
 
   // Unordered associative layer container.
   typedef boost::multi_index::multi_index_container<
-      SdfLayerHandle,
-      boost::multi_index::indexed_by<
-          // Layer<->Layer, one-to-one. Duplicate layer handles cannot be
-          // inserted into the container.
-          boost::multi_index::hashed_unique<boost::multi_index::tag<by_identity>,
-                                            boost::multi_index::identity<SdfLayerHandle>,
-                                            TfHash>,
+    SdfLayerHandle,
+    boost::multi_index::indexed_by<
+      // Layer<->Layer, one-to-one. Duplicate layer handles cannot be
+      // inserted into the container.
+      boost::multi_index::hashed_unique<boost::multi_index::tag<by_identity>,
+                                        boost::multi_index::identity<SdfLayerHandle>,
+                                        TfHash>,
 
-          // Layer<->RealPath, one-to-one. The real path is the file from
-          // which an existing layer asset was read, or the path to which a
-          // newly created layer asset will be written.
-          boost::multi_index::hashed_unique<boost::multi_index::tag<by_real_path>,
-                                            layer_real_path>,
+      // Layer<->RealPath, one-to-one. The real path is the file from
+      // which an existing layer asset was read, or the path to which a
+      // newly created layer asset will be written.
+      boost::multi_index::hashed_unique<boost::multi_index::tag<by_real_path>, layer_real_path>,
 
-          // Layer<->Identifier, one-to-many. The identifier is the path
-          // passed in to CreateNew/FindOrOpen, and may be any path form
-          // resolvable to a single real path.
-          boost::multi_index::hashed_non_unique<boost::multi_index::tag<by_identifier>,
-                                                layer_identifier>,
+      // Layer<->Identifier, one-to-many. The identifier is the path
+      // passed in to CreateNew/FindOrOpen, and may be any path form
+      // resolvable to a single real path.
+      boost::multi_index::hashed_non_unique<boost::multi_index::tag<by_identifier>, layer_identifier>,
 
-          // Layer<->RepositoryPath
-          boost::multi_index::hashed_non_unique<boost::multi_index::tag<by_repository_path>,
-                                                layer_repository_path>>>
-      _Layers;
+      // Layer<->RepositoryPath
+      boost::multi_index::hashed_non_unique<boost::multi_index::tag<by_repository_path>,
+                                            layer_repository_path>>>
+    _Layers;
 
   // Identity index.
   typedef _Layers::index<by_identity>::type _LayersByIdentity;

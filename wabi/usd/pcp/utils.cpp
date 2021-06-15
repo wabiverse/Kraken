@@ -65,9 +65,9 @@ SdfLayer::FileFormatArguments Pcp_GetArgumentsForFileFormatTarget(const std::str
 }
 
 const SdfLayer::FileFormatArguments &Pcp_GetArgumentsForFileFormatTarget(
-    const std::string &identifier,
-    const SdfLayer::FileFormatArguments *defaultArgs,
-    SdfLayer::FileFormatArguments *localArgs)
+  const std::string &identifier,
+  const SdfLayer::FileFormatArguments *defaultArgs,
+  SdfLayer::FileFormatArguments *localArgs)
 {
   if (!_TargetIsSpecifiedInIdentifier(identifier)) {
     return *defaultArgs;

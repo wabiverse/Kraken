@@ -54,20 +54,15 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateFieldDataTypeAttr(UsdVolOpenVDBAsset &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
+static UsdAttribute _CreateFieldDataTypeAttr(UsdVolOpenVDBAsset &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateFieldDataTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
                                       writeSparsely);
 }
 
-static UsdAttribute _CreateFieldClassAttr(UsdVolOpenVDBAsset &self,
-                                          object defaultVal,
-                                          bool writeSparsely)
+static UsdAttribute _CreateFieldClassAttr(UsdVolOpenVDBAsset &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateFieldClassAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                   writeSparsely);
+  return self.CreateFieldClassAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
 static std::string _Repr(const UsdVolOpenVDBAsset &self)
@@ -85,39 +80,37 @@ void wrapUsdVolOpenVDBAsset()
   class_<This, bases<UsdVolFieldAsset>> cls("OpenVDBAsset");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetFieldDataTypeAttr", &This::GetFieldDataTypeAttr)
-      .def("CreateFieldDataTypeAttr",
-           &_CreateFieldDataTypeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetFieldDataTypeAttr", &This::GetFieldDataTypeAttr)
+    .def("CreateFieldDataTypeAttr",
+         &_CreateFieldDataTypeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetFieldClassAttr", &This::GetFieldClassAttr)
-      .def("CreateFieldClassAttr",
-           &_CreateFieldClassAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetFieldClassAttr", &This::GetFieldClassAttr)
+    .def("CreateFieldClassAttr",
+         &_CreateFieldClassAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

@@ -81,31 +81,27 @@ static void _PcpComposeSiteReferencesOrPayloads(TfToken const &field,
       // relative to the layer where they were expressed and combines
       // layer offsets.
       curListOp.ApplyOperations(
-          result,
-          [&layer, layerOffset, &infoMap](SdfListOpType opType,
-                                          const RefOrPayloadType &refOrPayload) {
-            // Fill in the result reference of payload with the anchored
-            // asset path instead of the authored asset path. This
-            // ensures that references or payloads with the same
-            // relative asset path but anchored to different
-            // locations will not be considered duplicates.
-            const std::string &authoredAssetPath = refOrPayload.GetAssetPath();
-            const std::string assetPath          = authoredAssetPath.empty() ?
-                                                       authoredAssetPath :
-                                                       SdfComputeAssetPathRelativeToLayer(
-                                                  layer, authoredAssetPath);
-            SdfLayerOffset resolvedLayerOffset   = layerOffset ?
-                                                       *layerOffset * refOrPayload.GetLayerOffset() :
-                                                       refOrPayload.GetLayerOffset();
-            RefOrPayloadType result(assetPath, refOrPayload.GetPrimPath(), resolvedLayerOffset);
+        result, [&layer, layerOffset, &infoMap](SdfListOpType opType, const RefOrPayloadType &refOrPayload) {
+          // Fill in the result reference of payload with the anchored
+          // asset path instead of the authored asset path. This
+          // ensures that references or payloads with the same
+          // relative asset path but anchored to different
+          // locations will not be considered duplicates.
+          const std::string &authoredAssetPath = refOrPayload.GetAssetPath();
+          const std::string assetPath = authoredAssetPath.empty() ?
+                                          authoredAssetPath :
+                                          SdfComputeAssetPathRelativeToLayer(layer, authoredAssetPath);
+          SdfLayerOffset resolvedLayerOffset = layerOffset ? *layerOffset * refOrPayload.GetLayerOffset() :
+                                                             refOrPayload.GetLayerOffset();
+          RefOrPayloadType result(assetPath, refOrPayload.GetPrimPath(), resolvedLayerOffset);
 
-            _CopyCustomData(&result, refOrPayload);
-            PcpSourceArcInfo &info = infoMap[result];
-            info.layer             = layer;
-            info.layerOffset       = refOrPayload.GetLayerOffset();
-            info.authoredAssetPath = refOrPayload.GetAssetPath();
-            return result;
-          });
+          _CopyCustomData(&result, refOrPayload);
+          PcpSourceArcInfo &info = infoMap[result];
+          info.layer = layer;
+          info.layerOffset = refOrPayload.GetLayerOffset();
+          info.authoredAssetPath = refOrPayload.GetAssetPath();
+          return result;
+        });
     }
   }
 
@@ -186,8 +182,8 @@ void PcpComposeSiteRelocates(PcpLayerStackRefPtr const &layerStack,
     if ((*layer)->HasField(path, field, &relocMap)) {
       TF_FOR_ALL(reloc, relocMap)
       {
-        SdfPath source    = reloc->first.MakeAbsolutePath(path);
-        SdfPath target    = reloc->second.MakeAbsolutePath(path);
+        SdfPath source = reloc->first.MakeAbsolutePath(path);
+        SdfPath target = reloc->second.MakeAbsolutePath(path);
         (*result)[source] = target;
       }
     }
@@ -212,13 +208,12 @@ static void _ComposeSiteListOpWithSourceInfo(const PcpLayerStackRefPtr &layerSta
   TF_REVERSE_FOR_ALL(layer, layerStack->GetLayers())
   {
     if ((*layer)->HasField(path, field, &listOp)) {
-      listOp.ApplyOperations(result,
-                             [&layer, &infoMap](SdfListOpType opType, const ResultType &path) {
-                               // Just store the layer in the source arc info for the
-                               // result. We don't need the other data.
-                               infoMap[path].layer = *layer;
-                               return path;
-                             });
+      listOp.ApplyOperations(result, [&layer, &infoMap](SdfListOpType opType, const ResultType &path) {
+        // Just store the layer in the source arc info for the
+        // result. We don't need the other data.
+        infoMap[path].layer = *layer;
+        return path;
+      });
     }
   }
 

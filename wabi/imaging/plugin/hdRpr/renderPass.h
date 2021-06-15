@@ -24,16 +24,13 @@ class HdRprRenderParam;
 
 class HdRprRenderPass final : public HdRenderPass {
  public:
-  HdRprRenderPass(HdRenderIndex *index,
-                  HdRprimCollection const &collection,
-                  HdRprRenderParam *renderParam);
+  HdRprRenderPass(HdRenderIndex *index, HdRprimCollection const &collection, HdRprRenderParam *renderParam);
 
   ~HdRprRenderPass() override;
 
   bool IsConverged() const override;
 
-  void _Execute(HdRenderPassStateSharedPtr const &renderPassState,
-                TfTokenVector const &renderTags) override;
+  void _Execute(HdRenderPassStateSharedPtr const &renderPassState, TfTokenVector const &renderTags) override;
 
  private:
   HdRprRenderParam *m_renderParam;

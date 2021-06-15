@@ -78,15 +78,12 @@ struct Tf_TokenToPythonString {
 
 void wrapToken()
 {
-  TfPyContainerConversions::from_python_sequence<std::set<TfToken>,
-                                                 TfPyContainerConversions::set_policy>();
+  TfPyContainerConversions::from_python_sequence<std::set<TfToken>, TfPyContainerConversions::set_policy>();
 
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<TfToken>,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<TfToken>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 
-  boost::python::to_python_converter<std::vector<TfToken>,
-                                     TfPySequenceToPython<std::vector<TfToken>>>();
+  boost::python::to_python_converter<std::vector<TfToken>, TfPySequenceToPython<std::vector<TfToken>>>();
 
   // Tokens are represented directly as Python strings in Python.
   bp::to_python_converter<TfToken, Tf_TokenToPythonString>();

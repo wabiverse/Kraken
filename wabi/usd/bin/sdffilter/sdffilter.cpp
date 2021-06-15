@@ -80,9 +80,7 @@ class SdfFilterPseudoFileFormat : public SdfTextFileFormat {
 
  public:
   SdfFilterPseudoFileFormat(string description = "<< human readable >>")
-      : SdfTextFileFormat(TfToken("pseudosdf"),
-                          TfToken(description),
-                          SdfTextFileFormatTokens->Target)
+    : SdfTextFileFormat(TfToken("pseudosdf"), TfToken(description), SdfTextFileFormatTokens->Target)
   {}
 
  private:
@@ -226,19 +224,19 @@ struct ReportParams {
   std::vector<std::pair<double, double>> timeRanges;
   double timeTolerance;
 
-  SortKey sortKey              = SortByPath;
-  int64_t arraySizeLimit       = -1;
+  SortKey sortKey = SortByPath;
+  int64_t arraySizeLimit = -1;
   int64_t timeSamplesSizeLimit = -1;
-  bool showValues              = true;
+  bool showValues = true;
 };
 
 // Summary statistics for 'summary' output.
 struct SummaryStats {
-  size_t numSpecs         = 0;
-  size_t numPrimSpecs     = 0;
+  size_t numSpecs = 0;
+  size_t numPrimSpecs = 0;
   size_t numPropertySpecs = 0;
-  size_t numFields        = 0;
-  size_t numSampleTimes   = 0;
+  size_t numFields = 0;
+  size_t numSampleTimes = 0;
 };
 
 // Parse times and time ranges in timeSpecs, throw an exception if something
@@ -254,8 +252,7 @@ void ParseTimes(vector<string> const &timeSpecs,
         if (elts.size() != 2) {
           throw std::invalid_argument(TfStringPrintf("invalid time syntax '%s'", spec.c_str()));
         }
-        timeRanges->emplace_back(boost::lexical_cast<double>(elts[0]),
-                                 boost::lexical_cast<double>(elts[1]));
+        timeRanges->emplace_back(boost::lexical_cast<double>(elts[0]), boost::lexical_cast<double>(elts[1]));
       }
       else {
         literalTimes->emplace_back(boost::lexical_cast<double>(spec));
@@ -272,8 +269,7 @@ void ParseTimes(vector<string> const &timeSpecs,
 }
 
 // Find all the paths in layer that match, or all paths if matcher is null.
-std::vector<SdfPath> CollectMatchingSpecPaths(SdfLayerHandle const &layer,
-                                              TfPatternMatcher const *matcher)
+std::vector<SdfPath> CollectMatchingSpecPaths(SdfLayerHandle const &layer, TfPatternMatcher const *matcher)
 {
   std::vector<SdfPath> result;
   layer->Traverse(SdfPath::AbsoluteRootPath(), [&result, &matcher](SdfPath const &path) {
@@ -292,9 +288,7 @@ std::vector<TfToken> CollectMatchingFields(SdfLayerHandle const &layer,
   std::vector<TfToken> fields = layer->ListFields(path);
   fields.erase(remove_if(fields.begin(),
                          fields.end(),
-                         [&matcher](TfToken const &f) {
-                           return matcher && !matcher->Match(f.GetString());
-                         }),
+                         [&matcher](TfToken const &f) { return matcher && !matcher->Match(f.GetString()); }),
                fields.end());
   return fields;
 }
@@ -313,8 +307,8 @@ VtValue GetReportValue(VtValue const &value, ReportParams const &p)
 {
   if (p.outputType != OutputLayer && p.arraySizeLimit >= 0 && value.IsArrayValued() &&
       value.GetArraySize() > static_cast<uint64_t>(p.arraySizeLimit)) {
-    return VtValue(SdfHumanReadableValue(TfStringPrintf(
-        "%s[%zu]", ArchGetDemangled(value.GetElementTypeid()).c_str(), value.GetArraySize())));
+    return VtValue(SdfHumanReadableValue(
+      TfStringPrintf("%s[%zu]", ArchGetDemangled(value.GetElementTypeid()).c_str(), value.GetArraySize())));
   }
   return value;
 }
@@ -322,12 +316,10 @@ VtValue GetReportValue(VtValue const &value, ReportParams const &p)
 // Get a suitable value for timeSamples for the report specified by p.  In
 // particular, for non-layer output, make a value that shows number of samples
 // and their time range.
-VtValue GetReportTimeSamplesValue(SdfLayerHandle const &layer,
-                                  SdfPath const &path,
-                                  ReportParams const &p)
+VtValue GetReportTimeSamplesValue(SdfLayerHandle const &layer, SdfPath const &path, ReportParams const &p)
 {
   bool takeAllTimes = p.literalTimes.empty() && p.timeRanges.empty();
-  auto times        = layer->ListTimeSamplesForPath(path);
+  auto times = layer->ListTimeSamplesForPath(path);
   std::vector<double> selectedTimes;
   selectedTimes.reserve(times.size());
 
@@ -337,10 +329,9 @@ VtValue GetReportTimeSamplesValue(SdfLayerHandle const &layer,
   else {
     for (auto time : times) {
       // Check literalTimes.
-      auto rng = equal_range(
-          p.literalTimes.begin(), p.literalTimes.end(), time, [&p](double a, double b) {
-            return IsClose(a, b, p.timeTolerance) ? false : a < b;
-          });
+      auto rng = equal_range(p.literalTimes.begin(), p.literalTimes.end(), time, [&p](double a, double b) {
+        return IsClose(a, b, p.timeTolerance) ? false : a < b;
+      });
       if (rng.first != rng.second)
         selectedTimes.push_back(time);
 
@@ -395,9 +386,7 @@ VtValue GetReportFieldValue(SdfLayerHandle const &layer,
 }
 
 // Produce the 'outline' output report by path.
-void GetReportByPath(SdfLayerHandle const &layer,
-                     ReportParams const &p,
-                     std::vector<std::string> &report)
+void GetReportByPath(SdfLayerHandle const &layer, ReportParams const &p, std::vector<std::string> &report)
 {
   std::vector<SdfPath> paths = CollectMatchingSpecPaths(layer, p.pathMatcher.get());
   sort(paths.begin(), paths.end());
@@ -410,10 +399,8 @@ void GetReportByPath(SdfLayerHandle const &layer,
       continue;
     for (auto const &field : fields) {
       if (p.showValues) {
-        report.push_back(
-            TfStringPrintf("  %s: %s",
-                           field.GetText(),
-                           TfStringify(GetReportFieldValue(layer, path, field, p)).c_str()));
+        report.push_back(TfStringPrintf(
+          "  %s: %s", field.GetText(), TfStringify(GetReportFieldValue(layer, path, field, p)).c_str()));
       }
       else {
         report.push_back(TfStringPrintf("  %s", field.GetText()));
@@ -423,9 +410,7 @@ void GetReportByPath(SdfLayerHandle const &layer,
 }
 
 // Produce the 'outline' output report by field.
-void GetReportByField(SdfLayerHandle const &layer,
-                      ReportParams const &p,
-                      std::vector<std::string> &report)
+void GetReportByField(SdfLayerHandle const &layer, ReportParams const &p, std::vector<std::string> &report)
 {
   std::vector<SdfPath> paths = CollectMatchingSpecPaths(layer, p.pathMatcher.get());
   std::unordered_map<std::string, std::vector<std::string>> pathsByFieldString;
@@ -439,9 +424,7 @@ void GetReportByField(SdfLayerHandle const &layer,
       std::string fieldString;
       if (p.showValues) {
         fieldString = TfStringPrintf(
-            "%s: %s",
-            field.GetText(),
-            TfStringify(GetReportFieldValue(layer, path, field, p)).c_str());
+          "%s: %s", field.GetText(), TfStringify(GetReportFieldValue(layer, path, field, p)).c_str());
       }
       else {
         fieldString = TfStringPrintf("%s", field.GetText());
@@ -478,11 +461,9 @@ SummaryStats GetSummaryStats(SdfLayerHandle const &layer)
 // replacing large arrays and timeSamples with human readable values if
 // appropriate, and skipping paths and fields that do not match the matchers in
 // p.
-void FilterLayer(SdfLayerHandle const &inLayer,
-                 SdfLayerHandle const &outLayer,
-                 ReportParams const &p)
+void FilterLayer(SdfLayerHandle const &inLayer, SdfLayerHandle const &outLayer, ReportParams const &p)
 {
-  namespace ph     = std::placeholders;
+  namespace ph = std::placeholders;
   auto copyValueFn = [&p](SdfSpecType specType,
                           TfToken const &field,
                           SdfLayerHandle const &srcLayer,
@@ -533,14 +514,12 @@ void Validate(SdfLayerHandle const &layer, ReportParams const &p, string &report
   TF_DESCRIBE_SCOPE("Collecting paths in @%s@", layer->GetIdentifier().c_str());
   vector<SdfPath> paths;
   layer->Traverse(SdfPath::AbsoluteRootPath(), [&paths, layer](SdfPath const &path) {
-    TF_DESCRIBE_SCOPE(
-        "Collecting path <%s> in @%s@", path.GetText(), layer->GetIdentifier().c_str());
+    TF_DESCRIBE_SCOPE("Collecting path <%s> in @%s@", path.GetText(), layer->GetIdentifier().c_str());
     paths.push_back(path);
   });
   sort(paths.begin(), paths.end());
   for (auto const &path : paths) {
-    TF_DESCRIBE_SCOPE(
-        "Collecting fields for <%s> in @%s@", path.GetText(), layer->GetIdentifier().c_str());
+    TF_DESCRIBE_SCOPE("Collecting fields for <%s> in @%s@", path.GetText(), layer->GetIdentifier().c_str());
     vector<TfToken> fields = layer->ListFields(path);
     if (fields.empty())
       continue;
@@ -556,12 +535,12 @@ void Validate(SdfLayerHandle const &layer, ReportParams const &p, string &report
 
         for (auto time : times) {
           TF_DESCRIBE_SCOPE(
-              "Getting sample value at time "
-              "%f for '%s' on <%s> in @%s@",
-              time,
-              field.GetText(),
-              path.GetText(),
-              layer->GetIdentifier().c_str());
+            "Getting sample value at time "
+            "%f for '%s' on <%s> in @%s@",
+            time,
+            field.GetText(),
+            path.GetText(),
+            layer->GetIdentifier().c_str());
           layer->QueryTimeSample(path, time, &value);
         }
       }
@@ -614,21 +593,20 @@ void Process(SdfLayerHandle layer, ReportParams const &p)
   if (p.outputType == OutputValidity) {
     std::string validateText;
     Validate(layer, p, validateText);
-    output.Write(
-        TfStringPrintf("@%s@ - %s\n", layer->GetIdentifier().c_str(), validateText.c_str()));
+    output.Write(TfStringPrintf("@%s@ - %s\n", layer->GetIdentifier().c_str(), validateText.c_str()));
   }
   else if (p.outputType == OutputSummary) {
     auto stats = GetSummaryStats(layer);
     output.Write(
-        TfStringPrintf("@%s@\n"
-                       "  %zu specs, %zu prim specs, %zu property specs, %zu fields, "
-                       "%zu sample times\n",
-                       layer->GetIdentifier().c_str(),
-                       stats.numSpecs,
-                       stats.numPrimSpecs,
-                       stats.numPropertySpecs,
-                       stats.numFields,
-                       stats.numSampleTimes));
+      TfStringPrintf("@%s@\n"
+                     "  %zu specs, %zu prim specs, %zu property specs, %zu fields, "
+                     "%zu sample times\n",
+                     layer->GetIdentifier().c_str(),
+                     stats.numSpecs,
+                     stats.numPrimSpecs,
+                     stats.numPropertySpecs,
+                     stats.numFields,
+                     stats.numSampleTimes));
   }
   else if (p.outputType == OutputOutline) {
     vector<string> report;
@@ -649,8 +627,8 @@ void Process(SdfLayerHandle layer, ReportParams const &p)
     SdfLayerRefPtr outputLayer;
     SdfFileFormatConstRefPtr fmt;
     if (p.outputType == OutputPseudoLayer) {
-      fmt         = TfCreateRefPtr(new SdfFilterPseudoFileFormat(
-          TfStringPrintf("from @%s@", layer->GetIdentifier().c_str())));
+      fmt = TfCreateRefPtr(
+        new SdfFilterPseudoFileFormat(TfStringPrintf("from @%s@", layer->GetIdentifier().c_str())));
       outputLayer = SdfLayer::CreateAnonymous(".pseudosdf", fmt);
     }
     else {
@@ -658,11 +636,10 @@ void Process(SdfLayerHandle layer, ReportParams const &p)
       if (!p.outputFormat.empty()) {
         formatArgs["format"] = p.outputFormat;
       }
-      outputLayer = !p.outputFile.empty() ? SdfLayer::CreateNew(p.outputFile, formatArgs) :
-                                            SdfLayer::CreateAnonymous(
-                                                p.outputFormat.empty() ?
-                                                    string() :
-                                                    TfStringPrintf(".%s", p.outputFormat.c_str()));
+      outputLayer = !p.outputFile.empty() ?
+                      SdfLayer::CreateNew(p.outputFile, formatArgs) :
+                      SdfLayer::CreateAnonymous(
+                        p.outputFormat.empty() ? string() : TfStringPrintf(".%s", p.outputFormat.c_str()));
     }
 
     // Generate the layer content.
@@ -698,11 +675,11 @@ int main(int argc, char const *argv[])
   vector<string> inputFiles;
   vector<double> literalTimes;
   vector<pair<double, double>> timeRanges;
-  double timeTolerance         = 1.25e-4;  // ugh -- chosen to print well in help.
-  SortKey sortKey              = SortByPath;
-  int64_t arraySizeLimit       = -2;
+  double timeTolerance = 1.25e-4;  // ugh -- chosen to print well in help.
+  SortKey sortKey = SortByPath;
+  int64_t arraySizeLimit = -2;
   int64_t timeSamplesSizeLimit = -2;
-  bool noValues                = false;
+  bool noValues = false;
 
   po::options_description argOpts("Options");
   argOpts.add_options()
@@ -783,14 +760,14 @@ int main(int argc, char const *argv[])
     exit(1);
   }
 
-  std::shared_ptr<TfPatternMatcher> pathMatcher(
-      pathRegex != ".*" ? new TfPatternMatcher(pathRegex) : nullptr);
+  std::shared_ptr<TfPatternMatcher> pathMatcher(pathRegex != ".*" ? new TfPatternMatcher(pathRegex) :
+                                                                    nullptr);
   if (pathMatcher && !pathMatcher->IsValid()) {
     ErrExit("path regex '%s' : %s", pathRegex.c_str(), pathMatcher->GetInvalidReason().c_str());
   }
 
-  std::shared_ptr<TfPatternMatcher> fieldMatcher(
-      fieldRegex != ".*" ? new TfPatternMatcher(fieldRegex) : nullptr);
+  std::shared_ptr<TfPatternMatcher> fieldMatcher(fieldRegex != ".*" ? new TfPatternMatcher(fieldRegex) :
+                                                                      nullptr);
   if (fieldMatcher && !fieldMatcher->IsValid()) {
     ErrExit("field regex '%s' : %s", fieldRegex.c_str(), fieldMatcher->GetInvalidReason().c_str());
   }
@@ -809,8 +786,8 @@ int main(int argc, char const *argv[])
     if (outputType == OutputLayer) {
       if (inputFiles.size() > 1) {
         ErrExit(
-            "must supply exactly one input file with "
-            "'--outputType layer'");
+          "must supply exactly one input file with "
+          "'--outputType layer'");
       }
       if (!SdfFileFormat::FindByExtension(TfStringGetSuffix(outputFile))) {
         ErrExit("no known Sdf file format for output file '%s'", outputFile.c_str());
@@ -821,10 +798,10 @@ int main(int argc, char const *argv[])
     if (outputType != OutputLayer) {
       if (SdfFileFormat::FindByExtension(TfStringGetSuffix(outputFile))) {
         ErrExit(
-            "output type '%s' does not produce content compatible "
-            "with the format for output file '%s'",
-            TfStringify(outputType).c_str(),
-            outputFile.c_str());
+          "output type '%s' does not produce content compatible "
+          "with the format for output file '%s'",
+          TfStringify(outputType).c_str(),
+          outputFile.c_str());
       }
     }
 
@@ -841,27 +818,25 @@ int main(int argc, char const *argv[])
     arraySizeLimit = outputType == OutputPseudoLayer ? 8 : outputType == OutputLayer ? -1 : 0;
   }
   if (timeSamplesSizeLimit == -2 /* unset */) {
-    timeSamplesSizeLimit = outputType == OutputPseudoLayer ? 8 :
-                           outputType == OutputLayer       ? -1 :
-                                                             0;
+    timeSamplesSizeLimit = outputType == OutputPseudoLayer ? 8 : outputType == OutputLayer ? -1 : 0;
   }
 
   ReportParams params;
-  params.pathMatcher  = pathMatcher;
+  params.pathMatcher = pathMatcher;
   params.fieldMatcher = fieldMatcher;
 
-  params.outputType   = outputType;
-  params.outputFile   = outputFile;
+  params.outputType = outputType;
+  params.outputFile = outputFile;
   params.outputFormat = outputFormat;
 
-  params.literalTimes  = literalTimes;
-  params.timeRanges    = timeRanges;
+  params.literalTimes = literalTimes;
+  params.timeRanges = timeRanges;
   params.timeTolerance = timeTolerance;
 
-  params.sortKey              = sortKey;
-  params.arraySizeLimit       = arraySizeLimit;
+  params.sortKey = sortKey;
+  params.arraySizeLimit = arraySizeLimit;
   params.timeSamplesSizeLimit = timeSamplesSizeLimit;
-  params.showValues           = !noValues;
+  params.showValues = !noValues;
 
   for (auto const &file : inputFiles) {
     TF_DESCRIBE_SCOPE("Opening layer @%s@", file.c_str());

@@ -100,10 +100,7 @@ class Sdf_VectorListEditor : public Sdf_ListEditor<TypePolicy> {
   typedef typename Parent::ApplyCallback ApplyCallback;
   virtual void ApplyEditsToList(value_vector_type *vec, const ApplyCallback &cb);
 
-  virtual bool ReplaceEdits(SdfListOpType op,
-                            size_t index,
-                            size_t n,
-                            const value_vector_type &elems);
+  virtual bool ReplaceEdits(SdfListOpType op, size_t index, size_t n, const value_vector_type &elems);
 
   virtual void ApplyList(SdfListOpType op, const Sdf_ListEditor<TypePolicy> &rhs);
 
@@ -170,8 +167,8 @@ Sdf_VectorListEditor<TP, FST>::Sdf_VectorListEditor(const SdfSpecHandle &owner,
                                                     const TfToken &field,
                                                     SdfListOpType op,
                                                     const TP &typePolicy)
-    : Parent(owner, field, typePolicy),
-      _op(op)
+  : Parent(owner, field, typePolicy),
+    _op(op)
 {
   if (owner) {
     typedef std::vector<FST> FieldVectorType;
@@ -191,8 +188,7 @@ template<class TP, class FST> bool Sdf_VectorListEditor<TP, FST>::IsOrderedOnly(
   return _op == SdfListOpTypeOrdered;
 }
 
-template<class TP, class FST>
-bool Sdf_VectorListEditor<TP, FST>::CopyEdits(const Sdf_ListEditor<TP> &rhs)
+template<class TP, class FST> bool Sdf_VectorListEditor<TP, FST>::CopyEdits(const Sdf_ListEditor<TP> &rhs)
 {
   const This *rhsEdit = dynamic_cast<const This *>(&rhs);
   if (!rhsEdit) {
@@ -237,8 +233,7 @@ template<class TP, class FST> bool Sdf_VectorListEditor<TP, FST>::ClearEditsAndM
   return true;
 }
 
-template<class TP, class FST>
-void Sdf_VectorListEditor<TP, FST>::ModifyItemEdits(const ModifyCallback &cb)
+template<class TP, class FST> void Sdf_VectorListEditor<TP, FST>::ModifyItemEdits(const ModifyCallback &cb)
 {
   if (_data.empty()) {
     return;
@@ -247,14 +242,13 @@ void Sdf_VectorListEditor<TP, FST>::ModifyItemEdits(const ModifyCallback &cb)
   SdfListOp<value_type> valueListOp;
   valueListOp.SetItems(_data, _op);
   valueListOp.ModifyOperations(
-      [this, &cb](const value_type &t) { return _ModifyCallbackHelper(cb, _GetTypePolicy(), t); });
+    [this, &cb](const value_type &t) { return _ModifyCallbackHelper(cb, _GetTypePolicy(), t); });
 
   _UpdateFieldData(valueListOp.GetItems(_op));
 }
 
 template<class TP, class FST>
-void Sdf_VectorListEditor<TP, FST>::ApplyEditsToList(value_vector_type *vec,
-                                                     const ApplyCallback &cb)
+void Sdf_VectorListEditor<TP, FST>::ApplyEditsToList(value_vector_type *vec, const ApplyCallback &cb)
 {
   if (_data.empty()) {
     return;
@@ -311,7 +305,7 @@ void Sdf_VectorListEditor<TP, FST>::ApplyList(SdfListOpType op, const Sdf_ListEd
 
 template<class TP, class FST>
 const typename Sdf_VectorListEditor<TP, FST>::value_vector_type &Sdf_VectorListEditor<TP, FST>::
-    _GetOperations(SdfListOpType op) const
+  _GetOperations(SdfListOpType op) const
 {
   if (op != _op) {
     static const value_vector_type empty;

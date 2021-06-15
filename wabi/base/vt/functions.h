@@ -44,8 +44,7 @@ WABI_NAMESPACE_BEGIN
 // arguments.
 
 // VtCat
-#    define BOOST_PP_ITERATION_PARAMS_1 \
-      (4, (0, VT_FUNCTIONS_MAX_ARGS, "wabi/base/vt/functions.h", 0))
+#    define BOOST_PP_ITERATION_PARAMS_1 (4, (0, VT_FUNCTIONS_MAX_ARGS, "wabi/base/vt/functions.h", 0))
 #    include BOOST_PP_ITERATE()
 
 // ****************************************************************************
@@ -133,8 +132,7 @@ template<typename T> VtArray<T> VtLessOrEqual(VtArray<T> const &a, T const &b);
 ///
 /// The result is an array with length equal to the sum of the number
 /// of elements in the source arrays.
-template<typename T>
-VtArray<T> VtCat(VtArray<T> const &a0, VtArray<T> const &a1, ... VtArray<T> const &aN);
+template<typename T> VtArray<T> VtCat(VtArray<T> const &a0, VtArray<T> const &a1, ... VtArray<T> const &aN);
 
 #    endif
 

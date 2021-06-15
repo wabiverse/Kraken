@@ -66,7 +66,7 @@ void HdxTask::_ToggleRenderTarget(HdTaskContext *ctx)
   if (_HasTaskContextData(ctx, HdxAovTokens->colorIntermediate)) {
     _GetTaskContextData(ctx, HdAovTokens->color, &aovTexture);
     _GetTaskContextData(ctx, HdxAovTokens->colorIntermediate, &aovTextureIntermediate);
-    (*ctx)[HdAovTokens->color]              = VtValue(aovTextureIntermediate);
+    (*ctx)[HdAovTokens->color] = VtValue(aovTextureIntermediate);
     (*ctx)[HdxAovTokens->colorIntermediate] = VtValue(aovTexture);
   }
 }

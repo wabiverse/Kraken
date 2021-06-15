@@ -34,8 +34,7 @@
 WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(_tokens,
-                         ((primvarsPrefix, "primvars:"))((idFrom, ":idFrom"))((indicesSuffix,
-                                                                               ":indices")));
+                         ((primvarsPrefix, "primvars:"))((idFrom, ":idFrom"))((indicesSuffix, ":indices")));
 
 UsdGeomPrimvar::UsdGeomPrimvar(const UsdAttribute &attr) : _attr(attr)
 {
@@ -67,8 +66,7 @@ TfToken UsdGeomPrimvar::StripPrimvarsName(const TfToken &name)
 {
   std::string const &fullName = name.GetString();
 
-  std::pair<std::string, bool> res = SdfPath::StripPrefixNamespace(fullName,
-                                                                   _tokens->primvarsPrefix);
+  std::pair<std::string, bool> res = SdfPath::StripPrefixNamespace(fullName, _tokens->primvarsPrefix);
 
   return res.second ? TfToken(res.first) : name;
 }
@@ -96,9 +94,9 @@ TfToken UsdGeomPrimvar::_MakeNamespaced(const TfToken &name, bool quiet)
       // XXX if we add more reserved keywords we'll need to extract
       // the offending keyword rather than assume it is "indices".
       TF_CODING_ERROR(
-          "%s is not a valid name for a Primvar, because"
-          " it contains the reserved name \"indices\"",
-          name.GetText());
+        "%s is not a valid name for a Primvar, because"
+        " it contains the reserved name \"indices\"",
+        name.GetText());
     }
   }
 
@@ -129,9 +127,8 @@ bool UsdGeomPrimvar::HasAuthoredInterpolation() const
 
 bool UsdGeomPrimvar::IsValidInterpolation(const TfToken &interpolation)
 {
-  return ((interpolation == UsdGeomTokens->constant) ||
-          (interpolation == UsdGeomTokens->uniform) || (interpolation == UsdGeomTokens->vertex) ||
-          (interpolation == UsdGeomTokens->varying) ||
+  return ((interpolation == UsdGeomTokens->constant) || (interpolation == UsdGeomTokens->uniform) ||
+          (interpolation == UsdGeomTokens->vertex) || (interpolation == UsdGeomTokens->varying) ||
           (interpolation == UsdGeomTokens->faceVarying));
 }
 
@@ -139,10 +136,10 @@ bool UsdGeomPrimvar::SetInterpolation(const TfToken &interpolation)
 {
   if (!IsValidInterpolation(interpolation)) {
     TF_CODING_ERROR(
-        "Attempt to set invalid primvar interpolation "
-        "\"%s\" for attribute %s",
-        interpolation.GetText(),
-        _attr.GetPath().GetString().c_str());
+      "Attempt to set invalid primvar interpolation "
+      "\"%s\" for attribute %s",
+      interpolation.GetText(),
+      _attr.GetPath().GetString().c_str());
     return false;
   }
   return _attr.SetMetadata(UsdGeomTokens->interpolation, interpolation);
@@ -160,10 +157,10 @@ bool UsdGeomPrimvar::SetElementSize(int eltSize)
 {
   if (eltSize < 1) {
     TF_CODING_ERROR(
-        "Attempt to set elementSize to %d for attribute "
-        "%s (must be a positive, non-zero value)",
-        eltSize,
-        _attr.GetPath().GetString().c_str());
+      "Attempt to set elementSize to %d for attribute "
+      "%s (must be a positive, non-zero value)",
+      eltSize,
+      _attr.GetPath().GetString().c_str());
     return false;
   }
   return _attr.SetMetadata(UsdGeomTokens->elementSize, eltSize);
@@ -183,10 +180,10 @@ void UsdGeomPrimvar::GetDeclarationInfo(TfToken *name,
 
   // We don't have any more efficient access pattern yet, but at least
   // we're still saving client some code
-  *name          = GetPrimvarName();
-  *typeName      = GetTypeName();
+  *name = GetPrimvarName();
+  *typeName = GetTypeName();
   *interpolation = GetInterpolation();
-  *elementSize   = GetElementSize();
+  *elementSize = GetElementSize();
 }
 
 UsdAttribute UsdGeomPrimvar::_GetIndicesAttr(bool create) const
@@ -195,7 +192,7 @@ UsdAttribute UsdGeomPrimvar::_GetIndicesAttr(bool create) const
 
   if (create) {
     return _attr.GetPrim().CreateAttribute(
-        indicesAttrName, SdfValueTypeNames->IntArray, /*custom*/ false, SdfVariabilityVarying);
+      indicesAttrName, SdfValueTypeNames->IntArray, /*custom*/ false, SdfVariabilityVarying);
   }
   else {
     return _attr.GetPrim().GetAttribute(indicesAttrName);
@@ -219,9 +216,9 @@ bool UsdGeomPrimvar::SetIndices(const VtIntArray &indices, UsdTimeCode time) con
   SdfValueTypeName typeName = GetTypeName();
   if (!typeName.IsArray()) {
     TF_CODING_ERROR(
-        "Setting indices on non-array valued primvar of type "
-        "'%s'.",
-        typeName.GetAsToken().GetText());
+      "Setting indices on non-array valued primvar of type "
+      "'%s'.",
+      typeName.GetAsToken().GetText());
     return false;
   }
   return _GetIndicesAttr(/*create*/ true).Set(indices, time);
@@ -234,9 +231,9 @@ void UsdGeomPrimvar::BlockIndices() const
   SdfValueTypeName typeName = GetTypeName();
   if (!typeName.IsArray()) {
     TF_CODING_ERROR(
-        "Setting indices on non-array valued primvar of type "
-        "'%s'.",
-        typeName.GetAsToken().GetText());
+      "Setting indices on non-array valued primvar of type "
+      "'%s'.",
+      typeName.GetAsToken().GetText());
     return;
   }
   _GetIndicesAttr(/*create*/ true).Block();
@@ -329,32 +326,31 @@ bool UsdGeomPrimvar::ComputeFlattened(VtValue *value,
   }
 
   // Handle all known supported array value types.
-  bool foundSupportedType =
-      _ComputeFlattenedArray<VtVec2fArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtVec2dArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtVec2iArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtVec2hArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtVec3fArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtVec3dArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtVec3iArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtVec3hArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtVec4fArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtVec4dArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtVec4iArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtVec4hArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtMatrix3dArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtMatrix4dArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtStringArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtDoubleArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtIntArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtUIntArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtFloatArray>(attrVal, indices, value, errStr) ||
-      _ComputeFlattenedArray<VtHalfArray>(attrVal, indices, value, errStr);
+  bool foundSupportedType = _ComputeFlattenedArray<VtVec2fArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtVec2dArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtVec2iArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtVec2hArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtVec3fArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtVec3dArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtVec3iArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtVec3hArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtVec4fArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtVec4dArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtVec4iArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtVec4hArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtMatrix3dArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtMatrix4dArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtStringArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtDoubleArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtIntArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtUIntArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtFloatArray>(attrVal, indices, value, errStr) ||
+                            _ComputeFlattenedArray<VtHalfArray>(attrVal, indices, value, errStr);
 
   if (!foundSupportedType && errStr) {
     std::string thisErr = TfStringPrintf("Unsupported indexed primvar value type %s.",
                                          attrVal.GetTypeName().c_str());
-    *errStr             = errStr->empty() ? thisErr : *errStr + "\n" + thisErr;
+    *errStr = errStr->empty() ? thisErr : *errStr + "\n" + thisErr;
   }
 
   return !value->IsEmpty();
@@ -409,9 +405,9 @@ bool UsdGeomPrimvar::SetIdTarget(const SdfPath &path) const
 {
   if (_idTargetRelName.IsEmpty()) {
     TF_CODING_ERROR(
-        "Can only set ID Target for string or string[] typed"
-        " primvars (primvar type is '%s')",
-        _attr.GetTypeName().GetAsToken().GetText());
+      "Can only set ID Target for string or string[] typed"
+      " primvars (primvar type is '%s')",
+      _attr.GetTypeName().GetAsToken().GetText());
     return false;
   }
 
@@ -495,8 +491,7 @@ bool UsdGeomPrimvar::GetTimeSamples(std::vector<double> *times) const
   return GetTimeSamplesInInterval(GfInterval::GetFullInterval(), times);
 }
 
-bool UsdGeomPrimvar::GetTimeSamplesInInterval(const GfInterval &interval,
-                                              std::vector<double> *times) const
+bool UsdGeomPrimvar::GetTimeSamplesInInterval(const GfInterval &interval, std::vector<double> *times) const
 {
   if (IsIndexed()) {
     if (UsdAttribute indicesAttr = _GetIndicesAttr(false)) {
@@ -524,8 +519,7 @@ TfToken UsdGeomPrimvar::GetPrimvarName() const
 {
   std::string const &fullName = _attr.GetName().GetString();
 
-  std::pair<std::string, bool> res = SdfPath::StripPrefixNamespace(fullName,
-                                                                   _tokens->primvarsPrefix);
+  std::pair<std::string, bool> res = SdfPath::StripPrefixNamespace(fullName, _tokens->primvarsPrefix);
 
   return res.second ? TfToken(res.first) : TfToken();
 }

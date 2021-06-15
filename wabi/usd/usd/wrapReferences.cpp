@@ -36,33 +36,32 @@ WABI_NAMESPACE_USING
 void wrapUsdReferences()
 {
   class_<UsdReferences>("References", no_init)
-      .def("AddReference",
-           (bool (UsdReferences::*)(const SdfReference &, UsdListPosition)) &
-               UsdReferences::AddReference,
-           (arg("ref"), arg("position") = UsdListPositionBackOfPrependList))
-      .def("AddReference",
-           (bool (UsdReferences::*)(
-               const string &, const SdfPath &, const SdfLayerOffset &, UsdListPosition)) &
-               UsdReferences::AddReference,
-           (arg("assetPath"),
-            arg("primPath"),
-            arg("layerOffset") = SdfLayerOffset(),
-            arg("position")    = UsdListPositionBackOfPrependList))
-      .def("AddReference",
-           (bool (UsdReferences::*)(const string &, const SdfLayerOffset &, UsdListPosition)) &
-               UsdReferences::AddReference,
-           (arg("assetPath"),
-            arg("layerOffset") = SdfLayerOffset(),
-            arg("position")    = UsdListPositionBackOfPrependList))
-      .def("AddInternalReference",
-           &UsdReferences::AddInternalReference,
-           (arg("primPath"),
-            arg("layerOffset") = SdfLayerOffset(),
-            arg("position")    = UsdListPositionBackOfPrependList))
+    .def("AddReference",
+         (bool (UsdReferences::*)(const SdfReference &, UsdListPosition)) & UsdReferences::AddReference,
+         (arg("ref"), arg("position") = UsdListPositionBackOfPrependList))
+    .def(
+      "AddReference",
+      (bool (UsdReferences::*)(const string &, const SdfPath &, const SdfLayerOffset &, UsdListPosition)) &
+        UsdReferences::AddReference,
+      (arg("assetPath"),
+       arg("primPath"),
+       arg("layerOffset") = SdfLayerOffset(),
+       arg("position") = UsdListPositionBackOfPrependList))
+    .def("AddReference",
+         (bool (UsdReferences::*)(const string &, const SdfLayerOffset &, UsdListPosition)) &
+           UsdReferences::AddReference,
+         (arg("assetPath"),
+          arg("layerOffset") = SdfLayerOffset(),
+          arg("position") = UsdListPositionBackOfPrependList))
+    .def("AddInternalReference",
+         &UsdReferences::AddInternalReference,
+         (arg("primPath"),
+          arg("layerOffset") = SdfLayerOffset(),
+          arg("position") = UsdListPositionBackOfPrependList))
 
-      .def("RemoveReference", &UsdReferences::RemoveReference, arg("ref"))
-      .def("ClearReferences", &UsdReferences::ClearReferences)
-      .def("SetReferences", &UsdReferences::SetReferences)
-      .def("GetPrim", (UsdPrim(UsdReferences::*)()) & UsdReferences::GetPrim)
-      .def(!self);
+    .def("RemoveReference", &UsdReferences::RemoveReference, arg("ref"))
+    .def("ClearReferences", &UsdReferences::ClearReferences)
+    .def("SetReferences", &UsdReferences::SetReferences)
+    .def("GetPrim", (UsdPrim(UsdReferences::*)()) & UsdReferences::GetPrim)
+    .def(!self);
 }

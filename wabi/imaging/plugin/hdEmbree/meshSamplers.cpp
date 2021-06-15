@@ -94,7 +94,7 @@ bool HdEmbreeUniformSampler::Sample(unsigned int element,
     return false;
   }
   return _sampler.Sample(
-      HdMeshUtil::DecodeFaceIndexFromCoarseFaceParam(_primitiveParams[element]), value, dataType);
+    HdMeshUtil::DecodeFaceIndexFromCoarseFaceParam(_primitiveParams[element]), value, dataType);
 }
 
 // HdEmbreeTriangleVertexSampler
@@ -114,9 +114,8 @@ bool HdEmbreeTriangleVertexSampler::Sample(unsigned int element,
       !_sampler.Sample(_indices[element][2], &corners[2], dataType)) {
     return false;
   }
-  void *samples[3] = {static_cast<void *>(&corners[0]),
-                      static_cast<void *>(&corners[1]),
-                      static_cast<void *>(&corners[2])};
+  void *samples[3] = {
+    static_cast<void *>(&corners[0]), static_cast<void *>(&corners[1]), static_cast<void *>(&corners[2])};
   // Embree specification of triangle interpolation:
   // t_uv = (1-u-v)*t0 + u*t1 + v*t2
   float weights[3] = {1.0f - u - v, u, v};
@@ -137,9 +136,8 @@ bool HdEmbreeTriangleFaceVaryingSampler::Sample(unsigned int element,
       !_sampler.Sample(element * 3 + 2, &corners[2], dataType)) {
     return false;
   }
-  void *samples[3] = {static_cast<void *>(&corners[0]),
-                      static_cast<void *>(&corners[1]),
-                      static_cast<void *>(&corners[2])};
+  void *samples[3] = {
+    static_cast<void *>(&corners[0]), static_cast<void *>(&corners[1]), static_cast<void *>(&corners[2])};
   // Embree specification of triangle interpolation:
   // t_uv = (1-u-v)*t0 + u*t1 + v*t2
   float weights[3] = {1.0f - u - v, u, v};
@@ -153,7 +151,7 @@ bool HdEmbreeTriangleFaceVaryingSampler::Sample(unsigned int element,
   HdVtBufferSource buffer(name, value);
   VtValue triangulated;
   if (!meshUtil.ComputeTriangulatedFaceVaryingPrimvar(
-          buffer.GetData(), buffer.GetNumElements(), buffer.GetTupleType().type, &triangulated)) {
+        buffer.GetData(), buffer.GetNumElements(), buffer.GetTupleType().type, &triangulated)) {
     TF_CODING_ERROR("[%s] Could not triangulate face-varying data.", name.GetText());
     return VtValue();
   }
@@ -167,11 +165,11 @@ HdEmbreeSubdivVertexSampler::HdEmbreeSubdivVertexSampler(TfToken const &name,
                                                          RTCScene meshScene,
                                                          unsigned meshId,
                                                          HdEmbreeRTCBufferAllocator *allocator)
-    : _embreeBufferId(-1),
-      _buffer(name, value),
-      _meshScene(meshScene),
-      _meshId(meshId),
-      _allocator(allocator)
+  : _embreeBufferId(-1),
+    _buffer(name, value),
+    _meshScene(meshScene),
+    _meshId(meshId),
+    _allocator(allocator)
 {
   // Arrays are not supported
   if (_buffer.GetTupleType().count != 1) {
@@ -196,8 +194,8 @@ HdEmbreeSubdivVertexSampler::HdEmbreeSubdivVertexSampler(TfToken const &name,
       break;
     default:
       TF_WARN(
-          "Embree subdivision meshes only support float-based"
-          " primvars for vertex interpolation mode");
+        "Embree subdivision meshes only support float-based"
+        " primvars for vertex interpolation mode");
       return;
   };
 
@@ -206,15 +204,14 @@ HdEmbreeSubdivVertexSampler::HdEmbreeSubdivVertexSampler(TfToken const &name,
   // count), shared between vertex and face-varying modes.
   if (_embreeBufferId == -1) {
     TF_WARN(
-        "Embree subdivision meshes only support %d primvars"
-        " in vertex interpolation mode, excceded for rprim ",
-        HdEmbreeRTCBufferAllocator::WABI_MAX_USER_VERTEX_BUFFERS);
+      "Embree subdivision meshes only support %d primvars"
+      " in vertex interpolation mode, excceded for rprim ",
+      HdEmbreeRTCBufferAllocator::WABI_MAX_USER_VERTEX_BUFFERS);
     return;
   }
 
   // Set number of vertex attributes correctly
-  rtcSetGeometryVertexAttributeCount(rtcGetGeometry(_meshScene, _meshId),
-                                     _allocator->NumBuffers());
+  rtcSetGeometryVertexAttributeCount(rtcGetGeometry(_meshScene, _meshId), _allocator->NumBuffers());
 
   // The start address (`byteOffset` argument) and stride (`byteStride`
   // argument) must be both aligned to 4 bytes; otherwise the
@@ -222,12 +219,12 @@ HdEmbreeSubdivVertexSampler::HdEmbreeSubdivVertexSampler(TfToken const &name,
   // floats, so this will be ok, but this is possibly not robust. Not sure
   // that it will be easy to enforce this alignment on the data
   // that is gotten from the HdVtBufferSource
-  rtcSetSharedGeometryBuffer(rtcGetGeometry(_meshScene, _meshId),  /* RTCGeometry geometry */
-                             RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE,     /*enum RTCBufferType type */
-                             static_cast<size_t>(_embreeBufferId), /* unsigned int slot */
-                             format,                               /*enum RTCFormat format */
-                             _buffer.GetData(),                    /* const void* ptr */
-                             0,                                    /*size_t byteOffset */
+  rtcSetSharedGeometryBuffer(rtcGetGeometry(_meshScene, _meshId),           /* RTCGeometry geometry */
+                             RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE,              /*enum RTCBufferType type */
+                             static_cast<size_t>(_embreeBufferId),          /* unsigned int slot */
+                             format,                                        /*enum RTCFormat format */
+                             _buffer.GetData(),                             /* const void* ptr */
+                             0,                                             /*size_t byteOffset */
                              HdDataSizeOfTupleType(_buffer.GetTupleType()), /* size_t byteStride */
                              _buffer.GetNumElements() /* size_t itemCount */);
 }

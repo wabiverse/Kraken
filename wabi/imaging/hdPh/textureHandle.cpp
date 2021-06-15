@@ -38,12 +38,12 @@ HdPhTextureHandle::HdPhTextureHandle(HdPhTextureObjectSharedPtr const &textureOb
                                      const bool createBindlessHandle,
                                      HdPhShaderCodePtr const &shaderCode,
                                      HdPh_TextureHandleRegistry *textureHandleRegistry)
-    : _textureObject(textureObject),
-      _samplerParams(samplerParams),
-      _memoryRequest(memoryRequest),
-      _createBindlessHandle(createBindlessHandle),
-      _shaderCode(shaderCode),
-      _textureHandleRegistry(textureHandleRegistry)
+  : _textureObject(textureObject),
+    _samplerParams(samplerParams),
+    _memoryRequest(memoryRequest),
+    _createBindlessHandle(createBindlessHandle),
+    _shaderCode(shaderCode),
+    _textureHandleRegistry(textureHandleRegistry)
 {}
 
 HdPhTextureHandle::~HdPhTextureHandle()
@@ -81,10 +81,10 @@ void HdPhTextureHandle::ReallocateSamplerIfNecessary()
 
   // Create sampler object through registry.
   HdPh_SamplerObjectRegistry *const samplerObjectRegistry =
-      _textureHandleRegistry->GetSamplerObjectRegistry();
+    _textureHandleRegistry->GetSamplerObjectRegistry();
 
   _samplerObject = samplerObjectRegistry->AllocateSampler(
-      _textureObject, _samplerParams, _createBindlessHandle);
+    _textureObject, _samplerParams, _createBindlessHandle);
 }
 
 WABI_NAMESPACE_END

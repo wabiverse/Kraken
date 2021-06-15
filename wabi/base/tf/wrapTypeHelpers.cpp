@@ -38,8 +38,8 @@ WABI_NAMESPACE_BEGIN
 TfType TfType_DefinePythonTypeAndBases(const boost::python::object &classObj)
 {
   string moduleName = extract<string>(classObj.attr("__module__"));
-  string className  = extract<string>(classObj.attr("__name__"));
-  string typeName   = moduleName + "." + className;
+  string className = extract<string>(classObj.attr("__name__"));
+  string typeName = moduleName + "." + className;
 
   // Extract the bases, and declare them if they have not yet been declared.
   object basesObj = classObj.attr("__bases__");

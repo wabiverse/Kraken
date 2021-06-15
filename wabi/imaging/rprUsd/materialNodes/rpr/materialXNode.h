@@ -22,9 +22,7 @@ WABI_NAMESPACE_BEGIN
 #define RPRUSD_RPR_MATERIALX_NODE_TOKENS \
   (rpr_materialx_node)(file)(string)(basePath)(surfaceElement)(displacementElement)(stPrimvarName)
 
-TF_DECLARE_PUBLIC_TOKENS(RprUsdRprMaterialXNodeTokens,
-                         RPRUSD_API,
-                         RPRUSD_RPR_MATERIALX_NODE_TOKENS);
+TF_DECLARE_PUBLIC_TOKENS(RprUsdRprMaterialXNodeTokens, RPRUSD_API, RPRUSD_RPR_MATERIALX_NODE_TOKENS);
 
 WABI_NAMESPACE_END
 

@@ -51,7 +51,7 @@ WABI_NAMESPACE_BEGIN
 ///
 class TraceReporterDataSourceCollection : public TraceReporterDataSourceBase {
  public:
-  using This       = TraceReporterDataSourceCollection;
+  using This = TraceReporterDataSourceCollection;
   using ThisRefPtr = std::unique_ptr<This>;
 
   static ThisRefPtr New(CollectionPtr collection)

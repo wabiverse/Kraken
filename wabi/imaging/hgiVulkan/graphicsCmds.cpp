@@ -44,12 +44,12 @@
 WABI_NAMESPACE_BEGIN
 
 HgiVulkanGraphicsCmds::HgiVulkanGraphicsCmds(HgiVulkan *hgi, HgiGraphicsCmdsDesc const &desc)
-    : _hgi(hgi),
-      _descriptor(desc),
-      _commandBuffer(nullptr),
-      _renderPassStarted(false),
-      _viewportSet(false),
-      _scissorSet(false)
+  : _hgi(hgi),
+    _descriptor(desc),
+    _commandBuffer(nullptr),
+    _renderPassStarted(false),
+    _viewportSet(false),
+    _scissorSet(false)
 {
   // We do not acquire the command buffer here, because the Cmds object may
   // have been created on the main thread, but used on a secondary thread.
@@ -80,8 +80,8 @@ void HgiVulkanGraphicsCmds::SetViewport(GfVec4i const &vp)
   _pendingUpdates.push_back([this, vp] {
     float offsetX = (float)vp[0];
     float offsetY = (float)vp[1];
-    float width   = (float)vp[2];
-    float height  = (float)vp[3];
+    float width = (float)vp[2];
+    float height = (float)vp[3];
 
     // Flip viewport in Y-axis, because the vertex.y position is flipped
     // between opengl and vulkan. This also moves origin to bottom-left.
@@ -100,10 +100,10 @@ void HgiVulkanGraphicsCmds::SetViewport(GfVec4i const &vp)
     //    gl_Position.z = (gl_Position.z + gl_Position.w) / 2.0;
 
     VkViewport viewport;
-    viewport.x        = offsetX;
-    viewport.y        = height - offsetY;
-    viewport.width    = width;
-    viewport.height   = -height;
+    viewport.x = offsetX;
+    viewport.y = height - offsetY;
+    viewport.width = width;
+    viewport.height = -height;
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
 
@@ -132,7 +132,7 @@ void HgiVulkanGraphicsCmds::BindPipeline(HgiGraphicsPipelineHandle pipeline)
   // GfxCmds with multiple pipelines.
   _EndRenderPass();
 
-  _pipeline                      = pipeline;
+  _pipeline = pipeline;
   HgiVulkanGraphicsPipeline *pso = static_cast<HgiVulkanGraphicsPipeline *>(_pipeline.Get());
 
   if (TF_VERIFY(pso)) {
@@ -195,7 +195,7 @@ void HgiVulkanGraphicsCmds::BindVertexBuffers(uint32_t firstBinding,
 
     for (HgiBufferHandle bufHandle : vertexBuffers) {
       HgiVulkanBuffer *buf = static_cast<HgiVulkanBuffer *>(bufHandle.Get());
-      VkBuffer vkBuf       = buf->GetVulkanBuffer();
+      VkBuffer vkBuf = buf->GetVulkanBuffer();
       if (vkBuf) {
         buffers.push_back(vkBuf);
         bufferOffsets.push_back(0);
@@ -210,9 +210,7 @@ void HgiVulkanGraphicsCmds::BindVertexBuffers(uint32_t firstBinding,
   });
 }
 
-void HgiVulkanGraphicsCmds::Draw(uint32_t vertexCount,
-                                 uint32_t firstVertex,
-                                 uint32_t instanceCount)
+void HgiVulkanGraphicsCmds::Draw(uint32_t vertexCount, uint32_t firstVertex, uint32_t instanceCount)
 {
   // Make sure the render pass has begun and resource are bound
   _ApplyPendingUpdates();
@@ -252,7 +250,7 @@ void HgiVulkanGraphicsCmds::DrawIndexed(HgiBufferHandle const &indexBuffer,
 
   TF_VERIFY(instanceCount > 0);
 
-  HgiVulkanBuffer *ibo           = static_cast<HgiVulkanBuffer *>(indexBuffer.Get());
+  HgiVulkanBuffer *ibo = static_cast<HgiVulkanBuffer *>(indexBuffer.Get());
   HgiBufferDesc const &indexDesc = ibo->GetDescriptor();
 
   // We assume 32bit indices
@@ -280,7 +278,7 @@ void HgiVulkanGraphicsCmds::DrawIndexedIndirect(HgiBufferHandle const &indexBuff
   // Make sure the render pass has begun and resource are bound
   _ApplyPendingUpdates();
 
-  HgiVulkanBuffer *ibo           = static_cast<HgiVulkanBuffer *>(indexBuffer.Get());
+  HgiVulkanBuffer *ibo = static_cast<HgiVulkanBuffer *>(indexBuffer.Get());
   HgiBufferDesc const &indexDesc = ibo->GetDescriptor();
 
   // We assume 32bit indices
@@ -320,7 +318,7 @@ bool HgiVulkanGraphicsCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
   // End render pass
   _EndRenderPass();
 
-  HgiVulkanDevice *device      = _commandBuffer->GetDevice();
+  HgiVulkanDevice *device = _commandBuffer->GetDevice();
   HgiVulkanCommandQueue *queue = device->GetCommandQueue();
 
   // Submit the GPU work and optionally do CPU - GPU synchronization.
@@ -348,13 +346,13 @@ void HgiVulkanGraphicsCmds::_ApplyPendingUpdates()
     GfVec2i size(0);
     VkClearValueVector const &clearValues = pso->GetClearValues();
 
-    VkRenderPassBeginInfo beginInfo    = {VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
-    beginInfo.renderPass               = pso->GetVulkanRenderPass();
-    beginInfo.framebuffer              = pso->AcquireVulkanFramebuffer(_descriptor, &size);
-    beginInfo.renderArea.extent.width  = size[0];
+    VkRenderPassBeginInfo beginInfo = {VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
+    beginInfo.renderPass = pso->GetVulkanRenderPass();
+    beginInfo.framebuffer = pso->AcquireVulkanFramebuffer(_descriptor, &size);
+    beginInfo.renderArea.extent.width = size[0];
     beginInfo.renderArea.extent.height = size[1];
-    beginInfo.clearValueCount          = (uint32_t)clearValues.size();
-    beginInfo.pClearValues             = clearValues.data();
+    beginInfo.clearValueCount = (uint32_t)clearValues.size();
+    beginInfo.pClearValues = clearValues.data();
 
     VkSubpassContents contents = VK_SUBPASS_CONTENTS_INLINE;
 
@@ -383,17 +381,17 @@ void HgiVulkanGraphicsCmds::_EndRenderPass()
   if (_renderPassStarted) {
     vkCmdEndRenderPass(_commandBuffer->GetVulkanCommandBuffer());
     _renderPassStarted = false;
-    _viewportSet       = false;
-    _scissorSet        = false;
+    _viewportSet = false;
+    _scissorSet = false;
   }
 }
 
 void HgiVulkanGraphicsCmds::_CreateCommandBuffer()
 {
   if (!_commandBuffer) {
-    HgiVulkanDevice *device      = _hgi->GetPrimaryDevice();
+    HgiVulkanDevice *device = _hgi->GetPrimaryDevice();
     HgiVulkanCommandQueue *queue = device->GetCommandQueue();
-    _commandBuffer               = queue->AcquireCommandBuffer();
+    _commandBuffer = queue->AcquireCommandBuffer();
     TF_VERIFY(_commandBuffer);
   }
 }

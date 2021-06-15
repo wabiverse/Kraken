@@ -70,12 +70,12 @@ class TraceReporter : public TraceReporterBase {
  public:
   TF_MALLOC_TAG_NEW("Trace", "TraceReporter");
 
-  using This       = TraceReporter;
-  using ThisPtr    = TraceReporterPtr;
+  using This = TraceReporter;
+  using ThisPtr = TraceReporterPtr;
   using ThisRefPtr = TraceReporterRefPtr;
 
-  using Event      = TraceEvent;
-  using TimeStamp  = TraceEvent::TimeStamp;
+  using Event = TraceEvent;
+  using TimeStamp = TraceEvent::TimeStamp;
   using CounterMap = TfHashMap<TfToken, double, TfToken::HashFunctor>;
 
   /// Create a new reporter with \a label and \a dataSource.

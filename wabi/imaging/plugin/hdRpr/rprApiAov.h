@@ -67,8 +67,8 @@ class HdRprApiAov {
 
  protected:
   HdRprApiAov(HdRprAovDescriptor const &aovDescriptor, HdFormat format)
-      : m_aovDescriptor(aovDescriptor),
-        m_format(format){};
+    : m_aovDescriptor(aovDescriptor),
+      m_format(format){};
 
   virtual void OnFormatChange(rif::Context *rifContext);
   virtual void OnSizeChange(rif::Context *rifContext);
@@ -82,9 +82,9 @@ class HdRprApiAov {
   std::unique_ptr<rif::Filter> m_filter;
 
   enum ChangeTracker {
-    Clean       = 0,
-    AllDirty    = ~0u,
-    DirtySize   = 1 << 0,
+    Clean = 0,
+    AllDirty = ~0u,
+    DirtySize = 1 << 0,
     DirtyFormat = 1 << 1,
   };
   uint32_t m_dirtyBits = AllDirty;
@@ -128,8 +128,8 @@ class HdRprApiColorAov : public HdRprApiAov {
 
     bool operator==(TonemapParams const &lhs)
     {
-      return exposureTime == lhs.exposureTime && sensitivity == lhs.sensitivity &&
-             fstop == lhs.fstop && gamma == lhs.gamma;
+      return exposureTime == lhs.exposureTime && sensitivity == lhs.sensitivity && fstop == lhs.fstop &&
+             gamma == lhs.gamma;
     }
     bool operator!=(TonemapParams const &lhs)
     {
@@ -144,12 +144,12 @@ class HdRprApiColorAov : public HdRprApiAov {
 
  private:
   enum Filter {
-    kFilterNone           = 0,
-    kFilterResample       = 1 << 0,
-    kFilterAIDenoise      = 1 << 1,
-    kFilterEAWDenoise     = 1 << 2,
+    kFilterNone = 0,
+    kFilterResample = 1 << 0,
+    kFilterAIDenoise = 1 << 1,
+    kFilterEAWDenoise = 1 << 2,
     kFilterComposeOpacity = 1 << 3,
-    kFilterTonemap        = 1 << 4,
+    kFilterTonemap = 1 << 4,
   };
   void SetFilter(Filter filter, bool enable);
 
@@ -169,12 +169,12 @@ class HdRprApiColorAov : public HdRprApiAov {
   Filter m_mainFilterType = kFilterNone;
   std::vector<std::pair<Filter, std::unique_ptr<rif::Filter>>> m_auxFilters;
 
-  uint32_t m_enabledFilters    = kFilterNone;
+  uint32_t m_enabledFilters = kFilterNone;
   bool m_isEnabledFiltersDirty = true;
 
   TonemapParams m_tonemap;
 
-  int m_width  = 0;
+  int m_width = 0;
   int m_height = 0;
 };
 
@@ -195,20 +195,17 @@ class HdRprApiNormalAov : public HdRprApiAov {
 
 class HdRprApiComputedAov : public HdRprApiAov {
  public:
-  HdRprApiComputedAov(HdRprAovDescriptor const &aovDescriptor,
-                      int width,
-                      int height,
-                      HdFormat format)
-      : HdRprApiAov(aovDescriptor, format),
-        m_width(width),
-        m_height(height)
+  HdRprApiComputedAov(HdRprAovDescriptor const &aovDescriptor, int width, int height, HdFormat format)
+    : HdRprApiAov(aovDescriptor, format),
+      m_width(width),
+      m_height(height)
   {}
   ~HdRprApiComputedAov() override = default;
 
   void Resize(int width, int height, HdFormat format) override final;
 
  protected:
-  int m_width  = -1;
+  int m_width = -1;
   int m_height = -1;
 };
 

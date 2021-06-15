@@ -59,7 +59,7 @@ class TraceCollection {
 
   using This = TraceCollection;
 
-  using EventList    = TraceEventList;
+  using EventList = TraceEventList;
   using EventListPtr = std::unique_ptr<EventList>;
 
   /// Constructor.
@@ -111,9 +111,7 @@ class TraceCollection {
 
     /// Called for every event \p event with \p key on thread
     /// \p threadId if AcceptsCategory returns true.
-    virtual void OnEvent(const TraceThreadId &threadId,
-                         const TfToken &key,
-                         const TraceEvent &event) = 0;
+    virtual void OnEvent(const TraceThreadId &threadId, const TfToken &key, const TraceEvent &event) = 0;
   };
 
   /// Forward iterates over the events of the collection and calls the
@@ -133,8 +131,7 @@ class TraceCollection {
 
   // Iterate through events in either forward or reverse order, depending on
   // the templated arguments
-  template<class I>
-  void _IterateEvents(Visitor &, KeyTokenCache &, const TraceThreadId &, I, I) const;
+  template<class I> void _IterateEvents(Visitor &, KeyTokenCache &, const TraceThreadId &, I, I) const;
 
   using EventTable = std::map<TraceThreadId, EventListPtr>;
 

@@ -174,8 +174,8 @@ template<class T> class TfSingleton {
   {
     if (_instance)
       TF_FATAL_ERROR(
-          "this function may not be called after "
-          "GetInstance() has completed");
+        "this function may not be called after "
+        "GetInstance() has completed");
     _instance = &instance;
   }
 

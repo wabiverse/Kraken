@@ -77,15 +77,9 @@ class HdxVisualizeAovTask : public HdxTask {
 
  private:
   // Enumeration of visualization kernels
-  enum VizKernel {
-    VizKernelDepth = 0,
-    VizKernelId,
-    VizKernelNormal,
-    VizKernelFallback,
-    VizKernelNone
-  };
+  enum VizKernel { VizKernelDepth = 0, VizKernelId, VizKernelNormal, VizKernelFallback, VizKernelNone };
 
-  HdxVisualizeAovTask()                            = delete;
+  HdxVisualizeAovTask() = delete;
   HdxVisualizeAovTask(const HdxVisualizeAovTask &) = delete;
   HdxVisualizeAovTask &operator=(const HdxVisualizeAovTask &) = delete;
 

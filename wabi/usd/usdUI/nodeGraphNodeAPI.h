@@ -191,8 +191,7 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDUI_API
-  UsdAttribute CreatePosAttr(VtValue const &defaultValue = VtValue(),
-                             bool writeSparsely          = false) const;
+  UsdAttribute CreatePosAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -226,7 +225,7 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDUI_API
   UsdAttribute CreateStackingOrderAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -252,7 +251,7 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDUI_API
   UsdAttribute CreateDisplayColorAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -280,8 +279,7 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDUI_API
-  UsdAttribute CreateIconAttr(VtValue const &defaultValue = VtValue(),
-                              bool writeSparsely          = false) const;
+  UsdAttribute CreateIconAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -311,7 +309,7 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDUI_API
   UsdAttribute CreateExpansionStateAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -341,8 +339,7 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDUI_API
-  UsdAttribute CreateSizeAttr(VtValue const &defaultValue = VtValue(),
-                              bool writeSparsely          = false) const;
+  UsdAttribute CreateSizeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

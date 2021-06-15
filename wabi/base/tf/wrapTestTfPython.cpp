@@ -75,8 +75,8 @@ class Tf_TestBase : public TfRefBase, public TfWeakBase {
  public:
   virtual ~Tf_TestBase()
   {}
-  virtual string Virtual() const           = 0;
-  virtual void Virtual2() const            = 0;
+  virtual string Virtual() const = 0;
+  virtual void Virtual2() const = 0;
   virtual void Virtual3(string const &arg) = 0;
 
   virtual string Virtual4() const
@@ -178,8 +178,7 @@ TF_REGISTRY_FUNCTION(TfType)
 
 ////////////////////////////////
 
-template<typename T = Tf_TestBase>
-struct polymorphic_Tf_TestBase : public T, public TfPyPolymorphic<T> {
+template<typename T = Tf_TestBase> struct polymorphic_Tf_TestBase : public T, public TfPyPolymorphic<T> {
   typedef polymorphic_Tf_TestBase This;
   virtual string Virtual() const
   {
@@ -212,8 +211,7 @@ static string callVirtual(Tf_TestBase *base)
   return base->VirtualCaller();
 }
 
-template<typename T = Tf_TestDerived>
-struct polymorphic_Tf_TestDerived : public polymorphic_Tf_TestBase<T> {
+template<typename T = Tf_TestDerived> struct polymorphic_Tf_TestDerived : public polymorphic_Tf_TestBase<T> {
   typedef polymorphic_Tf_TestDerived This;
   string default_Virtual() const
   {
@@ -482,15 +480,14 @@ static Tf_ClassWithVarArgInitRefPtr _MakeClassWithVarArgInit(bool allowExtraArgs
   // To Python consumer, this class has 3 explicit optional arguments, named
   // 'a', 'b', and 'c'.
   const TfPyArgs optionalArgs = boost::assign::list_of<>(TfPyArg("a", ""))(TfPyArg("b", ""))(
-      TfPyArg("c", ""));
+    TfPyArg("c", ""));
 
-  const std::pair<tuple, dict> params = TfPyProcessOptionalArgs(
-      args, kwargs, optionalArgs, allowExtraArgs);
+  const std::pair<tuple, dict> params = TfPyProcessOptionalArgs(args, kwargs, optionalArgs, allowExtraArgs);
 
   Tf_ClassWithVarArgInitRefPtr rval = TfCreateRefPtr(new Tf_ClassWithVarArgInit);
-  rval->allowExtraArgs              = allowExtraArgs;
-  rval->args                        = params.first;
-  rval->kwargs                      = params.second;
+  rval->allowExtraArgs = allowExtraArgs;
+  rval->args = params.first;
+  rval->kwargs = params.second;
 
   return rval;
 }
@@ -553,8 +550,8 @@ void wrapTf_TestTfPython()
   def("_TakesVecVecString", TakesVecVecString);
 
   class_<_TestStaticMethodError>("_TestStaticMethodError", no_init)
-      .def("Error", &_TestStaticMethodError::Error)
-      .staticmethod("Error");
+    .def("Error", &_TestStaticMethodError::Error)
+    .staticmethod("Error");
 
   def("_TakesReference", TakesReference);
   def("_TakesConstBase", TakesConstBase);
@@ -566,40 +563,38 @@ void wrapTf_TestTfPython()
 
   def("_DerivedFactory", Tf_TestDerived::Factory, return_value_policy<TfPyRefPtrFactory<>>());
 
-  def("_DerivedNullFactory",
-      Tf_TestDerived::NullFactory,
-      return_value_policy<TfPyRefPtrFactory<>>());
+  def("_DerivedNullFactory", Tf_TestDerived::NullFactory, return_value_policy<TfPyRefPtrFactory<>>());
 
-  class_<polymorphic_Tf_TestBase<>, TfWeakPtr<polymorphic_Tf_TestBase<>>, boost::noncopyable>(
-      "_TestBase", no_init)
-      .def(TfPyRefAndWeakPtr())
-      .def(TfMakePyConstructor(__Ref_init__<polymorphic_Tf_TestBase<>>))
-      .def("Virtual", pure_virtual(&Tf_TestBase::Virtual))
-      .def("Virtual2", pure_virtual(&Tf_TestBase::Virtual2))
-      .def("Virtual3", pure_virtual(&Tf_TestBase::Virtual3))
-      .def("Virtual4", &Tf_TestBase::Virtual4, &polymorphic_Tf_TestBase<>::default_Virtual4)
-      .def("TestCallVirtual", &callVirtual);
+  class_<polymorphic_Tf_TestBase<>, TfWeakPtr<polymorphic_Tf_TestBase<>>, boost::noncopyable>("_TestBase",
+                                                                                              no_init)
+    .def(TfPyRefAndWeakPtr())
+    .def(TfMakePyConstructor(__Ref_init__<polymorphic_Tf_TestBase<>>))
+    .def("Virtual", pure_virtual(&Tf_TestBase::Virtual))
+    .def("Virtual2", pure_virtual(&Tf_TestBase::Virtual2))
+    .def("Virtual3", pure_virtual(&Tf_TestBase::Virtual3))
+    .def("Virtual4", &Tf_TestBase::Virtual4, &polymorphic_Tf_TestBase<>::default_Virtual4)
+    .def("TestCallVirtual", &callVirtual);
 
   class_<polymorphic_Tf_TestDerived<>,
          TfWeakPtr<polymorphic_Tf_TestDerived<>>,
          bases<Tf_TestBase>,
          boost::noncopyable>("_TestDerived", no_init)
-      .def(TfPyRefAndWeakPtr())
-      .def("__init__", TfMakePyConstructor(__Ref_init__<polymorphic_Tf_TestDerived<>>))
-      .def("Virtual", &Tf_TestDerived::Virtual, &polymorphic_Tf_TestDerived<>::default_Virtual)
-      .def("Virtual2", &Tf_TestDerived::Virtual2, &polymorphic_Tf_TestDerived<>::default_Virtual2)
-      .def("Virtual3", &Tf_TestDerived::Virtual3, &polymorphic_Tf_TestDerived<>::default_Virtual3);
+    .def(TfPyRefAndWeakPtr())
+    .def("__init__", TfMakePyConstructor(__Ref_init__<polymorphic_Tf_TestDerived<>>))
+    .def("Virtual", &Tf_TestDerived::Virtual, &polymorphic_Tf_TestDerived<>::default_Virtual)
+    .def("Virtual2", &Tf_TestDerived::Virtual2, &polymorphic_Tf_TestDerived<>::default_Virtual2)
+    .def("Virtual3", &Tf_TestDerived::Virtual3, &polymorphic_Tf_TestDerived<>::default_Virtual3);
 
   class_<Tf_ClassWithClassMethod>("_ClassWithClassMethod", init<>())
-      .def("Test", &_TestClassMethod)
-      .def(TfPyClassMethod("Test"));
+    .def("Test", &_TestClassMethod)
+    .def(TfPyClassMethod("Test"));
 
   class_<Tf_ClassWithVarArgInit, Tf_ClassWithVarArgInitPtr>("_ClassWithVarArgInit", no_init)
-      .def(TfPyRefAndWeakPtr())
-      .def(TfMakePyConstructorWithVarArgs(&_MakeClassWithVarArgInit))
-      .add_property("allowExtraArgs", &Tf_ClassWithVarArgInit::allowExtraArgs)
-      .add_property("args", &Tf_ClassWithVarArgInit::args)
-      .add_property("kwargs", &Tf_ClassWithVarArgInit::kwargs);
+    .def(TfPyRefAndWeakPtr())
+    .def(TfMakePyConstructorWithVarArgs(&_MakeClassWithVarArgInit))
+    .add_property("allowExtraArgs", &Tf_ClassWithVarArgInit::allowExtraArgs)
+    .add_property("args", &Tf_ClassWithVarArgInit::args)
+    .add_property("kwargs", &Tf_ClassWithVarArgInit::kwargs);
 }
 
 TF_REFPTR_CONST_VOLATILE_GET(Tf_ClassWithVarArgInit)

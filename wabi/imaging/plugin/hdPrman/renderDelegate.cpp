@@ -59,39 +59,38 @@ TF_DEFINE_PRIVATE_TOKENS(
 TF_DEFINE_PUBLIC_TOKENS(HdPrmanIntegratorTokens, HDPRMAN_INTEGRATOR_TOKENS);
 
 const TfTokenVector HdPrmanRenderDelegate::SUPPORTED_RPRIM_TYPES = {
-    HdPrimTypeTokens->mesh,
-    HdPrimTypeTokens->basisCurves,
-    HdPrimTypeTokens->points,
-    HdPrimTypeTokens->volume,
+  HdPrimTypeTokens->mesh,
+  HdPrimTypeTokens->basisCurves,
+  HdPrimTypeTokens->points,
+  HdPrimTypeTokens->volume,
 };
 
 const TfTokenVector HdPrmanRenderDelegate::SUPPORTED_SPRIM_TYPES = {
-    HdPrimTypeTokens->camera,
-    HdPrimTypeTokens->material,
-    HdPrimTypeTokens->distantLight,
-    HdPrimTypeTokens->domeLight,
-    HdPrimTypeTokens->lightFilter,
-    HdPrimTypeTokens->rectLight,
-    HdPrimTypeTokens->diskLight,
-    HdPrimTypeTokens->cylinderLight,
-    HdPrimTypeTokens->sphereLight,
-    HdPrimTypeTokens->extComputation,
-    HdPrimTypeTokens->coordSys,
+  HdPrimTypeTokens->camera,
+  HdPrimTypeTokens->material,
+  HdPrimTypeTokens->distantLight,
+  HdPrimTypeTokens->domeLight,
+  HdPrimTypeTokens->lightFilter,
+  HdPrimTypeTokens->rectLight,
+  HdPrimTypeTokens->diskLight,
+  HdPrimTypeTokens->cylinderLight,
+  HdPrimTypeTokens->sphereLight,
+  HdPrimTypeTokens->extComputation,
+  HdPrimTypeTokens->coordSys,
 };
 
 const TfTokenVector HdPrmanRenderDelegate::SUPPORTED_BPRIM_TYPES = {_tokens->openvdbAsset,
                                                                     _tokens->field3dAsset};
 
-HdPrmanRenderDelegate::HdPrmanRenderDelegate(std::shared_ptr<HdPrman_Context> context)
-    : _context(context)
+HdPrmanRenderDelegate::HdPrmanRenderDelegate(std::shared_ptr<HdPrman_Context> context) : _context(context)
 {
   _Initialize();
 }
 
 HdPrmanRenderDelegate::HdPrmanRenderDelegate(std::shared_ptr<HdPrman_Context> context,
                                              HdRenderSettingsMap const &settingsMap)
-    : HdRenderDelegate(settingsMap),
-      _context(context)
+  : HdRenderDelegate(settingsMap),
+    _context(context)
 {
   _Initialize();
 }
@@ -104,13 +103,13 @@ void HdPrmanRenderDelegate::_Initialize()
   // resource registry during HdxPrmanRenderDelegate::_Initialize.
   _resourceRegistry = std::make_shared<HdResourceRegistry>();
 
-  std::string integrator                  = HdPrmanIntegratorTokens->PxrPathTracer;
+  std::string integrator = HdPrmanIntegratorTokens->PxrPathTracer;
   const std::string interactiveIntegrator = HdPrmanIntegratorTokens->PxrDirectLighting;
-  std::string integratorEnv               = TfGetenv("HDX_PRMAN_INTEGRATOR");
+  std::string integratorEnv = TfGetenv("HDX_PRMAN_INTEGRATOR");
   if (!integratorEnv.empty())
     integrator = integratorEnv;
 
-  int maxSamples    = 1024;
+  int maxSamples = 1024;
   int maxSamplesEnv = TfGetenvInt("HDX_PRMAN_MAX_SAMPLES", 0);
   if (maxSamplesEnv != 0)
     maxSamples = maxSamplesEnv;
@@ -120,7 +119,7 @@ void HdPrmanRenderDelegate::_Initialize()
   _settingDescriptors.resize(5);
 
   _settingDescriptors[0] = {
-      std::string("Integrator"), HdPrmanRenderSettingsTokens->integratorName, VtValue(integrator)};
+    std::string("Integrator"), HdPrmanRenderSettingsTokens->integratorName, VtValue(integrator)};
 
   _settingDescriptors[1] = {std::string("Interactive Integrator"),
                             HdPrmanRenderSettingsTokens->interactiveIntegrator,
@@ -132,13 +131,11 @@ void HdPrmanRenderDelegate::_Initialize()
                             HdPrmanRenderSettingsTokens->interactiveIntegratorTimeout,
                             VtValue(200)};
 
-  _settingDescriptors[3] = {std::string("Max Samples"),
-                            HdRenderSettingsTokens->convergedSamplesPerPixel,
-                            VtValue(maxSamples)};
+  _settingDescriptors[3] = {
+    std::string("Max Samples"), HdRenderSettingsTokens->convergedSamplesPerPixel, VtValue(maxSamples)};
 
-  _settingDescriptors[4] = {std::string("Variance Threshold"),
-                            HdRenderSettingsTokens->convergedVariance,
-                            VtValue(pixelVariance)};
+  _settingDescriptors[4] = {
+    std::string("Variance Threshold"), HdRenderSettingsTokens->convergedVariance, VtValue(pixelVariance)};
 
   _PopulateDefaultSettings(_settingDescriptors);
 }

@@ -48,19 +48,18 @@ WABI_NAMESPACE_BEGIN
 // the identifier and the real path.
 static string Sdf_LayerDebugRepr(const SdfLayerHandle &layer)
 {
-  return layer ? "SdfLayer('" + layer->GetIdentifier() + "', '" + layer->GetRealPath() + "')" :
-                 "None";
+  return layer ? "SdfLayer('" + layer->GetIdentifier() + "', '" + layer->GetRealPath() + "')" : "None";
 }
 
-const Sdf_LayerRegistry::layer_identifier::result_type &Sdf_LayerRegistry::layer_identifier::
-operator()(const SdfLayerHandle &layer) const
+const Sdf_LayerRegistry::layer_identifier::result_type &Sdf_LayerRegistry::layer_identifier::operator()(
+  const SdfLayerHandle &layer) const
 {
   static string emptyString;
   return layer ? layer->GetIdentifier() : emptyString;
 }
 
-Sdf_LayerRegistry::layer_repository_path::result_type Sdf_LayerRegistry::layer_repository_path::
-operator()(const SdfLayerHandle &layer) const
+Sdf_LayerRegistry::layer_repository_path::result_type Sdf_LayerRegistry::layer_repository_path::operator()(
+  const SdfLayerHandle &layer) const
 {
   if (!layer) {
     return std::string();
@@ -77,7 +76,7 @@ operator()(const SdfLayerHandle &layer) const
 }
 
 Sdf_LayerRegistry::layer_real_path::result_type Sdf_LayerRegistry::layer_real_path::operator()(
-    const SdfLayerHandle &layer) const
+  const SdfLayerHandle &layer) const
 {
   if (!layer) {
     return std::string();
@@ -116,8 +115,7 @@ void Sdf_LayerRegistry::InsertOrUpdate(const SdfLayerHandle &layer)
     return;
   }
 
-  TF_DEBUG(SDF_LAYER).Msg("Sdf_LayerRegistry::InsertOrUpdate(%s)\n",
-                          Sdf_LayerDebugRepr(layer).c_str());
+  TF_DEBUG(SDF_LAYER).Msg("Sdf_LayerRegistry::InsertOrUpdate(%s)\n", Sdf_LayerDebugRepr(layer).c_str());
 
   // Attempt to insert the layer into the registry. This may fail because
   // the new layer violates constraints of one of the registry indices.
@@ -135,12 +133,12 @@ void Sdf_LayerRegistry::InsertOrUpdate(const SdfLayerHandle &layer)
       // is a realPath conflict. This can happen when the same layer is
       // crated twice in the same location in the same session.
       TF_CODING_ERROR(
-          "Cannot insert duplicate registry entry for "
-          "%s layer %s over existing entry for %s layer %s",
-          layer->GetFileFormat()->GetFormatId().GetText(),
-          Sdf_LayerDebugRepr(layer).c_str(),
-          existingLayer->GetFileFormat()->GetFormatId().GetText(),
-          Sdf_LayerDebugRepr(existingLayer).c_str());
+        "Cannot insert duplicate registry entry for "
+        "%s layer %s over existing entry for %s layer %s",
+        layer->GetFileFormat()->GetFormatId().GetText(),
+        Sdf_LayerDebugRepr(layer).c_str(),
+        existingLayer->GetFileFormat()->GetFormatId().GetText(),
+        Sdf_LayerDebugRepr(existingLayer).c_str());
     }
   }
 }
@@ -154,8 +152,7 @@ void Sdf_LayerRegistry::Erase(const SdfLayerHandle &layer)
                           erased ? "Success" : "Failed");
 }
 
-SdfLayerHandle Sdf_LayerRegistry::Find(const string &inputLayerPath,
-                                       const string &resolvedPath) const
+SdfLayerHandle Sdf_LayerRegistry::Find(const string &inputLayerPath, const string &resolvedPath) const
 {
   TRACE_FUNCTION();
 
@@ -210,9 +207,8 @@ SdfLayerHandle Sdf_LayerRegistry::Find(const string &inputLayerPath,
       foundLayer = FindByRealPath(layerPath, resolvedPath);
   }
 
-  TF_DEBUG(SDF_LAYER).Msg("Sdf_LayerRegistry::Find('%s') => %s\n",
-                          inputLayerPath.c_str(),
-                          Sdf_LayerDebugRepr(foundLayer).c_str());
+  TF_DEBUG(SDF_LAYER).Msg(
+    "Sdf_LayerRegistry::Find('%s') => %s\n", inputLayerPath.c_str(), Sdf_LayerDebugRepr(foundLayer).c_str());
 
   return foundLayer;
 }
@@ -223,7 +219,7 @@ SdfLayerHandle Sdf_LayerRegistry::FindByIdentifier(const string &layerPath) cons
 
   SdfLayerHandle foundLayer;
 
-  const _LayersByIdentifier &byIdentifier          = _layers.get<by_identifier>();
+  const _LayersByIdentifier &byIdentifier = _layers.get<by_identifier>();
   _LayersByIdentifier::const_iterator identifierIt = byIdentifier.find(layerPath);
   if (identifierIt != byIdentifier.end())
     foundLayer = *identifierIt;
@@ -244,7 +240,7 @@ SdfLayerHandle Sdf_LayerRegistry::FindByRepositoryPath(const string &layerPath) 
   if (layerPath.empty())
     return foundLayer;
 
-  const _LayersByRepositoryPath &byRepoPath          = _layers.get<by_repository_path>();
+  const _LayersByRepositoryPath &byRepoPath = _layers.get<by_repository_path>();
   _LayersByRepositoryPath::const_iterator repoPathIt = byRepoPath.find(layerPath);
   if (repoPathIt != byRepoPath.end())
     foundLayer = *repoPathIt;
@@ -256,8 +252,7 @@ SdfLayerHandle Sdf_LayerRegistry::FindByRepositoryPath(const string &layerPath) 
   return foundLayer;
 }
 
-SdfLayerHandle Sdf_LayerRegistry::FindByRealPath(const string &layerPath,
-                                                 const string &resolvedPath) const
+SdfLayerHandle Sdf_LayerRegistry::FindByRealPath(const string &layerPath, const string &resolvedPath) const
 {
   TRACE_FUNCTION();
 
@@ -280,7 +275,7 @@ SdfLayerHandle Sdf_LayerRegistry::FindByRealPath(const string &layerPath,
   searchPath = TfAbsPath(searchPath);
 #endif
 
-  const _LayersByRealPath &byRealPath          = _layers.get<by_real_path>();
+  const _LayersByRealPath &byRealPath = _layers.get<by_real_path>();
   _LayersByRealPath::const_iterator realPathIt = byRealPath.find(searchPath);
   if (realPathIt != byRealPath.end())
     foundLayer = *realPathIt;
@@ -314,21 +309,20 @@ std::ostream &operator<<(std::ostream &ostr, const Sdf_LayerRegistry &registry)
   {
     if (SdfLayerHandle layer = *i) {
       ostr << boost::format(
-                  "%1%[ref=%2%]:\n"
-                  "    format           = %3%\n"
-                  "    identifier       = '%4%'\n"
-                  "    repositoryPath   = '%5%'\n"
-                  "    realPath         = '%6%'\n"
-                  "    version          = '%7%'\n"
-                  "    assetInfo        = \n'%8%'\n"
-                  "    muted            = %9%\n"
-                  "    anonymous        = %10%\n"
-                  "\n") %
-                  layer.GetUniqueIdentifier() % layer->GetCurrentCount() %
-                  layer->GetFileFormat()->GetFormatId() % layer->GetIdentifier() %
-                  layer->GetRepositoryPath() % layer->GetRealPath() % layer->GetVersion() %
-                  layer->GetAssetInfo() % (layer->IsMuted() ? "True" : "False") %
-                  (layer->IsAnonymous() ? "True" : "False");
+                "%1%[ref=%2%]:\n"
+                "    format           = %3%\n"
+                "    identifier       = '%4%'\n"
+                "    repositoryPath   = '%5%'\n"
+                "    realPath         = '%6%'\n"
+                "    version          = '%7%'\n"
+                "    assetInfo        = \n'%8%'\n"
+                "    muted            = %9%\n"
+                "    anonymous        = %10%\n"
+                "\n") %
+                layer.GetUniqueIdentifier() % layer->GetCurrentCount() %
+                layer->GetFileFormat()->GetFormatId() % layer->GetIdentifier() % layer->GetRepositoryPath() %
+                layer->GetRealPath() % layer->GetVersion() % layer->GetAssetInfo() %
+                (layer->IsMuted() ? "True" : "False") % (layer->IsAnonymous() ? "True" : "False");
     }
   }
 

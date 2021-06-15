@@ -50,13 +50,13 @@ class HdRenderParam;
 
 using HdReprSharedPtr = std::shared_ptr<HdRepr>;
 
-using HdBufferSourceSharedPtr       = std::shared_ptr<HdBufferSource>;
+using HdBufferSourceSharedPtr = std::shared_ptr<HdBufferSource>;
 using HdBufferSourceSharedPtrVector = std::vector<HdBufferSourceSharedPtr>;
 
-using HdBufferSpecVector          = std::vector<struct HdBufferSpec>;
+using HdBufferSpecVector = std::vector<struct HdBufferSpec>;
 using HdBufferArrayRangeSharedPtr = std::shared_ptr<HdBufferArrayRange>;
 
-using HdComputationSharedPtr       = std::shared_ptr<class HdComputation>;
+using HdComputationSharedPtr = std::shared_ptr<class HdComputation>;
 using HdComputationSharedPtrVector = std::vector<HdComputationSharedPtr>;
 
 /// \class HdRprim
@@ -381,9 +381,8 @@ GfRange3d HdRprim::GetExtent(HdSceneDelegate *delegate) const
   return delegate->GetExtent(GetId());
 }
 
-inline HdPrimvarDescriptorVector HdRprim::GetPrimvarDescriptors(
-    HdSceneDelegate *delegate,
-    HdInterpolation interpolation) const
+inline HdPrimvarDescriptorVector HdRprim::GetPrimvarDescriptors(HdSceneDelegate *delegate,
+                                                                HdInterpolation interpolation) const
 {
   return delegate->GetPrimvarDescriptors(GetId(), interpolation);
 }

@@ -196,7 +196,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateCookieModeAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -218,8 +218,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateWidthAttr(VtValue const &defaultValue = VtValue(),
-                               bool writeSparsely          = false) const;
+  UsdAttribute CreateWidthAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -241,8 +240,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateHeightAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateHeightAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -265,7 +263,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateTextureMapAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -293,7 +291,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateTextureWrapModeAttr(VtValue const &defaultValue = VtValue(),
-                                         bool writeSparsely          = false) const;
+                                         bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -317,7 +315,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateTextureFillColorAttr(VtValue const &defaultValue = VtValue(),
-                                          bool writeSparsely          = false) const;
+                                          bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -341,7 +339,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateTexturePremultipliedAlphaAttr(VtValue const &defaultValue = VtValue(),
-                                                   bool writeSparsely          = false) const;
+                                                   bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -366,7 +364,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateTextureInvertUAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -391,7 +389,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateTextureInvertVAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -414,7 +412,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateTextureScaleUAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -437,7 +435,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateTextureScaleVAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -460,7 +458,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateTextureOffsetUAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -483,7 +481,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateTextureOffsetVAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -508,7 +506,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticDirectionalAttr(VtValue const &defaultValue = VtValue(),
-                                             bool writeSparsely          = false) const;
+                                             bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -531,7 +529,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticShearXAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -554,7 +552,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticShearYAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -577,7 +575,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticApexAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -603,7 +601,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticUseLightDirectionAttr(VtValue const &defaultValue = VtValue(),
-                                                   bool writeSparsely          = false) const;
+                                                   bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -629,7 +627,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticBlurAmountAttr(VtValue const &defaultValue = VtValue(),
-                                            bool writeSparsely          = false) const;
+                                            bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -652,7 +650,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticBlurSMultAttr(VtValue const &defaultValue = VtValue(),
-                                           bool writeSparsely          = false) const;
+                                           bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -675,7 +673,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticBlurTMultAttr(VtValue const &defaultValue = VtValue(),
-                                           bool writeSparsely          = false) const;
+                                           bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -699,7 +697,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticBlurNearDistanceAttr(VtValue const &defaultValue = VtValue(),
-                                                  bool writeSparsely          = false) const;
+                                                  bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -722,7 +720,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticBlurMidpointAttr(VtValue const &defaultValue = VtValue(),
-                                              bool writeSparsely          = false) const;
+                                              bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -745,7 +743,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticBlurFarDistanceAttr(VtValue const &defaultValue = VtValue(),
-                                                 bool writeSparsely          = false) const;
+                                                 bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -768,7 +766,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticBlurNearValueAttr(VtValue const &defaultValue = VtValue(),
-                                               bool writeSparsely          = false) const;
+                                               bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -791,7 +789,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticBlurMidValueAttr(VtValue const &defaultValue = VtValue(),
-                                              bool writeSparsely          = false) const;
+                                              bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -814,7 +812,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticBlurFarValueAttr(VtValue const &defaultValue = VtValue(),
-                                              bool writeSparsely          = false) const;
+                                              bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -837,7 +835,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticBlurExponentAttr(VtValue const &defaultValue = VtValue(),
-                                              bool writeSparsely          = false) const;
+                                              bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -861,7 +859,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticDensityNearDistanceAttr(VtValue const &defaultValue = VtValue(),
-                                                     bool writeSparsely          = false) const;
+                                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -884,7 +882,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticDensityMidpointAttr(VtValue const &defaultValue = VtValue(),
-                                                 bool writeSparsely          = false) const;
+                                                 bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -908,7 +906,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticDensityFarDistanceAttr(VtValue const &defaultValue = VtValue(),
-                                                    bool writeSparsely          = false) const;
+                                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -931,7 +929,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticDensityNearValueAttr(VtValue const &defaultValue = VtValue(),
-                                                  bool writeSparsely          = false) const;
+                                                  bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -954,7 +952,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticDensityMidValueAttr(VtValue const &defaultValue = VtValue(),
-                                                 bool writeSparsely          = false) const;
+                                                 bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -977,7 +975,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticDensityFarValueAttr(VtValue const &defaultValue = VtValue(),
-                                                 bool writeSparsely          = false) const;
+                                                 bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -1000,7 +998,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateAnalyticDensityExponentAttr(VtValue const &defaultValue = VtValue(),
-                                                 bool writeSparsely          = false) const;
+                                                 bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -1024,7 +1022,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateColorSaturationAttr(VtValue const &defaultValue = VtValue(),
-                                         bool writeSparsely          = false) const;
+                                         bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -1047,7 +1045,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateColorMidpointAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -1071,7 +1069,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateColorContrastAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -1094,7 +1092,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateColorWhitepointAttr(VtValue const &defaultValue = VtValue(),
-                                         bool writeSparsely          = false) const;
+                                         bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -1118,7 +1116,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateColorTintAttr(VtValue const &defaultValue = VtValue(),
-                                   bool writeSparsely          = false) const;
+                                   bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

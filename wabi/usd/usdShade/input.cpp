@@ -170,8 +170,7 @@ void UsdShadeInput::ClearSdrMetadataByKey(const TfToken &key) const
 /* static */
 bool UsdShadeInput::IsInput(const UsdAttribute &attr)
 {
-  return attr && attr.IsDefined() &&
-         TfStringStartsWith(attr.GetName().GetString(), UsdShadeTokens->inputs);
+  return attr && attr.IsDefined() && TfStringStartsWith(attr.GetName().GetString(), UsdShadeTokens->inputs);
 }
 
 /* static */
@@ -264,14 +263,12 @@ bool UsdShadeInput::ConnectToSource(UsdShadeOutput const &sourceOutput) const
   return UsdShadeConnectableAPI::ConnectToSource(*this, sourceOutput);
 }
 
-bool UsdShadeInput::SetConnectedSources(
-    std::vector<UsdShadeConnectionSourceInfo> const &sourceInfos) const
+bool UsdShadeInput::SetConnectedSources(std::vector<UsdShadeConnectionSourceInfo> const &sourceInfos) const
 {
   return UsdShadeConnectableAPI::SetConnectedSources(*this, sourceInfos);
 }
 
-UsdShadeInput::SourceInfoVector UsdShadeInput::GetConnectedSources(
-    SdfPathVector *invalidSourcePaths) const
+UsdShadeInput::SourceInfoVector UsdShadeInput::GetConnectedSources(SdfPathVector *invalidSourcePaths) const
 {
   return UsdShadeConnectableAPI::GetConnectedSources(*this, invalidSourcePaths);
 }
@@ -357,11 +354,11 @@ UsdAttribute UsdShadeInput::GetValueProducingAttribute(UsdShadeAttributeType *at
     // If we have valid connections extract the first one
     if (valueAttrs.size() > 1) {
       TF_WARN(
-          "More than one value producing attribute for shading input "
-          "%s. GetValueProducingAttribute will only report the first "
-          "one. Please use GetValueProducingAttributes to retrieve "
-          "all.",
-          GetAttr().GetPath().GetText());
+        "More than one value producing attribute for shading input "
+        "%s. GetValueProducingAttribute will only report the first "
+        "one. Please use GetValueProducingAttributes to retrieve "
+        "all.",
+        GetAttr().GetPath().GetText());
     }
 
     UsdAttribute attr = valueAttrs[0];

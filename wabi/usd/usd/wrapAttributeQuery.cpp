@@ -53,8 +53,7 @@ static vector<double> _GetTimeSamples(const UsdAttributeQuery &query)
   return result;
 }
 
-static vector<double> _GetTimeSamplesInInterval(const UsdAttributeQuery &query,
-                                                const GfInterval &interval)
+static vector<double> _GetTimeSamplesInInterval(const UsdAttributeQuery &query, const GfInterval &interval)
 {
   vector<double> result;
   query.GetTimeSamplesInInterval(interval, &result);
@@ -68,9 +67,8 @@ static vector<double> _GetUnionedTimeSamples(const vector<UsdAttributeQuery> &at
   return result;
 }
 
-static vector<double> _GetUnionedTimeSamplesInInterval(
-    const vector<UsdAttributeQuery> &attrQueries,
-    const GfInterval &interval)
+static vector<double> _GetUnionedTimeSamplesInInterval(const vector<UsdAttributeQuery> &attrQueries,
+                                                       const GfInterval &interval)
 {
   vector<double> result;
   UsdAttributeQuery::GetUnionedTimeSamplesInInterval(attrQueries, interval, &result);
@@ -100,54 +98,53 @@ static TfPyObjWrapper _Get(const UsdAttributeQuery &self, UsdTimeCode time)
 void wrapUsdAttributeQuery()
 {
   class_<UsdAttributeQuery, boost::noncopyable>("AttributeQuery", no_init)
-      .def(init<const UsdAttribute &>((arg("attribute"))))
+    .def(init<const UsdAttribute &>((arg("attribute"))))
 
-      .def(init<const UsdPrim &, const TfToken &>((arg("prim"), arg("attributeName"))))
+    .def(init<const UsdPrim &, const TfToken &>((arg("prim"), arg("attributeName"))))
 
-      .def("CreateQueries",
-           &UsdAttributeQuery::CreateQueries,
-           (arg("prim"), arg("attributeNames")),
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("CreateQueries")
+    .def("CreateQueries",
+         &UsdAttributeQuery::CreateQueries,
+         (arg("prim"), arg("attributeNames")),
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("CreateQueries")
 
-      .def("IsValid", &UsdAttributeQuery::IsValid)
-      .def(!self)
+    .def("IsValid", &UsdAttributeQuery::IsValid)
+    .def(!self)
 
-      .def(
-          "GetAttribute", &UsdAttributeQuery::GetAttribute, return_value_policy<return_by_value>())
+    .def("GetAttribute", &UsdAttributeQuery::GetAttribute, return_value_policy<return_by_value>())
 
-      .def("GetTimeSamples", _GetTimeSamples, return_value_policy<TfPySequenceToList>())
+    .def("GetTimeSamples", _GetTimeSamples, return_value_policy<TfPySequenceToList>())
 
-      .def("GetTimeSamplesInInterval",
-           _GetTimeSamplesInInterval,
-           arg("interval"),
-           return_value_policy<TfPySequenceToList>())
+    .def("GetTimeSamplesInInterval",
+         _GetTimeSamplesInInterval,
+         arg("interval"),
+         return_value_policy<TfPySequenceToList>())
 
-      .def("GetUnionedTimeSamples",
-           _GetUnionedTimeSamples,
-           arg("attrQueries"),
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetUnionedTimeSamples")
+    .def("GetUnionedTimeSamples",
+         _GetUnionedTimeSamples,
+         arg("attrQueries"),
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetUnionedTimeSamples")
 
-      .def("GetUnionedTimeSamplesInInterval",
-           _GetUnionedTimeSamplesInInterval,
-           (arg("attrQueries"), arg("interval")),
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetUnionedTimeSamplesInInterval")
+    .def("GetUnionedTimeSamplesInInterval",
+         _GetUnionedTimeSamplesInInterval,
+         (arg("attrQueries"), arg("interval")),
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetUnionedTimeSamplesInInterval")
 
-      .def("GetNumTimeSamples", &UsdAttributeQuery::GetNumTimeSamples)
-      .def("GetBracketingTimeSamples", _GetBracketingTimeSamples, arg("desiredTime"))
+    .def("GetNumTimeSamples", &UsdAttributeQuery::GetNumTimeSamples)
+    .def("GetBracketingTimeSamples", _GetBracketingTimeSamples, arg("desiredTime"))
 
-      .def("HasValue", &UsdAttributeQuery::HasValue)
-      .def("HasAuthoredValueOpinion", &UsdAttributeQuery::HasAuthoredValueOpinion)
-      .def("HasAuthoredValue", &UsdAttributeQuery::HasAuthoredValue)
-      .def("HasFallbackValue", &UsdAttributeQuery::HasFallbackValue)
+    .def("HasValue", &UsdAttributeQuery::HasValue)
+    .def("HasAuthoredValueOpinion", &UsdAttributeQuery::HasAuthoredValueOpinion)
+    .def("HasAuthoredValue", &UsdAttributeQuery::HasAuthoredValue)
+    .def("HasFallbackValue", &UsdAttributeQuery::HasFallbackValue)
 
-      .def("ValueMightBeTimeVarying", &UsdAttributeQuery::ValueMightBeTimeVarying)
+    .def("ValueMightBeTimeVarying", &UsdAttributeQuery::ValueMightBeTimeVarying)
 
-      .def("Get", _Get, arg("time") = UsdTimeCode::Default())
+    .def("Get", _Get, arg("time") = UsdTimeCode::Default())
 
-      ;
+    ;
 
   TfPyRegisterStlSequencesFromPython<UsdAttributeQuery>();
 }

@@ -41,11 +41,11 @@ WABI_NAMESPACE_BEGIN
 
 HgiVulkanComputePipeline::HgiVulkanComputePipeline(HgiVulkanDevice *device,
                                                    HgiComputePipelineDesc const &desc)
-    : HgiComputePipeline(desc),
-      _device(device),
-      _inflightBits(0),
-      _vkPipeline(nullptr),
-      _vkPipelineLayout(nullptr)
+  : HgiComputePipeline(desc),
+    _device(device),
+    _inflightBits(0),
+    _vkPipeline(nullptr),
+    _vkPipelineLayout(nullptr)
 {
   VkComputePipelineCreateInfo pipeCreateInfo = {VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO};
 
@@ -56,18 +56,17 @@ HgiVulkanComputePipeline::HgiVulkanComputePipeline(HgiVulkanDevice *device,
     return;
   }
 
-  HgiVulkanShaderFunction const *s = static_cast<HgiVulkanShaderFunction const *>(
-      sfv.front().Get());
+  HgiVulkanShaderFunction const *s = static_cast<HgiVulkanShaderFunction const *>(sfv.front().Get());
 
   HgiVulkanDescriptorSetInfoVector const &setInfo = s->GetDescriptorSetInfo();
 
-  pipeCreateInfo.stage.sType               = {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO};
-  pipeCreateInfo.stage.stage               = VK_SHADER_STAGE_COMPUTE_BIT;
-  pipeCreateInfo.stage.module              = s->GetShaderModule();
-  pipeCreateInfo.stage.pName               = s->GetShaderFunctionName();
-  pipeCreateInfo.stage.pNext               = nullptr;
+  pipeCreateInfo.stage.sType = {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO};
+  pipeCreateInfo.stage.stage = VK_SHADER_STAGE_COMPUTE_BIT;
+  pipeCreateInfo.stage.module = s->GetShaderModule();
+  pipeCreateInfo.stage.pName = s->GetShaderFunctionName();
+  pipeCreateInfo.stage.pNext = nullptr;
   pipeCreateInfo.stage.pSpecializationInfo = nullptr;
-  pipeCreateInfo.stage.flags               = 0;
+  pipeCreateInfo.stage.flags = 0;
 
   //
   // Generate Pipeline layout
@@ -76,29 +75,28 @@ HgiVulkanComputePipeline::HgiVulkanComputePipeline(HgiVulkanDevice *device,
   VkPushConstantRange pcRanges;
   if (usePushConstants) {
     TF_VERIFY(desc.shaderConstantsDesc.byteSize % 4 == 0, "Push constants not multipes of 4");
-    pcRanges.offset     = 0;
-    pcRanges.size       = desc.shaderConstantsDesc.byteSize;
+    pcRanges.offset = 0;
+    pcRanges.size = desc.shaderConstantsDesc.byteSize;
     pcRanges.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
   }
 
   VkPipelineLayoutCreateInfo pipeLayCreateInfo = {VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO};
-  pipeLayCreateInfo.pushConstantRangeCount     = usePushConstants ? 1 : 0;
-  pipeLayCreateInfo.pPushConstantRanges        = &pcRanges;
+  pipeLayCreateInfo.pushConstantRangeCount = usePushConstants ? 1 : 0;
+  pipeLayCreateInfo.pPushConstantRanges = &pcRanges;
 
   _vkDescriptorSetLayouts = HgiVulkanMakeDescriptorSetLayouts(device, {setInfo}, desc.debugName);
   pipeLayCreateInfo.setLayoutCount = (uint32_t)_vkDescriptorSetLayouts.size();
-  pipeLayCreateInfo.pSetLayouts    = _vkDescriptorSetLayouts.data();
+  pipeLayCreateInfo.pSetLayouts = _vkDescriptorSetLayouts.data();
 
-  TF_VERIFY(vkCreatePipelineLayout(_device->GetVulkanDevice(),
-                                   &pipeLayCreateInfo,
-                                   HgiVulkanAllocator(),
-                                   &_vkPipelineLayout) == VK_SUCCESS);
+  TF_VERIFY(vkCreatePipelineLayout(
+              _device->GetVulkanDevice(), &pipeLayCreateInfo, HgiVulkanAllocator(), &_vkPipelineLayout) ==
+            VK_SUCCESS);
 
   // Debug label
   if (!desc.debugName.empty()) {
     std::string debugLabel = "PipelineLayout " + desc.debugName;
     HgiVulkanSetDebugName(
-        device, (uint64_t)_vkPipelineLayout, VK_OBJECT_TYPE_PIPELINE_LAYOUT, debugLabel.c_str());
+      device, (uint64_t)_vkPipelineLayout, VK_OBJECT_TYPE_PIPELINE_LAYOUT, debugLabel.c_str());
   }
 
   pipeCreateInfo.layout = _vkPipelineLayout;
@@ -118,8 +116,7 @@ HgiVulkanComputePipeline::HgiVulkanComputePipeline(HgiVulkanDevice *device,
   // Debug label
   if (!desc.debugName.empty()) {
     std::string debugLabel = "Pipeline " + desc.debugName;
-    HgiVulkanSetDebugName(
-        device, (uint64_t)_vkPipeline, VK_OBJECT_TYPE_PIPELINE, debugLabel.c_str());
+    HgiVulkanSetDebugName(device, (uint64_t)_vkPipeline, VK_OBJECT_TYPE_PIPELINE, debugLabel.c_str());
   }
 }
 

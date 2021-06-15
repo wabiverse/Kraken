@@ -62,12 +62,12 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   typedef value_type &reference;
   typedef const value_type &const_reference;
 
-  T *m_pStart         = nullptr;  // Start of the buffer
-  T *m_pEnd           = nullptr;  // Pointer after the end
-  T *m_pGapStart      = nullptr;  // Gap start position
-  T *m_pGapEnd        = nullptr;  // End of the gap, just beyond
-  size_t m_defaultGap = 0;        // Current fixed_size of gap
-  A _alloc;                       // The memory allocator to use
+  T *m_pStart = nullptr;     // Start of the buffer
+  T *m_pEnd = nullptr;       // Pointer after the end
+  T *m_pGapStart = nullptr;  // Gap start position
+  T *m_pGapEnd = nullptr;    // End of the gap, just beyond
+  size_t m_defaultGap = 0;   // Current fixed_size of gap
+  A _alloc;                  // The memory allocator to use
 
   // An iterator used to walk the buffer
   class iterator {
@@ -85,10 +85,7 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
 
     GapBuffer<T> &buffer;
 
-    iterator(GapBuffer<T> &buff, size_t ptr, bool skip = true)
-        : skipGap(skip),
-          p(ptr),
-          buffer(buff)
+    iterator(GapBuffer<T> &buff, size_t ptr, bool skip = true) : skipGap(skip), p(ptr), buffer(buff)
     {}
     iterator(const iterator &rhs) : skipGap(rhs.skipGap), p(rhs.p), buffer(rhs.buffer)
     {}
@@ -200,13 +197,13 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
     typedef value_type &reference;
 
     bool skipGap = true;
-    size_t p     = 0;
+    size_t p = 0;
     const GapBuffer<T> &buffer;
 
     const_iterator(const GapBuffer<T> &buff, size_t ptr, bool skip = true)
-        : skipGap(skip),
-          p(ptr),
-          buffer(buff)
+      : skipGap(skip),
+        p(ptr),
+        buffer(buff)
     {}
     const_iterator(const iterator &rhs) : skipGap(rhs.skipGap), p(rhs.p), buffer(rhs.buffer)
     {}
@@ -402,8 +399,8 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
 
     //  SG_____gE -- gap visualization
     m_pGapStart = m_pStart;
-    m_pGapEnd   = m_pStart + m_defaultGap;
-    m_pEnd      = m_pGapEnd;
+    m_pGapEnd = m_pStart + m_defaultGap;
+    m_pEnd = m_pGapEnd;
   }
 
   // Make buffer this fixed_size, but only ever actually grow the memory for now.
@@ -444,10 +441,10 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
 
     // Fix up the new pointers (gap hasn't changed, end is bigger)
     auto gapSize = CurrentGapSize();
-    m_pGapStart  = pNewStart + (m_pGapStart - m_pStart);
-    m_pGapEnd    = m_pGapStart + gapSize;
-    m_pStart     = pNewStart;
-    m_pEnd       = pNewStart + bufferSize;
+    m_pGapStart = pNewStart + (m_pGapStart - m_pStart);
+    m_pGapEnd = m_pGapStart + gapSize;
+    m_pStart = pNewStart;
+    m_pEnd = pNewStart + bufferSize;
   }
 
   // Resize the gap to this fixed_size
@@ -474,7 +471,7 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
 
     // Last section - copy into place
     auto pNewGapStart = m_pGapStart + (pNewStart - m_pStart);
-    auto pNewGapEnd   = pNewGapStart + newGapSize;
+    auto pNewGapEnd = pNewGapStart + newGapSize;
     if (m_pGapEnd < m_pEnd) {
       memcpy(pNewGapEnd, m_pGapEnd, (m_pEnd - m_pGapEnd) * sizeof(T));
     }
@@ -486,9 +483,9 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
 
     // Fix up the new pointers
     m_pGapStart = pNewStart + (m_pGapStart - m_pStart);
-    m_pGapEnd   = m_pGapStart + newGapSize;
-    m_pStart    = pNewStart;
-    m_pEnd      = pNewStart + bufferSize;
+    m_pGapEnd = m_pGapStart + newGapSize;
+    m_pStart = pNewStart;
+    m_pEnd = pNewStart + bufferSize;
 
     DEBUG_FILL_GAP;
   }
@@ -529,7 +526,7 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
 
     // Gap is what's left at the end
     m_pGapStart = m_pStart + spaceRequired;
-    m_pGapEnd   = m_pEnd;
+    m_pGapEnd = m_pEnd;
 
     assert(m_pGapStart <= m_pEnd);
     assert(size() >= size_t(spaceRequired));
@@ -556,7 +553,7 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
 
     // Gap is what's left at the end
     m_pGapStart = m_pStart + count;
-    m_pGapEnd   = m_pEnd;
+    m_pGapEnd = m_pEnd;
 
     assert(m_pGapStart <= m_pEnd);
     assert(size() >= size_t(count));
@@ -706,8 +703,7 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   // Here we split the find into 2 seperate searches; because we can be smart and search
   // either side of the gap.  This is more efficient that using an iterator which will keep
   // checking for the gap and trying to jump it
-  template<class ForwardIt>
-  T *find_first_of(T *pStart, T *pEnd, ForwardIt s_first, ForwardIt s_last) const
+  template<class ForwardIt> T *find_first_of(T *pStart, T *pEnd, ForwardIt s_first, ForwardIt s_last) const
   {
     assert(pEnd <= m_pEnd);
     assert(pStart <= pEnd);
@@ -801,7 +797,7 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
                                    ForwardIt s_first,
                                    ForwardIt s_last) const
   {
-    T *pVal  = find_first_not_of(GetGaplessPtr(first.p), GetGaplessPtr(last.p), s_first, s_last);
+    T *pVal = find_first_not_of(GetGaplessPtr(first.p), GetGaplessPtr(last.p), s_first, s_last);
     auto itr = const_iterator(*this, GetGaplessOffset(pVal));
     // Return invalid if we walked to end without finding
     if (itr == last)
@@ -825,7 +821,7 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   template<class ForwardIt>
   iterator find_first_not_of(iterator first, iterator last, ForwardIt s_first, ForwardIt s_last)
   {
-    T *pVal  = find_first_not_of(GetGaplessPtr(first.p), GetGaplessPtr(last.p), s_first, s_last);
+    T *pVal = find_first_not_of(GetGaplessPtr(first.p), GetGaplessPtr(last.p), s_first, s_last);
     auto itr = iterator(*this, GetGaplessOffset(pVal));
     // Return invalid if we walked to end without finding
     if (itr == last)
@@ -842,9 +838,9 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
       // Free all memory, including the gap
       get_allocator().deallocate(m_pStart, m_pEnd - m_pStart);
     }
-    m_pStart    = nullptr;
-    m_pEnd      = nullptr;
-    m_pGapEnd   = nullptr;
+    m_pStart = nullptr;
+    m_pEnd = nullptr;
+    m_pGapEnd = nullptr;
     m_pGapStart = nullptr;
   }
 

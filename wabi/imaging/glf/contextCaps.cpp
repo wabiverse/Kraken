@@ -47,17 +47,11 @@ WABI_NAMESPACE_BEGIN
 
 TF_INSTANTIATE_SINGLETON(GlfContextCaps);
 
-TF_DEFINE_ENV_SETTING(GLF_ENABLE_SHADER_STORAGE_BUFFER,
-                      true,
-                      "Use GL shader storage buffer (OpenGL 4.3)");
+TF_DEFINE_ENV_SETTING(GLF_ENABLE_SHADER_STORAGE_BUFFER, true, "Use GL shader storage buffer (OpenGL 4.3)");
 TF_DEFINE_ENV_SETTING(GLF_ENABLE_BINDLESS_BUFFER, false, "Use GL bindless buffer extention");
 TF_DEFINE_ENV_SETTING(GLF_ENABLE_BINDLESS_TEXTURE, false, "Use GL bindless texture extention");
-TF_DEFINE_ENV_SETTING(GLF_ENABLE_MULTI_DRAW_INDIRECT,
-                      true,
-                      "Use GL multi draw indirect extention");
-TF_DEFINE_ENV_SETTING(GLF_ENABLE_DIRECT_STATE_ACCESS,
-                      true,
-                      "Use GL direct state access extention");
+TF_DEFINE_ENV_SETTING(GLF_ENABLE_MULTI_DRAW_INDIRECT, true, "Use GL multi draw indirect extention");
+TF_DEFINE_ENV_SETTING(GLF_ENABLE_DIRECT_STATE_ACCESS, true, "Use GL direct state access extention");
 TF_DEFINE_ENV_SETTING(GLF_ENABLE_COPY_BUFFER, true, "Use GL copy buffer data");
 TF_DEFINE_ENV_SETTING(GLF_ENABLE_SHADER_DRAW_PARAMETERS,
                       true,
@@ -66,42 +60,42 @@ TF_DEFINE_ENV_SETTING(GLF_ENABLE_SHADER_DRAW_PARAMETERS,
 TF_DEFINE_ENV_SETTING(GLF_GLSL_VERSION, 0, "GLSL version");
 
 // Set defaults based on GL spec minimums
-static const int _DefaultMaxArrayTextureLayers     = 256;
-static const int _DefaultMaxUniformBlockSize       = 16 * 1024;
+static const int _DefaultMaxArrayTextureLayers = 256;
+static const int _DefaultMaxUniformBlockSize = 16 * 1024;
 static const int _DefaultMaxShaderStorageBlockSize = 16 * 1024 * 1024;
-static const int _DefaultMaxTextureBufferSize      = 64 * 1024;
-static const int _DefaultGLSLVersion               = 400;
+static const int _DefaultMaxTextureBufferSize = 64 * 1024;
+static const int _DefaultGLSLVersion = 400;
 
 // Initialize members to ensure a sane starting state.
 GlfContextCaps::GlfContextCaps()
-    : glVersion(0),
-      coreProfile(false)
+  : glVersion(0),
+    coreProfile(false)
 
-      ,
-      maxArrayTextureLayers(_DefaultMaxArrayTextureLayers),
-      maxUniformBlockSize(_DefaultMaxUniformBlockSize),
-      maxShaderStorageBlockSize(_DefaultMaxShaderStorageBlockSize),
-      maxTextureBufferSize(_DefaultMaxTextureBufferSize),
-      uniformBufferOffsetAlignment(0)
+    ,
+    maxArrayTextureLayers(_DefaultMaxArrayTextureLayers),
+    maxUniformBlockSize(_DefaultMaxUniformBlockSize),
+    maxShaderStorageBlockSize(_DefaultMaxShaderStorageBlockSize),
+    maxTextureBufferSize(_DefaultMaxTextureBufferSize),
+    uniformBufferOffsetAlignment(0)
 
-      ,
-      arrayTexturesEnabled(false),
-      shaderStorageBufferEnabled(false),
-      bufferStorageEnabled(false),
-      directStateAccessEnabled(false),
-      multiDrawIndirectEnabled(false),
-      bindlessTextureEnabled(false),
-      bindlessBufferEnabled(false)
+    ,
+    arrayTexturesEnabled(false),
+    shaderStorageBufferEnabled(false),
+    bufferStorageEnabled(false),
+    directStateAccessEnabled(false),
+    multiDrawIndirectEnabled(false),
+    bindlessTextureEnabled(false),
+    bindlessBufferEnabled(false)
 
-      ,
-      glslVersion(_DefaultGLSLVersion),
-      explicitUniformLocation(false),
-      shadingLanguage420pack(false),
-      shaderDrawParametersEnabled(false)
+    ,
+    glslVersion(_DefaultGLSLVersion),
+    explicitUniformLocation(false),
+    shadingLanguage420pack(false),
+    shaderDrawParametersEnabled(false)
 
-      ,
-      copyBufferEnabled(true),
-      floatingPointBuffersEnabled(false)
+    ,
+    copyBufferEnabled(true),
+    floatingPointBuffersEnabled(false)
 {}
 
 /*static*/
@@ -142,34 +136,34 @@ void GlfContextCaps::_LoadCaps()
   //
   // _LoadCaps can also be called multiple times, so not want
   // to mix and match values in the event of an early out.
-  glVersion                    = 0;
-  coreProfile                  = false;
-  maxArrayTextureLayers        = _DefaultMaxArrayTextureLayers;
-  maxUniformBlockSize          = _DefaultMaxUniformBlockSize;
-  maxShaderStorageBlockSize    = _DefaultMaxShaderStorageBlockSize;
-  maxTextureBufferSize         = _DefaultMaxTextureBufferSize;
+  glVersion = 0;
+  coreProfile = false;
+  maxArrayTextureLayers = _DefaultMaxArrayTextureLayers;
+  maxUniformBlockSize = _DefaultMaxUniformBlockSize;
+  maxShaderStorageBlockSize = _DefaultMaxShaderStorageBlockSize;
+  maxTextureBufferSize = _DefaultMaxTextureBufferSize;
   uniformBufferOffsetAlignment = 0;
-  arrayTexturesEnabled         = false;
-  shaderStorageBufferEnabled   = false;
-  bufferStorageEnabled         = false;
-  directStateAccessEnabled     = false;
-  multiDrawIndirectEnabled     = false;
-  bindlessTextureEnabled       = false;
-  bindlessBufferEnabled        = false;
-  glslVersion                  = _DefaultGLSLVersion;
-  explicitUniformLocation      = false;
-  shadingLanguage420pack       = false;
-  shaderDrawParametersEnabled  = false;
-  copyBufferEnabled            = true;
-  floatingPointBuffersEnabled  = false;
+  arrayTexturesEnabled = false;
+  shaderStorageBufferEnabled = false;
+  bufferStorageEnabled = false;
+  directStateAccessEnabled = false;
+  multiDrawIndirectEnabled = false;
+  bindlessTextureEnabled = false;
+  bindlessBufferEnabled = false;
+  glslVersion = _DefaultGLSLVersion;
+  explicitUniformLocation = false;
+  shadingLanguage420pack = false;
+  shaderDrawParametersEnabled = false;
+  copyBufferEnabled = true;
+  floatingPointBuffersEnabled = false;
 
   if (!TF_VERIFY(GlfGLContext::GetCurrentGLContext()->IsValid())) {
     return;
   }
 
-  const char *glVendorStr   = (const char *)glGetString(GL_VENDOR);
+  const char *glVendorStr = (const char *)glGetString(GL_VENDOR);
   const char *glRendererStr = (const char *)glGetString(GL_RENDERER);
-  const char *glVersionStr  = (const char *)glGetString(GL_VERSION);
+  const char *glVersionStr = (const char *)glGetString(GL_VERSION);
 
   // GL hasn't been initialized yet.
   if (glVersionStr == NULL)
@@ -187,14 +181,13 @@ void GlfContextCaps::_LoadCaps()
 
   if (glVersion >= 200) {
     const char *glslVersionStr = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
-    dot                        = strchr(glslVersionStr, '.');
-    if (TF_VERIFY((dot && dot != glslVersionStr),
-                  "Can't parse GL_SHADING_LANGUAGE_VERSION %s",
-                  glslVersionStr)) {
+    dot = strchr(glslVersionStr, '.');
+    if (TF_VERIFY(
+          (dot && dot != glslVersionStr), "Can't parse GL_SHADING_LANGUAGE_VERSION %s", glslVersionStr)) {
       // GL_SHADING_LANGUAGE_VERSION = "4.10"
       //                               "4.50 <vendor>"
-      int major   = std::max(0, std::min(9, *(dot - 1) - '0'));
-      int minor   = std::max(0, std::min(9, *(dot + 1) - '0'));
+      int major = std::max(0, std::min(9, *(dot - 1) - '0'));
+      int minor = std::max(0, std::min(9, *(dot + 1) - '0'));
       glslVersion = major * 100 + minor * 10;
     }
   }
@@ -228,7 +221,7 @@ void GlfContextCaps::_LoadCaps()
   }
   if (glVersion >= 430) {
     shaderStorageBufferEnabled = true;
-    explicitUniformLocation    = true;
+    explicitUniformLocation = true;
     glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &maxShaderStorageBlockSize);
   }
   if (glVersion >= 440) {
@@ -329,7 +322,7 @@ void GlfContextCaps::_LoadCaps()
               << "  ARB_shading_language_420pack       = " << shadingLanguage420pack << "\n"
               << "  NV_shader_buffer_load              = " << bindlessBufferEnabled << "\n"
 
-        ;
+      ;
 
     if (!copyBufferEnabled) {
       std::cout << "  CopyBuffer : disabled\n";

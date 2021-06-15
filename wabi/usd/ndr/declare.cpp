@@ -84,10 +84,10 @@ NdrVersion::NdrVersion(int major, int minor) : _major(major), _minor(minor)
   if (_major < 0 || _minor < 0 || (_major == 0 && _minor == 0)) {
     *this = NdrVersion();
     TF_CODING_ERROR(
-        "Invalid version %d.%d: both components must be "
-        "non-negative and at least one non-zero",
-        major,
-        minor);
+      "Invalid version %d.%d: both components must be "
+      "non-negative and at least one non-zero",
+      major,
+      minor);
   }
 }
 

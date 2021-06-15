@@ -47,9 +47,9 @@ WABI_NAMESPACE_BEGIN
 class PxOsdSubdivTags {
 
  public:
-  PxOsdSubdivTags()                        = default;
+  PxOsdSubdivTags() = default;
   PxOsdSubdivTags(PxOsdSubdivTags const &) = default;
-  PxOsdSubdivTags(PxOsdSubdivTags &&)      = default;
+  PxOsdSubdivTags(PxOsdSubdivTags &&) = default;
   PxOsdSubdivTags &operator=(PxOsdSubdivTags const &) = default;
   PxOsdSubdivTags &operator=(PxOsdSubdivTags &&) = default;
 
@@ -62,15 +62,15 @@ class PxOsdSubdivTags {
                   const VtFloatArray &creaseWeights,
                   const VtIntArray &cornerIndices,
                   const VtFloatArray &cornerWeights)
-      : _vtxInterpolationRule(vertexInterpolationRule),
-        _fvarInterpolationRule(faceVaryingInterpolationRule),
-        _creaseMethod(creaseMethod),
-        _trianglesSubdivision(triangleSubdivision),
-        _creaseIndices(creaseIndices),
-        _creaseLengths(creaseLengths),
-        _creaseWeights(creaseWeights),
-        _cornerIndices(cornerIndices),
-        _cornerWeights(cornerWeights)
+    : _vtxInterpolationRule(vertexInterpolationRule),
+      _fvarInterpolationRule(faceVaryingInterpolationRule),
+      _creaseMethod(creaseMethod),
+      _trianglesSubdivision(triangleSubdivision),
+      _creaseIndices(creaseIndices),
+      _creaseLengths(creaseLengths),
+      _creaseWeights(creaseWeights),
+      _cornerIndices(cornerIndices),
+      _cornerWeights(cornerWeights)
   {}
 
   /// Returns the vertex boundary interpolation rule

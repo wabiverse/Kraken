@@ -46,8 +46,8 @@ struct HdCommandArgDescriptor {
   HdCommandArgDescriptor();
 
   HdCommandArgDescriptor(const TfToken &argName, const VtValue &defaultValue_)
-      : argName(argName),
-        defaultValue(defaultValue_)
+    : argName(argName),
+      defaultValue(defaultValue_)
   {}
 
   ///
@@ -77,11 +77,11 @@ struct HdCommandDescriptor {
   HdCommandDescriptor();
 
   explicit HdCommandDescriptor(const TfToken &name_,
-                               const std::string &description_      = "",
+                               const std::string &description_ = "",
                                const HdCommandArgDescriptors &args_ = HdCommandArgDescriptors())
-      : commandName(name_),
-        commandDescription(description_),
-        commandArgs(args_)
+    : commandName(name_),
+      commandDescription(description_),
+      commandArgs(args_)
   {}
 
   ///

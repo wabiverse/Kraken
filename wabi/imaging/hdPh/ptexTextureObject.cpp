@@ -72,16 +72,15 @@ bool HdPhIsSupportedPtexTexture(std::string const &imageFilePath)
 ///////////////////////////////////////////////////////////////////////////////
 // Ptex texture
 
-HdPhPtexTextureObject::HdPhPtexTextureObject(
-    const HdPhTextureIdentifier &textureId,
-    HdPh_TextureObjectRegistry *const textureObjectRegistry)
-    : HdPhTextureObject(textureId, textureObjectRegistry),
-      _format(HgiFormatInvalid),
-      _texelDimensions(0),
-      _texelLayers(0),
-      _texelDataSize(0),
-      _layoutDimensions(0),
-      _layoutDataSize(0)
+HdPhPtexTextureObject::HdPhPtexTextureObject(const HdPhTextureIdentifier &textureId,
+                                             HdPh_TextureObjectRegistry *const textureObjectRegistry)
+  : HdPhTextureObject(textureId, textureObjectRegistry),
+    _format(HgiFormatInvalid),
+    _texelDimensions(0),
+    _texelLayers(0),
+    _texelDataSize(0),
+    _layoutDimensions(0),
+    _layoutDataSize(0)
 {}
 
 HdPhPtexTextureObject::~HdPhPtexTextureObject()
@@ -131,15 +130,13 @@ void HdPhPtexTextureObject::_Load()
 #ifdef WITH_PTEX
   const std::string &filename = GetTextureIdentifier().GetFilePath();
 
-  const bool premultiplyAlpha = _GetPremultiplyAlpha(
-      GetTextureIdentifier().GetSubtextureIdentifier());
+  const bool premultiplyAlpha = _GetPremultiplyAlpha(GetTextureIdentifier().GetSubtextureIdentifier());
 
   // create a temporary ptex cache
   // (required to build guttering pixels efficiently)
   constexpr int PTEX_MAX_CACHE_SIZE = 128 * 1024 * 1024;
   // Held by std::unique_ptr calling release instead of d'tor
-  const _ReleaseUniquePtr<PtexCache> cache(
-      PtexCache::create(1, PTEX_MAX_CACHE_SIZE, premultiplyAlpha));
+  const _ReleaseUniquePtr<PtexCache> cache(PtexCache::create(1, PTEX_MAX_CACHE_SIZE, premultiplyAlpha));
   if (!cache) {
     TF_WARN("Unable to create PtexCache");
     return;
@@ -173,9 +170,9 @@ void HdPhPtexTextureObject::_Load()
   const size_t numFaces = loader.GetNumFaces();
 
   // Layout data in memory buffer after load
-  constexpr size_t maxTextureWidth     = 16384;
+  constexpr size_t maxTextureWidth = 16384;
   constexpr size_t layoutTexelsPerFace = 3;
-  constexpr size_t maxFacesPerLayer    = maxTextureWidth / layoutTexelsPerFace;
+  constexpr size_t maxFacesPerLayer = maxTextureWidth / layoutTexelsPerFace;
 
   _layoutDimensions = GfVec2i(maxFacesPerLayer * layoutTexelsPerFace,
                               (numFaces + maxFacesPerLayer - 1) / maxFacesPerLayer);
@@ -191,15 +188,15 @@ void HdPhPtexTextureObject::_Load()
 
   // Texel data in memory buffer after load
   _texelDimensions = GfVec3i(loader.GetPageWidth(), loader.GetPageHeight(), 1);
-  _texelLayers     = loader.GetNumPages();
+  _texelLayers = loader.GetNumPages();
 
   // premultiplyAlpha = false since Ptex cache already premultiplied.
   _format = HdPhTextureUtils::GetHgiFormat(hioFormat,
                                            /* premultiplyAlpha = */ false);
 
-  const HdPhTextureUtils::ConversionFunction conversionFunction =
-      HdPhTextureUtils::GetHioToHgiConversion(hioFormat,
-                                              /* premultiplyAlpha = */ false);
+  const HdPhTextureUtils::ConversionFunction conversionFunction = HdPhTextureUtils::GetHioToHgiConversion(
+    hioFormat,
+    /* premultiplyAlpha = */ false);
 
   _texelDataSize = _texelLayers * HgiGetDataSize(_format, _texelDimensions);
 
@@ -215,9 +212,8 @@ void HdPhPtexTextureObject::_Load()
   static const size_t layoutBytesPerTexel = HgiGetDataSizeOfFormat(HgiFormatUInt16Vec2);
 
   _layoutDataSize = _layoutDimensions[0] * _layoutDimensions[1] * layoutBytesPerTexel;
-  _layoutData     = std::make_unique<uint8_t[]>(_layoutDataSize);
-  memcpy(
-      _layoutData.get(), loaderLayoutBuffer, numFaces * layoutTexelsPerFace * layoutBytesPerTexel);
+  _layoutData = std::make_unique<uint8_t[]>(_layoutDataSize);
+  memcpy(_layoutData.get(), loaderLayoutBuffer, numFaces * layoutTexelsPerFace * layoutBytesPerTexel);
 #endif
 }
 
@@ -239,16 +235,16 @@ void HdPhPtexTextureObject::_Commit()
   // Texel GPU texture creation
   {
     HgiTextureDesc texDesc;
-    texDesc.debugName      = _GetDebugName(GetTextureIdentifier());
-    texDesc.usage          = HgiTextureUsageBitsShaderRead;
-    texDesc.type           = HgiTextureType2DArray;
-    texDesc.dimensions     = _texelDimensions;
-    texDesc.layerCount     = _texelLayers;
-    texDesc.format         = _format;
-    texDesc.mipLevels      = 1;
-    texDesc.initialData    = _texelData.get();
+    texDesc.debugName = _GetDebugName(GetTextureIdentifier());
+    texDesc.usage = HgiTextureUsageBitsShaderRead;
+    texDesc.type = HgiTextureType2DArray;
+    texDesc.dimensions = _texelDimensions;
+    texDesc.layerCount = _texelLayers;
+    texDesc.format = _format;
+    texDesc.mipLevels = 1;
+    texDesc.initialData = _texelData.get();
     texDesc.pixelsByteSize = _texelDataSize;
-    _texelTexture          = hgi->CreateTexture(texDesc);
+    _texelTexture = hgi->CreateTexture(texDesc);
   }
 
   // Layout GPU texture creation
@@ -265,16 +261,16 @@ void HdPhPtexTextureObject::_Commit()
     // };
 
     HgiTextureDesc texDesc;
-    texDesc.debugName      = _GetDebugName(GetTextureIdentifier());
-    texDesc.usage          = HgiTextureUsageBitsShaderRead;
-    texDesc.type           = HgiTextureType1DArray;
-    texDesc.dimensions     = GfVec3i(_layoutDimensions[0], 1, 1);
-    texDesc.layerCount     = _layoutDimensions[1];
-    texDesc.format         = HgiFormatUInt16Vec2;
-    texDesc.mipLevels      = 1;
-    texDesc.initialData    = _layoutData.get();
+    texDesc.debugName = _GetDebugName(GetTextureIdentifier());
+    texDesc.usage = HgiTextureUsageBitsShaderRead;
+    texDesc.type = HgiTextureType1DArray;
+    texDesc.dimensions = GfVec3i(_layoutDimensions[0], 1, 1);
+    texDesc.layerCount = _layoutDimensions[1];
+    texDesc.format = HgiFormatUInt16Vec2;
+    texDesc.mipLevels = 1;
+    texDesc.initialData = _layoutData.get();
     texDesc.pixelsByteSize = _layoutDataSize;
-    _layoutTexture         = hgi->CreateTexture(texDesc);
+    _layoutTexture = hgi->CreateTexture(texDesc);
   }
 
   // Free CPU data

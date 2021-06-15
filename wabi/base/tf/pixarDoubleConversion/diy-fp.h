@@ -90,7 +90,7 @@ class DiyFp {
   {
     ASSERT(f_ != 0);
     uint64_t significand = f_;
-    int exponent         = e_;
+    int exponent = e_;
 
     // This method is mainly called for normalizing boundaries. In general
     // boundaries need to be shifted by 10 bits. We thus optimize for this case.

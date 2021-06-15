@@ -50,7 +50,7 @@ void TfNotice::_DelivererBase::_BeginDelivery(const TfNotice &notice,
                                               const vector<TfNotice::WeakProbePtr> &probes)
 {
   Tf_NoticeRegistry::_GetInstance()._BeginDelivery(
-      notice, sender, senderType, listener, listenerType, probes);
+    notice, sender, senderType, listener, listenerType, probes);
 }
 
 void TfNotice::_DelivererBase::_EndDelivery(const vector<TfNotice::WeakProbePtr> &probes)
@@ -76,9 +76,7 @@ TfNotice::Key TfNotice::_Register(_DelivererBase *deliverer)
   return Tf_NoticeRegistry::_GetInstance()._Register(deliverer);
 }
 
-size_t TfNotice::_Send(const TfWeakBase *s,
-                       const void *senderUniqueId,
-                       const type_info &senderType) const
+size_t TfNotice::_Send(const TfWeakBase *s, const void *senderUniqueId, const type_info &senderType) const
 {
   // Look up the notice type using the static type_info.
   // This is faster than TfType::Find().
@@ -127,9 +125,7 @@ void TfNotice::Revoke(Keys *keys)
   keys->clear();
 }
 
-void TfNotice::_VerifyFailedCast(const type_info &toType,
-                                 const TfNotice &notice,
-                                 const TfNotice *castNotice)
+void TfNotice::_VerifyFailedCast(const type_info &toType, const TfNotice &notice, const TfNotice *castNotice)
 {
   Tf_NoticeRegistry::_GetInstance()._VerifyFailedCast(toType, notice, castNotice);
 }

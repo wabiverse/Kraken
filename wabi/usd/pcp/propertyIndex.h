@@ -50,8 +50,8 @@ struct Pcp_PropertyInfo {
   Pcp_PropertyInfo()
   {}
   Pcp_PropertyInfo(const SdfPropertySpecHandle &prop, const PcpNodeRef &node)
-      : propertySpec(prop),
-        originatingNode(node)
+    : propertySpec(prop),
+      originatingNode(node)
   {}
 
   SdfPropertySpecHandle propertySpec;

@@ -39,8 +39,7 @@ HoudiniOpenvdbLoader::~HoudiniOpenvdbLoader()
 
 #ifdef BUILD_AS_HOUDINI_PLUGIN
 
-openvdb::GridBase const *HoudiniOpenvdbLoader::GetGrid(const char *filepath,
-                                                       const char *name) const
+openvdb::GridBase const *HoudiniOpenvdbLoader::GetGrid(const char *filepath, const char *name) const
 {
   if (!m_vdbGetter) {
     return nullptr;
@@ -53,7 +52,7 @@ HoudiniOpenvdbLoader::HoudiniOpenvdbLoader()
 {
   if (auto hfs = std::getenv("HFS")) {
     auto sopVdbLibPath = hfs + std::string("/houdini/dso/USD_SopVol") + ARCH_LIBRARY_SUFFIX;
-    m_sopVolLibHandle  = ArchLibraryOpen(sopVdbLibPath, ARCH_LIBRARY_LAZY);
+    m_sopVolLibHandle = ArchLibraryOpen(sopVdbLibPath, ARCH_LIBRARY_LAZY);
     if (m_sopVolLibHandle) {
       m_vdbGetter = (sopVdbGetterFunction)GETSYM(m_sopVolLibHandle, "SOPgetVDBVolumePrimitive");
       if (!m_vdbGetter) {
@@ -72,8 +71,7 @@ HoudiniOpenvdbLoader::HoudiniOpenvdbLoader()
 
 #else
 
-openvdb::GridBase const *HoudiniOpenvdbLoader::GetGrid(const char *filepath,
-                                                       const char *name) const
+openvdb::GridBase const *HoudiniOpenvdbLoader::GetGrid(const char *filepath, const char *name) const
 {
   return nullptr;
 }

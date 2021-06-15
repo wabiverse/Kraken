@@ -157,11 +157,11 @@ class JsValue {
   /// method raises a coding error. See Get functions above for default
   /// value returned in this case.
   template<typename T,
-           typename ReturnType = typename std::conditional<std::is_same<T, JsObject>::value ||
-                                                               std::is_same<T, JsArray>::value ||
-                                                               std::is_same<T, std::string>::value,
-                                                           const T &,
-                                                           T>::type>
+           typename ReturnType =
+             typename std::conditional<std::is_same<T, JsObject>::value || std::is_same<T, JsArray>::value ||
+                                         std::is_same<T, std::string>::value,
+                                       const T &,
+                                       T>::type>
   ReturnType Get() const
   {
     return _Get(static_cast<T *>(nullptr));
@@ -317,8 +317,7 @@ template<typename T> inline std::vector<T> JsValue::GetArrayOf() const
 {
   const JsArray &array = GetJsArray();
   std::vector<T> result(array.size());
-  std::transform(
-      array.begin(), array.end(), result.begin(), [](const JsValue &v) { return v.Get<T>(); });
+  std::transform(array.begin(), array.end(), result.begin(), [](const JsValue &v) { return v.Get<T>(); });
   return result;
 }
 

@@ -176,7 +176,7 @@ class UsdRiLightPortalAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiPortalIntensityAttr(VtValue const &defaultValue = VtValue(),
-                                           bool writeSparsely          = false) const;
+                                           bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -199,7 +199,7 @@ class UsdRiLightPortalAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiPortalTintAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

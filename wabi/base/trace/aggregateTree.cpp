@@ -81,14 +81,13 @@ bool TraceAggregateTree::AddCounter(const TfToken &key, int index, double totalV
   }
 
   // Add the new counter
-  _counters[key]        = totalValue;
+  _counters[key] = totalValue;
   _counterIndexMap[key] = index;
 
   return true;
 }
 
-void TraceAggregateTree::Append(const TraceEventTreeRefPtr &eventTree,
-                                const TraceCollection &collection)
+void TraceAggregateTree::Append(const TraceEventTreeRefPtr &eventTree, const TraceCollection &collection)
 {
   Trace_AggregateTreeBuilder::AddEventTreeToAggregate(this, eventTree, collection);
 }

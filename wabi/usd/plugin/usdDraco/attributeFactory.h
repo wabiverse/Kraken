@@ -88,8 +88,8 @@ class UsdDracoAttributeFactory {
 
 template<class InterfaceT, class CreatorT>
 std::unique_ptr<InterfaceT> UsdDracoAttributeFactory::CreateAttribute(
-    const UsdDracoAttributeDescriptor &descriptor,
-    const CreatorT &creator)
+  const UsdDracoAttributeDescriptor &descriptor,
+  const CreatorT &creator)
 {
   // Create attribute from attribute descriptor.
   switch (descriptor.GetShape()) {

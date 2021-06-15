@@ -7,9 +7,8 @@
 // A Simple adornment to add rainbow brackets to the syntax
 namespace Zep {
 
-ZepSyntaxAdorn_RainbowBrackets::ZepSyntaxAdorn_RainbowBrackets(ZepSyntax &syntax,
-                                                               ZepBuffer &buffer)
-    : ZepSyntaxAdorn(syntax, buffer)
+ZepSyntaxAdorn_RainbowBrackets::ZepSyntaxAdorn_RainbowBrackets(ZepSyntax &syntax, ZepBuffer &buffer)
+  : ZepSyntaxAdorn(syntax, buffer)
 {
   syntax.GetEditor().RegisterCallback(this);
 
@@ -41,8 +40,7 @@ void ZepSyntaxAdorn_RainbowBrackets::Notify(std::shared_ptr<ZepMessage> spMsg)
   }
 }
 
-SyntaxResult ZepSyntaxAdorn_RainbowBrackets::GetSyntaxAt(const GlyphIterator &offset,
-                                                         bool &found) const
+SyntaxResult ZepSyntaxAdorn_RainbowBrackets::GetSyntaxAt(const GlyphIterator &offset, bool &found) const
 {
   SyntaxResult data;
   auto itr = m_brackets.find(offset.Index());
@@ -111,7 +109,7 @@ void ZepSyntaxAdorn_RainbowBrackets::Clear(const GlyphIterator &start, const Gly
 void ZepSyntaxAdorn_RainbowBrackets::Update(const GlyphIterator &start, const GlyphIterator &end)
 {
   auto itrStart = start;
-  auto itrEnd   = end;
+  auto itrEnd = end;
 
   for (auto itrBracket = itrStart; itrBracket < itrEnd; itrBracket++) {
     if (*itrBracket == '(') {

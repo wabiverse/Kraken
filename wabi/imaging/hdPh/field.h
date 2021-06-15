@@ -46,9 +46,7 @@ class HdPhField : public HdField {
 
   /// Loads field as 3d texture to generate GetFieldResource.
   HDPH_API
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   HDPH_API
   HdDirtyBits GetInitialDirtyBitsMask() const override;

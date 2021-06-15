@@ -62,11 +62,10 @@ class UsdImagingFieldAdapter : public UsdImagingPrimAdapter {
 
   /// Thread Safe.
   USDIMAGING_API
-  void TrackVariability(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      HdDirtyBits *timeVaryingBits,
-      UsdImagingInstancerContext const *instancerContext = nullptr) const override;
+  void TrackVariability(UsdPrim const &prim,
+                        SdfPath const &cachePath,
+                        HdDirtyBits *timeVaryingBits,
+                        UsdImagingInstancerContext const *instancerContext = nullptr) const override;
 
   /// Thread Safe.
   USDIMAGING_API

@@ -46,9 +46,9 @@ WABI_NAMESPACE_BEGIN
 // "__SDR__" to reduce the risk of collision with metadata actually in the
 // shader.
 #define SDR_NODE_METADATA_TOKENS \
-  ((Category, "category"))((Role, "role"))((Departments, "departments"))((Help, "help"))(( \
-      Label, "label"))((Pages, "pages"))((Primvars, "primvars"))(( \
-      ImplementationName, "__SDR__implementationName"))((Target, "__SDR__target"))
+  ((Category, "category"))((Role, "role"))( \
+    (Departments, "departments"))((Help, "help"))((Label, "label"))((Pages, "pages"))(( \
+    Primvars, "primvars"))((ImplementationName, "__SDR__implementationName"))((Target, "__SDR__target"))
 
 // Note: The concept of context is defined on NdrNode and can be queried with
 // the GetContext() method. Sdr categorizes shaders by the context in which they
@@ -57,11 +57,10 @@ WABI_NAMESPACE_BEGIN
 // 'volume' rendering situations.
 #define SDR_NODE_CONTEXT_TOKENS \
   ((Pattern, "pattern"))((Surface, "surface"))( \
-      (Volume, "volume"))((Displacement, "displacement"))((Light, "light"))(( \
-      LightFilter, "lightFilter"))((SampleFilter, "sampleFilter"))((PixelFilter, "pixelFilter"))
+    (Volume, "volume"))((Displacement, "displacement"))((Light, "light"))((LightFilter, "lightFilter"))(( \
+    SampleFilter, "sampleFilter"))((PixelFilter, "pixelFilter"))
 
-#define SDR_NODE_ROLE_TOKENS \
-  ((Primvar, "primvar"))((Texture, "texture"))((Field, "field"))((Math, "math"))
+#define SDR_NODE_ROLE_TOKENS ((Primvar, "primvar"))((Texture, "texture"))((Field, "field"))((Math, "math"))
 
 TF_DECLARE_PUBLIC_TOKENS(SdrNodeMetadata, SDR_API, SDR_NODE_METADATA_TOKENS);
 TF_DECLARE_PUBLIC_TOKENS(SdrNodeContext, SDR_API, SDR_NODE_CONTEXT_TOKENS);
@@ -84,7 +83,7 @@ class SdrShaderNode : public NdrNode {
                 const std::string &definitionURI,
                 const std::string &implementationURI,
                 NdrPropertyUniquePtrVec &&properties,
-                const NdrTokenMap &metadata   = NdrTokenMap(),
+                const NdrTokenMap &metadata = NdrTokenMap(),
                 const std::string &sourceCode = std::string());
 
   /// \name Inputs and Outputs

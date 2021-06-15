@@ -51,8 +51,7 @@ TF_REGISTRY_FUNCTION(TfType)
 
 std::ostream &operator<<(std::ostream &out, GfRange3d const &r)
 {
-  return out << '[' << Gf_OstreamHelperP(r.GetMin()) << "..." << Gf_OstreamHelperP(r.GetMax())
-             << ']';
+  return out << '[' << Gf_OstreamHelperP(r.GetMin()) << "..." << Gf_OstreamHelperP(r.GetMax()) << ']';
 }
 
 double GfRange3d::GetDistanceSquared(const GfVec3d &p) const

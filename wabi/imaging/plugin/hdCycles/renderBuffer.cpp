@@ -33,8 +33,8 @@ void _ConvertPixel(HdFormat dstFormat, uint8_t *dst, HdFormat srcFormat, uint8_t
 {
   HdFormat srcComponentFormat = HdGetComponentFormat(srcFormat);
   HdFormat dstComponentFormat = HdGetComponentFormat(dstFormat);
-  size_t srcComponentCount    = HdGetComponentCount(srcFormat);
-  size_t dstComponentCount    = HdGetComponentCount(dstFormat);
+  size_t srcComponentCount = HdGetComponentCount(srcFormat);
+  size_t dstComponentCount = HdGetComponentCount(dstFormat);
 
   for (size_t c = 0; c < dstComponentCount; ++c) {
     T readValue = 0;
@@ -69,27 +69,24 @@ void _ConvertPixel(HdFormat dstFormat, uint8_t *dst, HdFormat srcFormat, uint8_t
       reinterpret_cast<float *>(dst)[c] = static_cast<float>(readValue);
     }
     else if (dstComponentFormat == HdFormatUNorm8) {
-      reinterpret_cast<uint8_t *>(dst)[c] = static_cast<uint8_t>(static_cast<float>(readValue) *
-                                                                 255.0f);
+      reinterpret_cast<uint8_t *>(dst)[c] = static_cast<uint8_t>(static_cast<float>(readValue) * 255.0f);
     }
     else if (dstComponentFormat == HdFormatSNorm8) {
-      reinterpret_cast<int8_t *>(dst)[c] = static_cast<int8_t>(static_cast<float>(readValue) *
-                                                               127.0f);
+      reinterpret_cast<int8_t *>(dst)[c] = static_cast<int8_t>(static_cast<float>(readValue) * 127.0f);
     }
   }
 }
 }  // namespace
 
-HdCyclesRenderBuffer::HdCyclesRenderBuffer(HdCyclesRenderDelegate *renderDelegate,
-                                           const SdfPath &id)
-    : HdRenderBuffer(id),
-      m_width(0),
-      m_height(0),
-      m_format(HdFormatInvalid),
-      m_pixelSize(0),
-      m_mappers(0),
-      m_converged(false),
-      m_renderDelegate(renderDelegate)
+HdCyclesRenderBuffer::HdCyclesRenderBuffer(HdCyclesRenderDelegate *renderDelegate, const SdfPath &id)
+  : HdRenderBuffer(id),
+    m_width(0),
+    m_height(0),
+    m_format(HdFormatInvalid),
+    m_pixelSize(0),
+    m_mappers(0),
+    m_converged(false),
+    m_renderDelegate(renderDelegate)
 {}
 
 HdCyclesRenderBuffer::~HdCyclesRenderBuffer()
@@ -121,9 +118,9 @@ bool HdCyclesRenderBuffer::Allocate(const GfVec3i &dimensions, HdFormat format, 
   std::vector<uint8_t> buffer_empty{};
   m_buffer.swap(buffer_empty);
 
-  m_width     = static_cast<unsigned int>(dimensions[0]);
-  m_height    = static_cast<unsigned int>(dimensions[1]);
-  m_format    = format;
+  m_width = static_cast<unsigned int>(dimensions[0]);
+  m_height = static_cast<unsigned int>(dimensions[1]);
+  m_format = format;
   m_pixelSize = static_cast<unsigned int>(HdDataSizeOfFormat(format));
   m_buffer.resize(m_width * m_height * m_pixelSize, 0);
 
@@ -277,7 +274,7 @@ void HdCyclesRenderBuffer::_Deallocate()
 {
   std::lock_guard<std::mutex> lock{m_mutex};
 
-  m_width  = 0;
+  m_width = 0;
   m_height = 0;
   m_format = HdFormatInvalid;
 

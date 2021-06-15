@@ -94,8 +94,7 @@ UsdAttribute UsdVolFieldAsset::GetFilePathAttr() const
   return GetPrim().GetAttribute(UsdVolTokens->filePath);
 }
 
-UsdAttribute UsdVolFieldAsset::CreateFilePathAttr(VtValue const &defaultValue,
-                                                  bool writeSparsely) const
+UsdAttribute UsdVolFieldAsset::CreateFilePathAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdVolTokens->filePath,
                                     SdfValueTypeNames->Asset,
@@ -110,8 +109,7 @@ UsdAttribute UsdVolFieldAsset::GetFieldNameAttr() const
   return GetPrim().GetAttribute(UsdVolTokens->fieldName);
 }
 
-UsdAttribute UsdVolFieldAsset::CreateFieldNameAttr(VtValue const &defaultValue,
-                                                   bool writeSparsely) const
+UsdAttribute UsdVolFieldAsset::CreateFieldNameAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdVolTokens->fieldName,
                                     SdfValueTypeNames->Token,
@@ -126,8 +124,7 @@ UsdAttribute UsdVolFieldAsset::GetFieldIndexAttr() const
   return GetPrim().GetAttribute(UsdVolTokens->fieldIndex);
 }
 
-UsdAttribute UsdVolFieldAsset::CreateFieldIndexAttr(VtValue const &defaultValue,
-                                                    bool writeSparsely) const
+UsdAttribute UsdVolFieldAsset::CreateFieldIndexAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdVolTokens->fieldIndex,
                                     SdfValueTypeNames->Int,
@@ -142,8 +139,7 @@ UsdAttribute UsdVolFieldAsset::GetFieldDataTypeAttr() const
   return GetPrim().GetAttribute(UsdVolTokens->fieldDataType);
 }
 
-UsdAttribute UsdVolFieldAsset::CreateFieldDataTypeAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdVolFieldAsset::CreateFieldDataTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdVolTokens->fieldDataType,
                                     SdfValueTypeNames->Token,
@@ -170,8 +166,7 @@ UsdAttribute UsdVolFieldAsset::CreateVectorDataRoleHintAttr(VtValue const &defau
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -185,14 +180,14 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdVolFieldAsset::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdVolTokens->filePath,
-      UsdVolTokens->fieldName,
-      UsdVolTokens->fieldIndex,
-      UsdVolTokens->fieldDataType,
-      UsdVolTokens->vectorDataRoleHint,
+    UsdVolTokens->filePath,
+    UsdVolTokens->fieldName,
+    UsdVolTokens->fieldIndex,
+    UsdVolTokens->fieldDataType,
+    UsdVolTokens->vectorDataRoleHint,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdVolFieldBase::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdVolFieldBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

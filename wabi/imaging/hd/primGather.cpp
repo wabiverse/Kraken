@@ -34,9 +34,9 @@ WABI_NAMESPACE_BEGIN
 // Parallelism tunable values.
 // Only run ranges in parallel if there are enough to cover the
 // overhead.
-static const size_t MIN_RANGES_FOR_PARALLEL  = 10;
+static const size_t MIN_RANGES_FOR_PARALLEL = 10;
 static const size_t MIN_ENTRIES_FOR_PARALLEL = 10;
-static const size_t MIN_GRAIN_SIZE           = 10;
+static const size_t MIN_GRAIN_SIZE = 10;
 
 void HdPrimGather::Filter(const SdfPathVector &paths,
                           const SdfPathVector &includePaths,
@@ -101,9 +101,7 @@ void HdPrimGather::PredicatedFilter(const SdfPathVector &paths,
   _WriteResults(paths, flattendResultRanges.begin(), flattendResultRanges.end(), results);
 }
 
-void HdPrimGather::Subtree(const SdfPathVector &paths,
-                           const SdfPath &rootPath,
-                           SdfPathVector *results)
+void HdPrimGather::Subtree(const SdfPathVector &paths, const SdfPath &rootPath, SdfPathVector *results)
 {
   results->clear();
 
@@ -129,8 +127,8 @@ bool HdPrimGather::SubtreeAsRange(const SdfPathVector &paths,
   }
 
   _Range &range = _gatheredRanges[0];
-  *start        = range._start;
-  *end          = range._end;
+  *start = range._start;
+  *end = range._end;
 
   return true;
 }
@@ -143,7 +141,7 @@ size_t HdPrimGather::_FindLowerBound(const SdfPathVector &paths,
   size_t rangeSize = end - start;
   while (rangeSize > 0) {
     size_t step = rangeSize / 2;
-    size_t mid  = start + step;
+    size_t mid = start + step;
 
     const SdfPath &testPath = paths[mid];
 
@@ -173,7 +171,7 @@ size_t HdPrimGather::_FindUpperBound(const SdfPathVector &paths,
   size_t rangeSize = end - start;
   while (rangeSize > 0) {
     size_t step = rangeSize / 2;
-    size_t mid  = start + step;
+    size_t mid = start + step;
 
     const SdfPath &testPath = paths[mid];
 
@@ -194,10 +192,7 @@ size_t HdPrimGather::_FindUpperBound(const SdfPathVector &paths,
 // Apply the the top item on the filter stack to the range
 // of elements between (start, end) (inclusive).
 // isIncludeRange is the current state of the specified range.
-void HdPrimGather::_FilterRange(const SdfPathVector &paths,
-                                size_t start,
-                                size_t end,
-                                bool isIncludeRange)
+void HdPrimGather::_FilterRange(const SdfPathVector &paths, size_t start, size_t end, bool isIncludeRange)
 {
   // If filter list is empty, we are done processing.
   if (_filterList.empty()) {
@@ -228,8 +223,7 @@ void HdPrimGather::_FilterRange(const SdfPathVector &paths,
   bool skipFilter = currentFilter._includePath == isIncludeRange;
 
   // Is filter before the start of the range?
-  skipFilter |= (paths[start] > currentFilter._path) &&
-                (!paths[start].HasPrefix(currentFilter._path));
+  skipFilter |= (paths[start] > currentFilter._path) && (!paths[start].HasPrefix(currentFilter._path));
 
   if (skipFilter) {
     _FilterRange(paths, start, end, isIncludeRange);
@@ -256,19 +250,16 @@ void HdPrimGather::_FilterRange(const SdfPathVector &paths,
   }
 }
 
-void HdPrimGather::_SetupFilter(const SdfPathVector &includePaths,
-                                const SdfPathVector &excludePaths)
+void HdPrimGather::_SetupFilter(const SdfPathVector &includePaths, const SdfPathVector &excludePaths)
 {
   // Combine include and exclude paths in to the filter stack.
   _filterList.clear();
   _filterList.reserve(includePaths.size() + excludePaths.size());
-  for (SdfPathVector::const_iterator incIt = includePaths.begin(); incIt != includePaths.end();
-       ++incIt) {
+  for (SdfPathVector::const_iterator incIt = includePaths.begin(); incIt != includePaths.end(); ++incIt) {
     _filterList.emplace_back(*incIt, true);
   }
 
-  for (SdfPathVector::const_iterator excIt = excludePaths.begin(); excIt != excludePaths.end();
-       ++excIt) {
+  for (SdfPathVector::const_iterator excIt = excludePaths.begin(); excIt != excludePaths.end(); ++excIt) {
     _filterList.emplace_back(*excIt, false);
   }
 
@@ -342,7 +333,7 @@ void HdPrimGather::_DoPredicateTestOnPrims(const SdfPathVector &paths,
   TRACE_FUNCTION();
 
   size_t begin = range.begin();
-  size_t end   = range.end() - 1;  // convert to inclusive.
+  size_t end = range.end() - 1;  // convert to inclusive.
 
   _RangeArray &resultRanges = _resultRanges.local();
 
@@ -385,7 +376,7 @@ void HdPrimGather::_WriteResults(const SdfPathVector &paths,
   for (Iterator it = rangesBegin; it != rangesEnd; ++it) {
 
     SdfPathVector::const_iterator rangeStartIt = paths.begin();
-    SdfPathVector::const_iterator rangeEndIt   = paths.begin();
+    SdfPathVector::const_iterator rangeEndIt = paths.begin();
 
     rangeStartIt += it->_start;
     rangeEndIt += it->_end + 1;  // End is exclusive, so +1

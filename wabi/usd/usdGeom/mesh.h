@@ -250,7 +250,7 @@ class UsdGeomMesh : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateFaceVertexIndicesAttr(VtValue const &defaultValue = VtValue(),
-                                           bool writeSparsely          = false) const;
+                                           bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -277,7 +277,7 @@ class UsdGeomMesh : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateFaceVertexCountsAttr(VtValue const &defaultValue = VtValue(),
-                                          bool writeSparsely          = false) const;
+                                          bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -319,7 +319,7 @@ class UsdGeomMesh : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateSubdivisionSchemeAttr(VtValue const &defaultValue = VtValue(),
-                                           bool writeSparsely          = false) const;
+                                           bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -356,7 +356,7 @@ class UsdGeomMesh : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateInterpolateBoundaryAttr(VtValue const &defaultValue = VtValue(),
-                                             bool writeSparsely          = false) const;
+                                             bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -402,7 +402,7 @@ class UsdGeomMesh : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateFaceVaryingLinearInterpolationAttr(VtValue const &defaultValue = VtValue(),
-                                                        bool writeSparsely          = false) const;
+                                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -432,7 +432,7 @@ class UsdGeomMesh : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateTriangleSubdivisionRuleAttr(VtValue const &defaultValue = VtValue(),
-                                                 bool writeSparsely          = false) const;
+                                                 bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -457,7 +457,7 @@ class UsdGeomMesh : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateHoleIndicesAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -482,7 +482,7 @@ class UsdGeomMesh : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateCornerIndicesAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -508,7 +508,7 @@ class UsdGeomMesh : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateCornerSharpnessesAttr(VtValue const &defaultValue = VtValue(),
-                                           bool writeSparsely          = false) const;
+                                           bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -533,7 +533,7 @@ class UsdGeomMesh : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateCreaseIndicesAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -561,7 +561,7 @@ class UsdGeomMesh : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateCreaseLengthsAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -592,7 +592,7 @@ class UsdGeomMesh : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateCreaseSharpnessesAttr(VtValue const &defaultValue = VtValue(),
-                                           bool writeSparsely          = false) const;
+                                           bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

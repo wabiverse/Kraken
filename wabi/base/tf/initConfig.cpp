@@ -40,7 +40,7 @@ namespace {
 ARCH_CONSTRUCTOR(Tf_InitConfig, 2, void)
 {
   std::string capture = TfGetenv("TF_MALLOC_TAG_CAPTURE");
-  std::string debug   = TfGetenv("TF_MALLOC_TAG_DEBUG");
+  std::string debug = TfGetenv("TF_MALLOC_TAG_DEBUG");
   if (!capture.empty() || !debug.empty() || TfGetenvBool("TF_MALLOC_TAG", false)) {
     std::string errMsg;
 

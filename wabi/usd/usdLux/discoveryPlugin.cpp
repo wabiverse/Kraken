@@ -52,7 +52,7 @@ NdrNodeDiscoveryResultVec UsdLux_DiscoveryPlugin::DiscoverNodes(const Context &c
 
   // We want to discover nodes for all concrete schema types that derive from
   // UsdLuxLight and UsdLuxLightFilter.
-  static const TfType lightType       = TfType::Find<UsdLuxLight>();
+  static const TfType lightType = TfType::Find<UsdLuxLight>();
   static const TfType lightFilterType = TfType::Find<UsdLuxLightFilter>();
   // LightFilter is a concrete type and is legit to instantiate while Light
   // is abstract and cannot be instantiated. However since the loop below
@@ -72,14 +72,14 @@ NdrNodeDiscoveryResultVec UsdLux_DiscoveryPlugin::DiscoverNodes(const Context &c
       // left empty as these nodes can be populated from the schema
       // registry prim definitions.
       result.emplace_back(
-          /*identifier=*/name,
-          NdrVersion().GetAsDefault(),
-          name,
-          /*family=*/TfToken(),
-          UsdLux_LightDefParserPlugin::_GetDiscoveryType(),
-          UsdLux_LightDefParserPlugin::_GetSourceType(),
-          /*uri=*/"",
-          /*resolvedUri=*/"");
+        /*identifier=*/name,
+        NdrVersion().GetAsDefault(),
+        name,
+        /*family=*/TfToken(),
+        UsdLux_LightDefParserPlugin::_GetDiscoveryType(),
+        UsdLux_LightDefParserPlugin::_GetSourceType(),
+        /*uri=*/"",
+        /*resolvedUri=*/"");
     }
   }
 

@@ -174,7 +174,7 @@ template<class T> class TfWeakPtr : public TfWeakPtrFacade<TfWeakPtr, T> {
   template<class U>
   TfWeakPtr(TfRefPtr<U> const &p,
             typename std::enable_if<std::is_convertible<U *, T *>::value>::type *dummy = 0)
-      : _rawPtr(get_pointer(p))
+    : _rawPtr(get_pointer(p))
   {
     TF_UNUSED(dummy);
     if (ARCH_LIKELY(_rawPtr))
@@ -183,10 +183,9 @@ template<class T> class TfWeakPtr : public TfWeakPtrFacade<TfWeakPtr, T> {
 
   /// Explicitly construct from a raw pointer \a p.
   template<class U>
-  explicit TfWeakPtr(
-      U *p,
-      typename std::enable_if<std::is_convertible<U *, T *>::value>::type *dummy = nullptr)
-      : _rawPtr(p)
+  explicit TfWeakPtr(U *p,
+                     typename std::enable_if<std::is_convertible<U *, T *>::value>::type *dummy = nullptr)
+    : _rawPtr(p)
   {
     TF_UNUSED(dummy);
     if (ARCH_LIKELY(_rawPtr))
@@ -196,8 +195,8 @@ template<class T> class TfWeakPtr : public TfWeakPtrFacade<TfWeakPtr, T> {
   template<class U>
   TfWeakPtr(TfWeakPtr<U> const &p,
             typename std::enable_if<std::is_convertible<U *, T *>::value>::type *dummy = 0)
-      : _rawPtr(p._rawPtr),
-        _remnant(p._remnant)
+    : _rawPtr(p._rawPtr),
+      _remnant(p._remnant)
   {}
 
   /// Copy assignment
@@ -206,8 +205,8 @@ template<class T> class TfWeakPtr : public TfWeakPtrFacade<TfWeakPtr, T> {
   /// Move assignment
   TfWeakPtr &operator=(TfWeakPtr &&p) noexcept
   {
-    _rawPtr   = p._rawPtr;
-    _remnant  = std::move(p._remnant);
+    _rawPtr = p._rawPtr;
+    _remnant = std::move(p._remnant);
     p._rawPtr = nullptr;
     return *this;
   }
@@ -413,8 +412,8 @@ template<class T> struct Tf_HasGetWeakBase {
   static std::false_type _Deduce(...);
 
  public:
-  using type              = decltype(_Deduce(static_cast<T *>(nullptr)));
-  using value_type        = bool;
+  using type = decltype(_Deduce(static_cast<T *>(nullptr)));
+  using value_type = bool;
   static const bool value = type::value;
 };
 

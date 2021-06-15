@@ -26,7 +26,7 @@ class ZepPath {
 
   ZepPath stem() const
   {
-    auto str   = filename().string();
+    auto str = filename().string();
     size_t dot = str.find_last_of(".");
     if (dot != std::string::npos) {
       return str.substr(0, dot);
@@ -43,7 +43,7 @@ class ZepPath {
       return {};
     }
 
-    auto len   = m_strPath.length();
+    auto len = m_strPath.length();
     auto index = m_strPath.find_last_of("/\\");
 
     if (index == std::string::npos) {
@@ -93,7 +93,7 @@ class ZepPath {
     if (!has_filename())
       return ZepPath();
 
-    auto str   = filename().string();
+    auto str = filename().string();
     size_t dot = str.find_last_of(".");
     if (dot != std::string::npos) {
       return str.substr(dot, str.length() - dot);
@@ -165,7 +165,7 @@ class ZepPath {
   std::vector<std::string>::const_iterator begin() const
   {
     std::string can = string_replace(m_strPath, "\\", "/");
-    m_components    = string_split(can, "/");
+    m_components = string_split(can, "/");
     return m_components.begin();
   }
 

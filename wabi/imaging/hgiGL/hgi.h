@@ -44,7 +44,7 @@ WABI_NAMESPACE_BEGIN
 
 class HgiGLDevice;
 
-using HgiGLOpsFn     = std::function<void(void)>;
+using HgiGLOpsFn = std::function<void(void)>;
 using HgiGLOpsVector = std::vector<HgiGLOpsFn>;
 
 /// \class HgiGL
@@ -116,8 +116,7 @@ class HgiGL final : public Hgi {
   void DestroyResourceBindings(HgiResourceBindingsHandle *resHandle) override;
 
   HGIGL_API
-  HgiGraphicsPipelineHandle CreateGraphicsPipeline(
-      HgiGraphicsPipelineDesc const &pipeDesc) override;
+  HgiGraphicsPipelineHandle CreateGraphicsPipeline(HgiGraphicsPipelineDesc const &pipeDesc) override;
 
   HGIGL_API
   void DestroyGraphicsPipeline(HgiGraphicsPipelineHandle *pipeHandle) override;
@@ -151,7 +150,7 @@ class HgiGL final : public Hgi {
 
  private:
   HgiGL &operator=(const HgiGL &) = delete;
-  HgiGL(const HgiGL &)            = delete;
+  HgiGL(const HgiGL &) = delete;
 
   // Invalidates the resource handle and places the object in the garbage
   // collector vector for future destruction.

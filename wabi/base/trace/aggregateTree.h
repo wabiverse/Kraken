@@ -54,11 +54,11 @@ TF_DECLARE_WEAK_AND_REF_PTRS(TraceEventTree);
 
 class TraceAggregateTree : public TfRefBase, public TfWeakBase {
  public:
-  using This       = TraceAggregateTree;
-  using ThisPtr    = TraceAggregateTreePtr;
+  using This = TraceAggregateTree;
+  using ThisPtr = TraceAggregateTreePtr;
   using ThisRefPtr = TraceAggregateTreeRefPtr;
 
-  using TimeStamp  = TraceEvent::TimeStamp;
+  using TimeStamp = TraceEvent::TimeStamp;
   using EventTimes = std::map<TfToken, TimeStamp>;
   using CounterMap = TfHashMap<TfToken, double, TfToken::HashFunctor>;
 

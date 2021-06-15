@@ -163,7 +163,7 @@ class UsdRenderSettingsBase : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDRENDER_API
   UsdAttribute CreateResolutionAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -188,7 +188,7 @@ class UsdRenderSettingsBase : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDRENDER_API
   UsdAttribute CreatePixelAspectRatioAttr(VtValue const &defaultValue = VtValue(),
-                                          bool writeSparsely          = false) const;
+                                          bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -237,7 +237,7 @@ class UsdRenderSettingsBase : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDRENDER_API
   UsdAttribute CreateAspectRatioConformPolicyAttr(VtValue const &defaultValue = VtValue(),
-                                                  bool writeSparsely          = false) const;
+                                                  bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -290,7 +290,7 @@ class UsdRenderSettingsBase : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDRENDER_API
   UsdAttribute CreateDataWindowNDCAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -317,7 +317,7 @@ class UsdRenderSettingsBase : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDRENDER_API
   UsdAttribute CreateInstantaneousShutterAttr(VtValue const &defaultValue = VtValue(),
-                                              bool writeSparsely          = false) const;
+                                              bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //

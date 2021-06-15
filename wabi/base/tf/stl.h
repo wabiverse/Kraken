@@ -226,8 +226,7 @@ inline void TfReset(TfHashSet<Value, Hash, Equal, Alloc> &hash)
 ///
 /// This is similar to the sgi extension std::identity<T>.
 template<class T>
-inline typename boost::call_traits<T>::param_type TfIdentity(
-    typename boost::call_traits<T>::param_type arg)
+inline typename boost::call_traits<T>::param_type TfIdentity(typename boost::call_traits<T>::param_type arg)
 {
   return arg;
 }
@@ -357,7 +356,7 @@ static inline ForwardIterator TfFindBoundary(ForwardIterator first,
   ForwardIterator middle;
 
   while (len > 0) {
-    half   = len >> 1;
+    half = len >> 1;
     middle = first;
     std::advance(middle, half);
     if (pred(*middle)) {
@@ -385,8 +384,7 @@ static inline ForwardIterator TfFindBoundary(ForwardIterator first,
 /// \ingroup group_tf_Stl
 template<size_t N> class TfGet {
  public:
-  template<class PairOrTuple>
-  using return_type = typename std::tuple_element<N, PairOrTuple>::type;
+  template<class PairOrTuple> using return_type = typename std::tuple_element<N, PairOrTuple>::type;
 
   template<class PairOrTuple> constexpr return_type<PairOrTuple> &operator()(PairOrTuple &p) const
   {
@@ -399,8 +397,7 @@ template<size_t N> class TfGet {
     return std::get<N>(p);
   }
 
-  template<class PairOrTuple>
-  constexpr return_type<PairOrTuple> &&operator()(PairOrTuple &&p) const
+  template<class PairOrTuple> constexpr return_type<PairOrTuple> &&operator()(PairOrTuple &&p) const
   {
     return std::get<N>(std::move(p));
   }

@@ -131,15 +131,15 @@ static std::map<string, string> _GetTemplateList(const std::string &templates)
   std::map<string, string> result;
 
   string::size_type typeEnd = templates.size();
-  string::size_type i       = templates.rfind('=', typeEnd);
+  string::size_type i = templates.rfind('=', typeEnd);
   while (i != string::npos) {
     auto typeStart = templates.find_first_not_of(" =", i);
-    auto nameEnd   = templates.find_last_not_of(" =", i);
+    auto nameEnd = templates.find_last_not_of(" =", i);
     auto nameStart = _GetStartOfName(templates, nameEnd);
-    result[templates.substr(nameStart, nameEnd + 1 - nameStart)] = templates.substr(
-        typeStart, typeEnd - typeStart);
+    result[templates.substr(nameStart, nameEnd + 1 - nameStart)] = templates.substr(typeStart,
+                                                                                    typeEnd - typeStart);
     typeEnd = templates.find_last_not_of(" =,;", nameStart - 1) + 1;
-    i       = templates.rfind('=', typeEnd);
+    i = templates.rfind('=', typeEnd);
   }
 
   return result;
@@ -194,7 +194,7 @@ static string _GetNextIdentifier(const string &prettyFunction, string::size_type
   // be just before the next identifier.
   std::string::size_type last = prettyFunction.find_first_of(",>", first);
   if (last == string::npos) {
-    pos  = string::npos;
+    pos = string::npos;
     last = prettyFunction.find('>', first);
     if (last == string::npos)
       last = prettyFunction.size();

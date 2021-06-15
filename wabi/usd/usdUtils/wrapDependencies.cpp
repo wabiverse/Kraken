@@ -75,15 +75,13 @@ void wrapDependencies()
 {
   bp::def("ExtractExternalReferences", _ExtractExternalReferences, bp::arg("filePath"));
 
-  bp::def(
-      "CreateNewUsdzPackage",
-      UsdUtilsCreateNewUsdzPackage,
-      (bp::arg("assetPath"), bp::arg("usdzFilePath"), bp::arg("firstLayerName") = std::string()));
+  bp::def("CreateNewUsdzPackage",
+          UsdUtilsCreateNewUsdzPackage,
+          (bp::arg("assetPath"), bp::arg("usdzFilePath"), bp::arg("firstLayerName") = std::string()));
 
-  bp::def(
-      "CreateNewARKitUsdzPackage",
-      UsdUtilsCreateNewARKitUsdzPackage,
-      (bp::arg("assetPath"), bp::arg("usdzFilePath"), bp::arg("firstLayerName") = std::string()));
+  bp::def("CreateNewARKitUsdzPackage",
+          UsdUtilsCreateNewARKitUsdzPackage,
+          (bp::arg("assetPath"), bp::arg("usdzFilePath"), bp::arg("firstLayerName") = std::string()));
 
   bp::def("ComputeAllDependencies", _ComputeAllDependencies, (bp::arg("assetPath")));
 

@@ -51,8 +51,7 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 
 namespace {
 
-template<typename UsdType, unsigned ArnoldType, typename StorageType>
-struct _ConvertValueToArnoldParameter {
+template<typename UsdType, unsigned ArnoldType, typename StorageType> struct _ConvertValueToArnoldParameter {
   inline static unsigned int f(AtNode *node, const StorageType &data, const AtString &arnoldName)
   {
     return false;
@@ -68,7 +67,7 @@ struct _ConvertValueToArnoldParameter<UsdType, ArnoldType, VtValue> {
     if (!value.IsHolding<VtArray<UsdType>>()) {
       return 0;
     }
-    const auto &values   = value.UncheckedGet<VtArray<UsdType>>();
+    const auto &values = value.UncheckedGet<VtArray<UsdType>>();
     const auto numValues = static_cast<unsigned int>(values.size());
     // Data comes in as flattened and in these cases the memory layout of the USD data matches the
     // memory layout of the Arnold data.
@@ -94,19 +93,19 @@ struct _ConvertValueToArnoldParameter<UsdType, ArnoldType, HdArnoldSampledPrimva
         !samples.values[0].IsHolding<VtArray<UsdType>>()) {
       return 0;
     }
-    const auto &v0       = samples.values[0].UncheckedGet<VtArray<UsdType>>();
-    const auto numKeys   = static_cast<unsigned int>(samples.count);
+    const auto &v0 = samples.values[0].UncheckedGet<VtArray<UsdType>>();
+    const auto numKeys = static_cast<unsigned int>(samples.count);
     const auto numValues = static_cast<unsigned int>(v0.size());
     auto *valueList = AiArrayAllocate(static_cast<unsigned int>(v0.size()), numKeys, ArnoldType);
     AiArraySetKey(valueList, 0, v0.data());
     for (auto index = decltype(numKeys){1}; index < numKeys; index += 1) {
       if (
 #ifdef USD_HAS_UPDATED_TIME_SAMPLE_ARRAY
-          samples.values.size()
+        samples.values.size()
 #else
-          samples.count
+        samples.count
 #endif
-          > index) {
+        > index) {
         const auto &vti = samples.values[index];
         if (ARCH_LIKELY(vti.IsHolding<VtArray<UsdType>>())) {
           const auto &vi = vti.UncheckedGet<VtArray<UsdType>>();
@@ -131,8 +130,7 @@ inline void _ConvertVertexPrimvarToBuiltin(AtNode *node,
 {
   // We are receiving per vertex data, the way to support this is in arnold to use the values and
   // copy the vertex ids to the new ids for the given value.
-  if (_ConvertValueToArnoldParameter<UsdType, ArnoldType, StorageType>::f(
-          node, data, arnoldName) == 0) {
+  if (_ConvertValueToArnoldParameter<UsdType, ArnoldType, StorageType>::f(node, data, arnoldName) == 0) {
     return;
   }
   auto *valueIdxs = AiArrayCopy(AiNodeGetArray(node, str::vidxs));
@@ -145,22 +143,21 @@ inline void _ConvertFaceVaryingPrimvarToBuiltin(AtNode *node,
                                                 const AtString &arnoldName,
                                                 const AtString &arnoldIndexName,
                                                 const VtIntArray *vertexCounts = nullptr,
-                                                const size_t *vertexCountSum   = nullptr)
+                                                const size_t *vertexCountSum = nullptr)
 {
   const auto numValues = _ConvertValueToArnoldParameter<UsdType, ArnoldType, StorageType>::f(
-      node, data, arnoldName);
+    node, data, arnoldName);
   if (numValues == 0) {
     return;
   }
-  AiNodeSetArray(
-      node, arnoldIndexName, HdArnoldGenerateIdxs(numValues, vertexCounts, vertexCountSum));
+  AiNodeSetArray(node, arnoldIndexName, HdArnoldGenerateIdxs(numValues, vertexCounts, vertexCountSum));
 }
 
 }  // namespace
 
 #if WABI_VERSION >= 2102
 HdArnoldMesh::HdArnoldMesh(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id)
-    : HdArnoldRprim<HdMesh>(str::polymesh, renderDelegate, id)
+  : HdArnoldRprim<HdMesh>(str::polymesh, renderDelegate, id)
 {
   // The default value is 1, which won't work well in a Hydra context.
   AiNodeSetByte(GetArnoldNode(), str::subdiv_iterations, 0);
@@ -169,7 +166,7 @@ HdArnoldMesh::HdArnoldMesh(HdArnoldRenderDelegate *renderDelegate, const SdfPath
 HdArnoldMesh::HdArnoldMesh(HdArnoldRenderDelegate *renderDelegate,
                            const SdfPath &id,
                            const SdfPath &instancerId)
-    : HdArnoldRprim<HdMesh>(str::polymesh, renderDelegate, id, instancerId)
+  : HdArnoldRprim<HdMesh>(str::polymesh, renderDelegate, id, instancerId)
 {
   // The default value is 1, which won't work well in a Hydra context.
   AiNodeSetByte(GetArnoldNode(), str::subdiv_iterations, 0);
@@ -185,8 +182,7 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
   HdArnoldRenderParamInterrupt param(renderParam);
   const auto &id = GetId();
 
-  const auto dirtyPrimvars = HdArnoldGetComputedPrimvars(
-                                 sceneDelegate, id, *dirtyBits, _primvars) ||
+  const auto dirtyPrimvars = HdArnoldGetComputedPrimvars(sceneDelegate, id, *dirtyBits, _primvars) ||
                              (*dirtyBits & HdChangeTracker::DirtyPrimvar);
 
   if (_primvars.count(HdTokens->points) != 0) {
@@ -194,8 +190,7 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
   }
   else if (HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, HdTokens->points)) {
     param.Interrupt();
-    _numberOfPositionKeys = HdArnoldSetPositionFromPrimvar(
-        GetArnoldNode(), id, sceneDelegate, str::vlist);
+    _numberOfPositionKeys = HdArnoldSetPositionFromPrimvar(GetArnoldNode(), id, sceneDelegate, str::vlist);
   }
 
   const auto dirtyTopology = HdChangeTracker::IsTopologyDirty(*dirtyBits, id);
@@ -203,15 +198,15 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
     param.Interrupt();
     const auto topology = GetMeshTopology(sceneDelegate);
     // We have to flip the orientation if it's left handed.
-    const auto isLeftHanded   = topology.GetOrientation() == PxOsdOpenSubdivTokens->leftHanded;
-    _vertexCounts             = topology.GetFaceVertexCounts();
+    const auto isLeftHanded = topology.GetOrientation() == PxOsdOpenSubdivTokens->leftHanded;
+    _vertexCounts = topology.GetFaceVertexCounts();
     const auto &vertexIndices = topology.GetFaceVertexIndices();
-    const auto numFaces       = topology.GetNumFaces();
-    auto *nsidesArray         = AiArrayAllocate(numFaces, 1, AI_TYPE_UINT);
-    auto *vidxsArray          = AiArrayAllocate(vertexIndices.size(), 1, AI_TYPE_UINT);
+    const auto numFaces = topology.GetNumFaces();
+    auto *nsidesArray = AiArrayAllocate(numFaces, 1, AI_TYPE_UINT);
+    auto *vidxsArray = AiArrayAllocate(vertexIndices.size(), 1, AI_TYPE_UINT);
 
-    auto *nsides    = static_cast<uint32_t *>(AiArrayMap(nsidesArray));
-    auto *vidxs     = static_cast<uint32_t *>(AiArrayMap(vidxsArray));
+    auto *nsides = static_cast<uint32_t *>(AiArrayMap(nsidesArray));
+    auto *vidxs = static_cast<uint32_t *>(AiArrayMap(vidxsArray));
     _vertexCountSum = 0;
     // We are manually calculating the sum of the vertex counts here, because we are filtering for
     // negative values from the vertex indices array.
@@ -224,7 +219,7 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
         nsides[i] = vertexCount;
         for (auto vertex = decltype(vertexCount){0}; vertex < vertexCount; vertex += 1) {
           vidxs[_vertexCountSum + vertexCount - vertex - 1] = static_cast<uint32_t>(
-              vertexIndices[_vertexCountSum + vertex]);
+            vertexIndices[_vertexCountSum + vertex]);
         }
         _vertexCountSum += vertexCount;
       }
@@ -233,19 +228,17 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
       // We still need _vertexCountSum as it is used to validate primvars.
       // We are manually calculating the sum of the vertex counts here, because we are filtering
       // for negative values from the vertex indices array.
-      std::transform(
-          _vertexCounts.begin(), _vertexCounts.end(), nsides, [&](const int i) -> uint32_t {
-            if (Ai_unlikely(i <= 0)) {
-              return 0;
-            }
-            const auto vertexCount = static_cast<uint32_t>(i);
-            _vertexCountSum += vertexCount;
-            return vertexCount;
-          });
-      std::transform(
-          vertexIndices.begin(), vertexIndices.end(), vidxs, [](const int i) -> uint32_t {
-            return Ai_unlikely(i <= 0) ? 0 : static_cast<uint32_t>(i);
-          });
+      std::transform(_vertexCounts.begin(), _vertexCounts.end(), nsides, [&](const int i) -> uint32_t {
+        if (Ai_unlikely(i <= 0)) {
+          return 0;
+        }
+        const auto vertexCount = static_cast<uint32_t>(i);
+        _vertexCountSum += vertexCount;
+        return vertexCount;
+      });
+      std::transform(vertexIndices.begin(), vertexIndices.end(), vidxs, [](const int i) -> uint32_t {
+        return Ai_unlikely(i <= 0) ? 0 : static_cast<uint32_t>(i);
+      });
       _vertexCounts = {};  // We don't need this anymore.
     }
     AiNodeSetArray(GetArnoldNode(), str::nsides, nsidesArray);
@@ -257,9 +250,8 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
     else {
       AiNodeSetStr(GetArnoldNode(), str::subdiv_type, str::none);
     }
-    AiNodeSetArray(GetArnoldNode(),
-                   str::shidxs,
-                   HdArnoldGetShidxs(topology.GetGeomSubsets(), numFaces, _subsets));
+    AiNodeSetArray(
+      GetArnoldNode(), str::shidxs, HdArnoldGetShidxs(topology.GetGeomSubsets(), numFaces, _subsets));
   }
 
   if (HdChangeTracker::IsVisibilityDirty(*dirtyBits, id)) {
@@ -271,9 +263,8 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
   if (HdChangeTracker::IsDisplayStyleDirty(*dirtyBits, id)) {
     param.Interrupt();
     const auto displayStyle = GetDisplayStyle(sceneDelegate);
-    AiNodeSetByte(GetArnoldNode(),
-                  str::subdiv_iterations,
-                  static_cast<uint8_t>(std::max(0, displayStyle.refineLevel)));
+    AiNodeSetByte(
+      GetArnoldNode(), str::subdiv_iterations, static_cast<uint8_t>(std::max(0, displayStyle.refineLevel)));
   }
 
   auto transformDirtied = false;
@@ -295,33 +286,33 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
   }
 
   auto materialsAssigned = false;
-  auto assignMaterials   = [&]() {
+  auto assignMaterials = [&]() {
     // Materials have already been assigned.
     if (materialsAssigned) {
       return;
     }
-    materialsAssigned     = true;
+    materialsAssigned = true;
     const auto numSubsets = _subsets.size();
     const auto numShaders = numSubsets + 1;
-    const auto isVolume   = _IsVolume();
-    auto *shaderArray     = AiArrayAllocate(numShaders, 1, AI_TYPE_POINTER);
-    auto *dispMapArray    = AiArrayAllocate(numShaders, 1, AI_TYPE_POINTER);
-    auto *shader          = static_cast<AtNode **>(AiArrayMap(shaderArray));
-    auto *dispMap         = static_cast<AtNode **>(AiArrayMap(dispMapArray));
+    const auto isVolume = _IsVolume();
+    auto *shaderArray = AiArrayAllocate(numShaders, 1, AI_TYPE_POINTER);
+    auto *dispMapArray = AiArrayAllocate(numShaders, 1, AI_TYPE_POINTER);
+    auto *shader = static_cast<AtNode **>(AiArrayMap(shaderArray));
+    auto *dispMap = static_cast<AtNode **>(AiArrayMap(dispMapArray));
     // We are using VtAray here, so it's going to be COW.
     auto oldMaterials = _materialTracker.GetCurrentMaterials(numShaders);
 
     auto setMaterial = [&](const SdfPath &materialId, size_t arrayId) {
       _materialTracker.SetMaterial(materialId, arrayId);
       const auto *material = reinterpret_cast<const HdArnoldMaterial *>(
-          sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, materialId));
+        sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, materialId));
       if (material == nullptr) {
-        shader[arrayId]  = isVolume ? GetRenderDelegate()->GetFallbackVolumeShader() :
-                                        GetRenderDelegate()->GetFallbackShader();
+        shader[arrayId] = isVolume ? GetRenderDelegate()->GetFallbackVolumeShader() :
+                                     GetRenderDelegate()->GetFallbackShader();
         dispMap[arrayId] = nullptr;
       }
       else {
-        shader[arrayId]  = isVolume ? material->GetVolumeShader() : material->GetSurfaceShader();
+        shader[arrayId] = isVolume ? material->GetVolumeShader() : material->GetSurfaceShader();
         dispMap[arrayId] = material->GetDisplacementShader();
       }
     };
@@ -342,7 +333,7 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
     HdArnoldGetPrimvars(sceneDelegate, id, *dirtyBits, _numberOfPositionKeys > 1, _primvars);
     param.Interrupt();
     const auto isVolume = _IsVolume();
-    auto visibility     = GetShapeVisibility();
+    auto visibility = GetShapeVisibility();
     for (auto &primvar : _primvars) {
       auto &desc = primvar.second;
       if (!desc.NeedsUpdate()) {
@@ -350,14 +341,12 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
       }
 
       if (desc.interpolation == HdInterpolationConstant) {
-        HdArnoldSetConstantPrimvar(
-            GetArnoldNode(), primvar.first, desc.role, desc.value, &visibility);
+        HdArnoldSetConstantPrimvar(GetArnoldNode(), primvar.first, desc.role, desc.value, &visibility);
       }
-      else if (desc.interpolation == HdInterpolationVertex ||
-               desc.interpolation == HdInterpolationVarying) {
+      else if (desc.interpolation == HdInterpolationVertex || desc.interpolation == HdInterpolationVarying) {
         if (primvar.first == _tokens->st || primvar.first == _tokens->uv) {
           _ConvertVertexPrimvarToBuiltin<GfVec2f, AI_TYPE_VECTOR2>(
-              GetArnoldNode(), desc.value, str::uvlist, str::uvidxs);
+            GetArnoldNode(), desc.value, str::uvlist, str::uvidxs);
         }
         else if (primvar.first == HdTokens->normals) {
           if (desc.value.IsEmpty()) {
@@ -365,11 +354,11 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
             sceneDelegate->SamplePrimvar(id, primvar.first, &sample);
             sample.count = _numberOfPositionKeys;
             _ConvertVertexPrimvarToBuiltin<GfVec3f, AI_TYPE_VECTOR>(
-                GetArnoldNode(), sample, str::nlist, str::nidxs);
+              GetArnoldNode(), sample, str::nlist, str::nidxs);
           }
           else {
             _ConvertVertexPrimvarToBuiltin<GfVec3f, AI_TYPE_VECTOR>(
-                GetArnoldNode(), desc.value, str::nlist, str::nidxs);
+              GetArnoldNode(), desc.value, str::nlist, str::nidxs);
           }
         }
         else {
@@ -388,12 +377,8 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
       }
       else if (desc.interpolation == HdInterpolationFaceVarying) {
         if (primvar.first == _tokens->st || primvar.first == _tokens->uv) {
-          _ConvertFaceVaryingPrimvarToBuiltin<GfVec2f, AI_TYPE_VECTOR2>(GetArnoldNode(),
-                                                                        desc.value,
-                                                                        str::uvlist,
-                                                                        str::uvidxs,
-                                                                        &_vertexCounts,
-                                                                        &_vertexCountSum);
+          _ConvertFaceVaryingPrimvarToBuiltin<GfVec2f, AI_TYPE_VECTOR2>(
+            GetArnoldNode(), desc.value, str::uvlist, str::uvidxs, &_vertexCounts, &_vertexCountSum);
         }
         else if (primvar.first == HdTokens->normals) {
           if (desc.value.IsEmpty()) {
@@ -401,24 +386,16 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
             sceneDelegate->SamplePrimvar(id, primvar.first, &sample);
             sample.count = _numberOfPositionKeys;
             _ConvertFaceVaryingPrimvarToBuiltin<GfVec3f, AI_TYPE_VECTOR>(
-                GetArnoldNode(), sample, str::nlist, str::nidxs, &_vertexCounts, &_vertexCountSum);
+              GetArnoldNode(), sample, str::nlist, str::nidxs, &_vertexCounts, &_vertexCountSum);
           }
           else {
-            _ConvertFaceVaryingPrimvarToBuiltin<GfVec3f, AI_TYPE_VECTOR>(GetArnoldNode(),
-                                                                         desc.value,
-                                                                         str::nlist,
-                                                                         str::nidxs,
-                                                                         &_vertexCounts,
-                                                                         &_vertexCountSum);
+            _ConvertFaceVaryingPrimvarToBuiltin<GfVec3f, AI_TYPE_VECTOR>(
+              GetArnoldNode(), desc.value, str::nlist, str::nidxs, &_vertexCounts, &_vertexCountSum);
           }
         }
         else {
-          HdArnoldSetFaceVaryingPrimvar(GetArnoldNode(),
-                                        primvar.first,
-                                        desc.role,
-                                        desc.value,
-                                        &_vertexCounts,
-                                        &_vertexCountSum);
+          HdArnoldSetFaceVaryingPrimvar(
+            GetArnoldNode(), primvar.first, desc.role, desc.value, &_vertexCounts, &_vertexCountSum);
         }
       }
     }

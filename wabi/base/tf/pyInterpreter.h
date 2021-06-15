@@ -62,11 +62,10 @@ extern int TfPyRunSimpleString(const std::string &cmd);
 /// Starts the interpreter if necessary. Deals with necessary thread state
 /// setup.
 TF_API
-extern boost::python::handle<> TfPyRunString(
-    const std::string &cmd,
-    int start,
-    boost::python::object const &globals = boost::python::object(),
-    boost::python::object const &locals  = boost::python::object());
+extern boost::python::handle<> TfPyRunString(const std::string &cmd,
+                                             int start,
+                                             boost::python::object const &globals = boost::python::object(),
+                                             boost::python::object const &locals = boost::python::object());
 
 /// Runs the given file using PyRun_File().
 ///
@@ -78,11 +77,10 @@ extern boost::python::handle<> TfPyRunString(
 /// Starts the interpreter if necessary. Deals with necessary thread state
 /// setup.
 TF_API
-extern boost::python::handle<> TfPyRunFile(
-    const std::string &filename,
-    int start,
-    boost::python::object const &globals = boost::python::object(),
-    boost::python::object const &locals  = boost::python::object());
+extern boost::python::handle<> TfPyRunFile(const std::string &filename,
+                                           int start,
+                                           boost::python::object const &globals = boost::python::object(),
+                                           boost::python::object const &locals = boost::python::object());
 
 /// Returns the disk path to the given module as an NSString.
 ///

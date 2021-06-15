@@ -51,8 +51,7 @@ template<typename... Bases> struct Tf_AddBases<TfType::Bases<Bases...>> {
       TfType::_CastFunction func;
     };
 
-    const std::initializer_list<Cast> baseCasts = {
-        {&typeid(Bases), &Tf_CastToParent<Derived, Bases>}...};
+    const std::initializer_list<Cast> baseCasts = {{&typeid(Bases), &Tf_CastToParent<Derived, Bases>}...};
 
     for (const Cast &cast : baseCasts) {
       type->_AddCppCastFunc(*cast.typeInfo, cast.func);
@@ -66,7 +65,7 @@ template<class T, class BaseTypes> TfType const &TfType::Declare()
   std::vector<TfType> baseTfTypes = Tf_AddBases<BaseTypes>::Declare();
   // Declare our type T.
   const std::type_info &typeInfo = typeid(T);
-  const std::string typeName     = TfType::GetCanonicalTypeName(typeInfo);
+  const std::string typeName = TfType::GetCanonicalTypeName(typeInfo);
   return TfType::Declare(typeName, baseTfTypes);
 }
 
@@ -79,12 +78,12 @@ template<typename T, typename BaseTypes> TfType const &TfType::Define()
 
   // Declare our type T.
   const std::type_info &typeInfo = typeid(T);
-  const std::string typeName     = TfType::GetCanonicalTypeName(typeInfo);
-  TfType const &newType          = TfType::Declare(typeName, baseTfTypes);
+  const std::string typeName = TfType::GetCanonicalTypeName(typeInfo);
+  TfType const &newType = TfType::Declare(typeName, baseTfTypes);
 
   // Record traits information about T.
-  const bool isPodType    = std::is_trivial<T>::value;
-  const bool isEnumType   = std::is_enum<T>::value;
+  const bool isPodType = std::is_trivial<T>::value;
+  const bool isEnumType = std::is_enum<T>::value;
   const size_t sizeofType = TfSizeofType<T>::value;
 
   newType._DefineCppType(typeInfo, sizeofType, isPodType, isEnumType);
@@ -105,12 +104,12 @@ template<class DERIVED, class BASE> inline void *Tf_CastToParent(void *addr, boo
   if (derivedToBase) {
     // Upcast -- can be done implicitly.
     DERIVED *derived = reinterpret_cast<DERIVED *>(addr);
-    BASE *base       = derived;
+    BASE *base = derived;
     return base;
   }
   else {
     // Downcast -- use static_cast.
-    BASE *base       = reinterpret_cast<BASE *>(addr);
+    BASE *base = reinterpret_cast<BASE *>(addr);
     DERIVED *derived = static_cast<DERIVED *>(base);
     return derived;
   }

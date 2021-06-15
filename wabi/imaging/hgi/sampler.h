@@ -63,12 +63,12 @@ WABI_NAMESPACE_BEGIN
 ///
 struct HgiSamplerDesc {
   HgiSamplerDesc()
-      : magFilter(HgiSamplerFilterNearest),
-        minFilter(HgiSamplerFilterNearest),
-        mipFilter(HgiMipFilterNotMipmapped),
-        addressModeU(HgiSamplerAddressModeClampToEdge),
-        addressModeV(HgiSamplerAddressModeClampToEdge),
-        addressModeW(HgiSamplerAddressModeClampToEdge)
+    : magFilter(HgiSamplerFilterNearest),
+      minFilter(HgiSamplerFilterNearest),
+      mipFilter(HgiMipFilterNotMipmapped),
+      addressModeU(HgiSamplerAddressModeClampToEdge),
+      addressModeV(HgiSamplerAddressModeClampToEdge),
+      addressModeW(HgiSamplerAddressModeClampToEdge)
   {}
 
   std::string debugName;
@@ -122,12 +122,12 @@ class HgiSampler {
   HgiSamplerDesc _descriptor;
 
  private:
-  HgiSampler()        = delete;
+  HgiSampler() = delete;
   HgiSampler &operator=(const HgiSampler &) = delete;
-  HgiSampler(const HgiSampler &)            = delete;
+  HgiSampler(const HgiSampler &) = delete;
 };
 
-using HgiSamplerHandle       = HgiHandle<HgiSampler>;
+using HgiSamplerHandle = HgiHandle<HgiSampler>;
 using HgiSamplerHandleVector = std::vector<HgiSamplerHandle>;
 
 WABI_NAMESPACE_END

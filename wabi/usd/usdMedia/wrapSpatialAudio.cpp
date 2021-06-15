@@ -54,20 +54,14 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateFilePathAttr(UsdMediaSpatialAudio &self,
-                                        object defaultVal,
-                                        bool writeSparsely)
+static UsdAttribute _CreateFilePathAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateFilePathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
-                                 writeSparsely);
+  return self.CreateFilePathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
 }
 
-static UsdAttribute _CreateAuralModeAttr(UsdMediaSpatialAudio &self,
-                                         object defaultVal,
-                                         bool writeSparsely)
+static UsdAttribute _CreateAuralModeAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateAuralModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                  writeSparsely);
+  return self.CreateAuralModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
 static UsdAttribute _CreatePlaybackModeAttr(UsdMediaSpatialAudio &self,
@@ -78,36 +72,26 @@ static UsdAttribute _CreatePlaybackModeAttr(UsdMediaSpatialAudio &self,
                                      writeSparsely);
 }
 
-static UsdAttribute _CreateStartTimeAttr(UsdMediaSpatialAudio &self,
-                                         object defaultVal,
-                                         bool writeSparsely)
+static UsdAttribute _CreateStartTimeAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateStartTimeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TimeCode),
                                   writeSparsely);
 }
 
-static UsdAttribute _CreateEndTimeAttr(UsdMediaSpatialAudio &self,
-                                       object defaultVal,
-                                       bool writeSparsely)
+static UsdAttribute _CreateEndTimeAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateEndTimeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TimeCode),
-                                writeSparsely);
+  return self.CreateEndTimeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TimeCode), writeSparsely);
 }
 
-static UsdAttribute _CreateMediaOffsetAttr(UsdMediaSpatialAudio &self,
-                                           object defaultVal,
-                                           bool writeSparsely)
+static UsdAttribute _CreateMediaOffsetAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateMediaOffsetAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double),
                                     writeSparsely);
 }
 
-static UsdAttribute _CreateGainAttr(UsdMediaSpatialAudio &self,
-                                    object defaultVal,
-                                    bool writeSparsely)
+static UsdAttribute _CreateGainAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateGainAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double),
-                             writeSparsely);
+  return self.CreateGainAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double), writeSparsely);
 }
 
 static std::string _Repr(const UsdMediaSpatialAudio &self)
@@ -125,64 +109,60 @@ void wrapUsdMediaSpatialAudio()
   class_<This, bases<UsdGeomXformable>> cls("SpatialAudio");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetFilePathAttr", &This::GetFilePathAttr)
-      .def("CreateFilePathAttr",
-           &_CreateFilePathAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetFilePathAttr", &This::GetFilePathAttr)
+    .def("CreateFilePathAttr",
+         &_CreateFilePathAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAuralModeAttr", &This::GetAuralModeAttr)
-      .def("CreateAuralModeAttr",
-           &_CreateAuralModeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAuralModeAttr", &This::GetAuralModeAttr)
+    .def("CreateAuralModeAttr",
+         &_CreateAuralModeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetPlaybackModeAttr", &This::GetPlaybackModeAttr)
-      .def("CreatePlaybackModeAttr",
-           &_CreatePlaybackModeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetPlaybackModeAttr", &This::GetPlaybackModeAttr)
+    .def("CreatePlaybackModeAttr",
+         &_CreatePlaybackModeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetStartTimeAttr", &This::GetStartTimeAttr)
-      .def("CreateStartTimeAttr",
-           &_CreateStartTimeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetStartTimeAttr", &This::GetStartTimeAttr)
+    .def("CreateStartTimeAttr",
+         &_CreateStartTimeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetEndTimeAttr", &This::GetEndTimeAttr)
-      .def("CreateEndTimeAttr",
-           &_CreateEndTimeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetEndTimeAttr", &This::GetEndTimeAttr)
+    .def("CreateEndTimeAttr",
+         &_CreateEndTimeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetMediaOffsetAttr", &This::GetMediaOffsetAttr)
-      .def("CreateMediaOffsetAttr",
-           &_CreateMediaOffsetAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetMediaOffsetAttr", &This::GetMediaOffsetAttr)
+    .def("CreateMediaOffsetAttr",
+         &_CreateMediaOffsetAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetGainAttr", &This::GetGainAttr)
-      .def("CreateGainAttr",
-           &_CreateGainAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetGainAttr", &This::GetGainAttr)
+    .def("CreateGainAttr", &_CreateGainAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

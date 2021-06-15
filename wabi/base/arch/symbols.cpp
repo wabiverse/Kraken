@@ -87,7 +87,7 @@ bool ArchGetAddressInfo(void *address,
 
   HMODULE module = nullptr;
   if (!::GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
-                               GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                             GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
                            reinterpret_cast<LPCSTR>(address),
                            &module)) {
     return false;
@@ -108,13 +108,13 @@ bool ArchGetAddressInfo(void *address,
     // Symbol
     ULONG64 symBuffer[(sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR) + sizeof(ULONG64) - 1) /
                       sizeof(ULONG64)];
-    SYMBOL_INFO *symbol  = (SYMBOL_INFO *)symBuffer;
-    symbol->MaxNameLen   = MAX_SYM_NAME;
+    SYMBOL_INFO *symbol = (SYMBOL_INFO *)symBuffer;
+    symbol->MaxNameLen = MAX_SYM_NAME;
     symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
 
     // Line
     IMAGEHLP_LINE64 line = {0};
-    line.SizeOfStruct    = sizeof(IMAGEHLP_LINE64);
+    line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
 
     DWORD64 dwAddress = (DWORD64)address;
     SymFromAddr(process, dwAddress, NULL, symbol);

@@ -112,8 +112,7 @@ UsdAttribute UsdRenderVar::GetDataTypeAttr() const
   return GetPrim().GetAttribute(UsdRenderTokens->dataType);
 }
 
-UsdAttribute UsdRenderVar::CreateDataTypeAttr(VtValue const &defaultValue,
-                                              bool writeSparsely) const
+UsdAttribute UsdRenderVar::CreateDataTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRenderTokens->dataType,
                                     SdfValueTypeNames->Token,
@@ -128,8 +127,7 @@ UsdAttribute UsdRenderVar::GetSourceNameAttr() const
   return GetPrim().GetAttribute(UsdRenderTokens->sourceName);
 }
 
-UsdAttribute UsdRenderVar::CreateSourceNameAttr(VtValue const &defaultValue,
-                                                bool writeSparsely) const
+UsdAttribute UsdRenderVar::CreateSourceNameAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRenderTokens->sourceName,
                                     SdfValueTypeNames->String,
@@ -144,8 +142,7 @@ UsdAttribute UsdRenderVar::GetSourceTypeAttr() const
   return GetPrim().GetAttribute(UsdRenderTokens->sourceType);
 }
 
-UsdAttribute UsdRenderVar::CreateSourceTypeAttr(VtValue const &defaultValue,
-                                                bool writeSparsely) const
+UsdAttribute UsdRenderVar::CreateSourceTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRenderTokens->sourceType,
                                     SdfValueTypeNames->Token,
@@ -156,8 +153,7 @@ UsdAttribute UsdRenderVar::CreateSourceTypeAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -171,12 +167,12 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRenderVar::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRenderTokens->dataType,
-      UsdRenderTokens->sourceName,
-      UsdRenderTokens->sourceType,
+    UsdRenderTokens->dataType,
+    UsdRenderTokens->sourceName,
+    UsdRenderTokens->sourceType,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdTyped::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

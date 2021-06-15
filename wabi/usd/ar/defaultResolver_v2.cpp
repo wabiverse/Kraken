@@ -105,8 +105,7 @@ bool ArDefaultResolver::IsRelativePath(const std::string &path)
   return (!path.empty() && TfIsRelativePath(path));
 }
 
-std::string ArDefaultResolver::AnchorRelativePath(const std::string &anchorPath,
-                                                  const std::string &path)
+std::string ArDefaultResolver::AnchorRelativePath(const std::string &anchorPath, const std::string &path)
 {
   if (TfIsRelativePath(anchorPath) || !IsRelativePath(path)) {
     return path;
@@ -119,8 +118,7 @@ std::string ArDefaultResolver::AnchorRelativePath(const std::string &anchorPath,
   // If anchorPath does not end with a '/', we assume it is specifying
   // a file, strip off the last component, and anchor the path to that
   // directory.
-  const std::string anchoredPath = TfStringCatPaths(TfStringGetBeforeSuffix(forwardPath, '/'),
-                                                    path);
+  const std::string anchoredPath = TfStringCatPaths(TfStringGetBeforeSuffix(forwardPath, '/'), path);
   return TfNormPath(anchoredPath);
 }
 
@@ -245,8 +243,7 @@ ArResolvedPath ArDefaultResolver::_Resolve(const std::string &assetPath)
 
   if (_CachePtr currentCache = _GetCurrentCache()) {
     _Cache::_PathToResolvedPathMap::accessor accessor;
-    if (currentCache->_pathToResolvedPathMap.insert(accessor,
-                                                    std::make_pair(assetPath, ArResolvedPath()))) {
+    if (currentCache->_pathToResolvedPathMap.insert(accessor, std::make_pair(assetPath, ArResolvedPath()))) {
       accessor->second = _ResolveNoCache(assetPath);
     }
     return accessor->second;
@@ -283,9 +280,8 @@ std::shared_ptr<ArAsset> ArDefaultResolver::_OpenAsset(const ArResolvedPath &res
   return std::shared_ptr<ArAsset>(new ArFilesystemAsset(f));
 }
 
-std::shared_ptr<ArWritableAsset> ArDefaultResolver::_OpenAssetForWrite(
-    const ArResolvedPath &resolvedPath,
-    WriteMode writeMode)
+std::shared_ptr<ArWritableAsset> ArDefaultResolver::_OpenAssetForWrite(const ArResolvedPath &resolvedPath,
+                                                                       WriteMode writeMode)
 {
   return ArFilesystemWritableAsset::Create(resolvedPath, writeMode);
 }
@@ -349,8 +345,7 @@ void ArDefaultResolver::_UnbindContext(const ArResolverContext &context, VtValue
 {
   _ContextStack &contextStack = _threadContextStack.local();
   if (contextStack.empty()) {
-    TF_CODING_ERROR("No context was bound, cannot unbind context: %s",
-                    context.GetDebugString().c_str());
+    TF_CODING_ERROR("No context was bound, cannot unbind context: %s", context.GetDebugString().c_str());
   }
 
   if (!contextStack.empty()) {

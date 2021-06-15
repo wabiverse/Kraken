@@ -90,23 +90,20 @@ static tuple FindClosestPointsHelper2(const GfRay &l1, const GfLineSeg &l2)
   return make_tuple(result, p1, p2, t1, t2);
 }
 
-static tuple IntersectHelper1(const GfRay &self,
-                              const GfVec3d &p0,
-                              const GfVec3d &p1,
-                              const GfVec3d &p2)
+static tuple IntersectHelper1(const GfRay &self, const GfVec3d &p0, const GfVec3d &p1, const GfVec3d &p2)
 {
   double dist = 0;
   GfVec3d barycentricCoords(0);
   bool frontFacing = false;
-  bool result      = self.Intersect(p0, p1, p2, &dist, &barycentricCoords, &frontFacing);
+  bool result = self.Intersect(p0, p1, p2, &dist, &barycentricCoords, &frontFacing);
   return make_tuple(result, dist, barycentricCoords, frontFacing);
 }
 
 static tuple IntersectHelper2(const GfRay &self, const GfPlane &plane)
 {
-  double dist      = 0;
+  double dist = 0;
   bool frontFacing = false;
-  bool result      = self.Intersect(plane, &dist, &frontFacing);
+  bool result = self.Intersect(plane, &dist, &frontFacing);
   return make_tuple(result, dist, frontFacing);
 }
 
@@ -131,10 +128,7 @@ static tuple IntersectHelper5(const GfRay &self, const GfVec3d &center, double r
   return make_tuple(result, enterDist, exitDist);
 }
 
-static tuple IntersectHelper6(const GfRay &self,
-                              const GfVec3d &origin,
-                              const GfVec3d &axis,
-                              double radius)
+static tuple IntersectHelper6(const GfRay &self, const GfVec3d &origin, const GfVec3d &axis, double radius)
 {
   double enter = 0, exit = 0;
   bool result = self.Intersect(origin, axis, radius, &enter, &exit);
@@ -154,8 +148,8 @@ static tuple IntersectHelper7(const GfRay &self,
 
 static string _Repr(GfRay const &self)
 {
-  return TF_PY_REPR_PREFIX + "Ray(" + TfPyRepr(self.GetStartPoint()) + ", " +
-         TfPyRepr(self.GetDirection()) + ")";
+  return TF_PY_REPR_PREFIX + "Ray(" + TfPyRepr(self.GetStartPoint()) + ", " + TfPyRepr(self.GetDirection()) +
+         ")";
 }
 
 }  // anonymous namespace
@@ -194,122 +188,120 @@ void wrapRay()
       "----------------------------------------------------------------------");
 
   class_<This>("Ray", "", init<>())
-      .def(init<const GfVec3d &, const GfVec3d &>())
+    .def(init<const GfVec3d &, const GfVec3d &>())
 
-      .def(TfTypePythonClass())
+    .def(TfTypePythonClass())
 
-      .def("SetPointAndDirection", &This::SetPointAndDirection, return_self<>())
-      .def("SetEnds", &This::SetEnds, return_self<>())
+    .def("SetPointAndDirection", &This::SetPointAndDirection, return_self<>())
+    .def("SetEnds", &This::SetEnds, return_self<>())
 
-      .add_property(
-          "startPoint",
-          make_function(&This::GetStartPoint, return_value_policy<copy_const_reference>()),
-          SetStartPointHelper)
-      .add_property(
-          "direction",
-          make_function(&This::GetDirection, return_value_policy<copy_const_reference>()),
-          SetDirectionHelper)
+    .add_property("startPoint",
+                  make_function(&This::GetStartPoint, return_value_policy<copy_const_reference>()),
+                  SetStartPointHelper)
+    .add_property("direction",
+                  make_function(&This::GetDirection, return_value_policy<copy_const_reference>()),
+                  SetDirectionHelper)
 
-      .def("GetPoint", &This::GetPoint)
+    .def("GetPoint", &This::GetPoint)
 
-      .def("FindClosestPoint", FindClosestPointHelper)
+    .def("FindClosestPoint", FindClosestPointHelper)
 
-      .def("Transform", &This::Transform, return_self<>())
+    .def("Transform", &This::Transform, return_self<>())
 
-      .def("Intersect",
-           IntersectHelper1,
-           "Intersect( p0, p1, p2 ) -> tuple<intersects = bool, dist =\n"
-           "float, barycentric = GfVec3d, frontFacing = bool>\n"
-           "\n"
-           "Intersects the ray with the triangle formed by points p0,\n"
-           "p1, and p2.  The first item in the tuple is true if the ray\n"
-           "intersects the triangle. dist is the the parametric\n"
-           "distance to the intersection point, the barycentric\n"
-           "coordinates of the intersection point, and the front-facing\n"
-           "flag. The barycentric coordinates are defined with respect\n"
-           "to the three vertices taken in order.  The front-facing\n"
-           "flag is True if the intersection hit the side of the\n"
-           "triangle that is formed when the vertices are ordered\n"
-           "counter-clockwise (right-hand rule).\n"
-           "\n"
-           "Barycentric coordinates are defined to sum to 1 and satisfy\n"
-           "this relationsip:\n"
-           "\n"
-           "    intersectionPoint = (barycentricCoords[0] * p0 +\n"
-           "                         barycentricCoords[1] * p1 +\n"
-           "                         barycentricCoords[2] * p2);\n"
-           "----------------------------------------------------------------------")
-      .def("Intersect",
-           IntersectHelper2,
-           "Intersect( plane ) -> tuple<intersects = bool, dist = float,\n"
-           "frontFacing = bool>\n"
-           "\n"
-           "Intersects the ray with the Gf.Plane.  The first item in\n"
-           "the returned tuple is true if the ray intersects the plane.\n"
-           "dist is the parametric distance to the intersection point\n"
-           "and frontfacing is true if the intersection is on the side\n"
-           "of the plane toward which the plane's normal points.\n"
-           "----------------------------------------------------------------------")
-      .def("Intersect",
-           IntersectHelper3,
-           "Intersect( range3d ) -> tuple<intersects = bool, enterDist\n"
-           "= float, exitDist = float>\n"
-           //\n"
-           "Intersects the plane with an axis-aligned box in a\n"
-           "Gf.Range3d.  intersects is true if the ray intersects it at\n"
-           "all within bounds. If there is an intersection then enterDist\n"
-           "and exitDist will be the parametric distances to the two\n"
-           "intersection points.\n"
-           "----------------------------------------------------------------------")
-      .def("Intersect",
-           IntersectHelper4,
-           "Intersect( bbox3d ) -> tuple<intersects = bool, enterDist\n"
-           "= float, exitDist = float>\n"
-           //\n"
-           "Intersects the plane with an oriented box in a Gf.BBox3d.\n"
-           "intersects is true if the ray intersects it at all within\n"
-           "bounds. If there is an intersection then enterDist and\n"
-           "exitDist will be the parametric distances to the two\n"
-           "intersection points.\n"
-           "----------------------------------------------------------------------")
-      .def("Intersect",
-           IntersectHelper5,
-           "Intersect( center, radius ) -> tuple<intersects = bool,\n"
-           "enterDist = float, exitDist = float>\n"
-           "\n"
-           "Intersects the plane with an sphere. intersects is true if\n"
-           "the ray intersects it at all within the sphere. If there is\n"
-           "an intersection then enterDist and exitDist will be the\n"
-           "parametric distances to the two intersection points.\n"
-           "----------------------------------------------------------------------")
-      .def("Intersect",
-           IntersectHelper6,
-           "Intersect( origin, axis, radius ) -> tuple<intersects = bool,\n"
-           "enterDist = float, exitDist = float>\n"
-           "\n"
-           "Intersects the plane with an infinite cylinder. intersects\n"
-           "is true if the ray intersects it at all within the\n"
-           "sphere. If there is an intersection then enterDist and\n"
-           "exitDist will be the parametric distances to the two\n"
-           "intersection points.\n"
-           "----------------------------------------------------------------------")
-      .def("Intersect",
-           IntersectHelper7,
-           "Intersect( origin, axis, radius, height ) -> \n"
-           "tuple<intersects = bool, enterDist = float, exitDist = float>\n"
-           "\n"
-           "Intersects the plane with an cylinder. intersects\n"
-           "is true if the ray intersects it at all within the\n"
-           "sphere. If there is an intersection then enterDist and\n"
-           "exitDist will be the parametric distances to the two\n"
-           "intersection points.\n"
-           "----------------------------------------------------------------------")
+    .def("Intersect",
+         IntersectHelper1,
+         "Intersect( p0, p1, p2 ) -> tuple<intersects = bool, dist =\n"
+         "float, barycentric = GfVec3d, frontFacing = bool>\n"
+         "\n"
+         "Intersects the ray with the triangle formed by points p0,\n"
+         "p1, and p2.  The first item in the tuple is true if the ray\n"
+         "intersects the triangle. dist is the the parametric\n"
+         "distance to the intersection point, the barycentric\n"
+         "coordinates of the intersection point, and the front-facing\n"
+         "flag. The barycentric coordinates are defined with respect\n"
+         "to the three vertices taken in order.  The front-facing\n"
+         "flag is True if the intersection hit the side of the\n"
+         "triangle that is formed when the vertices are ordered\n"
+         "counter-clockwise (right-hand rule).\n"
+         "\n"
+         "Barycentric coordinates are defined to sum to 1 and satisfy\n"
+         "this relationsip:\n"
+         "\n"
+         "    intersectionPoint = (barycentricCoords[0] * p0 +\n"
+         "                         barycentricCoords[1] * p1 +\n"
+         "                         barycentricCoords[2] * p2);\n"
+         "----------------------------------------------------------------------")
+    .def("Intersect",
+         IntersectHelper2,
+         "Intersect( plane ) -> tuple<intersects = bool, dist = float,\n"
+         "frontFacing = bool>\n"
+         "\n"
+         "Intersects the ray with the Gf.Plane.  The first item in\n"
+         "the returned tuple is true if the ray intersects the plane.\n"
+         "dist is the parametric distance to the intersection point\n"
+         "and frontfacing is true if the intersection is on the side\n"
+         "of the plane toward which the plane's normal points.\n"
+         "----------------------------------------------------------------------")
+    .def("Intersect",
+         IntersectHelper3,
+         "Intersect( range3d ) -> tuple<intersects = bool, enterDist\n"
+         "= float, exitDist = float>\n"
+         //\n"
+         "Intersects the plane with an axis-aligned box in a\n"
+         "Gf.Range3d.  intersects is true if the ray intersects it at\n"
+         "all within bounds. If there is an intersection then enterDist\n"
+         "and exitDist will be the parametric distances to the two\n"
+         "intersection points.\n"
+         "----------------------------------------------------------------------")
+    .def("Intersect",
+         IntersectHelper4,
+         "Intersect( bbox3d ) -> tuple<intersects = bool, enterDist\n"
+         "= float, exitDist = float>\n"
+         //\n"
+         "Intersects the plane with an oriented box in a Gf.BBox3d.\n"
+         "intersects is true if the ray intersects it at all within\n"
+         "bounds. If there is an intersection then enterDist and\n"
+         "exitDist will be the parametric distances to the two\n"
+         "intersection points.\n"
+         "----------------------------------------------------------------------")
+    .def("Intersect",
+         IntersectHelper5,
+         "Intersect( center, radius ) -> tuple<intersects = bool,\n"
+         "enterDist = float, exitDist = float>\n"
+         "\n"
+         "Intersects the plane with an sphere. intersects is true if\n"
+         "the ray intersects it at all within the sphere. If there is\n"
+         "an intersection then enterDist and exitDist will be the\n"
+         "parametric distances to the two intersection points.\n"
+         "----------------------------------------------------------------------")
+    .def("Intersect",
+         IntersectHelper6,
+         "Intersect( origin, axis, radius ) -> tuple<intersects = bool,\n"
+         "enterDist = float, exitDist = float>\n"
+         "\n"
+         "Intersects the plane with an infinite cylinder. intersects\n"
+         "is true if the ray intersects it at all within the\n"
+         "sphere. If there is an intersection then enterDist and\n"
+         "exitDist will be the parametric distances to the two\n"
+         "intersection points.\n"
+         "----------------------------------------------------------------------")
+    .def("Intersect",
+         IntersectHelper7,
+         "Intersect( origin, axis, radius, height ) -> \n"
+         "tuple<intersects = bool, enterDist = float, exitDist = float>\n"
+         "\n"
+         "Intersects the plane with an cylinder. intersects\n"
+         "is true if the ray intersects it at all within the\n"
+         "sphere. If there is an intersection then enterDist and\n"
+         "exitDist will be the parametric distances to the two\n"
+         "intersection points.\n"
+         "----------------------------------------------------------------------")
 
-      .def(str(self))
-      .def(self == self)
-      .def(self != self)
+    .def(str(self))
+    .def(self == self)
+    .def(self != self)
 
-      .def("__repr__", _Repr)
+    .def("__repr__", _Repr)
 
-      ;
+    ;
 }

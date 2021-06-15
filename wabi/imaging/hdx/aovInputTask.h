@@ -80,7 +80,7 @@ class HdxAovInputTask : public HdxTask {
   HgiTextureHandle _depthTexture;
   HgiTextureHandle _aovTextureIntermediate;
 
-  HdxAovInputTask()                        = delete;
+  HdxAovInputTask() = delete;
   HdxAovInputTask(const HdxAovInputTask &) = delete;
   HdxAovInputTask &operator=(const HdxAovInputTask &) = delete;
 };

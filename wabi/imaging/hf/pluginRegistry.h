@@ -178,7 +178,7 @@ class HfPluginRegistry {
   ///
   /// This class is not intended to be copied.
   ///
-  HfPluginRegistry()                         = delete;
+  HfPluginRegistry() = delete;
   HfPluginRegistry(const HfPluginRegistry &) = delete;
   HfPluginRegistry &operator=(const HfPluginRegistry &) = delete;
 };

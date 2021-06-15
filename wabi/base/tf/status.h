@@ -49,7 +49,7 @@ class TfStatus : public TfDiagnosticBase {
            const std::string &commentary,
            TfDiagnosticInfo info,
            bool quiet)
-      : TfDiagnosticBase(statusCode, statusCodeString, context, commentary, info, quiet)
+    : TfDiagnosticBase(statusCode, statusCodeString, context, commentary, info, quiet)
   {}
 
   friend class TfDiagnosticMgr;

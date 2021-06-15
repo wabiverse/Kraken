@@ -35,8 +35,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdRenderPass::HdRenderPass(HdRenderIndex *index, HdRprimCollection const &collection)
-    : _renderIndex(index)
+HdRenderPass::HdRenderPass(HdRenderIndex *index, HdRprimCollection const &collection) : _renderIndex(index)
 {
   SetRprimCollection(collection);
 }
@@ -75,14 +74,14 @@ void HdRenderPass::SetRprimCollection(HdRprimCollection const &col)
     s << "  Repr: " << col.GetReprSelector() << "\n";
 
     TF_DEBUG(HD_DIRTY_LIST)
-        .Msg(
-            "RenderPass(%p)::SetRprimCollection (%s) - "
-            "constructing new DirtyList(%p) minorChange(%d) \n%s\n",
-            (void *)this,
-            col.GetName().GetText(),
-            (void *)&*_dirtyList,
-            isMinorChange,
-            s.str().c_str());
+      .Msg(
+        "RenderPass(%p)::SetRprimCollection (%s) - "
+        "constructing new DirtyList(%p) minorChange(%d) \n%s\n",
+        (void *)this,
+        col.GetName().GetText(),
+        (void *)&*_dirtyList,
+        isMinorChange,
+        s.str().c_str());
   }
 
   // Mark the collection dirty in derived classes.

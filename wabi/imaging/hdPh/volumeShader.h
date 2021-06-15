@@ -34,8 +34,8 @@ WABI_NAMESPACE_BEGIN
 
 class HdRenderDelegate;
 
-using HdPh_VolumeShaderSharedPtr    = std::shared_ptr<class HdPh_VolumeShader>;
-using HdPh_MaterialParamVector      = std::vector<class HdPh_MaterialParam>;
+using HdPh_VolumeShaderSharedPtr = std::shared_ptr<class HdPh_VolumeShader>;
+using HdPh_MaterialParamVector = std::vector<class HdPh_MaterialParam>;
 using HdVolumeFieldDescriptorVector = std::vector<struct HdVolumeFieldDescriptor>;
 
 /// \class HdPh_VolumeShader
@@ -120,8 +120,8 @@ class HdPh_VolumeShader final : public HdPhSurfaceShader {
   /// distance to shader.
   ///
   static void GetBufferSourcesForBBoxAndSampleDistance(
-      const std::pair<GfBBox3d, float> &bboxAndSampleDistance,
-      HdBufferSourceSharedPtrVector *sources);
+    const std::pair<GfBBox3d, float> &bboxAndSampleDistance,
+    HdBufferSourceSharedPtrVector *sources);
 
   /// GfRange3d encodes empty range by (infinity, -infinity).
   /// Avoid those insane values by returning (0,0).

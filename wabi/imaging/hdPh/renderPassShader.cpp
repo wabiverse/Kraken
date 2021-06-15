@@ -67,19 +67,18 @@ TfToken _GetInputName(const TfToken &aovName)
 // An AOV is backed by a render buffer. And Phoenix backs a render buffer
 // by a texture. The identifier for this texture can be obtained from
 // the HdPhRenderBuffer.
-_NamedTextureIdentifiers _GetNamedTextureIdentifiers(
-    HdRenderPassAovBindingVector const &aovInputBindings,
-    HdRenderIndex *const renderIndex)
+_NamedTextureIdentifiers _GetNamedTextureIdentifiers(HdRenderPassAovBindingVector const &aovInputBindings,
+                                                     HdRenderIndex *const renderIndex)
 {
   _NamedTextureIdentifiers result;
   result.reserve(aovInputBindings.size());
 
   for (const HdRenderPassAovBinding &aovBinding : aovInputBindings) {
     if (HdPhRenderBuffer *const renderBuffer = dynamic_cast<HdPhRenderBuffer *>(
-            renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, aovBinding.renderBufferId))) {
+          renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, aovBinding.renderBufferId))) {
       result.push_back(_NamedTextureIdentifier{_GetInputName(aovBinding.aovName),
                                                renderBuffer->GetTextureIdentifier(
-                                                   /* multiSampled = */ false)});
+                                                 /* multiSampled = */ false)});
     }
   }
 
@@ -97,13 +96,12 @@ bool _AreHandlesValid(const HdPhShaderCode::NamedTextureHandleVector &namedTextu
 
   for (size_t i = 0; i < namedTextureHandles.size(); i++) {
     const HdPhShaderCode::NamedTextureHandle namedTextureHandle = namedTextureHandles[i];
-    const _NamedTextureIdentifier namedTextureIdentifier        = namedTextureIdentifiers[i];
+    const _NamedTextureIdentifier namedTextureIdentifier = namedTextureIdentifiers[i];
 
     if (namedTextureHandle.name != namedTextureIdentifier.name) {
       return false;
     }
-    const HdPhTextureObjectSharedPtr &textureObject =
-        namedTextureHandle.handle->GetTextureObject();
+    const HdPhTextureObjectSharedPtr &textureObject = namedTextureHandle.handle->GetTextureObject();
     if (textureObject->GetTextureIdentifier() != namedTextureIdentifier.id) {
       return false;
     }
@@ -118,13 +116,13 @@ HdPhRenderPassShader::HdPhRenderPassShader() : HdPhRenderPassShader(HdPhPackageR
 {}
 
 HdPhRenderPassShader::HdPhRenderPassShader(TfToken const &glslfxFile)
-    : HdPhShaderCode(),
-      _glslfxFile(glslfxFile)  // user-defined
-      ,
-      _glslfx(std::make_unique<HioGlslfx>(glslfxFile)),
-      _hash(0),
-      _hashValid(false),
-      _cullStyle(HdCullStyleNothing)
+  : HdPhShaderCode(),
+    _glslfxFile(glslfxFile)  // user-defined
+    ,
+    _glslfx(std::make_unique<HioGlslfx>(glslfxFile)),
+    _hash(0),
+    _hashValid(false),
+    _cullStyle(HdCullStyleNothing)
 {}
 
 /*virtual*/
@@ -184,8 +182,7 @@ void HdPhRenderPassShader::BindResources(const int program,
   unsigned int cullStyle = _cullStyle;
   binder.BindUniformui(HdShaderTokens->cullStyle, 1, &cullStyle);
 
-  HdPh_TextureBinder::BindResources(
-      binder, /* useBindlessHandles = */ false, _namedTextureHandles);
+  HdPh_TextureBinder::BindResources(binder, /* useBindlessHandles = */ false, _namedTextureHandles);
 }
 
 /*virtual*/
@@ -198,8 +195,7 @@ void HdPhRenderPassShader::UnbindResources(const int program,
     binder.Unbind(it->second);
   }
 
-  HdPh_TextureBinder::UnbindResources(
-      binder, /* useBindlessHandles = */ false, _namedTextureHandles);
+  HdPh_TextureBinder::UnbindResources(binder, /* useBindlessHandles = */ false, _namedTextureHandles);
 
   glActiveTexture(GL_TEXTURE0);
 }
@@ -212,7 +208,7 @@ void HdPhRenderPassShader::AddBufferBinding(HdBindingRequest const &req)
     return;
   }
   it.first->second = req;
-  _hashValid       = false;
+  _hashValid = false;
 }
 
 void HdPhRenderPassShader::RemoveBufferBinding(TfToken const &name)
@@ -261,8 +257,7 @@ void HdPhRenderPassShader::AddBindings(HdBindingRequestVector *customBindings)
   }
 
   // typed binding to emit declaration and accessor.
-  customBindings->push_back(
-      HdBindingRequest(HdBinding::UNIFORM, HdShaderTokens->cullStyle, HdTypeUInt32));
+  customBindings->push_back(HdBindingRequest(HdBinding::UNIFORM, HdShaderTokens->cullStyle, HdTypeUInt32));
 }
 
 HdPh_MaterialParamVector const &HdPhRenderPassShader::GetParams() const
@@ -270,22 +265,20 @@ HdPh_MaterialParamVector const &HdPhRenderPassShader::GetParams() const
   return _params;
 }
 
-HdPhShaderCode::NamedTextureHandleVector const &HdPhRenderPassShader::GetNamedTextureHandles()
-    const
+HdPhShaderCode::NamedTextureHandleVector const &HdPhRenderPassShader::GetNamedTextureHandles() const
 {
   return _namedTextureHandles;
 }
 
-void HdPhRenderPassShader::UpdateAovInputTextures(
-    HdRenderPassAovBindingVector const &aovInputBindings,
-    HdRenderIndex *const renderIndex)
+void HdPhRenderPassShader::UpdateAovInputTextures(HdRenderPassAovBindingVector const &aovInputBindings,
+                                                  HdRenderIndex *const renderIndex)
 {
   TRACE_FUNCTION();
 
   // Compute the identifiers for the textures backing the requested
   // (resolved) AOVs.
-  const _NamedTextureIdentifiers namedTextureIdentifiers = _GetNamedTextureIdentifiers(
-      aovInputBindings, renderIndex);
+  const _NamedTextureIdentifiers namedTextureIdentifiers = _GetNamedTextureIdentifiers(aovInputBindings,
+                                                                                       renderIndex);
   // If the (named) texture handles are up-to-date, there is nothing to do.
   if (_AreHandlesValid(_namedTextureHandles, namedTextureIdentifiers)) {
     return;
@@ -299,23 +292,23 @@ void HdPhRenderPassShader::UpdateAovInputTextures(
   _params.clear();
 
   HdPhResourceRegistry *const resourceRegistry = dynamic_cast<HdPhResourceRegistry *>(
-      renderIndex->GetResourceRegistry().get());
+    renderIndex->GetResourceRegistry().get());
   if (!TF_VERIFY(resourceRegistry)) {
     return;
   }
 
   for (const auto &namedTextureIdentifier : namedTextureIdentifiers) {
     static const HdSamplerParameters samplerParameters{
-        HdWrapClamp, HdWrapClamp, HdWrapClamp, HdMinFilterNearest, HdMagFilterNearest};
+      HdWrapClamp, HdWrapClamp, HdWrapClamp, HdMinFilterNearest, HdMagFilterNearest};
 
     // Allocate texture handle for given identifier.
     HdPhTextureHandleSharedPtr textureHandle = resourceRegistry->AllocateTextureHandle(
-        namedTextureIdentifier.id,
-        HdTextureType::Uv,
-        samplerParameters,
-        /* memoryRequest = */ 0,
-        /* createBindlessHandle = */ false,
-        shared_from_this());
+      namedTextureIdentifier.id,
+      HdTextureType::Uv,
+      samplerParameters,
+      /* memoryRequest = */ 0,
+      /* createBindlessHandle = */ false,
+      shared_from_this());
     // Add to _namedTextureHandles so that the texture will
     // be bound to the shader in BindResources.
     _namedTextureHandles.push_back(HdPhShaderCode::NamedTextureHandle{namedTextureIdentifier.name,
@@ -325,9 +318,8 @@ void HdPhRenderPassShader::UpdateAovInputTextures(
 
     // Add a corresponding param so that codegen is
     // generating the accessor HdGet_AOVNAMEReadback().
-    _params.emplace_back(HdPh_MaterialParam::ParamTypeTexture,
-                         namedTextureIdentifier.name,
-                         VtValue(GfVec4f(0, 0, 0, 0)));
+    _params.emplace_back(
+      HdPh_MaterialParam::ParamTypeTexture, namedTextureIdentifier.name, VtValue(GfVec4f(0, 0, 0, 0)));
   }
 }
 

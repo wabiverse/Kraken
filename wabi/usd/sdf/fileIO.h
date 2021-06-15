@@ -115,15 +115,14 @@ class Sdf_StreamWritableAsset : public ArWritableAsset {
 // Helper class for writing out strings for the text file format.
 class Sdf_TextOutput {
  public:
-  explicit Sdf_TextOutput(std::ostream &out)
-      : Sdf_TextOutput(std::make_shared<Sdf_StreamWritableAsset>(out))
+  explicit Sdf_TextOutput(std::ostream &out) : Sdf_TextOutput(std::make_shared<Sdf_StreamWritableAsset>(out))
   {}
 
   explicit Sdf_TextOutput(std::shared_ptr<ArWritableAsset> &&asset)
-      : _asset(std::move(asset)),
-        _offset(0),
-        _buffer(new char[BUFFER_SIZE]),
-        _bufferPos(0)
+    : _asset(std::move(asset)),
+      _offset(0),
+      _buffer(new char[BUFFER_SIZE]),
+      _bufferPos(0)
   {}
 
   ~Sdf_TextOutput()
@@ -167,7 +166,7 @@ class Sdf_TextOutput {
     // characters at a time. Buffer writes to batch writes into larger
     // chunks.
     while (strLength != 0) {
-      const size_t numAvail  = BUFFER_SIZE - _bufferPos;
+      const size_t numAvail = BUFFER_SIZE - _bufferPos;
       const size_t numToCopy = std::min(numAvail, strLength);
       memcpy(_buffer.get() + _bufferPos, str, numToCopy);
 

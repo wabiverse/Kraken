@@ -31,11 +31,10 @@ namespace {
 ///
 struct HdCyclesIndexedTimeSample {
   using index_type = ccl::uint;
-  using time_type  = float;
+  using time_type = float;
 
-  static constexpr time_type epsilon     = static_cast<time_type>(1e-5);
-  static constexpr index_type resolution = static_cast<index_type>(static_cast<time_type>(1.0) /
-                                                                   epsilon);
+  static constexpr time_type epsilon = static_cast<time_type>(1e-5);
+  static constexpr index_type resolution = static_cast<index_type>(static_cast<time_type>(1.0) / epsilon);
 
   HdCyclesIndexedTimeSample(index_type _index, time_type _time) : index{_index}, time{_time}
   {
@@ -81,7 +80,7 @@ namespace {
 
 template<typename TYPE, unsigned int CAPACITY>
 HdTimeSampleArray<TYPE, CAPACITY> HdCyclesTimeSamplesRemoveOverlaps(
-    const HdTimeSampleArray<TYPE, CAPACITY> &samples)
+  const HdTimeSampleArray<TYPE, CAPACITY> &samples)
 {
   if (samples.count == 1) {
     return samples;
@@ -102,7 +101,7 @@ HdTimeSampleArray<TYPE, CAPACITY> HdCyclesTimeSamplesRemoveOverlaps(
 
   using size_type = typename decltype(HdTimeSampleArray<TYPE, CAPACITY>::times)::size_type;
   for (size_type i = 0; i < sorted.size(); ++i) {
-    result.times[i]  = sorted[i].time;
+    result.times[i] = sorted[i].time;
     result.values[i] = samples.values[sorted[i].index];
   }
 
@@ -116,7 +115,7 @@ bool HdCyclesAreTimeSamplesUniformlyDistributed(const HdTimeSampleArray<TYPE, CA
     return true;
   }
 
-  using size_type  = typename decltype(HdTimeSampleArray<TYPE, CAPACITY>::times)::size_type;
+  using size_type = typename decltype(HdTimeSampleArray<TYPE, CAPACITY>::times)::size_type;
   using value_type = typename decltype(HdTimeSampleArray<TYPE, CAPACITY>::times)::value_type;
 
   // reference segment - samples must be sorted in ascending order
@@ -137,10 +136,10 @@ HdCyclesTransformSource::HdCyclesTransformSource(ccl::Object *object,
                                                  const HdCyclesMatrix4dTimeSampleArray &samples,
                                                  const GfMatrix4d &fallback,
                                                  unsigned int new_num_samples)
-    : m_object{object},
-      m_samples{samples},
-      m_fallback{fallback},
-      m_new_num_samples{new_num_samples}
+  : m_object{object},
+    m_samples{samples},
+    m_fallback{fallback},
+    m_new_num_samples{new_num_samples}
 {}
 
 bool HdCyclesTransformSource::_CheckValid() const
@@ -153,8 +152,8 @@ bool HdCyclesTransformSource::_CheckValid() const
 }
 
 HdCyclesTransformTimeSampleArray HdCyclesTransformSource::ResampleUniform(
-    const HdCyclesMatrix4dTimeSampleArray &samples,
-    unsigned int new_num_samples)
+  const HdCyclesMatrix4dTimeSampleArray &samples,
+  unsigned int new_num_samples)
 {
   if (new_num_samples % 2 == 0)
     new_num_samples += 1;
@@ -166,9 +165,9 @@ HdCyclesTransformTimeSampleArray HdCyclesTransformSource::ResampleUniform(
 
   // sample - point in time, segment - width between two samples
   // 3 samples = 2 segments => num_segments = num_samples - 1
-  const float shutter_time            = samples.times[num_samples - 1] - samples.times[0];
+  const float shutter_time = samples.times[num_samples - 1] - samples.times[0];
   const unsigned int new_num_segments = new_num_samples > 1 ? new_num_samples - 1 : 1;
-  const float new_segment_width       = shutter_time / static_cast<float>(new_num_segments);
+  const float new_segment_width = shutter_time / static_cast<float>(new_num_segments);
 
   //
   unsigned int sample = 1;
@@ -214,7 +213,7 @@ HdCyclesTransformTimeSampleArray HdCyclesTransformSource::ResampleUniform(
 
     // Weighting by distance to sample
     const float timeDiff = samples.times[iXfNext] - samples.times[iXfPrev];
-    const float t        = (resampled.times[i] - samples.times[iXfPrev]) / timeDiff;
+    const float t = (resampled.times[i] - samples.times[iXfPrev]) / timeDiff;
     assert(t >= 0.0f && t <= 1.0f);
 
     transform_motion_array_interpolate(&resampled.values[i], dxf, 2, t);
@@ -256,10 +255,9 @@ bool HdCyclesTransformSource::Resolve()
   }
 
   // Frame centered motion blur only, with fallback to default value
-  const float shutter_open  = m_samples.times[0];
+  const float shutter_open = m_samples.times[0];
   const float shutter_close = m_samples.times[static_cast<unsigned int>(m_samples.count) - 1];
-  if (std::abs(std::abs(shutter_close) - std::abs(shutter_open)) >
-      HdCyclesIndexedTimeSample::epsilon) {
+  if (std::abs(std::abs(shutter_close) - std::abs(shutter_open)) > HdCyclesIndexedTimeSample::epsilon) {
     object->motion.resize(0);
     object->tfm = mat4d_to_transform(m_fallback);
 
@@ -281,8 +279,7 @@ bool HdCyclesTransformSource::Resolve()
 
   // Check if resampling is required
   bool requires_resampling = false;
-  if (num_inp_samples != num_req_samples ||
-      !HdCyclesAreTimeSamplesUniformlyDistributed(m_samples)) {
+  if (num_inp_samples != num_req_samples || !HdCyclesAreTimeSamplesUniformlyDistributed(m_samples)) {
     requires_resampling = true;
   }
 

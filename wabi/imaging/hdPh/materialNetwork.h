@@ -32,7 +32,7 @@
 WABI_NAMESPACE_BEGIN
 
 class HdPhResourceRegistry;
-using HioGlslfxSharedPtr       = std::shared_ptr<class HioGlslfx>;
+using HioGlslfxSharedPtr = std::shared_ptr<class HioGlslfx>;
 using HdPh_MaterialParamVector = std::vector<class HdPh_MaterialParam>;
 
 /// \class HdPhMaterialNetwork

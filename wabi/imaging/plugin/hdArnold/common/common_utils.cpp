@@ -28,7 +28,7 @@ std::string ArnoldUsdMakeCamelCase(const std::string &in)
     }
     else {
       if (capitalize) {
-        c          = toupper(c);
+        c = toupper(c);
         capitalize = false;
       }
       out += c;

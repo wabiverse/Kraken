@@ -87,8 +87,7 @@ UsdAttribute UsdGeomPointBased::GetPointsAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->points);
 }
 
-UsdAttribute UsdGeomPointBased::CreatePointsAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdGeomPointBased::CreatePointsAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->points,
                                     SdfValueTypeNames->Point3fArray,
@@ -103,8 +102,7 @@ UsdAttribute UsdGeomPointBased::GetVelocitiesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->velocities);
 }
 
-UsdAttribute UsdGeomPointBased::CreateVelocitiesAttr(VtValue const &defaultValue,
-                                                     bool writeSparsely) const
+UsdAttribute UsdGeomPointBased::CreateVelocitiesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->velocities,
                                     SdfValueTypeNames->Vector3fArray,
@@ -135,8 +133,7 @@ UsdAttribute UsdGeomPointBased::GetNormalsAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->normals);
 }
 
-UsdAttribute UsdGeomPointBased::CreateNormalsAttr(VtValue const &defaultValue,
-                                                  bool writeSparsely) const
+UsdAttribute UsdGeomPointBased::CreateNormalsAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->normals,
                                     SdfValueTypeNames->Normal3fArray,
@@ -147,8 +144,7 @@ UsdAttribute UsdGeomPointBased::CreateNormalsAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -162,13 +158,13 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdGeomPointBased::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdGeomTokens->points,
-      UsdGeomTokens->velocities,
-      UsdGeomTokens->accelerations,
-      UsdGeomTokens->normals,
+    UsdGeomTokens->points,
+    UsdGeomTokens->velocities,
+    UsdGeomTokens->accelerations,
+    UsdGeomTokens->normals,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdGeomGprim::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomGprim::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -216,10 +212,10 @@ bool UsdGeomPointBased::SetNormalsInterpolation(TfToken const &interpolation)
   }
 
   TF_CODING_ERROR(
-      "Attempt to set invalid interpolation "
-      "\"%s\" for normals attr on prim %s",
-      interpolation.GetText(),
-      GetPrim().GetPath().GetString().c_str());
+    "Attempt to set invalid interpolation "
+    "\"%s\" for normals attr on prim %s",
+    interpolation.GetText(),
+    GetPrim().GetPath().GetString().c_str());
 
   return false;
 }
@@ -232,11 +228,11 @@ bool _ComputeExtentImpl(const VtVec3fArray &points, VtVec3fArray *extent, Reduct
 
   // Calculate bounds
   GfRange3d bbox = WorkParallelReduceN(
-      GfRange3d(),
-      points.size(),
-      std::forward<Reduction>(reduction),
-      [](GfRange3d lhs, GfRange3d rhs) { return GfRange3d::GetUnion(lhs, rhs); },
-      /*grainSize=*/500);
+    GfRange3d(),
+    points.size(),
+    std::forward<Reduction>(reduction),
+    [](GfRange3d lhs, GfRange3d rhs) { return GfRange3d::GetUnion(lhs, rhs); },
+    /*grainSize=*/500);
 
   (*extent)[0] = GfVec3f(bbox.GetMin());
   (*extent)[1] = GfVec3f(bbox.GetMax());
@@ -259,13 +255,12 @@ bool UsdGeomPointBased::ComputeExtent(const VtVec3fArray &points,
                                       const GfMatrix4d &transform,
                                       VtVec3fArray *extent)
 {
-  return _ComputeExtentImpl(
-      points, extent, [&points, &transform](size_t b, size_t e, GfRange3d init) {
-        for (size_t i = b; i != e; ++i) {
-          init.UnionWith(transform.Transform(points[i]));
-        }
-        return init;
-      });
+  return _ComputeExtentImpl(points, extent, [&points, &transform](size_t b, size_t e, GfRange3d init) {
+    for (size_t i = b; i != e; ++i) {
+      init.UnionWith(transform.Transform(points[i]));
+    }
+    return init;
+  });
 }
 
 static bool _ComputeExtentForPointBased(const UsdGeomBoundable &boundable,
@@ -313,9 +308,9 @@ bool UsdGeomPointBased::ComputePointsAtTimes(std::vector<VtArray<GfVec3f>> *poin
   for (auto time : times) {
     if (time.IsNumeric() != baseTime.IsNumeric()) {
       TF_CODING_ERROR(
-          "%s -- all sample times in times and baseTime must either all "
-          "be numeric or all be default",
-          GetPrim().GetPath().GetText());
+        "%s -- all sample times in times and baseTime must either all "
+        "be numeric or all be default",
+        GetPrim().GetPath().GetText());
     }
   }
 
@@ -355,7 +350,7 @@ bool UsdGeomPointBased::ComputePointsAtTimes(std::vector<VtArray<GfVec3f>> *poin
   bool useInterpolated = velocities.empty();
   for (size_t i = 0; i < numSamples; i++) {
 
-    UsdTimeCode time         = times[i];
+    UsdTimeCode time = times[i];
     VtArray<GfVec3f> *points = &(pointsArrayData[i]);
 
     // If there are no valid velocities or angular velocities, we fallback to
@@ -367,20 +362,13 @@ bool UsdGeomPointBased::ComputePointsAtTimes(std::vector<VtArray<GfVec3f>> *poin
       // data from the base time.
 
       VtVec3fArray interpolatedPoints;
-      if (GetPointsAttr().Get(&interpolatedPoints, time) &&
-          interpolatedPoints.size() == numPoints) {
+      if (GetPointsAttr().Get(&interpolatedPoints, time) && interpolatedPoints.size() == numPoints) {
         positions = interpolatedPoints;
       }
     }
 
-    if (!ComputePointsAtTime(points,
-                             stage,
-                             time,
-                             positions,
-                             velocities,
-                             velocitiesSampleTime,
-                             accelerations,
-                             velocityScale)) {
+    if (!ComputePointsAtTime(
+          points, stage, time, positions, velocities, velocitiesSampleTime, accelerations, velocityScale)) {
       return false;
     }
   }
@@ -401,26 +389,25 @@ bool UsdGeomPointBased::ComputePointsAtTime(VtArray<GfVec3f> *points,
   size_t numPoints = positions.size();
 
   const double timeCodesPerSecond = stage->GetTimeCodesPerSecond();
-  const float velocityTimeDelta   = UsdGeom_CalculateTimeDelta(
-      velocityScale, time, velocitiesSampleTime, timeCodesPerSecond);
+  const float velocityTimeDelta = UsdGeom_CalculateTimeDelta(
+    velocityScale, time, velocitiesSampleTime, timeCodesPerSecond);
 
   points->resize(numPoints);
 
   const auto computePoints =
-      [&velocityTimeDelta, &positions, &velocities, &accelerations, &points](size_t start,
-                                                                             size_t end) {
-        for (size_t pointId = start; pointId < end; ++pointId) {
-          GfVec3f translation = positions[pointId];
-          if (velocities.size() != 0) {
-            GfVec3f velocity = velocities[pointId];
-            if (accelerations.size() != 0) {
-              velocity += velocityTimeDelta * accelerations[pointId] * 0.5;
-            }
-            translation += velocityTimeDelta * velocity;
+    [&velocityTimeDelta, &positions, &velocities, &accelerations, &points](size_t start, size_t end) {
+      for (size_t pointId = start; pointId < end; ++pointId) {
+        GfVec3f translation = positions[pointId];
+        if (velocities.size() != 0) {
+          GfVec3f velocity = velocities[pointId];
+          if (accelerations.size() != 0) {
+            velocity += velocityTimeDelta * accelerations[pointId] * 0.5;
           }
-          (*points)[pointId] = translation;
+          translation += velocityTimeDelta * velocity;
         }
-      };
+        (*points)[pointId] = translation;
+      }
+    };
 
   {
     WorkParallelForN(numPoints, computePoints);

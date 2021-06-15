@@ -66,8 +66,8 @@ class UsdDracoImportTranslator {
                               std::vector<bool> &triangleVisited,
                               PolygonEdges &polygonEdges);
   std::unique_ptr<UsdDracoImportAttributeInterface> CreateAttributeFrom(
-      const draco::PointAttribute &attribute,
-      const draco::AttributeMetadata &metadata);
+    const draco::PointAttribute &attribute,
+    const draco::AttributeMetadata &metadata);
 
  private:
   const draco::Mesh &_dracoMesh;

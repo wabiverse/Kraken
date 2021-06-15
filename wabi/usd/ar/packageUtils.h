@@ -95,8 +95,7 @@ std::string ArJoinPackageRelativePath(const std::pair<std::string, std::string> 
 
 /// \overload
 AR_API
-std::string ArJoinPackageRelativePath(const std::string &packagePath,
-                                      const std::string &packagedPath);
+std::string ArJoinPackageRelativePath(const std::string &packagePath, const std::string &packagedPath);
 
 /// Split package-relative path \p path into a (package path, packaged path)
 /// pair. If \p packageRelativePath contains nested package-relative paths

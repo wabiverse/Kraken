@@ -112,8 +112,7 @@ UsdAttribute UsdSkelSkeleton::GetJointsAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->joints);
 }
 
-UsdAttribute UsdSkelSkeleton::CreateJointsAttr(VtValue const &defaultValue,
-                                               bool writeSparsely) const
+UsdAttribute UsdSkelSkeleton::CreateJointsAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->joints,
                                     SdfValueTypeNames->TokenArray,
@@ -128,8 +127,7 @@ UsdAttribute UsdSkelSkeleton::GetJointNamesAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->jointNames);
 }
 
-UsdAttribute UsdSkelSkeleton::CreateJointNamesAttr(VtValue const &defaultValue,
-                                                   bool writeSparsely) const
+UsdAttribute UsdSkelSkeleton::CreateJointNamesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->jointNames,
                                     SdfValueTypeNames->TokenArray,
@@ -144,8 +142,7 @@ UsdAttribute UsdSkelSkeleton::GetBindTransformsAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->bindTransforms);
 }
 
-UsdAttribute UsdSkelSkeleton::CreateBindTransformsAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdSkelSkeleton::CreateBindTransformsAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->bindTransforms,
                                     SdfValueTypeNames->Matrix4dArray,
@@ -160,8 +157,7 @@ UsdAttribute UsdSkelSkeleton::GetRestTransformsAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->restTransforms);
 }
 
-UsdAttribute UsdSkelSkeleton::CreateRestTransformsAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdSkelSkeleton::CreateRestTransformsAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->restTransforms,
                                     SdfValueTypeNames->Matrix4dArray,
@@ -172,8 +168,7 @@ UsdAttribute UsdSkelSkeleton::CreateRestTransformsAttr(VtValue const &defaultVal
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -187,13 +182,13 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdSkelSkeleton::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdSkelTokens->joints,
-      UsdSkelTokens->jointNames,
-      UsdSkelTokens->bindTransforms,
-      UsdSkelTokens->restTransforms,
+    UsdSkelTokens->joints,
+    UsdSkelTokens->jointNames,
+    UsdSkelTokens->bindTransforms,
+    UsdSkelTokens->restTransforms,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdGeomBoundable::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomBoundable::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

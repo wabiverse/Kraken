@@ -106,8 +106,7 @@ UsdAttribute UsdRiTextureAPI::GetRiTextureGammaAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->riTextureGamma);
 }
 
-UsdAttribute UsdRiTextureAPI::CreateRiTextureGammaAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdRiTextureAPI::CreateRiTextureGammaAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->riTextureGamma,
                                     SdfValueTypeNames->Float,
@@ -134,8 +133,7 @@ UsdAttribute UsdRiTextureAPI::CreateRiTextureSaturationAttr(VtValue const &defau
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -149,11 +147,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRiTextureAPI::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRiTokens->riTextureGamma,
-      UsdRiTokens->riTextureSaturation,
+    UsdRiTokens->riTextureGamma,
+    UsdRiTokens->riTextureSaturation,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdAPISchemaBase::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

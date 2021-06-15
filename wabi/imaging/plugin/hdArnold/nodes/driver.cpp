@@ -46,10 +46,7 @@ struct BucketData {
   int type;
   const void *data;
 
-  BucketData(const TfToken &_name, int _type, const void *_data)
-      : name(_name),
-        type(_type),
-        data(_data)
+  BucketData(const TfToken &_name, int _type, const void *_data) : name(_name), type(_type), data(_data)
   {}
 };
 
@@ -84,11 +81,10 @@ node_initialize
 
 node_update
 {
-  auto *data          = reinterpret_cast<DriverData *>(AiNodeGetLocalData(node));
-  data->projMtx       = HdArnoldConvertMatrix(AiNodeGetMatrix(node, str::projMtx));
-  data->viewMtx       = HdArnoldConvertMatrix(AiNodeGetMatrix(node, str::viewMtx));
-  data->renderBuffers = static_cast<HdArnoldRenderBufferStorage *>(
-      AiNodeGetPtr(node, str::aov_pointer));
+  auto *data = reinterpret_cast<DriverData *>(AiNodeGetLocalData(node));
+  data->projMtx = HdArnoldConvertMatrix(AiNodeGetMatrix(node, str::projMtx));
+  data->viewMtx = HdArnoldConvertMatrix(AiNodeGetMatrix(node, str::viewMtx));
+  data->renderBuffers = static_cast<HdArnoldRenderBufferStorage *>(AiNodeGetPtr(node, str::aov_pointer));
   // TODO(pal): Clear AOVs.
 }
 
@@ -119,9 +115,9 @@ driver_prepare_bucket
 
 driver_process_bucket
 {
-  auto *driverData       = reinterpret_cast<DriverData *>(AiNodeGetLocalData(node));
+  auto *driverData = reinterpret_cast<DriverData *>(AiNodeGetLocalData(node));
   const char *outputName = nullptr;
-  int pixelType          = AI_TYPE_RGBA;
+  int pixelType = AI_TYPE_RGBA;
   const void *bucketData = nullptr;
   // TODO: IDs are used to detect background pixels, so we have to handle them first. We should do
   // a two phase
@@ -146,15 +142,13 @@ driver_process_bucket
           ids[i] = static_cast<int>(in[i]) - 1;
         }
         it->second.buffer->WriteBucket(
-            bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatInt32, ids.data());
+          bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatInt32, ids.data());
       }
     }
     else if (pixelType == AI_TYPE_RGB || pixelType == AI_TYPE_RGBA) {
       // TODO(pal): Push back to RGBA too if the buffer RGBA exists.
-      buckets.emplace_back(strcmp(outputName, "RGBA") == 0 ? HdAovTokens->color :
-                                                             TfToken{outputName},
-                           pixelType,
-                           bucketData);
+      buckets.emplace_back(
+        strcmp(outputName, "RGBA") == 0 ? HdAovTokens->color : TfToken{outputName}, pixelType, bucketData);
     }
   }
   for (const auto &bucket : buckets) {
@@ -169,7 +163,7 @@ driver_process_bucket
       if (ids.empty()) {
         for (auto i = decltype(pixelCount){0}; i < pixelCount; i += 1) {
           const auto p = driverData->projMtx.Transform(driverData->viewMtx.Transform(in[i]));
-          depth[i]     = std::max(-1.0f, std::min(1.0f, p[2]));
+          depth[i] = std::max(-1.0f, std::min(1.0f, p[2]));
         }
       }
       else {
@@ -179,12 +173,12 @@ driver_process_bucket
           }
           else {
             const auto p = driverData->projMtx.Transform(driverData->viewMtx.Transform(in[i]));
-            depth[i]     = std::max(-1.0f, std::min(1.0f, p[2]));
+            depth[i] = std::max(-1.0f, std::min(1.0f, p[2]));
           }
         }
       }
       it->second.buffer->WriteBucket(
-          bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32, depth.data());
+        bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32, depth.data());
     }
     else if (bucket.name == HdAovTokens->color) {
       const auto it = driverData->renderBuffers->find(bucket.name);
@@ -193,7 +187,7 @@ driver_process_bucket
       }
       if (ids.empty()) {
         it->second.buffer->WriteBucket(
-            bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32Vec4, bucketData);
+          bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32Vec4, bucketData);
       }
       else {
         auto &color = driverData->colors[tid];
@@ -208,14 +202,14 @@ driver_process_bucket
           }
         }
         it->second.buffer->WriteBucket(
-            bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32Vec4, color.data());
+          bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32Vec4, color.data());
       }
     }
     else if (bucket.type == AI_TYPE_RGB) {
       const auto it = driverData->renderBuffers->find(bucket.name);
       if (it != driverData->renderBuffers->end()) {
         it->second.buffer->WriteBucket(
-            bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32Vec3, bucket.data);
+          bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32Vec3, bucket.data);
       }
     }
   }

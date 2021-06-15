@@ -122,11 +122,11 @@ struct Pcp_Permissions {
 class Pcp_PropertyIndexer {
  public:
   Pcp_PropertyIndexer(PcpPropertyIndex *propIndex, PcpSite propSite, PcpErrorVector *allErrors)
-      : _propIndex(propIndex),
-        _propSite(propSite),
-        _allErrors(allErrors),
-        _var(SdfVariabilityVarying),
-        _propType(SdfSpecTypeUnknown)
+    : _propIndex(propIndex),
+      _propSite(propSite),
+      _allErrors(allErrors),
+      _var(SdfVariabilityVarying),
+      _propType(SdfSpecTypeUnknown)
   {}
 
   void GatherPropertySpecs(const PcpPrimIndex &primIndex, bool usd);
@@ -157,19 +157,19 @@ class Pcp_PropertyIndexer {
     if (_propType == SdfSpecTypeUnknown) {
       // First one, just record the property type and layer
       _firstSpec = propSpec;
-      _propType  = propType;
+      _propType = propType;
     }
     else if (_propType != propType) {
       // This property spec is inconsistent with the type of the
       // specs previously seen.
       PcpErrorInconsistentPropertyTypePtr e = PcpErrorInconsistentPropertyType::New();
-      e->rootSite                           = _propSite;
-      e->definingLayerIdentifier            = _firstSpec->GetLayer()->GetIdentifier();
-      e->definingSpecPath                   = _firstSpec->GetPath();
-      e->definingSpecType                   = _propType;
-      e->conflictingLayerIdentifier         = propSpec->GetLayer()->GetIdentifier();
-      e->conflictingSpecPath                = propSpec->GetPath();
-      e->conflictingSpecType                = propType;
+      e->rootSite = _propSite;
+      e->definingLayerIdentifier = _firstSpec->GetLayer()->GetIdentifier();
+      e->definingSpecPath = _firstSpec->GetPath();
+      e->definingSpecType = _propType;
+      e->conflictingLayerIdentifier = propSpec->GetLayer()->GetIdentifier();
+      e->conflictingSpecPath = propSpec->GetPath();
+      e->conflictingSpecType = propType;
       _RecordError(e);
       return TfNullPtr;
     }
@@ -185,8 +185,7 @@ class Pcp_PropertyIndexer {
   // Returns the attribute spec with the given name if it is consistent with
   // previously seen specs, otherwise returns NULL.
   //
-  SdfPropertySpecHandle _GetRelationalAttribute(const SdfLayerHandle &layer,
-                                                const SdfPath &relAttrPath)
+  SdfPropertySpecHandle _GetRelationalAttribute(const SdfLayerHandle &layer, const SdfPath &relAttrPath)
   {
     SdfPropertySpecHandle attr = layer->GetAttributeAtPath(relAttrPath);
 
@@ -213,42 +212,41 @@ class Pcp_PropertyIndexer {
     // the underlying spec pointer to avoid excessive dormancy checks (one
     // per dereference).
     if (SdfSpec *specPtr = get_pointer(attr)) {
-      SdfLayer *layer     = get_pointer(specPtr->GetLayer());
+      SdfLayer *layer = get_pointer(specPtr->GetLayer());
       SdfPath const &path = specPtr->GetPath();
-      valueType           = layer->GetFieldAs<TfToken>(path, SdfFieldKeys->TypeName);
-      var                 = layer->GetFieldAs<SdfVariability>(path, SdfFieldKeys->Variability);
+      valueType = layer->GetFieldAs<TfToken>(path, SdfFieldKeys->TypeName);
+      var = layer->GetFieldAs<SdfVariability>(path, SdfFieldKeys->Variability);
     }
 
     if (_valueType.IsEmpty()) {
       // First one, just record the type and variability.
       _valueType = valueType;
-      _var       = var;
+      _var = var;
       return true;
     }
 
     if (_valueType != valueType) {
       PcpErrorInconsistentAttributeTypePtr e = PcpErrorInconsistentAttributeType::New();
-      e->rootSite                            = _propSite;
-      e->definingLayerIdentifier             = _firstSpec->GetLayer()->GetIdentifier();
-      e->definingSpecPath                    = _firstSpec->GetPath();
-      e->definingValueType                   = _valueType;
-      e->conflictingLayerIdentifier          = attr->GetLayer()->GetIdentifier();
-      e->conflictingSpecPath                 = attr->GetPath();
-      e->conflictingValueType                = valueType;
+      e->rootSite = _propSite;
+      e->definingLayerIdentifier = _firstSpec->GetLayer()->GetIdentifier();
+      e->definingSpecPath = _firstSpec->GetPath();
+      e->definingValueType = _valueType;
+      e->conflictingLayerIdentifier = attr->GetLayer()->GetIdentifier();
+      e->conflictingSpecPath = attr->GetPath();
+      e->conflictingValueType = valueType;
       _RecordError(e);
       return false;
     }
 
     if (_var != var) {
-      PcpErrorInconsistentAttributeVariabilityPtr e =
-          PcpErrorInconsistentAttributeVariability::New();
-      e->rootSite                   = _propSite;
-      e->definingLayerIdentifier    = _firstSpec->GetLayer()->GetIdentifier();
-      e->definingSpecPath           = _firstSpec->GetPath();
-      e->definingVariability        = _var;
+      PcpErrorInconsistentAttributeVariabilityPtr e = PcpErrorInconsistentAttributeVariability::New();
+      e->rootSite = _propSite;
+      e->definingLayerIdentifier = _firstSpec->GetLayer()->GetIdentifier();
+      e->definingSpecPath = _firstSpec->GetPath();
+      e->definingVariability = _var;
       e->conflictingLayerIdentifier = attr->GetLayer()->GetIdentifier();
-      e->conflictingSpecPath        = attr->GetPath();
-      e->conflictingVariability     = var;
+      e->conflictingSpecPath = attr->GetPath();
+      e->conflictingVariability = var;
       _RecordError(e);
       // Not returning false here.  We will conform, not ignore.
     }
@@ -297,10 +295,10 @@ void Pcp_PropertyIndexer::_AddPropertySpecIfPermitted(const SdfPropertySpecHandl
     // The previous node's property permission was private, and this
     // node also has an opinion about it. This is illegal.
     PcpErrorPropertyPermissionDeniedPtr err = PcpErrorPropertyPermissionDenied::New();
-    err->rootSite                           = _propSite;
-    err->propPath                           = propSpec->GetPath();
-    err->propType                           = propSpec->GetSpecType();
-    err->layerPath                          = propSpec->GetLayer()->GetIdentifier();
+    err->rootSite = _propSite;
+    err->propPath = propSpec->GetPath();
+    err->propType = propSpec->GetSpecType();
+    err->layerPath = propSpec->GetLayer()->GetIdentifier();
     _RecordError(err);
   }
 }
@@ -325,12 +323,11 @@ void Pcp_PropertyIndexer::GatherPropertySpecs(const PcpPrimIndex &primIndex, boo
       PcpNodeRef curNode = i.base().GetNode();
       if (curNode != prevNode) {
         permissions.previous = permissions.current;
-        prevNode             = curNode;
+        prevNode = curNode;
       }
 
       const Pcp_SdSiteRef primSite = i.base()._GetSiteRef();
-      if (SdfPropertySpecHandle propSpec = _GetPrimProperty(
-              primSite.layer, primSite.path, name, usd)) {
+      if (SdfPropertySpecHandle propSpec = _GetPrimProperty(primSite.layer, primSite.path, name, usd)) {
         _AddPropertySpecIfPermitted(propSpec, curNode, &permissions, &propertyInfo);
       }
     }
@@ -357,8 +354,7 @@ void Pcp_PropertyIndexer::GatherPropertySpecs(const PcpPrimIndex &primIndex, boo
   _propIndex->_propertyStack.swap(propertyInfo);
 }
 
-void Pcp_PropertyIndexer::GatherRelationalAttributeSpecs(const PcpPropertyIndex &relIndex,
-                                                         bool usd)
+void Pcp_PropertyIndexer::GatherRelationalAttributeSpecs(const PcpPropertyIndex &relIndex, bool usd)
 {
   const SdfPath &relAttrPath = _propSite.path;
   TF_VERIFY(relAttrPath.IsRelationalAttributePath());
@@ -385,7 +381,7 @@ void Pcp_PropertyIndexer::GatherRelationalAttributeSpecs(const PcpPropertyIndex 
       if (relAttrPathInNodeNS.IsEmpty())
         continue;
 
-      const SdfPropertySpecHandle relSpec     = *relIt;
+      const SdfPropertySpecHandle relSpec = *relIt;
       const SdfPropertySpecHandle relAttrSpec = _GetRelationalAttribute(relSpec->GetLayer(),
                                                                         relAttrPathInNodeNS);
       if (!relAttrSpec)
@@ -423,9 +419,9 @@ void PcpBuildPropertyIndex(const SdfPath &propertyPath,
   }
   if (!propertyIndex->IsEmpty()) {
     TF_CODING_ERROR(
-        "Cannot build property index for %s with a non-empty "
-        "property stack.",
-        propertyPath.GetText());
+      "Cannot build property index for %s with a non-empty "
+      "property stack.",
+      propertyPath.GetText());
     return;
   }
 
@@ -437,11 +433,8 @@ void PcpBuildPropertyIndex(const SdfPath &propertyPath,
   }
 
   if (parentPath.IsPrimPath()) {
-    PcpBuildPrimPropertyIndex(propertyPath,
-                              *cache,
-                              cache->ComputePrimIndex(parentPath, allErrors),
-                              propertyIndex,
-                              allErrors);
+    PcpBuildPrimPropertyIndex(
+      propertyPath, *cache, cache->ComputePrimIndex(parentPath, allErrors), propertyIndex, allErrors);
   }
   else if (parentPath.IsPrimPropertyPath()) {
     const PcpSite propSite(cache->GetLayerStackIdentifier(), propertyPath);
@@ -467,9 +460,9 @@ void PcpBuildPropertyIndex(const SdfPath &propertyPath,
     // This should not happen.  Owner is not a prim or a
     // relationship.
     TF_CODING_ERROR(
-        "Error, the property <%s> is owned by something "
-        "that is not a prim or a relationship.",
-        propertyPath.GetText());
+      "Error, the property <%s> is owned by something "
+      "that is not a prim or a relationship.",
+      propertyPath.GetText());
     // CODE_COVERAGE_ON
   }
 }

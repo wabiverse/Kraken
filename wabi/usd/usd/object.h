@@ -161,8 +161,8 @@ class UsdObject {
   /// same UsdObject, false otherwise.
   friend bool operator==(const UsdObject &lhs, const UsdObject &rhs)
   {
-    return lhs._type == rhs._type && lhs._prim == rhs._prim &&
-           lhs._proxyPrimPath == rhs._proxyPrimPath && lhs._propName == rhs._propName;
+    return lhs._type == rhs._type && lhs._prim == rhs._prim && lhs._proxyPrimPath == rhs._proxyPrimPath &&
+           lhs._propName == rhs._propName;
   }
 
   /// Inequality comparison. Return false if \a lhs and \a rhs represent the
@@ -248,8 +248,7 @@ class UsdObject {
   /// \endcode
   template<class T> bool Is() const
   {
-    static_assert(std::is_base_of<UsdObject, T>::value,
-                  "Provided type T must derive from or be UsdObject");
+    static_assert(std::is_base_of<UsdObject, T>::value, "Provided type T must derive from or be UsdObject");
     return UsdIsConvertible(_type, _Detail::GetObjType<T>::Value);
   }
 
@@ -341,8 +340,7 @@ class UsdObject {
   /// in subdictionaries.
   ///
   /// \sa \ref Usd_Dictionary_Type
-  template<class T>
-  bool GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, T *value) const;
+  template<class T> bool GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, T *value) const;
   /// \overload
   USD_API
   bool GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, VtValue *value) const;
@@ -358,9 +356,7 @@ class UsdObject {
   bool SetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, const T &value) const;
   /// \overload
   USD_API
-  bool SetMetadataByDictKey(const TfToken &key,
-                            const TfToken &keyPath,
-                            const VtValue &value) const;
+  bool SetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, const VtValue &value) const;
 
   /// Clear any authored value identified by \p key and \p keyPath
   /// at the current EditTarget.  The \p keyPath is a ':'-separated path
@@ -634,33 +630,26 @@ class UsdObject {
   template<class T>
   bool _GetMetadataImpl(const TfToken &key, T *value, const TfToken &keyPath = TfToken()) const;
 
-  bool _GetMetadataImpl(const TfToken &key,
-                        VtValue *value,
-                        const TfToken &keyPath = TfToken()) const;
+  bool _GetMetadataImpl(const TfToken &key, VtValue *value, const TfToken &keyPath = TfToken()) const;
 
   template<class T>
-  bool _SetMetadataImpl(const TfToken &key,
-                        const T &value,
-                        const TfToken &keyPath = TfToken()) const;
+  bool _SetMetadataImpl(const TfToken &key, const T &value, const TfToken &keyPath = TfToken()) const;
 
-  bool _SetMetadataImpl(const TfToken &key,
-                        const VtValue &value,
-                        const TfToken &keyPath = TfToken()) const;
+  bool _SetMetadataImpl(const TfToken &key, const VtValue &value, const TfToken &keyPath = TfToken()) const;
 
  protected:
   template<class Derived> struct _Null {
   };
 
   // Private constructor for null dervied types.
-  template<class Derived>
-  explicit UsdObject(_Null<Derived>) : _type(_Detail::GetObjType<Derived>::Value)
+  template<class Derived> explicit UsdObject(_Null<Derived>) : _type(_Detail::GetObjType<Derived>::Value)
   {}
 
   // Private constructor for UsdPrim.
   UsdObject(const Usd_PrimDataHandle &prim, const SdfPath &proxyPrimPath)
-      : _type(UsdTypePrim),
-        _prim(prim),
-        _proxyPrimPath(proxyPrimPath)
+    : _type(UsdTypePrim),
+      _prim(prim),
+      _proxyPrimPath(proxyPrimPath)
   {
     TF_VERIFY(!_prim || _prim->GetPath() != _proxyPrimPath);
   }
@@ -670,10 +659,10 @@ class UsdObject {
             const Usd_PrimDataHandle &prim,
             const SdfPath &proxyPrimPath,
             const TfToken &propName)
-      : _type(objType),
-        _prim(prim),
-        _proxyPrimPath(proxyPrimPath),
-        _propName(propName)
+    : _type(objType),
+      _prim(prim),
+      _proxyPrimPath(proxyPrimPath),
+      _propName(propName)
   {
     TF_VERIFY(!_prim || _prim->GetPath() != _proxyPrimPath);
   }
@@ -734,17 +723,13 @@ template<typename T> inline bool UsdObject::SetMetadata(const TfToken &key, cons
 }
 
 template<typename T>
-inline bool UsdObject::GetMetadataByDictKey(const TfToken &key,
-                                            const TfToken &keyPath,
-                                            T *value) const
+inline bool UsdObject::GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, T *value) const
 {
   return _GetMetadataImpl(key, value, keyPath);
 }
 
 template<typename T>
-inline bool UsdObject::SetMetadataByDictKey(const TfToken &key,
-                                            const TfToken &keyPath,
-                                            const T &value) const
+inline bool UsdObject::SetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, const T &value) const
 {
   return _SetMetadataImpl(key, value, keyPath);
 }

@@ -70,8 +70,7 @@ void TfScriptModuleLoader::RegisterLibrary(TfToken const &name,
 {
 
   if (TfDebug::IsEnabled(TF_SCRIPT_MODULE_LOADER)) {
-    TF_DEBUG(TF_SCRIPT_MODULE_LOADER)
-        .Msg("Registering library %s with predecessors: ", name.GetText());
+    TF_DEBUG(TF_SCRIPT_MODULE_LOADER).Msg("Registering library %s with predecessors: ", name.GetText());
     TF_FOR_ALL(pred, predecessors)
     {
       TF_DEBUG(TF_SCRIPT_MODULE_LOADER).Msg("%s, ", pred->GetText());
@@ -81,7 +80,7 @@ void TfScriptModuleLoader::RegisterLibrary(TfToken const &name,
 
   // Add library with predecessors.
   vector<TfToken> &predsInTable = _libInfo[name].predecessors;
-  predsInTable                  = predecessors;
+  predsInTable = predecessors;
   std::sort(predsInTable.begin(), predsInTable.end());
   _libsToModules[name] = moduleName;
 
@@ -241,14 +240,14 @@ void TfScriptModuleLoader::_LoadUpTo(TfToken const &name)
 
   if (TfDebug::IsEnabled(TF_SCRIPT_MODULE_LOADER)) {
     indentString = std::string(indent * 2, ' ');
-    indentTxt    = indentString.c_str();
+    indentTxt = indentString.c_str();
   }
 
   // Don't do anything if the name isn't empty and it's not a name we know
   // about.
   if (!name.IsEmpty() && !_libInfo.count(name)) {
     TF_DEBUG(TF_SCRIPT_MODULE_LOADER)
-        .Msg("%s*** Not loading modules for unknown lib '%s'\n", indentTxt, name.GetText());
+      .Msg("%s*** Not loading modules for unknown lib '%s'\n", indentTxt, name.GetText());
     return;
   }
 
@@ -374,8 +373,7 @@ void TfScriptModuleLoader::_AddSuccessor(TfToken const &lib, TfToken const &succ
 
   // Add dependent as a dependent of lib.
   vector<TfToken> *successors = &(_libInfo[lib].successors);
-  successors->insert(std::lower_bound(successors->begin(), successors->end(), successor),
-                     successor);
+  successors->insert(std::lower_bound(successors->begin(), successors->end(), successor), successor);
 }
 
 void TfScriptModuleLoader ::_GetOrderedDependenciesRecursive(TfToken const &lib,

@@ -108,7 +108,7 @@ static std::string _GenMaterialXShaderCode(mx::DocumentPtr const &mxDoc,
   for (auto &nodeGraphOutputElement : renderableElements) {
     if (hdOutputName == nodeGraphOutputElement->getName()) {
       TF_DEBUG(HDPRMAN_MATERIALS)
-          .Msg("Generate a MaterialX Osl shader for output '%s'\n", hdOutputName.c_str());
+        .Msg("Generate a MaterialX Osl shader for output '%s'\n", hdOutputName.c_str());
       mx::ShaderPtr mxShader = mx::createShader(shaderName, mxContext, nodeGraphOutputElement);
       if (mxShader) {
         return mxShader->getSourceCode();
@@ -132,9 +132,9 @@ static HdMaterialNode2 const *_GetSurfaceTerminalNode(HdMaterialNetwork2 const &
     return nullptr;
   }
   HdMaterialConnection2 const &connection = terminalConnIt->second;
-  SdfPath const &terminalPath             = connection.upstreamNode;
-  auto const &terminalIt                  = network.nodes.find(terminalPath);
-  *terminalNodePath                       = terminalPath;
+  SdfPath const &terminalPath = connection.upstreamNode;
+  auto const &terminalIt = network.nodes.find(terminalPath);
+  *terminalNodePath = terminalPath;
   return &terminalIt->second;
 }
 
@@ -158,10 +158,9 @@ static TfToken _GetAdapterNodeType(TfToken const &hdNodeType)
 static TfToken _GetUpdatedInputToken(TfToken const &currInputName)
 {
   // { currentInputNname , updatedInputName }
-  static const mx::StringMap conflicts = {{"emission", "emission_value"},
-                                          {"subsurface", "subsurface_value"},
-                                          {"normal", "input_normal"}};
-  auto it                              = conflicts.find(currInputName.GetString());
+  static const mx::StringMap conflicts = {
+    {"emission", "emission_value"}, {"subsurface", "subsurface_value"}, {"normal", "input_normal"}};
+  auto it = conflicts.find(currInputName.GetString());
   if (it != conflicts.end()) {
     return TfToken(it->second);
   }
@@ -181,7 +180,7 @@ static bool _FindConnectedNode(HdMaterialNetwork2 const &hdNetwork,
 
   // Make sure we don't process the node again if we already visited it
   if (visitedNodes->count(connectionPath) > 0) {
-    *hdNode     = hdNetwork.nodes.find(connectionPath)->second;
+    *hdNode = hdNetwork.nodes.find(connectionPath)->second;
     *hdNodePath = connectionPath;
     return false;
   }
@@ -195,7 +194,7 @@ static bool _FindConnectedNode(HdMaterialNetwork2 const &hdNetwork,
   }
 
   // Otherwise return the HdNode and corresponding NodePath
-  *hdNode     = hdNodeIt->second;
+  *hdNode = hdNodeIt->second;
   *hdNodePath = connectionPath;
   return true;
 }
@@ -212,7 +211,7 @@ static void _GatherNodeGraphNodes(HdMaterialNetwork2 const &hdNetwork,
       SdfPath nextNodePath;
       HdMaterialNode2 nextNode;
       const bool found = _FindConnectedNode(
-          hdNetwork, currConnection, &nextNode, &nextNodePath, visitedNodes);
+        hdNetwork, currConnection, &nextNode, &nextNodePath, visitedNodes);
       if (!found) {
         return;
       }
@@ -229,8 +228,8 @@ static void _GatherNodeGraphNodes(HdMaterialNetwork2 const &hdNetwork,
 static void _UpdateGetAttributeCall(std::string *oslSource)
 {
   const std::string originalFnCall = "getattribute(geomprop";
-  const std::string updatedFnCall  = "getattribute(\"primvar\", geomprop";
-  const size_t pos                 = oslSource->find(originalFnCall);
+  const std::string updatedFnCall = "getattribute(\"primvar\", geomprop";
+  const size_t pos = oslSource->find(originalFnCall);
   if (pos != std::string::npos) {
     *oslSource = oslSource->replace(pos, originalFnCall.size(), updatedFnCall);
   }
@@ -242,18 +241,17 @@ static std::string _CompileOslSource(std::string const &name, std::string const 
 #ifdef WITH_OSL
 
   TF_DEBUG(HDPRMAN_DUMP_MATERIALX_OSL_SHADER)
-      .Msg(
-          "--------- MaterialX Generated Shader '%s' ----------\n%s"
-          "---------------------------\n\n",
-          name.c_str(),
-          oslSource.c_str());
+    .Msg(
+      "--------- MaterialX Generated Shader '%s' ----------\n%s"
+      "---------------------------\n\n",
+      name.c_str(),
+      oslSource.c_str());
 
   // Compile oslSource
   std::string oslCompiledSource;
   OSL::OSLCompiler oslCompiler;
-  oslCompiler.compile_buffer(oslSource,
-                             oslCompiledSource,
-                             {"-I" + std::string(WABI_MATERIALX_STDLIB_DIR) + "/stdlib/osl"});
+  oslCompiler.compile_buffer(
+    oslSource, oslCompiledSource, {"-I" + std::string(WABI_MATERIALX_STDLIB_DIR) + "/stdlib/osl"});
 
   // Save compiled shader
   std::string compiledFilePath = ArchMakeTmpFileName("MX." + name, ".oso");
@@ -270,8 +268,8 @@ static std::string _CompileOslSource(std::string const &name, std::string const 
   }
 #else
   TF_WARN(
-      "Unable to compile MaterialX generated Osl shader, enable OSL "
-      "support for full MaterialX support in HdPrman.\n");
+    "Unable to compile MaterialX generated Osl shader, enable OSL "
+    "support for full MaterialX support in HdPrman.\n");
   return mx::EMPTY_STRING;
 #endif
 }
@@ -303,7 +301,7 @@ static void _UpdateNetwork(HdMaterialNetwork2 *hdNetwork,
       SdfPath level1NodePath;
       HdMaterialNode2 level1Node;
       bool newNode = _FindConnectedNode(
-          *hdNetwork, currConnection, &level1Node, &level1NodePath, &visitedNodes);
+        *hdNetwork, currConnection, &level1Node, &level1NodePath, &visitedNodes);
       // If we did not find the node
       if (level1Node == HdMaterialNode2()) {
         continue;
@@ -312,17 +310,16 @@ static void _UpdateNetwork(HdMaterialNetwork2 *hdNetwork,
       // are re-using a nodegraph output)
       if (!newNode) {
         // Get the sdrNode for this nodegraph output.
-        SdrRegistry &sdrRegistry      = SdrRegistry::GetInstance();
+        SdrRegistry &sdrRegistry = SdrRegistry::GetInstance();
         SdrShaderNodeConstPtr sdrNode = sdrRegistry.GetShaderNodeByIdentifier(
-            hdNetwork->nodes[level1NodePath].nodeTypeId);
+          hdNetwork->nodes[level1NodePath].nodeTypeId);
 
         // Update the connection into the terminal node so that the
         // nodegraph output makes it into the closure
         // Note: MaterialX nodes only have one output
-        TfToken inputName  = TfToken(mxNodeGraphOutput);
+        TfToken inputName = TfToken(mxNodeGraphOutput);
         TfToken outputName = sdrNode->GetOutputNames().at(0);
-        hdNetwork->nodes[terminalNodePath].inputConnections[inputName] = {
-            {level1NodePath, outputName}};
+        hdNetwork->nodes[terminalNodePath].inputConnections[inputName] = {{level1NodePath, outputName}};
         continue;
       }
       // collect nodes further removed from the terminal in nodesToRemove
@@ -330,11 +327,9 @@ static void _UpdateNetwork(HdMaterialNetwork2 *hdNetwork,
       nodesToKeep.insert(level1NodePath);
 
       // Generate the oslSource code for the output
-      std::string fullOutputName = mxNodeGraphOutput + "_" +
-                                   currConnection.upstreamOutputName.GetString();
+      std::string fullOutputName = mxNodeGraphOutput + "_" + currConnection.upstreamOutputName.GetString();
       std::string shaderName = mxNodeGraphOutput + "Shader";
-      std::string oslSource  = _GenMaterialXShaderCode(
-          mxDoc, searchPath, fullOutputName, shaderName);
+      std::string oslSource = _GenMaterialXShaderCode(mxDoc, searchPath, fullOutputName, shaderName);
       if (oslSource.empty()) {
         continue;
       }
@@ -347,12 +342,11 @@ static void _UpdateNetwork(HdMaterialNetwork2 *hdNetwork,
       }
 
       // Create a new SdrShaderNode with the compiled oslSource
-      SdrRegistry &sdrRegistry      = SdrRegistry::GetInstance();
-      SdrShaderNodeConstPtr sdrNode = sdrRegistry.GetShaderNodeFromAsset(
-          SdfAssetPath(compiledShaderPath),
-          NdrTokenMap(),  // metadata
-          _tokens->mtlx,  // subId
-          _tokens->OSL);  // sourceType
+      SdrRegistry &sdrRegistry = SdrRegistry::GetInstance();
+      SdrShaderNodeConstPtr sdrNode = sdrRegistry.GetShaderNodeFromAsset(SdfAssetPath(compiledShaderPath),
+                                                                         NdrTokenMap(),  // metadata
+                                                                         _tokens->mtlx,  // subId
+                                                                         _tokens->OSL);  // sourceType
 
       // Update NodeTypeId to point to this new sdrNode
       hdNetwork->nodes[level1NodePath].nodeTypeId = sdrNode->GetIdentifier();
@@ -361,13 +355,12 @@ static void _UpdateNetwork(HdMaterialNetwork2 *hdNetwork,
       // nodegraph outputs make their way into the closure
       TfToken outputName(fullOutputName);
       if (sdrNode->GetOutput(outputName)) {
-        TfToken inputName        = TfToken(mxNodeGraphOutput);
+        TfToken inputName = TfToken(mxNodeGraphOutput);
         TfToken updatedInputName = _GetUpdatedInputToken(inputName);
         if (updatedInputName != TfToken()) {
           inputName = updatedInputName;
         }
-        hdNetwork->nodes[terminalNodePath].inputConnections[inputName] = {
-            {level1NodePath, outputName}};
+        hdNetwork->nodes[terminalNodePath].inputConnections[inputName] = {{level1NodePath, outputName}};
       }
 
       // Clear inputConnections since they will be removed (nodesToRemove)
@@ -416,11 +409,11 @@ static void _UpdateTerminal(HdMaterialNetwork2 *hdNetwork,
   // Create a SdrShaderNodes for the Adapter and PxrSurface Nodes.
   TfToken adapterType = _GetAdapterNodeType(terminalNode.nodeTypeId);
 
-  SdrRegistry &sdrRegistry                  = SdrRegistry::GetInstance();
-  SdrShaderNodeConstPtr const sdrAdapter    = sdrRegistry.GetShaderNodeByIdentifier(adapterType,
+  SdrRegistry &sdrRegistry = SdrRegistry::GetInstance();
+  SdrShaderNodeConstPtr const sdrAdapter = sdrRegistry.GetShaderNodeByIdentifier(adapterType,
                                                                                  {_tokens->OSL});
-  SdrShaderNodeConstPtr const sdrPxrSurface = sdrRegistry.GetShaderNodeByIdentifier(
-      _tokens->PxrSurface, {_tokens->RmanCpp});
+  SdrShaderNodeConstPtr const sdrPxrSurface = sdrRegistry.GetShaderNodeByIdentifier(_tokens->PxrSurface,
+                                                                                    {_tokens->RmanCpp});
   if (!sdrAdapter) {
     TF_WARN("No sdrAdater node of type '%s'", adapterType.GetText());
     return;
@@ -429,9 +422,9 @@ static void _UpdateTerminal(HdMaterialNetwork2 *hdNetwork,
   // Replace the terminalNode with the appropriate Adapter Node, which
   // translates the MaterialX parameters into PxrSurface Node inputs.
   HdMaterialNode2 adapterNode;
-  adapterNode.nodeTypeId       = adapterType;
+  adapterNode.nodeTypeId = adapterType;
   adapterNode.inputConnections = terminalNode.inputConnections;
-  adapterNode.parameters       = terminalNode.parameters;
+  adapterNode.parameters = terminalNode.parameters;
   _UpdateTerminalConnections(&adapterNode);
   hdNetwork->nodes[terminalNodePath] = adapterNode;
 
@@ -459,7 +452,7 @@ static void _UpdateTerminal(HdMaterialNetwork2 *hdNetwork,
 
   // Add the PxrSurface Node to the network
   SdfPath pxrSurfacePath = terminalNodePath.GetParentPath().AppendChild(
-      TfToken(terminalNodePath.GetName() + "_PxrSurface"));
+    TfToken(terminalNodePath.GetName() + "_PxrSurface"));
   hdNetwork->nodes[pxrSurfacePath] = pxrSurfaceNode;
 
   // Update the network terminals so that the terminal Node is the PxrSurface
@@ -468,14 +461,13 @@ static void _UpdateTerminal(HdMaterialNetwork2 *hdNetwork,
 }
 
 // Get the Hydra equivalent for the given MaterialX input value
-static std::string _GetHdWrapString(mx::NodePtr const &mxTextureNode,
-                                    std::string const &mxInputValue)
+static std::string _GetHdWrapString(mx::NodePtr const &mxTextureNode, std::string const &mxInputValue)
 {
   if (mxInputValue == "constant") {
     TF_WARN(
-        "RtxHioImagePlugin: Texture %s has unsupported wrap mode "
-        "'constant' using 'black' instead.",
-        mxTextureNode->getName().c_str());
+      "RtxHioImagePlugin: Texture %s has unsupported wrap mode "
+      "'constant' using 'black' instead.",
+      mxTextureNode->getName().c_str());
     return _tokens->black.GetText();
   }
   if (mxInputValue == "clamp") {
@@ -483,9 +475,9 @@ static std::string _GetHdWrapString(mx::NodePtr const &mxTextureNode,
   }
   if (mxInputValue == "mirror") {
     TF_WARN(
-        "RtxHioImagePlugin: Texture %s has unsupported wrap mode "
-        "'mirror' using 'repeat' instead.",
-        mxTextureNode->getName().c_str());
+      "RtxHioImagePlugin: Texture %s has unsupported wrap mode "
+      "'mirror' using 'repeat' instead.",
+      mxTextureNode->getName().c_str());
     return _tokens->repeat.GetText();
   }
   return _tokens->repeat.GetText();
@@ -513,15 +505,14 @@ static void _UpdateTextureNodes(HdMaterialNetwork2 *hdNetwork,
   for (SdfPath const &texturePath : hdTextureNodes) {
 
     // Get the MaterialX Texture Node from the mxDoc
-    const mx::NodeGraphPtr mxNodeGraph = mxDoc->getNodeGraph(
-        texturePath.GetParentPath().GetName());
+    const mx::NodeGraphPtr mxNodeGraph = mxDoc->getNodeGraph(texturePath.GetParentPath().GetName());
     const mx::NodePtr mxTextureNode = mxNodeGraph->getNode(texturePath.GetName());
 
     // Get the filepath from the hdNetwork
     VtValue const &pathValue = hdNetwork->nodes[texturePath].parameters[_tokens->file];
     if (pathValue.IsHolding<SdfAssetPath>()) {
       std::string path = pathValue.Get<SdfAssetPath>().GetResolvedPath();
-      std::string ext  = ArGetResolver().GetExtension(path);
+      std::string ext = ArGetResolver().GetExtension(path);
 
       // Update texture nodes that use non-native texture formats
       // to read them via a Renderman texture plugin.
@@ -532,13 +523,12 @@ static void _UpdateTextureNodes(HdMaterialNetwork2 *hdNetwork,
         _GetWrapModes(mxTextureNode, &uWrap, &vWrap);
 
         // Update the input value to use the Renderman texture plugin
-        std::string pluginName          = std::string("RtxHioImage") + ARCH_LIBRARY_SUFFIX;
-        std::string const &mxInputValue = TfStringPrintf(
-            "rtxplugin:%s?filename=%s&wrapS=%s&wrapT=%s",
-            pluginName.c_str(),
-            path.c_str(),
-            uWrap.c_str(),
-            vWrap.c_str());
+        std::string pluginName = std::string("RtxHioImage") + ARCH_LIBRARY_SUFFIX;
+        std::string const &mxInputValue = TfStringPrintf("rtxplugin:%s?filename=%s&wrapS=%s&wrapT=%s",
+                                                         pluginName.c_str(),
+                                                         path.c_str(),
+                                                         uWrap.c_str(),
+                                                         vWrap.c_str());
         mxTextureNode->setInputValue(_tokens->file.GetText(),       // name
                                      mxInputValue,                  // value
                                      _tokens->filename.GetText());  // type
@@ -562,9 +552,9 @@ void MatfiltMaterialX(const SdfPath &materialPath,
   }
 
   // Check if the surface terminal is a MaterialX Node
-  SdrRegistry &sdrRegistry                = SdrRegistry::GetInstance();
+  SdrRegistry &sdrRegistry = SdrRegistry::GetInstance();
   const SdrShaderNodeConstPtr mtlxSdrNode = sdrRegistry.GetShaderNodeByIdentifierAndType(
-      terminalNode->nodeTypeId, _tokens->mtlx);
+    terminalNode->nodeTypeId, _tokens->mtlx);
 
   if (mtlxSdrNode) {
 
@@ -573,7 +563,7 @@ void MatfiltMaterialX(const SdfPath &materialPath,
 
       // Load Standard Libraries/setup SearchPaths (for mxDoc and mxShaderGen)
       mx::FilePathVec libraryFolders = {
-          "libraries",
+        "libraries",
       };
       mx::FileSearchPath searchPath;
       searchPath.append(mx::FilePath(WABI_MATERIALX_STDLIB_DIR));
@@ -585,7 +575,7 @@ void MatfiltMaterialX(const SdfPath &materialPath,
       std::set<SdfPath> hdTextureNodes;
       mx::StringMap mxHdTextureMap;  // Store Mx-Hd texture counterparts
       mx::DocumentPtr mxDoc = HdMtlxCreateMtlxDocumentFromHdNetwork(
-          hdNetwork, *terminalNode, materialPath, stdLibraries, &hdTextureNodes, &mxHdTextureMap);
+        hdNetwork, *terminalNode, materialPath, stdLibraries, &hdTextureNodes, &mxHdTextureMap);
 
       _UpdateTextureNodes(&hdNetwork, hdTextureNodes, mxDoc);
 

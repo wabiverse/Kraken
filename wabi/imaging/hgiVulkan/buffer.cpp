@@ -41,16 +41,14 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiVulkanBuffer::HgiVulkanBuffer(HgiVulkan *hgi,
-                                 HgiVulkanDevice *device,
-                                 HgiBufferDesc const &desc)
-    : HgiBuffer(desc),
-      _device(device),
-      _vkBuffer(nullptr),
-      _vmaAllocation(nullptr),
-      _inflightBits(0),
-      _stagingBuffer(nullptr),
-      _cpuStagingAddress(nullptr)
+HgiVulkanBuffer::HgiVulkanBuffer(HgiVulkan *hgi, HgiVulkanDevice *device, HgiBufferDesc const &desc)
+  : HgiBuffer(desc),
+    _device(device),
+    _vkBuffer(nullptr),
+    _vmaAllocation(nullptr),
+    _inflightBits(0),
+    _stagingBuffer(nullptr),
+    _cpuStagingAddress(nullptr)
 {
   if (desc.byteSize == 0) {
     TF_CODING_ERROR("The size of buffer [%p] is zero.", this);
@@ -60,8 +58,8 @@ HgiVulkanBuffer::HgiVulkanBuffer(HgiVulkan *hgi,
   VmaAllocator vma = device->GetVulkanMemoryAllocator();
 
   VkBufferCreateInfo bi = {VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
-  bi.size               = desc.byteSize;
-  bi.usage              = HgiVulkanConversions::GetBufferUsage(desc.usage);
+  bi.size = desc.byteSize;
+  bi.usage = HgiVulkanConversions::GetBufferUsage(desc.usage);
   bi.usage |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
   bi.sharingMode = VK_SHARING_MODE_EXCLUSIVE;  // gfx queue only
 
@@ -71,7 +69,7 @@ HgiVulkanBuffer::HgiVulkanBuffer(HgiVulkan *hgi,
   // skip staging buffers and use DEVICE_LOCAL | HOST_VISIBLE_BIT since all
   // memory is shared between CPU and GPU.
   VmaAllocationCreateInfo ai = {};
-  ai.preferredFlags          = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;  // GPU efficient
+  ai.preferredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;  // GPU efficient
 
   TF_VERIFY(vmaCreateBuffer(vma, &bi, &ai, &_vkBuffer, &_vmaAllocation, 0) == VK_SUCCESS);
 
@@ -85,17 +83,17 @@ HgiVulkanBuffer::HgiVulkanBuffer(HgiVulkan *hgi,
     // Use a 'staging buffer' to schedule uploading the 'initialData' to
     // the device-local GPU buffer.
     HgiVulkanBuffer *stagingBuffer = CreateStagingBuffer(_device, desc);
-    VkBuffer vkStagingBuf          = stagingBuffer->GetVulkanBuffer();
+    VkBuffer vkStagingBuf = stagingBuffer->GetVulkanBuffer();
 
     HgiVulkanCommandQueue *queue = device->GetCommandQueue();
-    HgiVulkanCommandBuffer *cb   = queue->AcquireResourceCommandBuffer();
-    VkCommandBuffer vkCmdBuf     = cb->GetVulkanCommandBuffer();
+    HgiVulkanCommandBuffer *cb = queue->AcquireResourceCommandBuffer();
+    VkCommandBuffer vkCmdBuf = cb->GetVulkanCommandBuffer();
 
     // Copy data from staging buffer to device-local buffer.
     VkBufferCopy copyRegion = {};
-    copyRegion.srcOffset    = 0;
-    copyRegion.dstOffset    = 0;
-    copyRegion.size         = desc.byteSize;
+    copyRegion.srcOffset = 0;
+    copyRegion.dstOffset = 0;
+    copyRegion.size = desc.byteSize;
     vkCmdCopyBuffer(vkCmdBuf, vkStagingBuf, _vkBuffer, 1, &copyRegion);
 
     // We don't know if this buffer is a static (immutable) or
@@ -112,20 +110,19 @@ HgiVulkanBuffer::HgiVulkanBuffer(HgiVulkanDevice *device,
                                  VkBuffer vkBuffer,
                                  VmaAllocation vmaAllocation,
                                  HgiBufferDesc const &desc)
-    : HgiBuffer(desc),
-      _device(device),
-      _vkBuffer(vkBuffer),
-      _vmaAllocation(vmaAllocation),
-      _inflightBits(0),
-      _stagingBuffer(nullptr),
-      _cpuStagingAddress(nullptr)
+  : HgiBuffer(desc),
+    _device(device),
+    _vkBuffer(vkBuffer),
+    _vmaAllocation(vmaAllocation),
+    _inflightBits(0),
+    _stagingBuffer(nullptr),
+    _cpuStagingAddress(nullptr)
 {}
 
 HgiVulkanBuffer::~HgiVulkanBuffer()
 {
   if (_cpuStagingAddress && _stagingBuffer) {
-    vmaUnmapMemory(_device->GetVulkanMemoryAllocator(),
-                   _stagingBuffer->GetVulkanMemoryAllocation());
+    vmaUnmapMemory(_device->GetVulkanMemoryAllocator(), _stagingBuffer->GetVulkanMemoryAllocation());
     _cpuStagingAddress = nullptr;
   }
 
@@ -149,8 +146,8 @@ void *HgiVulkanBuffer::GetCPUStagingAddress()
 {
   if (!_stagingBuffer) {
     HgiBufferDesc desc = _descriptor;
-    desc.initialData   = nullptr;
-    _stagingBuffer     = CreateStagingBuffer(_device, desc);
+    desc.initialData = nullptr;
+    _stagingBuffer = CreateStagingBuffer(_device, desc);
   }
 
   if (!_cpuStagingAddress) {
@@ -195,22 +192,21 @@ uint64_t &HgiVulkanBuffer::GetInflightBits()
   return _inflightBits;
 }
 
-HgiVulkanBuffer *HgiVulkanBuffer::CreateStagingBuffer(HgiVulkanDevice *device,
-                                                      HgiBufferDesc const &desc)
+HgiVulkanBuffer *HgiVulkanBuffer::CreateStagingBuffer(HgiVulkanDevice *device, HgiBufferDesc const &desc)
 {
   VmaAllocator vma = device->GetVulkanMemoryAllocator();
 
   VkBufferCreateInfo bi = {VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
-  bi.size               = desc.byteSize;
-  bi.usage              = HgiVulkanConversions::GetBufferUsage(desc.usage);
+  bi.size = desc.byteSize;
+  bi.usage = HgiVulkanConversions::GetBufferUsage(desc.usage);
   bi.usage |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
   bi.sharingMode = VK_SHARING_MODE_EXCLUSIVE;  // gfx queue only
 
   VmaAllocationCreateInfo ai = {};
-  ai.requiredFlags           = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |  // CPU access (mem map)
+  ai.requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |  // CPU access (mem map)
                      VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;  // Dont have to manually flush
 
-  VkBuffer buffer     = 0;
+  VkBuffer buffer = 0;
   VmaAllocation alloc = 0;
   TF_VERIFY(vmaCreateBuffer(vma, &bi, &ai, &buffer, &alloc, 0) == VK_SUCCESS);
 

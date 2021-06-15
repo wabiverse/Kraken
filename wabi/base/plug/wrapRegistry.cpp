@@ -145,7 +145,7 @@ void _LoadPluginsConcurrently(PluginPredicateFn pred, size_t numThreads, bool ve
 
   // Shuffle all already loaded plugins to the end.
   PlugPluginPtrVector::iterator alreadyLoaded = partition(
-      plugins.begin(), plugins.end(), [](PlugPluginPtr const &plug) { return !plug->IsLoaded(); });
+    plugins.begin(), plugins.end(), [](PlugPluginPtr const &plug) { return !plug->IsLoaded(); });
 
   // Report any already loaded plugins as skipped.
   if (verbose && alreadyLoaded != plugins.end()) {
@@ -202,30 +202,28 @@ void wrapRegistry()
   typedef PlugRegistry This;
 
   class_<This, TfWeakPtr<This>, boost::noncopyable>("Registry", no_init)
-      .def(TfPySingleton())
-      .def("RegisterPlugins", &_RegisterPlugins, return_value_policy<TfPySequenceToList>())
-      .def("RegisterPlugins", &_RegisterPluginsList, return_value_policy<TfPySequenceToList>())
-      .def("GetStringFromPluginMetaData", &_GetStringFromPluginMetaData)
-      .def("GetPluginWithName", &This::GetPluginWithName)
-      .def("GetPluginForType", &_GetPluginForType)
-      .def("GetAllPlugins", &This::GetAllPlugins, return_value_policy<TfPySequenceToList>())
+    .def(TfPySingleton())
+    .def("RegisterPlugins", &_RegisterPlugins, return_value_policy<TfPySequenceToList>())
+    .def("RegisterPlugins", &_RegisterPluginsList, return_value_policy<TfPySequenceToList>())
+    .def("GetStringFromPluginMetaData", &_GetStringFromPluginMetaData)
+    .def("GetPluginWithName", &This::GetPluginWithName)
+    .def("GetPluginForType", &_GetPluginForType)
+    .def("GetAllPlugins", &This::GetAllPlugins, return_value_policy<TfPySequenceToList>())
 
-      .def("FindTypeByName", This::FindTypeByName, return_value_policy<return_by_value>())
-      .staticmethod("FindTypeByName")
+    .def("FindTypeByName", This::FindTypeByName, return_value_policy<return_by_value>())
+    .staticmethod("FindTypeByName")
 
-      .def("FindDerivedTypeByName",
-           (TfType(*)(TfType, std::string const &))This::FindDerivedTypeByName)
-      .staticmethod("FindDerivedTypeByName")
+    .def("FindDerivedTypeByName", (TfType(*)(TfType, std::string const &))This::FindDerivedTypeByName)
+    .staticmethod("FindDerivedTypeByName")
 
-      .def("GetDirectlyDerivedTypes",
-           This::GetDirectlyDerivedTypes,
-           return_value_policy<TfPySequenceToTuple>())
-      .staticmethod("GetDirectlyDerivedTypes")
+    .def(
+      "GetDirectlyDerivedTypes", This::GetDirectlyDerivedTypes, return_value_policy<TfPySequenceToTuple>())
+    .staticmethod("GetDirectlyDerivedTypes")
 
-      .def("GetAllDerivedTypes", _GetAllDerivedTypes, return_value_policy<TfPySequenceToTuple>())
-      .staticmethod("GetAllDerivedTypes")
+    .def("GetAllDerivedTypes", _GetAllDerivedTypes, return_value_policy<TfPySequenceToTuple>())
+    .staticmethod("GetAllDerivedTypes")
 
-      ;
+    ;
 
   TfPyFunctionFromPython<PluginPredicateSig>();
   def("_LoadPluginsConcurrently",

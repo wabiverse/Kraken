@@ -40,9 +40,9 @@ WABI_NAMESPACE_BEGIN
 
 class HdBufferArrayRange;
 
-using HdBufferArraySharedPtr      = std::shared_ptr<class HdBufferArray>;
+using HdBufferArraySharedPtr = std::shared_ptr<class HdBufferArray>;
 using HdBufferArrayRangeSharedPtr = std::shared_ptr<HdBufferArrayRange>;
-using HdBufferArrayRangePtr       = std::weak_ptr<HdBufferArrayRange>;
+using HdBufferArrayRangePtr = std::weak_ptr<HdBufferArrayRange>;
 
 /// \union HdBufferArrayUsageHint
 ///

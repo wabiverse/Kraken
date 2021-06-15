@@ -54,14 +54,14 @@ HdBbMeshAttributeSource::HdBbMeshAttributeSource(TfToken name,
                                                  ccl::Mesh *mesh,
                                                  const HdInterpolation &interpolation,
                                                  std::shared_ptr<HdBbMeshTopology> topology)
-    : HdBbAttributeSource(std::move(name),
-                          role,
-                          value,
-                          &mesh->attributes,
-                          interpolation_to_mesh_element(interpolation),
-                          GetTypeDesc(HdGetValueTupleType(value).type, role)),
-      m_interpolation{interpolation},
-      m_topology{std::move(topology)}
+  : HdBbAttributeSource(std::move(name),
+                        role,
+                        value,
+                        &mesh->attributes,
+                        interpolation_to_mesh_element(interpolation),
+                        GetTypeDesc(HdGetValueTupleType(value).type, role)),
+    m_interpolation{interpolation},
+    m_topology{std::move(topology)}
 {}
 
 bool HdBbMeshAttributeSource::Resolve()
@@ -72,9 +72,9 @@ bool HdBbMeshAttributeSource::Resolve()
 
   // refine attribute
   const ccl::TypeDesc &source_type_desc = GetSourceTypeDesc();
-  const VtValue source_value            = m_value;
-  m_value                               = m_topology->GetRefiner()->Refine(
-      GetName(), GetRole(source_type_desc), source_value, GetInterpolation());
+  const VtValue source_value = m_value;
+  m_value = m_topology->GetRefiner()->Refine(
+    GetName(), GetRole(source_type_desc), source_value, GetInterpolation());
 
   // late size check, since it is only known after refining
   if (!_CheckBuffersSize()) {
@@ -103,8 +103,8 @@ bool HdBbMeshAttributeSource::_CheckValid() const
   }
 
   TF_CODING_ERROR(
-      "Attribute:%s is not going to be committed. Attribute has unknown type or can not be "
-      "converted to known type!",
-      m_name.data());
+    "Attribute:%s is not going to be committed. Attribute has unknown type or can not be "
+    "converted to known type!",
+    m_name.data());
   return false;  // unsupported type
 }

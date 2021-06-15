@@ -64,8 +64,7 @@ bool Usd_InstanceCache::RegisterInstancePrimIndex(const PcpPrimIndex &index,
   // Check whether a prototype for this prim index already exists
   // or if this prim index is already being used as the source for
   // a prototype.
-  _InstanceKeyToPrototypeMap::const_iterator keyToPrototypeIt = _instanceKeyToPrototypeMap.find(
-      key);
+  _InstanceKeyToPrototypeMap::const_iterator keyToPrototypeIt = _instanceKeyToPrototypeMap.find(key);
   const bool prototypeAlreadyExists = (keyToPrototypeIt != _instanceKeyToPrototypeMap.end());
 
   {
@@ -85,11 +84,10 @@ bool Usd_InstanceCache::RegisterInstancePrimIndex(const PcpPrimIndex &index,
 
   if (prototypeAlreadyExists) {
     _PrototypeToSourcePrimIndexMap::const_iterator prototypeToSourceIndexIt =
-        _prototypeToSourcePrimIndexMap.find(keyToPrototypeIt->second);
+      _prototypeToSourcePrimIndexMap.find(keyToPrototypeIt->second);
     const bool existingPrototypeUsesIndexAsSource = (prototypeToSourceIndexIt !=
-                                                         _prototypeToSourcePrimIndexMap.end() &&
-                                                     prototypeToSourceIndexIt->second ==
-                                                         index.GetPath());
+                                                       _prototypeToSourcePrimIndexMap.end() &&
+                                                     prototypeToSourceIndexIt->second == index.GetPath());
     return existingPrototypeUsesIndexAsSource;
   }
 
@@ -100,20 +98,19 @@ void Usd_InstanceCache::UnregisterInstancePrimIndexesUnder(const SdfPath &primIn
 {
   TfAutoMallocTag tag("InstanceCache::UnregisterIndex");
 
-  for (_PrimIndexToPrototypeMap::const_iterator
-           it  = _primIndexToPrototypeMap.lower_bound(primIndexPath),
-           end = _primIndexToPrototypeMap.end();
+  for (_PrimIndexToPrototypeMap::const_iterator it = _primIndexToPrototypeMap.lower_bound(primIndexPath),
+                                                end = _primIndexToPrototypeMap.end();
        it != end && it->first.HasPrefix(primIndexPath);
        ++it) {
 
-    const SdfPath &prototypePath                                = it->second;
+    const SdfPath &prototypePath = it->second;
     _PrototypeToInstanceKeyMap::const_iterator prototypeToKeyIt = _prototypeToInstanceKeyMap.find(
-        prototypePath);
+      prototypePath);
     if (!TF_VERIFY(prototypeToKeyIt != _prototypeToInstanceKeyMap.end())) {
       continue;
     }
 
-    const Usd_InstanceKey &key      = prototypeToKeyIt->second;
+    const Usd_InstanceKey &key = prototypeToKeyIt->second;
     _PrimIndexPaths &pendingIndexes = _pendingRemovedPrimIndexes[key];
     pendingIndexes.push_back(it->first);
   }
@@ -127,7 +124,7 @@ void Usd_InstanceCache::ProcessChanges(Usd_InstanceChanges *changes)
   // Remove unregistered prim indexes from the cache.
   std::unordered_map<SdfPath, SdfPath, SdfPath::Hash> prototypeToOldSourceIndexPath;
   for (_InstanceKeyToPrimIndexesMap::value_type &v : _pendingRemovedPrimIndexes) {
-    const Usd_InstanceKey &key   = v.first;
+    const Usd_InstanceKey &key = v.first;
     _PrimIndexPaths &primIndexes = v.second;
 
     // Ignore any unregistered prim index that was subsequently
@@ -159,7 +156,7 @@ void Usd_InstanceCache::ProcessChanges(Usd_InstanceChanges *changes)
     typedef std::map<SdfPath, Usd_InstanceKey> _PrimIndexPathToKey;
     std::map<SdfPath, Usd_InstanceKey> keysToProcess;
     for (_InstanceKeyToPrimIndexesMap::value_type &v : _pendingAddedPrimIndexes) {
-      const Usd_InstanceKey &key         = v.first;
+      const Usd_InstanceKey &key = v.first;
       const _PrimIndexPaths &primIndexes = v.second;
       if (TF_VERIFY(!primIndexes.empty())) {
         TF_VERIFY(keysToProcess.emplace(primIndexes.front(), key).second);
@@ -167,16 +164,14 @@ void Usd_InstanceCache::ProcessChanges(Usd_InstanceChanges *changes)
     }
 
     for (const _PrimIndexPathToKey::value_type &v : keysToProcess) {
-      const Usd_InstanceKey &key   = v.second;
+      const Usd_InstanceKey &key = v.second;
       _PrimIndexPaths &primIndexes = _pendingAddedPrimIndexes[key];
-      _CreateOrUpdatePrototypeForInstances(
-          key, &primIndexes, changes, prototypeToOldSourceIndexPath);
+      _CreateOrUpdatePrototypeForInstances(key, &primIndexes, changes, prototypeToOldSourceIndexPath);
     }
   }
   else {
     for (_InstanceKeyToPrimIndexesMap::value_type &v : _pendingAddedPrimIndexes) {
-      _CreateOrUpdatePrototypeForInstances(
-          v.first, &v.second, changes, prototypeToOldSourceIndexPath);
+      _CreateOrUpdatePrototypeForInstances(v.first, &v.second, changes, prototypeToOldSourceIndexPath);
     }
   }
 
@@ -191,13 +186,13 @@ void Usd_InstanceCache::ProcessChanges(Usd_InstanceChanges *changes)
 }
 
 void Usd_InstanceCache::_CreateOrUpdatePrototypeForInstances(
-    const Usd_InstanceKey &key,
-    _PrimIndexPaths *primIndexPaths,
-    Usd_InstanceChanges *changes,
-    std::unordered_map<SdfPath, SdfPath, SdfPath::Hash> const &prototypeToOldSourceIndexPath)
+  const Usd_InstanceKey &key,
+  _PrimIndexPaths *primIndexPaths,
+  Usd_InstanceChanges *changes,
+  std::unordered_map<SdfPath, SdfPath, SdfPath::Hash> const &prototypeToOldSourceIndexPath)
 {
   pair<_InstanceKeyToPrototypeMap::iterator, bool> result = _instanceKeyToPrototypeMap.insert(
-      make_pair(key, SdfPath()));
+    make_pair(key, SdfPath()));
 
   const bool createdNewPrototype = result.second;
   if (createdNewPrototype) {
@@ -210,24 +205,24 @@ void Usd_InstanceCache::_CreateOrUpdatePrototypeForInstances(
     // change from run to run. This should be fine, because all
     // prim indexes with the same instancing key should have the
     // same composed values.
-    const SdfPath newPrototypePath               = _GetNextPrototypePath(key);
-    result.first->second                         = newPrototypePath;
+    const SdfPath newPrototypePath = _GetNextPrototypePath(key);
+    result.first->second = newPrototypePath;
     _prototypeToInstanceKeyMap[newPrototypePath] = key;
 
-    const SdfPath sourcePrimIndexPath                   = primIndexPaths->front();
+    const SdfPath sourcePrimIndexPath = primIndexPaths->front();
     _sourcePrimIndexToPrototypeMap[sourcePrimIndexPath] = newPrototypePath;
-    _prototypeToSourcePrimIndexMap[newPrototypePath]    = sourcePrimIndexPath;
+    _prototypeToSourcePrimIndexMap[newPrototypePath] = sourcePrimIndexPath;
 
     changes->newPrototypePrims.push_back(newPrototypePath);
     changes->newPrototypePrimIndexes.push_back(sourcePrimIndexPath);
 
     TF_DEBUG(USD_INSTANCING)
-        .Msg(
-            "Instancing: Creating prototype <%s> with source prim index <%s> "
-            "for instancing key: %s\n",
-            newPrototypePath.GetString().c_str(),
-            sourcePrimIndexPath.GetString().c_str(),
-            TfStringify(key).c_str());
+      .Msg(
+        "Instancing: Creating prototype <%s> with source prim index <%s> "
+        "for instancing key: %s\n",
+        newPrototypePath.GetString().c_str(),
+        sourcePrimIndexPath.GetString().c_str(),
+        TfStringify(key).c_str());
   }
   else {
     // Otherwise, if a prototype prim for this instance already exists
@@ -236,23 +231,22 @@ void Usd_InstanceCache::_CreateOrUpdatePrototypeForInstances(
     // is assigned to a prototype; however, this handles the case where
     // the last instance of a prototype has been removed and a new instance
     // of the prototype has been added in the same round of changes.
-    const SdfPath &prototypePath              = result.first->second;
-    const bool assignNewPrimIndexForPrototype = (_prototypeToSourcePrimIndexMap.count(
-                                                     prototypePath) == 0);
+    const SdfPath &prototypePath = result.first->second;
+    const bool assignNewPrimIndexForPrototype = (_prototypeToSourcePrimIndexMap.count(prototypePath) == 0);
     if (assignNewPrimIndexForPrototype) {
-      const SdfPath sourcePrimIndexPath                   = primIndexPaths->front();
+      const SdfPath sourcePrimIndexPath = primIndexPaths->front();
       _sourcePrimIndexToPrototypeMap[sourcePrimIndexPath] = prototypePath;
-      _prototypeToSourcePrimIndexMap[prototypePath]       = sourcePrimIndexPath;
+      _prototypeToSourcePrimIndexMap[prototypePath] = sourcePrimIndexPath;
 
       changes->changedPrototypePrims.push_back(prototypePath);
       changes->changedPrototypePrimIndexes.push_back(sourcePrimIndexPath);
       SdfPath const &oldSourcePath = prototypeToOldSourceIndexPath.find(prototypePath)->second;
 
       TF_DEBUG(USD_INSTANCING)
-          .Msg("Instancing: Changing source <%s> -> <%s> for <%s>\n",
-               oldSourcePath.GetText(),
-               sourcePrimIndexPath.GetText(),
-               prototypePath.GetText());
+        .Msg("Instancing: Changing source <%s> -> <%s> for <%s>\n",
+             oldSourcePath.GetText(),
+             sourcePrimIndexPath.GetText(),
+             prototypePath.GetText());
     }
   }
 
@@ -260,11 +254,11 @@ void Usd_InstanceCache::_CreateOrUpdatePrototypeForInstances(
   const SdfPath &prototypePath = result.first->second;
   for (const SdfPath &primIndexPath : *primIndexPaths) {
     TF_DEBUG(USD_INSTANCING)
-        .Msg(
-            "Instancing: Added instance prim index <%s> for prototype "
-            "<%s>\n",
-            primIndexPath.GetText(),
-            prototypePath.GetText());
+      .Msg(
+        "Instancing: Added instance prim index <%s> for prototype "
+        "<%s>\n",
+        primIndexPath.GetText(),
+        prototypePath.GetText());
 
     _primIndexToPrototypeMap[primIndexPath] = prototypePath;
   }
@@ -278,31 +272,29 @@ void Usd_InstanceCache::_CreateOrUpdatePrototypeForInstances(
   else {
     const size_t oldNumPrimIndexes = primIndexesForPrototype.size();
     primIndexesForPrototype.insert(
-        primIndexesForPrototype.end(), primIndexPaths->begin(), primIndexPaths->end());
+      primIndexesForPrototype.end(), primIndexPaths->begin(), primIndexPaths->end());
 
     _PrimIndexPaths::iterator newlyAddedIt = primIndexesForPrototype.begin() + oldNumPrimIndexes;
-    std::inplace_merge(
-        primIndexesForPrototype.begin(), newlyAddedIt, primIndexesForPrototype.end());
+    std::inplace_merge(primIndexesForPrototype.begin(), newlyAddedIt, primIndexesForPrototype.end());
 
     primIndexesForPrototype.erase(
-        std::unique(primIndexesForPrototype.begin(), primIndexesForPrototype.end()),
-        primIndexesForPrototype.end());
+      std::unique(primIndexesForPrototype.begin(), primIndexesForPrototype.end()),
+      primIndexesForPrototype.end());
   }
 }
 
 void Usd_InstanceCache::_RemoveInstances(
-    const Usd_InstanceKey &instanceKey,
-    const _PrimIndexPaths &primIndexPaths,
-    Usd_InstanceChanges *changes,
-    std::unordered_map<SdfPath, SdfPath, SdfPath::Hash> *prototypeToOldSourceIndexPath)
+  const Usd_InstanceKey &instanceKey,
+  const _PrimIndexPaths &primIndexPaths,
+  Usd_InstanceChanges *changes,
+  std::unordered_map<SdfPath, SdfPath, SdfPath::Hash> *prototypeToOldSourceIndexPath)
 {
   if (primIndexPaths.empty()) {
     // if all unregistered primIndexes are also in the registered set, then
     // vector of primIndexPaths to remove can be empty.
     return;
   }
-  _InstanceKeyToPrototypeMap::iterator keyToPrototypeIt = _instanceKeyToPrototypeMap.find(
-      instanceKey);
+  _InstanceKeyToPrototypeMap::iterator keyToPrototypeIt = _instanceKeyToPrototypeMap.find(instanceKey);
   if (keyToPrototypeIt == _instanceKeyToPrototypeMap.end()) {
     return;
   }
@@ -318,14 +310,14 @@ void Usd_InstanceCache::_RemoveInstances(
   _PrimIndexPaths &primIndexesForPrototype = _prototypeToPrimIndexesMap[prototypePath];
   for (const SdfPath &path : primIndexPaths) {
     _PrimIndexPaths::iterator it = std::find(
-        primIndexesForPrototype.begin(), primIndexesForPrototype.end(), path);
+      primIndexesForPrototype.begin(), primIndexesForPrototype.end(), path);
     if (it != primIndexesForPrototype.end()) {
       TF_DEBUG(USD_INSTANCING)
-          .Msg(
-              "Instancing: Removed instance prim index <%s> for prototype "
-              "<%s>\n",
-              path.GetText(),
-              prototypePath.GetText());
+        .Msg(
+          "Instancing: Removed instance prim index <%s> for prototype "
+          "<%s>\n",
+          path.GetText(),
+          prototypePath.GetText());
 
       primIndexesForPrototype.erase(it);
       _primIndexToPrototypeMap.erase(path);
@@ -336,8 +328,7 @@ void Usd_InstanceCache::_RemoveInstances(
     // have removed the entry from _prototypeToSourcePrimIndexMap in an
     // earlier iteration of this loop; if we have, then we will have saved
     // the old path away in removedPrototypePrimIndexPath.
-    const SdfPath *oldSourcePrimIndexPath = TfMapLookupPtr(_prototypeToSourcePrimIndexMap,
-                                                           prototypePath);
+    const SdfPath *oldSourcePrimIndexPath = TfMapLookupPtr(_prototypeToSourcePrimIndexMap, prototypePath);
     if (!oldSourcePrimIndexPath) {
       oldSourcePrimIndexPath = &removedPrototypePrimIndexPath;
     }
@@ -360,13 +351,13 @@ void Usd_InstanceCache::_RemoveInstances(
       const SdfPath &newSourceIndexPath = primIndexesForPrototype.front();
 
       TF_DEBUG(USD_INSTANCING)
-          .Msg("Instancing: Changing source <%s> -> <%s> for <%s>\n",
-               removedPrototypePrimIndexPath.GetText(),
-               newSourceIndexPath.GetText(),
-               prototypePath.GetText());
+        .Msg("Instancing: Changing source <%s> -> <%s> for <%s>\n",
+             removedPrototypePrimIndexPath.GetText(),
+             newSourceIndexPath.GetText(),
+             prototypePath.GetText());
 
       _sourcePrimIndexToPrototypeMap[newSourceIndexPath] = prototypePath;
-      _prototypeToSourcePrimIndexMap[prototypePath]      = newSourceIndexPath;
+      _prototypeToSourcePrimIndexMap[prototypePath] = newSourceIndexPath;
 
       changes->changedPrototypePrims.push_back(prototypePath);
       changes->changedPrototypePrimIndexes.push_back(newSourceIndexPath);
@@ -389,7 +380,7 @@ void Usd_InstanceCache::_RemovePrototypeIfNoInstances(const Usd_InstanceKey &ins
     return;
   }
 
-  const SdfPath &prototypePath  = keyToPrototypeIt->second;
+  const SdfPath &prototypePath = keyToPrototypeIt->second;
   auto prototypeToPrimIndexesIt = _prototypeToPrimIndexesMap.find(prototypePath);
   if (!TF_VERIFY(prototypeToPrimIndexesIt != _prototypeToPrimIndexesMap.end())) {
     return;
@@ -421,9 +412,9 @@ bool Usd_InstanceCache::IsPathInPrototype(const SdfPath &path)
     // We require an absolute path because there is no way for us
     // to walk to the root prim level from a relative path.
     TF_CODING_ERROR(
-        "IsPathInPrototype() requires an absolute path "
-        "but was given <%s>",
-        path.GetText());
+      "IsPathInPrototype() requires an absolute path "
+      "but was given <%s>",
+      path.GetText());
     return false;
   }
 
@@ -440,8 +431,7 @@ bool Usd_InstanceCache::IsPrototypePath(const SdfPath &path)
   return path.IsRootPrimPath() && TfStringStartsWith(path.GetName(), "__Prototype_");
 }
 
-vector<SdfPath> Usd_InstanceCache::GetInstancePrimIndexesForPrototype(
-    const SdfPath &prototypePath) const
+vector<SdfPath> Usd_InstanceCache::GetInstancePrimIndexesForPrototype(const SdfPath &prototypePath) const
 {
   _PrototypeToPrimIndexesMap::const_iterator it = _prototypeToPrimIndexesMap.find(prototypePath);
 
@@ -451,7 +441,7 @@ vector<SdfPath> Usd_InstanceCache::GetInstancePrimIndexesForPrototype(
 SdfPath Usd_InstanceCache::_GetNextPrototypePath(const Usd_InstanceKey &key)
 {
   return SdfPath::AbsoluteRootPath().AppendChild(
-      TfToken(TfStringPrintf("__Prototype_%zu", ++_lastPrototypeIndex)));
+    TfToken(TfStringPrintf("__Prototype_%zu", ++_lastPrototypeIndex)));
 }
 
 vector<SdfPath> Usd_InstanceCache::GetAllPrototypes() const
@@ -471,21 +461,18 @@ size_t Usd_InstanceCache::GetNumPrototypes() const
 
 SdfPath Usd_InstanceCache::GetPrototypeUsingPrimIndexPath(const SdfPath &primIndexPath) const
 {
-  _SourcePrimIndexToPrototypeMap::const_iterator it = _sourcePrimIndexToPrototypeMap.find(
-      primIndexPath);
+  _SourcePrimIndexToPrototypeMap::const_iterator it = _sourcePrimIndexToPrototypeMap.find(primIndexPath);
   return it == _sourcePrimIndexToPrototypeMap.end() ? SdfPath() : it->second;
 }
 
 template<class PathMap>
-static typename PathMap::const_iterator _FindEntryForPathOrAncestor(const PathMap &map,
-                                                                    SdfPath path)
+static typename PathMap::const_iterator _FindEntryForPathOrAncestor(const PathMap &map, SdfPath path)
 {
   return SdfPathFindLongestPrefix(map, path);
 }
 
 template<class PathMap>
-static typename PathMap::const_iterator _FindEntryForAncestor(const PathMap &map,
-                                                              const SdfPath &path)
+static typename PathMap::const_iterator _FindEntryForAncestor(const PathMap &map, const SdfPath &path)
 {
   if (path == SdfPath::AbsoluteRootPath()) {
     return map.end();
@@ -498,27 +485,26 @@ bool Usd_InstanceCache::PrototypeUsesPrimIndexPath(const SdfPath &primIndexPath)
   return _PrototypeUsesPrimIndexPath(primIndexPath);
 }
 
-vector<SdfPath> Usd_InstanceCache::GetPrimsInPrototypesUsingPrimIndexPath(
-    const SdfPath &primIndexPath) const
+vector<SdfPath> Usd_InstanceCache::GetPrimsInPrototypesUsingPrimIndexPath(const SdfPath &primIndexPath) const
 {
   vector<SdfPath> prototypePaths;
   _PrototypeUsesPrimIndexPath(primIndexPath, &prototypePaths);
   return prototypePaths;
 }
 
-vector<std::pair<SdfPath, SdfPath>> Usd_InstanceCache::
-    GetPrototypesUsingPrimIndexPathOrDescendents(const SdfPath &primIndexPath) const
+vector<std::pair<SdfPath, SdfPath>> Usd_InstanceCache::GetPrototypesUsingPrimIndexPathOrDescendents(
+  const SdfPath &primIndexPath) const
 {
   vector<std::pair<SdfPath, SdfPath>> prototypeSourceIndexPairs;
   for (_SourcePrimIndexToPrototypeMap::const_iterator
-           it  = _sourcePrimIndexToPrototypeMap.lower_bound(primIndexPath),
-           end = _sourcePrimIndexToPrototypeMap.end();
+         it = _sourcePrimIndexToPrototypeMap.lower_bound(primIndexPath),
+         end = _sourcePrimIndexToPrototypeMap.end();
        it != end && it->first.HasPrefix(primIndexPath);
        ++it) {
 
     const SdfPath &prototypePath = it->second;
-    _PrototypeToSourcePrimIndexMap::const_iterator prototypeToSourceIt =
-        _prototypeToSourcePrimIndexMap.find(prototypePath);
+    _PrototypeToSourcePrimIndexMap::const_iterator prototypeToSourceIt = _prototypeToSourcePrimIndexMap.find(
+      prototypePath);
 
     if (!TF_VERIFY(prototypeToSourceIt != _prototypeToSourcePrimIndexMap.end(),
                    "prototypePath <%s> missing in prototypesToSourceIndexPath map",
@@ -562,8 +548,8 @@ bool Usd_InstanceCache::_PrototypeUsesPrimIndexPath(const SdfPath &primIndexPath
     // Find the instance prim index that is closest to the current prim
     // index path. If there isn't one, this prim index isn't a descendent
     // of an instance, which means it can't possibly be used by a prototype.
-    _PrimIndexToPrototypeMap::const_iterator it = _FindEntryForPathOrAncestor(
-        _primIndexToPrototypeMap, curIndexPath);
+    _PrimIndexToPrototypeMap::const_iterator it = _FindEntryForPathOrAncestor(_primIndexToPrototypeMap,
+                                                                              curIndexPath);
     if (it == _primIndexToPrototypeMap.end()) {
       break;
     }
@@ -572,13 +558,13 @@ bool Usd_InstanceCache::_PrototypeUsesPrimIndexPath(const SdfPath &primIndexPath
     // we found, and see if the given prim index is a descendent of its
     // source prim index. If it is, then this prim index must be used
     // by a descendent of that prototype.
-    _PrototypeToSourcePrimIndexMap::const_iterator prototypeToSourceIt =
-        _prototypeToSourcePrimIndexMap.find(it->second);
+    _PrototypeToSourcePrimIndexMap::const_iterator prototypeToSourceIt = _prototypeToSourcePrimIndexMap.find(
+      it->second);
     if (!TF_VERIFY(prototypeToSourceIt != _prototypeToSourcePrimIndexMap.end())) {
       break;
     }
 
-    const SdfPath &prototypePath       = prototypeToSourceIt->first;
+    const SdfPath &prototypePath = prototypeToSourceIt->first;
     const SdfPath &sourcePrimIndexPath = prototypeToSourceIt->second;
     if (curIndexPath.HasPrefix(sourcePrimIndexPath)) {
       // If we don't need to collect all the prototype paths using this
@@ -616,8 +602,7 @@ bool Usd_InstanceCache::IsPathDescendantToAnInstance(const SdfPath &usdPrimPath)
 {
   // If any ancestor of usdPrimPath is in _primIndexToPrototypeMap, it's
   // a descendent of an instance.
-  return _FindEntryForAncestor(_primIndexToPrototypeMap, usdPrimPath) !=
-         _primIndexToPrototypeMap.end();
+  return _FindEntryForAncestor(_primIndexToPrototypeMap, usdPrimPath) != _primIndexToPrototypeMap.end();
 }
 
 SdfPath Usd_InstanceCache::GetMostAncestralInstancePath(const SdfPath &usdPrimPath) const
@@ -630,13 +615,12 @@ SdfPath Usd_InstanceCache::GetMostAncestralInstancePath(const SdfPath &usdPrimPa
     if (it == _primIndexToPrototypeMap.end())
       break;
     result = it->first;
-    path   = it->first.GetParentPath();
+    path = it->first.GetParentPath();
   }
   return result;
 }
 
-SdfPath Usd_InstanceCache::GetPrototypeForInstanceablePrimIndexPath(
-    const SdfPath &primIndexPath) const
+SdfPath Usd_InstanceCache::GetPrototypeForInstanceablePrimIndexPath(const SdfPath &primIndexPath) const
 {
   // Search the mapping from instance prim index to prototype prim
   // to find the associated prototype.
@@ -656,11 +640,10 @@ SdfPath Usd_InstanceCache::GetPathInPrototypeForInstancePath(const SdfPath &prim
     // If primPath is prefixed by a prototype prim path, replace it
     // with that prototype's source index path to produce a prim index
     // path.
-    _PrototypeToSourcePrimIndexMap::const_iterator it = _prototypeToSourcePrimIndexMap.upper_bound(
-        primPath);
+    _PrototypeToSourcePrimIndexMap::const_iterator it = _prototypeToSourcePrimIndexMap.upper_bound(primPath);
     if (it != _prototypeToSourcePrimIndexMap.begin()) {
       --it;
-      const SdfPath &prototypePath       = it->first;
+      const SdfPath &prototypePath = it->first;
       const SdfPath &sourcePrimIndexPath = it->second;
 
       // Just try the prefix replacement instead of doing a separate
@@ -726,8 +709,8 @@ SdfPath Usd_InstanceCache::GetPathInPrototypeForInstancePath(const SdfPath &prim
     // The next time around we'll find a match for curPrimIndexPath
     // in _primIndexToPrototypeMap that gets us closer to the nested
     // instance's prototype (if one exists).
-    _PrototypeToSourcePrimIndexMap::const_iterator prototypeToSourceIt =
-        _prototypeToSourcePrimIndexMap.find(it->second);
+    _PrototypeToSourcePrimIndexMap::const_iterator prototypeToSourceIt = _prototypeToSourcePrimIndexMap.find(
+      it->second);
     if (!TF_VERIFY(prototypeToSourceIt != _prototypeToSourcePrimIndexMap.end())) {
       break;
     }

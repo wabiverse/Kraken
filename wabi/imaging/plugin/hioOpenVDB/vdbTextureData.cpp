@@ -64,7 +64,7 @@ class HioOpenVDB_TextureDataFactory final : public HioFieldTextureDataFactoryBas
 
 TF_REGISTRY_FUNCTION(TfType)
 {
-  using T  = HioOpenVDB_TextureData;
+  using T = HioOpenVDB_TextureData;
   TfType t = TfType::Define<T, TfType::Bases<T::Base>>();
   t.SetFactory<HioOpenVDB_TextureDataFactory>();
 }
@@ -72,13 +72,13 @@ TF_REGISTRY_FUNCTION(TfType)
 HioOpenVDB_TextureData::HioOpenVDB_TextureData(std::string const &filePath,
                                                std::string const &gridName,
                                                const size_t targetMemory)
-    : _filePath(filePath),
-      _gridName(gridName),
-      _targetMemory(targetMemory),
-      _resizedWidth(0),
-      _resizedHeight(0),
-      _resizedDepth(1),
-      _format(HioFormatUNorm8Vec3)
+  : _filePath(filePath),
+    _gridName(gridName),
+    _targetMemory(targetMemory),
+    _resizedWidth(0),
+    _resizedHeight(0),
+    _resizedDepth(1),
+    _format(HioFormatUNorm8Vec3)
 {}
 
 HioOpenVDB_TextureData::~HioOpenVDB_TextureData() = default;
@@ -174,7 +174,7 @@ class _DenseGridHolder final : public HioOpenVDB_TextureData_DenseGridHolderBase
  public:
   using ValueType = typename GridType::ValueType;
   using DenseGrid = openvdb::tools::Dense<ValueType, openvdb::tools::LayoutXYZ>;
-  using GridPtr   = typename GridType::Ptr;
+  using GridPtr = typename GridType::Ptr;
 
   // Create dense grid holder from grid and bounding box or return
   // null pointer for empty grid.
@@ -192,8 +192,8 @@ class _DenseGridHolder final : public HioOpenVDB_TextureData_DenseGridHolderBase
   }
 
   _DenseGridHolder(const GridPtr &grid, const openvdb::CoordBBox &bbox)
-      // Allocate dense grid of given size
-      : _denseGrid(bbox)
+    // Allocate dense grid of given size
+    : _denseGrid(bbox)
   {
     HF_MALLOC_TAG_FUNCTION();
     {
@@ -249,8 +249,7 @@ class _GridHolderBase {
   static _GridHolderBase *New(const openvdb::GridBase::Ptr &grid);
 
  protected:
-  _GridHolderBase(const openvdb::GridBase::Ptr &grid)
-      : _treeBoundingBox(_ComputeTreeBoundingBox(grid))
+  _GridHolderBase(const openvdb::GridBase::Ptr &grid) : _treeBoundingBox(_ComputeTreeBoundingBox(grid))
   {}
 
  private:
@@ -272,7 +271,7 @@ class _GridHolderBase {
 template<typename GridType> class _GridHolder final : public _GridHolderBase {
  public:
   using GridPtr = typename GridType::Ptr;
-  using This    = _GridHolder<GridType>;
+  using This = _GridHolder<GridType>;
 
   // Construct's _GridHolder if given OpenVDB grid pointer has the
   // correct type - also computed the bounding box of the tree in the grid.
@@ -301,8 +300,8 @@ template<typename GridType> class _GridHolder final : public _GridHolderBase {
 
     GridPtr const result = GridType::create();
 
-    result->setTransform(openvdb::math::Transform::createLinearTransform(
-        openvdb::math::Mat4d(newTransform.data())));
+    result->setTransform(
+      openvdb::math::Transform::createLinearTransform(openvdb::math::Mat4d(newTransform.data())));
 
     openvdb::tools::resampleToMatch<openvdb::tools::BoxSampler>(*_grid, *result);
 
@@ -318,32 +317,28 @@ template<typename GridType> class _GridHolder final : public _GridHolderBase {
   const GridPtr _grid;
 };
 
-template<>
-void _GridHolder<openvdb::FloatGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
+template<> void _GridHolder<openvdb::FloatGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
 {
   *bytesPerPixel = sizeof(float);
-  *format        = HioFormatFloat32;
+  *format = HioFormatFloat32;
 }
 
-template<>
-void _GridHolder<openvdb::DoubleGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
+template<> void _GridHolder<openvdb::DoubleGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
 {
   *bytesPerPixel = sizeof(double);
-  *format        = HioFormatDouble64;
+  *format = HioFormatDouble64;
 }
 
-template<>
-void _GridHolder<openvdb::Vec3fGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
+template<> void _GridHolder<openvdb::Vec3fGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
 {
   *bytesPerPixel = 3 * sizeof(float);
-  *format        = HioFormatFloat32Vec3;
+  *format = HioFormatFloat32Vec3;
 }
 
-template<>
-void _GridHolder<openvdb::Vec3dGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
+template<> void _GridHolder<openvdb::Vec3dGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
 {
   *bytesPerPixel = 3 * sizeof(double);
-  *format        = HioFormatDouble64Vec3;
+  *format = HioFormatDouble64Vec3;
 }
 
 _GridHolderBase *_GridHolderBase::New(const openvdb::GridBase::Ptr &grid)
@@ -481,7 +476,7 @@ _GridHolderBase *_LoadGrid(const std::string &filePath, std::string const &gridN
     {
       TRACE_FUNCTION_SCOPE("Streaming VDB grids from ArAsset bytes");
       std::shared_ptr<const char> vdbBytes = asset->GetBuffer();
-      const size_t vdbNumBytes             = asset->GetSize();
+      const size_t vdbNumBytes = asset->GetSize();
       _CharStream vdbSource(vdbBytes.get(), vdbNumBytes);
 
       openvdb::io::Stream s(vdbSource);
@@ -558,7 +553,7 @@ bool HioOpenVDB_TextureData::Read()
   TRACE_FUNCTION();
 
   TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE)
-      .Msg("[VdbTextureData] Path: %s GridName: %s\n", _filePath.c_str(), _gridName.c_str());
+    .Msg("[VdbTextureData] Path: %s GridName: %s\n", _filePath.c_str(), _gridName.c_str());
 
   // Load grid from OpenVDB file
   std::unique_ptr<_GridHolderBase> gridHolder(_LoadGrid(_filePath, _gridName));
@@ -577,19 +572,16 @@ bool HioOpenVDB_TextureData::Read()
 
   // Get tree bounding box to compute native dimensions and size
   const openvdb::CoordBBox &nativeTreeBoundingBox = gridHolder->GetTreeBoundingBox();
-  const openvdb::Coord nativeDim                  = nativeTreeBoundingBox.dim();
-  const int nativeWidth                           = nativeDim.x();
-  const int nativeHeight                          = nativeDim.y();
+  const openvdb::Coord nativeDim = nativeTreeBoundingBox.dim();
+  const int nativeWidth = nativeDim.x();
+  const int nativeHeight = nativeDim.y();
   // Following convention to set depth to 1 for an empty texture.
   const int nativeDepth = std::max(1, nativeDim.z());
 
   const size_t nativeSize = nativeTreeBoundingBox.volume() * bytesPerPixel;
 
   TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE)
-      .Msg("[VdbTextureData] Native dimensions %d x %d x %d\n",
-           nativeWidth,
-           nativeHeight,
-           nativeDepth);
+    .Msg("[VdbTextureData] Native dimensions %d x %d x %d\n", nativeWidth, nativeHeight, nativeDepth);
 
   // Check whether native size is more than target memory if given
   if (nativeSize > _targetMemory && _targetMemory > 0) {
@@ -602,8 +594,7 @@ bool HioOpenVDB_TextureData::Read()
     // As first approximation, use the cube-root.
     const double approxScale = cbrt(double(nativeSize) / double(_targetMemory));
 
-    TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE)
-        .Msg("[VdbTextureData] Approximate scaling factor %f\n", approxScale);
+    TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE).Msg("[VdbTextureData] Approximate scaling factor %f\n", approxScale);
 
     // There will be additional samples near the boundary
     // of the original voluem, so scale down a bit more.
@@ -624,9 +615,9 @@ bool HioOpenVDB_TextureData::Read()
   _denseGrid.reset(gridHolder->GetDense());
 
   if (!_denseGrid) {
-    _resizedWidth  = 0;
+    _resizedWidth = 0;
     _resizedHeight = 0;
-    _resizedDepth  = 1;
+    _resizedDepth = 1;
 
     // Not emitting warning as volume might be empty for
     // legitimate reason (for example during an animation).
@@ -641,27 +632,26 @@ bool HioOpenVDB_TextureData::Read()
   _boundingBox.Set(_ToRange3d(treeBoundingBox), gridTransform);
 
   const openvdb::Coord dim = treeBoundingBox.dim();
-  _resizedWidth            = dim.x();
-  _resizedHeight           = dim.y();
-  _resizedDepth            = dim.z();
+  _resizedWidth = dim.x();
+  _resizedHeight = dim.y();
+  _resizedDepth = dim.z();
 
   const size_t size = treeBoundingBox.volume() * bytesPerPixel;
 
   TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE)
-      .Msg(
-          "[VdbTextureData] Resized dimensions %d x %d x %d "
-          "(size: %zd, target: %zd)\n",
-          _resizedWidth,
-          _resizedHeight,
-          _resizedDepth,
-          size,
-          _targetMemory);
+    .Msg(
+      "[VdbTextureData] Resized dimensions %d x %d x %d "
+      "(size: %zd, target: %zd)\n",
+      _resizedWidth,
+      _resizedHeight,
+      _resizedDepth,
+      size,
+      _targetMemory);
 
   TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE)
-      .Msg("[VdbTextureData] %s",
-           (size <= _targetMemory || _targetMemory == 0) ?
-               "Target memory was met." :
-               "WARNING: the target memory was EXCEEDED");
+    .Msg("[VdbTextureData] %s",
+         (size <= _targetMemory || _targetMemory == 0) ? "Target memory was met." :
+                                                         "WARNING: the target memory was EXCEEDED");
 
   return true;
 }

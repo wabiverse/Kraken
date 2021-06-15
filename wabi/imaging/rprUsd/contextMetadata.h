@@ -18,13 +18,7 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-enum RprUsdPluginType {
-  kPluginInvalid = -1,
-  kPluginTahoe,
-  kPluginNorthstar,
-  kPluginHybrid,
-  kPluginsCount
-};
+enum RprUsdPluginType { kPluginInvalid = -1, kPluginTahoe, kPluginNorthstar, kPluginHybrid, kPluginsCount };
 
 enum class RprUsdRenderDeviceType {
   Invalid,
@@ -33,10 +27,10 @@ enum class RprUsdRenderDeviceType {
 };
 
 struct RprUsdContextMetadata {
-  RprUsdPluginType pluginType             = kPluginInvalid;
+  RprUsdPluginType pluginType = kPluginInvalid;
   RprUsdRenderDeviceType renderDeviceType = RprUsdRenderDeviceType::Invalid;
-  bool isGlInteropEnabled                 = false;
-  void *interopInfo                       = nullptr;
+  bool isGlInteropEnabled = false;
+  void *interopInfo = nullptr;
 };
 
 WABI_NAMESPACE_END

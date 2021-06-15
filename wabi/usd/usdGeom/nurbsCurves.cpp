@@ -105,8 +105,7 @@ UsdAttribute UsdGeomNurbsCurves::GetOrderAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->order);
 }
 
-UsdAttribute UsdGeomNurbsCurves::CreateOrderAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdGeomNurbsCurves::CreateOrderAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->order,
                                     SdfValueTypeNames->IntArray,
@@ -121,8 +120,7 @@ UsdAttribute UsdGeomNurbsCurves::GetKnotsAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->knots);
 }
 
-UsdAttribute UsdGeomNurbsCurves::CreateKnotsAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdGeomNurbsCurves::CreateKnotsAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->knots,
                                     SdfValueTypeNames->DoubleArray,
@@ -137,8 +135,7 @@ UsdAttribute UsdGeomNurbsCurves::GetRangesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->ranges);
 }
 
-UsdAttribute UsdGeomNurbsCurves::CreateRangesAttr(VtValue const &defaultValue,
-                                                  bool writeSparsely) const
+UsdAttribute UsdGeomNurbsCurves::CreateRangesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->ranges,
                                     SdfValueTypeNames->Double2Array,
@@ -149,8 +146,7 @@ UsdAttribute UsdGeomNurbsCurves::CreateRangesAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -164,12 +160,12 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdGeomNurbsCurves::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdGeomTokens->order,
-      UsdGeomTokens->knots,
-      UsdGeomTokens->ranges,
+    UsdGeomTokens->order,
+    UsdGeomTokens->knots,
+    UsdGeomTokens->ranges,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdGeomCurves::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomCurves::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

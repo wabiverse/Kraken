@@ -71,7 +71,7 @@ class GfMatrix2f {
  public:
   typedef float ScalarType;
 
-  static const size_t numRows    = 2;
+  static const size_t numRows = 2;
   static const size_t numColumns = 2;
 
   /// Default constructor. Leaves the matrix component values undefined.
@@ -254,8 +254,8 @@ class GfMatrix2f {
   /// Hash.
   friend inline size_t hash_value(GfMatrix2f const &m)
   {
-    int nElems     = 2 * 2;
-    size_t h       = 0;
+    int nElems = 2 * 2;
+    size_t h = 0;
     const float *p = m.GetArray();
     while (nElems--)
       boost::hash_combine(h, *p++);

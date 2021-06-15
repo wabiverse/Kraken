@@ -37,8 +37,7 @@ struct HdxPrman_InteractiveContext;
 class HdxPrmanRenderDelegate final : public HdPrmanRenderDelegate {
  public:
   HdxPrmanRenderDelegate(std::shared_ptr<HdPrman_Context> context);
-  HdxPrmanRenderDelegate(std::shared_ptr<HdPrman_Context> context,
-                         HdRenderSettingsMap const &settingsMap);
+  HdxPrmanRenderDelegate(std::shared_ptr<HdPrman_Context> context, HdRenderSettingsMap const &settingsMap);
   virtual ~HdxPrmanRenderDelegate();
 
   // HdRenderDelegate API implementation.

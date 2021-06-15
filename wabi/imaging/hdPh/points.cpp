@@ -114,28 +114,26 @@ void HdPhPoints::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
   /* INSTANCE PRIMVARS */
   _UpdateInstancer(sceneDelegate, dirtyBits);
   HdPhUpdateInstancerData(
-      sceneDelegate->GetRenderIndex(), renderParam, this, drawItem, &_sharedData, *dirtyBits);
+    sceneDelegate->GetRenderIndex(), renderParam, this, drawItem, &_sharedData, *dirtyBits);
 
-  _displayOpacity = _displayOpacity ||
-                    HdPhIsInstancePrimvarExistentAndValid(
-                        sceneDelegate->GetRenderIndex(), this, HdTokens->displayOpacity);
+  _displayOpacity = _displayOpacity || HdPhIsInstancePrimvarExistentAndValid(
+                                         sceneDelegate->GetRenderIndex(), this, HdTokens->displayOpacity);
 
   /* CONSTANT PRIMVARS, TRANSFORM, EXTENT AND PRIMID */
   if (HdPhShouldPopulateConstantPrimvars(dirtyBits, id)) {
     HdPrimvarDescriptorVector constantPrimvars = HdPhGetPrimvarDescriptors(
-        this, drawItem, sceneDelegate, HdInterpolationConstant);
+      this, drawItem, sceneDelegate, HdInterpolationConstant);
 
     HdPhPopulateConstantPrimvars(
-        this, &_sharedData, sceneDelegate, renderParam, drawItem, dirtyBits, constantPrimvars);
+      this, &_sharedData, sceneDelegate, renderParam, drawItem, dirtyBits, constantPrimvars);
 
-    _displayOpacity = _displayOpacity ||
-                      HdPhIsPrimvarExistentAndValid(
-                          this, sceneDelegate, constantPrimvars, HdTokens->displayOpacity);
+    _displayOpacity = _displayOpacity || HdPhIsPrimvarExistentAndValid(
+                                           this, sceneDelegate, constantPrimvars, HdTokens->displayOpacity);
   }
 
   HdPh_PointsShaderKey shaderKey;
   HdPhResourceRegistrySharedPtr resourceRegistry = std::static_pointer_cast<HdPhResourceRegistry>(
-      sceneDelegate->GetRenderIndex().GetResourceRegistry());
+    sceneDelegate->GetRenderIndex().GetResourceRegistry());
   drawItem->SetGeometricShader(HdPh_GeometricShader::Create(shaderKey, resourceRegistry));
 
   /* PRIMVAR */
@@ -158,11 +156,11 @@ void HdPhPoints::_UpdateRepr(HdSceneDelegate *sceneDelegate,
 
   // XXX: We only support smoothHull for now
   _PointsReprConfig::DescArray descs = _GetReprDesc(HdReprTokens->smoothHull);
-  HdReprSharedPtr const &curRepr     = _smoothHullRepr;
+  HdReprSharedPtr const &curRepr = _smoothHullRepr;
 
   if (TfDebug::IsEnabled(HD_RPRIM_UPDATED)) {
     TfDebug::Helper().Msg(
-        "HdPhPoints::_UpdateRepr for %s : Repr = %s\n", GetId().GetText(), reprToken.GetText());
+      "HdPhPoints::_UpdateRepr for %s : Repr = %s\n", GetId().GetText(), reprToken.GetText());
     HdChangeTracker::DumpDirtyBits(*dirtyBits);
   }
 
@@ -190,9 +188,8 @@ void HdPhPoints::_PopulateVertexPrimvars(HdSceneDelegate *sceneDelegate,
   HF_MALLOC_TAG_FUNCTION();
 
   SdfPath const &id = GetId();
-  HdPhResourceRegistrySharedPtr const &resourceRegistry =
-      std::static_pointer_cast<HdPhResourceRegistry>(
-          sceneDelegate->GetRenderIndex().GetResourceRegistry());
+  HdPhResourceRegistrySharedPtr const &resourceRegistry = std::static_pointer_cast<HdPhResourceRegistry>(
+    sceneDelegate->GetRenderIndex().GetResourceRegistry());
 
   // Gather vertex and varying primvars
   HdPrimvarDescriptorVector primvars;
@@ -200,13 +197,13 @@ void HdPhPoints::_PopulateVertexPrimvars(HdSceneDelegate *sceneDelegate,
     primvars = HdPhGetPrimvarDescriptors(this, drawItem, sceneDelegate, HdInterpolationVertex);
 
     HdPrimvarDescriptorVector varyingPvs = HdPhGetPrimvarDescriptors(
-        this, drawItem, sceneDelegate, HdInterpolationVarying);
+      this, drawItem, sceneDelegate, HdInterpolationVarying);
     primvars.insert(primvars.end(), varyingPvs.begin(), varyingPvs.end());
   }
 
   // Get computed vertex primvars
-  HdExtComputationPrimvarDescriptorVector compPrimvars =
-      sceneDelegate->GetExtComputationPrimvarDescriptors(id, HdInterpolationVertex);
+  HdExtComputationPrimvarDescriptorVector compPrimvars = sceneDelegate->GetExtComputationPrimvarDescriptors(
+    id, HdInterpolationVertex);
 
   HdBufferSourceSharedPtrVector sources;
   HdBufferSourceSharedPtrVector reserveOnlySources;
@@ -251,8 +248,7 @@ void HdPhPoints::_PopulateVertexPrimvars(HdSceneDelegate *sceneDelegate,
   HdBufferSpecVector removedSpecs;
   if (hasDirtyPrimvarDesc) {
     TfTokenVector internallyGeneratedPrimvars;  // none
-    removedSpecs = HdPhGetRemovedPrimvarBufferSpecs(
-        bar, primvars, internallyGeneratedPrimvars, id);
+    removedSpecs = HdPhGetRemovedPrimvarBufferSpecs(bar, primvars, internallyGeneratedPrimvars, id);
   }
 
   HdBufferSpecVector bufferSpecs;
@@ -261,7 +257,7 @@ void HdPhPoints::_PopulateVertexPrimvars(HdSceneDelegate *sceneDelegate,
   HdPhGetBufferSpecsFromCompuations(computations, &bufferSpecs);
 
   HdBufferArrayRangeSharedPtr range = resourceRegistry->UpdateNonUniformBufferArrayRange(
-      HdTokens->primvar, bar, bufferSpecs, removedSpecs, HdBufferArrayUsageHint());
+    HdTokens->primvar, bar, bufferSpecs, removedSpecs, HdBufferArrayUsageHint());
 
   HdPhUpdateDrawItemBAR(range,
                         drawItem->GetDrawingCoord()->GetVertexPrimvarIndex(),
@@ -284,7 +280,7 @@ void HdPhPoints::_PopulateVertexPrimvars(HdSceneDelegate *sceneDelegate,
   // add gpu computations to queue.
   for (auto const &compQueuePair : computations) {
     HdComputationSharedPtr const &comp = compQueuePair.first;
-    HdPhComputeQueue queue             = compQueuePair.second;
+    HdPhComputeQueue queue = compQueuePair.second;
     resourceRegistry->AddComputation(drawItem->GetVertexPrimvarRange(), comp, queue);
   }
   if (!separateComputationSources.empty()) {
@@ -296,12 +292,12 @@ void HdPhPoints::_PopulateVertexPrimvars(HdSceneDelegate *sceneDelegate,
 
 HdDirtyBits HdPhPoints::GetInitialDirtyBitsMask() const
 {
-  HdDirtyBits mask = HdChangeTracker::Clean | HdChangeTracker::InitRepr |
-                     HdChangeTracker::DirtyExtent | HdChangeTracker::DirtyPoints |
-                     HdChangeTracker::DirtyPrimID | HdChangeTracker::DirtyPrimvar |
-                     HdChangeTracker::DirtyRepr | HdChangeTracker::DirtyMaterialId |
-                     HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyVisibility |
-                     HdChangeTracker::DirtyWidths | HdChangeTracker::DirtyInstancer;
+  HdDirtyBits mask = HdChangeTracker::Clean | HdChangeTracker::InitRepr | HdChangeTracker::DirtyExtent |
+                     HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyPrimID |
+                     HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyRepr |
+                     HdChangeTracker::DirtyMaterialId | HdChangeTracker::DirtyTransform |
+                     HdChangeTracker::DirtyVisibility | HdChangeTracker::DirtyWidths |
+                     HdChangeTracker::DirtyInstancer;
 
   return mask;
 }
@@ -326,7 +322,7 @@ void HdPhPoints::_InitRepr(TfToken const &reprToken, HdDirtyBits *dirtyBits)
 
       if (desc.geomStyle != HdPointsGeomStyleInvalid) {
         HdRepr::DrawItemUniquePtr drawItem = std::make_unique<HdPhDrawItem>(&_sharedData);
-        HdDrawingCoord *drawingCoord       = drawItem->GetDrawingCoord();
+        HdDrawingCoord *drawingCoord = drawItem->GetDrawingCoord();
         _smoothHullRepr->AddDrawItem(std::move(drawItem));
 
         // Set up drawing coord instance primvars.
@@ -335,8 +331,7 @@ void HdPhPoints::_InitRepr(TfToken const &reprToken, HdDirtyBits *dirtyBits)
     }
   }
 
-  _ReprVector::iterator it = std::find_if(
-      _reprs.begin(), _reprs.end(), _ReprComparator(reprToken));
+  _ReprVector::iterator it = std::find_if(_reprs.begin(), _reprs.end(), _ReprComparator(reprToken));
   bool isNew = it == _reprs.end();
   if (isNew) {
     // add new repr

@@ -118,11 +118,11 @@ class Bignum {
   typedef uint32_t Chunk;
   typedef uint64_t DoubleChunk;
 
-  static const int kChunkSize       = sizeof(Chunk) * 8;
+  static const int kChunkSize = sizeof(Chunk) * 8;
   static const int kDoubleChunkSize = sizeof(DoubleChunk) * 8;
   // With bigit size of 28 we loose some bits, but a double still fits easily
   // into two chunks, and more importantly we can use the Comba multiplication.
-  static const int kBigitSize   = 28;
+  static const int kBigitSize = 28;
   static const Chunk kBigitMask = (1 << kBigitSize) - 1;
   // Every instance allocates kBigitLength chunks on the stack. Bignums cannot
   // grow. There are no checks if the stack-allocated space is sufficient.

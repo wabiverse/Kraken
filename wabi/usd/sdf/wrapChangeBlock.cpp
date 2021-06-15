@@ -86,8 +86,8 @@ void wrapChangeBlock()
   // with the 'with' statement.
   typedef Sdf_PythonChangeBlock This;
   class_<This, boost::noncopyable>("ChangeBlock", init<>())
-      .def("__enter__", &This::Open)
-      .def("__exit__", &This::Close);
+    .def("__enter__", &This::Open)
+    .def("__exit__", &This::Close);
 
   // Helpers to open/close change blocks in a non-RAII fashion. Primarily
   // here for API compatibility, consumers should prefer the ChangeBlock

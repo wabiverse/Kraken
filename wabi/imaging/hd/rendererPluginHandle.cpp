@@ -30,8 +30,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdRendererPluginHandle::HdRendererPluginHandle(const HdRendererPluginHandle &other)
-    : _plugin(other._plugin)
+HdRendererPluginHandle::HdRendererPluginHandle(const HdRendererPluginHandle &other) : _plugin(other._plugin)
 {
   if (_plugin) {
     HdRendererPluginRegistry::GetInstance().AddPluginReference(_plugin);

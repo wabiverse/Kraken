@@ -26,10 +26,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-Hd_SceneExtCompInputSource::Hd_SceneExtCompInputSource(const TfToken &inputName,
-                                                       const VtValue &value)
-    : Hd_ExtCompInputSource(inputName),
-      _value(value)
+Hd_SceneExtCompInputSource::Hd_SceneExtCompInputSource(const TfToken &inputName, const VtValue &value)
+  : Hd_ExtCompInputSource(inputName),
+    _value(value)
 {}
 
 bool Hd_SceneExtCompInputSource::Resolve()

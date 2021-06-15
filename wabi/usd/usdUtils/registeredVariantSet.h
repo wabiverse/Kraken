@@ -75,10 +75,9 @@ struct UsdUtilsRegisteredVariantSet {
   /// Specifies how to export a variant selection.
   const SelectionExportPolicy selectionExportPolicy;
 
-  UsdUtilsRegisteredVariantSet(const std::string &name,
-                               const SelectionExportPolicy &selectionExportPolicy)
-      : name(name),
-        selectionExportPolicy(selectionExportPolicy)
+  UsdUtilsRegisteredVariantSet(const std::string &name, const SelectionExportPolicy &selectionExportPolicy)
+    : name(name),
+      selectionExportPolicy(selectionExportPolicy)
   {}
 
   // provided so this can be stored in a std::set.

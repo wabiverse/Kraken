@@ -83,8 +83,7 @@ template<class T> class TfPointerAndBits {
   }
 
   /// Constructor.  Set the pointer to \a p, and the bits to \a bits.
-  constexpr explicit TfPointerAndBits(T *p, uintptr_t bits = 0) noexcept
-      : _ptrAndBits(_Combine(p, bits))
+  constexpr explicit TfPointerAndBits(T *p, uintptr_t bits = 0) noexcept : _ptrAndBits(_Combine(p, bits))
   {
     static_assert(_SupportsAtLeastOneBit(), "T's alignment does not support any bits");
   }

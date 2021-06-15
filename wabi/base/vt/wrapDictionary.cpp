@@ -143,7 +143,7 @@ struct _VtValueArrayFromPython {
     if (!dProxy.check()) {
       return NULL;
     }
-    list d      = dProxy();
+    list d = dProxy();
     int numElts = len(d);
 
     if (result)
@@ -170,8 +170,7 @@ struct _VtValueArrayFromPython {
   static void construct(PyObject *source, converter::rvalue_from_python_stage1_data *data)
   {
     TfAutoMallocTag2 tag("Vt", "_VtValueArrayFromPython::construct");
-    void *storage =
-        ((converter::rvalue_from_python_storage<std::vector<VtValue>> *)data)->storage.bytes;
+    void *storage = ((converter::rvalue_from_python_storage<std::vector<VtValue>> *)data)->storage.bytes;
     new (storage) std::vector<VtValue>();
     data->convertible = storage;
     convert(source, (std::vector<VtValue> *)storage);
@@ -193,7 +192,7 @@ struct _VtDictionaryFromPython {
       return NULL;
     }
 
-    Py_ssize_t pos  = 0;
+    Py_ssize_t pos = 0;
     PyObject *pyKey = NULL, *pyVal = NULL;
     while (PyDict_Next(p, &pos, &pyKey, &pyVal)) {
       extract<std::string> keyProxy(pyKey);
@@ -233,8 +232,7 @@ struct _VtDictionaryFromPython {
 struct _VtValueHoldingVtValueArrayFromPython {
   _VtValueHoldingVtValueArrayFromPython()
   {
-    converter::registry::insert(
-        &_VtValueArrayFromPython::convertible, &construct, type_id<VtValue>());
+    converter::registry::insert(&_VtValueArrayFromPython::convertible, &construct, type_id<VtValue>());
   }
 
   static void construct(PyObject *source, converter::rvalue_from_python_stage1_data *data)
@@ -253,8 +251,7 @@ struct _VtValueHoldingVtValueArrayFromPython {
 struct _VtValueHoldingVtDictionaryFromPython {
   _VtValueHoldingVtDictionaryFromPython()
   {
-    converter::registry::insert(
-        &_VtDictionaryFromPython::convertible, &construct, type_id<VtValue>());
+    converter::registry::insert(&_VtDictionaryFromPython::convertible, &construct, type_id<VtValue>());
   }
 
   static void construct(PyObject *source, converter::rvalue_from_python_stage1_data *data)

@@ -67,10 +67,10 @@ template<typename T> class TraceConcurrentList {
    public:
     // iterator types
     using iterator_category = std::forward_iterator_tag;
-    using value             = T;
-    using pointer           = T *;
-    using reference         = T &;
-    using difference_type   = ptrdiff_t;
+    using value = T;
+    using pointer = T *;
+    using reference = T &;
+    using difference_type = ptrdiff_t;
 
     iterator() : _node(nullptr)
     {}
@@ -126,7 +126,7 @@ template<typename T> class TraceConcurrentList {
     Node *curNode = _head.load(std::memory_order_acquire);
     while (curNode) {
       Node *nodeToDelete = curNode;
-      curNode            = curNode->next;
+      curNode = curNode->next;
       nodeToDelete->~Node();
       _alloc.deallocate(nodeToDelete, 1);
     }

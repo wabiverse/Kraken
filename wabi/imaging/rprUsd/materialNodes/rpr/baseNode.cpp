@@ -21,16 +21,15 @@ WABI_NAMESPACE_BEGIN
 
 RprUsd_BaseRuntimeNode::RprUsd_BaseRuntimeNode(rpr::MaterialNodeType type,
                                                RprUsd_MaterialBuilderContext *ctx)
-    : m_type(type),
-      m_ctx(ctx)
+  : m_type(type),
+    m_ctx(ctx)
 {
 
   rpr::Status status;
   m_rprNode.reset(ctx->rprContext->CreateMaterialNode(type, &status));
 
   if (!m_rprNode) {
-    throw RprUsd_NodeError(
-        RPR_GET_ERROR_MESSAGE(status, "Failed to create material node", ctx->rprContext));
+    throw RprUsd_NodeError(RPR_GET_ERROR_MESSAGE(status, "Failed to create material node", ctx->rprContext));
   }
 }
 

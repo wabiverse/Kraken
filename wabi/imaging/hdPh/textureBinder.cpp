@@ -67,9 +67,8 @@ void HdPh_TextureBinder::GetBufferSpecs(const NamedTextureHandleVector &textures
           specs->emplace_back(_Concat(texture.name, HdPh_ResourceBindingSuffixTokens->valid),
                               HdTupleType{HdTypeBool, 1});
         }
-        specs->emplace_back(
-            _Concat(texture.name, HdPh_ResourceBindingSuffixTokens->samplingTransform),
-            HdTupleType{HdTypeDoubleMat4, 1});
+        specs->emplace_back(_Concat(texture.name, HdPh_ResourceBindingSuffixTokens->samplingTransform),
+                            HdTupleType{HdTypeDoubleMat4, 1});
         break;
       case HdTextureType::Ptex:
         if (useBindlessHandles) {
@@ -97,9 +96,9 @@ namespace {
 class HdPh_BindlessSamplerBufferSource : public HdBufferSource {
  public:
   HdPh_BindlessSamplerBufferSource(TfToken const &name, const GLuint64EXT value)
-      : HdBufferSource(),
-        _name(name),
-        _value(value)
+    : HdBufferSource(),
+      _name(name),
+      _value(value)
   {}
 
   ~HdPh_BindlessSamplerBufferSource() override = default;
@@ -152,12 +151,12 @@ class _ComputeBufferSourcesFunctor {
                       HdBufferSourceSharedPtrVector *const sources)
   {
     if (useBindlessHandles) {
-      sources->push_back(std::make_shared<HdPh_BindlessSamplerBufferSource>(
-          name, sampler.GetGLTextureSamplerHandle()));
+      sources->push_back(
+        std::make_shared<HdPh_BindlessSamplerBufferSource>(name, sampler.GetGLTextureSamplerHandle()));
     }
     else {
       sources->push_back(std::make_shared<HdVtBufferSource>(
-          _Concat(name, HdPh_ResourceBindingSuffixTokens->valid), VtValue(texture.IsValid())));
+        _Concat(name, HdPh_ResourceBindingSuffixTokens->valid), VtValue(texture.IsValid())));
     }
   }
 
@@ -167,17 +166,17 @@ class _ComputeBufferSourcesFunctor {
                       const bool useBindlessHandles,
                       HdBufferSourceSharedPtrVector *const sources)
   {
-    sources->push_back(std::make_shared<HdVtBufferSource>(
-        _Concat(name, HdPh_ResourceBindingSuffixTokens->samplingTransform),
-        VtValue(texture.GetSamplingTransform())));
+    sources->push_back(
+      std::make_shared<HdVtBufferSource>(_Concat(name, HdPh_ResourceBindingSuffixTokens->samplingTransform),
+                                         VtValue(texture.GetSamplingTransform())));
 
     if (useBindlessHandles) {
-      sources->push_back(std::make_shared<HdPh_BindlessSamplerBufferSource>(
-          name, sampler.GetGLTextureSamplerHandle()));
+      sources->push_back(
+        std::make_shared<HdPh_BindlessSamplerBufferSource>(name, sampler.GetGLTextureSamplerHandle()));
     }
     else {
       sources->push_back(std::make_shared<HdVtBufferSource>(
-          _Concat(name, HdPh_ResourceBindingSuffixTokens->valid), VtValue(texture.IsValid())));
+        _Concat(name, HdPh_ResourceBindingSuffixTokens->valid), VtValue(texture.IsValid())));
     }
   }
 
@@ -191,12 +190,11 @@ class _ComputeBufferSourcesFunctor {
       return;
     }
 
-    sources->push_back(std::make_shared<HdPh_BindlessSamplerBufferSource>(
-        name, sampler.GetTexelsGLTextureHandle()));
+    sources->push_back(
+      std::make_shared<HdPh_BindlessSamplerBufferSource>(name, sampler.GetTexelsGLTextureHandle()));
 
     sources->push_back(std::make_shared<HdPh_BindlessSamplerBufferSource>(
-        _Concat(name, HdPh_ResourceBindingSuffixTokens->layout),
-        sampler.GetLayoutGLTextureHandle()));
+      _Concat(name, HdPh_ResourceBindingSuffixTokens->layout), sampler.GetLayoutGLTextureHandle()));
   }
 
   static void Compute(TfToken const &name,
@@ -209,12 +207,11 @@ class _ComputeBufferSourcesFunctor {
       return;
     }
 
-    sources->push_back(std::make_shared<HdPh_BindlessSamplerBufferSource>(
-        name, sampler.GetTexelsGLTextureHandle()));
+    sources->push_back(
+      std::make_shared<HdPh_BindlessSamplerBufferSource>(name, sampler.GetTexelsGLTextureHandle()));
 
     sources->push_back(std::make_shared<HdPh_BindlessSamplerBufferSource>(
-        _Concat(name, HdPh_ResourceBindingSuffixTokens->layout),
-        sampler.GetLayoutGLTextureHandle()));
+      _Concat(name, HdPh_ResourceBindingSuffixTokens->layout), sampler.GetLayoutGLTextureHandle()));
   }
 };
 
@@ -226,11 +223,11 @@ void _BindTexture(const GLenum target,
                   const bool bind)
 {
   const HdBinding binding = binder.GetBinding(name);
-  const int samplerUnit   = binding.GetTextureUnit();
+  const int samplerUnit = binding.GetTextureUnit();
 
   glActiveTexture(GL_TEXTURE0 + samplerUnit);
 
-  const HgiTexture *const tex     = textureHandle.Get();
+  const HgiTexture *const tex = textureHandle.Get();
   const HgiGLTexture *const glTex = dynamic_cast<const HgiGLTexture *>(tex);
 
   if (tex && !glTex) {
@@ -240,7 +237,7 @@ void _BindTexture(const GLenum target,
   const GLuint texName = (bind && glTex) ? glTex->GetTextureId() : 0;
   glBindTexture(target, texName);
 
-  const HgiSampler *const sampler     = samplerHandle.Get();
+  const HgiSampler *const sampler = samplerHandle.Get();
   const HgiGLSampler *const glSampler = dynamic_cast<const HgiGLSampler *>(sampler);
 
   if (sampler && !glSampler) {
@@ -278,15 +275,14 @@ class _BindFunctor {
                       const bool bind)
   {
     const HdBinding texelBinding = binder.GetBinding(name);
-    const int texelSamplerUnit   = texelBinding.GetTextureUnit();
+    const int texelSamplerUnit = texelBinding.GetTextureUnit();
 
     glActiveTexture(GL_TEXTURE0 + texelSamplerUnit);
     glBindTexture(GL_TEXTURE_2D_ARRAY, bind ? texture.GetTexelTexture()->GetRawResource() : 0);
 
     HgiSampler *const texelSampler = sampler.GetTexelsSampler().Get();
 
-    const HgiGLSampler *const glSampler = bind ? dynamic_cast<HgiGLSampler *>(texelSampler) :
-                                                 nullptr;
+    const HgiGLSampler *const glSampler = bind ? dynamic_cast<HgiGLSampler *>(texelSampler) : nullptr;
 
     if (glSampler) {
       glBindSampler(texelSamplerUnit, (GLuint)glSampler->GetSamplerId());
@@ -296,7 +292,7 @@ class _BindFunctor {
     }
 
     const HdBinding layoutBinding = binder.GetBinding(
-        _Concat(name, HdPh_ResourceBindingSuffixTokens->layout));
+      _Concat(name, HdPh_ResourceBindingSuffixTokens->layout));
     const int layoutSamplerUnit = layoutBinding.GetTextureUnit();
 
     glActiveTexture(GL_TEXTURE0 + layoutSamplerUnit);
@@ -310,15 +306,14 @@ class _BindFunctor {
                       const bool bind)
   {
     const HdBinding texelBinding = binder.GetBinding(name);
-    const int texelSamplerUnit   = texelBinding.GetTextureUnit();
+    const int texelSamplerUnit = texelBinding.GetTextureUnit();
 
     glActiveTexture(GL_TEXTURE0 + texelSamplerUnit);
     glBindTexture(GL_TEXTURE_2D_ARRAY, bind ? texture.GetTexelTexture()->GetRawResource() : 0);
 
     HgiSampler *const texelSampler = sampler.GetTexelsSampler().Get();
 
-    const HgiGLSampler *const glSampler = bind ? dynamic_cast<HgiGLSampler *>(texelSampler) :
-                                                 nullptr;
+    const HgiGLSampler *const glSampler = bind ? dynamic_cast<HgiGLSampler *>(texelSampler) : nullptr;
 
     if (glSampler) {
       glBindSampler(texelSamplerUnit, (GLuint)glSampler->GetSamplerId());
@@ -328,7 +323,7 @@ class _BindFunctor {
     }
 
     const HdBinding layoutBinding = binder.GetBinding(
-        _Concat(name, HdPh_ResourceBindingSuffixTokens->layout));
+      _Concat(name, HdPh_ResourceBindingSuffixTokens->layout));
     const int layoutSamplerUnit = layoutBinding.GetTextureUnit();
 
     glActiveTexture(GL_TEXTURE0 + layoutSamplerUnit);
@@ -350,21 +345,20 @@ void _CastAndCompute(HdPhShaderCode::NamedTextureHandle const &namedTextureHandl
   }
 
   const TextureObject *const typedTexture = dynamic_cast<TextureObject *>(
-      namedTextureHandle.handle->GetTextureObject().get());
+    namedTextureHandle.handle->GetTextureObject().get());
   if (!typedTexture) {
     TF_CODING_ERROR("Bad texture object");
     return;
   }
 
   const SamplerObject *const typedSampler = dynamic_cast<SamplerObject *>(
-      namedTextureHandle.handle->GetSamplerObject().get());
+    namedTextureHandle.handle->GetSamplerObject().get());
   if (!typedSampler) {
     TF_CODING_ERROR("Bad sampler object");
     return;
   }
 
-  Functor::Compute(
-      namedTextureHandle.name, *typedTexture, *typedSampler, std::forward<Args>(args)...);
+  Functor::Compute(namedTextureHandle.name, *typedTexture, *typedSampler, std::forward<Args>(args)...);
 }
 
 template<class Functor, typename... Args>
@@ -375,16 +369,13 @@ void _Dispatch(HdPhShaderCode::NamedTextureHandle const &namedTextureHandle, Arg
       _CastAndCompute<HdTextureType::Uv, Functor>(namedTextureHandle, std::forward<Args>(args)...);
       break;
     case HdTextureType::Field:
-      _CastAndCompute<HdTextureType::Field, Functor>(namedTextureHandle,
-                                                     std::forward<Args>(args)...);
+      _CastAndCompute<HdTextureType::Field, Functor>(namedTextureHandle, std::forward<Args>(args)...);
       break;
     case HdTextureType::Ptex:
-      _CastAndCompute<HdTextureType::Ptex, Functor>(namedTextureHandle,
-                                                    std::forward<Args>(args)...);
+      _CastAndCompute<HdTextureType::Ptex, Functor>(namedTextureHandle, std::forward<Args>(args)...);
       break;
     case HdTextureType::Udim:
-      _CastAndCompute<HdTextureType::Udim, Functor>(namedTextureHandle,
-                                                    std::forward<Args>(args)...);
+      _CastAndCompute<HdTextureType::Udim, Functor>(namedTextureHandle, std::forward<Args>(args)...);
       break;
   }
 }

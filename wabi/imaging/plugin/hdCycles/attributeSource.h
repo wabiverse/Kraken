@@ -45,9 +45,7 @@ class HdBbAttributeSource : public HdBufferSource {
                       ccl::AttributeElement element,
                       const ccl::TypeDesc &type_desc);
 
-  HdBbAttributeSource(const VtValue &value,
-                      ccl::AttributeSet *attribs,
-                      ccl::AttributeStandard std);
+  HdBbAttributeSource(const VtValue &value, ccl::AttributeSet *attribs, ccl::AttributeStandard std);
 
   // immutable data accessors
   const TfToken &GetName() const override

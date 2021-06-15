@@ -90,41 +90,40 @@ void HgiVulkanBlitCmds::CopyTextureGpuToCpu(HgiTextureGpuToCpuOp const &copyOp)
   origin.z = depthOffset;
 
   VkExtent3D size;
-  size.width  = texDesc.dimensions[0] - copyOp.sourceTexelOffset[0];
+  size.width = texDesc.dimensions[0] - copyOp.sourceTexelOffset[0];
   size.height = texDesc.dimensions[1] - copyOp.sourceTexelOffset[1];
-  size.depth  = texDesc.dimensions[2] - depthOffset;
+  size.depth = texDesc.dimensions[2] - depthOffset;
 
   VkImageSubresourceLayers imageSub;
-  imageSub.aspectMask     = HgiVulkanConversions::GetImageAspectFlag(texDesc.usage);
+  imageSub.aspectMask = HgiVulkanConversions::GetImageAspectFlag(texDesc.usage);
   imageSub.baseArrayLayer = isTexArray ? copyOp.sourceTexelOffset[2] : 0;
-  imageSub.layerCount     = 1;
-  imageSub.mipLevel       = copyOp.mipLevel;
+  imageSub.layerCount = 1;
+  imageSub.mipLevel = copyOp.mipLevel;
 
   // See vulkan docs: Copying Data Between Buffers and Images
   VkBufferImageCopy region;
   region.bufferImageHeight = 0;  // Buffer is tightly packed, like image
-  region.bufferRowLength   = 0;  // Buffer is tightly packed, like image
-  region.bufferOffset      = 0;  // We offset cpuDestinationBuffer. Not here.
-  region.imageExtent       = size;
-  region.imageOffset       = origin;
-  region.imageSubresource  = imageSub;
+  region.bufferRowLength = 0;    // Buffer is tightly packed, like image
+  region.bufferOffset = 0;       // We offset cpuDestinationBuffer. Not here.
+  region.imageExtent = size;
+  region.imageOffset = origin;
+  region.imageSubresource = imageSub;
 
   // Transition image to TRANSFER_READ
   VkImageLayout oldLayout = srcTexture->GetImageLayout();
-  srcTexture->TransitionImageBarrier(
-      _commandBuffer,
-      srcTexture,
-      VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,  // transition tex to this layout
-      HgiVulkanTexture::NO_PENDING_WRITES,   // no pending writes
-      VK_ACCESS_TRANSFER_READ_BIT,           // type of access
-      VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,     // producer stage
-      VK_PIPELINE_STAGE_TRANSFER_BIT);       // consumer stage
+  srcTexture->TransitionImageBarrier(_commandBuffer,
+                                     srcTexture,
+                                     VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,  // transition tex to this layout
+                                     HgiVulkanTexture::NO_PENDING_WRITES,   // no pending writes
+                                     VK_ACCESS_TRANSFER_READ_BIT,           // type of access
+                                     VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,     // producer stage
+                                     VK_PIPELINE_STAGE_TRANSFER_BIT);       // consumer stage
 
   // Copy gpu texture to gpu staging buffer.
   // We reuse the texture's staging buffer, assuming that any new texel
   // uploads this frame will have been consumed from the staging buffer
   // before any downloads (read backs) overwrite the staging buffer texels.
-  uint8_t *src                   = static_cast<uint8_t *>(srcTexture->GetCPUStagingAddress());
+  uint8_t *src = static_cast<uint8_t *>(srcTexture->GetCPUStagingAddress());
   HgiVulkanBuffer *stagingBuffer = srcTexture->GetStagingBuffer();
   TF_VERIFY(src && stagingBuffer);
 
@@ -136,12 +135,11 @@ void HgiVulkanBlitCmds::CopyTextureGpuToCpu(HgiTextureGpuToCpuOp const &copyOp)
                          &region);
 
   // Transition image back to what it was.
-  VkAccessFlags access = HgiVulkanTexture::GetDefaultAccessFlags(
-      srcTexture->GetDescriptor().usage);
+  VkAccessFlags access = HgiVulkanTexture::GetDefaultAccessFlags(srcTexture->GetDescriptor().usage);
 
   srcTexture->TransitionImageBarrier(_commandBuffer,
                                      srcTexture,
-                                     oldLayout,  // transition tex to this layout
+                                     oldLayout,                            // transition tex to this layout
                                      HgiVulkanTexture::NO_PENDING_WRITES,  // no pending writes
                                      access,                               // type of access
                                      VK_PIPELINE_STAGE_TRANSFER_BIT,       // producer stage
@@ -161,8 +159,7 @@ void HgiVulkanBlitCmds::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
 {
   _CreateCommandBuffer();
 
-  HgiVulkanTexture *dstTexture = static_cast<HgiVulkanTexture *>(
-      copyOp.gpuDestinationTexture.Get());
+  HgiVulkanTexture *dstTexture = static_cast<HgiVulkanTexture *>(copyOp.gpuDestinationTexture.Get());
   HgiTextureDesc const &texDesc = dstTexture->GetDescriptor();
 
   // If we used GetCPUStagingAddress as the cpuSourceBuffer when the copyOp
@@ -176,7 +173,7 @@ void HgiVulkanBlitCmds::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
     // before submitting the cmd buf. So we can't just use the start
     // of the staging buffer each time.
     const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(
-        texDesc.format, texDesc.dimensions, 1 /*HgiTextureCpuToGpuOp does one layer at a time*/);
+      texDesc.format, texDesc.dimensions, 1 /*HgiTextureCpuToGpuOp does one layer at a time*/);
 
     if (mipInfos.size() > copyOp.mipLevel) {
       HgiMipInfo const &mipInfo = mipInfos[copyOp.mipLevel];
@@ -193,10 +190,8 @@ void HgiVulkanBlitCmds::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
   // Schedule transfer from staging buffer to device-local texture
   HgiVulkanBuffer *stagingBuffer = dstTexture->GetStagingBuffer();
   if (TF_VERIFY(stagingBuffer, "Invalid staging buffer for texture")) {
-    dstTexture->CopyBufferToTexture(_commandBuffer,
-                                    dstTexture->GetStagingBuffer(),
-                                    copyOp.destinationTexelOffset,
-                                    copyOp.mipLevel);
+    dstTexture->CopyBufferToTexture(
+      _commandBuffer, dstTexture->GetStagingBuffer(), copyOp.destinationTexelOffset, copyOp.mipLevel);
   }
 }
 
@@ -205,14 +200,14 @@ void HgiVulkanBlitCmds::CopyBufferGpuToGpu(HgiBufferGpuToGpuOp const &copyOp)
   _CreateCommandBuffer();
 
   HgiBufferHandle const &srcBufHandle = copyOp.gpuSourceBuffer;
-  HgiVulkanBuffer *srcBuffer          = static_cast<HgiVulkanBuffer *>(srcBufHandle.Get());
+  HgiVulkanBuffer *srcBuffer = static_cast<HgiVulkanBuffer *>(srcBufHandle.Get());
 
   if (!TF_VERIFY(srcBuffer && srcBuffer->GetVulkanBuffer(), "Invalid source buffer handle")) {
     return;
   }
 
   HgiBufferHandle const &dstBufHandle = copyOp.gpuDestinationBuffer;
-  HgiVulkanBuffer *dstBuffer          = static_cast<HgiVulkanBuffer *>(dstBufHandle.Get());
+  HgiVulkanBuffer *dstBuffer = static_cast<HgiVulkanBuffer *>(dstBufHandle.Get());
 
   if (!TF_VERIFY(dstBuffer && dstBuffer->GetVulkanBuffer(), "Invalid destination buffer handle")) {
     return;
@@ -225,9 +220,9 @@ void HgiVulkanBlitCmds::CopyBufferGpuToGpu(HgiBufferGpuToGpuOp const &copyOp)
 
   // Copy data from staging buffer to destination (gpu) buffer
   VkBufferCopy copyRegion = {};
-  copyRegion.srcOffset    = copyOp.sourceByteOffset;
-  copyRegion.dstOffset    = copyOp.destinationByteOffset;
-  copyRegion.size         = copyOp.byteSize;
+  copyRegion.srcOffset = copyOp.sourceByteOffset;
+  copyRegion.dstOffset = copyOp.destinationByteOffset;
+  copyRegion.size = copyOp.byteSize;
 
   vkCmdCopyBuffer(_commandBuffer->GetVulkanCommandBuffer(),
                   srcBuffer->GetVulkanBuffer(),
@@ -253,7 +248,7 @@ void HgiVulkanBlitCmds::CopyBufferCpuToGpu(HgiBufferCpuToGpuOp const &copyOp)
   if (!buffer->IsCPUStagingAddress(copyOp.cpuSourceBuffer) ||
       copyOp.sourceByteOffset != copyOp.destinationByteOffset) {
 
-    uint8_t *dst     = static_cast<uint8_t *>(buffer->GetCPUStagingAddress());
+    uint8_t *dst = static_cast<uint8_t *>(buffer->GetCPUStagingAddress());
     size_t dstOffset = copyOp.destinationByteOffset;
 
     // Offset into the src buffer
@@ -268,9 +263,9 @@ void HgiVulkanBlitCmds::CopyBufferCpuToGpu(HgiBufferCpuToGpuOp const &copyOp)
 
   if (TF_VERIFY(stagingBuffer)) {
     VkBufferCopy copyRegion = {};
-    copyRegion.srcOffset    = copyOp.sourceByteOffset;
-    copyRegion.dstOffset    = copyOp.destinationByteOffset;
-    copyRegion.size         = copyOp.byteSize;
+    copyRegion.srcOffset = copyOp.sourceByteOffset;
+    copyRegion.dstOffset = copyOp.destinationByteOffset;
+    copyRegion.size = copyOp.byteSize;
 
     vkCmdCopyBuffer(_commandBuffer->GetVulkanCommandBuffer(),
                     stagingBuffer->GetVulkanBuffer(),
@@ -291,7 +286,7 @@ void HgiVulkanBlitCmds::CopyBufferGpuToCpu(HgiBufferGpuToCpuOp const &copyOp)
   HgiVulkanBuffer *buffer = static_cast<HgiVulkanBuffer *>(copyOp.gpuSourceBuffer.Get());
 
   // Make sure there is a staging buffer in the buffer by asking for cpuAddr.
-  void *cpuAddress               = buffer->GetCPUStagingAddress();
+  void *cpuAddress = buffer->GetCPUStagingAddress();
   HgiVulkanBuffer *stagingBuffer = buffer->GetStagingBuffer();
   if (!TF_VERIFY(stagingBuffer)) {
     return;
@@ -299,9 +294,9 @@ void HgiVulkanBlitCmds::CopyBufferGpuToCpu(HgiBufferGpuToCpuOp const &copyOp)
 
   // Copy from device-local GPU buffer into GPU staging buffer
   VkBufferCopy copyRegion = {};
-  copyRegion.srcOffset    = copyOp.sourceByteOffset;
-  copyRegion.dstOffset    = copyOp.destinationByteOffset;
-  copyRegion.size         = copyOp.byteSize;
+  copyRegion.srcOffset = copyOp.sourceByteOffset;
+  copyRegion.dstOffset = copyOp.destinationByteOffset;
+  copyRegion.size = copyOp.byteSize;
   vkCmdCopyBuffer(_commandBuffer->GetVulkanCommandBuffer(),
                   buffer->GetVulkanBuffer(),
                   stagingBuffer->GetVulkanBuffer(),
@@ -341,9 +336,9 @@ void HgiVulkanBlitCmds::GenerateMipMaps(HgiTextureHandle const &texture)
   HgiVulkanDevice *device = vkTex->GetDevice();
 
   HgiTextureDesc const &desc = texture->GetDescriptor();
-  VkFormat format            = HgiVulkanConversions::GetFormat(desc.format);
-  int32_t width              = desc.dimensions[0];
-  int32_t height             = desc.dimensions[1];
+  VkFormat format = HgiVulkanConversions::GetFormat(desc.format);
+  int32_t width = desc.dimensions[0];
+  int32_t height = desc.dimensions[1];
 
   if (desc.layerCount > 1) {
     TF_CODING_ERROR("Missing implementation generating mips for layers");
@@ -355,8 +350,8 @@ void HgiVulkanBlitCmds::GenerateMipMaps(HgiTextureHandle const &texture)
   if (!(formatProps.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT) ||
       !(formatProps.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT)) {
     TF_CODING_ERROR(
-        "Texture format does not support "
-        "blit source and destination");
+      "Texture format does not support "
+      "blit source and destination");
     return;
   }
 
@@ -377,18 +372,18 @@ void HgiVulkanBlitCmds::GenerateMipMaps(HgiTextureHandle const &texture)
     // Source
     imageBlit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
     imageBlit.srcSubresource.layerCount = 1;
-    imageBlit.srcSubresource.mipLevel   = i - 1;
-    imageBlit.srcOffsets[1].x           = width >> (i - 1);
-    imageBlit.srcOffsets[1].y           = height >> (i - 1);
-    imageBlit.srcOffsets[1].z           = 1;
+    imageBlit.srcSubresource.mipLevel = i - 1;
+    imageBlit.srcOffsets[1].x = width >> (i - 1);
+    imageBlit.srcOffsets[1].y = height >> (i - 1);
+    imageBlit.srcOffsets[1].z = 1;
 
     // Destination
     imageBlit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
     imageBlit.dstSubresource.layerCount = 1;
-    imageBlit.dstSubresource.mipLevel   = i;
-    imageBlit.dstOffsets[1].x           = width >> i;
-    imageBlit.dstOffsets[1].y           = height >> i;
-    imageBlit.dstOffsets[1].z           = 1;
+    imageBlit.dstSubresource.mipLevel = i;
+    imageBlit.dstOffsets[1].x = width >> i;
+    imageBlit.dstOffsets[1].y = height >> i;
+    imageBlit.dstOffsets[1].z = 1;
 
     // Transition current mip level to image blit destination
     HgiVulkanTexture::TransitionImageBarrier(_commandBuffer,
@@ -448,7 +443,7 @@ bool HgiVulkanBlitCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
     return false;
   }
 
-  HgiVulkanDevice *device      = _commandBuffer->GetDevice();
+  HgiVulkanDevice *device = _commandBuffer->GetDevice();
   HgiVulkanCommandQueue *queue = device->GetCommandQueue();
 
   // Submit the GPU work and optionally do CPU - GPU synchronization.
@@ -460,9 +455,9 @@ bool HgiVulkanBlitCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
 void HgiVulkanBlitCmds::_CreateCommandBuffer()
 {
   if (!_commandBuffer) {
-    HgiVulkanDevice *device      = _hgi->GetPrimaryDevice();
+    HgiVulkanDevice *device = _hgi->GetPrimaryDevice();
     HgiVulkanCommandQueue *queue = device->GetCommandQueue();
-    _commandBuffer               = queue->AcquireCommandBuffer();
+    _commandBuffer = queue->AcquireCommandBuffer();
     TF_VERIFY(_commandBuffer);
   }
 }

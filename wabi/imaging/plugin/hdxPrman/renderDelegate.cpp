@@ -37,14 +37,14 @@
 WABI_NAMESPACE_BEGIN
 
 HdxPrmanRenderDelegate::HdxPrmanRenderDelegate(std::shared_ptr<HdPrman_Context> context)
-    : HdPrmanRenderDelegate(context)
+  : HdPrmanRenderDelegate(context)
 {
   _Initialize(context);
 }
 
 HdxPrmanRenderDelegate::HdxPrmanRenderDelegate(std::shared_ptr<HdPrman_Context> context,
                                                HdRenderSettingsMap const &settingsMap)
-    : HdPrmanRenderDelegate(context, settingsMap)
+  : HdPrmanRenderDelegate(context, settingsMap)
 {
   _Initialize(context);
 }

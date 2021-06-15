@@ -55,7 +55,7 @@ GfQuath::GfQuath(GfQuatf const &other) : _imaginary(other.GetImaginary()), _real
 
 std::ostream &operator<<(std::ostream &out, GfQuath const &q)
 {
-  GfVec3h i   = q.GetImaginary();
+  GfVec3h i = q.GetImaginary();
   GfHalf real = q.GetReal();
   return out << GfVec4h(real, i[0], i[1], i[2]);
 }
@@ -146,8 +146,8 @@ GfVec3h GfQuath::Transform(const GfVec3h &point) const
 
 GfQuath &GfQuath::operator*=(const GfQuath &q)
 {
-  GfHalf r1         = GetReal();
-  GfHalf r2         = q.GetReal();
+  GfHalf r1 = GetReal();
+  GfHalf r2 = q.GetReal();
   const GfVec3h &i1 = GetImaginary();
   const GfVec3h &i2 = q.GetImaginary();
 
@@ -171,11 +171,11 @@ GfQuath GfSlerp(const GfQuath &q0, const GfQuath &q1, double alpha)
 GfQuath GfSlerp(double alpha, const GfQuath &q0, const GfQuath &q1)
 {
   double cosTheta = q0.GetImaginary() * q1.GetImaginary() + q0.GetReal() * q1.GetReal();
-  bool flip1      = false;
+  bool flip1 = false;
 
   if (cosTheta < 0.0) {
     cosTheta = -cosTheta;
-    flip1    = true;
+    flip1 = true;
   }
 
   double scale0, scale1;

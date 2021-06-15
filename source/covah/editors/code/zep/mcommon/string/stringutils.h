@@ -37,12 +37,8 @@ inline size_t Utf8Length(const char *s)
   return stringLength;
 }
 
-std::string string_replace(std::string subject,
-                           const std::string &search,
-                           const std::string &replace);
-void string_replace_in_place(std::string &subject,
-                             const std::string &search,
-                             const std::string &replace);
+std::string string_replace(std::string subject, const std::string &search, const std::string &replace);
+void string_replace_in_place(std::string &subject, const std::string &search, const std::string &replace);
 
 // trim from beginning of string (left)
 inline std::string &LTrim(std::string &s, const char *t = " \t\n\r\f\v")
@@ -134,9 +130,7 @@ inline std::ostream &operator<<(std::ostream &str, StringId id)
 void string_split(const std::string &text, const char *delims, std::vector<std::string> &tokens);
 std::vector<std::string> string_split(const std::string &text, const char *delims);
 void string_split_lines(const std::string &text, std::vector<std::string> &tokens);
-void string_split_each(const std::string &text,
-                       const char *delims,
-                       std::function<bool(size_t, size_t)> fn);
+void string_split_each(const std::string &text, const char *delims, std::function<bool(size_t, size_t)> fn);
 void string_split_each(char *text,
                        size_t start,
                        size_t end,

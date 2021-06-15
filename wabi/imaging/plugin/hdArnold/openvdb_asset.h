@@ -66,9 +66,7 @@ class HdArnoldOpenvdbAsset : public HdField {
   /// @param renderParam Pointer to a HdArnoldRenderParam instance.
   /// @param dirtyBits Dirty Bits to sync.
   HDARNOLD_API
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   /// Returns the initial Dirty Bits for the Primitive.
   ///

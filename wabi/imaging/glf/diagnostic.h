@@ -98,7 +98,7 @@ class GlfDebugGroup {
   GLF_API
   ~GlfDebugGroup();
 
-  GlfDebugGroup()                      = delete;
+  GlfDebugGroup() = delete;
   GlfDebugGroup(GlfDebugGroup const &) = delete;
   GlfDebugGroup &operator=(GlfDebugGroup const &) = delete;
 };

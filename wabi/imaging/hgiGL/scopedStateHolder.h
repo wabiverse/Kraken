@@ -59,7 +59,7 @@ class HgiGL_ScopedStateHolder final {
 
  private:
   HgiGL_ScopedStateHolder &operator=(const HgiGL_ScopedStateHolder &) = delete;
-  HgiGL_ScopedStateHolder(const HgiGL_ScopedStateHolder &)            = delete;
+  HgiGL_ScopedStateHolder(const HgiGL_ScopedStateHolder &) = delete;
 
   int32_t _restoreDrawFramebuffer;
   int32_t _restoreReadFramebuffer;

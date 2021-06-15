@@ -56,32 +56,25 @@ WRAP_CUSTOM;
 
 static UsdAttribute _CreateJointsAttr(UsdSkelSkeleton &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateJointsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
-                               writeSparsely);
+  return self.CreateJointsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray), writeSparsely);
 }
 
-static UsdAttribute _CreateJointNamesAttr(UsdSkelSkeleton &self,
-                                          object defaultVal,
-                                          bool writeSparsely)
+static UsdAttribute _CreateJointNamesAttr(UsdSkelSkeleton &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateJointNamesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
                                    writeSparsely);
 }
 
-static UsdAttribute _CreateBindTransformsAttr(UsdSkelSkeleton &self,
-                                              object defaultVal,
-                                              bool writeSparsely)
+static UsdAttribute _CreateBindTransformsAttr(UsdSkelSkeleton &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateBindTransformsAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Matrix4dArray), writeSparsely);
+  return self.CreateBindTransformsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Matrix4dArray),
+                                       writeSparsely);
 }
 
-static UsdAttribute _CreateRestTransformsAttr(UsdSkelSkeleton &self,
-                                              object defaultVal,
-                                              bool writeSparsely)
+static UsdAttribute _CreateRestTransformsAttr(UsdSkelSkeleton &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateRestTransformsAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Matrix4dArray), writeSparsely);
+  return self.CreateRestTransformsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Matrix4dArray),
+                                       writeSparsely);
 }
 
 static std::string _Repr(const UsdSkelSkeleton &self)
@@ -99,49 +92,46 @@ void wrapUsdSkelSkeleton()
   class_<This, bases<UsdGeomBoundable>> cls("Skeleton");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetJointsAttr", &This::GetJointsAttr)
-      .def("CreateJointsAttr",
-           &_CreateJointsAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetJointsAttr", &This::GetJointsAttr)
+    .def(
+      "CreateJointsAttr", &_CreateJointsAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetJointNamesAttr", &This::GetJointNamesAttr)
-      .def("CreateJointNamesAttr",
-           &_CreateJointNamesAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetJointNamesAttr", &This::GetJointNamesAttr)
+    .def("CreateJointNamesAttr",
+         &_CreateJointNamesAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetBindTransformsAttr", &This::GetBindTransformsAttr)
-      .def("CreateBindTransformsAttr",
-           &_CreateBindTransformsAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetBindTransformsAttr", &This::GetBindTransformsAttr)
+    .def("CreateBindTransformsAttr",
+         &_CreateBindTransformsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetRestTransformsAttr", &This::GetRestTransformsAttr)
-      .def("CreateRestTransformsAttr",
-           &_CreateRestTransformsAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRestTransformsAttr", &This::GetRestTransformsAttr)
+    .def("CreateRestTransformsAttr",
+         &_CreateRestTransformsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

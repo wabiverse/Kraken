@@ -61,9 +61,7 @@ object _ComputeJointInfluences(const UsdSkelSkinningQuery &self, UsdTimeCode tim
   return object();
 }
 
-object _ComputeVaryingJointInfluences(const UsdSkelSkinningQuery &self,
-                                      size_t numPoints,
-                                      UsdTimeCode time)
+object _ComputeVaryingJointInfluences(const UsdSkelSkinningQuery &self, size_t numPoints, UsdTimeCode time)
 {
   VtIntArray indices;
   VtFloatArray weights;
@@ -80,8 +78,7 @@ std::vector<double> _GetTimeSamples(const UsdSkelSkinningQuery &self)
   return times;
 }
 
-std::vector<double> _GetTimeSamplesInInterval(const UsdSkelSkinningQuery &self,
-                                              const GfInterval &interval)
+std::vector<double> _GetTimeSamplesInInterval(const UsdSkelSkinningQuery &self, const GfInterval &interval)
 {
   std::vector<double> times;
   self.GetTimeSamplesInInterval(interval, &times);
@@ -131,94 +128,80 @@ void wrapUsdSkelSkinningQuery()
 
   class_<This>("SkinningQuery")
 
-      .def(!self)
+    .def(!self)
 
-      .def("__str__", &This::GetDescription)
+    .def("__str__", &This::GetDescription)
 
-      .def("GetPrim", &This::GetPrim, return_value_policy<return_by_value>())
+    .def("GetPrim", &This::GetPrim, return_value_policy<return_by_value>())
 
-      .def("HasJointInfluences", &This::HasJointInfluences)
+    .def("HasJointInfluences", &This::HasJointInfluences)
 
-      .def("HasBlendShapes", &This::HasBlendShapes)
+    .def("HasBlendShapes", &This::HasBlendShapes)
 
-      .def("GetNumInfluencesPerComponent", &This::GetNumInfluencesPerComponent)
+    .def("GetNumInfluencesPerComponent", &This::GetNumInfluencesPerComponent)
 
-      .def("GetInterpolation", &This::GetInterpolation, return_value_policy<return_by_value>())
+    .def("GetInterpolation", &This::GetInterpolation, return_value_policy<return_by_value>())
 
-      .def("IsRigidlyDeformed", &This::IsRigidlyDeformed)
+    .def("IsRigidlyDeformed", &This::IsRigidlyDeformed)
 
-      .def("GetGeomBindTransformAttr",
-           &This::GetGeomBindTransformAttr,
-           return_value_policy<return_by_value>())
+    .def("GetGeomBindTransformAttr", &This::GetGeomBindTransformAttr, return_value_policy<return_by_value>())
 
-      .def("GetJointIndicesPrimvar",
-           &This::GetJointIndicesPrimvar,
-           return_value_policy<return_by_value>())
+    .def("GetJointIndicesPrimvar", &This::GetJointIndicesPrimvar, return_value_policy<return_by_value>())
 
-      .def("GetJointWeightsPrimvar",
-           &This::GetJointWeightsPrimvar,
-           return_value_policy<return_by_value>())
+    .def("GetJointWeightsPrimvar", &This::GetJointWeightsPrimvar, return_value_policy<return_by_value>())
 
-      .def("GetBlendShapesAttr", &This::GetBlendShapesAttr, return_value_policy<return_by_value>())
+    .def("GetBlendShapesAttr", &This::GetBlendShapesAttr, return_value_policy<return_by_value>())
 
-      .def("GetBlendShapeTargetsRel",
-           &This::GetBlendShapeTargetsRel,
-           return_value_policy<return_by_value>())
+    .def("GetBlendShapeTargetsRel", &This::GetBlendShapeTargetsRel, return_value_policy<return_by_value>())
 
-      // deprecated
-      .def("GetMapper", &This::GetMapper, return_value_policy<return_by_value>())
+    // deprecated
+    .def("GetMapper", &This::GetMapper, return_value_policy<return_by_value>())
 
-      .def("GetJointMapper", &This::GetJointMapper, return_value_policy<return_by_value>())
+    .def("GetJointMapper", &This::GetJointMapper, return_value_policy<return_by_value>())
 
-      .def("GetBlendShapeMapper",
-           &This::GetBlendShapeMapper,
-           return_value_policy<return_by_value>())
+    .def("GetBlendShapeMapper", &This::GetBlendShapeMapper, return_value_policy<return_by_value>())
 
-      .def("GetJointOrder", &_GetJointOrder)
+    .def("GetJointOrder", &_GetJointOrder)
 
-      .def("GetBlendShapeOrder", &_GetBlendShapeOrder)
+    .def("GetBlendShapeOrder", &_GetBlendShapeOrder)
 
-      .def("GetTimeSamples", &_GetTimeSamples)
+    .def("GetTimeSamples", &_GetTimeSamples)
 
-      .def("GetTimeSamplesInInterval", &_GetTimeSamplesInInterval)
+    .def("GetTimeSamplesInInterval", &_GetTimeSamplesInInterval)
 
-      .def("ComputeJointInfluences",
-           &_ComputeJointInfluences,
-           (arg("time") = UsdTimeCode::Default()))
+    .def("ComputeJointInfluences", &_ComputeJointInfluences, (arg("time") = UsdTimeCode::Default()))
 
-      .def("ComputeVaryingJointInfluences",
-           &_ComputeVaryingJointInfluences,
-           (arg("numPoints"), arg("time") = UsdTimeCode::Default()))
+    .def("ComputeVaryingJointInfluences",
+         &_ComputeVaryingJointInfluences,
+         (arg("numPoints"), arg("time") = UsdTimeCode::Default()))
 
-      .def("ComputeSkinnedPoints",
-           &_ComputeSkinnedPoints<GfMatrix4d>,
-           (arg("xforms"), arg("points"), arg("time") = UsdTimeCode::Default()))
+    .def("ComputeSkinnedPoints",
+         &_ComputeSkinnedPoints<GfMatrix4d>,
+         (arg("xforms"), arg("points"), arg("time") = UsdTimeCode::Default()))
 
-      .def("ComputeSkinnedPoints",
-           &_ComputeSkinnedPoints<GfMatrix4f>,
-           (arg("xforms"), arg("points"), arg("time") = UsdTimeCode::Default()))
+    .def("ComputeSkinnedPoints",
+         &_ComputeSkinnedPoints<GfMatrix4f>,
+         (arg("xforms"), arg("points"), arg("time") = UsdTimeCode::Default()))
 
-      .def("ComputeSkinnedTransform",
-           &_ComputeSkinnedTransform<GfMatrix4d>,
-           (arg("xforms"), arg("time") = UsdTimeCode::Default()))
+    .def("ComputeSkinnedTransform",
+         &_ComputeSkinnedTransform<GfMatrix4d>,
+         (arg("xforms"), arg("time") = UsdTimeCode::Default()))
 
-      .def("ComputeSkinnedTransform",
-           &_ComputeSkinnedTransform<GfMatrix4f>,
-           (arg("xforms"), arg("time") = UsdTimeCode::Default()))
+    .def("ComputeSkinnedTransform",
+         &_ComputeSkinnedTransform<GfMatrix4f>,
+         (arg("xforms"), arg("time") = UsdTimeCode::Default()))
 
-      .def("ComputeExtentsPadding",
-           static_cast<float (UsdSkelSkinningQuery::*)(const VtMatrix4dArray &,
-                                                       const UsdGeomBoundable &) const>(
-               &This::ComputeExtentsPadding),
-           (arg("skelRestXforms"), arg("boundable"), arg("time") = UsdTimeCode::Default()))
+    .def(
+      "ComputeExtentsPadding",
+      static_cast<float (UsdSkelSkinningQuery::*)(const VtMatrix4dArray &, const UsdGeomBoundable &) const>(
+        &This::ComputeExtentsPadding),
+      (arg("skelRestXforms"), arg("boundable"), arg("time") = UsdTimeCode::Default()))
 
-      .def("ComputeExtentsPadding",
-           static_cast<float (UsdSkelSkinningQuery::*)(const VtMatrix4fArray &,
-                                                       const UsdGeomBoundable &) const>(
-               &This::ComputeExtentsPadding),
-           (arg("skelRestXforms"), arg("boundable"), arg("time") = UsdTimeCode::Default()))
+    .def(
+      "ComputeExtentsPadding",
+      static_cast<float (UsdSkelSkinningQuery::*)(const VtMatrix4fArray &, const UsdGeomBoundable &) const>(
+        &This::ComputeExtentsPadding),
+      (arg("skelRestXforms"), arg("boundable"), arg("time") = UsdTimeCode::Default()))
 
-      .def("GetGeomBindTransform",
-           &This::GetGeomBindTransform,
-           (arg("time") = UsdTimeCode::Default()));
+    .def("GetGeomBindTransform", &This::GetGeomBindTransform, (arg("time") = UsdTimeCode::Default()));
 }

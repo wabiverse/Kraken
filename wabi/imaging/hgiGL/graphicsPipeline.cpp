@@ -40,8 +40,8 @@
 WABI_NAMESPACE_BEGIN
 
 HgiGLGraphicsPipeline::HgiGLGraphicsPipeline(HgiGraphicsPipelineDesc const &desc)
-    : HgiGraphicsPipeline(desc),
-      _vao(0)
+  : HgiGraphicsPipeline(desc),
+    _vao(0)
 {
   if (!_descriptor.vertexBuffers.empty()) {
     glCreateVertexArrays(1, &_vao);
@@ -95,8 +95,7 @@ void HgiGLGraphicsPipeline::BindPipeline()
   //
   if (_descriptor.depthState.depthTestEnabled) {
     glEnable(GL_DEPTH_TEST);
-    GLenum depthFn = HgiGLConversions::GetDepthCompareFunction(
-        _descriptor.depthState.depthCompareFn);
+    GLenum depthFn = HgiGLConversions::GetDepthCompareFunction(_descriptor.depthState.depthCompareFn);
     glDepthFunc(depthFn);
   }
   else {
@@ -137,8 +136,7 @@ void HgiGLGraphicsPipeline::BindPipeline()
     glCullFace(cullMode);
   }
 
-  GLenum polygonMode = HgiGLConversions::GetPolygonMode(
-      _descriptor.rasterizationState.polygonMode);
+  GLenum polygonMode = HgiGLConversions::GetPolygonMode(_descriptor.rasterizationState.polygonMode);
   glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
 
   if (_descriptor.rasterizationState.winding == HgiWindingClockwise) {
@@ -162,8 +160,7 @@ void HgiGLGraphicsPipeline::BindPipeline()
   //
   // Shader program
   //
-  HgiGLShaderProgram *glProgram = static_cast<HgiGLShaderProgram *>(
-      _descriptor.shaderProgram.Get());
+  HgiGLShaderProgram *glProgram = static_cast<HgiGLShaderProgram *>(_descriptor.shaderProgram.Get());
   if (glProgram) {
     glUseProgram(glProgram->GetProgramId());
   }

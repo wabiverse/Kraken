@@ -93,10 +93,9 @@ class HdPluginRenderDelegateUniqueHandle final {
  private:
   friend class HdRendererPlugin;
 
-  HdPluginRenderDelegateUniqueHandle(const HdRendererPluginHandle &plugin,
-                                     HdRenderDelegate *delegate)
-      : _plugin(plugin),
-        _delegate(delegate)
+  HdPluginRenderDelegateUniqueHandle(const HdRendererPluginHandle &plugin, HdRenderDelegate *delegate)
+    : _plugin(plugin),
+      _delegate(delegate)
   {}
 
   HdRendererPluginHandle _plugin;

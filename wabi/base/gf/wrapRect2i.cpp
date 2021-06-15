@@ -52,8 +52,7 @@ namespace {
 
 static string _Repr(GfRect2i const &self)
 {
-  return TF_PY_REPR_PREFIX + "Rect2i(" + TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax()) +
-         ")";
+  return TF_PY_REPR_PREFIX + "Rect2i(" + TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax()) + ")";
 }
 
 }  // anonymous namespace
@@ -67,61 +66,61 @@ void wrapRect2i()
   object getMax = make_function(&This::GetMax, return_value_policy<return_by_value>());
 
   class_<This>("Rect2i", init<>())
-      .def(init<const This &>())
-      .def(init<const GfVec2i &, const GfVec2i &>())
-      .def(init<const GfVec2i &, int, int>())
+    .def(init<const This &>())
+    .def(init<const GfVec2i &, const GfVec2i &>())
+    .def(init<const GfVec2i &, int, int>())
 
-      .def(TfTypePythonClass())
+    .def(TfTypePythonClass())
 
-      .def("IsNull", &This::IsNull)
-      .def("IsEmpty", &This::IsEmpty)
-      .def("IsValid", &This::IsValid)
+    .def("IsNull", &This::IsNull)
+    .def("IsEmpty", &This::IsEmpty)
+    .def("IsValid", &This::IsValid)
 
-      .add_property("min", getMin, &This::SetMin)
-      .add_property("max", getMax, &This::SetMax)
+    .add_property("min", getMin, &This::SetMin)
+    .add_property("max", getMax, &This::SetMax)
 
-      .add_property("minX", &This::GetMinX, &This::SetMinX)
-      .add_property("maxX", &This::GetMaxX, &This::SetMaxX)
-      .add_property("minY", &This::GetMinY, &This::SetMinY)
-      .add_property("maxY", &This::GetMaxY, &This::SetMaxY)
+    .add_property("minX", &This::GetMinX, &This::SetMinX)
+    .add_property("maxX", &This::GetMaxX, &This::SetMaxX)
+    .add_property("minY", &This::GetMinY, &This::SetMinY)
+    .add_property("maxY", &This::GetMaxY, &This::SetMaxY)
 
-      .def("GetMin", getMin)
-      .def("GetMax", getMax)
+    .def("GetMin", getMin)
+    .def("GetMax", getMax)
 
-      .def("GetMinX", &This::GetMinX)
-      .def("GetMaxX", &This::GetMaxX)
-      .def("GetMinY", &This::GetMinY)
-      .def("GetMaxY", &This::GetMaxY)
+    .def("GetMinX", &This::GetMinX)
+    .def("GetMaxX", &This::GetMaxX)
+    .def("GetMinY", &This::GetMinY)
+    .def("GetMaxY", &This::GetMaxY)
 
-      .def("SetMin", &This::SetMin)
-      .def("SetMax", &This::SetMax)
+    .def("SetMin", &This::SetMin)
+    .def("SetMax", &This::SetMax)
 
-      .def("SetMinX", &This::SetMinX)
-      .def("SetMaxX", &This::SetMaxX)
-      .def("SetMinY", &This::SetMinY)
-      .def("SetMaxY", &This::SetMaxY)
+    .def("SetMinX", &This::SetMinX)
+    .def("SetMaxX", &This::SetMaxX)
+    .def("SetMinY", &This::SetMinY)
+    .def("SetMaxY", &This::SetMaxY)
 
-      .def("GetArea", &This::GetArea)
-      .def("GetCenter", &This::GetCenter)
-      .def("GetHeight", &This::GetHeight)
-      .def("GetSize", &This::GetSize)
-      .def("GetWidth", &This::GetWidth)
+    .def("GetArea", &This::GetArea)
+    .def("GetCenter", &This::GetCenter)
+    .def("GetHeight", &This::GetHeight)
+    .def("GetSize", &This::GetSize)
+    .def("GetWidth", &This::GetWidth)
 
-      .def("Translate", &This::Translate, return_self<>())
-      .def("GetNormalized", &This::GetNormalized)
-      .def("GetIntersection", &This::GetIntersection)
-      .def("GetUnion", &This::GetUnion)
+    .def("Translate", &This::Translate, return_self<>())
+    .def("GetNormalized", &This::GetNormalized)
+    .def("GetIntersection", &This::GetIntersection)
+    .def("GetUnion", &This::GetUnion)
 
-      .def("Contains", &This::Contains)
+    .def("Contains", &This::Contains)
 
-      .def(str(self))
-      .def(self == self)
-      .def(self != self)
-      .def(self += self)
-      .def(self + self)
+    .def(str(self))
+    .def(self == self)
+    .def(self != self)
+    .def(self += self)
+    .def(self + self)
 
-      .def("__repr__", _Repr)
+    .def("__repr__", _Repr)
 
-      ;
+    ;
   to_python_converter<std::vector<This>, TfPySequenceToPython<std::vector<This>>>();
 }

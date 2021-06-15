@@ -75,51 +75,51 @@ template<class T> class SdfPyWrapListOp {
     using ItemVector = typename T::ItemVector;
 
     class_<T>(name.c_str())
-        .def("__str__", &This::_GetStr)
+      .def("__str__", &This::_GetStr)
 
-        .def("Create",
-             &T::Create,
-             (arg("prependedItems") = ItemVector(),
-              arg("appendedItems")  = ItemVector(),
-              arg("deletedItems")   = ItemVector()))
-        .staticmethod("Create")
+      .def("Create",
+           &T::Create,
+           (arg("prependedItems") = ItemVector(),
+            arg("appendedItems") = ItemVector(),
+            arg("deletedItems") = ItemVector()))
+      .staticmethod("Create")
 
-        .def("CreateExplicit", &T::CreateExplicit, (arg("explicitItems") = ItemVector()))
-        .staticmethod("CreateExplicit")
+      .def("CreateExplicit", &T::CreateExplicit, (arg("explicitItems") = ItemVector()))
+      .staticmethod("CreateExplicit")
 
-        .def(self == self)
-        .def(self != self)
+      .def(self == self)
+      .def(self != self)
 
-        .def("HasItem", &T::HasItem)
+      .def("HasItem", &T::HasItem)
 
-        .def("Clear", &T::Clear)
-        .def("ClearAndMakeExplicit", &T::ClearAndMakeExplicit)
-        .def("ApplyOperations", &This::_ApplyOperations1)
-        .def("ApplyOperations", &This::_ApplyOperations2)
+      .def("Clear", &T::Clear)
+      .def("ClearAndMakeExplicit", &T::ClearAndMakeExplicit)
+      .def("ApplyOperations", &This::_ApplyOperations1)
+      .def("ApplyOperations", &This::_ApplyOperations2)
 
-        .add_property("explicitItems",
-                      make_function(&T::GetExplicitItems, return_value_policy<return_by_value>()),
-                      &T::SetExplicitItems)
-        .add_property("addedItems",
-                      make_function(&T::GetAddedItems, return_value_policy<return_by_value>()),
-                      &T::SetAddedItems)
-        .add_property("prependedItems",
-                      make_function(&T::GetPrependedItems, return_value_policy<return_by_value>()),
-                      &T::SetPrependedItems)
-        .add_property("appendedItems",
-                      make_function(&T::GetAppendedItems, return_value_policy<return_by_value>()),
-                      &T::SetAppendedItems)
-        .add_property("deletedItems",
-                      make_function(&T::GetDeletedItems, return_value_policy<return_by_value>()),
-                      &T::SetDeletedItems)
-        .add_property("orderedItems",
-                      make_function(&T::GetOrderedItems, return_value_policy<return_by_value>()),
-                      &T::SetOrderedItems)
-        .def("GetAddedOrExplicitItems", &This::_GetAddedOrExplicitItems)
+      .add_property("explicitItems",
+                    make_function(&T::GetExplicitItems, return_value_policy<return_by_value>()),
+                    &T::SetExplicitItems)
+      .add_property("addedItems",
+                    make_function(&T::GetAddedItems, return_value_policy<return_by_value>()),
+                    &T::SetAddedItems)
+      .add_property("prependedItems",
+                    make_function(&T::GetPrependedItems, return_value_policy<return_by_value>()),
+                    &T::SetPrependedItems)
+      .add_property("appendedItems",
+                    make_function(&T::GetAppendedItems, return_value_policy<return_by_value>()),
+                    &T::SetAppendedItems)
+      .add_property("deletedItems",
+                    make_function(&T::GetDeletedItems, return_value_policy<return_by_value>()),
+                    &T::SetDeletedItems)
+      .add_property("orderedItems",
+                    make_function(&T::GetOrderedItems, return_value_policy<return_by_value>()),
+                    &T::SetOrderedItems)
+      .def("GetAddedOrExplicitItems", &This::_GetAddedOrExplicitItems)
 
-        .add_property("isExplicit", &T::IsExplicit)
+      .add_property("isExplicit", &T::IsExplicit)
 
-        ;
+      ;
   }
 
   static std::string _GetStr(const T &listOp)

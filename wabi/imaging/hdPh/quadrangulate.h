@@ -37,8 +37,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-using HdPh_QuadInfoBuilderComputationSharedPtr =
-    std::shared_ptr<class HdPh_QuadInfoBuilderComputation>;
+using HdPh_QuadInfoBuilderComputationSharedPtr = std::shared_ptr<class HdPh_QuadInfoBuilderComputation>;
 
 class HdPh_MeshTopology;
 

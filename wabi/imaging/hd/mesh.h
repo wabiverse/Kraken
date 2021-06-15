@@ -37,7 +37,7 @@ WABI_NAMESPACE_BEGIN
 
 #define HD_MESH_REPR_DESC_TOKENS \
   (surfaceShader)(surfaceShaderUnlit)( \
-      surfaceShaderSheer)(surfaceShaderOutline)(constantColor)(hullColor)(pointColor)
+    surfaceShaderSheer)(surfaceShaderOutline)(constantColor)(hullColor)(pointColor)
 
 TF_DECLARE_PUBLIC_TOKENS(HdMeshReprDescTokens, HD_API, HD_MESH_REPR_DESC_TOKENS);
 
@@ -46,24 +46,24 @@ TF_DECLARE_PUBLIC_TOKENS(HdMeshReprDescTokens, HD_API, HD_MESH_REPR_DESC_TOKENS)
 /// Descriptor to configure the drawItem(s) for a repr
 ///
 struct HdMeshReprDesc {
-  HdMeshReprDesc(HdMeshGeomStyle geomStyle  = HdMeshGeomStyleInvalid,
-                 HdCullStyle cullStyle      = HdCullStyleDontCare,
-                 TfToken shadingTerminal    = HdMeshReprDescTokens->surfaceShader,
-                 bool flatShadingEnabled    = true,
-                 bool blendWireframeColor   = true,
-                 bool doubleSided           = false,
-                 float lineWidth            = 0,
+  HdMeshReprDesc(HdMeshGeomStyle geomStyle = HdMeshGeomStyleInvalid,
+                 HdCullStyle cullStyle = HdCullStyleDontCare,
+                 TfToken shadingTerminal = HdMeshReprDescTokens->surfaceShader,
+                 bool flatShadingEnabled = true,
+                 bool blendWireframeColor = true,
+                 bool doubleSided = false,
+                 float lineWidth = 0,
                  bool useCustomDisplacement = true,
-                 bool enableScalarOverride  = true)
-      : geomStyle(geomStyle),
-        cullStyle(cullStyle),
-        shadingTerminal(shadingTerminal),
-        flatShadingEnabled(flatShadingEnabled),
-        blendWireframeColor(blendWireframeColor),
-        doubleSided(doubleSided),
-        lineWidth(lineWidth),
-        useCustomDisplacement(useCustomDisplacement),
-        enableScalarOverride(enableScalarOverride)
+                 bool enableScalarOverride = true)
+    : geomStyle(geomStyle),
+      cullStyle(cullStyle),
+      shadingTerminal(shadingTerminal),
+      flatShadingEnabled(flatShadingEnabled),
+      blendWireframeColor(blendWireframeColor),
+      doubleSided(doubleSided),
+      lineWidth(lineWidth),
+      useCustomDisplacement(useCustomDisplacement),
+      enableScalarOverride(enableScalarOverride)
   {}
 
   bool IsEmpty() const
@@ -151,7 +151,7 @@ class HdMesh : public HdRprim {
 
  private:
   // Class can not be default constructed or copied.
-  HdMesh()               = delete;
+  HdMesh() = delete;
   HdMesh(const HdMesh &) = delete;
   HdMesh &operator=(const HdMesh &) = delete;
 

@@ -63,9 +63,9 @@ bool HdPh_Subdivision::RefinesToBoxSplineTrianglePatches(TfToken const &scheme)
 HdPh_OsdTopologyComputation::HdPh_OsdTopologyComputation(HdPh_MeshTopology *topology,
                                                          int level,
                                                          SdfPath const &id)
-    : _topology(topology),
-      _level(level),
-      _id(id)
+  : _topology(topology),
+    _level(level),
+    _id(id)
 {}
 
 /*virtual*/
@@ -77,8 +77,8 @@ void HdPh_OsdTopologyComputation::GetBufferSpecs(HdBufferSpecVector *specs) cons
 // ---------------------------------------------------------------------------
 HdPh_OsdIndexComputation::HdPh_OsdIndexComputation(HdPh_MeshTopology *topology,
                                                    HdBufferSourceSharedPtr const &osdTopology)
-    : _topology(topology),
-      _osdTopology(osdTopology)
+  : _topology(topology),
+    _osdTopology(osdTopology)
 {}
 
 /*virtual*/
@@ -136,16 +136,15 @@ bool HdPh_OsdIndexComputation::_CheckValid() const
 /// OpenSubdiv GPU Refinement
 ///
 ///
-HdPh_OsdRefineComputationGPU::HdPh_OsdRefineComputationGPU(
-    HdPh_MeshTopology *topology,
-    TfToken const &name,
-    HdType type,
-    HdPh_MeshTopology::Interpolation interpolation,
-    int fvarChannel)
-    : _topology(topology),
-      _name(name),
-      _interpolation(interpolation),
-      _fvarChannel(fvarChannel)
+HdPh_OsdRefineComputationGPU::HdPh_OsdRefineComputationGPU(HdPh_MeshTopology *topology,
+                                                           TfToken const &name,
+                                                           HdType type,
+                                                           HdPh_MeshTopology::Interpolation interpolation,
+                                                           int fvarChannel)
+  : _topology(topology),
+    _name(name),
+    _interpolation(interpolation),
+    _fvarChannel(fvarChannel)
 {}
 
 void HdPh_OsdRefineComputationGPU::GetBufferSpecs(HdBufferSpecVector *specs) const

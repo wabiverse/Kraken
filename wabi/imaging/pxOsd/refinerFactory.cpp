@@ -44,12 +44,10 @@ namespace {
 
 struct Converter {
 
-  Converter(PxOsdMeshTopology const &topo,
-            std::vector<VtIntArray> const &fvarTopologies,
-            TfToken t)
-      : name(t),
-        topology(topo),
-        fvarTopologies(fvarTopologies)
+  Converter(PxOsdMeshTopology const &topo, std::vector<VtIntArray> const &fvarTopologies, TfToken t)
+    : name(t),
+      topology(topo),
+      fvarTopologies(fvarTopologies)
   {}
 
   OpenSubdiv::Sdc::SchemeType GetType() const;
@@ -75,16 +73,16 @@ OpenSubdiv::Sdc::SchemeType Converter::GetType() const
   else if (scheme == PxOsdOpenSubdivTokens->loop) {
     type = SCHEME_LOOP;
     // in loop case, all input faces have to be triangle.
-    int numFaces           = topology.GetFaceVertexCounts().size();
+    int numFaces = topology.GetFaceVertexCounts().size();
     int const *numVertsPtr = topology.GetFaceVertexCounts().cdata();
     if (std::find_if(numVertsPtr, numVertsPtr + numFaces, [](int x) { return x != 3; }) ==
         numVertsPtr + numFaces) {
     }
     else {
       TF_WARN(
-          "Can't apply loop subdivision on prim %s, since "
-          "it has non-triangle face(s).",
-          name.GetText());
+        "Can't apply loop subdivision on prim %s, since "
+        "it has non-triangle face(s).",
+        name.GetText());
     }
   }
   else if (scheme == PxOsdOpenSubdivTokens->bilinear) {
@@ -110,10 +108,10 @@ OpenSubdiv::Sdc::Options Converter::GetOptions() const
   // boundary faces of bilinear scheme mesh when
   // boundaryInterpolationMode=None. To workaround the bug
   // override boundary interpolation mode to be edgeAndCorner.
-  TfToken const scheme              = topology.GetScheme();
+  TfToken const scheme = topology.GetScheme();
   TfToken const interpolateBoundary = scheme == PxOsdOpenSubdivTokens->bilinear ?
-                                          PxOsdOpenSubdivTokens->edgeAndCorner :
-                                          topology.GetSubdivTags().GetVertexInterpolationRule();
+                                        PxOsdOpenSubdivTokens->edgeAndCorner :
+                                        topology.GetSubdivTags().GetVertexInterpolationRule();
 
   if (!interpolateBoundary.IsEmpty()) {
     if (interpolateBoundary == PxOsdOpenSubdivTokens->none) {
@@ -142,8 +140,7 @@ OpenSubdiv::Sdc::Options Converter::GetOptions() const
   // face-varying boundary interpolation rule
   //
 
-  TfToken const faceVaryingLinearInterpolation =
-      topology.GetSubdivTags().GetFaceVaryingInterpolationRule();
+  TfToken const faceVaryingLinearInterpolation = topology.GetSubdivTags().GetFaceVaryingInterpolationRule();
 
   if (!faceVaryingLinearInterpolation.IsEmpty()) {
     if (faceVaryingLinearInterpolation == PxOsdOpenSubdivTokens->all) {
@@ -209,9 +206,7 @@ OpenSubdiv::Sdc::Options Converter::GetOptions() const
       options.SetTriangleSubdivision(Options::TRI_SUB_SMOOTH);
     }
     else {
-      TF_WARN("Unknown triangle subdivision rule (%s) (%s)",
-              triangleSubdivision.GetText(),
-              name.GetText());
+      TF_WARN("Unknown triangle subdivision rule (%s) (%s)", triangleSubdivision.GetText(), name.GetText());
     }
   }
 
@@ -233,18 +228,18 @@ namespace Far {
 //----------------------------------------------------------
 template<>
 inline bool TopologyRefinerFactory<WABI_NS::Converter>::resizeComponentTopology(
-    Far::TopologyRefiner &refiner,
-    WABI_NS::Converter const &converter)
+  Far::TopologyRefiner &refiner,
+  WABI_NS::Converter const &converter)
 {
 
   WABI_NAMESPACE_USING
 
   PxOsdMeshTopology const topology = converter.topology;
 
-  int numFaces     = topology.GetFaceVertexCounts().size();
+  int numFaces = topology.GetFaceVertexCounts().size();
   int maxVertIndex = 0;
 
-  int const *vertCounts  = topology.GetFaceVertexCounts().cdata(),
+  int const *vertCounts = topology.GetFaceVertexCounts().cdata(),
             *vertIndices = topology.GetFaceVertexIndices().cdata();
 
   setNumBaseFaces(refiner, numFaces);
@@ -267,14 +262,14 @@ inline bool TopologyRefinerFactory<WABI_NS::Converter>::resizeComponentTopology(
 //----------------------------------------------------------
 template<>
 inline bool TopologyRefinerFactory<WABI_NS::Converter>::assignComponentTopology(
-    Far::TopologyRefiner &refiner,
-    WABI_NS::Converter const &converter)
+  Far::TopologyRefiner &refiner,
+  WABI_NS::Converter const &converter)
 {
 
   WABI_NAMESPACE_USING
 
   PxOsdMeshTopology const topology = converter.topology;
-  int const *vertIndices           = topology.GetFaceVertexIndices().cdata();
+  int const *vertIndices = topology.GetFaceVertexIndices().cdata();
   bool flip = (topology.GetOrientation() != PxOsdOpenSubdivTokens->rightHanded);
 
   for (int face = 0, idx = 0; face < refiner.GetLevel(0).GetNumFaces(); ++face) {
@@ -302,8 +297,8 @@ inline bool TopologyRefinerFactory<WABI_NS::Converter>::assignComponentTopology(
 
 template<>
 inline bool TopologyRefinerFactory<WABI_NS::Converter>::assignComponentTags(
-    Far::TopologyRefiner &refiner,
-    WABI_NS::Converter const &converter)
+  Far::TopologyRefiner &refiner,
+  WABI_NS::Converter const &converter)
 {
 
   WABI_NAMESPACE_USING
@@ -317,12 +312,11 @@ inline bool TopologyRefinerFactory<WABI_NS::Converter>::assignComponentTags(
   //
 
   // The sharpnesses can be defined either per-crease or per-edge.
-  VtIntArray const creaseIndices   = tags.GetCreaseIndices(),
-                   creaseLengths   = tags.GetCreaseLengths();
+  VtIntArray const creaseIndices = tags.GetCreaseIndices(), creaseLengths = tags.GetCreaseLengths();
   VtFloatArray const creaseWeights = tags.GetCreaseWeights();
 
   size_t numCreaseSets = creaseLengths.size();
-  bool perEdgeCrease   = creaseWeights.size() != numCreaseSets;
+  bool perEdgeCrease = creaseWeights.size() != numCreaseSets;
 
   if (perEdgeCrease) {
     // validate per-edge crease.
@@ -349,10 +343,8 @@ inline bool TopologyRefinerFactory<WABI_NS::Converter>::assignComponentTags(
       // The asset may need fixing if any of the warnings fire off.
       bool validIndices = true;
       if (v0 < 0 || v0 >= level.GetNumVertices()) {
-        TF_WARN("creaseIndices[%d] (%d) is out of bounds on %s",
-                int(cindex + j),
-                v0,
-                converter.name.GetText());
+        TF_WARN(
+          "creaseIndices[%d] (%d) is out of bounds on %s", int(cindex + j), v0, converter.name.GetText());
         validIndices = false;
       }
       if (v1 < 0 || v1 >= level.GetNumVertices()) {
@@ -366,10 +358,7 @@ inline bool TopologyRefinerFactory<WABI_NS::Converter>::assignComponentTags(
       if (validIndices) {
         OpenSubdiv::Vtr::Index edge = level.FindEdge(v0, v1);
         if (edge == OpenSubdiv::Vtr::INDEX_INVALID) {
-          TF_WARN("Set edge sharpness cannot find edge (%d-%d) (%s)",
-                  v0,
-                  v1,
-                  converter.name.GetText());
+          TF_WARN("Set edge sharpness cannot find edge (%d-%d) (%s)", v0, v1, converter.name.GetText());
         }
         else {
           setBaseEdgeSharpness(refiner, edge, std::max(0.0f, creaseWeights[sindex]));
@@ -390,7 +379,7 @@ inline bool TopologyRefinerFactory<WABI_NS::Converter>::assignComponentTags(
   // corners
   //
 
-  VtIntArray const cornerIndices   = tags.GetCornerIndices();
+  VtIntArray const cornerIndices = tags.GetCornerIndices();
   VtFloatArray const cornerWeights = tags.GetCornerWeights();
 
   size_t numCorners = cornerIndices.size();
@@ -434,8 +423,8 @@ inline bool TopologyRefinerFactory<WABI_NS::Converter>::assignComponentTags(
 
 template<>
 bool TopologyRefinerFactory<WABI_NS::Converter>::assignFaceVaryingTopology(
-    TopologyRefiner &refiner,
-    WABI_NS::Converter const &converter)
+  TopologyRefiner &refiner,
+  WABI_NS::Converter const &converter)
 {
 
   WABI_NAMESPACE_USING
@@ -452,14 +441,14 @@ bool TopologyRefinerFactory<WABI_NS::Converter>::assignFaceVaryingTopology(
       maxIndex = std::max(maxIndex, fvIndices[j]);
     }
 
-    size_t nfaces  = getNumBaseFaces(refiner);
+    size_t nfaces = getNumBaseFaces(refiner);
     size_t channel = createBaseFVarChannel(refiner, maxIndex + 1);
 
     bool flip = (converter.topology.GetOrientation() != PxOsdOpenSubdivTokens->rightHanded);
 
     for (size_t j = 0, ofs = 0; j < nfaces; ++j) {
       Far::IndexArray faceIndices = getBaseFaceFVarValues(refiner, j, channel);
-      size_t numVerts             = faceIndices.size();
+      size_t numVerts = faceIndices.size();
 
       if (!TF_VERIFY(ofs + numVerts <= fvIndices.size())) {
         return false;
@@ -485,9 +474,9 @@ bool TopologyRefinerFactory<WABI_NS::Converter>::assignFaceVaryingTopology(
 //----------------------------------------------------------
 template<>
 inline void TopologyRefinerFactory<WABI_NS::Converter>::reportInvalidTopology(
-    TopologyRefinerFactory::TopologyError /* errCode */,
-    char const *msg,
-    WABI_NS::Converter const &converter)
+  TopologyRefinerFactory::TopologyError /* errCode */,
+  char const *msg,
+  WABI_NS::Converter const &converter)
 {
   WABI_NAMESPACE_USING
   TF_WARN("%s (%s)", msg, converter.name.GetText());
@@ -503,18 +492,16 @@ inline void TopologyRefinerFactory<WABI_NS::Converter>::reportInvalidTopology(
 WABI_NAMESPACE_BEGIN
 
 // ---------------------------------------------------------------------------
-PxOsdTopologyRefinerSharedPtr PxOsdRefinerFactory::Create(PxOsdMeshTopology const &topology,
-                                                          TfToken name)
+PxOsdTopologyRefinerSharedPtr PxOsdRefinerFactory::Create(PxOsdMeshTopology const &topology, TfToken name)
 {
 
   std::vector<VtIntArray> fvarTopologies;
   return Create(topology, fvarTopologies, name);
 }
 
-PxOsdTopologyRefinerSharedPtr PxOsdRefinerFactory::Create(
-    PxOsdMeshTopology const &topology,
-    std::vector<VtIntArray> const &fvarTopologies,
-    TfToken name)
+PxOsdTopologyRefinerSharedPtr PxOsdRefinerFactory::Create(PxOsdMeshTopology const &topology,
+                                                          std::vector<VtIntArray> const &fvarTopologies,
+                                                          TfToken name)
 {
 
   Converter converter(topology, fvarTopologies, name);
@@ -522,8 +509,8 @@ PxOsdTopologyRefinerSharedPtr PxOsdRefinerFactory::Create(
   OpenSubdiv::Far::TopologyRefinerFactory<Converter>::Options options(converter.GetType(),
                                                                       converter.GetOptions());
 
-  OpenSubdiv::Far::TopologyRefiner *refiner =
-      OpenSubdiv::Far::TopologyRefinerFactory<Converter>::Create(converter, options);
+  OpenSubdiv::Far::TopologyRefiner *refiner = OpenSubdiv::Far::TopologyRefinerFactory<Converter>::Create(
+    converter, options);
 
   return PxOsdTopologyRefinerSharedPtr(refiner);
 }

@@ -80,8 +80,8 @@ GfQuaternion GfQuaternion::GetInverse() const
 
 GfQuaternion &GfQuaternion::operator*=(const GfQuaternion &q)
 {
-  double r1         = GetReal();
-  double r2         = q.GetReal();
+  double r1 = GetReal();
+  double r2 = q.GetReal();
   const GfVec3d &i1 = GetImaginary();
   const GfVec3d &i2 = q.GetImaginary();
 
@@ -112,11 +112,11 @@ GfQuaternion GfSlerp(const GfQuaternion &q0, const GfQuaternion &q1, double alph
 GfQuaternion GfSlerp(double alpha, const GfQuaternion &q0, const GfQuaternion &q1)
 {
   double cosTheta = q0.GetImaginary() * q1.GetImaginary() + q0.GetReal() * q1.GetReal();
-  bool flip1      = false;
+  bool flip1 = false;
 
   if (cosTheta < 0.0) {
     cosTheta = -cosTheta;
-    flip1    = true;
+    flip1 = true;
   }
 
   double scale0, scale1;
@@ -142,8 +142,8 @@ GfQuaternion GfSlerp(double alpha, const GfQuaternion &q0, const GfQuaternion &q
 
 std::ostream &operator<<(std::ostream &out, const GfQuaternion &q)
 {
-  return (out << '(' << Gf_OstreamHelperP(q.GetReal()) << " + "
-              << Gf_OstreamHelperP(q.GetImaginary()) << ')');
+  return (out << '(' << Gf_OstreamHelperP(q.GetReal()) << " + " << Gf_OstreamHelperP(q.GetImaginary())
+              << ')');
 }
 
 WABI_NAMESPACE_END

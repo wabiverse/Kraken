@@ -57,13 +57,13 @@ static size_t Arch_ObtainCacheLineSize()
 #if defined(ARCH_OS_LINUX)
   return sysconf(_SC_LEVEL1_DCACHE_LINESIZE);
 #elif defined(ARCH_OS_DARWIN)
-  size_t cacheLineSize     = 0;
+  size_t cacheLineSize = 0;
   size_t cacheLineSizeSize = sizeof(cacheLineSize);
   sysctlbyname("hw.cachelinesize", &cacheLineSize, &cacheLineSizeSize, 0, 0);
   return cacheLineSize;
 #elif defined(ARCH_OS_WINDOWS)
   DWORD bufferSize = 0;
-  using INFO       = SYSTEM_LOGICAL_PROCESSOR_INFORMATION;
+  using INFO = SYSTEM_LOGICAL_PROCESSOR_INFORMATION;
 
   // Get the number of bytes required.
   ::GetLogicalProcessorInformation(nullptr, &bufferSize);
@@ -110,8 +110,7 @@ void Arch_ValidateAssumptions()
    * Verify that float and double are IEEE-754 compliant.
    */
   static_assert(sizeof(float) == sizeof(uint32_t) && sizeof(double) == sizeof(uint64_t) &&
-                    std::numeric_limits<float>::is_iec559 &&
-                    std::numeric_limits<double>::is_iec559,
+                  std::numeric_limits<float>::is_iec559 && std::numeric_limits<double>::is_iec559,
                 "float/double not IEEE-754 compliant");
 
   /*
@@ -134,7 +133,7 @@ void Arch_ValidateAssumptions()
    * emulating x64_64 on arm64 which has a far greater performance impact.
    */
   const size_t ROSETTA_WORKAROUND_CACHE_LINE_SIZE = 128;
-  NXArchInfo const *archInfo                      = NXGetLocalArchInfo();
+  NXArchInfo const *archInfo = NXGetLocalArchInfo();
   if (archInfo && ((archInfo->cputype & ~CPU_ARCH_MASK) == CPU_TYPE_ARM)) {
     if ((cacheLineSize != ROSETTA_WORKAROUND_CACHE_LINE_SIZE)) {
       ARCH_WARNING("Cache-line size mismatch may negatively impact performance.");

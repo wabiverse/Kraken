@@ -71,9 +71,8 @@ static std::string _ValidationRepr(PxOsdMeshTopologyValidation const &validation
   return repr.str();
 }
 
-static PxOsdMeshTopologyValidation::Invalidation _InvalidationInit(
-    PxOsdMeshTopologyValidation::Code code,
-    std::string const &message)
+static PxOsdMeshTopologyValidation::Invalidation _InvalidationInit(PxOsdMeshTopologyValidation::Code code,
+                                                                   std::string const &message)
 {
   return {code, message};
 }
@@ -88,10 +87,10 @@ void wrapMeshTopologyValidation()
     scope obj = cls;
     TfPyWrapEnum<This::Code, true>();
     class_<This::Invalidation>("Invalidation", no_init)
-        .def("__init__", &::_InvalidationInit)
-        .def_readwrite("code", &This::Invalidation::code)
-        .def_readwrite("message", &This::Invalidation::message)
-        .def("__repr__", &::_InvalidationRepr);
+      .def("__init__", &::_InvalidationInit)
+      .def_readwrite("code", &This::Invalidation::code)
+      .def_readwrite("message", &This::Invalidation::message)
+      .def("__repr__", &::_InvalidationRepr);
   }
   cls.def("__repr__", &::_ValidationRepr);
   cls.def("__iter__", iterator<This>());

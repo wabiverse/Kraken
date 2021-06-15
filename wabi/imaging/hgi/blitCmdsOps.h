@@ -72,12 +72,12 @@ WABI_NAMESPACE_BEGIN
 ///
 struct HgiTextureGpuToCpuOp {
   HgiTextureGpuToCpuOp()
-      : gpuSourceTexture(),
-        sourceTexelOffset(GfVec3i(0)),
-        mipLevel(0),
-        cpuDestinationBuffer(nullptr),
-        destinationByteOffset(0),
-        destinationBufferByteSize(0)
+    : gpuSourceTexture(),
+      sourceTexelOffset(GfVec3i(0)),
+      mipLevel(0),
+      cpuDestinationBuffer(nullptr),
+      destinationByteOffset(0),
+      destinationBufferByteSize(0)
   {}
 
   HgiTextureHandle gpuSourceTexture;
@@ -114,11 +114,11 @@ struct HgiTextureGpuToCpuOp {
 ///
 struct HgiTextureCpuToGpuOp {
   HgiTextureCpuToGpuOp()
-      : cpuSourceBuffer(nullptr),
-        bufferByteSize(0),
-        destinationTexelOffset(GfVec3i(0)),
-        mipLevel(0),
-        gpuDestinationTexture()
+    : cpuSourceBuffer(nullptr),
+      bufferByteSize(0),
+      destinationTexelOffset(GfVec3i(0)),
+      mipLevel(0),
+      gpuDestinationTexture()
   {}
 
   void const *cpuSourceBuffer;
@@ -153,11 +153,11 @@ struct HgiTextureCpuToGpuOp {
 ///
 struct HgiBufferGpuToGpuOp {
   HgiBufferGpuToGpuOp()
-      : gpuSourceBuffer(),
-        sourceByteOffset(0),
-        byteSize(0),
-        gpuDestinationBuffer(),
-        destinationByteOffset(0)
+    : gpuSourceBuffer(),
+      sourceByteOffset(0),
+      byteSize(0),
+      gpuDestinationBuffer(),
+      destinationByteOffset(0)
   {}
 
   HgiBufferHandle gpuSourceBuffer;
@@ -191,11 +191,11 @@ struct HgiBufferGpuToGpuOp {
 ///
 struct HgiBufferCpuToGpuOp {
   HgiBufferCpuToGpuOp()
-      : cpuSourceBuffer(nullptr),
-        sourceByteOffset(0),
-        gpuDestinationBuffer(),
-        destinationByteOffset(0),
-        byteSize(0)
+    : cpuSourceBuffer(nullptr),
+      sourceByteOffset(0),
+      gpuDestinationBuffer(),
+      destinationByteOffset(0),
+      byteSize(0)
   {}
 
   void const *cpuSourceBuffer;
@@ -230,11 +230,11 @@ struct HgiBufferCpuToGpuOp {
 ///
 struct HgiBufferGpuToCpuOp {
   HgiBufferGpuToCpuOp()
-      : gpuSourceBuffer(),
-        sourceByteOffset(0),
-        byteSize(0),
-        cpuDestinationBuffer(),
-        destinationByteOffset(0)
+    : gpuSourceBuffer(),
+      sourceByteOffset(0),
+      byteSize(0),
+      cpuDestinationBuffer(),
+      destinationByteOffset(0)
   {}
 
   HgiBufferHandle gpuSourceBuffer;
@@ -269,12 +269,12 @@ struct HgiBufferGpuToCpuOp {
 ///
 struct HgiTextureToBufferOp {
   HgiTextureToBufferOp()
-      : gpuSourceTexture(),
-        sourceTexelOffset(GfVec3i(0)),
-        mipLevel(0),
-        gpuDestinationBuffer(),
-        destinationByteOffset(0),
-        byteSize(0)
+    : gpuSourceTexture(),
+      sourceTexelOffset(GfVec3i(0)),
+      mipLevel(0),
+      gpuDestinationBuffer(),
+      destinationByteOffset(0),
+      byteSize(0)
   {}
 
   HgiTextureHandle gpuSourceTexture;
@@ -312,12 +312,12 @@ struct HgiTextureToBufferOp {
 ///
 struct HgiBufferToTextureOp {
   HgiBufferToTextureOp()
-      : gpuSourceBuffer(),
-        sourceByteOffset(0),
-        gpuDestinationTexture(),
-        destinationTexelOffset(GfVec3i(0)),
-        mipLevel(0),
-        byteSize(0)
+    : gpuSourceBuffer(),
+      sourceByteOffset(0),
+      gpuDestinationTexture(),
+      destinationTexelOffset(GfVec3i(0)),
+      mipLevel(0),
+      byteSize(0)
   {}
 
   HgiBufferHandle gpuSourceBuffer;

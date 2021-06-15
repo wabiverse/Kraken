@@ -191,7 +191,7 @@ class HgiGraphicsCmds : public HgiCmds {
 
  private:
   HgiGraphicsCmds &operator=(const HgiGraphicsCmds &) = delete;
-  HgiGraphicsCmds(const HgiGraphicsCmds &)            = delete;
+  HgiGraphicsCmds(const HgiGraphicsCmds &) = delete;
 };
 
 WABI_NAMESPACE_END

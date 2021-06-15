@@ -122,7 +122,7 @@ class Trace_EventTreeBuilder : protected TraceCollection::Visitor {
   void _OnMarker(const TraceThreadId &, const TfToken &, const TraceEvent &);
 
   using _PendingNodeStack = std::vector<_PendingEventNode>;
-  using _ThreadStackMap   = std::map<TraceThreadId, _PendingNodeStack>;
+  using _ThreadStackMap = std::map<TraceThreadId, _PendingNodeStack>;
 
   void _PopAndClose(_PendingNodeStack &stack);
 

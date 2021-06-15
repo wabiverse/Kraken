@@ -71,9 +71,9 @@ class HgiVulkanSampler final : public HgiSampler {
   HgiVulkanSampler(HgiVulkanDevice *device, HgiSamplerDesc const &desc);
 
  private:
-  HgiVulkanSampler()        = delete;
+  HgiVulkanSampler() = delete;
   HgiVulkanSampler &operator=(const HgiVulkanSampler &) = delete;
-  HgiVulkanSampler(const HgiVulkanSampler &)            = delete;
+  HgiVulkanSampler(const HgiVulkanSampler &) = delete;
 
   VkSampler _vkSampler;
 

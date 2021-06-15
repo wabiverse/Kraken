@@ -53,20 +53,18 @@ bool UsdImagingHermiteCurvesAdapter::IsSupported(UsdImagingIndexProxy const *ind
   return index->IsRprimTypeSupported(HdPrimTypeTokens->basisCurves);
 }
 
-SdfPath UsdImagingHermiteCurvesAdapter::Populate(
-    UsdPrim const &prim,
-    UsdImagingIndexProxy *index,
-    UsdImagingInstancerContext const *instancerContext)
+SdfPath UsdImagingHermiteCurvesAdapter::Populate(UsdPrim const &prim,
+                                                 UsdImagingIndexProxy *index,
+                                                 UsdImagingInstancerContext const *instancerContext)
 {
-  return _AddRprim(
-      HdPrimTypeTokens->basisCurves, prim, index, GetMaterialUsdPath(prim), instancerContext);
+  return _AddRprim(HdPrimTypeTokens->basisCurves, prim, index, GetMaterialUsdPath(prim), instancerContext);
 }
 
 void UsdImagingHermiteCurvesAdapter::TrackVariability(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    HdDirtyBits *timeVaryingBits,
-    UsdImagingInstancerContext const *instancerContext) const
+  UsdPrim const &prim,
+  SdfPath const &cachePath,
+  HdDirtyBits *timeVaryingBits,
+  UsdImagingInstancerContext const *instancerContext) const
 {
   BaseAdapter::TrackVariability(prim, cachePath, timeVaryingBits, instancerContext);
 

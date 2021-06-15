@@ -93,10 +93,10 @@ template<class MappedType> class SdfPathTable {
   // structure.
   struct _Entry : boost::noncopyable {
     _Entry(value_type const &value, _Entry *n)
-        : value(value),
-          next(n),
-          firstChild(0),
-          nextSiblingOrParent(0, false)
+      : value(value),
+        next(n),
+        firstChild(0),
+        nextSiblingOrParent(0, false)
     {}
 
     // If this entry's nextSiblingOrParent field points to a sibling, return
@@ -163,7 +163,7 @@ template<class MappedType> class SdfPathTable {
         _Entry *prev, *cur = firstChild;
         do {
           prev = cur;
-          cur  = prev->GetNextSibling();
+          cur = prev->GetNextSibling();
         } while (cur != child);
         prev->nextSiblingOrParent = cur->nextSiblingOrParent;
       }
@@ -195,9 +195,8 @@ template<class MappedType> class SdfPathTable {
   // iterators.  Currently only forward traversal is supported.
   template<class, class> friend class Iterator;
   template<class ValType, class EntryPtr>
-  class Iterator : public boost::iterator_facade<Iterator<ValType, EntryPtr>,
-                                                 ValType,
-                                                 boost::forward_traversal_tag> {
+  class Iterator
+    : public boost::iterator_facade<Iterator<ValType, EntryPtr>, ValType, boost::forward_traversal_tag> {
    public:
     /// The standard requires default construction but places practically no
     /// requirements on the semantics of default-constructed iterators.
@@ -283,10 +282,10 @@ template<class MappedType> class SdfPathTable {
 
   /// Copy constructor.
   SdfPathTable(SdfPathTable const &other)
-      : _buckets(other._buckets.size()),
-        _size(0)  // size starts at 0, since we insert elements.
-        ,
-        _mask(other._mask)
+    : _buckets(other._buckets.size()),
+      _size(0)  // size starts at 0, since we insert elements.
+      ,
+      _mask(other._mask)
   {
     // Walk all elements in the other container, inserting into this one,
     // and creating the right child/sibling links along the way.
@@ -299,17 +298,17 @@ template<class MappedType> class SdfPathTable {
       // Ensure the nextSibling/parentLink is created.
       if (i._entry->nextSiblingOrParent.Get() && !j._entry->nextSiblingOrParent.Get()) {
         j._entry->nextSiblingOrParent.Set(
-            _InsertInTable(i._entry->nextSiblingOrParent.Get()->value).first._entry,
-            i._entry->nextSiblingOrParent.template BitsAs<bool>());
+          _InsertInTable(i._entry->nextSiblingOrParent.Get()->value).first._entry,
+          i._entry->nextSiblingOrParent.template BitsAs<bool>());
       }
     }
   }
 
   /// Move constructor.
   SdfPathTable(SdfPathTable &&other)
-      : _buckets(std::move(other._buckets)),
-        _size(other._size),
-        _mask(other._mask)
+    : _buckets(std::move(other._buckets)),
+      _size(other._size),
+      _mask(other._mask)
   {
     other._size = 0;
     other._mask = 0;
@@ -433,7 +432,7 @@ template<class MappedType> class SdfPathTable {
   std::pair<iterator, iterator> FindSubtreeRange(SdfPath const &path)
   {
     std::pair<iterator, iterator> result;
-    result.first  = find(path);
+    result.first = find(path);
     result.second = result.first.GetNextSubtree();
     return result;
   }
@@ -444,7 +443,7 @@ template<class MappedType> class SdfPathTable {
   std::pair<const_iterator, const_iterator> FindSubtreeRange(SdfPath const &path) const
   {
     std::pair<const_iterator, const_iterator> result;
-    result.first  = find(path);
+    result.first = find(path);
     result.second = result.first.GetNextSubtree();
     return result;
   }
@@ -484,7 +483,7 @@ template<class MappedType> class SdfPathTable {
     _IterBoolPair result = _InsertInTable(value);
     if (result.second) {
       // New element -- make sure the parent is inserted.
-      _Entry *const newEntry    = result.first._entry;
+      _Entry *const newEntry = result.first._entry;
       SdfPath const &parentPath = _GetParentPath(value.first);
       if (!parentPath.IsEmpty()) {
         iterator parIter = insert(value_type(parentPath, mapped_type())).first;
@@ -528,7 +527,7 @@ template<class MappedType> class SdfPathTable {
   void ClearInParallel()
   {
     Sdf_ClearPathTableInParallel(
-        reinterpret_cast<void **>(_buckets.data()), _buckets.size(), _DeleteEntryChain);
+      reinterpret_cast<void **>(_buckets.data()), _buckets.size(), _DeleteEntryChain);
     _size = 0;
   }
 
@@ -638,7 +637,7 @@ template<class MappedType> class SdfPathTable {
     // Unlink item and destroy it
     --_size;
     _Entry *tmp = *cur;
-    *cur        = tmp->next;
+    *cur = tmp->next;
     delete tmp;
   }
 
@@ -660,12 +659,12 @@ template<class MappedType> class SdfPathTable {
     _EraseSubtree(entry);
 
     // And siblings.
-    _Entry *sibling     = entry->GetNextSibling();
+    _Entry *sibling = entry->GetNextSibling();
     _Entry *nextSibling = sibling ? sibling->GetNextSibling() : nullptr;
     while (sibling) {
       _EraseSubtree(sibling);
       _EraseFromTable(sibling);
-      sibling     = nextSibling;
+      sibling = nextSibling;
       nextSibling = sibling ? sibling->GetNextSibling() : nullptr;
     }
   }
@@ -709,7 +708,7 @@ template<class MappedType> class SdfPathTable {
 
         // Insert the item at the head
         elem->next = m;
-        m          = elem;
+        m = elem;
 
         // Next item
         elem = next;

@@ -293,7 +293,7 @@ class UsdShadeShader : public UsdTyped {
   /// Forwards to UsdShadeNodeDefAPI(prim).
   USDSHADE_API
   UsdAttribute CreateImplementationSourceAttr(VtValue const &defaultValue = VtValue(),
-                                              bool writeSparsely          = false) const;
+                                              bool writeSparsely = false) const;
 
   /// Forwards to UsdShadeNodeDefAPI(prim).
   USDSHADE_API
@@ -301,8 +301,7 @@ class UsdShadeShader : public UsdTyped {
 
   /// Forwards to UsdShadeNodeDefAPI(prim).
   USDSHADE_API
-  UsdAttribute CreateIdAttr(VtValue const &defaultValue = VtValue(),
-                            bool writeSparsely          = false) const;
+  UsdAttribute CreateIdAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
   /// Forwards to UsdShadeNodeDefAPI(prim).
   USDSHADE_API
@@ -328,15 +327,13 @@ class UsdShadeShader : public UsdTyped {
 
   /// Forwards to UsdShadeNodeDefAPI(prim).
   USDSHADE_API
-  bool SetSourceAssetSubIdentifier(
-      const TfToken &subIdentifier,
-      const TfToken &sourceType = UsdShadeTokens->universalSourceType) const;
+  bool SetSourceAssetSubIdentifier(const TfToken &subIdentifier,
+                                   const TfToken &sourceType = UsdShadeTokens->universalSourceType) const;
 
   /// Forwards to UsdShadeNodeDefAPI(prim).
   USDSHADE_API
-  bool GetSourceAssetSubIdentifier(
-      TfToken *subIdentifier,
-      const TfToken &sourceType = UsdShadeTokens->universalSourceType) const;
+  bool GetSourceAssetSubIdentifier(TfToken *subIdentifier,
+                                   const TfToken &sourceType = UsdShadeTokens->universalSourceType) const;
 
   /// Forwards to UsdShadeNodeDefAPI(prim).
   USDSHADE_API

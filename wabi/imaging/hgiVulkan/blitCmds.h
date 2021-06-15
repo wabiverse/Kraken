@@ -97,7 +97,7 @@ class HgiVulkanBlitCmds final : public HgiBlitCmds {
 
  private:
   HgiVulkanBlitCmds &operator=(const HgiVulkanBlitCmds &) = delete;
-  HgiVulkanBlitCmds(const HgiVulkanBlitCmds &)            = delete;
+  HgiVulkanBlitCmds(const HgiVulkanBlitCmds &) = delete;
 
   void _CreateCommandBuffer();
 

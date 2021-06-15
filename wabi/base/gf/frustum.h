@@ -114,13 +114,13 @@ class GfFrustum {
 
   /// Copy constructor.
   GfFrustum(GfFrustum const &o)
-      : _position(o._position),
-        _rotation(o._rotation),
-        _window(o._window),
-        _nearFar(o._nearFar),
-        _viewDistance(o._viewDistance),
-        _projectionType(o._projectionType),
-        _planes(nullptr)
+    : _position(o._position),
+      _rotation(o._rotation),
+      _window(o._window),
+      _nearFar(o._nearFar),
+      _viewDistance(o._viewDistance),
+      _projectionType(o._projectionType),
+      _planes(nullptr)
   {
     if (auto *planes = o._planes.load()) {
       _planes = new std::array<GfPlane, 6>(*planes);
@@ -129,13 +129,13 @@ class GfFrustum {
 
   /// Move constructor.
   GfFrustum(GfFrustum &&o) noexcept
-      : _position(o._position),
-        _rotation(o._rotation),
-        _window(o._window),
-        _nearFar(o._nearFar),
-        _viewDistance(o._viewDistance),
-        _projectionType(o._projectionType),
-        _planes(nullptr)
+    : _position(o._position),
+      _rotation(o._rotation),
+      _window(o._window),
+      _nearFar(o._nearFar),
+      _viewDistance(o._viewDistance),
+      _projectionType(o._projectionType),
+      _planes(nullptr)
   {
     if (auto *planes = o._planes.exchange(nullptr, std::memory_order_relaxed)) {
       _planes = planes;
@@ -166,11 +166,11 @@ class GfFrustum {
     if (this == &o) {
       return *this;
     }
-    _position       = o._position;
-    _rotation       = o._rotation;
-    _window         = o._window;
-    _nearFar        = o._nearFar;
-    _viewDistance   = o._viewDistance;
+    _position = o._position;
+    _rotation = o._rotation;
+    _window = o._window;
+    _nearFar = o._nearFar;
+    _viewDistance = o._viewDistance;
     _projectionType = o._projectionType;
     delete _planes.load(std::memory_order_relaxed);
     if (auto *planes = o._planes.load(std::memory_order_relaxed)) {
@@ -188,11 +188,11 @@ class GfFrustum {
     if (this == &o) {
       return *this;
     }
-    _position       = o._position;
-    _rotation       = o._rotation;
-    _window         = o._window;
-    _nearFar        = o._nearFar;
-    _viewDistance   = o._viewDistance;
+    _position = o._position;
+    _rotation = o._rotation;
+    _window = o._window;
+    _nearFar = o._nearFar;
+    _viewDistance = o._viewDistance;
     _projectionType = o._projectionType;
     delete _planes.load(std::memory_order_relaxed);
     _planes.store(o._planes.load(std::memory_order_relaxed), std::memory_order_relaxed);
@@ -577,8 +577,7 @@ class GfFrustum {
   ///
   /// This method is useful for computing a volume to use for interactive
   /// picking.
-  GF_API GfFrustum ComputeNarrowedFrustum(const GfVec3d &worldPoint,
-                                          const GfVec2d &halfSize) const;
+  GF_API GfFrustum ComputeNarrowedFrustum(const GfVec3d &worldPoint, const GfVec2d &halfSize) const;
 
   /// Builds and returns a \c GfRay that starts at the viewpoint and extends
   /// through the given \a windowPos given in normalized coords (-1 to +1 in
@@ -678,10 +677,7 @@ class GfFrustum {
   // picking.
   GfFrustum _ComputeNarrowedFrustumSub(const GfVec2d windowPoint, const GfVec2d &halfSize) const;
 
-  bool _SegmentIntersects(GfVec3d const &p0,
-                          uint32_t p0Mask,
-                          GfVec3d const &p1,
-                          uint32_t p1Mask) const;
+  bool _SegmentIntersects(GfVec3d const &p0, uint32_t p0Mask, GfVec3d const &p1, uint32_t p1Mask) const;
 
   // Position of the frustum in world space.
   GfVec3d _position;

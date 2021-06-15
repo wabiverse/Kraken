@@ -78,31 +78,28 @@ void wrapUsdSkelAnimMapper()
 
   class_<This, UsdSkelAnimMapperRefPtr>("AnimMapper", no_init)
 
-      .def(init<>())
+    .def(init<>())
 
-      .def(init<size_t>())
+    .def(init<size_t>())
 
-      .def(init<VtTokenArray, VtTokenArray>((arg("sourceOrder"), arg("targetOrder"))))
-      .def("Remap",
-           &_Remap,
-           (arg("source"),
-            arg("target")       = VtValue(),
-            arg("elementSize")  = 1,
-            arg("defaultValue") = VtValue()))
+    .def(init<VtTokenArray, VtTokenArray>((arg("sourceOrder"), arg("targetOrder"))))
+    .def("Remap",
+         &_Remap,
+         (arg("source"), arg("target") = VtValue(), arg("elementSize") = 1, arg("defaultValue") = VtValue()))
 
-      .def("RemapTransforms",
-           &_RemapTransforms<GfMatrix4d>,
-           (arg("source"), arg("target"), arg("elementSize") = 1))
+    .def("RemapTransforms",
+         &_RemapTransforms<GfMatrix4d>,
+         (arg("source"), arg("target"), arg("elementSize") = 1))
 
-      .def("RemapTransforms",
-           &_RemapTransforms<GfMatrix4f>,
-           (arg("source"), arg("target"), arg("elementSize") = 1))
+    .def("RemapTransforms",
+         &_RemapTransforms<GfMatrix4f>,
+         (arg("source"), arg("target"), arg("elementSize") = 1))
 
-      .def("IsIdentity", &This::IsIdentity)
+    .def("IsIdentity", &This::IsIdentity)
 
-      .def("IsSparse", &This::IsSparse)
+    .def("IsSparse", &This::IsSparse)
 
-      .def("IsNull", &This::IsNull)
+    .def("IsNull", &This::IsNull)
 
-      .def("__len__", &This::size);
+    .def("__len__", &This::size);
 }

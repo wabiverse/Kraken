@@ -55,8 +55,7 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<SdfUIntListOp>().Alias(TfType::GetRoot(), "SdfUIntListOp");
   TfType::Define<SdfInt64ListOp>().Alias(TfType::GetRoot(), "SdfInt64ListOp");
   TfType::Define<SdfUInt64ListOp>().Alias(TfType::GetRoot(), "SdfUInt64ListOp");
-  TfType::Define<SdfUnregisteredValueListOp>().Alias(TfType::GetRoot(),
-                                                     "SdfUnregisteredValueListOp");
+  TfType::Define<SdfUnregisteredValueListOp>().Alias(TfType::GetRoot(), "SdfUnregisteredValueListOp");
 
   TfType::Define<SdfListOpType>();
 }
@@ -111,8 +110,7 @@ template<typename T> bool SdfListOp<T>::HasItem(const T &item) const
   }
 
   return (std::find(_addedItems.begin(), _addedItems.end(), item) != _addedItems.end()) ||
-         (std::find(_prependedItems.begin(), _prependedItems.end(), item) !=
-          _prependedItems.end()) ||
+         (std::find(_prependedItems.begin(), _prependedItems.end(), item) != _prependedItems.end()) ||
          (std::find(_appendedItems.begin(), _appendedItems.end(), item) != _appendedItems.end()) ||
          (std::find(_deletedItems.begin(), _deletedItems.end(), item) != _deletedItems.end()) ||
          (std::find(_orderedItems.begin(), _orderedItems.end(), item) != _orderedItems.end());
@@ -229,8 +227,7 @@ template<typename T> void SdfListOp<T>::ClearAndMakeExplicit()
   _SetExplicit(true);
 }
 
-template<typename T>
-void SdfListOp<T>::ApplyOperations(ItemVector *vec, const ApplyCallback &cb) const
+template<typename T> void SdfListOp<T>::ApplyOperations(ItemVector *vec, const ApplyCallback &cb) const
 {
   if (!vec) {
     return;
@@ -247,11 +244,11 @@ void SdfListOp<T>::ApplyOperations(ItemVector *vec, const ApplyCallback &cb) con
     _AddKeys(SdfListOpTypeExplicit, cb, &result, &search);
   }
   else {
-    size_t numToDelete  = _deletedItems.size();
-    size_t numToAdd     = _addedItems.size();
+    size_t numToDelete = _deletedItems.size();
+    size_t numToAdd = _addedItems.size();
     size_t numToPrepend = _prependedItems.size();
-    size_t numToAppend  = _appendedItems.size();
-    size_t numToOrder   = _orderedItems.size();
+    size_t numToAppend = _appendedItems.size();
+    size_t numToOrder = _orderedItems.size();
 
     if (!cb && ((numToDelete + numToAdd + numToPrepend + numToAppend + numToOrder) == 0)) {
       // nothing to do, so avoid copying vectors
@@ -437,7 +434,7 @@ void SdfListOp<T>::_AppendKeys(SdfListOpType op,
                                _ApplyList *result,
                                _ApplyMap *search) const
 {
-  const ItemVector &items                 = GetItems(op);
+  const ItemVector &items = GetItems(op);
   typename _ApplyList::iterator insertPos = result->begin();
   if (callback) {
     for (const T &item : items) {
@@ -618,8 +615,7 @@ bool SdfListOp<T>::ReplaceOperations(const SdfListOpType op,
   return true;
 }
 
-template<typename T>
-void SdfListOp<T>::ComposeOperations(const SdfListOp<T> &stronger, SdfListOpType op)
+template<typename T> void SdfListOp<T>::ComposeOperations(const SdfListOp<T> &stronger, SdfListOpType op)
 {
 
   SdfListOp<T> &weaker = *this;
@@ -693,8 +689,7 @@ static void _StreamOutItems(std::ostream &out,
 
 template<typename T> static std::ostream &_StreamOut(std::ostream &out, const SdfListOp<T> &op)
 {
-  const std::vector<std::string> &listOpAliases = TfType::GetRoot().GetAliases(
-      TfType::Find<SdfListOp<T>>());
+  const std::vector<std::string> &listOpAliases = TfType::GetRoot().GetAliases(TfType::Find<SdfListOp<T>>());
   TF_VERIFY(!listOpAliases.empty());
 
   out << listOpAliases.front() << "(";
@@ -717,8 +712,7 @@ template<typename T> static std::ostream &_StreamOut(std::ostream &out, const Sd
   return out;
 }
 
-template<typename ITEM_TYPE>
-std::ostream &operator<<(std::ostream &out, const SdfListOp<ITEM_TYPE> &op)
+template<typename ITEM_TYPE> std::ostream &operator<<(std::ostream &out, const SdfListOp<ITEM_TYPE> &op)
 {
   return _StreamOut(out, op);
 }
@@ -774,9 +768,7 @@ SDF_INSTANTIATE_LIST_OP(SdfPath);
 SDF_INSTANTIATE_LIST_OP(SdfReference);
 SDF_INSTANTIATE_LIST_OP(SdfPayload);
 
-template SDF_API void SdfApplyListOrdering(std::vector<string> *v,
-                                           const std::vector<string> &order);
-template SDF_API void SdfApplyListOrdering(std::vector<TfToken> *v,
-                                           const std::vector<TfToken> &order);
+template SDF_API void SdfApplyListOrdering(std::vector<string> *v, const std::vector<string> &order);
+template SDF_API void SdfApplyListOrdering(std::vector<TfToken> *v, const std::vector<TfToken> &order);
 
 WABI_NAMESPACE_END

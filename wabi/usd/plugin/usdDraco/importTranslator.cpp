@@ -39,13 +39,13 @@
 WABI_NAMESPACE_BEGIN
 
 UsdDracoImportTranslator::UsdDracoImportTranslator(const draco::Mesh &dracoMesh)
-    : _dracoMesh(dracoMesh),
-      _positions(UsdDracoAttributeDescriptor::ForPositions(dracoMesh), dracoMesh),
-      _texCoords(UsdDracoAttributeDescriptor::ForTexCoords(dracoMesh), dracoMesh),
-      _normals(UsdDracoAttributeDescriptor::ForNormals(dracoMesh), dracoMesh),
-      _holeFaces(UsdDracoAttributeDescriptor::ForHoleFaces(), dracoMesh),
-      _addedEdges(UsdDracoAttributeDescriptor::ForAddedEdges(), dracoMesh),
-      _posOrder(UsdDracoAttributeDescriptor::ForPosOrder(), dracoMesh)
+  : _dracoMesh(dracoMesh),
+    _positions(UsdDracoAttributeDescriptor::ForPositions(dracoMesh), dracoMesh),
+    _texCoords(UsdDracoAttributeDescriptor::ForTexCoords(dracoMesh), dracoMesh),
+    _normals(UsdDracoAttributeDescriptor::ForNormals(dracoMesh), dracoMesh),
+    _holeFaces(UsdDracoAttributeDescriptor::ForHoleFaces(), dracoMesh),
+    _addedEdges(UsdDracoAttributeDescriptor::ForAddedEdges(), dracoMesh),
+    _posOrder(UsdDracoAttributeDescriptor::ForPosOrder(), dracoMesh)
 {}
 
 SdfLayerRefPtr UsdDracoImportTranslator::Translate(const draco::Mesh &dracoMesh)
@@ -63,18 +63,18 @@ void UsdDracoImportTranslator::_FindOriginalFaceEdges(draco::FaceIndex faceIndex
   if (triangleVisited[faceIndex.value()])
     return;
   triangleVisited[faceIndex.value()] = true;
-  const draco::Mesh::Face &face      = _dracoMesh.face(faceIndex);
+  const draco::Mesh::Face &face = _dracoMesh.face(faceIndex);
   for (size_t c = 0; c < 3; c++) {
     // Check for added edge using this corner.
-    const draco::PointIndex pi  = face[c];
-    bool isNewEdge              = _addedEdges.GetMappedValue(pi);
+    const draco::PointIndex pi = face[c];
+    bool isNewEdge = _addedEdges.GetMappedValue(pi);
     const draco::CornerIndex ci = cornerTable->FirstCorner(faceIndex) + c;
     const draco::CornerIndex co = cornerTable->Opposite(ci);
 
     // Check for the new edge using the opposite corner.
     if (!isNewEdge && co != draco::kInvalidCornerIndex) {
       const draco::PointIndex pi = _dracoMesh.CornerToPointId(co);
-      isNewEdge                  = _addedEdges.GetMappedValue(pi);
+      isNewEdge = _addedEdges.GetMappedValue(pi);
     }
     if (isNewEdge) {
       // Visit triangle across the new edge.
@@ -84,7 +84,7 @@ void UsdDracoImportTranslator::_FindOriginalFaceEdges(draco::FaceIndex faceIndex
     else {
       // Insert the original edge to the map.
       const draco::PointIndex pointFrom = face[(c + 1) % 3];
-      draco::PointIndex pointTo         = face[(c + 2) % 3];
+      draco::PointIndex pointTo = face[(c + 2) % 3];
       polygonEdges.insert({PositionIndex(_positions.GetMappedIndex(pointFrom)), pointTo});
     }
   }
@@ -156,11 +156,11 @@ void UsdDracoImportTranslator::_PopulateValuesFromMesh()
 
   // Get generic attributes from Draco mesh.
   const std::vector<std::unique_ptr<draco::AttributeMetadata>> &metadatas =
-      _dracoMesh.GetMetadata()->attribute_metadatas();
+    _dracoMesh.GetMetadata()->attribute_metadatas();
   for (size_t i = 0; i < metadatas.size(); i++) {
     const draco::AttributeMetadata &metadata = *metadatas[i];
-    const draco::PointAttribute &attribute   = *_dracoMesh.attribute(metadata.att_unique_id());
-    auto importAttribute                     = CreateAttributeFrom(attribute, metadata);
+    const draco::PointAttribute &attribute = *_dracoMesh.attribute(metadata.att_unique_id());
+    auto importAttribute = CreateAttributeFrom(attribute, metadata);
     if (!importAttribute) {
       TF_RUNTIME_ERROR("Draco mesh has invalid attribute.");
       return;
@@ -183,10 +183,10 @@ class ImportAttributeCreator {
   {}
   template<class ValueT>
   std::unique_ptr<UsdDracoImportAttributeInterface> CreateAttribute(
-      const UsdDracoAttributeDescriptor &descriptor) const
+    const UsdDracoAttributeDescriptor &descriptor) const
   {
     return std::unique_ptr<UsdDracoImportAttributeInterface>(
-        new UsdDracoImportAttribute<ValueT>(descriptor, _dracoMesh));
+      new UsdDracoImportAttribute<ValueT>(descriptor, _dracoMesh));
   }
 
  private:
@@ -194,13 +194,13 @@ class ImportAttributeCreator {
 };
 
 std::unique_ptr<UsdDracoImportAttributeInterface> UsdDracoImportTranslator::CreateAttributeFrom(
-    const draco::PointAttribute &attribute,
-    const draco::AttributeMetadata &metadata)
+  const draco::PointAttribute &attribute,
+  const draco::AttributeMetadata &metadata)
 {
   // Get attribute descriptor from Draco attribute and metadata.
-  const bool isPrimvar                         = true;
+  const bool isPrimvar = true;
   const UsdDracoAttributeDescriptor descriptor = UsdDracoAttributeDescriptor::FromDracoAttribute(
-      attribute, metadata, isPrimvar);
+    attribute, metadata, isPrimvar);
 
   // Check if attribute is valid.
   if (descriptor.GetStatus() != UsdDracoAttributeDescriptor::VALID)
@@ -208,15 +208,15 @@ std::unique_ptr<UsdDracoImportAttributeInterface> UsdDracoImportTranslator::Crea
 
   // Create import attribute from attribute descriptor.
   const ImportAttributeCreator creator(_dracoMesh);
-  return UsdDracoAttributeFactory::CreateAttribute<UsdDracoImportAttributeInterface,
-                                                   ImportAttributeCreator>(descriptor, creator);
+  return UsdDracoAttributeFactory::CreateAttribute<UsdDracoImportAttributeInterface, ImportAttributeCreator>(
+    descriptor, creator);
 }
 
 void UsdDracoImportTranslator::_PopulateIndicesFromMesh()
 {
   // Allocate index arrays as if all faces were triangles. The arrays will be
   // downsized if it turns out that the mesh has quads and other polygons.
-  const size_t numFaces   = _dracoMesh.num_faces();
+  const size_t numFaces = _dracoMesh.num_faces();
   const size_t numCorners = 3 * numFaces;
   _faceVertexCounts.resize(numFaces);
   _faceVertexIndices.resize(numCorners);
@@ -228,11 +228,11 @@ void UsdDracoImportTranslator::_PopulateIndicesFromMesh()
 
   // Create corner table.
   std::unique_ptr<draco::CornerTable> cornerTable = draco::CreateCornerTableFromPositionAttribute(
-      &_dracoMesh);
+    &_dracoMesh);
 
   // Reconstruct polygons here.
   size_t vertexIndex = 0;
-  size_t faceIndex   = 0;
+  size_t faceIndex = 0;
   std::vector<bool> triangleVisited(numFaces, false);
 
   // Populate index arrays.
@@ -255,7 +255,7 @@ void UsdDracoImportTranslator::_PopulateIndicesFromMesh()
       // not guaranteed to be the same as in the original polygon.
       // It is deterministic, however, and defined by std::map behavior.
       const draco::AttributeValueIndex firstPositionIndex = polygonEdges.begin()->first;
-      draco::AttributeValueIndex positionIndex            = firstPositionIndex;
+      draco::AttributeValueIndex positionIndex = firstPositionIndex;
       do {
         // Get the next polygon point index by following polygon edge.
         const draco::PointIndex pi = polygonEdges[positionIndex];
@@ -294,14 +294,12 @@ void UsdDracoImportTranslator::_PopulateIndicesFromMesh()
 
 inline void UsdDracoImportTranslator::_SetIndices(size_t vertexIndex, draco::PointIndex pointIndex)
 {
-  _faceVertexIndices[vertexIndex] = _posOrder.HasPointAttribute() ?
-                                        _posOrder.GetMappedValue(pointIndex) :
-                                        _positions.GetMappedIndex(pointIndex);
+  _faceVertexIndices[vertexIndex] = _posOrder.HasPointAttribute() ? _posOrder.GetMappedValue(pointIndex) :
+                                                                    _positions.GetMappedIndex(pointIndex);
   _texCoords.SetIndex(vertexIndex, _texCoords.GetMappedIndex(pointIndex));
   _normals.SetIndex(vertexIndex, _normals.GetMappedIndex(pointIndex));
   for (size_t i = 0; i < _genericAttributes.size(); i++) {
-    _genericAttributes[i]->SetIndex(vertexIndex,
-                                    _genericAttributes[i]->GetMappedIndex(pointIndex));
+    _genericAttributes[i]->SetIndex(vertexIndex, _genericAttributes[i]->GetMappedIndex(pointIndex));
   }
 }
 

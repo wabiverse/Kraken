@@ -61,17 +61,14 @@ void UsdImagingFieldAdapter::_RemovePrim(SdfPath const &cachePath, UsdImagingInd
   index->RemoveBprim(GetPrimTypeToken(), cachePath);
 }
 
-void UsdImagingFieldAdapter::TrackVariability(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    HdDirtyBits *timeVaryingBits,
-    UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingFieldAdapter::TrackVariability(UsdPrim const &prim,
+                                              SdfPath const &cachePath,
+                                              HdDirtyBits *timeVaryingBits,
+                                              UsdImagingInstancerContext const *instancerContext) const
 {
   // Discover time-varying transforms.
-  _IsTransformVarying(prim,
-                      HdField::DirtyBits::DirtyTransform,
-                      UsdImagingTokens->usdVaryingXform,
-                      timeVaryingBits);
+  _IsTransformVarying(
+    prim, HdField::DirtyBits::DirtyTransform, UsdImagingTokens->usdVaryingXform, timeVaryingBits);
 
   // If any of the field attributes is time varying
   // we will assume all field params are time-varying.
@@ -87,12 +84,11 @@ void UsdImagingFieldAdapter::TrackVariability(
 
 // Thread safe.
 //  * Populate dirty bits for the given \p time.
-void UsdImagingFieldAdapter::UpdateForTime(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    UsdTimeCode time,
-    HdDirtyBits requestedBits,
-    UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingFieldAdapter::UpdateForTime(UsdPrim const &prim,
+                                           SdfPath const &cachePath,
+                                           UsdTimeCode time,
+                                           HdDirtyBits requestedBits,
+                                           UsdImagingInstancerContext const *instancerContext) const
 {}
 
 HdDirtyBits UsdImagingFieldAdapter::ProcessPropertyChange(UsdPrim const &prim,
@@ -142,9 +138,8 @@ VtValue UsdImagingFieldAdapter::Get(UsdPrim const &prim,
     return VtValue(0.0f);
   }
 
-  TF_CODING_ERROR("Property %s not supported for fields by UsdImaging, path: %s",
-                  key.GetText(),
-                  cachePath.GetText());
+  TF_CODING_ERROR(
+    "Property %s not supported for fields by UsdImaging, path: %s", key.GetText(), cachePath.GetText());
   return VtValue();
 }
 

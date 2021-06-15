@@ -185,27 +185,25 @@ void Usd_MergeTimeSamples(std::vector<double> *const timeSamples,
 // If the item already exists in the list, but not in the requested
 // position, it will be moved to the requested position.
 template<class PROXY>
-void Usd_InsertListItem(PROXY proxy,
-                        const typename PROXY::value_type &item,
-                        UsdListPosition position)
+void Usd_InsertListItem(PROXY proxy, const typename PROXY::value_type &item, UsdListPosition position)
 {
   typename PROXY::ListProxy list(/* unused */ SdfListOpTypeExplicit);
   bool atFront = false;
   switch (position) {
     case UsdListPositionBackOfPrependList:
-      list    = proxy.GetPrependedItems();
+      list = proxy.GetPrependedItems();
       atFront = false;
       break;
     case UsdListPositionFrontOfPrependList:
-      list    = proxy.GetPrependedItems();
+      list = proxy.GetPrependedItems();
       atFront = true;
       break;
     case UsdListPositionBackOfAppendList:
-      list    = proxy.GetAppendedItems();
+      list = proxy.GetAppendedItems();
       atFront = false;
       break;
     case UsdListPositionFrontOfAppendList:
-      list    = proxy.GetAppendedItems();
+      list = proxy.GetAppendedItems();
       atFront = true;
       break;
   }
@@ -284,7 +282,7 @@ inline void Usd_ApplyLayerOffsetToValue(SdfTimeSampleMap *value, const SdfLayerO
   for (const auto &sample : origValue) {
     // Each time sample key must be mapped by the layer offset.
     VtValue &newSample = (*value)[offset * sample.first];
-    newSample          = std::move(sample.second);
+    newSample = std::move(sample.second);
     // The value may also have be mapped if it is time mappable.
     Usd_ApplyLayerOffsetToValue(&newSample, offset);
   }
@@ -293,8 +291,7 @@ inline void Usd_ApplyLayerOffsetToValue(SdfTimeSampleMap *value, const SdfLayerO
 /// \overload
 inline void Usd_ApplyLayerOffsetToValue(VtDictionary *value, const SdfLayerOffset &offset)
 {
-  Usd_ResolveValuesInDictionary(value,
-                                [&offset](VtValue *v) { Usd_ApplyLayerOffsetToValue(v, offset); });
+  Usd_ResolveValuesInDictionary(value, [&offset](VtValue *v) { Usd_ApplyLayerOffsetToValue(v, offset); });
 }
 
 WABI_NAMESPACE_END

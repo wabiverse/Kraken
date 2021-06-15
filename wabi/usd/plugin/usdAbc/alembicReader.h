@@ -141,8 +141,7 @@ class UsdAbc_AlembicDataReader : boost::noncopyable {
     bool Bracket(double usdTime, double *tLower, double *tUpper) const;
 
     /// Returns the times bracketing \p time.
-    template<class T>
-    static bool Bracket(const T &, double usdTime, double *tLower, double *tUpper);
+    template<class T> static bool Bracket(const T &, double usdTime, double *tLower, double *tUpper);
 
    private:
     // The monotonically increasing Usd times.

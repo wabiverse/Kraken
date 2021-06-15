@@ -201,8 +201,7 @@ class UsdGeomHermiteCurves : public UsdGeomCurves {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateTangentsAttr(VtValue const &defaultValue = VtValue(),
-                                  bool writeSparsely          = false) const;
+  UsdAttribute CreateTangentsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //
@@ -227,9 +226,9 @@ class UsdGeomHermiteCurves : public UsdGeomCurves {
 
    public:
     /// Construct empty points and tangents arrays
-    PointAndTangentArrays()                              = default;
+    PointAndTangentArrays() = default;
     PointAndTangentArrays(const PointAndTangentArrays &) = default;
-    PointAndTangentArrays(PointAndTangentArrays &&)      = default;
+    PointAndTangentArrays(PointAndTangentArrays &&) = default;
     PointAndTangentArrays &operator=(const PointAndTangentArrays &) = default;
     PointAndTangentArrays &operator=(PointAndTangentArrays &&) = default;
 
@@ -238,8 +237,8 @@ class UsdGeomHermiteCurves : public UsdGeomCurves {
     /// If points and tangents are not the same size, an empty container
     /// is created.
     PointAndTangentArrays(const VtVec3fArray &points, const VtVec3fArray &tangents)
-        : _points(points),
-          _tangents(tangents)
+      : _points(points),
+        _tangents(tangents)
     {
       if (_points.size() != _tangents.size()) {
         TF_RUNTIME_ERROR("Points and tangents must be the same size.");

@@ -145,7 +145,7 @@ static VtValue ConvertToSdrCompatibleValueAndType(VtValue any, size_t *arraySize
         }
       }
 
-      *sdrType   = SdrPropertyTypes->Float;
+      *sdrType = SdrPropertyTypes->Float;
       *arraySize = 2;
       return VtValue(retVec);
     }
@@ -183,7 +183,7 @@ static VtValue ConvertToSdrCompatibleValueAndType(VtValue any, size_t *arraySize
         }
       }
 
-      *sdrType   = SdrPropertyTypes->Float;
+      *sdrType = SdrPropertyTypes->Float;
       *arraySize = 4;
       return VtValue(retVec);
     }
@@ -222,15 +222,15 @@ NdrNodeUniquePtr SdrGlslfxParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
     // Get the resolved URI to a location that can be read
     // Get the resolved URI to a location that can be read
     // by the glslfx parser.
-    bool localFetchSuccessful = ArGetResolver().FetchToLocalResolvedPath(
-        discoveryResult.uri, discoveryResult.resolvedUri);
+    bool localFetchSuccessful = ArGetResolver().FetchToLocalResolvedPath(discoveryResult.uri,
+                                                                         discoveryResult.resolvedUri);
 
     if (!localFetchSuccessful) {
       TF_WARN(
-          "Could not localize the glslfx at URI [%s] into"
-          " a local path. An invalid Sdr node definition"
-          " will be created.",
-          discoveryResult.uri.c_str());
+        "Could not localize the glslfx at URI [%s] into"
+        " a local path. An invalid Sdr node definition"
+        " will be created.",
+        discoveryResult.uri.c_str());
       return NdrParserPlugin::GetInvalidNode(discoveryResult);
     }
 #endif
@@ -243,18 +243,17 @@ NdrNodeUniquePtr SdrGlslfxParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
   }
   else {
     TF_WARN(
-        "Invalid NdrNodeDiscoveryResult with identifier %s: both uri "
-        "and sourceCode are empty.",
-        discoveryResult.identifier.GetText());
+      "Invalid NdrNodeDiscoveryResult with identifier %s: both uri "
+      "and sourceCode are empty.",
+      discoveryResult.identifier.GetText());
 
     return NdrParserPlugin::GetInvalidNode(discoveryResult);
   }
 
   std::string errorString;
   if (!glslfx->IsValid(&errorString)) {
-    TF_WARN("Failed to parse glslfx at URI [%s] error [%s]",
-            discoveryResult.uri.c_str(),
-            errorString.c_str());
+    TF_WARN(
+      "Failed to parse glslfx at URI [%s] error [%s]", discoveryResult.uri.c_str(), errorString.c_str());
   }
 
   NdrPropertyUniquePtrVec nodeProperties;
@@ -264,14 +263,13 @@ NdrNodeUniquePtr SdrGlslfxParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
 
     size_t arraySize = 0;
     TfToken sdrType;
-    VtValue defaultValue = ConvertToSdrCompatibleValueAndType(
-        p.defaultValue, &arraySize, &sdrType);
+    VtValue defaultValue = ConvertToSdrCompatibleValueAndType(p.defaultValue, &arraySize, &sdrType);
 
     NdrTokenMap hints;
     NdrOptionVec options;
     NdrTokenMap localMetadata;
     nodeProperties.push_back(std::make_unique<SdrShaderProperty>(
-        TfToken(p.name), sdrType, defaultValue, false, arraySize, localMetadata, hints, options));
+      TfToken(p.name), sdrType, defaultValue, false, arraySize, localMetadata, hints, options));
   }
 
   HioGlslfxConfig::Textures textures = glslfx->GetTextures();
@@ -279,12 +277,11 @@ NdrNodeUniquePtr SdrGlslfxParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
 
     size_t arraySize = 0;
     TfToken sdrType;
-    VtValue defaultValue = ConvertToSdrCompatibleValueAndType(
-        t.defaultValue, &arraySize, &sdrType);
+    VtValue defaultValue = ConvertToSdrCompatibleValueAndType(t.defaultValue, &arraySize, &sdrType);
 
     // Check for a default value, or fallback to all black.
     if (defaultValue.IsEmpty()) {
-      sdrType      = SdrPropertyTypes->Color;
+      sdrType = SdrPropertyTypes->Color;
       defaultValue = VtValue(GfVec3f(0.0, 0.0, 0.0));
     }
 
@@ -292,7 +289,7 @@ NdrNodeUniquePtr SdrGlslfxParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
     NdrOptionVec options;
     NdrTokenMap localMetadata;
     nodeProperties.push_back(std::make_unique<SdrShaderProperty>(
-        TfToken(t.name), sdrType, defaultValue, false, arraySize, localMetadata, hints, options));
+      TfToken(t.name), sdrType, defaultValue, false, arraySize, localMetadata, hints, options));
   }
 
   NdrTokenMap metadata = discoveryResult.metadata;

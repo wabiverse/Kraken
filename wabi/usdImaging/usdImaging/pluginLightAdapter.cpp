@@ -56,8 +56,7 @@ SdfPath UsdImagingPluginLightAdapter::Populate(UsdPrim const &prim,
   return prim.GetPath();
 }
 
-void UsdImagingPluginLightAdapter::_RemovePrim(SdfPath const &cachePath,
-                                               UsdImagingIndexProxy *index)
+void UsdImagingPluginLightAdapter::_RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index)
 {
   index->RemoveSprim(HdPrimTypeTokens->pluginLight, cachePath);
 }

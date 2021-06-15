@@ -193,7 +193,7 @@
 #if ((defined(__STDC__) && __STDC__ && __STDC_VERSION__ >= 199901L) || \
      (defined(__WATCOMC__) && (defined(_STDINT_H_INCLUDED) || __WATCOMC__ >= 1250)) || \
      (defined(__GNUC__) && (defined(_STDINT_H) || defined(_STDINT_H_)))) && \
-    !defined(_PSTDINT_H_INCLUDED)
+  !defined(_PSTDINT_H_INCLUDED)
 #  include <stdint.h>
 #  define _PSTDINT_H_INCLUDED
 #  ifndef PRINTF_INT64_MODIFIER
@@ -467,8 +467,8 @@ __extension__ typedef unsigned long long uint64_t;
 #      ifndef PRINTF_INT64_MODIFIER
 #        define PRINTF_INT64_MODIFIER "ll"
 #      endif
-#    elif defined(__MWERKS__) || defined(__SUNPRO_C) || defined(__SUNPRO_CC) || \
-        defined(__APPLE_CC__) || defined(_LONG_LONG) || defined(_CRAYC) || defined(S_SPLINT_S)
+#    elif defined(__MWERKS__) || defined(__SUNPRO_C) || defined(__SUNPRO_CC) || defined(__APPLE_CC__) || \
+      defined(_LONG_LONG) || defined(_CRAYC) || defined(S_SPLINT_S)
 #      define stdint_int64_defined
 typedef long long int64_t;
 typedef unsigned long long uint64_t;
@@ -478,8 +478,8 @@ typedef unsigned long long uint64_t;
 #        define PRINTF_INT64_MODIFIER "ll"
 #      endif
 #    elif (defined(__WATCOMC__) && defined(__WATCOM_INT64__)) || \
-        (defined(_MSC_VER) && _INTEGRAL_MAX_BITS >= 64) || \
-        (defined(__BORLANDC__) && __BORLANDC__ > 0x460) || defined(__alpha) || defined(__DECC)
+      (defined(_MSC_VER) && _INTEGRAL_MAX_BITS >= 64) || (defined(__BORLANDC__) && __BORLANDC__ > 0x460) || \
+      defined(__alpha) || defined(__DECC)
 #      define stdint_int64_defined
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
@@ -694,8 +694,7 @@ typedef uint_least64_t uint_fast64_t;
 #      define stdint_intptr_glue3_i(a, b, c) a##b##c
 #      define stdint_intptr_glue3(a, b, c) stdint_intptr_glue3_i(a, b, c)
 #      ifndef PRINTF_INTPTR_MODIFIER
-#        define PRINTF_INTPTR_MODIFIER \
-          stdint_intptr_glue3(PRINTF_INT, stdint_intptr_bits, _MODIFIER)
+#        define PRINTF_INTPTR_MODIFIER stdint_intptr_glue3(PRINTF_INT, stdint_intptr_bits, _MODIFIER)
 #      endif
 #      ifndef PTRDIFF_MAX
 #        define PTRDIFF_MAX stdint_intptr_glue3(INT, stdint_intptr_bits, _MAX)
@@ -774,7 +773,7 @@ int main()
   DECL(I, 64)
   DECL(U, 64)
 #  endif
-  intmax_t imax  = INTMAX_C(0);
+  intmax_t imax = INTMAX_C(0);
   uintmax_t umax = UINTMAX_C(0);
   char str0[256], str1[256];
 

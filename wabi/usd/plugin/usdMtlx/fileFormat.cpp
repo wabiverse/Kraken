@@ -73,10 +73,10 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 UsdMtlxFileFormat::UsdMtlxFileFormat()
-    : SdfFileFormat(UsdMtlxFileFormatTokens->Id,
-                    UsdMtlxFileFormatTokens->Version,
-                    UsdMtlxFileFormatTokens->Target,
-                    UsdMtlxFileFormatTokens->Id)
+  : SdfFileFormat(UsdMtlxFileFormatTokens->Id,
+                  UsdMtlxFileFormatTokens->Version,
+                  UsdMtlxFileFormatTokens->Target,
+                  UsdMtlxFileFormatTokens->Id)
 {}
 
 UsdMtlxFileFormat::~UsdMtlxFileFormat()
@@ -103,15 +103,12 @@ bool UsdMtlxFileFormat::CanRead(const std::string &filePath) const
   return true;
 }
 
-bool UsdMtlxFileFormat::Read(SdfLayer *layer,
-                             const std::string &resolvedPath,
-                             bool metadataOnly) const
+bool UsdMtlxFileFormat::Read(SdfLayer *layer, const std::string &resolvedPath, bool metadataOnly) const
 {
   TRACE_FUNCTION();
 
   auto stage = UsdStage::CreateInMemory();
-  if (!_Read(stage,
-             [&resolvedPath](mx::DocumentPtr d) { mx::readFromXmlFile(d, resolvedPath); })) {
+  if (!_Read(stage, [&resolvedPath](mx::DocumentPtr d) { mx::readFromXmlFile(d, resolvedPath); })) {
     return false;
   }
 
@@ -147,9 +144,7 @@ bool UsdMtlxFileFormat::WriteToString(const SdfLayer &layer,
   return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToString(layer, str, comment);
 }
 
-bool UsdMtlxFileFormat::WriteToStream(const SdfSpecHandle &spec,
-                                      std::ostream &out,
-                                      size_t indent) const
+bool UsdMtlxFileFormat::WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const
 {
   return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToStream(spec, out, indent);
 }

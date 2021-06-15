@@ -112,8 +112,7 @@ UsdAttribute UsdRiRisOslPattern::GetFilePathAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->infoFilePath);
 }
 
-UsdAttribute UsdRiRisOslPattern::CreateFilePathAttr(VtValue const &defaultValue,
-                                                    bool writeSparsely) const
+UsdAttribute UsdRiRisOslPattern::CreateFilePathAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->infoFilePath,
                                     SdfValueTypeNames->Asset,
@@ -128,8 +127,7 @@ UsdAttribute UsdRiRisOslPattern::GetOslPathAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->infoOslPath);
 }
 
-UsdAttribute UsdRiRisOslPattern::CreateOslPathAttr(VtValue const &defaultValue,
-                                                   bool writeSparsely) const
+UsdAttribute UsdRiRisOslPattern::CreateOslPathAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->infoOslPath,
                                     SdfValueTypeNames->Asset,
@@ -140,8 +138,7 @@ UsdAttribute UsdRiRisOslPattern::CreateOslPathAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -155,11 +152,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRiRisOslPattern::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRiTokens->infoFilePath,
-      UsdRiTokens->infoOslPath,
+    UsdRiTokens->infoFilePath,
+    UsdRiTokens->infoOslPath,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdRiRisPattern::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdRiRisPattern::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

@@ -99,8 +99,7 @@ size_t HdDrawItem::GetElementOffsetsHash() const
   for (int i = 0; i < instancerNumLevels; ++i) {
     hash = TfHash::Combine(hash, _GetElementOffset(GetInstancePrimvarRange(i)));
   }
-  hash = TfHash::Combine(
-      hash, _GetElementOffset(GetInstanceIndexRange()), _GetElementOffsetsHash());
+  hash = TfHash::Combine(hash, _GetElementOffset(GetInstanceIndexRange()), _GetElementOffsetsHash());
 
   return hash;
 }

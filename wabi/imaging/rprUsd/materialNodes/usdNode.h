@@ -49,15 +49,14 @@ class RprUsd_UsdPreviewSurface : public RprUsd_BaseRuntimeNode {
 
 #define RPRUSD_USD_UV_TEXTURE_TOKENS \
   (file)(scale)( \
-      bias)(wrapS)(wrapT)(black)(clamp)(mirror)(repeat)(sourceColorSpace)(sRGB)(srgblinear)(raw)(( \
-      colorSpaceAuto, "auto"))(st)(rgba)(rgb)(r)(g)(b)(a)
+    bias)(wrapS)(wrapT)(black)(clamp)(mirror)(repeat)(sourceColorSpace)(sRGB)(srgblinear)(raw)(( \
+    colorSpaceAuto, "auto"))(st)(rgba)(rgb)(r)(g)(b)(a)
 
 TF_DECLARE_PUBLIC_TOKENS(RprUsd_UsdUVTextureTokens, RPRUSD_USD_UV_TEXTURE_TOKENS);
 
 class RprUsd_UsdUVTexture : public RprUsd_MaterialNode {
  public:
-  RprUsd_UsdUVTexture(RprUsd_MaterialBuilderContext *ctx,
-                      std::map<TfToken, VtValue> const &hydraParameters);
+  RprUsd_UsdUVTexture(RprUsd_MaterialBuilderContext *ctx, std::map<TfToken, VtValue> const &hydraParameters);
   ~RprUsd_UsdUVTexture() override = default;
 
   VtValue GetOutput(TfToken const &outputId) override;

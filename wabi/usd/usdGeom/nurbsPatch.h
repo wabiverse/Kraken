@@ -226,7 +226,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateUVertexCountAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -250,7 +250,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateVVertexCountAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -273,8 +273,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateUOrderAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateUOrderAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -297,8 +296,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateVOrderAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateVOrderAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -322,8 +320,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateUKnotsAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateUKnotsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -347,8 +344,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateVKnotsAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateVKnotsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -375,8 +371,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateUFormAttr(VtValue const &defaultValue = VtValue(),
-                               bool writeSparsely          = false) const;
+  UsdAttribute CreateUFormAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -403,8 +398,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateVFormAttr(VtValue const &defaultValue = VtValue(),
-                               bool writeSparsely          = false) const;
+  UsdAttribute CreateVFormAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -430,8 +424,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateURangeAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateURangeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -457,8 +450,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateVRangeAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateVRangeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -486,7 +478,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreatePointWeightsAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -513,7 +505,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateTrimCurveCountsAttr(VtValue const &defaultValue = VtValue(),
-                                         bool writeSparsely          = false) const;
+                                         bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -536,7 +528,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateTrimCurveOrdersAttr(VtValue const &defaultValue = VtValue(),
-                                         bool writeSparsely          = false) const;
+                                         bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -560,7 +552,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateTrimCurveVertexCountsAttr(VtValue const &defaultValue = VtValue(),
-                                               bool writeSparsely          = false) const;
+                                               bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -586,7 +578,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateTrimCurveKnotsAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -610,7 +602,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateTrimCurveRangesAttr(VtValue const &defaultValue = VtValue(),
-                                         bool writeSparsely          = false) const;
+                                         bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -635,7 +627,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateTrimCurvePointsAttr(VtValue const &defaultValue = VtValue(),
-                                         bool writeSparsely          = false) const;
+                                         bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

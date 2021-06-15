@@ -26,13 +26,12 @@
 
 WABI_NAMESPACE_BEGIN
 
-Hd_CompExtCompInputSource::Hd_CompExtCompInputSource(
-    const TfToken &name,
-    const HdExtCompCpuComputationSharedPtr &source,
-    const TfToken &sourceOutputName)
-    : Hd_ExtCompInputSource(name),
-      _source(source),
-      _sourceOutputIdx(HdExtCompCpuComputation::INVALID_OUTPUT_INDEX)
+Hd_CompExtCompInputSource::Hd_CompExtCompInputSource(const TfToken &name,
+                                                     const HdExtCompCpuComputationSharedPtr &source,
+                                                     const TfToken &sourceOutputName)
+  : Hd_ExtCompInputSource(name),
+    _source(source),
+    _sourceOutputIdx(HdExtCompCpuComputation::INVALID_OUTPUT_INDEX)
 {
   _sourceOutputIdx = source->GetOutputIndex(sourceOutputName);
 }

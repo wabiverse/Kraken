@@ -27,13 +27,13 @@
 WABI_NAMESPACE_BEGIN
 
 UsdPyEditContext::UsdPyEditContext(const std::pair<UsdStagePtr, UsdEditTarget> &stageTarget)
-    : _stage(stageTarget.first),
-      _editTarget(stageTarget.second)
+  : _stage(stageTarget.first),
+    _editTarget(stageTarget.second)
 {}
 
 UsdPyEditContext::UsdPyEditContext(const UsdStagePtr &stage, const UsdEditTarget &editTarget)
-    : _stage(stage),
-      _editTarget(editTarget)
+  : _stage(stage),
+    _editTarget(editTarget)
 {}
 
 WABI_NAMESPACE_END

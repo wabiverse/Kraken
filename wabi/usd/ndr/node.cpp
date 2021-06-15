@@ -39,17 +39,17 @@ NdrNode::NdrNode(const NdrIdentifier &identifier,
                  NdrPropertyUniquePtrVec &&properties,
                  const NdrTokenMap &metadata,
                  const std::string &sourceCode)
-    : _identifier(identifier),
-      _version(version),
-      _name(name),
-      _family(family),
-      _context(context),
-      _sourceType(sourceType),
-      _definitionURI(definitionURI),
-      _implementationURI(implementationURI),
-      _properties(std::move(properties)),
-      _metadata(metadata),
-      _sourceCode(sourceCode)
+  : _identifier(identifier),
+    _version(version),
+    _name(name),
+    _family(family),
+    _context(context),
+    _sourceType(sourceType),
+    _definitionURI(definitionURI),
+    _implementationURI(implementationURI),
+    _properties(std::move(properties)),
+    _metadata(metadata),
+    _sourceCode(sourceCode)
 {
   // If the properties are not empty, that signifies that the node was parsed
   // successfully, and thus the node is valid.
@@ -60,7 +60,7 @@ NdrNode::NdrNode(const NdrIdentifier &identifier,
   size_t numProperties = _properties.size();
   for (size_t i = 0; i < numProperties; i++) {
     NdrPropertyConstPtr property = _properties[i].get();
-    const TfToken &propertyName  = property->GetName();
+    const TfToken &propertyName = property->GetName();
 
     if (property->IsOutput()) {
       _outputNames.push_back(propertyName);
@@ -81,14 +81,14 @@ NdrNode::~NdrNode()
 std::string NdrNode::GetInfoString() const
 {
   return TfStringPrintf(
-      "%s (context: '%s', version: '%s', family: '%s'); definition URI: '%s';"
-      " implementation URI: '%s'",
-      NdrGetIdentifierString(_identifier).c_str(),
-      _context.GetText(),
-      _version.GetString().c_str(),
-      _family.GetText(),
-      _definitionURI.c_str(),
-      _implementationURI.c_str());
+    "%s (context: '%s', version: '%s', family: '%s'); definition URI: '%s';"
+    " implementation URI: '%s'",
+    NdrGetIdentifierString(_identifier).c_str(),
+    _context.GetText(),
+    _version.GetString().c_str(),
+    _family.GetText(),
+    _definitionURI.c_str(),
+    _implementationURI.c_str());
 }
 
 const NdrTokenVec &NdrNode::GetInputNames() const

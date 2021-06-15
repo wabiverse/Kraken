@@ -37,7 +37,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-using HdExtComputationConstPtr       = HdExtComputation const *;
+using HdExtComputationConstPtr = HdExtComputation const *;
 using HdExtComputationConstPtrVector = std::vector<HdExtComputationConstPtr>;
 
 // This class contains utility methods to allow any Hydra backend to execute
@@ -56,28 +56,26 @@ class HdExtComputationUtils {
   // The participating computations are ordered based on their dependency
   // and then, the CPU kernel is executed for each computation.
   HD_API
-  static ValueStore GetComputedPrimvarValues(
-      HdExtComputationPrimvarDescriptorVector const &compPrimvars,
-      HdSceneDelegate *sceneDelegate);
+  static ValueStore GetComputedPrimvarValues(HdExtComputationPrimvarDescriptorVector const &compPrimvars,
+                                             HdSceneDelegate *sceneDelegate);
 
   template<unsigned int CAPACITY>
   using SampledValueStore =
-      std::unordered_map<TfToken, HdTimeSampleArray<VtValue, CAPACITY>, TfToken::HashFunctor>;
+    std::unordered_map<TfToken, HdTimeSampleArray<VtValue, CAPACITY>, TfToken::HashFunctor>;
 
   /// Returns a map containing the (token, samples) pairs for each
   /// computation primvar, with up to \a maxSampleCount samples.
   /// The participating computations are ordered based on their dependency
   /// and then, the CPU kernel is executed for each computation.
   template<unsigned int CAPACITY>
-  static void SampleComputedPrimvarValues(
-      HdExtComputationPrimvarDescriptorVector const &compPrimvars,
-      HdSceneDelegate *sceneDelegate,
-      size_t maxSampleCount,
-      SampledValueStore<CAPACITY> *computedPrimvarValueStore);
+  static void SampleComputedPrimvarValues(HdExtComputationPrimvarDescriptorVector const &compPrimvars,
+                                          HdSceneDelegate *sceneDelegate,
+                                          size_t maxSampleCount,
+                                          SampledValueStore<CAPACITY> *computedPrimvarValueStore);
 
   // Helper methods (these are public for testing purposes)
   using ComputationDependencyMap =
-      std::unordered_map<HdExtComputation const *, HdExtComputationConstPtrVector>;
+    std::unordered_map<HdExtComputation const *, HdExtComputationConstPtrVector>;
   // Returns true if an ordering of the computations wherein any dependencies
   // of a given computation come before it is possible, and fills
   // sortedComps with the ordering.
@@ -85,8 +83,7 @@ class HdExtComputationUtils {
   // The directed graph of a computation (vertex) and its dependencies (edges)
   // is represented via the ComputationDependencyMap.
   HD_API
-  static bool DependencySort(ComputationDependencyMap cdm,
-                             HdExtComputationConstPtrVector *sortedComps);
+  static bool DependencySort(ComputationDependencyMap cdm, HdExtComputationConstPtrVector *sortedComps);
 
   HD_API
   static void PrintDependencyMap(ComputationDependencyMap const &cdm);
@@ -94,8 +91,8 @@ class HdExtComputationUtils {
  private:
   HD_API
   static ComputationDependencyMap _GenerateDependencyMap(
-      HdExtComputationPrimvarDescriptorVector const &compPrimvars,
-      HdSceneDelegate *sceneDelegate);
+    HdExtComputationPrimvarDescriptorVector const &compPrimvars,
+    HdSceneDelegate *sceneDelegate);
 
   template<unsigned int CAPACITY>
   static void _ExecuteSampledComputations(HdExtComputationConstPtrVector computations,
@@ -123,10 +120,10 @@ class HdExtComputationUtils {
 
 template<unsigned int CAPACITY>
 /*static*/ void HdExtComputationUtils::SampleComputedPrimvarValues(
-    HdExtComputationPrimvarDescriptorVector const &compPrimvars,
-    HdSceneDelegate *sceneDelegate,
-    size_t maxSampleCount,
-    SampledValueStore<CAPACITY> *computedPrimvarValueStore)
+  HdExtComputationPrimvarDescriptorVector const &compPrimvars,
+  HdSceneDelegate *sceneDelegate,
+  size_t maxSampleCount,
+  SampledValueStore<CAPACITY> *computedPrimvarValueStore)
 {
   HD_TRACE_FUNCTION();
 
@@ -142,30 +139,29 @@ template<unsigned int CAPACITY>
 
   // Execution
   SampledValueStore<CAPACITY> valueStore;
-  _ExecuteSampledComputations<CAPACITY>(
-      sortedComputations, sceneDelegate, maxSampleCount, &valueStore);
+  _ExecuteSampledComputations<CAPACITY>(sortedComputations, sceneDelegate, maxSampleCount, &valueStore);
 
   // Output extraction
   for (auto const &pv : compPrimvars) {
-    TfToken const &compOutputName         = pv.sourceComputationOutputName;
+    TfToken const &compOutputName = pv.sourceComputationOutputName;
     (*computedPrimvarValueStore)[pv.name] = valueStore[compOutputName];
   }
 }
 
 template<unsigned int CAPACITY>
 /*static*/ void HdExtComputationUtils::_ExecuteSampledComputations(
-    HdExtComputationConstPtrVector computations,
-    HdSceneDelegate *sceneDelegate,
-    size_t maxSampleCount,
-    SampledValueStore<CAPACITY> *valueStore)
+  HdExtComputationConstPtrVector computations,
+  HdSceneDelegate *sceneDelegate,
+  size_t maxSampleCount,
+  SampledValueStore<CAPACITY> *valueStore)
 {
   HD_TRACE_FUNCTION();
 
   for (auto const &comp : computations) {
     SdfPath const &compId = comp->GetId();
 
-    TfTokenVector const &sceneInputNames                      = comp->GetSceneInputNames();
-    HdExtComputationInputDescriptorVector const &compInputs   = comp->GetComputationInputs();
+    TfTokenVector const &sceneInputNames = comp->GetSceneInputNames();
+    HdExtComputationInputDescriptorVector const &compInputs = comp->GetComputationInputs();
     HdExtComputationOutputDescriptorVector const &compOutputs = comp->GetComputationOutputs();
 
     // Add all the scene inputs to the value store
@@ -243,7 +239,7 @@ template<unsigned int CAPACITY>
       for (size_t i = 0; i < compOutputValues.size(); ++i) {
         auto &output_samples = (*valueStore)[compOutputs[i].name];
 
-        output_samples.times[output_samples.count]  = t;
+        output_samples.times[output_samples.count] = t;
         output_samples.values[output_samples.count] = std::move(compOutputValues[i]);
         ++output_samples.count;
       }

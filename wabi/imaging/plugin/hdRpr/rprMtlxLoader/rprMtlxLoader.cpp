@@ -41,8 +41,8 @@ struct Mtlx2Rpr {
 
     Node() = default;
     Node(rpr_material_node_type id, std::initializer_list<InputsValueType> &&inputs)
-        : id(id),
-          inputs(std::move(inputs))
+      : id(id),
+        inputs(std::move(inputs))
     {}
   };
 
@@ -51,166 +51,166 @@ struct Mtlx2Rpr {
 
   Mtlx2Rpr()
   {
-    nodes["diffuse_brdf"]             = {RPR_MATERIAL_NODE_MATX_DIFFUSE_BRDF,
+    nodes["diffuse_brdf"] = {RPR_MATERIAL_NODE_MATX_DIFFUSE_BRDF,
                              {
-                                 {"color", RPR_MATERIAL_INPUT_COLOR},
-                                 {"weight", RPR_MATERIAL_INPUT_WEIGHT},
-                                 {"roughness", RPR_MATERIAL_INPUT_ROUGHNESS},
-                                 {"normal", RPR_MATERIAL_INPUT_NORMAL},
+                               {"color", RPR_MATERIAL_INPUT_COLOR},
+                               {"weight", RPR_MATERIAL_INPUT_WEIGHT},
+                               {"roughness", RPR_MATERIAL_INPUT_ROUGHNESS},
+                               {"normal", RPR_MATERIAL_INPUT_NORMAL},
                              }};
-    nodes["dielectric_brdf"]          = {RPR_MATERIAL_NODE_MATX_DIELECTRIC_BRDF,
+    nodes["dielectric_brdf"] = {RPR_MATERIAL_NODE_MATX_DIELECTRIC_BRDF,
                                 {
-                                    {"weight", RPR_MATERIAL_INPUT_WEIGHT},
-                                    {"tint", RPR_MATERIAL_INPUT_TINT},
-                                    {"ior", RPR_MATERIAL_INPUT_IOR},
-                                    {"roughness", RPR_MATERIAL_INPUT_ROUGHNESS},
-                                    {"normal", RPR_MATERIAL_INPUT_NORMAL},
-                                    {"tangent", RPR_MATERIAL_INPUT_TANGENT},
-                                    {"distribution", RPR_MATERIAL_INPUT_DISTRIBUTION},
-                                    {"base", RPR_MATERIAL_INPUT_BASE},
+                                  {"weight", RPR_MATERIAL_INPUT_WEIGHT},
+                                  {"tint", RPR_MATERIAL_INPUT_TINT},
+                                  {"ior", RPR_MATERIAL_INPUT_IOR},
+                                  {"roughness", RPR_MATERIAL_INPUT_ROUGHNESS},
+                                  {"normal", RPR_MATERIAL_INPUT_NORMAL},
+                                  {"tangent", RPR_MATERIAL_INPUT_TANGENT},
+                                  {"distribution", RPR_MATERIAL_INPUT_DISTRIBUTION},
+                                  {"base", RPR_MATERIAL_INPUT_BASE},
                                 }};
     nodes["generalized_schlick_brdf"] = {RPR_MATERIAL_NODE_MATX_GENERALIZED_SCHLICK_BRDF,
                                          {
-                                             {"color0", RPR_MATERIAL_INPUT_COLOR0},
-                                             {"color90", RPR_MATERIAL_INPUT_COLOR1},
-                                             {"exponent", RPR_MATERIAL_INPUT_EXPONENT},
-                                             {"roughness", RPR_MATERIAL_INPUT_ROUGHNESS},
-                                             {"weight", RPR_MATERIAL_INPUT_WEIGHT},
-                                             {"normal", RPR_MATERIAL_INPUT_NORMAL},
-                                             {"tangent", RPR_MATERIAL_INPUT_TANGENT},
-                                             {"distribution", RPR_MATERIAL_INPUT_DISTRIBUTION},
-                                             {"base", RPR_MATERIAL_INPUT_BASE},
+                                           {"color0", RPR_MATERIAL_INPUT_COLOR0},
+                                           {"color90", RPR_MATERIAL_INPUT_COLOR1},
+                                           {"exponent", RPR_MATERIAL_INPUT_EXPONENT},
+                                           {"roughness", RPR_MATERIAL_INPUT_ROUGHNESS},
+                                           {"weight", RPR_MATERIAL_INPUT_WEIGHT},
+                                           {"normal", RPR_MATERIAL_INPUT_NORMAL},
+                                           {"tangent", RPR_MATERIAL_INPUT_TANGENT},
+                                           {"distribution", RPR_MATERIAL_INPUT_DISTRIBUTION},
+                                           {"base", RPR_MATERIAL_INPUT_BASE},
                                          }};
-    nodes["dielectric_btdf"]          = {RPR_MATERIAL_NODE_MATX_DIELECTRIC_BTDF,
+    nodes["dielectric_btdf"] = {RPR_MATERIAL_NODE_MATX_DIELECTRIC_BTDF,
                                 {
-                                    {"weight", RPR_MATERIAL_INPUT_WEIGHT},
-                                    {"tint", RPR_MATERIAL_INPUT_COLOR},
-                                    {"ior", RPR_MATERIAL_INPUT_IOR},
-                                    {"roughness", RPR_MATERIAL_INPUT_ROUGHNESS},
-                                    {"normal", RPR_MATERIAL_INPUT_NORMAL},
-                                    {"tangent", RPR_MATERIAL_INPUT_TANGENT},
-                                    {"distribution", RPR_MATERIAL_INPUT_DISTRIBUTION},
-                                    {"interior", RPR_MATERIAL_INPUT_INTERIOR},
+                                  {"weight", RPR_MATERIAL_INPUT_WEIGHT},
+                                  {"tint", RPR_MATERIAL_INPUT_COLOR},
+                                  {"ior", RPR_MATERIAL_INPUT_IOR},
+                                  {"roughness", RPR_MATERIAL_INPUT_ROUGHNESS},
+                                  {"normal", RPR_MATERIAL_INPUT_NORMAL},
+                                  {"tangent", RPR_MATERIAL_INPUT_TANGENT},
+                                  {"distribution", RPR_MATERIAL_INPUT_DISTRIBUTION},
+                                  {"interior", RPR_MATERIAL_INPUT_INTERIOR},
                                 }};
-    nodes["sheen_brdf"]               = {RPR_MATERIAL_NODE_MATX_SHEEN_BRDF,
+    nodes["sheen_brdf"] = {RPR_MATERIAL_NODE_MATX_SHEEN_BRDF,
                            {
+                             {"weight", RPR_MATERIAL_INPUT_WEIGHT},
+                             {"color", RPR_MATERIAL_INPUT_COLOR},
+                             {"roughness", RPR_MATERIAL_INPUT_ROUGHNESS},
+                             {"normal", RPR_MATERIAL_INPUT_NORMAL},
+                             {"base", RPR_MATERIAL_INPUT_BASE},
+                           }};
+    nodes["subsurface_brdf"] = {RPR_MATERIAL_NODE_MATX_SUBSURFACE_BRDF,
+                                {
+                                  {"weight", RPR_MATERIAL_INPUT_WEIGHT},
+                                  {"color", RPR_MATERIAL_INPUT_COLOR},
+                                  {"radius", RPR_MATERIAL_INPUT_RADIUS},
+                                  {"anisotropy", RPR_MATERIAL_INPUT_ANISOTROPIC},
+                                  {"normal", RPR_MATERIAL_INPUT_NORMAL},
+                                }};
+    nodes["diffuse_btdf"] = {RPR_MATERIAL_NODE_MATX_DIFFUSE_BTDF,
+                             {
                                {"weight", RPR_MATERIAL_INPUT_WEIGHT},
                                {"color", RPR_MATERIAL_INPUT_COLOR},
-                               {"roughness", RPR_MATERIAL_INPUT_ROUGHNESS},
                                {"normal", RPR_MATERIAL_INPUT_NORMAL},
-                               {"base", RPR_MATERIAL_INPUT_BASE},
-                           }};
-    nodes["subsurface_brdf"]          = {RPR_MATERIAL_NODE_MATX_SUBSURFACE_BRDF,
-                                {
-                                    {"weight", RPR_MATERIAL_INPUT_WEIGHT},
-                                    {"color", RPR_MATERIAL_INPUT_COLOR},
-                                    {"radius", RPR_MATERIAL_INPUT_RADIUS},
-                                    {"anisotropy", RPR_MATERIAL_INPUT_ANISOTROPIC},
-                                    {"normal", RPR_MATERIAL_INPUT_NORMAL},
-                                }};
-    nodes["diffuse_btdf"]             = {RPR_MATERIAL_NODE_MATX_DIFFUSE_BTDF,
-                             {
-                                 {"weight", RPR_MATERIAL_INPUT_WEIGHT},
-                                 {"color", RPR_MATERIAL_INPUT_COLOR},
-                                 {"normal", RPR_MATERIAL_INPUT_NORMAL},
                              }};
-    nodes["conductor_brdf"]           = {RPR_MATERIAL_NODE_MATX_CONDUCTOR_BRDF,
+    nodes["conductor_brdf"] = {RPR_MATERIAL_NODE_MATX_CONDUCTOR_BRDF,
                                {
-                                   {"weight", RPR_MATERIAL_INPUT_WEIGHT},
-                                   {"reflectivity", RPR_MATERIAL_INPUT_REFLECTIVITY},
-                                   {"edge_color", RPR_MATERIAL_INPUT_EDGE_COLOR},
-                                   {"roughness", RPR_MATERIAL_INPUT_ROUGHNESS},
-                                   {"normal", RPR_MATERIAL_INPUT_NORMAL},
-                                   {"tangent", RPR_MATERIAL_INPUT_TANGENT},
-                                   {"distribution", RPR_MATERIAL_INPUT_DISTRIBUTION},
+                                 {"weight", RPR_MATERIAL_INPUT_WEIGHT},
+                                 {"reflectivity", RPR_MATERIAL_INPUT_REFLECTIVITY},
+                                 {"edge_color", RPR_MATERIAL_INPUT_EDGE_COLOR},
+                                 {"roughness", RPR_MATERIAL_INPUT_ROUGHNESS},
+                                 {"normal", RPR_MATERIAL_INPUT_NORMAL},
+                                 {"tangent", RPR_MATERIAL_INPUT_TANGENT},
+                                 {"distribution", RPR_MATERIAL_INPUT_DISTRIBUTION},
                                }};
-    nodes["fresnel"]                  = {RPR_MATERIAL_NODE_MATX_FRESNEL,
+    nodes["fresnel"] = {RPR_MATERIAL_NODE_MATX_FRESNEL,
                         {
-                            {"ior", RPR_MATERIAL_INPUT_IOR},
-                            {"normal", RPR_MATERIAL_INPUT_NORMAL},
-                            {"viewdirection", RPR_MATERIAL_INPUT_VIEW_DIRECTION},
+                          {"ior", RPR_MATERIAL_INPUT_IOR},
+                          {"normal", RPR_MATERIAL_INPUT_NORMAL},
+                          {"viewdirection", RPR_MATERIAL_INPUT_VIEW_DIRECTION},
                         }};
-    nodes["constant"]                 = {RPR_MATERIAL_NODE_CONSTANT_TEXTURE,
+    nodes["constant"] = {RPR_MATERIAL_NODE_CONSTANT_TEXTURE,
                          {
-                             {"value", RPR_MATERIAL_INPUT_VALUE},
+                           {"value", RPR_MATERIAL_INPUT_VALUE},
                          }};
-    nodes["mix"]                      = {RPR_MATERIAL_NODE_BLEND_VALUE,
+    nodes["mix"] = {RPR_MATERIAL_NODE_BLEND_VALUE,
                     {
-                        {"fg", RPR_MATERIAL_INPUT_COLOR1},
-                        {"bg", RPR_MATERIAL_INPUT_COLOR0},
-                        {"mix", RPR_MATERIAL_INPUT_WEIGHT},
+                      {"fg", RPR_MATERIAL_INPUT_COLOR1},
+                      {"bg", RPR_MATERIAL_INPUT_COLOR0},
+                      {"mix", RPR_MATERIAL_INPUT_WEIGHT},
                     }};
-    nodes["ifgreater"]                = {RPR_MATERIAL_NODE_MATX_IFGREATER,
+    nodes["ifgreater"] = {RPR_MATERIAL_NODE_MATX_IFGREATER,
                           {
-                              {"value1", RPR_MATERIAL_INPUT_0},
-                              {"value2", RPR_MATERIAL_INPUT_1},
-                              {"in1", RPR_MATERIAL_INPUT_COLOR0},
-                              {"in2", RPR_MATERIAL_INPUT_COLOR1},
+                            {"value1", RPR_MATERIAL_INPUT_0},
+                            {"value2", RPR_MATERIAL_INPUT_1},
+                            {"in1", RPR_MATERIAL_INPUT_COLOR0},
+                            {"in2", RPR_MATERIAL_INPUT_COLOR1},
                           }};
-    nodes["normalize"]                = {RPR_MATERIAL_NODE_MATX_NORMALIZE,
+    nodes["normalize"] = {RPR_MATERIAL_NODE_MATX_NORMALIZE,
                           {
-                              {"in", RPR_MATERIAL_INPUT_COLOR},
+                            {"in", RPR_MATERIAL_INPUT_COLOR},
                           }};
-    nodes["luminance"]                = {RPR_MATERIAL_NODE_MATX_LUMINANCE,
+    nodes["luminance"] = {RPR_MATERIAL_NODE_MATX_LUMINANCE,
                           {
-                              {"in", RPR_MATERIAL_INPUT_0},
-                              {"lumacoeffs", RPR_MATERIAL_INPUT_LUMACOEFF},
+                            {"in", RPR_MATERIAL_INPUT_0},
+                            {"lumacoeffs", RPR_MATERIAL_INPUT_LUMACOEFF},
                           }};
-    nodes["rotate3d"]                 = {RPR_MATERIAL_NODE_MATX_ROTATE3D,
+    nodes["rotate3d"] = {RPR_MATERIAL_NODE_MATX_ROTATE3D,
                          {
-                             {"in", RPR_MATERIAL_INPUT_0},
-                             {"amount", RPR_MATERIAL_INPUT_AMOUNT},
-                             {"axis", RPR_MATERIAL_INPUT_AXIS},
+                           {"in", RPR_MATERIAL_INPUT_0},
+                           {"amount", RPR_MATERIAL_INPUT_AMOUNT},
+                           {"axis", RPR_MATERIAL_INPUT_AXIS},
                          }};
-    nodes["roughness_anisotropy"]     = {RPR_MATERIAL_NODE_MATX_ROUGHNESS_ANISOTROPY,
+    nodes["roughness_anisotropy"] = {RPR_MATERIAL_NODE_MATX_ROUGHNESS_ANISOTROPY,
                                      {
-                                         {"roughness", RPR_MATERIAL_INPUT_ROUGHNESS},
-                                         {"anisotropy", RPR_MATERIAL_INPUT_ANISOTROPIC},
+                                       {"roughness", RPR_MATERIAL_INPUT_ROUGHNESS},
+                                       {"anisotropy", RPR_MATERIAL_INPUT_ANISOTROPIC},
                                      }};
-    nodes["noise3d"]                  = {RPR_MATERIAL_NODE_MATX_NOISE3D,
+    nodes["noise3d"] = {RPR_MATERIAL_NODE_MATX_NOISE3D,
                         {
-                            {"amplitude", RPR_MATERIAL_INPUT_AMPLITUDE},
-                            {"pivot", RPR_MATERIAL_INPUT_PIVOT},
-                            {"position", RPR_MATERIAL_INPUT_POSITION},
+                          {"amplitude", RPR_MATERIAL_INPUT_AMPLITUDE},
+                          {"pivot", RPR_MATERIAL_INPUT_PIVOT},
+                          {"position", RPR_MATERIAL_INPUT_POSITION},
                         }};
-    nodes["normalmap"]                = {RPR_MATERIAL_NODE_NORMAL_MAP,
+    nodes["normalmap"] = {RPR_MATERIAL_NODE_NORMAL_MAP,
                           {
-                              {"in", RPR_MATERIAL_INPUT_COLOR},
-                              {"scale", RPR_MATERIAL_INPUT_SCALE},
+                            {"in", RPR_MATERIAL_INPUT_COLOR},
+                            {"scale", RPR_MATERIAL_INPUT_SCALE},
                           }};
-    nodes["heighttonormal"]           = {RPR_MATERIAL_NODE_BUMP_MAP,
+    nodes["heighttonormal"] = {RPR_MATERIAL_NODE_BUMP_MAP,
                                {
-                                   {"in", RPR_MATERIAL_INPUT_COLOR},
-                                   {"scale", RPR_MATERIAL_INPUT_SCALE},
+                                 {"in", RPR_MATERIAL_INPUT_COLOR},
+                                 {"scale", RPR_MATERIAL_INPUT_SCALE},
                                }};
-    nodes["normalize"]                = {RPR_MATERIAL_NODE_MATX_NORMALIZE,
+    nodes["normalize"] = {RPR_MATERIAL_NODE_MATX_NORMALIZE,
                           {
-                              {"in", RPR_MATERIAL_INPUT_COLOR},
+                            {"in", RPR_MATERIAL_INPUT_COLOR},
                           }};
-    nodes["position"]                 = {RPR_MATERIAL_NODE_MATX_POSITION, {}};
+    nodes["position"] = {RPR_MATERIAL_NODE_MATX_POSITION, {}};
 
     nodes["rpr_emissive"] = {RPR_MATERIAL_NODE_EMISSIVE, {{"color", RPR_MATERIAL_INPUT_COLOR}}};
 
     auto addArithmeticNode =
-        [this](const char *name, rpr_material_node_arithmetic_operation op, int numArgs) {
-          auto &mapping = nodes[name];
-          mapping.id    = RPR_MATERIAL_NODE_ARITHMETIC;
+      [this](const char *name, rpr_material_node_arithmetic_operation op, int numArgs) {
+        auto &mapping = nodes[name];
+        mapping.id = RPR_MATERIAL_NODE_ARITHMETIC;
 
-          arithmeticOps[name] = op;
+        arithmeticOps[name] = op;
 
-          if (numArgs == 1) {
-            mapping.inputs["in"] = RPR_MATERIAL_INPUT_COLOR0;
-          }
-          else {
-            mapping.inputs["in1"] = RPR_MATERIAL_INPUT_COLOR0;
-            mapping.inputs["in2"] = RPR_MATERIAL_INPUT_COLOR1;
+        if (numArgs == 1) {
+          mapping.inputs["in"] = RPR_MATERIAL_INPUT_COLOR0;
+        }
+        else {
+          mapping.inputs["in1"] = RPR_MATERIAL_INPUT_COLOR0;
+          mapping.inputs["in2"] = RPR_MATERIAL_INPUT_COLOR1;
 
-            if (numArgs > 2)
-              mapping.inputs["in3"] = RPR_MATERIAL_INPUT_COLOR2;
-            if (numArgs > 3)
-              mapping.inputs["in4"] = RPR_MATERIAL_INPUT_COLOR3;
-          }
-        };
+          if (numArgs > 2)
+            mapping.inputs["in3"] = RPR_MATERIAL_INPUT_COLOR2;
+          if (numArgs > 3)
+            mapping.inputs["in4"] = RPR_MATERIAL_INPUT_COLOR3;
+        }
+      };
 
     addArithmeticNode("sin", RPR_MATERIAL_NODE_OP_SIN, 1);
     addArithmeticNode("cos", RPR_MATERIAL_NODE_OP_COS, 1);
@@ -233,18 +233,18 @@ struct Mtlx2Rpr {
     addArithmeticNode("modulo", RPR_MATERIAL_NODE_OP_MOD, 2);
 
     arithmeticOps["invert"] = RPR_MATERIAL_NODE_OP_SUB;
-    nodes["invert"]         = {RPR_MATERIAL_NODE_ARITHMETIC,
+    nodes["invert"] = {RPR_MATERIAL_NODE_ARITHMETIC,
                        {
-                           {"amount", RPR_MATERIAL_INPUT_COLOR0},
-                           {"in", RPR_MATERIAL_INPUT_COLOR1},
+                         {"amount", RPR_MATERIAL_INPUT_COLOR0},
+                         {"in", RPR_MATERIAL_INPUT_COLOR1},
                        }};
 
     // TODO: add custom implementations
     arithmeticOps["clamp"] = RPR_MATERIAL_NODE_OP_MAX;
-    nodes["clamp"]         = {RPR_MATERIAL_NODE_ARITHMETIC,
+    nodes["clamp"] = {RPR_MATERIAL_NODE_ARITHMETIC,
                       {
-                          {"in", RPR_MATERIAL_INPUT_COLOR0},
-                          {"low", RPR_MATERIAL_INPUT_COLOR1},
+                        {"in", RPR_MATERIAL_INPUT_COLOR0},
+                        {"low", RPR_MATERIAL_INPUT_COLOR1},
                       }};
   }
 };
@@ -323,8 +323,8 @@ struct LoaderContext {
   std::unique_ptr<ValueConverter> GetUnitConverter(mx::Element *input);
 
   static const int kGlobalLogDepth = -1;
-  int logDepth                     = kGlobalLogDepth;
-  LogScope logScope                = LSGlobal;
+  int logDepth = kGlobalLogDepth;
+  LogScope logScope = LSGlobal;
 
   RPRMtlxLoader::LogLevel logLevel;
 
@@ -343,11 +343,9 @@ struct LoaderContext {
   std::string ResolveFile(std::string const &filename);
 };
 
-#define LOG_ERROR(ctx, fmt, ...) \
-  (ctx)->Log(RPRMtlxLoader::LogLevel::Error, __LINE__, fmt, ##__VA_ARGS__)
+#define LOG_ERROR(ctx, fmt, ...) (ctx)->Log(RPRMtlxLoader::LogLevel::Error, __LINE__, fmt, ##__VA_ARGS__)
 
-#define LOG_WARNING(ctx, fmt, ...) \
-  (ctx)->Log(RPRMtlxLoader::LogLevel::Warning, __LINE__, fmt, ##__VA_ARGS__)
+#define LOG_WARNING(ctx, fmt, ...) (ctx)->Log(RPRMtlxLoader::LogLevel::Warning, __LINE__, fmt, ##__VA_ARGS__)
 
 #define LOG(ctx, fmt, ...) (ctx)->Log(RPRMtlxLoader::LogLevel::Info, __LINE__, fmt, ##__VA_ARGS__)
 
@@ -440,7 +438,7 @@ struct PassthroughNode : public RprNode {
                       LoaderContext *context) override
   {
     if (downstreamElement->getName() == inputName) {
-      rprNode         = upstreamRprNode;
+      rprNode = upstreamRprNode;
       isOwningRprNode = false;
       return RPR_SUCCESS;
     }
@@ -462,15 +460,14 @@ struct PassthroughNode : public RprNode {
 
       if (!rprNode) {
         auto status = rprMaterialSystemCreateNode(
-            context->rprMatSys, RPR_MATERIAL_NODE_CONSTANT_TEXTURE, &rprNode);
+          context->rprMatSys, RPR_MATERIAL_NODE_CONSTANT_TEXTURE, &rprNode);
         if (status != RPR_SUCCESS) {
           return status;
         }
         isOwningRprNode = true;
       }
 
-      return RprNode::SetInput(
-          downstreamElement, RPR_MATERIAL_INPUT_VALUE, upstreamValueElement, context);
+      return RprNode::SetInput(downstreamElement, RPR_MATERIAL_INPUT_VALUE, upstreamValueElement, context);
     }
     else {
       LOG(context, "Unsupported input: %s", downstreamElement->getName().c_str());
@@ -518,12 +515,10 @@ struct DisplacementNode : public RprNode {
         return RPR_ERROR_UNSUPPORTED;
       }
 
-      return RprNode::SetInput(
-          downstreamElement, RPR_MATERIAL_INPUT_COLOR0, upstreamValueElement, context);
+      return RprNode::SetInput(downstreamElement, RPR_MATERIAL_INPUT_COLOR0, upstreamValueElement, context);
     }
     else if (downstreamElement->getName() == "scale") {
-      return RprNode::SetInput(
-          downstreamElement, RPR_MATERIAL_INPUT_COLOR1, upstreamValueElement, context);
+      return RprNode::SetInput(downstreamElement, RPR_MATERIAL_INPUT_COLOR1, upstreamValueElement, context);
     }
     else {
       LOG(context, "Unsupported input: %s", downstreamElement->getName().c_str());
@@ -552,7 +547,7 @@ struct RprMappedNode : public RprNode {
 
 struct RprImageNode : public RprMappedNode {
   mx::ValueElement *fileValueElement = nullptr;
-  bool isFileDirty                   = true;
+  bool isFileDirty = true;
   std::string resolvedFilepath;
 
   // TODO: support frame ranges
@@ -745,9 +740,8 @@ mx::OutputPtr GetOutput(mx::InterfaceElement const *interfaceElement,
 
     auto output = interfaceElement->getOutput(targetOutputName);
     if (!output) {
-      LOG_ERROR(context,
-                "invalid connection: cannot determine output - %s",
-                portElement->asString().c_str());
+      LOG_ERROR(
+        context, "invalid connection: cannot determine output - %s", portElement->asString().c_str());
     }
 
     return output;
@@ -766,10 +760,10 @@ template<typename T> size_t GetHash(T const &value)
 //------------------------------------------------------------------------------
 
 const char *const kLogLevelStr[int(RPRMtlxLoader::LogLevel::Info) + 1] = {
-    "",
-    "ERROR",
-    "WARNING",
-    "INFO",
+  "",
+  "ERROR",
+  "WARNING",
+  "INFO",
 };
 
 void LoaderContext::Log(RPRMtlxLoader::LogLevel level, size_t line, const char *fmt, ...)
@@ -803,12 +797,10 @@ void LoaderContext::Log(RPRMtlxLoader::LogLevel level, size_t line, const char *
   }
 }
 
-LoaderContext::ScopeGuard::ScopeGuard(LoaderContext *ctx,
-                                      LogScope logScope,
-                                      mx::Element const *scopeElement)
-    : ctx(ctx),
-      previousLogDepth(ctx->logDepth),
-      previousLogScope(ctx->logScope)
+LoaderContext::ScopeGuard::ScopeGuard(LoaderContext *ctx, LogScope logScope, mx::Element const *scopeElement)
+  : ctx(ctx),
+    previousLogDepth(ctx->logDepth),
+    previousLogScope(ctx->logScope)
 {
 
   ctx->logScope = logScope;
@@ -826,8 +818,7 @@ LoaderContext::ScopeGuard::~ScopeGuard()
   ctx->logDepth = previousLogDepth;
 }
 
-LoaderContext::ScopeGuard LoaderContext::EnterScope(LogScope logScope,
-                                                    mx::Element const *scopeElement)
+LoaderContext::ScopeGuard LoaderContext::EnterScope(LogScope logScope, mx::Element const *scopeElement)
 {
   return ScopeGuard(this, logScope, scopeElement);
 }
@@ -844,7 +835,7 @@ std::string LoaderContext::ResolveFile(std::string const &filename)
 Node *LoaderContext::GetGlobalNode(mx::Node *node)
 {
   if (!globalNodeGraph) {
-    auto docGraph   = mtlxDocument->getSelf()->asA<mx::Document>();
+    auto docGraph = mtlxDocument->getSelf()->asA<mx::Document>();
     globalNodeGraph = std::make_unique<MtlxNodeGraphNode>(docGraph, MtlxNodeGraphNode::LAZY_INIT);
   }
 
@@ -890,8 +881,8 @@ template<typename T> bool LoaderContext::ConnectToGlobalOutput(T *input, Node *n
               nodeGraphName.c_str(),
               outputName.c_str());
 
-          return freeStandingNodeGraphNode->Connect(
-                     nodeGraphOutput->getName(), node, input, this) == RPR_SUCCESS;
+          return freeStandingNodeGraphNode->Connect(nodeGraphOutput->getName(), node, input, this) ==
+                 RPR_SUCCESS;
         }
       }
     }
@@ -904,13 +895,11 @@ template<typename T> bool LoaderContext::ConnectToGlobalOutput(T *input, Node *n
       //
       if (auto mtlxGlobalNode = globalOutput->getConnectedNode()) {
         if (auto mxtlGlobalNodeDef = mtlxGlobalNode->getNodeDef()) {
-          if (auto mtlxGlobalNodeOutput = GetOutput(
-                  mxtlGlobalNodeDef.get(), globalOutput.get(), this)) {
+          if (auto mtlxGlobalNodeOutput = GetOutput(mxtlGlobalNodeDef.get(), globalOutput.get(), this)) {
             if (auto globalNode = GetGlobalNode(mtlxGlobalNode.get())) {
               LOG(this, "Bindinput %s: %s (output)", input->getName().c_str(), outputName.c_str());
 
-              return globalNode->Connect(mtlxGlobalNodeOutput->getName(), node, input, this) ==
-                     RPR_SUCCESS;
+              return globalNode->Connect(mtlxGlobalNodeOutput->getName(), node, input, this) == RPR_SUCCESS;
             }
           }
         }
@@ -929,7 +918,7 @@ Node *LoaderContext::GetGeomNode(mx::GeomPropDef *geomPropDef)
   }
 
   auto &geomProp = geomPropDef->getGeomProp();
-  auto &type     = geomPropDef->getAttribute("type");
+  auto &type = geomPropDef->getAttribute("type");
   if (geomProp.empty() || type.empty()) {
     LOG_ERROR(this, "Invalid geomPropDef: %s", geomPropDef->asString().c_str());
     return nullptr;
@@ -940,8 +929,7 @@ Node *LoaderContext::GetGeomNode(mx::GeomPropDef *geomPropDef)
   if (geomProp == "tangent") {
     auto &space = geomPropDef->getSpace();
     if (space == "world") {
-      auto status = rprMaterialSystemCreateNode(
-          rprMatSys, RPR_MATERIAL_NODE_MATX_TANGENT, &apiHandle);
+      auto status = rprMaterialSystemCreateNode(rprMatSys, RPR_MATERIAL_NODE_MATX_TANGENT, &apiHandle);
       if (!apiHandle) {
         LOG_ERROR(this, "Failed to create matx tangent node: %d", status);
       }
@@ -951,7 +939,7 @@ Node *LoaderContext::GetGeomNode(mx::GeomPropDef *geomPropDef)
     }
   }
   else {
-    const auto kInvalidLookupValue             = static_cast<rpr_material_node_lookup_value>(-1);
+    const auto kInvalidLookupValue = static_cast<rpr_material_node_lookup_value>(-1);
     rpr_material_node_lookup_value lookupValue = kInvalidLookupValue;
 
     if (geomProp == "texcoord") {
@@ -988,8 +976,7 @@ Node *LoaderContext::GetGeomNode(mx::GeomPropDef *geomPropDef)
     // TODO: handle bitangent, geomcolor, geompropvalue (primvar)
 
     if (lookupValue != kInvalidLookupValue) {
-      auto status = rprMaterialSystemCreateNode(
-          rprMatSys, RPR_MATERIAL_NODE_INPUT_LOOKUP, &apiHandle);
+      auto status = rprMaterialSystemCreateNode(rprMatSys, RPR_MATERIAL_NODE_INPUT_LOOKUP, &apiHandle);
       if (apiHandle) {
         rprMaterialNodeSetInputUByKey(apiHandle, RPR_MATERIAL_INPUT_VALUE, lookupValue);
       }
@@ -1000,10 +987,8 @@ Node *LoaderContext::GetGeomNode(mx::GeomPropDef *geomPropDef)
   }
 
   if (apiHandle) {
-    auto geomNodeIt = geomNodes
-                          .emplace(geomPropDef->getName(),
-                                   std::make_unique<RprNode>(apiHandle, true))
-                          .first;
+    auto geomNodeIt =
+      geomNodes.emplace(geomPropDef->getName(), std::make_unique<RprNode>(apiHandle, true)).first;
     return geomNodeIt->second.get();
   }
 
@@ -1015,7 +1000,7 @@ struct BaseConverterNode {
   virtual ~BaseConverterNode() = default;
 
   virtual rpr_status SetInput(rpr_material_node inputNode, LoaderContext *context) = 0;
-  virtual rpr_material_node GetOutput()                                            = 0;
+  virtual rpr_material_node GetOutput() = 0;
 
   virtual size_t MoveRprApiHandles(rpr_material_node *dst) = 0;
 };
@@ -1034,7 +1019,7 @@ LoaderContext::ValueConverter *LoaderContext::GetColorSpaceConverter(std::string
   std::unique_ptr<ValueConverter> converter;
   if (StringStartsWith(colorspace, "gamma")) {
     std::string gammaStr = colorspace.substr(sizeof("gamma") - 1);
-    float gamma          = std::stof(gammaStr) * 0.1f;
+    float gamma = std::stof(gammaStr) * 0.1f;
 
     /// Applies gamma decoding - pow(color, gamma)
     struct GammaConverter : public ValueConverter {
@@ -1048,7 +1033,7 @@ LoaderContext::ValueConverter *LoaderContext::GetColorSpaceConverter(std::string
       {
         for (int i = 0; i < 3; ++i) {
           float value = std::max(color[i], 0.0f);
-          color[i]    = std::pow(value, gamma);
+          color[i] = std::pow(value, gamma);
         }
         return true;
       }
@@ -1060,12 +1045,9 @@ LoaderContext::ValueConverter *LoaderContext::GetColorSpaceConverter(std::string
 
           GammaConversioNode(float gamma, LoaderContext *context)
           {
-            rprMaterialSystemCreateNode(
-                context->rprMatSys, RPR_MATERIAL_NODE_ARITHMETIC, &powNode);
-            rprMaterialNodeSetInputUByKey(
-                powNode, RPR_MATERIAL_INPUT_OP, RPR_MATERIAL_NODE_OP_POW);
-            rprMaterialNodeSetInputFByKey(
-                powNode, RPR_MATERIAL_INPUT_COLOR1, gamma, gamma, gamma, 1.0f);
+            rprMaterialSystemCreateNode(context->rprMatSys, RPR_MATERIAL_NODE_ARITHMETIC, &powNode);
+            rprMaterialNodeSetInputUByKey(powNode, RPR_MATERIAL_INPUT_OP, RPR_MATERIAL_NODE_OP_POW);
+            rprMaterialNodeSetInputFByKey(powNode, RPR_MATERIAL_INPUT_COLOR1, gamma, gamma, gamma, 1.0f);
           }
 
           ~GammaConversioNode() override
@@ -1089,7 +1071,7 @@ LoaderContext::ValueConverter *LoaderContext::GetColorSpaceConverter(std::string
           {
             if (powNode) {
               if (dst) {
-                *dst    = powNode;
+                *dst = powNode;
                 powNode = nullptr;
               }
               return 1;
@@ -1131,10 +1113,8 @@ LoaderContext::ValueConverter *LoaderContext::GetColorSpaceConverter(std::string
 
           AcescgConversioNode(LoaderContext *context)
           {
-            rprMaterialSystemCreateNode(
-                context->rprMatSys, RPR_MATERIAL_NODE_ARITHMETIC, &matMulNode);
-            rprMaterialNodeSetInputUByKey(
-                matMulNode, RPR_MATERIAL_INPUT_OP, RPR_MATERIAL_NODE_OP_MAT_MUL);
+            rprMaterialSystemCreateNode(context->rprMatSys, RPR_MATERIAL_NODE_ARITHMETIC, &matMulNode);
+            rprMaterialNodeSetInputUByKey(matMulNode, RPR_MATERIAL_INPUT_OP, RPR_MATERIAL_NODE_OP_MAT_MUL);
             rprMaterialNodeSetInputFByKey(matMulNode,
                                           RPR_MATERIAL_INPUT_COLOR0,
                                           kAcescgMatrix[0],
@@ -1176,7 +1156,7 @@ LoaderContext::ValueConverter *LoaderContext::GetColorSpaceConverter(std::string
           {
             if (matMulNode) {
               if (dst) {
-                *dst       = matMulNode;
+                *dst = matMulNode;
                 matMulNode = nullptr;
               }
               return 1;
@@ -1200,8 +1180,7 @@ LoaderContext::ValueConverter *LoaderContext::GetColorSpaceConverter(std::string
       {
         for (int i = 0; i < 3; i++) {
           if (color[i] > kSrgbBreakPnt[i]) {
-            color[i] = std::pow(std::max(0.0f, kSrgbScale[i] * color[i] + kSrgbOffset[i]),
-                                kSrgbGamma[i]);
+            color[i] = std::pow(std::max(0.0f, kSrgbScale[i] * color[i] + kSrgbOffset[i]), kSrgbGamma[i]);
           }
           else {
             color[i] = color[i] * kSrgbSlope[i];
@@ -1213,16 +1192,7 @@ LoaderContext::ValueConverter *LoaderContext::GetColorSpaceConverter(std::string
       std::unique_ptr<BaseConverterNode> GetConversionNode(LoaderContext *context) const override
       {
         struct SrgbConversionNode : public BaseConverterNode {
-          enum NodeTypes {
-            kIsAboveBreak,
-            kLinSeg,
-            kMax,
-            kScale,
-            kOffset,
-            kPowSeg,
-            kOut,
-            kTotalNodes
-          };
+          enum NodeTypes { kIsAboveBreak, kLinSeg, kMax, kScale, kOffset, kPowSeg, kOut, kTotalNodes };
           rpr_material_node nodes[kTotalNodes];
 
           SrgbConversionNode(LoaderContext *context)
@@ -1236,25 +1206,16 @@ LoaderContext::ValueConverter *LoaderContext::GetColorSpaceConverter(std::string
 
             nodes[kLinSeg] = createArithmeticNode(RPR_MATERIAL_NODE_OP_MUL);
             // set RPR_MATERIAL_INPUT_COLOR0 to the input color
-            rprMaterialNodeSetInputFByKey(nodes[kLinSeg],
-                                          RPR_MATERIAL_INPUT_COLOR1,
-                                          kSrgbSlope[0],
-                                          kSrgbSlope[1],
-                                          kSrgbSlope[2],
-                                          0.0f);
+            rprMaterialNodeSetInputFByKey(
+              nodes[kLinSeg], RPR_MATERIAL_INPUT_COLOR1, kSrgbSlope[0], kSrgbSlope[1], kSrgbSlope[2], 0.0f);
 
             nodes[kScale] = createArithmeticNode(RPR_MATERIAL_NODE_OP_MUL);
             // set RPR_MATERIAL_INPUT_COLOR0 to the input color
-            rprMaterialNodeSetInputFByKey(nodes[kScale],
-                                          RPR_MATERIAL_INPUT_COLOR1,
-                                          kSrgbScale[0],
-                                          kSrgbScale[1],
-                                          kSrgbScale[2],
-                                          0.0f);
+            rprMaterialNodeSetInputFByKey(
+              nodes[kScale], RPR_MATERIAL_INPUT_COLOR1, kSrgbScale[0], kSrgbScale[1], kSrgbScale[2], 0.0f);
 
             nodes[kOffset] = createArithmeticNode(RPR_MATERIAL_NODE_OP_ADD);
-            rprMaterialNodeSetInputNByKey(
-                nodes[kOffset], RPR_MATERIAL_INPUT_COLOR0, nodes[kScale]);
+            rprMaterialNodeSetInputNByKey(nodes[kOffset], RPR_MATERIAL_INPUT_COLOR0, nodes[kScale]);
             rprMaterialNodeSetInputFByKey(nodes[kOffset],
                                           RPR_MATERIAL_INPUT_COLOR1,
                                           kSrgbOffset[0],
@@ -1264,17 +1225,12 @@ LoaderContext::ValueConverter *LoaderContext::GetColorSpaceConverter(std::string
 
             nodes[kMax] = createArithmeticNode(RPR_MATERIAL_NODE_OP_MAX);
             rprMaterialNodeSetInputNByKey(nodes[kMax], RPR_MATERIAL_INPUT_COLOR0, nodes[kOffset]);
-            rprMaterialNodeSetInputFByKey(
-                nodes[kMax], RPR_MATERIAL_INPUT_COLOR1, 0.0f, 0.0f, 0.0f, 0.0f);
+            rprMaterialNodeSetInputFByKey(nodes[kMax], RPR_MATERIAL_INPUT_COLOR1, 0.0f, 0.0f, 0.0f, 0.0f);
 
             nodes[kPowSeg] = createArithmeticNode(RPR_MATERIAL_NODE_OP_POW);
             rprMaterialNodeSetInputNByKey(nodes[kPowSeg], RPR_MATERIAL_INPUT_COLOR0, nodes[kMax]);
-            rprMaterialNodeSetInputFByKey(nodes[kPowSeg],
-                                          RPR_MATERIAL_INPUT_COLOR1,
-                                          kSrgbGamma[0],
-                                          kSrgbGamma[1],
-                                          kSrgbGamma[2],
-                                          1.0f);
+            rprMaterialNodeSetInputFByKey(
+              nodes[kPowSeg], RPR_MATERIAL_INPUT_COLOR1, kSrgbGamma[0], kSrgbGamma[1], kSrgbGamma[2], 1.0f);
 
             nodes[kIsAboveBreak] = createArithmeticNode(RPR_MATERIAL_NODE_OP_GREATER);
             // set RPR_MATERIAL_INPUT_COLOR0 to the input color
@@ -1285,23 +1241,21 @@ LoaderContext::ValueConverter *LoaderContext::GetColorSpaceConverter(std::string
                                           kSrgbBreakPnt[2],
                                           1.0f);
 
-            rprMaterialSystemCreateNode(
-                context->rprMatSys, RPR_MATERIAL_NODE_BLEND_VALUE, &nodes[kOut]);
+            rprMaterialSystemCreateNode(context->rprMatSys, RPR_MATERIAL_NODE_BLEND_VALUE, &nodes[kOut]);
             rprMaterialNodeSetInputNByKey(nodes[kOut], RPR_MATERIAL_INPUT_COLOR0, nodes[kPowSeg]);
             rprMaterialNodeSetInputNByKey(nodes[kOut], RPR_MATERIAL_INPUT_COLOR1, nodes[kLinSeg]);
-            rprMaterialNodeSetInputNByKey(
-                nodes[kOut], RPR_MATERIAL_INPUT_WEIGHT, nodes[kIsAboveBreak]);
+            rprMaterialNodeSetInputNByKey(nodes[kOut], RPR_MATERIAL_INPUT_WEIGHT, nodes[kIsAboveBreak]);
           }
 
           rpr_status SetInput(rpr_material_node inputNode, LoaderContext *context) override
           {
             rpr_status status;
             if ((status = rprMaterialNodeSetInputNByKey(
-                     nodes[kLinSeg], RPR_MATERIAL_INPUT_COLOR0, inputNode)) != RPR_SUCCESS ||
+                   nodes[kLinSeg], RPR_MATERIAL_INPUT_COLOR0, inputNode)) != RPR_SUCCESS ||
                 (status = rprMaterialNodeSetInputNByKey(
-                     nodes[kScale], RPR_MATERIAL_INPUT_COLOR0, inputNode)) != RPR_SUCCESS ||
+                   nodes[kScale], RPR_MATERIAL_INPUT_COLOR0, inputNode)) != RPR_SUCCESS ||
                 (status = rprMaterialNodeSetInputNByKey(
-                     nodes[kIsAboveBreak], RPR_MATERIAL_INPUT_COLOR0, inputNode)) != RPR_SUCCESS) {
+                   nodes[kIsAboveBreak], RPR_MATERIAL_INPUT_COLOR0, inputNode)) != RPR_SUCCESS) {
               return status;
             }
 
@@ -1343,8 +1297,7 @@ LoaderContext::ValueConverter *LoaderContext::GetColorSpaceConverter(std::string
   return it->second.get();
 }
 
-std::unique_ptr<LoaderContext::ValueConverter> LoaderContext::GetUnitConverter(
-    mx::Element *inputElement)
+std::unique_ptr<LoaderContext::ValueConverter> LoaderContext::GetUnitConverter(mx::Element *inputElement)
 {
   if (!inputElement) {
     return {};
@@ -1400,8 +1353,7 @@ std::unique_ptr<LoaderContext::ValueConverter> LoaderContext::GetUnitConverter(
         {
           rprMaterialSystemCreateNode(context->rprMatSys, RPR_MATERIAL_NODE_ARITHMETIC, &mulNode);
           rprMaterialNodeSetInputUByKey(mulNode, RPR_MATERIAL_INPUT_OP, RPR_MATERIAL_NODE_OP_MUL);
-          rprMaterialNodeSetInputFByKey(
-              mulNode, RPR_MATERIAL_INPUT_COLOR0, scale, scale, scale, scale);
+          rprMaterialNodeSetInputFByKey(mulNode, RPR_MATERIAL_INPUT_COLOR0, scale, scale, scale, scale);
         }
 
         ~ScaleConversioNode() override
@@ -1425,7 +1377,7 @@ std::unique_ptr<LoaderContext::ValueConverter> LoaderContext::GetUnitConverter(
         {
           if (mulNode) {
             if (dst) {
-              *dst    = mulNode;
+              *dst = mulNode;
               mulNode = nullptr;
             }
             return 1;
@@ -1448,7 +1400,7 @@ std::unique_ptr<LoaderContext::ValueConverter> LoaderContext::GetUnitConverter(
 // TODO: add error handling
 Node::Ptr Node::Create(mx::Node *mtlxNode, LoaderContext *context)
 {
-  rpr_material_node rprNode            = nullptr;
+  rpr_material_node rprNode = nullptr;
   Mtlx2Rpr::Node const *rprNodeMapping = nullptr;
 
   // Check for nodes with special handling first
@@ -1497,8 +1449,7 @@ Node::Ptr Node::Create(mx::Node *mtlxNode, LoaderContext *context)
   }
   else if (mtlxNode->getCategory() == "viewdirection") {
     rprMaterialSystemCreateNode(context->rprMatSys, RPR_MATERIAL_NODE_INPUT_LOOKUP, &rprNode);
-    rprMaterialNodeSetInputUByKey(
-        rprNode, RPR_MATERIAL_INPUT_VALUE, RPR_MATERIAL_NODE_LOOKUP_INVEC);
+    rprMaterialNodeSetInputUByKey(rprNode, RPR_MATERIAL_INPUT_VALUE, RPR_MATERIAL_NODE_LOOKUP_INVEC);
   }
   else if (mtlxNode->getCategory() == "sqrt") {
     rprMaterialSystemCreateNode(context->rprMatSys, RPR_MATERIAL_NODE_ARITHMETIC, &rprNode);
@@ -1506,7 +1457,7 @@ Node::Ptr Node::Create(mx::Node *mtlxNode, LoaderContext *context)
     rprMaterialNodeSetInputFByKey(rprNode, RPR_MATERIAL_INPUT_COLOR1, 0.5f, 0.5f, 0.5f, 1.0f);
     static Mtlx2Rpr::Node s_sqrtMapping = {RPR_MATERIAL_NODE_ARITHMETIC,
                                            {{"in", RPR_MATERIAL_INPUT_COLOR0}}};
-    rprNodeMapping                      = &s_sqrtMapping;
+    rprNodeMapping = &s_sqrtMapping;
   }
   else if (mtlxNode->getCategory() == "image") {
     return std::make_unique<RprImageNode>(mtlxNode->getType(), context);
@@ -1541,7 +1492,7 @@ Node::Ptr Node::Create(mx::Node *mtlxNode, LoaderContext *context)
 
     static Mtlx2Rpr::Node s_swizzleMapping = {RPR_MATERIAL_NODE_ARITHMETIC,
                                               {{"in", RPR_MATERIAL_INPUT_COLOR0}}};
-    rprNodeMapping                         = &s_swizzleMapping;
+    rprNodeMapping = &s_swizzleMapping;
 
     // Then process standard nodes that can be mapped directly to RPR nodes
     //
@@ -1556,11 +1507,11 @@ Node::Ptr Node::Create(mx::Node *mtlxNode, LoaderContext *context)
       //
       static Mtlx2Rpr::Node bsdfMix = {RPR_MATERIAL_NODE_BLEND,
                                        {
-                                           {"fg", RPR_MATERIAL_INPUT_COLOR1},
-                                           {"bg", RPR_MATERIAL_INPUT_COLOR0},
-                                           {"mix", RPR_MATERIAL_INPUT_WEIGHT},
+                                         {"fg", RPR_MATERIAL_INPUT_COLOR1},
+                                         {"bg", RPR_MATERIAL_INPUT_COLOR0},
+                                         {"mix", RPR_MATERIAL_INPUT_WEIGHT},
                                        }};
-      rprNodeMapping                = &bsdfMix;
+      rprNodeMapping = &bsdfMix;
     }
     else {
       auto rprNodeMappingIt = GetMtlx2Rpr().nodes.find(mtlxNode->getCategory());
@@ -1660,18 +1611,17 @@ rpr_status RprWrapNode::SetInput(mx::TypedElement *downstreamElement,
 //------------------------------------------------------------------------------
 
 MtlxNodeGraphNode::MtlxNodeGraphNode(mx::ConstGraphElementPtr const &mtlxGraph, LazyInit)
-    : mtlxGraph(mtlxGraph)
+  : mtlxGraph(mtlxGraph)
 {}
 
-MtlxNodeGraphNode::MtlxNodeGraphNode(mx::ConstGraphElementPtr const &mtlxGraph,
-                                     LoaderContext *context)
-    : MtlxNodeGraphNode(mtlxGraph, mtlxGraph->getOutputs(), context)
+MtlxNodeGraphNode::MtlxNodeGraphNode(mx::ConstGraphElementPtr const &mtlxGraph, LoaderContext *context)
+  : MtlxNodeGraphNode(mtlxGraph, mtlxGraph->getOutputs(), context)
 {}
 
 MtlxNodeGraphNode::MtlxNodeGraphNode(mx::ConstGraphElementPtr const &graph,
                                      std::vector<mx::OutputPtr> const &requiredOutputs,
                                      LoaderContext *context)
-    : mtlxGraph(graph)
+  : mtlxGraph(graph)
 {
 
   LOG(context, "NodeGraph: %s", mtlxGraph->getName().c_str());
@@ -1816,16 +1766,14 @@ Node *MtlxNodeGraphNode::_CreateSubNode(mx::NodePtr const &mtlxNode, LoaderConte
         }
 
         auto mtlxUpstreamNodeOutput = GetOutput(mtlxUpstreamNode.get(), input.get(), context);
-        if (!mtlxUpstreamNodeOutput &&
-            mtlxUpstreamNode->getType() == mx::MULTI_OUTPUT_TYPE_STRING) {
+        if (!mtlxUpstreamNodeOutput && mtlxUpstreamNode->getType() == mx::MULTI_OUTPUT_TYPE_STRING) {
           continue;
         }
 
         Node *upstreamNode = _CreateSubNode(mtlxUpstreamNode, context);
         if (upstreamNode) {
-          auto &outputName = mtlxUpstreamNodeOutput ? mtlxUpstreamNodeOutput->getName() :
-                                                      mx::EMPTY_STRING;
-          auto status      = upstreamNode->Connect(outputName, node, inputElement.get(), context);
+          auto &outputName = mtlxUpstreamNodeOutput ? mtlxUpstreamNodeOutput->getName() : mx::EMPTY_STRING;
+          auto status = upstreamNode->Connect(outputName, node, inputElement.get(), context);
 
           if (status == RPR_SUCCESS) {
             LOG(context,
@@ -1903,8 +1851,7 @@ rpr_status MtlxNodeGraphNode::Connect(std::string const &upstreamOutput,
   if (output && !output->getNodeName().empty()) {
     auto nodeIt = subNodes.find(output->getNodeName());
     if (nodeIt != subNodes.end()) {
-      return nodeIt->second->Connect(
-          output->getOutputString(), downstreamNode, downstreamElement, context);
+      return nodeIt->second->Connect(output->getOutputString(), downstreamNode, downstreamElement, context);
     }
   }
 
@@ -1912,7 +1859,7 @@ rpr_status MtlxNodeGraphNode::Connect(std::string const &upstreamOutput,
 }
 
 MtlxNodeGraphNode::InterfaceSocketsQuery MtlxNodeGraphNode::_GetInterfaceSockets(
-    mx::TypedElement *inputElement)
+  mx::TypedElement *inputElement)
 {
   if (auto valueElement = inputElement->asA<mx::ValueElement>()) {
     auto &interfaceName = valueElement->getInterfaceName();
@@ -1927,7 +1874,7 @@ MtlxNodeGraphNode::InterfaceSocketsQuery MtlxNodeGraphNode::_GetInterfaceSockets
 }
 
 MtlxNodeGraphNode::InterfaceSocketsQuery MtlxNodeGraphNode::_GetInterfaceSockets(
-    std::string const &interfaceName)
+  std::string const &interfaceName)
 {
   auto it = _interfaceSockets.find(interfaceName);
   if (it == _interfaceSockets.end()) {
@@ -1945,7 +1892,7 @@ rpr_status MtlxNodeGraphNode::SetInput(mx::TypedElement *downstreamElement,
     rpr_status status = RPR_SUCCESS;
     sockets.ForEach(context, [&](Node *socketNode, mx::TypedElement *socketDownstreamElement) {
       auto setInputStatus = socketNode->SetInput(
-          socketDownstreamElement, upstreamElement, upstreamRprNode, context);
+        socketDownstreamElement, upstreamElement, upstreamRprNode, context);
       if (setInputStatus != RPR_SUCCESS) {
         status = setInputStatus;
       }
@@ -1967,8 +1914,7 @@ rpr_status MtlxNodeGraphNode::SetInput(mx::TypedElement *downstreamElement,
   if (auto sockets = _GetInterfaceSockets(downstreamElement)) {
     rpr_status status = RPR_SUCCESS;
     sockets.ForEach(context, [&](Node *socketNode, mx::TypedElement *socketDownstreamElement) {
-      auto setInputStatus = socketNode->SetInput(
-          socketDownstreamElement, upstreamValueElement, context);
+      auto setInputStatus = socketNode->SetInput(socketDownstreamElement, upstreamValueElement, context);
       if (setInputStatus != RPR_SUCCESS) {
         status = setInputStatus;
       }
@@ -1987,9 +1933,7 @@ rpr_status MtlxNodeGraphNode::SetInput(mx::TypedElement *downstreamElement,
 // RprNode implementation
 //------------------------------------------------------------------------------
 
-RprNode::RprNode(rpr_material_node node, bool retainNode)
-    : isOwningRprNode(retainNode),
-      rprNode(node)
+RprNode::RprNode(rpr_material_node node, bool retainNode) : isOwningRprNode(retainNode), rprNode(node)
 {}
 
 RprNode::~RprNode()
@@ -2034,27 +1978,27 @@ bool GetInputF(mx::TypedElement *downstreamElement,
   if (valueType == "float") {
     auto value = mx::fromValueString<float>(valueString);
     dst[0] = dst[1] = dst[2] = value;
-    dst[3]                   = 0.0f;
+    dst[3] = 0.0f;
   }
   else if (valueType == "vector2" || valueType == "color2") {
     auto value = mx::fromValueString<mx::Vector2>(valueString);
-    dst[0]     = value[0];
-    dst[1]     = value[1];
+    dst[0] = value[0];
+    dst[1] = value[1];
     dst[2] = dst[3] = 0.0f;
   }
   else if (valueType == "vector3" || valueType == "color3") {
     auto value = mx::fromValueString<mx::Color3>(valueString);
-    dst[0]     = value[0];
-    dst[1]     = value[1];
-    dst[2]     = value[2];
-    dst[3]     = 0.0f;
+    dst[0] = value[0];
+    dst[1] = value[1];
+    dst[2] = value[2];
+    dst[3] = 0.0f;
   }
   else if (valueType == "vector4" || valueType == "color4") {
     auto value = mx::fromValueString<mx::Color4>(valueString);
-    dst[0]     = value[0];
-    dst[1]     = value[1];
-    dst[2]     = value[2];
-    dst[3]     = value[3];
+    dst[0] = value[0];
+    dst[1] = value[1];
+    dst[2] = value[2];
+    dst[3] = value[3];
   }
   else {
     return false;
@@ -2084,14 +2028,12 @@ rpr_status RprNode::SetInput(mx::TypedElement *downstreamElement,
                              LoaderContext *context)
 {
   auto &valueString = upstreamValueElement->getValueString();
-  auto &valueType   = upstreamValueElement->getType();
+  auto &valueType = upstreamValueElement->getType();
 
   try {
     float color[4];
-    if (GetInputF(
-            downstreamElement, upstreamValueElement, valueString, valueType, context, color)) {
-      return rprMaterialNodeSetInputFByKey(
-          rprNode, downstreamRprId, color[0], color[1], color[2], color[3]);
+    if (GetInputF(downstreamElement, upstreamValueElement, valueString, valueType, context, color)) {
+      return rprMaterialNodeSetInputFByKey(rprNode, downstreamRprId, color[0], color[1], color[2], color[3]);
     }
     else if (valueType == "boolean") {
       auto value = static_cast<float>(mx::fromValueString<bool>(valueString));
@@ -2102,10 +2044,8 @@ rpr_status RprNode::SetInput(mx::TypedElement *downstreamElement,
       return rprMaterialNodeSetInputFByKey(rprNode, downstreamRprId, value, value, value, 0.0f);
     }
     else {
-      LOG_WARNING(context,
-                  "failed to parse %s value: unsupported type - %s",
-                  valueString.c_str(),
-                  valueType.c_str());
+      LOG_WARNING(
+        context, "failed to parse %s value: unsupported type - %s", valueString.c_str(), valueType.c_str());
     }
   }
   catch (mx::ExceptionTypeError &e) {
@@ -2123,7 +2063,7 @@ size_t RprNode::MoveRprApiHandles(rpr_material_node *dst)
   //
   if (rprNode && isOwningRprNode) {
     if (dst) {
-      dst[i]  = rprNode;
+      dst[i] = rprNode;
       rprNode = nullptr;
     }
     i++;
@@ -2136,8 +2076,8 @@ size_t RprNode::MoveRprApiHandles(rpr_material_node *dst)
 }
 
 RprMappedNode::RprMappedNode(rpr_material_node node, Mtlx2Rpr::Node const *nodeMapping)
-    : RprNode(node, true),
-      rprNodeMapping(nodeMapping)
+  : RprNode(node, true),
+    rprNodeMapping(nodeMapping)
 {}
 
 rpr_status RprMappedNode::SetInput(mx::TypedElement *downstreamElement,
@@ -2191,19 +2131,18 @@ rpr_status RprMappedNode::SetInput(mx::TypedElement *downstreamElement,
 }
 
 RprImageNode::RprImageNode(std::string const &type, LoaderContext *context)
-    : RprMappedNode(
-          [context]() {
-            rpr_material_node node = nullptr;
-            rprMaterialSystemCreateNode(
-                context->rprMatSys, RPR_MATERIAL_NODE_IMAGE_TEXTURE, &node);
-            return node;
-          }(),
-          []() {
-            static Mtlx2Rpr::Node s_imageMapping = {RPR_MATERIAL_NODE_IMAGE_TEXTURE,
-                                                    {{"texcoord", RPR_MATERIAL_INPUT_UV}}};
-            return &s_imageMapping;
-          }()),
-      type(type)
+  : RprMappedNode(
+      [context]() {
+        rpr_material_node node = nullptr;
+        rprMaterialSystemCreateNode(context->rprMatSys, RPR_MATERIAL_NODE_IMAGE_TEXTURE, &node);
+        return node;
+      }(),
+      []() {
+        static Mtlx2Rpr::Node s_imageMapping = {RPR_MATERIAL_NODE_IMAGE_TEXTURE,
+                                                {{"texcoord", RPR_MATERIAL_INPUT_UV}}};
+        return &s_imageMapping;
+      }()),
+    type(type)
 {}
 
 rpr_status RprImageNode::Connect(std::string const &upstreamOutput,
@@ -2228,12 +2167,12 @@ rpr_status RprImageNode::Connect(std::string const &upstreamOutput,
     auto &colorspace = fileValueElement->getActiveColorSpace();
     if (auto colorspaceConverter = context->GetColorSpaceConverter(colorspace)) {
       conversionNodeId = colorspace;
-      converter        = colorspaceConverter;
+      converter = colorspaceConverter;
     }
     else if (auto unitConverter = context->GetUnitConverter(fileValueElement)) {
-      conversionNodeId      = fileValueElement->getUnit() + fileValueElement->getUnitType();
+      conversionNodeId = fileValueElement->getUnit() + fileValueElement->getUnitType();
       retainedUnitConverter = std::move(unitConverter);
-      converter             = retainedUnitConverter.get();
+      converter = retainedUnitConverter.get();
     }
 
     disableRprImageColorspace = !colorspace.empty();
@@ -2247,8 +2186,7 @@ rpr_status RprImageNode::Connect(std::string const &upstreamOutput,
           conversionNodes.clear();
 
           conversionNode->SetInput(rprNode, context);
-          conversionNodeIt =
-              conversionNodes.emplace(conversionNodeId, std::move(conversionNode)).first;
+          conversionNodeIt = conversionNodes.emplace(conversionNodeId, std::move(conversionNode)).first;
         }
       }
     }
@@ -2267,7 +2205,7 @@ rpr_status RprImageNode::SetInput(mx::TypedElement *downstreamElement,
                                   mx::ValueElement *upstreamValueElement,
                                   LoaderContext *context)
 {
-  auto &value     = upstreamValueElement->getValueString();
+  auto &value = upstreamValueElement->getValueString();
   auto &valueType = upstreamValueElement->getType();
 
   rpr_status status = RPR_SUCCESS;
@@ -2281,8 +2219,7 @@ rpr_status RprImageNode::SetInput(mx::TypedElement *downstreamElement,
     else if (downstreamElement->getName() == "vaddressmode") {
       vaddressmode = value;
     }
-    else if (downstreamElement->getName() == "filtertype" ||
-             downstreamElement->getName() == "framerange" ||
+    else if (downstreamElement->getName() == "filtertype" || downstreamElement->getName() == "framerange" ||
              downstreamElement->getName() == "frameendaction") {
       // unprocessed for now
     }
@@ -2294,7 +2231,7 @@ rpr_status RprImageNode::SetInput(mx::TypedElement *downstreamElement,
     if (downstreamElement->getName() == "file") {
       if (fileValueElement != upstreamValueElement) {
         fileValueElement = upstreamValueElement;
-        isFileDirty      = true;
+        isFileDirty = true;
       }
     }
     else {
@@ -2322,79 +2259,73 @@ rpr_status RprImageNode::SetInput(mx::TypedElement *downstreamElement,
 }
 
 RprUberNode::RprUberNode(LoaderContext *context)
-    : RprMappedNode(
-          [context]() {
-            rpr_material_node node = nullptr;
-            rprMaterialSystemCreateNode(context->rprMatSys, RPR_MATERIAL_NODE_UBERV2, &node);
-            return node;
-          }(),
-          []() {
-            static Mtlx2Rpr::Node s_imageMapping = {
-                RPR_MATERIAL_NODE_UBERV2,
-                {
-                    {"uber_diffuse_color", RPR_MATERIAL_INPUT_UBER_DIFFUSE_COLOR},
-                    {"uber_diffuse_weight", RPR_MATERIAL_INPUT_UBER_DIFFUSE_WEIGHT},
-                    {"uber_diffuse_roughness", RPR_MATERIAL_INPUT_UBER_DIFFUSE_ROUGHNESS},
-                    {"uber_diffuse_normal", RPR_MATERIAL_INPUT_UBER_DIFFUSE_NORMAL},
-                    {"uber_reflection_color", RPR_MATERIAL_INPUT_UBER_REFLECTION_COLOR},
-                    {"uber_reflection_weight", RPR_MATERIAL_INPUT_UBER_REFLECTION_WEIGHT},
-                    {"uber_reflection_roughness", RPR_MATERIAL_INPUT_UBER_REFLECTION_ROUGHNESS},
-                    {"uber_reflection_anisotropy", RPR_MATERIAL_INPUT_UBER_REFLECTION_ANISOTROPY},
-                    {"uber_reflection_anisotropy_rotation",
-                     RPR_MATERIAL_INPUT_UBER_REFLECTION_ANISOTROPY_ROTATION},
-                    {"uber_reflection_ior", RPR_MATERIAL_INPUT_UBER_REFLECTION_IOR},
-                    {"uber_reflection_metalness", RPR_MATERIAL_INPUT_UBER_REFLECTION_METALNESS},
-                    {"uber_reflection_normal", RPR_MATERIAL_INPUT_UBER_REFLECTION_NORMAL},
-                    {"uber_refraction_color", RPR_MATERIAL_INPUT_UBER_REFRACTION_COLOR},
-                    {"uber_refraction_weight", RPR_MATERIAL_INPUT_UBER_REFRACTION_WEIGHT},
-                    {"uber_refraction_roughness", RPR_MATERIAL_INPUT_UBER_REFRACTION_ROUGHNESS},
-                    {"uber_refraction_ior", RPR_MATERIAL_INPUT_UBER_REFRACTION_IOR},
-                    {"uber_refraction_normal", RPR_MATERIAL_INPUT_UBER_REFRACTION_NORMAL},
-                    {"uber_refraction_thin_surface",
-                     RPR_MATERIAL_INPUT_UBER_REFRACTION_THIN_SURFACE},
-                    {"uber_refraction_absorption_color",
-                     RPR_MATERIAL_INPUT_UBER_REFRACTION_ABSORPTION_COLOR},
-                    {"uber_refraction_absorption_distance",
-                     RPR_MATERIAL_INPUT_UBER_REFRACTION_ABSORPTION_DISTANCE},
-                    {"uber_refraction_caustics", RPR_MATERIAL_INPUT_UBER_REFRACTION_CAUSTICS},
-                    {"uber_coating_color", RPR_MATERIAL_INPUT_UBER_COATING_COLOR},
-                    {"uber_coating_weight", RPR_MATERIAL_INPUT_UBER_COATING_WEIGHT},
-                    {"uber_coating_roughness", RPR_MATERIAL_INPUT_UBER_COATING_ROUGHNESS},
-                    {"uber_coating_ior", RPR_MATERIAL_INPUT_UBER_COATING_IOR},
-                    {"uber_coating_metalness", RPR_MATERIAL_INPUT_UBER_COATING_METALNESS},
-                    {"uber_coating_normal", RPR_MATERIAL_INPUT_UBER_COATING_NORMAL},
-                    {"uber_coating_transmission_color",
-                     RPR_MATERIAL_INPUT_UBER_COATING_TRANSMISSION_COLOR},
-                    {"uber_coating_thickness", RPR_MATERIAL_INPUT_UBER_COATING_THICKNESS},
-                    {"uber_sheen", RPR_MATERIAL_INPUT_UBER_SHEEN},
-                    {"uber_sheen_tint", RPR_MATERIAL_INPUT_UBER_SHEEN_TINT},
-                    {"uber_sheen_weight", RPR_MATERIAL_INPUT_UBER_SHEEN_WEIGHT},
-                    {"uber_emission_color", RPR_MATERIAL_INPUT_UBER_EMISSION_COLOR},
-                    {"uber_emission_weight", RPR_MATERIAL_INPUT_UBER_EMISSION_WEIGHT},
-                    {"uber_transparency", RPR_MATERIAL_INPUT_UBER_TRANSPARENCY},
-                    {"uber_sss_scatter_color", RPR_MATERIAL_INPUT_UBER_SSS_SCATTER_COLOR},
-                    {"uber_sss_scatter_distance", RPR_MATERIAL_INPUT_UBER_SSS_SCATTER_DISTANCE},
-                    {"uber_sss_scatter_direction", RPR_MATERIAL_INPUT_UBER_SSS_SCATTER_DIRECTION},
-                    {"uber_sss_weight", RPR_MATERIAL_INPUT_UBER_SSS_WEIGHT},
-                    {"uber_sss_multiscatter", RPR_MATERIAL_INPUT_UBER_SSS_MULTISCATTER},
-                    {"uber_backscatter_weight", RPR_MATERIAL_INPUT_UBER_BACKSCATTER_WEIGHT},
-                    {"uber_backscatter_color", RPR_MATERIAL_INPUT_UBER_BACKSCATTER_COLOR},
-                    {"uber_fresnel_schlick_approximation",
-                     RPR_MATERIAL_INPUT_UBER_FRESNEL_SCHLICK_APPROXIMATION},
-                    // handled in SetInput
-                    //{"uber_reflection_mode", RPR_MATERIAL_INPUT_UBER_REFLECTION_MODE},
-                    //{"uber_coating_mode", RPR_MATERIAL_INPUT_UBER_COATING_MODE},
-                    //{"uber_emission_mode", RPR_MATERIAL_INPUT_UBER_EMISSION_MODE},
-                }};
-            return &s_imageMapping;
-          }())
+  : RprMappedNode(
+      [context]() {
+        rpr_material_node node = nullptr;
+        rprMaterialSystemCreateNode(context->rprMatSys, RPR_MATERIAL_NODE_UBERV2, &node);
+        return node;
+      }(),
+      []() {
+        static Mtlx2Rpr::Node s_imageMapping = {
+          RPR_MATERIAL_NODE_UBERV2,
+          {
+            {"uber_diffuse_color", RPR_MATERIAL_INPUT_UBER_DIFFUSE_COLOR},
+            {"uber_diffuse_weight", RPR_MATERIAL_INPUT_UBER_DIFFUSE_WEIGHT},
+            {"uber_diffuse_roughness", RPR_MATERIAL_INPUT_UBER_DIFFUSE_ROUGHNESS},
+            {"uber_diffuse_normal", RPR_MATERIAL_INPUT_UBER_DIFFUSE_NORMAL},
+            {"uber_reflection_color", RPR_MATERIAL_INPUT_UBER_REFLECTION_COLOR},
+            {"uber_reflection_weight", RPR_MATERIAL_INPUT_UBER_REFLECTION_WEIGHT},
+            {"uber_reflection_roughness", RPR_MATERIAL_INPUT_UBER_REFLECTION_ROUGHNESS},
+            {"uber_reflection_anisotropy", RPR_MATERIAL_INPUT_UBER_REFLECTION_ANISOTROPY},
+            {"uber_reflection_anisotropy_rotation", RPR_MATERIAL_INPUT_UBER_REFLECTION_ANISOTROPY_ROTATION},
+            {"uber_reflection_ior", RPR_MATERIAL_INPUT_UBER_REFLECTION_IOR},
+            {"uber_reflection_metalness", RPR_MATERIAL_INPUT_UBER_REFLECTION_METALNESS},
+            {"uber_reflection_normal", RPR_MATERIAL_INPUT_UBER_REFLECTION_NORMAL},
+            {"uber_refraction_color", RPR_MATERIAL_INPUT_UBER_REFRACTION_COLOR},
+            {"uber_refraction_weight", RPR_MATERIAL_INPUT_UBER_REFRACTION_WEIGHT},
+            {"uber_refraction_roughness", RPR_MATERIAL_INPUT_UBER_REFRACTION_ROUGHNESS},
+            {"uber_refraction_ior", RPR_MATERIAL_INPUT_UBER_REFRACTION_IOR},
+            {"uber_refraction_normal", RPR_MATERIAL_INPUT_UBER_REFRACTION_NORMAL},
+            {"uber_refraction_thin_surface", RPR_MATERIAL_INPUT_UBER_REFRACTION_THIN_SURFACE},
+            {"uber_refraction_absorption_color", RPR_MATERIAL_INPUT_UBER_REFRACTION_ABSORPTION_COLOR},
+            {"uber_refraction_absorption_distance", RPR_MATERIAL_INPUT_UBER_REFRACTION_ABSORPTION_DISTANCE},
+            {"uber_refraction_caustics", RPR_MATERIAL_INPUT_UBER_REFRACTION_CAUSTICS},
+            {"uber_coating_color", RPR_MATERIAL_INPUT_UBER_COATING_COLOR},
+            {"uber_coating_weight", RPR_MATERIAL_INPUT_UBER_COATING_WEIGHT},
+            {"uber_coating_roughness", RPR_MATERIAL_INPUT_UBER_COATING_ROUGHNESS},
+            {"uber_coating_ior", RPR_MATERIAL_INPUT_UBER_COATING_IOR},
+            {"uber_coating_metalness", RPR_MATERIAL_INPUT_UBER_COATING_METALNESS},
+            {"uber_coating_normal", RPR_MATERIAL_INPUT_UBER_COATING_NORMAL},
+            {"uber_coating_transmission_color", RPR_MATERIAL_INPUT_UBER_COATING_TRANSMISSION_COLOR},
+            {"uber_coating_thickness", RPR_MATERIAL_INPUT_UBER_COATING_THICKNESS},
+            {"uber_sheen", RPR_MATERIAL_INPUT_UBER_SHEEN},
+            {"uber_sheen_tint", RPR_MATERIAL_INPUT_UBER_SHEEN_TINT},
+            {"uber_sheen_weight", RPR_MATERIAL_INPUT_UBER_SHEEN_WEIGHT},
+            {"uber_emission_color", RPR_MATERIAL_INPUT_UBER_EMISSION_COLOR},
+            {"uber_emission_weight", RPR_MATERIAL_INPUT_UBER_EMISSION_WEIGHT},
+            {"uber_transparency", RPR_MATERIAL_INPUT_UBER_TRANSPARENCY},
+            {"uber_sss_scatter_color", RPR_MATERIAL_INPUT_UBER_SSS_SCATTER_COLOR},
+            {"uber_sss_scatter_distance", RPR_MATERIAL_INPUT_UBER_SSS_SCATTER_DISTANCE},
+            {"uber_sss_scatter_direction", RPR_MATERIAL_INPUT_UBER_SSS_SCATTER_DIRECTION},
+            {"uber_sss_weight", RPR_MATERIAL_INPUT_UBER_SSS_WEIGHT},
+            {"uber_sss_multiscatter", RPR_MATERIAL_INPUT_UBER_SSS_MULTISCATTER},
+            {"uber_backscatter_weight", RPR_MATERIAL_INPUT_UBER_BACKSCATTER_WEIGHT},
+            {"uber_backscatter_color", RPR_MATERIAL_INPUT_UBER_BACKSCATTER_COLOR},
+            {"uber_fresnel_schlick_approximation", RPR_MATERIAL_INPUT_UBER_FRESNEL_SCHLICK_APPROXIMATION},
+            // handled in SetInput
+            //{"uber_reflection_mode", RPR_MATERIAL_INPUT_UBER_REFLECTION_MODE},
+            //{"uber_coating_mode", RPR_MATERIAL_INPUT_UBER_COATING_MODE},
+            //{"uber_emission_mode", RPR_MATERIAL_INPUT_UBER_EMISSION_MODE},
+          }};
+        return &s_imageMapping;
+      }())
 {}
 
 rpr_status RprUberNode::SetInput(mx::TypedElement *downstreamElement,
                                  mx::ValueElement *upstreamValueElement,
                                  LoaderContext *context)
 {
-  auto &value     = upstreamValueElement->getValueString();
+  auto &value = upstreamValueElement->getValueString();
   auto &valueType = upstreamValueElement->getType();
 
   rpr_status status = RPR_SUCCESS;
@@ -2711,8 +2642,7 @@ struct GraphNodesValue {
 RPRMtlxLoader::RPRMtlxLoader() : _stdSearchPath(mx::getEnvironmentPath())
 {}
 
-RPRMtlxLoader::RenderableElements RPRMtlxLoader::GetRenderableElements(
-    mx::Document const *mtlxDocument)
+RPRMtlxLoader::RenderableElements RPRMtlxLoader::GetRenderableElements(mx::Document const *mtlxDocument)
 {
   std::unordered_set<mx::Element *> processedElements;
   RenderableElements elements;
@@ -2756,10 +2686,10 @@ RPRMtlxLoader::Result RPRMtlxLoader::Load(MaterialX::Document const *mtlxDocumen
 {
 
   LoaderContext ctx = {};
-  ctx.logLevel      = _logLevel;
-  ctx.mtlxDocument  = mtlxDocument;
-  ctx.rprMatSys     = rprMatSys;
-  ctx.searchPath    = searchPath;
+  ctx.logLevel = _logLevel;
+  ctx.mtlxDocument = mtlxDocument;
+  ctx.rprMatSys = rprMatSys;
+  ctx.searchPath = searchPath;
   ctx.searchPath.append(_stdSearchPath);
   auto globalScope = ctx.EnterScope(LSGlobal, mtlxDocument);
 
@@ -2784,7 +2714,7 @@ RPRMtlxLoader::Result RPRMtlxLoader::Load(MaterialX::Document const *mtlxDocumen
             continue;
           }
 
-          compiledUnitType.sceneScale     = it->second;
+          compiledUnitType.sceneScale = it->second;
           ctx.compiledUnitTypes[unitType] = std::move(compiledUnitType);
           return;
         }
@@ -2798,9 +2728,7 @@ RPRMtlxLoader::Result RPRMtlxLoader::Load(MaterialX::Document const *mtlxDocumen
 
   class MtlxRenderableElements {
    public:
-    void Add(RPRMtlxLoader::OutputType outputType,
-             mx::ElementPtr const &element,
-             LoaderContext *ctx)
+    void Add(RPRMtlxLoader::OutputType outputType, mx::ElementPtr const &element, LoaderContext *ctx)
     {
       if (Exists(outputType)) {
         return;
@@ -2948,7 +2876,7 @@ RPRMtlxLoader::Result RPRMtlxLoader::Load(MaterialX::Document const *mtlxDocumen
 
   // Create MtlxNodeGraphNode for each nodeGraph-shaderRef pair
   //
-  bool hasAnyOutput                  = false;
+  bool hasAnyOutput = false;
   RprNode *rprOutputs[kOutputsTotal] = {};
   // for (auto& entry : graphNodes) {
   //     std::vector<mx::OutputPtr> requiredOutputs;
@@ -3091,7 +3019,7 @@ RPRMtlxLoader::Result RPRMtlxLoader::Load(MaterialX::Document const *mtlxDocumen
 
   if (!outImageNodes.empty()) {
     ret.numImageNodes = outImageNodes.size();
-    ret.imageNodes    = new Result::ImageNode[ret.numImageNodes];
+    ret.imageNodes = new Result::ImageNode[ret.numImageNodes];
     for (size_t i = 0; i < ret.numImageNodes; ++i) {
       ret.imageNodes[i] = outImageNodes[i];
     }
@@ -3100,10 +3028,9 @@ RPRMtlxLoader::Result RPRMtlxLoader::Load(MaterialX::Document const *mtlxDocumen
   return ret;
 }
 
-void RPRMtlxLoader::SetupStdlib(mx::FilePathVec const &libraryNames,
-                                mx::FileSearchPath const &searchPath)
+void RPRMtlxLoader::SetupStdlib(mx::FilePathVec const &libraryNames, mx::FileSearchPath const &searchPath)
 {
-  _stdlib       = mx::createDocument();
+  _stdlib = mx::createDocument();
   auto includes = mx::loadLibraries(libraryNames, searchPath, _stdlib);
   if (!includes.empty()) {
     _stdSearchPath.append(searchPath);

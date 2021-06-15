@@ -108,10 +108,7 @@ class Usd_CrateDataImpl {
   friend class Usd_CrateData;
 
  public:
-  Usd_CrateDataImpl()
-      : _flatLastSet(nullptr),
-        _hashLastSet(nullptr),
-        _crateFile(CrateFile::CreateNew())
+  Usd_CrateDataImpl() : _flatLastSet(nullptr), _hashLastSet(nullptr), _crateFile(CrateFile::CreateNew())
   {}
 
   ~Usd_CrateDataImpl()
@@ -157,25 +154,24 @@ class Usd_CrateDataImpl {
         sortedPaths.push_back(p.first);
       }
     }
-    tbb::parallel_sort(
-        sortedPaths.begin(), sortedPaths.end(), [](SdfPath const &p1, SdfPath const &p2) {
-          // Prim paths before property paths, then property paths grouped
-          // by property name.
-          bool p1IsProperty = p1.IsPropertyPath();
-          bool p2IsProperty = p2.IsPropertyPath();
-          switch ((int)p1IsProperty + (int)p2IsProperty) {
-            case 1:
-              return !p1IsProperty;
-            case 2:
-              if (p1.GetName() != p2.GetName()) {
-                return p1.GetName() < p2.GetName();
-              }
-            // Intentional fall-through
-            default:
-            case 0:
-              return p1 < p2;
+    tbb::parallel_sort(sortedPaths.begin(), sortedPaths.end(), [](SdfPath const &p1, SdfPath const &p2) {
+      // Prim paths before property paths, then property paths grouped
+      // by property name.
+      bool p1IsProperty = p1.IsPropertyPath();
+      bool p2IsProperty = p2.IsPropertyPath();
+      switch ((int)p1IsProperty + (int)p2IsProperty) {
+        case 1:
+          return !p1IsProperty;
+        case 2:
+          if (p1.GetName() != p2.GetName()) {
+            return p1.GetName() < p2.GetName();
           }
-        });
+        // Intentional fall-through
+        default:
+        case 0:
+          return p1 < p2;
+      }
+    });
 
     // Now pack all the specs.
     if (CrateFile::Packer packer = _crateFile->StartPacking(fileName)) {
@@ -234,7 +230,7 @@ class Usd_CrateDataImpl {
         specType = SdfSpecTypeAttribute;
       }
       if (!targetPaths.IsHolding<SdfPathListOp>()) {
-        specType    = SdfSpecTypeUnknown;
+        specType = SdfSpecTypeUnknown;
         targetPaths = VtValue();
       }
     }
@@ -253,7 +249,7 @@ class Usd_CrateDataImpl {
     using std::find;
     SdfPath parentPath = path.GetParentPath();
     SdfPath targetPath = path.GetTargetPath();
-    VtValue listOpVal  = _GetTargetOrConnectionListOpValue(parentPath);
+    VtValue listOpVal = _GetTargetOrConnectionListOpValue(parentPath);
     if (!listOpVal.IsEmpty()) {
       SdfPathListOp const &listOp = listOpVal.UncheckedGet<SdfPathListOp>();
       if (listOp.IsExplicit()) {
@@ -261,9 +257,9 @@ class Usd_CrateDataImpl {
         return find(items.begin(), items.end(), targetPath) != items.end();
       }
       else {
-        auto const &added     = listOp.GetAddedItems();
+        auto const &added = listOp.GetAddedItems();
         auto const &prepended = listOp.GetPrependedItems();
-        auto const &appended  = listOp.GetAppendedItems();
+        auto const &appended = listOp.GetAppendedItems();
         return find(added.begin(), added.end(), targetPath) != added.end() ||
                find(prepended.begin(), prepended.end(), targetPath) != prepended.end() ||
                find(appended.begin(), appended.end(), targetPath) != appended.end();
@@ -277,8 +273,7 @@ class Usd_CrateDataImpl {
     if (ARCH_UNLIKELY(path.IsTargetPath())) {
       return _HasTargetOrConnectionSpec(path);
     }
-    return _hashData ? _hashData->find(path) != _hashData->end() :
-                       _flatData.find(path) != _flatData.end();
+    return _hashData ? _hashData->find(path) != _hashData->end() : _flatData.find(path) != _flatData.end();
   }
 
   inline void EraseSpec(const SdfPath &path)
@@ -292,7 +287,7 @@ class Usd_CrateDataImpl {
       TF_VERIFY(_hashData->erase(path), "%s", path.GetText());
     }
     else {
-      auto iter    = _flatData.find(path);
+      auto iter = _flatData.find(path);
       size_t index = iter - _flatData.begin();
       if (TF_VERIFY(iter != _flatData.end(), "%s", path.GetText())) {
         _flatLastSet = nullptr;
@@ -313,7 +308,7 @@ class Usd_CrateDataImpl {
       auto oldIter = _hashData->find(oldPath);
       if (!TF_VERIFY(oldIter != _hashData->end()))
         return;
-      _hashLastSet  = nullptr;
+      _hashLastSet = nullptr;
       bool inserted = _hashData->emplace(newPath, oldIter->second).second;
       if (!TF_VERIFY(inserted))
         return;
@@ -333,7 +328,7 @@ class Usd_CrateDataImpl {
       _flatData.erase(oldIter);
       _flatTypes.erase(_flatTypes.begin() + index);
 
-      auto iresult          = _flatData.emplace(newPath, std::move(tmpFields));
+      auto iresult = _flatData.emplace(newPath, std::move(tmpFields));
       const size_t newIndex = iresult.first - _flatData.begin();
       _flatTypes.insert(_flatTypes.begin() + newIndex, tmpType);
 
@@ -348,7 +343,7 @@ class Usd_CrateDataImpl {
     }
     if (path.IsTargetPath()) {
       if (_HasTargetOrConnectionSpec(path)) {
-        SdfPath parentPath         = path.GetParentPath();
+        SdfPath parentPath = path.GetParentPath();
         SdfSpecType parentSpecType = GetSpecType(parentPath);
         if (parentSpecType == SdfSpecTypeRelationship) {
           return SdfSpecTypeRelationshipTarget;
@@ -386,7 +381,7 @@ class Usd_CrateDataImpl {
     else {
       _flatLastSet = nullptr;
       auto iresult = _flatData.emplace(path, _FlatSpecData());
-      auto index   = iresult.first - _flatData.begin();
+      auto index = iresult.first - _flatData.begin();
       if (iresult.second) {
         _flatTypes.insert(_flatTypes.begin() + index, _SpecType(specType));
       }
@@ -402,8 +397,7 @@ class Usd_CrateDataImpl {
     // A helper function for spoofing target & connection spec existence --
     // we don't actually store those specs since we don't support fields on
     // them.
-    auto doTargetAndConnectionSpecs = [this, &data, visitor](SdfPath const &path,
-                                                             SdfSpecType specType) {
+    auto doTargetAndConnectionSpecs = [this, &data, visitor](SdfPath const &path, SdfSpecType specType) {
       // Spoof existence of target & connection specs.
       if (specType == SdfSpecTypeAttribute || specType == SdfSpecTypeRelationship) {
         SdfPathListOp listOp;
@@ -415,16 +409,14 @@ class Usd_CrateDataImpl {
             specs = listOp.GetExplicitItems();
           }
           else {
-            auto const &added     = listOp.GetAddedItems();
+            auto const &added = listOp.GetAddedItems();
             auto const &prepended = listOp.GetPrependedItems();
-            auto const &appended  = listOp.GetAppendedItems();
+            auto const &appended = listOp.GetAppendedItems();
             specs.resize(added.size() + prepended.size() + appended.size());
             using std::copy;
             copy(appended.begin(),
                  appended.end(),
-                 copy(prepended.begin(),
-                      prepended.end(),
-                      copy(added.begin(), added.end(), specs.begin())));
+                 copy(prepended.begin(), prepended.end(), copy(added.begin(), added.end(), specs.begin())));
             std::sort(specs.begin(), specs.end());
             specs.erase(std::unique(specs.begin(), specs.end()), specs.end());
           }
@@ -441,8 +433,7 @@ class Usd_CrateDataImpl {
 
     if (_hashData) {
       for (auto const &p : *_hashData) {
-        if (!visitor->VisitSpec(data, p.first) ||
-            !doTargetAndConnectionSpecs(p.first, p.second.specType)) {
+        if (!visitor->VisitSpec(data, p.first) || !doTargetAndConnectionSpecs(p.first, p.second.specType)) {
           return;
         }
       }
@@ -535,9 +526,7 @@ class Usd_CrateDataImpl {
     return false;
   }
 
-  bool _HasConnectionOrTargetChildren(const SdfPath &path,
-                                      const TfToken &field,
-                                      VtValue *value) const
+  bool _HasConnectionOrTargetChildren(const SdfPath &path, const TfToken &field, VtValue *value) const
   {
     VtValue listOpVal = _GetTargetOrConnectionListOpValue(path);
     if (!listOpVal.IsEmpty()) {
@@ -563,8 +552,8 @@ class Usd_CrateDataImpl {
   {
     if (VtValue const *fieldValue = _GetFieldValue(path, field)) {
       return fieldValue->IsHolding<ValueRep>() ?
-                 _crateFile->GetTypeid(fieldValue->UncheckedGet<ValueRep>()) :
-                 fieldValue->GetTypeid();
+               _crateFile->GetTypeid(fieldValue->UncheckedGet<ValueRep>()) :
+               fieldValue->GetTypeid();
     }
     return typeid(void);
   }
@@ -583,7 +572,7 @@ class Usd_CrateDataImpl {
       // existence of connectionChildren or targetChildren.
       if (path.IsPrimPropertyPath()) {
         SdfSpecType specType = SdfSpecTypeUnknown;
-        VtValue listOpVal    = _GetTargetOrConnectionListOpValue(path, &specType);
+        VtValue listOpVal = _GetTargetOrConnectionListOpValue(path, &specType);
         if (specType == SdfSpecTypeRelationship) {
           out.push_back(SdfChildrenKeys->RelationshipTargetChildren);
         }
@@ -631,7 +620,7 @@ class Usd_CrateDataImpl {
     VtValue convertedVal;
     if (fieldName == SdfDataTokens->TimeSamples) {
       convertedVal = _Make_TimeSamples(value);
-      valPtr       = &convertedVal;
+      valPtr = &convertedVal;
     }
     else if (fieldName == SdfFieldKeys->Payload) {
       // Special case. Some payload list op values can be represented as
@@ -640,7 +629,7 @@ class Usd_CrateDataImpl {
       // field as old version compatible if possible in case we need to
       // write the file in a 0.7.0 compatible crate file.
       convertedVal = _FromPayloadListOpValue(value);
-      valPtr       = &convertedVal;
+      valPtr = &convertedVal;
     }
 
     auto &spec = lastSet->second;
@@ -666,21 +655,19 @@ class Usd_CrateDataImpl {
     }
     if (path.IsTargetPath()) {
       TF_CODING_ERROR(
-          "Cannot set fields on relationship target or "
-          "attribute connection specs: "
-          "<%s>:%s = %s",
-          path.GetText(),
-          fieldName.GetText(),
-          TfStringify(value).c_str());
+        "Cannot set fields on relationship target or "
+        "attribute connection specs: "
+        "<%s>:%s = %s",
+        path.GetText(),
+        fieldName.GetText(),
+        TfStringify(value).c_str());
       return;
     }
     _hashData ? _SetHelper(*_hashData, path, _hashLastSet, fieldName, value) :
                 _SetHelper(_flatData, path, _flatLastSet, fieldName, value);
   }
 
-  inline void Set(const SdfPath &path,
-                  const TfToken &field,
-                  const SdfAbstractDataConstValue &value)
+  inline void Set(const SdfPath &path, const TfToken &field, const SdfAbstractDataConstValue &value)
   {
     VtValue val;
     TF_AXIOM(value.GetValue(&val));
@@ -693,7 +680,7 @@ class Usd_CrateDataImpl {
     if (i == d.end())
       return;
 
-    auto &spec         = i->second;
+    auto &spec = i->second;
     auto const &fields = spec.fields.Get();
     for (size_t j = 0, jEnd = fields.size(); j != jEnd; ++j) {
       if (fields[j].first == field) {
@@ -748,14 +735,14 @@ class Usd_CrateDataImpl {
     // TF_DESCRIBE_SCOPE(GetAssetPath().c_str());
     if (VtValue const *fieldValue = _GetFieldValue(path, SdfDataTokens->TimeSamples)) {
       if (fieldValue->IsHolding<TimeSamples>()) {
-        auto const &ts    = fieldValue->UncheckedGet<TimeSamples>();
+        auto const &ts = fieldValue->UncheckedGet<TimeSamples>();
         auto const &times = ts.times.Get();
-        auto iter         = lower_bound(times.begin(), times.end(), time);
+        auto iter = lower_bound(times.begin(), times.end(), time);
         if (iter == times.end() || *iter != time)
           return false;
         if (value) {
           auto index = iter - times.begin();
-          *value     = _DetachValue(_crateFile->GetTimeSampleValue(ts, index));
+          *value = _DetachValue(_crateFile->GetTimeSampleValue(ts, index));
         }
         return true;
       }
@@ -874,13 +861,11 @@ class Usd_CrateDataImpl {
       // Sort by path fast-less-than, need same order that _Table will
       // store.
       dispatcher.Run([this, &specs]() {
-        tbb::parallel_sort(specs.begin(),
-                           specs.end(),
-                           [this](CrateFile::Spec const &l, CrateFile::Spec const &r) {
-                             SdfPath::FastLessThan flt;
-                             return flt(_crateFile->GetPath(l.pathIndex),
-                                        _crateFile->GetPath(r.pathIndex));
-                           });
+        tbb::parallel_sort(
+          specs.begin(), specs.end(), [this](CrateFile::Spec const &l, CrateFile::Spec const &r) {
+            SdfPath::FastLessThan flt;
+            return flt(_crateFile->GetPath(l.pathIndex), _crateFile->GetPath(r.pathIndex));
+          });
       });
       dispatcher.Wait();
 
@@ -908,7 +893,7 @@ class Usd_CrateDataImpl {
         decltype(_flatData)(boost::container::ordered_unique_range,
                             boost::make_transform_iterator(specs.begin(), s2p),
                             boost::make_transform_iterator(specs.end(), s2p))
-            .swap(_flatData);
+          .swap(_flatData);
       }
 
       // Allocate all the spec data structures in the hashtable first,
@@ -955,8 +940,8 @@ class Usd_CrateDataImpl {
           pairs.resize(fsEnd - fsBegin);
           for (size_t i = 0; fsBegin != fsEnd; ++fsBegin, ++i) {
             auto const &field = fields[fsBegin->value];
-            pairs[i].first    = _crateFile->GetToken(field.tokenIndex);
-            pairs[i].second   = _UnpackForField(field.valueRep);
+            pairs[i].first = _crateFile->GetToken(field.tokenIndex);
+            pairs[i].second = _UnpackForField(field.valueRep);
           }
         });
       }
@@ -967,10 +952,10 @@ class Usd_CrateDataImpl {
         tbb::parallel_for(static_cast<size_t>(0),
                           static_cast<size_t>(specs.size()),
                           [this, &specs, &specDataPtrs, &liveFieldSets](size_t specIdx) {
-                            auto const &s            = specs[specIdx];
-                            auto *specData           = specDataPtrs[specIdx];
+                            auto const &s = specs[specIdx];
+                            auto *specData = specDataPtrs[specIdx];
                             _flatTypes[specIdx].type = s.specType;
-                            specData->fields         = liveFieldSets.find(s.fieldSetIndex)->second;
+                            specData->fields = liveFieldSets.find(s.fieldSetIndex)->second;
                           });
       });
 
@@ -1017,8 +1002,7 @@ class Usd_CrateDataImpl {
 
   inline vector<double> _ListAllTimeSamples() const
   {
-    return _hashData ? _ListAllTimeSamplesHelper(*_hashData) :
-                       _ListAllTimeSamplesHelper(_flatData);
+    return _hashData ? _ListAllTimeSamplesHelper(*_hashData) : _ListAllTimeSamplesHelper(_flatData);
   }
 
   inline VtValue _MakeTimeSampleMap(VtValue const &val) const
@@ -1110,9 +1094,7 @@ class Usd_CrateDataImpl {
   }
 
   template<class Data>
-  inline VtValue const *_GetFieldValueHelper(Data const &d,
-                                             SdfPath const &path,
-                                             TfToken const &field) const
+  inline VtValue const *_GetFieldValueHelper(Data const &d, SdfPath const &path, TfToken const &field) const
   {
     auto i = d.find(path);
     if (i != d.end()) {
@@ -1137,7 +1119,7 @@ class Usd_CrateDataImpl {
   {
     auto i = d.find(path);
     if (i != d.end()) {
-      auto &spec         = i->second;
+      auto &spec = i->second;
       auto const &fields = spec.fields.Get();
       for (size_t j = 0, jEnd = fields.size(); j != jEnd; ++j) {
         if (fields[j].first == field) {
@@ -1180,7 +1162,7 @@ class Usd_CrateDataImpl {
 
       // move to hash table.
       _hashData.reset(new decltype(_hashData)::element_type);
-      auto &d            = *_hashData;
+      auto &d = *_hashData;
       auto flatBeginIter = _flatData.begin();
       for (size_t i = 0; i != _flatData.size(); ++i) {
         auto const &p = flatBeginIter[i];
@@ -1237,8 +1219,7 @@ class Usd_CrateDataImpl {
     explicit _SpecType(SdfSpecType type) : type(type)
     {}
     SdfSpecType type : 8;
-    static_assert(TF_BITS_FOR_VALUES(SdfNumSpecTypes) <= 8,
-                  "Must be able to pack a SdfSpecType in a byte.");
+    static_assert(TF_BITS_FOR_VALUES(SdfNumSpecTypes) <= 8, "Must be able to pack a SdfSpecType in a byte.");
   };
   std::vector<_SpecType> _flatTypes;
 
@@ -1329,9 +1310,7 @@ void Usd_CrateData::_VisitSpecs(SdfAbstractDataSpecVisitor *visitor) const
   _impl->_VisitSpecs(*this, visitor);
 }
 
-bool Usd_CrateData::Has(const SdfPath &path,
-                        const TfToken &field,
-                        SdfAbstractDataValue *value) const
+bool Usd_CrateData::Has(const SdfPath &path, const TfToken &field, SdfAbstractDataValue *value) const
 {
   return _impl->Has(path, field, value);
 }
@@ -1361,9 +1340,7 @@ void Usd_CrateData::Set(const SdfPath &path, const TfToken &fieldName, const VtV
   return _impl->Set(path, fieldName, value);
 }
 
-void Usd_CrateData::Set(const SdfPath &path,
-                        const TfToken &field,
-                        const SdfAbstractDataConstValue &value)
+void Usd_CrateData::Set(const SdfPath &path, const TfToken &field, const SdfAbstractDataConstValue &value)
 {
   return _impl->Set(path, field, value);
 }
@@ -1409,9 +1386,7 @@ bool Usd_CrateData::QueryTimeSample(const SdfPath &path, double time, VtValue *v
   return _impl->QueryTimeSample(path, time, value);
 }
 
-bool Usd_CrateData::QueryTimeSample(const SdfPath &path,
-                                    double time,
-                                    SdfAbstractDataValue *value) const
+bool Usd_CrateData::QueryTimeSample(const SdfPath &path, double time, SdfAbstractDataValue *value) const
 {
   return _impl->QueryTimeSample(path, time, value);
 }

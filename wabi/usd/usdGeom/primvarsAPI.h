@@ -194,7 +194,7 @@ class UsdGeomPrimvarsAPI : public UsdAPISchemaBase {
   UsdGeomPrimvar CreatePrimvar(const TfToken &name,
                                const SdfValueTypeName &typeName,
                                const TfToken &interpolation = TfToken(),
-                               int elementSize              = -1) const;
+                               int elementSize = -1) const;
 
   /// Author scene description to create an attribute and authoring a \p value
   /// on this prim that will be recognized as a Primvar (i.e. will present as
@@ -214,7 +214,7 @@ class UsdGeomPrimvarsAPI : public UsdAPISchemaBase {
                                          const SdfValueTypeName &typeName,
                                          const T &value,
                                          const TfToken &interpolation = TfToken(),
-                                         int elementSize              = -1,
+                                         int elementSize = -1,
                                          UsdTimeCode time = UsdTimeCode::Default()) const
   {
     UsdGeomPrimvar primvar = CreatePrimvar(name, typeName, interpolation, elementSize);
@@ -241,8 +241,8 @@ class UsdGeomPrimvarsAPI : public UsdAPISchemaBase {
                                       const T &value,
                                       const VtIntArray &indices,
                                       const TfToken &interpolation = TfToken(),
-                                      int elementSize              = -1,
-                                      UsdTimeCode time             = UsdTimeCode::Default()) const
+                                      int elementSize = -1,
+                                      UsdTimeCode time = UsdTimeCode::Default()) const
   {
     UsdGeomPrimvar primvar = CreatePrimvar(name, typeName, interpolation, elementSize);
 
@@ -377,7 +377,7 @@ class UsdGeomPrimvarsAPI : public UsdAPISchemaBase {
   /// \sa \ref usdGeom_PrimvarFetchingAPI
   USDGEOM_API
   std::vector<UsdGeomPrimvar> FindIncrementallyInheritablePrimvars(
-      const std::vector<UsdGeomPrimvar> &inheritedFromAncestors) const;
+    const std::vector<UsdGeomPrimvar> &inheritedFromAncestors) const;
 
   /// Like GetPrimvar(), but if the named primvar does not exist or has no
   /// authored value on this prim, search for the named, value-producing
@@ -404,9 +404,8 @@ class UsdGeomPrimvarsAPI : public UsdAPISchemaBase {
   ///
   /// \sa \ref usdGeom_PrimvarFetchingAPI
   USDGEOM_API
-  UsdGeomPrimvar FindPrimvarWithInheritance(
-      const TfToken &name,
-      const std::vector<UsdGeomPrimvar> &inheritedFromAncestors) const;
+  UsdGeomPrimvar FindPrimvarWithInheritance(const TfToken &name,
+                                            const std::vector<UsdGeomPrimvar> &inheritedFromAncestors) const;
 
   /// Find all of the value-producing primvars either defined on this prim,
   /// or inherited from ancestor prims.
@@ -425,7 +424,7 @@ class UsdGeomPrimvarsAPI : public UsdAPISchemaBase {
   /// \sa \ref usdGeom_PrimvarFetchingAPI
   USDGEOM_API
   std::vector<UsdGeomPrimvar> FindPrimvarsWithInheritance(
-      const std::vector<UsdGeomPrimvar> &inheritedFromAncestors) const;
+    const std::vector<UsdGeomPrimvar> &inheritedFromAncestors) const;
 
   /// Is there a defined Primvar \p name on this prim?
   ///

@@ -37,8 +37,8 @@ namespace {
 
 struct _Opener {
   explicit _Opener(const Pcp_MutedLayers &mutedLayers, std::set<SdfLayerRefPtr> *retainedLayers)
-      : _mutedLayers(mutedLayers),
-        _retainedLayers(retainedLayers)
+    : _mutedLayers(mutedLayers),
+      _retainedLayers(retainedLayers)
   {}
 
   ~_Opener()
@@ -66,8 +66,7 @@ struct _Opener {
     // Open this specific sublayer path.
     // The call to SdfLayer::FindOrOpenRelativeToLayer() may take some
     // time, potentially multiple seconds.
-    if (SdfLayerRefPtr sublayer = SdfLayer::FindOrOpenRelativeToLayer(
-            anchorLayer, path, layerArgs)) {
+    if (SdfLayerRefPtr sublayer = SdfLayer::FindOrOpenRelativeToLayer(anchorLayer, path, layerArgs)) {
       // Retain this sublayer.
       bool didInsert;
       {

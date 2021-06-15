@@ -59,19 +59,18 @@ struct Tf_StdStringFromPythonUnicode {
   Tf_StdStringFromPythonUnicode()
   {
     boost::python::converter::registry::insert(
-        &convertible, &construct, boost::python::type_id<std::string>());
+      &convertible, &construct, boost::python::type_id<std::string>());
   }
   static void *convertible(PyObject *obj)
   {
     return PyUnicode_Check(obj) ? obj : 0;
   }
-  static void construct(PyObject *src,
-                        boost::python::converter::rvalue_from_python_stage1_data *data)
+  static void construct(PyObject *src, boost::python::converter::rvalue_from_python_stage1_data *data)
   {
     boost::python::handle<> utf8(PyUnicode_AsUTF8String(src));
     std::string utf8String(boost::python::extract<std::string>(utf8.get()));
     void *storage =
-        ((boost::python::converter::rvalue_from_python_storage<std::string> *)data)->storage.bytes;
+      ((boost::python::converter::rvalue_from_python_storage<std::string> *)data)->storage.bytes;
     new (storage) std::string(utf8String);
     data->convertible = storage;
   }
@@ -79,7 +78,7 @@ struct Tf_StdStringFromPythonUnicode {
 
 static unsigned long _StringToULong(char const *str)
 {
-  bool outOfRange      = false;
+  bool outOfRange = false;
   unsigned long result = TfStringToULong(str, &outOfRange);
   if (outOfRange)
     TfPyThrowValueError("Out of range.");
@@ -89,7 +88,7 @@ static unsigned long _StringToULong(char const *str)
 static long _StringToLong(char const *str)
 {
   bool outOfRange = false;
-  long result     = TfStringToLong(str, &outOfRange);
+  long result = TfStringToLong(str, &outOfRange);
   if (outOfRange)
     TfPyThrowValueError("Out of range.");
   return result;

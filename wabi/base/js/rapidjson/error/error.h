@@ -155,7 +155,7 @@ struct ParseResult {
   //! Update error code and offset.
   void Set(ParseErrorCode code, size_t offset = 0)
   {
-    code_   = code;
+    code_ = code;
     offset_ = offset;
   }
 

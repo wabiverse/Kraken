@@ -147,23 +147,23 @@ class HdBindingRequest {
   /// BufferResource.  This binding request simply
   /// generates named metadata (#define HD_HAS_foo 1, #define HD_foo_Binding)
   HdBindingRequest(HdBinding::Type bindingType, TfToken const &name)
-      : _bindingType(bindingType),
-        _dataType(HdTypeInvalid),
-        _name(name),
-        _resource(nullptr),
-        _bar(nullptr),
-        _isInterleaved(false)
+    : _bindingType(bindingType),
+      _dataType(HdTypeInvalid),
+      _name(name),
+      _resource(nullptr),
+      _bar(nullptr),
+      _isInterleaved(false)
   {}
 
   /// A data binding, not backed by neither BufferArrayRange nor
   /// BufferResource.
   HdBindingRequest(HdBinding::Type bindingType, TfToken const &name, HdType dataType)
-      : _bindingType(bindingType),
-        _dataType(dataType),
-        _name(name),
-        _resource(nullptr),
-        _bar(nullptr),
-        _isInterleaved(false)
+    : _bindingType(bindingType),
+      _dataType(dataType),
+      _name(name),
+      _resource(nullptr),
+      _bar(nullptr),
+      _isInterleaved(false)
   {}
 
   /// A buffer resource binding. Binds a given buffer resource to a specified
@@ -171,12 +171,12 @@ class HdBindingRequest {
   HdBindingRequest(HdBinding::Type bindingType,
                    TfToken const &name,
                    HdBufferResourceSharedPtr const &resource)
-      : _bindingType(bindingType),
-        _dataType(resource->GetTupleType().type),
-        _name(name),
-        _resource(resource),
-        _bar(nullptr),
-        _isInterleaved(false)
+    : _bindingType(bindingType),
+      _dataType(resource->GetTupleType().type),
+      _name(name),
+      _resource(resource),
+      _bar(nullptr),
+      _isInterleaved(false)
   {}
 
   /// A named struct binding. From an interleaved BufferArray, an array of
@@ -188,12 +188,12 @@ class HdBindingRequest {
                    TfToken const &name,
                    HdBufferArrayRangeSharedPtr bar,
                    bool interleave)
-      : _bindingType(type),
-        _dataType(HdTypeInvalid),
-        _name(name),
-        _resource(nullptr),
-        _bar(bar),
-        _isInterleaved(interleave)
+    : _bindingType(type),
+      _dataType(HdTypeInvalid),
+      _name(name),
+      _resource(nullptr),
+      _bar(bar),
+      _isInterleaved(interleave)
   {}
 
   // ---------------------------------------------------------------------- //

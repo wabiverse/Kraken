@@ -62,8 +62,7 @@ template<class ChildPolicy> struct Sdf_IsValidPathComponent {
 
 // Helper function which returns \a path with \a newName appended.
 template<class ChildPolicy>
-static SdfPath _ComputeMovedPath(const SdfPath &path,
-                                 const typename ChildPolicy::FieldType &newName)
+static SdfPath _ComputeMovedPath(const SdfPath &path, const typename ChildPolicy::FieldType &newName)
 {
   if (!Sdf_IsValidPathComponent<ChildPolicy>()(newName)) {
     return SdfPath();
@@ -74,8 +73,7 @@ static SdfPath _ComputeMovedPath(const SdfPath &path,
 
 // Helper function which returns \a path with the name changed to \a newName
 template<class ChildPolicy>
-static SdfPath _ComputeRenamedPath(const SdfPath &path,
-                                   const typename ChildPolicy::FieldType &newName)
+static SdfPath _ComputeRenamedPath(const SdfPath &path, const typename ChildPolicy::FieldType &newName)
 {
   return ChildPolicy::GetChildPath(ChildPolicy::GetParentPath(path), newName);
 }
@@ -107,7 +105,7 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CreateSpec(SdfLayer *layer,
   // Add this spec to the parent's list of children. Since _CreateSpec above
   // will fail if a duplicate spec exists, we can simply append the new child
   // to the list.
-  const SdfPath parentPath  = ChildPolicy::GetParentPath(childPath);
+  const SdfPath parentPath = ChildPolicy::GetParentPath(childPath);
   const TfToken childrenKey = ChildPolicy::GetChildrenToken(parentPath);
   const FieldType childName = ChildPolicy::GetFieldValue(childPath);
 
@@ -117,10 +115,9 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CreateSpec(SdfLayer *layer,
 }
 
 template<class ChildPolicy>
-static void _FilterDuplicatePreexistingChildren(
-    std::vector<typename ChildPolicy::ValueType> *filtered,
-    const SdfPath &parentPath,
-    const std::vector<typename ChildPolicy::ValueType> &original)
+static void _FilterDuplicatePreexistingChildren(std::vector<typename ChildPolicy::ValueType> *filtered,
+                                                const SdfPath &parentPath,
+                                                const std::vector<typename ChildPolicy::ValueType> &original)
 {
   typedef typename ChildPolicy::FieldType FieldType;
   std::set<FieldType> keySet;
@@ -144,9 +141,9 @@ static void _FilterDuplicatePreexistingChildren(
 
 template<class ChildPolicy>
 bool Sdf_ChildrenUtils<ChildPolicy>::SetChildren(
-    const SdfLayerHandle &layer,
-    const SdfPath &path,
-    const std::vector<typename ChildPolicy::ValueType> &origValues)
+  const SdfLayerHandle &layer,
+  const SdfPath &path,
+  const std::vector<typename ChildPolicy::ValueType> &origValues)
 {
   typedef typename ChildPolicy::FieldType FieldType;
   const TfToken childrenKey = ChildPolicy::GetChildrenToken(path);
@@ -249,11 +246,11 @@ bool Sdf_ChildrenUtils<ChildPolicy>::SetChildren(
                                                                                    oldChildrenKey);
 
     typename std::vector<FieldType>::iterator oldNameIter = std::find(
-        oldSiblings.begin(), oldSiblings.end(), key);
+      oldSiblings.begin(), oldSiblings.end(), key);
     if (oldNameIter == oldSiblings.end()) {
       TF_CODING_ERROR(
-          "An object was not in its parent's list of "
-          "children");
+        "An object was not in its parent's list of "
+        "children");
       return false;
     }
 
@@ -342,11 +339,11 @@ bool Sdf_ChildrenUtils<ChildPolicy>::InsertChild(const SdfLayerHandle &layer,
   // Find the child in the old parent's list of children
   const TfToken oldChildrenKey = ChildPolicy::GetChildrenToken(oldParentPath);
 
-  std::vector<FieldType> oldSiblingNames = layer->GetFieldAs<std::vector<FieldType>>(
-      oldParentPath, oldChildrenKey);
+  std::vector<FieldType> oldSiblingNames = layer->GetFieldAs<std::vector<FieldType>>(oldParentPath,
+                                                                                     oldChildrenKey);
 
   typename std::vector<FieldType>::iterator oldNameIter = std::find(
-      oldSiblingNames.begin(), oldSiblingNames.end(), key);
+    oldSiblingNames.begin(), oldSiblingNames.end(), key);
 
   if (oldNameIter == oldSiblingNames.end()) {
     TF_CODING_ERROR("An object was not in its parent's list of children");
@@ -423,11 +420,11 @@ bool Sdf_ChildrenUtils<ChildPolicy>::RemoveChild(const SdfLayerHandle &layer,
 
 template<class ChildPolicy>
 bool Sdf_ChildrenUtils<ChildPolicy>::MoveChildForBatchNamespaceEdit(
-    const SdfLayerHandle &layer,
-    const SdfPath &path,
-    const typename ChildPolicy::ValueType &value,
-    const typename ChildPolicy::FieldType &newName,
-    int index)
+  const SdfLayerHandle &layer,
+  const SdfPath &path,
+  const typename ChildPolicy::ValueType &value,
+  const typename ChildPolicy::FieldType &newName,
+  int index)
 {
   typedef typename ChildPolicy::FieldType FieldType;
   const TfToken childrenKey = ChildPolicy::GetChildrenToken(path);
@@ -455,11 +452,11 @@ bool Sdf_ChildrenUtils<ChildPolicy>::MoveChildForBatchNamespaceEdit(
   }
 
   // Get the old sibling names and find the value.
-  const TfToken oldChildrenKey           = ChildPolicy::GetChildrenToken(oldParentPath);
-  std::vector<FieldType> oldSiblingNames = layer->GetFieldAs<std::vector<FieldType>>(
-      oldParentPath, oldChildrenKey);
+  const TfToken oldChildrenKey = ChildPolicy::GetChildrenToken(oldParentPath);
+  std::vector<FieldType> oldSiblingNames = layer->GetFieldAs<std::vector<FieldType>>(oldParentPath,
+                                                                                     oldChildrenKey);
   typename std::vector<FieldType>::iterator oldNameIter = std::find(
-      oldSiblingNames.begin(), oldSiblingNames.end(), oldKey);
+    oldSiblingNames.begin(), oldSiblingNames.end(), oldKey);
 
   // Use a change block to ensure all layer data manipulations below are
   // treated atomically.
@@ -516,12 +513,12 @@ bool Sdf_ChildrenUtils<ChildPolicy>::MoveChildForBatchNamespaceEdit(
 
 template<class ChildPolicy>
 bool Sdf_ChildrenUtils<ChildPolicy>::CanMoveChildForBatchNamespaceEdit(
-    const SdfLayerHandle &layer,
-    const SdfPath &path,
-    const typename ChildPolicy::ValueType &value,
-    const typename ChildPolicy::FieldType &newName,
-    int index,
-    std::string *whyNot)
+  const SdfLayerHandle &layer,
+  const SdfPath &path,
+  const typename ChildPolicy::ValueType &value,
+  const typename ChildPolicy::FieldType &newName,
+  int index,
+  std::string *whyNot)
 {
   typedef typename ChildPolicy::FieldType FieldType;
   const TfToken childrenKey = ChildPolicy::GetChildrenToken(path);
@@ -593,12 +590,12 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CanMoveChildForBatchNamespaceEdit(
 
   // Check the invariant that a parent has its children.
   FieldType oldKey((ChildPolicy::GetKey(value)));
-  SdfPath oldParentPath                  = ChildPolicy::GetParentPath(value->GetPath());
-  const TfToken oldChildrenKey           = ChildPolicy::GetChildrenToken(oldParentPath);
-  std::vector<FieldType> oldSiblingNames = layer->GetFieldAs<std::vector<FieldType>>(
-      oldParentPath, oldChildrenKey);
+  SdfPath oldParentPath = ChildPolicy::GetParentPath(value->GetPath());
+  const TfToken oldChildrenKey = ChildPolicy::GetChildrenToken(oldParentPath);
+  std::vector<FieldType> oldSiblingNames = layer->GetFieldAs<std::vector<FieldType>>(oldParentPath,
+                                                                                     oldChildrenKey);
   typename std::vector<FieldType>::iterator oldNameIter = std::find(
-      oldSiblingNames.begin(), oldSiblingNames.end(), oldKey);
+    oldSiblingNames.begin(), oldSiblingNames.end(), oldKey);
   if (oldNameIter == oldSiblingNames.end()) {
     if (whyNot) {
       *whyNot = "Coding error: Object is not in its parent's children";
@@ -611,10 +608,10 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CanMoveChildForBatchNamespaceEdit(
 
 template<class ChildPolicy>
 bool Sdf_ChildrenUtils<ChildPolicy>::CanRemoveChildForBatchNamespaceEdit(
-    const SdfLayerHandle &layer,
-    const SdfPath &path,
-    const typename ChildPolicy::FieldType &key,
-    std::string *whyNot)
+  const SdfLayerHandle &layer,
+  const SdfPath &path,
+  const typename ChildPolicy::FieldType &key,
+  std::string *whyNot)
 {
   typedef typename ChildPolicy::FieldType FieldType;
   const TfToken childrenKey = ChildPolicy::GetChildrenToken(path);
@@ -627,8 +624,7 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CanRemoveChildForBatchNamespaceEdit(
   }
 
   std::vector<FieldType> childNames = layer->GetFieldAs<std::vector<FieldType>>(path, childrenKey);
-  typename std::vector<FieldType>::iterator i = std::find(
-      childNames.begin(), childNames.end(), key);
+  typename std::vector<FieldType>::iterator i = std::find(childNames.begin(), childNames.end(), key);
   if (i == childNames.end()) {
     if (whyNot) {
       *whyNot = "Object does not exist";
@@ -639,29 +635,26 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CanRemoveChildForBatchNamespaceEdit(
   return true;
 }
 
-template<class ChildPolicy>
-bool Sdf_ChildrenUtils<ChildPolicy>::IsValidName(const FieldType &newName)
+template<class ChildPolicy> bool Sdf_ChildrenUtils<ChildPolicy>::IsValidName(const FieldType &newName)
+{
+  return ChildPolicy::IsValidIdentifier(newName);
+}
+
+template<class ChildPolicy> bool Sdf_ChildrenUtils<ChildPolicy>::IsValidName(const std::string &newName)
 {
   return ChildPolicy::IsValidIdentifier(newName);
 }
 
 template<class ChildPolicy>
-bool Sdf_ChildrenUtils<ChildPolicy>::IsValidName(const std::string &newName)
-{
-  return ChildPolicy::IsValidIdentifier(newName);
-}
-
-template<class ChildPolicy>
-SdfAllowed Sdf_ChildrenUtils<ChildPolicy>::CanRename(
-    const SdfSpec &spec,
-    const typename ChildPolicy::FieldType &newName)
+SdfAllowed Sdf_ChildrenUtils<ChildPolicy>::CanRename(const SdfSpec &spec,
+                                                     const typename ChildPolicy::FieldType &newName)
 {
   if (!spec.GetLayer()->PermissionToEdit()) {
     return "Layer is not editable";
   }
   if (!IsValidName(newName)) {
     return TfStringPrintf(
-        "Cannot rename %s to invalid name '%s'", spec.GetPath().GetText(), newName.GetText());
+      "Cannot rename %s to invalid name '%s'", spec.GetPath().GetText(), newName.GetText());
   }
 
   SdfPath newPath = _ComputeRenamedPath<ChildPolicy>(spec.GetPath(), newName);
@@ -699,20 +692,19 @@ bool Sdf_ChildrenUtils<ChildPolicy>::Rename(const SdfSpec &spec,
   SdfLayerHandle layer = spec.GetLayer();
 
   // Determine the key for the children vector.
-  const SdfPath parentPath  = ChildPolicy::GetParentPath(oldPath);
+  const SdfPath parentPath = ChildPolicy::GetParentPath(oldPath);
   const TfToken childrenKey = ChildPolicy::GetChildrenToken(parentPath);
 
-  std::vector<FieldType> childNames = layer->GetFieldAs<std::vector<FieldType>>(parentPath,
-                                                                                childrenKey);
+  std::vector<FieldType> childNames = layer->GetFieldAs<std::vector<FieldType>>(parentPath, childrenKey);
 
   TF_FOR_ALL(i, childNames)
   {
     if (*i == newName) {
       TF_CODING_ERROR(
-          "Cannot rename %s to %s because a sibling "
-          "with that name already exists",
-          oldPath.GetText(),
-          newPath.GetText());
+        "Cannot rename %s to %s because a sibling "
+        "with that name already exists",
+        oldPath.GetText(),
+        newPath.GetText());
       return false;
     }
   }
@@ -745,15 +737,13 @@ bool Sdf_ChildrenUtils<ChildPolicy>::Rename(const SdfSpec &spec,
 /// that other specs are.
 
 template<>
-SdfAllowed Sdf_ChildrenUtils<Sdf_MapperChildPolicy>::CanRename(const SdfSpec &spec,
-                                                               const SdfPath &newName)
+SdfAllowed Sdf_ChildrenUtils<Sdf_MapperChildPolicy>::CanRename(const SdfSpec &spec, const SdfPath &newName)
 {
   TF_CODING_ERROR("Cannot rename mappers");
   return SdfAllowed("Cannot rename mappers");
 }
 
-template<>
-bool Sdf_ChildrenUtils<Sdf_MapperChildPolicy>::Rename(const SdfSpec &spec, const SdfPath &newName)
+template<> bool Sdf_ChildrenUtils<Sdf_MapperChildPolicy>::Rename(const SdfSpec &spec, const SdfPath &newName)
 {
   TF_CODING_ERROR("Cannot rename mappers");
   return false;

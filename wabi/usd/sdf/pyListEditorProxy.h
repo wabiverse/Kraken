@@ -46,9 +46,7 @@ class Sdf_PyListEditorUtils {
  public:
   template<class T, class V> class ApplyHelper {
    public:
-    ApplyHelper(const T &owner, const boost::python::object &callback)
-        : _owner(owner),
-          _callback(callback)
+    ApplyHelper(const T &owner, const boost::python::object &callback) : _owner(owner), _callback(callback)
     {
       // Do nothing
     }
@@ -66,8 +64,8 @@ class Sdf_PyListEditorUtils {
         }
         else {
           TF_CODING_ERROR(
-              "ApplyEditsToList callback has "
-              "incorrect return type.");
+            "ApplyEditsToList callback has "
+            "incorrect return type.");
         }
       }
       return boost::optional<V>();
@@ -98,8 +96,8 @@ class Sdf_PyListEditorUtils {
         }
         else {
           TF_CODING_ERROR(
-              "ModifyItemEdits callback has "
-              "incorrect return type.");
+            "ModifyItemEdits callback has "
+            "incorrect return type.");
         }
       }
       return boost::optional<V>();
@@ -133,52 +131,46 @@ template<class T> class SdfPyWrapListEditorProxy {
     using namespace boost::python;
 
     class_<Type>(_GetName().c_str(), no_init)
-        .def("__str__", &This::_GetStr)
-        .add_property("isExpired", &Type::IsExpired)
-        .add_property("explicitItems", &Type::GetExplicitItems, &This::_SetExplicitProxy)
-        .add_property("addedItems", &Type::GetAddedItems, &This::_SetAddedProxy)
-        .add_property("prependedItems", &Type::GetPrependedItems, &This::_SetPrependedProxy)
-        .add_property("appendedItems", &Type::GetAppendedItems, &This::_SetAppendedProxy)
-        .add_property("deletedItems", &Type::GetDeletedItems, &This::_SetDeletedProxy)
-        .add_property("orderedItems", &Type::GetOrderedItems, &This::_SetOrderedProxy)
-        .def("GetAddedOrExplicitItems",
-             &Type::GetAddedOrExplicitItems,
-             return_value_policy<TfPySequenceToTuple>())
-        .add_property("isExplicit", &Type::IsExplicit)
-        .add_property("isOrderedOnly", &Type::IsOrderedOnly)
-        .def("ApplyEditsToList",
-             &This::_ApplyEditsToList,
-             return_value_policy<TfPySequenceToList>())
-        .def("ApplyEditsToList",
-             &This::_ApplyEditsToList2,
-             return_value_policy<TfPySequenceToList>())
+      .def("__str__", &This::_GetStr)
+      .add_property("isExpired", &Type::IsExpired)
+      .add_property("explicitItems", &Type::GetExplicitItems, &This::_SetExplicitProxy)
+      .add_property("addedItems", &Type::GetAddedItems, &This::_SetAddedProxy)
+      .add_property("prependedItems", &Type::GetPrependedItems, &This::_SetPrependedProxy)
+      .add_property("appendedItems", &Type::GetAppendedItems, &This::_SetAppendedProxy)
+      .add_property("deletedItems", &Type::GetDeletedItems, &This::_SetDeletedProxy)
+      .add_property("orderedItems", &Type::GetOrderedItems, &This::_SetOrderedProxy)
+      .def("GetAddedOrExplicitItems",
+           &Type::GetAddedOrExplicitItems,
+           return_value_policy<TfPySequenceToTuple>())
+      .add_property("isExplicit", &Type::IsExplicit)
+      .add_property("isOrderedOnly", &Type::IsOrderedOnly)
+      .def("ApplyEditsToList", &This::_ApplyEditsToList, return_value_policy<TfPySequenceToList>())
+      .def("ApplyEditsToList", &This::_ApplyEditsToList2, return_value_policy<TfPySequenceToList>())
 
-        .def("CopyItems", &Type::CopyItems)
-        .def("ClearEdits", &Type::ClearEdits)
-        .def("ClearEditsAndMakeExplicit", &Type::ClearEditsAndMakeExplicit)
-        .def("ContainsItemEdit",
-             &Type::ContainsItemEdit,
-             (arg("item"), arg("onlyAddOrExplicit") = false))
-        .def("RemoveItemEdits", &Type::RemoveItemEdits)
-        .def("ReplaceItemEdits", &Type::ReplaceItemEdits)
-        .def("ModifyItemEdits", &This::_ModifyEdits)
+      .def("CopyItems", &Type::CopyItems)
+      .def("ClearEdits", &Type::ClearEdits)
+      .def("ClearEditsAndMakeExplicit", &Type::ClearEditsAndMakeExplicit)
+      .def("ContainsItemEdit", &Type::ContainsItemEdit, (arg("item"), arg("onlyAddOrExplicit") = false))
+      .def("RemoveItemEdits", &Type::RemoveItemEdits)
+      .def("ReplaceItemEdits", &Type::ReplaceItemEdits)
+      .def("ModifyItemEdits", &This::_ModifyEdits)
 
-        // New API (see bug 8710)
-        .def("Add", &Type::Add)
-        .def("Prepend", &Type::Prepend)
-        .def("Append", &Type::Append)
-        .def("Remove", &Type::Remove)
-        .def("Erase", &Type::Erase);
+      // New API (see bug 8710)
+      .def("Add", &Type::Add)
+      .def("Prepend", &Type::Prepend)
+      .def("Append", &Type::Append)
+      .def("Remove", &Type::Remove)
+      .def("Erase", &Type::Erase);
   }
 
   static std::string _GetName()
   {
     std::string name = "ListEditorProxy_" + ArchGetDemangled<TypePolicy>();
-    name             = TfStringReplace(name, " ", "_");
-    name             = TfStringReplace(name, ",", "_");
-    name             = TfStringReplace(name, "::", "_");
-    name             = TfStringReplace(name, "<", "_");
-    name             = TfStringReplace(name, ">", "_");
+    name = TfStringReplace(name, " ", "_");
+    name = TfStringReplace(name, ",", "_");
+    name = TfStringReplace(name, "::", "_");
+    name = TfStringReplace(name, "<", "_");
+    name = TfStringReplace(name, ">", "_");
     return name;
   }
 

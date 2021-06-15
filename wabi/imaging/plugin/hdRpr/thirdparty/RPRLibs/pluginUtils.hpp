@@ -40,8 +40,7 @@ bool ProcessVDBGrid(VDBGrid<GridValueT> &outGrid,
 // string - name of the file IN - GridParams - data contaijner that holds grid name and grid
 // dimensions
 using GridParams = std::map<std::string, std::array<int, 3>>;
-std::tuple<bool, std::string> ReadVolumeDataFromFile(const std::string &filename,
-                                                     GridParams &gridParams);
+std::tuple<bool, std::string> ReadVolumeDataFromFile(const std::string &filename, GridParams &gridParams);
 
 // Reads vdb grid into provided data container and also adjust voxel indices values if necessary
 // RET - bool - true if data was read succesfully
@@ -54,7 +53,7 @@ bool ProcessVDBGrid(VDBGrid<GridValueT> &outGrid,
                     const openvdb::GridBase *baseGrid,
                     const openvdb::CoordBBox &bbox)
 {
-  using TGrid    = const openvdb::Grid<typename openvdb::tree::Tree4<GridValueT, 5, 4, 3>::Type>;
+  using TGrid = const openvdb::Grid<typename openvdb::tree::Tree4<GridValueT, 5, 4, 3>::Type>;
   using TGridPtr = TGrid *;
 
   TGridPtr grid = static_cast<TGridPtr>(baseGrid);
@@ -78,9 +77,9 @@ bool ProcessVDBGrid(VDBGrid<GridValueT> &outGrid,
   for (TGridValueCIter iter = grid->cbeginValueOn(); iter; ++iter) {
     // for RPR negative voxel indices are invalid
     openvdb::Coord curCoord = iter.getCoord();
-    openvdb::Int32 x        = curCoord.x() - lowerBound.x();
-    openvdb::Int32 y        = curCoord.y() - lowerBound.y();
-    openvdb::Int32 z        = curCoord.z() - lowerBound.z();
+    openvdb::Int32 x = curCoord.x() - lowerBound.x();
+    openvdb::Int32 y = curCoord.y() - lowerBound.y();
+    openvdb::Int32 z = curCoord.z() - lowerBound.z();
 
     coords.push_back(x);
     coords.push_back(y);
@@ -190,8 +189,7 @@ std::tuple<bool, std::string> ReadFileGridToVDBGrid(VDBGrid<GridValueT> &outGrid
 // string - name of the file IN - GridParams - data contaijner that holds grid name and grid
 // dimensions
 using GridParams = std::map<std::string, std::array<int, 3>>;
-std::tuple<bool, std::string> ReadVolumeDataFromFile(const std::string &filename,
-                                                     GridParams &gridParams)
+std::tuple<bool, std::string> ReadVolumeDataFromFile(const std::string &filename, GridParams &gridParams)
 {
   // back-off
   if (filename.empty())
@@ -226,7 +224,7 @@ std::tuple<bool, std::string> ReadVolumeDataFromFile(const std::string &filename
 
       // get grid dimensions from file (we need this for UI)
       openvdb::GridBase::Ptr baseGrid = file.readGrid(nameIter.gridName());
-      openvdb::Coord gridDimensions   = baseGrid->evalActiveVoxelDim();
+      openvdb::Coord gridDimensions = baseGrid->evalActiveVoxelDim();
 
       gridParams[gridName][0] = gridDimensions.x();
       gridParams[gridName][1] = gridDimensions.y();

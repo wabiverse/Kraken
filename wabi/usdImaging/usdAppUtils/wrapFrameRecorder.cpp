@@ -45,14 +45,14 @@ void wrapFrameRecorder()
   using This = UsdAppUtilsFrameRecorder;
 
   scope s = class_<This, boost::noncopyable>("FrameRecorder")
-                .def(init<>())
-                .def("GetCurrentRendererId", &This::GetCurrentRendererId)
-                .def("SetRendererPlugin", &This::SetRendererPlugin)
-                .def("SetImageWidth", &This::SetImageWidth)
-                .def("SetComplexity", &This::SetComplexity)
-                .def("SetColorCorrectionMode", &This::SetColorCorrectionMode)
-                .def("SetIncludedPurposes", &This::SetIncludedPurposes, (arg("purposes")))
-                .def("Record",
-                     &This::Record,
-                     (arg("stage"), arg("usdCamera"), arg("timeCode"), arg("outputImagePath")));
+              .def(init<>())
+              .def("GetCurrentRendererId", &This::GetCurrentRendererId)
+              .def("SetRendererPlugin", &This::SetRendererPlugin)
+              .def("SetImageWidth", &This::SetImageWidth)
+              .def("SetComplexity", &This::SetComplexity)
+              .def("SetColorCorrectionMode", &This::SetColorCorrectionMode)
+              .def("SetIncludedPurposes", &This::SetIncludedPurposes, (arg("purposes")))
+              .def("Record",
+                   &This::Record,
+                   (arg("stage"), arg("usdCamera"), arg("timeCode"), arg("outputImagePath")));
 }

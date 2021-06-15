@@ -42,7 +42,7 @@ WABI_NAMESPACE_BEGIN
 // HdPhTextureObject
 
 HdPhSamplerObject::HdPhSamplerObject(HdPh_SamplerObjectRegistry *samplerObjectRegistry)
-    : _samplerObjectRegistry(samplerObjectRegistry)
+  : _samplerObjectRegistry(samplerObjectRegistry)
 {}
 
 HdPhSamplerObject::~HdPhSamplerObject() = default;
@@ -73,8 +73,7 @@ static HgiSamplerDesc _ToHgiSamplerDesc(HdSamplerParameters const &samplerParame
   HgiSamplerDesc desc;
   desc.debugName = "HdPhSamplerObject";
   desc.magFilter = HdPhHgiConversions::GetHgiMagFilter(samplerParameters.magFilter);
-  HdPhHgiConversions::GetHgiMinAndMipFilter(
-      samplerParameters.minFilter, &desc.minFilter, &desc.mipFilter);
+  HdPhHgiConversions::GetHgiMinAndMipFilter(samplerParameters.minFilter, &desc.minFilter, &desc.mipFilter);
   desc.addressModeU = HdPhHgiConversions::GetHgiSamplerAddressMode(samplerParameters.wrapS);
   desc.addressModeV = HdPhHgiConversions::GetHgiSamplerAddressMode(samplerParameters.wrapT);
   desc.addressModeW = HdPhHgiConversions::GetHgiSamplerAddressMode(samplerParameters.wrapR);
@@ -156,8 +155,7 @@ static GLuint64EXT _GenGLTextureSamplerHandle(HgiTextureHandle const &textureHan
 }
 
 // Get texture handle for bindless textures.
-static GLuint64EXT _GenGlTextureHandle(HgiTextureHandle const &texture,
-                                       const bool createGLTextureHandle)
+static GLuint64EXT _GenGlTextureHandle(HgiTextureHandle const &texture, const bool createGLTextureHandle)
 {
   if (!createGLTextureHandle) {
     return 0;
@@ -204,9 +202,8 @@ static void _ResolveSamplerParameter(const HdWrap textureOpinion, HdWrap *const 
 
 // Resolve wrapS or wrapT of the samplerParameters using metadata
 // from the texture file.
-static HdSamplerParameters _ResolveUvSamplerParameters(
-    HdPhUvTextureObject const &texture,
-    HdSamplerParameters const &samplerParameters)
+static HdSamplerParameters _ResolveUvSamplerParameters(HdPhUvTextureObject const &texture,
+                                                       HdSamplerParameters const &samplerParameters)
 {
   HdSamplerParameters result = samplerParameters;
   _ResolveSamplerParameter(texture.GetWrapParameters().first, &result.wrapS);
@@ -220,14 +217,12 @@ HdPhUvSamplerObject::HdPhUvSamplerObject(HdPhUvTextureObject const &texture,
                                          HdSamplerParameters const &samplerParameters,
                                          const bool createBindlessHandle,
                                          HdPh_SamplerObjectRegistry *const samplerObjectRegistry)
-    : HdPhSamplerObject(samplerObjectRegistry),
-      _sampler(_GenSampler(samplerObjectRegistry,
-                           _ResolveUvSamplerParameters(texture, samplerParameters),
-                           texture.IsValid())),
-      _glTextureSamplerHandle(
-          _GenGLTextureSamplerHandle(texture.GetTexture(),
-                                     _sampler,
-                                     createBindlessHandle && texture.IsValid()))
+  : HdPhSamplerObject(samplerObjectRegistry),
+    _sampler(_GenSampler(samplerObjectRegistry,
+                         _ResolveUvSamplerParameters(texture, samplerParameters),
+                         texture.IsValid())),
+    _glTextureSamplerHandle(
+      _GenGLTextureSamplerHandle(texture.GetTexture(), _sampler, createBindlessHandle && texture.IsValid()))
 {}
 
 HdPhUvSamplerObject::~HdPhUvSamplerObject()
@@ -251,17 +246,14 @@ HdPhUvSamplerObject::~HdPhUvSamplerObject()
 ///////////////////////////////////////////////////////////////////////////////
 // Field sampler
 
-HdPhFieldSamplerObject::HdPhFieldSamplerObject(
-    HdPhFieldTextureObject const &texture,
-    HdSamplerParameters const &samplerParameters,
-    const bool createBindlessHandle,
-    HdPh_SamplerObjectRegistry *const samplerObjectRegistry)
-    : HdPhSamplerObject(samplerObjectRegistry),
-      _sampler(_GenSampler(samplerObjectRegistry, samplerParameters, texture.IsValid())),
-      _glTextureSamplerHandle(
-          _GenGLTextureSamplerHandle(texture.GetTexture(),
-                                     _sampler,
-                                     createBindlessHandle && texture.IsValid()))
+HdPhFieldSamplerObject::HdPhFieldSamplerObject(HdPhFieldTextureObject const &texture,
+                                               HdSamplerParameters const &samplerParameters,
+                                               const bool createBindlessHandle,
+                                               HdPh_SamplerObjectRegistry *const samplerObjectRegistry)
+  : HdPhSamplerObject(samplerObjectRegistry),
+    _sampler(_GenSampler(samplerObjectRegistry, samplerParameters, texture.IsValid())),
+    _glTextureSamplerHandle(
+      _GenGLTextureSamplerHandle(texture.GetTexture(), _sampler, createBindlessHandle && texture.IsValid()))
 {}
 
 HdPhFieldSamplerObject::~HdPhFieldSamplerObject()
@@ -283,21 +275,18 @@ static HdSamplerParameters PTEX_SAMPLER_PARAMETERS{HdWrapClamp,
                                                    HdMinFilterLinear,
                                                    HdMagFilterLinear};
 
-HdPhPtexSamplerObject::HdPhPtexSamplerObject(
-    HdPhPtexTextureObject const &ptexTexture,
-    // samplerParameters are ignored are ptex
-    HdSamplerParameters const &samplerParameters,
-    const bool createBindlessHandle,
-    HdPh_SamplerObjectRegistry *const samplerObjectRegistry)
-    : HdPhSamplerObject(samplerObjectRegistry),
-      _texelsSampler(
-          _GenSampler(samplerObjectRegistry, PTEX_SAMPLER_PARAMETERS, ptexTexture.IsValid())),
-      _texelsGLTextureHandle(
-          _GenGLTextureSamplerHandle(ptexTexture.GetTexelTexture(),
-                                     _texelsSampler,
-                                     createBindlessHandle && ptexTexture.IsValid())),
-      _layoutGLTextureHandle(_GenGlTextureHandle(ptexTexture.GetLayoutTexture(),
-                                                 createBindlessHandle && ptexTexture.IsValid()))
+HdPhPtexSamplerObject::HdPhPtexSamplerObject(HdPhPtexTextureObject const &ptexTexture,
+                                             // samplerParameters are ignored are ptex
+                                             HdSamplerParameters const &samplerParameters,
+                                             const bool createBindlessHandle,
+                                             HdPh_SamplerObjectRegistry *const samplerObjectRegistry)
+  : HdPhSamplerObject(samplerObjectRegistry),
+    _texelsSampler(_GenSampler(samplerObjectRegistry, PTEX_SAMPLER_PARAMETERS, ptexTexture.IsValid())),
+    _texelsGLTextureHandle(_GenGLTextureSamplerHandle(ptexTexture.GetTexelTexture(),
+                                                      _texelsSampler,
+                                                      createBindlessHandle && ptexTexture.IsValid())),
+    _layoutGLTextureHandle(
+      _GenGlTextureHandle(ptexTexture.GetLayoutTexture(), createBindlessHandle && ptexTexture.IsValid()))
 {}
 
 // See above comment about destroying bindless texture handles
@@ -319,20 +308,17 @@ static HdSamplerParameters UDIM_SAMPLER_PARAMETERS{HdWrapClamp,
                                                    HdMinFilterLinearMipmapLinear,
                                                    HdMagFilterLinear};
 
-HdPhUdimSamplerObject::HdPhUdimSamplerObject(
-    HdPhUdimTextureObject const &udimTexture,
-    HdSamplerParameters const &samplerParameters,
-    const bool createBindlessHandle,
-    HdPh_SamplerObjectRegistry *const samplerObjectRegistry)
-    : HdPhSamplerObject(samplerObjectRegistry),
-      _texelsSampler(
-          _GenSampler(samplerObjectRegistry, UDIM_SAMPLER_PARAMETERS, udimTexture.IsValid())),
-      _texelsGLTextureHandle(
-          _GenGLTextureSamplerHandle(udimTexture.GetTexelTexture(),
-                                     _texelsSampler,
-                                     createBindlessHandle && udimTexture.IsValid())),
-      _layoutGLTextureHandle(_GenGlTextureHandle(udimTexture.GetLayoutTexture(),
-                                                 createBindlessHandle && udimTexture.IsValid()))
+HdPhUdimSamplerObject::HdPhUdimSamplerObject(HdPhUdimTextureObject const &udimTexture,
+                                             HdSamplerParameters const &samplerParameters,
+                                             const bool createBindlessHandle,
+                                             HdPh_SamplerObjectRegistry *const samplerObjectRegistry)
+  : HdPhSamplerObject(samplerObjectRegistry),
+    _texelsSampler(_GenSampler(samplerObjectRegistry, UDIM_SAMPLER_PARAMETERS, udimTexture.IsValid())),
+    _texelsGLTextureHandle(_GenGLTextureSamplerHandle(udimTexture.GetTexelTexture(),
+                                                      _texelsSampler,
+                                                      createBindlessHandle && udimTexture.IsValid())),
+    _layoutGLTextureHandle(
+      _GenGlTextureHandle(udimTexture.GetLayoutTexture(), createBindlessHandle && udimTexture.IsValid()))
 {}
 
 HdPhUdimSamplerObject::~HdPhUdimSamplerObject()

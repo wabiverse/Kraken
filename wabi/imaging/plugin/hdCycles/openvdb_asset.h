@@ -42,8 +42,8 @@ WABI_NAMESPACE_BEGIN
 class HdCyclesVolumeLoader : public ccl::VDBImageLoader {
  public:
   HdCyclesVolumeLoader(const char *filepath, const char *grid_name_in)
-      : ccl::VDBImageLoader(grid_name_in),
-        m_file_path(filepath)
+    : ccl::VDBImageLoader(grid_name_in),
+      m_file_path(filepath)
   {
     UpdateGrid();
   }
@@ -63,8 +63,7 @@ class HdCyclesVolumeLoader : public ccl::VDBImageLoader {
         this->grid = file.readGrid(grid_name);
       }
       catch (const openvdb::IoError &e) {
-        TF_RUNTIME_ERROR(
-            "Unable to load grid %s from file %s", grid_name.c_str(), m_file_path.c_str());
+        TF_RUNTIME_ERROR("Unable to load grid %s from file %s", grid_name.c_str(), m_file_path.c_str());
       }
       catch (const std::exception &e) {
         TF_RUNTIME_ERROR("Error updating grid: %s", e.what());
@@ -106,9 +105,7 @@ class HdCyclesOpenvdbAsset : public HdField {
   /// @param sceneDelegate Pointer to the Hydra Scene Delegate.
   /// @param renderParam Pointer to a HdCyclesRenderParam instance.
   /// @param dirtyBits Dirty Bits to sync.
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   /// Returns the initial Dirty Bits for the Primitive.
   ///

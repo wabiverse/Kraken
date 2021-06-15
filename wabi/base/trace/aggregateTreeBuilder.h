@@ -67,9 +67,7 @@ class Trace_AggregateTreeBuilder : private TraceCollection::Visitor {
   virtual void OnBeginThread(const TraceThreadId &threadId) override;
   virtual void OnEndThread(const TraceThreadId &threadId) override;
   virtual bool AcceptsCategory(TraceCategoryId categoryId) override;
-  virtual void OnEvent(const TraceThreadId &threadIndex,
-                       const TfToken &key,
-                       const TraceEvent &e) override;
+  virtual void OnEvent(const TraceThreadId &threadIndex, const TfToken &key, const TraceEvent &e) override;
 
   void _OnCounterEvent(const TraceThreadId &threadIndex, const TfToken &key, const TraceEvent &e);
 

@@ -43,8 +43,7 @@ Universe UNI;
 void UNI_create_stage(std::string project_file)
 {
   UNI.stage = UsdStage::CreateNew(project_file);
-  UNI.stage->GetRootLayer()->SetDocumentation(std::string("Covah v") +
-                                              UNI.system.version.covah_version);
+  UNI.stage->GetRootLayer()->SetDocumentation(std::string("Covah v") + UNI.system.version.covah_version);
   strcpy(UNI.system.paths.stage_path, project_file.c_str());
 }
 

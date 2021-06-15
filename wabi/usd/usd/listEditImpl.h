@@ -98,12 +98,10 @@ class Usd_ListEditImplBase {
 // their type.
 template<class UsdListEditorType, class ListOpProxyType>
 struct Usd_ListEditImpl : public Usd_ListEditImplBase {
-  using ListOpValueType   = typename ListOpProxyType::value_type;
+  using ListOpValueType = typename ListOpProxyType::value_type;
   using ListOpValueVector = typename ListOpProxyType::value_vector_type;
 
-  static bool Add(const UsdListEditorType &editor,
-                  const ListOpValueType &itemIn,
-                  UsdListPosition position)
+  static bool Add(const UsdListEditorType &editor, const ListOpValueType &itemIn, UsdListPosition position)
   {
     const UsdPrim &prim = editor.GetPrim();
 

@@ -47,11 +47,10 @@ struct _FramebufferDesc {
   _FramebufferDesc() = default;
 
   _FramebufferDesc(HgiGraphicsCmdsDesc const &desc, bool resolved)
-      : depthFormat(desc.depthAttachmentDesc.format),
-        colorTextures(resolved && !desc.colorResolveTextures.empty() ? desc.colorResolveTextures :
-                                                                       desc.colorTextures),
-        depthTexture(resolved && desc.depthResolveTexture ? desc.depthResolveTexture :
-                                                            desc.depthTexture)
+    : depthFormat(desc.depthAttachmentDesc.format),
+      colorTextures(resolved && !desc.colorResolveTextures.empty() ? desc.colorResolveTextures :
+                                                                     desc.colorTextures),
+      depthTexture(resolved && desc.depthResolveTexture ? desc.depthResolveTexture : desc.depthTexture)
   {
     TF_VERIFY(colorTextures.size() == desc.colorAttachmentDescs.size(),
               "Number of attachment descriptors and textures don't match");
@@ -137,9 +136,8 @@ static void _CreateFramebuffer(const _FramebufferDesc &desc, uint32_t *const fra
     const uint32_t textureName = glTexture->GetTextureId();
 
     if (TF_VERIFY(glIsTexture(textureName), "Attachment not a texture")) {
-      const GLenum attachment = (desc.depthFormat == HgiFormatFloat32UInt8) ?
-                                    GL_DEPTH_STENCIL_ATTACHMENT :
-                                    GL_DEPTH_ATTACHMENT;
+      const GLenum attachment = (desc.depthFormat == HgiFormatFloat32UInt8) ? GL_DEPTH_STENCIL_ATTACHMENT :
+                                                                              GL_DEPTH_ATTACHMENT;
 
       glNamedFramebufferTexture(*framebuffer, attachment, textureName,
                                 0);  // level
@@ -158,7 +156,7 @@ static HgiGLDescriptorCacheItem *_CreateDescriptorCacheItem(const _FramebufferDe
   TRACE_FUNCTION();
 
   HgiGLDescriptorCacheItem *const dci = new HgiGLDescriptorCacheItem();
-  dci->descriptor                     = desc;
+  dci->descriptor = desc;
 
   // Create framebuffer
   _CreateFramebuffer(desc, &dci->framebuffer);

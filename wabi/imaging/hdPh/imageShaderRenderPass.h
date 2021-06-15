@@ -36,7 +36,7 @@ WABI_NAMESPACE_BEGIN
 using HdPhResourceRegistrySharedPtr = std::shared_ptr<class HdPhResourceRegistry>;
 
 using HdPh_ImageShaderRenderPassSharedPtr = std::shared_ptr<class HdPh_ImageShaderRenderPass>;
-using HdPhResourceRegistrySharedPtr       = std::shared_ptr<class HdPhResourceRegistry>;
+using HdPhResourceRegistrySharedPtr = std::shared_ptr<class HdPhResourceRegistry>;
 
 class Hgi;
 

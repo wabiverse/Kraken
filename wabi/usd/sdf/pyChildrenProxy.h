@@ -55,7 +55,7 @@ template<class _View> class SdfPyChildrenProxy {
   SdfPyChildrenProxy(const View &view,
                      const std::string &type,
                      int permission = Proxy::CanSet | Proxy::CanInsert | Proxy::CanErase)
-      : _proxy(view, type, permission)
+    : _proxy(view, type, permission)
   {
     _Init();
   }
@@ -98,8 +98,8 @@ template<class _View> class SdfPyChildrenProxy {
   template<class E> class _Iterator {
    public:
     _Iterator(const boost::python::object &object)
-        : _object(object),
-          _owner(boost::python::extract<const This &>(object)()._proxy)
+      : _object(object),
+        _owner(boost::python::extract<const This &>(object)()._proxy)
     {
       _cur = _owner.begin();
     }
@@ -137,61 +137,61 @@ template<class _View> class SdfPyChildrenProxy {
     std::string name = _GetName();
 
     scope thisScope = class_<This>(name.c_str(), no_init)
-                          .def("__repr__", &This::_GetRepr, TfPyRaiseOnError<>())
-                          .def("__len__", &This::_GetSize, TfPyRaiseOnError<>())
-                          .def("__getitem__", &This::_GetItemByKey, TfPyRaiseOnError<>())
-                          .def("__getitem__", &This::_GetItemByIndex, TfPyRaiseOnError<>())
-                          .def("__setitem__", &This::_SetItemByKey, TfPyRaiseOnError<>())
-                          .def("__setitem__", &This::_SetItemBySlice, TfPyRaiseOnError<>())
-                          .def("__delitem__", &This::_DelItemByKey, TfPyRaiseOnError<>())
-                          .def("__delitem__", &This::_DelItemByIndex, TfPyRaiseOnError<>())
-                          .def("__contains__", &This::_HasKey, TfPyRaiseOnError<>())
-                          .def("__contains__", &This::_HasValue, TfPyRaiseOnError<>())
-                          .def("__iter__", &This::_GetValueIterator, TfPyRaiseOnError<>())
-                          .def("clear", &This::_Clear, TfPyRaiseOnError<>())
-                          .def("append", &This::_AppendItem, TfPyRaiseOnError<>())
-                          .def("insert", &This::_InsertItemByIndex, TfPyRaiseOnError<>())
-                          .def("get", &This::_PyGet, TfPyRaiseOnError<>())
-                          .def("get", &This::_PyGetDefault, TfPyRaiseOnError<>())
+                        .def("__repr__", &This::_GetRepr, TfPyRaiseOnError<>())
+                        .def("__len__", &This::_GetSize, TfPyRaiseOnError<>())
+                        .def("__getitem__", &This::_GetItemByKey, TfPyRaiseOnError<>())
+                        .def("__getitem__", &This::_GetItemByIndex, TfPyRaiseOnError<>())
+                        .def("__setitem__", &This::_SetItemByKey, TfPyRaiseOnError<>())
+                        .def("__setitem__", &This::_SetItemBySlice, TfPyRaiseOnError<>())
+                        .def("__delitem__", &This::_DelItemByKey, TfPyRaiseOnError<>())
+                        .def("__delitem__", &This::_DelItemByIndex, TfPyRaiseOnError<>())
+                        .def("__contains__", &This::_HasKey, TfPyRaiseOnError<>())
+                        .def("__contains__", &This::_HasValue, TfPyRaiseOnError<>())
+                        .def("__iter__", &This::_GetValueIterator, TfPyRaiseOnError<>())
+                        .def("clear", &This::_Clear, TfPyRaiseOnError<>())
+                        .def("append", &This::_AppendItem, TfPyRaiseOnError<>())
+                        .def("insert", &This::_InsertItemByIndex, TfPyRaiseOnError<>())
+                        .def("get", &This::_PyGet, TfPyRaiseOnError<>())
+                        .def("get", &This::_PyGetDefault, TfPyRaiseOnError<>())
 #if PY_MAJOR_VERSION < 3
-                          .def("has_key", &This::_HasKey, TfPyRaiseOnError<>())
-                          .def("itervalues", &This::_GetValueIterator, TfPyRaiseOnError<>())
-                          .def("iterkeys", &This::_GetKeyIterator, TfPyRaiseOnError<>())
-                          .def("iteritems", &This::_GetItemIterator, TfPyRaiseOnError<>())
-                          .def("items", &This::_GetItems, TfPyRaiseOnError<>())
-                          .def("keys", &This::_GetKeys, TfPyRaiseOnError<>())
-                          .def("values", &This::_GetValues, TfPyRaiseOnError<>())
+                        .def("has_key", &This::_HasKey, TfPyRaiseOnError<>())
+                        .def("itervalues", &This::_GetValueIterator, TfPyRaiseOnError<>())
+                        .def("iterkeys", &This::_GetKeyIterator, TfPyRaiseOnError<>())
+                        .def("iteritems", &This::_GetItemIterator, TfPyRaiseOnError<>())
+                        .def("items", &This::_GetItems, TfPyRaiseOnError<>())
+                        .def("keys", &This::_GetKeys, TfPyRaiseOnError<>())
+                        .def("values", &This::_GetValues, TfPyRaiseOnError<>())
 #else
-                          .def("items", &This::_GetItemIterator, TfPyRaiseOnError<>())
-                          .def("keys", &This::_GetKeyIterator, TfPyRaiseOnError<>())
-                          .def("values", &This::_GetValueIterator, TfPyRaiseOnError<>())
+                        .def("items", &This::_GetItemIterator, TfPyRaiseOnError<>())
+                        .def("keys", &This::_GetKeyIterator, TfPyRaiseOnError<>())
+                        .def("values", &This::_GetValueIterator, TfPyRaiseOnError<>())
 #endif
-                          .def("index", &This::_FindIndexByKey, TfPyRaiseOnError<>())
-                          .def("index", &This::_FindIndexByValue, TfPyRaiseOnError<>())
-                          .def("__eq__", &This::operator==, TfPyRaiseOnError<>())
-                          .def("__ne__", &This::operator!=, TfPyRaiseOnError<>());
+                        .def("index", &This::_FindIndexByKey, TfPyRaiseOnError<>())
+                        .def("index", &This::_FindIndexByValue, TfPyRaiseOnError<>())
+                        .def("__eq__", &This::operator==, TfPyRaiseOnError<>())
+                        .def("__ne__", &This::operator!=, TfPyRaiseOnError<>());
 
     class_<_Iterator<_ExtractItem>>((name + "_Iterator").c_str(), no_init)
-        .def("__iter__", &This::template _Iterator<_ExtractItem>::GetCopy)
-        .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractItem>::GetNext);
+      .def("__iter__", &This::template _Iterator<_ExtractItem>::GetCopy)
+      .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractItem>::GetNext);
 
     class_<_Iterator<_ExtractKey>>((name + "_KeyIterator").c_str(), no_init)
-        .def("__iter__", &This::template _Iterator<_ExtractKey>::GetCopy)
-        .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractKey>::GetNext);
+      .def("__iter__", &This::template _Iterator<_ExtractKey>::GetCopy)
+      .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractKey>::GetNext);
 
     class_<_Iterator<_ExtractValue>>((name + "_ValueIterator").c_str(), no_init)
-        .def("__iter__", &This::template _Iterator<_ExtractValue>::GetCopy)
-        .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractValue>::GetNext);
+      .def("__iter__", &This::template _Iterator<_ExtractValue>::GetCopy)
+      .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractValue>::GetNext);
   }
 
   static std::string _GetName()
   {
     std::string name = "ChildrenProxy_" + ArchGetDemangled<View>();
-    name             = TfStringReplace(name, " ", "_");
-    name             = TfStringReplace(name, ",", "_");
-    name             = TfStringReplace(name, "::", "_");
-    name             = TfStringReplace(name, "<", "_");
-    name             = TfStringReplace(name, ">", "_");
+    name = TfStringReplace(name, " ", "_");
+    name = TfStringReplace(name, ",", "_");
+    name = TfStringReplace(name, "::", "_");
+    name = TfStringReplace(name, "<", "_");
+    name = TfStringReplace(name, ">", "_");
     return name;
   }
 
@@ -283,9 +283,7 @@ template<class _View> class SdfPyChildrenProxy {
   void _InsertItemByIndex(int index, const mapped_type &value)
   {
     // Note that -1 below means to insert at end for the _proxy._Insert API.
-    index = index < (int)_proxy.size() ?
-                TfPyNormalizeIndex(index, _proxy.size(), false /*throwError*/) :
-                -1;
+    index = index < (int)_proxy.size() ? TfPyNormalizeIndex(index, _proxy.size(), false /*throwError*/) : -1;
 
     _proxy._Insert(value, index);
   }

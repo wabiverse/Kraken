@@ -59,49 +59,45 @@ void wrapNode()
 {
   typedef PcpNodeRef This;
 
-  scope s =
-      class_<This>("NodeRef", no_init)
+  scope s = class_<This>("NodeRef", no_init)
 
-          .add_property("site", &This::GetSite)
-          .add_property("path",
-                        make_function(&This::GetPath, return_value_policy<return_by_value>()))
-          .add_property(
-              "layerStack",
-              make_function(&This::GetLayerStack, return_value_policy<return_by_value>()))
+              .add_property("site", &This::GetSite)
+              .add_property("path", make_function(&This::GetPath, return_value_policy<return_by_value>()))
+              .add_property("layerStack",
+                            make_function(&This::GetLayerStack, return_value_policy<return_by_value>()))
 
-          .add_property("parent", &_GetParentNode)
-          .add_property("origin", &_GetOriginNode)
-          .add_property("children",
-                        make_function(&_GetChildren, return_value_policy<TfPySequenceToList>()))
+              .add_property("parent", &_GetParentNode)
+              .add_property("origin", &_GetOriginNode)
+              .add_property("children",
+                            make_function(&_GetChildren, return_value_policy<TfPySequenceToList>()))
 
-          .add_property("arcType", &This::GetArcType)
-          .add_property(
-              "mapToParent",
-              make_function(&This::GetMapToParent, return_value_policy<return_by_value>()))
-          .add_property("mapToRoot",
-                        make_function(&This::GetMapToRoot, return_value_policy<return_by_value>()))
+              .add_property("arcType", &This::GetArcType)
+              .add_property("mapToParent",
+                            make_function(&This::GetMapToParent, return_value_policy<return_by_value>()))
+              .add_property("mapToRoot",
+                            make_function(&This::GetMapToRoot, return_value_policy<return_by_value>()))
 
-          .add_property("siblingNumAtOrigin", &This::GetSiblingNumAtOrigin)
-          .add_property("namespaceDepth", &This::GetNamespaceDepth)
+              .add_property("siblingNumAtOrigin", &This::GetSiblingNumAtOrigin)
+              .add_property("namespaceDepth", &This::GetNamespaceDepth)
 
-          .add_property("hasSymmetry", &This::HasSymmetry)
-          .add_property("hasSpecs", &This::HasSpecs)
-          .add_property("isInert", &This::IsInert)
-          .add_property("isCulled", &This::IsCulled)
-          .add_property("isRestricted", &This::IsRestricted)
-          .add_property("permission", &This::GetPermission)
+              .add_property("hasSymmetry", &This::HasSymmetry)
+              .add_property("hasSpecs", &This::HasSpecs)
+              .add_property("isInert", &This::IsInert)
+              .add_property("isCulled", &This::IsCulled)
+              .add_property("isRestricted", &This::IsRestricted)
+              .add_property("permission", &This::GetPermission)
 
-          .def("GetRootNode", &_GetRootNode)
-          .def("GetOriginRootNode", &_GetOriginRootNode)
+              .def("GetRootNode", &_GetRootNode)
+              .def("GetOriginRootNode", &_GetOriginRootNode)
 
-          .def("IsRootNode", &This::IsRootNode)
-          .def("IsDueToAncestor", &This::IsDueToAncestor)
-          .def("GetDepthBelowIntroduction", &This::GetDepthBelowIntroduction)
-          .def("GetIntroPath", &This::GetIntroPath)
-          .def("GetPathAtIntroduction", &This::GetPathAtIntroduction)
+              .def("IsRootNode", &This::IsRootNode)
+              .def("IsDueToAncestor", &This::IsDueToAncestor)
+              .def("GetDepthBelowIntroduction", &This::GetDepthBelowIntroduction)
+              .def("GetIntroPath", &This::GetIntroPath)
+              .def("GetPathAtIntroduction", &This::GetPathAtIntroduction)
 
-          .def("CanContributeSpecs", &This::CanContributeSpecs)
+              .def("CanContributeSpecs", &This::CanContributeSpecs)
 
-          .def(self == self)
-          .def(self != self);
+              .def(self == self)
+              .def(self != self);
 }

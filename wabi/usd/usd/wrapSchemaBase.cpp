@@ -54,12 +54,11 @@ static object __getattribute__(object selfObj, const char *name)
   // method on this base class. The real purpose here is to protect against
   // invalid calls in subclasses which will try to actually manipulate the
   // underlying (invalid) prim and likely crash.
-  if ((name[0] == '_' && name[1] == '_') ||
-      extract<UsdSchemaBase &>(selfObj)().GetPrim().IsValid() || strcmp(name, "GetPrim") == 0 ||
-      strcmp(name, "GetPath") == 0 || strcmp(name, "GetSchemaClassPrimDefinition") == 0 ||
-      strcmp(name, "GetSchemaAttributeNames") == 0 || strcmp(name, "GetSchemaType") == 0 ||
-      strcmp(name, "GetSchemaKind") == 0 || strcmp(name, "IsAPISchema") == 0 ||
-      strcmp(name, "IsConcrete") == 0 || strcmp(name, "IsTyped") == 0 ||
+  if ((name[0] == '_' && name[1] == '_') || extract<UsdSchemaBase &>(selfObj)().GetPrim().IsValid() ||
+      strcmp(name, "GetPrim") == 0 || strcmp(name, "GetPath") == 0 ||
+      strcmp(name, "GetSchemaClassPrimDefinition") == 0 || strcmp(name, "GetSchemaAttributeNames") == 0 ||
+      strcmp(name, "GetSchemaType") == 0 || strcmp(name, "GetSchemaKind") == 0 ||
+      strcmp(name, "IsAPISchema") == 0 || strcmp(name, "IsConcrete") == 0 || strcmp(name, "IsTyped") == 0 ||
       strcmp(name, "IsAppliedAPISchema") == 0 || strcmp(name, "IsMultipleApplyAPISchema") == 0) {
     // Dispatch to object's __getattribute__.
     return (*_object__getattribute__)(selfObj, name);
@@ -77,32 +76,32 @@ void wrapUsdSchemaBase()
   class_<UsdSchemaBase> cls("SchemaBase");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("otherSchema")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("otherSchema")))
+    .def(TfTypePythonClass())
 
-      .def("GetPrim", &UsdSchemaBase::GetPrim)
-      .def("GetPath", &UsdSchemaBase::GetPath)
-      .def("GetSchemaClassPrimDefinition",
-           &UsdSchemaBase::GetSchemaClassPrimDefinition,
-           return_internal_reference<>())
-      .def("GetSchemaAttributeNames",
-           &UsdSchemaBase::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetPrim", &UsdSchemaBase::GetPrim)
+    .def("GetPath", &UsdSchemaBase::GetPath)
+    .def("GetSchemaClassPrimDefinition",
+         &UsdSchemaBase::GetSchemaClassPrimDefinition,
+         return_internal_reference<>())
+    .def("GetSchemaAttributeNames",
+         &UsdSchemaBase::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("IsAPISchema", &UsdSchemaBase::IsAPISchema)
-      .def("IsConcrete", &UsdSchemaBase::IsConcrete)
-      .def("IsTyped", &UsdSchemaBase::IsTyped)
-      .def("IsAppliedAPISchema", &UsdSchemaBase::IsAppliedAPISchema)
-      .def("IsMultipleApplyAPISchema", &UsdSchemaBase::IsMultipleApplyAPISchema)
+    .def("IsAPISchema", &UsdSchemaBase::IsAPISchema)
+    .def("IsConcrete", &UsdSchemaBase::IsConcrete)
+    .def("IsTyped", &UsdSchemaBase::IsTyped)
+    .def("IsAppliedAPISchema", &UsdSchemaBase::IsAppliedAPISchema)
+    .def("IsMultipleApplyAPISchema", &UsdSchemaBase::IsMultipleApplyAPISchema)
 
-      .def("GetSchemaType", &UsdSchemaBase::GetSchemaType)
-      .def("GetSchemaKind", &UsdSchemaBase::GetSchemaKind)
+    .def("GetSchemaType", &UsdSchemaBase::GetSchemaType)
+    .def("GetSchemaKind", &UsdSchemaBase::GetSchemaKind)
 
-      .def(!self)
+    .def(!self)
 
-      ;
+    ;
 
   // Save existing __getattribute__ and replace.
   *_object__getattribute__ = object(cls.attr("__getattribute__"));

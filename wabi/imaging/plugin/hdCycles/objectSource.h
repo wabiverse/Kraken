@@ -45,8 +45,7 @@ class HdCyclesObjectSource : public HdBufferSource {
   explicit HdCyclesObjectSource(ccl::Object *object, const SdfPath &id, bool isReference = true);
   ~HdCyclesObjectSource() override;
 
-  HdBbbObjectPropertiesSource *AddObjectPropertiesSource(
-      HdBbbObjectPropertiesSourceSharedPtr source);
+  HdBbbObjectPropertiesSource *AddObjectPropertiesSource(HdBbbObjectPropertiesSourceSharedPtr source);
 
   /// Add new source to the pending sources list
   HdBbAttributeSource *AddAttributeSource(HdBbAttributeSourceSharedPtr source);

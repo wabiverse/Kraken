@@ -102,13 +102,13 @@ class Double {
   }
 
  private:
-  static const int kSignificandSize      = 52;
-  static const int kExponentBias         = 0x3FF;
-  static const int kDenormalExponent     = 1 - kExponentBias;
-  static const uint64_t kSignMask        = RAPIDJSON_UINT64_C2(0x80000000, 0x00000000);
-  static const uint64_t kExponentMask    = RAPIDJSON_UINT64_C2(0x7FF00000, 0x00000000);
+  static const int kSignificandSize = 52;
+  static const int kExponentBias = 0x3FF;
+  static const int kDenormalExponent = 1 - kExponentBias;
+  static const uint64_t kSignMask = RAPIDJSON_UINT64_C2(0x80000000, 0x00000000);
+  static const uint64_t kExponentMask = RAPIDJSON_UINT64_C2(0x7FF00000, 0x00000000);
   static const uint64_t kSignificandMask = RAPIDJSON_UINT64_C2(0x000FFFFF, 0xFFFFFFFF);
-  static const uint64_t kHiddenBit       = RAPIDJSON_UINT64_C2(0x00100000, 0x00000000);
+  static const uint64_t kHiddenBit = RAPIDJSON_UINT64_C2(0x00100000, 0x00000000);
 
   union {
     double d_;

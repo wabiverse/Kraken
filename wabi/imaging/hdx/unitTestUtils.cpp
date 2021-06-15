@@ -180,11 +180,9 @@ HdSelectionSharedPtr TranslateHitsToSelection(TfToken const &pickTarget,
   return selection;
 }
 
-GfVec2i CalculatePickResolution(GfVec2i const &start,
-                                GfVec2i const &end,
-                                GfVec2i const &pickRadius)
+GfVec2i CalculatePickResolution(GfVec2i const &start, GfVec2i const &end, GfVec2i const &pickRadius)
 {
-  int fwidth  = std::max(pickRadius[0], std::abs(start[0] - end[0]));
+  int fwidth = std::max(pickRadius[0], std::abs(start[0] - end[0]));
   int fheight = std::max(pickRadius[1], std::abs(start[1] - end[1]));
 
   return GfVec2i(fwidth, fheight);
@@ -199,9 +197,9 @@ GfMatrix4d ComputePickingProjectionMatrix(GfVec2i const &start,
   GfVec2d max(2 * (end[0] + 1) / float(screen[0]) - 1, 1 - 2 * (end[1] + 1) / float(screen[1]));
   // scale window
   GfVec2d origin = viewFrustum.GetWindow().GetMin();
-  GfVec2d scale  = viewFrustum.GetWindow().GetMax() - viewFrustum.GetWindow().GetMin();
-  min            = origin + GfCompMult(scale, 0.5 * (GfVec2d(1.0, 1.0) + min));
-  max            = origin + GfCompMult(scale, 0.5 * (GfVec2d(1.0, 1.0) + max));
+  GfVec2d scale = viewFrustum.GetWindow().GetMax() - viewFrustum.GetWindow().GetMin();
+  min = origin + GfCompMult(scale, 0.5 * (GfVec2d(1.0, 1.0) + min));
+  max = origin + GfCompMult(scale, 0.5 * (GfVec2d(1.0, 1.0) + max));
 
   GfFrustum pickFrustum(viewFrustum);
   pickFrustum.SetWindow(GfRange2d(min, max));
@@ -223,22 +221,22 @@ void Marquee::InitGLResources()
   _program = glCreateProgram();
   const char *sources[1];
   sources[0] =
-      "#version 430                                         \n"
-      "in vec2 position;                                    \n"
-      "void main() {                                        \n"
-      "  gl_Position = vec4(position.x, position.y, 0, 1);  \n"
-      "}                                                    \n";
+    "#version 430                                         \n"
+    "in vec2 position;                                    \n"
+    "void main() {                                        \n"
+    "  gl_Position = vec4(position.x, position.y, 0, 1);  \n"
+    "}                                                    \n";
 
   GLuint vShader = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vShader, 1, sources, NULL);
   glCompileShader(vShader);
 
   sources[0] =
-      "#version 430                                         \n"
-      "out vec4 outColor;                                   \n"
-      "void main() {                                        \n"
-      "  outColor = vec4(1);                                \n"
-      "}                                                    \n";
+    "#version 430                                         \n"
+    "out vec4 outColor;                                   \n"
+    "void main() {                                        \n"
+    "  outColor = vec4(1);                                \n"
+    "}                                                    \n";
 
   GLuint fShader = glCreateShader(GL_FRAGMENT_SHADER);
   glShaderSource(fShader, 1, sources, NULL);

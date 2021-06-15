@@ -133,8 +133,8 @@ class Usd_Resolver {
     friend class Usd_Resolver;
 
     Position(const PcpNodeIterator &curNode, const SdfLayerRefPtrVector::const_iterator &curLayer)
-        : _curNode(curNode),
-          _curLayer(curLayer)
+      : _curNode(curNode),
+        _curLayer(curLayer)
     {}
 
     PcpNodeIterator _curNode;

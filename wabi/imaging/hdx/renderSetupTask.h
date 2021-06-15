@@ -42,9 +42,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-using HdxRenderSetupTaskSharedPtr   = std::shared_ptr<class HdxRenderSetupTask>;
+using HdxRenderSetupTaskSharedPtr = std::shared_ptr<class HdxRenderSetupTask>;
 using HdPhRenderPassShaderSharedPtr = std::shared_ptr<class HdPhRenderPassShader>;
-using HdPhShaderCodeSharedPtr       = std::shared_ptr<class HdPhShaderCode>;
+using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
 
 using HdRenderPassStateSharedPtr = std::shared_ptr<class HdRenderPassState>;
 
@@ -113,7 +113,7 @@ class HdxRenderSetupTask : public HdTask {
 
   void _PrepareAovBindings(HdTaskContext *ctx, HdRenderIndex *renderIndex);
 
-  HdxRenderSetupTask()                           = delete;
+  HdxRenderSetupTask() = delete;
   HdxRenderSetupTask(const HdxRenderSetupTask &) = delete;
   HdxRenderSetupTask &operator=(const HdxRenderSetupTask &) = delete;
 };
@@ -124,53 +124,53 @@ class HdxRenderSetupTask : public HdTask {
 ///
 struct HdxRenderTaskParams {
   HdxRenderTaskParams()
-      // Global Params
-      : overrideColor(0.0),
-        wireframeColor(0.0),
-        pointColor(GfVec4f(0, 0, 0, 1)),
-        pointSize(3.0),
-        enableLighting(false),
-        enableIdRender(false),
-        alphaThreshold(0.0),
-        enableSceneMaterials(true),
-        enableSceneLights(true),
-        enableClipping(true)
-        // Selection/Masking params
-        ,
-        maskColor(1.0f, 0.0f, 0.0f, 1.0f),
-        indicatorColor(0.0f, 1.0f, 0.0f, 1.0f),
-        pointSelectedSize(3.0)
-        // Phoenix render pipeline state
-        ,
-        depthBiasUseDefault(true),
-        depthBiasEnable(false),
-        depthBiasConstantFactor(0.0f),
-        depthBiasSlopeFactor(1.0f),
-        depthFunc(HdCmpFuncLEqual),
-        depthMaskEnable(true),
-        stencilFunc(HdCmpFuncAlways),
-        stencilRef(0),
-        stencilMask(~0),
-        stencilFailOp(HdStencilOpKeep),
-        stencilZFailOp(HdStencilOpKeep),
-        stencilZPassOp(HdStencilOpKeep),
-        stencilEnable(false),
-        blendColorOp(HdBlendOpAdd),
-        blendColorSrcFactor(HdBlendFactorOne),
-        blendColorDstFactor(HdBlendFactorZero),
-        blendAlphaOp(HdBlendOpAdd),
-        blendAlphaSrcFactor(HdBlendFactorOne),
-        blendAlphaDstFactor(HdBlendFactorZero),
-        blendConstantColor(0.0f, 0.0f, 0.0f, 0.0f),
-        blendEnable(false),
-        enableAlphaToCoverage(true),
-        useAovMultiSample(true),
-        resolveAovMultiSample(true)
-        // Camera framing and viewer state
-        ,
-        viewport(0.0),
-        cullStyle(HdCullStyleBackUnlessDoubleSided),
-        overrideWindowPolicy{false, CameraUtilFit}
+    // Global Params
+    : overrideColor(0.0),
+      wireframeColor(0.0),
+      pointColor(GfVec4f(0, 0, 0, 1)),
+      pointSize(3.0),
+      enableLighting(false),
+      enableIdRender(false),
+      alphaThreshold(0.0),
+      enableSceneMaterials(true),
+      enableSceneLights(true),
+      enableClipping(true)
+      // Selection/Masking params
+      ,
+      maskColor(1.0f, 0.0f, 0.0f, 1.0f),
+      indicatorColor(0.0f, 1.0f, 0.0f, 1.0f),
+      pointSelectedSize(3.0)
+      // Phoenix render pipeline state
+      ,
+      depthBiasUseDefault(true),
+      depthBiasEnable(false),
+      depthBiasConstantFactor(0.0f),
+      depthBiasSlopeFactor(1.0f),
+      depthFunc(HdCmpFuncLEqual),
+      depthMaskEnable(true),
+      stencilFunc(HdCmpFuncAlways),
+      stencilRef(0),
+      stencilMask(~0),
+      stencilFailOp(HdStencilOpKeep),
+      stencilZFailOp(HdStencilOpKeep),
+      stencilZPassOp(HdStencilOpKeep),
+      stencilEnable(false),
+      blendColorOp(HdBlendOpAdd),
+      blendColorSrcFactor(HdBlendFactorOne),
+      blendColorDstFactor(HdBlendFactorZero),
+      blendAlphaOp(HdBlendOpAdd),
+      blendAlphaSrcFactor(HdBlendFactorOne),
+      blendAlphaDstFactor(HdBlendFactorZero),
+      blendConstantColor(0.0f, 0.0f, 0.0f, 0.0f),
+      blendEnable(false),
+      enableAlphaToCoverage(true),
+      useAovMultiSample(true),
+      resolveAovMultiSample(true)
+      // Camera framing and viewer state
+      ,
+      viewport(0.0),
+      cullStyle(HdCullStyleBackUnlessDoubleSided),
+      overrideWindowPolicy{false, CameraUtilFit}
   {}
 
   // ---------------------------------------------------------------------- //

@@ -17,7 +17,7 @@ namespace Zep {
 class IZepFileSystem {
  public:
   virtual ~IZepFileSystem(){};
-  virtual std::string Read(const ZepPath &filePath)                           = 0;
+  virtual std::string Read(const ZepPath &filePath) = 0;
   virtual bool Write(const ZepPath &filePath, const void *pData, size_t size) = 0;
 
   // This is the application config path, where the executable configuration files live
@@ -30,22 +30,21 @@ class IZepFileSystem {
   // The working directory is typically the root of the current project that is being edited;
   // i.e. it is set to the path of the first thing that is passed to zep, or is the zep startup
   // folder
-  virtual const ZepPath &GetWorkingDirectory() const    = 0;
+  virtual const ZepPath &GetWorkingDirectory() const = 0;
   virtual void SetWorkingDirectory(const ZepPath &path) = 0;
-  virtual bool MakeDirectories(const ZepPath &path)     = 0;
+  virtual bool MakeDirectories(const ZepPath &path) = 0;
 
   virtual bool IsDirectory(const ZepPath &path) const = 0;
-  virtual bool IsReadOnly(const ZepPath &path) const  = 0;
-  virtual bool Exists(const ZepPath &path) const      = 0;
+  virtual bool IsReadOnly(const ZepPath &path) const = 0;
+  virtual bool Exists(const ZepPath &path) const = 0;
 
   // A callback API for scaning
-  virtual void ScanDirectory(
-      const ZepPath &path,
-      std::function<bool(const ZepPath &path, bool &dont_recurse)> fnScan) const = 0;
+  virtual void ScanDirectory(const ZepPath &path,
+                             std::function<bool(const ZepPath &path, bool &dont_recurse)> fnScan) const = 0;
 
   // Equivalent means 'the same file'
   virtual bool Equivalent(const ZepPath &path1, const ZepPath &path2) const = 0;
-  virtual ZepPath Canonical(const ZepPath &path) const                      = 0;
+  virtual ZepPath Canonical(const ZepPath &path) const = 0;
 };
 
 // A generic file system using cross platform fs:: and tinydir for searches
@@ -59,8 +58,8 @@ class ZepFileSystemCPP : public IZepFileSystem {
   virtual std::string Read(const ZepPath &filePath) override;
   virtual bool Write(const ZepPath &filePath, const void *pData, size_t size) override;
   virtual void ScanDirectory(
-      const ZepPath &path,
-      std::function<bool(const ZepPath &path, bool &dont_recurse)> fnScan) const override;
+    const ZepPath &path,
+    std::function<bool(const ZepPath &path, bool &dont_recurse)> fnScan) const override;
   virtual void SetWorkingDirectory(const ZepPath &path) override;
   virtual bool MakeDirectories(const ZepPath &path) override;
   virtual const ZepPath &GetWorkingDirectory() const override;

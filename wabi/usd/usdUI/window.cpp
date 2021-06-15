@@ -122,8 +122,7 @@ UsdAttribute UsdUIWindow::GetWindowCoordsAttr() const
   return GetPrim().GetAttribute(UsdUITokens->uiWindowCoords);
 }
 
-UsdAttribute UsdUIWindow::CreateWindowCoordsAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdUIWindow::CreateWindowCoordsAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdUITokens->uiWindowCoords,
                                     SdfValueTypeNames->Float4,
@@ -134,8 +133,7 @@ UsdAttribute UsdUIWindow::CreateWindowCoordsAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -149,11 +147,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdUIWindow::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdUITokens->uiTitle,
+    UsdUITokens->uiTitle,
   };
 
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdTyped::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

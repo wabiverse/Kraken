@@ -80,7 +80,7 @@ template<typename Base> class HdRprBaseRprim : public Base {
 
  protected:
   SdfPath m_materialId;
-  bool m_isVisible          = false;
+  bool m_isVisible = false;
   uint32_t m_visibilityMask = 0;
 };
 

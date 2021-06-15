@@ -44,24 +44,24 @@
 WABI_NAMESPACE_BEGIN
 
 PxOsdMeshTopology::PxOsdMeshTopology()
-    : _scheme(PxOsdOpenSubdivTokens->bilinear),
-      _orientation(PxOsdOpenSubdivTokens->rightHanded),
-      _faceVertexCounts(),
-      _faceVertexIndices(),
-      _holeIndices(),
-      _subdivTags()
+  : _scheme(PxOsdOpenSubdivTokens->bilinear),
+    _orientation(PxOsdOpenSubdivTokens->rightHanded),
+    _faceVertexCounts(),
+    _faceVertexIndices(),
+    _holeIndices(),
+    _subdivTags()
 {}
 
 PxOsdMeshTopology::PxOsdMeshTopology(TfToken const &scheme,
                                      TfToken const &orientation,
                                      VtIntArray const &faceVertexCounts,
                                      VtIntArray const &faceVertexIndices)
-    : _scheme(scheme),
-      _orientation(orientation),
-      _faceVertexCounts(faceVertexCounts),
-      _faceVertexIndices(faceVertexIndices),
-      _holeIndices(),
-      _subdivTags()
+  : _scheme(scheme),
+    _orientation(orientation),
+    _faceVertexCounts(faceVertexCounts),
+    _faceVertexIndices(faceVertexIndices),
+    _holeIndices(),
+    _subdivTags()
 {}
 
 PxOsdMeshTopology::PxOsdMeshTopology(TfToken const &scheme,
@@ -69,12 +69,12 @@ PxOsdMeshTopology::PxOsdMeshTopology(TfToken const &scheme,
                                      VtIntArray const &faceVertexCounts,
                                      VtIntArray const &faceVertexIndices,
                                      VtIntArray const &holeIndices)
-    : _scheme(scheme),
-      _orientation(orientation),
-      _faceVertexCounts(faceVertexCounts),
-      _faceVertexIndices(faceVertexIndices),
-      _holeIndices(holeIndices),
-      _subdivTags()
+  : _scheme(scheme),
+    _orientation(orientation),
+    _faceVertexCounts(faceVertexCounts),
+    _faceVertexIndices(faceVertexIndices),
+    _holeIndices(holeIndices),
+    _subdivTags()
 {}
 
 PxOsdMeshTopology::PxOsdMeshTopology(TfToken const &scheme,
@@ -83,12 +83,12 @@ PxOsdMeshTopology::PxOsdMeshTopology(TfToken const &scheme,
                                      VtIntArray const &faceVertexIndices,
                                      VtIntArray const &holeIndices,
                                      PxOsdSubdivTags const &subdivTags)
-    : _scheme(scheme),
-      _orientation(orientation),
-      _faceVertexCounts(faceVertexCounts),
-      _faceVertexIndices(faceVertexIndices),
-      _holeIndices(holeIndices),
-      _subdivTags(subdivTags)
+  : _scheme(scheme),
+    _orientation(orientation),
+    _faceVertexCounts(faceVertexCounts),
+    _faceVertexIndices(faceVertexIndices),
+    _holeIndices(holeIndices),
+    _subdivTags(subdivTags)
 {}
 
 PxOsdMeshTopology::PxOsdMeshTopology(TfToken const &scheme,
@@ -96,12 +96,12 @@ PxOsdMeshTopology::PxOsdMeshTopology(TfToken const &scheme,
                                      VtIntArray const &faceVertexCounts,
                                      VtIntArray const &faceVertexIndices,
                                      PxOsdSubdivTags const &subdivTags)
-    : _scheme(scheme),
-      _orientation(orientation),
-      _faceVertexCounts(faceVertexCounts),
-      _faceVertexIndices(faceVertexIndices),
-      _holeIndices(),
-      _subdivTags(subdivTags)
+  : _scheme(scheme),
+    _orientation(orientation),
+    _faceVertexCounts(faceVertexCounts),
+    _faceVertexIndices(faceVertexIndices),
+    _holeIndices(),
+    _subdivTags(subdivTags)
 {}
 
 PxOsdMeshTopology::ID PxOsdMeshTopology::ComputeHash() const
@@ -110,12 +110,10 @@ PxOsdMeshTopology::ID PxOsdMeshTopology::ComputeHash() const
   TRACE_FUNCTION();
 
   ID hash = _subdivTags.ComputeHash();
-  hash    = ArchHash64((const char *)&_scheme, sizeof(TfToken), hash);
-  hash    = ArchHash64((const char *)&_orientation, sizeof(TfToken), hash);
-  hash    = ArchHash64(
-      (const char *)_faceVertexCounts.cdata(), _faceVertexCounts.size() * sizeof(int), hash);
-  hash = ArchHash64(
-      (const char *)_faceVertexIndices.cdata(), _faceVertexIndices.size() * sizeof(int), hash);
+  hash = ArchHash64((const char *)&_scheme, sizeof(TfToken), hash);
+  hash = ArchHash64((const char *)&_orientation, sizeof(TfToken), hash);
+  hash = ArchHash64((const char *)_faceVertexCounts.cdata(), _faceVertexCounts.size() * sizeof(int), hash);
+  hash = ArchHash64((const char *)_faceVertexIndices.cdata(), _faceVertexIndices.size() * sizeof(int), hash);
   hash = ArchHash64((const char *)_holeIndices.cdata(), _holeIndices.size() * sizeof(int), hash);
   return hash;
 }
@@ -126,9 +124,8 @@ bool PxOsdMeshTopology::operator==(PxOsdMeshTopology const &other) const
   TRACE_FUNCTION();
 
   return (_scheme == other._scheme && _orientation == other._orientation &&
-          _faceVertexCounts == other._faceVertexCounts &&
-          _faceVertexIndices == other._faceVertexIndices && _subdivTags == other._subdivTags &&
-          _holeIndices == other._holeIndices);
+          _faceVertexCounts == other._faceVertexCounts && _faceVertexIndices == other._faceVertexIndices &&
+          _subdivTags == other._subdivTags && _holeIndices == other._holeIndices);
 }
 
 PxOsdMeshTopologyValidation PxOsdMeshTopology::Validate() const

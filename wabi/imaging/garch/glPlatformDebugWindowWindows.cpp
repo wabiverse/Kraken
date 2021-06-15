@@ -55,11 +55,11 @@ static std::map<HWND, Garch_GLPlatformDebugWindow *> &_GetWindowsMap()
 LPCTSTR Garch_GLPlatformDebugWindow::_className = _T("GarchGLDebugWindow");
 
 Garch_GLPlatformDebugWindow::Garch_GLPlatformDebugWindow(GarchGLDebugWindow *w)
-    : _running(false),
-      _callback(w),
-      _hWND(NULL),
-      _hDC(NULL),
-      _hGLRC(NULL)
+  : _running(false),
+    _callback(w),
+    _hWND(NULL),
+    _hDC(NULL),
+    _hGLRC(NULL)
 {}
 
 void Garch_GLPlatformDebugWindow::Init(const char *title, int width, int height, int nSamples)
@@ -70,10 +70,10 @@ void Garch_GLPlatformDebugWindow::Init(const char *title, int width, int height,
   if (GetClassInfo(hInstance, _className, &wc) == 0) {
     ZeroMemory(&wc, sizeof(WNDCLASS));
 
-    wc.lpfnWndProc   = &Garch_GLPlatformDebugWindow::_MsgProc;
-    wc.hInstance     = hInstance;
-    wc.style         = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-    wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
+    wc.lpfnWndProc = &Garch_GLPlatformDebugWindow::_MsgProc;
+    wc.hInstance = hInstance;
+    wc.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.lpszClassName = _className;
 
     if (RegisterClass(&wc) == 0) {
@@ -84,7 +84,7 @@ void Garch_GLPlatformDebugWindow::Init(const char *title, int width, int height,
 
   // XXX: todo: add support multi sampling
 
-  DWORD flags   = WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+  DWORD flags = WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
   DWORD exFlags = 0;
 
   _hWND = CreateWindowEx(exFlags,
@@ -106,21 +106,21 @@ void Garch_GLPlatformDebugWindow::Init(const char *title, int width, int height,
 
   ShowWindow(_hWND, SW_SHOW);
   _GetWindowsMap()[_hWND] = this;
-  _hDC                    = GetDC(_hWND);
+  _hDC = GetDC(_hWND);
 
   PIXELFORMATDESCRIPTOR pfd;
   ZeroMemory(&pfd, sizeof(PIXELFORMATDESCRIPTOR));
 
-  pfd.nSize        = sizeof(PIXELFORMATDESCRIPTOR);
-  pfd.nVersion     = 1;
-  pfd.dwFlags      = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-  pfd.iPixelType   = PFD_TYPE_RGBA;
-  pfd.cRedBits     = 8;
-  pfd.cGreenBits   = 8;
-  pfd.cBlueBits    = 8;
-  pfd.cAlphaBits   = 8;
-  pfd.cColorBits   = 24;
-  pfd.cDepthBits   = 24;
+  pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+  pfd.nVersion = 1;
+  pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+  pfd.iPixelType = PFD_TYPE_RGBA;
+  pfd.cRedBits = 8;
+  pfd.cGreenBits = 8;
+  pfd.cBlueBits = 8;
+  pfd.cAlphaBits = 8;
+  pfd.cColorBits = 24;
+  pfd.cDepthBits = 24;
   pfd.cStencilBits = 8;
 
   int pixelformat = ChoosePixelFormat(_hDC, &pfd);
@@ -159,7 +159,7 @@ static int Garch_GetModifierKeys(WPARAM wParam)
 Garch_GLPlatformDebugWindow *Garch_GLPlatformDebugWindow::_GetWindowByHandle(HWND hWND)
 {
   const auto &windows = _GetWindowsMap();
-  auto it             = windows.find(hWND);
+  auto it = windows.find(hWND);
   if (it != windows.end()) {
     return it->second;
   }
@@ -167,10 +167,7 @@ Garch_GLPlatformDebugWindow *Garch_GLPlatformDebugWindow::_GetWindowByHandle(HWN
 }
 
 /* static */
-LRESULT WINAPI Garch_GLPlatformDebugWindow::_MsgProc(HWND hWnd,
-                                                     UINT msg,
-                                                     WPARAM wParam,
-                                                     LPARAM lParam)
+LRESULT WINAPI Garch_GLPlatformDebugWindow::_MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   Garch_GLPlatformDebugWindow *window = Garch_GLPlatformDebugWindow::_GetWindowByHandle(hWnd);
   if (!TF_VERIFY(window)) {
@@ -185,27 +182,27 @@ LRESULT WINAPI Garch_GLPlatformDebugWindow::_MsgProc(HWND hWnd,
       break;
     case WM_LBUTTONDOWN:
       window->_callback->OnMousePress(
-          /*button=*/0, x, y, Garch_GetModifierKeys(wParam));
+        /*button=*/0, x, y, Garch_GetModifierKeys(wParam));
       break;
     case WM_MBUTTONDOWN:
       window->_callback->OnMousePress(
-          /*button=*/1, x, y, Garch_GetModifierKeys(wParam));
+        /*button=*/1, x, y, Garch_GetModifierKeys(wParam));
       break;
     case WM_RBUTTONDOWN:
       window->_callback->OnMousePress(
-          /*button=*/2, x, y, Garch_GetModifierKeys(wParam));
+        /*button=*/2, x, y, Garch_GetModifierKeys(wParam));
       break;
     case WM_LBUTTONUP:
       window->_callback->OnMouseRelease(
-          /*button=*/0, x, y, Garch_GetModifierKeys(wParam));
+        /*button=*/0, x, y, Garch_GetModifierKeys(wParam));
       break;
     case WM_MBUTTONUP:
       window->_callback->OnMouseRelease(
-          /*button=*/1, x, y, Garch_GetModifierKeys(wParam));
+        /*button=*/1, x, y, Garch_GetModifierKeys(wParam));
       break;
     case WM_RBUTTONUP:
       window->_callback->OnMouseRelease(
-          /*button=*/2, x, y, Garch_GetModifierKeys(wParam));
+        /*button=*/2, x, y, Garch_GetModifierKeys(wParam));
       break;
     case WM_MOUSEMOVE:
       window->_callback->OnMouseMove(x, y, Garch_GetModifierKeys(wParam));

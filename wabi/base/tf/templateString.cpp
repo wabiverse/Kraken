@@ -40,14 +40,14 @@ WABI_NAMESPACE_BEGIN
     ptr->push_back(TfStringPrintf(__VA_ARGS__)); \
   }
 
-static const char _Sigil      = '$';
-static const char _OpenQuote  = '{';
+static const char _Sigil = '$';
+static const char _OpenQuote = '{';
 static const char _CloseQuote = '}';
 
 static const char *const _IdentChars =
-    "abcdefghijklmnopqrstuvwxyz"
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    "0123456789_";
+  "abcdefghijklmnopqrstuvwxyz"
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  "0123456789_";
 
 TfTemplateString::TfTemplateString() : _data(new _Data)
 {}
@@ -141,15 +141,12 @@ bool TfTemplateString::_FindNextPlaceHolder(size_t *pos, vector<string> *errors)
       *pos = nextpos;
     }
     else if (_data->template_[endpos] != _CloseQuote) {
-      _ERROR(errors,
-             "Invalid character '%c' in identifier at pos %zu",
-             _data->template_[endpos],
-             endpos);
+      _ERROR(errors, "Invalid character '%c' in identifier at pos %zu", _data->template_[endpos], endpos);
       *pos = endpos;
     }
     else {
       // len includes the sigil and quote characters.
-      size_t len  = endpos - *pos + 1;
+      size_t len = endpos - *pos + 1;
       string name = _data->template_.substr(nextpos + 1, len - 3);
       if (!name.empty()) {
         _data->placeholders.push_back(_PlaceHolder(name, *pos, len));
@@ -163,8 +160,8 @@ bool TfTemplateString::_FindNextPlaceHolder(size_t *pos, vector<string> *errors)
   else {
     // Find the next character not valid within an identifier.
     size_t endpos = _data->template_.find_first_not_of(_IdentChars, nextpos);
-    size_t len    = (endpos == string::npos ? _data->template_.length() : endpos) - *pos;
-    string name   = _data->template_.substr(nextpos, len - 1);
+    size_t len = (endpos == string::npos ? _data->template_.length() : endpos) - *pos;
+    string name = _data->template_.substr(nextpos, len - 1);
     if (!name.empty()) {
       _data->placeholders.push_back(_PlaceHolder(name, *pos, len));
     }
@@ -200,8 +197,7 @@ string TfTemplateString::_Evaluate(const Mapping &mapping, vector<string> *error
   {
     // Add template content between the end of the last placeholder (or
     // the start of the template) and the start of the next placeholder.
-    result.insert(
-        result.end(), _data->template_.begin() + pos, _data->template_.begin() + it->pos);
+    result.insert(result.end(), _data->template_.begin() + pos, _data->template_.begin() + it->pos);
 
     if (it->name[0] == _Sigil) {
       result.insert(result.end(), _Sigil);
@@ -213,9 +209,8 @@ string TfTemplateString::_Evaluate(const Mapping &mapping, vector<string> *error
       }
       else {
         // Insert the placeholder into the result.
-        result.insert(result.end(),
-                      _data->template_.begin() + it->pos,
-                      _data->template_.begin() + it->pos + it->len);
+        result.insert(
+          result.end(), _data->template_.begin() + it->pos, _data->template_.begin() + it->pos + it->len);
         _ERROR(errors, "No mapping found for placeholder '%s'", it->name.c_str());
       }
     }

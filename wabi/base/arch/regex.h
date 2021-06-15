@@ -42,7 +42,7 @@ WABI_NAMESPACE_BEGIN
 class ArchRegex {
  public:
   static constexpr unsigned int CASE_INSENSITIVE = 1u;
-  static constexpr unsigned int GLOB             = 2u;
+  static constexpr unsigned int GLOB = 2u;
 
   /// Create an empty regex.
   ARCH_API ArchRegex();
@@ -50,7 +50,7 @@ class ArchRegex {
   ArchRegex(const ArchRegex &) = delete;
   ARCH_API ArchRegex(ArchRegex &&) noexcept;
   ArchRegex &operator=(const ArchRegex &) = delete;
-  ARCH_API ArchRegex &operator            =(ArchRegex &&) noexcept;
+  ARCH_API ArchRegex &operator=(ArchRegex &&) noexcept;
   ARCH_API ~ArchRegex();
 
   /// Returns \c true if the regex is valid.

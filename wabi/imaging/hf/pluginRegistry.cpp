@@ -42,13 +42,13 @@ WABI_NAMESPACE_BEGIN
 // Plugin Metadata Keys
 //
 static const char *DISPLAY_NAME = "displayName";
-static const char *PRIORITY     = "priority";
+static const char *PRIORITY = "priority";
 
 HfPluginRegistry::HfPluginRegistry(const TfType &pluginBaseType)
-    : _pluginBaseType(pluginBaseType),
-      _pluginEntries(),
-      _pluginIndex(),
-      _pluginCachePopulated(false)
+  : _pluginBaseType(pluginBaseType),
+    _pluginEntries(),
+    _pluginIndex(),
+    _pluginCachePopulated(false)
 {}
 
 HfPluginRegistry::~HfPluginRegistry()
@@ -68,7 +68,7 @@ void HfPluginRegistry::GetPluginDescs(HfPluginDescVector *plugins)
   plugins->resize(_pluginEntries.size());
   for (size_t index = 0; index < _pluginEntries.size(); ++index) {
     const Hf_PluginEntry &entry = _pluginEntries[index];
-    HfPluginDesc *desc          = &(*plugins)[index];
+    HfPluginDesc *desc = &(*plugins)[index];
 
     entry.GetDesc(desc);
   }
@@ -183,8 +183,7 @@ void HfPluginRegistry::_DiscoverPlugins()
   for (TfTypeSet::const_iterator it = pluginTypes.begin(); it != pluginTypes.end(); ++it) {
     const TfType &pluginType = *it;
 
-    const std::string &displayName = pluginRegistry.GetStringFromPluginMetaData(pluginType,
-                                                                                DISPLAY_NAME);
+    const std::string &displayName = pluginRegistry.GetStringFromPluginMetaData(pluginType, DISPLAY_NAME);
     const JsValue &priorityValue = pluginRegistry.GetDataFromPluginMetaData(pluginType, PRIORITY);
 
     if (displayName.empty() || !priorityValue.IsInt()) {

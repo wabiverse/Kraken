@@ -28,9 +28,8 @@ enum AnchorFreeTypeBuilderFlags {
              // spacing in horizontal text.
   AnchorFreeTypeBuilderFlags_MonoHinting =
     1 << 4,  // Strong hinting algorithm that should only be used for monochrome output.
-  AnchorFreeTypeBuilderFlags_Bold = 1 << 5,  // Styling: Should we artificially embolden the font?
-  AnchorFreeTypeBuilderFlags_Oblique =
-    1 << 6,  // Styling: Should we slant the font, emulating italic style?
+  AnchorFreeTypeBuilderFlags_Bold = 1 << 5,     // Styling: Should we artificially embolden the font?
+  AnchorFreeTypeBuilderFlags_Oblique = 1 << 6,  // Styling: Should we slant the font, emulating italic style?
   AnchorFreeTypeBuilderFlags_Monochrome =
     1 << 7,  // Disable anti-aliasing. Combine this with MonoHinting for best results!
   AnchorFreeTypeBuilderFlags_LoadColor = 1 << 8,  // Enable FreeType color-layered glyphs

@@ -96,8 +96,7 @@ template<typename T, bool PerThread> class Tf_StackedStorageType {
 
  public:
   /* Choose the stack storage type based on thea PerThread argument. */
-  typedef
-      typename std::conditional<PerThread, _PerThreadStackStorage, _GlobalStackStorage>::type Type;
+  typedef typename std::conditional<PerThread, _PerThreadStackStorage, _GlobalStackStorage>::type Type;
 };
 
 // Detail for TfStacked storage.  This exists so we can specialize it
@@ -133,9 +132,7 @@ template<typename T, bool PerThread> struct Tf_StackedStorage {
 /// Note that \a Stacked objects that differ only by \a PerThread will not
 /// share stacks.
 ///
-template<class Derived,
-         bool PerThread = true,
-         class Holder   = Tf_StackedStorage<Derived, PerThread>>
+template<class Derived, bool PerThread = true, class Holder = Tf_StackedStorage<Derived, PerThread>>
 class TfStacked {
   TfStacked(TfStacked const &) = delete;
   TfStacked &operator=(TfStacked const &) = delete;
@@ -175,7 +172,7 @@ class TfStacked {
   static Derived const *GetStackPrevious()
   {
     Stack const &stack = GetStack();
-    size_t size        = stack.size();
+    size_t size = stack.size();
     return size <= 1 ? 0 : stack[size - 2];
   }
 
@@ -259,8 +256,7 @@ class TfStacked {
     typedef typename Tf_StackedStorageType<Derived, IsPerThread>::Type Type; \
     static eiAPI std::atomic<Type *> value; \
   }; \
-  class Derived \
-      : public TfStacked<Derived, IsPerThread, Tf_ExportedStackedStorage<Derived, IsPerThread>>
+  class Derived : public TfStacked<Derived, IsPerThread, Tf_ExportedStackedStorage<Derived, IsPerThread>>
 
 WABI_NAMESPACE_END
 

@@ -46,7 +46,7 @@ size_t HgiTexture::_GetByteSizeOfResource(const HgiTextureDesc &descriptor)
 {
   // Compute all mip levels down to 1x1(x1)
   const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(
-      descriptor.format, descriptor.dimensions, descriptor.layerCount);
+    descriptor.format, descriptor.dimensions, descriptor.layerCount);
 
   // Number of mip levels actually used.
   const size_t mipLevels = std::min(mipInfos.size(), size_t(descriptor.mipLevels));
@@ -75,9 +75,9 @@ bool operator==(const HgiTextureDesc &lhs, const HgiTextureDesc &rhs)
          lhs.componentMapping == rhs.componentMapping && lhs.type == rhs.type &&
          lhs.dimensions == rhs.dimensions && lhs.sampleCount == rhs.sampleCount &&
          lhs.pixelsByteSize == rhs.pixelsByteSize
-      // Omitted because data ptr is set to nullptr after CreateTexture
-      // lhs.initialData == rhs.initialData
-      ;
+    // Omitted because data ptr is set to nullptr after CreateTexture
+    // lhs.initialData == rhs.initialData
+    ;
 }
 
 bool operator!=(const HgiTextureDesc &lhs, const HgiTextureDesc &rhs)
@@ -87,10 +87,9 @@ bool operator!=(const HgiTextureDesc &lhs, const HgiTextureDesc &rhs)
 
 bool operator==(const HgiTextureViewDesc &lhs, const HgiTextureViewDesc &rhs)
 {
-  return lhs.debugName == rhs.debugName && lhs.format == rhs.format &&
-         lhs.layerCount == rhs.layerCount && lhs.mipLevels == rhs.mipLevels &&
-         lhs.sourceTexture == rhs.sourceTexture && lhs.sourceFirstLayer == rhs.sourceFirstLayer &&
-         lhs.sourceFirstMip == rhs.sourceFirstMip;
+  return lhs.debugName == rhs.debugName && lhs.format == rhs.format && lhs.layerCount == rhs.layerCount &&
+         lhs.mipLevels == rhs.mipLevels && lhs.sourceTexture == rhs.sourceTexture &&
+         lhs.sourceFirstLayer == rhs.sourceFirstLayer && lhs.sourceFirstMip == rhs.sourceFirstMip;
 }
 
 bool operator!=(const HgiTextureViewDesc &lhs, const HgiTextureViewDesc &rhs)

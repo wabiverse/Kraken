@@ -36,9 +36,9 @@ WABI_NAMESPACE_USING
 void wrapUsdResolveInfo()
 {
   class_<UsdResolveInfo>("ResolveInfo")
-      .def("GetSource", &UsdResolveInfo::GetSource)
-      .def("GetNode", &UsdResolveInfo::GetNode)
-      .def("ValueIsBlocked", &UsdResolveInfo::ValueIsBlocked);
+    .def("GetSource", &UsdResolveInfo::GetSource)
+    .def("GetNode", &UsdResolveInfo::GetNode)
+    .def("ValueIsBlocked", &UsdResolveInfo::ValueIsBlocked);
 
   TfPyWrapEnum<UsdResolveInfoSource>();
 }

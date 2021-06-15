@@ -68,7 +68,7 @@ class GfLine2d {
 
   double Set(const GfVec2d &p0, const GfVec2d &dir)
   {
-    _p0  = p0;
+    _p0 = p0;
     _dir = dir;
     return _dir.Normalize();
   }
@@ -134,8 +134,8 @@ bool GfFindClosestPoints(const GfLine2d &l1,
                          const GfLine2d &l2,
                          GfVec2d *p1 = nullptr,
                          GfVec2d *p2 = nullptr,
-                         double *t1  = nullptr,
-                         double *t2  = nullptr);
+                         double *t1 = nullptr,
+                         double *t2 = nullptr);
 
 WABI_NAMESPACE_END
 

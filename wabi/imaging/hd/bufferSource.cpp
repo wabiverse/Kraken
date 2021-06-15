@@ -89,8 +89,8 @@ void const *HdComputedBufferSource::GetData() const
 {
   if (!_result) {
     TF_CODING_ERROR(
-        "HdComputedBufferSource::GetData() called without "
-        "setting the result.");
+      "HdComputedBufferSource::GetData() called without "
+      "setting the result.");
     return nullptr;
   }
   return _result->GetData();
@@ -100,8 +100,8 @@ HdTupleType HdComputedBufferSource::GetTupleType() const
 {
   if (!_result) {
     TF_CODING_ERROR(
-        "HdComputedBufferSource::GetTupleType() called "
-        "without setting the result.");
+      "HdComputedBufferSource::GetTupleType() called "
+      "without setting the result.");
     return {HdTypeInvalid, 0};
   }
   return _result->GetTupleType();
@@ -136,8 +136,8 @@ void const *HdNullBufferSource::GetData() const
 HdTupleType HdNullBufferSource::GetTupleType() const
 {
   TF_CODING_ERROR(
-      "HdNullBufferSource can't be scheduled with a buffer "
-      "range");
+    "HdNullBufferSource can't be scheduled with a buffer "
+    "range");
   return {HdTypeInvalid, 0};
 }
 

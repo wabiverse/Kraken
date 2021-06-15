@@ -64,14 +64,14 @@ struct GlfGLContextRegistry_Data {
 //
 
 GlfGLContextRegistry::GlfGLContextRegistry()
-    : _sharedContextInitialized(false),
-      _data(new GlfGLContextRegistry_Data)
+  : _sharedContextInitialized(false),
+    _data(new GlfGLContextRegistry_Data)
 {
   // Make a context for when no context is bound.  This is to avoid
   // repeatedly creating a raw context for this condition in GetCurrent().
-  GarchGLPlatformContextState nullState      = GarchGetNullGLPlatformContextState();
-  _nullContext                               = GlfGLRawContext::New(nullState);
-  _data->contextsByState[nullState]          = _nullContext;
+  GarchGLPlatformContextState nullState = GarchGetNullGLPlatformContextState();
+  _nullContext = GlfGLRawContext::New(nullState);
+  _data->contextsByState[nullState] = _nullContext;
   _data->statesByContext[_nullContext.get()] = nullState;
 }
 
@@ -159,7 +159,7 @@ void GlfGLContextRegistry::DidMakeCurrent(const GlfGLContextSharedPtr &context)
     GarchGLPlatformContextState currentState;
     if (_data->contextsByState.find(currentState) == _data->contextsByState.end()) {
       // Register context under the current context state.
-      _data->contextsByState[currentState]  = context;
+      _data->contextsByState[currentState] = context;
       _data->statesByContext[context.get()] = currentState;
     }
   }

@@ -55,7 +55,7 @@ void wrapNotice()
   TfPyNoticeWrapper<PlugNotice::Base, TfNotice>::Wrap();
 
   TfPyNoticeWrapper<PlugNotice::DidRegisterPlugins, PlugNotice::Base>::Wrap().def(
-      "GetNewPlugins",
-      make_function(&PlugNotice::DidRegisterPlugins::GetNewPlugins,
-                    return_value_policy<TfPySequenceToList>()));
+    "GetNewPlugins",
+    make_function(&PlugNotice::DidRegisterPlugins::GetNewPlugins,
+                  return_value_policy<TfPySequenceToList>()));
 }

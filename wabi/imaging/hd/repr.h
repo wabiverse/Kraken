@@ -49,22 +49,19 @@ class HdReprSelector {
   explicit HdReprSelector() : refinedToken(), unrefinedToken(), pointsToken()
   {}
 
-  explicit HdReprSelector(TfToken const &token)
-      : refinedToken(token),
-        unrefinedToken(),
-        pointsToken()
+  explicit HdReprSelector(TfToken const &token) : refinedToken(token), unrefinedToken(), pointsToken()
   {}
 
   explicit HdReprSelector(TfToken const &refined, TfToken const &unrefined)
-      : refinedToken(refined),
-        unrefinedToken(unrefined),
-        pointsToken()
+    : refinedToken(refined),
+      unrefinedToken(unrefined),
+      pointsToken()
   {}
 
   explicit HdReprSelector(TfToken const &refined, TfToken const &unrefined, TfToken const &points)
-      : refinedToken(refined),
-        unrefinedToken(unrefined),
-        pointsToken(points)
+    : refinedToken(refined),
+      unrefinedToken(unrefined),
+      pointsToken(points)
   {}
 
   /// Currenly support upto 3 topology tokens.
@@ -145,7 +142,7 @@ class HdReprSelector {
 ///
 class HdRepr final {
  public:
-  using DrawItemUniquePtr       = std::unique_ptr<HdDrawItem>;
+  using DrawItemUniquePtr = std::unique_ptr<HdDrawItem>;
   using DrawItemUniquePtrVector = std::vector<DrawItemUniquePtr>;
 
   HD_API

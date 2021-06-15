@@ -172,8 +172,7 @@ class HdEmbreeMesh final : public HdMesh {
 
   // Populate _primvarSourceMap with primvars that are computed.
   // Return the names of the primvars that were successfully updated.
-  TfTokenVector _UpdateComputedPrimvarSources(HdSceneDelegate *sceneDelegate,
-                                              HdDirtyBits dirtyBits);
+  TfTokenVector _UpdateComputedPrimvarSources(HdSceneDelegate *sceneDelegate, HdDirtyBits dirtyBits);
 
   // Populate a single primvar, with given name and data, in the prototype
   // context. Overwrites the current mapping for the name, if necessary.

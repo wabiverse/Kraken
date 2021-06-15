@@ -38,8 +38,7 @@
 WABI_NAMESPACE_BEGIN
 
 using Hd_VertexAdjacencySharedPtr = std::shared_ptr<class Hd_VertexAdjacency>;
-using Hd_AdjacencyBuilderComputationSharedPtr =
-    std::shared_ptr<class Hd_AdjacencyBuilderComputation>;
+using Hd_AdjacencyBuilderComputationSharedPtr = std::shared_ptr<class Hd_AdjacencyBuilderComputation>;
 using Hd_AdjacencyBuilderComputationPtr = std::weak_ptr<class Hd_AdjacencyBuilderComputation>;
 
 class HdMeshTopology;

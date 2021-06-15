@@ -73,7 +73,7 @@ class Plug_InterfaceFactory {
   TF_REGISTRY_FUNCTION(TfType) \
   { \
     TfType::Define<Interface>() \
-        .SetFactory<Plug_InterfaceFactory::SingletonFactory<Interface, Implementation>>(); \
+      .SetFactory<Plug_InterfaceFactory::SingletonFactory<Interface, Implementation>>(); \
   }
 
 WABI_NAMESPACE_END

@@ -37,8 +37,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiGLResourceBindings::HgiGLResourceBindings(HgiResourceBindingsDesc const &desc)
-    : HgiResourceBindings(desc)
+HgiGLResourceBindings::HgiGLResourceBindings(HgiResourceBindingsDesc const &desc) : HgiResourceBindings(desc)
 {}
 
 HgiGLResourceBindings::~HgiGLResourceBindings() = default;
@@ -49,9 +48,9 @@ void HgiGLResourceBindings::BindResources()
   std::vector<uint32_t> samplers(textures.size(), 0);
   std::vector<uint32_t> images(textures.size(), 0);
 
-  bool hasTex     = false;
+  bool hasTex = false;
   bool hasSampler = false;
-  bool hasImage   = false;
+  bool hasImage = false;
 
   //
   // Bind Textures, images and samplers
@@ -72,17 +71,17 @@ void HgiGLResourceBindings::BindResources()
     if (texDesc.resourceType == HgiBindResourceTypeSampledImage ||
         texDesc.resourceType == HgiBindResourceTypeCombinedSamplerImage) {
       // Texture sampling (for graphics pipeline)
-      hasTex                            = true;
+      hasTex = true;
       HgiTextureHandle const &texHandle = texDesc.textures.front();
-      HgiGLTexture *glTex               = static_cast<HgiGLTexture *>(texHandle.Get());
-      textures[texDesc.bindingIndex]    = glTex->GetTextureId();
+      HgiGLTexture *glTex = static_cast<HgiGLTexture *>(texHandle.Get());
+      textures[texDesc.bindingIndex] = glTex->GetTextureId();
     }
     else if (texDesc.resourceType == HgiBindResourceTypeStorageImage) {
       // Image load/store (usually for compute pipeline)
-      hasImage                          = true;
+      hasImage = true;
       HgiTextureHandle const &texHandle = texDesc.textures.front();
-      HgiGLTexture *glTex               = static_cast<HgiGLTexture *>(texHandle.Get());
-      images[texDesc.bindingIndex]      = glTex->GetTextureId();
+      HgiGLTexture *glTex = static_cast<HgiGLTexture *>(texHandle.Get());
+      images[texDesc.bindingIndex] = glTex->GetTextureId();
     }
     else {
       TF_CODING_ERROR("Unsupported texture bind resource type");
@@ -90,10 +89,10 @@ void HgiGLResourceBindings::BindResources()
 
     // 'StorageImage' types do not need a sampler, so check if we have one.
     if (!texDesc.samplers.empty()) {
-      hasSampler                        = true;
+      hasSampler = true;
       HgiSamplerHandle const &smpHandle = texDesc.samplers.front();
-      HgiGLSampler *glSmp               = static_cast<HgiGLSampler *>(smpHandle.Get());
-      samplers[texDesc.bindingIndex]    = glSmp->GetSamplerId();
+      HgiGLSampler *glSmp = static_cast<HgiGLSampler *>(smpHandle.Get());
+      samplers[texDesc.bindingIndex] = glSmp->GetSamplerId();
     }
     else {
       // A sampler MUST be provided for sampler image textures (Hgi rule).
@@ -150,7 +149,7 @@ void HgiGLResourceBindings::BindResources()
       dst->resize(unit + 1, 0);
     }
     HgiBufferHandle const &bufHandle = bufDesc.buffers.front();
-    HgiGLBuffer *glbuffer            = static_cast<HgiGLBuffer *>(bufHandle.Get());
+    HgiGLBuffer *glbuffer = static_cast<HgiGLBuffer *>(bufHandle.Get());
 
     (*dst)[bufDesc.bindingIndex] = glbuffer->GetBufferId();
   }

@@ -106,8 +106,7 @@ UsdAttribute UsdUINodeGraphNodeAPI::GetPosAttr() const
   return GetPrim().GetAttribute(UsdUITokens->uiNodegraphNodePos);
 }
 
-UsdAttribute UsdUINodeGraphNodeAPI::CreatePosAttr(VtValue const &defaultValue,
-                                                  bool writeSparsely) const
+UsdAttribute UsdUINodeGraphNodeAPI::CreatePosAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdUITokens->uiNodegraphNodePos,
                                     SdfValueTypeNames->Float2,
@@ -154,8 +153,7 @@ UsdAttribute UsdUINodeGraphNodeAPI::GetIconAttr() const
   return GetPrim().GetAttribute(UsdUITokens->uiNodegraphNodeIcon);
 }
 
-UsdAttribute UsdUINodeGraphNodeAPI::CreateIconAttr(VtValue const &defaultValue,
-                                                   bool writeSparsely) const
+UsdAttribute UsdUINodeGraphNodeAPI::CreateIconAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdUITokens->uiNodegraphNodeIcon,
                                     SdfValueTypeNames->Asset,
@@ -186,8 +184,7 @@ UsdAttribute UsdUINodeGraphNodeAPI::GetSizeAttr() const
   return GetPrim().GetAttribute(UsdUITokens->uiNodegraphNodeSize);
 }
 
-UsdAttribute UsdUINodeGraphNodeAPI::CreateSizeAttr(VtValue const &defaultValue,
-                                                   bool writeSparsely) const
+UsdAttribute UsdUINodeGraphNodeAPI::CreateSizeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdUITokens->uiNodegraphNodeSize,
                                     SdfValueTypeNames->Float2,
@@ -198,8 +195,7 @@ UsdAttribute UsdUINodeGraphNodeAPI::CreateSizeAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -213,15 +209,15 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdUINodeGraphNodeAPI::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdUITokens->uiNodegraphNodePos,
-      UsdUITokens->uiNodegraphNodeStackingOrder,
-      UsdUITokens->uiNodegraphNodeDisplayColor,
-      UsdUITokens->uiNodegraphNodeIcon,
-      UsdUITokens->uiNodegraphNodeExpansionState,
-      UsdUITokens->uiNodegraphNodeSize,
+    UsdUITokens->uiNodegraphNodePos,
+    UsdUITokens->uiNodegraphNodeStackingOrder,
+    UsdUITokens->uiNodegraphNodeDisplayColor,
+    UsdUITokens->uiNodegraphNodeIcon,
+    UsdUITokens->uiNodegraphNodeExpansionState,
+    UsdUITokens->uiNodegraphNodeSize,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdAPISchemaBase::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

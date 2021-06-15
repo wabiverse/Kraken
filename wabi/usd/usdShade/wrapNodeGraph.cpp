@@ -62,29 +62,27 @@ void wrapUsdShadeNodeGraph()
   class_<This, bases<UsdTyped>> cls("NodeGraph");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -123,32 +121,32 @@ static object _WrapComputeOutputSource(const UsdShadeNodeGraph &self, const TfTo
 WRAP_CUSTOM
 {
   _class.def(init<UsdShadeConnectableAPI>(arg("connectable")))
-      .def("ConnectableAPI", &UsdShadeNodeGraph::ConnectableAPI)
+    .def("ConnectableAPI", &UsdShadeNodeGraph::ConnectableAPI)
 
-      .def("CreateOutput", &UsdShadeNodeGraph::CreateOutput, (arg("name"), arg("typeName")))
-      .def("GetOutput", &UsdShadeNodeGraph::GetOutput, (arg("name")))
-      .def("GetOutputs",
-           &UsdShadeNodeGraph::GetOutputs,
-           (arg("onlyAuthored") = true),
-           return_value_policy<TfPySequenceToList>())
-      .def("ComputeOutputSource", _WrapComputeOutputSource, (arg("outputName")))
+    .def("CreateOutput", &UsdShadeNodeGraph::CreateOutput, (arg("name"), arg("typeName")))
+    .def("GetOutput", &UsdShadeNodeGraph::GetOutput, (arg("name")))
+    .def("GetOutputs",
+         &UsdShadeNodeGraph::GetOutputs,
+         (arg("onlyAuthored") = true),
+         return_value_policy<TfPySequenceToList>())
+    .def("ComputeOutputSource", _WrapComputeOutputSource, (arg("outputName")))
 
-      .def("CreateInput", &UsdShadeNodeGraph::CreateInput, (arg("name"), arg("type")))
-      .def("GetInput", &UsdShadeNodeGraph::GetInput, arg("name"))
-      .def("GetInputs",
-           &UsdShadeNodeGraph::GetInputs,
-           (arg("onlyAuthored") = true),
-           return_value_policy<TfPySequenceToList>())
-      .def("GetInterfaceInputs",
-           &UsdShadeNodeGraph::GetInterfaceInputs,
-           return_value_policy<TfPySequenceToList>())
+    .def("CreateInput", &UsdShadeNodeGraph::CreateInput, (arg("name"), arg("type")))
+    .def("GetInput", &UsdShadeNodeGraph::GetInput, arg("name"))
+    .def("GetInputs",
+         &UsdShadeNodeGraph::GetInputs,
+         (arg("onlyAuthored") = true),
+         return_value_policy<TfPySequenceToList>())
+    .def("GetInterfaceInputs",
+         &UsdShadeNodeGraph::GetInterfaceInputs,
+         return_value_policy<TfPySequenceToList>())
 
-      .def("ComputeInterfaceInputConsumersMap",
-           &UsdShadeNodeGraph::ComputeInterfaceInputConsumersMap,
-           return_value_policy<TfPyMapToDictionary>(),
-           (arg("computeTransitiveConsumers") = false))
+    .def("ComputeInterfaceInputConsumersMap",
+         &UsdShadeNodeGraph::ComputeInterfaceInputConsumersMap,
+         return_value_policy<TfPyMapToDictionary>(),
+         (arg("computeTransitiveConsumers") = false))
 
-      ;
+    ;
 }
 
 }  // anonymous namespace

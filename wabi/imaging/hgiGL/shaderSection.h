@@ -50,8 +50,8 @@ class HgiGLShaderSection : public HgiShaderSection {
   HGIGL_API
   explicit HgiGLShaderSection(const std::string &identifier,
                               const HgiShaderSectionAttributeVector &attributes = {},
-                              const std::string &storageQualifier               = std::string(),
-                              const std::string &defaultValue                   = std::string());
+                              const std::string &storageQualifier = std::string(),
+                              const std::string &defaultValue = std::string());
 
   HGIGL_API
   ~HgiGLShaderSection() override;
@@ -73,9 +73,9 @@ class HgiGLShaderSection : public HgiShaderSection {
   virtual bool VisitGlobalFunctionDefinitions(std::ostream &ss);
 
  private:
-  HgiGLShaderSection()        = delete;
+  HgiGLShaderSection() = delete;
   HgiGLShaderSection &operator=(const HgiGLShaderSection &) = delete;
-  HgiGLShaderSection(const HgiGLShaderSection &)            = delete;
+  HgiGLShaderSection(const HgiGLShaderSection &) = delete;
 
   const std::string _storageQualifier;
 };
@@ -88,8 +88,7 @@ class HgiGLShaderSection : public HgiShaderSection {
 class HgiGLMacroShaderSection final : public HgiGLShaderSection {
  public:
   HGIGL_API
-  explicit HgiGLMacroShaderSection(const std::string &macroDeclaration,
-                                   const std::string &macroComment);
+  explicit HgiGLMacroShaderSection(const std::string &macroDeclaration, const std::string &macroComment);
 
   HGIGL_API
   ~HgiGLMacroShaderSection() override;
@@ -98,9 +97,9 @@ class HgiGLMacroShaderSection final : public HgiGLShaderSection {
   bool VisitGlobalMacros(std::ostream &ss) override;
 
  private:
-  HgiGLMacroShaderSection()        = delete;
+  HgiGLMacroShaderSection() = delete;
   HgiGLMacroShaderSection &operator=(const HgiGLMacroShaderSection &) = delete;
-  HgiGLMacroShaderSection(const HgiGLMacroShaderSection &)            = delete;
+  HgiGLMacroShaderSection(const HgiGLMacroShaderSection &) = delete;
 
   const std::string _macroComment;
 };
@@ -117,7 +116,7 @@ class HgiGLMemberShaderSection final : public HgiGLShaderSection {
                                     const std::string &typeName,
                                     const HgiShaderSectionAttributeVector &attributes,
                                     const std::string &storageQualifier = std::string(),
-                                    const std::string &defaultValue     = std::string());
+                                    const std::string &defaultValue = std::string());
 
   HGIGL_API
   ~HgiGLMemberShaderSection() override;
@@ -129,9 +128,9 @@ class HgiGLMemberShaderSection final : public HgiGLShaderSection {
   void WriteType(std::ostream &ss) const override;
 
  private:
-  HgiGLMemberShaderSection()        = delete;
+  HgiGLMemberShaderSection() = delete;
   HgiGLMemberShaderSection &operator=(const HgiGLMemberShaderSection &) = delete;
-  HgiGLMemberShaderSection(const HgiGLMemberShaderSection &)            = delete;
+  HgiGLMemberShaderSection(const HgiGLMemberShaderSection &) = delete;
 
   std::string _typeName;
 };
@@ -184,9 +183,9 @@ class HgiGLTextureShaderSection final : public HgiGLShaderSection {
   bool VisitGlobalFunctionDefinitions(std::ostream &ss) override;
 
  private:
-  HgiGLTextureShaderSection()        = delete;
+  HgiGLTextureShaderSection() = delete;
   HgiGLTextureShaderSection &operator=(const HgiGLTextureShaderSection &) = delete;
-  HgiGLTextureShaderSection(const HgiGLTextureShaderSection &)            = delete;
+  HgiGLTextureShaderSection(const HgiGLTextureShaderSection &) = delete;
 
   void _WriteSamplerType(std::ostream &ss) const;
   void _WriteSampledDataType(std::ostream &ss) const;
@@ -218,9 +217,9 @@ class HgiGLBufferShaderSection final : public HgiGLShaderSection {
   bool VisitGlobalMemberDeclarations(std::ostream &ss) override;
 
  private:
-  HgiGLBufferShaderSection()        = delete;
+  HgiGLBufferShaderSection() = delete;
   HgiGLBufferShaderSection &operator=(const HgiGLBufferShaderSection &) = delete;
-  HgiGLBufferShaderSection(const HgiGLBufferShaderSection &)            = delete;
+  HgiGLBufferShaderSection(const HgiGLBufferShaderSection &) = delete;
 
   const std::string _type;
 };
@@ -246,9 +245,9 @@ class HgiGLKeywordShaderSection final : public HgiGLShaderSection {
   bool VisitGlobalMemberDeclarations(std::ostream &ss) override;
 
  private:
-  HgiGLKeywordShaderSection()        = delete;
+  HgiGLKeywordShaderSection() = delete;
   HgiGLKeywordShaderSection &operator=(const HgiGLKeywordShaderSection &) = delete;
-  HgiGLKeywordShaderSection(const HgiGLKeywordShaderSection &)            = delete;
+  HgiGLKeywordShaderSection(const HgiGLKeywordShaderSection &) = delete;
 
   const std::string _type;
   const std::string _keyword;

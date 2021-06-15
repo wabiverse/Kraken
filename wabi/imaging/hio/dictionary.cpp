@@ -41,7 +41,7 @@ using namespace std;
 
 TF_DEBUG_CODES(
 
-    HIO_DEBUG_DICTIONARY
+  HIO_DEBUG_DICTIONARY
 
 );
 
@@ -80,10 +80,10 @@ static VtDictionary _Hio_GetDictionaryFromJSON(const string &input, string *erro
   if (jsdict.IsNull()) {
     if (errorStr || TfDebug::IsEnabled(HIO_DEBUG_DICTIONARY)) {
       std::string errorMessageStr = TfStringPrintf(
-          "Failed to extract dictionary from input (line %d, col %d): %s",
-          error.line,
-          error.column,
-          error.reason.c_str());
+        "Failed to extract dictionary from input (line %d, col %d): %s",
+        error.line,
+        error.column,
+        error.reason.c_str());
       if (errorStr) {
         *errorStr = errorMessageStr;
       }
@@ -95,7 +95,7 @@ static VtDictionary _Hio_GetDictionaryFromJSON(const string &input, string *erro
   if (!jsdict.IsObject()) {
     if (errorStr || TfDebug::IsEnabled(HIO_DEBUG_DICTIONARY)) {
       std::string errorMessageStr = TfStringPrintf(
-          "Input string did not evaluate to a JSON dictionary:\n%s\n", input.c_str());
+        "Input string did not evaluate to a JSON dictionary:\n%s\n", input.c_str());
       if (errorStr) {
         *errorStr = errorMessageStr;
       }
@@ -104,14 +104,11 @@ static VtDictionary _Hio_GetDictionaryFromJSON(const string &input, string *erro
     return VtDictionary();
   }
 
-  const VtValue vtdict = JsValueTypeConverter<VtValue, VtDictionary, /*UseInt64*/ false>::Convert(
-      jsdict);
+  const VtValue vtdict = JsValueTypeConverter<VtValue, VtDictionary, /*UseInt64*/ false>::Convert(jsdict);
   return vtdict.IsHolding<VtDictionary>() ? vtdict.UncheckedGet<VtDictionary>() : VtDictionary();
 }
 
-VtDictionary Hio_GetDictionaryFromInput(const string &input,
-                                        const string &filename,
-                                        string *errorStr)
+VtDictionary Hio_GetDictionaryFromInput(const string &input, const string &filename, string *errorStr)
 {
   std::string jsError;
   VtDictionary ret = _Hio_GetDictionaryFromJSON(input, &jsError);

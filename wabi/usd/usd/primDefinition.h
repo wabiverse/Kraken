@@ -144,8 +144,7 @@ class UsdPrimDefinition {
   /// Returns true if a fallback dictionary value is defined for the given
   /// metadata \p key and it contains a value at \p keyPath. Returns false
   /// otherwise.
-  template<class T>
-  bool GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, T *value) const
+  template<class T> bool GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, T *value) const
   {
     if (UsdSchemaRegistry::IsDisallowedField(key)) {
       return false;
@@ -172,8 +171,7 @@ class UsdPrimDefinition {
   ///
   /// Returns true if a fallback value is defined for the given metadata
   /// \p key for the named property. Returns false otherwise.
-  template<class T>
-  bool GetPropertyMetadata(const TfToken &propName, const TfToken &key, T *value) const
+  template<class T> bool GetPropertyMetadata(const TfToken &propName, const TfToken &key, T *value) const
   {
     if (propName.IsEmpty() || UsdSchemaRegistry::IsDisallowedField(key)) {
       return false;
@@ -273,8 +271,7 @@ class UsdPrimDefinition {
   /// It is preferable to use the _HasField and _HasFieldDictKey methods to
   /// access property field values, as opposed to getting a spec handle from
   /// the GetSchemaXXXSpec functions, as these methods are faster.
-  template<class T>
-  bool _HasField(const TfToken &propName, const TfToken &fieldName, T *value) const
+  template<class T> bool _HasField(const TfToken &propName, const TfToken &fieldName, T *value) const
   {
     if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName)) {
       return _GetSchematics()->HasField(*path, fieldName, value);
@@ -312,8 +309,7 @@ class UsdPrimDefinition {
   void _SetPrimSpec(const SdfPrimSpecHandle &primSpec, bool providesPrimMetadata);
 
   USD_API
-  void _ApplyPropertiesFromPrimDef(const UsdPrimDefinition &primDef,
-                                   const std::string &propPrefix = "");
+  void _ApplyPropertiesFromPrimDef(const UsdPrimDefinition &primDef, const std::string &propPrefix = "");
 
   void _AddProperty(const TfToken &name, const SdfPath &schemaPath)
   {

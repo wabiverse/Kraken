@@ -49,25 +49,23 @@ void wrapResolver()
   typedef ArResolver This;
 
   class_<This, boost::noncopyable>("Resolver", no_init)
-      .def("ConfigureResolverForAsset", &This::ConfigureResolverForAsset)
-      .def("CreateDefaultContext", &This::CreateDefaultContext)
-      .def("CreateDefaultContextForAsset", &This::CreateDefaultContextForAsset)
-      .def("GetCurrentContext", &This::GetCurrentContext)
+    .def("ConfigureResolverForAsset", &This::ConfigureResolverForAsset)
+    .def("CreateDefaultContext", &This::CreateDefaultContext)
+    .def("CreateDefaultContextForAsset", &This::CreateDefaultContextForAsset)
+    .def("GetCurrentContext", &This::GetCurrentContext)
 
-      .def("IsRelativePath", &This::IsRelativePath)
-      .def("AnchorRelativePath", &This::AnchorRelativePath)
-      .def("Resolve", &This::Resolve)
+    .def("IsRelativePath", &This::IsRelativePath)
+    .def("AnchorRelativePath", &This::AnchorRelativePath)
+    .def("Resolve", &This::Resolve)
 
-      .def("GetExtension", &This::GetExtension)
-      .def("RefreshContext", &This::RefreshContext);
+    .def("GetExtension", &This::GetExtension)
+    .def("RefreshContext", &This::RefreshContext);
 
   def("GetResolver", ArGetResolver, return_value_policy<reference_existing_object>());
 
   def("SetPreferredResolver", ArSetPreferredResolver, arg("resolverTypeName"));
 
-  def("GetUnderlyingResolver",
-      ArGetUnderlyingResolver,
-      return_value_policy<reference_existing_object>());
+  def("GetUnderlyingResolver", ArGetUnderlyingResolver, return_value_policy<reference_existing_object>());
 }
 
 TF_REFPTR_CONST_VOLATILE_GET(ArResolver)

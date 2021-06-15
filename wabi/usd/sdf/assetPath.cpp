@@ -61,9 +61,7 @@ static int _ReadUTF8(char const *&cp, std::string *errMsg)
   auto highBits = [](int n) { return static_cast<unsigned char>(((1 << n) - 1) << (8 - n)); };
 
   // Return true if `ch` is a continuation byte.
-  auto isContinuation = [&highBits](unsigned char ch) {
-    return (ch & highBits(2)) == highBits(1);
-  };
+  auto isContinuation = [&highBits](unsigned char ch) { return (ch & highBits(2)) == highBits(1); };
 
   // Check for single-character code.
   if ((*cp & highBits(1)) == 0) {
@@ -81,11 +79,11 @@ static int _ReadUTF8(char const *&cp, std::string *errMsg)
       for (int j = 1; j != i; ++j) {
         if (!isContinuation(cp[j])) {
           char const *ordinalWords[] = {"first", "second", "third", "fourth"};
-          *errMsg                    = TfStringPrintf(
-              "%d-byte UTF-8 code point lacks "
-              "%s continuation byte",
-              i,
-              ordinalWords[j - 1]);
+          *errMsg = TfStringPrintf(
+            "%d-byte UTF-8 code point lacks "
+            "%s continuation byte",
+            i,
+            ordinalWords[j - 1]);
           return -1;
         }
         ret = (ret << 6) | (cp[j] & ~highBits(2));
@@ -111,14 +109,14 @@ static bool _ValidateAssetPathString(char const *path)
   char const *cp = path;
   std::string err;
   int utf8Char = _ReadUTF8(cp, &err);
-  int charNum  = 1;
+  int charNum = 1;
   for (; utf8Char > 0; utf8Char = _ReadUTF8(cp, &err)) {
     if (isControlCode(utf8Char)) {
       TF_CODING_ERROR(
-          "Invalid asset path string -- character %d is "
-          "control character 0x%x",
-          charNum,
-          utf8Char);
+        "Invalid asset path string -- character %d is "
+        "control character 0x%x",
+        charNum,
+        utf8Char);
       return false;
     }
     ++charNum;
@@ -141,8 +139,8 @@ SdfAssetPath::SdfAssetPath(const std::string &path) : _assetPath(path)
 }
 
 SdfAssetPath::SdfAssetPath(const std::string &path, const std::string &resolvedPath)
-    : _assetPath(path),
-      _resolvedPath(resolvedPath)
+  : _assetPath(path),
+    _resolvedPath(resolvedPath)
 {
   if (!_ValidateAssetPathString(path.c_str()) || !_ValidateAssetPathString(resolvedPath.c_str())) {
     *this = SdfAssetPath();

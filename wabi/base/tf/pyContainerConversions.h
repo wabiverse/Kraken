@@ -104,14 +104,12 @@ struct default_policy {
     return false;
   }
 
-  template<typename ContainerType>
-  static bool check_size(boost::type<ContainerType>, std::size_t sz)
+  template<typename ContainerType> static bool check_size(boost::type<ContainerType>, std::size_t sz)
   {
     return true;
   }
 
-  template<typename ContainerType>
-  static void assert_size(boost::type<ContainerType>, std::size_t sz)
+  template<typename ContainerType> static void assert_size(boost::type<ContainerType>, std::size_t sz)
   {}
 
   template<typename ContainerType> static void reserve(ContainerType &a, std::size_t sz)
@@ -124,14 +122,12 @@ struct fixed_size_policy {
     return true;
   }
 
-  template<typename ContainerType>
-  static bool check_size(boost::type<ContainerType>, std::size_t sz)
+  template<typename ContainerType> static bool check_size(boost::type<ContainerType>, std::size_t sz)
   {
     return ContainerType::size() == sz;
   }
 
-  template<typename ContainerType>
-  static void assert_size(boost::type<ContainerType>, std::size_t sz)
+  template<typename ContainerType> static void assert_size(boost::type<ContainerType>, std::size_t sz)
   {
     if (!check_size(boost::type<ContainerType>(), sz)) {
       PyErr_SetString(PyExc_RuntimeError, "Insufficient elements for fixed-size array.");
@@ -177,8 +173,7 @@ struct variable_capacity_all_items_convertible_policy : variable_capacity_policy
 };
 
 struct fixed_capacity_policy : variable_capacity_policy {
-  template<typename ContainerType>
-  static bool check_size(boost::type<ContainerType>, std::size_t sz)
+  template<typename ContainerType> static bool check_size(boost::type<ContainerType>, std::size_t sz)
   {
     return ContainerType::max_size() >= sz;
   }
@@ -206,7 +201,7 @@ template<typename ContainerType, typename ConversionPolicy> struct from_python_s
   from_python_sequence()
   {
     boost::python::converter::registry::push_back(
-        &convertible, &construct, boost::python::type_id<ContainerType>());
+      &convertible, &construct, boost::python::type_id<ContainerType>());
   }
 
   static void *convertible(PyObject *obj_ptr)
@@ -217,8 +212,7 @@ template<typename ContainerType, typename ConversionPolicy> struct from_python_s
            (Py_TYPE(obj_ptr) == 0 || Py_TYPE(Py_TYPE(obj_ptr)) == 0 ||
             Py_TYPE(Py_TYPE(obj_ptr))->tp_name == 0 ||
             std::strcmp(Py_TYPE(Py_TYPE(obj_ptr))->tp_name, "Boost.Python.class") != 0) &&
-           PyObject_HasAttrString(obj_ptr, "__len__") &&
-           PyObject_HasAttrString(obj_ptr, "__getitem__"))))
+           PyObject_HasAttrString(obj_ptr, "__len__") && PyObject_HasAttrString(obj_ptr, "__getitem__"))))
       return 0;
     boost::python::handle<> obj_iter(boost::python::allow_null(PyObject_GetIter(obj_ptr)));
     if (!obj_iter.get()) {  // must be convertible to an iterator
@@ -245,9 +239,7 @@ template<typename ContainerType, typename ConversionPolicy> struct from_python_s
 
   // This loop factored out by Achim Domma to avoid Visual C++
   // Internal Compiler Error.
-  static bool all_elements_convertible(boost::python::handle<> &obj_iter,
-                                       bool is_range,
-                                       std::size_t &i)
+  static bool all_elements_convertible(boost::python::handle<> &obj_iter, bool is_range, std::size_t &i)
   {
     for (;; i++) {
       boost::python::handle<> py_elem_hdl(boost::python::allow_null(PyIter_Next(obj_iter.get())));
@@ -267,16 +259,15 @@ template<typename ContainerType, typename ConversionPolicy> struct from_python_s
     return true;
   }
 
-  static void construct(PyObject *obj_ptr,
-                        boost::python::converter::rvalue_from_python_stage1_data *data)
+  static void construct(PyObject *obj_ptr, boost::python::converter::rvalue_from_python_stage1_data *data)
   {
     boost::python::handle<> obj_iter(PyObject_GetIter(obj_ptr));
-    void *storage = ((boost::python::converter::rvalue_from_python_storage<ContainerType> *)data)
-                        ->storage.bytes;
+    void *storage =
+      ((boost::python::converter::rvalue_from_python_storage<ContainerType> *)data)->storage.bytes;
     new (storage) ContainerType();
-    data->convertible     = storage;
+    data->convertible = storage;
     ContainerType &result = *((ContainerType *)storage);
-    std::size_t i         = 0;
+    std::size_t i = 0;
     for (;; i++) {
       boost::python::handle<> py_elem_hdl(boost::python::allow_null(PyIter_Next(obj_iter.get())));
       if (PyErr_Occurred())
@@ -298,7 +289,7 @@ template<typename PairType> struct from_python_tuple_pair {
   from_python_tuple_pair()
   {
     boost::python::converter::registry::push_back(
-        &convertible, &construct, boost::python::type_id<PairType>());
+      &convertible, &construct, boost::python::type_id<PairType>());
   }
 
   static void *convertible(PyObject *obj_ptr)
@@ -314,11 +305,9 @@ template<typename PairType> struct from_python_tuple_pair {
     return obj_ptr;
   }
 
-  static void construct(PyObject *obj_ptr,
-                        boost::python::converter::rvalue_from_python_stage1_data *data)
+  static void construct(PyObject *obj_ptr, boost::python::converter::rvalue_from_python_stage1_data *data)
   {
-    void *storage =
-        ((boost::python::converter::rvalue_from_python_storage<PairType> *)data)->storage.bytes;
+    void *storage = ((boost::python::converter::rvalue_from_python_storage<PairType> *)data)->storage.bytes;
     boost::python::extract<first_type> e1(PyTuple_GetItem(obj_ptr, 0));
     boost::python::extract<second_type> e2(PyTuple_GetItem(obj_ptr, 1));
     new (storage) PairType(e1(), e2());

@@ -26,10 +26,10 @@ double maxBias(std::vector<int> &counts, int reps);
 template<typename keytype, typename hashtype>
 void calcBias(pfHash hash, std::vector<int> &counts, int reps, Rand &r)
 {
-  const int keybytes  = sizeof(keytype);
+  const int keybytes = sizeof(keytype);
   const int hashbytes = sizeof(hashtype);
 
-  const int keybits  = keybytes * 8;
+  const int keybits = keybytes * 8;
   const int hashbits = hashbytes * 8;
 
   keytype K;
@@ -66,10 +66,10 @@ template<typename keytype, typename hashtype> bool AvalancheTest(pfHash hash, co
 {
   Rand r(48273);
 
-  const int keybytes  = sizeof(keytype);
+  const int keybytes = sizeof(keytype);
   const int hashbytes = sizeof(hashtype);
 
-  const int keybits  = keybytes * 8;
+  const int keybits = keybytes * 8;
   const int hashbits = hashbytes * 8;
 
   printf("Testing %3d-bit keys -> %3d-bit hashes, %8d reps", keybits, hashbits, reps);
@@ -113,9 +113,9 @@ void BicTest(pfHash hash,
 {
   Rand r(11938);
 
-  const int keybytes  = sizeof(keytype);
+  const int keybytes = sizeof(keytype);
   const int hashbytes = sizeof(hashtype);
-  const int hashbits  = hashbytes * 8;
+  const int hashbits = hashbytes * 8;
 
   std::vector<int> bins(hashbits * hashbits * 4, 0);
 
@@ -164,7 +164,7 @@ void BicTest(pfHash hash,
 
       for (int b = 0; b < 4; b++) {
         double b2 = double(bins[(out1 * hashbits + out2) * 4 + b]) / double(reps / 2);
-        b2        = fabs(b2 * 2 - 1);
+        b2 = fabs(b2 * 2 - 1);
 
         if (b2 > bias)
           bias = b2;
@@ -172,8 +172,8 @@ void BicTest(pfHash hash,
 
       if (bias > maxBias) {
         maxBias = bias;
-        maxA    = out1;
-        maxB    = out2;
+        maxA = out1;
+        maxB = out2;
       }
 
       if (verbose) {
@@ -198,12 +198,12 @@ void BicTest(pfHash hash,
 template<typename keytype, typename hashtype> bool BicTest(pfHash hash, const int reps)
 {
   const int keybytes = sizeof(keytype);
-  const int keybits  = keybytes * 8;
+  const int keybits = keybytes * 8;
 
   double maxBias = 0;
-  int maxK       = 0;
-  int maxA       = 0;
-  int maxB       = 0;
+  int maxK = 0;
+  int maxA = 0;
+  int maxB = 0;
 
   for (int i = 0; i < keybits; i++) {
     if (i % (keybits / 10) == 0)
@@ -216,9 +216,9 @@ template<typename keytype, typename hashtype> bool BicTest(pfHash hash, const in
 
     if (bias > maxBias) {
       maxBias = bias;
-      maxK    = i;
-      maxA    = a;
-      maxB    = b;
+      maxK = i;
+      maxA = a;
+      maxB = b;
     }
   }
 
@@ -235,21 +235,20 @@ template<typename keytype, typename hashtype> bool BicTest(pfHash hash, const in
 // BIC test variant - store all intermediate data in a table, draw diagram
 // afterwards (much faster)
 
-template<typename keytype, typename hashtype>
-void BicTest3(pfHash hash, const int reps, bool verbose = true)
+template<typename keytype, typename hashtype> void BicTest3(pfHash hash, const int reps, bool verbose = true)
 {
-  const int keybytes  = sizeof(keytype);
-  const int keybits   = keybytes * 8;
+  const int keybytes = sizeof(keytype);
+  const int keybits = keybytes * 8;
   const int hashbytes = sizeof(hashtype);
-  const int hashbits  = hashbytes * 8;
-  const int pagesize  = hashbits * hashbits * 4;
+  const int hashbits = hashbytes * 8;
+  const int pagesize = hashbits * hashbits * 4;
 
   Rand r(11938);
 
   double maxBias = 0;
-  int maxK       = 0;
-  int maxA       = 0;
-  int maxB       = 0;
+  int maxK = 0;
+  int maxA = 0;
+  int maxB = 0;
 
   keytype key;
   hashtype h1, h2;
@@ -296,7 +295,7 @@ void BicTest3(pfHash hash, const int reps, bool verbose = true)
 
         for (int b = 0; b < 4; b++) {
           double b2 = double(bins[b]) / double(reps / 2);
-          b2        = fabs(b2 * 2 - 1);
+          b2 = fabs(b2 * 2 - 1);
 
           if (b2 > bias)
             bias = b2;
@@ -304,9 +303,9 @@ void BicTest3(pfHash hash, const int reps, bool verbose = true)
 
         if (bias > maxBias) {
           maxBias = bias;
-          maxK    = keybit;
-          maxA    = out1;
-          maxB    = out2;
+          maxK = keybit;
+          maxA = out1;
+          maxB = out2;
         }
 
         if (verbose) {
@@ -341,20 +340,19 @@ void BicTest3(pfHash hash, const int reps, bool verbose = true)
 // BIC test variant - iterate over output bits, then key bits. No temp storage,
 // but slooooow
 
-template<typename keytype, typename hashtype>
-void BicTest2(pfHash hash, const int reps, bool verbose = true)
+template<typename keytype, typename hashtype> void BicTest2(pfHash hash, const int reps, bool verbose = true)
 {
-  const int keybytes  = sizeof(keytype);
-  const int keybits   = keybytes * 8;
+  const int keybytes = sizeof(keytype);
+  const int keybits = keybytes * 8;
   const int hashbytes = sizeof(hashtype);
-  const int hashbits  = hashbytes * 8;
+  const int hashbits = hashbytes * 8;
 
   Rand r(11938);
 
   double maxBias = 0;
-  int maxK       = 0;
-  int maxA       = 0;
-  int maxB       = 0;
+  int maxK = 0;
+  int maxA = 0;
+  int maxB = 0;
 
   keytype key;
   hashtype h1, h2;
@@ -384,7 +382,7 @@ void BicTest2(pfHash hash, const int reps, bool verbose = true)
 
         for (int b = 0; b < 4; b++) {
           double b2 = double(bins[b]) / double(reps / 2);
-          b2        = fabs(b2 * 2 - 1);
+          b2 = fabs(b2 * 2 - 1);
 
           if (b2 > bias)
             bias = b2;
@@ -392,9 +390,9 @@ void BicTest2(pfHash hash, const int reps, bool verbose = true)
 
         if (bias > maxBias) {
           maxBias = bias;
-          maxK    = keybit;
-          maxA    = out1;
-          maxB    = out2;
+          maxK = keybit;
+          maxA = out1;
+          maxB = out2;
         }
 
         if (verbose) {

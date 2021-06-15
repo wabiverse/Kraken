@@ -38,10 +38,9 @@ WABI_NAMESPACE_USING
 
 void CKE_covah_plugins_init()
 {
+  PlugRegistry::GetInstance().RegisterPlugins(TfStringCatPaths(G.main->datafiles_path, "covahverse/"));
   PlugRegistry::GetInstance().RegisterPlugins(
-      TfStringCatPaths(G.main->datafiles_path, "covahverse/"));
-  PlugRegistry::GetInstance().RegisterPlugins(
-      TfStringCatPaths(G.main->datafiles_path, "plugin/covahverse/"));
+    TfStringCatPaths(G.main->datafiles_path, "plugin/covahverse/"));
 
   printf("::: COVAHVERSE | INITIALIZED :::\n\n");
 }

@@ -52,12 +52,12 @@ void ED_view3d_run(bool *show)
   std::call_once(getVersion, []() {
     /** Only get the version once. */
     static auto version = PFN_vkEnumerateInstanceVersion(
-        vkGetInstanceProcAddr(nullptr, "vkEnumerateInstanceVersion"));
+      vkGetInstanceProcAddr(nullptr, "vkEnumerateInstanceVersion"));
 
     if (ARCH_UNLIKELY(version == nullptr)) {
       /** Backwards compatibility & no patch. */
       vulkan_v = TfStringPrintf(
-          "%d.%d", VK_VERSION_MAJOR(VK_API_VERSION_1_0), VK_VERSION_MINOR(VK_API_VERSION_1_0));
+        "%d.%d", VK_VERSION_MAJOR(VK_API_VERSION_1_0), VK_VERSION_MINOR(VK_API_VERSION_1_0));
     }
     else {
       /** Vulkan Version. */

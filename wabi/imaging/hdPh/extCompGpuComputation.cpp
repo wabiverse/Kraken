@@ -55,7 +55,7 @@ static void _AppendResourceBindings(HgiResourceBindingsDesc *resourceDesc,
   HgiBufferBindDesc bufBind;
   bufBind.bindingIndex = location;
   bufBind.resourceType = HgiBindResourceTypeStorageBuffer;
-  bufBind.stageUsage   = HgiShaderStageCompute;
+  bufBind.stageUsage = HgiShaderStageCompute;
   bufBind.offsets.push_back(0);
   bufBind.buffers.push_back(buffer);
   resourceDesc->buffers.push_back(std::move(bufBind));
@@ -66,28 +66,27 @@ static HgiComputePipelineSharedPtr _CreatePipeline(Hgi *hgi,
                                                    HgiShaderProgramHandle const &program)
 {
   HgiComputePipelineDesc desc;
-  desc.debugName                    = "ExtComputation";
-  desc.shaderProgram                = program;
+  desc.debugName = "ExtComputation";
+  desc.shaderProgram = program;
   desc.shaderConstantsDesc.byteSize = constantValuesSize;
   return std::make_shared<HgiComputePipelineHandle>(hgi->CreateComputePipeline(desc));
 }
 
 HdPhExtCompGpuComputation::HdPhExtCompGpuComputation(
-    SdfPath const &id,
-    HdPhExtCompGpuComputationResourceSharedPtr const &resource,
-    HdExtComputationPrimvarDescriptorVector const &compPrimvars,
-    int dispatchCount,
-    int elementCount)
-    : HdComputation(),
-      _id(id),
-      _resource(resource),
-      _compPrimvars(compPrimvars),
-      _dispatchCount(dispatchCount),
-      _elementCount(elementCount)
+  SdfPath const &id,
+  HdPhExtCompGpuComputationResourceSharedPtr const &resource,
+  HdExtComputationPrimvarDescriptorVector const &compPrimvars,
+  int dispatchCount,
+  int elementCount)
+  : HdComputation(),
+    _id(id),
+    _resource(resource),
+    _compPrimvars(compPrimvars),
+    _dispatchCount(dispatchCount),
+    _elementCount(elementCount)
 {}
 
-static std::string _GetDebugPrimvarNames(
-    HdExtComputationPrimvarDescriptorVector const &compPrimvars)
+static std::string _GetDebugPrimvarNames(HdExtComputationPrimvarDescriptorVector const &compPrimvars)
 {
   std::string result;
   for (HdExtComputationPrimvarDescriptor const &compPrimvar : compPrimvars) {
@@ -108,21 +107,19 @@ void HdPhExtCompGpuComputation::Execute(HdBufferArrayRangeSharedPtr const &outpu
   TF_VERIFY(resourceRegistry);
 
   TF_DEBUG(HD_EXT_COMPUTATION_UPDATED)
-      .Msg("GPU computation '%s' executed for primvars: %s\n",
-           _id.GetText(),
-           _GetDebugPrimvarNames(_compPrimvars).c_str());
+    .Msg("GPU computation '%s' executed for primvars: %s\n",
+         _id.GetText(),
+         _GetDebugPrimvarNames(_compPrimvars).c_str());
 
-  HdPhResourceRegistry *hdPhResourceRegistry = static_cast<HdPhResourceRegistry *>(
-      resourceRegistry);
+  HdPhResourceRegistry *hdPhResourceRegistry = static_cast<HdPhResourceRegistry *>(resourceRegistry);
   HdPhGLSLProgramSharedPtr const &computeProgram = _resource->GetProgram();
-  HdPh_ResourceBinder const &binder              = _resource->GetResourceBinder();
+  HdPh_ResourceBinder const &binder = _resource->GetResourceBinder();
 
   if (!TF_VERIFY(computeProgram)) {
     return;
   }
 
-  HdPhBufferArrayRangeSharedPtr outputBar = std::static_pointer_cast<HdPhBufferArrayRange>(
-      outputRange);
+  HdPhBufferArrayRangeSharedPtr outputBar = std::static_pointer_cast<HdPhBufferArrayRange>(outputRange);
   TF_VERIFY(outputBar);
 
   // Prepare uniform buffer for GPU computation
@@ -136,7 +133,7 @@ void HdPhExtCompGpuComputation::Execute(HdBufferArrayRangeSharedPtr const &outpu
 
   // Bind buffers as SSBOs to the indices matching the layout in the shader
   for (HdExtComputationPrimvarDescriptor const &compPrimvar : _compPrimvars) {
-    TfToken const &name                       = compPrimvar.sourceComputationOutputName;
+    TfToken const &name = compPrimvar.sourceComputationOutputName;
     HdPhBufferResourceSharedPtr const &buffer = outputBar->GetResource(compPrimvar.name);
 
     HdBinding const &binding = binder.GetBinding(name);
@@ -152,18 +149,17 @@ void HdPhExtCompGpuComputation::Execute(HdBufferArrayRangeSharedPtr const &outpu
   }
 
   for (HdBufferArrayRangeSharedPtr const &input : _resource->GetInputs()) {
-    HdPhBufferArrayRangeSharedPtr const &inputBar = std::static_pointer_cast<HdPhBufferArrayRange>(
-        input);
+    HdPhBufferArrayRangeSharedPtr const &inputBar = std::static_pointer_cast<HdPhBufferArrayRange>(input);
 
     for (HdPhBufferResourceNamedPair const &it : inputBar->GetResources()) {
-      TfToken const &name                       = it.first;
+      TfToken const &name = it.first;
       HdPhBufferResourceSharedPtr const &buffer = it.second;
 
       HdBinding const &binding = binder.GetBinding(name);
       // These should all be valid as they are required inputs
       if (TF_VERIFY(binding.IsValid())) {
         HdTupleType tupleType = buffer->GetTupleType();
-        size_t componentSize  = HdDataSizeOfType(HdGetComponentType(tupleType.type));
+        size_t componentSize = HdDataSizeOfType(HdGetComponentType(tupleType.type));
         _uniforms.push_back((inputBar->GetByteOffset(name) + buffer->GetOffset()) / componentSize);
         // If allocated with a VBO allocator use the line below instead.
         //_uniforms.push_back(
@@ -184,29 +180,29 @@ void HdPhExtCompGpuComputation::Execute(HdBufferArrayRangeSharedPtr const &outpu
 
   // Prepare uniform buffer for GPU computation
   const size_t uboSize = sizeof(int32_t) * _uniforms.size();
-  uint64_t pHash       = (uint64_t)TfHash::Combine(computeProgram->GetProgram().Get(), uboSize);
+  uint64_t pHash = (uint64_t)TfHash::Combine(computeProgram->GetProgram().Get(), uboSize);
 
   // Get or add pipeline in registry.
   HdInstance<HgiComputePipelineSharedPtr> computePipelineInstance =
-      hdPhResourceRegistry->RegisterComputePipeline(pHash);
+    hdPhResourceRegistry->RegisterComputePipeline(pHash);
   if (computePipelineInstance.IsFirstInstance()) {
     HgiComputePipelineSharedPtr pipe = _CreatePipeline(hgi, uboSize, computeProgram->GetProgram());
     computePipelineInstance.SetValue(pipe);
   }
 
   HgiComputePipelineSharedPtr const &pipelinePtr = computePipelineInstance.GetValue();
-  HgiComputePipelineHandle pipeline              = *pipelinePtr.get();
+  HgiComputePipelineHandle pipeline = *pipelinePtr.get();
 
   // Get or add resource bindings in registry.
   HdInstance<HgiResourceBindingsSharedPtr> resourceBindingsInstance =
-      hdPhResourceRegistry->RegisterResourceBindings(rbHash);
+    hdPhResourceRegistry->RegisterResourceBindings(rbHash);
   if (resourceBindingsInstance.IsFirstInstance()) {
     // Begin the resource set
     HgiResourceBindingsDesc resourceDesc;
     resourceDesc.debugName = "ExtComputation";
 
     for (HdExtComputationPrimvarDescriptor const &compPvar : _compPrimvars) {
-      TfToken const &name                       = compPvar.sourceComputationOutputName;
+      TfToken const &name = compPvar.sourceComputationOutputName;
       HdPhBufferResourceSharedPtr const &buffer = outputBar->GetResource(compPvar.name);
 
       HdBinding const &binding = binder.GetBinding(name);
@@ -217,11 +213,10 @@ void HdPhExtCompGpuComputation::Execute(HdBufferArrayRangeSharedPtr const &outpu
     }
 
     for (HdBufferArrayRangeSharedPtr const &input : _resource->GetInputs()) {
-      HdPhBufferArrayRangeSharedPtr const &inputBar =
-          std::static_pointer_cast<HdPhBufferArrayRange>(input);
+      HdPhBufferArrayRangeSharedPtr const &inputBar = std::static_pointer_cast<HdPhBufferArrayRange>(input);
 
       for (HdPhBufferResourceNamedPair const &it : inputBar->GetResources()) {
-        TfToken const &name                       = it.first;
+        TfToken const &name = it.first;
         HdPhBufferResourceSharedPtr const &buffer = it.second;
 
         HdBinding const &binding = binder.GetBinding(name);
@@ -233,13 +228,13 @@ void HdPhExtCompGpuComputation::Execute(HdBufferArrayRangeSharedPtr const &outpu
     }
 
     HgiResourceBindingsSharedPtr rb = std::make_shared<HgiResourceBindingsHandle>(
-        hgi->CreateResourceBindings(resourceDesc));
+      hgi->CreateResourceBindings(resourceDesc));
 
     resourceBindingsInstance.SetValue(rb);
   }
 
   HgiResourceBindingsSharedPtr const &resourceBindindsPtr = resourceBindingsInstance.GetValue();
-  HgiResourceBindingsHandle resourceBindings              = *resourceBindindsPtr.get();
+  HgiResourceBindingsHandle resourceBindings = *resourceBindindsPtr.get();
 
   HgiComputeCmds *computeCmds = hdPhResourceRegistry->GetGlobalComputeCmds();
 
@@ -278,22 +273,21 @@ HdPhExtCompGpuComputationResourceSharedPtr const &HdPhExtCompGpuComputation::Get
 
 /* static */
 HdPhExtCompGpuComputationSharedPtr HdPhExtCompGpuComputation::CreateGpuComputation(
-    HdSceneDelegate *sceneDelegate,
-    HdExtComputation const *sourceComp,
-    HdExtComputationPrimvarDescriptorVector const &compPrimvars)
+  HdSceneDelegate *sceneDelegate,
+  HdExtComputation const *sourceComp,
+  HdExtComputationPrimvarDescriptorVector const &compPrimvars)
 {
   TF_DEBUG(HD_EXT_COMPUTATION_UPDATED)
-      .Msg("GPU computation '%s' created for primvars: %s\n",
-           sourceComp->GetId().GetText(),
-           _GetDebugPrimvarNames(compPrimvars).c_str());
+    .Msg("GPU computation '%s' created for primvars: %s\n",
+         sourceComp->GetId().GetText(),
+         _GetDebugPrimvarNames(compPrimvars).c_str());
 
   // Downcast the resource registry
   HdRenderIndex &renderIndex = sceneDelegate->GetRenderIndex();
-  HdPhResourceRegistrySharedPtr const &resourceRegistry =
-      std::dynamic_pointer_cast<HdPhResourceRegistry>(renderIndex.GetResourceRegistry());
+  HdPhResourceRegistrySharedPtr const &resourceRegistry = std::dynamic_pointer_cast<HdPhResourceRegistry>(
+    renderIndex.GetResourceRegistry());
 
-  HdPh_ExtCompComputeShaderSharedPtr shader = std::make_shared<HdPh_ExtCompComputeShader>(
-      sourceComp);
+  HdPh_ExtCompComputeShaderSharedPtr shader = std::make_shared<HdPh_ExtCompComputeShader>(sourceComp);
 
   // Map the computation outputs onto the destination primvar types
   HdBufferSpecVector outputBufferSpecs;
@@ -311,7 +305,7 @@ HdPhExtCompGpuComputationSharedPtr HdPhExtCompGpuComputation::CreateGpuComputati
 
   for (HdExtComputationInputDescriptor const &desc : sourceComp->GetComputationInputs()) {
     HdPhExtComputation const *deviceInputComp = static_cast<HdPhExtComputation const *>(
-        renderIndex.GetSprim(HdPrimTypeTokens->extComputation, desc.sourceComputationId));
+      renderIndex.GetSprim(HdPrimTypeTokens->extComputation, desc.sourceComputationId));
     if (deviceInputComp && deviceInputComp->GetInputRange()) {
       HdBufferArrayRangeSharedPtr input = deviceInputComp->GetInputRange();
       // skip duplicate inputs
@@ -323,9 +317,8 @@ HdPhExtCompGpuComputationSharedPtr HdPhExtCompGpuComputation::CreateGpuComputati
 
   // There is a companion resource that requires allocation
   // and resolution.
-  HdPhExtCompGpuComputationResourceSharedPtr resource =
-      std::make_shared<HdPhExtCompGpuComputationResource>(
-          outputBufferSpecs, shader, inputs, resourceRegistry);
+  HdPhExtCompGpuComputationResourceSharedPtr resource = std::make_shared<HdPhExtCompGpuComputationResource>(
+    outputBufferSpecs, shader, inputs, resourceRegistry);
 
   return std::make_shared<HdPhExtCompGpuComputation>(sourceComp->GetId(),
                                                      resource,
@@ -335,14 +328,14 @@ HdPhExtCompGpuComputationSharedPtr HdPhExtCompGpuComputation::CreateGpuComputati
 }
 
 void HdPh_GetExtComputationPrimvarsComputations(
-    SdfPath const &id,
-    HdSceneDelegate *sceneDelegate,
-    HdExtComputationPrimvarDescriptorVector const &allCompPrimvars,
-    HdDirtyBits dirtyBits,
-    HdBufferSourceSharedPtrVector *sources,
-    HdBufferSourceSharedPtrVector *reserveOnlySources,
-    HdBufferSourceSharedPtrVector *separateComputationSources,
-    HdPhComputationSharedPtrVector *computations)
+  SdfPath const &id,
+  HdSceneDelegate *sceneDelegate,
+  HdExtComputationPrimvarDescriptorVector const &allCompPrimvars,
+  HdDirtyBits dirtyBits,
+  HdBufferSourceSharedPtrVector *sources,
+  HdBufferSourceSharedPtrVector *reserveOnlySources,
+  HdBufferSourceSharedPtrVector *separateComputationSources,
+  HdPhComputationSharedPtrVector *computations)
 {
   TF_VERIFY(sources);
   TF_VERIFY(reserveOnlySources);
@@ -360,11 +353,11 @@ void HdPh_GetExtComputationPrimvarsComputations(
 
   // Create computation primvar buffer sources by source computation
   for (CompPrimvarsByComputation::value_type it : byComputation) {
-    SdfPath const &computationId                                = it.first;
+    SdfPath const &computationId = it.first;
     HdExtComputationPrimvarDescriptorVector const &compPrimvars = it.second;
 
     HdExtComputation const *sourceComp = static_cast<HdExtComputation const *>(
-        renderIndex.GetSprim(HdPrimTypeTokens->extComputation, computationId));
+      renderIndex.GetSprim(HdPrimTypeTokens->extComputation, computationId));
 
     if (!(sourceComp && sourceComp->GetElementCount() > 0)) {
       continue;
@@ -380,11 +373,11 @@ void HdPh_GetExtComputationPrimvarsComputations(
           if (!gpuComputation) {
             // Create the computation for the first dirty primvar
             gpuComputation = HdPhExtCompGpuComputation::CreateGpuComputation(
-                sceneDelegate, sourceComp, compPrimvars);
+              sceneDelegate, sourceComp, compPrimvars);
 
             HdBufferSourceSharedPtr gpuComputationSource =
-                std::make_shared<HdPhExtCompGpuComputationBufferSource>(
-                    HdBufferSourceSharedPtrVector(), gpuComputation->GetResource());
+              std::make_shared<HdPhExtCompGpuComputationBufferSource>(HdBufferSourceSharedPtrVector(),
+                                                                      gpuComputation->GetResource());
 
             separateComputationSources->push_back(gpuComputationSource);
             // Assume there are no dependencies between ExtComp so
@@ -393,11 +386,8 @@ void HdPh_GetExtComputationPrimvarsComputations(
           }
 
           // Create a primvar buffer source for the computation
-          HdBufferSourceSharedPtr primvarBufferSource =
-              std::make_shared<HdPhExtCompGpuPrimvarBufferSource>(compPrimvar.name,
-                                                                  compPrimvar.valueType,
-                                                                  sourceComp->GetElementCount(),
-                                                                  sourceComp->GetId());
+          HdBufferSourceSharedPtr primvarBufferSource = std::make_shared<HdPhExtCompGpuPrimvarBufferSource>(
+            compPrimvar.name, compPrimvar.valueType, sourceComp->GetElementCount(), sourceComp->GetId());
 
           // Gpu primvar sources only need to reserve space
           reserveOnlySources->push_back(primvarBufferSource);
@@ -414,16 +404,15 @@ void HdPh_GetExtComputationPrimvarsComputations(
           if (!cpuComputation) {
             // Create the computation for the first dirty primvar
             cpuComputation = HdExtCompCpuComputation::CreateComputation(
-                sceneDelegate, *sourceComp, separateComputationSources);
+              sceneDelegate, *sourceComp, separateComputationSources);
           }
 
           // Create a primvar buffer source for the computation
-          HdBufferSourceSharedPtr primvarBufferSource =
-              std::make_shared<HdExtCompPrimvarBufferSource>(
-                  compPrimvar.name,
-                  cpuComputation,
-                  compPrimvar.sourceComputationOutputName,
-                  compPrimvar.valueType);
+          HdBufferSourceSharedPtr primvarBufferSource = std::make_shared<HdExtCompPrimvarBufferSource>(
+            compPrimvar.name,
+            cpuComputation,
+            compPrimvar.sourceComputationOutputName,
+            compPrimvar.valueType);
 
           // Cpu primvar sources need to allocate and commit data
           sources->push_back(primvarBufferSource);

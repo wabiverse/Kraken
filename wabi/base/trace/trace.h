@@ -47,8 +47,7 @@
 
 /// Records a timestamp when constructed and a timespan event when destructed,
 /// using the name of the function or method as the key.
-#  define TRACE_FUNCTION() \
-    _TRACE_FUNCTION_INSTANCE(__LINE__, __ARCH_FUNCTION__, __ARCH_PRETTY_FUNCTION__)
+#  define TRACE_FUNCTION() _TRACE_FUNCTION_INSTANCE(__LINE__, __ARCH_FUNCTION__, __ARCH_PRETTY_FUNCTION__)
 
 /// Records a timestamp when constructed and a timespan event when destructed,
 /// using \a name as the key.
@@ -70,8 +69,7 @@
 /// value, whereas a negative delta will decrement it. The recorded value will
 /// be stored at the currently traced scope, and will propagate up to the
 /// parent scopes.
-#  define TRACE_COUNTER_DELTA(name, delta) \
-    _TRACE_COUNTER_INSTANCE(__LINE__, name, delta, /* isDelta */ true)
+#  define TRACE_COUNTER_DELTA(name, delta) _TRACE_COUNTER_INSTANCE(__LINE__, name, delta, /* isDelta */ true)
 
 /// Records a counter delta using the name as the counter key. Similar to
 /// TRACE_COUNTER_DELTA except that \p name does not need to be a compile time
@@ -111,8 +109,7 @@
 /// TRACE_COUNTER_DELTA_CODE("My counter", {
 ///     value = _ComputeExpensiveCounterValue();
 /// })
-#  define TRACE_COUNTER_DELTA_CODE(name, code) \
-    _TRACE_COUNTER_CODE_INSTANCE(__LINE__, name, code, true)
+#  define TRACE_COUNTER_DELTA_CODE(name, code) _TRACE_COUNTER_CODE_INSTANCE(__LINE__, name, code, true)
 
 /// Records a begin event when constructed and an end event when destructed,
 /// using name of the function or method and the supplied name as the key.
@@ -135,21 +132,17 @@
 /// TraceScope will be used to record begin and end events.
 
 #  define _TRACE_FUNCTION_INSTANCE(instance, name, prettyName) \
-    constexpr static WABI_NS::TraceStaticKeyData TF_PP_CAT(TraceKeyData_, instance)(name, \
-                                                                                    prettyName); \
-    WABI_NS::TraceScopeAuto TF_PP_CAT(TraceScopeAuto_, \
-                                      instance)(TF_PP_CAT(TraceKeyData_, instance));
+    constexpr static WABI_NS::TraceStaticKeyData TF_PP_CAT(TraceKeyData_, instance)(name, prettyName); \
+    WABI_NS::TraceScopeAuto TF_PP_CAT(TraceScopeAuto_, instance)(TF_PP_CAT(TraceKeyData_, instance));
 
 #  define _TRACE_SCOPE_INSTANCE(instance, name) \
     constexpr static WABI_NS::TraceStaticKeyData TF_PP_CAT(TraceKeyData_, instance)(name); \
-    WABI_NS::TraceScopeAuto TF_PP_CAT(TraceScopeAuto_, \
-                                      instance)(TF_PP_CAT(TraceKeyData_, instance));
+    WABI_NS::TraceScopeAuto TF_PP_CAT(TraceScopeAuto_, instance)(TF_PP_CAT(TraceKeyData_, instance));
 
 #  define _TRACE_FUNCTION_SCOPE_INSTANCE(instance, name, prettyName, scopeName) \
-    constexpr static WABI_NS::TraceStaticKeyData TF_PP_CAT(TraceKeyData_, instance)( \
-        name, prettyName, scopeName); \
-    WABI_NS::TraceScopeAuto TF_PP_CAT(TraceScopeAuto_, \
-                                      instance)(TF_PP_CAT(TraceKeyData_, instance));
+    constexpr static WABI_NS::TraceStaticKeyData TF_PP_CAT(TraceKeyData_, \
+                                                           instance)(name, prettyName, scopeName); \
+    WABI_NS::TraceScopeAuto TF_PP_CAT(TraceScopeAuto_, instance)(TF_PP_CAT(TraceKeyData_, instance));
 
 #  define _TRACE_MARKER_INSTANCE(instance, name) \
     constexpr static WABI_NS::TraceStaticKeyData TF_PP_CAT(TraceKeyData_, instance)(name); \
@@ -174,8 +167,7 @@
 #  define _TRACE_SCOPE_DYNAMIC_INSTANCE(instance, str) \
     WABI_NS::TraceAuto TF_PP_CAT(TraceAuto_, instance)(str)
 
-#  define _TRACE_MARKER_DYNAMIC_INSTANCE(instance, name) \
-    TraceCollector::GetInstance().MarkerEvent(name);
+#  define _TRACE_MARKER_DYNAMIC_INSTANCE(instance, name) TraceCollector::GetInstance().MarkerEvent(name);
 
 #else  // TRACE_DISABLE
 
@@ -206,7 +198,7 @@ class TraceScopeAuto {
 
     if (ARCH_UNLIKELY(TraceCollector::IsEnabled())) {
       // Init the key if needed.
-      _key   = &key;
+      _key = &key;
       _start = ArchGetTickTime();
     }
   }
@@ -250,7 +242,7 @@ struct TraceAuto {
   /// Constructor taking function name, pretty function name and a scope name.
   ///
   TraceAuto(const char *funcName, const char *prettyFuncName, const std::string &name)
-      : _key(_CreateKeyString(funcName, prettyFuncName, name))
+    : _key(_CreateKeyString(funcName, prettyFuncName, name))
   {
     std::atomic_thread_fence(std::memory_order_seq_cst);
     _collector = &TraceCollector::GetInstance();

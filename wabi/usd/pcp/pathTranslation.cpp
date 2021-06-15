@@ -33,9 +33,7 @@
 WABI_NAMESPACE_BEGIN
 
 template<bool NodeToRoot, class Mapping>
-static SdfPath Pcp_TranslatePath(const Mapping &mapToRoot,
-                                 const SdfPath &path,
-                                 bool *pathWasTranslated)
+static SdfPath Pcp_TranslatePath(const Mapping &mapToRoot, const SdfPath &path, bool *pathWasTranslated)
 {
   bool localPathWasTranslated;
   if (!pathWasTranslated) {
@@ -61,9 +59,9 @@ static SdfPath Pcp_TranslatePath(const Mapping &mapToRoot,
   }
   if (path.ContainsPrimVariantSelection()) {
     TF_CODING_ERROR(
-        "Path to translate <%s> must not contain a variant "
-        "selection.",
-        path.GetText());
+      "Path to translate <%s> must not contain a variant "
+      "selection.",
+      path.GetText());
     return SdfPath();
   }
 
@@ -88,7 +86,7 @@ static SdfPath Pcp_TranslatePath(const Mapping &mapToRoot,
 
   TF_FOR_ALL(targetPathIt, targetPaths)
   {
-    const SdfPath &targetPath          = *targetPathIt;
+    const SdfPath &targetPath = *targetPathIt;
     const SdfPath translatedTargetPath = NodeToRoot ? mapToRoot.MapSourceToTarget(targetPath) :
                                                       mapToRoot.MapTargetToSource(targetPath);
     if (translatedTargetPath.IsEmpty()) {
@@ -116,7 +114,7 @@ SdfPath PcpTranslatePathFromNodeToRoot(const PcpNodeRef &sourceNode,
   const SdfPath pathToTranslate = pathInNodeNamespace.StripAllVariantSelections();
 
   return Pcp_TranslatePath</* NodeToRoot = */ true>(
-      sourceNode.GetMapToRoot(), pathToTranslate, pathWasTranslated);
+    sourceNode.GetMapToRoot(), pathToTranslate, pathWasTranslated);
 }
 
 SdfPath PcpTranslatePathFromRootToNode(const PcpNodeRef &destNode,
@@ -126,8 +124,8 @@ SdfPath PcpTranslatePathFromRootToNode(const PcpNodeRef &destNode,
   TRACE_FUNCTION();
 
   bool localPathWasTranslated = false;
-  SdfPath translatedPath      = Pcp_TranslatePath</* NodeToRoot = */ false>(
-      destNode.GetMapToRoot(), pathInRootNamespace, &localPathWasTranslated);
+  SdfPath translatedPath = Pcp_TranslatePath</* NodeToRoot = */ false>(
+    destNode.GetMapToRoot(), pathInRootNamespace, &localPathWasTranslated);
 
   // We want to ensure that any variant selections that were made
   // between the root node and the destination node are applied to the
@@ -137,10 +135,9 @@ SdfPath PcpTranslatePathFromRootToNode(const PcpNodeRef &destNode,
   // We don't need to fix target paths because they should never have
   // variant selections.
   if (localPathWasTranslated) {
-    const SdfPath sitePath         = destNode.GetPath();
+    const SdfPath sitePath = destNode.GetPath();
     const SdfPath strippedSitePath = sitePath.StripAllVariantSelections();
-    translatedPath                 = translatedPath.ReplacePrefix(
-        strippedSitePath, sitePath, /* fixTargetPaths = */ false);
+    translatedPath = translatedPath.ReplacePrefix(strippedSitePath, sitePath, /* fixTargetPaths = */ false);
   }
 
   if (pathWasTranslated) {
@@ -157,7 +154,7 @@ SdfPath PcpTranslateTargetPathFromRootToNode(const PcpNodeRef &destNode,
   TRACE_FUNCTION();
 
   return Pcp_TranslatePath</* NodeToRoot = */ false>(
-      destNode.GetMapToRoot(), pathInRootNamespace, pathWasTranslated);
+    destNode.GetMapToRoot(), pathInRootNamespace, pathWasTranslated);
 }
 
 SdfPath PcpTranslatePathFromRootToNodeUsingFunction(const PcpMapFunction &mapToRoot,
@@ -165,8 +162,7 @@ SdfPath PcpTranslatePathFromRootToNodeUsingFunction(const PcpMapFunction &mapToR
                                                     bool *pathWasTranslated)
 {
   TRACE_FUNCTION();
-  return Pcp_TranslatePath</* NodeToRoot = */ false>(
-      mapToRoot, pathInRootNamespace, pathWasTranslated);
+  return Pcp_TranslatePath</* NodeToRoot = */ false>(mapToRoot, pathInRootNamespace, pathWasTranslated);
 }
 
 SdfPath PcpTranslatePathFromNodeToRootUsingFunction(const PcpMapFunction &mapToRoot,

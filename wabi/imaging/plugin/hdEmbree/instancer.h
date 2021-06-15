@@ -76,9 +76,7 @@ class HdEmbreeInstancer : public HdInstancer {
   ///   \param sceneDelegate The scene delegate for this prim.
   ///   \param renderParam The hdEmbree render param.
   ///   \param dirtyBits The dirty bits for this instancer.
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
  private:
   // Updates the cached primvars in _primvarMap based on scene delegate

@@ -44,9 +44,9 @@
 WABI_NAMESPACE_BEGIN
 
 GarchGLDebugWindow::GarchGLDebugWindow(const char *title, int width, int height)
-    : _title(title),
-      _width(width),
-      _height(height)
+  : _title(title),
+    _width(width),
+    _height(height)
 {
   _private = new Garch_GLPlatformDebugWindow(this);
 }
@@ -82,7 +82,7 @@ void GarchGLDebugWindow::OnUninitializeGL()
 /* virtual */
 void GarchGLDebugWindow::OnResize(int w, int h)
 {
-  _width  = w;
+  _width = w;
   _height = h;
 }
 

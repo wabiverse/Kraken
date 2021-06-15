@@ -60,7 +60,7 @@ class HioGlslfxConfig {
   /// </ul>
   ///
   enum Role {
-    RoleNone  = 0,
+    RoleNone = 0,
     RoleColor = 1,
   };
 
@@ -73,11 +73,11 @@ class HioGlslfxConfig {
     Parameter(std::string const &name,
               VtValue const &defaultValue,
               std::string const &docString = "",
-              Role const &role             = RoleNone)
-        : name(name),
-          defaultValue(defaultValue),
-          docString(docString),
-          role(role)
+              Role const &role = RoleNone)
+      : name(name),
+        defaultValue(defaultValue),
+        docString(docString),
+        role(role)
     {}
 
     std::string name;
@@ -94,12 +94,10 @@ class HioGlslfxConfig {
   ///
   class Texture {
    public:
-    Texture(std::string const &name,
-            VtValue const &defaultValue,
-            std::string const &docString = "")
-        : name(name),
-          defaultValue(defaultValue),
-          docString(docString)
+    Texture(std::string const &name, VtValue const &defaultValue, std::string const &docString = "")
+      : name(name),
+        defaultValue(defaultValue),
+        docString(docString)
     {}
 
     std::string name;
@@ -115,12 +113,10 @@ class HioGlslfxConfig {
   ///
   class Attribute {
    public:
-    Attribute(std::string const &name,
-              VtValue const &defaultValue,
-              std::string const &docString = "")
-        : name(name),
-          defaultValue(defaultValue),
-          docString(docString)
+    Attribute(std::string const &name, VtValue const &defaultValue, std::string const &docString = "")
+      : name(name),
+        defaultValue(defaultValue),
+        docString(docString)
     {}
 
     std::string name;

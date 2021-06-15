@@ -44,13 +44,13 @@ void wrapUsdCommon()
   TfPyWrapEnum<UsdListPosition>();
   TfPyWrapEnum<UsdLoadPolicy>();
   enum_<UsdSchemaKind>("SchemaKind")
-      .value("Invalid", UsdSchemaKind::Invalid)
-      .value("AbstractBase", UsdSchemaKind::AbstractBase)
-      .value("AbstractTyped", UsdSchemaKind::AbstractTyped)
-      .value("ConcreteTyped", UsdSchemaKind::ConcreteTyped)
-      .value("NonAppliedAPI", UsdSchemaKind::NonAppliedAPI)
-      .value("SingleApplyAPI", UsdSchemaKind::SingleApplyAPI)
-      .value("MultipleApplyAPI", UsdSchemaKind::MultipleApplyAPI);
+    .value("Invalid", UsdSchemaKind::Invalid)
+    .value("AbstractBase", UsdSchemaKind::AbstractBase)
+    .value("AbstractTyped", UsdSchemaKind::AbstractTyped)
+    .value("ConcreteTyped", UsdSchemaKind::ConcreteTyped)
+    .value("NonAppliedAPI", UsdSchemaKind::NonAppliedAPI)
+    .value("SingleApplyAPI", UsdSchemaKind::SingleApplyAPI)
+    .value("MultipleApplyAPI", UsdSchemaKind::MultipleApplyAPI);
   // Deprecated aliasing of UsdSchemaType to UsdSchemaKind for backward
   // compatibility.
   scope().attr("SchemaType") = scope().attr("SchemaKind");

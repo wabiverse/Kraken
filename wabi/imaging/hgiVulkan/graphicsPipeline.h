@@ -44,7 +44,7 @@ WABI_NAMESPACE_BEGIN
 class HgiVulkanDevice;
 
 using VkDescriptorSetLayoutVector = std::vector<VkDescriptorSetLayout>;
-using VkClearValueVector          = std::vector<VkClearValue>;
+using VkClearValueVector = std::vector<VkClearValue>;
 
 /// \class HgiVulkanPipeline
 ///
@@ -90,9 +90,9 @@ class HgiVulkanGraphicsPipeline final : public HgiGraphicsPipeline {
   HgiVulkanGraphicsPipeline(HgiVulkanDevice *device, HgiGraphicsPipelineDesc const &desc);
 
  private:
-  HgiVulkanGraphicsPipeline()        = delete;
+  HgiVulkanGraphicsPipeline() = delete;
   HgiVulkanGraphicsPipeline &operator=(const HgiVulkanGraphicsPipeline &) = delete;
-  HgiVulkanGraphicsPipeline(const HgiVulkanGraphicsPipeline &)            = delete;
+  HgiVulkanGraphicsPipeline(const HgiVulkanGraphicsPipeline &) = delete;
 
   void _CreateRenderPass();
 

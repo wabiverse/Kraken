@@ -44,10 +44,10 @@ namespace {
 enum _MapFlags {
   _NullMap = 0,
 
-  _SomeSourceValuesMapToTarget    = 0x1,
-  _AllSourceValuesMapToTarget     = 0x2,
+  _SomeSourceValuesMapToTarget = 0x1,
+  _AllSourceValuesMapToTarget = 0x2,
   _SourceOverridesAllTargetValues = 0x4,
-  _OrderedMap                     = 0x8,
+  _OrderedMap = 0x8,
 
   _IdentityMap = (_AllSourceValuesMapToTarget | _SourceOverridesAllTargetValues | _OrderedMap),
 
@@ -59,26 +59,19 @@ enum _MapFlags {
 UsdSkelAnimMapper::UsdSkelAnimMapper() : _targetSize(0), _offset(0), _flags(_NullMap)
 {}
 
-UsdSkelAnimMapper::UsdSkelAnimMapper(size_t size)
-    : _targetSize(size),
-      _offset(0),
-      _flags(_IdentityMap)
+UsdSkelAnimMapper::UsdSkelAnimMapper(size_t size) : _targetSize(size), _offset(0), _flags(_IdentityMap)
 {}
 
-UsdSkelAnimMapper::UsdSkelAnimMapper(const VtTokenArray &sourceOrder,
-                                     const VtTokenArray &targetOrder)
-    : UsdSkelAnimMapper(sourceOrder.cdata(),
-                        sourceOrder.size(),
-                        targetOrder.cdata(),
-                        targetOrder.size())
+UsdSkelAnimMapper::UsdSkelAnimMapper(const VtTokenArray &sourceOrder, const VtTokenArray &targetOrder)
+  : UsdSkelAnimMapper(sourceOrder.cdata(), sourceOrder.size(), targetOrder.cdata(), targetOrder.size())
 {}
 
 UsdSkelAnimMapper::UsdSkelAnimMapper(const TfToken *sourceOrder,
                                      size_t sourceOrderSize,
                                      const TfToken *targetOrder,
                                      size_t targetOrderSize)
-    : _targetSize(targetOrderSize),
-      _offset(0)
+  : _targetSize(targetOrderSize),
+    _offset(0)
 {
   if (sourceOrderSize == 0 || targetOrderSize == 0) {
     _flags = _NullMap;
@@ -91,7 +84,7 @@ UsdSkelAnimMapper::UsdSkelAnimMapper(const TfToken *sourceOrder,
     // This includes identity maps.
 
     // Find where the first source element begins on the target.
-    const auto it    = std::find(targetOrder, targetOrder + targetOrderSize, sourceOrder[0]);
+    const auto it = std::find(targetOrder, targetOrder + targetOrderSize, sourceOrder[0]);
     const size_t pos = it - targetOrder;
     if ((pos + sourceOrderSize) <= targetOrderSize) {
       if (std::equal(sourceOrder, sourceOrder + sourceOrderSize, it)) {
@@ -117,13 +110,13 @@ UsdSkelAnimMapper::UsdSkelAnimMapper(const TfToken *sourceOrder,
   }
 
   _indexMap.resize(sourceOrderSize);
-  int *indexMap      = _indexMap.data();
+  int *indexMap = _indexMap.data();
   size_t mappedCount = 0;
   std::vector<bool> targetMapped(targetOrderSize);
   for (size_t i = 0; i < sourceOrderSize; ++i) {
     auto it = targetMap.find(sourceOrder[i]);
     if (it != targetMap.end()) {
-      indexMap[i]              = it->second;
+      indexMap[i] = it->second;
       targetMapped[it->second] = true;
       ++mappedCount;
     }
@@ -131,8 +124,7 @@ UsdSkelAnimMapper::UsdSkelAnimMapper(const TfToken *sourceOrder,
       indexMap[i] = -1;
     }
   }
-  _flags = mappedCount == sourceOrderSize ? _AllSourceValuesMapToTarget :
-                                            _SomeSourceValuesMapToTarget;
+  _flags = mappedCount == sourceOrderSize ? _AllSourceValuesMapToTarget : _SomeSourceValuesMapToTarget;
 
   if (std::all_of(targetMapped.begin(), targetMapped.end(), [](bool val) { return val; })) {
     _flags |= _SourceOverridesAllTargetValues;
@@ -177,10 +169,10 @@ bool UsdSkelAnimMapper::_UntypedRemap(const VtValue &source,
   }
   else if (!target->IsHolding<VtArray<T>>()) {
     TF_CODING_ERROR(
-        "Type of 'target' [%s] did not match the type of "
-        "'source' [%s].",
-        target->GetTypeName().c_str(),
-        source.GetTypeName().c_str());
+      "Type of 'target' [%s] did not match the type of "
+      "'source' [%s].",
+      target->GetTypeName().c_str(),
+      source.GetTypeName().c_str());
     return false;
   }
 
@@ -191,16 +183,16 @@ bool UsdSkelAnimMapper::_UntypedRemap(const VtValue &source,
     }
     else {
       TF_CODING_ERROR(
-          "Unexpected type [%s] for defaultValue: expecting "
-          "'%s'.",
-          defaultValue.GetTypeName().c_str(),
-          TfType::Find<T>().GetTypeName().c_str());
+        "Unexpected type [%s] for defaultValue: expecting "
+        "'%s'.",
+        defaultValue.GetTypeName().c_str(),
+        TfType::Find<T>().GetTypeName().c_str());
       return false;
     }
   }
 
   const auto &sourceArray = source.UncheckedGet<VtArray<T>>();
-  auto targetArray        = target->UncheckedGet<VtArray<T>>();
+  auto targetArray = target->UncheckedGet<VtArray<T>>();
   if (Remap(sourceArray, &targetArray, elementSize, defaultValueT)) {
     *target = targetArray;
     return true;

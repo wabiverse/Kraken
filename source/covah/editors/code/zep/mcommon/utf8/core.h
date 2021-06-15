@@ -46,13 +46,13 @@ namespace internal {
 // Unicode constants
 // Leading (high) surrogates: 0xd800 - 0xdbff
 // Trailing (low) surrogates: 0xdc00 - 0xdfff
-const uint16_t LEAD_SURROGATE_MIN  = 0xd800u;
-const uint16_t LEAD_SURROGATE_MAX  = 0xdbffu;
+const uint16_t LEAD_SURROGATE_MIN = 0xd800u;
+const uint16_t LEAD_SURROGATE_MAX = 0xdbffu;
 const uint16_t TRAIL_SURROGATE_MIN = 0xdc00u;
 const uint16_t TRAIL_SURROGATE_MAX = 0xdfffu;
-const uint16_t LEAD_OFFSET         = 0xd7c0u;  // LEAD_SURROGATE_MIN - (0x10000 >> 10)
+const uint16_t LEAD_OFFSET = 0xd7c0u;  // LEAD_SURROGATE_MIN - (0x10000 >> 10)
 const uint32_t SURROGATE_OFFSET =
-    0xfca02400u;  // 0x10000u - (LEAD_SURROGATE_MIN << 10) - TRAIL_SURROGATE_MIN
+  0xfca02400u;  // 0x10000u - (LEAD_SURROGATE_MIN << 10) - TRAIL_SURROGATE_MIN
 
 // Maximum valid value for a Unicode code point
 const uint32_t CODE_POINT_MAX = 0x0010ffffu;
@@ -91,8 +91,7 @@ template<typename u32> inline bool is_code_point_valid(u32 cp)
 }
 
 template<typename octet_iterator>
-inline typename std::iterator_traits<octet_iterator>::difference_type sequence_length(
-    octet_iterator lead_it)
+inline typename std::iterator_traits<octet_iterator>::difference_type sequence_length(octet_iterator lead_it)
 {
   uint8_t lead = utf8::internal::mask8(*lead_it);
   if (lead < 0x80)
@@ -280,8 +279,7 @@ utf_error validate_next(octet_iterator &it, octet_iterator end, uint32_t &code_p
   return err;
 }
 
-template<typename octet_iterator>
-inline utf_error validate_next(octet_iterator &it, octet_iterator end)
+template<typename octet_iterator> inline utf_error validate_next(octet_iterator &it, octet_iterator end)
 {
   uint32_t ignored;
   return utf8::internal::validate_next(it, end, ignored);
@@ -294,8 +292,7 @@ inline utf_error validate_next(octet_iterator &it, octet_iterator end)
 // Byte order mark
 const uint8_t bom[] = {0xef, 0xbb, 0xbf};
 
-template<typename octet_iterator>
-octet_iterator find_invalid(octet_iterator start, octet_iterator end)
+template<typename octet_iterator> octet_iterator find_invalid(octet_iterator start, octet_iterator end)
 {
   octet_iterator result = start;
   while (result != end) {
@@ -311,8 +308,7 @@ template<typename octet_iterator> inline bool is_valid(octet_iterator start, oct
   return (utf8::find_invalid(start, end) == end);
 }
 
-template<typename octet_iterator>
-inline bool starts_with_bom(octet_iterator it, octet_iterator end)
+template<typename octet_iterator> inline bool starts_with_bom(octet_iterator it, octet_iterator end)
 {
   return (((it != end) && (utf8::internal::mask8(*it++)) == bom[0]) &&
           ((it != end) && (utf8::internal::mask8(*it++)) == bom[1]) &&

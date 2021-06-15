@@ -32,17 +32,17 @@ class HdRprNdrDiscoveryPlugin final : public NdrDiscoveryPlugin {
         continue;
 
       ret.emplace_back(
-          /* identifier    = */ TfToken(nodeDesc.info->GetName()),
-          /* version       = */ NdrVersion(1),
-          /* name          = */ nodeDesc.info->GetName(),
-          /* family        = */ TfToken(nodeDesc.info->GetUIFolder()),
-          /* discoveryType = */ rpr,
-          /* sourceType    = */ rpr,
-          /* uri           = */ std::string(),
-          /* resolvedUri   = */ std::string(),
-          /* sourceCode    = */ std::string(),
-          /* metadata      = */ NdrTokenMap(),
-          /* blindData     = */ std::string());
+        /* identifier    = */ TfToken(nodeDesc.info->GetName()),
+        /* version       = */ NdrVersion(1),
+        /* name          = */ nodeDesc.info->GetName(),
+        /* family        = */ TfToken(nodeDesc.info->GetUIFolder()),
+        /* discoveryType = */ rpr,
+        /* sourceType    = */ rpr,
+        /* uri           = */ std::string(),
+        /* resolvedUri   = */ std::string(),
+        /* sourceCode    = */ std::string(),
+        /* metadata      = */ NdrTokenMap(),
+        /* blindData     = */ std::string());
     }
     return ret;
   }

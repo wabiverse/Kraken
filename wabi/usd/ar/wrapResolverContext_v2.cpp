@@ -54,8 +54,7 @@ namespace {
 struct Ar_ResolverContextFromPython {
   Ar_ResolverContextFromPython()
   {
-    converter::registry::push_back(
-        &_convertible, &_construct, boost::python::type_id<ArResolverContext>());
+    converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<ArResolverContext>());
   }
 
   static void *_convertible(PyObject *obj_ptr)
@@ -69,8 +68,7 @@ struct Ar_ResolverContextFromPython {
 
   static void _construct(PyObject *obj_ptr, converter::rvalue_from_python_stage1_data *data)
   {
-    void *storage =
-        ((converter::rvalue_from_python_storage<ArResolverContext> *)data)->storage.bytes;
+    void *storage = ((converter::rvalue_from_python_storage<ArResolverContext> *)data)->storage.bytes;
 
     ArResolverContext context;
 
@@ -105,8 +103,7 @@ class Ar_ResolverContextPythonAccess {
     for (const auto &data : ctx._contexts) {
       objReprs.push_back(TfPyObjectRepr(data->GetPythonObj().Get()));
     }
-    return TF_PY_REPR_PREFIX +
-           TfStringPrintf("ResolverContext(%s)", TfStringJoin(objReprs, ", ").c_str());
+    return TF_PY_REPR_PREFIX + TfStringPrintf("ResolverContext(%s)", TfStringJoin(objReprs, ", ").c_str());
   }
 };
 
@@ -133,23 +130,22 @@ void wrapResolverContext()
   Ar_ResolverContextFromPython();
 
   class_<ArResolverContext>("ResolverContext", no_init)
-      .def(init<>())
-      .def("__init__", make_constructor(&_Create))
+    .def(init<>())
+    .def("__init__", make_constructor(&_Create))
 
-      .def("IsEmpty", &ArResolverContext::IsEmpty)
-      .def("Get", &Ar_ResolverContextPythonAccess::GetAsList)
-      .def("GetDebugString", &ArResolverContext::GetDebugString)
+    .def("IsEmpty", &ArResolverContext::IsEmpty)
+    .def("Get", &Ar_ResolverContextPythonAccess::GetAsList)
+    .def("GetDebugString", &ArResolverContext::GetDebugString)
 
-      .def(self == self)
-      .def(self != self)
-      .def(self < self)
+    .def(self == self)
+    .def(self != self)
+    .def(self < self)
 
-      .def("__hash__", &_Hash)
-      .def("__repr__", &Ar_ResolverContextPythonAccess::GetRepr);
+    .def("__hash__", &_Hash)
+    .def("__repr__", &Ar_ResolverContextPythonAccess::GetRepr);
 
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<ArResolverContext>,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<ArResolverContext>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 
   // Helper function for unit tests to exercise implicit conversion of
   // context objects into an ArResolverContext.

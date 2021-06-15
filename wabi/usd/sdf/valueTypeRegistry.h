@@ -84,16 +84,16 @@ class Sdf_ValueTypeRegistry : boost::noncopyable {
     // Specify a type with the given name, default value, and default
     // array value.
     Type(const TfToken &name, const VtValue &defaultValue, const VtValue &defaultArrayValue)
-        : _name(name),
-          _defaultValue(defaultValue),
-          _defaultArrayValue(defaultArrayValue)
+      : _name(name),
+        _defaultValue(defaultValue),
+        _defaultArrayValue(defaultArrayValue)
     {}
 
     // Specify a type with the given name, default value, and default
     // array value of VtArray<T>.
     template<class T>
     Type(char const *name, const T &defaultValue)
-        : Type(TfToken(name), VtValue(defaultValue), VtValue(VtArray<T>()))
+      : Type(TfToken(name), VtValue(defaultValue), VtValue(VtArray<T>()))
     {}
 
     // Specify a type with the given name and underlying C++ type.
@@ -137,7 +137,7 @@ class Sdf_ValueTypeRegistry : boost::noncopyable {
     Type &NoArrays()
     {
       _defaultArrayValue = VtValue();
-      _arrayCppTypeName  = std::string();
+      _arrayCppTypeName = std::string();
       return *this;
     }
 

@@ -38,9 +38,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-using HdPhShaderCodeSharedPtr       = std::shared_ptr<class HdPhShaderCode>;
+using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
 using HdPhShaderCodeSharedPtrVector = std::vector<HdPhShaderCodeSharedPtr>;
-using HdPh_GeometricShaderPtr       = std::shared_ptr<class HdPh_GeometricShader>;
+using HdPh_GeometricShaderPtr = std::shared_ptr<class HdPh_GeometricShader>;
 
 /// \class HdPh_CodeGen
 ///

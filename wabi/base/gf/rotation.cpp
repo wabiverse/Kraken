@@ -69,7 +69,7 @@ GfRotation &GfRotation::SetQuat(const GfQuatd &quat)
 GfRotation &GfRotation::SetRotateInto(const GfVec3d &rotateFrom, const GfVec3d &rotateTo)
 {
   GfVec3d from = rotateFrom.GetNormalized();
-  GfVec3d to   = rotateTo.GetNormalized();
+  GfVec3d to = rotateTo.GetNormalized();
 
   double cos = GfDot(from, to);
 
@@ -110,9 +110,7 @@ static double _GetEpsilon()
   return 1e-6;
 }
 
-GfVec3d GfRotation::Decompose(const GfVec3d &axis0,
-                              const GfVec3d &axis1,
-                              const GfVec3d &axis2) const
+GfVec3d GfRotation::Decompose(const GfVec3d &axis0, const GfVec3d &axis1, const GfVec3d &axis2) const
 {
   GfMatrix4d mat;
   mat.SetRotate(*this);
@@ -171,7 +169,7 @@ GfVec3d GfRotation::Decompose(const GfVec3d &axis0,
 
   // Check handedness of matrix
   GfVec3d axisCross = GfCross(nAxis0, nAxis1);
-  double axisHand   = GfDot(axisCross, nAxis2);
+  double axisHand = GfDot(axisCross, nAxis2);
   if (axisHand >= 0.0) {
     r0 = -r0;
     r1 = -r1;
@@ -193,9 +191,7 @@ GfVec3d GfRotation::Decompose(const GfVec3d &axis0,
 //    ::DualCross -> GfCross  ?
 //  CfgPointd -> GfVec3d
 
-GfRotation GfRotation::RotateOntoProjected(const GfVec3d &v1,
-                                           const GfVec3d &v2,
-                                           const GfVec3d &axisParam)
+GfRotation GfRotation::RotateOntoProjected(const GfVec3d &v1, const GfVec3d &v2, const GfVec3d &axisParam)
 {
   GfVec3d axis = axisParam.GetNormalized();
 
@@ -204,9 +200,9 @@ GfRotation GfRotation::RotateOntoProjected(const GfVec3d &v1,
   v1Proj.Normalize();
   v2Proj.Normalize();
   GfVec3d crossAxis = GfCross(v1Proj, v2Proj);
-  double sinTheta   = GfDot(crossAxis, axis);
-  double cosTheta   = GfDot(v1Proj, v2Proj);
-  double theta      = 0;
+  double sinTheta = GfDot(crossAxis, axis);
+  double cosTheta = GfDot(v1Proj, v2Proj);
+  double theta = 0;
   if (!(fabs(sinTheta) < _GetEpsilon() && fabs(cosTheta) < _GetEpsilon()))
     theta = atan2(sinTheta, cosTheta);
 
@@ -226,7 +222,7 @@ static GfMatrix4d _RotateOntoProjected(const GfVec3d &v1,
   mat.SetRotate(r);
   if (thetaInRadians) {
     const double toDeg = (180.0) / M_PI;
-    *thetaInRadians    = r.GetAngle() / toDeg;
+    *thetaInRadians = r.GetAngle() / toDeg;
   }
 
   return mat;
@@ -241,7 +237,7 @@ static GfVec4d _PiShift(const GfVec4d &hint, const GfVec4d &attempt, double mul 
   for (int i = 0; i < 4; i++) {
     double mod1 = fmod(attempt[i], mul);
     double mod2 = fmod(hint[i], mul);
-    result[i]   = (hint[i] - mod2) + mod1;
+    result[i] = (hint[i] - mod2) + mod1;
     if (fabs(hint[i] - result[i]) > mul / 2.0)
       result[i] += (hint[i] < 0 ? -mul : mul);
   }
@@ -257,15 +253,15 @@ static void _ShiftGimbalLock(double middleAngle, double *firstAngle, double *las
   // difference of the two angles.
   if (fabs(fabs(middleAngle) - M_PI) < _GetEpsilon()) {
     double diff = *lastAngle - *firstAngle;
-    *lastAngle  = diff / 2;
+    *lastAngle = diff / 2;
     *firstAngle = -diff / 2;
   }
 
   // If the middle angle is 0, then the two axes have the same effect so use
   // the sum of the angles.
   if (fabs(middleAngle) < _GetEpsilon()) {
-    double sum  = *lastAngle + *firstAngle;
-    *lastAngle  = sum / 2;
+    double sum = *lastAngle + *firstAngle;
+    *lastAngle = sum / 2;
     *firstAngle = sum / 2;
   }
 }
@@ -290,7 +286,7 @@ void GfRotation::DecomposeRotation(const GfMatrix4d &rot,
   double angleStandin = 0.0f, hintTw = 0.0f, hintFB = 0.0f, hintLR = 0.0f, hintSw = 0.0f;
   if (thetaTw == NULL) {
     zeroAngle = ZERO_TW;
-    thetaTw   = &angleStandin;
+    thetaTw = &angleStandin;
   }
   if (thetaFB == NULL) {
     if (zeroAngle != ZERO_NONE) {
@@ -298,7 +294,7 @@ void GfRotation::DecomposeRotation(const GfMatrix4d &rot,
       return;
     }
     zeroAngle = ZERO_FB;
-    thetaFB   = &angleStandin;
+    thetaFB = &angleStandin;
   }
   if (thetaLR == NULL) {
     if (zeroAngle != ZERO_NONE) {
@@ -306,7 +302,7 @@ void GfRotation::DecomposeRotation(const GfMatrix4d &rot,
       return;
     }
     zeroAngle = ZERO_LR;
-    thetaLR   = &angleStandin;
+    thetaLR = &angleStandin;
   }
   if (thetaSw == NULL) {
     if (zeroAngle != ZERO_NONE) {
@@ -314,13 +310,13 @@ void GfRotation::DecomposeRotation(const GfMatrix4d &rot,
       return;
     }
     zeroAngle = ZERO_SW;
-    thetaSw   = &angleStandin;
+    thetaSw = &angleStandin;
   }
 
   if (swShift && zeroAngle != ZERO_NONE) {
     TF_WARN(
-        "A swing shift was provided but we're not decomposing into"
-        " four angles.  The swing shift will be ignored.");
+      "A swing shift was provided but we're not decomposing into"
+      " four angles.  The swing shift will be ignored.");
   }
 
   // Update hint values if we're using them as hints.
@@ -475,12 +471,12 @@ void GfRotation::DecomposeRotation(const GfMatrix4d &rot,
   int i, j, mini = -1;
 
   for (i = 0; i < numVals; i++) {
-    double sum       = 0;
+    double sum = 0;
     GfVec4d hintDiff = vals[i] - hintAngles;
     for (j = 0; j < 4; j++)
       sum += fabs(hintDiff[j]);
     if ((i == 0) || (sum < min)) {
-      min  = sum;
+      min = sum;
       mini = i;
     }
   }
@@ -587,7 +583,7 @@ GfRotation &GfRotation::operator*=(const GfRotation &r)
   // the current axis for an identity rotation:
   double len = q.GetImaginary().GetLength();
   if (len > GF_MIN_VECTOR_LENGTH) {
-    _axis  = q.GetImaginary() / len;
+    _axis = q.GetImaginary() / len;
     _angle = 2.0 * GfRadiansToDegrees(acos(q.GetReal()));
   }
   else {
@@ -600,8 +596,7 @@ GfRotation &GfRotation::operator*=(const GfRotation &r)
 
 std::ostream &operator<<(std::ostream &out, const GfRotation &r)
 {
-  return out << '[' << Gf_OstreamHelperP(r.GetAxis()) << " " << Gf_OstreamHelperP(r.GetAngle())
-             << ']';
+  return out << '[' << Gf_OstreamHelperP(r.GetAxis()) << " " << Gf_OstreamHelperP(r.GetAngle()) << ']';
 }
 
 WABI_NAMESPACE_END

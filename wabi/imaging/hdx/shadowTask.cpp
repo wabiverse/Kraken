@@ -49,11 +49,11 @@ bool _HasDrawItems(HdRenderPassSharedPtr pass)
 }
 
 HdxShadowTask::HdxShadowTask(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdTask(id),
-      _passes(),
-      _renderPassStates(),
-      _params(),
-      _renderTags()
+  : HdTask(id),
+    _passes(),
+    _renderPassStates(),
+    _params(),
+    _renderTags()
 {}
 
 HdxShadowTask::~HdxShadowTask() = default;
@@ -77,7 +77,7 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
     return;
   }
 
-  GlfSimpleLightVector const glfLights     = lightingContext->GetLights();
+  GlfSimpleLightVector const glfLights = lightingContext->GetLights();
   GlfSimpleShadowArrayRefPtr const shadows = lightingContext->GetShadows();
 
   // Extract the new shadow task params from scene delegate
@@ -99,7 +99,7 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
   // render passes for what would be the same shadow map pass.
   // Thus we must make a distinction between the number of render passes and
   // the number of shadow maps indicated by the shadow array.
-  size_t numShadowMaps                       = shadows->GetNumShadowMapPasses();
+  size_t numShadowMaps = shadows->GetNumShadowMapPasses();
   static const TfToken shadowMaterialTags[2] = {HdPhMaterialTagTokens->defaultMaterialTag,
                                                 HdPhMaterialTagTokens->masked};
   _passes.resize(TfArraySize(shadowMaterialTags) * numShadowMaps);
@@ -114,17 +114,17 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
     }
 
     const HdPhLight *light = static_cast<const HdPhLight *>(
-        renderIndex.GetSprim(HdPrimTypeTokens->simpleLight, glfLights[lightId].GetID()));
+      renderIndex.GetSprim(HdPrimTypeTokens->simpleLight, glfLights[lightId].GetID()));
 
     // It is possible the light is nullptr for area lights converted to
     // simple lights, however they should not have shadows enabled.
     TF_VERIFY(light);
 
     // Extract the collection from the HD light
-    VtValue vtShadowCollection   = light->Get(HdLightTokens->shadowCollection);
+    VtValue vtShadowCollection = light->Get(HdLightTokens->shadowCollection);
     const HdRprimCollection &col = vtShadowCollection.IsHolding<HdRprimCollection>() ?
-                                       vtShadowCollection.Get<HdRprimCollection>() :
-                                       HdRprimCollection();
+                                     vtShadowCollection.Get<HdRprimCollection>() :
+                                     HdRprimCollection();
 
     // Only want opaque or masked prims to appear in shadow pass, so make
     // two copies of the shadow collection with appropriate material tags
@@ -134,7 +134,7 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
     newColMasked.SetMaterialTag(shadowMaterialTags[1]);
 
     int shadowStart = glfLights[lightId].GetShadowIndexStart();
-    int shadowEnd   = glfLights[lightId].GetShadowIndexEnd();
+    int shadowEnd = glfLights[lightId].GetShadowIndexEnd();
 
     // Note here that we may want to sort the passes by collection
     // to invalidate fewer passes if the collections match already.
@@ -155,8 +155,7 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
         _passes[shadowId + numShadowMaps]->SetRprimCollection(newColMasked);
       }
       else {
-        _passes[shadowId + numShadowMaps] = std::make_shared<HdPh_RenderPass>(&renderIndex,
-                                                                              newColMasked);
+        _passes[shadowId + numShadowMaps] = std::make_shared<HdPh_RenderPass>(&renderIndex, newColMasked);
       }
     }
   }
@@ -177,10 +176,10 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
   // Add new states if the number of passes has grown
   if (_renderPassStates.size() < _passes.size()) {
     for (size_t passId = _renderPassStates.size(); passId < _passes.size(); passId++) {
-      HdPhRenderPassShaderSharedPtr renderPassShadowShader =
-          std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassShadowShader());
+      HdPhRenderPassShaderSharedPtr renderPassShadowShader = std::make_shared<HdPhRenderPassShader>(
+        HdxPackageRenderPassShadowShader());
       HdPhRenderPassStateSharedPtr renderPassState = std::make_shared<HdPhRenderPassState>(
-          renderPassShadowShader);
+        renderPassShadowShader);
 
       renderPassState->SetDepthFunc(_params.depthFunc);
       renderPassState->SetDepthBiasUseDefault(!_params.depthBiasEnable);
@@ -220,11 +219,10 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
 
     // Set camera framing based on the shadow map's, which is computed in
     // HdxSimpleLightTask.
-    _renderPassStates[passId]->SetCameraFramingState(
-        shadows->GetViewMatrix(shadowMapId),
-        shadows->GetProjectionMatrix(shadowMapId),
-        GfVec4d(0, 0, shadowMapRes[0], shadowMapRes[1]),
-        HdRenderPassState::ClipPlanesVector());
+    _renderPassStates[passId]->SetCameraFramingState(shadows->GetViewMatrix(shadowMapId),
+                                                     shadows->GetProjectionMatrix(shadowMapId),
+                                                     GfVec4d(0, 0, shadowMapRes[0], shadowMapRes[1]),
+                                                     HdRenderPassState::ClipPlanesVector());
 
     _passes[passId]->Sync();
   }
@@ -256,7 +254,7 @@ void HdxShadowTask::Execute(HdTaskContext *ctx)
 
   // Generate the actual shadow maps
   GlfSimpleShadowArrayRefPtr const shadows = lightingContext->GetShadows();
-  size_t numShadowMaps                     = shadows->GetNumShadowMapPasses();
+  size_t numShadowMaps = shadows->GetNumShadowMapPasses();
   for (size_t shadowId = 0; shadowId < numShadowMaps; shadowId++) {
 
     // Make sure each pass got created. Light shadow indices are supposed
@@ -296,8 +294,7 @@ void HdxShadowTask::_UpdateDirtyParams(HdPhRenderPassStateSharedPtr &renderPassS
   renderPassState->SetWireframeColor(params.wireframeColor);
   renderPassState->SetCullStyle(HdInvertCullStyle(params.cullStyle));
 
-  if (HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(
-          renderPassState.get())) {
+  if (HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(renderPassState.get())) {
     extendedState->SetUseSceneMaterials(params.enableSceneMaterials);
   }
 }
@@ -319,8 +316,8 @@ bool operator==(const HdxShadowTaskParams &lhs, const HdxShadowTaskParams &rhs)
 {
   return lhs.overrideColor == rhs.overrideColor && lhs.wireframeColor == rhs.wireframeColor &&
          lhs.enableLighting == rhs.enableLighting && lhs.enableIdRender == rhs.enableIdRender &&
-         lhs.enableSceneMaterials == rhs.enableSceneMaterials &&
-         lhs.alphaThreshold == rhs.alphaThreshold && lhs.depthBiasEnable == rhs.depthBiasEnable &&
+         lhs.enableSceneMaterials == rhs.enableSceneMaterials && lhs.alphaThreshold == rhs.alphaThreshold &&
+         lhs.depthBiasEnable == rhs.depthBiasEnable &&
          lhs.depthBiasConstantFactor == rhs.depthBiasConstantFactor &&
          lhs.depthBiasSlopeFactor == rhs.depthBiasSlopeFactor && lhs.depthFunc == rhs.depthFunc &&
          lhs.cullStyle == rhs.cullStyle;

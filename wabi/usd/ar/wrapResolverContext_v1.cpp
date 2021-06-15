@@ -56,8 +56,7 @@ struct Ar_ResolverContextToPython {
 struct Ar_ResolverContextFromPython {
   Ar_ResolverContextFromPython()
   {
-    converter::registry::push_back(
-        &_convertible, &_construct, boost::python::type_id<ArResolverContext>());
+    converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<ArResolverContext>());
   }
 
   static void *_convertible(PyObject *obj_ptr)
@@ -70,8 +69,7 @@ struct Ar_ResolverContextFromPython {
 
   static void _construct(PyObject *obj_ptr, converter::rvalue_from_python_stage1_data *data)
   {
-    void *storage =
-        ((converter::rvalue_from_python_storage<ArResolverContext> *)data)->storage.bytes;
+    void *storage = ((converter::rvalue_from_python_storage<ArResolverContext> *)data)->storage.bytes;
 
     ArResolverContext context;
     if (obj_ptr != Py_None) {

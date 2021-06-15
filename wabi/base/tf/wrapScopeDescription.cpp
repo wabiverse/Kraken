@@ -104,7 +104,7 @@ void wrapScopeDescription()
   typedef Tf_PyScopeDescription This;
 
   class_<This, boost::noncopyable>("ScopeDescription", init<string>())
-      .def("__enter__", &This::__enter__, return_self<>())
-      .def("__exit__", &This::__exit__)
-      .def("SetDescription", &This::SetDescription);
+    .def("__enter__", &This::__enter__, return_self<>())
+    .def("__exit__", &This::__exit__)
+    .def("SetDescription", &This::SetDescription);
 }

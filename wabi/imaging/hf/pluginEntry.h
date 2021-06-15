@@ -152,7 +152,7 @@ class Hf_PluginEntry final {
   ///
   /// Don't allow copying
   ///
-  Hf_PluginEntry()                       = delete;
+  Hf_PluginEntry() = delete;
   Hf_PluginEntry(const Hf_PluginEntry &) = delete;
   Hf_PluginEntry &operator=(const Hf_PluginEntry &) = delete;
 };

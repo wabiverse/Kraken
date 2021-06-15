@@ -207,7 +207,7 @@ class UsdGeomCamera : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateProjectionAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -232,7 +232,7 @@ class UsdGeomCamera : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateHorizontalApertureAttr(VtValue const &defaultValue = VtValue(),
-                                            bool writeSparsely          = false) const;
+                                            bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -257,7 +257,7 @@ class UsdGeomCamera : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateVerticalApertureAttr(VtValue const &defaultValue = VtValue(),
-                                          bool writeSparsely          = false) const;
+                                          bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -281,7 +281,7 @@ class UsdGeomCamera : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateHorizontalApertureOffsetAttr(VtValue const &defaultValue = VtValue(),
-                                                  bool writeSparsely          = false) const;
+                                                  bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -305,7 +305,7 @@ class UsdGeomCamera : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateVerticalApertureOffsetAttr(VtValue const &defaultValue = VtValue(),
-                                                bool writeSparsely          = false) const;
+                                                bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -329,7 +329,7 @@ class UsdGeomCamera : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateFocalLengthAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -353,7 +353,7 @@ class UsdGeomCamera : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateClippingRangeAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -379,7 +379,7 @@ class UsdGeomCamera : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateClippingPlanesAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -401,8 +401,7 @@ class UsdGeomCamera : public UsdGeomXformable {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateFStopAttr(VtValue const &defaultValue = VtValue(),
-                               bool writeSparsely          = false) const;
+  UsdAttribute CreateFStopAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -426,7 +425,7 @@ class UsdGeomCamera : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateFocusDistanceAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -452,7 +451,7 @@ class UsdGeomCamera : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateStereoRoleAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -477,7 +476,7 @@ class UsdGeomCamera : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateShutterOpenAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -503,7 +502,7 @@ class UsdGeomCamera : public UsdGeomXformable {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateShutterCloseAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -528,8 +527,7 @@ class UsdGeomCamera : public UsdGeomXformable {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateExposureAttr(VtValue const &defaultValue = VtValue(),
-                                  bool writeSparsely          = false) const;
+  UsdAttribute CreateExposureAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

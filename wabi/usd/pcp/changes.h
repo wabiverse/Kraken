@@ -83,10 +83,10 @@ class PcpLayerStackChanges {
   SdfPathSet pathsAffectedByRelocationChanges;
 
   PcpLayerStackChanges()
-      : didChangeLayers(false),
-        didChangeLayerOffsets(false),
-        didChangeRelocates(false),
-        didChangeSignificantly(false)
+    : didChangeLayers(false),
+      didChangeLayerOffsets(false),
+      didChangeRelocates(false),
+      didChangeSignificantly(false)
   {}
 };
 
@@ -187,9 +187,7 @@ class PcpChanges {
   /// and all prims in \p cache using any prim in any of those layer stacks
   /// are marked as changed.
   PCP_API
-  void DidMaybeFixSublayer(const PcpCache *cache,
-                           const SdfLayerHandle &layer,
-                           const std::string &assetPath);
+  void DidMaybeFixSublayer(const PcpCache *cache, const SdfLayerHandle &layer, const std::string &assetPath);
 
   /// Tries to load the asset at \p assetPath.  If successful, any prim
   /// in \p cache using the site \p site is marked as changed.
@@ -244,9 +242,7 @@ class PcpChanges {
   /// The connections on the attribute or targets on the relationship have
   /// changed.
   PCP_API
-  void DidChangeTargets(const PcpCache *cache,
-                        const SdfPath &path,
-                        PcpCacheChanges::TargetType targetType);
+  void DidChangeTargets(const PcpCache *cache, const SdfPath &path, PcpCacheChanges::TargetType targetType);
 
   /// The relocates that affect prims and properties at and below
   /// the given cache path have changed.

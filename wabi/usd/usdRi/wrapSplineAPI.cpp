@@ -69,29 +69,27 @@ void wrapUsdRiSplineAPI()
   class_<This, bases<UsdAPISchemaBase>> cls("SplineAPI");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Apply", &This::Apply, (arg("prim")))
-      .staticmethod("Apply")
+    .def("Apply", &This::Apply, (arg("prim")))
+    .staticmethod("Apply")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -117,17 +115,13 @@ void wrapUsdRiSplineAPI()
 
 namespace {
 
-static UsdAttribute _CreateInterpolationAttr(UsdRiSplineAPI &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
+static UsdAttribute _CreateInterpolationAttr(UsdRiSplineAPI &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateInterpolationAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
                                       writeSparsely);
 }
 
-static UsdAttribute _CreatePositionsAttr(UsdRiSplineAPI &self,
-                                         object defaultVal,
-                                         bool writeSparsely)
+static UsdAttribute _CreatePositionsAttr(UsdRiSplineAPI &self, object defaultVal, bool writeSparsely)
 {
   return self.CreatePositionsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
                                   writeSparsely);
@@ -135,8 +129,7 @@ static UsdAttribute _CreatePositionsAttr(UsdRiSplineAPI &self,
 
 static UsdAttribute _CreateValuesAttr(UsdRiSplineAPI &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateValuesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
-                               writeSparsely);
+  return self.CreateValuesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray), writeSparsely);
 }
 
 static boost::python::tuple _Validate(const UsdRiSplineAPI &self)
@@ -150,24 +143,23 @@ WRAP_CUSTOM
 {
   typedef UsdRiSplineAPI This;
   _class.def(init<const UsdPrim &, const TfToken &, const SdfValueTypeName &, bool>())
-      .def(init<const UsdSchemaBase &, const TfToken &, const SdfValueTypeName &, bool>())
+    .def(init<const UsdSchemaBase &, const TfToken &, const SdfValueTypeName &, bool>())
 
-      .def("GetValuesTypeName", &This::GetValuesTypeName)
+    .def("GetValuesTypeName", &This::GetValuesTypeName)
 
-      .def("GetInterpolationAttr", &This::GetInterpolationAttr)
-      .def("CreateInterpolationAttr",
-           &_CreateInterpolationAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
-      .def("GetPositionsAttr", &This::GetPositionsAttr)
-      .def("CreatePositionsAttr",
-           &_CreatePositionsAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
-      .def("GetValuesAttr", &This::GetValuesAttr)
-      .def("CreateValuesAttr",
-           &_CreateValuesAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetInterpolationAttr", &This::GetInterpolationAttr)
+    .def("CreateInterpolationAttr",
+         &_CreateInterpolationAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetPositionsAttr", &This::GetPositionsAttr)
+    .def("CreatePositionsAttr",
+         &_CreatePositionsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetValuesAttr", &This::GetValuesAttr)
+    .def(
+      "CreateValuesAttr", &_CreateValuesAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("Validate", &_Validate);
+    .def("Validate", &_Validate);
 }
 
 }  // namespace

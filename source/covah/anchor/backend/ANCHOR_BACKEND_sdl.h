@@ -78,9 +78,7 @@ class ANCHOR_DisplayManagerSDL : public ANCHOR_DisplayManager {
 
   eAnchorStatus getNumDisplaySettings(AnchorU8 display, AnchorS32 &numSettings) const;
 
-  eAnchorStatus getDisplaySetting(AnchorU8 display,
-                                  AnchorS32 index,
-                                  ANCHOR_DisplaySetting &setting) const;
+  eAnchorStatus getDisplaySetting(AnchorU8 display, AnchorS32 index, ANCHOR_DisplaySetting &setting) const;
 
   eAnchorStatus getCurrentDisplaySetting(AnchorU8 display, ANCHOR_DisplaySetting &setting) const;
 

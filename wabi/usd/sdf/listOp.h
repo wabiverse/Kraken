@@ -84,8 +84,8 @@ template<typename T> class SdfListOp {
   /// \p prependedItems, \p appendedItems, and \p deletedItems
   SDF_API
   static SdfListOp Create(const ItemVector &prependedItems = ItemVector(),
-                          const ItemVector &appendedItems  = ItemVector(),
-                          const ItemVector &deletedItems   = ItemVector());
+                          const ItemVector &appendedItems = ItemVector(),
+                          const ItemVector &deletedItems = ItemVector());
 
   /// Create an empty ListOp in non-explicit mode.
   SDF_API SdfListOp();
@@ -210,10 +210,7 @@ template<typename T> class SdfListOp {
   /// (index, index + n] with the given \p newItems. If \p newItems is empty
   /// the items in the range will simply be removed.
   SDF_API
-  bool ReplaceOperations(const SdfListOpType op,
-                         size_t index,
-                         size_t n,
-                         const ItemVector &newItems);
+  bool ReplaceOperations(const SdfListOpType op, size_t index, size_t n, const ItemVector &newItems);
 
   /// Composes a stronger SdfListOp's opinions for a given operation list
   /// over this one.
@@ -253,26 +250,11 @@ template<typename T> class SdfListOp {
   typedef std::list<ItemType> _ApplyList;
   typedef std::map<ItemType, typename _ApplyList::iterator, _ItemComparator> _ApplyMap;
 
-  void _AddKeys(SdfListOpType,
-                const ApplyCallback &cb,
-                _ApplyList *result,
-                _ApplyMap *search) const;
-  void _PrependKeys(SdfListOpType,
-                    const ApplyCallback &cb,
-                    _ApplyList *result,
-                    _ApplyMap *search) const;
-  void _AppendKeys(SdfListOpType,
-                   const ApplyCallback &cb,
-                   _ApplyList *result,
-                   _ApplyMap *search) const;
-  void _DeleteKeys(SdfListOpType,
-                   const ApplyCallback &cb,
-                   _ApplyList *result,
-                   _ApplyMap *search) const;
-  void _ReorderKeys(SdfListOpType,
-                    const ApplyCallback &cb,
-                    _ApplyList *result,
-                    _ApplyMap *search) const;
+  void _AddKeys(SdfListOpType, const ApplyCallback &cb, _ApplyList *result, _ApplyMap *search) const;
+  void _PrependKeys(SdfListOpType, const ApplyCallback &cb, _ApplyList *result, _ApplyMap *search) const;
+  void _AppendKeys(SdfListOpType, const ApplyCallback &cb, _ApplyList *result, _ApplyMap *search) const;
+  void _DeleteKeys(SdfListOpType, const ApplyCallback &cb, _ApplyList *result, _ApplyMap *search) const;
+  void _ReorderKeys(SdfListOpType, const ApplyCallback &cb, _ApplyList *result, _ApplyMap *search) const;
 
  private:
   bool _isExplicit;

@@ -61,17 +61,17 @@ void wrapUsdCollectionMembershipQuery()
       return_value_policy<TfPySequenceToList>());
 
   class_<UsdCollectionMembershipQuery>("UsdCollectionMembershipQuery")
-      .def(init<>())
-      .def("IsPathIncluded", _WrapIsPathIncluded_1, arg("path"))
-      .def("IsPathIncluded", _WrapIsPathIncluded_2, (arg("path"), arg("parentExpansionRule")))
-      .def("HasExcludes", &UsdCollectionMembershipQuery::HasExcludes)
-      .def("GetAsPathExpansionRuleMap",
-           &UsdCollectionMembershipQuery::GetAsPathExpansionRuleMap,
-           return_value_policy<TfPyMapToDictionary>())
-      .def("GetIncludedCollections",
-           &UsdCollectionMembershipQuery::GetIncludedCollections,
-           return_value_policy<TfPySequenceToList>())
-      .def("__hash__", &UsdCollectionMembershipQuery::GetHash)
-      .def(self == self)
-      .def(self != self);
+    .def(init<>())
+    .def("IsPathIncluded", _WrapIsPathIncluded_1, arg("path"))
+    .def("IsPathIncluded", _WrapIsPathIncluded_2, (arg("path"), arg("parentExpansionRule")))
+    .def("HasExcludes", &UsdCollectionMembershipQuery::HasExcludes)
+    .def("GetAsPathExpansionRuleMap",
+         &UsdCollectionMembershipQuery::GetAsPathExpansionRuleMap,
+         return_value_policy<TfPyMapToDictionary>())
+    .def("GetIncludedCollections",
+         &UsdCollectionMembershipQuery::GetIncludedCollections,
+         return_value_policy<TfPySequenceToList>())
+    .def("__hash__", &UsdCollectionMembershipQuery::GetHash)
+    .def(self == self)
+    .def(self != self);
 }

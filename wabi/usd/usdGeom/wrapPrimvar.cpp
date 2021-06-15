@@ -63,8 +63,7 @@ static TfPyObjWrapper _Get(const UsdGeomPrimvar &self, UsdTimeCode time = UsdTim
   return UsdVtValueToPython(retValue);
 }
 
-static VtIntArray _GetIndices(const UsdGeomPrimvar &self,
-                              UsdTimeCode time = UsdTimeCode::Default())
+static VtIntArray _GetIndices(const UsdGeomPrimvar &self, UsdTimeCode time = UsdTimeCode::Default())
 {
   VtIntArray indices;
   self.GetIndices(&indices, time);
@@ -86,8 +85,7 @@ static vector<double> _GetTimeSamples(const UsdGeomPrimvar &self)
   return result;
 }
 
-static vector<double> _GetTimeSamplesInInterval(const UsdGeomPrimvar &self,
-                                                const GfInterval &interval)
+static vector<double> _GetTimeSamplesInInterval(const UsdGeomPrimvar &self, const GfInterval &interval)
 {
   vector<double> result;
   self.GetTimeSamplesInInterval(interval, &result);
@@ -145,74 +143,69 @@ void wrapUsdGeomPrimvar()
 
   class_<Primvar> clsObj("Primvar");
   clsObj
-      .def(init<UsdAttribute>(arg("attr")))
+    .def(init<UsdAttribute>(arg("attr")))
 
-      .def(self == self)
-      .def(self != self)
-      .def(!self)
-      .def("__hash__", __hash__)
+    .def(self == self)
+    .def(self != self)
+    .def(!self)
+    .def("__hash__", __hash__)
 
-      .def("GetInterpolation", &Primvar::GetInterpolation)
-      .def("SetInterpolation", &Primvar::SetInterpolation, arg("interpolation"))
-      .def("HasAuthoredInterpolation", &Primvar::HasAuthoredInterpolation)
+    .def("GetInterpolation", &Primvar::GetInterpolation)
+    .def("SetInterpolation", &Primvar::SetInterpolation, arg("interpolation"))
+    .def("HasAuthoredInterpolation", &Primvar::HasAuthoredInterpolation)
 
-      .def("GetElementSize", &Primvar::GetElementSize)
-      .def("SetElementSize", &Primvar::SetElementSize, arg("eltSize"))
-      .def("HasAuthoredElementSize", &Primvar::HasAuthoredElementSize)
+    .def("GetElementSize", &Primvar::GetElementSize)
+    .def("SetElementSize", &Primvar::SetElementSize, arg("eltSize"))
+    .def("HasAuthoredElementSize", &Primvar::HasAuthoredElementSize)
 
-      .def("IsPrimvar", Primvar::IsPrimvar, arg("attr"))
-      .staticmethod("IsPrimvar")
+    .def("IsPrimvar", Primvar::IsPrimvar, arg("attr"))
+    .staticmethod("IsPrimvar")
 
-      .def("IsValidPrimvarName", Primvar::IsValidPrimvarName, arg("name"))
-      .staticmethod("IsValidPrimvarName")
+    .def("IsValidPrimvarName", Primvar::IsValidPrimvarName, arg("name"))
+    .staticmethod("IsValidPrimvarName")
 
-      .def("StripPrimvarsName", Primvar::StripPrimvarsName, arg("name"))
-      .staticmethod("StripPrimvarsName")
+    .def("StripPrimvarsName", Primvar::StripPrimvarsName, arg("name"))
+    .staticmethod("StripPrimvarsName")
 
-      .def("IsValidInterpolation", Primvar::IsValidInterpolation, arg("interpolation"))
-      .staticmethod("IsValidInterpolation")
+    .def("IsValidInterpolation", Primvar::IsValidInterpolation, arg("interpolation"))
+    .staticmethod("IsValidInterpolation")
 
-      .def("GetDeclarationInfo", _GetDeclarationInfo)
-      .def("GetAttr", &Primvar::GetAttr, return_value_policy<return_by_value>())
-      .def("IsDefined", &Primvar::IsDefined)
-      .def("HasValue", &Primvar::HasValue)
-      .def("HasAuthoredValue", &Primvar::HasAuthoredValue)
-      .def("GetName", &Primvar::GetName, return_value_policy<return_by_value>())
-      .def("GetPrimvarName", &Primvar::GetPrimvarName)
-      .def("NameContainsNamespaces", &Primvar::NameContainsNamespaces)
-      .def("GetBaseName", &Primvar::GetBaseName)
-      .def("GetNamespace", &Primvar::GetNamespace)
-      .def("SplitName", &Primvar::SplitName, return_value_policy<TfPySequenceToList>())
-      .def("GetTypeName", &Primvar::GetTypeName)
-      .def("Get", _Get, (arg("time") = UsdTimeCode::Default()))
-      .def("Set", _Set, (arg("value"), arg("time") = UsdTimeCode::Default()))
+    .def("GetDeclarationInfo", _GetDeclarationInfo)
+    .def("GetAttr", &Primvar::GetAttr, return_value_policy<return_by_value>())
+    .def("IsDefined", &Primvar::IsDefined)
+    .def("HasValue", &Primvar::HasValue)
+    .def("HasAuthoredValue", &Primvar::HasAuthoredValue)
+    .def("GetName", &Primvar::GetName, return_value_policy<return_by_value>())
+    .def("GetPrimvarName", &Primvar::GetPrimvarName)
+    .def("NameContainsNamespaces", &Primvar::NameContainsNamespaces)
+    .def("GetBaseName", &Primvar::GetBaseName)
+    .def("GetNamespace", &Primvar::GetNamespace)
+    .def("SplitName", &Primvar::SplitName, return_value_policy<TfPySequenceToList>())
+    .def("GetTypeName", &Primvar::GetTypeName)
+    .def("Get", _Get, (arg("time") = UsdTimeCode::Default()))
+    .def("Set", _Set, (arg("value"), arg("time") = UsdTimeCode::Default()))
 
-      .def("GetTimeSamples", _GetTimeSamples)
-      .def("GetTimeSamplesInInterval", _GetTimeSamplesInInterval)
-      .def("ValueMightBeTimeVarying", &Primvar::ValueMightBeTimeVarying)
+    .def("GetTimeSamples", _GetTimeSamples)
+    .def("GetTimeSamplesInInterval", _GetTimeSamplesInInterval)
+    .def("ValueMightBeTimeVarying", &Primvar::ValueMightBeTimeVarying)
 
-      .def("SetIndices",
-           &Primvar::SetIndices,
-           (arg("indices"), arg("time") = UsdTimeCode::Default()))
-      .def("BlockIndices", &Primvar::BlockIndices)
-      .def("GetIndices", _GetIndices, (arg("time") = UsdTimeCode::Default()))
-      .def("GetIndicesAttr", &Primvar::GetIndicesAttr)
-      .def("CreateIndicesAttr", &Primvar::GetIndicesAttr)
-      .def("IsIndexed", &Primvar::IsIndexed)
+    .def("SetIndices", &Primvar::SetIndices, (arg("indices"), arg("time") = UsdTimeCode::Default()))
+    .def("BlockIndices", &Primvar::BlockIndices)
+    .def("GetIndices", _GetIndices, (arg("time") = UsdTimeCode::Default()))
+    .def("GetIndicesAttr", &Primvar::GetIndicesAttr)
+    .def("CreateIndicesAttr", &Primvar::GetIndicesAttr)
+    .def("IsIndexed", &Primvar::IsIndexed)
 
-      .def("GetUnauthoredValuesIndex", &Primvar::GetUnauthoredValuesIndex)
-      .def("SetUnauthoredValuesIndex",
-           &Primvar::SetUnauthoredValuesIndex,
-           arg("unauthoredValuesIndex"))
+    .def("GetUnauthoredValuesIndex", &Primvar::GetUnauthoredValuesIndex)
+    .def("SetUnauthoredValuesIndex", &Primvar::SetUnauthoredValuesIndex, arg("unauthoredValuesIndex"))
 
-      .def("ComputeFlattened", _ComputeFlattened, (arg("time") = UsdTimeCode::Default()))
+    .def("ComputeFlattened", _ComputeFlattened, (arg("time") = UsdTimeCode::Default()))
 
-      .def("IsIdTarget", &Primvar::IsIdTarget)
-      .def("SetIdTarget", &Primvar::SetIdTarget);
+    .def("IsIdTarget", &Primvar::IsIdTarget)
+    .def("SetIdTarget", &Primvar::SetIdTarget);
 
   TfPyRegisterStlSequencesFromPython<UsdGeomPrimvar>();
-  to_python_converter<std::vector<UsdGeomPrimvar>,
-                      TfPySequenceToPython<std::vector<UsdGeomPrimvar>>>();
+  to_python_converter<std::vector<UsdGeomPrimvar>, TfPySequenceToPython<std::vector<UsdGeomPrimvar>>>();
   implicitly_convertible<Primvar, UsdAttribute>();
 
   // Save existing __getattribute__ and replace.

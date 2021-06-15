@@ -54,44 +54,29 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateAovNameAttr(UsdRiPxrAovLight &self,
-                                       object defaultVal,
-                                       bool writeSparsely)
+static UsdAttribute _CreateAovNameAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateAovNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->String),
-                                writeSparsely);
+  return self.CreateAovNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->String), writeSparsely);
 }
 
-static UsdAttribute _CreateInPrimaryHitAttr(UsdRiPxrAovLight &self,
-                                            object defaultVal,
-                                            bool writeSparsely)
+static UsdAttribute _CreateInPrimaryHitAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateInPrimaryHitAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                     writeSparsely);
+  return self.CreateInPrimaryHitAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
 }
 
-static UsdAttribute _CreateInReflectionAttr(UsdRiPxrAovLight &self,
-                                            object defaultVal,
-                                            bool writeSparsely)
+static UsdAttribute _CreateInReflectionAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateInReflectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                     writeSparsely);
+  return self.CreateInReflectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
 }
 
-static UsdAttribute _CreateInRefractionAttr(UsdRiPxrAovLight &self,
-                                            object defaultVal,
-                                            bool writeSparsely)
+static UsdAttribute _CreateInRefractionAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateInRefractionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                     writeSparsely);
+  return self.CreateInRefractionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
 }
 
-static UsdAttribute _CreateInvertAttr(UsdRiPxrAovLight &self,
-                                      object defaultVal,
-                                      bool writeSparsely)
+static UsdAttribute _CreateInvertAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateInvertAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                               writeSparsely);
+  return self.CreateInvertAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
 }
 
 static UsdAttribute _CreateOnVolumeBoundariesAttr(UsdRiPxrAovLight &self,
@@ -102,17 +87,12 @@ static UsdAttribute _CreateOnVolumeBoundariesAttr(UsdRiPxrAovLight &self,
                                            writeSparsely);
 }
 
-static UsdAttribute _CreateUseColorAttr(UsdRiPxrAovLight &self,
-                                        object defaultVal,
-                                        bool writeSparsely)
+static UsdAttribute _CreateUseColorAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateUseColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                 writeSparsely);
+  return self.CreateUseColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
 }
 
-static UsdAttribute _CreateUseThroughputAttr(UsdRiPxrAovLight &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
+static UsdAttribute _CreateUseThroughputAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateUseThroughputAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
                                       writeSparsely);
@@ -133,69 +113,66 @@ void wrapUsdRiPxrAovLight()
   class_<This, bases<UsdLuxLight>> cls("wabiAovLight");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetAovNameAttr", &This::GetAovNameAttr)
-      .def("CreateAovNameAttr",
-           &_CreateAovNameAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAovNameAttr", &This::GetAovNameAttr)
+    .def("CreateAovNameAttr",
+         &_CreateAovNameAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetInPrimaryHitAttr", &This::GetInPrimaryHitAttr)
-      .def("CreateInPrimaryHitAttr",
-           &_CreateInPrimaryHitAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetInPrimaryHitAttr", &This::GetInPrimaryHitAttr)
+    .def("CreateInPrimaryHitAttr",
+         &_CreateInPrimaryHitAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetInReflectionAttr", &This::GetInReflectionAttr)
-      .def("CreateInReflectionAttr",
-           &_CreateInReflectionAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetInReflectionAttr", &This::GetInReflectionAttr)
+    .def("CreateInReflectionAttr",
+         &_CreateInReflectionAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetInRefractionAttr", &This::GetInRefractionAttr)
-      .def("CreateInRefractionAttr",
-           &_CreateInRefractionAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetInRefractionAttr", &This::GetInRefractionAttr)
+    .def("CreateInRefractionAttr",
+         &_CreateInRefractionAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetInvertAttr", &This::GetInvertAttr)
-      .def("CreateInvertAttr",
-           &_CreateInvertAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetInvertAttr", &This::GetInvertAttr)
+    .def(
+      "CreateInvertAttr", &_CreateInvertAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetOnVolumeBoundariesAttr", &This::GetOnVolumeBoundariesAttr)
-      .def("CreateOnVolumeBoundariesAttr",
-           &_CreateOnVolumeBoundariesAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetOnVolumeBoundariesAttr", &This::GetOnVolumeBoundariesAttr)
+    .def("CreateOnVolumeBoundariesAttr",
+         &_CreateOnVolumeBoundariesAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetUseColorAttr", &This::GetUseColorAttr)
-      .def("CreateUseColorAttr",
-           &_CreateUseColorAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetUseColorAttr", &This::GetUseColorAttr)
+    .def("CreateUseColorAttr",
+         &_CreateUseColorAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetUseThroughputAttr", &This::GetUseThroughputAttr)
-      .def("CreateUseThroughputAttr",
-           &_CreateUseThroughputAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetUseThroughputAttr", &This::GetUseThroughputAttr)
+    .def("CreateUseThroughputAttr",
+         &_CreateUseThroughputAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

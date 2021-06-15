@@ -42,8 +42,7 @@ extern "C" {
 #  include <stddef.h> /* size_t */
 
 /* PXR - modification; hoist this include out of namespace scope. */
-#  if defined(__cplusplus) || \
-      (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) /* C99 */)
+#  if defined(__cplusplus) || (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) /* C99 */)
 #    include <stdint.h>
 #  endif
 
@@ -103,8 +102,8 @@ namespace wabi_lz4 {
 #  elif defined(LZ4_DLL_IMPORT) && (LZ4_DLL_IMPORT == 1)
 #    define LZ4LIB_API \
       __declspec(dllimport) \
-          LZ4LIB_VISIBILITY /* It isn't required but allows to generate better code, saving a \
-                               function pointer load from the IAT and an indirect jump.*/
+        LZ4LIB_VISIBILITY /* It isn't required but allows to generate better code, saving a \
+                             function pointer load from the IAT and an indirect jump.*/
 #  else
 #    define LZ4LIB_API LZ4LIB_VISIBILITY
 #  endif
@@ -114,17 +113,15 @@ namespace wabi_lz4 {
 #  define LZ4_VERSION_MINOR 9   /* for new (non-breaking) interface capabilities */
 #  define LZ4_VERSION_RELEASE 2 /* for tweaks, bug-fixes, or development */
 
-#  define LZ4_VERSION_NUMBER \
-    (LZ4_VERSION_MAJOR * 100 * 100 + LZ4_VERSION_MINOR * 100 + LZ4_VERSION_RELEASE)
+#  define LZ4_VERSION_NUMBER (LZ4_VERSION_MAJOR * 100 * 100 + LZ4_VERSION_MINOR * 100 + LZ4_VERSION_RELEASE)
 
 #  define LZ4_LIB_VERSION LZ4_VERSION_MAJOR.LZ4_VERSION_MINOR.LZ4_VERSION_RELEASE
 #  define LZ4_QUOTE(str) #  str
 #  define LZ4_EXPAND_AND_QUOTE(str) LZ4_QUOTE(str)
 #  define LZ4_VERSION_STRING LZ4_EXPAND_AND_QUOTE(LZ4_LIB_VERSION)
 
-LZ4LIB_API int LZ4_versionNumber(void); /**< library version number; useful to check dll version */
-LZ4LIB_API const char *LZ4_versionString(
-    void); /**< library version string; useful to check dll version */
+LZ4LIB_API int LZ4_versionNumber(void);         /**< library version number; useful to check dll version */
+LZ4LIB_API const char *LZ4_versionString(void); /**< library version string; useful to check dll version */
 
 /*-************************************
  *  Tuning parameter
@@ -176,10 +173,7 @@ LZ4LIB_API int LZ4_compress_default(const char *src, char *dst, int srcSize, int
  * way is most beneficial. If there is a need for a different format which bundles together both
  * compressed data and its metadata, consider looking at lz4frame.h instead.
  */
-LZ4LIB_API int LZ4_decompress_safe(const char *src,
-                                   char *dst,
-                                   int compressedSize,
-                                   int dstCapacity);
+LZ4LIB_API int LZ4_decompress_safe(const char *src, char *dst, int compressedSize, int dstCapacity);
 
 /*-************************************
  *  Advanced Functions
@@ -207,11 +201,7 @@ LZ4LIB_API int LZ4_compressBound(int inputSize);
    LZ4_compress_default() Values <= 0 will be replaced by ACCELERATION_DEFAULT (currently == 1, see
    lz4.c).
 */
-LZ4LIB_API int LZ4_compress_fast(const char *src,
-                                 char *dst,
-                                 int srcSize,
-                                 int dstCapacity,
-                                 int acceleration);
+LZ4LIB_API int LZ4_compress_fast(const char *src, char *dst, int srcSize, int dstCapacity, int acceleration);
 
 /*! LZ4_compress_fast_extState() :
  *  Same as LZ4_compress_fast(), using an externally allocated memory space for its state.
@@ -239,10 +229,7 @@ LZ4LIB_API int LZ4_compress_fast_extState(void *state,
  * @return : Nb bytes written into 'dst' (necessarily <= targetDestSize)
  *           or 0 if compression fails.
  */
-LZ4LIB_API int LZ4_compress_destSize(const char *src,
-                                     char *dst,
-                                     int *srcSizePtr,
-                                     int targetDstSize);
+LZ4LIB_API int LZ4_compress_destSize(const char *src, char *dst, int *srcSizePtr, int targetDstSize);
 
 /*! LZ4_decompress_safe_partial() :
  *  Decompress an LZ4 compressed block, of size 'srcSize' at position 'src',
@@ -587,25 +574,22 @@ LZ4LIB_STATIC_API void LZ4_attach_dictionary(LZ4_stream_t *workingStream,
 
 #    define LZ4_DECOMPRESS_INPLACE_MARGIN(compressedSize) (((compressedSize) >> 8) + 32)
 #    define LZ4_DECOMPRESS_INPLACE_BUFFER_SIZE(decompressedSize) \
-      ((decompressedSize) + \
-       LZ4_DECOMPRESS_INPLACE_MARGIN( \
-           decompressedSize)) /**< note: presumes that compressedSize < decompressedSize. note2: \
-                                 margin is overestimated a bit, since it could use compressedSize \
-                                 instead */
+      ((decompressedSize) + LZ4_DECOMPRESS_INPLACE_MARGIN( \
+                              decompressedSize)) /**< note: presumes that compressedSize < \
+                                                    decompressedSize. note2: margin is overestimated a bit, \
+                                                    since it could use compressedSize instead */
 
 #    ifndef LZ4_DISTANCE_MAX         /* history window size; can be user-defined at compile time */
 #      define LZ4_DISTANCE_MAX 65535 /* set to maximum value by default */
 #    endif
 
 #    define LZ4_COMPRESS_INPLACE_MARGIN \
-      (LZ4_DISTANCE_MAX + \
-       32) /* LZ4_DISTANCE_MAX can be safely replaced by srcSize when it's smaller */
+      (LZ4_DISTANCE_MAX + 32) /* LZ4_DISTANCE_MAX can be safely replaced by srcSize when it's smaller */
 #    define LZ4_COMPRESS_INPLACE_BUFFER_SIZE(maxCompressedSize) \
-      ((maxCompressedSize) + \
-       LZ4_COMPRESS_INPLACE_MARGIN) /**< maxCompressedSize is generally \
-                                       LZ4_COMPRESSBOUND(inputSize), but can be set to any lower \
-                                       value, with the risk that compression can fail (return \
-                                       code 0(zero)) */
+      ((maxCompressedSize) + LZ4_COMPRESS_INPLACE_MARGIN) /**< maxCompressedSize is generally \
+                                                             LZ4_COMPRESSBOUND(inputSize), but can be set \
+                                                             to any lower value, with the risk that \
+                                                             compression can fail (return code 0(zero)) */
 
 #  endif /* LZ4_STATIC_3504398509 */
 #endif   /* LZ4_STATIC_LINKING_ONLY */
@@ -624,8 +608,7 @@ LZ4LIB_STATIC_API void LZ4_attach_dictionary(LZ4_stream_t *workingStream,
 #  define LZ4_HASHTABLESIZE (1 << LZ4_MEMORY_USAGE)
 #  define LZ4_HASH_SIZE_U32 (1 << LZ4_HASHLOG) /* required as macro for static allocation */
 
-#  if defined(__cplusplus) || \
-      (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) /* C99 */)
+#  if defined(__cplusplus) || (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) /* C99 */)
 #    include <stdint.h>
 
 typedef struct LZ4_stream_t_internal LZ4_stream_t_internal;
@@ -837,19 +820,18 @@ LZ4LIB_API int LZ4_decompress_fast_withPrefix64k(const char *src, char *dst, int
  * trusted data **only**.
  */
 
-LZ4_DEPRECATED(
-    "This function is deprecated and unsafe. Consider using LZ4_decompress_safe() instead")
+LZ4_DEPRECATED("This function is deprecated and unsafe. Consider using LZ4_decompress_safe() instead")
 LZ4LIB_API int LZ4_decompress_fast(const char *src, char *dst, int originalSize);
 LZ4_DEPRECATED(
-    "This function is deprecated and unsafe. Consider using LZ4_decompress_safe_continue() "
-    "instead")
+  "This function is deprecated and unsafe. Consider using LZ4_decompress_safe_continue() "
+  "instead")
 LZ4LIB_API int LZ4_decompress_fast_continue(LZ4_streamDecode_t *LZ4_streamDecode,
                                             const char *src,
                                             char *dst,
                                             int originalSize);
 LZ4_DEPRECATED(
-    "This function is deprecated and unsafe. Consider using LZ4_decompress_safe_usingDict() "
-    "instead")
+  "This function is deprecated and unsafe. Consider using LZ4_decompress_safe_usingDict() "
+  "instead")
 LZ4LIB_API int LZ4_decompress_fast_usingDict(const char *src,
                                              char *dst,
                                              int originalSize,

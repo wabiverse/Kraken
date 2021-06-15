@@ -105,8 +105,7 @@ UsdAttribute UsdGeomMesh::GetFaceVertexIndicesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->faceVertexIndices);
 }
 
-UsdAttribute UsdGeomMesh::CreateFaceVertexIndicesAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateFaceVertexIndicesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->faceVertexIndices,
                                     SdfValueTypeNames->IntArray,
@@ -121,8 +120,7 @@ UsdAttribute UsdGeomMesh::GetFaceVertexCountsAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->faceVertexCounts);
 }
 
-UsdAttribute UsdGeomMesh::CreateFaceVertexCountsAttr(VtValue const &defaultValue,
-                                                     bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateFaceVertexCountsAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->faceVertexCounts,
                                     SdfValueTypeNames->IntArray,
@@ -137,8 +135,7 @@ UsdAttribute UsdGeomMesh::GetSubdivisionSchemeAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->subdivisionScheme);
 }
 
-UsdAttribute UsdGeomMesh::CreateSubdivisionSchemeAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateSubdivisionSchemeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->subdivisionScheme,
                                     SdfValueTypeNames->Token,
@@ -201,8 +198,7 @@ UsdAttribute UsdGeomMesh::GetHoleIndicesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->holeIndices);
 }
 
-UsdAttribute UsdGeomMesh::CreateHoleIndicesAttr(VtValue const &defaultValue,
-                                                bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateHoleIndicesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->holeIndices,
                                     SdfValueTypeNames->IntArray,
@@ -217,8 +213,7 @@ UsdAttribute UsdGeomMesh::GetCornerIndicesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->cornerIndices);
 }
 
-UsdAttribute UsdGeomMesh::CreateCornerIndicesAttr(VtValue const &defaultValue,
-                                                  bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateCornerIndicesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->cornerIndices,
                                     SdfValueTypeNames->IntArray,
@@ -233,8 +228,7 @@ UsdAttribute UsdGeomMesh::GetCornerSharpnessesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->cornerSharpnesses);
 }
 
-UsdAttribute UsdGeomMesh::CreateCornerSharpnessesAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateCornerSharpnessesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->cornerSharpnesses,
                                     SdfValueTypeNames->FloatArray,
@@ -249,8 +243,7 @@ UsdAttribute UsdGeomMesh::GetCreaseIndicesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->creaseIndices);
 }
 
-UsdAttribute UsdGeomMesh::CreateCreaseIndicesAttr(VtValue const &defaultValue,
-                                                  bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateCreaseIndicesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->creaseIndices,
                                     SdfValueTypeNames->IntArray,
@@ -265,8 +258,7 @@ UsdAttribute UsdGeomMesh::GetCreaseLengthsAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->creaseLengths);
 }
 
-UsdAttribute UsdGeomMesh::CreateCreaseLengthsAttr(VtValue const &defaultValue,
-                                                  bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateCreaseLengthsAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->creaseLengths,
                                     SdfValueTypeNames->IntArray,
@@ -281,8 +273,7 @@ UsdAttribute UsdGeomMesh::GetCreaseSharpnessesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->creaseSharpnesses);
 }
 
-UsdAttribute UsdGeomMesh::CreateCreaseSharpnessesAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateCreaseSharpnessesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->creaseSharpnesses,
                                     SdfValueTypeNames->FloatArray,
@@ -293,8 +284,7 @@ UsdAttribute UsdGeomMesh::CreateCreaseSharpnessesAttr(VtValue const &defaultValu
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -308,21 +298,21 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdGeomMesh::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdGeomTokens->faceVertexIndices,
-      UsdGeomTokens->faceVertexCounts,
-      UsdGeomTokens->subdivisionScheme,
-      UsdGeomTokens->interpolateBoundary,
-      UsdGeomTokens->faceVaryingLinearInterpolation,
-      UsdGeomTokens->triangleSubdivisionRule,
-      UsdGeomTokens->holeIndices,
-      UsdGeomTokens->cornerIndices,
-      UsdGeomTokens->cornerSharpnesses,
-      UsdGeomTokens->creaseIndices,
-      UsdGeomTokens->creaseLengths,
-      UsdGeomTokens->creaseSharpnesses,
+    UsdGeomTokens->faceVertexIndices,
+    UsdGeomTokens->faceVertexCounts,
+    UsdGeomTokens->subdivisionScheme,
+    UsdGeomTokens->interpolateBoundary,
+    UsdGeomTokens->faceVaryingLinearInterpolation,
+    UsdGeomTokens->triangleSubdivisionRule,
+    UsdGeomTokens->holeIndices,
+    UsdGeomTokens->cornerIndices,
+    UsdGeomTokens->cornerSharpnesses,
+    UsdGeomTokens->creaseIndices,
+    UsdGeomTokens->creaseLengths,
+    UsdGeomTokens->creaseSharpnesses,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdGeomPointBased::GetSchemaAttributeNames(true), localNames);
+    UsdGeomPointBased::GetSchemaAttributeNames(true), localNames);
 
   if (includeInherited)
     return allNames;
@@ -359,10 +349,10 @@ bool UsdGeomMesh::ValidateTopology(const VtIntArray &faceVertexIndices,
   if (vertCountsSum != faceVertexIndices.size()) {
     if (reason) {
       *reason = TfStringPrintf(
-          "Sum of faceVertexCounts [%zu] != "
-          "size of faceVertexIndices [%zu].",
-          vertCountsSum,
-          faceVertexIndices.size());
+        "Sum of faceVertexCounts [%zu] != "
+        "size of faceVertexIndices [%zu].",
+        vertCountsSum,
+        faceVertexIndices.size());
     }
     return false;
   }
@@ -372,10 +362,10 @@ bool UsdGeomMesh::ValidateTopology(const VtIntArray &faceVertexIndices,
     if (ARCH_UNLIKELY(vertexIndex < 0 || (size_t)vertexIndex >= numPoints)) {
       if (reason) {
         *reason = TfStringPrintf(
-            "Out of range face vertex index %d: "
-            "Vertex must be in the range [0,%zu).",
-            vertexIndex,
-            numPoints);
+          "Out of range face vertex index %d: "
+          "Vertex must be in the range [0,%zu).",
+          vertexIndex,
+          numPoints);
       }
       return false;
     }

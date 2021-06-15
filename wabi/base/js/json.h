@@ -171,8 +171,7 @@ class JsWriter {
 
   /// Convenience function to write an array of values by calling the given
   /// functor for each item in the container.
-  template<class Container, class ItemWriteFn>
-  void WriteArray(const Container &c, const ItemWriteFn &f)
+  template<class Container, class ItemWriteFn> void WriteArray(const Container &c, const ItemWriteFn &f)
   {
     BeginArray();
     for (const auto &i : c) {
@@ -225,8 +224,7 @@ class JsWriter {
     v(*this);
   }
 
-  template<class Key0, class T0, class... T>
-  void _WriteObjectFields(Key0 &&key0, T0 &&f0, T &&...f)
+  template<class Key0, class T0, class... T> void _WriteObjectFields(Key0 &&key0, T0 &&f0, T &&...f)
   {
     _WriteObjectFields(std::forward<Key0>(key0), std::forward<T0>(f0));
     _WriteObjectFields(std::forward<T>(f)...);

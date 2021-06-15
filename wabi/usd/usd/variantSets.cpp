@@ -158,27 +158,26 @@ UsdEditTarget UsdVariantSet::GetVariantEditTarget(const SdfLayerHandle &layer) c
   if (curVarSel.second.empty())
     return target;
 
-  UsdStagePtr stage         = _prim.GetStage();
+  UsdStagePtr stage = _prim.GetStage();
   const SdfLayerHandle &lyr = layer ? layer : _prim.GetStage()->GetEditTarget().GetLayer();
 
   if (!stage->HasLocalLayer(lyr)) {
     TF_CODING_ERROR(
-        "Layer %s is not a local layer of stage rooted at "
-        "layer %s",
-        lyr->GetIdentifier().c_str(),
-        stage->GetRootLayer()->GetIdentifier().c_str());
+      "Layer %s is not a local layer of stage rooted at "
+      "layer %s",
+      lyr->GetIdentifier().c_str(),
+      stage->GetRootLayer()->GetIdentifier().c_str());
     return target;
   }
 
   SdfPath varSpecPath = stage->GetEditTarget()
-                            .MapToSpecPath(_prim.GetPath())
-                            .AppendVariantSelection(curVarSel.first, curVarSel.second);
+                          .MapToSpecPath(_prim.GetPath())
+                          .AppendVariantSelection(curVarSel.first, curVarSel.second);
 
   return UsdEditTarget::ForLocalDirectVariant(lyr, varSpecPath);
 }
 
-std::pair<UsdStagePtr, UsdEditTarget> UsdVariantSet::GetVariantEditContext(
-    const SdfLayerHandle &layer) const
+std::pair<UsdStagePtr, UsdEditTarget> UsdVariantSet::GetVariantEditContext(const SdfLayerHandle &layer) const
 {
   UsdEditTarget target = GetVariantEditTarget(layer);
 
@@ -227,8 +226,7 @@ UsdVariantSet UsdVariantSets::GetVariantSet(const std::string &variantSetName) c
   return _prim.GetVariantSet(TfToken(variantSetName));
 }
 
-UsdVariantSet UsdVariantSets::AddVariantSet(const std::string &variantSetName,
-                                            UsdListPosition position)
+UsdVariantSet UsdVariantSets::AddVariantSet(const std::string &variantSetName, UsdListPosition position)
 {
   UsdVariantSet varSet = GetVariantSet(variantSetName);
 
@@ -277,8 +275,7 @@ string UsdVariantSets::GetVariantSelection(const std::string &variantSetName) co
   return GetVariantSet(variantSetName).GetVariantSelection();
 }
 
-bool UsdVariantSets::SetSelection(const std::string &variantSetName,
-                                  const std::string &variantName)
+bool UsdVariantSets::SetSelection(const std::string &variantSetName, const std::string &variantName)
 {
   UsdVariantSet vset(_prim, variantSetName);
 

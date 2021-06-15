@@ -49,8 +49,7 @@ class PcpLayerPrefetchRequest {
   /// This recursively includes any nested sublayers. Arguments in \a args
   /// will be passed to Sdf when finding or opening sublayers.
   PCP_API
-  void RequestSublayerStack(const SdfLayerRefPtr &layer,
-                            const SdfLayer::FileFormatArguments &args);
+  void RequestSublayerStack(const SdfLayerRefPtr &layer, const SdfLayer::FileFormatArguments &args);
 
   /// Run the queued requests, returning when complete.
   PCP_API

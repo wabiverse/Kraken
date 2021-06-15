@@ -55,8 +55,8 @@ static bool _StrEqual(const char *a, const char *b)
 
 bool TraceStaticKeyData::operator==(const TraceStaticKeyData &other) const
 {
-  return _StrEqual(_funcName, other._funcName) &&
-         _StrEqual(_prettyFuncName, other._prettyFuncName) && _StrEqual(_name, other._name);
+  return _StrEqual(_funcName, other._funcName) && _StrEqual(_prettyFuncName, other._prettyFuncName) &&
+         _StrEqual(_name, other._name);
 }
 
 std::string TraceStaticKeyData::GetString() const

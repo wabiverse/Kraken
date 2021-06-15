@@ -49,8 +49,7 @@ struct Usd_NonPopulatingStageCacheWrapper {
 /// Calls to UsdStage::Open() will attempt to find stages in \p cache when a
 /// UsdStageCacheContext is present on the stack.  See UsdStageCacheContext for
 /// more details and example use.
-template<class StageCache>
-Usd_NonPopulatingStageCacheWrapper UsdUseButDoNotPopulateCache(StageCache &cache)
+template<class StageCache> Usd_NonPopulatingStageCacheWrapper UsdUseButDoNotPopulateCache(StageCache &cache)
 {
   return Usd_NonPopulatingStageCacheWrapper(cache);
 }
@@ -121,17 +120,17 @@ TF_DEFINE_STACKED(UsdStageCacheContext, true, USD_API)
  public:
   /// Bind a cache for calls to UsdStage::Open() to read from and write to.
   explicit UsdStageCacheContext(UsdStageCache & cache)
-      : _rwCache(&cache),
-        _isReadOnlyCache(false),
-        _blockType(Usd_NoBlock)
+    : _rwCache(&cache),
+      _isReadOnlyCache(false),
+      _blockType(Usd_NoBlock)
   {}
 
   /// Bind a cache for calls to UsdStage::Open() to read from.
   /// \see UsdUseButDoNotPopulateCache()
   explicit UsdStageCacheContext(Usd_NonPopulatingStageCacheWrapper holder)
-      : _roCache(&holder.cache),
-        _isReadOnlyCache(true),
-        _blockType(Usd_NoBlock)
+    : _roCache(&holder.cache),
+      _isReadOnlyCache(true),
+      _blockType(Usd_NoBlock)
   {}
 
   /// Disable cache use completely (with UsdBlockStageCaches) or only

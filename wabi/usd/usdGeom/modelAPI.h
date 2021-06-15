@@ -260,7 +260,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateModelDrawModeAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -286,7 +286,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateModelApplyDrawModeAttr(VtValue const &defaultValue = VtValue(),
-                                            bool writeSparsely          = false) const;
+                                            bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -313,7 +313,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateModelDrawModeColorAttr(VtValue const &defaultValue = VtValue(),
-                                            bool writeSparsely          = false) const;
+                                            bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -340,7 +340,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateModelCardGeometryAttr(VtValue const &defaultValue = VtValue(),
-                                           bool writeSparsely          = false) const;
+                                           bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -364,7 +364,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateModelCardTextureXPosAttr(VtValue const &defaultValue = VtValue(),
-                                              bool writeSparsely          = false) const;
+                                              bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -388,7 +388,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateModelCardTextureYPosAttr(VtValue const &defaultValue = VtValue(),
-                                              bool writeSparsely          = false) const;
+                                              bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -412,7 +412,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateModelCardTextureZPosAttr(VtValue const &defaultValue = VtValue(),
-                                              bool writeSparsely          = false) const;
+                                              bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -436,7 +436,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateModelCardTextureXNegAttr(VtValue const &defaultValue = VtValue(),
-                                              bool writeSparsely          = false) const;
+                                              bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -460,7 +460,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateModelCardTextureYNegAttr(VtValue const &defaultValue = VtValue(),
-                                              bool writeSparsely          = false) const;
+                                              bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -484,7 +484,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateModelCardTextureZNegAttr(VtValue const &defaultValue = VtValue(),
-                                              bool writeSparsely          = false) const;
+                                              bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //
@@ -547,16 +547,14 @@ class UsdGeomModelAPI : public UsdAPISchemaBase {
   ///     UsdGeomImageable::GetOrderedPurposeTokens()
   ///
   USDGEOM_API
-  bool GetExtentsHint(VtVec3fArray *extents,
-                      const UsdTimeCode &time = UsdTimeCode::Default()) const;
+  bool GetExtentsHint(VtVec3fArray *extents, const UsdTimeCode &time = UsdTimeCode::Default()) const;
 
   /// Authors the extentsHint array for this model at the given time.
   ///
   /// \sa GetExtentsHint()
   ///
   USDGEOM_API
-  bool SetExtentsHint(VtVec3fArray const &extents,
-                      const UsdTimeCode &time = UsdTimeCode::Default()) const;
+  bool SetExtentsHint(VtVec3fArray const &extents, const UsdTimeCode &time = UsdTimeCode::Default()) const;
 
   /// Returns the custom 'extentsHint' attribute if it exits.
   USDGEOM_API

@@ -29,10 +29,9 @@ WABI_NAMESPACE_BEGIN
 ////////////////////////////////////////////////////////////////////////////
 // HdPhOpenVDBAssetSubtextureIdentifier
 
-HdPhOpenVDBAssetSubtextureIdentifier::HdPhOpenVDBAssetSubtextureIdentifier(
-    TfToken const &fieldName,
-    const int fieldIndex)
-    : HdPhFieldBaseSubtextureIdentifier(fieldName, fieldIndex)
+HdPhOpenVDBAssetSubtextureIdentifier::HdPhOpenVDBAssetSubtextureIdentifier(TfToken const &fieldName,
+                                                                           const int fieldIndex)
+  : HdPhFieldBaseSubtextureIdentifier(fieldName, fieldIndex)
 {}
 
 HdPhOpenVDBAssetSubtextureIdentifier::~HdPhOpenVDBAssetSubtextureIdentifier() = default;
@@ -52,12 +51,11 @@ HdPhSubtextureIdentifier::ID HdPhOpenVDBAssetSubtextureIdentifier::_Hash() const
 ////////////////////////////////////////////////////////////////////////////
 // HdPhField3DAssetSubtextureIdentifier
 
-HdPhField3DAssetSubtextureIdentifier::HdPhField3DAssetSubtextureIdentifier(
-    TfToken const &fieldName,
-    const int fieldIndex,
-    TfToken const &fieldPurpose)
-    : HdPhFieldBaseSubtextureIdentifier(fieldName, fieldIndex),
-      _fieldPurpose(fieldPurpose)
+HdPhField3DAssetSubtextureIdentifier::HdPhField3DAssetSubtextureIdentifier(TfToken const &fieldName,
+                                                                           const int fieldIndex,
+                                                                           TfToken const &fieldPurpose)
+  : HdPhFieldBaseSubtextureIdentifier(fieldName, fieldIndex),
+    _fieldPurpose(fieldPurpose)
 {}
 
 HdPhField3DAssetSubtextureIdentifier::~HdPhField3DAssetSubtextureIdentifier() = default;
@@ -65,7 +63,7 @@ HdPhField3DAssetSubtextureIdentifier::~HdPhField3DAssetSubtextureIdentifier() = 
 std::unique_ptr<HdPhSubtextureIdentifier> HdPhField3DAssetSubtextureIdentifier::Clone() const
 {
   return std::make_unique<HdPhField3DAssetSubtextureIdentifier>(
-      GetFieldName(), GetFieldIndex(), GetFieldPurpose());
+    GetFieldName(), GetFieldIndex(), GetFieldPurpose());
 }
 
 HdPhSubtextureIdentifier::ID HdPhField3DAssetSubtextureIdentifier::_Hash() const

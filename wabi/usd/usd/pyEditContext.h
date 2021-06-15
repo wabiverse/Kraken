@@ -42,8 +42,7 @@ struct UsdPyEditContext {
   USD_API
   explicit UsdPyEditContext(const std::pair<UsdStagePtr, UsdEditTarget> &stageTarget);
   USD_API
-  explicit UsdPyEditContext(const UsdStagePtr &stage,
-                            const UsdEditTarget &editTarget = UsdEditTarget());
+  explicit UsdPyEditContext(const UsdStagePtr &stage, const UsdEditTarget &editTarget = UsdEditTarget());
 
  private:
   friend struct Usd_PyEditContextAccess;

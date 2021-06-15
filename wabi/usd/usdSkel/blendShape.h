@@ -188,8 +188,7 @@ class UsdSkelBlendShape : public UsdTyped {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
-  UsdAttribute CreateOffsetsAttr(VtValue const &defaultValue = VtValue(),
-                                 bool writeSparsely          = false) const;
+  UsdAttribute CreateOffsetsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -214,7 +213,7 @@ class UsdSkelBlendShape : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
   UsdAttribute CreateNormalOffsetsAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -241,7 +240,7 @@ class UsdSkelBlendShape : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
   UsdAttribute CreatePointIndicesAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

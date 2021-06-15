@@ -53,10 +53,10 @@ void UsdPrimRange::iterator::PruneChildren()
   }
   if (_isPost) {
     TF_CODING_ERROR(
-        "Cannot prune children during post-visit because the"
-        "children have already been processed. "
-        "Current node: %s",
-        (*this)->GetPath().GetText());
+      "Cannot prune children during post-visit because the"
+      "children have already been processed. "
+      "Current node: %s",
+      (*this)->GetPath().GetText());
     return;
   }
   _pruneChildrenFlag = true;
@@ -65,7 +65,7 @@ void UsdPrimRange::iterator::PruneChildren()
 void UsdPrimRange::iterator::increment()
 {
   base_type &base = base_reference();
-  base_type end   = _range->_end;
+  base_type end = _range->_end;
   if (ARCH_UNLIKELY(_isPost)) {
     _isPost = false;
     if (Usd_MoveToNextSiblingOrParent(base, _proxyPrimPath, end, _range->_predicate)) {
@@ -74,7 +74,7 @@ void UsdPrimRange::iterator::increment()
         _isPost = true;
       }
       else {
-        base           = end;
+        base = end;
         _proxyPrimPath = SdfPath();
       }
     }
@@ -92,7 +92,7 @@ void UsdPrimRange::iterator::increment()
           --_depth;
         }
         else {
-          base           = end;
+          base = end;
           _proxyPrimPath = SdfPath();
           break;
         }

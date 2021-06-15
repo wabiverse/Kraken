@@ -60,9 +60,9 @@ class HgiMetalComputePipeline final : public HgiComputePipeline {
   id<MTLComputePipelineState> GetMetalPipelineState();
 
  private:
-  HgiMetalComputePipeline()        = delete;
+  HgiMetalComputePipeline() = delete;
   HgiMetalComputePipeline &operator=(const HgiMetalComputePipeline &) = delete;
-  HgiMetalComputePipeline(const HgiMetalComputePipeline &)            = delete;
+  HgiMetalComputePipeline(const HgiMetalComputePipeline &) = delete;
 
   id<MTLComputePipelineState> _computePipelineState;
 };

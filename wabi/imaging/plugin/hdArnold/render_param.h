@@ -101,8 +101,7 @@ class HdArnoldRenderParamInterrupt {
   /// Constructor for HdArnoldRenderParamInterrupt.
   ///
   /// @param param Pointer to the HdRenderParam struct.
-  HdArnoldRenderParamInterrupt(HdRenderParam *param)
-      : _param(reinterpret_cast<HdArnoldRenderParam *>(param))
+  HdArnoldRenderParamInterrupt(HdRenderParam *param) : _param(reinterpret_cast<HdArnoldRenderParam *>(param))
   {}
 
   /// Interrupts an ongoing render.

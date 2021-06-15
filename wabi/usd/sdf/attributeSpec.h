@@ -73,7 +73,7 @@ class SdfAttributeSpec : public SdfPropertySpec {
                                     const std::string &name,
                                     const SdfValueTypeName &typeName,
                                     SdfVariability variability = SdfVariabilityVarying,
-                                    bool custom                = false);
+                                    bool custom = false);
 
   /// @}
 
@@ -181,7 +181,7 @@ bool SdfJustCreatePrimAttributeInLayer(const SdfLayerHandle &layer,
                                        const SdfPath &attrPath,
                                        const SdfValueTypeName &typeName,
                                        SdfVariability variability = SdfVariabilityVarying,
-                                       bool isCustom              = false);
+                                       bool isCustom = false);
 
 WABI_NAMESPACE_END
 

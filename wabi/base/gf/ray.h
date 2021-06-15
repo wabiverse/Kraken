@@ -161,10 +161,10 @@ class GfRay {
   bool Intersect(const GfVec3d &p0,
                  const GfVec3d &p1,
                  const GfVec3d &p2,
-                 double *distance           = NULL,
+                 double *distance = NULL,
                  GfVec3d *barycentricCoords = NULL,
-                 bool *frontFacing          = NULL,
-                 double maxDist             = std::numeric_limits<double>::infinity()) const;
+                 bool *frontFacing = NULL,
+                 double maxDist = std::numeric_limits<double>::infinity()) const;
 
   /// Intersects the ray with a plane, returning \c true if the ray is not
   /// parallel to the plane and the intersection is within the ray bounds.
@@ -181,18 +181,14 @@ class GfRay {
   /// this also returns the parametric distances to the two intersection
   /// points in \p enterDistance and \p exitDistance.
   GF_API
-  bool Intersect(const GfRange3d &box,
-                 double *enterDistance = NULL,
-                 double *exitDistance  = NULL) const;
+  bool Intersect(const GfRange3d &box, double *enterDistance = NULL, double *exitDistance = NULL) const;
 
   /// Intersects the ray with an oriented box, returning \c true if the
   /// ray intersects it at all within bounds. If there is an intersection,
   /// this also returns the parametric distances to the two intersection
   /// points in \p enterDistance and \p exitDistance.
   GF_API
-  bool Intersect(const GfBBox3d &box,
-                 double *enterDistance = NULL,
-                 double *exitDistance  = NULL) const;
+  bool Intersect(const GfBBox3d &box, double *enterDistance = NULL, double *exitDistance = NULL) const;
 
   /// Intersects the ray with a sphere, returning \c true if the ray
   /// intersects it at all within bounds.  If there is an intersection,
@@ -202,7 +198,7 @@ class GfRay {
   bool Intersect(const GfVec3d &center,
                  double radius,
                  double *enterDistance = NULL,
-                 double *exitDistance  = NULL) const;
+                 double *exitDistance = NULL) const;
 
   /// Intersects the ray with an infinite cylinder, with axis \p axis,
   /// centered at the \p origin, with radius \p radius.
@@ -217,7 +213,7 @@ class GfRay {
                  const GfVec3d &axis,
                  const double radius,
                  double *enterDistance = NULL,
-                 double *exitDistance  = NULL) const;
+                 double *exitDistance = NULL) const;
 
   /// Intersects the ray with an infinite non-double cone, centered at \p
   /// origin, with axis \p axis, radius \p radius and apex at \p height.
@@ -234,17 +230,12 @@ class GfRay {
                  const double radius,
                  const double height,
                  double *enterDistance = NULL,
-                 double *exitDistance  = NULL) const;
+                 double *exitDistance = NULL) const;
   ///@}
 
  private:
   GF_API
-  friend bool GfFindClosestPoints(const GfRay &,
-                                  const GfLine &,
-                                  GfVec3d *,
-                                  GfVec3d *,
-                                  double *,
-                                  double *);
+  friend bool GfFindClosestPoints(const GfRay &, const GfLine &, GfVec3d *, GfVec3d *, double *, double *);
   GF_API
   friend bool GfFindClosestPoints(const GfRay &,
                                   const GfLineSeg &,
@@ -260,7 +251,7 @@ class GfRay {
                        const double b,
                        const double c,
                        double *enterDistance = NULL,
-                       double *exitDistance  = NULL) const;
+                       double *exitDistance = NULL) const;
 
   /// The starting point of the ray.
   GfVec3d _startPoint;
@@ -278,9 +269,9 @@ class GfRay {
 GF_API
 bool GfFindClosestPoints(const GfRay &ray,
                          const GfLine &line,
-                         GfVec3d *rayPoint    = nullptr,
-                         GfVec3d *linePoint   = nullptr,
-                         double *rayDistance  = nullptr,
+                         GfVec3d *rayPoint = nullptr,
+                         GfVec3d *linePoint = nullptr,
+                         double *rayDistance = nullptr,
                          double *lineDistance = nullptr);
 
 /// Computes the closest points between a ray and a line segment. The two
@@ -293,8 +284,8 @@ bool GfFindClosestPoints(const GfRay &ray,
 GF_API
 bool GfFindClosestPoints(const GfRay &ray,
                          const GfLineSeg &seg,
-                         GfVec3d *rayPoint   = nullptr,
-                         GfVec3d *segPoint   = nullptr,
+                         GfVec3d *rayPoint = nullptr,
+                         GfVec3d *segPoint = nullptr,
                          double *rayDistance = nullptr,
                          double *segDistance = nullptr);
 

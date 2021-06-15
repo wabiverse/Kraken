@@ -22,7 +22,7 @@ WABI_NAMESPACE_BEGIN
 
 #define RPRUSD_TOKENS \
   (rpr) /* UsdShadeShader */ \
-      ((id, "rpr:id"))((cryptomatteName, "rpr:cryptomatteName"))
+    ((id, "rpr:id"))((cryptomatteName, "rpr:cryptomatteName"))
 
 TF_DECLARE_PUBLIC_TOKENS(RprUsdTokens, RPRUSD_API, RPRUSD_TOKENS);
 

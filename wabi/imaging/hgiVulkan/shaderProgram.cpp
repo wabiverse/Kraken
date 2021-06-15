@@ -33,11 +33,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiVulkanShaderProgram::HgiVulkanShaderProgram(HgiVulkanDevice *device,
-                                               HgiShaderProgramDesc const &desc)
-    : HgiShaderProgram(desc),
-      _device(device),
-      _inflightBits(0)
+HgiVulkanShaderProgram::HgiVulkanShaderProgram(HgiVulkanDevice *device, HgiShaderProgramDesc const &desc)
+  : HgiShaderProgram(desc),
+    _device(device),
+    _inflightBits(0)
 {}
 
 bool HgiVulkanShaderProgram::IsValid() const

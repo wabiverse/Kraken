@@ -81,8 +81,8 @@
   a20 = _mtx[2][0];
   a21 = _mtx[2][1];
   a22 = _mtx[2][2];
-  det = -(a02 * a11 * a20) + a01 * a12 * a20 + a02 * a10 * a21 - a00 * a12 * a21 -
-        a01 * a10 * a22 + a00 * a11 * a22;
+  det = -(a02 * a11 * a20) + a01 * a12 * a20 + a02 * a10 * a21 - a00 * a12 * a21 - a01 * a10 * a22 +
+        a00 * a11 * a22;
 
   if (detPtr) {
     *detPtr = det;
@@ -164,19 +164,19 @@ bool
   GfVec3d r1(_mtx[1][0], _mtx[1][1], _mtx[1][2]);
   GfVec3d r2(_mtx[2][0], _mtx[2][1], _mtx[2][2]);
   bool result = GfVec3d::OrthogonalizeBasis(&r0, &r1, &r2, true);
-  _mtx[0][0]  = r0[0];
-  _mtx[0][1]  = r0[1];
-  _mtx[0][2]  = r0[2];
-  _mtx[1][0]  = r1[0];
-  _mtx[1][1]  = r1[1];
-  _mtx[1][2]  = r1[2];
-  _mtx[2][0]  = r2[0];
-  _mtx[2][1]  = r2[1];
-  _mtx[2][2]  = r2[2];
+  _mtx[0][0] = r0[0];
+  _mtx[0][1] = r0[1];
+  _mtx[0][2] = r0[2];
+  _mtx[1][0] = r1[0];
+  _mtx[1][1] = r1[1];
+  _mtx[1][2] = r1[2];
+  _mtx[2][0] = r2[0];
+  _mtx[2][1] = r2[1];
+  _mtx[2][2] = r2[2];
   if (!result && issueWarning)
     TF_WARN(
-        "OrthogonalizeBasis did not converge, matrix may not be "
-        "orthonormal.");
+      "OrthogonalizeBasis did not converge, matrix may not be "
+      "orthonormal.");
   return result;
 }
 
@@ -255,12 +255,12 @@ void
   }
 }
 ::_SetRotateFromQuat(
+  {
     {
-      {
-        SCL
-      }
-    } r,
-    const GfVec3{{SCL[0]}} & i)
+      SCL
+    }
+  } r,
+  const GfVec3{{SCL[0]}} & i)
 {
   _mtx[0][0] = 1.0 - 2.0 * (i[1] * i[1] + i[2] * i[2]);
   _mtx[0][1] = 2.0 * (i[0] * i[1] + i[2] * r);
@@ -325,14 +325,14 @@ GfQuaternion
            (_mtx[0][1] - _mtx[1][0]) / (4.0 * r));
   }
   else {
-    int j    = (i + 1) % 3;
-    int k    = (i + 2) % 3;
+    int j = (i + 1) % 3;
+    int k = (i + 2) % 3;
     double q = 0.5 * sqrt(_mtx[i][i] - _mtx[j][j] - _mtx[k][k] + 1);
 
     im[i] = q;
     im[j] = (_mtx[i][j] + _mtx[j][i]) / (4 * q);
     im[k] = (_mtx[k][i] + _mtx[i][k]) / (4 * q);
-    r     = (_mtx[j][k] - _mtx[k][j]) / (4 * q);
+    r = (_mtx[j][k] - _mtx[k][j]) / (4 * q);
   }
 
   return GfQuaternion(GfClamp(r, -1.0, 1.0), im);

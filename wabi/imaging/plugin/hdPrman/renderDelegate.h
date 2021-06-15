@@ -81,11 +81,9 @@ class HdPrmanRenderDelegate : public HdRenderDelegate {
 
   HDPRMAN_API virtual HdRenderSettingsMap GetRenderSettingsMap() const;
 
-  HDPRMAN_API virtual HdRenderPassSharedPtr CreateRenderPass(
-      HdRenderIndex *index,
-      HdRprimCollection const &collection) override;
-  HDPRMAN_API virtual HdInstancer *CreateInstancer(HdSceneDelegate *delegate,
-                                                   SdfPath const &id) override;
+  HDPRMAN_API virtual HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index,
+                                                             HdRprimCollection const &collection) override;
+  HDPRMAN_API virtual HdInstancer *CreateInstancer(HdSceneDelegate *delegate, SdfPath const &id) override;
   HDPRMAN_API virtual void DestroyInstancer(HdInstancer *instancer) override;
   HDPRMAN_API virtual HdRprim *CreateRprim(TfToken const &typeId, SdfPath const &rprimId) override;
   HDPRMAN_API virtual void DestroyRprim(HdRprim *rPrim) override;

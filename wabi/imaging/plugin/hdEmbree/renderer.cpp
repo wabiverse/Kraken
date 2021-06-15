@@ -47,25 +47,25 @@
 WABI_NAMESPACE_BEGIN
 
 HdEmbreeRenderer::HdEmbreeRenderer()
-    : _aovBindings(),
-      _aovNames(),
-      _aovBindingsNeedValidation(false),
-      _aovBindingsValid(false),
-      _width(0),
-      _height(0),
-      _viewMatrix(1.0f)  // == identity
-      ,
-      _projMatrix(1.0f)  // == identity
-      ,
-      _inverseViewMatrix(1.0f)  // == identity
-      ,
-      _inverseProjMatrix(1.0f)  // == identity
-      ,
-      _scene(nullptr),
-      _samplesToConvergence(0),
-      _ambientOcclusionSamples(0),
-      _enableSceneColors(false),
-      _completedSamples(0)
+  : _aovBindings(),
+    _aovNames(),
+    _aovBindingsNeedValidation(false),
+    _aovBindingsValid(false),
+    _width(0),
+    _height(0),
+    _viewMatrix(1.0f)  // == identity
+    ,
+    _projMatrix(1.0f)  // == identity
+    ,
+    _inverseViewMatrix(1.0f)  // == identity
+    ,
+    _inverseProjMatrix(1.0f)  // == identity
+    ,
+    _scene(nullptr),
+    _samplesToConvergence(0),
+    _ambientOcclusionSamples(0),
+    _enableSceneColors(false),
+    _completedSamples(0)
 {}
 
 HdEmbreeRenderer::~HdEmbreeRenderer() = default;
@@ -104,8 +104,8 @@ void HdEmbreeRenderer::SetDataWindow(const GfRect2i &dataWindow)
 
 void HdEmbreeRenderer::SetCamera(const GfMatrix4d &viewMatrix, const GfMatrix4d &projMatrix)
 {
-  _viewMatrix        = viewMatrix;
-  _projMatrix        = projMatrix;
+  _viewMatrix = viewMatrix;
+  _projMatrix = projMatrix;
   _inverseViewMatrix = viewMatrix.GetInverse();
   _inverseProjMatrix = projMatrix.GetInverse();
 }
@@ -129,7 +129,7 @@ bool HdEmbreeRenderer::_ValidateAovBindings()
   }
 
   _aovBindingsNeedValidation = false;
-  _aovBindingsValid          = true;
+  _aovBindingsValid = true;
 
   for (size_t i = 0; i < _aovBindings.size(); ++i) {
 
@@ -143,18 +143,16 @@ bool HdEmbreeRenderer::_ValidateAovBindings()
 
     if (_aovNames[i].name != HdAovTokens->color && _aovNames[i].name != HdAovTokens->cameraDepth &&
         _aovNames[i].name != HdAovTokens->depth && _aovNames[i].name != HdAovTokens->primId &&
-        _aovNames[i].name != HdAovTokens->instanceId &&
-        _aovNames[i].name != HdAovTokens->elementId && _aovNames[i].name != HdAovTokens->Neye &&
-        _aovNames[i].name != HdAovTokens->normal && !_aovNames[i].isPrimvar) {
-      TF_WARN("Unsupported attachment with Aov '%s' won't be rendered to",
-              _aovNames[i].name.GetText());
+        _aovNames[i].name != HdAovTokens->instanceId && _aovNames[i].name != HdAovTokens->elementId &&
+        _aovNames[i].name != HdAovTokens->Neye && _aovNames[i].name != HdAovTokens->normal &&
+        !_aovNames[i].isPrimvar) {
+      TF_WARN("Unsupported attachment with Aov '%s' won't be rendered to", _aovNames[i].name.GetText());
     }
 
     HdFormat format = _aovBindings[i].renderBuffer->GetFormat();
 
     // depth is only supported for float32 attachments
-    if ((_aovNames[i].name == HdAovTokens->cameraDepth ||
-         _aovNames[i].name == HdAovTokens->depth) &&
+    if ((_aovNames[i].name == HdAovTokens->cameraDepth || _aovNames[i].name == HdAovTokens->depth) &&
         format != HdFormatFloat32) {
       TF_WARN("Aov '%s' has unsupported format '%s'",
               _aovNames[i].name.GetText(),
@@ -163,8 +161,7 @@ bool HdEmbreeRenderer::_ValidateAovBindings()
     }
 
     // ids are only supported for int32 attachments
-    if ((_aovNames[i].name == HdAovTokens->primId ||
-         _aovNames[i].name == HdAovTokens->instanceId ||
+    if ((_aovNames[i].name == HdAovTokens->primId || _aovNames[i].name == HdAovTokens->instanceId ||
          _aovNames[i].name == HdAovTokens->elementId) &&
         format != HdFormatInt32) {
       TF_WARN("Aov '%s' has unsupported format '%s'",
@@ -239,11 +236,11 @@ bool HdEmbreeRenderer::_ValidateAovBindings()
           (format == HdFormatInt32 && clearType.type != HdTypeInt32) ||
           (format == HdFormatFloat32Vec3 && clearType.type != HdTypeFloatVec3)) {
         TF_WARN(
-            "Aov '%s' clear value type '%s' isn't compatible with"
-            " format %s",
-            _aovNames[i].name.GetText(),
-            _aovBindings[i].clearValue.GetTypeName().c_str(),
-            TfEnum::GetName(format).c_str());
+          "Aov '%s' clear value type '%s' isn't compatible with"
+          " format %s",
+          _aovNames[i].name.GetText(),
+          _aovBindings[i].clearValue.GetTypeName().c_str(),
+          TfEnum::GetName(format).c_str());
         _aovBindingsValid = false;
       }
     }
@@ -333,8 +330,7 @@ int HdEmbreeRenderer::GetCompletedSamples() const
 
 static bool _IsContained(const GfRect2i &rect, int width, int height)
 {
-  return rect.GetMinX() >= 0 && rect.GetMaxX() < width && rect.GetMinY() >= 0 &&
-         rect.GetMaxY() < height;
+  return rect.GetMinX() >= 0 && rect.GetMaxX() < width && rect.GetMinY() >= 0 && rect.GetMaxY() < height;
 }
 
 void HdEmbreeRenderer::Render(HdRenderThread *renderThread)
@@ -356,7 +352,7 @@ void HdEmbreeRenderer::Render(HdRenderThread *renderThread)
     return;
   }
 
-  _width  = 0;
+  _width = 0;
   _height = 0;
 
   // Map all of the attachments.
@@ -371,7 +367,7 @@ void HdEmbreeRenderer::Render(HdRenderThread *renderThread)
     static_cast<HdEmbreeRenderBuffer *>(_aovBindings[i].renderBuffer)->Map();
 
     if (i == 0) {
-      _width  = _aovBindings[i].renderBuffer->GetWidth();
+      _width = _aovBindings[i].renderBuffer->GetWidth();
       _height = _aovBindings[i].renderBuffer->GetHeight();
     }
     else {
@@ -407,7 +403,7 @@ void HdEmbreeRenderer::Render(HdRenderThread *renderThread)
       break;
     }
 
-    const unsigned int tileSize  = HdEmbreeConfig::GetInstance().tileSize;
+    const unsigned int tileSize = HdEmbreeConfig::GetInstance().tileSize;
     const unsigned int numTilesX = (_dataWindow.GetWidth() + tileSize - 1) / tileSize;
     const unsigned int numTilesY = (_dataWindow.GetHeight() + tileSize - 1) / tileSize;
 
@@ -426,8 +422,7 @@ void HdEmbreeRenderer::Render(HdRenderThread *renderThread)
     if (i == 0) {
       bool moreWork = false;
       for (size_t i = 0; i < _aovBindings.size(); ++i) {
-        HdEmbreeRenderBuffer *rb = static_cast<HdEmbreeRenderBuffer *>(
-            _aovBindings[i].renderBuffer);
+        HdEmbreeRenderBuffer *rb = static_cast<HdEmbreeRenderBuffer *>(_aovBindings[i].renderBuffer);
         if (rb->IsMultiSampled()) {
           moreWork = true;
         }
@@ -458,9 +453,9 @@ void HdEmbreeRenderer::Render(HdRenderThread *renderThread)
 void HdEmbreeRenderer::_RenderTiles(HdRenderThread *renderThread, size_t tileStart, size_t tileEnd)
 {
   const unsigned int minX = _dataWindow.GetMinX();
-  unsigned int minY       = _dataWindow.GetMinY();
+  unsigned int minY = _dataWindow.GetMinY();
   const unsigned int maxX = _dataWindow.GetMaxX() + 1;
-  unsigned int maxY       = _dataWindow.GetMaxY() + 1;
+  unsigned int maxY = _dataWindow.GetMaxY() + 1;
 
   // If a client does not use AOVs and we have no render buffers,
   // _height is 0 and we shouldn't use it to flip the data window.
@@ -472,7 +467,7 @@ void HdEmbreeRenderer::_RenderTiles(HdRenderThread *renderThread, size_t tileSta
     maxY = _height - maxY;
   }
 
-  const unsigned int tileSize  = HdEmbreeConfig::GetInstance().tileSize;
+  const unsigned int tileSize = HdEmbreeConfig::GetInstance().tileSize;
   const unsigned int numTilesX = (_dataWindow.GetWidth() + tileSize - 1) / tileSize;
 
   // Initialize the RNG for this tile (each tile creates one as
@@ -520,8 +515,7 @@ void HdEmbreeRenderer::_RenderTiles(HdRenderThread *renderThread, size_t tileSta
         const float w(_dataWindow.GetWidth());
         const float h(_dataWindow.GetHeight());
 
-        const GfVec3f ndc(
-            2 * ((x + jitter[0] - minX) / w) - 1, 2 * ((y + jitter[1] - minY) / h) - 1, -1);
+        const GfVec3f ndc(2 * ((x + jitter[0] - minX) / w) - 1, 2 * ((y + jitter[1] - minY) / h) - 1, -1);
         const GfVec3f nearPlaneTrace = _inverseProjMatrix.Transform(ndc);
 
         GfVec3f origin;
@@ -532,18 +526,18 @@ void HdEmbreeRenderer::_RenderTiles(HdRenderThread *renderThread, size_t tileSta
           // During orthographic projection: trace parallel rays
           // from the near plane trace.
           origin = nearPlaneTrace;
-          dir    = GfVec3f(0, 0, -1);
+          dir = GfVec3f(0, 0, -1);
         }
         else {
           // Otherwise, assume this is a perspective projection;
           // project from the camera origin through the
           // near plane trace.
           origin = GfVec3f(0, 0, 0);
-          dir    = nearPlaneTrace;
+          dir = nearPlaneTrace;
         }
         // Transform camera rays to world space.
         origin = _inverseViewMatrix.Transform(origin);
-        dir    = _inverseViewMatrix.TransformDir(dir).GetNormalized();
+        dir = _inverseViewMatrix.TransformDir(dir).GetNormalized();
 
         // Trace the ray.
         _TraceRay(x, y, origin, dir, random);
@@ -563,7 +557,7 @@ static void _PopulateRay(RTCRay *ray, GfVec3f const &origin, GfVec3f const &dir,
   ray->dir_x = dir[0];
   ray->dir_y = dir[1];
   ray->dir_z = dir[2];
-  ray->time  = 0.0f;
+  ray->time = 0.0f;
 
   ray->tfar = std::numeric_limits<float>::infinity();
   ray->mask = -1;
@@ -571,10 +565,7 @@ static void _PopulateRay(RTCRay *ray, GfVec3f const &origin, GfVec3f const &dir,
 
 /// Fill in an RTCRayHit structure from the given parameters.
 // note this containts a Ray and a RayHit
-static void _PopulateRayHit(RTCRayHit *rayHit,
-                            GfVec3f const &origin,
-                            GfVec3f const &dir,
-                            float nearest)
+static void _PopulateRayHit(RTCRayHit *rayHit, GfVec3f const &origin, GfVec3f const &dir, float nearest)
 {
   // Fill in defaults for the ray
   _PopulateRay(&rayHit->ray, origin, dir, nearest);
@@ -593,12 +584,12 @@ static void _PopulateRayHit(RTCRayHit *rayHit,
 static GfVec3f _CosineWeightedDirection(GfVec2f const &uniform_float)
 {
   GfVec3f dir;
-  float theta   = 2.0f * M_PI * uniform_float[0];
-  float eta     = uniform_float[1];
+  float theta = 2.0f * M_PI * uniform_float[0];
+  float eta = uniform_float[1];
   float sqrteta = sqrtf(eta);
-  dir[0]        = cosf(theta) * sqrteta;
-  dir[1]        = sinf(theta) * sqrteta;
-  dir[2]        = sqrtf(1.0f - eta);
+  dir[0] = cosf(theta) * sqrteta;
+  dir[1] = sinf(theta) * sqrteta;
+  dir[2] = sqrtf(1.0f - eta);
   return dir;
 }
 
@@ -634,8 +625,7 @@ void HdEmbreeRenderer::_TraceRay(unsigned int x,
 
   // Write AOVs to attachments that aren't converged.
   for (size_t i = 0; i < _aovBindings.size(); ++i) {
-    HdEmbreeRenderBuffer *renderBuffer = static_cast<HdEmbreeRenderBuffer *>(
-        _aovBindings[i].renderBuffer);
+    HdEmbreeRenderBuffer *renderBuffer = static_cast<HdEmbreeRenderBuffer *>(_aovBindings[i].renderBuffer);
 
     if (renderBuffer->IsConverged()) {
       continue;
@@ -643,11 +633,10 @@ void HdEmbreeRenderer::_TraceRay(unsigned int x,
 
     if (_aovNames[i].name == HdAovTokens->color) {
       GfVec4f clearColor = _GetClearColor(_aovBindings[i].clearValue);
-      GfVec4f sample     = _ComputeColor(rayHit, random, clearColor);
+      GfVec4f sample = _ComputeColor(rayHit, random, clearColor);
       renderBuffer->Write(GfVec3i(x, y, 1), 4, sample.data());
     }
-    else if ((_aovNames[i].name == HdAovTokens->cameraDepth ||
-              _aovNames[i].name == HdAovTokens->depth) &&
+    else if ((_aovNames[i].name == HdAovTokens->cameraDepth || _aovNames[i].name == HdAovTokens->depth) &&
              renderBuffer->GetFormat() == HdFormatFloat32) {
       float depth;
       bool clip = (_aovNames[i].name == HdAovTokens->depth);
@@ -655,8 +644,7 @@ void HdEmbreeRenderer::_TraceRay(unsigned int x,
         renderBuffer->Write(GfVec3i(x, y, 1), 1, &depth);
       }
     }
-    else if ((_aovNames[i].name == HdAovTokens->primId ||
-              _aovNames[i].name == HdAovTokens->elementId ||
+    else if ((_aovNames[i].name == HdAovTokens->primId || _aovNames[i].name == HdAovTokens->elementId ||
               _aovNames[i].name == HdAovTokens->instanceId) &&
              renderBuffer->GetFormat() == HdFormatInt32) {
       int32_t id;
@@ -664,8 +652,7 @@ void HdEmbreeRenderer::_TraceRay(unsigned int x,
         renderBuffer->Write(GfVec3i(x, y, 1), 1, &id);
       }
     }
-    else if ((_aovNames[i].name == HdAovTokens->Neye ||
-              _aovNames[i].name == HdAovTokens->normal) &&
+    else if ((_aovNames[i].name == HdAovTokens->Neye || _aovNames[i].name == HdAovTokens->normal) &&
              renderBuffer->GetFormat() == HdFormatFloat32Vec3) {
       GfVec3f normal;
       bool eye = (_aovNames[i].name == HdAovTokens->Neye);
@@ -692,10 +679,10 @@ bool HdEmbreeRenderer::_ComputeId(RTCRayHit const &rayHit, TfToken const &idType
   // We don't use embree's multi-level instancing; we
   // flatten everything in hydra. So instID[0] should always be correct.
   const HdEmbreeInstanceContext *instanceContext = static_cast<HdEmbreeInstanceContext *>(
-      rtcGetGeometryUserData(rtcGetGeometry(_scene, rayHit.hit.instID[0])));
+    rtcGetGeometryUserData(rtcGetGeometry(_scene, rayHit.hit.instID[0])));
 
   const HdEmbreePrototypeContext *prototypeContext = static_cast<HdEmbreePrototypeContext *>(
-      rtcGetGeometryUserData(rtcGetGeometry(instanceContext->rootScene, rayHit.hit.geomID)));
+    rtcGetGeometryUserData(rtcGetGeometry(instanceContext->rootScene, rayHit.hit.geomID)));
 
   if (idType == HdAovTokens->primId) {
     *id = prototypeContext->rprim->GetPrimId();
@@ -706,7 +693,7 @@ bool HdEmbreeRenderer::_ComputeId(RTCRayHit const &rayHit, TfToken const &idType
     }
     else {
       *id = HdMeshUtil::DecodeFaceIndexFromCoarseFaceParam(
-          prototypeContext->primitiveParams[rayHit.hit.primID]);
+        prototypeContext->primitiveParams[rayHit.hit.primID]);
     }
   }
   else if (idType == HdAovTokens->instanceId) {
@@ -751,13 +738,13 @@ bool HdEmbreeRenderer::_ComputeNormal(RTCRayHit const &rayHit, GfVec3f *normal, 
   // We don't use embree's multi-level instancing; we
   // flatten everything in hydra. So instID[0] should always be correct.
   const HdEmbreeInstanceContext *instanceContext = static_cast<HdEmbreeInstanceContext *>(
-      rtcGetGeometryUserData(rtcGetGeometry(_scene, rayHit.hit.instID[0])));
+    rtcGetGeometryUserData(rtcGetGeometry(_scene, rayHit.hit.instID[0])));
 
   const HdEmbreePrototypeContext *prototypeContext = static_cast<HdEmbreePrototypeContext *>(
-      rtcGetGeometryUserData(rtcGetGeometry(instanceContext->rootScene, rayHit.hit.geomID)));
+    rtcGetGeometryUserData(rtcGetGeometry(instanceContext->rootScene, rayHit.hit.geomID)));
 
   GfVec3f n = -GfVec3f(rayHit.hit.Ng_x, rayHit.hit.Ng_y, rayHit.hit.Ng_z);
-  auto it   = prototypeContext->primvarMap.find(HdTokens->normals);
+  auto it = prototypeContext->primvarMap.find(HdTokens->normals);
   if (it != prototypeContext->primvarMap.end()) {
     it->second->Sample(rayHit.hit.primID, rayHit.hit.u, rayHit.hit.v, &n);
   }
@@ -772,9 +759,7 @@ bool HdEmbreeRenderer::_ComputeNormal(RTCRayHit const &rayHit, GfVec3f *normal, 
   return true;
 }
 
-bool HdEmbreeRenderer::_ComputePrimvar(RTCRayHit const &rayHit,
-                                       TfToken const &primvar,
-                                       GfVec3f *value)
+bool HdEmbreeRenderer::_ComputePrimvar(RTCRayHit const &rayHit, TfToken const &primvar, GfVec3f *value)
 {
   if (rayHit.hit.geomID == RTC_INVALID_GEOMETRY_ID) {
     return false;
@@ -783,10 +768,10 @@ bool HdEmbreeRenderer::_ComputePrimvar(RTCRayHit const &rayHit,
   // We don't use embree's multi-level instancing; we
   // flatten everything in hydra. So instID[0] should always be correct.
   const HdEmbreeInstanceContext *instanceContext = static_cast<HdEmbreeInstanceContext *>(
-      rtcGetGeometryUserData(rtcGetGeometry(_scene, rayHit.hit.instID[0])));
+    rtcGetGeometryUserData(rtcGetGeometry(_scene, rayHit.hit.instID[0])));
 
   const HdEmbreePrototypeContext *prototypeContext = static_cast<HdEmbreePrototypeContext *>(
-      rtcGetGeometryUserData(rtcGetGeometry(instanceContext->rootScene, rayHit.hit.geomID)));
+    rtcGetGeometryUserData(rtcGetGeometry(instanceContext->rootScene, rayHit.hit.geomID)));
 
   // XXX: This is a little clunky, although sample will early out if the
   // types don't match.
@@ -822,10 +807,10 @@ GfVec4f HdEmbreeRenderer::_ComputeColor(RTCRayHit const &rayHit,
   // We don't use embree's multi-level instancing; we
   // flatten everything in hydra. So instID[0] should always be correct.
   const HdEmbreeInstanceContext *instanceContext = static_cast<HdEmbreeInstanceContext *>(
-      rtcGetGeometryUserData(rtcGetGeometry(_scene, rayHit.hit.instID[0])));
+    rtcGetGeometryUserData(rtcGetGeometry(_scene, rayHit.hit.instID[0])));
 
   const HdEmbreePrototypeContext *prototypeContext = static_cast<HdEmbreePrototypeContext *>(
-      rtcGetGeometryUserData(rtcGetGeometry(instanceContext->rootScene, rayHit.hit.geomID)));
+    rtcGetGeometryUserData(rtcGetGeometry(instanceContext->rootScene, rayHit.hit.geomID)));
 
   // Compute the worldspace location of the rayHit hit.
   GfVec3f hitPos = GfVec3f(rayHit.ray.org_x + rayHit.ray.tfar * rayHit.ray.dir_x,
@@ -835,7 +820,7 @@ GfVec4f HdEmbreeRenderer::_ComputeColor(RTCRayHit const &rayHit,
   // If a normal primvar is present (e.g. from smooth shading), use that
   // for shading; otherwise use the flat face normal.
   GfVec3f normal = -GfVec3f(rayHit.hit.Ng_x, rayHit.hit.Ng_y, rayHit.hit.Ng_z);
-  auto it        = prototypeContext->primvarMap.find(HdTokens->normals);
+  auto it = prototypeContext->primvarMap.find(HdTokens->normals);
   if (it != prototypeContext->primvarMap.end()) {
     it->second->Sample(rayHit.hit.primID, rayHit.hit.u, rayHit.hit.v, &normal);
   }
@@ -858,9 +843,8 @@ GfVec4f HdEmbreeRenderer::_ComputeColor(RTCRayHit const &rayHit,
 
   // Lighting model: (camera dot normal), i.e. diffuse-only point light
   // centered on the camera.
-  GfVec3f dir        = GfVec3f(rayHit.ray.dir_x, rayHit.ray.dir_y, rayHit.ray.dir_z);
-  float diffuseLight = fabs(GfDot(-dir, normal)) *
-                       HdEmbreeConfig::GetInstance().cameraLightIntensity;
+  GfVec3f dir = GfVec3f(rayHit.ray.dir_x, rayHit.ray.dir_y, rayHit.ray.dir_z);
+  float diffuseLight = fabs(GfDot(-dir, normal)) * HdEmbreeConfig::GetInstance().cameraLightIntensity;
 
   // Lighting gets modulated by an ambient occlusion term.
   float aoLightIntensity = _ComputeAmbientOcclusion(hitPos, normal, random);

@@ -59,9 +59,7 @@ template<> struct HdFormatType<HdFormatInt32> {
 struct ConversionKey {
   const uint16_t from;
   const uint16_t to;
-  ConversionKey(int _from, int _to)
-      : from(static_cast<uint16_t>(_from)),
-        to(static_cast<uint16_t>(_to))
+  ConversionKey(int _from, int _to) : from(static_cast<uint16_t>(_from)), to(static_cast<uint16_t>(_to))
   {}
   struct HashFunctor {
     size_t operator()(const ConversionKey &key) const
@@ -131,11 +129,10 @@ inline void _WriteBucket(void *buffer,
              (xo + (height - yo - 1) * width) * componentCount;
   const auto *from = static_cast<const typename HdFormatType<FROM>::type *>(bucketData);
 
-  const auto toStep   = width * componentCount;
+  const auto toStep = width * componentCount;
   const auto fromStep = bucketWidth * bucketComponentCount;
 
-  const auto copyOp =
-      [](const typename HdFormatType<FROM>::type &in) -> typename HdFormatType<TO>::type {
+  const auto copyOp = [](const typename HdFormatType<FROM>::type &in) -> typename HdFormatType<TO>::type {
     return _ConvertType<typename HdFormatType<TO>::type, typename HdFormatType<FROM>::type>(in);
   };
   const auto dataWidth = xe - xo;
@@ -178,34 +175,34 @@ using WriteBucketFunction = void (*)(void *,
                                      unsigned int);
 
 using WriteBucketFunctionMap =
-    std::unordered_map<ConversionKey, WriteBucketFunction, ConversionKey::HashFunctor>;
+  std::unordered_map<ConversionKey, WriteBucketFunction, ConversionKey::HashFunctor>;
 
 WriteBucketFunctionMap writeBucketFunctions{
-    // Write to UNorm8 format.
-    {{HdFormatUNorm8, HdFormatSNorm8}, _WriteBucket<HdFormatUNorm8, HdFormatSNorm8>},
-    {{HdFormatUNorm8, HdFormatFloat16}, _WriteBucket<HdFormatUNorm8, HdFormatFloat16>},
-    {{HdFormatUNorm8, HdFormatFloat32}, _WriteBucket<HdFormatUNorm8, HdFormatFloat32>},
-    {{HdFormatUNorm8, HdFormatInt32}, _WriteBucket<HdFormatUNorm8, HdFormatInt32>},
-    // Write to SNorm8 format.
-    {{HdFormatSNorm8, HdFormatUNorm8}, _WriteBucket<HdFormatSNorm8, HdFormatUNorm8>},
-    {{HdFormatSNorm8, HdFormatFloat16}, _WriteBucket<HdFormatSNorm8, HdFormatFloat16>},
-    {{HdFormatSNorm8, HdFormatFloat32}, _WriteBucket<HdFormatSNorm8, HdFormatFloat32>},
-    {{HdFormatSNorm8, HdFormatInt32}, _WriteBucket<HdFormatSNorm8, HdFormatInt32>},
-    // Write to Float16 format.
-    {{HdFormatFloat16, HdFormatSNorm8}, _WriteBucket<HdFormatFloat16, HdFormatSNorm8>},
-    {{HdFormatFloat16, HdFormatUNorm8}, _WriteBucket<HdFormatFloat16, HdFormatUNorm8>},
-    {{HdFormatFloat16, HdFormatFloat32}, _WriteBucket<HdFormatFloat16, HdFormatFloat32>},
-    {{HdFormatFloat16, HdFormatInt32}, _WriteBucket<HdFormatFloat16, HdFormatInt32>},
-    // Write to Float32 format.
-    {{HdFormatFloat32, HdFormatSNorm8}, _WriteBucket<HdFormatFloat32, HdFormatSNorm8>},
-    {{HdFormatFloat32, HdFormatUNorm8}, _WriteBucket<HdFormatFloat32, HdFormatUNorm8>},
-    {{HdFormatFloat32, HdFormatFloat16}, _WriteBucket<HdFormatFloat32, HdFormatFloat16>},
-    {{HdFormatFloat32, HdFormatInt32}, _WriteBucket<HdFormatFloat32, HdFormatInt32>},
-    // Write to Int32 format.
-    {{HdFormatInt32, HdFormatSNorm8}, _WriteBucket<HdFormatInt32, HdFormatSNorm8>},
-    {{HdFormatInt32, HdFormatUNorm8}, _WriteBucket<HdFormatInt32, HdFormatUNorm8>},
-    {{HdFormatInt32, HdFormatFloat16}, _WriteBucket<HdFormatInt32, HdFormatFloat16>},
-    {{HdFormatInt32, HdFormatFloat32}, _WriteBucket<HdFormatInt32, HdFormatFloat32>},
+  // Write to UNorm8 format.
+  {{HdFormatUNorm8, HdFormatSNorm8}, _WriteBucket<HdFormatUNorm8, HdFormatSNorm8>},
+  {{HdFormatUNorm8, HdFormatFloat16}, _WriteBucket<HdFormatUNorm8, HdFormatFloat16>},
+  {{HdFormatUNorm8, HdFormatFloat32}, _WriteBucket<HdFormatUNorm8, HdFormatFloat32>},
+  {{HdFormatUNorm8, HdFormatInt32}, _WriteBucket<HdFormatUNorm8, HdFormatInt32>},
+  // Write to SNorm8 format.
+  {{HdFormatSNorm8, HdFormatUNorm8}, _WriteBucket<HdFormatSNorm8, HdFormatUNorm8>},
+  {{HdFormatSNorm8, HdFormatFloat16}, _WriteBucket<HdFormatSNorm8, HdFormatFloat16>},
+  {{HdFormatSNorm8, HdFormatFloat32}, _WriteBucket<HdFormatSNorm8, HdFormatFloat32>},
+  {{HdFormatSNorm8, HdFormatInt32}, _WriteBucket<HdFormatSNorm8, HdFormatInt32>},
+  // Write to Float16 format.
+  {{HdFormatFloat16, HdFormatSNorm8}, _WriteBucket<HdFormatFloat16, HdFormatSNorm8>},
+  {{HdFormatFloat16, HdFormatUNorm8}, _WriteBucket<HdFormatFloat16, HdFormatUNorm8>},
+  {{HdFormatFloat16, HdFormatFloat32}, _WriteBucket<HdFormatFloat16, HdFormatFloat32>},
+  {{HdFormatFloat16, HdFormatInt32}, _WriteBucket<HdFormatFloat16, HdFormatInt32>},
+  // Write to Float32 format.
+  {{HdFormatFloat32, HdFormatSNorm8}, _WriteBucket<HdFormatFloat32, HdFormatSNorm8>},
+  {{HdFormatFloat32, HdFormatUNorm8}, _WriteBucket<HdFormatFloat32, HdFormatUNorm8>},
+  {{HdFormatFloat32, HdFormatFloat16}, _WriteBucket<HdFormatFloat32, HdFormatFloat16>},
+  {{HdFormatFloat32, HdFormatInt32}, _WriteBucket<HdFormatFloat32, HdFormatInt32>},
+  // Write to Int32 format.
+  {{HdFormatInt32, HdFormatSNorm8}, _WriteBucket<HdFormatInt32, HdFormatSNorm8>},
+  {{HdFormatInt32, HdFormatUNorm8}, _WriteBucket<HdFormatInt32, HdFormatUNorm8>},
+  {{HdFormatInt32, HdFormatFloat16}, _WriteBucket<HdFormatInt32, HdFormatFloat16>},
+  {{HdFormatInt32, HdFormatFloat32}, _WriteBucket<HdFormatInt32, HdFormatFloat32>},
 };
 
 }  // namespace
@@ -222,14 +219,14 @@ bool HdArnoldRenderBuffer::Allocate(const GfVec3i &dimensions, HdFormat format, 
   decltype(_buffer) tmp{};
   _buffer.swap(tmp);
   if (!_SupportedComponentFormat(format)) {
-    _width  = 0;
+    _width = 0;
     _height = 0;
     return false;
   }
   TF_UNUSED(multiSampled);
-  _format              = format;
-  _width               = dimensions[0];
-  _height              = dimensions[1];
+  _format = format;
+  _width = dimensions[0];
+  _height = dimensions[1];
   const auto byteCount = _width * _height * HdDataSizeOfFormat(format);
   if (byteCount != 0) {
     _buffer.resize(byteCount, 0);
@@ -312,10 +309,10 @@ void HdArnoldRenderBuffer::WriteBucket(unsigned int bucketXO,
   //  and zeroing out the rest.
   // If the component count matches, but the format is different, we are converting each element.
   // If none of the matches, we are converting as much as we can, and zeroing out the rest.
-  const auto componentCount  = HdGetComponentCount(_format);
+  const auto componentCount = HdGetComponentCount(_format);
   const auto componentFormat = HdGetComponentFormat(_format);
   // For now we are only implementing cases where the format does matches.
-  const auto inComponentCount  = HdGetComponentCount(format);
+  const auto inComponentCount = HdGetComponentCount(format);
   const auto inComponentFormat = HdGetComponentFormat(format);
   if (componentFormat == inComponentFormat) {
     const auto pixelSize = HdDataSizeOfFormat(_format);
@@ -325,7 +322,7 @@ void HdArnoldRenderBuffer::WriteBucket(unsigned int bucketXO,
     // The full size of a line.
     const auto fullLineDataSize = _width * pixelSize;
     // This is the first pixel we are copying into.
-    auto *data         = _buffer.data() + (xo + (_height - yo - 1) * _width) * pixelSize;
+    auto *data = _buffer.data() + (xo + (_height - yo - 1) * _width) * pixelSize;
     const auto *inData = static_cast<const uint8_t *>(bucketData);
     if (inComponentCount == componentCount) {
       // The size of the line for the bucket, this could be more than the data copied.

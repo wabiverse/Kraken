@@ -26,8 +26,8 @@ WABI_NAMESPACE_BEGIN
 HdRprRenderPass::HdRprRenderPass(HdRenderIndex *index,
                                  HdRprimCollection const &collection,
                                  HdRprRenderParam *renderParam)
-    : HdRenderPass(index, collection),
-      m_renderParam(renderParam)
+  : HdRenderPass(index, collection),
+    m_renderParam(renderParam)
 {}
 
 HdRprRenderPass::~HdRprRenderPass()
@@ -77,7 +77,7 @@ void HdRprRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassState
   auto rprApiConst = m_renderParam->GetRprApi();
 
   GfVec2i newViewportSize = GetViewportSize(renderPassState);
-  auto oldViewportSize    = rprApiConst->GetViewportSize();
+  auto oldViewportSize = rprApiConst->GetViewportSize();
   if (oldViewportSize != newViewportSize) {
     m_renderParam->AcquireRprApiForEdit()->SetViewportSize(newViewportSize);
   }

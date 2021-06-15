@@ -37,11 +37,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-TraceAggregateNodeRefPtr TraceAggregateNode::Append(Id id,
-                                                    const TfToken &key,
-                                                    TimeStamp ts,
-                                                    int c,
-                                                    int xc)
+TraceAggregateNodeRefPtr TraceAggregateNode::Append(Id id, const TfToken &key, TimeStamp ts, int c, int xc)
 {
   TraceAggregateNodeRefPtr n = GetChild(key);
   if (n) {
@@ -60,7 +56,7 @@ TraceAggregateNodeRefPtr TraceAggregateNode::Append(Id id,
   }
 
   // Update our exclusive time to discount our new child's time.
-  _exclusiveTs          = (_exclusiveTs >= ts) ? _exclusiveTs - ts : 0;
+  _exclusiveTs = (_exclusiveTs >= ts) ? _exclusiveTs - ts : 0;
   _recursiveExclusiveTs = (_recursiveExclusiveTs >= ts) ? _recursiveExclusiveTs - ts : 0;
 
   return n;
@@ -94,10 +90,8 @@ void TraceAggregateNode::Append(TraceAggregateNodeRefPtr child)
   }
 
   // Update our exclusive time to discount our new child's time.
-  _exclusiveTs          = (_exclusiveTs >= child->_ts) ? _exclusiveTs - child->_ts : 0;
-  _recursiveExclusiveTs = (_recursiveExclusiveTs >= child->_ts) ?
-                              _recursiveExclusiveTs - child->_ts :
-                              0;
+  _exclusiveTs = (_exclusiveTs >= child->_ts) ? _exclusiveTs - child->_ts : 0;
+  _recursiveExclusiveTs = (_recursiveExclusiveTs >= child->_ts) ? _recursiveExclusiveTs - child->_ts : 0;
 }
 
 TraceAggregateNode::TimeStamp TraceAggregateNode::GetExclusiveTime(bool recursive)
@@ -171,8 +165,8 @@ void TraceAggregateNode::MarkRecursiveChildren()
 
   while (stack.size()) {
     TraceAggregateNodePtr curNode = stack.back().eventNode;
-    int numKids                   = stack.back().remainingChildren;
-    int parentIdx                 = stack.back().parentIdx;
+    int numKids = stack.back().remainingChildren;
+    int parentIdx = stack.back().parentIdx;
 
     // We're processing this node, mark it so that we don't process it
     // again, ever.
@@ -274,21 +268,18 @@ void TraceAggregateNode::_MergeRecursive(const TraceAggregateNodeRefPtr &node)
       // CODE_COVERAGE_ON
     }
 
-    TfToken key                = child->GetKey();
+    TfToken key = child->GetKey();
     TraceAggregateNodeRefPtr n = GetChild(key);
 
     if (!n) {
       // Create an empty node to merge with.
-      n = TraceAggregateNode::New(child->GetId(),
-                                  child->GetKey(),
-                                  child->GetInclusiveTime(),
-                                  0,
-                                  child->GetExclusiveCount());
+      n = TraceAggregateNode::New(
+        child->GetId(), child->GetKey(), child->GetInclusiveTime(), 0, child->GetExclusiveCount());
 
       // On our new node, we want the exclusiveTs to be computed by
       // recursiveTs not exclusiveTs, which is done during the merge
       // (this avoids double counting exclusive time).
-      n->_exclusiveTs          = child->GetExclusiveTime(false /*recursive*/);
+      n->_exclusiveTs = child->GetExclusiveTime(false /*recursive*/);
       n->_recursiveExclusiveTs = 0;
 
       _children.push_back(n);
@@ -337,7 +328,7 @@ void TraceAggregateNode::_MergeRecursive(const TraceAggregateNodeRefPtr &node)
 void TraceAggregateNode::_SetAsRecursionMarker(TraceAggregateNodePtr parent)
 {
   _isRecursionMarker = true;
-  _recursionParent   = parent;
+  _recursionParent = parent;
   if (!parent) {
     // CODE_COVERAGE_OFF
     TF_CODING_ERROR("Marker has no or expired parent.");

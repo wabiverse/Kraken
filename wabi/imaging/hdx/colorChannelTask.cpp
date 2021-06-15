@@ -41,15 +41,13 @@ WABI_NAMESPACE_BEGIN
 TF_DEFINE_PRIVATE_TOKENS(_tokens, ((colorChannelFrag, "ColorChannelFragment"))(colorIn));
 
 HdxColorChannelTask::HdxColorChannelTask(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdxTask(id),
-      _channel(HdxColorChannelTokens->color)
+  : HdxTask(id),
+    _channel(HdxColorChannelTokens->color)
 {}
 
 HdxColorChannelTask::~HdxColorChannelTask() = default;
 
-void HdxColorChannelTask::_Sync(HdSceneDelegate *delegate,
-                                HdTaskContext *ctx,
-                                HdDirtyBits *dirtyBits)
+void HdxColorChannelTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -81,7 +79,7 @@ void HdxColorChannelTask::Execute(HdTaskContext *ctx)
   _GetTaskContextData(ctx, HdAovTokens->color, &aovTexture);
 
   HgiShaderFunctionDesc fragDesc;
-  fragDesc.debugName   = _tokens->colorChannelFrag.GetString();
+  fragDesc.debugName = _tokens->colorChannelFrag.GetString();
   fragDesc.shaderStage = HgiShaderStageFragment;
   HgiShaderFunctionAddStageInput(&fragDesc, "uvOut", "vec2");
   HgiShaderFunctionAddTexture(&fragDesc, "colorIn");
@@ -119,7 +117,7 @@ bool HdxColorChannelTask::_UpdateParameterBuffer(float screenSizeX, float screen
       break;
     ++i;
   }
-  pb.channel       = i;
+  pb.channel = i;
   pb.screenSize[0] = screenSizeX;
   pb.screenSize[1] = screenSizeY;
 

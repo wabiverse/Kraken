@@ -104,9 +104,9 @@ class HgiVulkanBuffer final : public HgiBuffer {
                   HgiBufferDesc const &desc);
 
  private:
-  HgiVulkanBuffer()        = delete;
+  HgiVulkanBuffer() = delete;
   HgiVulkanBuffer &operator=(const HgiVulkanBuffer &) = delete;
-  HgiVulkanBuffer(const HgiVulkanBuffer &)            = delete;
+  HgiVulkanBuffer(const HgiVulkanBuffer &) = delete;
 
   HgiVulkanDevice *_device;
   VkBuffer _vkBuffer;

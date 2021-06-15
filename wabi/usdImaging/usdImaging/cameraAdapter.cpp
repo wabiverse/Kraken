@@ -36,7 +36,7 @@ WABI_NAMESPACE_BEGIN
 TF_REGISTRY_FUNCTION(TfType)
 {
   using Adapter = UsdImagingCameraAdapter;
-  TfType t      = TfType::Define<Adapter, TfType::Bases<Adapter::BaseAdapter>>();
+  TfType t = TfType::Define<Adapter, TfType::Bases<Adapter::BaseAdapter>>();
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
@@ -61,11 +61,10 @@ SdfPath UsdImagingCameraAdapter::Populate(UsdPrim const &prim,
   return prim.GetPath();
 }
 
-void UsdImagingCameraAdapter::TrackVariability(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    HdDirtyBits *timeVaryingBits,
-    UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingCameraAdapter::TrackVariability(UsdPrim const &prim,
+                                               SdfPath const &cachePath,
+                                               HdDirtyBits *timeVaryingBits,
+                                               UsdImagingInstancerContext const *instancerContext) const
 {
   UsdGeomCamera cam(prim);
   if (!TF_VERIFY(cam)) {
@@ -73,8 +72,7 @@ void UsdImagingCameraAdapter::TrackVariability(
   }
 
   // Discover time-varying transforms.
-  _IsTransformVarying(
-      prim, HdCamera::DirtyTransform, UsdImagingTokens->usdVaryingXform, timeVaryingBits);
+  _IsTransformVarying(prim, HdCamera::DirtyTransform, UsdImagingTokens->usdVaryingXform, timeVaryingBits);
 
   // Properties that affect the projection matrix.
   // To get a small speed boost, if an attribute sets a dirty bit we skip
@@ -150,12 +148,8 @@ void UsdImagingCameraAdapter::TrackVariability(
     *timeVaryingBits |= HdCamera::DirtyParams;
   }
   else {
-    _IsVarying(prim,
-               UsdGeomTokens->fStop,
-               HdCamera::DirtyParams,
-               HdCameraTokens->fStop,
-               timeVaryingBits,
-               false);
+    _IsVarying(
+      prim, UsdGeomTokens->fStop, HdCamera::DirtyParams, HdCameraTokens->fStop, timeVaryingBits, false);
     if ((*timeVaryingBits & HdCamera::DirtyParams) == 0) {
       _IsVarying(prim,
                  UsdGeomTokens->focusDistance,
@@ -191,12 +185,11 @@ void UsdImagingCameraAdapter::TrackVariability(
   }
 }
 
-void UsdImagingCameraAdapter::UpdateForTime(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    UsdTimeCode time,
-    HdDirtyBits requestedBits,
-    UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingCameraAdapter::UpdateForTime(UsdPrim const &prim,
+                                            SdfPath const &cachePath,
+                                            UsdTimeCode time,
+                                            HdDirtyBits requestedBits,
+                                            UsdImagingInstancerContext const *instancerContext) const
 {}
 
 static HdCamera::Projection _ToProjection(const TfToken &token)
@@ -313,13 +306,11 @@ HdDirtyBits UsdImagingCameraAdapter::ProcessPropertyChange(UsdPrim const &prim,
   if (UsdGeomXformable::IsTransformationAffectedByAttrNamed(propertyName))
     return HdCamera::DirtyTransform;
 
-  else if (propertyName == UsdGeomTokens->projection ||
-           propertyName == UsdGeomTokens->horizontalAperture ||
+  else if (propertyName == UsdGeomTokens->projection || propertyName == UsdGeomTokens->horizontalAperture ||
            propertyName == UsdGeomTokens->verticalAperture ||
            propertyName == UsdGeomTokens->horizontalApertureOffset ||
            propertyName == UsdGeomTokens->verticalApertureOffset ||
-           propertyName == UsdGeomTokens->clippingRange ||
-           propertyName == UsdGeomTokens->focalLength) {
+           propertyName == UsdGeomTokens->clippingRange || propertyName == UsdGeomTokens->focalLength) {
     return HdCamera::DirtyProjMatrix | HdCamera::DirtyParams;
   }
 
@@ -327,8 +318,8 @@ HdDirtyBits UsdImagingCameraAdapter::ProcessPropertyChange(UsdPrim const &prim,
     return HdCamera::DirtyClipPlanes;
 
   else if (propertyName == UsdGeomTokens->fStop || propertyName == UsdGeomTokens->focusDistance ||
-           propertyName == UsdGeomTokens->shutterOpen ||
-           propertyName == UsdGeomTokens->shutterClose || propertyName == UsdGeomTokens->exposure)
+           propertyName == UsdGeomTokens->shutterOpen || propertyName == UsdGeomTokens->shutterClose ||
+           propertyName == UsdGeomTokens->exposure)
     return HdCamera::DirtyParams;
 
   // XXX: There's no catch-all dirty bit for weird camera params.

@@ -36,9 +36,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-/*static*/ HdExtComputationUtils::ComputationDependencyMap HdExtComputationUtils::
-    _GenerateDependencyMap(HdExtComputationPrimvarDescriptorVector const &compPrimvars,
-                           HdSceneDelegate *sceneDelegate)
+/*static*/ HdExtComputationUtils::ComputationDependencyMap HdExtComputationUtils::_GenerateDependencyMap(
+  HdExtComputationPrimvarDescriptorVector const &compPrimvars,
+  HdSceneDelegate *sceneDelegate)
 {
   HD_TRACE_FUNCTION();
 
@@ -50,7 +50,7 @@ WABI_NAMESPACE_BEGIN
   // First discover the computation tied to the computation primvars.
   for (auto const &pv : compPrimvars) {
     HdExtComputation const *sourceComp = static_cast<HdExtComputation const *>(
-        renderIndex.GetSprim(HdPrimTypeTokens->extComputation, pv.sourceComputationId));
+      renderIndex.GetSprim(HdPrimTypeTokens->extComputation, pv.sourceComputationId));
 
     // We can have different computation primvars using the same computation
     // (since it can produce multiple outputs). It may thus be added more
@@ -85,7 +85,7 @@ WABI_NAMESPACE_BEGIN
     // Update dependency map entry, and add the dep. comp to the queue.
     for (auto const &depCompPath : dependentCompPaths) {
       HdExtComputation const *depComp = static_cast<HdExtComputation const *>(
-          renderIndex.GetSprim(HdPrimTypeTokens->extComputation, depCompPath));
+        renderIndex.GetSprim(HdPrimTypeTokens->extComputation, depCompPath));
 
       entry.emplace_back(depComp);
       computations.emplace_back(depComp);
@@ -95,8 +95,7 @@ WABI_NAMESPACE_BEGIN
   return cdm;
 }
 
-/* static */ void HdExtComputationUtils::_LimitTimeSamples(size_t maxSampleCount,
-                                                           std::vector<double> *times)
+/* static */ void HdExtComputationUtils::_LimitTimeSamples(size_t maxSampleCount, std::vector<double> *times)
 {
   std::sort(times->begin(), times->end());
   times->erase(std::unique(times->begin(), times->end()), times->end());
@@ -109,8 +108,8 @@ WABI_NAMESPACE_BEGIN
                                                             TfSpan<const VtValue> compInputValues,
                                                             TfSpan<VtValue> compOutputValues)
 {
-  TfTokenVector const &sceneInputNames                      = comp.GetSceneInputNames();
-  HdExtComputationInputDescriptorVector const &compInputs   = comp.GetComputationInputs();
+  TfTokenVector const &sceneInputNames = comp.GetSceneInputNames();
+  HdExtComputationInputDescriptorVector const &compInputs = comp.GetComputationInputs();
   HdExtComputationOutputDescriptorVector const &compOutputs = comp.GetComputationOutputs();
 
   TF_DEV_AXIOM(sceneInputValues.size() == sceneInputNames.size());
@@ -150,9 +149,8 @@ WABI_NAMESPACE_BEGIN
 
 namespace {
 
-static HdExtComputationUtils::ValueStore _ExecuteComputations(
-    HdExtComputationConstPtrVector computations,
-    HdSceneDelegate *sceneDelegate)
+static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationConstPtrVector computations,
+                                                              HdSceneDelegate *sceneDelegate)
 {
   HD_TRACE_FUNCTION();
 
@@ -179,8 +177,7 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(
     }
 
     for (auto const &computedInput : comp->GetComputationInputs()) {
-      context.SetInputValue(computedInput.name,
-                            valueStore.at(computedInput.sourceComputationOutputName));
+      context.SetInputValue(computedInput.name, valueStore.at(computedInput.sourceComputationOutputName));
     }
 
     sceneDelegate->InvokeExtComputation(compId, &context);
@@ -212,14 +209,13 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(
 }  // namespace
 
 /*static*/ HdExtComputationUtils::ValueStore HdExtComputationUtils::GetComputedPrimvarValues(
-    HdExtComputationPrimvarDescriptorVector const &compPrimvars,
-    HdSceneDelegate *sceneDelegate)
+  HdExtComputationPrimvarDescriptorVector const &compPrimvars,
+  HdSceneDelegate *sceneDelegate)
 {
   HD_TRACE_FUNCTION();
 
   // Directed graph representation of the participating computations
-  HdExtComputationUtils::ComputationDependencyMap cdm = _GenerateDependencyMap(compPrimvars,
-                                                                               sceneDelegate);
+  HdExtComputationUtils::ComputationDependencyMap cdm = _GenerateDependencyMap(compPrimvars, sceneDelegate);
 
   // Topological ordering of the computations
   HdExtComputationConstPtrVector sortedComputations;
@@ -230,8 +226,7 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(
   }
 
   // Execution
-  HdExtComputationUtils::ValueStore valueStore = _ExecuteComputations(sortedComputations,
-                                                                      sceneDelegate);
+  HdExtComputationUtils::ValueStore valueStore = _ExecuteComputations(sortedComputations, sceneDelegate);
 
   // Output extraction
   HdExtComputationUtils::ValueStore computedPrimvarValueStore;
@@ -244,9 +239,8 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(
   return computedPrimvarValueStore;
 }
 
-/*static*/ bool HdExtComputationUtils::DependencySort(
-    HdExtComputationUtils::ComputationDependencyMap cdm,
-    HdExtComputationConstPtrVector *sortedComps)
+/*static*/ bool HdExtComputationUtils::DependencySort(HdExtComputationUtils::ComputationDependencyMap cdm,
+                                                      HdExtComputationConstPtrVector *sortedComps)
 {
   HD_TRACE_FUNCTION();
   if (!sortedComps) {
@@ -259,9 +253,9 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(
   CompQueue independentComps;
   // Add independent comps to the queue and remove them from the graph.
   using GraphIterator = HdExtComputationUtils::ComputationDependencyMap::iterator;
-  GraphIterator it    = cdm.begin();
+  GraphIterator it = cdm.begin();
   while (it != cdm.end()) {
-    HdExtComputation const *comp                       = it->first;
+    HdExtComputation const *comp = it->first;
     HdExtComputationConstPtrVector const &dependencies = it->second;
     if (dependencies.empty()) {
       independentComps.emplace_back(comp);
@@ -284,7 +278,7 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(
     // Remove dependency edge from computations that depend on comp.
     GraphIterator it = cdm.begin();
     while (it != cdm.end()) {
-      HdExtComputation const *comp                 = it->first;
+      HdExtComputation const *comp = it->first;
       HdExtComputationConstPtrVector &dependencies = it->second;
       auto depIt = std::find(dependencies.begin(), dependencies.end(), indComp);
       if (depIt != dependencies.end()) {
@@ -310,8 +304,8 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(
   // cycles.
   if (!cdm.empty()) {
     TF_WARN(
-        "Cycle detected in ExtComputation dependency graph. "
-        "Unresolved dependencies:\n");
+      "Cycle detected in ExtComputation dependency graph. "
+      "Unresolved dependencies:\n");
     if (TfDebug::IsEnabled(HD_EXT_COMPUTATION_EXECUTION)) {
       PrintDependencyMap(cdm);
     }
@@ -323,7 +317,7 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(
 }
 
 /*static*/ void HdExtComputationUtils::PrintDependencyMap(
-    HdExtComputationUtils::ComputationDependencyMap const &cdm)
+  HdExtComputationUtils::ComputationDependencyMap const &cdm)
 {
   std::cout << "Computations dep map" << std::endl;
   for (auto const &pair : cdm) {

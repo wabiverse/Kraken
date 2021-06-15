@@ -150,8 +150,7 @@ class UsdRelationship : public UsdProperty {
   /// authored in the authoring layer, with respect to list-editing
   /// semantics, which we will document soon
   USD_API
-  bool AddTarget(const SdfPath &target,
-                 UsdListPosition position = UsdListPositionBackOfPrependList) const;
+  bool AddTarget(const SdfPath &target, UsdListPosition position = UsdListPositionBackOfPrependList) const;
 
   /// Removes \p target from the list of targets.
   ///
@@ -246,17 +245,15 @@ class UsdRelationship : public UsdProperty {
   friend class Usd_PrimData;
   template<class A0, class A1> friend struct UsdPrim_TargetFinder;
 
-  UsdRelationship(const Usd_PrimDataHandle &prim,
-                  const SdfPath &proxyPrimPath,
-                  const TfToken &relName)
-      : UsdProperty(UsdTypeRelationship, prim, proxyPrimPath, relName)
+  UsdRelationship(const Usd_PrimDataHandle &prim, const SdfPath &proxyPrimPath, const TfToken &relName)
+    : UsdProperty(UsdTypeRelationship, prim, proxyPrimPath, relName)
   {}
 
   UsdRelationship(UsdObjType objType,
                   const Usd_PrimDataHandle &prim,
                   const SdfPath &proxyPrimPath,
                   const TfToken &propName)
-      : UsdProperty(objType, prim, proxyPrimPath, propName)
+    : UsdProperty(objType, prim, proxyPrimPath, propName)
   {}
 
   SdfRelationshipSpecHandle _CreateSpec(bool fallbackCustom = true) const;

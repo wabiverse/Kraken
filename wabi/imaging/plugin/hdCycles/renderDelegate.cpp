@@ -99,8 +99,8 @@ HdCyclesRenderDelegate::HdCyclesRenderDelegate() : HdRenderDelegate(), m_hasStar
 }
 
 HdCyclesRenderDelegate::HdCyclesRenderDelegate(HdRenderSettingsMap const &settingsMap)
-    : HdRenderDelegate(settingsMap),
-      m_hasStarted(false)
+  : HdRenderDelegate(settingsMap),
+    m_hasStarted(false)
 {
   _Initialize(settingsMap);
 }
@@ -178,8 +178,7 @@ HdResourceRegistrySharedPtr HdCyclesRenderDelegate::GetResourceRegistry() const
 HdRenderPassSharedPtr HdCyclesRenderDelegate::CreateRenderPass(HdRenderIndex *index,
                                                                HdRprimCollection const &collection)
 {
-  HdRenderPassSharedPtr xx = HdRenderPassSharedPtr(
-      new HdCyclesRenderPass(this, index, collection));
+  HdRenderPassSharedPtr xx = HdRenderPassSharedPtr(new HdCyclesRenderPass(this, index, collection));
   m_renderPass = static_cast<HdCyclesRenderPass *>(xx.get());
   return xx;
 }
@@ -330,7 +329,7 @@ HdCyclesRenderParam *HdCyclesRenderDelegate::GetCyclesRenderParam() const
 
 HdAovDescriptor HdCyclesRenderDelegate::GetDefaultAovDescriptor(TfToken const &name) const
 {
-  bool use_tiles  = GetCyclesRenderParam()->IsTiledRender();
+  bool use_tiles = GetCyclesRenderParam()->IsTiledRender();
   bool use_linear = GetCyclesRenderParam()->GetCyclesSession()->params.display_buffer_linear;
 
   HdFormat colorFormat = use_linear ? HdFormatFloat16Vec4 : HdFormatUNorm8Vec4;
@@ -409,8 +408,7 @@ void HdCyclesDiagnosticDelegate::IssueError(const TfError &err)
 HdCyclesDiagnosticDelegate::~HdCyclesDiagnosticDelegate()
 {}
 
-void HdCyclesDiagnosticDelegate::IssueFatalError(const TfCallContext &context,
-                                                 const std::string &msg)
+void HdCyclesDiagnosticDelegate::IssueFatalError(const TfCallContext &context, const std::string &msg)
 {
   std::string message = TfStringPrintf("[FATAL ERROR] %s -- in %s at line %zu of %s",
                                        msg.c_str(),

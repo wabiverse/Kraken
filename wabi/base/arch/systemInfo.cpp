@@ -122,8 +122,8 @@ std::string ArchGetExecutablePath()
     const ssize_t n = readlink("/proc/self/exe", buffer, *size);
     if (n == -1) {
       ARCH_WARNING(
-          "Unable to read /proc/self/exe to obtain "
-          "executable path");
+        "Unable to read /proc/self/exe to obtain "
+        "executable path");
       *size = std::numeric_limits<size_t>::max();
       return false;
     }
@@ -164,12 +164,12 @@ std::string ArchGetExecutablePath()
 
   // On Windows GetModuleFileName() returns the executable path.
   return _DynamicSizedRead(ARCH_PATH_MAX, [](char *buffer, size_t *size) {
-    DWORD nSize   = *size;
+    DWORD nSize = *size;
     const DWORD n = GetModuleFileName(NULL, buffer, nSize);
     if (n == 0) {
       ARCH_WARNING(
-          "Unable to read GetModuleFileName() to obtain "
-          "executable path");
+        "Unable to read GetModuleFileName() to obtain "
+        "executable path");
       *size = std::numeric_limits<size_t>::max();
       return false;
     }

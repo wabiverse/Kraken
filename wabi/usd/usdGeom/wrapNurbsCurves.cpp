@@ -47,25 +47,17 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateOrderAttr(UsdGeomNurbsCurves &self,
-                                     object defaultVal,
-                                     bool writeSparsely)
+static UsdAttribute _CreateOrderAttr(UsdGeomNurbsCurves &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateOrderAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
-                              writeSparsely);
+  return self.CreateOrderAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray), writeSparsely);
 }
 
-static UsdAttribute _CreateKnotsAttr(UsdGeomNurbsCurves &self,
-                                     object defaultVal,
-                                     bool writeSparsely)
+static UsdAttribute _CreateKnotsAttr(UsdGeomNurbsCurves &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateKnotsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->DoubleArray),
-                              writeSparsely);
+  return self.CreateKnotsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->DoubleArray), writeSparsely);
 }
 
-static UsdAttribute _CreateRangesAttr(UsdGeomNurbsCurves &self,
-                                      object defaultVal,
-                                      bool writeSparsely)
+static UsdAttribute _CreateRangesAttr(UsdGeomNurbsCurves &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateRangesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double2Array),
                                writeSparsely);
@@ -86,44 +78,39 @@ void wrapUsdGeomNurbsCurves()
   class_<This, bases<UsdGeomCurves>> cls("NurbsCurves");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetOrderAttr", &This::GetOrderAttr)
-      .def("CreateOrderAttr",
-           &_CreateOrderAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetOrderAttr", &This::GetOrderAttr)
+    .def(
+      "CreateOrderAttr", &_CreateOrderAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetKnotsAttr", &This::GetKnotsAttr)
-      .def("CreateKnotsAttr",
-           &_CreateKnotsAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetKnotsAttr", &This::GetKnotsAttr)
+    .def(
+      "CreateKnotsAttr", &_CreateKnotsAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetRangesAttr", &This::GetRangesAttr)
-      .def("CreateRangesAttr",
-           &_CreateRangesAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRangesAttr", &This::GetRangesAttr)
+    .def(
+      "CreateRangesAttr", &_CreateRangesAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

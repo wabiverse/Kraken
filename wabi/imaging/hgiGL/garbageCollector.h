@@ -78,7 +78,7 @@ class HgiGLGarbageCollector final {
 
  private:
   HgiGLGarbageCollector &operator=(const HgiGLGarbageCollector &) = delete;
-  HgiGLGarbageCollector(const HgiGLGarbageCollector &)            = delete;
+  HgiGLGarbageCollector(const HgiGLGarbageCollector &) = delete;
 
   /// Returns a thread_local vector in which to store a object handle.
   /// Thread safety: The returned vector is a thread_local vector so this call

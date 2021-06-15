@@ -54,12 +54,9 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateResolutionAttr(UsdRenderSettingsBase &self,
-                                          object defaultVal,
-                                          bool writeSparsely)
+static UsdAttribute _CreateResolutionAttr(UsdRenderSettingsBase &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateResolutionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int2),
-                                   writeSparsely);
+  return self.CreateResolutionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int2), writeSparsely);
 }
 
 static UsdAttribute _CreatePixelAspectRatioAttr(UsdRenderSettingsBase &self,
@@ -74,8 +71,8 @@ static UsdAttribute _CreateAspectRatioConformPolicyAttr(UsdRenderSettingsBase &s
                                                         object defaultVal,
                                                         bool writeSparsely)
 {
-  return self.CreateAspectRatioConformPolicyAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  return self.CreateAspectRatioConformPolicyAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                                 writeSparsely);
 }
 
 static UsdAttribute _CreateDataWindowNDCAttr(UsdRenderSettingsBase &self,
@@ -90,8 +87,8 @@ static UsdAttribute _CreateInstantaneousShutterAttr(UsdRenderSettingsBase &self,
                                                     object defaultVal,
                                                     bool writeSparsely)
 {
-  return self.CreateInstantaneousShutterAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
+  return self.CreateInstantaneousShutterAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                             writeSparsely);
 }
 
 static std::string _Repr(const UsdRenderSettingsBase &self)
@@ -109,53 +106,51 @@ void wrapUsdRenderSettingsBase()
   class_<This, bases<UsdTyped>> cls("SettingsBase");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetResolutionAttr", &This::GetResolutionAttr)
-      .def("CreateResolutionAttr",
-           &_CreateResolutionAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetResolutionAttr", &This::GetResolutionAttr)
+    .def("CreateResolutionAttr",
+         &_CreateResolutionAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetPixelAspectRatioAttr", &This::GetPixelAspectRatioAttr)
-      .def("CreatePixelAspectRatioAttr",
-           &_CreatePixelAspectRatioAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetPixelAspectRatioAttr", &This::GetPixelAspectRatioAttr)
+    .def("CreatePixelAspectRatioAttr",
+         &_CreatePixelAspectRatioAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAspectRatioConformPolicyAttr", &This::GetAspectRatioConformPolicyAttr)
-      .def("CreateAspectRatioConformPolicyAttr",
-           &_CreateAspectRatioConformPolicyAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAspectRatioConformPolicyAttr", &This::GetAspectRatioConformPolicyAttr)
+    .def("CreateAspectRatioConformPolicyAttr",
+         &_CreateAspectRatioConformPolicyAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetDataWindowNDCAttr", &This::GetDataWindowNDCAttr)
-      .def("CreateDataWindowNDCAttr",
-           &_CreateDataWindowNDCAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetDataWindowNDCAttr", &This::GetDataWindowNDCAttr)
+    .def("CreateDataWindowNDCAttr",
+         &_CreateDataWindowNDCAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetInstantaneousShutterAttr", &This::GetInstantaneousShutterAttr)
-      .def("CreateInstantaneousShutterAttr",
-           &_CreateInstantaneousShutterAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetInstantaneousShutterAttr", &This::GetInstantaneousShutterAttr)
+    .def("CreateInstantaneousShutterAttr",
+         &_CreateInstantaneousShutterAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetCameraRel", &This::GetCameraRel)
-      .def("CreateCameraRel", &This::CreateCameraRel)
-      .def("__repr__", ::_Repr);
+    .def("GetCameraRel", &This::GetCameraRel)
+    .def("CreateCameraRel", &This::CreateCameraRel)
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

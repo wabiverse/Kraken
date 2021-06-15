@@ -49,8 +49,8 @@ void GfBBox3d::_SetMatrices(const GfMatrix4d &matrix)
   double det;
 
   _isDegenerate = false;
-  _matrix       = matrix;
-  _inverse      = matrix.GetInverse(&det, PRECISION_LIMIT);
+  _matrix = matrix;
+  _inverse = matrix.GetInverse(&det, PRECISION_LIMIT);
 
   // Check for degenerate matrix:
   if (GfAbs(det) <= PRECISION_LIMIT) {
@@ -140,8 +140,8 @@ GfBBox3d GfBBox3d::Combine(const GfBBox3d &b1, const GfBBox3d &b2)
 
     // Test within a tolerance (based on volume) to make this
     // reasonably deterministic.
-    double v1        = result1.GetVolume();
-    double v2        = result2.GetVolume();
+    double v1 = result1.GetVolume();
+    double v2 = result2.GetVolume();
     double tolerance = GfMax(1e-10, 1e-6 * GfAbs(GfMax(v1, v2)));
 
     result = (GfAbs(v1 - v2) <= tolerance ? result1 : (v1 < v2 ? result1 : result2));
@@ -158,8 +158,8 @@ GfBBox3d GfBBox3d::_CombineInOrder(const GfBBox3d &b1, const GfBBox3d &b2)
 {
   // Transform b2 into b1's space to get b2t
   GfBBox3d b2t;
-  b2t._box     = b2._box;
-  b2t._matrix  = b2._matrix * b1._inverse;
+  b2t._box = b2._box;
+  b2t._matrix = b2._matrix * b1._inverse;
   b2t._inverse = b1._matrix * b2._inverse;
 
   // Compute the projection of this box into b1's space.
@@ -181,8 +181,7 @@ GfVec3d GfBBox3d::ComputeCentroid() const
 
 std::ostream &operator<<(std::ostream &out, const GfBBox3d &b)
 {
-  return out << "[(" << Gf_OstreamHelperP(b.GetRange()) << ") ("
-             << Gf_OstreamHelperP(b.GetMatrix()) << ") "
+  return out << "[(" << Gf_OstreamHelperP(b.GetRange()) << ") (" << Gf_OstreamHelperP(b.GetMatrix()) << ") "
              << (b.HasZeroAreaPrimitives() ? "true" : "false") << ']';
 }
 

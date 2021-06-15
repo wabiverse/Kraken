@@ -199,7 +199,7 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiCombineModeAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -222,7 +222,7 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiDensityAttr(VtValue const &defaultValue = VtValue(),
-                                   bool writeSparsely          = false) const;
+                                   bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -244,8 +244,7 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateRiInvertAttr(VtValue const &defaultValue = VtValue(),
-                                  bool writeSparsely          = false) const;
+  UsdAttribute CreateRiInvertAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -268,7 +267,7 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiIntensityAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -291,7 +290,7 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiExposureAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -315,7 +314,7 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiDiffuseAttr(VtValue const &defaultValue = VtValue(),
-                                   bool writeSparsely          = false) const;
+                                   bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -339,7 +338,7 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiSpecularAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

@@ -108,8 +108,7 @@ const TfType &UsdLuxLightFilter::_GetTfType() const
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -123,10 +122,10 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdLuxLightFilter::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdLuxTokens->collectionFilterLinkIncludeRoot,
+    UsdLuxTokens->collectionFilterLinkIncludeRoot,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdGeomXformable::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomXformable::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -155,8 +154,7 @@ class UsdLuxLightFilter_ConnectableAPIBehavior : public UsdShadeConnectableAPIBe
                                const UsdAttribute &source,
                                std::string *reason) override
   {
-    return _CanConnectInputToSource(
-        input, source, reason, ConnectableNodeTypes::DerivedContainerNodes);
+    return _CanConnectInputToSource(input, source, reason, ConnectableNodeTypes::DerivedContainerNodes);
   }
 
   bool IsContainer() const
@@ -173,12 +171,11 @@ TF_REGISTRY_FUNCTION(UsdShadeConnectableAPI)
 {
   // UsdLuxLightFilter prims are connectable, with special behavior requiring
   // connection source to be encapsulated under the light.
-  UsdShadeRegisterConnectableAPIBehavior<UsdLuxLightFilter,
-                                         UsdLuxLightFilter_ConnectableAPIBehavior>();
+  UsdShadeRegisterConnectableAPIBehavior<UsdLuxLightFilter, UsdLuxLightFilter_ConnectableAPIBehavior>();
 }
 
 UsdLuxLightFilter::UsdLuxLightFilter(const UsdShadeConnectableAPI &connectable)
-    : UsdLuxLightFilter(connectable.GetPrim())
+  : UsdLuxLightFilter(connectable.GetPrim())
 {}
 
 UsdShadeConnectableAPI UsdLuxLightFilter::ConnectableAPI() const
@@ -186,8 +183,7 @@ UsdShadeConnectableAPI UsdLuxLightFilter::ConnectableAPI() const
   return UsdShadeConnectableAPI(GetPrim());
 }
 
-UsdShadeOutput UsdLuxLightFilter::CreateOutput(const TfToken &name,
-                                               const SdfValueTypeName &typeName)
+UsdShadeOutput UsdLuxLightFilter::CreateOutput(const TfToken &name, const SdfValueTypeName &typeName)
 {
   return UsdShadeConnectableAPI(GetPrim()).CreateOutput(name, typeName);
 }

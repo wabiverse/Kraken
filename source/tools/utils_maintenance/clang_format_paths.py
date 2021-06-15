@@ -15,8 +15,7 @@ os.chdir(BASE_DIR)
 extensions = (
     ".c", ".cc", ".cpp", ".cxx",
     ".h", ".hh", ".hpp", ".hxx",
-    ".m", ".mm", ".osl", ".glsl",
-    ".glslfx"
+    ".m", ".mm", ".osl", ".glsl"
 )
 
 extensions_only_retab = (

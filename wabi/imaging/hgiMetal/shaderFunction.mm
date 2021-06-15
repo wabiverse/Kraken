@@ -42,8 +42,8 @@
 WABI_NAMESPACE_BEGIN
 
 HgiMetalShaderFunction::HgiMetalShaderFunction(HgiMetal *hgi, HgiShaderFunctionDesc const &desc)
-    : HgiShaderFunction(desc),
-      _shaderId(nil)
+  : HgiShaderFunction(desc),
+    _shaderId(nil)
 {
   if (desc.shaderCode) {
     id<MTLDevice> device = hgi->GetPrimaryDevice();
@@ -52,14 +52,14 @@ HgiMetalShaderFunction::HgiMetalShaderFunction(HgiMetal *hgi, HgiShaderFunctionD
     std::stringstream ss;
     shaderGenerator.Execute(ss);
     MTLCompileOptions *options = [[MTLCompileOptions alloc] init];
-    options.fastMathEnabled    = YES;
-    options.languageVersion    = MTLLanguageVersion2_1;
+    options.fastMathEnabled = YES;
+    options.languageVersion = MTLLanguageVersion2_1;
     options.preprocessorMacros = @{
       @"ARCH_GFX_METAL" : @1,
     };
 
-    NSError *error         = NULL;
-    std::string shaderStr  = ss.str();
+    NSError *error = NULL;
+    std::string shaderStr = ss.str();
     id<MTLLibrary> library = [hgi->GetPrimaryDevice() newLibraryWithSource:@(shaderStr.c_str())
                                                                    options:options
                                                                      error:&error];

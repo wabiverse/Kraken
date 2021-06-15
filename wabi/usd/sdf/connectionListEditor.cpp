@@ -32,19 +32,17 @@
 WABI_NAMESPACE_BEGIN
 
 template<class ChildPolicy>
-Sdf_ConnectionListEditor<ChildPolicy>::Sdf_ConnectionListEditor(
-    const SdfSpecHandle &connectionOwner,
-    const TfToken &connectionListField,
-    const SdfPathKeyPolicy &typePolicy)
-    : Parent(connectionOwner, connectionListField, typePolicy)
+Sdf_ConnectionListEditor<ChildPolicy>::Sdf_ConnectionListEditor(const SdfSpecHandle &connectionOwner,
+                                                                const TfToken &connectionListField,
+                                                                const SdfPathKeyPolicy &typePolicy)
+  : Parent(connectionOwner, connectionListField, typePolicy)
 {}
 
 template<class ChildPolicy>
-void Sdf_ConnectionListEditor<ChildPolicy>::_OnEditShared(
-    SdfListOpType op,
-    SdfSpecType specType,
-    const std::vector<SdfPath> &oldItems,
-    const std::vector<SdfPath> &newItems) const
+void Sdf_ConnectionListEditor<ChildPolicy>::_OnEditShared(SdfListOpType op,
+                                                          SdfSpecType specType,
+                                                          const std::vector<SdfPath> &oldItems,
+                                                          const std::vector<SdfPath> &newItems) const
 {
   // XXX The following code tries to manage lifetime of the target
   // specs associated with this list, but it slightly buggy: if
@@ -60,7 +58,7 @@ void Sdf_ConnectionListEditor<ChildPolicy>::_OnEditShared(
   }
 
   const SdfPath propertyPath = GetPath();
-  SdfLayerHandle layer       = GetLayer();
+  SdfLayerHandle layer = GetLayer();
 
   // A common pattern is to append at the end, so old and new often share a
   // common prefix.  Scan forward until we find a difference, then just
@@ -72,8 +70,7 @@ void Sdf_ConnectionListEditor<ChildPolicy>::_OnEditShared(
   std::set<value_type> oldItemSet;
   std::set<value_type> newItemSet;
   {
-    std::vector<SdfPath>::const_iterator oldItemTail = oldItems.begin(),
-                                         newItemTail = newItems.begin();
+    std::vector<SdfPath>::const_iterator oldItemTail = oldItems.begin(), newItemTail = newItems.begin();
     auto oldEnd = oldItems.end(), newEnd = newItems.end();
     while (oldItemTail != oldEnd && newItemTail != newEnd && *oldItemTail == *newItemTail) {
       ++oldItemTail, ++newItemTail;
@@ -123,17 +120,15 @@ void Sdf_ConnectionListEditor<ChildPolicy>::_OnEditShared(
   }
 }
 
-template<class ChildPolicy>
-Sdf_ConnectionListEditor<ChildPolicy>::~Sdf_ConnectionListEditor() = default;
+template<class ChildPolicy> Sdf_ConnectionListEditor<ChildPolicy>::~Sdf_ConnectionListEditor() = default;
 
 ////////////////////////////////////////
 // Sdf_AttributeConnectionListEditor
 ////////////////////////////////////////
 
-Sdf_AttributeConnectionListEditor::Sdf_AttributeConnectionListEditor(
-    const SdfSpecHandle &owner,
-    const SdfPathKeyPolicy &typePolicy)
-    : Parent(owner, SdfFieldKeys->ConnectionPaths, typePolicy)
+Sdf_AttributeConnectionListEditor::Sdf_AttributeConnectionListEditor(const SdfSpecHandle &owner,
+                                                                     const SdfPathKeyPolicy &typePolicy)
+  : Parent(owner, SdfFieldKeys->ConnectionPaths, typePolicy)
 {}
 
 Sdf_AttributeConnectionListEditor::~Sdf_AttributeConnectionListEditor() = default;
@@ -143,17 +138,16 @@ void Sdf_AttributeConnectionListEditor::_OnEdit(SdfListOpType op,
                                                 const std::vector<SdfPath> &newItems) const
 {
   return Sdf_ConnectionListEditor<Sdf_AttributeConnectionChildPolicy>::_OnEditShared(
-      op, SdfSpecTypeConnection, oldItems, newItems);
+    op, SdfSpecTypeConnection, oldItems, newItems);
 }
 
 ////////////////////////////////////////
 // Sdf_RelationshipTargetListEditor
 ////////////////////////////////////////
 
-Sdf_RelationshipTargetListEditor::Sdf_RelationshipTargetListEditor(
-    const SdfSpecHandle &owner,
-    const SdfPathKeyPolicy &typePolicy)
-    : Parent(owner, SdfFieldKeys->TargetPaths, typePolicy)
+Sdf_RelationshipTargetListEditor::Sdf_RelationshipTargetListEditor(const SdfSpecHandle &owner,
+                                                                   const SdfPathKeyPolicy &typePolicy)
+  : Parent(owner, SdfFieldKeys->TargetPaths, typePolicy)
 {}
 
 Sdf_RelationshipTargetListEditor::~Sdf_RelationshipTargetListEditor() = default;
@@ -163,7 +157,7 @@ void Sdf_RelationshipTargetListEditor::_OnEdit(SdfListOpType op,
                                                const std::vector<SdfPath> &newItems) const
 {
   return Sdf_ConnectionListEditor<Sdf_RelationshipTargetChildPolicy>::_OnEditShared(
-      op, SdfSpecTypeRelationshipTarget, oldItems, newItems);
+    op, SdfSpecTypeRelationshipTarget, oldItems, newItems);
 }
 
 WABI_NAMESPACE_END

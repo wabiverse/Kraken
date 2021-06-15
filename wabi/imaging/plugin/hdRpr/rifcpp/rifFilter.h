@@ -34,27 +34,11 @@ class HdRprApiFramebuffer;
 
 namespace rif {
 
-enum FilterInputType {
-  Color,
-  Normal,
-  LinearDepth,
-  WorldCoordinate,
-  ObjectId,
-  Trans,
-  Albedo,
-  MaxInput
-};
+enum FilterInputType { Color, Normal, LinearDepth, WorldCoordinate, ObjectId, Trans, Albedo, MaxInput };
 
 using FilterParam = BOOST_NS::variant<int, float, std::string, GfVec2i, GfMatrix4f, rif_image>;
 
-enum class FilterType {
-  None = -1,
-  AIDenoise,
-  Resample,
-  EawDenoise,
-  FIRST = AIDenoise,
-  LAST  = EawDenoise
-};
+enum class FilterType { None = -1, AIDenoise, Resample, EawDenoise, FIRST = AIDenoise, LAST = EawDenoise };
 
 class Filter {
  public:
@@ -68,9 +52,7 @@ class Filter {
 
   void SetInput(FilterInputType inputType, Filter *filter);
   void SetInput(FilterInputType inputType, rif_image rifImage, float sigma = 1.0f);
-  void SetInput(FilterInputType inputType,
-                HdRprApiFramebuffer *rprFrameBuffer,
-                float sigma = 1.0f);
+  void SetInput(FilterInputType inputType, HdRprApiFramebuffer *rprFrameBuffer, float sigma = 1.0f);
   void SetInput(const char *name, HdRprApiFramebuffer *rprFrameBuffer);
   void SetInput(const char *name, rif_image rifImage);
   void SetOutput(rif_image rifImage);
@@ -113,35 +95,25 @@ class Filter {
 
     InputTraits() : rifImage(nullptr), rprFrameBuffer(nullptr), sigma(0.0f)
     {}
-    InputTraits(rif_image rifImage, float sigma)
-        : rifImage(rifImage),
-          rprFrameBuffer(nullptr),
-          sigma(sigma)
+    InputTraits(rif_image rifImage, float sigma) : rifImage(rifImage), rprFrameBuffer(nullptr), sigma(sigma)
     {}
     InputTraits(HdRprApiFramebuffer *rprFrameBuffer, Context *context, float sigma)
-        : rprFrameBuffer(rprFrameBuffer),
-          sigma(sigma)
+      : rprFrameBuffer(rprFrameBuffer),
+        sigma(sigma)
     {
       retainedImage = context->CreateImage(rprFrameBuffer);
-      rifImage      = retainedImage->GetHandle();
+      rifImage = retainedImage->GetHandle();
     }
   };
 
-  std::unordered_map<FilterInputType,
-                     InputTraits,
-                     std::hash<std::underlying_type<FilterInputType>::type>>
-      m_inputs;
+  std::unordered_map<FilterInputType, InputTraits, std::hash<std::underlying_type<FilterInputType>::type>>
+    m_inputs;
   std::map<std::string, InputTraits> m_namedInputs;
   std::unordered_map<std::string, FilterParam> m_params;
 
   rif_image m_outputImage = nullptr;
 
-  enum ChangeTracker {
-    Clean           = 0,
-    DirtyAll        = ~0u,
-    DirtyIOImage    = 1 << 0,
-    DirtyParameters = 1 << 2
-  };
+  enum ChangeTracker { Clean = 0, DirtyAll = ~0u, DirtyIOImage = 1 << 0, DirtyParameters = 1 << 2 };
   uint32_t m_dirtyFlags = DirtyAll;
 
   bool m_isAttached = false;

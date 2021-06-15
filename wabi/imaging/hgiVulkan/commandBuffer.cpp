@@ -38,22 +38,22 @@
 WABI_NAMESPACE_BEGIN
 
 HgiVulkanCommandBuffer::HgiVulkanCommandBuffer(HgiVulkanDevice *device, VkCommandPool pool)
-    : _device(device),
-      _vkCommandPool(pool),
-      _vkCommandBuffer(nullptr),
-      _vkFence(nullptr),
-      _vkSemaphore(nullptr),
-      _isInFlight(false),
-      _isSubmitted(false),
-      _inflightId(0)
+  : _device(device),
+    _vkCommandPool(pool),
+    _vkCommandBuffer(nullptr),
+    _vkFence(nullptr),
+    _vkSemaphore(nullptr),
+    _isInFlight(false),
+    _isSubmitted(false),
+    _inflightId(0)
 {
   VkDevice vkDevice = _device->GetVulkanDevice();
 
   // Create vulkan command buffer
   VkCommandBufferAllocateInfo allocInfo = {VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO};
-  allocInfo.commandBufferCount          = 1;
-  allocInfo.commandPool                 = pool;
-  allocInfo.level                       = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  allocInfo.commandBufferCount = 1;
+  allocInfo.commandPool = pool;
+  allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 
   TF_VERIFY(vkAllocateCommandBuffers(vkDevice, &allocInfo, &_vkCommandBuffer) == VK_SUCCESS);
 
@@ -66,14 +66,13 @@ HgiVulkanCommandBuffer::HgiVulkanCommandBuffer(HgiVulkanDevice *device, VkComman
 
   // CPU synchronization fence. So we known when the cmd buffer can be reused.
   VkFenceCreateInfo fenceInfo = {VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
-  fenceInfo.flags             = 0;  // Unsignaled starting state
+  fenceInfo.flags = 0;  // Unsignaled starting state
 
   TF_VERIFY(vkCreateFence(vkDevice, &fenceInfo, HgiVulkanAllocator(), &_vkFence) == VK_SUCCESS);
 
   // Create semaphore for GPU-GPU synchronization
   VkSemaphoreCreateInfo semaCreateInfo = {VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
-  TF_VERIFY(vkCreateSemaphore(vkDevice, &semaCreateInfo, HgiVulkanAllocator(), &_vkSemaphore) ==
-            VK_SUCCESS);
+  TF_VERIFY(vkCreateSemaphore(vkDevice, &semaCreateInfo, HgiVulkanAllocator(), &_vkSemaphore) == VK_SUCCESS);
 
   // Assign a debug label to fence.
   std::string fenceLbl = "HgiVulkan Fence for Command Buffer: " + handleStr;
@@ -155,7 +154,7 @@ bool HgiVulkanCommandBuffer::ResetIfConsumedByGPU()
   TF_VERIFY(vkResetCommandBuffer(_vkCommandBuffer, flags) == VK_SUCCESS);
 
   // Command buffer may now be reused for new recordings / resource creation.
-  _isInFlight  = false;
+  _isInFlight = false;
   _isSubmitted = false;
   return true;
 }

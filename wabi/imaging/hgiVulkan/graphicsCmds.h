@@ -46,7 +46,7 @@ struct HgiGraphicsCmdsDesc;
 class HgiVulkan;
 class HgiVulkanCommandBuffer;
 
-using HgiVulkanGfxFunction       = std::function<void(void)>;
+using HgiVulkanGfxFunction = std::function<void(void)>;
 using HgiVulkanGfxFunctionVector = std::vector<HgiVulkanGfxFunction>;
 
 /// \class HgiVulkanGraphicsCmds
@@ -128,9 +128,9 @@ class HgiVulkanGraphicsCmds final : public HgiGraphicsCmds {
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
-  HgiVulkanGraphicsCmds()        = delete;
+  HgiVulkanGraphicsCmds() = delete;
   HgiVulkanGraphicsCmds &operator=(const HgiVulkanGraphicsCmds &) = delete;
-  HgiVulkanGraphicsCmds(const HgiVulkanGraphicsCmds &)            = delete;
+  HgiVulkanGraphicsCmds(const HgiVulkanGraphicsCmds &) = delete;
 
   void _ApplyPendingUpdates();
   void _EndRenderPass();

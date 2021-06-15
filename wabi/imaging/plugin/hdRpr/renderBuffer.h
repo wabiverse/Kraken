@@ -27,9 +27,7 @@ class HdRprRenderBuffer final : public HdRenderBuffer {
   HdRprRenderBuffer(SdfPath const &id, HdRprApi *api = nullptr);
   ~HdRprRenderBuffer() override = default;
 
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   void Finalize(HdRenderParam *renderParam) override;
 
@@ -86,9 +84,9 @@ class HdRprRenderBuffer final : public HdRenderBuffer {
 
  private:
   std::vector<uint8_t> m_mappedBuffer;
-  uint32_t m_width    = 0u;
-  uint32_t m_height   = 0u;
-  HdFormat m_format   = HdFormat::HdFormatInvalid;
+  uint32_t m_width = 0u;
+  uint32_t m_height = 0u;
+  HdFormat m_format = HdFormat::HdFormatInvalid;
   bool m_multiSampled = false;
 
   std::atomic<bool> m_isConverged;

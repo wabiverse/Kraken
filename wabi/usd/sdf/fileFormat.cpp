@@ -55,25 +55,25 @@ SdfFileFormat::SdfFileFormat(const TfToken &formatId,
                              const TfToken &target,
                              const std::string &extension,
                              const SdfSchemaBase &schema)
-    : SdfFileFormat(formatId, versionString, target, std::vector<std::string>{extension}, schema)
+  : SdfFileFormat(formatId, versionString, target, std::vector<std::string>{extension}, schema)
 {}
 
 SdfFileFormat::SdfFileFormat(const TfToken &formatId,
                              const TfToken &versionString,
                              const TfToken &target,
                              const std::string &extension)
-    : SdfFileFormat(formatId,
-                    versionString,
-                    target,
-                    std::vector<std::string>{extension},
-                    SdfSchema::GetInstance())
+  : SdfFileFormat(formatId,
+                  versionString,
+                  target,
+                  std::vector<std::string>{extension},
+                  SdfSchema::GetInstance())
 {}
 
 SdfFileFormat::SdfFileFormat(const TfToken &formatId,
                              const TfToken &versionString,
                              const TfToken &target,
                              const std::vector<std::string> &extensions)
-    : SdfFileFormat(formatId, versionString, target, extensions, SdfSchema::GetInstance())
+  : SdfFileFormat(formatId, versionString, target, extensions, SdfSchema::GetInstance())
 {}
 
 SdfFileFormat::SdfFileFormat(const TfToken &formatId,
@@ -81,19 +81,18 @@ SdfFileFormat::SdfFileFormat(const TfToken &formatId,
                              const TfToken &target,
                              const std::vector<std::string> &extensions,
                              const SdfSchemaBase &schema)
-    : _schema(schema),
-      _formatId(formatId),
-      _target(target),
-      _cookie("#" + formatId.GetString()),
-      _versionString(versionString),
-      _extensions(extensions)
+  : _schema(schema),
+    _formatId(formatId),
+    _target(target),
+    _cookie("#" + formatId.GetString()),
+    _versionString(versionString),
+    _extensions(extensions)
 
-      // If a file format is marked as primary, then it must be the
-      // primary format for all of the extensions it supports. So,
-      // it's sufficient to just check the first extension in the list.
-      ,
-      _isPrimaryFormat(_FileFormatRegistry->GetPrimaryFormatForExtension(extensions[0]) ==
-                       formatId)
+    // If a file format is marked as primary, then it must be the
+    // primary format for all of the extensions it supports. So,
+    // it's sufficient to just check the first extension in the list.
+    ,
+    _isPrimaryFormat(_FileFormatRegistry->GetPrimaryFormatForExtension(extensions[0]) == formatId)
 {
   // Do Nothing.
 }
@@ -216,16 +215,12 @@ bool SdfFileFormat::ReadFromString(SdfLayer *layer, const std::string &str) cons
   return false;
 }
 
-bool SdfFileFormat::WriteToStream(const SdfSpecHandle &spec,
-                                  std::ostream &out,
-                                  size_t indent) const
+bool SdfFileFormat::WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const
 {
   return false;
 }
 
-bool SdfFileFormat::WriteToString(const SdfLayer &layer,
-                                  std::string *str,
-                                  const std::string &comment) const
+bool SdfFileFormat::WriteToString(const SdfLayer &layer, std::string *str, const std::string &comment) const
 {
   return false;
 }
@@ -259,8 +254,7 @@ SdfFileFormatConstPtr SdfFileFormat::FindById(const TfToken &formatId)
 }
 
 /* static */
-SdfFileFormatConstPtr SdfFileFormat::FindByExtension(const std::string &extension,
-                                                     const std::string &target)
+SdfFileFormatConstPtr SdfFileFormat::FindByExtension(const std::string &extension, const std::string &target)
 {
   return _FileFormatRegistry->FindByExtension(extension, target);
 }
@@ -311,9 +305,7 @@ void SdfFileFormat::_SetLayerData(SdfLayer *layer, SdfAbstractDataRefPtr &data)
   _SetLayerData(layer, data, SdfLayerHints{});
 }
 
-void SdfFileFormat::_SetLayerData(SdfLayer *layer,
-                                  SdfAbstractDataRefPtr &data,
-                                  SdfLayerHints hints)
+void SdfFileFormat::_SetLayerData(SdfLayer *layer, SdfAbstractDataRefPtr &data, SdfLayerHints hints)
 {
   // If layer initialization has not completed, then this
   // is being loaded as a new layer; otherwise we are loading

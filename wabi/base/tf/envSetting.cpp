@@ -68,7 +68,7 @@ class Tf_EnvSettingRegistry {
       bool syncPython = TfPyIsInitialized();
 #endif  // WITH_PYTHON
 
-      int lineNo     = 0;
+      int lineNo = 0;
       auto emitError = [&fileName, &lineNo](char const *fmt, ...)
       /*ARCH_PRINTF_FUNCTION(1, 2)*/ {
         va_list ap;
@@ -101,7 +101,7 @@ class Tf_EnvSettingRegistry {
           continue;
         }
 
-        string key   = TfStringTrim(trimmed.substr(0, eqPos));
+        string key = TfStringTrim(trimmed.substr(0, eqPos));
         string value = TfStringTrim(trimmed.substr(eqPos + 1));
         if (key.empty()) {
           emitError("empty key");
@@ -126,8 +126,7 @@ class Tf_EnvSettingRegistry {
 
   using VariantType = boost::variant<int, bool, std::string>;
 
-  template<typename U>
-  bool Define(string const &varName, U const &value, std::atomic<U *> *cachedValue)
+  template<typename U> bool Define(string const &varName, U const &value, std::atomic<U *> *cachedValue)
   {
 
     bool inserted = false;
@@ -149,11 +148,11 @@ class Tf_EnvSettingRegistry {
 
     if (!inserted) {
       TF_CODING_ERROR(
-          "Multiple definitions of TfEnvSetting variable "
-          "detected.  This is usually due to software "
-          "misconfiguration.  Contact the build team for "
-          "assistance.  (duplicate '%s')",
-          varName.c_str());
+        "Multiple definitions of TfEnvSetting variable "
+        "detected.  This is usually due to software "
+        "misconfiguration.  Contact the build team for "
+        "assistance.  (duplicate '%s')",
+        varName.c_str());
       return false;
     }
     else {
@@ -219,11 +218,11 @@ template<class T> void Tf_InitializeEnvSetting(TfEnvSetting<T> *setting)
     // Setting was defined successfully and we should print alerts.
     if (setting->_default != value) {
       string text = TfStringPrintf(
-          "#  %s is overridden to '%s'.  "
-          "Default is '%s'.  #",
-          setting->_name,
-          _Str(value).c_str(),
-          _Str(setting->_default).c_str());
+        "#  %s is overridden to '%s'.  "
+        "Default is '%s'.  #",
+        setting->_name,
+        _Str(value).c_str(),
+        _Str(setting->_default).c_str());
       string line(text.length(), '#');
       fprintf(stderr, "%s\n%s\n%s\n", line.c_str(), text.c_str(), line.c_str());
     }

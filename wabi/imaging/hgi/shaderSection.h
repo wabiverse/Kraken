@@ -87,7 +87,7 @@ class HgiShaderSection {
   HGI_API
   explicit HgiShaderSection(const std::string &identifier,
                             const HgiShaderSectionAttributeVector &attributes = {},
-                            const std::string &defaultValue                   = std::string());
+                            const std::string &defaultValue = std::string());
 
   HGI_API
   const std::string &_GetDefaultValue() const;

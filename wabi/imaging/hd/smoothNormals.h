@@ -60,18 +60,16 @@ class Hd_SmoothNormals final {
                                                int numPoints,
                                                GfVec3d const *pointsPtr);
   HD_API
-  static VtArray<HdVec4f_2_10_10_10_REV> ComputeSmoothNormalsPacked(
-      Hd_VertexAdjacency const *adjacency,
-      int numPoints,
-      GfVec3f const *pointsPtr);
+  static VtArray<HdVec4f_2_10_10_10_REV> ComputeSmoothNormalsPacked(Hd_VertexAdjacency const *adjacency,
+                                                                    int numPoints,
+                                                                    GfVec3f const *pointsPtr);
   HD_API
-  static VtArray<HdVec4f_2_10_10_10_REV> ComputeSmoothNormalsPacked(
-      Hd_VertexAdjacency const *adjacency,
-      int numPoints,
-      GfVec3d const *pointsPtr);
+  static VtArray<HdVec4f_2_10_10_10_REV> ComputeSmoothNormalsPacked(Hd_VertexAdjacency const *adjacency,
+                                                                    int numPoints,
+                                                                    GfVec3d const *pointsPtr);
 
  private:
-  Hd_SmoothNormals()  = delete;
+  Hd_SmoothNormals() = delete;
   ~Hd_SmoothNormals() = delete;
 };
 

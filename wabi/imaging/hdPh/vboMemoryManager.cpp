@@ -53,13 +53,12 @@ TF_DEFINE_ENV_SETTING(HD_MAX_VBO_SIZE, (1 * 1024 * 1024 * 1024), "Maximum aggreg
 // ---------------------------------------------------------------------------
 //  HdPhVBOMemoryManager
 // ---------------------------------------------------------------------------
-HdBufferArraySharedPtr HdPhVBOMemoryManager::CreateBufferArray(
-    TfToken const &role,
-    HdBufferSpecVector const &bufferSpecs,
-    HdBufferArrayUsageHint usageHint)
+HdBufferArraySharedPtr HdPhVBOMemoryManager::CreateBufferArray(TfToken const &role,
+                                                               HdBufferSpecVector const &bufferSpecs,
+                                                               HdBufferArrayUsageHint usageHint)
 {
   return std::make_shared<HdPhVBOMemoryManager::_StripedBufferArray>(
-      _resourceRegistry, role, bufferSpecs, usageHint);
+    _resourceRegistry, role, bufferSpecs, usageHint);
 }
 
 HdBufferArrayRangeSharedPtr HdPhVBOMemoryManager::CreateBufferArrayRange()
@@ -68,11 +67,11 @@ HdBufferArrayRangeSharedPtr HdPhVBOMemoryManager::CreateBufferArrayRange()
 }
 
 HdAggregationStrategy::AggregationId HdPhVBOMemoryManager::ComputeAggregationId(
-    HdBufferSpecVector const &bufferSpecs,
-    HdBufferArrayUsageHint usageHint) const
+  HdBufferSpecVector const &bufferSpecs,
+  HdBufferArrayUsageHint usageHint) const
 {
   static size_t salt = ArchHash(__FUNCTION__, sizeof(__FUNCTION__));
-  size_t result      = salt;
+  size_t result = salt;
   for (HdBufferSpec const &spec : bufferSpecs) {
     boost::hash_combine(result, spec.Hash());
   }
@@ -84,11 +83,9 @@ HdAggregationStrategy::AggregationId HdPhVBOMemoryManager::ComputeAggregationId(
 }
 
 /// Returns the buffer specs from a given buffer array
-HdBufferSpecVector HdPhVBOMemoryManager::GetBufferSpecs(
-    HdBufferArraySharedPtr const &bufferArray) const
+HdBufferSpecVector HdPhVBOMemoryManager::GetBufferSpecs(HdBufferArraySharedPtr const &bufferArray) const
 {
-  _StripedBufferArraySharedPtr bufferArray_ = std::static_pointer_cast<_StripedBufferArray>(
-      bufferArray);
+  _StripedBufferArraySharedPtr bufferArray_ = std::static_pointer_cast<_StripedBufferArray>(bufferArray);
   return bufferArray_->GetBufferSpecs();
 }
 
@@ -99,13 +96,12 @@ size_t HdPhVBOMemoryManager::GetResourceAllocation(HdBufferArraySharedPtr const 
   std::set<uint64_t> idSet;
   size_t gpuMemoryUsed = 0;
 
-  _StripedBufferArraySharedPtr bufferArray_ = std::static_pointer_cast<_StripedBufferArray>(
-      bufferArray);
+  _StripedBufferArraySharedPtr bufferArray_ = std::static_pointer_cast<_StripedBufferArray>(bufferArray);
 
   TF_FOR_ALL(resIt, bufferArray_->GetResources())
   {
     HdPhBufferResourceSharedPtr const &resource = resIt->second;
-    HgiBufferHandle buffer                      = resource->GetHandle();
+    HgiBufferHandle buffer = resource->GetHandle();
 
     // XXX avoid double counting of resources shared within a buffer
     uint64_t id = buffer ? buffer->GetRawResource() : 0;
@@ -113,11 +109,11 @@ size_t HdPhVBOMemoryManager::GetResourceAllocation(HdBufferArraySharedPtr const 
       idSet.insert(id);
 
       std::string const &role = resource->GetRole().GetString();
-      size_t size             = size_t(resource->GetSize());
+      size_t size = size_t(resource->GetSize());
 
       if (result.count(role)) {
         size_t currentSize = result[role].Get<size_t>();
-        result[role]       = VtValue(currentSize + size);
+        result[role] = VtValue(currentSize + size);
       }
       else {
         result[role] = VtValue(size);
@@ -133,16 +129,15 @@ size_t HdPhVBOMemoryManager::GetResourceAllocation(HdBufferArraySharedPtr const 
 // ---------------------------------------------------------------------------
 //  _StripedBufferArray
 // ---------------------------------------------------------------------------
-HdPhVBOMemoryManager::_StripedBufferArray::_StripedBufferArray(
-    HdPhResourceRegistry *resourceRegistry,
-    TfToken const &role,
-    HdBufferSpecVector const &bufferSpecs,
-    HdBufferArrayUsageHint usageHint)
-    : HdBufferArray(role, HdPerfTokens->garbageCollectedVbo, usageHint),
-      _resourceRegistry(resourceRegistry),
-      _needsCompaction(false),
-      _totalCapacity(0),
-      _maxBytesPerElement(0)
+HdPhVBOMemoryManager::_StripedBufferArray::_StripedBufferArray(HdPhResourceRegistry *resourceRegistry,
+                                                               TfToken const &role,
+                                                               HdBufferSpecVector const &bufferSpecs,
+                                                               HdBufferArrayUsageHint usageHint)
+  : HdBufferArray(role, HdPerfTokens->garbageCollectedVbo, usageHint),
+    _resourceRegistry(resourceRegistry),
+    _needsCompaction(false),
+    _totalCapacity(0),
+    _maxBytesPerElement(0)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -179,8 +174,7 @@ HdPhVBOMemoryManager::_StripedBufferArray::_StripedBufferArray(
   // compute max bytes / elements
   TF_FOR_ALL(it, GetResources())
   {
-    _maxBytesPerElement = std::max(_maxBytesPerElement,
-                                   HdDataSizeOfTupleType(it->second->GetTupleType()));
+    _maxBytesPerElement = std::max(_maxBytesPerElement, HdDataSizeOfTupleType(it->second->GetTupleType()));
   }
 
   // GetMaxNumElements() will crash with a divide by 0
@@ -194,11 +188,10 @@ HdPhVBOMemoryManager::_StripedBufferArray::_StripedBufferArray(
   }
 }
 
-HdPhBufferResourceSharedPtr HdPhVBOMemoryManager::_StripedBufferArray::_AddResource(
-    TfToken const &name,
-    HdTupleType tupleType,
-    int offset,
-    int stride)
+HdPhBufferResourceSharedPtr HdPhVBOMemoryManager::_StripedBufferArray::_AddResource(TfToken const &name,
+                                                                                    HdTupleType tupleType,
+                                                                                    int offset,
+                                                                                    int stride)
 {
   HD_TRACE_FUNCTION();
   if (TfDebug::IsEnabled(HD_SAFE_MODE)) {
@@ -210,7 +203,7 @@ HdPhBufferResourceSharedPtr HdPhVBOMemoryManager::_StripedBufferArray::_AddResou
   }
 
   HdPhBufferResourceSharedPtr bufferRes = std::make_shared<HdPhBufferResource>(
-      GetRole(), tupleType, offset, stride);
+    GetRole(), tupleType, offset, stride);
   _resourceList.emplace_back(name, bufferRes);
   return bufferRes;
 }
@@ -259,16 +252,15 @@ bool HdPhVBOMemoryManager::_StripedBufferArray::GarbageCollect()
 }
 
 void HdPhVBOMemoryManager::_StripedBufferArray::Reallocate(
-    std::vector<HdBufferArrayRangeSharedPtr> const &ranges,
-    HdBufferArraySharedPtr const &curRangeOwner)
+  std::vector<HdBufferArrayRangeSharedPtr> const &ranges,
+  HdBufferArraySharedPtr const &curRangeOwner)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
   HD_PERF_COUNTER_INCR(HdPerfTokens->vboRelocated);
 
-  _StripedBufferArraySharedPtr curRangeOwner_ = std::static_pointer_cast<_StripedBufferArray>(
-      curRangeOwner);
+  _StripedBufferArraySharedPtr curRangeOwner_ = std::static_pointer_cast<_StripedBufferArray>(curRangeOwner);
 
   if (!TF_VERIFY(GetResources().size() == curRangeOwner_->GetResources().size())) {
     TF_CODING_ERROR("Resource mismatch when reallocating buffer array");
@@ -309,14 +301,14 @@ void HdPhVBOMemoryManager::_StripedBufferArray::Reallocate(
 
   _totalCapacity = totalNumElements;
 
-  Hgi *hgi              = _resourceRegistry->GetHgi();
+  Hgi *hgi = _resourceRegistry->GetHgi();
   HgiBlitCmds *blitCmds = _resourceRegistry->GetGlobalBlitCmds();
   blitCmds->PushDebugGroup(__ARCH_PRETTY_FUNCTION__);
 
   // resize each BufferResource
   HdPhBufferResourceNamedList const &resources = GetResources();
   for (size_t bresIdx = 0; bresIdx < resources.size(); ++bresIdx) {
-    HdPhBufferResourceSharedPtr const &bres   = resources[bresIdx].second;
+    HdPhBufferResourceSharedPtr const &bres = resources[bresIdx].second;
     HdPhBufferResourceSharedPtr const &curRes = curRangeOwner_->GetResources()[bresIdx].second;
 
     int bytesPerElement = HdDataSizeOfTupleType(bres->GetTupleType());
@@ -333,9 +325,9 @@ void HdPhVBOMemoryManager::_StripedBufferArray::Reallocate(
     // Skip buffers of zero size
     if (bufferSize > 0) {
       HgiBufferDesc bufDesc;
-      bufDesc.usage    = HgiBufferUsageUniform;
+      bufDesc.usage = HgiBufferUsageUniform;
       bufDesc.byteSize = bufferSize;
-      newBuf           = hgi->CreateBuffer(bufDesc);
+      newBuf = hgi->CreateBuffer(bufDesc);
     }
 
     // if old and new buffer exist, copy unchanged data
@@ -346,12 +338,11 @@ void HdPhVBOMemoryManager::_StripedBufferArray::Reallocate(
       HdPhBufferRelocator relocator(curBuf, newBuf);
       TF_FOR_ALL(it, ranges)
       {
-        _StripedBufferArrayRangeSharedPtr range =
-            std::static_pointer_cast<_StripedBufferArrayRange>(*it);
+        _StripedBufferArrayRangeSharedPtr range = std::static_pointer_cast<_StripedBufferArrayRange>(*it);
         if (!range) {
           TF_CODING_ERROR(
-              "_StripedBufferArrayRange "
-              "expired unexpectedly.");
+            "_StripedBufferArrayRange "
+            "expired unexpectedly.");
           continue;
         }
 
@@ -369,12 +360,12 @@ void HdPhVBOMemoryManager::_StripedBufferArray::Reallocate(
         //   Shrinking the range. When the garbage collection
         //   truncates ranges.
         //
-        int oldSize        = range->GetCapacity();
-        int newSize        = range->GetNumElements();
+        int oldSize = range->GetCapacity();
+        int newSize = range->GetNumElements();
         ptrdiff_t copySize = std::min(oldSize, newSize) * bytesPerElement;
-        int oldOffset      = range->GetElementOffset();
+        int oldOffset = range->GetElementOffset();
         if (copySize > 0) {
-          ptrdiff_t readOffset  = oldOffset * bytesPerElement;
+          ptrdiff_t readOffset = oldOffset * bytesPerElement;
           ptrdiff_t writeOffset = *newOffsetIt * bytesPerElement;
 
           relocator.AddRange(readOffset, writeOffset, copySize);
@@ -397,7 +388,7 @@ void HdPhVBOMemoryManager::_StripedBufferArray::Reallocate(
   // update ranges
   for (size_t idx = 0; idx < ranges.size(); ++idx) {
     _StripedBufferArrayRangeSharedPtr range = std::static_pointer_cast<_StripedBufferArrayRange>(
-        ranges[idx]);
+      ranges[idx]);
     if (!range) {
       TF_CODING_ERROR("_StripedBufferArrayRange expired unexpectedly.");
       continue;
@@ -409,7 +400,7 @@ void HdPhVBOMemoryManager::_StripedBufferArray::Reallocate(
   blitCmds->PopDebugGroup();
 
   _needsReallocation = false;
-  _needsCompaction   = false;
+  _needsCompaction = false;
 
   // increment version to rebuild dispatch buffers.
   IncrementVersion();
@@ -460,8 +451,8 @@ HdPhBufferResourceSharedPtr HdPhVBOMemoryManager::_StripedBufferArray::GetResour
     {
       if (it->second->GetHandle() != buffer) {
         TF_CODING_ERROR(
-            "GetResource(void) called on"
-            "HdBufferArray having multiple GPU resources");
+          "GetResource(void) called on"
+          "HdBufferArray having multiple GPU resources");
       }
     }
   }
@@ -470,15 +461,13 @@ HdPhBufferResourceSharedPtr HdPhVBOMemoryManager::_StripedBufferArray::GetResour
   return _resourceList.begin()->second;
 }
 
-HdPhBufferResourceSharedPtr HdPhVBOMemoryManager::_StripedBufferArray::GetResource(
-    TfToken const &name)
+HdPhBufferResourceSharedPtr HdPhVBOMemoryManager::_StripedBufferArray::GetResource(TfToken const &name)
 {
   HD_TRACE_FUNCTION();
 
   // linear search.
   // The number of buffer resources should be small (<10 or so).
-  for (HdPhBufferResourceNamedList::iterator it = _resourceList.begin(); it != _resourceList.end();
-       ++it) {
+  for (HdPhBufferResourceNamedList::iterator it = _resourceList.begin(); it != _resourceList.end(); ++it) {
     if (it->first == name)
       return it->second;
   }
@@ -579,11 +568,11 @@ bool HdPhVBOMemoryManager::_StripedBufferArrayRange::Resize(int numElements)
 
     if (static_cast<size_t>(numElements) > numMaxElements) {
       TF_WARN(
-          "Attempting to resize the BAR with 0x%x elements when the "
-          "max number of elements in the buffer array is 0x%lx. "
-          "Clamping BAR size to the latter.",
-          numElements,
-          numMaxElements);
+        "Attempting to resize the BAR with 0x%x elements when the "
+        "max number of elements in the buffer array is 0x%lx. "
+        "Clamping BAR size to the latter.",
+        numElements,
+        numMaxElements);
 
       numElements = numMaxElements;
     }
@@ -596,8 +585,7 @@ bool HdPhVBOMemoryManager::_StripedBufferArrayRange::Resize(int numElements)
   return needsReallocation;
 }
 
-void HdPhVBOMemoryManager::_StripedBufferArrayRange::CopyData(
-    HdBufferSourceSharedPtr const &bufferSource)
+void HdPhVBOMemoryManager::_StripedBufferArrayRange::CopyData(HdBufferSourceSharedPtr const &bufferSource)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -607,9 +595,7 @@ void HdPhVBOMemoryManager::_StripedBufferArrayRange::CopyData(
 
   HdPhBufferResourceSharedPtr VBO = _stripedBufferArray->GetResource(bufferSource->GetName());
 
-  if (!TF_VERIFY((VBO && VBO->GetHandle()),
-                 "VBO doesn't exist for %s",
-                 bufferSource->GetName().GetText())) {
+  if (!TF_VERIFY((VBO && VBO->GetHandle()), "VBO doesn't exist for %s", bufferSource->GetName().GetText())) {
     return;
   }
 
@@ -631,13 +617,10 @@ void HdPhVBOMemoryManager::_StripedBufferArrayRange::CopyData(
   // overrun check. for graceful handling of erroneous assets,
   // issue warning here and continue to copy for the valid range.
   size_t dstSize = _numElements * bytesPerElement;
-  size_t srcSize = bufferSource->GetNumElements() *
-                   HdDataSizeOfTupleType(bufferSource->GetTupleType());
+  size_t srcSize = bufferSource->GetNumElements() * HdDataSizeOfTupleType(bufferSource->GetTupleType());
   if (srcSize > dstSize) {
-    TF_WARN("%s: size %ld is larger than the range (%ld)",
-            bufferSource->GetName().GetText(),
-            srcSize,
-            dstSize);
+    TF_WARN(
+      "%s: size %ld is larger than the range (%ld)", bufferSource->GetName().GetText(), srcSize, dstSize);
     srcSize = dstSize;
   }
   size_t vboOffset = bytesPerElement * _elementOffset;
@@ -645,11 +628,11 @@ void HdPhVBOMemoryManager::_StripedBufferArrayRange::CopyData(
   HD_PERF_COUNTER_INCR(HdPhPerfTokens->copyBufferCpuToGpu);
 
   HgiBufferCpuToGpuOp blitOp;
-  blitOp.cpuSourceBuffer      = bufferSource->GetData();
+  blitOp.cpuSourceBuffer = bufferSource->GetData();
   blitOp.gpuDestinationBuffer = VBO->GetHandle();
 
-  blitOp.sourceByteOffset      = 0;
-  blitOp.byteSize              = srcSize;
+  blitOp.sourceByteOffset = 0;
+  blitOp.byteSize = srcSize;
   blitOp.destinationByteOffset = vboOffset;
 
   HgiBlitCmds *blitCmds = GetResourceRegistry()->GetGlobalBlitCmds();
@@ -658,8 +641,7 @@ void HdPhVBOMemoryManager::_StripedBufferArrayRange::CopyData(
   blitCmds->PopDebugGroup();
 }
 
-int HdPhVBOMemoryManager::_StripedBufferArrayRange::GetByteOffset(
-    TfToken const &resourceName) const
+int HdPhVBOMemoryManager::_StripedBufferArrayRange::GetByteOffset(TfToken const &resourceName) const
 {
   if (!TF_VERIFY(_stripedBufferArray))
     return 0;
@@ -724,8 +706,7 @@ HdPhBufferResourceSharedPtr HdPhVBOMemoryManager::_StripedBufferArrayRange::GetR
   return _stripedBufferArray->GetResource();
 }
 
-HdPhBufferResourceSharedPtr HdPhVBOMemoryManager::_StripedBufferArrayRange::GetResource(
-    TfToken const &name)
+HdPhBufferResourceSharedPtr HdPhVBOMemoryManager::_StripedBufferArrayRange::GetResource(TfToken const &name)
 {
   if (!TF_VERIFY(_stripedBufferArray))
     return HdPhBufferResourceSharedPtr();
@@ -733,8 +714,7 @@ HdPhBufferResourceSharedPtr HdPhVBOMemoryManager::_StripedBufferArrayRange::GetR
   return _stripedBufferArray->GetResource(name);
 }
 
-HdPhBufferResourceNamedList const &HdPhVBOMemoryManager::_StripedBufferArrayRange::GetResources()
-    const
+HdPhBufferResourceNamedList const &HdPhVBOMemoryManager::_StripedBufferArrayRange::GetResources() const
 {
   if (!TF_VERIFY(_stripedBufferArray)) {
     static HdPhBufferResourceNamedList empty;
@@ -760,7 +740,7 @@ const void *HdPhVBOMemoryManager::_StripedBufferArrayRange::_GetAggregation() co
 }
 
 size_t HdPhVBOMemoryManager::_StripedBufferArrayRange::_GetByteOffset(
-    HdPhBufferResourceSharedPtr const &resource) const
+  HdPhBufferResourceSharedPtr const &resource) const
 {
   return HdDataSizeOfTupleType(resource->GetTupleType()) * _elementOffset;
 }

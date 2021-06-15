@@ -62,8 +62,7 @@ class Sdf_FileFormatRegistry : boost::noncopyable {
   /// \p s and target \p target. Extension \p s may be a full file path name,
   /// or an extension with or without a leading dot (e.g. 'foo/bar.usd', 'usd'
   /// or '.usd' are acceptable).
-  SdfFileFormatConstPtr FindByExtension(const std::string &s,
-                                        const std::string &target = std::string());
+  SdfFileFormatConstPtr FindByExtension(const std::string &s, const std::string &target = std::string());
 
   /// Returns a set containing the extension(s) corresponding to
   /// all registered file formats.
@@ -83,15 +82,12 @@ class Sdf_FileFormatRegistry : boost::noncopyable {
   ///
   class _Info {
    public:
-    _Info(const TfToken &formatId,
-          const TfType &type,
-          const TfToken &target,
-          const PlugPluginPtr &plugin)
-        : formatId(formatId),
-          type(type),
-          target(target),
-          _plugin(plugin),
-          _hasFormat(false)
+    _Info(const TfToken &formatId, const TfType &type, const TfToken &target, const PlugPluginPtr &plugin)
+      : formatId(formatId),
+        type(type),
+        target(target),
+        _plugin(plugin),
+        _hasFormat(false)
     {}
 
     // Return this _Info's file format

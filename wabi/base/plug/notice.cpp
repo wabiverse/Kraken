@@ -50,7 +50,7 @@ PlugNotice::Base::~Base()
 ////////////////////////////////////////////////////////////
 
 PlugNotice::DidRegisterPlugins::DidRegisterPlugins(const PlugPluginPtrVector &newPlugins)
-    : _plugins(newPlugins)
+  : _plugins(newPlugins)
 {}
 
 PlugNotice::DidRegisterPlugins::~DidRegisterPlugins()

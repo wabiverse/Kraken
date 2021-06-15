@@ -54,20 +54,14 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateAngleAttr(UsdLuxDistantLight &self,
-                                     object defaultVal,
-                                     bool writeSparsely)
+static UsdAttribute _CreateAngleAttr(UsdLuxDistantLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateAngleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                              writeSparsely);
+  return self.CreateAngleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
-static UsdAttribute _CreateIntensityAttr(UsdLuxDistantLight &self,
-                                         object defaultVal,
-                                         bool writeSparsely)
+static UsdAttribute _CreateIntensityAttr(UsdLuxDistantLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                  writeSparsely);
+  return self.CreateIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
 static std::string _Repr(const UsdLuxDistantLight &self)
@@ -85,39 +79,36 @@ void wrapUsdLuxDistantLight()
   class_<This, bases<UsdLuxLight>> cls("DistantLight");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetAngleAttr", &This::GetAngleAttr)
-      .def("CreateAngleAttr",
-           &_CreateAngleAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAngleAttr", &This::GetAngleAttr)
+    .def(
+      "CreateAngleAttr", &_CreateAngleAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetIntensityAttr", &This::GetIntensityAttr)
-      .def("CreateIntensityAttr",
-           &_CreateIntensityAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetIntensityAttr", &This::GetIntensityAttr)
+    .def("CreateIntensityAttr",
+         &_CreateIntensityAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

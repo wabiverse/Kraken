@@ -126,7 +126,7 @@ class NdrRegistry : public TfWeakBase {
   NdrNodeConstPtr GetNodeFromAsset(const SdfAssetPath &asset,
                                    const NdrTokenMap &metadata,
                                    const TfToken &subIdentifier = TfToken(),
-                                   const TfToken &sourceType    = TfToken());
+                                   const TfToken &sourceType = TfToken());
 
   /// Parses the given \p sourceCode string, constructs a NdrNode from it and
   /// adds it to the registry. The parser to be used is determined by the
@@ -163,7 +163,7 @@ class NdrRegistry : public TfWeakBase {
   /// to that family and a filter can be specified to get just the default
   /// version (the default) or all versions of the node.
   NDR_API
-  NdrIdentifierVec GetNodeIdentifiers(const TfToken &family   = TfToken(),
+  NdrIdentifierVec GetNodeIdentifiers(const TfToken &family = TfToken(),
                                       NdrVersionFilter filter = NdrVersionFilterDefaultOnly) const;
 
   /// Get the names of all the nodes that the registry is aware of.
@@ -212,8 +212,7 @@ class NdrRegistry : public TfWeakBase {
   ///
   /// \sa NdrNodeDiscoveryResult::aliases
   NDR_API
-  NdrNodeConstPtr GetNodeByIdentifierAndType(const NdrIdentifier &identifier,
-                                             const TfToken &sourceType);
+  NdrNodeConstPtr GetNodeByIdentifierAndType(const NdrIdentifier &identifier, const TfToken &sourceType);
 
   /// Get the node with the specified name.  An optional priority list
   /// specifies the set of node SOURCE types (\sa NdrNode::GetSourceType())
@@ -266,7 +265,7 @@ class NdrRegistry : public TfWeakBase {
   /// (unless a family is specified), so this may take some time to run
   /// the first time it is called.
   NDR_API
-  NdrNodeConstPtrVec GetNodesByFamily(const TfToken &family   = TfToken(),
+  NdrNodeConstPtrVec GetNodesByFamily(const TfToken &family = TfToken(),
                                       NdrVersionFilter filter = NdrVersionFilterDefaultOnly);
 
   /// Get a sorted list of all node source types that may be present on the
@@ -297,8 +296,7 @@ class NdrRegistry : public TfWeakBase {
   class _DiscoveryContext;
   friend class _DiscoveryContext;
 
-  typedef std::unordered_map<TfToken, NdrParserPlugin *, TfToken::HashFunctor>
-      TypeToParserPluginMap;
+  typedef std::unordered_map<TfToken, NdrParserPlugin *, TfToken::HashFunctor> TypeToParserPluginMap;
   typedef std::pair<NdrIdentifier, TfToken> NodeMapKey;
   struct NodeMapKeyHashFunctor {
     size_t operator()(const NodeMapKey &x) const
@@ -337,8 +335,7 @@ class NdrRegistry : public TfWeakBase {
 
   // Returns the cached or newly parsed node for the discovery result if it
   // has an alias that matches the given identifier.
-  NdrNodeConstPtr _ParseNodeMatchingAlias(const NdrNodeDiscoveryResult &dr,
-                                          const NdrIdentifier &identifier);
+  NdrNodeConstPtr _ParseNodeMatchingAlias(const NdrNodeDiscoveryResult &dr, const NdrIdentifier &identifier);
 
   // Returns the cached or newly parsed node for the discovery result if its
   // name and version match the given name and version filter.

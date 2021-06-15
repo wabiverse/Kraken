@@ -42,8 +42,8 @@ TF_DECLARE_PUBLIC_TOKENS(HdBasisCurvesReprDescTokens, HD_API, HD_BASISCURVES_REP
 struct HdBasisCurvesReprDesc {
   HdBasisCurvesReprDesc(HdBasisCurvesGeomStyle geomStyle = HdBasisCurvesGeomStyleInvalid,
                         TfToken shadingTerminal = HdBasisCurvesReprDescTokens->surfaceShader)
-      : geomStyle(geomStyle),
-        shadingTerminal(shadingTerminal)
+    : geomStyle(geomStyle),
+      shadingTerminal(shadingTerminal)
   {}
 
   bool IsEmpty() const
@@ -92,7 +92,7 @@ class HdBasisCurves : public HdRprim {
 
  private:
   // Class can not be default constructed or copied.
-  HdBasisCurves()                      = delete;
+  HdBasisCurves() = delete;
   HdBasisCurves(const HdBasisCurves &) = delete;
   HdBasisCurves &operator=(const HdBasisCurves &) = delete;
 

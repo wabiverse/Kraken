@@ -212,11 +212,7 @@ class NdrVersion {
 };
 
 /// Enumeration used to select nodes by version.
-enum NdrVersionFilter {
-  NdrVersionFilterDefaultOnly,
-  NdrVersionFilterAllVersions,
-  NdrNumVersionFilters
-};
+enum NdrVersionFilter { NdrVersionFilterDefaultOnly, NdrVersionFilterAllVersions, NdrNumVersionFilters };
 
 WABI_NAMESPACE_END
 

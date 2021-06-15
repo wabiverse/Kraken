@@ -30,13 +30,13 @@
 WABI_NAMESPACE_BEGIN
 
 HdPh_MaterialParam::HdPh_MaterialParam()
-    : paramType(ParamTypeFallback),
-      name(),
-      fallbackValue(),
-      samplerCoords(),
-      textureType(HdTextureType::Uv),
-      swizzle(),
-      isPremultiplied(false)
+  : paramType(ParamTypeFallback),
+    name(),
+    fallbackValue(),
+    samplerCoords(),
+    textureType(HdTextureType::Uv),
+    swizzle(),
+    isPremultiplied(false)
 {}
 
 HdPh_MaterialParam::HdPh_MaterialParam(ParamType paramType,
@@ -46,13 +46,13 @@ HdPh_MaterialParam::HdPh_MaterialParam(ParamType paramType,
                                        HdTextureType textureType,
                                        std::string const &swizzle,
                                        bool const isPremultiplied)
-    : paramType(paramType),
-      name(name),
-      fallbackValue(fallbackValue),
-      samplerCoords(samplerCoords),
-      textureType(textureType),
-      swizzle(swizzle),
-      isPremultiplied(isPremultiplied)
+  : paramType(paramType),
+    name(name),
+    fallbackValue(fallbackValue),
+    samplerCoords(samplerCoords),
+    textureType(textureType),
+    swizzle(swizzle),
+    isPremultiplied(isPremultiplied)
 {}
 
 size_t HdPh_MaterialParam::ComputeHash(HdPh_MaterialParamVector const &params)

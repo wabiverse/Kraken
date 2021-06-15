@@ -64,7 +64,7 @@ UsdShadeOutput::UsdShadeOutput(UsdPrim prim, TfToken const &name, SdfValueTypeNa
 {
   // XXX what do we do if the type name doesn't match and it exists already?
   TfToken attrName = _GetOutputAttrName(name);
-  _attr            = prim.GetAttribute(attrName);
+  _attr = prim.GetAttribute(attrName);
   if (!_attr) {
     _attr = prim.CreateAttribute(attrName, typeName, /* custom = */ false);
   }
@@ -198,14 +198,12 @@ bool UsdShadeOutput::ConnectToSource(UsdShadeOutput const &sourceOutput) const
   return UsdShadeConnectableAPI::ConnectToSource(*this, sourceOutput);
 }
 
-bool UsdShadeOutput::SetConnectedSources(
-    std::vector<UsdShadeConnectionSourceInfo> const &sourceInfos) const
+bool UsdShadeOutput::SetConnectedSources(std::vector<UsdShadeConnectionSourceInfo> const &sourceInfos) const
 {
   return UsdShadeConnectableAPI::SetConnectedSources(*this, sourceInfos);
 }
 
-UsdShadeOutput::SourceInfoVector UsdShadeOutput::GetConnectedSources(
-    SdfPathVector *invalidSourcePaths) const
+UsdShadeOutput::SourceInfoVector UsdShadeOutput::GetConnectedSources(SdfPathVector *invalidSourcePaths) const
 {
   return UsdShadeConnectableAPI::GetConnectedSources(*this, invalidSourcePaths);
 }

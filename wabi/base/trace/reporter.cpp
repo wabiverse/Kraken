@@ -59,13 +59,13 @@ TF_DEFINE_PUBLIC_TOKENS(TraceReporterTokens, TRACE_REPORTER_TOKENS);
 //
 
 TraceReporter::TraceReporter(const string &label, DataSourcePtr dataSource)
-    : TraceReporterBase(std::move(dataSource)),
-      _label(label),
-      _groupByFunction(true),
-      _foldRecursiveCalls(false)
+  : TraceReporterBase(std::move(dataSource)),
+    _label(label),
+    _groupByFunction(true),
+    _foldRecursiveCalls(false)
 {
   _aggregateTree = TraceAggregateTree::New();
-  _eventTree     = TraceEventTree::New();
+  _eventTree = TraceEventTree::New();
 }
 
 TraceReporter::~TraceReporter()
@@ -98,13 +98,13 @@ static void _PrintLineTimes(ostream &s,
                             bool recursive_node,
                             int iterationCount)
 {
-  string inclusiveStr = TfStringPrintf(
-      "%9.3f ms ", ArchTicksToSeconds(uint64_t(inclusive * 1e3) / iterationCount));
+  string inclusiveStr = TfStringPrintf("%9.3f ms ",
+                                       ArchTicksToSeconds(uint64_t(inclusive * 1e3) / iterationCount));
   if (inclusive <= 0)
     inclusiveStr = string(inclusiveStr.size(), ' ');
 
-  string exclusiveStr = TfStringPrintf(
-      "%9.3f ms ", ArchTicksToSeconds(uint64_t(exclusive * 1e3) / iterationCount));
+  string exclusiveStr = TfStringPrintf("%9.3f ms ",
+                                       ArchTicksToSeconds(uint64_t(exclusive * 1e3) / iterationCount));
   if (exclusive <= 0)
     exclusiveStr = string(exclusiveStr.size(), ' ');
 
@@ -144,10 +144,7 @@ static void _PrintRecursionMarker(ostream &s, const std::string &label, int inde
   s << "[" << label << "]\n";
 }
 
-static void _PrintNodeTimes(ostream &s,
-                            TraceAggregateNodeRefPtr node,
-                            int indent,
-                            int iterationCount)
+static void _PrintNodeTimes(ostream &s, TraceAggregateNodeRefPtr node, int indent, int iterationCount)
 {
   // The root of the tree has id == -1, no useful stats there.
 
@@ -347,7 +344,7 @@ TraceReporterPtr TraceReporter::GetGlobalReporter()
   // Note that, like TfSingleton, the global reporter instance is not freed
   // at shutdown.
   static const TraceReporterPtr globalReporter(
-      new TraceReporter("Trace global reporter", TraceReporterDataSourceCollector::New()));
+    new TraceReporter("Trace global reporter", TraceReporterDataSourceCollector::New()));
   return globalReporter;
 }
 

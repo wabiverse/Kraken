@@ -40,21 +40,19 @@ WABI_NAMESPACE_BEGIN
 //
 
 GarchGLXContextState::GarchGLXContextState()
-    : display(glXGetCurrentDisplay()),
-      drawable(glXGetCurrentDrawable()),
-      context(glXGetCurrentContext()),
-      _defaultCtor(true)
+  : display(glXGetCurrentDisplay()),
+    drawable(glXGetCurrentDrawable()),
+    context(glXGetCurrentContext()),
+    _defaultCtor(true)
 {
   // Do nothing
 }
 
-GarchGLXContextState::GarchGLXContextState(Display *display_,
-                                           GLXDrawable drawable_,
-                                           GLXContext context_)
-    : display(display_),
-      drawable(drawable_),
-      context(context_),
-      _defaultCtor(false)
+GarchGLXContextState::GarchGLXContextState(Display *display_, GLXDrawable drawable_, GLXContext context_)
+  : display(display_),
+    drawable(drawable_),
+    context(context_),
+    _defaultCtor(false)
 {
   // Do nothing
 }

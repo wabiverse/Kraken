@@ -52,7 +52,7 @@ class SdfChangeList {
   SdfChangeList() = default;
   SDF_API SdfChangeList(SdfChangeList const &);
   SdfChangeList(SdfChangeList &&) = default;
-  SDF_API SdfChangeList &operator =(SdfChangeList const &);
+  SDF_API SdfChangeList &operator=(SdfChangeList const &);
   SdfChangeList &operator=(SdfChangeList &&) = default;
 
   enum SubLayerChangeType { SubLayerAdded, SubLayerRemoved, SubLayerOffset };

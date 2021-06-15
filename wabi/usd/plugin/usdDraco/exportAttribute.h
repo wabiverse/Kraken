@@ -46,15 +46,13 @@ WABI_NAMESPACE_BEGIN
 ///
 class UsdDracoExportAttributeInterface {
  public:
-  virtual const UsdDracoAttributeDescriptor &GetDescriptor() const          = 0;
+  virtual const UsdDracoAttributeDescriptor &GetDescriptor() const = 0;
   virtual void GetFromMesh(const UsdGeomMesh &usdMesh, size_t numPositions) = 0;
-  virtual void SetToMesh(draco::Mesh *dracoMesh)                            = 0;
-  virtual void SetPointMapEntry(draco::PointIndex pointIndex,
-                                size_t positionIndex,
-                                size_t cornerIndex)                         = 0;
-  virtual size_t GetNumValues() const                                       = 0;
-  virtual size_t GetNumIndices() const                                      = 0;
-  virtual bool UsesPositionIndex() const                                    = 0;
+  virtual void SetToMesh(draco::Mesh *dracoMesh) = 0;
+  virtual void SetPointMapEntry(draco::PointIndex pointIndex, size_t positionIndex, size_t cornerIndex) = 0;
+  virtual size_t GetNumValues() const = 0;
+  virtual size_t GetNumIndices() const = 0;
+  virtual bool UsesPositionIndex() const = 0;
 };
 
 /// \class UsdDracoExportAttribute
@@ -81,9 +79,7 @@ template<class T> class UsdDracoExportAttribute : public UsdDracoExportAttribute
 
   // Sets Draco mesh attribute point map entry using either position index or
   // corner index, depending on the USD attribute interpolation value.
-  void SetPointMapEntry(draco::PointIndex pointIndex,
-                        size_t positionIndex,
-                        size_t cornerIndex) override;
+  void SetPointMapEntry(draco::PointIndex pointIndex, size_t positionIndex, size_t cornerIndex) override;
   void Clear();
   size_t GetNumValues() const override;
   size_t GetNumIndices() const override;
@@ -102,8 +98,7 @@ template<class T> class UsdDracoExportAttribute : public UsdDracoExportAttribute
   }
 
   // Specialization for GfHalf type.
-  template<class T_                                                         = T,
-           typename std::enable_if<std::is_same<T_, GfHalf>::value>::type * = nullptr>
+  template<class T_ = T, typename std::enable_if<std::is_same<T_, GfHalf>::value>::type * = nullptr>
   void _SetAttributeValueSpecialized(draco::AttributeValueIndex avi, const T &value)
   {
     // USD halfs are stored as Draco 16-bit ints.
@@ -148,13 +143,12 @@ template<class T> class UsdDracoExportAttribute : public UsdDracoExportAttribute
 
 template<class T>
 UsdDracoExportAttribute<T>::UsdDracoExportAttribute(const UsdDracoAttributeDescriptor &descriptor)
-    : _descriptor(descriptor),
-      _pointAttribute(nullptr),
-      _usePositionIndex(false)
+  : _descriptor(descriptor),
+    _pointAttribute(nullptr),
+    _usePositionIndex(false)
 {}
 
-template<class T>
-const UsdDracoAttributeDescriptor &UsdDracoExportAttribute<T>::GetDescriptor() const
+template<class T> const UsdDracoAttributeDescriptor &UsdDracoExportAttribute<T>::GetDescriptor() const
 {
   return _descriptor;
 }
@@ -167,7 +161,7 @@ void UsdDracoExportAttribute<T>::GetFromMesh(const UsdGeomMesh &usdMesh, size_t 
   if (_descriptor.GetIsPrimvar()) {
     // Get data from a primvar.
     const UsdGeomPrimvarsAPI api = UsdGeomPrimvarsAPI(usdMesh.GetPrim());
-    UsdGeomPrimvar primvar       = api.GetPrimvar(_descriptor.GetName());
+    UsdGeomPrimvar primvar = api.GetPrimvar(_descriptor.GetName());
     if (!primvar)
       return;
     primvar.GetAttr().Get(&_values, _descriptor.GetValuesTime());
@@ -207,7 +201,7 @@ template<class T> void UsdDracoExportAttribute<T>::SetToMesh(draco::Mesh *dracoM
                     byteStride,
                     0 /* byteOffset */);
   const int attributeId = dracoMesh->AddAttribute(geometryAttr, false, _values.size());
-  _pointAttribute       = dracoMesh->attribute(attributeId);
+  _pointAttribute = dracoMesh->attribute(attributeId);
 
   // Populate Draco attribute values.
   for (size_t i = 0; i < _values.size(); i++)
@@ -233,15 +227,13 @@ void UsdDracoExportAttribute<T>::_MakeRange(VtArray<S> *array, size_t size)
 }
 
 template<class T>
-inline void UsdDracoExportAttribute<T>::_SetAttributeValue(draco::AttributeValueIndex avi,
-                                                           size_t index)
+inline void UsdDracoExportAttribute<T>::_SetAttributeValue(draco::AttributeValueIndex avi, size_t index)
 {
   _SetAttributeValueSpecialized(avi, _values[index]);
 }
 
 template<class T>
-inline void UsdDracoExportAttribute<T>::SetPointMapEntry(draco::PointIndex pointIndex,
-                                                         size_t entryIndex)
+inline void UsdDracoExportAttribute<T>::SetPointMapEntry(draco::PointIndex pointIndex, size_t entryIndex)
 {
   if (_pointAttribute == nullptr)
     return;
@@ -255,7 +247,7 @@ inline void UsdDracoExportAttribute<T>::SetPointMapEntry(draco::PointIndex point
 {
   if (_pointAttribute == nullptr)
     return;
-  const size_t index      = _usePositionIndex ? positionIndex : cornerIndex;
+  const size_t index = _usePositionIndex ? positionIndex : cornerIndex;
   const size_t entryIndex = _indices[index];
   SetPointMapEntry(pointIndex, entryIndex);
 }
@@ -265,7 +257,7 @@ template<class T> void UsdDracoExportAttribute<T>::Clear()
   _values.clear();
   _indices.clear();
   _usePositionIndex = false;
-  _pointAttribute   = nullptr;
+  _pointAttribute = nullptr;
 }
 
 template<class T> size_t UsdDracoExportAttribute<T>::GetNumValues() const

@@ -160,8 +160,7 @@ class Hd_NullRprim final : public HdRprim {
  protected:
   virtual void _InitRepr(TfToken const &reprToken, HdDirtyBits *dirtyBits) override
   {
-    _ReprVector::iterator it = std::find_if(
-        _reprs.begin(), _reprs.end(), _ReprComparator(reprToken));
+    _ReprVector::iterator it = std::find_if(_reprs.begin(), _reprs.end(), _ReprComparator(reprToken));
     if (it == _reprs.end()) {
       _reprs.emplace_back(reprToken, HdReprSharedPtr());
     }
@@ -176,7 +175,7 @@ class Hd_NullRprim final : public HdRprim {
     for (size_t interpolation = HdInterpolationConstant; interpolation < HdInterpolationCount;
          ++interpolation) {
       HdPrimvarDescriptorVector primvars = GetPrimvarDescriptors(
-          delegate, static_cast<HdInterpolation>(interpolation));
+        delegate, static_cast<HdInterpolation>(interpolation));
 
       size_t numPrimVars = primvars.size();
       for (size_t primVarNum = 0; primVarNum < numPrimVars; ++primVarNum) {
@@ -189,7 +188,7 @@ class Hd_NullRprim final : public HdRprim {
     }
   }
 
-  Hd_NullRprim()                     = delete;
+  Hd_NullRprim() = delete;
   Hd_NullRprim(const Hd_NullRprim &) = delete;
   Hd_NullRprim &operator=(const Hd_NullRprim &) = delete;
 };
@@ -213,7 +212,7 @@ class Hd_NullMaterial final : public HdMaterial {
   }
 
  private:
-  Hd_NullMaterial()                        = delete;
+  Hd_NullMaterial() = delete;
   Hd_NullMaterial(const Hd_NullMaterial &) = delete;
   Hd_NullMaterial &operator=(const Hd_NullMaterial &) = delete;
 };
@@ -237,7 +236,7 @@ class Hd_NullCoordSys final : public HdCoordSys {
   }
 
  private:
-  Hd_NullCoordSys()                        = delete;
+  Hd_NullCoordSys() = delete;
   Hd_NullCoordSys(const Hd_NullCoordSys &) = delete;
   Hd_NullCoordSys &operator=(const Hd_NullCoordSys &) = delete;
 };
@@ -261,20 +260,18 @@ class Hd_NullCamera final : public HdCamera {
   }
 
  private:
-  Hd_NullCamera()                      = delete;
+  Hd_NullCamera() = delete;
   Hd_NullCamera(const Hd_NullCamera &) = delete;
   Hd_NullCamera &operator=(const Hd_NullCamera &) = delete;
 };
 
-const TfTokenVector Hd_UnitTestNullRenderDelegate::SUPPORTED_RPRIM_TYPES = {
-    HdPrimTypeTokens->mesh,
-    HdPrimTypeTokens->basisCurves,
-    HdPrimTypeTokens->points};
+const TfTokenVector Hd_UnitTestNullRenderDelegate::SUPPORTED_RPRIM_TYPES = {HdPrimTypeTokens->mesh,
+                                                                            HdPrimTypeTokens->basisCurves,
+                                                                            HdPrimTypeTokens->points};
 
-const TfTokenVector Hd_UnitTestNullRenderDelegate::SUPPORTED_SPRIM_TYPES = {
-    HdPrimTypeTokens->camera,
-    HdPrimTypeTokens->coordSys,
-    HdPrimTypeTokens->material};
+const TfTokenVector Hd_UnitTestNullRenderDelegate::SUPPORTED_SPRIM_TYPES = {HdPrimTypeTokens->camera,
+                                                                            HdPrimTypeTokens->coordSys,
+                                                                            HdPrimTypeTokens->material};
 
 const TfTokenVector Hd_UnitTestNullRenderDelegate::SUPPORTED_BPRIM_TYPES = {};
 
@@ -304,15 +301,13 @@ HdResourceRegistrySharedPtr Hd_UnitTestNullRenderDelegate::GetResourceRegistry()
   return resourceRegistry;
 }
 
-HdRenderPassSharedPtr Hd_UnitTestNullRenderDelegate::CreateRenderPass(
-    HdRenderIndex *index,
-    HdRprimCollection const &collection)
+HdRenderPassSharedPtr Hd_UnitTestNullRenderDelegate::CreateRenderPass(HdRenderIndex *index,
+                                                                      HdRprimCollection const &collection)
 {
   return HdRenderPassSharedPtr(new Hd_UnitTestNullRenderPass(index, collection));
 }
 
-HdInstancer *Hd_UnitTestNullRenderDelegate::CreateInstancer(HdSceneDelegate *delegate,
-                                                            SdfPath const &id)
+HdInstancer *Hd_UnitTestNullRenderDelegate::CreateInstancer(HdSceneDelegate *delegate, SdfPath const &id)
 {
   return new HdInstancer(delegate, id);
 }
@@ -404,8 +399,7 @@ HdCommandDescriptors Hd_UnitTestNullRenderDelegate::GetCommandDescriptors() cons
   return {commandDesc};
 }
 
-bool Hd_UnitTestNullRenderDelegate::InvokeCommand(const TfToken &command,
-                                                  const HdCommandArgs &args)
+bool Hd_UnitTestNullRenderDelegate::InvokeCommand(const TfToken &command, const HdCommandArgs &args)
 {
   if (command == _tokens->print) {
     HdCommandArgs::const_iterator it = args.find(_tokens->message);

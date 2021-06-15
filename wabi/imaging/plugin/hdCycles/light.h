@@ -64,9 +64,7 @@ class HdCyclesLight final : public HdLight {
    * @param a_renderDelegate Associated Render Delegate
    * as a prototype
    */
-  HdCyclesLight(SdfPath const &id,
-                TfToken const &lightType,
-                HdCyclesRenderDelegate *a_renderDelegate);
+  HdCyclesLight(SdfPath const &id, TfToken const &lightType, HdCyclesRenderDelegate *a_renderDelegate);
 
   /**
    * @brief Destroy the HdCycles Light object
@@ -84,9 +82,7 @@ class HdCyclesLight final : public HdLight {
    * @param renderParam State
    * @param dirtyBits Which bits of scene data has changed
    */
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   /**
    * @brief Inform the scene graph which state needs to be downloaded in
@@ -110,11 +106,11 @@ class HdCyclesLight final : public HdLight {
   // Tracking for Cycles light shader graphs, saves on potentially
   // expensive new/delete re-creation of graphs for interactive sessions.
   enum ShaderGraphBits : uint8_t {
-    Default     = 0,
+    Default = 0,
     Temperature = 1 << 0,
-    IES         = 1 << 1,
-    Texture     = 1 << 2,
-    All         = (Temperature | IES | Texture)
+    IES = 1 << 1,
+    Texture = 1 << 2,
+    All = (Temperature | IES | Texture)
   };
 
   /**

@@ -102,157 +102,145 @@ void wrapFrustum()
 
   // Create some objects that will be reused a few times.
   //
-  object getPositionFunc = make_function(&This::GetPosition,
-                                         return_value_policy<copy_const_reference>());
-  object getRotationFunc = make_function(&This::GetRotation,
-                                         return_value_policy<copy_const_reference>());
-  object getWindowFunc   = make_function(&This::GetWindow,
-                                       return_value_policy<copy_const_reference>());
-  object getNearFarFunc  = make_function(&This::GetNearFar,
-                                        return_value_policy<copy_const_reference>());
+  object getPositionFunc = make_function(&This::GetPosition, return_value_policy<copy_const_reference>());
+  object getRotationFunc = make_function(&This::GetRotation, return_value_policy<copy_const_reference>());
+  object getWindowFunc = make_function(&This::GetWindow, return_value_policy<copy_const_reference>());
+  object getNearFarFunc = make_function(&This::GetNearFar, return_value_policy<copy_const_reference>());
 
   scope thisScope =
-      class_<This>("Frustum", "Basic view frustum", init<>())
-          .def(init<const This &>())
-          .def(init<const GfVec3d &,
-                    const GfRotation &,
-                    const GfRange2d &,
-                    const GfRange1d &,
-                    GfFrustum::ProjectionType,
-                    double>((args("position"),
-                             args("rotation"),
-                             args("window"),
-                             args("nearFar"),
-                             args("projectionType"),
-                             args("viewDistance") = 5.0)))
+    class_<This>("Frustum", "Basic view frustum", init<>())
+      .def(init<const This &>())
+      .def(init<const GfVec3d &,
+                const GfRotation &,
+                const GfRange2d &,
+                const GfRange1d &,
+                GfFrustum::ProjectionType,
+                double>((args("position"),
+                         args("rotation"),
+                         args("window"),
+                         args("nearFar"),
+                         args("projectionType"),
+                         args("viewDistance") = 5.0)))
 
-          .def(init<const GfMatrix4d &,
-                    const GfRange2d &,
-                    const GfRange1d &,
-                    GfFrustum::ProjectionType,
-                    double>((args("camToWorldXf"),
-                             args("window"),
-                             args("nearFar"),
-                             args("projectionType"),
-                             args("viewDistance") = 5.0)))
+      .def(init<const GfMatrix4d &, const GfRange2d &, const GfRange1d &, GfFrustum::ProjectionType, double>(
+        (args("camToWorldXf"),
+         args("window"),
+         args("nearFar"),
+         args("projectionType"),
+         args("viewDistance") = 5.0)))
 
-          .def(TfTypePythonClass())
+      .def(TfTypePythonClass())
 
-          .add_property("position", getPositionFunc, &This::SetPosition)
-          .add_property("rotation", getRotationFunc, &This::SetRotation)
-          .add_property("window", getWindowFunc, &This::SetWindow)
-          .add_property("nearFar", getNearFarFunc, &This::SetNearFar)
-          .add_property("viewDistance", &This::GetViewDistance, &This::SetViewDistance)
-          .add_property("projectionType", &This::GetProjectionType, &This::SetProjectionType)
+      .add_property("position", getPositionFunc, &This::SetPosition)
+      .add_property("rotation", getRotationFunc, &This::SetRotation)
+      .add_property("window", getWindowFunc, &This::SetWindow)
+      .add_property("nearFar", getNearFarFunc, &This::SetNearFar)
+      .add_property("viewDistance", &This::GetViewDistance, &This::SetViewDistance)
+      .add_property("projectionType", &This::GetProjectionType, &This::SetProjectionType)
 
-          .def("SetPerspective",
-               (void (This::*)(double, double, double, double)) & This::SetPerspective,
-               (args("fovHeight"), "aspectRatio", "nearDist", "farDist"))
-          .def("SetPerspective",
-               (void (This::*)(double, bool, double, double, double)) & This::SetPerspective,
-               (args("fov"), "isFovVertical", "aspectRatio", "nearDist", "farDist"))
+      .def("SetPerspective",
+           (void (This::*)(double, double, double, double)) & This::SetPerspective,
+           (args("fovHeight"), "aspectRatio", "nearDist", "farDist"))
+      .def("SetPerspective",
+           (void (This::*)(double, bool, double, double, double)) & This::SetPerspective,
+           (args("fov"), "isFovVertical", "aspectRatio", "nearDist", "farDist"))
 
-          .def("GetPerspective",
-               GetPerspectiveHelper,
-               (args("isFovVertical") = true),
-               "Returns the current perspective frustum values suitable\n"
-               "for use by SetPerspective.  If the current frustum is a\n"
-               "perspective projection, the return value is a tuple of\n"
-               "fieldOfView, aspectRatio, nearDistance, farDistance).\n"
-               "If the current frustum is not perspective, the return\n"
-               "value is None.")
+      .def("GetPerspective",
+           GetPerspectiveHelper,
+           (args("isFovVertical") = true),
+           "Returns the current perspective frustum values suitable\n"
+           "for use by SetPerspective.  If the current frustum is a\n"
+           "perspective projection, the return value is a tuple of\n"
+           "fieldOfView, aspectRatio, nearDistance, farDistance).\n"
+           "If the current frustum is not perspective, the return\n"
+           "value is None.")
 
-          .def("GetFOV",
-               &This::GetFOV,
-               (args("isFovVertical") = false),
-               "Returns the horizontal fov of the frustum. The fov of the\n"
-               "frustum is not necessarily the same value as displayed in\n"
-               "the viewer. The displayed fov is a function of the focal\n"
-               "length or FOV avar. The frustum's fov may be different due\n"
-               "to things like lens breathing.\n"
-               "\n"
-               "If the frustum is not of type GfFrustum::Perspective, the\n"
-               "returned FOV will be 0.0.")
+      .def("GetFOV",
+           &This::GetFOV,
+           (args("isFovVertical") = false),
+           "Returns the horizontal fov of the frustum. The fov of the\n"
+           "frustum is not necessarily the same value as displayed in\n"
+           "the viewer. The displayed fov is a function of the focal\n"
+           "length or FOV avar. The frustum's fov may be different due\n"
+           "to things like lens breathing.\n"
+           "\n"
+           "If the frustum is not of type GfFrustum::Perspective, the\n"
+           "returned FOV will be 0.0.")
 
-          .def("SetOrthographic", &This::SetOrthographic)
-          .def("GetOrthographic", GetOrthographicHelper)
+      .def("SetOrthographic", &This::SetOrthographic)
+      .def("GetOrthographic", GetOrthographicHelper)
 
-          .def("GetPosition", getPositionFunc)
-          .def("SetPosition", &This::SetPosition)
+      .def("GetPosition", getPositionFunc)
+      .def("SetPosition", &This::SetPosition)
 
-          .def("GetRotation", getRotationFunc)
-          .def("SetRotation", &This::SetRotation)
+      .def("GetRotation", getRotationFunc)
+      .def("SetRotation", &This::SetRotation)
 
-          .def("SetPositionAndRotationFromMatrix",
-               &This::SetPositionAndRotationFromMatrix,
-               (args("camToWorldXf")))
+      .def(
+        "SetPositionAndRotationFromMatrix", &This::SetPositionAndRotationFromMatrix, (args("camToWorldXf")))
 
-          .def("GetWindow", getWindowFunc)
-          .def("SetWindow", &This::SetWindow)
+      .def("GetWindow", getWindowFunc)
+      .def("SetWindow", &This::SetWindow)
 
-          .def("GetNearFar", getNearFarFunc)
-          .def("SetNearFar", &This::SetNearFar)
+      .def("GetNearFar", getNearFarFunc)
+      .def("SetNearFar", &This::SetNearFar)
 
-          .def("GetViewDistance", &This::GetViewDistance)
-          .def("SetViewDistance", &This::SetViewDistance)
+      .def("GetViewDistance", &This::GetViewDistance)
+      .def("SetViewDistance", &This::SetViewDistance)
 
-          .def("FitToSphere", &This::FitToSphere, FitToSphere_overloads())
+      .def("FitToSphere", &This::FitToSphere, FitToSphere_overloads())
 
-          .def("Transform", &This::Transform, return_self<>())
+      .def("Transform", &This::Transform, return_self<>())
 
-          .def("ComputeViewDirection", &This::ComputeViewDirection)
-          .def("ComputeUpVector", &This::ComputeUpVector)
+      .def("ComputeViewDirection", &This::ComputeViewDirection)
+      .def("ComputeUpVector", &This::ComputeUpVector)
 
-          .def("ComputeViewFrame", ComputeViewFrameHelper)
+      .def("ComputeViewFrame", ComputeViewFrameHelper)
 
-          .def("ComputeLookAtPoint", &This::ComputeLookAtPoint)
+      .def("ComputeLookAtPoint", &This::ComputeLookAtPoint)
 
-          .def("ComputeViewMatrix", &This::ComputeViewMatrix)
+      .def("ComputeViewMatrix", &This::ComputeViewMatrix)
 
-          .def("ComputeViewInverse", &This::ComputeViewInverse)
+      .def("ComputeViewInverse", &This::ComputeViewInverse)
 
-          .def("ComputeProjectionMatrix", &This::ComputeProjectionMatrix)
+      .def("ComputeProjectionMatrix", &This::ComputeProjectionMatrix)
 
-          .def("ComputeAspectRatio", &This::ComputeAspectRatio)
+      .def("ComputeAspectRatio", &This::ComputeAspectRatio)
 
-          .def("ComputeCorners", &This::ComputeCorners, return_value_policy<TfPySequenceToTuple>())
+      .def("ComputeCorners", &This::ComputeCorners, return_value_policy<TfPySequenceToTuple>())
 
-          .def("ComputeCornersAtDistance",
-               &This::ComputeCornersAtDistance,
-               return_value_policy<TfPySequenceToTuple>())
+      .def("ComputeCornersAtDistance",
+           &This::ComputeCornersAtDistance,
+           return_value_policy<TfPySequenceToTuple>())
 
-          .def("ComputeNarrowedFrustum",
-               (GfFrustum(This::*)(const GfVec2d &, const GfVec2d &) const) &
-                   This::ComputeNarrowedFrustum)
-          .def("ComputeNarrowedFrustum",
-               (GfFrustum(This::*)(const GfVec3d &, const GfVec2d &) const) &
-                   This::ComputeNarrowedFrustum)
+      .def("ComputeNarrowedFrustum",
+           (GfFrustum(This::*)(const GfVec2d &, const GfVec2d &) const) & This::ComputeNarrowedFrustum)
+      .def("ComputeNarrowedFrustum",
+           (GfFrustum(This::*)(const GfVec3d &, const GfVec2d &) const) & This::ComputeNarrowedFrustum)
 
-          .def("ComputePickRay", (GfRay(This::*)(const GfVec2d &) const) & This::ComputePickRay)
-          .def("ComputePickRay", (GfRay(This::*)(const GfVec3d &) const) & This::ComputePickRay)
+      .def("ComputePickRay", (GfRay(This::*)(const GfVec2d &) const) & This::ComputePickRay)
+      .def("ComputePickRay", (GfRay(This::*)(const GfVec3d &) const) & This::ComputePickRay)
 
-          .def("Intersects", (bool (This::*)(const GfBBox3d &) const) & This::Intersects)
-          .def("Intersects", (bool (This::*)(const GfVec3d &) const) & This::Intersects)
-          .def("Intersects",
-               (bool (This::*)(const GfVec3d &, const GfVec3d &) const) & This::Intersects)
-          .def("Intersects",
-               (bool (This::*)(const GfVec3d &, const GfVec3d &, const GfVec3d &) const) &
-                   This::Intersects)
+      .def("Intersects", (bool (This::*)(const GfBBox3d &) const) & This::Intersects)
+      .def("Intersects", (bool (This::*)(const GfVec3d &) const) & This::Intersects)
+      .def("Intersects", (bool (This::*)(const GfVec3d &, const GfVec3d &) const) & This::Intersects)
+      .def("Intersects",
+           (bool (This::*)(const GfVec3d &, const GfVec3d &, const GfVec3d &) const) & This::Intersects)
 
-          .def("SetProjectionType", &This::SetProjectionType)
-          .def("GetProjectionType", &This::GetProjectionType)
+      .def("SetProjectionType", &This::SetProjectionType)
+      .def("GetProjectionType", &This::GetProjectionType)
 
-          .def("GetReferencePlaneDepth", &This::GetReferencePlaneDepth)
-          .staticmethod("GetReferencePlaneDepth")
+      .def("GetReferencePlaneDepth", &This::GetReferencePlaneDepth)
+      .staticmethod("GetReferencePlaneDepth")
 
-          .def("IntersectsViewVolume", &This::IntersectsViewVolume)
-          .staticmethod("IntersectsViewVolume")
+      .def("IntersectsViewVolume", &This::IntersectsViewVolume)
+      .staticmethod("IntersectsViewVolume")
 
-          .def(str(self))
-          .def(self == self)
-          .def(self != self)
+      .def(str(self))
+      .def(self == self)
+      .def(self != self)
 
-          .def("__repr__", _Repr);
+      .def("__repr__", _Repr);
 
   TfPyWrapEnum<This::ProjectionType>();
 }

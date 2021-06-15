@@ -42,7 +42,7 @@ namespace {
 static std::string _Repr(const SdfLayerOffset &self)
 {
   double offset = self.GetOffset();
-  double scale  = self.GetScale();
+  double scale = self.GetScale();
 
   std::stringstream s;
   s << TF_PY_REPR_PREFIX + "LayerOffset(";
@@ -61,9 +61,8 @@ void wrapLayerOffset()
 {
   typedef SdfLayerOffset This;
 
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<SdfLayerOffset>,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<SdfLayerOffset>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 
   // Note: Since we have no support for nested proxies we wrap Sdf.LayerOffset
   //       as an immutable type to avoid confusion about code like this
@@ -73,27 +72,27 @@ void wrapLayerOffset()
   //       Sdf.LayerOffset object.
 
   class_<This>("LayerOffset")
-      .def(init<double, double>((arg("offset") = 0.0, arg("scale") = 1.0)))
-      .def(init<const This &>())
+    .def(init<double, double>((arg("offset") = 0.0, arg("scale") = 1.0)))
+    .def(init<const This &>())
 
-      .add_property("offset", &This::GetOffset)
-      .add_property("scale", &This::GetScale)
+    .add_property("offset", &This::GetOffset)
+    .add_property("scale", &This::GetScale)
 
-      .def("IsIdentity", &This::IsIdentity)
-      .def("GetInverse", &This::GetInverse)
+    .def("IsIdentity", &This::IsIdentity)
+    .def("GetInverse", &This::GetInverse)
 
-      .def(self == self)
-      .def(self != self)
-      .def(self * self)
+    .def(self == self)
+    .def(self != self)
+    .def(self * self)
 
-      // This order is required to prevent doubles from implicitly converting
-      // to SdfTimeCode when calling SdfLayerOffset * double.
-      .def(self * SdfTimeCode())
-      .def(self * double())
+    // This order is required to prevent doubles from implicitly converting
+    // to SdfTimeCode when calling SdfLayerOffset * double.
+    .def(self * SdfTimeCode())
+    .def(self * double())
 
-      .def("__repr__", _Repr)
+    .def("__repr__", _Repr)
 
-      ;
+    ;
 
   VtValueFromPython<SdfLayerOffset>();
 }

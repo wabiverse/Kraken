@@ -45,7 +45,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-    TF_REGISTRY_FUNCTION(TfType)
+  TF_REGISTRY_FUNCTION(TfType)
 {
   TfType::Define<{{QUAT}}>();
 }
@@ -62,15 +62,15 @@ WABI_NAMESPACE_BEGIN
     QUATNAME(S)
   }
 } const &other)
-    : _imaginary(other.GetImaginary()),
-      _real(other.GetReal()){} { % endfor % }
+  : _imaginary(other.GetImaginary()),
+    _real(other.GetReal()){} { % endfor % }
 
-          std::ostream
-          & operator<<(std::ostream &out, {
-              {
-                QUAT
-              }
-            } const &q)
+      std::ostream
+      & operator<<(std::ostream &out, {
+          {
+            QUAT
+          }
+        } const &q)
 {
   GfVec3
   {
@@ -221,7 +221,7 @@ GfVec3{{SUFFIX}}
       SCL
     }
   }
-  r2                         = q.GetReal();
+  r2 = q.GetReal();
   const GfVec3{{SUFFIX}} &i1 = GetImaginary();
   const GfVec3{{SUFFIX}} &i2 = q.GetImaginary();
 
@@ -266,11 +266,11 @@ GfSlerp(const {{QUAT}} & q0, const {{QUAT}} & q1, double alpha)
 GfSlerp(double alpha, const {{QUAT}} & q0, const {{QUAT}} & q1)
 {
   double cosTheta = q0.GetImaginary() * q1.GetImaginary() + q0.GetReal() * q1.GetReal();
-  bool flip1      = false;
+  bool flip1 = false;
 
   if (cosTheta < 0.0) {
     cosTheta = -cosTheta;
-    flip1    = true;
+    flip1 = true;
   }
 
   double scale0, scale1;

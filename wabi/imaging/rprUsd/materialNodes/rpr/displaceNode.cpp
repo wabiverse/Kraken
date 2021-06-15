@@ -32,9 +32,7 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens, (minscale)(maxscale)(in));
 ///
 class RprUsd_RprDisplaceNode : public RprUsd_MaterialNode {
  public:
-  RprUsd_RprDisplaceNode(RprUsd_MaterialBuilderContext *ctx)
-      : m_ctx(ctx),
-        m_displacementScale(0, 1)
+  RprUsd_RprDisplaceNode(RprUsd_MaterialBuilderContext *ctx) : m_ctx(ctx), m_displacementScale(0, 1)
   {}
   ~RprUsd_RprDisplaceNode() override = default;
 
@@ -81,7 +79,7 @@ class RprUsd_RprDisplaceNode : public RprUsd_MaterialNode {
         if (!GfIsEqual(vec, GfVec4f(0.0f))) {
           if (!m_scalarDisplaceNode) {
             m_scalarDisplaceNode.reset(
-                new RprUsd_BaseRuntimeNode(RPR_MATERIAL_NODE_CONSTANT_TEXTURE, m_ctx));
+              new RprUsd_BaseRuntimeNode(RPR_MATERIAL_NODE_CONSTANT_TEXTURE, m_ctx));
           }
 
           m_scalarDisplaceNode->SetInput(RPR_MATERIAL_INPUT_VALUE, value);
@@ -89,7 +87,7 @@ class RprUsd_RprDisplaceNode : public RprUsd_MaterialNode {
         }
         else {
           m_scalarDisplaceNode = nullptr;
-          m_output             = VtValue();
+          m_output = VtValue();
         }
       }
     }
@@ -99,28 +97,28 @@ class RprUsd_RprDisplaceNode : public RprUsd_MaterialNode {
 
   static RprUsd_RprNodeInfo *GetInfo()
   {
-    auto ret       = new RprUsd_RprNodeInfo;
+    auto ret = new RprUsd_RprNodeInfo;
     auto &nodeInfo = *ret;
 
-    nodeInfo.name     = "rpr_displace";
-    nodeInfo.uiName   = "RPR Displace";
+    nodeInfo.name = "rpr_displace";
+    nodeInfo.uiName = "RPR Displace";
     nodeInfo.uiFolder = "Shaders";
 
     RprUsd_RprNodeInput input(RprUsdMaterialNodeElement::kFloat);
     input.uiSoftMin = "0";
     input.uiSoftMax = "1";
 
-    input.name        = _tokens->in;
-    input.uiName      = "Displacement";
+    input.name = _tokens->in;
+    input.uiName = "Displacement";
     input.valueString = "0";
     nodeInfo.inputs.push_back(input);
 
-    input.name   = _tokens->minscale;
+    input.name = _tokens->minscale;
     input.uiName = "Minimum Scale";
     nodeInfo.inputs.push_back(input);
 
-    input.name        = _tokens->maxscale;
-    input.uiName      = "Maximum Scale";
+    input.name = _tokens->maxscale;
+    input.uiName = "Maximum Scale";
     input.valueString = "1";
     nodeInfo.inputs.push_back(input);
 
@@ -142,14 +140,14 @@ ARCH_CONSTRUCTOR(RprUsd_InitDisplaceNode, 255, void)
 {
   auto nodeInfo = RprUsd_RprDisplaceNode::GetInfo();
   RprUsdMaterialRegistry::GetInstance().Register(
-      TfToken(nodeInfo->name, TfToken::Immortal),
-      [](RprUsd_MaterialBuilderContext *context, std::map<TfToken, VtValue> const &parameters) {
-        auto node = new RprUsd_RprDisplaceNode(context);
-        for (auto &entry : parameters)
-          node->SetInput(entry.first, entry.second);
-        return node;
-      },
-      nodeInfo);
+    TfToken(nodeInfo->name, TfToken::Immortal),
+    [](RprUsd_MaterialBuilderContext *context, std::map<TfToken, VtValue> const &parameters) {
+      auto node = new RprUsd_RprDisplaceNode(context);
+      for (auto &entry : parameters)
+        node->SetInput(entry.first, entry.second);
+      return node;
+    },
+    nodeInfo);
 }
 
 WABI_NAMESPACE_END

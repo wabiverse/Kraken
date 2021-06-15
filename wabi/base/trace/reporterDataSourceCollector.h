@@ -57,8 +57,8 @@ TF_DECLARE_WEAK_PTRS(TraceReporterDataSourceCollector);
 ///
 class TraceReporterDataSourceCollector : public TraceReporterDataSourceBase, public TfWeakBase {
  public:
-  using This       = TraceReporterDataSourceCollector;
-  using ThisPtr    = TraceReporterDataSourceCollectorPtr;
+  using This = TraceReporterDataSourceCollector;
+  using ThisPtr = TraceReporterDataSourceCollectorPtr;
   using ThisRefPtr = std::unique_ptr<This>;
 
   /// Creates a new TraceReporterDataSourceCollector.

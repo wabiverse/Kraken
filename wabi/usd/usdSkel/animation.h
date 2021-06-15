@@ -187,8 +187,7 @@ class UsdSkelAnimation : public UsdTyped {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
-  UsdAttribute CreateJointsAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateJointsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -212,7 +211,7 @@ class UsdSkelAnimation : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
   UsdAttribute CreateTranslationsAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -237,7 +236,7 @@ class UsdSkelAnimation : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
   UsdAttribute CreateRotationsAttr(VtValue const &defaultValue = VtValue(),
-                                   bool writeSparsely          = false) const;
+                                   bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -261,8 +260,7 @@ class UsdSkelAnimation : public UsdTyped {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
-  UsdAttribute CreateScalesAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateScalesAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -289,7 +287,7 @@ class UsdSkelAnimation : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
   UsdAttribute CreateBlendShapesAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -315,7 +313,7 @@ class UsdSkelAnimation : public UsdTyped {
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
   UsdAttribute CreateBlendShapeWeightsAttr(VtValue const &defaultValue = VtValue(),
-                                           bool writeSparsely          = false) const;
+                                           bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //
@@ -338,8 +336,7 @@ class UsdSkelAnimation : public UsdTyped {
   /// Convenience method for setting an array of transforms.
   /// The given transforms must be _orthogonal_.
   USDSKEL_API
-  bool SetTransforms(const VtMatrix4dArray &xforms,
-                     UsdTimeCode time = UsdTimeCode::Default()) const;
+  bool SetTransforms(const VtMatrix4dArray &xforms, UsdTimeCode time = UsdTimeCode::Default()) const;
 };
 
 WABI_NAMESPACE_END

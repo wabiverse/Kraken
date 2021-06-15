@@ -58,8 +58,8 @@ static UsdAttribute _CreateRiSamplingFixedSampleCountAttr(UsdRiLightAPI &self,
                                                           object defaultVal,
                                                           bool writeSparsely)
 {
-  return self.CreateRiSamplingFixedSampleCountAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
+  return self.CreateRiSamplingFixedSampleCountAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int),
+                                                   writeSparsely);
 }
 
 static UsdAttribute _CreateRiSamplingImportanceMultiplierAttr(UsdRiLightAPI &self,
@@ -67,36 +67,30 @@ static UsdAttribute _CreateRiSamplingImportanceMultiplierAttr(UsdRiLightAPI &sel
                                                               bool writeSparsely)
 {
   return self.CreateRiSamplingImportanceMultiplierAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
 static UsdAttribute _CreateRiIntensityNearDistAttr(UsdRiLightAPI &self,
                                                    object defaultVal,
                                                    bool writeSparsely)
 {
-  return self.CreateRiIntensityNearDistAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateRiIntensityNearDistAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                            writeSparsely);
 }
 
-static UsdAttribute _CreateRiLightGroupAttr(UsdRiLightAPI &self,
-                                            object defaultVal,
-                                            bool writeSparsely)
+static UsdAttribute _CreateRiLightGroupAttr(UsdRiLightAPI &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateRiLightGroupAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->String),
                                      writeSparsely);
 }
 
-static UsdAttribute _CreateRiShadowThinShadowAttr(UsdRiLightAPI &self,
-                                                  object defaultVal,
-                                                  bool writeSparsely)
+static UsdAttribute _CreateRiShadowThinShadowAttr(UsdRiLightAPI &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateRiShadowThinShadowAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
                                            writeSparsely);
 }
 
-static UsdAttribute _CreateRiTraceLightPathsAttr(UsdRiLightAPI &self,
-                                                 object defaultVal,
-                                                 bool writeSparsely)
+static UsdAttribute _CreateRiTraceLightPathsAttr(UsdRiLightAPI &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateRiTraceLightPathsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
                                           writeSparsely);
@@ -117,59 +111,57 @@ void wrapUsdRiLightAPI()
   class_<This, bases<UsdAPISchemaBase>> cls("LightAPI");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Apply", &This::Apply, (arg("prim")))
-      .staticmethod("Apply")
+    .def("Apply", &This::Apply, (arg("prim")))
+    .staticmethod("Apply")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetRiSamplingFixedSampleCountAttr", &This::GetRiSamplingFixedSampleCountAttr)
-      .def("CreateRiSamplingFixedSampleCountAttr",
-           &_CreateRiSamplingFixedSampleCountAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRiSamplingFixedSampleCountAttr", &This::GetRiSamplingFixedSampleCountAttr)
+    .def("CreateRiSamplingFixedSampleCountAttr",
+         &_CreateRiSamplingFixedSampleCountAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetRiSamplingImportanceMultiplierAttr", &This::GetRiSamplingImportanceMultiplierAttr)
-      .def("CreateRiSamplingImportanceMultiplierAttr",
-           &_CreateRiSamplingImportanceMultiplierAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRiSamplingImportanceMultiplierAttr", &This::GetRiSamplingImportanceMultiplierAttr)
+    .def("CreateRiSamplingImportanceMultiplierAttr",
+         &_CreateRiSamplingImportanceMultiplierAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetRiIntensityNearDistAttr", &This::GetRiIntensityNearDistAttr)
-      .def("CreateRiIntensityNearDistAttr",
-           &_CreateRiIntensityNearDistAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRiIntensityNearDistAttr", &This::GetRiIntensityNearDistAttr)
+    .def("CreateRiIntensityNearDistAttr",
+         &_CreateRiIntensityNearDistAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetRiLightGroupAttr", &This::GetRiLightGroupAttr)
-      .def("CreateRiLightGroupAttr",
-           &_CreateRiLightGroupAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRiLightGroupAttr", &This::GetRiLightGroupAttr)
+    .def("CreateRiLightGroupAttr",
+         &_CreateRiLightGroupAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetRiShadowThinShadowAttr", &This::GetRiShadowThinShadowAttr)
-      .def("CreateRiShadowThinShadowAttr",
-           &_CreateRiShadowThinShadowAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRiShadowThinShadowAttr", &This::GetRiShadowThinShadowAttr)
+    .def("CreateRiShadowThinShadowAttr",
+         &_CreateRiShadowThinShadowAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetRiTraceLightPathsAttr", &This::GetRiTraceLightPathsAttr)
-      .def("CreateRiTraceLightPathsAttr",
-           &_CreateRiTraceLightPathsAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRiTraceLightPathsAttr", &This::GetRiTraceLightPathsAttr)
+    .def("CreateRiTraceLightPathsAttr",
+         &_CreateRiTraceLightPathsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

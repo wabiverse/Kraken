@@ -46,8 +46,7 @@ class HdPhResourceRegistry;
 ///
 class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy {
  public:
-  HdPhVBOSimpleMemoryManager(HdPhResourceRegistry *resourceRegistry)
-      : _resourceRegistry(resourceRegistry)
+  HdPhVBOSimpleMemoryManager(HdPhResourceRegistry *resourceRegistry) : _resourceRegistry(resourceRegistry)
   {}
 
   /// Factory for creating HdBufferArray managed by
@@ -63,9 +62,8 @@ class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy {
 
   /// Returns id for given bufferSpecs to be used for aggregation
   HDPH_API
-  virtual HdAggregationStrategy::AggregationId ComputeAggregationId(
-      HdBufferSpecVector const &bufferSpecs,
-      HdBufferArrayUsageHint usageHint) const;
+  virtual HdAggregationStrategy::AggregationId ComputeAggregationId(HdBufferSpecVector const &bufferSpecs,
+                                                                    HdBufferArrayUsageHint usageHint) const;
 
   /// Returns the buffer specs from a given buffer array
   virtual HdBufferSpecVector GetBufferSpecs(HdBufferArraySharedPtr const &bufferArray) const;
@@ -85,9 +83,9 @@ class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy {
    public:
     /// Constructor.
     _SimpleBufferArrayRange(HdPhResourceRegistry *resourceRegistry)
-        : HdPhBufferArrayRange(resourceRegistry),
-          _bufferArray(nullptr),
-          _numElements(0)
+      : HdPhBufferArrayRange(resourceRegistry),
+        _bufferArray(nullptr),
+        _numElements(0)
     {}
 
     /// Returns true if this range is valid
@@ -210,9 +208,9 @@ class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy {
     size_t _numElements;
   };
 
-  using _SimpleBufferArraySharedPtr      = std::shared_ptr<_SimpleBufferArray>;
+  using _SimpleBufferArraySharedPtr = std::shared_ptr<_SimpleBufferArray>;
   using _SimpleBufferArrayRangeSharedPtr = std::shared_ptr<_SimpleBufferArrayRange>;
-  using _SimpleBufferArrayRangePtr       = std::weak_ptr<_SimpleBufferArrayRange>;
+  using _SimpleBufferArrayRangePtr = std::weak_ptr<_SimpleBufferArrayRange>;
 
   /// \class _SimpleBufferArray
   ///
@@ -306,9 +304,8 @@ class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy {
 
     _SimpleBufferArrayRangeSharedPtr _GetRangeSharedPtr() const
     {
-      return GetRangeCount() > 0 ?
-                 std::static_pointer_cast<_SimpleBufferArrayRange>(GetRange(0).lock()) :
-                 _SimpleBufferArrayRangeSharedPtr();
+      return GetRangeCount() > 0 ? std::static_pointer_cast<_SimpleBufferArrayRange>(GetRange(0).lock()) :
+                                   _SimpleBufferArrayRangeSharedPtr();
     }
   };
 

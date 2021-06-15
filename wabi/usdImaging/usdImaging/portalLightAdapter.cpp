@@ -53,8 +53,7 @@ SdfPath UsdImagingPortalLightAdapter::Populate(UsdPrim const &prim,
   return prim.GetPath();
 }
 
-void UsdImagingPortalLightAdapter::_RemovePrim(SdfPath const &cachePath,
-                                               UsdImagingIndexProxy *index)
+void UsdImagingPortalLightAdapter::_RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index)
 {
   TF_CODING_ERROR("Portal lights are not yet supported in USD imaging");
 }

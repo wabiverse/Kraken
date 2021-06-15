@@ -48,10 +48,9 @@ HdDirtyBits HdPrman_BasisCurves::GetInitialDirtyBitsMask() const
   // The initial dirty bits control what data is available on the first
   // run through _PopulateRtBasisCurves(), so it should list every data item
   // that _PopluateRtBasisCurves requests.
-  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyPoints |
-             HdChangeTracker::DirtyTopology | HdChangeTracker::DirtyTransform |
-             HdChangeTracker::DirtyVisibility | HdChangeTracker::DirtyPrimvar |
-             HdChangeTracker::DirtyNormals | HdChangeTracker::DirtyWidths |
+  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyTopology |
+             HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyVisibility |
+             HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyNormals | HdChangeTracker::DirtyWidths |
              HdChangeTracker::DirtyInstancer | HdChangeTracker::DirtyMaterialId;
 
   return (HdDirtyBits)mask;
@@ -64,31 +63,30 @@ RtParamList HdPrman_BasisCurves::_ConvertGeometry(HdPrman_Context *context,
                                                   std::vector<HdGeomSubset> *geomSubsets)
 {
   HdBasisCurvesTopology topology = GetBasisCurvesTopology(sceneDelegate);
-  VtValue pointsVal              = sceneDelegate->Get(id, HdTokens->points);
+  VtValue pointsVal = sceneDelegate->Get(id, HdTokens->points);
   VtVec3fArray points;
   if (pointsVal.IsHolding<VtVec3fArray>()) {
     points = pointsVal.Get<VtVec3fArray>();
   }
   VtIntArray curveVertexCounts = topology.GetCurveVertexCounts();
-  VtIntArray curveIndices      = topology.GetCurveIndices();
-  TfToken curveType            = topology.GetCurveType();
-  TfToken curveBasis           = topology.GetCurveBasis();
-  TfToken curveWrap            = topology.GetCurveWrap();
+  VtIntArray curveIndices = topology.GetCurveIndices();
+  TfToken curveType = topology.GetCurveType();
+  TfToken curveBasis = topology.GetCurveBasis();
+  TfToken curveWrap = topology.GetCurveWrap();
 
   *primType = RixStr.k_Ri_Curves;
 
   // Note: 'nowrap' and 'nsegs' terminology below is to match
   // prman primvar docs, for ease of validation.
-  const int numCurves            = curveVertexCounts.size();
-  const int nowrap               = (curveWrap == HdTokens->periodic) ? 0 : 1;
-  size_t vertexPrimvarCount      = 0;
-  size_t varyingPrimvarCount     = 0;
+  const int numCurves = curveVertexCounts.size();
+  const int nowrap = (curveWrap == HdTokens->periodic) ? 0 : 1;
+  size_t vertexPrimvarCount = 0;
+  size_t varyingPrimvarCount = 0;
   size_t facevaryingPrimvarCount = 0;
   if (curveType == HdTokens->cubic) {
     const int vstep = (curveBasis == HdTokens->bezier) ? 3 : 1;
     for (const int &nvertices : curveVertexCounts) {
-      const int nsegs = (curveWrap == HdTokens->periodic) ? nvertices / vstep :
-                                                            (nvertices - 4) / vstep + 1;
+      const int nsegs = (curveWrap == HdTokens->periodic) ? nvertices / vstep : (nvertices - 4) / vstep + 1;
       varyingPrimvarCount += nsegs + nowrap;
       vertexPrimvarCount += nvertices;
       facevaryingPrimvarCount += nsegs + nowrap;

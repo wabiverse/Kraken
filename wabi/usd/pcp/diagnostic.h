@@ -49,24 +49,22 @@ class PcpPrimIndex_StackFrame;
 PCP_API
 std::string PcpDump(const PcpPrimIndex &primIndex,
                     bool includeInheritOriginInfo = false,
-                    bool includeMaps              = false);
+                    bool includeMaps = false);
 
 PCP_API
-std::string PcpDump(const PcpNodeRef &node,
-                    bool includeInheritOriginInfo = false,
-                    bool includeMaps              = false);
+std::string PcpDump(const PcpNodeRef &node, bool includeInheritOriginInfo = false, bool includeMaps = false);
 
 PCP_API
 void PcpDumpDotGraph(const PcpPrimIndex &primIndex,
                      const char *filename,
                      bool includeInheritOriginInfo = true,
-                     bool includeMaps              = false);
+                     bool includeMaps = false);
 
 PCP_API
 void PcpDumpDotGraph(const PcpNodeRef &node,
                      const char *filename,
                      bool includeInheritOriginInfo = true,
-                     bool includeMaps              = false);
+                     bool includeMaps = false);
 
 // Enable this #define for extra runtime validation.
 // This is normally disabled because it is expensive.
@@ -93,10 +91,11 @@ template<class T> inline PcpPrimIndex const *Pcp_ToIndex(T const &obj)
 
 /// Opens a scope indicating a particular phase during prim indexing.
 #define PCP_INDEXING_PHASE(indexer, node, ...) \
-  auto BOOST_PP_CAT(_pcpIndexingPhase, __LINE__) = \
-      ARCH_UNLIKELY(TfDebug::IsEnabled(PCP_PRIM_INDEX)) ? \
-          Pcp_IndexingPhaseScope(Pcp_ToIndex(indexer), node, TfStringPrintf(__VA_ARGS__)) : \
-          Pcp_IndexingPhaseScope()
+  auto BOOST_PP_CAT(_pcpIndexingPhase, __LINE__) = ARCH_UNLIKELY(TfDebug::IsEnabled(PCP_PRIM_INDEX)) ? \
+                                                     Pcp_IndexingPhaseScope(Pcp_ToIndex(indexer), \
+                                                                            node, \
+                                                                            TfStringPrintf(__VA_ARGS__)) : \
+                                                     Pcp_IndexingPhaseScope()
 
 /// Indicates that the prim index currently being constructed has been
 /// updated.
@@ -120,11 +119,11 @@ class Pcp_PrimIndexingDebug {
   Pcp_PrimIndexingDebug(PcpPrimIndex const *index,
                         PcpPrimIndex const *originatingIndex,
                         PcpLayerStackSite const &site)
-      : _index(nullptr),
-        _originatingIndex(nullptr)
+    : _index(nullptr),
+      _originatingIndex(nullptr)
   {
     if (ARCH_UNLIKELY(TfDebug::IsEnabled(PCP_PRIM_INDEX))) {
-      _index            = index;
+      _index = index;
       _originatingIndex = originatingIndex;
       _PushIndex(site);
     }
@@ -165,7 +164,7 @@ class Pcp_IndexingPhaseScope {
   inline Pcp_IndexingPhaseScope &operator=(Pcp_IndexingPhaseScope &&other)
   {
     if (&other != this) {
-      _index       = other._index;
+      _index = other._index;
       other._index = nullptr;
     }
     return *this;
@@ -183,7 +182,7 @@ class Pcp_IndexingPhaseScope {
 };
 
 void Pcp_IndexingMsg(PcpPrimIndex const *index, const PcpNodeRef &a1, char const *fmt, ...)
-    ARCH_PRINTF_FUNCTION(3, 4);
+  ARCH_PRINTF_FUNCTION(3, 4);
 void Pcp_IndexingMsg(PcpPrimIndex const *index,
                      const PcpNodeRef &a1,
                      const PcpNodeRef &a2,

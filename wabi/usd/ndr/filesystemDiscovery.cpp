@@ -65,22 +65,19 @@ _NdrFilesystemDiscoveryPlugin::_NdrFilesystemDiscoveryPlugin()
   // TODO: This needs to somehow be set up to find the nodes that USD
   //       ships with
   //
-  _searchPaths       = TfStringSplit(TfGetEnvSetting(WABI_NDR_FS_PLUGIN_SEARCH_PATHS),
-                               ARCH_PATH_LIST_SEP);
+  _searchPaths = TfStringSplit(TfGetEnvSetting(WABI_NDR_FS_PLUGIN_SEARCH_PATHS), ARCH_PATH_LIST_SEP);
   _allowedExtensions = TfStringSplit(TfGetEnvSetting(WABI_NDR_FS_PLUGIN_ALLOWED_EXTS), ":");
-  _followSymlinks    = TfGetEnvSetting(WABI_NDR_FS_PLUGIN_FOLLOW_SYMLINKS);
+  _followSymlinks = TfGetEnvSetting(WABI_NDR_FS_PLUGIN_FOLLOW_SYMLINKS);
 }
 
-_NdrFilesystemDiscoveryPlugin::_NdrFilesystemDiscoveryPlugin(Filter filter)
-    : _NdrFilesystemDiscoveryPlugin()
+_NdrFilesystemDiscoveryPlugin::_NdrFilesystemDiscoveryPlugin(Filter filter) : _NdrFilesystemDiscoveryPlugin()
 {
   _filter = std::move(filter);
 }
 
 NdrNodeDiscoveryResultVec _NdrFilesystemDiscoveryPlugin::DiscoverNodes(const Context &context)
 {
-  auto result = NdrFsHelpersDiscoverNodes(
-      _searchPaths, _allowedExtensions, _followSymlinks, &context);
+  auto result = NdrFsHelpersDiscoverNodes(_searchPaths, _allowedExtensions, _followSymlinks, &context);
 
   if (_filter) {
     auto j = result.begin();

@@ -73,21 +73,16 @@ inline unsigned CountDecimalDigit32(uint32_t n)
   return 9;
 }
 
-inline void DigitGen(const DiyFp &W,
-                     const DiyFp &Mp,
-                     uint64_t delta,
-                     char *buffer,
-                     int *len,
-                     int *K)
+inline void DigitGen(const DiyFp &W, const DiyFp &Mp, uint64_t delta, char *buffer, int *len, int *K)
 {
   static const uint32_t kPow10[] = {
-      1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
+    1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
   const DiyFp one(uint64_t(1) << -Mp.e, Mp.e);
   const DiyFp wp_w = Mp - W;
-  uint32_t p1      = static_cast<uint32_t>(Mp.f >> -one.e);
-  uint64_t p2      = Mp.f & (one.f - 1);
-  unsigned kappa   = CountDecimalDigit32(p1);  // kappa in [0, 9]
-  *len             = 0;
+  uint32_t p1 = static_cast<uint32_t>(Mp.f >> -one.e);
+  uint64_t p2 = Mp.f & (one.f - 1);
+  unsigned kappa = CountDecimalDigit32(p1);  // kappa in [0, 9]
+  *len = 0;
 
   while (kappa > 0) {
     uint32_t d = 0;
@@ -125,7 +120,7 @@ inline void DigitGen(const DiyFp &W,
         p1 %= 10;
         break;
       case 1:
-        d  = p1;
+        d = p1;
         p1 = 0;
         break;
       default:;
@@ -165,9 +160,9 @@ inline void Grisu2(double value, char *buffer, int *length, int *K)
   v.NormalizedBoundaries(&w_m, &w_p);
 
   const DiyFp c_mk = GetCachedPower(w_p.e, K);
-  const DiyFp W    = v.Normalize() * c_mk;
-  DiyFp Wp         = w_p * c_mk;
-  DiyFp Wm         = w_m * c_mk;
+  const DiyFp W = v.Normalize() * c_mk;
+  DiyFp Wp = w_p * c_mk;
+  DiyFp Wm = w_m * c_mk;
   Wm.f++;
   Wp.f--;
   DigitGen(W, Wp, Wp.f - Wm.f, buffer, length, K);
@@ -177,20 +172,20 @@ inline char *WriteExponent(int K, char *buffer)
 {
   if (K < 0) {
     *buffer++ = '-';
-    K         = -K;
+    K = -K;
   }
 
   if (K >= 100) {
     *buffer++ = static_cast<char>('0' + static_cast<char>(K / 100));
     K %= 100;
     const char *d = GetDigitsLut() + K * 2;
-    *buffer++     = d[0];
-    *buffer++     = d[1];
+    *buffer++ = d[0];
+    *buffer++ = d[1];
   }
   else if (K >= 10) {
     const char *d = GetDigitsLut() + K * 2;
-    *buffer++     = d[0];
-    *buffer++     = d[1];
+    *buffer++ = d[0];
+    *buffer++ = d[1];
   }
   else
     *buffer++ = static_cast<char>('0' + static_cast<char>(K));
@@ -206,7 +201,7 @@ inline char *Prettify(char *buffer, int length, int k, int maxDecimalPlaces)
     // 1234e7 -> 12340000000
     for (int i = length; i < kk; i++)
       buffer[i] = '0';
-    buffer[kk]     = '.';
+    buffer[kk] = '.';
     buffer[kk + 1] = '0';
     return &buffer[kk + 2];
   }
@@ -259,7 +254,7 @@ inline char *Prettify(char *buffer, int length, int k, int maxDecimalPlaces)
   else {
     // 1234e30 -> 1.234e33
     std::memmove(&buffer[2], &buffer[1], static_cast<size_t>(length - 1));
-    buffer[1]          = '.';
+    buffer[1] = '.';
     buffer[length + 1] = 'e';
     return WriteExponent(kk - 1, &buffer[0 + length + 2]);
   }
@@ -280,7 +275,7 @@ inline char *dtoa(double value, char *buffer, int maxDecimalPlaces = 324)
   else {
     if (value < 0) {
       *buffer++ = '-';
-      value     = -value;
+      value = -value;
     }
     int length, K;
     Grisu2(value, buffer, &length, &K);

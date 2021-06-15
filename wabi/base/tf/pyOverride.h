@@ -125,10 +125,9 @@ class TfPyOverride : public TfPyObjWrapper {
     // unpack the right number of 'O' elements into the format string.
     static const char pyCallFormat[] = {'(', _PyObjArg<Args>()..., ')', '\0'};
 
-    TfPyMethodResult x(
-        PyEval_CallFunction(this->ptr(),
-                            const_cast<char *>(pyCallFormat),
-                            boost::python::converter::arg_to_python<Args>(args).get()...));
+    TfPyMethodResult x(PyEval_CallFunction(this->ptr(),
+                                           const_cast<char *>(pyCallFormat),
+                                           boost::python::converter::arg_to_python<Args>(args).get()...));
     return x;
   }
 };

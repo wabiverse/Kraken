@@ -100,8 +100,8 @@ void printbytes2(const void *blob, int len)
 
 uint32_t popcount(uint32_t v)
 {
-  v          = v - ((v >> 1) & 0x55555555);                       // reuse input as temporary
-  v          = (v & 0x33333333) + ((v >> 2) & 0x33333333);        // temp
+  v = v - ((v >> 1) & 0x55555555);                                // reuse input as temporary
+  v = (v & 0x33333333) + ((v >> 2) & 0x33333333);                 // temp
   uint32_t c = ((v + ((v >> 4) & 0xF0F0F0F)) * 0x1010101) >> 24;  // count
 
   return c;
@@ -122,7 +122,7 @@ uint32_t getbit(const void *block, int len, uint32_t bit)
   uint8_t *b = (uint8_t *)block;
 
   int byte = bit >> 3;
-  bit      = bit & 0x7;
+  bit = bit & 0x7;
 
   if (byte < len)
     return (b[byte] >> bit) & 1;
@@ -135,7 +135,7 @@ uint32_t getbit_wrap(const void *block, int len, uint32_t bit)
   uint8_t *b = (uint8_t *)block;
 
   int byte = bit >> 3;
-  bit      = bit & 0x7;
+  bit = bit & 0x7;
 
   byte %= len;
 
@@ -147,7 +147,7 @@ void setbit(void *block, int len, uint32_t bit)
   uint8_t *b = (uint8_t *)block;
 
   int byte = bit >> 3;
-  bit      = bit & 0x7;
+  bit = bit & 0x7;
 
   if (byte < len)
     b[byte] |= (1 << bit);
@@ -163,7 +163,7 @@ void clearbit(void *block, int len, uint32_t bit)
   uint8_t *b = (uint8_t *)block;
 
   int byte = bit >> 3;
-  bit      = bit & 0x7;
+  bit = bit & 0x7;
 
   if (byte < len)
     b[byte] &= ~(1 << bit);
@@ -174,7 +174,7 @@ void flipbit(void *block, int len, uint32_t bit)
   uint8_t *b = (uint8_t *)block;
 
   int byte = bit >> 3;
-  bit      = bit & 0x7;
+  bit = bit & 0x7;
 
   if (byte < len)
     b[byte] ^= (1 << bit);
@@ -184,8 +184,8 @@ void flipbit(void *block, int len, uint32_t bit)
 
 int countbits(uint32_t v)
 {
-  v     = v - ((v >> 1) & 0x55555555);                       // reuse input as temporary
-  v     = (v & 0x33333333) + ((v >> 2) & 0x33333333);        // temp
+  v = v - ((v >> 1) & 0x55555555);                           // reuse input as temporary
+  v = (v & 0x33333333) + ((v >> 2) & 0x33333333);            // temp
   int c = ((v + ((v >> 4) & 0xF0F0F0F)) * 0x1010101) >> 24;  // count
 
   return c;
@@ -235,7 +235,7 @@ void lshift32(void *blob, int len, int c)
 {
   assert((len & 3) == 0);
 
-  int nbytes  = len;
+  int nbytes = len;
   int ndwords = nbytes / 4;
 
   uint32_t *k = reinterpret_cast<uint32_t *>(blob);
@@ -311,7 +311,7 @@ void rshift32(void *blob, int len, int c)
 {
   assert((len & 3) == 0);
 
-  int nbytes  = len;
+  int nbytes = len;
   int ndwords = nbytes / 4;
 
   uint32_t *k = (uint32_t *)blob;
@@ -399,7 +399,7 @@ void lrot32(void *blob, int len, int c)
 {
   assert((len & 3) == 0);
 
-  int nbytes  = len;
+  int nbytes = len;
   int ndwords = nbytes / 4;
 
   uint32_t *k = (uint32_t *)blob;
@@ -493,7 +493,7 @@ void rrot32(void *blob, int len, int c)
 {
   assert((len & 3) == 0);
 
-  int nbytes  = len;
+  int nbytes = len;
   int ndwords = nbytes / 4;
 
   uint32_t *k = (uint32_t *)blob;
@@ -617,9 +617,9 @@ bool test_shift(void)
 {
   Rand r(1123);
 
-  int nbits  = 64;
+  int nbits = 64;
   int nbytes = nbits / 8;
-  int reps   = 10000;
+  int reps = 10000;
 
   for (int j = 0; j < reps; j++) {
     if (j % (reps / 10) == 0)
@@ -686,7 +686,7 @@ template<int nbits> bool test_window2(void)
   };
 
   int nbytes = nbits / 8;
-  int reps   = 10000;
+  int reps = 10000;
 
   for (int j = 0; j < reps; j++) {
     if (j % (reps / 10) == 0)
@@ -723,7 +723,7 @@ bool test_window(void)
     if (j % (reps / 10) == 0)
       printf(".");
 
-    int nbits  = 64;
+    int nbits = 64;
     int nbytes = nbits / 8;
 
     uint64_t x = r.rand_u64();

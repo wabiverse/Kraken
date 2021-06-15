@@ -35,16 +35,16 @@ WABI_NAMESPACE_BEGIN
 void Usd_Resolver::_Init()
 {
   PcpNodeRange _range = _index->GetNodeRange();
-  _curNode            = _range.first;
-  _lastNode           = _range.second;
+  _curNode = _range.first;
+  _lastNode = _range.second;
 
   _SkipEmptyNodes();
 
   // The entire stage may be empty, so we need to check IsValid here.
   if (IsValid()) {
     const SdfLayerRefPtrVector &layers = _curNode->GetLayerStack()->GetLayers();
-    _curLayer                          = layers.begin();
-    _lastLayer                         = layers.end();
+    _curLayer = layers.begin();
+    _lastLayer = layers.end();
   }
 }
 
@@ -63,8 +63,8 @@ void Usd_Resolver::_SkipEmptyNodes()
 }
 
 Usd_Resolver::Usd_Resolver(const PcpPrimIndex *index, bool skipEmptyNodes)
-    : _index(index),
-      _skipEmptyNodes(skipEmptyNodes)
+  : _index(index),
+    _skipEmptyNodes(skipEmptyNodes)
 {
   _Init();
 }
@@ -104,8 +104,8 @@ void Usd_Resolver::NextNode()
     _SkipEmptyNodes();
     if (IsValid()) {
       const SdfLayerRefPtrVector &layers = _curNode->GetLayerStack()->GetLayers();
-      _curLayer                          = layers.begin();
-      _lastLayer                         = layers.end();
+      _curLayer = layers.begin();
+      _lastLayer = layers.end();
     }
   }
 }

@@ -62,15 +62,14 @@ void HdCyclesParseUDIMS(const ccl::string &a_filepath, ccl::vector<int> &a_tiles
 {
   boost::filesystem::path filepath(a_filepath);
 
-  size_t offset            = filepath.stem().string().find("<UDIM>");
+  size_t offset = filepath.stem().string().find("<UDIM>");
   std::string baseFileName = filepath.stem().string().substr(0, offset);
 
   std::vector<std::string> files;
   try {
     boost::filesystem::path path(ccl::path_dirname(a_filepath));
     if (boost::filesystem::is_directory(path)) {
-      for (boost::filesystem::directory_iterator it(path);
-           it != boost::filesystem::directory_iterator();
+      for (boost::filesystem::directory_iterator it(path); it != boost::filesystem::directory_iterator();
            ++it) {
         try {
           if (boost::filesystem::is_regular_file(it->status()) ||
@@ -90,8 +89,7 @@ void HdCyclesParseUDIMS(const ccl::string &a_filepath, ccl::vector<int> &a_tiles
     }
   }
   catch (boost::exception &e) {
-    TF_WARN("Filesystem error in HdCyclesParseUDIMS() when parsing directory %s",
-            a_filepath.c_str());
+    TF_WARN("Filesystem error in HdCyclesParseUDIMS() when parsing directory %s", a_filepath.c_str());
   }
 
   a_tiles.clear();
@@ -109,7 +107,7 @@ void HdCyclesParseUDIMS(const ccl::string &a_filepath, ccl::vector<int> &a_tiles
 void HdCyclesMeshTextureSpace(ccl::Geometry *a_geom, ccl::float3 &a_loc, ccl::float3 &a_size)
 {
   // m_cyclesMesh->compute_bounds must be called before this
-  a_loc  = (a_geom->bounds.max + a_geom->bounds.min) / 2.0f;
+  a_loc = (a_geom->bounds.max + a_geom->bounds.min) / 2.0f;
   a_size = (a_geom->bounds.max - a_geom->bounds.min) / 2.0f;
 
   if (a_size.x != 0.0f)
@@ -131,7 +129,7 @@ ccl::Shader *HdCyclesCreateDefaultShader()
   shader->graph = new ccl::ShaderGraph();
 
   ccl::VertexColorNode *vc = new ccl::VertexColorNode();
-  vc->layer_name           = ccl::ustring("displayColor");
+  vc->layer_name = ccl::ustring("displayColor");
 
   ccl::PrincipledBsdfNode *bsdf = new ccl::PrincipledBsdfNode();
 
@@ -148,10 +146,10 @@ ccl::Shader *HdCyclesCreateDefaultShader()
 
 ccl::Shader *HdCyclesCreateObjectColorSurface()
 {
-  auto shader   = new ccl::Shader();
+  auto shader = new ccl::Shader();
   shader->graph = new ccl::ShaderGraph();
 
-  auto oi   = new ccl::ObjectInfoNode{};
+  auto oi = new ccl::ObjectInfoNode{};
   auto bsdf = new ccl::PrincipledBsdfNode();
 
   shader->graph->add(bsdf);
@@ -166,10 +164,10 @@ ccl::Shader *HdCyclesCreateObjectColorSurface()
 
 ccl::Shader *HdCyclesCreateAttribColorSurface()
 {
-  auto shader   = new ccl::Shader();
+  auto shader = new ccl::Shader();
   shader->graph = new ccl::ShaderGraph();
 
-  auto attrib       = new ccl::AttributeNode{};
+  auto attrib = new ccl::AttributeNode{};
   attrib->attribute = "displayColor";
 
   auto bsdf = new ccl::PrincipledBsdfNode();
@@ -212,8 +210,8 @@ bool _DumpGraph(ccl::ShaderGraph *shaderGraph, const char *name)
   static const HdCyclesConfig &config = HdCyclesConfig::GetInstance();
 
   if (config.cycles_shader_graph_dump_dir.size() > 0) {
-    std::string dump_location = config.cycles_shader_graph_dump_dir + "/" +
-                                TfMakeValidIdentifier(name) + "_graph.txt";
+    std::string dump_location = config.cycles_shader_graph_dump_dir + "/" + TfMakeValidIdentifier(name) +
+                                "_graph.txt";
     std::cout << "Dumping shader graph: " << dump_location << '\n';
     try {
       shaderGraph->dump_graph(dump_location.c_str());
@@ -236,11 +234,10 @@ bool _DumpGraph(ccl::ShaderGraph *shaderGraph, const char *name)
 // UPDATE:
 // The function now resamples the transforms at uniform intervals
 // rendering more correctly.
-HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(
-    ccl::Object *object,
-    HdSceneDelegate *delegate,
-    const SdfPath &id,
-    bool use_motion)
+HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(ccl::Object *object,
+                                                                           HdSceneDelegate *delegate,
+                                                                           const SdfPath &id,
+                                                                           bool use_motion)
 {
   if (!object)
     return {};
@@ -275,9 +272,9 @@ HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(
     }
 
     // Rounding to odd number of samples to have one in the center
-    const size_t sampleOffset   = (sampleCount % 2) ? 0 : 1;
+    const size_t sampleOffset = (sampleCount % 2) ? 0 : 1;
     const size_t numMotionSteps = sampleCount + static_cast<size_t>(sampleOffset);
-    const float motionStepSize  = (xf.times.back() - xf.times.front()) /
+    const float motionStepSize = (xf.times.back() - xf.times.front()) /
                                  static_cast<float>((numMotionSteps - 1));
     object->motion.resize(numMotionSteps, ccl::transform_empty());
 
@@ -306,11 +303,11 @@ HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(
 
         const float stepTimeDiff = xf.times.data()[j] - stepTime;
         if (stepTimeDiff < 0 && stepTimeDiff > prevTimeDiff) {
-          iXfPrev      = j;
+          iXfPrev = j;
           prevTimeDiff = stepTimeDiff;
         }
         else if (stepTimeDiff > 0 && stepTimeDiff < nextTimeDiff) {
-          iXfNext      = j;
+          iXfNext = j;
           nextTimeDiff = stepTimeDiff;
         }
       }
@@ -338,7 +335,7 @@ HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(
 
         // Weighting by distance to sample
         const float timeDiff = xf.times.data()[iXfNext] - xf.times.data()[iXfPrev];
-        const float t        = (stepTime - xf.times.data()[iXfPrev]) / timeDiff;
+        const float t = (stepTime - xf.times.data()[iXfPrev]) / timeDiff;
 
         transform_motion_array_interpolate(&object->motion[i], dxf, 2, t);
       }
@@ -367,7 +364,7 @@ GfMatrix4d ConvertCameraTransform(const GfMatrix4d &a_cameraTransform)
   GfMatrix4d viewToWorldCorrectionMatrix(1.0);
 
   GfMatrix4d flipZ(1.0);
-  flipZ[2][2]                 = -1.0;
+  flipZ[2][2] = -1.0;
   viewToWorldCorrectionMatrix = flipZ * viewToWorldCorrectionMatrix;
 
   return viewToWorldCorrectionMatrix * a_cameraTransform;
@@ -475,13 +472,13 @@ ccl::float3 vec3f_to_float3(const GfVec3f &a_vec)
 ccl::float3 vec3i_to_float3(const GfVec3i &a_vec)
 {
   return ccl::make_float3(
-      static_cast<float>(a_vec[0]), static_cast<float>(a_vec[1]), static_cast<float>(a_vec[2]));
+    static_cast<float>(a_vec[0]), static_cast<float>(a_vec[1]), static_cast<float>(a_vec[2]));
 }
 
 ccl::float3 vec3d_to_float3(const GfVec3d &a_vec)
 {
   return ccl::make_float3(
-      static_cast<float>(a_vec[0]), static_cast<float>(a_vec[1]), static_cast<float>(a_vec[2]));
+    static_cast<float>(a_vec[0]), static_cast<float>(a_vec[1]), static_cast<float>(a_vec[2]));
 }
 
 ccl::float3 vec4f_to_float3(const GfVec4f &a_vec)
@@ -528,12 +525,12 @@ ccl::float4 vec4d_to_float4(const GfVec4d &a_vec)
 /* ========= Primvars ========= */
 
 const std::array<HdInterpolation, HdInterpolationCount> interpolations{
-    HdInterpolationConstant,
-    HdInterpolationUniform,
-    HdInterpolationVarying,
-    HdInterpolationVertex,
-    HdInterpolationFaceVarying,
-    HdInterpolationInstance,
+  HdInterpolationConstant,
+  HdInterpolationUniform,
+  HdInterpolationVarying,
+  HdInterpolationVertex,
+  HdInterpolationFaceVarying,
+  HdInterpolationInstance,
 };
 
 inline void _HdCyclesInsertPrimvar(HdCyclesPrimvarMap &primvars,
@@ -547,10 +544,10 @@ inline void _HdCyclesInsertPrimvar(HdCyclesPrimvarMap &primvars,
     primvars.insert({name, {value, role, interpolation}});
   }
   else {
-    it->second.value         = value;
-    it->second.role          = role;
+    it->second.value = value;
+    it->second.role = role;
     it->second.interpolation = interpolation;
-    it->second.dirtied       = true;
+    it->second.dirtied = true;
   }
 }
 
@@ -577,7 +574,7 @@ bool HdCyclesGetComputedPrimvars(HdSceneDelegate *a_delegate,
     return false;
   }
 
-  auto changed    = false;
+  auto changed = false;
   auto valueStore = HdExtComputationUtils::GetComputedPrimvarValues(dirtyPrimvars, a_delegate);
   for (const auto &primvar : dirtyPrimvars) {
     const auto itComputed = valueStore.find(primvar.name);
@@ -586,7 +583,7 @@ bool HdCyclesGetComputedPrimvars(HdSceneDelegate *a_delegate,
     }
     changed = true;
     _HdCyclesInsertPrimvar(
-        a_primvars, primvar.name, primvar.role, primvar.interpolation, itComputed->second);
+      a_primvars, primvar.name, primvar.role, primvar.interpolation, itComputed->second);
   }
 
   return changed;
@@ -611,8 +608,8 @@ bool HdCyclesGetPrimvars(HdSceneDelegate *a_delegate,
                              primvarDesc.role,
                              primvarDesc.interpolation,
                              (a_multiplePositionKeys && primvarDesc.name == HdTokens->normals) ?
-                                 VtValue{} :
-                                 a_delegate->Get(a_id, primvarDesc.name));
+                               VtValue{} :
+                               a_delegate->Get(a_id, primvarDesc.name));
     }
   }
 
@@ -628,16 +625,16 @@ void HdCyclesPopulatePrimvarDescsPerInterpolation(HdSceneDelegate *a_sceneDelega
   }
 
   auto hd_interpolations = {
-      HdInterpolationConstant,
-      HdInterpolationUniform,
-      HdInterpolationVarying,
-      HdInterpolationVertex,
-      HdInterpolationFaceVarying,
-      HdInterpolationInstance,
+    HdInterpolationConstant,
+    HdInterpolationUniform,
+    HdInterpolationVarying,
+    HdInterpolationVertex,
+    HdInterpolationFaceVarying,
+    HdInterpolationInstance,
   };
   for (auto &interpolation : hd_interpolations) {
-    a_primvarDescsPerInterpolation->emplace(
-        interpolation, a_sceneDelegate->GetPrimvarDescriptors(a_id, interpolation));
+    a_primvarDescsPerInterpolation->emplace(interpolation,
+                                            a_sceneDelegate->GetPrimvarDescriptors(a_id, interpolation));
   }
 }
 
@@ -694,18 +691,15 @@ template<> inline ccl::float3 to_cycles<GfVec3f>(const GfVec3f &v) noexcept
 }
 template<> inline ccl::float3 to_cycles<GfVec3h>(const GfVec3h &v) noexcept
 {
-  return ccl::make_float3(
-      static_cast<float>(v[0]), static_cast<float>(v[1]), static_cast<float>(v[2]));
+  return ccl::make_float3(static_cast<float>(v[0]), static_cast<float>(v[1]), static_cast<float>(v[2]));
 }
 template<> inline ccl::float3 to_cycles<GfVec3d>(const GfVec3d &v) noexcept
 {
-  return ccl::make_float3(
-      static_cast<float>(v[0]), static_cast<float>(v[1]), static_cast<float>(v[2]));
+  return ccl::make_float3(static_cast<float>(v[0]), static_cast<float>(v[1]), static_cast<float>(v[2]));
 }
 template<> inline ccl::float3 to_cycles<GfVec3i>(const GfVec3i &v) noexcept
 {
-  return ccl::make_float3(
-      static_cast<float>(v[0]), static_cast<float>(v[1]), static_cast<float>(v[2]));
+  return ccl::make_float3(static_cast<float>(v[0]), static_cast<float>(v[1]), static_cast<float>(v[2]));
 }
 
 template<> inline ccl::float4 to_cycles<GfVec4f>(const GfVec4f &v) noexcept
@@ -714,39 +708,30 @@ template<> inline ccl::float4 to_cycles<GfVec4f>(const GfVec4f &v) noexcept
 }
 template<> inline ccl::float4 to_cycles<GfVec4h>(const GfVec4h &v) noexcept
 {
-  return ccl::make_float4(static_cast<float>(v[0]),
-                          static_cast<float>(v[1]),
-                          static_cast<float>(v[2]),
-                          static_cast<float>(v[3]));
+  return ccl::make_float4(
+    static_cast<float>(v[0]), static_cast<float>(v[1]), static_cast<float>(v[2]), static_cast<float>(v[3]));
 }
 template<> inline ccl::float4 to_cycles<GfVec4d>(const GfVec4d &v) noexcept
 {
-  return ccl::make_float4(static_cast<float>(v[0]),
-                          static_cast<float>(v[1]),
-                          static_cast<float>(v[2]),
-                          static_cast<float>(v[3]));
+  return ccl::make_float4(
+    static_cast<float>(v[0]), static_cast<float>(v[1]), static_cast<float>(v[2]), static_cast<float>(v[3]));
 }
 template<> inline ccl::float4 to_cycles<GfVec4i>(const GfVec4i &v) noexcept
 {
-  return ccl::make_float4(static_cast<float>(v[0]),
-                          static_cast<float>(v[1]),
-                          static_cast<float>(v[2]),
-                          static_cast<float>(v[3]));
+  return ccl::make_float4(
+    static_cast<float>(v[0]), static_cast<float>(v[1]), static_cast<float>(v[2]), static_cast<float>(v[3]));
 }
 
 /* ========= MikkTSpace ========= */
 
 struct MikkUserData {
-  MikkUserData(const char *layer_name,
-               ccl::Mesh *mesh_in,
-               ccl::float3 *tangent_in,
-               float *tangent_sign_in)
-      : mesh(mesh_in),
-        corner_normal(NULL),
-        vertex_normal(NULL),
-        texface(NULL),
-        tangent(tangent_in),
-        tangent_sign(tangent_sign_in)
+  MikkUserData(const char *layer_name, ccl::Mesh *mesh_in, ccl::float3 *tangent_in, float *tangent_sign_in)
+    : mesh(mesh_in),
+      corner_normal(NULL),
+      vertex_normal(NULL),
+      texface(NULL),
+      tangent(tangent_in),
+      tangent_sign(tangent_sign_in)
   {
     const ccl::AttributeSet &attributes = (mesh->subd_faces.size()) ? mesh->subd_attributes :
                                                                       mesh->attributes;
@@ -832,18 +817,15 @@ int mikk_corner_index(const ccl::Mesh *mesh, const int face_num, const int vert_
   }
 }
 
-void mikk_get_position(const SMikkTSpaceContext *context,
-                       float P[3],
-                       const int face_num,
-                       const int vert_num)
+void mikk_get_position(const SMikkTSpaceContext *context, float P[3], const int face_num, const int vert_num)
 {
   const MikkUserData *userdata = static_cast<const MikkUserData *>(context->m_pUserData);
-  const ccl::Mesh *mesh        = userdata->mesh;
-  const int vertex_index       = mikk_vertex_index(mesh, face_num, vert_num);
-  const ccl::float3 vP         = mesh->verts[vertex_index];
-  P[0]                         = vP.x;
-  P[1]                         = vP.y;
-  P[2]                         = vP.z;
+  const ccl::Mesh *mesh = userdata->mesh;
+  const int vertex_index = mikk_vertex_index(mesh, face_num, vert_num);
+  const ccl::float3 vP = mesh->verts[vertex_index];
+  P[0] = vP.x;
+  P[1] = vP.y;
+  P[2] = vP.z;
 }
 
 void mikk_get_texture_coordinate(const SMikkTSpaceContext *context,
@@ -852,12 +834,12 @@ void mikk_get_texture_coordinate(const SMikkTSpaceContext *context,
                                  const int vert_num)
 {
   const MikkUserData *userdata = static_cast<const MikkUserData *>(context->m_pUserData);
-  const ccl::Mesh *mesh        = userdata->mesh;
+  const ccl::Mesh *mesh = userdata->mesh;
   if (userdata->texface != NULL) {
     const int corner_index = mikk_corner_index(mesh, face_num, vert_num);
-    ccl::float2 tfuv       = userdata->texface[corner_index];
-    uv[0]                  = tfuv.x;
-    uv[1]                  = tfuv.y;
+    ccl::float2 tfuv = userdata->texface[corner_index];
+    uv[0] = tfuv.x;
+    uv[1] = tfuv.y;
   }
   else {
     uv[0] = 0.0f;
@@ -865,13 +847,10 @@ void mikk_get_texture_coordinate(const SMikkTSpaceContext *context,
   }
 }
 
-void mikk_get_normal(const SMikkTSpaceContext *context,
-                     float N[3],
-                     const int face_num,
-                     const int vert_num)
+void mikk_get_normal(const SMikkTSpaceContext *context, float N[3], const int face_num, const int vert_num)
 {
   const MikkUserData *userdata = static_cast<const MikkUserData *>(context->m_pUserData);
-  const ccl::Mesh *mesh        = userdata->mesh;
+  const ccl::Mesh *mesh = userdata->mesh;
   ccl::float3 vN;
 
   if (mesh->subd_faces.size()) {
@@ -881,7 +860,7 @@ void mikk_get_normal(const SMikkTSpaceContext *context,
     }
     else if (face.smooth) {
       const int vertex_index = mikk_vertex_index(mesh, face_num, vert_num);
-      vN                     = userdata->vertex_normal[vertex_index];
+      vN = userdata->vertex_normal[vertex_index];
     }
     else {
       vN = face.normal(mesh);
@@ -893,11 +872,11 @@ void mikk_get_normal(const SMikkTSpaceContext *context,
     }
     else if (mesh->smooth[face_num]) {
       const int vertex_index = mikk_vertex_index(mesh, face_num, vert_num);
-      vN                     = userdata->vertex_normal[vertex_index];
+      vN = userdata->vertex_normal[vertex_index];
     }
     else {
       const ccl::Mesh::Triangle tri = mesh->get_triangle(face_num);
-      vN                            = tri.compute_normal(&mesh->verts[0]);
+      vN = tri.compute_normal(&mesh->verts[0]);
     }
   }
   N[0] = vN.x;
@@ -911,23 +890,19 @@ void mikk_set_tangent_space(const SMikkTSpaceContext *context,
                             const int face_num,
                             const int vert_num)
 {
-  MikkUserData *userdata          = static_cast<MikkUserData *>(context->m_pUserData);
-  const ccl::Mesh *mesh           = userdata->mesh;
-  const int corner_index          = mikk_corner_index(mesh, face_num, vert_num);
+  MikkUserData *userdata = static_cast<MikkUserData *>(context->m_pUserData);
+  const ccl::Mesh *mesh = userdata->mesh;
+  const int corner_index = mikk_corner_index(mesh, face_num, vert_num);
   userdata->tangent[corner_index] = ccl::make_float3(T[0], T[1], T[2]);
   if (userdata->tangent_sign != NULL) {
     userdata->tangent_sign[corner_index] = sign;
   }
 }
 
-void mikk_compute_tangents(const char *layer_name,
-                           ccl::Mesh *mesh,
-                           bool need_sign,
-                           bool active_render)
+void mikk_compute_tangents(const char *layer_name, ccl::Mesh *mesh, bool need_sign, bool active_render)
 {
   /* Create tangent attributes. */
-  ccl::AttributeSet &attributes = (mesh->subd_faces.size()) ? mesh->subd_attributes :
-                                                              mesh->attributes;
+  ccl::AttributeSet &attributes = (mesh->subd_faces.size()) ? mesh->subd_attributes : mesh->attributes;
   ccl::Attribute *attr;
   ccl::ustring name;
 
@@ -971,26 +946,23 @@ void mikk_compute_tangents(const char *layer_name,
   /* Setup interface. */
   SMikkTSpaceInterface sm_interface;
   memset(&sm_interface, 0, sizeof(sm_interface));
-  sm_interface.m_getNumFaces          = mikk_get_num_faces;
+  sm_interface.m_getNumFaces = mikk_get_num_faces;
   sm_interface.m_getNumVerticesOfFace = mikk_get_num_verts_of_face;
-  sm_interface.m_getPosition          = mikk_get_position;
-  sm_interface.m_getTexCoord          = mikk_get_texture_coordinate;
-  sm_interface.m_getNormal            = mikk_get_normal;
-  sm_interface.m_setTSpaceBasic       = mikk_set_tangent_space;
+  sm_interface.m_getPosition = mikk_get_position;
+  sm_interface.m_getTexCoord = mikk_get_texture_coordinate;
+  sm_interface.m_getNormal = mikk_get_normal;
+  sm_interface.m_setTSpaceBasic = mikk_set_tangent_space;
   /* Setup context. */
   SMikkTSpaceContext context;
   memset(&context, 0, sizeof(context));
-  context.m_pUserData  = &userdata;
+  context.m_pUserData = &userdata;
   context.m_pInterface = &sm_interface;
   /* Compute tangents. */
   genTangSpaceDefault(&context);
 }
 
 template<>
-bool _HdCyclesGetVtValue<bool>(VtValue a_value,
-                               bool a_default,
-                               bool *a_hasChanged,
-                               bool a_checkWithDefault)
+bool _HdCyclesGetVtValue<bool>(VtValue a_value, bool a_default, bool *a_hasChanged, bool a_checkWithDefault)
 {
   bool val = a_default;
   if (!a_value.IsEmpty()) {

@@ -41,12 +41,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiMetalGraphicsPipeline::HgiMetalGraphicsPipeline(HgiMetal *hgi,
-                                                   HgiGraphicsPipelineDesc const &desc)
-    : HgiGraphicsPipeline(desc),
-      _vertexDescriptor(nil),
-      _depthStencilState(nil),
-      _renderPipelineState(nil)
+HgiMetalGraphicsPipeline::HgiMetalGraphicsPipeline(HgiMetal *hgi, HgiGraphicsPipelineDesc const &desc)
+  : HgiGraphicsPipeline(desc),
+    _vertexDescriptor(nil),
+    _depthStencilState(nil),
+    _renderPipelineState(nil)
 {
   _CreateVertexDescriptor();
   _CreateDepthStencilState(hgi->GetPrimaryDevice());
@@ -76,17 +75,17 @@ void HgiMetalGraphicsPipeline::_CreateVertexDescriptor()
     HgiVertexAttributeDescVector const &vas = vbo.vertexAttributes;
 
     _vertexDescriptor.layouts[index].stepFunction = MTLVertexStepFunctionPerVertex;
-    _vertexDescriptor.layouts[index].stepRate     = 1;
-    _vertexDescriptor.layouts[index].stride       = vbo.vertexStride;
+    _vertexDescriptor.layouts[index].stepRate = 1;
+    _vertexDescriptor.layouts[index].stride = vbo.vertexStride;
 
     // Describe each vertex attribute in the vertex buffer
     for (size_t loc = 0; loc < vas.size(); loc++) {
       HgiVertexAttributeDesc const &va = vas[loc];
 
-      uint32_t idx                             = va.shaderBindLocation;
+      uint32_t idx = va.shaderBindLocation;
       _vertexDescriptor.attributes[idx].format = HgiMetalConversions::GetVertexFormat(va.format);
       _vertexDescriptor.attributes[idx].bufferIndex = vbo.bindingIndex;
-      _vertexDescriptor.attributes[idx].offset      = va.offset;
+      _vertexDescriptor.attributes[idx].offset = va.offset;
     }
     index++;
   }
@@ -100,16 +99,15 @@ void HgiMetalGraphicsPipeline::_CreateRenderPipelineState(id<MTLDevice> device)
   HGIMETAL_DEBUG_LABEL(stateDesc, _descriptor.debugName.c_str());
   stateDesc.rasterSampleCount = 1;
 
-  stateDesc.inputPrimitiveTopology = HgiMetalConversions::GetPrimitiveClass(
-      _descriptor.primitiveType);
+  stateDesc.inputPrimitiveTopology = HgiMetalConversions::GetPrimitiveClass(_descriptor.primitiveType);
 
   HgiMetalShaderProgram const *metalProgram = static_cast<HgiMetalShaderProgram *>(
-      _descriptor.shaderProgram.Get());
+    _descriptor.shaderProgram.Get());
 
-  stateDesc.vertexFunction     = metalProgram->GetVertexFunction();
+  stateDesc.vertexFunction = metalProgram->GetVertexFunction();
   id<MTLFunction> fragFunction = metalProgram->GetFragmentFunction();
   if (fragFunction && _descriptor.rasterizationState.rasterizerEnabled) {
-    stateDesc.fragmentFunction     = fragFunction;
+    stateDesc.fragmentFunction = fragFunction;
     stateDesc.rasterizationEnabled = YES;
   }
   else {
@@ -119,29 +117,27 @@ void HgiMetalGraphicsPipeline::_CreateRenderPipelineState(id<MTLDevice> device)
   // Color attachments
   for (size_t i = 0; i < _descriptor.colorAttachmentDescs.size(); i++) {
     HgiAttachmentDesc const &hgiColorAttachment = _descriptor.colorAttachmentDescs[i];
-    MTLRenderPipelineColorAttachmentDescriptor *metalColorAttachment =
-        stateDesc.colorAttachments[i];
+    MTLRenderPipelineColorAttachmentDescriptor *metalColorAttachment = stateDesc.colorAttachments[i];
 
-    metalColorAttachment.pixelFormat = HgiMetalConversions::GetPixelFormat(
-        hgiColorAttachment.format);
+    metalColorAttachment.pixelFormat = HgiMetalConversions::GetPixelFormat(hgiColorAttachment.format);
 
     if (hgiColorAttachment.blendEnabled) {
       metalColorAttachment.blendingEnabled = YES;
 
       metalColorAttachment.sourceRGBBlendFactor = HgiMetalConversions::GetBlendFactor(
-          hgiColorAttachment.srcColorBlendFactor);
+        hgiColorAttachment.srcColorBlendFactor);
       metalColorAttachment.destinationRGBBlendFactor = HgiMetalConversions::GetBlendFactor(
-          hgiColorAttachment.dstColorBlendFactor);
+        hgiColorAttachment.dstColorBlendFactor);
 
       metalColorAttachment.sourceAlphaBlendFactor = HgiMetalConversions::GetBlendFactor(
-          hgiColorAttachment.srcAlphaBlendFactor);
+        hgiColorAttachment.srcAlphaBlendFactor);
       metalColorAttachment.destinationAlphaBlendFactor = HgiMetalConversions::GetBlendFactor(
-          hgiColorAttachment.dstAlphaBlendFactor);
+        hgiColorAttachment.dstAlphaBlendFactor);
 
       metalColorAttachment.rgbBlendOperation = HgiMetalConversions::GetBlendEquation(
-          hgiColorAttachment.colorBlendOp);
+        hgiColorAttachment.colorBlendOp);
       metalColorAttachment.alphaBlendOperation = HgiMetalConversions::GetBlendEquation(
-          hgiColorAttachment.alphaBlendOp);
+        hgiColorAttachment.alphaBlendOp);
     }
     else {
       metalColorAttachment.blendingEnabled = NO;
@@ -150,8 +146,7 @@ void HgiMetalGraphicsPipeline::_CreateRenderPipelineState(id<MTLDevice> device)
 
   HgiAttachmentDesc const &hgiDepthAttachment = _descriptor.depthAttachmentDesc;
 
-  stateDesc.depthAttachmentPixelFormat = HgiMetalConversions::GetPixelFormat(
-      hgiDepthAttachment.format);
+  stateDesc.depthAttachmentPixelFormat = HgiMetalConversions::GetPixelFormat(hgiDepthAttachment.format);
 
   stateDesc.sampleCount = _descriptor.multiSampleState.sampleCount;
   if (_descriptor.multiSampleState.alphaToCoverageEnable) {
@@ -163,7 +158,7 @@ void HgiMetalGraphicsPipeline::_CreateRenderPipelineState(id<MTLDevice> device)
 
   stateDesc.vertexDescriptor = _vertexDescriptor;
 
-  NSError *error       = NULL;
+  NSError *error = NULL;
   _renderPipelineState = [device newRenderPipelineStateWithDescriptor:stateDesc error:&error];
   [stateDesc release];
 
@@ -175,8 +170,7 @@ void HgiMetalGraphicsPipeline::_CreateRenderPipelineState(id<MTLDevice> device)
 
 void HgiMetalGraphicsPipeline::_CreateDepthStencilState(id<MTLDevice> device)
 {
-  MTLDepthStencilDescriptor *depthStencilStateDescriptor = [[MTLDepthStencilDescriptor alloc]
-      init];
+  MTLDepthStencilDescriptor *depthStencilStateDescriptor = [[MTLDepthStencilDescriptor alloc] init];
 
   HGIMETAL_DEBUG_LABEL(depthStencilStateDescriptor, _descriptor.debugName.c_str());
 
@@ -188,7 +182,7 @@ void HgiMetalGraphicsPipeline::_CreateDepthStencilState(id<MTLDevice> device)
   }
   if (_descriptor.depthState.depthTestEnabled) {
     MTLCompareFunction depthFn = HgiMetalConversions::GetDepthCompareFunction(
-        _descriptor.depthState.depthCompareFn);
+      _descriptor.depthState.depthCompareFn);
     depthStencilStateDescriptor.depthCompareFunction = depthFn;
   }
   else {
@@ -201,7 +195,7 @@ void HgiMetalGraphicsPipeline::_CreateDepthStencilState(id<MTLDevice> device)
     TF_CODING_ERROR("Missing implementation stencil mask enabled");
   }
   else {
-    depthStencilStateDescriptor.backFaceStencil  = nil;
+    depthStencilStateDescriptor.backFaceStencil = nil;
     depthStencilStateDescriptor.frontFaceStencil = nil;
   }
 
@@ -218,12 +212,11 @@ void HgiMetalGraphicsPipeline::BindPipeline(id<MTLRenderCommandEncoder> renderEn
   //
   // Rasterization state
   //
+  [renderEncoder setCullMode:HgiMetalConversions::GetCullMode(_descriptor.rasterizationState.cullMode)];
   [renderEncoder
-      setCullMode:HgiMetalConversions::GetCullMode(_descriptor.rasterizationState.cullMode)];
-  [renderEncoder setTriangleFillMode:HgiMetalConversions::GetPolygonMode(
-                                         _descriptor.rasterizationState.polygonMode)];
-  [renderEncoder setFrontFacingWinding:HgiMetalConversions::GetWinding(
-                                           _descriptor.rasterizationState.winding)];
+    setTriangleFillMode:HgiMetalConversions::GetPolygonMode(_descriptor.rasterizationState.polygonMode)];
+  [renderEncoder
+    setFrontFacingWinding:HgiMetalConversions::GetWinding(_descriptor.rasterizationState.winding)];
   [renderEncoder setDepthStencilState:_depthStencilState];
 
   TF_VERIFY(_descriptor.rasterizationState.lineWidth == 1.0f, "Missing implementation buffers");

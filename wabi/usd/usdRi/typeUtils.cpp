@@ -49,7 +49,7 @@ SdfValueTypeName UsdRi_GetUsdType(const string &riType)
     const char *riName;
     SdfValueTypeName usdType;
   };
-  static Entry map[]         = {{"color", SdfValueTypeNames->Color3f},
+  static Entry map[] = {{"color", SdfValueTypeNames->Color3f},
                         {"vector", SdfValueTypeNames->Vector3d},
                         {"normal", SdfValueTypeNames->Normal3d},
                         {"point", SdfValueTypeNames->Point3d},

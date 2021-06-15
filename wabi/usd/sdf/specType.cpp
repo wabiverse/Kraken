@@ -101,7 +101,7 @@ struct Sdf_SpecTypeInfo {
     }
 
     const std::pair<SpecTypeToBitmask::iterator, bool> mapStatus = specTypeToBitmask.insert(
-        std::make_pair(specTfType, 0));
+      std::make_pair(specTfType, 0));
     if (mapStatus.second) {
       specTypeInfoToTfType.push_back(make_pair(&specCPPType, specTfType));
     }
@@ -150,13 +150,13 @@ void SdfSpecTypeRegistration::_RegisterSpecType(const std::type_info &specCPPTyp
   }
 
   Sdf_SpecTypeInfo::SpecTypeToBitmask::iterator specEntry = specTypeInfo.FindOrCreateSpecTypeEntry(
-      specCPPType);
+    specCPPType);
   if (specEntry == specTypeInfo.specTypeToBitmask.end()) {
     // Error already emitted, bail out.
     return;
   }
 
-  const TfType &specTfType   = specEntry->first;
+  const TfType &specTfType = specEntry->first;
   size_t &specAllowedBitmask = specEntry->second;
 
   // Check every entry currently in the specTypeToBitmask (including the
@@ -175,15 +175,13 @@ void SdfSpecTypeRegistration::_RegisterSpecType(const std::type_info &specCPPTyp
     specAllowedBitmask |= _GetBitmaskForSpecType(SdfSpecTypeVariant);
   }
 
-  Sdf_SpecTypeInfo::SpecTypeToTfType &specTypeToTfType =
-      specTypeInfo.schemaTypeToSpecTypes[schemaTfType];
+  Sdf_SpecTypeInfo::SpecTypeToTfType &specTypeToTfType = specTypeInfo.schemaTypeToSpecTypes[schemaTfType];
   if (specTypeToTfType.empty()) {
     specTypeToTfType.resize(SdfNumSpecTypes);
   }
   specTypeToTfType[specEnumType] = specTfType;
 
-  Sdf_SpecTypeInfo::SchemaTypes &schemaTypesForSpecType =
-      specTypeInfo.specTypeToSchemaTypes[specTfType];
+  Sdf_SpecTypeInfo::SchemaTypes &schemaTypesForSpecType = specTypeInfo.specTypeToSchemaTypes[specTfType];
   if (std::find(schemaTypesForSpecType.begin(), schemaTypesForSpecType.end(), schemaTfType) ==
       schemaTypesForSpecType.end()) {
     schemaTypesForSpecType.push_back(schemaTfType);
@@ -207,13 +205,13 @@ void SdfSpecTypeRegistration::_RegisterAbstractSpecType(const std::type_info &sp
   }
 
   Sdf_SpecTypeInfo::SpecTypeToBitmask::iterator specEntry = specTypeInfo.FindOrCreateSpecTypeEntry(
-      specCPPType);
+    specCPPType);
   if (specEntry == specTypeInfo.specTypeToBitmask.end()) {
     // Error already emitted, bail out.
     return;
   }
 
-  const TfType &specTfType   = specEntry->first;
+  const TfType &specTfType = specEntry->first;
   size_t &specAllowedBitmask = specEntry->second;
 
   // Check every entry currently in the specTypeToBitmask (including the
@@ -225,8 +223,7 @@ void SdfSpecTypeRegistration::_RegisterAbstractSpecType(const std::type_info &sp
       specAllowedBitmask |= it->second;
   }
 
-  Sdf_SpecTypeInfo::SchemaTypes &schemaTypesForSpecType =
-      specTypeInfo.specTypeToSchemaTypes[specTfType];
+  Sdf_SpecTypeInfo::SchemaTypes &schemaTypesForSpecType = specTypeInfo.specTypeToSchemaTypes[specTfType];
   if (std::find(schemaTypesForSpecType.begin(), schemaTypesForSpecType.end(), schemaTfType) ==
       schemaTypesForSpecType.end()) {
     schemaTypesForSpecType.push_back(schemaTfType);
@@ -252,8 +249,7 @@ static bool _CanCast(SdfSpecType fromType, const TfType &toType)
     // spin until registration has completed.
   }
 
-  const size_t allowedBitmask = TfMapLookupByValue(
-      specTypeInfo.specTypeToBitmask, toType, size_t(0));
+  const size_t allowedBitmask = TfMapLookupByValue(specTypeInfo.specTypeToBitmask, toType, size_t(0));
   return allowedBitmask & _GetBitmaskForSpecType(fromType);
 }
 
@@ -262,7 +258,7 @@ TfType Sdf_SpecType::Cast(const SdfSpec &from, const std::type_info &to)
   const Sdf_SpecTypeInfo &specTypeInfo = Sdf_SpecTypeInfo::GetInstance();
 
   const SdfSpecType fromType = from.GetSpecType();
-  const TfType &toType       = specTypeInfo.TfTypeFind(to);
+  const TfType &toType = specTypeInfo.TfTypeFind(to);
   if (!_CanCast(fromType, toType)) {
     return TfType();
   }
@@ -273,7 +269,7 @@ TfType Sdf_SpecType::Cast(const SdfSpec &from, const std::type_info &to)
   }
 
   const Sdf_SpecTypeInfo::SpecTypeToTfType *specTypeToTfType = TfMapLookupPtr(
-      specTypeInfo.schemaTypeToSpecTypes, schemaType);
+    specTypeInfo.schemaTypeToSpecTypes, schemaType);
 
   // Allow casting to go through if we're trying to cast from a
   // variant spec to a prim spec.
@@ -294,7 +290,7 @@ TfType Sdf_SpecType::Cast(const SdfSpec &from, const std::type_info &to)
 bool Sdf_SpecType::CanCast(SdfSpecType fromType, const std::type_info &to)
 {
   const Sdf_SpecTypeInfo &specTypeInfo = Sdf_SpecTypeInfo::GetInstance();
-  const TfType &toType                 = specTypeInfo.TfTypeFind(to);
+  const TfType &toType = specTypeInfo.TfTypeFind(to);
   return _CanCast(fromType, toType);
 }
 
@@ -303,14 +299,14 @@ bool Sdf_SpecType::CanCast(const SdfSpec &from, const std::type_info &to)
   const Sdf_SpecTypeInfo &specTypeInfo = Sdf_SpecTypeInfo::GetInstance();
 
   const SdfSpecType fromType = from.GetSpecType();
-  const TfType &toType       = specTypeInfo.TfTypeFind(to);
+  const TfType &toType = specTypeInfo.TfTypeFind(to);
   if (!_CanCast(fromType, toType)) {
     return false;
   }
 
-  const TfType &fromSchemaType                       = TfType::Find(typeid(from.GetSchema()));
-  const Sdf_SpecTypeInfo::SchemaTypes *toSchemaTypes = TfMapLookupPtr(
-      specTypeInfo.specTypeToSchemaTypes, toType);
+  const TfType &fromSchemaType = TfType::Find(typeid(from.GetSchema()));
+  const Sdf_SpecTypeInfo::SchemaTypes *toSchemaTypes = TfMapLookupPtr(specTypeInfo.specTypeToSchemaTypes,
+                                                                      toType);
   if (!toSchemaTypes) {
     return false;
   }

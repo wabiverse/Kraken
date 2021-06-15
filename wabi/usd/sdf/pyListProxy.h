@@ -59,48 +59,48 @@ template<class T> class SdfPyWrapListProxy {
     using namespace boost::python;
 
     class_<Type>(_GetName().c_str(), no_init)
-        .def("__str__", &This::_GetStr)
-        .def("__len__", &Type::size)
-        .def("__getitem__", &This::_GetItemIndex)
-        .def("__getitem__", &This::_GetItemSlice)
-        .def("__setitem__", &This::_SetItemIndex)
-        .def("__setitem__", &This::_SetItemSlice)
-        .def("__delitem__", &This::_DelItemIndex)
-        .def("__delitem__", &This::_DelItemSlice)
-        .def("__delitem__", &Type::Remove)
-        .def("count", &Type::Count)
-        .def("copy", &Type::operator value_vector_type, return_value_policy<TfPySequenceToList>())
-        .def("index", &This::_FindIndex)
-        .def("clear", &Type::clear)
-        .def("insert", &This::_Insert)
-        .def("append", &Type::push_back)
-        .def("remove", &Type::Remove)
-        .def("replace", &Type::Replace)
-        .def("ApplyList", &Type::ApplyList)
-        .def("ApplyEditsToList", &This::_ApplyEditsToList)
-        .add_property("expired", &This::_IsExpired)
-        .def(self == self)
-        .def(self != self)
-        .def(self < self)
-        .def(self <= self)
-        .def(self > self)
-        .def(self >= self)
-        .def(self == other<value_vector_type>())
-        .def(self != other<value_vector_type>())
-        .def(self < other<value_vector_type>())
-        .def(self <= other<value_vector_type>())
-        .def(self > other<value_vector_type>())
-        .def(self >= other<value_vector_type>());
+      .def("__str__", &This::_GetStr)
+      .def("__len__", &Type::size)
+      .def("__getitem__", &This::_GetItemIndex)
+      .def("__getitem__", &This::_GetItemSlice)
+      .def("__setitem__", &This::_SetItemIndex)
+      .def("__setitem__", &This::_SetItemSlice)
+      .def("__delitem__", &This::_DelItemIndex)
+      .def("__delitem__", &This::_DelItemSlice)
+      .def("__delitem__", &Type::Remove)
+      .def("count", &Type::Count)
+      .def("copy", &Type::operator value_vector_type, return_value_policy<TfPySequenceToList>())
+      .def("index", &This::_FindIndex)
+      .def("clear", &Type::clear)
+      .def("insert", &This::_Insert)
+      .def("append", &Type::push_back)
+      .def("remove", &Type::Remove)
+      .def("replace", &Type::Replace)
+      .def("ApplyList", &Type::ApplyList)
+      .def("ApplyEditsToList", &This::_ApplyEditsToList)
+      .add_property("expired", &This::_IsExpired)
+      .def(self == self)
+      .def(self != self)
+      .def(self < self)
+      .def(self <= self)
+      .def(self > self)
+      .def(self >= self)
+      .def(self == other<value_vector_type>())
+      .def(self != other<value_vector_type>())
+      .def(self < other<value_vector_type>())
+      .def(self <= other<value_vector_type>())
+      .def(self > other<value_vector_type>())
+      .def(self >= other<value_vector_type>());
   }
 
   static std::string _GetName()
   {
     std::string name = "ListProxy_" + ArchGetDemangled<TypePolicy>();
-    name             = TfStringReplace(name, " ", "_");
-    name             = TfStringReplace(name, ",", "_");
-    name             = TfStringReplace(name, "::", "_");
-    name             = TfStringReplace(name, "<", "_");
-    name             = TfStringReplace(name, ">", "_");
+    name = TfStringReplace(name, " ", "_");
+    name = TfStringReplace(name, ",", "_");
+    name = TfStringReplace(name, "::", "_");
+    name = TfStringReplace(name, "<", "_");
+    name = TfStringReplace(name, ">", "_");
     return name;
   }
 
@@ -141,9 +141,7 @@ template<class T> class SdfPyWrapListProxy {
     x[TfPyNormalizeIndex(index, x._GetSize(), true)] = value;
   }
 
-  static void _SetItemSlice(Type &x,
-                            const boost::python::slice &index,
-                            const value_vector_type &values)
+  static void _SetItemSlice(Type &x, const boost::python::slice &index, const value_vector_type &values)
   {
     using namespace boost::python;
 
@@ -155,15 +153,15 @@ template<class T> class SdfPyWrapListProxy {
     size_t start, step, count;
     try {
       slice::range<typename Type::iterator> range = index.get_indicies(x.begin(), x.end());
-      start                                       = range.start - x.begin();
-      step                                        = range.step;
-      count                                       = 1 + (range.stop - range.start) / range.step;
+      start = range.start - x.begin();
+      step = range.step;
+      count = 1 + (range.stop - range.start) / range.step;
     }
     catch (const std::invalid_argument &) {
       // Empty range.
       extract<int> e(index.start());
       start = e.check() ? TfPyNormalizeIndex(e(), x._GetSize(), true) : 0;
-      step  = 0;
+      step = 0;
       count = 0;
     }
 
@@ -178,7 +176,7 @@ template<class T> class SdfPyWrapListProxy {
                                            "to extended slice of size %zd",
                                            values.size(),
                                            count)
-                                .c_str());
+                              .c_str());
       }
       else if (step == 1) {
         x._Edit(start, count, values);
@@ -205,9 +203,9 @@ template<class T> class SdfPyWrapListProxy {
       try {
         // Get the range and the number of items in the slice.
         slice::range<typename Type::iterator> range = index.get_indicies(x.begin(), x.end());
-        size_t start                                = range.start - x.begin();
-        size_t step                                 = range.step;
-        size_t count                                = 1 + (range.stop - range.start) / range.step;
+        size_t start = range.start - x.begin();
+        size_t step = range.step;
+        size_t count = 1 + (range.stop - range.start) / range.step;
 
         // Erase items.
         if (step == 1) {

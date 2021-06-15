@@ -45,22 +45,21 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPh_DomeLightComputationGPU::HdPh_DomeLightComputationGPU(
-    const TfToken &shaderToken,
-    HdPhSimpleLightingShaderPtr const &lightingShader,
-    const unsigned int numLevels,
-    const unsigned int level,
-    const float roughness)
-    : _shaderToken(shaderToken),
-      _lightingShader(lightingShader),
-      _numLevels(numLevels),
-      _level(level),
-      _roughness(roughness)
+HdPh_DomeLightComputationGPU::HdPh_DomeLightComputationGPU(const TfToken &shaderToken,
+                                                           HdPhSimpleLightingShaderPtr const &lightingShader,
+                                                           const unsigned int numLevels,
+                                                           const unsigned int level,
+                                                           const float roughness)
+  : _shaderToken(shaderToken),
+    _lightingShader(lightingShader),
+    _numLevels(numLevels),
+    _level(level),
+    _roughness(roughness)
 {}
 
 static void _FillPixelsByteSize(HgiTextureDesc *const desc)
 {
-  const size_t s       = HgiGetDataSizeOfFormat(desc->format);
+  const size_t s = HgiGetDataSizeOfFormat(desc->format);
   desc->pixelsByteSize = s * desc->dimensions[0] * desc->dimensions[1] * desc->dimensions[2];
 }
 
@@ -70,20 +69,19 @@ static bool _GetSrcTextureDimensionsAndName(HdPhSimpleLightingShaderSharedPtr co
                                             HgiSamplerHandle *srcSamplerName)
 {
   // Get source texture, the dome light environment map
-  HdPhTextureHandleSharedPtr const &srcTextureHandle =
-      shader->GetDomeLightEnvironmentTextureHandle();
+  HdPhTextureHandleSharedPtr const &srcTextureHandle = shader->GetDomeLightEnvironmentTextureHandle();
   if (!TF_VERIFY(srcTextureHandle)) {
     return false;
   }
 
   const HdPhUvTextureObject *const srcTextureObject = dynamic_cast<HdPhUvTextureObject *>(
-      srcTextureHandle->GetTextureObject().get());
+    srcTextureHandle->GetTextureObject().get());
   if (!TF_VERIFY(srcTextureObject)) {
     return false;
   }
 
   const HdPhUvSamplerObject *const srcSamplerObject = dynamic_cast<HdPhUvSamplerObject *>(
-      srcTextureHandle->GetSamplerObject().get());
+    srcTextureHandle->GetSamplerObject().get());
   if (!TF_VERIFY(srcSamplerObject)) {
     return false;
   }
@@ -99,7 +97,7 @@ static bool _GetSrcTextureDimensionsAndName(HdPhSimpleLightingShaderSharedPtr co
     return false;
   }
 
-  *srcDim         = srcTexture->GetDescriptor().dimensions;
+  *srcDim = srcTexture->GetDescriptor().dimensions;
   *srcTextureName = srcTextureObject->GetTexture();
   *srcSamplerName = srcSamplerObject->GetSampler();
 
@@ -112,12 +110,9 @@ void HdPh_DomeLightComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &ra
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  HdPhResourceRegistry *hdPhResourceRegistry = static_cast<HdPhResourceRegistry *>(
-      resourceRegistry);
+  HdPhResourceRegistry *hdPhResourceRegistry = static_cast<HdPhResourceRegistry *>(resourceRegistry);
   HdPhGLSLProgramSharedPtr const computeProgram = HdPhGLSLProgram::GetComputeProgram(
-      HdPhPackageDomeLightShader(),
-      _shaderToken,
-      static_cast<HdPhResourceRegistry *>(resourceRegistry));
+    HdPhPackageDomeLightShader(), _shaderToken, static_cast<HdPhResourceRegistry *>(resourceRegistry));
   if (!TF_VERIFY(computeProgram)) {
     return;
   }
@@ -136,7 +131,7 @@ void HdPh_DomeLightComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &ra
   }
 
   // Size of texture to be created.
-  const int width  = srcDim[0] / 2;
+  const int width = srcDim[0] / 2;
   const int height = srcDim[1] / 2;
 
   // Get texture object from lighting shader that this
@@ -146,8 +141,8 @@ void HdPh_DomeLightComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &ra
     return;
   }
 
-  HdPhDynamicUvTextureObject *const dstUvTextureObject =
-      dynamic_cast<HdPhDynamicUvTextureObject *>(dstTextureHandle->GetTextureObject().get());
+  HdPhDynamicUvTextureObject *const dstUvTextureObject = dynamic_cast<HdPhDynamicUvTextureObject *>(
+    dstTextureHandle->GetTextureObject().get());
   if (!TF_VERIFY(dstUvTextureObject)) {
     return;
   }
@@ -156,26 +151,26 @@ void HdPh_DomeLightComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &ra
     // Level zero is in charge of actually creating the
     // GPU resource.
     HgiTextureDesc desc;
-    desc.debugName  = _shaderToken.GetText();
-    desc.format     = HgiFormatFloat16Vec4;
+    desc.debugName = _shaderToken.GetText();
+    desc.format = HgiFormatFloat16Vec4;
     desc.dimensions = GfVec3i(width, height, 1);
     desc.layerCount = 1;
-    desc.mipLevels  = _numLevels;
-    desc.usage      = HgiTextureUsageBitsShaderRead | HgiTextureUsageBitsShaderWrite;
+    desc.mipLevels = _numLevels;
+    desc.usage = HgiTextureUsageBitsShaderRead | HgiTextureUsageBitsShaderWrite;
     _FillPixelsByteSize(&desc);
     dstUvTextureObject->CreateTexture(desc);
   }
 
   // Create a texture view for the layer we want to write to
   HgiTextureViewDesc texViewDesc;
-  texViewDesc.layerCount       = 1;
-  texViewDesc.mipLevels        = 1;
-  texViewDesc.format           = HgiFormatFloat16Vec4;
+  texViewDesc.layerCount = 1;
+  texViewDesc.mipLevels = 1;
+  texViewDesc.format = HgiFormatFloat16Vec4;
   texViewDesc.sourceFirstLayer = 0;
-  texViewDesc.sourceFirstMip   = _level;
-  texViewDesc.sourceTexture    = dstUvTextureObject->GetTexture();
+  texViewDesc.sourceFirstMip = _level;
+  texViewDesc.sourceTexture = dstUvTextureObject->GetTexture();
 
-  Hgi *hgi                            = hdPhResourceRegistry->GetHgi();
+  Hgi *hgi = hdPhResourceRegistry->GetHgi();
   HgiTextureViewHandle dstTextureView = hgi->CreateTextureView(texViewDesc);
 
   HgiResourceBindingsDesc resourceDesc;
@@ -183,7 +178,7 @@ void HdPh_DomeLightComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &ra
 
   HgiTextureBindDesc texBind0;
   texBind0.bindingIndex = 0;
-  texBind0.stageUsage   = HgiShaderStageCompute;
+  texBind0.stageUsage = HgiShaderStageCompute;
   texBind0.textures.push_back(srcTextureName);
   texBind0.samplers.push_back(srcSamplerName);
   texBind0.resourceType = HgiBindResourceTypeCombinedSamplerImage;
@@ -191,7 +186,7 @@ void HdPh_DomeLightComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &ra
 
   HgiTextureBindDesc texBind1;
   texBind1.bindingIndex = 1;
-  texBind1.stageUsage   = HgiShaderStageCompute;
+  texBind1.stageUsage = HgiShaderStageCompute;
   texBind1.textures.push_back(dstTextureView->GetViewTexture());
   texBind1.samplers.push_back(srcSamplerName);
   texBind1.resourceType = HgiBindResourceTypeStorageImage;
@@ -209,7 +204,7 @@ void HdPh_DomeLightComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &ra
   bool hasUniforms = uniform.roughness >= 0.0f;
 
   HgiComputePipelineDesc desc;
-  desc.debugName     = "DomeLightComputation";
+  desc.debugName = "DomeLightComputation";
   desc.shaderProgram = computeProgram->GetProgram();
   if (hasUniforms) {
     desc.shaderConstantsDesc.byteSize = sizeof(uniform);

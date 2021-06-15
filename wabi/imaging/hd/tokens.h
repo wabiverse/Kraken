@@ -33,22 +33,20 @@ WABI_NAMESPACE_BEGIN
 
 #define HD_TOKENS \
   (accelerations)(adjacency)( \
-      bboxLocalMin)(bboxLocalMax)(bbox)(bezier)(bSpline)(camera)(catmullRom)(collection)(computeShader)(coordSysBindings)(cubic)(cullStyle)(doubleSided)(dispatchCount)(displayColor)(displayOpacity)(displayStyle)(drawDispatch)(drawingShader)(drawingCoord0)(drawingCoord1)(drawingCoord2)(drawingCoordI)(drivers)(edgeIndices)(elementCount)(elementsVisibility)(extent)(faceColors)(filters)(full)(geometry)(hermite)(hullIndices)(indices)(isFlipped)(itemsDrawn)(layout)(leftHanded)(linear)(lightLink)(lightFilterLink)(materialParams)(nonperiodic)(normals)(params)(patchParam)(periodic)(pinned)(points)(pointsIndices)(power)(preview)(pointsVisibility)(primvar)(primID)(primitiveParam)(quadInfo)(renderTags)(rightHanded)(segmented)(shadowLink)(subdivTags)(taskState)(taskParams)(topology)(topologyVisibility)(totalItemCount)(transform)(transformInverse)(velocities)(visibility)(widths)
+    bboxLocalMin)(bboxLocalMax)(bbox)(bezier)(bSpline)(camera)(catmullRom)(collection)(computeShader)(coordSysBindings)(cubic)(cullStyle)(doubleSided)(dispatchCount)(displayColor)(displayOpacity)(displayStyle)(drawDispatch)(drawingShader)(drawingCoord0)(drawingCoord1)(drawingCoord2)(drawingCoordI)(drivers)(edgeIndices)(elementCount)(elementsVisibility)(extent)(faceColors)(filters)(full)(geometry)(hermite)(hullIndices)(indices)(isFlipped)(itemsDrawn)(layout)(leftHanded)(linear)(lightLink)(lightFilterLink)(materialParams)(nonperiodic)(normals)(params)(patchParam)(periodic)(pinned)(points)(pointsIndices)(power)(preview)(pointsVisibility)(primvar)(primID)(primitiveParam)(quadInfo)(renderTags)(rightHanded)(segmented)(shadowLink)(subdivTags)(taskState)(taskParams)(topology)(topologyVisibility)(totalItemCount)(transform)(transformInverse)(velocities)(visibility)(widths)
 
 #define HD_INSTANCER_TOKENS \
   (culledInstanceIndices)(instancer)( \
-      instancerTransform)(instancerTransformInverse)(instanceIndices)(instanceIndexBase)(instanceTransform)(rotate)(scale)(translate)
+    instancerTransform)(instancerTransformInverse)(instanceIndices)(instanceIndexBase)(instanceTransform)(rotate)(scale)(translate)
 
 #define HD_REPR_TOKENS \
   (disabled)(hull)(points)(smoothHull)(refined)(refinedWire)(refinedWireOnSurf)(wire)(wireOnSurf)
 
 #define HD_PERF_TOKENS \
-  ( \
-      adjacencyBufSize)(basisCurvesTopology)(bufferSourcesResolved)(bufferArrayRangeMigrated)(bufferArrayRangeContainerResized)(collectionsRefreshed)(computationsCommited)(drawBatches)(drawCalls)(dirtyLists)(dirtyListsRebuilt)(garbageCollected)(garbageCollectedSsbo)(garbageCollectedUbo)(garbageCollectedVbo)(gpuMemoryUsed)(instBasisCurvesTopology)(instBasisCurvesTopologyRange)(instExtComputationDataRange)(instMeshTopology)(instMeshTopologyRange)(instPrimvarRange)(instVertexAdjacency)(meshTopology)(nonUniformSize)(numCompletedSamples)(quadrangulateCPU)(quadrangulateGPU)(quadrangulateFaceVarying)(quadrangulatedVerts)(rebuildBatches)(singleBufferSize)(ssboSize)(skipInvisibleRprimSync)(subdivisionRefineCPU)(subdivisionRefineGPU)(textureMemory)(triangulateFaceVarying)(uboSize)(vboRelocated)
+  (adjacencyBufSize)(basisCurvesTopology)(bufferSourcesResolved)(bufferArrayRangeMigrated)(bufferArrayRangeContainerResized)(collectionsRefreshed)(computationsCommited)(drawBatches)(drawCalls)(dirtyLists)(dirtyListsRebuilt)(garbageCollected)(garbageCollectedSsbo)(garbageCollectedUbo)(garbageCollectedVbo)(gpuMemoryUsed)(instBasisCurvesTopology)(instBasisCurvesTopologyRange)(instExtComputationDataRange)(instMeshTopology)(instMeshTopologyRange)(instPrimvarRange)(instVertexAdjacency)(meshTopology)(nonUniformSize)(numCompletedSamples)(quadrangulateCPU)(quadrangulateGPU)(quadrangulateFaceVarying)(quadrangulatedVerts)(rebuildBatches)(singleBufferSize)(ssboSize)(skipInvisibleRprimSync)(subdivisionRefineCPU)(subdivisionRefineGPU)(textureMemory)(triangulateFaceVarying)(uboSize)(vboRelocated)
 
 #define HD_SHADER_TOKENS \
-  (alphaThreshold)(clipPlanes)( \
-      commonShaderSource)(computeShader)(cullStyle)(drawRange)(environmentMap)(fragmentShader)(geometryShader)(indicatorColor)(lightingBlendAmount)(overrideColor)(maskColor)(projectionMatrix)(pointColor)(pointSize)(pointSelectedSize)(materialTag)(tessControlShader)(tessEvalShader)(tessLevel)(viewport)(vertexShader)(wireframeColor)(worldToViewMatrix)(worldToViewInverseMatrix)
+  (alphaThreshold)(clipPlanes)(commonShaderSource)(computeShader)(cullStyle)(drawRange)(environmentMap)(fragmentShader)(geometryShader)(indicatorColor)(lightingBlendAmount)(overrideColor)(maskColor)(projectionMatrix)(pointColor)(pointSize)(pointSelectedSize)(materialTag)(tessControlShader)(tessEvalShader)(tessLevel)(viewport)(vertexShader)(wireframeColor)(worldToViewMatrix)(worldToViewInverseMatrix)
 
 // Deprecated. Use: HdPhMaterialTagTokens
 #define HD_MATERIALTAG_TOKENS (defaultMaterialTag)
@@ -67,13 +65,13 @@ WABI_NAMESPACE_BEGIN
   /* Rprims */ \
   (mesh)(basisCurves)(points)(volume) \
 \
-      /* Sprims */ \
-      (camera)(drawTarget)(material)(coordSys) /* Sprims Lights */ \
-      (simpleLight)(cylinderLight)(diskLight)(distantLight)(domeLight)(light)(lightFilter)(pluginLight)(rectLight)(sphereLight) /* Sprims ExtComputations */ \
-      (extComputation) \
+    /* Sprims */ \
+    (camera)(drawTarget)(material)(coordSys) /* Sprims Lights */ \
+    (simpleLight)(cylinderLight)(diskLight)(distantLight)(domeLight)(light)(lightFilter)(pluginLight)(rectLight)(sphereLight) /* Sprims ExtComputations */ \
+    (extComputation) \
 \
-      /* Bprims */ \
-      (renderBuffer)
+    /* Bprims */ \
+    (renderBuffer)
 
 #define HD_PRIMVAR_ROLE_TOKENS ((none, ""))(color)(vector)(normal)(point)(textureCoordinate)
 
@@ -156,9 +154,9 @@ TfToken HdAovTokensMakeShader(TfToken const &shader);
 #define HD_RENDER_SETTINGS_TOKENS \
   /* General graphical options */ \
   (enableShadows)(enableSceneMaterials)(enableSceneLights) /* Raytracer sampling settings */ \
-      (convergedVariance)(convergedSamplesPerPixel)        /* thread limit settings */ \
-      (threadLimit)                                        /* interactive vs offline */ \
-      (enableInteractive)
+    (convergedVariance)(convergedSamplesPerPixel)          /* thread limit settings */ \
+    (threadLimit)                                          /* interactive vs offline */ \
+    (enableInteractive)
 
 #define HD_RESOURCE_TYPE_TOKENS (texture)(shaderFile)
 

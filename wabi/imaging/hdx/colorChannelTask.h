@@ -59,7 +59,7 @@ class HdxColorChannelTask : public HdxTask {
   void _Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) override;
 
  private:
-  HdxColorChannelTask()                            = delete;
+  HdxColorChannelTask() = delete;
   HdxColorChannelTask(const HdxColorChannelTask &) = delete;
   HdxColorChannelTask &operator=(const HdxColorChannelTask &) = delete;
 

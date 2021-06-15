@@ -56,26 +56,24 @@ void _ExecuteDraw(HdPh_DrawBatchSharedPtr const &drawBatch,
 
 HdPh_ImageShaderRenderPass::HdPh_ImageShaderRenderPass(HdRenderIndex *index,
                                                        HdRprimCollection const &collection)
-    : HdRenderPass(index, collection),
-      _sharedData(1),
-      _drawItem(&_sharedData),
-      _drawItemInstance(&_drawItem),
-      _hgi(nullptr)
+  : HdRenderPass(index, collection),
+    _sharedData(1),
+    _drawItem(&_sharedData),
+    _drawItemInstance(&_drawItem),
+    _hgi(nullptr)
 {
   _sharedData.instancerLevels = 0;
-  _sharedData.rprimID         = SdfPath("/imageShaderRenderPass");
-  _immediateBatch             = std::make_shared<HdPh_ImmediateDrawBatch>(&_drawItemInstance);
+  _sharedData.rprimID = SdfPath("/imageShaderRenderPass");
+  _immediateBatch = std::make_shared<HdPh_ImmediateDrawBatch>(&_drawItemInstance);
 
-  HdPhRenderDelegate *renderDelegate = static_cast<HdPhRenderDelegate *>(
-      index->GetRenderDelegate());
+  HdPhRenderDelegate *renderDelegate = static_cast<HdPhRenderDelegate *>(index->GetRenderDelegate());
   _hgi = renderDelegate->GetHgi();
 }
 
 HdPh_ImageShaderRenderPass::~HdPh_ImageShaderRenderPass()
 {}
 
-void HdPh_ImageShaderRenderPass::_SetupVertexPrimvarBAR(
-    HdPhResourceRegistrySharedPtr const &registry)
+void HdPh_ImageShaderRenderPass::_SetupVertexPrimvarBAR(HdPhResourceRegistrySharedPtr const &registry)
 {
   // The current logic in HdPh_ImmediateDrawBatch::ExecuteDraw will use
   // glDrawArraysInstanced if it finds a VertexPrimvar buffer but no
@@ -83,13 +81,13 @@ void HdPh_ImageShaderRenderPass::_SetupVertexPrimvarBAR(
   // full-screen triangle for post-process shaders.
 
   HdBufferSourceSharedPtrVector sources = {
-      std::make_shared<HdVtBufferSource>(HdTokens->points, VtValue(VtVec3fArray(3)))};
+    std::make_shared<HdVtBufferSource>(HdTokens->points, VtValue(VtVec3fArray(3)))};
 
   HdBufferSpecVector bufferSpecs;
   HdBufferSpec::GetBufferSpecs(sources, &bufferSpecs);
 
   HdBufferArrayRangeSharedPtr vertexPrimvarRange = registry->AllocateNonUniformBufferArrayRange(
-      HdTokens->primvar, bufferSpecs, HdBufferArrayUsageHint());
+    HdTokens->primvar, bufferSpecs, HdBufferArrayUsageHint());
 
   registry->AddSources(vertexPrimvarRange, std::move(sources));
 
@@ -102,8 +100,8 @@ void HdPh_ImageShaderRenderPass::_Prepare(TfTokenVector const &renderTags)
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  HdPhResourceRegistrySharedPtr const &resourceRegistry =
-      std::dynamic_pointer_cast<HdPhResourceRegistry>(GetRenderIndex()->GetResourceRegistry());
+  HdPhResourceRegistrySharedPtr const &resourceRegistry = std::dynamic_pointer_cast<HdPhResourceRegistry>(
+    GetRenderIndex()->GetResourceRegistry());
   TF_VERIFY(resourceRegistry);
 
   // First time we must create a VertexPrimvar BAR for the triangle and setup
@@ -127,18 +125,18 @@ void HdPh_ImageShaderRenderPass::_Execute(HdRenderPassStateSharedPtr const &rend
 
   // Downcast render pass state
   HdPhRenderPassStateSharedPtr stRenderPassState = std::dynamic_pointer_cast<HdPhRenderPassState>(
-      renderPassState);
+    renderPassState);
   if (!TF_VERIFY(stRenderPassState))
     return;
 
-  HdPhResourceRegistrySharedPtr const &resourceRegistry =
-      std::dynamic_pointer_cast<HdPhResourceRegistry>(GetRenderIndex()->GetResourceRegistry());
+  HdPhResourceRegistrySharedPtr const &resourceRegistry = std::dynamic_pointer_cast<HdPhResourceRegistry>(
+    GetRenderIndex()->GetResourceRegistry());
   TF_VERIFY(resourceRegistry);
 
   _immediateBatch->PrepareDraw(stRenderPassState, resourceRegistry);
 
   // Create graphics work to render into aovs.
-  const HgiGraphicsCmdsDesc desc   = stRenderPassState->MakeGraphicsCmdsDesc(GetRenderIndex());
+  const HgiGraphicsCmdsDesc desc = stRenderPassState->MakeGraphicsCmdsDesc(GetRenderIndex());
   HgiGraphicsCmdsUniquePtr gfxCmds = _hgi->CreateGraphicsCmds(desc);
 
   // XXX When there are no aovBindings we get a null work object.
@@ -156,7 +154,7 @@ void HdPh_ImageShaderRenderPass::_Execute(HdRenderPassStateSharedPtr const &rend
 
   // Draw
   HdPh_DrawBatchSharedPtr const &batch = _immediateBatch;
-  HgiGLGraphicsCmds *glGfxCmds         = dynamic_cast<HgiGLGraphicsCmds *>(gfxCmds.get());
+  HgiGLGraphicsCmds *glGfxCmds = dynamic_cast<HgiGLGraphicsCmds *>(gfxCmds.get());
 
   if (gfxCmds && glGfxCmds) {
     // XXX Tmp code path to allow non-hgi code to insert functions into

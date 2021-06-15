@@ -23,9 +23,9 @@ limitations under the License.
 WABI_NAMESPACE_BEGIN
 
 HdRprPoints::HdRprPoints(SdfPath const &id HDRPR_INSTANCER_ID_ARG_DECL)
-    : HdPoints(id HDRPR_INSTANCER_ID_ARG),
-      m_visibilityMask(kVisibleAll),
-      m_subdivisionLevel(0)
+  : HdPoints(id HDRPR_INSTANCER_ID_ARG),
+    m_visibilityMask(kVisibleAll),
+    m_subdivisionLevel(0)
 {}
 
 void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
@@ -35,27 +35,26 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
 {
 
   auto rprRenderParam = static_cast<HdRprRenderParam *>(renderParam);
-  auto rprApi         = rprRenderParam->AcquireRprApiForEdit();
+  auto rprApi = rprRenderParam->AcquireRprApiForEdit();
 
   std::map<HdInterpolation, HdPrimvarDescriptorVector> primvarDescsPerInterpolation;
   SdfPath const &id = GetId();
 
-  bool dirtyPoints         = false;
-  bool isPointsComputed    = false;
-  auto extComputationDescs = sceneDelegate->GetExtComputationPrimvarDescriptors(
-      id, HdInterpolationVertex);
+  bool dirtyPoints = false;
+  bool isPointsComputed = false;
+  auto extComputationDescs = sceneDelegate->GetExtComputationPrimvarDescriptors(id, HdInterpolationVertex);
   for (auto &desc : extComputationDescs) {
     if (desc.name != HdTokens->points) {
       continue;
     }
 
     if (HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, desc.name)) {
-      auto valueStore   = HdExtComputationUtils::GetComputedPrimvarValues({desc}, sceneDelegate);
+      auto valueStore = HdExtComputationUtils::GetComputedPrimvarValues({desc}, sceneDelegate);
       auto pointValueIt = valueStore.find(desc.name);
       if (pointValueIt != valueStore.end()) {
-        m_points         = pointValueIt->second.Get<VtVec3fArray>();
+        m_points = pointValueIt->second.Get<VtVec3fArray>();
         isPointsComputed = true;
-        dirtyPoints      = true;
+        dirtyPoints = true;
       }
     }
 
@@ -64,40 +63,36 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
 
   if (!isPointsComputed && HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, HdTokens->points)) {
     VtValue pointsValue = sceneDelegate->Get(id, HdTokens->points);
-    m_points            = pointsValue.Get<VtVec3fArray>();
-    dirtyPoints         = true;
+    m_points = pointsValue.Get<VtVec3fArray>();
+    dirtyPoints = true;
   }
 
   if (*dirtyBits & HdChangeTracker::DirtyWidths) {
     HdRprFillPrimvarDescsPerInterpolation(sceneDelegate, id, &primvarDescsPerInterpolation);
-    if (HdRprIsPrimvarExists(
-            HdTokens->widths, primvarDescsPerInterpolation, &m_widthsInterpolation)) {
+    if (HdRprIsPrimvarExists(HdTokens->widths, primvarDescsPerInterpolation, &m_widthsInterpolation)) {
       m_widths = sceneDelegate->Get(id, HdTokens->widths).Get<VtFloatArray>();
     }
     else {
-      m_widths              = VtFloatArray(1, 1.0f);
+      m_widths = VtFloatArray(1, 1.0f);
       m_widthsInterpolation = HdInterpolationConstant;
-      TF_WARN(
-          "[%s] Points does not have widths. Fallback value is 1.0f with a constant interpolation",
-          id.GetText());
+      TF_WARN("[%s] Points does not have widths. Fallback value is 1.0f with a constant interpolation",
+              id.GetText());
     }
   }
 
-  bool dirtyDisplayColors = HdChangeTracker::IsPrimvarDirty(
-      *dirtyBits, id, HdTokens->displayColor);
+  bool dirtyDisplayColors = HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, HdTokens->displayColor);
   if (dirtyDisplayColors) {
     HdRprFillPrimvarDescsPerInterpolation(sceneDelegate, id, &primvarDescsPerInterpolation);
-    if (HdRprIsPrimvarExists(
-            HdTokens->displayColor, primvarDescsPerInterpolation, &m_colorsInterpolation)) {
+    if (HdRprIsPrimvarExists(HdTokens->displayColor, primvarDescsPerInterpolation, &m_colorsInterpolation)) {
       m_colors = sceneDelegate->Get(GetId(), HdTokens->displayColor).Get<VtVec3fArray>();
     }
     else {
-      m_colors              = VtVec3fArray(1, GfVec3f(1, 0, 1));
+      m_colors = VtVec3fArray(1, GfVec3f(1, 0, 1));
       m_colorsInterpolation = HdInterpolationConstant;
       TF_WARN(
-          "[%s] Points does not have display colors. Fallback value is pink color with a constant "
-          "interpolation",
-          id.GetText());
+        "[%s] Points does not have display colors. Fallback value is pink color with a constant "
+        "interpolation",
+        id.GetText());
     }
   }
 
@@ -110,7 +105,7 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
   }
 
   bool dirtySubdivisionLevel = false;
-  bool dirtyVisibilityMask   = false;
+  bool dirtyVisibilityMask = false;
   if (*dirtyBits & HdChangeTracker::DirtyPrimvar) {
     HdRprGeometrySettings geomSettings;
     geomSettings.visibilityMask = kVisibleAll;
@@ -118,12 +113,12 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
     HdRprParseGeometrySettings(sceneDelegate, id, primvarDescsPerInterpolation, &geomSettings);
 
     if (m_subdivisionLevel != geomSettings.subdivisionLevel) {
-      m_subdivisionLevel    = geomSettings.subdivisionLevel;
+      m_subdivisionLevel = geomSettings.subdivisionLevel;
       dirtySubdivisionLevel = true;
     }
 
     if (m_visibilityMask != geomSettings.visibilityMask) {
-      m_visibilityMask    = geomSettings.visibilityMask;
+      m_visibilityMask = geomSettings.visibilityMask;
       dirtyVisibilityMask = true;
     }
   }
@@ -147,7 +142,7 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
   }
 
   bool dirtyPrototypeMesh = false;
-  bool dirtyInstances     = false;
+  bool dirtyInstances = false;
   if (m_instances.size() != m_points.size()) {
     if (m_points.empty()) {
       rprApi->Release(m_prototypeMesh);
@@ -155,7 +150,7 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
     }
     else {
       auto &topology = UsdImagingGetUnitSphereMeshTopology();
-      auto &points   = UsdImagingGetUnitSphereMeshPoints();
+      auto &points = UsdImagingGetUnitSphereMeshPoints();
 
       m_prototypeMesh = rprApi->CreateMesh(points,
                                            topology.GetFaceVertexIndices(),
@@ -204,8 +199,8 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
       rprApi->SetMeshRefineLevel(m_prototypeMesh, m_subdivisionLevel);
     }
 
-    if ((*dirtyBits & HdChangeTracker::DirtyTransform) ||
-        (*dirtyBits & HdChangeTracker::DirtyWidths) || dirtyPoints || dirtyInstances) {
+    if ((*dirtyBits & HdChangeTracker::DirtyTransform) || (*dirtyBits & HdChangeTracker::DirtyWidths) ||
+        dirtyPoints || dirtyInstances) {
 
       std::function<float(size_t)> sampleWidth;
       if (m_widthsInterpolation == HdInterpolationVertex) {
@@ -217,16 +212,15 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
       else {
         sampleWidth = [](size_t) { return 1.0f; };
         TF_WARN(
-            "[%s] Unsupported widths interpolation. Fallback value is 1.0f with a constant "
-            "interpolation",
-            id.GetText());
+          "[%s] Unsupported widths interpolation. Fallback value is 1.0f with a constant "
+          "interpolation",
+          id.GetText());
       }
 
       for (size_t i = 0; i < m_instances.size(); ++i) {
         auto &position = m_points[i];
-        auto width     = sampleWidth(i);
-        auto transform = GfMatrix4f(1.0f).SetScale(GfVec3f(width)).SetTranslateOnly(position) *
-                         m_transform;
+        auto width = sampleWidth(i);
+        auto transform = GfMatrix4f(1.0f).SetScale(GfVec3f(width)).SetTranslateOnly(position) * m_transform;
 
         rprApi->SetTransform(m_instances[i], transform);
       }
@@ -274,8 +268,7 @@ void HdRprPoints::Finalize(HdRenderParam *renderParam)
 HdDirtyBits HdRprPoints::GetInitialDirtyBitsMask() const
 {
   return HdChangeTracker::Clean | HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyWidths |
-         HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyPrimvar |
-         HdChangeTracker::DirtyVisibility;
+         HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyVisibility;
 }
 
 HdDirtyBits HdRprPoints::_PropagateDirtyBits(HdDirtyBits bits) const

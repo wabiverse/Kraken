@@ -395,13 +395,11 @@ void Tf_TerminateHandler();
 // See documentation above.
 #      define TF_VERIFY(cond, ...) \
         (ARCH_LIKELY(cond) ? \
-             true : \
-             Tf_FailedVerifyHelper(TF_CALL_CONTEXT, #cond, Tf_VerifyStringFormat(__VA_ARGS__)))
+           true : \
+           Tf_FailedVerifyHelper(TF_CALL_CONTEXT, #cond, Tf_VerifyStringFormat(__VA_ARGS__)))
 
 // Helpers for TF_VERIFY.
-TF_API bool Tf_FailedVerifyHelper(TfCallContext const &context,
-                                  char const *condition,
-                                  char const *msg);
+TF_API bool Tf_FailedVerifyHelper(TfCallContext const &context, char const *condition, char const *msg);
 
 // Helpers for TF_VERIFY.
 inline char const *Tf_VerifyStringFormat()
@@ -426,9 +424,7 @@ std::string TfGetProgramNameForErrors();
 
 /// \private
 struct Tf_DiagnosticHelper {
-  Tf_DiagnosticHelper(TfCallContext const &context, TfDiagnosticType type)
-      : _context(context),
-        _type(type)
+  Tf_DiagnosticHelper(TfCallContext const &context, TfDiagnosticType type) : _context(context), _type(type)
   {}
 
   TfCallContext const &GetContext() const

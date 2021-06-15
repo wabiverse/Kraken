@@ -50,18 +50,14 @@ WABI_NAMESPACE_USING
 
 namespace {
 
-VtMatrix4dArray _ComputeJointLocalTransforms(UsdSkelSkeletonQuery &self,
-                                             UsdTimeCode time,
-                                             bool atRest)
+VtMatrix4dArray _ComputeJointLocalTransforms(UsdSkelSkeletonQuery &self, UsdTimeCode time, bool atRest)
 {
   VtMatrix4dArray xforms;
   self.ComputeJointLocalTransforms(&xforms, time, atRest);
   return xforms;
 }
 
-VtMatrix4dArray _ComputeJointSkelTransforms(UsdSkelSkeletonQuery &self,
-                                            UsdTimeCode time,
-                                            bool atRest)
+VtMatrix4dArray _ComputeJointSkelTransforms(UsdSkelSkeletonQuery &self, UsdTimeCode time, bool atRest)
 {
   VtMatrix4dArray xforms;
   self.ComputeJointSkelTransforms(&xforms, time, atRest);
@@ -106,49 +102,47 @@ void wrapUsdSkelSkeletonQuery()
 
   class_<This>("SkeletonQuery", no_init)
 
-      .def(!self)
-      .def(self == self)
-      .def(self != self)
+    .def(!self)
+    .def(self == self)
+    .def(self != self)
 
-      .def("__str__", &This::GetDescription)
+    .def("__str__", &This::GetDescription)
 
-      .def("GetPrim", &This::GetPrim, return_value_policy<return_by_value>())
+    .def("GetPrim", &This::GetPrim, return_value_policy<return_by_value>())
 
-      .def("GetSkeleton", &This::GetSkeleton, return_value_policy<return_by_value>())
+    .def("GetSkeleton", &This::GetSkeleton, return_value_policy<return_by_value>())
 
-      .def("GetAnimQuery", &This::GetAnimQuery, return_value_policy<return_by_value>())
+    .def("GetAnimQuery", &This::GetAnimQuery, return_value_policy<return_by_value>())
 
-      .def("GetTopology", &This::GetTopology, return_value_policy<return_by_value>())
+    .def("GetTopology", &This::GetTopology, return_value_policy<return_by_value>())
 
-      .def("GetMapper", &This::GetMapper, return_value_policy<return_by_value>())
+    .def("GetMapper", &This::GetMapper, return_value_policy<return_by_value>())
 
-      .def("GetJointOrder", &This::GetJointOrder)
+    .def("GetJointOrder", &This::GetJointOrder)
 
-      .def("GetJointWorldBindTransforms", &_GetJointWorldBindTransforms)
+    .def("GetJointWorldBindTransforms", &_GetJointWorldBindTransforms)
 
-      .def("ComputeJointLocalTransforms",
-           &_ComputeJointLocalTransforms,
-           (arg("time") = UsdTimeCode::Default(), arg("atRest") = false))
+    .def("ComputeJointLocalTransforms",
+         &_ComputeJointLocalTransforms,
+         (arg("time") = UsdTimeCode::Default(), arg("atRest") = false))
 
-      .def("ComputeJointSkelTransforms",
-           &_ComputeJointSkelTransforms,
-           (arg("time") = UsdTimeCode::Default(), arg("atRest") = false))
+    .def("ComputeJointSkelTransforms",
+         &_ComputeJointSkelTransforms,
+         (arg("time") = UsdTimeCode::Default(), arg("atRest") = false))
 
-      .def("ComputeJointWorldTransforms",
-           &_ComputeJointWorldTransforms,
-           (arg("time") = UsdTimeCode::Default(), arg("atRest") = false))
+    .def("ComputeJointWorldTransforms",
+         &_ComputeJointWorldTransforms,
+         (arg("time") = UsdTimeCode::Default(), arg("atRest") = false))
 
-      .def("ComputeSkinningTransforms",
-           &_ComputeSkinningTransforms,
-           (arg("time") = UsdTimeCode::Default()))
+    .def("ComputeSkinningTransforms", &_ComputeSkinningTransforms, (arg("time") = UsdTimeCode::Default()))
 
-      .def("ComputeJointRestRelativeTransforms",
-           &_ComputeJointRestRelativeTransforms,
-           (arg("time") = UsdTimeCode::Default()))
+    .def("ComputeJointRestRelativeTransforms",
+         &_ComputeJointRestRelativeTransforms,
+         (arg("time") = UsdTimeCode::Default()))
 
-      .def("HasBindPose", &This::HasBindPose)
+    .def("HasBindPose", &This::HasBindPose)
 
-      .def("HasRestPose", &This::HasRestPose)
+    .def("HasRestPose", &This::HasRestPose)
 
-      ;
+    ;
 }

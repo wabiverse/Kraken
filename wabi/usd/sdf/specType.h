@@ -71,8 +71,7 @@ class SdfSpecTypeRegistration {
   static void _RegisterSpecType(const std::type_info &specCPPType,
                                 SdfSpecType specEnumType,
                                 const std::type_info &schemaType);
-  static void _RegisterAbstractSpecType(const std::type_info &specCPPType,
-                                        const std::type_info &schemaType);
+  static void _RegisterAbstractSpecType(const std::type_info &specCPPType, const std::type_info &schemaType);
 };
 
 // This class holds type information for specs.  It associates a

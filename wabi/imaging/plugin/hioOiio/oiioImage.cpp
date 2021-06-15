@@ -53,20 +53,20 @@ ARCH_PRAGMA_MACRO_REDEFINITION  // due to Python copysign
 #include <OpenImageIO/imagebufalgo.h>
 #include <OpenImageIO/imageio.h>
 #include <OpenImageIO/typedesc.h>
-    ARCH_PRAGMA_POP
+  ARCH_PRAGMA_POP
 
-        WABI_NAMESPACE_BEGIN
+    WABI_NAMESPACE_BEGIN
 
-            OIIO_NAMESPACE_USING
+      OIIO_NAMESPACE_USING
 
-                // _ioProxySupportedExtensions is a list of hardcoded file extensions that
-                // support ioProxy. Although OIIO has an api call for checking whether or
-                // not a file type supports ioProxy, version 2.0.9 does not include this
-                // for EXR's, even though EXR's support ioProxy. This issue was fixed in
-                // commit 7677d498b599295fa8277d050ef994efbd297b55. Thus, for now we check
-                // whether or not a file extension is included in our hardcoded list of
-                // extensions we know to support ioProxy.
-                TF_MAKE_STATIC_DATA(std::vector<std::string>, _ioProxySupportedExtensions)
+        // _ioProxySupportedExtensions is a list of hardcoded file extensions that
+        // support ioProxy. Although OIIO has an api call for checking whether or
+        // not a file type supports ioProxy, version 2.0.9 does not include this
+        // for EXR's, even though EXR's support ioProxy. This issue was fixed in
+        // commit 7677d498b599295fa8277d050ef994efbd297b55. Thus, for now we check
+        // whether or not a file extension is included in our hardcoded list of
+        // extensions we know to support ioProxy.
+        TF_MAKE_STATIC_DATA(std::vector<std::string>, _ioProxySupportedExtensions)
 {
   _ioProxySupportedExtensions->push_back("exr");
 }
@@ -112,8 +112,7 @@ class HioOIIO_Image : public HioImage {
  private:
   std::string _GetFilenameExtension() const;
 #if OIIO_VERSION >= 20003
-  cspan<unsigned char> _GenerateBufferCSpan(const std::shared_ptr<const char> &buffer,
-                                            int bufferSize) const;
+  cspan<unsigned char> _GenerateBufferCSpan(const std::shared_ptr<const char> &buffer, int bufferSize) const;
 #endif
   bool _CanUseIOProxyForExtension(std::string extension, const ImageSpec &config) const;
   std::string _filename;
@@ -126,7 +125,7 @@ class HioOIIO_Image : public HioImage {
 TF_REGISTRY_FUNCTION(TfType)
 {
   using Image = HioOIIO_Image;
-  TfType t    = TfType::Define<Image, TfType::Bases<Image::Base>>();
+  TfType t = TfType::Define<Image, TfType::Bases<Image::Base>>();
   t.SetFactory<HioImageFactory<Image>>();
 }
 
@@ -302,7 +301,7 @@ static std::string _TranslateMetadataKey(std::string const &metadataKey, bool *c
 static VtValue _FindAttribute(ImageSpec const &spec, std::string const &metadataKey)
 {
   bool convertMatrixTypes = false;
-  std::string key         = _TranslateMetadataKey(metadataKey, &convertMatrixTypes);
+  std::string key = _TranslateMetadataKey(metadataKey, &convertMatrixTypes);
 
   ImageIOParameter const *param = spec.find_attribute(key);
   if (!param) {
@@ -352,11 +351,10 @@ static VtValue _FindAttribute(ImageSpec const &spec, std::string const &metadata
 static void _SetAttribute(ImageSpec *spec, std::string const &metadataKey, VtValue const &value)
 {
   bool convertMatrixTypes = false;
-  std::string key         = _TranslateMetadataKey(metadataKey, &convertMatrixTypes);
+  std::string key = _TranslateMetadataKey(metadataKey, &convertMatrixTypes);
 
   if (value.IsHolding<std::string>()) {
-    spec->attribute(
-        key, TypeDesc(TypeDesc::STRING, TypeDesc::SCALAR), value.Get<std::string>().c_str());
+    spec->attribute(key, TypeDesc(TypeDesc::STRING, TypeDesc::SCALAR), value.Get<std::string>().c_str());
   }
   else if (value.IsHolding<char>()) {
     spec->attribute(key, TypeDesc(TypeDesc::INT8, TypeDesc::SCALAR), &value.Get<char>());
@@ -386,8 +384,7 @@ static void _SetAttribute(ImageSpec *spec, std::string const &metadataKey, VtVal
       spec->attribute(key, TypeDesc(TypeDesc::FLOAT, TypeDesc::MATRIX44), &floatMatrix);
     }
     else {
-      spec->attribute(
-          key, TypeDesc(TypeDesc::DOUBLE, TypeDesc::MATRIX44), &value.Get<GfMatrix4d>());
+      spec->attribute(key, TypeDesc(TypeDesc::DOUBLE, TypeDesc::MATRIX44), &value.Get<GfMatrix4d>());
     }
   }
 }
@@ -439,8 +436,7 @@ bool HioOIIO_Image::IsColorSpaceSRGB() const
     return false;
   }
 
-  return ((_imagespec.nchannels == 3 || _imagespec.nchannels == 4) &&
-          _imagespec.format == TypeDesc::UINT8);
+  return ((_imagespec.nchannels == 3 || _imagespec.nchannels == 4) && _imagespec.format == TypeDesc::UINT8);
 }
 
 /* virtual */
@@ -510,19 +506,17 @@ std::string HioOIIO_Image::_GetFilenameExtension() const
 cspan<unsigned char> HioOIIO_Image::_GenerateBufferCSpan(const std::shared_ptr<const char> &buffer,
                                                          int bufferSize) const
 {
-  const char *bufferPtr                  = buffer.get();
+  const char *bufferPtr = buffer.get();
   const unsigned char *bufferPtrUnsigned = (const unsigned char *)bufferPtr;
   cspan<unsigned char> bufferCSpan(bufferPtrUnsigned, bufferSize);
   return bufferCSpan;
 }
 #endif
 
-bool HioOIIO_Image::_CanUseIOProxyForExtension(std::string extension,
-                                               const ImageSpec &config) const
+bool HioOIIO_Image::_CanUseIOProxyForExtension(std::string extension, const ImageSpec &config) const
 {
-  if (std::find(_ioProxySupportedExtensions->begin(),
-                _ioProxySupportedExtensions->end(),
-                extension) != _ioProxySupportedExtensions->end()) {
+  if (std::find(_ioProxySupportedExtensions->begin(), _ioProxySupportedExtensions->end(), extension) !=
+      _ioProxySupportedExtensions->end()) {
     return true;
   }
   std::string inputFilename("test.");
@@ -545,11 +539,11 @@ bool HioOIIO_Image::_OpenForReading(std::string const &filename,
                                     HioImage::SourceColorSpace sourceColorSpace,
                                     bool suppressErrors)
 {
-  _filename         = filename;
-  _subimage         = subimage;
-  _miplevel         = mip;
+  _filename = filename;
+  _subimage = subimage;
+  _miplevel = mip;
   _sourceColorSpace = sourceColorSpace;
-  _imagespec        = ImageSpec();
+  _imagespec = ImageSpec();
 
 #if OIIO_VERSION >= 20003
   std::shared_ptr<ArAsset> asset = ArGetResolver().OpenAsset(ArResolvedPath(_filename));
@@ -657,12 +651,12 @@ bool HioOIIO_Image::ReadCropped(int const cropTop,
   }
 
   int strideLength = imageInput->spec().width * imageInput->spec().pixel_bytes();
-  int readStride   = (storage.flipped) ? (-strideLength) : (strideLength);
-  int size         = imageInput->spec().height * strideLength;
+  int readStride = (storage.flipped) ? (-strideLength) : (strideLength);
+  int size = imageInput->spec().height * strideLength;
 
   std::unique_ptr<uint8_t[]> pixelData(new uint8_t[size]);
   unsigned char *pixels = pixelData.get();
-  void *start           = (storage.flipped) ? (pixels + size - strideLength) : (pixels);
+  void *start = (storage.flipped) ? (pixels + size - strideLength) : (pixels);
 
   // Read Image into pixels, flipping upon load so that
   // origin is at lower left corner
@@ -678,7 +672,7 @@ bool HioOIIO_Image::ReadCropped(int const cropTop,
 
   // Construct ImageBuf that wraps around allocated pixels memory
   ImageBuf imagebuf = ImageBuf(imageInput->spec(), pixels);
-  ImageBuf *image   = &imagebuf;
+  ImageBuf *image = &imagebuf;
 
   // Convert color images to linear (unless they are sRGB)
   // (Currently unimplemented, requires OpenColorIO support from OpenImageIO)
@@ -686,20 +680,17 @@ bool HioOIIO_Image::ReadCropped(int const cropTop,
   // Crop
   ImageBuf cropped;
   if (cropTop || cropBottom || cropLeft || cropRight) {
-    ImageBufAlgo::cut(cropped,
-                      *image,
-                      ROI(cropLeft,
-                          image->spec().width - cropRight,
-                          cropTop,
-                          image->spec().height - cropBottom));
+    ImageBufAlgo::cut(
+      cropped,
+      *image,
+      ROI(cropLeft, image->spec().width - cropRight, cropTop, image->spec().height - cropBottom));
     image = &cropped;
   }
 
   // Reformat
   ImageBuf scaled;
   if (image->spec().width != storage.width || image->spec().height != storage.height) {
-    ImageBufAlgo::resample(
-        scaled, *image, /*interpolate=*/false, ROI(0, storage.width, 0, storage.height));
+    ImageBufAlgo::resample(scaled, *image, /*interpolate=*/false, ROI(0, storage.width, 0, storage.height));
     image = &scaled;
   }
 
@@ -727,14 +718,14 @@ bool HioOIIO_Image::ReadCropped(int const cropTop,
 /* virtual */
 bool HioOIIO_Image::_OpenForWriting(std::string const &filename)
 {
-  _filename  = filename;
+  _filename = filename;
   _imagespec = ImageSpec();
   return true;
 }
 
 bool HioOIIO_Image::Write(StorageSpec const &storage, VtDictionary const &metadata)
 {
-  int nchannels   = HioGetComponentCount(storage.format);
+  int nchannels = HioGetComponentCount(storage.format);
   TypeDesc format = _GetOIIOBaseType(storage.format);
   ImageSpec spec(storage.width, storage.height, nchannels, format);
 

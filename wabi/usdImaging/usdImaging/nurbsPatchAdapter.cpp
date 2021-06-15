@@ -58,15 +58,13 @@ SdfPath UsdImagingNurbsPatchAdapter::Populate(UsdPrim const &prim,
                                               UsdImagingIndexProxy *index,
                                               UsdImagingInstancerContext const *instancerContext)
 {
-  return _AddRprim(
-      HdPrimTypeTokens->mesh, prim, index, GetMaterialUsdPath(prim), instancerContext);
+  return _AddRprim(HdPrimTypeTokens->mesh, prim, index, GetMaterialUsdPath(prim), instancerContext);
 }
 
-void UsdImagingNurbsPatchAdapter::TrackVariability(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    HdDirtyBits *timeVaryingBits,
-    UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingNurbsPatchAdapter::TrackVariability(UsdPrim const &prim,
+                                                   SdfPath const &cachePath,
+                                                   HdDirtyBits *timeVaryingBits,
+                                                   UsdImagingInstancerContext const *instancerContext) const
 {
   BaseAdapter::TrackVariability(prim, cachePath, timeVaryingBits, instancerContext);
   // WARNING: This method is executed from multiple threads, the value cache
@@ -139,14 +137,13 @@ VtValue UsdImagingNurbsPatchAdapter::GetMeshTopology(UsdPrim const &prim, UsdTim
   }
 
   if (nUVertexCount == 0 || nVVertexCount == 0) {
-    TF_WARN("NurbsPatch skipped <%s>, VVertexCount or UVertexCount is 0",
-            prim.GetPath().GetText());
+    TF_WARN("NurbsPatch skipped <%s>, VVertexCount or UVertexCount is 0", prim.GetPath().GetText());
     return VtValue(HdMeshTopology());
   }
 
   // Calculate the number of quads/faces needed
   // as well as the number of indices
-  int nFaces   = (nUVertexCount - 1) * (nVVertexCount - 1);
+  int nFaces = (nUVertexCount - 1) * (nVVertexCount - 1);
   int nIndices = nFaces * 4;
 
   // Prepare the array of vertices per face required for rendering
@@ -174,14 +171,13 @@ VtValue UsdImagingNurbsPatchAdapter::GetMeshTopology(UsdPrim const &prim, UsdTim
   // Obtain the orientation
   TfToken orientation;
   if (!prim.GetAttribute(UsdGeomTokens->orientation).Get(&orientation, time)) {
-    TF_WARN("Orientation could not be read from prim, using right handed: <%s>",
-            prim.GetPath().GetText());
+    TF_WARN("Orientation could not be read from prim, using right handed: <%s>", prim.GetPath().GetText());
     orientation = HdTokens->rightHanded;
   }
 
   // Create the mesh topology
   HdMeshTopology topo = HdMeshTopology(
-      PxOsdOpenSubdivTokens->catmullClark, orientation, vertsPerFace, indices);
+    PxOsdOpenSubdivTokens->catmullClark, orientation, vertsPerFace, indices);
 
   return VtValue(topo);
 }

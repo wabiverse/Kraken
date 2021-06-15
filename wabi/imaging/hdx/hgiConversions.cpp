@@ -32,54 +32,54 @@ struct _FormatDesc {
 };
 
 static const _FormatDesc FORMAT_DESC[] = {
-    {HdFormatUNorm8, HgiFormatUNorm8},
-    {HdFormatUNorm8Vec2, HgiFormatUNorm8Vec2},
-    {HdFormatUNorm8Vec3, HgiFormatInvalid},  // Unsupported by HgiFormat
-    {HdFormatUNorm8Vec4, HgiFormatUNorm8Vec4},
+  {HdFormatUNorm8, HgiFormatUNorm8},
+  {HdFormatUNorm8Vec2, HgiFormatUNorm8Vec2},
+  {HdFormatUNorm8Vec3, HgiFormatInvalid},  // Unsupported by HgiFormat
+  {HdFormatUNorm8Vec4, HgiFormatUNorm8Vec4},
 
-    {HdFormatSNorm8, HgiFormatSNorm8},
-    {HdFormatSNorm8Vec2, HgiFormatSNorm8Vec2},
-    {HdFormatSNorm8Vec3, HgiFormatInvalid},  // Unsupported by HgiFormat
-    {HdFormatSNorm8Vec4, HgiFormatSNorm8Vec4},
+  {HdFormatSNorm8, HgiFormatSNorm8},
+  {HdFormatSNorm8Vec2, HgiFormatSNorm8Vec2},
+  {HdFormatSNorm8Vec3, HgiFormatInvalid},  // Unsupported by HgiFormat
+  {HdFormatSNorm8Vec4, HgiFormatSNorm8Vec4},
 
-    {HdFormatFloat16, HgiFormatFloat16},
-    {HdFormatFloat16Vec2, HgiFormatFloat16Vec2},
-    {HdFormatFloat16Vec3, HgiFormatFloat16Vec3},
-    {HdFormatFloat16Vec4, HgiFormatFloat16Vec4},
+  {HdFormatFloat16, HgiFormatFloat16},
+  {HdFormatFloat16Vec2, HgiFormatFloat16Vec2},
+  {HdFormatFloat16Vec3, HgiFormatFloat16Vec3},
+  {HdFormatFloat16Vec4, HgiFormatFloat16Vec4},
 
-    {HdFormatFloat32, HgiFormatFloat32},
-    {HdFormatFloat32Vec2, HgiFormatFloat32Vec2},
-    {HdFormatFloat32Vec3, HgiFormatFloat32Vec3},
-    {HdFormatFloat32Vec4, HgiFormatFloat32Vec4},
+  {HdFormatFloat32, HgiFormatFloat32},
+  {HdFormatFloat32Vec2, HgiFormatFloat32Vec2},
+  {HdFormatFloat32Vec3, HgiFormatFloat32Vec3},
+  {HdFormatFloat32Vec4, HgiFormatFloat32Vec4},
 
-    {HdFormatInt16, HgiFormatInt16},
-    {HdFormatInt16Vec2, HgiFormatInt16Vec2},
-    {HdFormatInt16Vec3, HgiFormatInt16Vec3},
-    {HdFormatInt16Vec4, HgiFormatInt16Vec4},
+  {HdFormatInt16, HgiFormatInt16},
+  {HdFormatInt16Vec2, HgiFormatInt16Vec2},
+  {HdFormatInt16Vec3, HgiFormatInt16Vec3},
+  {HdFormatInt16Vec4, HgiFormatInt16Vec4},
 
-    {HdFormatUInt16, HgiFormatUInt16},
-    {HdFormatUInt16Vec2, HgiFormatUInt16Vec2},
-    {HdFormatUInt16Vec3, HgiFormatUInt16Vec3},
-    {HdFormatUInt16Vec4, HgiFormatUInt16Vec4},
+  {HdFormatUInt16, HgiFormatUInt16},
+  {HdFormatUInt16Vec2, HgiFormatUInt16Vec2},
+  {HdFormatUInt16Vec3, HgiFormatUInt16Vec3},
+  {HdFormatUInt16Vec4, HgiFormatUInt16Vec4},
 
-    {HdFormatInt32, HgiFormatInt32},
-    {HdFormatInt32Vec2, HgiFormatInt32Vec2},
-    {HdFormatInt32Vec3, HgiFormatInt32Vec3},
-    {HdFormatInt32Vec4, HgiFormatInt32Vec4},
+  {HdFormatInt32, HgiFormatInt32},
+  {HdFormatInt32Vec2, HgiFormatInt32Vec2},
+  {HdFormatInt32Vec3, HgiFormatInt32Vec3},
+  {HdFormatInt32Vec4, HgiFormatInt32Vec4},
 
-    {HdFormatFloat32UInt8, HgiFormatFloat32UInt8},
+  {HdFormatFloat32UInt8, HgiFormatFloat32UInt8},
 };
 
 // A few random format validations to make sure that the format conversion
 // table stays up-to-date with changes to HdFormat and HgiFormat.
 constexpr bool _CompileTimeValidateFormatTable()
 {
-  return (HdFormatCount == 29 && HdFormatUNorm8 == 0 && HgiFormatUNorm8 == 0 &&
-          HdFormatFloat16Vec4 == 11 && HgiFormatFloat16Vec4 == 9 && HdFormatFloat32Vec4 == 15 &&
-          HgiFormatFloat32Vec4 == 13 && HdFormatUInt16Vec4 == 23 && HgiFormatUInt16Vec4 == 21 &&
-          HdFormatInt32Vec4 == 27 && HgiFormatInt32Vec4 == 25) ?
-             true :
-             false;
+  return (HdFormatCount == 29 && HdFormatUNorm8 == 0 && HgiFormatUNorm8 == 0 && HdFormatFloat16Vec4 == 11 &&
+          HgiFormatFloat16Vec4 == 9 && HdFormatFloat32Vec4 == 15 && HgiFormatFloat32Vec4 == 13 &&
+          HdFormatUInt16Vec4 == 23 && HgiFormatUInt16Vec4 == 21 && HdFormatInt32Vec4 == 27 &&
+          HgiFormatInt32Vec4 == 25) ?
+           true :
+           false;
 }
 
 static_assert(_CompileTimeValidateFormatTable(),

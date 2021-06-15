@@ -49,7 +49,7 @@ WABI_NAMESPACE_BEGIN
 ///
 class HdEmbreeRendererPlugin final : public HdRendererPlugin {
  public:
-  HdEmbreeRendererPlugin()          = default;
+  HdEmbreeRendererPlugin() = default;
   virtual ~HdEmbreeRendererPlugin() = default;
 
   /// Construct a new render delegate of type HdEmbreeRenderDelegate.

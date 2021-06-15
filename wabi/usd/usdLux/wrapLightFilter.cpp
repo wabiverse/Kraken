@@ -69,29 +69,27 @@ void wrapUsdLuxLightFilter()
   class_<This, bases<UsdGeomXformable>> cls("LightFilter");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -122,23 +120,23 @@ namespace {
 WRAP_CUSTOM
 {
   _class.def(init<UsdShadeConnectableAPI>(arg("connectable")))
-      .def("ConnectableAPI", &UsdLuxLightFilter::ConnectableAPI)
+    .def("ConnectableAPI", &UsdLuxLightFilter::ConnectableAPI)
 
-      .def("CreateOutput", &UsdLuxLightFilter::CreateOutput, (arg("name"), arg("type")))
-      .def("GetOutput", &UsdLuxLightFilter::GetOutput, arg("name"))
-      .def("GetOutputs",
-           &UsdLuxLightFilter::GetOutputs,
-           (arg("onlyAuthored") = true),
-           return_value_policy<TfPySequenceToList>())
+    .def("CreateOutput", &UsdLuxLightFilter::CreateOutput, (arg("name"), arg("type")))
+    .def("GetOutput", &UsdLuxLightFilter::GetOutput, arg("name"))
+    .def("GetOutputs",
+         &UsdLuxLightFilter::GetOutputs,
+         (arg("onlyAuthored") = true),
+         return_value_policy<TfPySequenceToList>())
 
-      .def("CreateInput", &UsdLuxLightFilter::CreateInput, (arg("name"), arg("type")))
-      .def("GetInput", &UsdLuxLightFilter::GetInput, arg("name"))
-      .def("GetInputs",
-           &UsdLuxLightFilter::GetInputs,
-           (arg("onlyAuthored") = true),
-           return_value_policy<TfPySequenceToList>())
+    .def("CreateInput", &UsdLuxLightFilter::CreateInput, (arg("name"), arg("type")))
+    .def("GetInput", &UsdLuxLightFilter::GetInput, arg("name"))
+    .def("GetInputs",
+         &UsdLuxLightFilter::GetInputs,
+         (arg("onlyAuthored") = true),
+         return_value_policy<TfPySequenceToList>())
 
-      .def("GetFilterLinkCollectionAPI", &UsdLuxLightFilter::GetFilterLinkCollectionAPI);
+    .def("GetFilterLinkCollectionAPI", &UsdLuxLightFilter::GetFilterLinkCollectionAPI);
 }
 
 }  // namespace

@@ -42,17 +42,16 @@ static bool _AlwaysAccept()
 }
 
 TraceReporterDataSourceCollector::TraceReporterDataSourceCollector()
-    : TraceReporterDataSourceCollector(_AlwaysAccept)
+  : TraceReporterDataSourceCollector(_AlwaysAccept)
 {}
 
 TraceReporterDataSourceCollector::TraceReporterDataSourceCollector(std::function<bool()> accept)
-    : _accept(std::move(accept))
+  : _accept(std::move(accept))
 {
   TfNotice::Register(ThisPtr(this), &This::_OnTraceCollection);
 }
 
-std::vector<TraceReporterDataSourceBase::CollectionPtr> TraceReporterDataSourceCollector::
-    ConsumeData()
+std::vector<TraceReporterDataSourceBase::CollectionPtr> TraceReporterDataSourceCollector::ConsumeData()
 {
   TraceCollector::GetInstance().CreateCollection();
   std::vector<CollectionPtr> collections;

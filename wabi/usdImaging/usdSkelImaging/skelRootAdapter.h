@@ -80,11 +80,10 @@ class UsdSkelImagingSkelRootAdapter : public UsdImagingPrimAdapter {
 
   /// Thread Safe.
   USDSKELIMAGING_API
-  void TrackVariability(
-      const UsdPrim &prim,
-      const SdfPath &cachePath,
-      HdDirtyBits *timeVaryingBits,
-      const UsdImagingInstancerContext *instancerContext = nullptr) const override;
+  void TrackVariability(const UsdPrim &prim,
+                        const SdfPath &cachePath,
+                        HdDirtyBits *timeVaryingBits,
+                        const UsdImagingInstancerContext *instancerContext = nullptr) const override;
 
   /// Thread Safe.
   USDSKELIMAGING_API

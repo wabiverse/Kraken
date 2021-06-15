@@ -59,17 +59,16 @@ static std::string _Repr(const UsdUtilsTimeCodeRange &timeCodeRange)
     return TF_PY_REPR_PREFIX + "TimeCodeRange()";
   }
 
-  return TF_PY_REPR_PREFIX + "TimeCodeRange.CreateFromFrameSpec('" + _FrameSpec(timeCodeRange) +
-         "')";
+  return TF_PY_REPR_PREFIX + "TimeCodeRange.CreateFromFrameSpec('" + _FrameSpec(timeCodeRange) + "')";
 }
 
 class UsdUtils_PyTimeCodeRangeIterator {
  public:
   explicit UsdUtils_PyTimeCodeRangeIterator(const UsdUtilsTimeCodeRange &timeCodeRange)
-      : _iter(timeCodeRange.begin()),
-        _end(timeCodeRange.end()),
-        _currTimeCode(_iter != _end ? *_iter : UsdTimeCode()),
-        _didFirst(false)
+    : _iter(timeCodeRange.begin()),
+      _end(timeCodeRange.end()),
+      _currTimeCode(_iter != _end ? *_iter : UsdTimeCode()),
+      _didFirst(false)
   {}
 
   UsdUtils_PyTimeCodeRangeIterator iter(const UsdUtils_PyTimeCodeRangeIterator &iter)
@@ -86,7 +85,7 @@ class UsdUtils_PyTimeCodeRangeIterator {
       _RaiseIfAtEnd();
     }
 
-    _didFirst     = true;
+    _didFirst = true;
     _currTimeCode = *_iter;
     return _currTimeCode;
   }
@@ -107,7 +106,7 @@ class UsdUtils_PyTimeCodeRangeIterator {
 };
 
 static UsdUtils_PyTimeCodeRangeIterator UsdUtils_PyTimeCodeRangeIteratorCreate(
-    const UsdUtilsTimeCodeRange &timeCodeRange)
+  const UsdUtilsTimeCodeRange &timeCodeRange)
 {
   return UsdUtils_PyTimeCodeRangeIterator(timeCodeRange);
 }
@@ -118,34 +117,32 @@ void wrapTimeCodeRange()
 {
   using This = UsdUtilsTimeCodeRange;
 
-  scope s = class_<This>("TimeCodeRange")
-                .def(init<UsdTimeCode>(arg("timeCode")))
-                .def(init<UsdTimeCode, UsdTimeCode>((arg("startTimeCode"), arg("endTimeCode"))))
-                .def(init<UsdTimeCode, UsdTimeCode, double>(
-                    (arg("startTimeCode"), arg("endTimeCode"), arg("stride"))))
-                .def("CreateFromFrameSpec", &This::CreateFromFrameSpec)
-                .staticmethod("CreateFromFrameSpec")
-                .add_property("startTimeCode", &This::GetStartTimeCode)
-                .add_property("endTimeCode", &This::GetEndTimeCode)
-                .add_property("stride", &This::GetStride)
-                .add_property("frameSpec", _FrameSpec)
+  scope s =
+    class_<This>("TimeCodeRange")
+      .def(init<UsdTimeCode>(arg("timeCode")))
+      .def(init<UsdTimeCode, UsdTimeCode>((arg("startTimeCode"), arg("endTimeCode"))))
+      .def(init<UsdTimeCode, UsdTimeCode, double>((arg("startTimeCode"), arg("endTimeCode"), arg("stride"))))
+      .def("CreateFromFrameSpec", &This::CreateFromFrameSpec)
+      .staticmethod("CreateFromFrameSpec")
+      .add_property("startTimeCode", &This::GetStartTimeCode)
+      .add_property("endTimeCode", &This::GetEndTimeCode)
+      .add_property("stride", &This::GetStride)
+      .add_property("frameSpec", _FrameSpec)
 
-                .def("empty", &This::empty)
-                .def("IsValid", &This::IsValid)
+      .def("empty", &This::empty)
+      .def("IsValid", &This::IsValid)
 
-                .def(!self)
-                .def(self == self)
-                .def(self != self)
-                .def("__repr__", _Repr)
-                .def("__iter__",
-                     &UsdUtils_PyTimeCodeRangeIteratorCreate,
-                     with_custodian_and_ward_postcall<0, 1>());
+      .def(!self)
+      .def(self == self)
+      .def(self != self)
+      .def("__repr__", _Repr)
+      .def("__iter__", &UsdUtils_PyTimeCodeRangeIteratorCreate, with_custodian_and_ward_postcall<0, 1>());
 
   TF_PY_WRAP_PUBLIC_TOKENS("Tokens", UsdUtilsTimeCodeRangeTokens, USDUTILS_TIME_CODE_RANGE_TOKENS);
 
   class_<UsdUtils_PyTimeCodeRangeIterator>("_Iterator", no_init)
-      .def("__iter__", &UsdUtils_PyTimeCodeRangeIterator::iter, return_self<>())
-      .def(TfPyIteratorNextMethodName,
-           &UsdUtils_PyTimeCodeRangeIterator::next,
-           return_value_policy<return_by_value>());
+    .def("__iter__", &UsdUtils_PyTimeCodeRangeIterator::iter, return_self<>())
+    .def(TfPyIteratorNextMethodName,
+         &UsdUtils_PyTimeCodeRangeIterator::next,
+         return_value_policy<return_by_value>());
 }

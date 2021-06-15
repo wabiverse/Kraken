@@ -64,20 +64,19 @@ static int GetCount(TraceAggregateNodePtr &self)
 
 void wrapAggregateNode()
 {
-  using This    = TraceAggregateNode;
+  using This = TraceAggregateNode;
   using ThisPtr = TraceAggregateNodePtr;
 
   class_<This, ThisPtr>("AggregateNode", no_init)
-      .def(TfPyWeakPtr())
-      .add_property("key", &This::GetKey)
-      .add_property("id", make_function(&This::GetId, return_value_policy<return_by_value>()))
-      .add_property("count", GetCount)
-      .add_property("exclusiveCount", &This::GetExclusiveCount)
-      .add_property("inclusiveTime", GetInclusiveTime)
-      .add_property("exclusiveTime", GetExclusiveTime)
-      .add_property("children",
-                    make_function(&This::GetChildren, return_value_policy<TfPySequenceToList>()))
-      .add_property("expanded", &This::IsExpanded, &This::SetExpanded)
+    .def(TfPyWeakPtr())
+    .add_property("key", &This::GetKey)
+    .add_property("id", make_function(&This::GetId, return_value_policy<return_by_value>()))
+    .add_property("count", GetCount)
+    .add_property("exclusiveCount", &This::GetExclusiveCount)
+    .add_property("inclusiveTime", GetInclusiveTime)
+    .add_property("exclusiveTime", GetExclusiveTime)
+    .add_property("children", make_function(&This::GetChildren, return_value_policy<TfPySequenceToList>()))
+    .add_property("expanded", &This::IsExpanded, &This::SetExpanded)
 
-      ;
+    ;
 };

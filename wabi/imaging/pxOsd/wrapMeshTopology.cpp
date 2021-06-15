@@ -46,9 +46,8 @@ static std::string _ReprMeshTopology(const PxOsdMeshTopology &topology)
 {
   std::ostringstream repr(std::ostringstream::ate);
   repr << "PxOsd.MeshTopology(" << TfPyRepr(topology.GetScheme()) << ", "
-       << TfPyRepr(topology.GetOrientation()) << ", " << TfPyRepr(topology.GetFaceVertexCounts())
-       << ", " << TfPyRepr(topology.GetFaceVertexIndices()) << ", "
-       << TfPyRepr(topology.GetHoleIndices()) << ")";
+       << TfPyRepr(topology.GetOrientation()) << ", " << TfPyRepr(topology.GetFaceVertexCounts()) << ", "
+       << TfPyRepr(topology.GetFaceVertexIndices()) << ", " << TfPyRepr(topology.GetHoleIndices()) << ")";
   return repr.str();
 }
 
@@ -60,28 +59,24 @@ void wrapMeshTopology()
   const PxOsdSubdivTags &(This::*getSubdivTags)() const = &This::GetSubdivTags;
 
   class_<This>("MeshTopology", init<TfToken, TfToken, VtIntArray, VtIntArray>())
-      .def(init<TfToken, TfToken, VtIntArray, VtIntArray, VtIntArray>())
-      .def(init<TfToken, TfToken, VtIntArray, VtIntArray, VtIntArray, PxOsdSubdivTags>())
-      .def(init<TfToken, TfToken, VtIntArray, VtIntArray, PxOsdSubdivTags>())
-      .def(init<>())
-      .def("__repr__", &::_ReprMeshTopology)
-      .def(self == self)
-      .def(self != self)
-      .def(str(self))
+    .def(init<TfToken, TfToken, VtIntArray, VtIntArray, VtIntArray>())
+    .def(init<TfToken, TfToken, VtIntArray, VtIntArray, VtIntArray, PxOsdSubdivTags>())
+    .def(init<TfToken, TfToken, VtIntArray, VtIntArray, PxOsdSubdivTags>())
+    .def(init<>())
+    .def("__repr__", &::_ReprMeshTopology)
+    .def(self == self)
+    .def(self != self)
+    .def(str(self))
 
-      .def("GetScheme", &This::GetScheme)
-      .def("WithScheme", &This::WithScheme)
-      .def("GetFaceVertexCounts",
-           &This::GetFaceVertexCounts,
-           return_value_policy<copy_const_reference>())
-      .def("GetFaceVertexIndices",
-           &This::GetFaceVertexIndices,
-           return_value_policy<copy_const_reference>())
-      .def("GetOrientation", &This::GetOrientation, return_value_policy<copy_const_reference>())
-      .def("GetHoleIndices", &This::GetHoleIndices, return_value_policy<copy_const_reference>())
-      .def("WithHoleIndices", &This::WithHoleIndices)
-      .def("GetSubdivTags", getSubdivTags, return_value_policy<copy_const_reference>())
-      .def("WithSubdivTags", &This::WithSubdivTags)
-      .def("ComputeHash", &This::ComputeHash)
-      .def("Validate", &This::Validate);
+    .def("GetScheme", &This::GetScheme)
+    .def("WithScheme", &This::WithScheme)
+    .def("GetFaceVertexCounts", &This::GetFaceVertexCounts, return_value_policy<copy_const_reference>())
+    .def("GetFaceVertexIndices", &This::GetFaceVertexIndices, return_value_policy<copy_const_reference>())
+    .def("GetOrientation", &This::GetOrientation, return_value_policy<copy_const_reference>())
+    .def("GetHoleIndices", &This::GetHoleIndices, return_value_policy<copy_const_reference>())
+    .def("WithHoleIndices", &This::WithHoleIndices)
+    .def("GetSubdivTags", getSubdivTags, return_value_policy<copy_const_reference>())
+    .def("WithSubdivTags", &This::WithSubdivTags)
+    .def("ComputeHash", &This::ComputeHash)
+    .def("Validate", &This::Validate);
 }

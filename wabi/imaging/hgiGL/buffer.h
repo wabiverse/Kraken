@@ -67,9 +67,9 @@ class HgiGLBuffer final : public HgiBuffer {
   HgiGLBuffer(HgiBufferDesc const &desc);
 
  private:
-  HgiGLBuffer()        = delete;
+  HgiGLBuffer() = delete;
   HgiGLBuffer &operator=(const HgiGLBuffer &) = delete;
-  HgiGLBuffer(const HgiGLBuffer &)            = delete;
+  HgiGLBuffer(const HgiGLBuffer &) = delete;
 
   uint32_t _bufferId;
   void *_mapped;

@@ -71,8 +71,7 @@ template<class T> struct GfIsFloatingPoint : public std::is_floating_point<T> {
 /// also includes any specializations from GfIsFloatingPoint (like GfHalf)
 template<class T>
 struct GfIsArithmetic
-    : public std::integral_constant<bool,
-                                    GfIsFloatingPoint<T>::value || std::is_arithmetic<T>::value> {
+  : public std::integral_constant<bool, GfIsFloatingPoint<T>::value || std::is_arithmetic<T>::value> {
 };
 
 WABI_NAMESPACE_END

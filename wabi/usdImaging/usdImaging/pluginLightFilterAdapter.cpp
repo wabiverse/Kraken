@@ -47,10 +47,9 @@ bool UsdImagingPluginLightFilterAdapter::IsSupported(UsdImagingIndexProxy const 
          index->IsSprimTypeSupported(HdPrimTypeTokens->lightFilter);
 }
 
-SdfPath UsdImagingPluginLightFilterAdapter::Populate(
-    UsdPrim const &prim,
-    UsdImagingIndexProxy *index,
-    UsdImagingInstancerContext const *instancerContext)
+SdfPath UsdImagingPluginLightFilterAdapter::Populate(UsdPrim const &prim,
+                                                     UsdImagingIndexProxy *index,
+                                                     UsdImagingInstancerContext const *instancerContext)
 {
   index->InsertSprim(HdPrimTypeTokens->lightFilter, prim.GetPath(), prim);
   HD_PERF_COUNTER_INCR(HdPrimTypeTokens->lightFilter);
@@ -58,8 +57,7 @@ SdfPath UsdImagingPluginLightFilterAdapter::Populate(
   return prim.GetPath();
 }
 
-void UsdImagingPluginLightFilterAdapter::_RemovePrim(SdfPath const &cachePath,
-                                                     UsdImagingIndexProxy *index)
+void UsdImagingPluginLightFilterAdapter::_RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index)
 {
   index->RemoveSprim(HdPrimTypeTokens->lightFilter, cachePath);
 }

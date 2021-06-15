@@ -69,7 +69,7 @@ class UsdStagePopulationMask {
   UsdStagePopulationMask() = default;
 
   UsdStagePopulationMask(UsdStagePopulationMask const &) = default;
-  UsdStagePopulationMask(UsdStagePopulationMask &&)      = default;
+  UsdStagePopulationMask(UsdStagePopulationMask &&) = default;
   UsdStagePopulationMask &operator=(UsdStagePopulationMask const &) = default;
   UsdStagePopulationMask &operator=(UsdStagePopulationMask &&) = default;
 
@@ -85,7 +85,7 @@ class UsdStagePopulationMask {
   /// or the absolute root path.  (See SdfPath::IsAbsolutePath,
   /// SdfPath::IsAbsoluteRootOrPrimPath).
   explicit UsdStagePopulationMask(std::vector<SdfPath> const &paths)
-      : UsdStagePopulationMask(std::vector<SdfPath>(paths)){};
+    : UsdStagePopulationMask(std::vector<SdfPath>(paths)){};
 
   /// Construct a mask from \p paths.  All paths must be absolute prim paths
   /// or the absolute root path.  (See SdfPath::IsAbsolutePath,
@@ -95,8 +95,7 @@ class UsdStagePopulationMask {
 
   /// Return a mask that is the union of \p l and \p r.
   USD_API
-  static UsdStagePopulationMask Union(UsdStagePopulationMask const &l,
-                                      UsdStagePopulationMask const &r);
+  static UsdStagePopulationMask Union(UsdStagePopulationMask const &l, UsdStagePopulationMask const &r);
 
   /// Return a mask that is the union of this and \p other.
   USD_API

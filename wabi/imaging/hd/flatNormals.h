@@ -52,11 +52,9 @@ class Hd_FlatNormals final {
   /// information and points data. Returns an array of the same size and
   /// type as the source points, with optional packing.
   HD_API
-  static VtArray<GfVec3f> ComputeFlatNormals(HdMeshTopology const *topology,
-                                             GfVec3f const *pointsPtr);
+  static VtArray<GfVec3f> ComputeFlatNormals(HdMeshTopology const *topology, GfVec3f const *pointsPtr);
   HD_API
-  static VtArray<GfVec3d> ComputeFlatNormals(HdMeshTopology const *topology,
-                                             GfVec3d const *pointsPtr);
+  static VtArray<GfVec3d> ComputeFlatNormals(HdMeshTopology const *topology, GfVec3d const *pointsPtr);
   HD_API
   static VtArray<HdVec4f_2_10_10_10_REV> ComputeFlatNormalsPacked(HdMeshTopology const *topology,
                                                                   GfVec3f const *pointsPtr);
@@ -65,7 +63,7 @@ class Hd_FlatNormals final {
                                                                   GfVec3d const *pointsPtr);
 
  private:
-  Hd_FlatNormals()  = delete;
+  Hd_FlatNormals() = delete;
   ~Hd_FlatNormals() = delete;
 };
 

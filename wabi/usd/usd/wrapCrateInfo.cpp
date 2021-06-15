@@ -37,28 +37,27 @@ WABI_NAMESPACE_USING
 void wrapUsdCrateInfo()
 {
   scope thisClass = class_<UsdCrateInfo>("CrateInfo")
-                        .def("Open", &UsdCrateInfo::Open, arg("fileName"))
-                        .staticmethod("Open")
-                        .def("GetSummaryStats", &UsdCrateInfo::GetSummaryStats)
-                        .def("GetSections",
-                             &UsdCrateInfo::GetSections,
-                             return_value_policy<TfPySequenceToList>())
-                        .def("GetFileVersion", &UsdCrateInfo::GetFileVersion)
-                        .def("GetSoftwareVersion", &UsdCrateInfo::GetSoftwareVersion)
-                        .def(!self);
+                      .def("Open", &UsdCrateInfo::Open, arg("fileName"))
+                      .staticmethod("Open")
+                      .def("GetSummaryStats", &UsdCrateInfo::GetSummaryStats)
+                      .def(
+                        "GetSections", &UsdCrateInfo::GetSections, return_value_policy<TfPySequenceToList>())
+                      .def("GetFileVersion", &UsdCrateInfo::GetFileVersion)
+                      .def("GetSoftwareVersion", &UsdCrateInfo::GetSoftwareVersion)
+                      .def(!self);
 
   class_<UsdCrateInfo::Section>("Section")
-      .def(init<string, int64_t, int64_t>((arg("name"), arg("start"), arg("size"))))
-      .def_readwrite("name", &UsdCrateInfo::Section::name)
-      .def_readwrite("start", &UsdCrateInfo::Section::start)
-      .def_readwrite("size", &UsdCrateInfo::Section::size);
+    .def(init<string, int64_t, int64_t>((arg("name"), arg("start"), arg("size"))))
+    .def_readwrite("name", &UsdCrateInfo::Section::name)
+    .def_readwrite("start", &UsdCrateInfo::Section::start)
+    .def_readwrite("size", &UsdCrateInfo::Section::size);
 
   using SummaryStats = UsdCrateInfo::SummaryStats;
   class_<SummaryStats>("SummaryStats")
-      .def_readwrite("numSpecs", &SummaryStats::numSpecs)
-      .def_readwrite("numUniquePaths", &SummaryStats::numUniquePaths)
-      .def_readwrite("numUniqueTokens", &SummaryStats::numUniqueTokens)
-      .def_readwrite("numUniqueStrings", &SummaryStats::numUniqueStrings)
-      .def_readwrite("numUniqueFields", &SummaryStats::numUniqueFields)
-      .def_readwrite("numUniqueFieldSets", &SummaryStats::numUniqueFieldSets);
+    .def_readwrite("numSpecs", &SummaryStats::numSpecs)
+    .def_readwrite("numUniquePaths", &SummaryStats::numUniquePaths)
+    .def_readwrite("numUniqueTokens", &SummaryStats::numUniqueTokens)
+    .def_readwrite("numUniqueStrings", &SummaryStats::numUniqueStrings)
+    .def_readwrite("numUniqueFields", &SummaryStats::numUniqueFields)
+    .def_readwrite("numUniqueFieldSets", &SummaryStats::numUniqueFieldSets);
 }

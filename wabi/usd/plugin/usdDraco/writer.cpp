@@ -50,11 +50,11 @@ bool UsdDraco_WriteDraco(const UsdGeomMesh &usdMesh,
   // Translate USD mesh to Draco mesh.
   draco::Mesh dracoMesh;
   bool success = UsdDracoExportTranslator::Translate(
-      usdMesh,
-      &dracoMesh,
-      UsdDracoFlag<bool>::MakeBooleanFlag(preservePolygons),
-      UsdDracoFlag<bool>::MakeBooleanFlag(preservePositionOrder),
-      UsdDracoFlag<bool>::MakeBooleanFlag(preserveHoles));
+    usdMesh,
+    &dracoMesh,
+    UsdDracoFlag<bool>::MakeBooleanFlag(preservePolygons),
+    UsdDracoFlag<bool>::MakeBooleanFlag(preservePositionOrder),
+    UsdDracoFlag<bool>::MakeBooleanFlag(preserveHoles));
   if (!success) {
     std::cout << "Could not translate USD mesh to Draco mesh." << std::endl;
     return false;

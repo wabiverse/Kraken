@@ -45,17 +45,16 @@ bool UsdDracoExportTranslator::Translate(const UsdGeomMesh &usdMesh,
   return translator._Translate(preservePolygons, preservePositionOrder, preserveHoles);
 }
 
-UsdDracoExportTranslator::UsdDracoExportTranslator(const UsdGeomMesh &usdMesh,
-                                                   draco::Mesh *dracoMesh)
-    : _usdMesh(usdMesh),
-      _dracoMesh(dracoMesh),
-      _positions(UsdDracoAttributeDescriptor::ForPositions(usdMesh)),
-      _texCoords(UsdDracoAttributeDescriptor::ForTexCoords(usdMesh)),
-      _normals(UsdDracoAttributeDescriptor::ForNormals(usdMesh)),
-      _holeFaces(UsdDracoAttributeDescriptor::ForHoleFaces()),
-      _addedEdges(UsdDracoAttributeDescriptor::ForAddedEdges()),
-      _posOrder(UsdDracoAttributeDescriptor::ForPosOrder()),
-      _unsupportedPrimvarsReferToPositions(false)
+UsdDracoExportTranslator::UsdDracoExportTranslator(const UsdGeomMesh &usdMesh, draco::Mesh *dracoMesh)
+  : _usdMesh(usdMesh),
+    _dracoMesh(dracoMesh),
+    _positions(UsdDracoAttributeDescriptor::ForPositions(usdMesh)),
+    _texCoords(UsdDracoAttributeDescriptor::ForTexCoords(usdMesh)),
+    _normals(UsdDracoAttributeDescriptor::ForNormals(usdMesh)),
+    _holeFaces(UsdDracoAttributeDescriptor::ForHoleFaces()),
+    _addedEdges(UsdDracoAttributeDescriptor::ForAddedEdges()),
+    _posOrder(UsdDracoAttributeDescriptor::ForPosOrder()),
+    _unsupportedPrimvarsReferToPositions(false)
 {}
 
 bool UsdDracoExportTranslator::_Translate(UsdDracoFlag<bool> preservePolygons,
@@ -168,19 +167,19 @@ class ExportAttributeCreator {
  public:
   template<class ValueT>
   static std::unique_ptr<UsdDracoExportAttributeInterface> CreateAttribute(
-      const UsdDracoAttributeDescriptor &descriptor)
+    const UsdDracoAttributeDescriptor &descriptor)
   {
     return std::unique_ptr<UsdDracoExportAttributeInterface>(
-        new UsdDracoExportAttribute<ValueT>(descriptor));
+      new UsdDracoExportAttribute<ValueT>(descriptor));
   }
 };
 
 std::unique_ptr<UsdDracoExportAttributeInterface> UsdDracoExportTranslator::CreateAttributeFrom(
-    const UsdGeomPrimvar &primvar)
+  const UsdGeomPrimvar &primvar)
 {
   // Create generic attribute descriptor from USD primvar.
   const UsdDracoAttributeDescriptor descriptor = UsdDracoAttributeDescriptor::FromUsdPrimvar(
-      primvar, draco::GeometryAttribute::GENERIC);
+    primvar, draco::GeometryAttribute::GENERIC);
 
   // Skip unsupported primvars, e.g., with constant interpolation.
   if (descriptor.GetStatus() != UsdDracoAttributeDescriptor::VALID)
@@ -188,8 +187,8 @@ std::unique_ptr<UsdDracoExportAttributeInterface> UsdDracoExportTranslator::Crea
 
   // Create export attribute from attribute descriptor.
   const ExportAttributeCreator creator;
-  return UsdDracoAttributeFactory::CreateAttribute<UsdDracoExportAttributeInterface,
-                                                   ExportAttributeCreator>(descriptor, creator);
+  return UsdDracoAttributeFactory::CreateAttribute<UsdDracoExportAttributeInterface, ExportAttributeCreator>(
+    descriptor, creator);
 }
 
 void UsdDracoExportTranslator::_GetConnectivityFromMesh()
@@ -233,8 +232,7 @@ bool UsdDracoExportTranslator::_CheckData() const
   return true;
 }
 
-bool UsdDracoExportTranslator::_CheckPrimvarData(
-    const UsdDracoExportAttributeInterface &attribute) const
+bool UsdDracoExportTranslator::_CheckPrimvarData(const UsdDracoExportAttributeInterface &attribute) const
 {
   if (attribute.GetNumValues() == 0)
     return true;
@@ -312,7 +310,7 @@ void UsdDracoExportTranslator::_SetNumPointsToMesh() const
   size_t numPoints = 0;
   for (size_t i = 0; i < _faceVertexCounts.size(); i++) {
     const size_t numFaceVertices = _faceVertexCounts[i];
-    const size_t numTriangles    = numFaceVertices - 2;
+    const size_t numTriangles = numFaceVertices - 2;
     numPoints += 3 * numTriangles;
   }
   _dracoMesh->set_num_points(numPoints);
@@ -346,8 +344,8 @@ void UsdDracoExportTranslator::_SetPointMapsToMesh()
     const size_t nt = numFaceVertices - 2;
     for (size_t t = 0; t < nt; t++) {
       for (size_t c = 0; c < 3; c++) {
-        face[c]                  = pointIdx;
-        const size_t cornerIdx   = firstVertexIdx + _Triangulate(t, c);
+        face[c] = pointIdx;
+        const size_t cornerIdx = firstVertexIdx + _Triangulate(t, c);
         const size_t positionIdx = _faceVertexIndices[cornerIdx];
         _positions.SetPointMapEntry(pointIdx, positionIdx);
         _texCoords.SetPointMapEntry(pointIdx, positionIdx, cornerIdx);
@@ -406,9 +404,7 @@ inline size_t UsdDracoExportTranslator::_Triangulate(size_t triIndex, size_t tri
   return triCorner == 0 ? 0 : triIndex + triCorner;
 }
 
-inline bool UsdDracoExportTranslator::_IsNewEdge(size_t triCount,
-                                                 size_t triIndex,
-                                                 size_t triCorner)
+inline bool UsdDracoExportTranslator::_IsNewEdge(size_t triCount, size_t triIndex, size_t triCorner)
 {
   // All but the last triangle of the triangulated polygon have an added edge
   // opposite of corner 1.

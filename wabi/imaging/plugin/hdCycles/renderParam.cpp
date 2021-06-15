@@ -68,96 +68,56 @@ struct HdCyclesAov {
 };
 
 std::array<HdCyclesAov, 27> DefaultAovs = {{
-    {"Combined", ccl::PASS_COMBINED, HdAovTokens->color, HdFormatFloat32Vec4, true},
-    {"Depth", ccl::PASS_DEPTH, HdAovTokens->depth, HdFormatFloat32, false},
-    {"Normal", ccl::PASS_NORMAL, HdAovTokens->normal, HdFormatFloat32Vec3, true},
-    {"IndexOB", ccl::PASS_OBJECT_ID, HdAovTokens->primId, HdFormatFloat32, false},
-    {"IndexMA", ccl::PASS_MATERIAL_ID, HdCyclesAovTokens->IndexMA, HdFormatFloat32, false},
-    {"Mist", ccl::PASS_MIST, HdCyclesAovTokens->Mist, HdFormatFloat32, true},
-    {"Emission", ccl::PASS_EMISSION, HdCyclesAovTokens->Emit, HdFormatFloat32Vec3, true},
-    {"Shadow", ccl::PASS_SHADOW, HdCyclesAovTokens->Shadow, HdFormatFloat32Vec3, true},
-    {"AO", ccl::PASS_AO, HdCyclesAovTokens->AO, HdFormatFloat32Vec3, true},
+  {"Combined", ccl::PASS_COMBINED, HdAovTokens->color, HdFormatFloat32Vec4, true},
+  {"Depth", ccl::PASS_DEPTH, HdAovTokens->depth, HdFormatFloat32, false},
+  {"Normal", ccl::PASS_NORMAL, HdAovTokens->normal, HdFormatFloat32Vec3, true},
+  {"IndexOB", ccl::PASS_OBJECT_ID, HdAovTokens->primId, HdFormatFloat32, false},
+  {"IndexMA", ccl::PASS_MATERIAL_ID, HdCyclesAovTokens->IndexMA, HdFormatFloat32, false},
+  {"Mist", ccl::PASS_MIST, HdCyclesAovTokens->Mist, HdFormatFloat32, true},
+  {"Emission", ccl::PASS_EMISSION, HdCyclesAovTokens->Emit, HdFormatFloat32Vec3, true},
+  {"Shadow", ccl::PASS_SHADOW, HdCyclesAovTokens->Shadow, HdFormatFloat32Vec3, true},
+  {"AO", ccl::PASS_AO, HdCyclesAovTokens->AO, HdFormatFloat32Vec3, true},
 
-    {"UV", ccl::PASS_UV, HdCyclesAovTokens->UV, HdFormatFloat32Vec3, true},
-    {"Vector", ccl::PASS_MOTION, HdCyclesAovTokens->Vector, HdFormatFloat32Vec4, true},
+  {"UV", ccl::PASS_UV, HdCyclesAovTokens->UV, HdFormatFloat32Vec3, true},
+  {"Vector", ccl::PASS_MOTION, HdCyclesAovTokens->Vector, HdFormatFloat32Vec4, true},
 
-    {"DiffDir", ccl::PASS_DIFFUSE_DIRECT, HdCyclesAovTokens->DiffDir, HdFormatFloat32Vec3, true},
-    {"DiffInd", ccl::PASS_DIFFUSE_INDIRECT, HdCyclesAovTokens->DiffInd, HdFormatFloat32Vec3, true},
-    {"DiffCol", ccl::PASS_DIFFUSE_COLOR, HdCyclesAovTokens->DiffCol, HdFormatFloat32Vec3, true},
+  {"DiffDir", ccl::PASS_DIFFUSE_DIRECT, HdCyclesAovTokens->DiffDir, HdFormatFloat32Vec3, true},
+  {"DiffInd", ccl::PASS_DIFFUSE_INDIRECT, HdCyclesAovTokens->DiffInd, HdFormatFloat32Vec3, true},
+  {"DiffCol", ccl::PASS_DIFFUSE_COLOR, HdCyclesAovTokens->DiffCol, HdFormatFloat32Vec3, true},
 
-    {"GlossDir", ccl::PASS_GLOSSY_DIRECT, HdCyclesAovTokens->GlossDir, HdFormatFloat32Vec3, true},
-    {"GlossInd",
-     ccl::PASS_GLOSSY_INDIRECT,
-     HdCyclesAovTokens->GlossInd,
-     HdFormatFloat32Vec3,
-     true},
-    {"GlossCol", ccl::PASS_GLOSSY_COLOR, HdCyclesAovTokens->GlossCol, HdFormatFloat32Vec3, true},
+  {"GlossDir", ccl::PASS_GLOSSY_DIRECT, HdCyclesAovTokens->GlossDir, HdFormatFloat32Vec3, true},
+  {"GlossInd", ccl::PASS_GLOSSY_INDIRECT, HdCyclesAovTokens->GlossInd, HdFormatFloat32Vec3, true},
+  {"GlossCol", ccl::PASS_GLOSSY_COLOR, HdCyclesAovTokens->GlossCol, HdFormatFloat32Vec3, true},
 
-    {"TransDir",
-     ccl::PASS_TRANSMISSION_DIRECT,
-     HdCyclesAovTokens->TransDir,
-     HdFormatFloat32Vec3,
-     true},
-    {"TransInd",
-     ccl::PASS_TRANSMISSION_INDIRECT,
-     HdCyclesAovTokens->TransInd,
-     HdFormatFloat32Vec3,
-     true},
-    {"TransCol",
-     ccl::PASS_TRANSMISSION_COLOR,
-     HdCyclesAovTokens->TransCol,
-     HdFormatFloat32Vec3,
-     true},
+  {"TransDir", ccl::PASS_TRANSMISSION_DIRECT, HdCyclesAovTokens->TransDir, HdFormatFloat32Vec3, true},
+  {"TransInd", ccl::PASS_TRANSMISSION_INDIRECT, HdCyclesAovTokens->TransInd, HdFormatFloat32Vec3, true},
+  {"TransCol", ccl::PASS_TRANSMISSION_COLOR, HdCyclesAovTokens->TransCol, HdFormatFloat32Vec3, true},
 
-    {"VolumeDir",
-     ccl::PASS_VOLUME_DIRECT,
-     HdCyclesAovTokens->VolumeDir,
-     HdFormatFloat32Vec3,
-     true},
-    {"VolumeInd",
-     ccl::PASS_VOLUME_INDIRECT,
-     HdCyclesAovTokens->VolumeInd,
-     HdFormatFloat32Vec3,
-     true},
+  {"VolumeDir", ccl::PASS_VOLUME_DIRECT, HdCyclesAovTokens->VolumeDir, HdFormatFloat32Vec3, true},
+  {"VolumeInd", ccl::PASS_VOLUME_INDIRECT, HdCyclesAovTokens->VolumeInd, HdFormatFloat32Vec3, true},
 
-    {"RenderTime", ccl::PASS_RENDER_TIME, HdCyclesAovTokens->RenderTime, HdFormatFloat32, false},
-    {"SampleCount",
-     ccl::PASS_SAMPLE_COUNT,
-     HdCyclesAovTokens->SampleCount,
-     HdFormatFloat32,
-     false},
+  {"RenderTime", ccl::PASS_RENDER_TIME, HdCyclesAovTokens->RenderTime, HdFormatFloat32, false},
+  {"SampleCount", ccl::PASS_SAMPLE_COUNT, HdCyclesAovTokens->SampleCount, HdFormatFloat32, false},
 
-    {"P", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->P, HdFormatFloat32Vec3, false},
-    {"Pref", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->Pref, HdFormatFloat32Vec3, false},
-    {"Ngn", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->Ngn, HdFormatFloat32Vec3, false},
+  {"P", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->P, HdFormatFloat32Vec3, false},
+  {"Pref", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->Pref, HdFormatFloat32Vec3, false},
+  {"Ngn", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->Ngn, HdFormatFloat32Vec3, false},
 }};
 
 std::array<HdCyclesAov, 2> CustomAovs = {{
-    {"AOVC", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->AOVC, HdFormatFloat32Vec3, true},
-    {"AOVV", ccl::PASS_AOV_VALUE, HdCyclesAovTokens->AOVV, HdFormatFloat32, true},
+  {"AOVC", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->AOVC, HdFormatFloat32Vec3, true},
+  {"AOVV", ccl::PASS_AOV_VALUE, HdCyclesAovTokens->AOVV, HdFormatFloat32, true},
 }};
 
 std::array<HdCyclesAov, 3> CryptomatteAovs = {{
-    {"CryptoObject",
-     ccl::PASS_CRYPTOMATTE,
-     HdCyclesAovTokens->CryptoObject,
-     HdFormatFloat32Vec4,
-     true},
-    {"CryptoMaterial",
-     ccl::PASS_CRYPTOMATTE,
-     HdCyclesAovTokens->CryptoMaterial,
-     HdFormatFloat32Vec4,
-     true},
-    {"CryptoAsset",
-     ccl::PASS_CRYPTOMATTE,
-     HdCyclesAovTokens->CryptoAsset,
-     HdFormatFloat32Vec4,
-     true},
+  {"CryptoObject", ccl::PASS_CRYPTOMATTE, HdCyclesAovTokens->CryptoObject, HdFormatFloat32Vec4, true},
+  {"CryptoMaterial", ccl::PASS_CRYPTOMATTE, HdCyclesAovTokens->CryptoMaterial, HdFormatFloat32Vec4, true},
+  {"CryptoAsset", ccl::PASS_CRYPTOMATTE, HdCyclesAovTokens->CryptoAsset, HdFormatFloat32Vec4, true},
 }};
 
 std::array<HdCyclesAov, 2> DenoiseAovs = {{
-    {"DenoiseNormal", ccl::PASS_NONE, HdCyclesAovTokens->DenoiseNormal, HdFormatFloat32Vec3, true},
-    {"DenoiseAlbedo", ccl::PASS_NONE, HdCyclesAovTokens->DenoiseAlbedo, HdFormatFloat32Vec3, true},
+  {"DenoiseNormal", ccl::PASS_NONE, HdCyclesAovTokens->DenoiseNormal, HdFormatFloat32Vec3, true},
+  {"DenoiseAlbedo", ccl::PASS_NONE, HdCyclesAovTokens->DenoiseAlbedo, HdFormatFloat32Vec3, true},
 }};
 
 // Workaround for Houdini's default color buffer naming convention (not using HdAovTokens->color)
@@ -236,18 +196,18 @@ int GetDenoisePass(const TfToken token)
 }  // namespace
 
 HdCyclesRenderParam::HdCyclesRenderParam()
-    : m_renderPercent(0),
-      m_renderProgress(0.0f),
-      m_useTiledRendering(false),
-      m_objectsUpdated(false),
-      m_geometryUpdated(false),
-      m_lightsUpdated(false),
-      m_shadersUpdated(false),
-      m_shouldUpdate(false),
-      m_numDomeLights(0),
-      m_useSquareSamples(false),
-      m_cyclesSession(nullptr),
-      m_cyclesScene(nullptr)
+  : m_renderPercent(0),
+    m_renderProgress(0.0f),
+    m_useTiledRendering(false),
+    m_objectsUpdated(false),
+    m_geometryUpdated(false),
+    m_lightsUpdated(false),
+    m_shadersUpdated(false),
+    m_shouldUpdate(false),
+    m_numDomeLights(0),
+    m_useSquareSamples(false),
+    m_cyclesSession(nullptr),
+    m_cyclesScene(nullptr)
 {
   _InitializeDefaults();
 }
@@ -257,9 +217,9 @@ void HdCyclesRenderParam::_InitializeDefaults()
   // These aren't directly cycles settings, but inform the creation and behaviour
   // of a render. These should be will need to be set by schema too...
   static const HdCyclesConfig &config = HdCyclesConfig::GetInstance();
-  m_deviceName                        = config.device_name.value;
-  m_useSquareSamples                  = config.use_square_samples.value;
-  m_useTiledRendering                 = config.use_tiled_rendering;
+  m_deviceName = config.device_name.value;
+  m_useSquareSamples = config.use_square_samples.value;
+  m_useTiledRendering = config.use_tiled_rendering;
 
   m_upAxis = UpAxis::Z;
   if (config.up_axis == "Z") {
@@ -386,7 +346,7 @@ void HdCyclesRenderParam::_UpdateDelegateFromConfig(bool a_forceInit)
 void HdCyclesRenderParam::_UpdateDelegateFromRenderSettings(HdRenderSettingsMap const &settingsMap)
 {
   for (auto &entry : settingsMap) {
-    TfToken key   = entry.first;
+    TfToken key = entry.first;
     VtValue value = entry.second;
     _HandleDelegateRenderSetting(key, value);
   }
@@ -431,8 +391,8 @@ void HdCyclesRenderParam::_UpdateSessionFromConfig(bool a_forceInit)
 
   config.start_resolution.eval(sessionParams->start_resolution, a_forceInit);
 
-  sessionParams->progressive                = true;
-  sessionParams->progressive_refine         = false;
+  sessionParams->progressive = true;
+  sessionParams->progressive_refine = false;
   sessionParams->progressive_update_timeout = 0.1;
 
   config.pixel_size.eval(sessionParams->pixel_size, a_forceInit);
@@ -443,9 +403,9 @@ void HdCyclesRenderParam::_UpdateSessionFromConfig(bool a_forceInit)
   // This requires some more thought and testing in regards
   // to the usdCycles schema...
   if (m_useTiledRendering) {
-    sessionParams->background         = true;
-    sessionParams->start_resolution   = INT_MAX;
-    sessionParams->progressive        = false;
+    sessionParams->background = true;
+    sessionParams->start_resolution = INT_MAX;
+    sessionParams->progressive = false;
     sessionParams->progressive_refine = false;
   }
 
@@ -455,7 +415,7 @@ void HdCyclesRenderParam::_UpdateSessionFromConfig(bool a_forceInit)
 void HdCyclesRenderParam::_UpdateSessionFromRenderSettings(HdRenderSettingsMap const &settingsMap)
 {
   for (auto &entry : settingsMap) {
-    TfToken key   = entry.first;
+    TfToken key = entry.first;
     VtValue value = entry.second;
     _HandleSessionRenderSetting(key, value);
   }
@@ -480,33 +440,33 @@ bool HdCyclesRenderParam::_HandleSessionRenderSetting(const TfToken &key, const 
 
   if (key == HdCyclesTokens->cyclesProgressiveRefine) {
     sessionParams->progressive_refine = _HdCyclesGetVtValue<bool>(
-        value, sessionParams->progressive_refine, &session_updated);
+      value, sessionParams->progressive_refine, &session_updated);
   }
 
   if (key == HdCyclesTokens->cyclesProgressive) {
     sessionParams->progressive = _HdCyclesGetVtValue<bool>(
-        value, sessionParams->progressive, &session_updated);
+      value, sessionParams->progressive, &session_updated);
   }
 
   if (key == HdCyclesTokens->cyclesProgressiveUpdateTimeout) {
     sessionParams->progressive_update_timeout = static_cast<double>(_HdCyclesGetVtValue<float>(
-        value, static_cast<float>(sessionParams->progressive_update_timeout), &session_updated));
+      value, static_cast<float>(sessionParams->progressive_update_timeout), &session_updated));
   }
 
   if (key == HdCyclesTokens->cyclesExperimental) {
     sessionParams->experimental = _HdCyclesGetVtValue<bool>(
-        value, sessionParams->experimental, &session_updated);
+      value, sessionParams->experimental, &session_updated);
   }
 
   if (key == HdCyclesTokens->cyclesSamples) {
     // If branched-path mode is set, make sure to set samples to use the
     // aa_samples instead from the integrator.
-    int samples                    = sessionParams->samples;
-    int aa_samples                 = 0;
+    int samples = sessionParams->samples;
+    int aa_samples = 0;
     ccl::Integrator::Method method = ccl::Integrator::PATH;
 
     if (m_cyclesScene) {
-      method     = m_cyclesScene->integrator->method;
+      method = m_cyclesScene->integrator->method;
       aa_samples = m_cyclesScene->integrator->aa_samples;
 
       // Don't apply aa_samples if it is 0
@@ -529,17 +489,17 @@ bool HdCyclesRenderParam::_HandleSessionRenderSetting(const TfToken &key, const 
 
   if (key == HdCyclesTokens->cyclesTileSize) {
     if (value.IsHolding<GfVec2i>()) {
-      sessionParams->tile_size = vec2i_to_int2(_HdCyclesGetVtValue<GfVec2i>(
-          value, int2_to_vec2i(sessionParams->tile_size), &session_updated));
+      sessionParams->tile_size = vec2i_to_int2(
+        _HdCyclesGetVtValue<GfVec2i>(value, int2_to_vec2i(sessionParams->tile_size), &session_updated));
     }
     else if (value.IsHolding<GfVec2f>()) {
       // Adding this check for safety since the original implementation was using GfVec2i which
       // might have been valid at some point but does not match the current schema.
-      sessionParams->tile_size = vec2f_to_int2(_HdCyclesGetVtValue<GfVec2f>(
-          value, int2_to_vec2f(sessionParams->tile_size), &session_updated));
+      sessionParams->tile_size = vec2f_to_int2(
+        _HdCyclesGetVtValue<GfVec2f>(value, int2_to_vec2f(sessionParams->tile_size), &session_updated));
       TF_WARN(
-          "Tile size was specified as float, but the schema uses int. The value will be converted "
-          "but you should update the schema version.");
+        "Tile size was specified as float, but the schema uses int. The value will be converted "
+        "but you should update the schema version.");
     }
     else {
       TF_WARN("Tile size has unsupported type %s, expected GfVec2f", value.GetTypeName().c_str());
@@ -572,27 +532,26 @@ bool HdCyclesRenderParam::_HandleSessionRenderSetting(const TfToken &key, const 
 
   if (key == HdCyclesTokens->cyclesStartResolution) {
     sessionParams->start_resolution = _HdCyclesGetVtValue<int>(
-        value, sessionParams->start_resolution, &session_updated);
+      value, sessionParams->start_resolution, &session_updated);
   }
 
   if (key == HdCyclesTokens->cyclesPixelSize) {
-    sessionParams->pixel_size = _HdCyclesGetVtValue<int>(
-        value, sessionParams->pixel_size, &session_updated);
+    sessionParams->pixel_size = _HdCyclesGetVtValue<int>(value, sessionParams->pixel_size, &session_updated);
   }
 
   if (key == HdCyclesTokens->cyclesAdaptiveSampling) {
     sessionParams->adaptive_sampling = _HdCyclesGetVtValue<bool>(
-        value, sessionParams->adaptive_sampling, &session_updated);
+      value, sessionParams->adaptive_sampling, &session_updated);
   }
 
   if (key == HdCyclesTokens->cyclesUseProfiling) {
     sessionParams->use_profiling = _HdCyclesGetVtValue<bool>(
-        value, sessionParams->use_profiling, &session_updated);
+      value, sessionParams->use_profiling, &session_updated);
   }
 
   if (key == HdCyclesTokens->cyclesDisplayBufferLinear) {
     sessionParams->display_buffer_linear = _HdCyclesGetVtValue<bool>(
-        value, sessionParams->display_buffer_linear, &session_updated);
+      value, sessionParams->display_buffer_linear, &session_updated);
   }
 
   TfToken shadingSystem;
@@ -609,35 +568,34 @@ bool HdCyclesRenderParam::_HandleSessionRenderSetting(const TfToken &key, const 
 
   if (key == HdCyclesTokens->cyclesUseProfiling) {
     sessionParams->use_profiling = _HdCyclesGetVtValue<bool>(
-        value, sessionParams->use_profiling, &session_updated);
+      value, sessionParams->use_profiling, &session_updated);
   }
 
   // Session BVH
 
   // Denoising
 
-  bool denoising_updated              = false;
+  bool denoising_updated = false;
   bool denoising_start_sample_updated = false;
-  ccl::DenoiseParams denoisingParams  = sessionParams->denoising;
+  ccl::DenoiseParams denoisingParams = sessionParams->denoising;
 
   if (key == HdCyclesTokens->cyclesDenoiseUse) {
-    denoisingParams.use = _HdCyclesGetVtValue<bool>(
-        value, denoisingParams.use, &denoising_updated);
+    denoisingParams.use = _HdCyclesGetVtValue<bool>(value, denoisingParams.use, &denoising_updated);
   }
 
   if (key == HdCyclesTokens->cyclesDenoiseStorePasses) {
     denoisingParams.store_passes = _HdCyclesGetVtValue<bool>(
-        value, denoisingParams.store_passes, &denoising_updated);
+      value, denoisingParams.store_passes, &denoising_updated);
   }
 
   if (key == HdCyclesTokens->cyclesDenoiseStartSample) {
     sessionParams->denoising_start_sample = _HdCyclesGetVtValue<int>(
-        value, sessionParams->denoising_start_sample, &denoising_start_sample_updated);
+      value, sessionParams->denoising_start_sample, &denoising_start_sample_updated);
   }
 
   if (key == HdCyclesTokens->cyclesDenoiseType) {
     TfToken type = HdCyclesTokens->none;
-    type         = _HdCyclesGetVtValue<TfToken>(value, type, &denoising_updated);
+    type = _HdCyclesGetVtValue<TfToken>(value, type, &denoising_updated);
     if (type == HdCyclesTokens->none) {
       denoisingParams.type = ccl::DENOISER_NONE;
     }
@@ -654,7 +612,7 @@ bool HdCyclesRenderParam::_HandleSessionRenderSetting(const TfToken &key, const 
 
   if (key == HdCyclesTokens->cyclesDenoiseInputPasses) {
     TfToken inputPasses = HdCyclesTokens->rgb_albedo_normal;
-    inputPasses         = _HdCyclesGetVtValue<TfToken>(value, inputPasses, &denoising_updated);
+    inputPasses = _HdCyclesGetVtValue<TfToken>(value, inputPasses, &denoising_updated);
 
     if (inputPasses == HdCyclesTokens->rgb) {
       denoisingParams.input_passes = ccl::DENOISER_INPUT_RGB;
@@ -724,7 +682,7 @@ void HdCyclesRenderParam::_UpdateSceneFromConfig(bool a_forceInit)
 void HdCyclesRenderParam::_UpdateSceneFromRenderSettings(HdRenderSettingsMap const &settingsMap)
 {
   for (auto &entry : settingsMap) {
-    TfToken key   = entry.first;
+    TfToken key = entry.first;
     VtValue value = entry.second;
     _HandleSceneRenderSetting(key, value);
   }
@@ -739,12 +697,11 @@ bool HdCyclesRenderParam::_HandleSceneRenderSetting(const TfToken &key, const Vt
   if (m_cyclesScene)
     sceneParams = &m_cyclesScene->params;
 
-  bool scene_updated   = false;
+  bool scene_updated = false;
   bool texture_updated = false;
 
   if (key == HdCyclesTokens->cyclesShadingSystem) {
-    TfToken shading_system = _HdCyclesGetVtValue<TfToken>(
-        value, HdCyclesTokens->svm, &scene_updated);
+    TfToken shading_system = _HdCyclesGetVtValue<TfToken>(value, HdCyclesTokens->svm, &scene_updated);
     if (shading_system == HdCyclesTokens->svm) {
       sceneParams->shadingsystem = ccl::SHADINGSYSTEM_SVM;
     }
@@ -754,8 +711,7 @@ bool HdCyclesRenderParam::_HandleSceneRenderSetting(const TfToken &key, const Vt
   }
 
   if (key == HdCyclesTokens->cyclesBvhType) {
-    TfToken bvh_type = _HdCyclesGetVtValue<TfToken>(
-        value, HdCyclesTokens->bvh_dynamic, &scene_updated);
+    TfToken bvh_type = _HdCyclesGetVtValue<TfToken>(value, HdCyclesTokens->bvh_dynamic, &scene_updated);
     if (bvh_type == HdCyclesTokens->bvh_dynamic) {
       sceneParams->bvh_type = ccl::SceneParams::BVH_DYNAMIC;
     }
@@ -766,7 +722,7 @@ bool HdCyclesRenderParam::_HandleSceneRenderSetting(const TfToken &key, const Vt
 
   if (key == HdCyclesTokens->cyclesCurveSubdivisions) {
     sceneParams->hair_subdivisions = _HdCyclesGetVtValue<int>(
-        value, sceneParams->hair_subdivisions, &scene_updated);
+      value, sceneParams->hair_subdivisions, &scene_updated);
   }
 
   // TODO: Unsure how we will handle this if the camera hasn't been created yet/at all...
@@ -778,73 +734,73 @@ bool HdCyclesRenderParam::_HandleSceneRenderSetting(const TfToken &key, const Vt
 
   if (key == HdCyclesTokens->cyclesUseBvhSpatialSplit) {
     sceneParams->use_bvh_spatial_split = _HdCyclesGetVtValue<bool>(
-        value, sceneParams->use_bvh_spatial_split, &scene_updated);
+      value, sceneParams->use_bvh_spatial_split, &scene_updated);
   }
 
   if (key == HdCyclesTokens->cyclesUseBvhUnalignedNodes) {
     sceneParams->use_bvh_unaligned_nodes = _HdCyclesGetVtValue<bool>(
-        value, sceneParams->use_bvh_unaligned_nodes, &scene_updated);
+      value, sceneParams->use_bvh_unaligned_nodes, &scene_updated);
   }
 
   if (key == HdCyclesTokens->cyclesNumBvhTimeSteps) {
     sceneParams->num_bvh_time_steps = _HdCyclesGetVtValue<int>(
-        value, sceneParams->num_bvh_time_steps, &scene_updated);
+      value, sceneParams->num_bvh_time_steps, &scene_updated);
   }
 
   if (key == HdCyclesTokens->cyclesTextureUseCache) {
     sceneParams->texture.use_cache = _HdCyclesGetVtValue<bool>(
-        value, sceneParams->texture.use_cache, &texture_updated);
+      value, sceneParams->texture.use_cache, &texture_updated);
   }
 
   if (key == HdCyclesTokens->cyclesTextureCacheSize) {
     sceneParams->texture.cache_size = _HdCyclesGetVtValue<int>(
-        value, sceneParams->texture.cache_size, &texture_updated);
+      value, sceneParams->texture.cache_size, &texture_updated);
   }
 
   if (key == HdCyclesTokens->cyclesTextureTileSize) {
     sceneParams->texture.tile_size = _HdCyclesGetVtValue<int>(
-        value, sceneParams->texture.tile_size, &texture_updated);
+      value, sceneParams->texture.tile_size, &texture_updated);
   }
 
   if (key == HdCyclesTokens->cyclesTextureDiffuseBlur) {
     sceneParams->texture.diffuse_blur = _HdCyclesGetVtValue<float>(
-        value, sceneParams->texture.diffuse_blur, &texture_updated);
+      value, sceneParams->texture.diffuse_blur, &texture_updated);
   }
 
   if (key == HdCyclesTokens->cyclesTextureGlossyBlur) {
     sceneParams->texture.glossy_blur = _HdCyclesGetVtValue<float>(
-        value, sceneParams->texture.glossy_blur, &texture_updated);
+      value, sceneParams->texture.glossy_blur, &texture_updated);
   }
 
   if (key == HdCyclesTokens->cyclesTextureAutoConvert) {
     sceneParams->texture.auto_convert = _HdCyclesGetVtValue<bool>(
-        value, sceneParams->texture.auto_convert, &texture_updated);
+      value, sceneParams->texture.auto_convert, &texture_updated);
   }
 
   if (key == HdCyclesTokens->cyclesTextureAcceptUnmipped) {
     sceneParams->texture.accept_unmipped = _HdCyclesGetVtValue<bool>(
-        value, sceneParams->texture.accept_unmipped, &texture_updated);
+      value, sceneParams->texture.accept_unmipped, &texture_updated);
   }
 
   if (key == HdCyclesTokens->cyclesTextureAcceptUntiled) {
     sceneParams->texture.accept_untiled = _HdCyclesGetVtValue<bool>(
-        value, sceneParams->texture.accept_untiled, &texture_updated);
+      value, sceneParams->texture.accept_untiled, &texture_updated);
   }
   if (key == HdCyclesTokens->cyclesTextureAutoTile) {
     sceneParams->texture.auto_tile = _HdCyclesGetVtValue<bool>(
-        value, sceneParams->texture.auto_tile, &texture_updated);
+      value, sceneParams->texture.auto_tile, &texture_updated);
   }
   if (key == HdCyclesTokens->cyclesTextureAutoMip) {
     sceneParams->texture.auto_mip = _HdCyclesGetVtValue<bool>(
-        value, sceneParams->texture.auto_mip, &texture_updated);
+      value, sceneParams->texture.auto_mip, &texture_updated);
   }
   if (key == HdCyclesTokens->cyclesTextureUseCustomPath) {
     sceneParams->texture.use_custom_cache_path = _HdCyclesGetVtValue<bool>(
-        value, sceneParams->texture.use_custom_cache_path, &texture_updated);
+      value, sceneParams->texture.use_custom_cache_path, &texture_updated);
   }
   if (key == HdCyclesTokens->cyclesTextureMaxSize) {
     sceneParams->texture_limit = _HdCyclesGetVtValue<int>(
-        value, sceneParams->texture_limit, &texture_updated);
+      value, sceneParams->texture_limit, &texture_updated);
   }
 
   if (scene_updated || texture_updated) {
@@ -852,7 +808,7 @@ bool HdCyclesRenderParam::_HandleSceneRenderSetting(const TfToken &key, const Vt
     if (m_cyclesSession && m_cyclesScene) {
       Interrupt(true);
       if (texture_updated) {
-        m_cyclesScene->image_manager->need_update  = true;
+        m_cyclesScene->image_manager->need_update = true;
         m_cyclesScene->shader_manager->need_update = true;
       }
     }
@@ -884,8 +840,7 @@ void HdCyclesRenderParam::_UpdateIntegratorFromConfig(bool a_forceInit)
 
   // Samples
 
-  if (config.diffuse_samples.eval(integrator->diffuse_samples, a_forceInit) &&
-      m_useSquareSamples) {
+  if (config.diffuse_samples.eval(integrator->diffuse_samples, a_forceInit) && m_useSquareSamples) {
     integrator->diffuse_samples = integrator->diffuse_samples * integrator->diffuse_samples;
   }
   if (config.glossy_samples.eval(integrator->glossy_samples, a_forceInit) && m_useSquareSamples) {
@@ -893,21 +848,16 @@ void HdCyclesRenderParam::_UpdateIntegratorFromConfig(bool a_forceInit)
   }
   if (config.transmission_samples.eval(integrator->transmission_samples, a_forceInit) &&
       m_useSquareSamples) {
-    integrator->transmission_samples = integrator->transmission_samples *
-                                       integrator->transmission_samples;
+    integrator->transmission_samples = integrator->transmission_samples * integrator->transmission_samples;
   }
   if (config.ao_samples.eval(integrator->ao_samples, a_forceInit) && m_useSquareSamples) {
     integrator->ao_samples = integrator->ao_samples * integrator->ao_samples;
   }
-  if (config.mesh_light_samples.eval(integrator->mesh_light_samples, a_forceInit) &&
-      m_useSquareSamples) {
-    integrator->mesh_light_samples = integrator->mesh_light_samples *
-                                     integrator->mesh_light_samples;
+  if (config.mesh_light_samples.eval(integrator->mesh_light_samples, a_forceInit) && m_useSquareSamples) {
+    integrator->mesh_light_samples = integrator->mesh_light_samples * integrator->mesh_light_samples;
   }
-  if (config.subsurface_samples.eval(integrator->subsurface_samples, a_forceInit) &&
-      m_useSquareSamples) {
-    integrator->subsurface_samples = integrator->subsurface_samples *
-                                     integrator->subsurface_samples;
+  if (config.subsurface_samples.eval(integrator->subsurface_samples, a_forceInit) && m_useSquareSamples) {
+    integrator->subsurface_samples = integrator->subsurface_samples * integrator->subsurface_samples;
   }
   if (config.volume_samples.eval(integrator->volume_samples, a_forceInit) && m_useSquareSamples) {
     integrator->volume_samples = integrator->volume_samples * integrator->volume_samples;
@@ -925,11 +875,10 @@ void HdCyclesRenderParam::_UpdateIntegratorFromConfig(bool a_forceInit)
   integrator->tag_update(m_cyclesScene);
 }
 
-void HdCyclesRenderParam::_UpdateIntegratorFromRenderSettings(
-    HdRenderSettingsMap const &settingsMap)
+void HdCyclesRenderParam::_UpdateIntegratorFromRenderSettings(HdRenderSettingsMap const &settingsMap)
 {
   for (auto &entry : settingsMap) {
-    TfToken key   = entry.first;
+    TfToken key = entry.first;
     VtValue value = entry.second;
 
     _HandleIntegratorRenderSetting(key, value);
@@ -941,26 +890,23 @@ bool HdCyclesRenderParam::_HandleIntegratorRenderSetting(const TfToken &key, con
   // -- Integrator Settings
 
   ccl::Integrator *integrator = m_cyclesScene->integrator;
-  bool integrator_updated     = false;
-  bool method_updated         = false;
+  bool integrator_updated = false;
+  bool method_updated = false;
 
   if (key == HdCyclesTokens->cyclesIntegratorSeed) {
     integrator->seed = _HdCyclesGetVtValue<int>(value, integrator->seed, &integrator_updated);
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorMinBounce) {
-    integrator->min_bounce = _HdCyclesGetVtValue<int>(
-        value, integrator->min_bounce, &integrator_updated);
+    integrator->min_bounce = _HdCyclesGetVtValue<int>(value, integrator->min_bounce, &integrator_updated);
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorMaxBounce) {
-    integrator->max_bounce = _HdCyclesGetVtValue<int>(
-        value, integrator->max_bounce, &integrator_updated);
+    integrator->max_bounce = _HdCyclesGetVtValue<int>(value, integrator->max_bounce, &integrator_updated);
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorMethod) {
-    TfToken integratorMethod = _HdCyclesGetVtValue<TfToken>(
-        value, HdCyclesTokens->path, &method_updated);
+    TfToken integratorMethod = _HdCyclesGetVtValue<TfToken>(value, HdCyclesTokens->path, &method_updated);
     if (integratorMethod == HdCyclesTokens->path) {
       integrator->method = ccl::Integrator::PATH;
     }
@@ -985,8 +931,7 @@ bool HdCyclesRenderParam::_HandleIntegratorRenderSetting(const TfToken &key, con
       defaultPattern = HdCyclesTokens->pmj;
     }
 
-    TfToken samplingMethod = _HdCyclesGetVtValue<TfToken>(
-        value, defaultPattern, &integrator_updated);
+    TfToken samplingMethod = _HdCyclesGetVtValue<TfToken>(value, defaultPattern, &integrator_updated);
     if (samplingMethod == HdCyclesTokens->sobol) {
       integrator->sampling_pattern = ccl::SAMPLING_PATTERN_SOBOL;
     }
@@ -1000,65 +945,63 @@ bool HdCyclesRenderParam::_HandleIntegratorRenderSetting(const TfToken &key, con
     // Adaptive sampling must use PMJ
     if (m_cyclesSession->params.adaptive_sampling &&
         integrator->sampling_pattern != ccl::SAMPLING_PATTERN_PMJ) {
-      integrator_updated           = true;
+      integrator_updated = true;
       integrator->sampling_pattern = ccl::SAMPLING_PATTERN_PMJ;
     }
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorMaxDiffuseBounce) {
     integrator->max_diffuse_bounce = _HdCyclesGetVtValue<int>(
-        value, integrator->max_diffuse_bounce, &integrator_updated);
+      value, integrator->max_diffuse_bounce, &integrator_updated);
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorMaxGlossyBounce) {
     integrator->max_glossy_bounce = _HdCyclesGetVtValue<int>(
-        value, integrator->max_glossy_bounce, &integrator_updated);
+      value, integrator->max_glossy_bounce, &integrator_updated);
   }
   if (key == HdCyclesTokens->cyclesIntegratorMaxTransmissionBounce) {
     integrator->max_transmission_bounce = _HdCyclesGetVtValue<int>(
-        value, integrator->max_transmission_bounce, &integrator_updated);
+      value, integrator->max_transmission_bounce, &integrator_updated);
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorMaxVolumeBounce) {
     integrator->max_volume_bounce = _HdCyclesGetVtValue<int>(
-        value, integrator->max_volume_bounce, &integrator_updated);
+      value, integrator->max_volume_bounce, &integrator_updated);
   }
   if (key == HdCyclesTokens->cyclesIntegratorTransparentMinBounce) {
     integrator->transparent_min_bounce = _HdCyclesGetVtValue<int>(
-        value, integrator->transparent_min_bounce, &integrator_updated);
+      value, integrator->transparent_min_bounce, &integrator_updated);
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorTransparentMaxBounce) {
     integrator->transparent_max_bounce = _HdCyclesGetVtValue<int>(
-        value, integrator->transparent_max_bounce, &integrator_updated);
+      value, integrator->transparent_max_bounce, &integrator_updated);
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorAoBounces) {
-    integrator->ao_bounces = _HdCyclesGetVtValue<int>(
-        value, integrator->ao_bounces, &integrator_updated);
+    integrator->ao_bounces = _HdCyclesGetVtValue<int>(value, integrator->ao_bounces, &integrator_updated);
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorVolumeMaxSteps) {
     integrator->volume_max_steps = _HdCyclesGetVtValue<int>(
-        value, integrator->volume_max_steps, &integrator_updated);
+      value, integrator->volume_max_steps, &integrator_updated);
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorVolumeStepSize) {
     integrator->volume_step_rate = _HdCyclesGetVtValue<float>(
-        value, integrator->volume_step_rate, &integrator_updated);
+      value, integrator->volume_step_rate, &integrator_updated);
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorAdaptiveThreshold) {
     integrator->adaptive_threshold = _HdCyclesGetVtValue<float>(
-        value, integrator->adaptive_threshold, &integrator_updated);
+      value, integrator->adaptive_threshold, &integrator_updated);
   }
 
   // Samples
 
   if (key == HdCyclesTokens->cyclesIntegratorAaSamples) {
-    bool sample_updated    = false;
-    integrator->aa_samples = _HdCyclesGetVtValue<int>(
-        value, integrator->aa_samples, &sample_updated);
+    bool sample_updated = false;
+    integrator->aa_samples = _HdCyclesGetVtValue<int>(value, integrator->aa_samples, &sample_updated);
 
     if (sample_updated) {
       if (m_useSquareSamples) {
@@ -1072,23 +1015,23 @@ bool HdCyclesRenderParam::_HandleIntegratorRenderSetting(const TfToken &key, con
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorAdaptiveMinSamples) {
-    bool sample_updated              = false;
+    bool sample_updated = false;
     integrator->adaptive_min_samples = _HdCyclesGetVtValue<int>(
-        value, integrator->adaptive_min_samples, &sample_updated);
+      value, integrator->adaptive_min_samples, &sample_updated);
 
     if (sample_updated) {
       if (m_useSquareSamples) {
         integrator->adaptive_min_samples = std::min(
-            integrator->adaptive_min_samples * integrator->adaptive_min_samples, INT_MAX);
+          integrator->adaptive_min_samples * integrator->adaptive_min_samples, INT_MAX);
       }
       integrator_updated = true;
     }
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorDiffuseSamples) {
-    bool sample_updated         = false;
+    bool sample_updated = false;
     integrator->diffuse_samples = _HdCyclesGetVtValue<int>(
-        value, integrator->diffuse_samples, &sample_updated);
+      value, integrator->diffuse_samples, &sample_updated);
 
     if (sample_updated) {
       if (m_useSquareSamples) {
@@ -1099,9 +1042,9 @@ bool HdCyclesRenderParam::_HandleIntegratorRenderSetting(const TfToken &key, con
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorGlossySamples) {
-    bool sample_updated        = false;
+    bool sample_updated = false;
     integrator->glossy_samples = _HdCyclesGetVtValue<int>(
-        value, integrator->glossy_samples, &sample_updated);
+      value, integrator->glossy_samples, &sample_updated);
 
     if (sample_updated) {
       if (m_useSquareSamples) {
@@ -1112,9 +1055,9 @@ bool HdCyclesRenderParam::_HandleIntegratorRenderSetting(const TfToken &key, con
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorTransmissionSamples) {
-    bool sample_updated              = false;
+    bool sample_updated = false;
     integrator->transmission_samples = _HdCyclesGetVtValue<int>(
-        value, integrator->transmission_samples, &sample_updated);
+      value, integrator->transmission_samples, &sample_updated);
 
     if (sample_updated) {
       if (m_useSquareSamples) {
@@ -1126,9 +1069,8 @@ bool HdCyclesRenderParam::_HandleIntegratorRenderSetting(const TfToken &key, con
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorAoSamples) {
-    bool sample_updated    = false;
-    integrator->ao_samples = _HdCyclesGetVtValue<int>(
-        value, integrator->ao_samples, &sample_updated);
+    bool sample_updated = false;
+    integrator->ao_samples = _HdCyclesGetVtValue<int>(value, integrator->ao_samples, &sample_updated);
 
     if (sample_updated) {
       if (m_useSquareSamples) {
@@ -1139,37 +1081,35 @@ bool HdCyclesRenderParam::_HandleIntegratorRenderSetting(const TfToken &key, con
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorMeshLightSamples) {
-    bool sample_updated            = false;
+    bool sample_updated = false;
     integrator->mesh_light_samples = _HdCyclesGetVtValue<int>(
-        value, integrator->mesh_light_samples, &sample_updated);
+      value, integrator->mesh_light_samples, &sample_updated);
 
     if (sample_updated) {
       if (m_useSquareSamples) {
-        integrator->mesh_light_samples = integrator->mesh_light_samples *
-                                         integrator->mesh_light_samples;
+        integrator->mesh_light_samples = integrator->mesh_light_samples * integrator->mesh_light_samples;
       }
       integrator_updated = true;
     }
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorSubsurfaceSamples) {
-    bool sample_updated            = false;
+    bool sample_updated = false;
     integrator->subsurface_samples = _HdCyclesGetVtValue<int>(
-        value, integrator->subsurface_samples, &sample_updated);
+      value, integrator->subsurface_samples, &sample_updated);
 
     if (sample_updated) {
       if (m_useSquareSamples) {
-        integrator->subsurface_samples = integrator->subsurface_samples *
-                                         integrator->subsurface_samples;
+        integrator->subsurface_samples = integrator->subsurface_samples * integrator->subsurface_samples;
       }
       integrator_updated = true;
     }
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorVolumeSamples) {
-    bool sample_updated        = false;
+    bool sample_updated = false;
     integrator->volume_samples = _HdCyclesGetVtValue<int>(
-        value, integrator->volume_samples, &sample_updated);
+      value, integrator->volume_samples, &sample_updated);
 
     if (sample_updated) {
       if (m_useSquareSamples) {
@@ -1181,53 +1121,52 @@ bool HdCyclesRenderParam::_HandleIntegratorRenderSetting(const TfToken &key, con
 
   if (key == HdCyclesTokens->cyclesIntegratorStartSample) {
     integrator->start_sample = _HdCyclesGetVtValue<int>(
-        value, integrator->start_sample, &integrator_updated);
+      value, integrator->start_sample, &integrator_updated);
   }
 
   // Caustics
 
   if (key == HdCyclesTokens->cyclesIntegratorCausticsReflective) {
     integrator->caustics_reflective = _HdCyclesGetVtValue<bool>(
-        value, integrator->caustics_reflective, &integrator_updated);
+      value, integrator->caustics_reflective, &integrator_updated);
   }
   if (key == HdCyclesTokens->cyclesIntegratorCausticsRefractive) {
     integrator->caustics_refractive = _HdCyclesGetVtValue<bool>(
-        value, integrator->caustics_refractive, &integrator_updated);
+      value, integrator->caustics_refractive, &integrator_updated);
   }
 
   // Filter
 
   if (key == HdCyclesTokens->cyclesIntegratorFilterGlossy) {
     integrator->filter_glossy = _HdCyclesGetVtValue<float>(
-        value, integrator->filter_glossy, &integrator_updated);
+      value, integrator->filter_glossy, &integrator_updated);
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorSampleClampDirect) {
     integrator->sample_clamp_direct = _HdCyclesGetVtValue<float>(
-        value, integrator->sample_clamp_direct, &integrator_updated);
+      value, integrator->sample_clamp_direct, &integrator_updated);
   }
   if (key == HdCyclesTokens->cyclesIntegratorSampleClampIndirect) {
     integrator->sample_clamp_indirect = _HdCyclesGetVtValue<float>(
-        value, integrator->sample_clamp_indirect, &integrator_updated);
+      value, integrator->sample_clamp_indirect, &integrator_updated);
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorMotionBlur) {
-    integrator->motion_blur = _HdCyclesGetVtValue<bool>(
-        value, integrator->motion_blur, &integrator_updated);
+    integrator->motion_blur = _HdCyclesGetVtValue<bool>(value, integrator->motion_blur, &integrator_updated);
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorSampleAllLightsDirect) {
     integrator->sample_all_lights_direct = _HdCyclesGetVtValue<bool>(
-        value, integrator->sample_all_lights_direct, &integrator_updated);
+      value, integrator->sample_all_lights_direct, &integrator_updated);
   }
   if (key == HdCyclesTokens->cyclesIntegratorSampleAllLightsIndirect) {
     integrator->sample_all_lights_indirect = _HdCyclesGetVtValue<bool>(
-        value, integrator->sample_all_lights_indirect, &integrator_updated);
+      value, integrator->sample_all_lights_indirect, &integrator_updated);
   }
 
   if (key == HdCyclesTokens->cyclesIntegratorLightSamplingThreshold) {
     integrator->light_sampling_threshold = _HdCyclesGetVtValue<float>(
-        value, integrator->light_sampling_threshold, &integrator_updated);
+      value, integrator->light_sampling_threshold, &integrator_updated);
   }
 
   if (integrator_updated) {
@@ -1260,7 +1199,7 @@ void HdCyclesRenderParam::_UpdateFilmFromConfig(bool a_forceInit)
 void HdCyclesRenderParam::_UpdateFilmFromRenderSettings(HdRenderSettingsMap const &settingsMap)
 {
   for (auto &entry : settingsMap) {
-    TfToken key   = entry.first;
+    TfToken key = entry.first;
     VtValue value = entry.second;
 
     _HandleFilmRenderSetting(key, value);
@@ -1271,7 +1210,7 @@ bool HdCyclesRenderParam::_HandleFilmRenderSetting(const TfToken &key, const VtV
 {
   // -- Film Settings
 
-  ccl::Film *film   = m_cyclesScene->film;
+  ccl::Film *film = m_cyclesScene->film;
   bool film_updated = false;
 
   if (key == HdCyclesTokens->cyclesFilmExposure) {
@@ -1280,7 +1219,7 @@ bool HdCyclesRenderParam::_HandleFilmRenderSetting(const TfToken &key, const VtV
 
   if (key == HdCyclesTokens->cyclesFilmPassAlphaThreshold) {
     film->pass_alpha_threshold = _HdCyclesGetVtValue<float>(
-        value, film->pass_alpha_threshold, &film_updated, false);
+      value, film->pass_alpha_threshold, &film_updated, false);
   }
 
   // Filter
@@ -1299,8 +1238,7 @@ bool HdCyclesRenderParam::_HandleFilmRenderSetting(const TfToken &key, const VtV
   }
 
   if (key == HdCyclesTokens->cyclesFilmFilterWidth) {
-    film->filter_width = _HdCyclesGetVtValue<float>(
-        value, film->filter_width, &film_updated, false);
+    film->filter_width = _HdCyclesGetVtValue<float>(value, film->filter_width, &film_updated, false);
   }
 
   // Mist
@@ -1314,15 +1252,14 @@ bool HdCyclesRenderParam::_HandleFilmRenderSetting(const TfToken &key, const VtV
   }
 
   if (key == HdCyclesTokens->cyclesFilmMistFalloff) {
-    film->mist_falloff = _HdCyclesGetVtValue<float>(
-        value, film->mist_falloff, &film_updated, false);
+    film->mist_falloff = _HdCyclesGetVtValue<float>(value, film->mist_falloff, &film_updated, false);
   }
 
   // Light
 
   if (key == HdCyclesTokens->cyclesFilmUseLightVisibility) {
     film->use_light_visibility = _HdCyclesGetVtValue<bool>(
-        value, film->use_light_visibility, &film_updated, false);
+      value, film->use_light_visibility, &film_updated, false);
   }
 
   // Sampling
@@ -1330,13 +1267,13 @@ bool HdCyclesRenderParam::_HandleFilmRenderSetting(const TfToken &key, const VtV
   // TODO: Check if cycles actually uses this, doesnt appear to...
   if (key == HdCyclesTokens->cyclesFilmUseAdaptiveSampling) {
     film->use_adaptive_sampling = _HdCyclesGetVtValue<bool>(
-        value, film->use_adaptive_sampling, &film_updated, false);
+      value, film->use_adaptive_sampling, &film_updated, false);
   }
 
   if (key == HdCyclesTokens->cyclesFilmCryptomatteDepth) {
-    auto cryptomatte_depth  = _HdCyclesGetVtValue<int>(value, 4, &film_updated, false);
+    auto cryptomatte_depth = _HdCyclesGetVtValue<int>(value, 4, &film_updated, false);
     film->cryptomatte_depth = static_cast<int>(
-        ccl::divide_up(static_cast<size_t>(ccl::min(16, cryptomatte_depth)), 2));
+      ccl::divide_up(static_cast<size_t>(ccl::min(16, cryptomatte_depth)), 2));
   }
 
   if (film_updated) {
@@ -1362,11 +1299,10 @@ void HdCyclesRenderParam::_UpdateBackgroundFromConfig(bool a_forceInit)
   background->tag_update(m_cyclesScene);
 }
 
-void HdCyclesRenderParam::_UpdateBackgroundFromRenderSettings(
-    HdRenderSettingsMap const &settingsMap)
+void HdCyclesRenderParam::_UpdateBackgroundFromRenderSettings(HdRenderSettingsMap const &settingsMap)
 {
   for (auto &entry : settingsMap) {
-    TfToken key   = entry.first;
+    TfToken key = entry.first;
     VtValue value = entry.second;
     _HandleBackgroundRenderSetting(key, value);
   }
@@ -1377,20 +1313,18 @@ bool HdCyclesRenderParam::_HandleBackgroundRenderSetting(const TfToken &key, con
   // -- Background Settings
 
   ccl::Background *background = m_cyclesScene->background;
-  bool background_updated     = false;
+  bool background_updated = false;
 
   if (key == HdCyclesTokens->cyclesBackgroundAoFactor) {
-    background->ao_factor = _HdCyclesGetVtValue<float>(
-        value, background->ao_factor, &background_updated);
+    background->ao_factor = _HdCyclesGetVtValue<float>(value, background->ao_factor, &background_updated);
   }
   if (key == HdCyclesTokens->cyclesBackgroundAoDistance) {
     background->ao_distance = _HdCyclesGetVtValue<float>(
-        value, background->ao_distance, &background_updated);
+      value, background->ao_distance, &background_updated);
   }
 
   if (key == HdCyclesTokens->cyclesBackgroundUseShader) {
-    background->use_shader = _HdCyclesGetVtValue<bool>(
-        value, background->use_shader, &background_updated);
+    background->use_shader = _HdCyclesGetVtValue<bool>(value, background->use_shader, &background_updated);
   }
   if (key == HdCyclesTokens->cyclesBackgroundUseAo) {
     background->use_ao = _HdCyclesGetVtValue<bool>(value, background->use_ao, &background_updated);
@@ -1434,25 +1368,24 @@ bool HdCyclesRenderParam::_HandleBackgroundRenderSetting(const TfToken &key, con
   // Glass
 
   if (key == HdCyclesTokens->cyclesBackgroundTransparent) {
-    background->transparent = _HdCyclesGetVtValue<bool>(
-        value, background->transparent, &background_updated);
+    background->transparent = _HdCyclesGetVtValue<bool>(value, background->transparent, &background_updated);
   }
 
   if (key == HdCyclesTokens->cyclesBackgroundTransparentGlass) {
     background->transparent_glass = _HdCyclesGetVtValue<bool>(
-        value, background->transparent_glass, &background_updated);
+      value, background->transparent_glass, &background_updated);
   }
 
   if (key == HdCyclesTokens->cyclesBackgroundTransparentRoughnessThreshold) {
     background->transparent_roughness_threshold = _HdCyclesGetVtValue<float>(
-        value, background->transparent_roughness_threshold, &background_updated);
+      value, background->transparent_roughness_threshold, &background_updated);
   }
 
   // Volume
 
   if (key == HdCyclesTokens->cyclesBackgroundVolumeStepSize) {
     background->volume_step_size = _HdCyclesGetVtValue<float>(
-        value, background->volume_step_size, &background_updated);
+      value, background->volume_step_size, &background_updated);
   }
 
   if (background_updated) {
@@ -1503,13 +1436,12 @@ bool HdCyclesRenderParam::_CreateSession()
     }
   };
 
-  m_cyclesSession->write_render_tile_cb = std::bind(
-      &HdCyclesRenderParam::_WriteRenderTile, this, ccl::_1);
+  m_cyclesSession->write_render_tile_cb = std::bind(&HdCyclesRenderParam::_WriteRenderTile, this, ccl::_1);
   m_cyclesSession->update_render_tile_cb = std::bind(
-      &HdCyclesRenderParam::_UpdateRenderTile, this, ccl::_1, ccl::_2);
+    &HdCyclesRenderParam::_UpdateRenderTile, this, ccl::_1, ccl::_2);
 
   m_cyclesSession->progress.set_update_callback(
-      std::bind(&HdCyclesRenderParam::_SessionUpdateCallback, this));
+    std::bind(&HdCyclesRenderParam::_SessionUpdateCallback, this));
 
   return true;
 }
@@ -1533,7 +1465,7 @@ void HdCyclesRenderParam::_WriteRenderTile(ccl::RenderTile &rtile)
     return;
 
   // Adjust absolute sample number to the range.
-  int sample                   = rtile.sample;
+  int sample = rtile.sample;
   const int range_start_sample = m_cyclesSession->tile_manager.range_start_sample;
   if (range_start_sample != -1) {
     sample -= range_start_sample;
@@ -1568,13 +1500,12 @@ void HdCyclesRenderParam::_WriteRenderTile(ccl::RenderTile &rtile)
         continue;
       }
 
-      bool custom  = false;
+      bool custom = false;
       bool denoise = false;
       if ((cyclesAov.token == HdCyclesAovTokens->CryptoObject) ||
           (cyclesAov.token == HdCyclesAovTokens->CryptoMaterial) ||
           (cyclesAov.token == HdCyclesAovTokens->CryptoAsset) ||
-          (cyclesAov.token == HdCyclesAovTokens->AOVC) ||
-          (cyclesAov.token == HdCyclesAovTokens->AOVV)) {
+          (cyclesAov.token == HdCyclesAovTokens->AOVC) || (cyclesAov.token == HdCyclesAovTokens->AOVV)) {
         custom = true;
       }
       else if ((cyclesAov.token == HdCyclesAovTokens->DenoiseNormal) ||
@@ -1590,25 +1521,16 @@ void HdCyclesRenderParam::_WriteRenderTile(ccl::RenderTile &rtile)
 
       bool read = false;
       if (!custom && !denoise) {
-        read = buffers->get_pass_rect(cyclesAov.name.c_str(),
-                                      exposure,
-                                      sample,
-                                      static_cast<int>(numComponents),
-                                      &tileData[0]);
+        read = buffers->get_pass_rect(
+          cyclesAov.name.c_str(), exposure, sample, static_cast<int>(numComponents), &tileData[0]);
       }
       else if (denoise) {
-        read = buffers->get_denoising_pass_rect(GetDenoisePass(cyclesAov.token),
-                                                exposure,
-                                                sample,
-                                                static_cast<int>(numComponents),
-                                                &tileData[0]);
+        read = buffers->get_denoising_pass_rect(
+          GetDenoisePass(cyclesAov.token), exposure, sample, static_cast<int>(numComponents), &tileData[0]);
       }
       else if (custom) {
-        read = buffers->get_pass_rect(aov.aovName.GetText(),
-                                      exposure,
-                                      sample,
-                                      static_cast<int>(numComponents),
-                                      &tileData[0]);
+        read = buffers->get_pass_rect(
+          aov.aovName.GetText(), exposure, sample, static_cast<int>(numComponents), &tileData[0]);
       }
 
       if (!read) {
@@ -1639,19 +1561,19 @@ bool HdCyclesRenderParam::_CreateScene()
 
   m_cyclesScene = new ccl::Scene(m_sceneParams, m_cyclesSession->device);
 
-  m_width  = config.render_width.value;
+  m_width = config.render_width.value;
   m_height = config.render_height.value;
 
-  m_cyclesScene->camera->width  = m_width;
+  m_cyclesScene->camera->width = m_width;
   m_cyclesScene->camera->height = m_height;
 
   m_cyclesScene->camera->compute_auto_viewplane();
 
   m_cyclesSession->scene = m_cyclesScene;
 
-  m_bufferParams.width       = m_width;
-  m_bufferParams.height      = m_height;
-  m_bufferParams.full_width  = m_width;
+  m_bufferParams.width = m_width;
+  m_bufferParams.height = m_height;
+  m_bufferParams.full_width = m_width;
   m_bufferParams.full_height = m_height;
 
   default_attrib_display_color_surface = HdCyclesCreateAttribColorSurface();
@@ -1736,18 +1658,17 @@ void HdCyclesRenderParam::SetBackgroundShader(ccl::Shader *a_shader, bool a_emis
     // TODO: These aren't properly destroyed from memory
 
     // Create empty background shader
-    m_cyclesScene->default_background        = new ccl::Shader();
-    m_cyclesScene->default_background->name  = "default_background";
+    m_cyclesScene->default_background = new ccl::Shader();
+    m_cyclesScene->default_background->name = "default_background";
     m_cyclesScene->default_background->graph = new ccl::ShaderGraph();
     if (a_emissive) {
       ccl::BackgroundNode *bgNode = new ccl::BackgroundNode();
-      bgNode->color               = ccl::make_float3(0.6f, 0.6f, 0.6f);
+      bgNode->color = ccl::make_float3(0.6f, 0.6f, 0.6f);
 
       m_cyclesScene->default_background->graph->add(bgNode);
 
       ccl::ShaderNode *out = m_cyclesScene->default_background->graph->output();
-      m_cyclesScene->default_background->graph->connect(bgNode->output("Background"),
-                                                        out->input("Surface"));
+      m_cyclesScene->default_background->graph->connect(bgNode->output("Background"), out->input("Surface"));
     }
 
     m_cyclesScene->default_background->tag_update(m_cyclesScene);
@@ -1774,8 +1695,7 @@ bool HdCyclesRenderParam::SetDeviceType(ccl::DeviceType a_deviceType, ccl::Sessi
   return _SetDevice(m_deviceType, params);
 }
 
-bool HdCyclesRenderParam::SetDeviceType(const std::string &a_deviceType,
-                                        ccl::SessionParams &params)
+bool HdCyclesRenderParam::SetDeviceType(const std::string &a_deviceType, ccl::SessionParams &params)
 {
   return SetDeviceType(ccl::Device::type_from_string(a_deviceType.c_str()), params);
 }
@@ -1789,16 +1709,15 @@ bool HdCyclesRenderParam::SetDeviceType(const std::string &a_deviceType)
   return SetDeviceType(a_deviceType, *params);
 }
 
-bool HdCyclesRenderParam::_SetDevice(const ccl::DeviceType &a_deviceType,
-                                     ccl::SessionParams &params)
+bool HdCyclesRenderParam::_SetDevice(const ccl::DeviceType &a_deviceType, ccl::SessionParams &params)
 {
   std::vector<ccl::DeviceInfo> devices = ccl::Device::available_devices(
-      static_cast<ccl::DeviceTypeMask>(1 << a_deviceType));
+    static_cast<ccl::DeviceTypeMask>(1 << a_deviceType));
 
   bool device_available = false;
 
   if (!devices.empty()) {
-    params.device    = devices.front();
+    params.device = devices.front();
     device_available = true;
   }
 
@@ -1870,17 +1789,17 @@ void HdCyclesRenderParam::CyclesReset(bool a_forceUpdate)
 
 void HdCyclesRenderParam::SetViewport(int w, int h)
 {
-  m_width  = w;
+  m_width = w;
   m_height = h;
 
-  m_bufferParams.width          = m_width;
-  m_bufferParams.height         = m_height;
-  m_bufferParams.full_width     = m_width;
-  m_bufferParams.full_height    = m_height;
-  m_cyclesScene->camera->width  = m_width;
+  m_bufferParams.width = m_width;
+  m_bufferParams.height = m_height;
+  m_bufferParams.full_width = m_width;
+  m_bufferParams.full_height = m_height;
+  m_cyclesScene->camera->width = m_width;
   m_cyclesScene->camera->height = m_height;
   m_cyclesScene->camera->compute_auto_viewplane();
-  m_cyclesScene->camera->need_update        = true;
+  m_cyclesScene->camera->need_update = true;
   m_cyclesScene->camera->need_device_update = true;
 
   m_aovBindingsNeedValidation = true;
@@ -2126,8 +2045,8 @@ VtDictionary HdCyclesRenderParam::GetRenderStats() const
 
   // We need to store the cryptomatte metadata here, based on if there's any Cryptomatte AOVs
 
-  bool cryptoAsset    = false;
-  bool cryptoObject   = false;
+  bool cryptoAsset = false;
+  bool cryptoObject = false;
   bool cryptoMaterial = false;
   std::string cryptoAssetName;
   std::string cryptoObjectName;
@@ -2162,39 +2081,39 @@ VtDictionary HdCyclesRenderParam::GetRenderStats() const
   }
 
   if (cryptoAsset) {
-    auto cryptoNameLength  = static_cast<int>(cryptoAssetName.length());
+    auto cryptoNameLength = static_cast<int>(cryptoAssetName.length());
     std::string identifier = ccl::string_printf(
-        "%08x", ccl::util_murmur_hash3(cryptoAssetName.c_str(), cryptoNameLength, 0));
-    std::string prefix            = "cryptomatte/" + identifier.substr(0, 7) + "/";
-    result[prefix + "name"]       = VtValue(cryptoAssetName);
-    result[prefix + "hash"]       = VtValue("MurmurHash3_32");
+      "%08x", ccl::util_murmur_hash3(cryptoAssetName.c_str(), cryptoNameLength, 0));
+    std::string prefix = "cryptomatte/" + identifier.substr(0, 7) + "/";
+    result[prefix + "name"] = VtValue(cryptoAssetName);
+    result[prefix + "hash"] = VtValue("MurmurHash3_32");
     result[prefix + "conversion"] = VtValue("uint32_to_float32");
-    result[prefix + "manifest"]   = VtValue(
-        m_cyclesScene->object_manager->get_cryptomatte_assets(m_cyclesScene));
+    result[prefix + "manifest"] = VtValue(
+      m_cyclesScene->object_manager->get_cryptomatte_assets(m_cyclesScene));
   }
 
   if (cryptoObject) {
-    auto cryptoNameLength  = static_cast<int>(cryptoObjectName.length());
+    auto cryptoNameLength = static_cast<int>(cryptoObjectName.length());
     std::string identifier = ccl::string_printf(
-        "%08x", ccl::util_murmur_hash3(cryptoObjectName.c_str(), cryptoNameLength, 0));
-    std::string prefix            = "cryptomatte/" + identifier.substr(0, 7) + "/";
-    result[prefix + "name"]       = VtValue(cryptoObjectName);
-    result[prefix + "hash"]       = VtValue("MurmurHash3_32");
+      "%08x", ccl::util_murmur_hash3(cryptoObjectName.c_str(), cryptoNameLength, 0));
+    std::string prefix = "cryptomatte/" + identifier.substr(0, 7) + "/";
+    result[prefix + "name"] = VtValue(cryptoObjectName);
+    result[prefix + "hash"] = VtValue("MurmurHash3_32");
     result[prefix + "conversion"] = VtValue("uint32_to_float32");
-    result[prefix + "manifest"]   = VtValue(
-        m_cyclesScene->object_manager->get_cryptomatte_objects(m_cyclesScene));
+    result[prefix + "manifest"] = VtValue(
+      m_cyclesScene->object_manager->get_cryptomatte_objects(m_cyclesScene));
   }
 
   if (cryptoMaterial) {
-    auto cryptoNameLength  = static_cast<int>(cryptoMaterialName.length());
+    auto cryptoNameLength = static_cast<int>(cryptoMaterialName.length());
     std::string identifier = ccl::string_printf(
-        "%08x", ccl::util_murmur_hash3(cryptoMaterialName.c_str(), cryptoNameLength, 0));
-    std::string prefix            = "cryptomatte/" + identifier.substr(0, 7) + "/";
-    result[prefix + "name"]       = VtValue(cryptoMaterialName);
-    result[prefix + "hash"]       = VtValue("MurmurHash3_32");
+      "%08x", ccl::util_murmur_hash3(cryptoMaterialName.c_str(), cryptoNameLength, 0));
+    std::string prefix = "cryptomatte/" + identifier.substr(0, 7) + "/";
+    result[prefix + "name"] = VtValue(cryptoMaterialName);
+    result[prefix + "hash"] = VtValue("MurmurHash3_32");
     result[prefix + "conversion"] = VtValue("uint32_to_float32");
-    result[prefix + "manifest"]   = VtValue(
-        m_cyclesScene->shader_manager->get_cryptomatte_materials(m_cyclesScene));
+    result[prefix + "manifest"] = VtValue(
+      m_cyclesScene->shader_manager->get_cryptomatte_materials(m_cyclesScene));
   }
 
   return result;
@@ -2213,30 +2132,29 @@ void HdCyclesRenderParam::SetAovBindings(HdRenderPassAovBindingVector const &a_a
   m_aovs = a_aovs;
 
   m_bufferParams.passes.clear();
-  bool has_combined     = false;
+  bool has_combined = false;
   bool has_sample_count = false;
 
   ccl::Film *film = m_cyclesScene->film;
 
   ccl::CryptomatteType cryptomatte_passes = ccl::CRYPT_NONE;
   if (film->cryptomatte_passes & ccl::CRYPT_ACCURATE) {
-    cryptomatte_passes = static_cast<ccl::CryptomatteType>(cryptomatte_passes |
-                                                           ccl::CRYPT_ACCURATE);
+    cryptomatte_passes = static_cast<ccl::CryptomatteType>(cryptomatte_passes | ccl::CRYPT_ACCURATE);
   }
   film->cryptomatte_passes = cryptomatte_passes;
 
-  int cryptoObject   = 0;
+  int cryptoObject = 0;
   int cryptoMaterial = 0;
-  int cryptoAsset    = 0;
+  int cryptoAsset = 0;
   std::string cryptoObjectName;
   std::string cryptoMaterialName;
   std::string cryptoAssetName;
 
-  film->denoising_flags      = 0;
-  film->denoising_data_pass  = false;
+  film->denoising_flags = 0;
+  film->denoising_data_pass = false;
   film->denoising_clean_pass = false;
-  bool denoiseNormal         = false;
-  bool denoiseAlbedo         = false;
+  bool denoiseNormal = false;
+  bool denoiseAlbedo = false;
 
   for (const HdRenderPassAovBinding &aov : m_aovs) {
     TfToken sourceName = GetSourceName(aov);
@@ -2249,16 +2167,14 @@ void HdCyclesRenderParam::SetAovBindings(HdRenderPassAovBindingVector const &a_a
         else if (cyclesAov.type == ccl::PASS_SAMPLE_COUNT) {
           has_sample_count = true;
         }
-        ccl::Pass::add(
-            cyclesAov.type, m_bufferParams.passes, cyclesAov.name.c_str(), cyclesAov.filter);
+        ccl::Pass::add(cyclesAov.type, m_bufferParams.passes, cyclesAov.name.c_str(), cyclesAov.filter);
         continue;
       }
     }
 
     for (HdCyclesAov &cyclesAov : CustomAovs) {
       if (sourceName == cyclesAov.token) {
-        ccl::Pass::add(
-            cyclesAov.type, m_bufferParams.passes, aov.aovName.GetText(), cyclesAov.filter);
+        ccl::Pass::add(cyclesAov.type, m_bufferParams.passes, aov.aovName.GetText(), cyclesAov.filter);
         continue;
       }
     }
@@ -2308,15 +2224,14 @@ void HdCyclesRenderParam::SetAovBindings(HdRenderPassAovBindingVector const &a_a
 
   film->denoising_data_pass = m_cyclesSession->params.denoising.use ||
                               m_cyclesSession->params.denoising.store_passes;
-  film->denoising_flags = ccl::DENOISING_PASS_PREFILTERED_COLOR |
-                          ccl::DENOISING_PASS_PREFILTERED_NORMAL |
+  film->denoising_flags = ccl::DENOISING_PASS_PREFILTERED_COLOR | ccl::DENOISING_PASS_PREFILTERED_NORMAL |
                           ccl::DENOISING_PASS_PREFILTERED_ALBEDO;
-  film->denoising_clean_pass       = (film->denoising_flags & ccl::DENOISING_CLEAN_ALL_PASSES);
+  film->denoising_clean_pass = (film->denoising_flags & ccl::DENOISING_CLEAN_ALL_PASSES);
   film->denoising_prefiltered_pass = m_cyclesSession->params.denoising.store_passes &&
                                      m_cyclesSession->params.denoising.type == ccl::DENOISER_NLM;
 
-  m_bufferParams.denoising_data_pass        = film->denoising_data_pass;
-  m_bufferParams.denoising_clean_pass       = film->denoising_clean_pass;
+  m_bufferParams.denoising_data_pass = film->denoising_data_pass;
+  m_bufferParams.denoising_clean_pass = film->denoising_clean_pass;
   m_bufferParams.denoising_prefiltered_pass = film->denoising_prefiltered_pass;
 
   // Check for issues
@@ -2393,10 +2308,8 @@ void HdCyclesRenderParam::SetAovBindings(HdRenderPassAovBindingVector const &a_a
   }
 
   if (!has_combined) {
-    ccl::Pass::add(DefaultAovs[0].type,
-                   m_bufferParams.passes,
-                   DefaultAovs[0].name.c_str(),
-                   DefaultAovs[0].filter);
+    ccl::Pass::add(
+      DefaultAovs[0].type, m_bufferParams.passes, DefaultAovs[0].name.c_str(), DefaultAovs[0].filter);
   }
 
   film->display_pass = m_bufferParams.passes[0].type;
@@ -2426,10 +2339,7 @@ HdCyclesRenderParam::RemoveAovBinding(HdRenderBuffer* rb)
 }
 // clang-format on
 
-void HdCyclesRenderParam::BlitFromCyclesPass(const HdRenderPassAovBinding &aov,
-                                             int w,
-                                             int h,
-                                             int samples)
+void HdCyclesRenderParam::BlitFromCyclesPass(const HdRenderPassAovBinding &aov, int w, int h, int samples)
 {
   if (samples < 0) {
     return;
@@ -2458,7 +2368,7 @@ void HdCyclesRenderParam::BlitFromCyclesPass(const HdRenderPassAovBinding &aov,
 
   if (data) {
     const int n_comps_cycles = static_cast<int>(HdGetComponentCount(cyclesAov.format));
-    const int n_comps_hd     = static_cast<int>(HdGetComponentCount(rb->GetFormat()));
+    const int n_comps_hd = static_cast<int>(HdGetComponentCount(rb->GetFormat()));
 
     if (n_comps_cycles <= n_comps_hd) {
       ccl::RenderBuffers::ComponentType pixels_type = ccl::RenderBuffers::ComponentType::None;
@@ -2498,9 +2408,9 @@ void HdCyclesRenderParam::BlitFromCyclesPass(const HdRenderPassAovBinding &aov,
         return;
       }
 
-      const int stride     = static_cast<int>(HdDataSizeOfFormat(rb->GetFormat()));
+      const int stride = static_cast<int>(HdDataSizeOfFormat(rb->GetFormat()));
       const float exposure = m_cyclesScene->film->exposure;
-      auto buffers         = m_cyclesSession->buffers;
+      auto buffers = m_cyclesSession->buffers;
       buffers->get_pass_rect_as(cyclesAov.name.c_str(),
                                 exposure,
                                 samples + 1,
@@ -2526,17 +2436,16 @@ void HdCyclesRenderParam::BlitFromCyclesPass(const HdRenderPassAovBinding &aov,
     }
     else {
       TF_WARN(
-          "Don't know how to narrow aov %s from %d components (cycles) to %d components "
-          "(HdRenderBuffer)",
-          aov.aovName.GetText(),
-          n_comps_cycles,
-          n_comps_hd);
+        "Don't know how to narrow aov %s from %d components (cycles) to %d components "
+        "(HdRenderBuffer)",
+        aov.aovName.GetText(),
+        n_comps_cycles,
+        n_comps_hd);
     }
     rb->Unmap();
   }
   else {
-    TF_WARN("Failed to map renderbuffer %s for writing on Cycles display callback",
-            aov.aovName.GetText());
+    TF_WARN("Failed to map renderbuffer %s for writing on Cycles display callback", aov.aovName.GetText());
   }
 }
 

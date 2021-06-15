@@ -60,7 +60,7 @@ class HdxOitVolumeRenderTask : public HdxRenderTask {
   void _Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) override;
 
  private:
-  HdxOitVolumeRenderTask()                               = delete;
+  HdxOitVolumeRenderTask() = delete;
   HdxOitVolumeRenderTask(const HdxOitVolumeRenderTask &) = delete;
   HdxOitVolumeRenderTask &operator=(const HdxOitVolumeRenderTask &) = delete;
 

@@ -34,7 +34,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-using HdPhShaderCodePtr          = std::weak_ptr<class HdPhShaderCode>;
+using HdPhShaderCodePtr = std::weak_ptr<class HdPhShaderCode>;
 using HdPhTextureObjectSharedPtr = std::shared_ptr<class HdPhTextureObject>;
 using HdPhSamplerObjectSharedPtr = std::shared_ptr<class HdPhSamplerObject>;
 

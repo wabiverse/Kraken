@@ -41,7 +41,7 @@ WABI_NAMESPACE_BEGIN
 
 void HdVtBufferSource::_SetValue(const VtValue &v, int arraySize)
 {
-  _value     = v;
+  _value = v;
   _tupleType = HdGetValueTupleType(_value);
 
   // XXX: The following is a bit weird and could use reconsideration.
@@ -54,7 +54,7 @@ void HdVtBufferSource::_SetValue(const VtValue &v, int arraySize)
   // Array and componented bools are not currently supported.
   if (_value.IsHolding<bool>()) {
     int intValue = _value.UncheckedGet<bool>() ? 1 : 0;
-    _value       = VtValue(intValue);
+    _value = VtValue(intValue);
     // Intentionally leave _tupleType as HdTypeBool; see comment above.
   }
 
@@ -63,7 +63,7 @@ void HdVtBufferSource::_SetValue(const VtValue &v, int arraySize)
   // a zero-sized tuple.
   if (_value.IsArrayValued() && _value.GetArraySize() == 0) {
     _tupleType.count = 1;
-    _numElements     = 0;
+    _numElements = 0;
     return;
   }
 
@@ -73,12 +73,11 @@ void HdVtBufferSource::_SetValue(const VtValue &v, int arraySize)
   // from the case of 1 value for NM elements.  This is why
   // HdVtBufferSource requires the caller to provide this context
   // via the arraySize argument, so it can apply that shape here.
-  _numElements     = _tupleType.count / arraySize;
+  _numElements = _tupleType.count / arraySize;
   _tupleType.count = arraySize;
 }
 
-HdVtBufferSource::HdVtBufferSource(TfToken const &name, VtValue const &value, int arraySize)
-    : _name(name)
+HdVtBufferSource::HdVtBufferSource(TfToken const &name, VtValue const &value, int arraySize) : _name(name)
 {
   _SetValue(value, arraySize);
 }
@@ -109,10 +108,8 @@ HdVtBufferSource::HdVtBufferSource(TfToken const &name, GfMatrix4d const &matrix
   }
 }
 
-HdVtBufferSource::HdVtBufferSource(TfToken const &name,
-                                   VtArray<GfMatrix4d> const &matrices,
-                                   int arraySize)
-    : _name(name)
+HdVtBufferSource::HdVtBufferSource(TfToken const &name, VtArray<GfMatrix4d> const &matrices, int arraySize)
+  : _name(name)
 {
   if (GetDefaultMatrixType() == HdTypeDoubleMat4) {
     _SetValue(VtValue(matrices), arraySize);

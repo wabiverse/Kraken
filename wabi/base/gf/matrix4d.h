@@ -97,7 +97,7 @@ class GfMatrix4d {
  public:
   typedef double ScalarType;
 
-  static const size_t numRows    = 4;
+  static const size_t numRows = 4;
   static const size_t numColumns = 4;
 
   /// Default constructor. Leaves the matrix component values undefined.
@@ -364,8 +364,8 @@ class GfMatrix4d {
   /// Hash.
   friend inline size_t hash_value(GfMatrix4d const &m)
   {
-    int nElems      = 4 * 4;
-    size_t h        = 0;
+    int nElems = 4 * 4;
+    size_t h = 0;
     const double *p = m.GetArray();
     while (nElems--)
       boost::hash_combine(h, *p++);
@@ -550,27 +550,21 @@ class GfMatrix4d {
   /// Returns the product of a matrix \e m and a column vector \e vec.
   friend inline GfVec4d operator*(const GfMatrix4d &m, const GfVec4d &vec)
   {
-    return GfVec4d(vec[0] * m._mtx[0][0] + vec[1] * m._mtx[0][1] + vec[2] * m._mtx[0][2] +
-                       vec[3] * m._mtx[0][3],
-                   vec[0] * m._mtx[1][0] + vec[1] * m._mtx[1][1] + vec[2] * m._mtx[1][2] +
-                       vec[3] * m._mtx[1][3],
-                   vec[0] * m._mtx[2][0] + vec[1] * m._mtx[2][1] + vec[2] * m._mtx[2][2] +
-                       vec[3] * m._mtx[2][3],
-                   vec[0] * m._mtx[3][0] + vec[1] * m._mtx[3][1] + vec[2] * m._mtx[3][2] +
-                       vec[3] * m._mtx[3][3]);
+    return GfVec4d(
+      vec[0] * m._mtx[0][0] + vec[1] * m._mtx[0][1] + vec[2] * m._mtx[0][2] + vec[3] * m._mtx[0][3],
+      vec[0] * m._mtx[1][0] + vec[1] * m._mtx[1][1] + vec[2] * m._mtx[1][2] + vec[3] * m._mtx[1][3],
+      vec[0] * m._mtx[2][0] + vec[1] * m._mtx[2][1] + vec[2] * m._mtx[2][2] + vec[3] * m._mtx[2][3],
+      vec[0] * m._mtx[3][0] + vec[1] * m._mtx[3][1] + vec[2] * m._mtx[3][2] + vec[3] * m._mtx[3][3]);
   }
 
   /// Returns the product of row vector \e vec and a matrix \e m.
   friend inline GfVec4d operator*(const GfVec4d &vec, const GfMatrix4d &m)
   {
-    return GfVec4d(vec[0] * m._mtx[0][0] + vec[1] * m._mtx[1][0] + vec[2] * m._mtx[2][0] +
-                       vec[3] * m._mtx[3][0],
-                   vec[0] * m._mtx[0][1] + vec[1] * m._mtx[1][1] + vec[2] * m._mtx[2][1] +
-                       vec[3] * m._mtx[3][1],
-                   vec[0] * m._mtx[0][2] + vec[1] * m._mtx[1][2] + vec[2] * m._mtx[2][2] +
-                       vec[3] * m._mtx[3][2],
-                   vec[0] * m._mtx[0][3] + vec[1] * m._mtx[1][3] + vec[2] * m._mtx[2][3] +
-                       vec[3] * m._mtx[3][3]);
+    return GfVec4d(
+      vec[0] * m._mtx[0][0] + vec[1] * m._mtx[1][0] + vec[2] * m._mtx[2][0] + vec[3] * m._mtx[3][0],
+      vec[0] * m._mtx[0][1] + vec[1] * m._mtx[1][1] + vec[2] * m._mtx[2][1] + vec[3] * m._mtx[3][1],
+      vec[0] * m._mtx[0][2] + vec[1] * m._mtx[1][2] + vec[2] * m._mtx[2][2] + vec[3] * m._mtx[3][2],
+      vec[0] * m._mtx[0][3] + vec[1] * m._mtx[1][3] + vec[2] * m._mtx[2][3] + vec[3] * m._mtx[3][3]);
   }
 
   /// Returns the product of a matrix \e m and a column vector \e vec.
@@ -657,9 +651,7 @@ class GfMatrix4d {
   /// represents the world-space center of attention. \e upDirection
   /// is a vector indicating which way is up.
   GF_API
-  GfMatrix4d &SetLookAt(const GfVec3d &eyePoint,
-                        const GfVec3d &centerPoint,
-                        const GfVec3d &upDirection);
+  GfMatrix4d &SetLookAt(const GfVec3d &eyePoint, const GfVec3d &centerPoint, const GfVec3d &upDirection);
 
   /// Sets the matrix to specify a viewing matrix from a world-space
   /// \e eyePoint and a world-space rotation that rigidly rotates the
@@ -684,12 +676,7 @@ class GfMatrix4d {
   /// In that case, any zero scales in \e s are clamped to \e eps
   /// to allow computation of \e u.
   GF_API
-  bool Factor(GfMatrix4d *r,
-              GfVec3d *s,
-              GfMatrix4d *u,
-              GfVec3d *t,
-              GfMatrix4d *p,
-              double eps = 1e-10) const;
+  bool Factor(GfMatrix4d *r, GfVec3d *s, GfMatrix4d *u, GfVec3d *t, GfMatrix4d *p, double eps = 1e-10) const;
 
   /// Returns the translation part of the matrix, defined as the first three
   /// elements of the last row.
@@ -720,9 +707,7 @@ class GfMatrix4d {
   /// This is a convenience method that is equivalent to calling
   /// ExtractRotation().Decompose().
   GF_API
-  GfVec3d DecomposeRotation(const GfVec3d &axis0,
-                            const GfVec3d &axis1,
-                            const GfVec3d &axis2) const;
+  GfVec3d DecomposeRotation(const GfVec3d &axis0, const GfVec3d &axis1, const GfVec3d &axis2) const;
 
   /// Returns the rotation corresponding to this matrix. This works well
   /// only if the matrix represents a rotation.
@@ -737,11 +722,10 @@ class GfMatrix4d {
   /// is 1.
   GfVec3d Transform(const GfVec3d &vec) const
   {
-    return GfProject(
-        GfVec4d(vec[0] * _mtx[0][0] + vec[1] * _mtx[1][0] + vec[2] * _mtx[2][0] + _mtx[3][0],
-                vec[0] * _mtx[0][1] + vec[1] * _mtx[1][1] + vec[2] * _mtx[2][1] + _mtx[3][1],
-                vec[0] * _mtx[0][2] + vec[1] * _mtx[1][2] + vec[2] * _mtx[2][2] + _mtx[3][2],
-                vec[0] * _mtx[0][3] + vec[1] * _mtx[1][3] + vec[2] * _mtx[2][3] + _mtx[3][3]));
+    return GfProject(GfVec4d(vec[0] * _mtx[0][0] + vec[1] * _mtx[1][0] + vec[2] * _mtx[2][0] + _mtx[3][0],
+                             vec[0] * _mtx[0][1] + vec[1] * _mtx[1][1] + vec[2] * _mtx[2][1] + _mtx[3][1],
+                             vec[0] * _mtx[0][2] + vec[1] * _mtx[1][2] + vec[2] * _mtx[2][2] + _mtx[3][2],
+                             vec[0] * _mtx[0][3] + vec[1] * _mtx[1][3] + vec[2] * _mtx[2][3] + _mtx[3][3]));
   }
 
   /// Transforms the row vector \e vec by the matrix, returning the result.
@@ -750,11 +734,11 @@ class GfMatrix4d {
   /// in that it returns a different value type.
   GfVec3f Transform(const GfVec3f &vec) const
   {
-    return GfVec3f(GfProject(
-        GfVec4d(vec[0] * _mtx[0][0] + vec[1] * _mtx[1][0] + vec[2] * _mtx[2][0] + _mtx[3][0],
-                vec[0] * _mtx[0][1] + vec[1] * _mtx[1][1] + vec[2] * _mtx[2][1] + _mtx[3][1],
-                vec[0] * _mtx[0][2] + vec[1] * _mtx[1][2] + vec[2] * _mtx[2][2] + _mtx[3][2],
-                vec[0] * _mtx[0][3] + vec[1] * _mtx[1][3] + vec[2] * _mtx[2][3] + _mtx[3][3])));
+    return GfVec3f(
+      GfProject(GfVec4d(vec[0] * _mtx[0][0] + vec[1] * _mtx[1][0] + vec[2] * _mtx[2][0] + _mtx[3][0],
+                        vec[0] * _mtx[0][1] + vec[1] * _mtx[1][1] + vec[2] * _mtx[2][1] + _mtx[3][1],
+                        vec[0] * _mtx[0][2] + vec[1] * _mtx[1][2] + vec[2] * _mtx[2][2] + _mtx[3][2],
+                        vec[0] * _mtx[0][3] + vec[1] * _mtx[1][3] + vec[2] * _mtx[2][3] + _mtx[3][3])));
   }
 
   /// Transforms row vector \e vec by the matrix, returning the result. This
@@ -808,12 +792,8 @@ class GfMatrix4d {
   /// Returns the determinant of the 3x3 submatrix specified by the three
   /// given row and column indices (0-3 for each).
   GF_API
-  double _GetDeterminant3(size_t row1,
-                          size_t row2,
-                          size_t row3,
-                          size_t col1,
-                          size_t col2,
-                          size_t col3) const;
+  double _GetDeterminant3(size_t row1, size_t row2, size_t row3, size_t col1, size_t col2, size_t col3)
+    const;
 
   /// Diagonalizes the upper 3x3 matrix of a matrix known to be symmetric.
   void _Jacobi3(GfVec3d *eigenvalues, GfVec3d eigenvectors[3]) const;

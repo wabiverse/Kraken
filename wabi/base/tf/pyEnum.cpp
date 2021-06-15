@@ -62,11 +62,10 @@ Tf_PyEnumRegistry::~Tf_PyEnumRegistry()
 string Tf_PyEnumRepr(object const &self)
 {
   string moduleName = extract<string>(self.attr("__module__"));
-  string baseName   = extract<string>(self.attr("_baseName"));
-  string name       = extract<string>(self.attr("name"));
+  string baseName = extract<string>(self.attr("_baseName"));
+  string name = extract<string>(self.attr("name"));
 
-  return TfStringGetSuffix(moduleName) + "." + (baseName.empty() ? string() : baseName + ".") +
-         name;
+  return TfStringGetSuffix(moduleName) + "." + (baseName.empty() ? string() : baseName + ".") + name;
 }
 
 string Tf_PyCleanEnumName(string name)
@@ -87,9 +86,9 @@ void Tf_PyEnumAddAttribute(boost::python::scope &s,
   // for the class.
   if (PyObject_HasAttrString(s.ptr(), name.c_str())) {
     TF_CODING_ERROR(
-        "Ignoring enum value '%s'; an attribute with that "
-        "name already exists in that scope.",
-        name.c_str());
+      "Ignoring enum value '%s'; an attribute with that "
+      "name already exists in that scope.",
+      name.c_str());
   }
   else {
     s.attr(name.c_str()) = value;
@@ -103,7 +102,7 @@ void Tf_PyEnumRegistry::RegisterValue(TfEnum const &e, object const &obj)
   // we take a reference to obj.
   incref(obj.ptr());
 
-  _enumsToObjects[e]         = obj.ptr();
+  _enumsToObjects[e] = obj.ptr();
   _objectsToEnums[obj.ptr()] = e;
 }
 

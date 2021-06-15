@@ -75,9 +75,9 @@ class HgiVulkanComputePipeline final : public HgiComputePipeline {
   HgiVulkanComputePipeline(HgiVulkanDevice *device, HgiComputePipelineDesc const &desc);
 
  private:
-  HgiVulkanComputePipeline()        = delete;
+  HgiVulkanComputePipeline() = delete;
   HgiVulkanComputePipeline &operator=(const HgiVulkanComputePipeline &) = delete;
-  HgiVulkanComputePipeline(const HgiVulkanComputePipeline &)            = delete;
+  HgiVulkanComputePipeline(const HgiVulkanComputePipeline &) = delete;
 
   HgiVulkanDevice *_device;
   uint64_t _inflightBits;

@@ -103,14 +103,14 @@ void MatfiltConvertPreviewMaterial(const SdfPath &networkId,
 
   for (auto &nodeEntry : network.nodes) {
     SdfPath const &nodePath = nodeEntry.first;
-    HdMaterialNode2 &node   = nodeEntry.second;
+    HdMaterialNode2 &node = nodeEntry.second;
 
     if (node.nodeTypeId == _tokens->UsdPreviewSurface) {
       if (!pxrSurfacePath.IsEmpty()) {
         outputErrorMessages->push_back(
-            TfStringPrintf("Found multiple UsdPreviewSurface "
-                           "nodes in <%s>",
-                           networkId.GetText()));
+          TfStringPrintf("Found multiple UsdPreviewSurface "
+                         "nodes in <%s>",
+                         networkId.GetText()));
         continue;
       }
       // Modify the node to a UsdPreviewSurfaceParameters node, which
@@ -118,33 +118,32 @@ void MatfiltConvertPreviewMaterial(const SdfPath &networkId,
       node.nodeTypeId = _tokens->UsdPreviewSurfaceParameters;
 
       // Insert a PxrSurface and connect it to the above node.
-      pxrSurfacePath = nodePath.GetParentPath().AppendChild(
-          TfToken(nodePath.GetName() + "_PxrSurface"));
+      pxrSurfacePath = nodePath.GetParentPath().AppendChild(TfToken(nodePath.GetName() + "_PxrSurface"));
 
       nodesToAdd[pxrSurfacePath] = HdMaterialNode2{
-          _tokens->PxrSurface,
-          // parameters:
-          {
-              {_tokens->allowPresenceWithGlass, VtValue(1)},
-          },
-          // connections:
-          {
-              {_tokens->bumpNormal, {{nodePath, _tokens->bumpNormalOut}}},
-              {_tokens->diffuseColor, {{nodePath, _tokens->diffuseColorOut}}},
-              {_tokens->diffuseGain, {{nodePath, _tokens->diffuseGainOut}}},
-              {_tokens->glassIor, {{nodePath, _tokens->glassIorOut}}},
-              {_tokens->glowColor, {{nodePath, _tokens->glowColorOut}}},
-              {_tokens->glowGain, {{nodePath, _tokens->glowGainOut}}},
-              {_tokens->refractionGain, {{nodePath, _tokens->refractionGainOut}}},
-              {_tokens->specularFaceColor, {{nodePath, _tokens->specularFaceColorOut}}},
-              {_tokens->specularEdgeColor, {{nodePath, _tokens->specularEdgeColorOut}}},
-              {_tokens->specularRoughness, {{nodePath, _tokens->specularRoughnessOut}}},
-              {_tokens->specularIor, {{nodePath, _tokens->specularIorOut}}},
-              {_tokens->clearcoatFaceColor, {{nodePath, _tokens->clearcoatFaceColorOut}}},
-              {_tokens->clearcoatEdgeColor, {{nodePath, _tokens->clearcoatEdgeColorOut}}},
-              {_tokens->clearcoatRoughness, {{nodePath, _tokens->clearcoatRoughnessOut}}},
-              {_tokens->presence, {{nodePath, _tokens->presenceOut}}},
-          },
+        _tokens->PxrSurface,
+        // parameters:
+        {
+          {_tokens->allowPresenceWithGlass, VtValue(1)},
+        },
+        // connections:
+        {
+          {_tokens->bumpNormal, {{nodePath, _tokens->bumpNormalOut}}},
+          {_tokens->diffuseColor, {{nodePath, _tokens->diffuseColorOut}}},
+          {_tokens->diffuseGain, {{nodePath, _tokens->diffuseGainOut}}},
+          {_tokens->glassIor, {{nodePath, _tokens->glassIorOut}}},
+          {_tokens->glowColor, {{nodePath, _tokens->glowColorOut}}},
+          {_tokens->glowGain, {{nodePath, _tokens->glowGainOut}}},
+          {_tokens->refractionGain, {{nodePath, _tokens->refractionGainOut}}},
+          {_tokens->specularFaceColor, {{nodePath, _tokens->specularFaceColorOut}}},
+          {_tokens->specularEdgeColor, {{nodePath, _tokens->specularEdgeColorOut}}},
+          {_tokens->specularRoughness, {{nodePath, _tokens->specularRoughnessOut}}},
+          {_tokens->specularIor, {{nodePath, _tokens->specularIorOut}}},
+          {_tokens->clearcoatFaceColor, {{nodePath, _tokens->clearcoatFaceColorOut}}},
+          {_tokens->clearcoatEdgeColor, {{nodePath, _tokens->clearcoatEdgeColorOut}}},
+          {_tokens->clearcoatRoughness, {{nodePath, _tokens->clearcoatRoughnessOut}}},
+          {_tokens->presence, {{nodePath, _tokens->presenceOut}}},
+        },
       };
     }
     else if (node.nodeTypeId == _tokens->UsdUVTexture) {
@@ -153,7 +152,7 @@ void MatfiltConvertPreviewMaterial(const SdfPath &networkId,
       for (auto &param : node.parameters) {
         if (param.first == _tokens->file && param.second.IsHolding<SdfAssetPath>()) {
           std::string path = param.second.Get<SdfAssetPath>().GetResolvedPath();
-          std::string ext  = ArGetResolver().GetExtension(path);
+          std::string ext = ArGetResolver().GetExtension(path);
           if (!ext.empty() && ext != "tex") {
             std::string pluginName = std::string("RtxHioImage") + ARCH_LIBRARY_SUFFIX;
             // Check for wrap mode. In Renderman, the
@@ -165,13 +164,13 @@ void MatfiltConvertPreviewMaterial(const SdfPath &networkId,
             TfMapLookup(node.parameters, _tokens->wrapT, &wrapTVal);
             TfToken wrapS = wrapSVal.GetWithDefault(_tokens->useMetadata);
             TfToken wrapT = wrapSVal.GetWithDefault(_tokens->useMetadata);
-            param.second  = TfStringPrintf(
-                "rtxplugin:%s?filename=%s"
-                "&wrapS=%s&wrapT=%s",
-                pluginName.c_str(),
-                path.c_str(),
-                wrapS.GetText(),
-                wrapT.GetText());
+            param.second = TfStringPrintf(
+              "rtxplugin:%s?filename=%s"
+              "&wrapS=%s&wrapT=%s",
+              pluginName.c_str(),
+              path.c_str(),
+              wrapS.GetText(),
+              wrapT.GetText());
           }
         }
       }

@@ -17,15 +17,15 @@ void ZepFont::InvalidateCharCache()
 
 void ZepFont::BuildCharCache()
 {
-  const char chA    = 'A';
+  const char chA = 'A';
   m_defaultCharSize = GetTextSize((const uint8_t *)&chA, (const uint8_t *)&chA + 1);
   for (int i = 0; i < 256; i++) {
-    uint8_t ch          = (uint8_t)i;
+    uint8_t ch = (uint8_t)i;
     m_charCacheASCII[i] = GetTextSize(&ch, &ch + 1);
   }
   m_charCacheDirty = false;
 
-  m_dotSize   = m_defaultCharSize / 8.0f;
+  m_dotSize = m_defaultCharSize / 8.0f;
   m_dotSize.x = std::min(m_dotSize.x, m_dotSize.y);
   m_dotSize.y = std::min(m_dotSize.x, m_dotSize.y);
   m_dotSize.x = std::max(1.0f, m_dotSize.x);
@@ -63,7 +63,7 @@ NVec2f ZepFont::GetCharSize(const uint8_t *pCh)
     return itr->second;
   }
 
-  auto sz                     = GetTextSize(pCh, pCh + utf8_codepoint_length(*pCh));
+  auto sz = GetTextSize(pCh, pCh + utf8_codepoint_length(*pCh));
   m_charCache[(uint32_t)ch32] = sz;
 
   return sz;
@@ -124,8 +124,7 @@ void ZepDisplay::Bigger()
         case ZepTextType::Heading2:
         case ZepTextType::Heading3: {
           auto &textFont = GetFont(ZepTextType(i));
-          textFont.SetPixelHeight(
-              (int)std::min((float)ceil(textFont.GetPixelHeight() * 1.05), 800.0f));
+          textFont.SetPixelHeight((int)std::min((float)ceil(textFont.GetPixelHeight() * 1.05), 800.0f));
         }
         default:
           break;
@@ -144,8 +143,7 @@ void ZepDisplay::Smaller()
         case ZepTextType::Heading2:
         case ZepTextType::Heading3: {
           auto &textFont = GetFont(ZepTextType(i));
-          textFont.SetPixelHeight(
-              (int)std::max(4.0f, (float)floor(textFont.GetPixelHeight() * .95f)));
+          textFont.SetPixelHeight((int)std::max(4.0f, (float)floor(textFont.GetPixelHeight() * .95f)));
         }
         default:
           break;

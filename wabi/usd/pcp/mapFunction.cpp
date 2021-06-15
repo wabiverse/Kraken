@@ -65,8 +65,8 @@ PcpMapFunction::PcpMapFunction(PathPair const *begin,
                                PathPair const *end,
                                SdfLayerOffset offset,
                                bool hasRootIdentity)
-    : _data(begin, end, hasRootIdentity),
-      _offset(offset)
+  : _data(begin, end, hasRootIdentity),
+    _offset(offset)
 {}
 
 // Canonicalize pairs in-place by removing all redundant entries.  Redundant
@@ -163,10 +163,10 @@ PcpMapFunction PcpMapFunction::Create(const PathMap &sourceToTarget, const SdfLa
     const _Data::PairCount maxPairCount = std::numeric_limits<_Data::PairCount>::max();
     if (sourceToTarget.size() > maxPairCount) {
       TF_RUNTIME_ERROR(
-          "Cannot construct a PcpMapFunction with %zu "
-          "entries; limit is %zu",
-          sourceToTarget.size(),
-          size_t(maxPairCount));
+        "Cannot construct a PcpMapFunction with %zu "
+        "entries; limit is %zu",
+        sourceToTarget.size(),
+        size_t(maxPairCount));
       return PcpMapFunction();
     }
   }
@@ -188,8 +188,7 @@ PcpMapFunction PcpMapFunction::Create(const PathMap &sourceToTarget, const SdfLa
         !(source.IsAbsoluteRootOrPrimPath() || source.IsPrimVariantSelectionPath()) ||
         !target.IsAbsolutePath() ||
         !(target.IsAbsoluteRootOrPrimPath() || target.IsPrimVariantSelectionPath())) {
-      TF_CODING_ERROR(
-          "The mapping of '%s' to '%s' is invalid.", source.GetText(), target.GetText());
+      TF_CODING_ERROR("The mapping of '%s' to '%s' is invalid.", source.GetText(), target.GetText());
       return PcpMapFunction();
     }
   }
@@ -207,7 +206,7 @@ bool PcpMapFunction::IsNull() const
 
 PcpMapFunction *Pcp_MakeIdentity()
 {
-  PcpMapFunction *ret        = new PcpMapFunction;
+  PcpMapFunction *ret = new PcpMapFunction;
   ret->_data.hasRootIdentity = true;
   return ret;
 }
@@ -269,14 +268,14 @@ static SdfPath _Map(const SdfPath &path,
 
   // Find longest prefix that has a mapping;
   // this represents the most-specific mapping to apply.
-  int bestIndex        = -1;
+  int bestIndex = -1;
   size_t bestElemCount = 0;
   for (int i = 0; i < numPairs; ++i) {
     const SdfPath &source = invert ? pairs[i].second : pairs[i].first;
-    const size_t count    = source.GetPathElementCount();
+    const size_t count = source.GetPathElementCount();
     if (count >= bestElemCount && path.HasPrefix(source)) {
       bestElemCount = count;
-      bestIndex     = i;
+      bestIndex = i;
     }
   }
   if (bestIndex == -1 && !hasRootIdentity) {
@@ -290,7 +289,7 @@ static SdfPath _Map(const SdfPath &path,
                                             pairs[bestIndex].second;
   if (bestIndex != -1) {
     const SdfPath &source = invert ? pairs[bestIndex].second : pairs[bestIndex].first;
-    result                = path.ReplacePrefix(source, target, /* fixTargetPaths = */ false);
+    result = path.ReplacePrefix(source, target, /* fixTargetPaths = */ false);
     if (result.IsEmpty()) {
       return result;
     }
@@ -343,7 +342,7 @@ static SdfPath _Map(const SdfPath &path,
       continue;
     }
     const SdfPath &target = invert ? pairs[i].first : pairs[i].second;
-    const size_t count    = target.GetPathElementCount();
+    const size_t count = target.GetPathElementCount();
     if (count > bestElemCount && result.HasPrefix(target)) {
       // There is a more-specific reverse mapping for this path.
       return SdfPath();
@@ -415,7 +414,7 @@ PcpMapFunction PcpMapFunction::Compose(const PcpMapFunction &inner) const
   // If inner has a root identity, map that too.
   if (inner.HasRootIdentity()) {
     PathPair pair;
-    pair.first  = SdfPath::AbsoluteRootPath();
+    pair.first = SdfPath::AbsoluteRootPath();
     pair.second = MapSourceToTarget(SdfPath::AbsoluteRootPath());
     if (!pair.second.IsEmpty()) {
       if (std::find(scratchBegin, scratch, pair) == scratch) {
@@ -437,7 +436,7 @@ PcpMapFunction PcpMapFunction::Compose(const PcpMapFunction &inner) const
   // If outer has a root identity, map that too.
   if (HasRootIdentity()) {
     PathPair pair;
-    pair.first  = inner.MapTargetToSource(SdfPath::AbsoluteRootPath());
+    pair.first = inner.MapTargetToSource(SdfPath::AbsoluteRootPath());
     pair.second = SdfPath::AbsoluteRootPath();
     if (!pair.first.IsEmpty()) {
       if (std::find(scratchBegin, scratch, pair) == scratch) {
@@ -466,8 +465,7 @@ PcpMapFunction PcpMapFunction::GetInverse() const
   for (PathPair const &pair : _data) {
     targetToSource.emplace_back(pair.second, pair.first);
   }
-  PathPair const *begin = targetToSource.data(),
-                 *end   = targetToSource.data() + targetToSource.size();
+  PathPair const *begin = targetToSource.data(), *end = targetToSource.data() + targetToSource.size();
   return PcpMapFunction(begin, end, _offset.GetInverse(), _data.hasRootIdentity);
 }
 

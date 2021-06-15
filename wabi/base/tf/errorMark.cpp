@@ -100,8 +100,8 @@ void TfReportActiveErrorMarks()
 
   if (!_enableTfErrorMarkStackTraces) {
     msg +=
-        "- Set _enableTfErrorMarkStackTraces and recompile "
-        "tf/errorMark.cpp.\n";
+      "- Set _enableTfErrorMarkStackTraces and recompile "
+      "tf/errorMark.cpp.\n";
   }
 
   if (!TfDebug::IsEnabled(TF_ERROR_MARK_TRACKING)) {
@@ -110,9 +110,9 @@ void TfReportActiveErrorMarks()
 
   if (!msg.empty()) {
     printf(
-        "Active error mark stack traces are disabled.  "
-        "To enable, please do the following:\n%s",
-        msg.c_str());
+      "Active error mark stack traces are disabled.  "
+      "To enable, please do the following:\n%s",
+      msg.c_str());
     return;
   }
 

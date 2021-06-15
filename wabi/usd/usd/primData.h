@@ -343,8 +343,8 @@ class Usd_PrimData {
   void _MarkDead()
   {
     _flags[Usd_PrimDeadFlag] = true;
-    _stage                   = nullptr;
-    _primIndex               = nullptr;
+    _stage = nullptr;
+    _primIndex = nullptr;
   }
 
   // Return true if this prim's dead flag is set, false otherwise.
@@ -408,12 +408,12 @@ class Usd_PrimData {
 
 // Sibling iterator class.
 class Usd_PrimDataSiblingIterator
-    : public boost::iterator_adaptor<Usd_PrimDataSiblingIterator,   // crtp.
-                                     Usd_PrimData *,                // base iterator.
-                                     Usd_PrimData *,                // value.
-                                     boost::forward_traversal_tag,  // traversal.
-                                     Usd_PrimData *                 // reference.
-                                     > {
+  : public boost::iterator_adaptor<Usd_PrimDataSiblingIterator,   // crtp.
+                                   Usd_PrimData *,                // base iterator.
+                                   Usd_PrimData *,                // value.
+                                   boost::forward_traversal_tag,  // traversal.
+                                   Usd_PrimData *                 // reference.
+                                   > {
  public:
   // Default ctor.
   Usd_PrimDataSiblingIterator()
@@ -464,12 +464,12 @@ Usd_PrimData::SiblingRange Usd_PrimData::_GetChildrenRange() const
 
 // Tree iterator class.
 class Usd_PrimDataSubtreeIterator
-    : public boost::iterator_adaptor<Usd_PrimDataSubtreeIterator,   // crtp.
-                                     Usd_PrimData *,                // base iterator.
-                                     Usd_PrimData *,                // value.
-                                     boost::forward_traversal_tag,  // traversal.
-                                     Usd_PrimData *                 // reference.
-                                     > {
+  : public boost::iterator_adaptor<Usd_PrimDataSubtreeIterator,   // crtp.
+                                   Usd_PrimData *,                // base iterator.
+                                   Usd_PrimData *,                // value.
+                                   boost::forward_traversal_tag,  // traversal.
+                                   Usd_PrimData *                 // reference.
+                                   > {
  public:
   // Default ctor.
   Usd_PrimDataSubtreeIterator()
@@ -492,7 +492,7 @@ class Usd_PrimDataSubtreeIterator
   void increment()
   {
     base_type &b = base_reference();
-    b            = b->GetFirstChild() ? b->GetFirstChild() : b->GetNextPrim();
+    b = b->GetFirstChild() ? b->GetFirstChild() : b->GetNextPrim();
   }
 };
 
@@ -564,8 +564,7 @@ template<class PrimDataPtr> inline void Usd_MoveToParent(PrimDataPtr &p, SdfPath
 
     if (p && p->IsPrototype()) {
       p = p->GetPrimDataAtPathOrInPrototype(proxyPrimPath);
-      if (TF_VERIFY(p, "No prim at <%s>", proxyPrimPath.GetText()) &&
-          p->GetPath() == proxyPrimPath) {
+      if (TF_VERIFY(p, "No prim at <%s>", proxyPrimPath.GetText()) && p->GetPath() == proxyPrimPath) {
         proxyPrimPath = SdfPath();
       }
     }
@@ -595,7 +594,7 @@ inline bool Usd_MoveToNextSiblingOrParent(PrimDataPtr &p,
 
   PrimDataPtr next = p->GetNextSibling();
   while (next && next != end && !Usd_EvalPredicate(pred, next, isInstanceProxy)) {
-    p    = next;
+    p = next;
     next = p->GetNextSibling();
   }
   p = next ? next : p->GetParentLink();
@@ -611,8 +610,7 @@ inline bool Usd_MoveToNextSiblingOrParent(PrimDataPtr &p,
       proxyPrimPath = proxyPrimPath.GetParentPath();
       if (p && p->IsPrototype()) {
         p = p->GetPrimDataAtPathOrInPrototype(proxyPrimPath);
-        if (TF_VERIFY(p, "No prim at <%s>", proxyPrimPath.GetText()) &&
-            p->GetPath() == proxyPrimPath) {
+        if (TF_VERIFY(p, "No prim at <%s>", proxyPrimPath.GetText()) && p->GetPath() == proxyPrimPath) {
           proxyPrimPath = SdfPath();
         }
       }
@@ -647,7 +645,7 @@ inline bool Usd_MoveToChild(PrimDataPtr &p,
 
   PrimDataPtr src = p;
   if (src->IsInstance()) {
-    src             = src->GetPrototype();
+    src = src->GetPrototype();
     isInstanceProxy = true;
   }
 
@@ -669,9 +667,7 @@ inline bool Usd_MoveToChild(PrimDataPtr &p,
 
 // Convenience method for calling the above with \p end = \c nullptr.
 template<class PrimDataPtr>
-inline bool Usd_MoveToChild(PrimDataPtr &p,
-                            SdfPath &proxyPrimPath,
-                            const Usd_PrimFlagsPredicate &pred)
+inline bool Usd_MoveToChild(PrimDataPtr &p, SdfPath &proxyPrimPath, const Usd_PrimFlagsPredicate &pred)
 {
   return Usd_MoveToChild(p, proxyPrimPath, PrimDataPtr(nullptr), pred);
 }

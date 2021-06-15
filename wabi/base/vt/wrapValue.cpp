@@ -210,8 +210,7 @@ struct Vt_ValueFromPython {
         if (std::numeric_limits<int>::min() <= val && val <= std::numeric_limits<int>::max()) {
           new (storage) VtValue(boost::numeric_cast<int>(val));
         }
-        else if (std::numeric_limits<long>::min() <= val &&
-                 val <= std::numeric_limits<long>::max()) {
+        else if (std::numeric_limits<long>::min() <= val && val <= std::numeric_limits<long>::max()) {
           new (storage) VtValue(boost::numeric_cast<long>(val));
         }
         else {
@@ -279,15 +278,13 @@ void wrapValue()
   class_<Vt_ValueWrapper>("_ValueWrapper", no_init);
 
   static char const *funcDocString =
-      "%s(value) -> _ValueWrapper\n\n"
-      "value : %s\n\n"
-      "Use this function to specify a value with the explicit C++ type %s "
-      "when calling a C++ wrapped function that expects a VtValue. (There are "
-      "some C++ types that have no equivalents in Python, such as short.)";
+    "%s(value) -> _ValueWrapper\n\n"
+    "value : %s\n\n"
+    "Use this function to specify a value with the explicit C++ type %s "
+    "when calling a C++ wrapped function that expects a VtValue. (There are "
+    "some C++ types that have no equivalents in Python, such as short.)";
 
-  def("Bool",
-      Vt_ValueWrapper::Create<bool>,
-      TfStringPrintf(funcDocString, "Bool", "bool", "bool").c_str());
+  def("Bool", Vt_ValueWrapper::Create<bool>, TfStringPrintf(funcDocString, "Bool", "bool", "bool").c_str());
   def("UChar",
       Vt_ValueWrapper::Create<unsigned char>,
       TfStringPrintf(funcDocString, "UChar", "unsigned char", "unsigned char").c_str());
@@ -297,15 +294,11 @@ void wrapValue()
   def("UShort",
       Vt_ValueWrapper::Create<unsigned short>,
       TfStringPrintf(funcDocString, "UShort", "unsigned short", "unsigned short").c_str());
-  def("Int",
-      Vt_ValueWrapper::Create<int>,
-      TfStringPrintf(funcDocString, "Int", "int", "int").c_str());
+  def("Int", Vt_ValueWrapper::Create<int>, TfStringPrintf(funcDocString, "Int", "int", "int").c_str());
   def("UInt",
       Vt_ValueWrapper::Create<unsigned int>,
       TfStringPrintf(funcDocString, "UInt", "unsigned int", "unsigned int").c_str());
-  def("Long",
-      Vt_ValueWrapper::Create<long>,
-      TfStringPrintf(funcDocString, "Long", "long", "long").c_str());
+  def("Long", Vt_ValueWrapper::Create<long>, TfStringPrintf(funcDocString, "Long", "long", "long").c_str());
   def("ULong",
       Vt_ValueWrapper::Create<unsigned long>,
       TfStringPrintf(funcDocString, "ULong", "unsigned long", "unsigned long").c_str());
@@ -338,8 +331,8 @@ void wrapValue()
 
   if (Vt_ValueFromPythonRegistry::HasConversions()) {
     TF_FATAL_ERROR(
-        "Vt was not the first library to register VtValue "
-        "from-python conversions!");
+      "Vt was not the first library to register VtValue "
+      "from-python conversions!");
   }
 
   // register conversion types in reverse order, because the extractor
@@ -350,8 +343,7 @@ void wrapValue()
 #undef REGISTER_VALUE_FROM_PYTHON
 
 #define REGISTER_VALUE_FROM_PYTHON(r, unused, elem) VtValueFromPython<VT_TYPE(elem)>();
-  BOOST_PP_SEQ_FOR_EACH(
-      REGISTER_VALUE_FROM_PYTHON, ~, VT_SCALAR_CLASS_VALUE_TYPES VT_NONARRAY_VALUE_TYPES)
+  BOOST_PP_SEQ_FOR_EACH(REGISTER_VALUE_FROM_PYTHON, ~, VT_SCALAR_CLASS_VALUE_TYPES VT_NONARRAY_VALUE_TYPES)
 #undef REGISTER_VALUE_FROM_PYTHON
 
   VtValueFromPython<string>();
@@ -362,9 +354,8 @@ void wrapValue()
   VtValueFromPythonLValue<TfType>();
 
   // Register conversions from sequences of VtValues
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<VtValue>,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<VtValue>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 
   // Conversions for nullary functions returning VtValue.
   TfPyFunctionFromPython<VtValue()>();

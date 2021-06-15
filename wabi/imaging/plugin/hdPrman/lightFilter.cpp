@@ -42,9 +42,9 @@ WABI_NAMESPACE_BEGIN
 // currently is no HdLightFilter class.
 
 HdPrmanLightFilter::HdPrmanLightFilter(SdfPath const &id, TfToken const &lightFilterType)
-    : HdSprim(id),
-      _hdLightFilterType(lightFilterType),
-      _lightFilter(NULL)
+  : HdSprim(id),
+    _hdLightFilterType(lightFilterType),
+    _lightFilter(NULL)
 {
   /* NOTHING */
 }

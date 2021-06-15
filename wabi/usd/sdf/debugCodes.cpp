@@ -33,9 +33,8 @@ TF_REGISTRY_FUNCTION(TfDebug)
   TF_DEBUG_ENVIRONMENT_SYMBOL(SDF_LAYER, "SdfLayer loading and lifetime");
   TF_DEBUG_ENVIRONMENT_SYMBOL(SDF_CHANGES, "Sdf change notification");
   TF_DEBUG_ENVIRONMENT_SYMBOL(SDF_ASSET, "Sdf asset resolution");
-  TF_DEBUG_ENVIRONMENT_SYMBOL(
-      SDF_ASSET_TRACE_INVALID_CONTEXT,
-      "Post stack trace when opening an SdfLayer with no path resolver context");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(SDF_ASSET_TRACE_INVALID_CONTEXT,
+                              "Post stack trace when opening an SdfLayer with no path resolver context");
   TF_DEBUG_ENVIRONMENT_SYMBOL(SDF_FILE_FORMAT, "Sdf file format plugins");
 }
 

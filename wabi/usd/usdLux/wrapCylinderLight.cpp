@@ -54,28 +54,19 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateLengthAttr(UsdLuxCylinderLight &self,
-                                      object defaultVal,
-                                      bool writeSparsely)
+static UsdAttribute _CreateLengthAttr(UsdLuxCylinderLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateLengthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                               writeSparsely);
+  return self.CreateLengthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
-static UsdAttribute _CreateRadiusAttr(UsdLuxCylinderLight &self,
-                                      object defaultVal,
-                                      bool writeSparsely)
+static UsdAttribute _CreateRadiusAttr(UsdLuxCylinderLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                               writeSparsely);
+  return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
-static UsdAttribute _CreateTreatAsLineAttr(UsdLuxCylinderLight &self,
-                                           object defaultVal,
-                                           bool writeSparsely)
+static UsdAttribute _CreateTreatAsLineAttr(UsdLuxCylinderLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateTreatAsLineAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                    writeSparsely);
+  return self.CreateTreatAsLineAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
 }
 
 static std::string _Repr(const UsdLuxCylinderLight &self)
@@ -93,44 +84,40 @@ void wrapUsdLuxCylinderLight()
   class_<This, bases<UsdLuxLight>> cls("CylinderLight");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetLengthAttr", &This::GetLengthAttr)
-      .def("CreateLengthAttr",
-           &_CreateLengthAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetLengthAttr", &This::GetLengthAttr)
+    .def(
+      "CreateLengthAttr", &_CreateLengthAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetRadiusAttr", &This::GetRadiusAttr)
-      .def("CreateRadiusAttr",
-           &_CreateRadiusAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRadiusAttr", &This::GetRadiusAttr)
+    .def(
+      "CreateRadiusAttr", &_CreateRadiusAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetTreatAsLineAttr", &This::GetTreatAsLineAttr)
-      .def("CreateTreatAsLineAttr",
-           &_CreateTreatAsLineAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTreatAsLineAttr", &This::GetTreatAsLineAttr)
+    .def("CreateTreatAsLineAttr",
+         &_CreateTreatAsLineAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

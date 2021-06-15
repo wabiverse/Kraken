@@ -78,7 +78,7 @@ class TraceCollector : public TfWeakBase {
  public:
   TF_MALLOC_TAG_NEW("Trace", "TraceCollector");
 
-  using This    = TraceCollector;
+  using This = TraceCollector;
   using ThisPtr = TraceCollectorPtr;
 
   using TimeStamp = TraceEvent::TimeStamp;
@@ -236,8 +236,7 @@ class TraceCollector : public TfWeakBase {
   /// The variadic arguments \a args must be an even number of parameters in
   /// the form TraceKey, Value.
   /// \sa EndScope \sa Scope \sa StoreData
-  template<typename Category, typename... Args>
-  void BeginScope(const TraceKey &key, Args &&...args)
+  template<typename Category, typename... Args> void BeginScope(const TraceKey &key, Args &&...args)
   {
     static_assert(sizeof...(Args) % 2 == 0, "Data arguments must come in pairs");
 
@@ -344,8 +343,7 @@ class TraceCollector : public TfWeakBase {
   }
 
   /// Record a counter \a delta for a name \a key if \p Category is enabled.
-  template<typename Category = DefaultCategory>
-  void RecordCounterDelta(const TraceKey &key, double delta)
+  template<typename Category = DefaultCategory> void RecordCounterDelta(const TraceKey &key, double delta)
   {
     // Only record counter values if the collector is enabled.
     if (ARCH_UNLIKELY(Category::IsEnabled())) {
@@ -355,8 +353,7 @@ class TraceCollector : public TfWeakBase {
   }
 
   /// Record a counter \a delta for a name \a key if \p Category is enabled.
-  template<typename Category = DefaultCategory>
-  void RecordCounterDelta(const Key &key, double delta)
+  template<typename Category = DefaultCategory> void RecordCounterDelta(const Key &key, double delta)
   {
     if (ARCH_UNLIKELY(Category::IsEnabled())) {
       _PerThreadData *threadData = _GetThreadData();
@@ -365,8 +362,7 @@ class TraceCollector : public TfWeakBase {
   }
 
   /// Record a counter \a value for a name \a key if \p Category is enabled.
-  template<typename Category = DefaultCategory>
-  void RecordCounterValue(const TraceKey &key, double value)
+  template<typename Category = DefaultCategory> void RecordCounterValue(const TraceKey &key, double value)
   {
     // Only record counter values if the collector is enabled.
     if (ARCH_UNLIKELY(Category::IsEnabled())) {
@@ -377,8 +373,7 @@ class TraceCollector : public TfWeakBase {
 
   /// Record a counter \a value for a name \a key and delta \a value if
   /// \p Category is enabled.
-  template<typename Category = DefaultCategory>
-  void RecordCounterValue(const Key &key, double value)
+  template<typename Category = DefaultCategory> void RecordCounterValue(const Key &key, double value)
   {
 
     if (ARCH_UNLIKELY(Category::IsEnabled())) {
@@ -443,34 +438,25 @@ class TraceCollector : public TfWeakBase {
 #endif  // WITH_PYTHON
 
   // Implementation for small data that can stored inlined with the event.
-  template<typename T,
-           typename std::enable_if<sizeof(T) <= sizeof(uintptr_t) && !std::is_pointer<T>::value,
-                                   int>::type = 0>
-  void _StoreData(_PerThreadData *threadData,
-                  const TraceKey &key,
-                  TraceCategoryId cat,
-                  const T &value)
+  template<
+    typename T,
+    typename std::enable_if<sizeof(T) <= sizeof(uintptr_t) && !std::is_pointer<T>::value, int>::type = 0>
+  void _StoreData(_PerThreadData *threadData, const TraceKey &key, TraceCategoryId cat, const T &value)
   {
     threadData->StoreData(key, value, cat);
   }
 
   // Implementation for data that must be stored outside of the events.
-  template<typename T,
-           typename std::enable_if<(sizeof(T) > sizeof(uintptr_t)) && !std::is_pointer<T>::value,
-                                   int>::type = 0>
-  void _StoreData(_PerThreadData *threadData,
-                  const TraceKey &key,
-                  TraceCategoryId cat,
-                  const T &value)
+  template<
+    typename T,
+    typename std::enable_if<(sizeof(T) > sizeof(uintptr_t)) && !std::is_pointer<T>::value, int>::type = 0>
+  void _StoreData(_PerThreadData *threadData, const TraceKey &key, TraceCategoryId cat, const T &value)
   {
     threadData->StoreLargeData(key, value, cat);
   }
 
   // Specialization for c string
-  void _StoreData(_PerThreadData *threadData,
-                  const TraceKey &key,
-                  TraceCategoryId cat,
-                  const char *value)
+  void _StoreData(_PerThreadData *threadData, const TraceKey &key, TraceCategoryId cat, const char *value)
   {
     threadData->StoreLargeData(key, value, cat);
   }
@@ -544,11 +530,10 @@ class TraceCollector : public TfWeakBase {
       _events.load(std::memory_order_acquire)->EmplaceBack(TraceEvent::Data, key, data, cat);
     }
 
-    template<typename T>
-    void StoreLargeData(const TraceKey &key, const T &data, TraceCategoryId cat)
+    template<typename T> void StoreLargeData(const TraceKey &key, const T &data, TraceCategoryId cat)
     {
       AtomicRef lock(_writing);
-      EventList *events  = _events.load(std::memory_order_acquire);
+      EventList *events = _events.load(std::memory_order_acquire);
       const auto *cached = events->StoreData(data);
       events->EmplaceBack(TraceEvent::Data, key, cached, cat);
     }

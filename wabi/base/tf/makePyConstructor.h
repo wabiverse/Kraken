@@ -208,8 +208,7 @@ template<typename T> struct InstallPolicy<TfRefPtr<T>> {
   }
 };
 
-template<typename CLS, typename T>
-void Install(object const &self, T const &t, TfErrorMark const &m)
+template<typename CLS, typename T> void Install(object const &self, T const &t, TfErrorMark const &m)
 {
   // Stick the weakptr into the python object self to complete
   // construction.
@@ -220,8 +219,8 @@ void Install(object const &self, T const &t, TfErrorMark const &m)
 
   // CODE_COVERAGE_OFF
   void *memory = Holder::
-      // CODE_COVERAGE_ON
-      allocate(self.ptr(), offsetof(instance_t, storage), sizeof(Holder));
+    // CODE_COVERAGE_ON
+    allocate(self.ptr(), offsetof(instance_t, storage), sizeof(Holder));
   try {
     HeldType held(t);
     Holder *holder = (new (memory) Holder(held));
@@ -276,8 +275,8 @@ template<typename WeakPtr, typename P> struct _RefPtrFactoryConverter {
   PyTypeObject const *get_pytype() const
   {
     return boost::python::objects::registered_class_object(
-               boost::python::type_id<typename WeakPtr::DataType>())
-        .get();
+             boost::python::type_id<typename WeakPtr::DataType>())
+      .get();
   }
 };
 
@@ -300,9 +299,9 @@ template<typename SIG> struct CtorBase {
     else {
       // CODE_COVERAGE_OFF
       TF_CODING_ERROR(
-          "Ctor with signature '%s' is already registered.  "
-          "Duplicate will be ignored.",
-          ArchGetDemangled(typeid(Sig)).c_str());
+        "Ctor with signature '%s' is already registered.  "
+        "Duplicate will be ignored.",
+        ArchGetDemangled(typeid(Sig)).c_str());
       // CODE_COVERAGE_ON
     }
   }
@@ -328,8 +327,8 @@ template<typename SIG> struct NewCtorWithClassReference;
 
 template<typename T>
 Tf_MakePyConstructor::InitVisitor<typename Tf_MakePyConstructor::InitCtor<T>> TfMakePyConstructor(
-    T *func,
-    const std::string &doc = std::string())
+  T *func,
+  const std::string &doc = std::string())
 {
   // Instantiate to set static constructor pointer, then return the visitor.
   Tf_MakePyConstructor::InitCtor<T> Ctor(func);
@@ -342,8 +341,7 @@ TfMakePyConstructorWithBackReference(T *func, const std::string &doc = std::stri
 {
   // Instantiate to set static constructor pointer, then return the visitor.
   Tf_MakePyConstructor::InitCtorWithBackReference<T> Ctor(func);
-  return Tf_MakePyConstructor::InitVisitor<Tf_MakePyConstructor::InitCtorWithBackReference<T>>(
-      doc);
+  return Tf_MakePyConstructor::InitVisitor<Tf_MakePyConstructor::InitCtorWithBackReference<T>>(doc);
 }
 
 template<typename T>
@@ -357,8 +355,8 @@ TfMakePyConstructorWithVarArgs(T *func, const std::string &doc = std::string())
 
 template<typename T>
 Tf_MakePyConstructor::NewVisitor<typename Tf_MakePyConstructor::NewCtor<T>> TfMakePyNew(
-    T *func,
-    const std::string &doc = std::string())
+  T *func,
+  const std::string &doc = std::string())
 {
   // Instantiate to set static constructor pointer, then return the visitor.
   Tf_MakePyConstructor::NewCtor<T> Ctor(func);
@@ -374,8 +372,7 @@ TfMakePyNewWithClassReference(T *func, const std::string &doc = std::string())
   return Tf_MakePyConstructor::NewVisitor<Tf_MakePyConstructor::NewCtorWithClassReference<T>>(doc);
 }
 
-template<typename T = void>
-struct TfPyRefPtrFactory : public Tf_MakePyConstructor::RefPtrFactory<T> {
+template<typename T = void> struct TfPyRefPtrFactory : public Tf_MakePyConstructor::RefPtrFactory<T> {
 };
 
 template<typename T> struct Tf_PySequenceToListConverterRefPtrFactory;
@@ -399,9 +396,8 @@ template<typename T> struct Tf_PySequenceToListConverterRefPtrFactory {
   {
     using namespace boost::python;
 
-    typedef
-        typename Tf_MakePyConstructor::RefPtrFactory<>::apply<typename SeqType::value_type>::type
-            RefPtrFactory;
+    typedef typename Tf_MakePyConstructor::RefPtrFactory<>::apply<typename SeqType::value_type>::type
+      RefPtrFactory;
 
     boost::python::list l;
     for (typename SeqType::const_iterator i = seq.begin(); i != seq.end(); ++i) {
@@ -533,23 +529,23 @@ struct InitCtorWithVarArgs<VAR_SIGNATURE> : CtorBase<VAR_SIGNATURE> {
     if (numArgs - 1 < N) {
       // User didn't provide enough positional arguments for the factory
       // function. Complain.
-      TfPyThrowTypeError(TfStringPrintf(
-          "Arguments to __init__ did not match C++ signature:\n"
-          "\t__init__(" BOOST_PP_REPEAT(N, FORMAT_STR, 0) "...)" BOOST_PP_COMMA_IF(N)
-              BOOST_PP_ENUM(N, ARG_TYPE_STR_A, 0)));
+      TfPyThrowTypeError(
+        TfStringPrintf("Arguments to __init__ did not match C++ signature:\n"
+                       "\t__init__(" BOOST_PP_REPEAT(N, FORMAT_STR, 0) "...)" BOOST_PP_COMMA_IF(N)
+                         BOOST_PP_ENUM(N, ARG_TYPE_STR_A, 0)));
       return bp::object();
     }
 
     Install<CLS>(
-        // self object for new instance is the first arg to __init__
-        args[0],
+      // self object for new instance is the first arg to __init__
+      args[0],
 
-        // Slice the first N arguments from positional arguments as
-        // those are the required arguments for the factory function.
-        Base::_func(BOOST_PP_ENUM(N, EXTRACT_REQ_ARG_A, args) BOOST_PP_COMMA_IF(N)
-                        bp::tuple(args.slice(N + 1, numArgs)),
-                    kwargs),
-        m);
+      // Slice the first N arguments from positional arguments as
+      // those are the required arguments for the factory function.
+      Base::_func(BOOST_PP_ENUM(N, EXTRACT_REQ_ARG_A, args) BOOST_PP_COMMA_IF(N)
+                    bp::tuple(args.slice(N + 1, numArgs)),
+                  kwargs),
+      m);
 
     return bp::object();
   }

@@ -48,8 +48,8 @@ using BuiltInNodes = std::vector<NodeDefinition>;
 
 const auto builtInNodes = []() -> const BuiltInNodes & {
   static const BuiltInNodes ret{
-      {AI_NODE_DRIVER, AI_TYPE_UNDEFINED, str::HdArnoldDriverMain, HdArnoldDriverMainMtd},
-      {AI_NODE_DRIVER, AI_TYPE_UNDEFINED, str::HdArnoldDriverAOV, HdArnoldDriverAOVMtd},
+    {AI_NODE_DRIVER, AI_TYPE_UNDEFINED, str::HdArnoldDriverMain, HdArnoldDriverMainMtd},
+    {AI_NODE_DRIVER, AI_TYPE_UNDEFINED, str::HdArnoldDriverAOV, HdArnoldDriverAOVMtd},
   };
   return ret;
 };

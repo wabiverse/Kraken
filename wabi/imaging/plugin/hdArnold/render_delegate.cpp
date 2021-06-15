@@ -110,7 +110,7 @@ void _SetNodeParam(AtNode *node, const TfToken &key, const VtValue &value)
   // Some applications might send integers instead of booleans.
   if (value.IsHolding<int>()) {
     const auto *nodeEntry = AiNodeGetNodeEntry(node);
-    auto *paramEntry      = AiNodeEntryLookUpParameter(nodeEntry, AtString(key.GetText()));
+    auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, AtString(key.GetText()));
     if (paramEntry != nullptr) {
       const auto paramType = AiParamGetType(paramEntry);
       if (paramType == AI_TYPE_INT) {
@@ -124,7 +124,7 @@ void _SetNodeParam(AtNode *node, const TfToken &key, const VtValue &value)
   }
   else if (value.IsHolding<long>()) {
     const auto *nodeEntry = AiNodeGetNodeEntry(node);
-    auto *paramEntry      = AiNodeEntryLookUpParameter(nodeEntry, AtString(key.GetText()));
+    auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, AtString(key.GetText()));
     if (paramEntry != nullptr) {
       const auto paramType = AiParamGetType(paramEntry);
       if (paramType == AI_TYPE_INT) {
@@ -138,12 +138,11 @@ void _SetNodeParam(AtNode *node, const TfToken &key, const VtValue &value)
   }
   else if (value.IsHolding<long long>()) {
     const auto *nodeEntry = AiNodeGetNodeEntry(node);
-    auto *paramEntry      = AiNodeEntryLookUpParameter(nodeEntry, AtString(key.GetText()));
+    auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, AtString(key.GetText()));
     if (paramEntry != nullptr) {
       const auto paramType = AiParamGetType(paramEntry);
       if (paramType == AI_TYPE_INT) {
-        AiNodeSetInt(
-            node, AtString(key.GetText()), static_cast<int>(value.UncheckedGet<long long>()));
+        AiNodeSetInt(node, AtString(key.GetText()), static_cast<int>(value.UncheckedGet<long long>()));
       }
       else if (paramType == AI_TYPE_BOOLEAN) {
         AiNodeSetBool(node, AtString(key.GetText()), value.UncheckedGet<long long>() != 0);
@@ -160,8 +159,7 @@ void _SetNodeParam(AtNode *node, const TfToken &key, const VtValue &value)
     AiNodeSetBool(node, AtString(key.GetText()), value.UncheckedGet<bool>());
   }
   else if (value.IsHolding<std::string>()) {
-    AiNodeSetStr(
-        node, AtString(key.GetText()), AtString(value.UncheckedGet<std::string>().c_str()));
+    AiNodeSetStr(node, AtString(key.GetText()), AtString(value.UncheckedGet<std::string>().c_str()));
   }
   else if (value.IsHolding<TfToken>()) {
     AiNodeSetStr(node, AtString(key.GetText()), AtString(value.UncheckedGet<TfToken>().GetText()));
@@ -197,8 +195,8 @@ struct SupportedRenderSetting {
   /// Constructor with a default value.
   template<typename T>
   SupportedRenderSetting(const char *_label, const T &_defaultValue)
-      : label(_label),
-        defaultValue(_defaultValue)
+    : label(_label),
+      defaultValue(_defaultValue)
   {}
 
   TfToken label;
@@ -211,64 +209,60 @@ const SupportedRenderSettings &_GetSupportedRenderSettings()
 {
   static const auto &config = HdArnoldConfig::GetInstance();
   static const SupportedRenderSettings data{
-      // Global settings to control rendering
-      {str::t_enable_progressive_render,
-       {"Enable Progressive Render", config.enable_progressive_render}},
-      {str::t_progressive_min_AA_samples,
-       {"Progressive Render Minimum AA Samples", config.progressive_min_AA_samples}},
-      {str::t_enable_adaptive_sampling,
-       {"Enable Adaptive Sampling", config.enable_adaptive_sampling}},
+    // Global settings to control rendering
+    {str::t_enable_progressive_render, {"Enable Progressive Render", config.enable_progressive_render}},
+    {str::t_progressive_min_AA_samples,
+     {"Progressive Render Minimum AA Samples", config.progressive_min_AA_samples}},
+    {str::t_enable_adaptive_sampling, {"Enable Adaptive Sampling", config.enable_adaptive_sampling}},
 #ifndef __APPLE__
-      {str::t_enable_gpu_rendering, {"Enable GPU Rendering", config.enable_gpu_rendering}},
+    {str::t_enable_gpu_rendering, {"Enable GPU Rendering", config.enable_gpu_rendering}},
 #endif
-      {str::t_interactive_target_fps,
-       {"Target FPS for Interactive Rendering", config.interactive_target_fps}},
-      {str::t_interactive_target_fps_min,
-       {"Minimum Target FPS for Interactive Rendering", config.interactive_target_fps_min}},
-      {str::t_interactive_fps_min,
-       {"Minimum FPS for Interactive Rendering", config.interactive_fps_min}},
-      // Threading settings
-      {str::t_threads, {"Number of Threads", config.threads}},
-      // Sampling settings
-      {str::t_AA_samples, {"AA Samples", config.AA_samples}},
-      {str::t_AA_samples_max, {"AA Samples Max"}},
-      {str::t_GI_diffuse_samples, {"Diffuse Samples", config.GI_diffuse_samples}},
-      {str::t_GI_specular_samples, {"Specular Samples", config.GI_specular_samples}},
-      {str::t_GI_transmission_samples, {"Transmission Samples", config.GI_transmission_samples}},
-      {str::t_GI_sss_samples, {"SubSurface Scattering Samples", config.GI_sss_samples}},
-      {str::t_GI_volume_samples, {"Volume Samples", config.GI_volume_samples}},
-      // Depth settings
-      {str::t_auto_transparency_depth, {"Auto Transparency Depth"}},
-      {str::t_GI_diffuse_depth, {"Diffuse Depth", config.GI_diffuse_depth}},
-      {str::t_GI_specular_depth, {"Specular Depth", config.GI_specular_depth}},
-      {str::t_GI_transmission_depth, {"Transmission Depth"}},
-      {str::t_GI_volume_depth, {"Volume Depth"}},
-      {str::t_GI_total_depth, {"Total Depth"}},
-      // Ignore settings
-      {str::t_ignore_textures, {"Ignore Textures"}},
-      {str::t_ignore_shaders, {"Ignore Shaders"}},
-      {str::t_ignore_atmosphere, {"Ignore Atmosphere"}},
-      {str::t_ignore_lights, {"Ignore Lights"}},
-      {str::t_ignore_shadows, {"Ignore Shadows"}},
-      {str::t_ignore_subdivision, {"Ignore Subdivision"}},
-      {str::t_ignore_displacement, {"Ignore Displacement"}},
-      {str::t_ignore_bump, {"Ignore Bump"}},
-      {str::t_ignore_motion, {"Ignore Motion"}},
-      {str::t_ignore_motion_blur, {"Ignore Motion Blur"}},
-      {str::t_ignore_dof, {"Ignore Depth of Field"}},
-      {str::t_ignore_smoothing, {"Ignore Smoothing"}},
-      {str::t_ignore_sss, {"Ignore SubSurface Scattering"}},
-      {str::t_ignore_operators, {"Ignore Operators"}},
-      // Log Settings
-      {str::t_log_verbosity, {"Log Verbosity (0-5)", config.log_verbosity}},
-      {str::t_log_file, {"Log File Path", config.log_file}},
-      // Profiling Settings
-      {str::t_profile_file, {"File Output for Profiling", config.profile_file}},
-      // Search paths
-      {str::t_texture_searchpath, {"Texture search path.", config.texture_searchpath}},
-      {str::t_plugin_searchpath, {"Plugin search path.", config.plugin_searchpath}},
-      {str::t_procedural_searchpath, {"Procedural search path.", config.procedural_searchpath}},
-      {str::t_osl_includepath, {"OSL include path.", config.osl_includepath}},
+    {str::t_interactive_target_fps, {"Target FPS for Interactive Rendering", config.interactive_target_fps}},
+    {str::t_interactive_target_fps_min,
+     {"Minimum Target FPS for Interactive Rendering", config.interactive_target_fps_min}},
+    {str::t_interactive_fps_min, {"Minimum FPS for Interactive Rendering", config.interactive_fps_min}},
+    // Threading settings
+    {str::t_threads, {"Number of Threads", config.threads}},
+    // Sampling settings
+    {str::t_AA_samples, {"AA Samples", config.AA_samples}},
+    {str::t_AA_samples_max, {"AA Samples Max"}},
+    {str::t_GI_diffuse_samples, {"Diffuse Samples", config.GI_diffuse_samples}},
+    {str::t_GI_specular_samples, {"Specular Samples", config.GI_specular_samples}},
+    {str::t_GI_transmission_samples, {"Transmission Samples", config.GI_transmission_samples}},
+    {str::t_GI_sss_samples, {"SubSurface Scattering Samples", config.GI_sss_samples}},
+    {str::t_GI_volume_samples, {"Volume Samples", config.GI_volume_samples}},
+    // Depth settings
+    {str::t_auto_transparency_depth, {"Auto Transparency Depth"}},
+    {str::t_GI_diffuse_depth, {"Diffuse Depth", config.GI_diffuse_depth}},
+    {str::t_GI_specular_depth, {"Specular Depth", config.GI_specular_depth}},
+    {str::t_GI_transmission_depth, {"Transmission Depth"}},
+    {str::t_GI_volume_depth, {"Volume Depth"}},
+    {str::t_GI_total_depth, {"Total Depth"}},
+    // Ignore settings
+    {str::t_ignore_textures, {"Ignore Textures"}},
+    {str::t_ignore_shaders, {"Ignore Shaders"}},
+    {str::t_ignore_atmosphere, {"Ignore Atmosphere"}},
+    {str::t_ignore_lights, {"Ignore Lights"}},
+    {str::t_ignore_shadows, {"Ignore Shadows"}},
+    {str::t_ignore_subdivision, {"Ignore Subdivision"}},
+    {str::t_ignore_displacement, {"Ignore Displacement"}},
+    {str::t_ignore_bump, {"Ignore Bump"}},
+    {str::t_ignore_motion, {"Ignore Motion"}},
+    {str::t_ignore_motion_blur, {"Ignore Motion Blur"}},
+    {str::t_ignore_dof, {"Ignore Depth of Field"}},
+    {str::t_ignore_smoothing, {"Ignore Smoothing"}},
+    {str::t_ignore_sss, {"Ignore SubSurface Scattering"}},
+    {str::t_ignore_operators, {"Ignore Operators"}},
+    // Log Settings
+    {str::t_log_verbosity, {"Log Verbosity (0-5)", config.log_verbosity}},
+    {str::t_log_file, {"Log File Path", config.log_file}},
+    // Profiling Settings
+    {str::t_profile_file, {"File Output for Profiling", config.profile_file}},
+    // Search paths
+    {str::t_texture_searchpath, {"Texture search path.", config.texture_searchpath}},
+    {str::t_plugin_searchpath, {"Plugin search path.", config.plugin_searchpath}},
+    {str::t_procedural_searchpath, {"Procedural search path.", config.procedural_searchpath}},
+    {str::t_osl_includepath, {"OSL include path.", config.osl_includepath}},
   };
   return data;
 }
@@ -352,8 +346,8 @@ template<typename F> void _CheckForIntValue(const VtValue &value, F &&f)
 void _RemoveArnoldGlobalPrefix(const TfToken &key, TfToken &key_new)
 {
   key_new = TfStringStartsWith(key, _tokens->arnoldGlobal) ?
-                TfToken{key.GetText() + _tokens->arnoldGlobal.size()} :
-                key;
+              TfToken{key.GetText() + _tokens->arnoldGlobal.size()} :
+              key;
 }
 
 }  // namespace
@@ -391,18 +385,17 @@ HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context) : 
                           HdPrimTypeTokens->volume,
                           HdPrimTypeTokens->points,
                           HdPrimTypeTokens->basisCurves};
-  auto *shapeIter      = AiUniverseGetNodeEntryIterator(AI_NODE_SHAPE);
+  auto *shapeIter = AiUniverseGetNodeEntryIterator(AI_NODE_SHAPE);
   while (!AiNodeEntryIteratorFinished(shapeIter)) {
     const auto *nodeEntry = AiNodeEntryIteratorGetNext(shapeIter);
-    TfToken rprimType{
-        ArnoldUsdMakeCamelCase(TfStringPrintf("Arnold_%s", AiNodeEntryGetName(nodeEntry)))};
+    TfToken rprimType{ArnoldUsdMakeCamelCase(TfStringPrintf("Arnold_%s", AiNodeEntryGetName(nodeEntry)))};
     _supportedRprimTypes.push_back(rprimType);
     _nativeRprimTypes.insert({rprimType, AiNodeEntryGetNameAtString(nodeEntry)});
 
     NativeRprimParamList paramList;
     auto *paramIter = AiNodeEntryGetParamIterator(nodeEntry);
     while (!AiParamIteratorFinished(paramIter)) {
-      const auto *param    = AiParamIteratorGetNext(paramIter);
+      const auto *param = AiParamIteratorGetNext(paramIter);
       const auto paramName = AiParamGetName(param);
       if (ArnoldUsdIgnoreParameter(paramName)) {
         continue;
@@ -417,8 +410,7 @@ HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context) : 
     _nativeRprimParams.emplace(AiNodeEntryGetNameAtString(nodeEntry), std::move(paramList));
     AiParamIteratorDestroy(paramIter);
   }
-  AiRenderSetHintStr(str::render_context,
-                     _context == HdArnoldRenderContext::Hydra ? str::hydra : str::husk);
+  AiRenderSetHintStr(str::render_context, _context == HdArnoldRenderContext::Hydra ? str::hydra : str::husk);
   std::lock_guard<std::mutex> guard(_mutexResourceRegistry);
   if (_counterResourceRegistry.fetch_add(1) == 0) {
     _resourceRegistry.reset(new HdResourceRegistry());
@@ -434,16 +426,14 @@ HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context) : 
   }
 
   _fallbackShader = AiNode(_universe, str::utility);
-  AiNodeSetStr(_fallbackShader,
-               str::name,
-               AtString(TfStringPrintf("fallbackShader_%p", _fallbackShader).c_str()));
+  AiNodeSetStr(
+    _fallbackShader, str::name, AtString(TfStringPrintf("fallbackShader_%p", _fallbackShader).c_str()));
   AiNodeSetStr(_fallbackShader, str::shade_mode, str::ambocc);
   AiNodeSetStr(_fallbackShader, str::color_mode, str::color);
   auto *userDataReader = AiNode(_universe, str::user_data_rgb);
-  AiNodeSetStr(
-      userDataReader,
-      str::name,
-      AtString(TfStringPrintf("fallbackShader_userDataReader_%p", userDataReader).c_str()));
+  AiNodeSetStr(userDataReader,
+               str::name,
+               AtString(TfStringPrintf("fallbackShader_userDataReader_%p", userDataReader).c_str()));
   AiNodeSetStr(userDataReader, str::attribute, str::displayColor);
   AiNodeSetRGB(userDataReader, str::_default, 1.0f, 1.0f, 1.0f);
   AiNodeLink(userDataReader, str::color, _fallbackShader);
@@ -512,9 +502,8 @@ void HdArnoldRenderDelegate::_SetRenderSetting(const TfToken &_key, const VtValu
 
   // Currently usdview can return double for floats, so until it's fixed
   // we have to convert doubles to float.
-  auto value = _value.IsHolding<double>() ?
-                   VtValue(static_cast<float>(_value.UncheckedGet<double>())) :
-                   _value;
+  auto value = _value.IsHolding<double>() ? VtValue(static_cast<float>(_value.UncheckedGet<double>())) :
+                                            _value;
   // Certain applications might pass boolean values via ints or longs.
   if (key == str::t_enable_gpu_rendering) {
     _CheckForBoolValue(value, [&](const bool b) {
@@ -546,8 +535,7 @@ void HdArnoldRenderDelegate::_SetRenderSetting(const TfToken &_key, const VtValu
   }
   else if (key == str::t_progressive_min_AA_samples) {
     if (_context != HdArnoldRenderContext::Husk) {
-      _CheckForIntValue(
-          value, [&](const int i) { AiRenderSetHintInt(str::progressive_min_AA_samples, i); });
+      _CheckForIntValue(value, [&](const int i) { AiRenderSetHintInt(str::progressive_min_AA_samples, i); });
     }
   }
   else if (key == str::t_interactive_target_fps) {
@@ -577,8 +565,7 @@ void HdArnoldRenderDelegate::_SetRenderSetting(const TfToken &_key, const VtValu
     }
   }
   else if (key == _tokens->instantaneousShutter) {
-    _CheckForBoolValue(value,
-                       [&](const bool b) { AiNodeSetBool(_options, str::ignore_motion_blur, b); });
+    _CheckForBoolValue(value, [&](const bool b) { AiNodeSetBool(_options, str::ignore_motion_blur, b); });
   }
   else {
     auto *optionsEntry = AiNodeGetNodeEntry(_options);
@@ -661,12 +648,10 @@ void HdArnoldRenderDelegate::_ParseDelegateRenderProducts(const VtValue &value)
                      renderVarElem.second.IsHolding<TfToken>()) {
               renderVar.sourceType = renderVarElem.second.UncheckedGet<TfToken>();
             }
-            else if (renderVarElem.first == _tokens->dataType &&
-                     renderVarElem.second.IsHolding<TfToken>()) {
+            else if (renderVarElem.first == _tokens->dataType && renderVarElem.second.IsHolding<TfToken>()) {
               renderVar.dataType = renderVarElem.second.UncheckedGet<TfToken>();
             }
-            else if (renderVarElem.first == _tokens->format &&
-                     renderVarElem.second.IsHolding<HdFormat>()) {
+            else if (renderVarElem.first == _tokens->format && renderVarElem.second.IsHolding<HdFormat>()) {
               renderVar.format = renderVarElem.second.UncheckedGet<HdFormat>();
             }
             else if (renderVarElem.first == _tokens->clearValue) {
@@ -754,10 +739,10 @@ HdRenderSettingDescriptorList HdArnoldRenderDelegate::GetRenderSettingDescriptor
   for (const auto &it : _GetSupportedRenderSettings()) {
     HdRenderSettingDescriptor desc;
     desc.name = it.second.label;
-    desc.key  = it.first;
+    desc.key = it.first;
     if (it.second.defaultValue.IsEmpty()) {
       const auto *pentry = AiNodeEntryLookUpParameter(nentry, AtString(it.first.GetText()));
-      desc.defaultValue  = _GetNodeParamValue(_options, pentry);
+      desc.defaultValue = _GetNodeParamValue(_options, pentry);
     }
     else {
       desc.defaultValue = it.second.defaultValue;
@@ -1050,13 +1035,11 @@ HdAovDescriptor HdArnoldRenderDelegate::GetDefaultAovDescriptor(const TfToken &n
   }
 }
 
-void HdArnoldRenderDelegate::RegisterLightLinking(const TfToken &name,
-                                                  HdLight *light,
-                                                  bool isShadow)
+void HdArnoldRenderDelegate::RegisterLightLinking(const TfToken &name, HdLight *light, bool isShadow)
 {
   std::lock_guard<std::mutex> guard(_lightLinkingMutex);
   auto &links = isShadow ? _shadowLinks : _lightLinks;
-  auto it     = links.find(name);
+  auto it = links.find(name);
   if (it == links.end()) {
     if (!name.IsEmpty() || !links.empty()) {
       _lightLinkingChanged.store(true, std::memory_order_release);
@@ -1075,13 +1058,11 @@ void HdArnoldRenderDelegate::RegisterLightLinking(const TfToken &name,
   }
 }
 
-void HdArnoldRenderDelegate::DeregisterLightLinking(const TfToken &name,
-                                                    HdLight *light,
-                                                    bool isShadow)
+void HdArnoldRenderDelegate::DeregisterLightLinking(const TfToken &name, HdLight *light, bool isShadow)
 {
   std::lock_guard<std::mutex> guard(_lightLinkingMutex);
   auto &links = isShadow ? _shadowLinks : _lightLinks;
-  auto it     = links.find(name);
+  auto it = links.find(name);
   if (it != links.end()) {
     // We only trigger updates if either deregistering a named collection, or deregistering the
     // empty collection and there are other collection.
@@ -1115,9 +1096,7 @@ void HdArnoldRenderDelegate::ApplyLightLinking(AtNode *shape, const VtArray<TfTo
   if (lightEmpty && shadowEmpty) {
     return;
   }
-  auto applyGroups = [&](const AtString &group,
-                         const AtString &useGroup,
-                         const LightLinkingMap &links) {
+  auto applyGroups = [&](const AtString &group, const AtString &useGroup, const LightLinkingMap &links) {
     std::vector<AtNode *> lights;
     for (const auto &category : categories) {
       auto it = links.find(category);
@@ -1147,9 +1126,7 @@ void HdArnoldRenderDelegate::ApplyLightLinking(AtNode *shape, const VtArray<TfTo
     }
     else {
       AiNodeSetArray(
-          shape,
-          group,
-          AiArrayConvert(static_cast<uint32_t>(lights.size()), 1, AI_TYPE_NODE, lights.data()));
+        shape, group, AiArrayConvert(static_cast<uint32_t>(lights.size()), 1, AI_TYPE_NODE, lights.data()));
     }
     AiNodeSetBool(shape, useGroup, true);
   };
@@ -1174,10 +1151,9 @@ bool HdArnoldRenderDelegate::ShouldSkipIteration(HdRenderIndex *renderIndex,
   // When shutter open and shutter close significantly changes, we might not have enough samples
   // for transformation and deformation, so we need to force re-syncing all the prims.
   if (_shutterOpen != shutterOpen || _shutterClose != shutterClose) {
-    _shutterOpen  = shutterOpen;
+    _shutterOpen = shutterOpen;
     _shutterClose = shutterClose;
-    bits |= HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyTransform |
-            HdChangeTracker::DirtyInstancer;
+    bits |= HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyInstancer;
   }
   auto skip = false;
   if (bits != HdChangeTracker::Clean) {
@@ -1243,8 +1219,8 @@ bool HdArnoldRenderDelegate::Resume()
   return true;
 }
 
-const HdArnoldRenderDelegate::NativeRprimParamList *HdArnoldRenderDelegate::
-    GetNativeRprimParamList(const AtString &arnoldNodeType) const
+const HdArnoldRenderDelegate::NativeRprimParamList *HdArnoldRenderDelegate::GetNativeRprimParamList(
+  const AtString &arnoldNodeType) const
 {
   const auto it = _nativeRprimParams.find(arnoldNodeType);
   return it == _nativeRprimParams.end() ? nullptr : &it->second;
@@ -1260,14 +1236,12 @@ void HdArnoldRenderDelegate::RemoveMaterial(const SdfPath &id)
   _materialRemovalQueue.emplace(id);
 }
 
-void HdArnoldRenderDelegate::TrackShapeMaterials(const SdfPath &shape,
-                                                 const VtArray<SdfPath> &materials)
+void HdArnoldRenderDelegate::TrackShapeMaterials(const SdfPath &shape, const VtArray<SdfPath> &materials)
 {
   _shapeMaterialTrackQueue.emplace(shape, materials);
 }
 
-void HdArnoldRenderDelegate::UntrackShapeMaterials(const SdfPath &shape,
-                                                   const VtArray<SdfPath> &materials)
+void HdArnoldRenderDelegate::UntrackShapeMaterials(const SdfPath &shape, const VtArray<SdfPath> &materials)
 {
   _shapeMaterialUntrackQueue.emplace(shape, materials);
 }

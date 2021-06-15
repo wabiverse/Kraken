@@ -177,7 +177,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateShapingFocusAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -202,7 +202,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateShapingFocusTintAttr(VtValue const &defaultValue = VtValue(),
-                                          bool writeSparsely          = false) const;
+                                          bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -226,7 +226,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateShapingConeAngleAttr(VtValue const &defaultValue = VtValue(),
-                                          bool writeSparsely          = false) const;
+                                          bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -250,7 +250,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateShapingConeSoftnessAttr(VtValue const &defaultValue = VtValue(),
-                                             bool writeSparsely          = false) const;
+                                             bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -274,7 +274,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateShapingIesFileAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -298,7 +298,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateShapingIesAngleScaleAttr(VtValue const &defaultValue = VtValue(),
-                                              bool writeSparsely          = false) const;
+                                              bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -322,7 +322,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateShapingIesNormalizeAttr(VtValue const &defaultValue = VtValue(),
-                                             bool writeSparsely          = false) const;
+                                             bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

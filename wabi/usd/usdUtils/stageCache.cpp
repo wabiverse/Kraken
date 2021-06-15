@@ -58,12 +58,12 @@ UsdStageCache &UsdUtilsStageCache::Get()
 }
 
 SdfLayerRefPtr UsdUtilsStageCache::GetSessionLayerForVariantSelections(
-    const TfToken &modelName,
-    const std::vector<std::pair<std::string, std::string>> &variantSelections)
+  const TfToken &modelName,
+  const std::vector<std::pair<std::string, std::string>> &variantSelections)
 {
   // Sort so that the key is deterministic.
-  std::vector<std::pair<std::string, std::string>> variantSelectionsSorted(
-      variantSelections.begin(), variantSelections.end());
+  std::vector<std::pair<std::string, std::string>> variantSelectionsSorted(variantSelections.begin(),
+                                                                           variantSelections.end());
   std::sort(variantSelectionsSorted.begin(), variantSelectionsSorted.end());
 
   std::string sessionKey = modelName;
@@ -78,7 +78,7 @@ SdfLayerRefPtr UsdUtilsStageCache::GetSessionLayerForVariantSelections(
     std::lock_guard<std::mutex> lock(sessionLayerMapLock);
 
     _SessionLayerMap &sessionLayerMap = GetSessionLayerMap();
-    _SessionLayerMap::iterator itr    = sessionLayerMap.find(sessionKey);
+    _SessionLayerMap::iterator itr = sessionLayerMap.find(sessionKey);
     if (itr == sessionLayerMap.end()) {
       SdfLayerRefPtr layer = SdfLayer::CreateAnonymous();
       if (!variantSelections.empty()) {
@@ -90,7 +90,7 @@ SdfLayerRefPtr UsdUtilsStageCache::GetSessionLayerForVariantSelections(
         }
       }
       sessionLayerMap[sessionKey] = layer;
-      ret                         = layer;
+      ret = layer;
     }
     else {
       ret = itr->second;

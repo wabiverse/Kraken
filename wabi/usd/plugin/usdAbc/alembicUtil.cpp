@@ -140,8 +140,7 @@ template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODArra
 
     // Copy each element.
     VtArray<UsdType> result(sample->size());
-    _ConvertPODToUsdArray<UsdType, AlembicType, extent>()(
-        result.data(), sample->getData(), sample->size());
+    _ConvertPODToUsdArray<UsdType, AlembicType, extent>()(result.data(), sample->getData(), sample->size());
 
     // Copy to dst.
     return dst.Set(result);
@@ -221,8 +220,7 @@ UsdAbc_AlembicDataConversion::UsdAbc_AlembicDataConversion()
   // Do nothing
 }
 
-SdfValueTypeName UsdAbc_AlembicDataConversion::FindConverter(
-    const UsdAbc_AlembicType &alembicType) const
+SdfValueTypeName UsdAbc_AlembicDataConversion::FindConverter(const UsdAbc_AlembicType &alembicType) const
 {
   for (const auto &c : _typeConverters) {
     if (c.abcType == alembicType) {
@@ -232,8 +230,9 @@ SdfValueTypeName UsdAbc_AlembicDataConversion::FindConverter(
   return SdfValueTypeName();
 }
 
-const UsdAbc_AlembicDataConversion::ToUsdConverter &UsdAbc_AlembicDataConversion::
-    GetToUsdConverter(const UsdAbc_AlembicType &alembicType, const SdfValueTypeName &usdType) const
+const UsdAbc_AlembicDataConversion::ToUsdConverter &UsdAbc_AlembicDataConversion::GetToUsdConverter(
+  const UsdAbc_AlembicType &alembicType,
+  const SdfValueTypeName &usdType) const
 {
   for (const auto &c : _typeConverters) {
     if (c.usdType == usdType && c.abcType == alembicType) {
@@ -244,8 +243,7 @@ const UsdAbc_AlembicDataConversion::ToUsdConverter &UsdAbc_AlembicDataConversion
   return empty;
 }
 
-UsdAbc_AlembicType UsdAbc_AlembicDataConversion::FindConverter(
-    const SdfValueTypeName &usdType) const
+UsdAbc_AlembicType UsdAbc_AlembicDataConversion::FindConverter(const SdfValueTypeName &usdType) const
 {
   for (const auto &c : _typeConverters) {
     if (c.usdType == usdType) {
@@ -256,7 +254,7 @@ UsdAbc_AlembicType UsdAbc_AlembicDataConversion::FindConverter(
 }
 
 const UsdAbc_AlembicDataConversion::FromUsdConverter &UsdAbc_AlembicDataConversion::GetConverter(
-    const SdfValueTypeName &usdType) const
+  const SdfValueTypeName &usdType) const
 {
   for (const auto &c : _typeConverters) {
     if (c.usdType == usdType) {

@@ -138,8 +138,7 @@ class HdPhDispatchBuffer : public HdBufferArray {
   HDPH_API
   bool GarbageCollect() override;
   HDPH_API
-  void Reallocate(std::vector<HdBufferArrayRangeSharedPtr> const &,
-                  HdBufferArraySharedPtr const &) override;
+  void Reallocate(std::vector<HdBufferArrayRangeSharedPtr> const &, HdBufferArraySharedPtr const &) override;
 
   HDPH_API
   void DebugDump(std::ostream &out) const override;

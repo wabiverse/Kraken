@@ -80,9 +80,8 @@ std::string::const_iterator _FindInnermostClosingDelimiter(std::string &&path) =
 // Given iterator \p closingDelimIt in \p path pointing to a closing
 // ']' character, returns iterator to the corresponding opening '['
 // character, or path.end() if one can't be found.
-std::string::const_iterator _FindMatchingOpeningDelimiter(
-    const std::string &path,
-    std::string::const_iterator closingDelimIt)
+std::string::const_iterator _FindMatchingOpeningDelimiter(const std::string &path,
+                                                          std::string::const_iterator closingDelimIt)
 {
   size_t numOpenNeeded = 1;
   std::string::const_reverse_iterator revIt(closingDelimIt);
@@ -188,10 +187,10 @@ template<class Iter> std::string _JoinPackageRelativePath(Iter begin, Iter end)
   // If this path is itself a package-relative path, this insert location
   // should come just before the innermost ']' delimiter.
   std::string packageRelativePath = _Get(pathIt++);
-  size_t insertIdx                = packageRelativePath.length();
+  size_t insertIdx = packageRelativePath.length();
   if (packageRelativePath.back() == ']') {
     auto innermostCloseRevIt = std::find_if(
-        packageRelativePath.rbegin(), packageRelativePath.rend(), [](char c) { return c != ']'; });
+      packageRelativePath.rbegin(), packageRelativePath.rend(), [](char c) { return c != ']'; });
     insertIdx = std::distance(packageRelativePath.begin(), innermostCloseRevIt.base());
   }
 
@@ -224,8 +223,7 @@ std::string ArJoinPackageRelativePath(const std::pair<std::string, std::string> 
   return _JoinPackageRelativePath(arr, arr + 2);
 }
 
-std::string ArJoinPackageRelativePath(const std::string &packagePath,
-                                      const std::string &packagedPath)
+std::string ArJoinPackageRelativePath(const std::string &packagePath, const std::string &packagedPath)
 {
   const std::string *const arr[2] = {&packagePath, &packagedPath};
   return _JoinPackageRelativePath(arr, arr + 2);

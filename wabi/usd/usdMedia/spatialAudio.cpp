@@ -112,8 +112,7 @@ UsdAttribute UsdMediaSpatialAudio::GetFilePathAttr() const
   return GetPrim().GetAttribute(UsdMediaTokens->filePath);
 }
 
-UsdAttribute UsdMediaSpatialAudio::CreateFilePathAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdMediaSpatialAudio::CreateFilePathAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdMediaTokens->filePath,
                                     SdfValueTypeNames->Asset,
@@ -128,8 +127,7 @@ UsdAttribute UsdMediaSpatialAudio::GetAuralModeAttr() const
   return GetPrim().GetAttribute(UsdMediaTokens->auralMode);
 }
 
-UsdAttribute UsdMediaSpatialAudio::CreateAuralModeAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdMediaSpatialAudio::CreateAuralModeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdMediaTokens->auralMode,
                                     SdfValueTypeNames->Token,
@@ -160,8 +158,7 @@ UsdAttribute UsdMediaSpatialAudio::GetStartTimeAttr() const
   return GetPrim().GetAttribute(UsdMediaTokens->startTime);
 }
 
-UsdAttribute UsdMediaSpatialAudio::CreateStartTimeAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdMediaSpatialAudio::CreateStartTimeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdMediaTokens->startTime,
                                     SdfValueTypeNames->TimeCode,
@@ -176,8 +173,7 @@ UsdAttribute UsdMediaSpatialAudio::GetEndTimeAttr() const
   return GetPrim().GetAttribute(UsdMediaTokens->endTime);
 }
 
-UsdAttribute UsdMediaSpatialAudio::CreateEndTimeAttr(VtValue const &defaultValue,
-                                                     bool writeSparsely) const
+UsdAttribute UsdMediaSpatialAudio::CreateEndTimeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdMediaTokens->endTime,
                                     SdfValueTypeNames->TimeCode,
@@ -208,8 +204,7 @@ UsdAttribute UsdMediaSpatialAudio::GetGainAttr() const
   return GetPrim().GetAttribute(UsdMediaTokens->gain);
 }
 
-UsdAttribute UsdMediaSpatialAudio::CreateGainAttr(VtValue const &defaultValue,
-                                                  bool writeSparsely) const
+UsdAttribute UsdMediaSpatialAudio::CreateGainAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdMediaTokens->gain,
                                     SdfValueTypeNames->Double,
@@ -220,8 +215,7 @@ UsdAttribute UsdMediaSpatialAudio::CreateGainAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -235,16 +229,16 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdMediaSpatialAudio::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdMediaTokens->filePath,
-      UsdMediaTokens->auralMode,
-      UsdMediaTokens->playbackMode,
-      UsdMediaTokens->startTime,
-      UsdMediaTokens->endTime,
-      UsdMediaTokens->mediaOffset,
-      UsdMediaTokens->gain,
+    UsdMediaTokens->filePath,
+    UsdMediaTokens->auralMode,
+    UsdMediaTokens->playbackMode,
+    UsdMediaTokens->startTime,
+    UsdMediaTokens->endTime,
+    UsdMediaTokens->mediaOffset,
+    UsdMediaTokens->gain,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdGeomXformable::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomXformable::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

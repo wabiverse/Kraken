@@ -407,8 +407,7 @@ class UsdPrim : public UsdObject {
   /// \sa GetProperties()
   /// \sa UsdProperty::IsAuthored()
   USD_API
-  std::vector<UsdProperty> GetAuthoredProperties(
-      const PropertyPredicateFunc &predicate = {}) const;
+  std::vector<UsdProperty> GetAuthoredProperties(const PropertyPredicateFunc &predicate = {}) const;
 
   /// Return this prim's properties that are inside the given property
   /// namespace ordered according to the strongest propertyOrder statement in
@@ -422,8 +421,7 @@ class UsdPrim : public UsdObject {
   ///
   /// For details of namespaced properties, see \ref Usd_Ordering
   USD_API
-  std::vector<UsdProperty> GetPropertiesInNamespace(
-      const std::vector<std::string> &namespaces) const;
+  std::vector<UsdProperty> GetPropertiesInNamespace(const std::vector<std::string> &namespaces) const;
 
   /// \overload
   /// \p namespaces must be an already-concatenated ordered set of namespaces,
@@ -439,7 +437,7 @@ class UsdPrim : public UsdObject {
   /// For details of namespaced properties, see \ref Usd_Ordering
   USD_API
   std::vector<UsdProperty> GetAuthoredPropertiesInNamespace(
-      const std::vector<std::string> &namespaces) const;
+    const std::vector<std::string> &namespaces) const;
 
   /// \overload
   /// \p namespaces must be an already-concatenated ordered set of namespaces,
@@ -514,9 +512,7 @@ class UsdPrim : public UsdObject {
   // \p instanceName is used to determine whether a particular instance
   // of a multiple-apply API schema has been applied to the prim.
   USD_API
-  bool _HasAPI(const TfType &schemaType,
-               bool validateSchemaType,
-               const TfToken &instanceName) const;
+  bool _HasAPI(const TfType &schemaType, bool validateSchemaType, const TfToken &instanceName) const;
 
   // Private implementation for all ApplyAPI, CanApplyAPI, and RemoveAPI
   // methods for both single apply and multiple apply APIs. The multiple
@@ -528,9 +524,7 @@ class UsdPrim : public UsdObject {
   bool _CanApplyAPI(const TfType &schemaType, std::string *whyNot) const;
 
   USD_API
-  bool _CanApplyAPI(const TfType &schemaType,
-                    const TfToken &instanceName,
-                    std::string *whyNot) const;
+  bool _CanApplyAPI(const TfType &schemaType, const TfToken &instanceName, std::string *whyNot) const;
 
   USD_API
   bool _ApplyAPI(const TfType &schemaType) const;
@@ -551,8 +545,7 @@ class UsdPrim : public UsdObject {
   /// \sa \ref Usd_OM_FallbackPrimTypes
   template<typename T> bool IsA() const
   {
-    static_assert(std::is_base_of<UsdSchemaBase, T>::value,
-                  "Provided type must derive UsdSchemaBase.");
+    static_assert(std::is_base_of<UsdSchemaBase, T>::value, "Provided type must derive UsdSchemaBase.");
     return _IsA(TfType::Find<T>(), /*validateSchemaType=*/false);
   };
 
@@ -604,18 +597,17 @@ class UsdPrim : public UsdObject {
   {
     static_assert(std::is_base_of<UsdAPISchemaBase, T>::value,
                   "Provided type must derive UsdAPISchemaBase.");
-    static_assert(!std::is_same<UsdAPISchemaBase, T>::value,
-                  "Provided type must not be UsdAPISchemaBase.");
-    static_assert((T::schemaType == UsdSchemaKind::SingleApplyAPI ||
-                   T::schemaType == UsdSchemaKind::MultipleApplyAPI),
-                  "Provided schema type must be an applied API schema.");
+    static_assert(!std::is_same<UsdAPISchemaBase, T>::value, "Provided type must not be UsdAPISchemaBase.");
+    static_assert(
+      (T::schemaType == UsdSchemaKind::SingleApplyAPI || T::schemaType == UsdSchemaKind::MultipleApplyAPI),
+      "Provided schema type must be an applied API schema.");
 
     if (T::schemaType != UsdSchemaKind::MultipleApplyAPI && !instanceName.IsEmpty()) {
       TF_CODING_ERROR(
-          "HasAPI: single application API schemas like %s do "
-          "not contain an application instanceName ( %s ).",
-          TfType::GetCanonicalTypeName(typeid(T)).c_str(),
-          instanceName.GetText());
+        "HasAPI: single application API schemas like %s do "
+        "not contain an application instanceName ( %s ).",
+        TfType::GetCanonicalTypeName(typeid(T)).c_str(),
+        instanceName.GetText());
       return false;
     }
 
@@ -1059,7 +1051,7 @@ class UsdPrim : public UsdObject {
   UsdPrim GetParent() const
   {
     Usd_PrimDataConstPtr prim = get_pointer(_Prim());
-    SdfPath proxyPrimPath     = _ProxyPrimPath();
+    SdfPath proxyPrimPath = _ProxyPrimPath();
     Usd_MoveToParent(prim, proxyPrimPath);
     return UsdPrim(prim, proxyPrimPath);
   }
@@ -1270,8 +1262,8 @@ class UsdPrim : public UsdObject {
   /// prims of connected properties also and return the union.
   USD_API
   SdfPathVector FindAllAttributeConnectionPaths(
-      std::function<bool(UsdAttribute const &)> const &pred = nullptr,
-      bool recurseOnSources                                 = false) const;
+    std::function<bool(UsdAttribute const &)> const &pred = nullptr,
+    bool recurseOnSources = false) const;
 
   // --------------------------------------------------------------------- //
   /// \name Relationships
@@ -1321,8 +1313,7 @@ class UsdPrim : public UsdObject {
   /// name components used to construct a \em namespaced property name.
   /// For details, see \ref Usd_Ordering
   USD_API
-  UsdRelationship CreateRelationship(const std::vector<std::string> &nameElts,
-                                     bool custom = true) const;
+  UsdRelationship CreateRelationship(const std::vector<std::string> &nameElts, bool custom = true) const;
 
   /// Like GetProperties(), but exclude all attributes from the result.
   USD_API
@@ -1361,8 +1352,8 @@ class UsdPrim : public UsdObject {
   /// union.
   USD_API
   SdfPathVector FindAllRelationshipTargetPaths(
-      std::function<bool(UsdRelationship const &)> const &pred = nullptr,
-      bool recurseOnTargets                                    = false) const;
+    std::function<bool(UsdRelationship const &)> const &pred = nullptr,
+    bool recurseOnTargets = false) const;
 
   // --------------------------------------------------------------------- //
   /// \name Payload Authoring
@@ -1672,7 +1663,7 @@ class UsdPrim : public UsdObject {
 
   // Prim constructor.
   UsdPrim(const Usd_PrimDataHandle &primData, const SdfPath &proxyPrimPath)
-      : UsdObject(primData, proxyPrimPath)
+    : UsdObject(primData, proxyPrimPath)
   {}
 
   // General constructor.
@@ -1680,7 +1671,7 @@ class UsdPrim : public UsdObject {
           const Usd_PrimDataHandle &prim,
           const SdfPath &proxyPrimPath,
           const TfToken &propName)
-      : UsdObject(objType, prim, proxyPrimPath, propName)
+    : UsdObject(objType, prim, proxyPrimPath, propName)
   {}
 
   // Helper to make a sibling range.
@@ -1694,12 +1685,11 @@ class UsdPrim : public UsdObject {
 
   // Helper for Get{Authored}{PropertyNames,Properties}
   TfTokenVector _GetPropertyNames(bool onlyAuthored,
-                                  bool applyOrder                        = true,
+                                  bool applyOrder = true,
                                   const PropertyPredicateFunc &predicate = {}) const;
 
   // Helper for Get(Authored)PropertiesInNamespace.
-  std::vector<UsdProperty> _GetPropertiesInNamespace(const std::string &namespaces,
-                                                     bool onlyAuthored) const;
+  std::vector<UsdProperty> _GetPropertiesInNamespace(const std::string &namespaces, bool onlyAuthored) const;
 
   // Helper for Get(Authored)Attributes.
   std::vector<UsdAttribute> _GetAttributes(bool onlyAuthored, bool applyOrder = false) const;
@@ -1812,12 +1802,11 @@ class UsdPrimSiblingRange {
 
 // Sibling iterator class.  Converts ref to weak and filters according to a
 // supplied predicate.
-class UsdPrimSiblingIterator
-    : public boost::iterator_adaptor<UsdPrimSiblingIterator,        // crtp base.
-                                     const Usd_PrimData *,          // base iterator.
-                                     UsdPrim,                       // value type.
-                                     boost::forward_traversal_tag,  // traversal
-                                     UsdPrim>                       // reference type.
+class UsdPrimSiblingIterator : public boost::iterator_adaptor<UsdPrimSiblingIterator,  // crtp base.
+                                                              const Usd_PrimData *,    // base iterator.
+                                                              UsdPrim,                 // value type.
+                                                              boost::forward_traversal_tag,  // traversal
+                                                              UsdPrim>  // reference type.
 {
  public:
   // Default ctor.
@@ -1831,9 +1820,9 @@ class UsdPrimSiblingIterator
   UsdPrimSiblingIterator(const base_type &i,
                          const SdfPath &proxyPrimPath,
                          const Usd_PrimFlagsPredicate &predicate)
-      : iterator_adaptor_(i),
-        _proxyPrimPath(proxyPrimPath),
-        _predicate(predicate)
+    : iterator_adaptor_(i),
+      _proxyPrimPath(proxyPrimPath),
+      _predicate(predicate)
   {
     // Need to advance iterator to first matching element.
     if (base() && !Usd_EvalPredicate(_predicate, base(), _proxyPrimPath))
@@ -1852,7 +1841,7 @@ class UsdPrimSiblingIterator
   {
     base_type &base = base_reference();
     if (Usd_MoveToNextSiblingOrParent(base, _proxyPrimPath, _predicate)) {
-      base           = nullptr;
+      base = nullptr;
       _proxyPrimPath = SdfPath();
     }
   }
@@ -1896,9 +1885,9 @@ UsdPrimSiblingRange UsdPrim::GetChildren() const
 UsdPrim::SiblingRange UsdPrim::_MakeSiblingRange(const Usd_PrimFlagsPredicate &pred) const
 {
   Usd_PrimDataConstPtr firstChild = get_pointer(_Prim());
-  SdfPath firstChildPath          = _ProxyPrimPath();
+  SdfPath firstChildPath = _ProxyPrimPath();
   if (!Usd_MoveToChild(firstChild, firstChildPath, pred)) {
-    firstChild     = nullptr;
+    firstChild = nullptr;
     firstChildPath = SdfPath();
   }
 
@@ -1995,12 +1984,11 @@ class UsdPrimSubtreeRange {
 
 // Subtree iterator class.  Converts ref to weak and filters according to a
 // supplied predicate.
-class UsdPrimSubtreeIterator
-    : public boost::iterator_adaptor<UsdPrimSubtreeIterator,        // crtp base.
-                                     const Usd_PrimData *,          // base iterator.
-                                     UsdPrim,                       // value type.
-                                     boost::forward_traversal_tag,  // traversal
-                                     UsdPrim>                       // reference type.
+class UsdPrimSubtreeIterator : public boost::iterator_adaptor<UsdPrimSubtreeIterator,  // crtp base.
+                                                              const Usd_PrimData *,    // base iterator.
+                                                              UsdPrim,                 // value type.
+                                                              boost::forward_traversal_tag,  // traversal
+                                                              UsdPrim>  // reference type.
 {
  public:
   // Default ctor.
@@ -2014,15 +2002,15 @@ class UsdPrimSubtreeIterator
   UsdPrimSubtreeIterator(const base_type &i,
                          const SdfPath &proxyPrimPath,
                          const Usd_PrimFlagsPredicate &predicate)
-      : iterator_adaptor_(i),
-        _proxyPrimPath(proxyPrimPath),
-        _predicate(predicate)
+    : iterator_adaptor_(i),
+      _proxyPrimPath(proxyPrimPath),
+      _predicate(predicate)
   {
     // Need to advance iterator to first matching element.
     base_type &base = base_reference();
     if (base && !Usd_EvalPredicate(_predicate, base, _proxyPrimPath)) {
       if (Usd_MoveToNextSiblingOrParent(base, _proxyPrimPath, _predicate)) {
-        base           = nullptr;
+        base = nullptr;
         _proxyPrimPath = SdfPath();
       }
     }
@@ -2084,9 +2072,9 @@ UsdPrimSubtreeRange UsdPrim::GetDescendants() const
 UsdPrim::SubtreeRange UsdPrim::_MakeDescendantsRange(const Usd_PrimFlagsPredicate &pred) const
 {
   Usd_PrimDataConstPtr firstChild = get_pointer(_Prim());
-  SdfPath firstChildPath          = _ProxyPrimPath();
-  Usd_PrimDataConstPtr endChild   = firstChild;
-  SdfPath endChildPath            = firstChildPath;
+  SdfPath firstChildPath = _ProxyPrimPath();
+  Usd_PrimDataConstPtr endChild = firstChild;
+  SdfPath endChildPath = firstChildPath;
   if (Usd_MoveToChild(firstChild, firstChildPath, pred)) {
     while (Usd_MoveToNextSiblingOrParent(endChild, endChildPath, pred)) {
     }

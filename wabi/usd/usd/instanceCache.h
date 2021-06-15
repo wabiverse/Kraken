@@ -47,22 +47,20 @@ class Usd_InstanceChanges {
   void AppendChanges(const Usd_InstanceChanges &c)
   {
     newPrototypePrims.insert(
-        newPrototypePrims.end(), c.newPrototypePrims.begin(), c.newPrototypePrims.end());
+      newPrototypePrims.end(), c.newPrototypePrims.begin(), c.newPrototypePrims.end());
 
-    newPrototypePrimIndexes.insert(newPrototypePrimIndexes.end(),
-                                   c.newPrototypePrimIndexes.begin(),
-                                   c.newPrototypePrimIndexes.end());
+    newPrototypePrimIndexes.insert(
+      newPrototypePrimIndexes.end(), c.newPrototypePrimIndexes.begin(), c.newPrototypePrimIndexes.end());
 
-    changedPrototypePrims.insert(changedPrototypePrims.end(),
-                                 c.changedPrototypePrims.begin(),
-                                 c.changedPrototypePrims.end());
+    changedPrototypePrims.insert(
+      changedPrototypePrims.end(), c.changedPrototypePrims.begin(), c.changedPrototypePrims.end());
 
     changedPrototypePrimIndexes.insert(changedPrototypePrimIndexes.end(),
                                        c.changedPrototypePrimIndexes.begin(),
                                        c.changedPrototypePrimIndexes.end());
 
     deadPrototypePrims.insert(
-        deadPrototypePrims.end(), c.deadPrototypePrims.begin(), c.deadPrototypePrims.end());
+      deadPrototypePrims.end(), c.deadPrototypePrims.begin(), c.deadPrototypePrims.end());
   }
 
   /// List of new prototype prims and their corresponding source
@@ -189,7 +187,7 @@ class Usd_InstanceCache {
   /// path for all prototypes using the prim index at \p primIndexPath or as
   /// descendent of \p primIndexPath.
   std::vector<std::pair<SdfPath, SdfPath>> GetPrototypesUsingPrimIndexPathOrDescendents(
-      const SdfPath &primIndexPath) const;
+    const SdfPath &primIndexPath) const;
 
   /// Return true if a prim in a prototype uses the prim index at
   /// \p primIndexPath.
@@ -219,19 +217,17 @@ class Usd_InstanceCache {
   typedef std::vector<SdfPath> _PrimIndexPaths;
 
   void _CreateOrUpdatePrototypeForInstances(
-      const Usd_InstanceKey &instanceKey,
-      _PrimIndexPaths *primIndexPaths,
-      Usd_InstanceChanges *changes,
-      std::unordered_map<SdfPath, SdfPath, SdfPath::Hash> const &prototypeToOldSourceIndexPath);
+    const Usd_InstanceKey &instanceKey,
+    _PrimIndexPaths *primIndexPaths,
+    Usd_InstanceChanges *changes,
+    std::unordered_map<SdfPath, SdfPath, SdfPath::Hash> const &prototypeToOldSourceIndexPath);
 
-  void _RemoveInstances(
-      const Usd_InstanceKey &instanceKey,
-      const _PrimIndexPaths &primIndexPaths,
-      Usd_InstanceChanges *changes,
-      std::unordered_map<SdfPath, SdfPath, SdfPath::Hash> *prototypeToOldSourceIndexPath);
+  void _RemoveInstances(const Usd_InstanceKey &instanceKey,
+                        const _PrimIndexPaths &primIndexPaths,
+                        Usd_InstanceChanges *changes,
+                        std::unordered_map<SdfPath, SdfPath, SdfPath::Hash> *prototypeToOldSourceIndexPath);
 
-  void _RemovePrototypeIfNoInstances(const Usd_InstanceKey &instanceKey,
-                                     Usd_InstanceChanges *changes);
+  void _RemovePrototypeIfNoInstances(const Usd_InstanceKey &instanceKey, Usd_InstanceChanges *changes);
 
   bool _PrototypeUsesPrimIndexPath(const SdfPath &primIndexPath,
                                    std::vector<SdfPath> *prototypePaths = nullptr) const;
@@ -244,8 +240,7 @@ class Usd_InstanceCache {
   // Mapping from instance key <-> prototype prim path.
   // This stores the path of the prototype prim that should be used
   // for all instanceable prim indexes with the given instance key.
-  typedef TfHashMap<Usd_InstanceKey, SdfPath, boost::hash<Usd_InstanceKey>>
-      _InstanceKeyToPrototypeMap;
+  typedef TfHashMap<Usd_InstanceKey, SdfPath, boost::hash<Usd_InstanceKey>> _InstanceKeyToPrototypeMap;
   typedef TfHashMap<SdfPath, Usd_InstanceKey, SdfPath::Hash> _PrototypeToInstanceKeyMap;
   _InstanceKeyToPrototypeMap _instanceKeyToPrototypeMap;
   _PrototypeToInstanceKeyMap _prototypeToInstanceKeyMap;
@@ -270,7 +265,7 @@ class Usd_InstanceCache {
   // These maps contain lists of pending changes and are the only containers
   // that should be modified during registration and unregistration.
   typedef TfHashMap<Usd_InstanceKey, _PrimIndexPaths, boost::hash<Usd_InstanceKey>>
-      _InstanceKeyToPrimIndexesMap;
+    _InstanceKeyToPrimIndexesMap;
   _InstanceKeyToPrimIndexesMap _pendingAddedPrimIndexes;
   _InstanceKeyToPrimIndexesMap _pendingRemovedPrimIndexes;
 

@@ -87,8 +87,7 @@ UsdAttribute UsdGeomImageable::GetVisibilityAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->visibility);
 }
 
-UsdAttribute UsdGeomImageable::CreateVisibilityAttr(VtValue const &defaultValue,
-                                                    bool writeSparsely) const
+UsdAttribute UsdGeomImageable::CreateVisibilityAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->visibility,
                                     SdfValueTypeNames->Token,
@@ -103,8 +102,7 @@ UsdAttribute UsdGeomImageable::GetPurposeAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->purpose);
 }
 
-UsdAttribute UsdGeomImageable::CreatePurposeAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdGeomImageable::CreatePurposeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->purpose,
                                     SdfValueTypeNames->Token,
@@ -126,8 +124,7 @@ UsdRelationship UsdGeomImageable::CreateProxyPrimRel() const
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -141,11 +138,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdGeomImageable::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdGeomTokens->visibility,
-      UsdGeomTokens->purpose,
+    UsdGeomTokens->visibility,
+    UsdGeomTokens->purpose,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdTyped::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -179,9 +176,9 @@ inline static void _IssueAPIWarningIfDeprecationFlagEnabled()
 {
   if (TfGetEnvSetting(USD_GEOM_IMAGEABLE_DEPRECATE_PRIMVARS_API)) {
     TF_WARN(
-        "API deprecation warning: UsdGeomImageable's primvars API "
-        "will be removed in the future.  Use UsdGeomPrimvarsAPI "
-        "instead.");
+      "API deprecation warning: UsdGeomImageable's primvars API "
+      "will be removed in the future.  Use UsdGeomPrimvarsAPI "
+      "instead.");
   }
 }
 
@@ -191,8 +188,7 @@ UsdGeomPrimvar UsdGeomImageable::CreatePrimvar(const TfToken &attrName,
                                                int elementSize) const
 {
   _IssueAPIWarningIfDeprecationFlagEnabled();
-  return UsdGeomPrimvarsAPI(GetPrim()).CreatePrimvar(
-      attrName, typeName, interpolation, elementSize);
+  return UsdGeomPrimvarsAPI(GetPrim()).CreatePrimvar(attrName, typeName, interpolation, elementSize);
 }
 
 UsdGeomPrimvar UsdGeomImageable::GetPrimvar(const TfToken &name) const
@@ -223,7 +219,7 @@ bool UsdGeomImageable::HasPrimvar(const TfToken &name) const
 const TfTokenVector &UsdGeomImageable::GetOrderedPurposeTokens()
 {
   static const TfTokenVector purposeTokens = {
-      UsdGeomTokens->default_, UsdGeomTokens->render, UsdGeomTokens->proxy, UsdGeomTokens->guide};
+    UsdGeomTokens->default_, UsdGeomTokens->render, UsdGeomTokens->proxy, UsdGeomTokens->guide};
 
   return purposeTokens;
 }
@@ -251,8 +247,7 @@ TfToken UsdGeomImageable::ComputeVisibility(UsdTimeCode const &time) const
   return _ComputeVisibility(GetPrim(), time);
 }
 
-TfToken UsdGeomImageable::ComputeVisibility(const TfToken &parentVisibility,
-                                            UsdTimeCode const &time) const
+TfToken UsdGeomImageable::ComputeVisibility(const TfToken &parentVisibility, UsdTimeCode const &time) const
 {
   if (parentVisibility == UsdGeomTokens->invisible) {
     return UsdGeomTokens->invisible;
@@ -420,7 +415,7 @@ UsdGeomImageable::PurposeInfo UsdGeomImageable::ComputePurposeInfo() const
 }
 
 UsdGeomImageable::PurposeInfo UsdGeomImageable::ComputePurposeInfo(
-    const PurposeInfo &parentPurposeInfo) const
+  const PurposeInfo &parentPurposeInfo) const
 {
   // Check for an authored purpose opinion (if we're imageable) first. If
   // none, return the passed in parent purpose if its inheritable
@@ -448,10 +443,10 @@ UsdPrim UsdGeomImageable::ComputeProxyPrim(UsdPrim *renderPrim) const
   // the last prim that still has the render purpose and treat that as the
   // render root for this prim's proxy.
   TfToken purpose = ComputePurpose();
-  UsdPrim prim    = GetPrim();
+  UsdPrim prim = GetPrim();
   while (UsdGeomImageable(prim).ComputePurpose() == UsdGeomTokens->render) {
     renderRoot = prim;
-    prim       = prim.GetParent();
+    prim = prim.GetParent();
   }
 
   if (renderRoot) {
@@ -462,10 +457,10 @@ UsdPrim UsdGeomImageable::ComputeProxyPrim(UsdPrim *renderPrim) const
         if (UsdPrim proxy = self.GetStage()->GetPrimAtPath(target[0])) {
           if (_ComputePurpose(proxy) != UsdGeomTokens->proxy) {
             TF_WARN(
-                "Prim <%s>, targeted as proxyPrim of prim "
-                "<%s> does not have purpose 'proxy'",
-                proxy.GetPath().GetText(),
-                renderRoot.GetPath().GetText());
+              "Prim <%s>, targeted as proxyPrim of prim "
+              "<%s> does not have purpose 'proxy'",
+              proxy.GetPath().GetText(),
+              renderRoot.GetPath().GetText());
             return UsdPrim();
           }
           if (renderPrim) {
@@ -476,9 +471,9 @@ UsdPrim UsdGeomImageable::ComputeProxyPrim(UsdPrim *renderPrim) const
       }
       else if (target.size() > 1) {
         TF_WARN(
-            "Found multiple targets for proxyPrim rel on "
-            "prim <%s>",
-            renderRoot.GetPath().GetText());
+          "Found multiple targets for proxyPrim rel on "
+          "prim <%s>",
+          renderRoot.GetPath().GetText());
       }
     }
   }
@@ -533,10 +528,10 @@ GfBBox3d UsdGeomImageable::ComputeWorldBound(UsdTimeCode const &time,
 
   if (purposes.empty()) {
     TF_CODING_ERROR(
-        "Must include at least one purpose when computing"
-        " bounds for prim at path <%s>.  See "
-        "UsdGeomImageable::GetPurposeAttr().",
-        GetPrim().GetPath().GetText());
+      "Must include at least one purpose when computing"
+      " bounds for prim at path <%s>.  See "
+      "UsdGeomImageable::GetPurposeAttr().",
+      GetPrim().GetPath().GetText());
     return GfBBox3d();
   }
   return UsdGeomBBoxCache(time, purposes).ComputeWorldBound(GetPrim());
@@ -552,10 +547,10 @@ GfBBox3d UsdGeomImageable::ComputeLocalBound(UsdTimeCode const &time,
 
   if (purposes.empty()) {
     TF_CODING_ERROR(
-        "Must include at least one purpose when computing"
-        " bounds for prim at path <%s>.  See "
-        "UsdGeomImageable::GetPurposeAttr().",
-        GetPrim().GetPath().GetText());
+      "Must include at least one purpose when computing"
+      " bounds for prim at path <%s>.  See "
+      "UsdGeomImageable::GetPurposeAttr().",
+      GetPrim().GetPath().GetText());
     return GfBBox3d();
   }
   return UsdGeomBBoxCache(time, purposes).ComputeLocalBound(GetPrim());
@@ -571,10 +566,10 @@ GfBBox3d UsdGeomImageable::ComputeUntransformedBound(UsdTimeCode const &time,
 
   if (purposes.empty()) {
     TF_CODING_ERROR(
-        "Must include at least one purpose when computing"
-        " bounds for prim at path <%s>.  See "
-        "UsdGeomImageable::GetPurposeAttr().",
-        GetPrim().GetPath().GetText());
+      "Must include at least one purpose when computing"
+      " bounds for prim at path <%s>.  See "
+      "UsdGeomImageable::GetPurposeAttr().",
+      GetPrim().GetPath().GetText());
     return GfBBox3d();
   }
   return UsdGeomBBoxCache(time, purposes).ComputeUntransformedBound(GetPrim());

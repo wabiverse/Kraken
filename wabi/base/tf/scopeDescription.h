@@ -50,7 +50,7 @@ WABI_NAMESPACE_BEGIN
 /// performance sensitive contexts.  The cost to push & pop is essentially a TLS
 /// lookup plus a couple of atomic operations.
 class TfScopeDescription {
-  TfScopeDescription()                           = delete;
+  TfScopeDescription() = delete;
   TfScopeDescription(TfScopeDescription const &) = delete;
   TfScopeDescription &operator=(TfScopeDescription const &) = delete;
 
@@ -130,8 +130,7 @@ TF_API std::vector<std::string> TfGetThisThreadScopeDescriptionStack();
 /// creates a scope description local variable with the resulting string.
 #define TF_DESCRIBE_SCOPE(fmt, ...) \
   TfScopeDescription __scope_description__( \
-      BOOST_PP_IF(TF_NUM_ARGS(__VA_ARGS__), TfStringPrintf(fmt, __VA_ARGS__), fmt), \
-      TF_CALL_CONTEXT)
+    BOOST_PP_IF(TF_NUM_ARGS(__VA_ARGS__), TfStringPrintf(fmt, __VA_ARGS__), fmt), TF_CALL_CONTEXT)
 
 WABI_NAMESPACE_END
 

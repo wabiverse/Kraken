@@ -53,15 +53,15 @@ class CyclesShaderProperty : public SdrShaderProperty {
                        const NdrTokenMap &metadata,
                        const NdrTokenMap &hints,
                        const NdrOptionVec &options)
-      : SdrShaderProperty(name,
-                          typeName.GetAsToken(),
-                          defaultValue,
-                          isOutput,
-                          arraySize,
-                          metadata,
-                          hints,
-                          options),
-        _typeName(typeName)
+    : SdrShaderProperty(name,
+                        typeName.GetAsToken(),
+                        defaultValue,
+                        isOutput,
+                        arraySize,
+                        metadata,
+                        hints,
+                        options),
+      _typeName(typeName)
   {}
 
   const SdfTypeIndicator GetTypeAsSdfType() const override

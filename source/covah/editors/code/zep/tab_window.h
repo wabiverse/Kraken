@@ -22,7 +22,7 @@ class ZepTabWindow : public ZepComponent {
 
   ZepWindow *DoMotion(WindowMotion motion);
   ZepWindow *AddWindow(ZepBuffer *pBuffer,
-                       ZepWindow *pParent          = nullptr,
+                       ZepWindow *pParent = nullptr,
                        RegionLayoutType layoutType = RegionLayoutType::HBox);
   void RemoveWindow(ZepWindow *pWindow);
   // void WalkRegions();
@@ -33,7 +33,7 @@ class ZepTabWindow : public ZepComponent {
   }
   void CloseActiveWindow();
 
-  using tWindows       = std::vector<ZepWindow *>;
+  using tWindows = std::vector<ZepWindow *>;
   using tWindowRegions = std::map<ZepWindow *, std::shared_ptr<Region>>;
   const tWindows &GetWindows() const
   {

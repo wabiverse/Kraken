@@ -47,8 +47,8 @@ class HdPhInstancer;
 using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 
 using HdBufferSourceSharedPtrVector = std::vector<HdBufferSourceSharedPtr>;
-using HdBufferSpecVector            = std::vector<struct HdBufferSpec>;
-using HdPhShaderCodeSharedPtr       = std::shared_ptr<class HdPhShaderCode>;
+using HdBufferSpecVector = std::vector<struct HdBufferSpec>;
+using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
 
 using HdComputationSharedPtr = std::shared_ptr<class HdComputation>;
 
@@ -124,18 +124,17 @@ bool HdPhCanSkipBARAllocationOrUpdate(HdBufferSourceSharedPtrVector const &sourc
 // Internally generated primvar names will never be among the specs returned,
 HDPH_API
 HdBufferSpecVector HdPhGetRemovedPrimvarBufferSpecs(
-    HdBufferArrayRangeSharedPtr const &curRange,
-    HdPrimvarDescriptorVector const &newPrimvarDescs,
-    HdExtComputationPrimvarDescriptorVector const &newCompPrimvarDescs,
-    TfTokenVector const &internallyGeneratedPrimvarNames,
-    SdfPath const &rprimId);
+  HdBufferArrayRangeSharedPtr const &curRange,
+  HdPrimvarDescriptorVector const &newPrimvarDescs,
+  HdExtComputationPrimvarDescriptorVector const &newCompPrimvarDescs,
+  TfTokenVector const &internallyGeneratedPrimvarNames,
+  SdfPath const &rprimId);
 
 HDPH_API
-HdBufferSpecVector HdPhGetRemovedPrimvarBufferSpecs(
-    HdBufferArrayRangeSharedPtr const &curRange,
-    HdPrimvarDescriptorVector const &newPrimvarDescs,
-    TfTokenVector const &internallyGeneratedPrimvarNames,
-    SdfPath const &rprimId);
+HdBufferSpecVector HdPhGetRemovedPrimvarBufferSpecs(HdBufferArrayRangeSharedPtr const &curRange,
+                                                    HdPrimvarDescriptorVector const &newPrimvarDescs,
+                                                    TfTokenVector const &internallyGeneratedPrimvarNames,
+                                                    SdfPath const &rprimId);
 
 // Updates the existing range at drawCoordIndex with newRange and flags garbage
 // collection (for the existing range) and rebuild of all draw batches when

@@ -61,7 +61,7 @@ SDF_DECLARE_HANDLES(SdfLayer);
 USDUTILS_API
 bool UsdUtilsCopyLayerMetadata(const SdfLayerHandle &source,
                                const SdfLayerHandle &destination,
-                               bool skipSublayers           = false,
+                               bool skipSublayers = false,
                                bool bakeUnauthoredFallbacks = false);
 
 using UsdUtilsPathHashSet = TfHashSet<SdfPath, SdfPath::Hash>;
@@ -117,14 +117,14 @@ using UsdUtilsPathHashSet = TfHashSet<SdfPath, SdfPath::Hash>;
 /// two lists (pathsToInclude, pathsToExclude).
 USDUTILS_API
 bool UsdUtilsComputeCollectionIncludesAndExcludes(
-    const SdfPathSet &includedRootPaths,
-    const UsdStageWeakPtr &usdStage,
-    SdfPathVector *pathsToInclude,
-    SdfPathVector *pathsToExclude,
-    double minInclusionRatio                           = 0.75,
-    const unsigned int maxNumExcludesBelowInclude      = 5u,
-    const unsigned int minIncludeExcludeCollectionSize = 3u,
-    const UsdUtilsPathHashSet &pathsToIgnore           = UsdUtilsPathHashSet());
+  const SdfPathSet &includedRootPaths,
+  const UsdStageWeakPtr &usdStage,
+  SdfPathVector *pathsToInclude,
+  SdfPathVector *pathsToExclude,
+  double minInclusionRatio = 0.75,
+  const unsigned int maxNumExcludesBelowInclude = 5u,
+  const unsigned int minIncludeExcludeCollectionSize = 3u,
+  const UsdUtilsPathHashSet &pathsToIgnore = UsdUtilsPathHashSet());
 
 /// Authors a collection named \p collectionName on the given prim,
 /// \p usdPrim with the given set of included paths (\p pathsToInclude)
@@ -182,11 +182,11 @@ UsdCollectionAPI UsdUtilsAuthorCollection(const TfToken &collectionName,
 /// returned vector should match the size of \p assignments.
 USDUTILS_API
 std::vector<UsdCollectionAPI> UsdUtilsCreateCollections(
-    const std::vector<std::pair<TfToken, SdfPathSet>> &assignments,
-    const UsdPrim &usdPrim,
-    const double minInclusionRatio                     = 0.75,
-    const unsigned int maxNumExcludesBelowInclude      = 5u,
-    const unsigned int minIncludeExcludeCollectionSize = 3u);
+  const std::vector<std::pair<TfToken, SdfPathSet>> &assignments,
+  const UsdPrim &usdPrim,
+  const double minInclusionRatio = 0.75,
+  const unsigned int maxNumExcludesBelowInclude = 5u,
+  const unsigned int minIncludeExcludeCollectionSize = 3u);
 
 /// @}
 

@@ -27,8 +27,8 @@
 WABI_NAMESPACE_BEGIN
 
 void Usd_PrimTypeInfoCache::ComputeInvalidPrimTypeToFallbackMap(
-    const VtDictionary &fallbackPrimTypesDict,
-    TfHashMap<TfToken, TfToken, TfHash> *typeToFallbackTypeMap)
+  const VtDictionary &fallbackPrimTypesDict,
+  TfHashMap<TfToken, TfToken, TfHash> *typeToFallbackTypeMap)
 {
   // The dictionary is expected to map prim type name strings each to a
   // VtTokenArray containing the ordered list of fallback types to use if
@@ -42,9 +42,9 @@ void Usd_PrimTypeInfoCache::ComputeInvalidPrimTypeToFallbackMap(
     }
     if (!valuePair.second.IsHolding<VtTokenArray>()) {
       TF_WARN(
-          "Value for key '%s' in fallbackPrimTypes metadata "
-          "dictionary is not a VtTokenArray.",
-          typeName.GetText());
+        "Value for key '%s' in fallbackPrimTypes metadata "
+        "dictionary is not a VtTokenArray.",
+        typeName.GetText());
       continue;
     }
     const VtTokenArray &fallbackNames = valuePair.second.UncheckedGet<VtTokenArray>();

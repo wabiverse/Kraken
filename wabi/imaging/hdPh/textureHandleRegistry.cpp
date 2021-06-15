@@ -38,10 +38,10 @@ class HdPh_TextureHandleRegistry::_TextureToHandlesMap {
  public:
   using TextureSharedPtr = HdPhTextureObjectSharedPtr;
 
-  using HandlePtr                = HdPhTextureHandlePtr;
-  using HandlePtrVector          = tbb::concurrent_vector<HandlePtr>;
+  using HandlePtr = HdPhTextureHandlePtr;
+  using HandlePtrVector = tbb::concurrent_vector<HandlePtr>;
   using HandlePtrVectorSharedPtr = std::shared_ptr<HandlePtrVector>;
-  using Map                      = std::unordered_map<TextureSharedPtr, HandlePtrVectorSharedPtr>;
+  using Map = std::unordered_map<TextureSharedPtr, HandlePtrVectorSharedPtr>;
 
   // Get handles associated to a texture.
   HandlePtrVectorSharedPtr GetHandles(TextureSharedPtr const &texture)
@@ -151,30 +151,30 @@ class HdPh_TextureHandleRegistry::_TextureToHandlesMap {
 };
 
 HdPh_TextureHandleRegistry::HdPh_TextureHandleRegistry(HdPhResourceRegistry *registry)
-    : _textureTypeToMemoryRequestChanged(false),
-      _samplerObjectRegistry(std::make_unique<HdPh_SamplerObjectRegistry>(registry)),
-      _textureObjectRegistry(std::make_unique<HdPh_TextureObjectRegistry>(registry)),
-      _textureToHandlesMap(std::make_unique<_TextureToHandlesMap>())
+  : _textureTypeToMemoryRequestChanged(false),
+    _samplerObjectRegistry(std::make_unique<HdPh_SamplerObjectRegistry>(registry)),
+    _textureObjectRegistry(std::make_unique<HdPh_TextureObjectRegistry>(registry)),
+    _textureToHandlesMap(std::make_unique<_TextureToHandlesMap>())
 {}
 
 HdPh_TextureHandleRegistry::~HdPh_TextureHandleRegistry() = default;
 
 HdPhTextureHandleSharedPtr HdPh_TextureHandleRegistry::AllocateTextureHandle(
-    HdPhTextureIdentifier const &textureId,
-    HdTextureType textureType,
-    HdSamplerParameters const &samplerParams,
-    size_t memoryRequest,
-    bool createBindlessHandle,
-    HdPhShaderCodePtr const &shaderCode)
+  HdPhTextureIdentifier const &textureId,
+  HdTextureType textureType,
+  HdSamplerParameters const &samplerParams,
+  size_t memoryRequest,
+  bool createBindlessHandle,
+  HdPhShaderCodePtr const &shaderCode)
 {
   TRACE_FUNCTION();
 
   // Allocate texture (CPU only)
   HdPhTextureObjectSharedPtr const textureObject = _textureObjectRegistry->AllocateTextureObject(
-      textureId, textureType);
+    textureId, textureType);
 
   HdPhTextureHandleSharedPtr const result = std::make_shared<HdPhTextureHandle>(
-      textureObject, samplerParams, memoryRequest, createBindlessHandle, shaderCode, this);
+    textureObject, samplerParams, memoryRequest, createBindlessHandle, shaderCode, this);
 
   // Keep track and mark dirty
   _textureToHandlesMap->Insert(textureObject, result);
@@ -201,14 +201,13 @@ void HdPh_TextureHandleRegistry::MarkDirty(HdPhShaderCodePtr const &shader)
 // Compute target memory for texture.
 void HdPh_TextureHandleRegistry::_ComputeMemoryRequest(HdPhTextureObjectSharedPtr const &texture)
 {
-  _TextureToHandlesMap::HandlePtrVectorSharedPtr const handles = _textureToHandlesMap->GetHandles(
-      texture);
+  _TextureToHandlesMap::HandlePtrVectorSharedPtr const handles = _textureToHandlesMap->GetHandles(texture);
 
   if (!handles) {
     return;
   }
 
-  bool hasHandle    = false;
+  bool hasHandle = false;
   size_t maxRequest = 0;
 
   // Take maximum of memory requests from all associated
@@ -216,7 +215,7 @@ void HdPh_TextureHandleRegistry::_ComputeMemoryRequest(HdPhTextureObjectSharedPt
   for (HdPhTextureHandlePtr const &handlePtr : *handles) {
     if (HdPhTextureHandleSharedPtr const handle = handlePtr.lock()) {
       maxRequest = std::max(maxRequest, handle->GetMemoryRequest());
-      hasHandle  = true;
+      hasHandle = true;
     }
   }
 
@@ -234,8 +233,7 @@ void HdPh_TextureHandleRegistry::_ComputeMemoryRequest(HdPhTextureObjectSharedPt
 }
 
 // Compute target memory for textures.
-void HdPh_TextureHandleRegistry::_ComputeMemoryRequests(
-    const std::set<HdPhTextureObjectSharedPtr> &textures)
+void HdPh_TextureHandleRegistry::_ComputeMemoryRequests(const std::set<HdPhTextureObjectSharedPtr> &textures)
 {
   TRACE_FUNCTION();
 
@@ -337,8 +335,8 @@ std::set<HdPhShaderCodeSharedPtr> HdPh_TextureHandleRegistry::_Commit()
   // ... texture handles associated to textures affected by the
   // (re)-commit.
   for (HdPhTextureObjectSharedPtr const &texture : committedTextures) {
-    if (_TextureToHandlesMap::HandlePtrVectorSharedPtr const handles =
-            _textureToHandlesMap->GetHandles(texture)) {
+    if (_TextureToHandlesMap::HandlePtrVectorSharedPtr const handles = _textureToHandlesMap->GetHandles(
+          texture)) {
       _Uniquify(*handles, &dirtyHandles);
     }
   }
@@ -401,7 +399,7 @@ void HdPh_TextureHandleRegistry::SetMemoryRequestForTextureType(const HdTextureT
 {
   size_t &val = _textureTypeToMemoryRequest[textureType];
   if (val != memoryRequest) {
-    val                                = memoryRequest;
+    val = memoryRequest;
     _textureTypeToMemoryRequestChanged = true;
   }
 }

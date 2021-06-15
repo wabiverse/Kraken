@@ -35,9 +35,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-using HdPhExtCompGpuComputationResourceSharedPtr =
-    std::shared_ptr<class HdPhExtCompGpuComputationResource>;
-using HdPhGLSLProgramSharedPtr          = std::shared_ptr<class HdPhGLSLProgram>;
+using HdPhExtCompGpuComputationResourceSharedPtr = std::shared_ptr<class HdPhExtCompGpuComputationResource>;
+using HdPhGLSLProgramSharedPtr = std::shared_ptr<class HdPhGLSLProgram>;
 using HdBufferArrayRangeSharedPtrVector = std::vector<HdBufferArrayRangeSharedPtr>;
 
 /// \class HdPhExtCompGpuComputationResource
@@ -123,7 +122,7 @@ class HdPhExtCompGpuComputationResource final {
   HdPhGLSLProgramSharedPtr _computeProgram;
   HdPh_ResourceBinder _resourceBinder;
 
-  HdPhExtCompGpuComputationResource()                                          = delete;
+  HdPhExtCompGpuComputationResource() = delete;
   HdPhExtCompGpuComputationResource(const HdPhExtCompGpuComputationResource &) = delete;
   HdPhExtCompGpuComputationResource &operator=(const HdPhExtCompGpuComputationResource &) = delete;
 };

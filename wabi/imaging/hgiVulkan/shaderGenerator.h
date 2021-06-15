@@ -58,9 +58,9 @@ class HgiVulkanShaderGenerator final : public HgiShaderGenerator {
   void _Execute(std::ostream &ss, const std::string &originalShaderShader) override;
 
  private:
-  HgiVulkanShaderGenerator()        = delete;
+  HgiVulkanShaderGenerator() = delete;
   HgiVulkanShaderGenerator &operator=(const HgiVulkanShaderGenerator &) = delete;
-  HgiVulkanShaderGenerator(const HgiVulkanShaderGenerator &)            = delete;
+  HgiVulkanShaderGenerator(const HgiVulkanShaderGenerator &) = delete;
 
   void _WriteConstantParams(const HgiShaderFunctionParamDescVector &parameters);
 
@@ -69,8 +69,7 @@ class HgiVulkanShaderGenerator final : public HgiShaderGenerator {
   void _WriteBuffers(const HgiShaderFunctionBufferDescVector &buffers);
 
   // For writing shader inputs and outputs who are very similarly written
-  void _WriteInOuts(const HgiShaderFunctionParamDescVector &parameters,
-                    const std::string &qualifier);
+  void _WriteInOuts(const HgiShaderFunctionParamDescVector &parameters, const std::string &qualifier);
 
   HgiVulkanShaderSectionUniquePtrVector _shaderSections;
   uint32_t _bindIndex;

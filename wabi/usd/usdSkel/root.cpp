@@ -210,15 +210,15 @@ static bool _ComputeExtent(const UsdGeomBoundable &boundable,
 
         float skelPadding = skinningQuery.ComputeExtentsPadding(skelRestXforms,
                                                                 UsdGeomBoundable(skinnedPrim));
-        padding           = std::max(padding, skelPadding);
+        padding = std::max(padding, skelPadding);
       }
     }
 
     // Compute the final, padded extents from the skel-space
     // transforms, in the space of the SkelRoot prim.
-    bool resetXformStack     = false;
+    bool resetXformStack = false;
     GfMatrix4d skelRootXform = xfCache.ComputeRelativeTransform(
-        binding.GetSkeleton().GetPrim(), skelRoot.GetPrim(), &resetXformStack);
+      binding.GetSkeleton().GetPrim(), skelRoot.GetPrim(), &resetXformStack);
     if (!resetXformStack && transform) {
       skelRootXform *= *transform;
     }

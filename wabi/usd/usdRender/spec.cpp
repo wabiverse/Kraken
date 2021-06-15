@@ -77,9 +77,7 @@ template<typename T> inline bool _Get(UsdAttribute const &attr, T *val, bool spa
   return false;
 }
 
-static void _ReadSettingsBase(UsdRenderSettingsBase const &base,
-                              UsdRenderSpec::Product *pd,
-                              bool sparse)
+static void _ReadSettingsBase(UsdRenderSettingsBase const &base, UsdRenderSpec::Product *pd, bool sparse)
 {
   SdfPathVector targets;
   base.GetCameraRel().GetForwardedTargets(&targets);
@@ -105,21 +103,21 @@ static void _ReadSettingsBase(UsdRenderSettingsBase const &base,
 static void _ApplyAspectRatioPolicy(UsdRenderSpec::Product *product)
 {
   // Gather dimensions
-  GfVec2i res  = product->resolution;
+  GfVec2i res = product->resolution;
   GfVec2f size = product->apertureSize;
   // Validate dimensions
   if (res[0] <= 0.0 || res[1] <= 0.0 || size[0] <= 0.0 || size[1] <= 0.0) {
     return;
   }
   // Compute aspect ratios
-  float resAspectRatio   = float(res[0]) / float(res[1]);
+  float resAspectRatio = float(res[0]) / float(res[1]);
   float imageAspectRatio = product->pixelAspectRatio * resAspectRatio;
   if (imageAspectRatio <= 0.0) {
     return;
   }
   float apertureAspectRatio = size[0] / size[1];
   // Apply policy
-  TfToken const &policy               = product->aspectRatioConformPolicy;
+  TfToken const &policy = product->aspectRatioConformPolicy;
   enum { Width, Height, None } adjust = None;
   if (policy == UsdRenderTokens->adjustPixelAspectRatio) {
     product->pixelAspectRatio = apertureAspectRatio / resAspectRatio;
@@ -150,7 +148,7 @@ UsdRenderSpec UsdRenderComputeSpec(UsdRenderSettings const &settings,
                                    std::vector<std::string> const &extraNamespaces)
 {
   UsdRenderSpec rd;
-  UsdPrim prim          = settings.GetPrim();
+  UsdPrim prim = settings.GetPrim();
   UsdStageWeakPtr stage = prim.GetStage();
   if (!stage) {
     TF_CODING_ERROR("Invalid stage\n");
@@ -180,10 +178,10 @@ UsdRenderSpec UsdRenderComputeSpec(UsdRenderSettings const &settings,
       }
       else {
         TF_RUNTIME_ERROR(
-            "UsdRenderSettings: Could not find camera "
-            "<%s> for product <%s>\n",
-            pd.cameraPath.GetText(),
-            target.GetText());
+          "UsdRenderSettings: Could not find camera "
+          "<%s> for product <%s>\n",
+          pd.cameraPath.GetText(),
+          target.GetText());
         continue;
       }
 
@@ -221,12 +219,12 @@ UsdRenderSpec UsdRenderComputeSpec(UsdRenderSettings const &settings,
           }
           else {
             TF_RUNTIME_ERROR(
-                "Render product <%s> includes "
-                "render var at path <%s>, but "
-                "no suitable UsdRenderVar prim "
-                "was found.  Skipping.",
-                target.GetText(),
-                renderVarPath.GetText());
+              "Render product <%s> includes "
+              "render var at path <%s>, but "
+              "no suitable UsdRenderVar prim "
+              "was found.  Skipping.",
+              target.GetText(),
+              renderVarPath.GetText());
           }
         }
       }

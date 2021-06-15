@@ -156,9 +156,7 @@ size_t HgiGetComponentCount(HgiFormat f);
 /// a block.
 ///
 HGI_API
-size_t HgiGetDataSizeOfFormat(HgiFormat f,
-                              size_t *blockWidth  = nullptr,
-                              size_t *blockHeight = nullptr);
+size_t HgiGetDataSizeOfFormat(HgiFormat f, size_t *blockWidth = nullptr, size_t *blockHeight = nullptr);
 
 /// Return whether the given format uses compression.
 HGI_API

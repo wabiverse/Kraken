@@ -37,7 +37,7 @@ WABI_NAMESPACE_BEGIN
 
 using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 
-using HdComputationSharedPtr       = std::shared_ptr<class HdComputation>;
+using HdComputationSharedPtr = std::shared_ptr<class HdComputation>;
 using HdComputationSharedPtrVector = std::vector<HdComputationSharedPtr>;
 
 /// \class HdComputation
@@ -54,8 +54,7 @@ class HdComputation {
   virtual ~HdComputation();
 
   /// Execute computation.
-  virtual void Execute(HdBufferArrayRangeSharedPtr const &range,
-                       HdResourceRegistry *resourceRegistry) = 0;
+  virtual void Execute(HdBufferArrayRangeSharedPtr const &range, HdResourceRegistry *resourceRegistry) = 0;
 
   /// Returns the size of its destination buffer (located by range argument
   /// of Execute()). This function will be called after all HdBufferSources

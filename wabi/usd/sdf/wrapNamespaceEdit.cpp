@@ -103,8 +103,7 @@ static std::string _ReprBatchEdit(const SdfBatchNamespaceEdit &x)
     return TfStringPrintf("%sBatchNamespaceEdit()", TF_PY_REPR_PREFIX.c_str());
   }
   else {
-    return TfStringPrintf(
-        "%sBatchNamespaceEdit(%s)", TF_PY_REPR_PREFIX.c_str(), TfPyRepr(edits).c_str());
+    return TfStringPrintf("%sBatchNamespaceEdit(%s)", TF_PY_REPR_PREFIX.c_str(), TfPyRepr(edits).c_str());
   }
 }
 
@@ -128,9 +127,7 @@ static void _AddOldAndNew3(SdfBatchNamespaceEdit &x,
   x.Add(currentPath, newPath, index);
 }
 
-static bool _TranslateCanEdit(const object &canEdit,
-                              const SdfNamespaceEdit &edit,
-                              std::string *whyNot)
+static bool _TranslateCanEdit(const object &canEdit, const SdfNamespaceEdit &edit, std::string *whyNot)
 {
   if (TfPyIsNone(canEdit)) {
     return true;
@@ -215,25 +212,23 @@ void wrapNamespaceEditDetail()
 
   // Wrap SdfNamespaceEditDetail.
   scope s = class_<This>("NamespaceEditDetail", no_init)
-                .def(init<>())
-                .def(init<This::Result, const SdfNamespaceEdit &, const std::string &>())
-                .def("__str__", &_StringifyEditDetail)
-                .def("__repr__", &_ReprEditDetail)
-                .def_readwrite("result", &This::result)
-                .def_readwrite("edit", &This::edit)
-                .def_readwrite("reason", &This::reason)
-                .def(self == self)
-                .def(self != self);
+              .def(init<>())
+              .def(init<This::Result, const SdfNamespaceEdit &, const std::string &>())
+              .def("__str__", &_StringifyEditDetail)
+              .def("__repr__", &_ReprEditDetail)
+              .def_readwrite("result", &This::result)
+              .def_readwrite("edit", &This::edit)
+              .def_readwrite("reason", &This::reason)
+              .def(self == self)
+              .def(self != self);
 
   // Wrap SdfNamespaceEditDetail::Result.
   TfPyWrapEnum<This::Result>();
 
   // Wrap SdfNamespaceEditDetailVector.
-  to_python_converter<SdfNamespaceEditDetailVector,
-                      TfPySequenceToPython<SdfNamespaceEditDetailVector>>();
-  TfPyContainerConversions::from_python_sequence<
-      SdfNamespaceEditDetailVector,
-      TfPyContainerConversions::variable_capacity_policy>();
+  to_python_converter<SdfNamespaceEditDetailVector, TfPySequenceToPython<SdfNamespaceEditDetailVector>>();
+  TfPyContainerConversions::from_python_sequence<SdfNamespaceEditDetailVector,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 }
 
 void wrapBatchNamespaceEdit()
@@ -241,23 +236,20 @@ void wrapBatchNamespaceEdit()
   typedef SdfBatchNamespaceEdit This;
 
   class_<This>("BatchNamespaceEdit", no_init)
-      .def(init<>())
-      .def(init<const This &>())
-      .def(init<const SdfNamespaceEditVector &>())
-      .def("__str__", &_StringifyBatchEdit)
-      .def("__repr__", &_ReprBatchEdit)
-      .def("Add", &_AddEdit)
-      .def("Add", &_AddOldAndNew2)
-      .def("Add", &_AddOldAndNew3)
-      .add_property("edits",
-                    make_function(&This::GetEdits, return_value_policy<return_by_value>()))
-      .def("Process",
-           &_Process,
-           (arg("hasObjectAtPath"), arg("canEdit"), arg("fixBackpointers") = true));
+    .def(init<>())
+    .def(init<const This &>())
+    .def(init<const SdfNamespaceEditVector &>())
+    .def("__str__", &_StringifyBatchEdit)
+    .def("__repr__", &_ReprBatchEdit)
+    .def("Add", &_AddEdit)
+    .def("Add", &_AddOldAndNew2)
+    .def("Add", &_AddOldAndNew3)
+    .add_property("edits", make_function(&This::GetEdits, return_value_policy<return_by_value>()))
+    .def("Process", &_Process, (arg("hasObjectAtPath"), arg("canEdit"), arg("fixBackpointers") = true));
 }
 
 static SdfNamespaceEdit::Index _atEnd = SdfNamespaceEdit::AtEnd;
-static SdfNamespaceEdit::Index _same  = SdfNamespaceEdit::Same;
+static SdfNamespaceEdit::Index _same = SdfNamespaceEdit::Same;
 
 }  // anonymous namespace
 
@@ -266,34 +258,33 @@ void wrapNamespaceEdit()
   typedef SdfNamespaceEdit This;
 
   class_<This>("NamespaceEdit", no_init)
-      .def(init<>())
-      .def(init<const This::Path &, const This::Path &, optional<This::Index>>())
-      .def("__str__", &_StringifyEdit)
-      .def("__repr__", &_ReprEdit)
-      .def_readwrite("currentPath", &This::currentPath)
-      .def_readwrite("newPath", &This::newPath)
-      .def_readwrite("index", &This::index)
-      .def_readonly("atEnd", &_atEnd)
-      .def_readonly("same", &_same)
-      .def(self == self)
-      .def(self != self)
+    .def(init<>())
+    .def(init<const This::Path &, const This::Path &, optional<This::Index>>())
+    .def("__str__", &_StringifyEdit)
+    .def("__repr__", &_ReprEdit)
+    .def_readwrite("currentPath", &This::currentPath)
+    .def_readwrite("newPath", &This::newPath)
+    .def_readwrite("index", &This::index)
+    .def_readonly("atEnd", &_atEnd)
+    .def_readonly("same", &_same)
+    .def(self == self)
+    .def(self != self)
 
-      .def("Remove", &This::Remove)
-      .staticmethod("Remove")
-      .def("Rename", &This::Rename)
-      .staticmethod("Rename")
-      .def("Reorder", &This::Reorder)
-      .staticmethod("Reorder")
-      .def("Reparent", &This::Reparent)
-      .staticmethod("Reparent")
-      .def("ReparentAndRename", &This::ReparentAndRename)
-      .staticmethod("ReparentAndRename");
+    .def("Remove", &This::Remove)
+    .staticmethod("Remove")
+    .def("Rename", &This::Rename)
+    .staticmethod("Rename")
+    .def("Reorder", &This::Reorder)
+    .staticmethod("Reorder")
+    .def("Reparent", &This::Reparent)
+    .staticmethod("Reparent")
+    .def("ReparentAndRename", &This::ReparentAndRename)
+    .staticmethod("ReparentAndRename");
 
   // Wrap SdfNamespaceEditVector.
   to_python_converter<SdfNamespaceEditVector, TfPySequenceToPython<SdfNamespaceEditVector>>();
-  TfPyContainerConversions::from_python_sequence<
-      SdfNamespaceEditVector,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<SdfNamespaceEditVector,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 
   wrapNamespaceEditDetail();
   wrapBatchNamespaceEdit();

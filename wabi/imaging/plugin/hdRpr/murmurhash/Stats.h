@@ -94,8 +94,7 @@ int PrintCollisions(hashfunc<hashtype> hash, std::vector<keytype> &keys)
 //----------------------------------------------------------------------------
 // Measure the distribution "score" for each possible N-bit span up to 20 bits
 
-template<typename hashtype>
-double TestDistribution(std::vector<hashtype> &hashes, bool drawDiagram)
+template<typename hashtype> double TestDistribution(std::vector<hashtype> &hashes, bool drawDiagram)
 {
   printf("Testing distribution - ");
 
@@ -116,12 +115,12 @@ double TestDistribution(std::vector<hashtype> &hashes, bool drawDiagram)
   std::vector<int> bins;
   bins.resize(1 << maxwidth);
 
-  double worst   = 0;
+  double worst = 0;
   int worstStart = -1;
   int worstWidth = -1;
 
   for (int start = 0; start < hashbits; start++) {
-    int width    = maxwidth;
+    int width = maxwidth;
     int bincount = (1 << width);
 
     memset(&bins[0], 0, sizeof(int) * bincount);
@@ -147,7 +146,7 @@ double TestDistribution(std::vector<hashtype> &hashes, bool drawDiagram)
         plot(n);
 
       if (n > worst) {
-        worst      = n;
+        worst = n;
         worstStart = start;
         worstWidth = width;
       }
@@ -190,8 +189,7 @@ bool TestHashList(std::vector<hashtype> &hashes,
   {
     size_t count = hashes.size();
 
-    double expected = (double(count) * double(count - 1)) /
-                      pow(2.0, double(sizeof(hashtype) * 8 + 1));
+    double expected = (double(count) * double(count - 1)) / pow(2.0, double(sizeof(hashtype) * 8 + 1));
 
     printf("Testing collisions   - Expected %8.2f, ", expected);
 
@@ -239,10 +237,7 @@ bool TestHashList(std::vector<hashtype> &hashes,
 //----------
 
 template<typename hashtype>
-bool TestHashList(std::vector<hashtype> &hashes,
-                  bool /*testColl*/,
-                  bool testDist,
-                  bool drawDiagram)
+bool TestHashList(std::vector<hashtype> &hashes, bool /*testColl*/, bool testDist, bool drawDiagram)
 {
   std::vector<hashtype> collisions;
 
@@ -294,10 +289,9 @@ bool TestKeyList(hashfunc<hashtype> hash,
 // I'm not sure it's that useful (and hash functions that fail this test but
 // pass the normal distribution test still work well in practice)
 
-template<typename hashtype>
-double TestDistributionBytepairs(std::vector<hashtype> &hashes, bool drawDiagram)
+template<typename hashtype> double TestDistributionBytepairs(std::vector<hashtype> &hashes, bool drawDiagram)
 {
-  const int nbytes   = sizeof(hashtype);
+  const int nbytes = sizeof(hashtype);
   const int hashbits = nbytes * 8;
 
   const int nbins = 65536;
@@ -355,12 +349,12 @@ template<typename hashtype>
 void TestDistributionFast(std::vector<hashtype> &hashes, double &dworst, double &davg)
 {
   const int hashbits = sizeof(hashtype) * 8;
-  const int nbins    = 65536;
+  const int nbins = 65536;
 
   std::vector<int> bins(nbins, 0);
 
   dworst = -1.0e90;
-  davg   = 0;
+  davg = 0;
 
   for (int start = 0; start < hashbits; start += 8) {
     bins.clear();

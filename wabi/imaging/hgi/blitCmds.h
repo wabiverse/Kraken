@@ -118,7 +118,7 @@ class HgiBlitCmds : public HgiCmds {
 
  private:
   HgiBlitCmds &operator=(const HgiBlitCmds &) = delete;
-  HgiBlitCmds(const HgiBlitCmds &)            = delete;
+  HgiBlitCmds(const HgiBlitCmds &) = delete;
 };
 
 WABI_NAMESPACE_END

@@ -74,7 +74,7 @@ class HdPoints : public HdRprim {
 
  private:
   // Class can not be default constructed or copied.
-  HdPoints()                 = delete;
+  HdPoints() = delete;
   HdPoints(const HdPoints &) = delete;
   HdPoints &operator=(const HdPoints &) = delete;
 

@@ -32,19 +32,17 @@
 
 WABI_NAMESPACE_BEGIN
 
-CameraUtilScreenWindowParameters::CameraUtilScreenWindowParameters(
-    const GfCamera &camera,
-    GfCamera::FOVDirection fitDirection)
-    : _screenWindow(-camera.GetHorizontalAperture() + 2 * camera.GetHorizontalApertureOffset(),
-                    +camera.GetHorizontalAperture() + 2 * camera.GetHorizontalApertureOffset(),
-                    -camera.GetVerticalAperture() + 2 * camera.GetVerticalApertureOffset(),
-                    +camera.GetVerticalAperture() + 2 * camera.GetVerticalApertureOffset()),
-      _fieldOfView(camera.GetFieldOfView(fitDirection))
+CameraUtilScreenWindowParameters::CameraUtilScreenWindowParameters(const GfCamera &camera,
+                                                                   GfCamera::FOVDirection fitDirection)
+  : _screenWindow(-camera.GetHorizontalAperture() + 2 * camera.GetHorizontalApertureOffset(),
+                  +camera.GetHorizontalAperture() + 2 * camera.GetHorizontalApertureOffset(),
+                  -camera.GetVerticalAperture() + 2 * camera.GetVerticalApertureOffset(),
+                  +camera.GetVerticalAperture() + 2 * camera.GetVerticalApertureOffset()),
+    _fieldOfView(camera.GetFieldOfView(fitDirection))
 {
   if (camera.GetProjection() == GfCamera::Perspective) {
-    const double denom = (fitDirection == GfCamera::FOVHorizontal) ?
-                             camera.GetHorizontalAperture() :
-                             camera.GetVerticalAperture();
+    const double denom = (fitDirection == GfCamera::FOVHorizontal) ? camera.GetHorizontalAperture() :
+                                                                     camera.GetVerticalAperture();
     if (denom != 0.0) {
       _screenWindow /= denom;
     }

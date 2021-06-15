@@ -45,7 +45,7 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PUBLIC_TOKENS(GlfTextureTokens, GLF_TEXTURE_TOKENS);
 
 static size_t _TextureMemoryAllocated = 0;
-static size_t _TextureContentsID      = 0;
+static size_t _TextureContentsID = 0;
 
 static size_t _GetNewContentsID()
 {
@@ -53,17 +53,17 @@ static size_t _GetNewContentsID()
 }
 
 GlfTexture::GlfTexture()
-    : _memoryUsed(0),
-      _memoryRequested(INT_MAX),
-      _contentsID(_GetNewContentsID()),
-      _originLocation(HioImage::OriginUpperLeft)
+  : _memoryUsed(0),
+    _memoryRequested(INT_MAX),
+    _contentsID(_GetNewContentsID()),
+    _originLocation(HioImage::OriginUpperLeft)
 {}
 
 GlfTexture::GlfTexture(HioImage::ImageOriginLocation originLocation)
-    : _memoryUsed(0),
-      _memoryRequested(INT_MAX),
-      _contentsID(_GetNewContentsID()),
-      _originLocation(originLocation)
+  : _memoryUsed(0),
+    _memoryRequested(INT_MAX),
+    _contentsID(_GetNewContentsID()),
+    _originLocation(originLocation)
 {}
 
 GlfTexture::~GlfTexture()

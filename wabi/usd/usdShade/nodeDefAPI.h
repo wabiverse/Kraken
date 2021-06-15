@@ -206,7 +206,7 @@ class UsdShadeNodeDefAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDSHADE_API
   UsdAttribute CreateImplementationSourceAttr(VtValue const &defaultValue = VtValue(),
-                                              bool writeSparsely          = false) const;
+                                              bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -236,8 +236,7 @@ class UsdShadeNodeDefAPI : public UsdAPISchemaBase {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDSHADE_API
-  UsdAttribute CreateIdAttr(VtValue const &defaultValue = VtValue(),
-                            bool writeSparsely          = false) const;
+  UsdAttribute CreateIdAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //
@@ -349,9 +348,8 @@ class UsdShadeNodeDefAPI : public UsdAPISchemaBase {
   /// This also sets the <i>info:implementationSource</i> attribute on the
   /// shader to <b>UsdShadeTokens->sourceAsset</b>
   USDSHADE_API
-  bool SetSourceAssetSubIdentifier(
-      const TfToken &subIdentifier,
-      const TfToken &sourceType = UsdShadeTokens->universalSourceType) const;
+  bool SetSourceAssetSubIdentifier(const TfToken &subIdentifier,
+                                   const TfToken &sourceType = UsdShadeTokens->universalSourceType) const;
 
   /// Fetches the shader's sub-identifier for the source asset with the
   /// specified \p sourceType value from the <b>info:<i>sourceType:</i>
@@ -368,9 +366,8 @@ class UsdShadeNodeDefAPI : public UsdAPISchemaBase {
   /// <b>sourceAsset</b> and the sub-identifier for the given source type was
   /// fetched successfully into \p subIdentifier. Returns false otherwise.
   USDSHADE_API
-  bool GetSourceAssetSubIdentifier(
-      TfToken *subIdentifier,
-      const TfToken &sourceType = UsdShadeTokens->universalSourceType) const;
+  bool GetSourceAssetSubIdentifier(TfToken *subIdentifier,
+                                   const TfToken &sourceType = UsdShadeTokens->universalSourceType) const;
 
   /// Sets the shader's source-code value to \p sourceCode for the given
   /// source type, \p sourceType.

@@ -27,12 +27,12 @@
 WABI_NAMESPACE_BEGIN
 
 HdRenderThread::HdRenderThread()
-    : _renderCallback(_DefaultRenderCallback),
-      _shutdownCallback(_DefaultShutdownCallback),
-      _requestedState(StateInitial),
-      _stopRequested(false),
-      _pauseRender(false),
-      _rendering(false)
+  : _renderCallback(_DefaultRenderCallback),
+    _shutdownCallback(_DefaultShutdownCallback),
+    _requestedState(StateInitial),
+    _stopRequested(false),
+    _pauseRender(false),
+    _rendering(false)
 {}
 
 HdRenderThread::~HdRenderThread()
@@ -54,13 +54,13 @@ void HdRenderThread::StartThread()
 {
   if (_renderThread.joinable()) {
     TF_CODING_ERROR(
-        "StartThread() called while render thread is "
-        "already running");
+      "StartThread() called while render thread is "
+      "already running");
     return;
   }
 
   _requestedState = StateIdle;
-  _renderThread   = std::thread(&HdRenderThread::_RenderLoop, this);
+  _renderThread = std::thread(&HdRenderThread::_RenderLoop, this);
 }
 
 void HdRenderThread::StopThread()

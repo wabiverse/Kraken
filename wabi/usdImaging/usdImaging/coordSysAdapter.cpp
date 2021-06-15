@@ -53,7 +53,7 @@ SdfPath UsdImagingCoordSysAdapter::Populate(UsdPrim const &usdPrim,
 {
   UsdImaging_CoordSysBindingStrategy::value_type bindings = _GetCoordSysBindings(usdPrim);
   if (bindings.idVecPtr) {
-    SdfPathVector const &idVec                                  = *(bindings.idVecPtr);
+    SdfPathVector const &idVec = *(bindings.idVecPtr);
     std::vector<UsdShadeCoordSysAPI::Binding> const &bindingVec = *(bindings.usdBindingVecPtr);
     TF_VERIFY(idVec.size() == bindingVec.size());
     for (size_t i = 0, n = idVec.size(); i < n; ++i) {
@@ -76,27 +76,24 @@ void UsdImagingCoordSysAdapter::_RemovePrim(SdfPath const &cachePath, UsdImaging
   index->RemoveSprim(HdPrimTypeTokens->coordSys, cachePath);
 }
 
-void UsdImagingCoordSysAdapter::TrackVariability(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    HdDirtyBits *timeVaryingBits,
-    UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingCoordSysAdapter::TrackVariability(UsdPrim const &prim,
+                                                 SdfPath const &cachePath,
+                                                 HdDirtyBits *timeVaryingBits,
+                                                 UsdImagingInstancerContext const *instancerContext) const
 {
   // Discover time-varying transform on the target prim.
   _IsTransformVarying(
-      prim, HdChangeTracker::DirtyTransform, UsdImagingTokens->usdVaryingXform, timeVaryingBits);
+    prim, HdChangeTracker::DirtyTransform, UsdImagingTokens->usdVaryingXform, timeVaryingBits);
 }
 
-void UsdImagingCoordSysAdapter::UpdateForTime(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    UsdTimeCode time,
-    HdDirtyBits requestedBits,
-    UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingCoordSysAdapter::UpdateForTime(UsdPrim const &prim,
+                                              SdfPath const &cachePath,
+                                              UsdTimeCode time,
+                                              HdDirtyBits requestedBits,
+                                              UsdImagingInstancerContext const *instancerContext) const
 {}
 
-void UsdImagingCoordSysAdapter::ProcessPrimResync(SdfPath const &primPath,
-                                                  UsdImagingIndexProxy *index)
+void UsdImagingCoordSysAdapter::ProcessPrimResync(SdfPath const &primPath, UsdImagingIndexProxy *index)
 {
   // If we get a resync notice, remove the coord sys object, and rely on
   // the delegate resync function to re-populate.

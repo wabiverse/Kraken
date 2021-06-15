@@ -36,26 +36,26 @@
 WABI_NAMESPACE_BEGIN
 
 HdChangeTracker::HdChangeTracker()
-    : _rprimState(),
-      _instancerState(),
-      _taskState(),
-      _sprimState(),
-      _bprimState(),
-      _generalState(),
-      _collectionState(),
-      _instancerRprimDependencies(),
-      _instancerInstancerDependencies()
-      // Note: Version numbers start at 1, with observers resetting theirs to 0.
-      // This is to cause a version mismatch during first-time processing.
-      ,
-      _varyingStateVersion(1),
-      _rprimIndexVersion(1),
-      _sprimIndexVersion(1),
-      _bprimIndexVersion(1),
-      _instancerIndexVersion(1),
-      _sceneStateVersion(1),
-      _visChangeCount(1),
-      _renderTagVersion(1)
+  : _rprimState(),
+    _instancerState(),
+    _taskState(),
+    _sprimState(),
+    _bprimState(),
+    _generalState(),
+    _collectionState(),
+    _instancerRprimDependencies(),
+    _instancerInstancerDependencies()
+    // Note: Version numbers start at 1, with observers resetting theirs to 0.
+    // This is to cause a version mismatch during first-time processing.
+    ,
+    _varyingStateVersion(1),
+    _rprimIndexVersion(1),
+    _sprimIndexVersion(1),
+    _bprimIndexVersion(1),
+    _instancerIndexVersion(1),
+    _sceneStateVersion(1),
+    _visChangeCount(1),
+    _renderTagVersion(1)
 {
   /*NOTHING*/
 }
@@ -129,7 +129,7 @@ void HdChangeTracker::MarkRprimDirty(SdfPath const &id, HdDirtyBits bits)
   HdDirtyBits oldBits = it->second;
   if ((oldBits & HdChangeTracker::Varying) == 0) {
     TF_DEBUG(HD_VARYING_STATE)
-        .Msg("New Varying State %s: %s\n", id.GetText(), StringifyDirtyBits(bits).c_str());
+      .Msg("New Varying State %s: %s\n", id.GetText(), StringifyDirtyBits(bits).c_str());
 
     // varying state changed.
     bits |= HdChangeTracker::Varying;
@@ -219,26 +219,22 @@ void HdChangeTracker::InstancerRemoved(SdfPath const &id)
 /// \name Dependency Tracking
 // -------------------------------------------------------------------------- //
 
-void HdChangeTracker::AddInstancerRprimDependency(SdfPath const &instancerId,
-                                                  SdfPath const &rprimId)
+void HdChangeTracker::AddInstancerRprimDependency(SdfPath const &instancerId, SdfPath const &rprimId)
 {
   _AddDependency(_instancerRprimDependencies, instancerId, rprimId);
 }
 
-void HdChangeTracker::RemoveInstancerRprimDependency(SdfPath const &instancerId,
-                                                     SdfPath const &rprimId)
+void HdChangeTracker::RemoveInstancerRprimDependency(SdfPath const &instancerId, SdfPath const &rprimId)
 {
   _RemoveDependency(_instancerRprimDependencies, instancerId, rprimId);
 }
 
-void HdChangeTracker::AddInstancerInstancerDependency(SdfPath const &parentId,
-                                                      SdfPath const &instancerId)
+void HdChangeTracker::AddInstancerInstancerDependency(SdfPath const &parentId, SdfPath const &instancerId)
 {
   _AddDependency(_instancerInstancerDependencies, parentId, instancerId);
 }
 
-void HdChangeTracker::RemoveInstancerInstancerDependency(SdfPath const &parentId,
-                                                         SdfPath const &instancerId)
+void HdChangeTracker::RemoveInstancerInstancerDependency(SdfPath const &parentId, SdfPath const &instancerId)
 {
   _RemoveDependency(_instancerInstancerDependencies, parentId, instancerId);
 }
@@ -830,8 +826,7 @@ void HdChangeTracker::MarkCollectionDirty(TfToken const &collectionName)
   HD_TRACE_FUNCTION();
 
   _CollectionStateMap::iterator it = _collectionState.find(collectionName);
-  if (!TF_VERIFY(
-          it != _collectionState.end(), "Collection %s not found\n", collectionName.GetText())) {
+  if (!TF_VERIFY(it != _collectionState.end(), "Collection %s not found\n", collectionName.GetText())) {
     return;
   }
   // bump the version number

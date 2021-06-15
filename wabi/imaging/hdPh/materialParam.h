@@ -78,9 +78,9 @@ class HdPh_MaterialParam final {
                      TfToken const &name,
                      VtValue const &fallbackValue,
                      TfTokenVector const &samplerCoords = TfTokenVector(),
-                     HdTextureType textureType          = HdTextureType::Uv,
-                     std::string const &swizzle         = std::string(),
-                     bool const isPremultiplied         = false);
+                     HdTextureType textureType = HdTextureType::Uv,
+                     std::string const &swizzle = std::string(),
+                     bool const isPremultiplied = false);
 
   // No d'tor so that we pick up the implicitly declared default
   // move c'tor.

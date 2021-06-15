@@ -49,8 +49,7 @@ typedef SdfChildrenView<Sdf_AttributeChildPolicy, SdfAttributeViewPredicate> Sdf
 typedef SdfChildrenView<Sdf_PrimChildPolicy> SdfPrimSpecView;
 typedef SdfChildrenView<Sdf_PropertyChildPolicy> SdfPropertySpecView;
 typedef SdfChildrenView<Sdf_AttributeChildPolicy> SdfRelationalAttributeSpecView;
-typedef SdfChildrenView<Sdf_RelationshipChildPolicy, SdfRelationshipViewPredicate>
-    SdfRelationshipSpecView;
+typedef SdfChildrenView<Sdf_RelationshipChildPolicy, SdfRelationshipViewPredicate> SdfRelationshipSpecView;
 typedef SdfChildrenView<Sdf_VariantChildPolicy> SdfVariantView;
 typedef SdfChildrenView<Sdf_VariantSetChildPolicy> SdfVariantSetView;
 typedef SdfChildrenProxy<SdfVariantSetView> SdfVariantSetsProxy;
@@ -77,14 +76,12 @@ SdfPathEditorProxy SdfGetPathEditorProxy(const SdfSpecHandle &spec, const TfToke
 /// Returns a reference list editor proxy for the references list op in the
 /// given \p referenceField on \p spec. If the value doesn't exist or the object
 /// is invalid then this returns an invalid list editor.
-SdfReferenceEditorProxy SdfGetReferenceEditorProxy(const SdfSpecHandle &spec,
-                                                   const TfToken &referenceField);
+SdfReferenceEditorProxy SdfGetReferenceEditorProxy(const SdfSpecHandle &spec, const TfToken &referenceField);
 
 /// Returns a payload list editor proxy for the payloads list op in the given
 /// \p payloadField on \p spec.  If the value doesn't exist or the object is
 /// invalid then this returns an invalid list editor.
-SdfPayloadEditorProxy SdfGetPayloadEditorProxy(const SdfSpecHandle &spec,
-                                               const TfToken &payloadField);
+SdfPayloadEditorProxy SdfGetPayloadEditorProxy(const SdfSpecHandle &spec, const TfToken &payloadField);
 
 /// Returns a name order list proxy for the ordering specified in the given
 /// \p orderField on \p spec.  If the value doesn't exist or the object is

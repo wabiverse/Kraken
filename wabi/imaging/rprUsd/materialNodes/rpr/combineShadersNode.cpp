@@ -33,7 +33,7 @@ WABI_NAMESPACE_BEGIN
 ///
 class RprUsd_RprCombineShadersNode : public RprUsd_MaterialNode {
  public:
-  RprUsd_RprCombineShadersNode()           = default;
+  RprUsd_RprCombineShadersNode() = default;
   ~RprUsd_RprCombineShadersNode() override = default;
 
   VtValue GetOutput(TfToken const &outputId) override
@@ -47,8 +47,7 @@ class RprUsd_RprCombineShadersNode : public RprUsd_MaterialNode {
 
   bool SetInput(TfToken const &inputId, VtValue const &value) override
   {
-    if (inputId == HdMaterialTerminalTokens->volume ||
-        inputId == HdMaterialTerminalTokens->surface ||
+    if (inputId == HdMaterialTerminalTokens->volume || inputId == HdMaterialTerminalTokens->surface ||
         inputId == HdMaterialTerminalTokens->displacement) {
       if (value.IsHolding<std::shared_ptr<rpr::MaterialNode>>()) {
         m_outputs[inputId] = value;
@@ -61,9 +60,9 @@ class RprUsd_RprCombineShadersNode : public RprUsd_MaterialNode {
     }
     else {
       TF_RUNTIME_ERROR(
-          "Invalid input for Combine Shaders node: must be `surface` or `displacement` or "
-          "`volume`, inputId=%s",
-          inputId.GetText());
+        "Invalid input for Combine Shaders node: must be `surface` or `displacement` or "
+        "`volume`, inputId=%s",
+        inputId.GetText());
     }
 
     return false;
@@ -71,25 +70,25 @@ class RprUsd_RprCombineShadersNode : public RprUsd_MaterialNode {
 
   static RprUsd_RprNodeInfo *GetInfo()
   {
-    auto ret       = new RprUsd_RprNodeInfo;
+    auto ret = new RprUsd_RprNodeInfo;
     auto &nodeInfo = *ret;
 
-    nodeInfo.name     = "rpr_combine";
-    nodeInfo.uiName   = "RPR Combine Shaders";
+    nodeInfo.name = "rpr_combine";
+    nodeInfo.uiName = "RPR Combine Shaders";
     nodeInfo.uiFolder = "Shaders";
 
     RprUsd_RprNodeInput surfaceInput(RprUsdMaterialNodeElement::kSurfaceShader);
-    surfaceInput.name   = HdMaterialTerminalTokens->surface;
+    surfaceInput.name = HdMaterialTerminalTokens->surface;
     surfaceInput.uiName = "Surface Shader";
     nodeInfo.inputs.push_back(surfaceInput);
 
     RprUsd_RprNodeInput displacementInput(RprUsdMaterialNodeElement::kDisplacementShader);
-    displacementInput.name   = HdMaterialTerminalTokens->displacement;
+    displacementInput.name = HdMaterialTerminalTokens->displacement;
     displacementInput.uiName = "Displacement Shader";
     nodeInfo.inputs.push_back(displacementInput);
 
     RprUsd_RprNodeInput volumeInput(RprUsdMaterialNodeElement::kVolumeShader);
-    volumeInput.name   = HdMaterialTerminalTokens->volume;
+    volumeInput.name = HdMaterialTerminalTokens->volume;
     volumeInput.uiName = "Volume Shader";
     nodeInfo.inputs.push_back(volumeInput);
 
@@ -116,14 +115,14 @@ ARCH_CONSTRUCTOR(RprUsd_InitCombineShadersNode, 255, void)
 {
   auto nodeInfo = RprUsd_RprCombineShadersNode::GetInfo();
   RprUsdMaterialRegistry::GetInstance().Register(
-      TfToken(nodeInfo->name, TfToken::Immortal),
-      [](RprUsd_MaterialBuilderContext *context, std::map<TfToken, VtValue> const &parameters) {
-        auto node = new RprUsd_RprCombineShadersNode();
-        for (auto &entry : parameters)
-          node->SetInput(entry.first, entry.second);
-        return node;
-      },
-      nodeInfo);
+    TfToken(nodeInfo->name, TfToken::Immortal),
+    [](RprUsd_MaterialBuilderContext *context, std::map<TfToken, VtValue> const &parameters) {
+      auto node = new RprUsd_RprCombineShadersNode();
+      for (auto &entry : parameters)
+        node->SetInput(entry.first, entry.second);
+      return node;
+    },
+    nodeInfo);
 }
 
 WABI_NAMESPACE_END

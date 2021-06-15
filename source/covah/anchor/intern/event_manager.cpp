@@ -48,8 +48,7 @@ eAnchorStatus ANCHOR_EventManager::addConsumer(ANCHOR_IEventConsumer *consumer)
 
   /**
    * Check to see whether the consumer is already in our list. */
-  ConsumerVector::const_iterator iter = std::find(
-      m_consumers.begin(), m_consumers.end(), consumer);
+  ConsumerVector::const_iterator iter = std::find(m_consumers.begin(), m_consumers.end(), consumer);
 
   if (iter == m_consumers.end()) {
     /**

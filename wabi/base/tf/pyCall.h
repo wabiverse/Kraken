@@ -66,9 +66,7 @@ template<typename Return> struct TfPyCall {
   TfPyObjWrapper _callable;
 };
 
-template<typename Return>
-template<typename... Args>
-inline Return TfPyCall<Return>::operator()(Args... args)
+template<typename Return> template<typename... Args> inline Return TfPyCall<Return>::operator()(Args... args)
 {
   TfPyLock pyLock;
   // Do *not* call through if there's an active python exception.

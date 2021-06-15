@@ -44,28 +44,28 @@ class HdSceneDelegate;
 class HdPhRenderPassState;
 
 using HdPhRenderPassShaderSharedPtr = std::shared_ptr<class HdPhRenderPassShader>;
-using HdPhShaderCodeSharedPtr       = std::shared_ptr<class HdPhShaderCode>;
+using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
 
-using HdRenderPassSharedPtr              = std::shared_ptr<class HdRenderPass>;
-using HdRenderPassSharedPtrVector        = std::vector<HdRenderPassSharedPtr>;
-using HdPhRenderPassStateSharedPtr       = std::shared_ptr<class HdPhRenderPassState>;
+using HdRenderPassSharedPtr = std::shared_ptr<class HdRenderPass>;
+using HdRenderPassSharedPtrVector = std::vector<HdRenderPassSharedPtr>;
+using HdPhRenderPassStateSharedPtr = std::shared_ptr<class HdPhRenderPassState>;
 using HdPhRenderPassStateSharedPtrVector = std::vector<HdPhRenderPassStateSharedPtr>;
 
 TF_DECLARE_WEAK_AND_REF_PTRS(GlfSimpleShadowArray);
 
 struct HdxShadowTaskParams {
   HdxShadowTaskParams()
-      : overrideColor(0.0),
-        wireframeColor(0.0),
-        enableLighting(false),
-        enableIdRender(false),
-        enableSceneMaterials(true),
-        alphaThreshold(0.0),
-        depthBiasEnable(false),
-        depthBiasConstantFactor(0.0f),
-        depthBiasSlopeFactor(1.0f),
-        depthFunc(HdCmpFuncLEqual),
-        cullStyle(HdCullStyleBackUnlessDoubleSided)
+    : overrideColor(0.0),
+      wireframeColor(0.0),
+      enableLighting(false),
+      enableIdRender(false),
+      enableSceneMaterials(true),
+      alphaThreshold(0.0),
+      depthBiasEnable(false),
+      depthBiasConstantFactor(0.0f),
+      depthBiasSlopeFactor(1.0f),
+      depthFunc(HdCmpFuncLEqual),
+      cullStyle(HdCullStyleBackUnlessDoubleSided)
   {}
 
   // RenderPassState
@@ -111,15 +111,14 @@ class HdxShadowTask : public HdTask {
   const TfTokenVector &GetRenderTags() const override;
 
  private:
-  void _UpdateDirtyParams(HdPhRenderPassStateSharedPtr &renderPassState,
-                          HdxShadowTaskParams const &params);
+  void _UpdateDirtyParams(HdPhRenderPassStateSharedPtr &renderPassState, HdxShadowTaskParams const &params);
 
   HdRenderPassSharedPtrVector _passes;
   HdPhRenderPassStateSharedPtrVector _renderPassStates;
   HdxShadowTaskParams _params;
   TfTokenVector _renderTags;
 
-  HdxShadowTask()                      = delete;
+  HdxShadowTask() = delete;
   HdxShadowTask(const HdxShadowTask &) = delete;
   HdxShadowTask &operator=(const HdxShadowTask &) = delete;
 };

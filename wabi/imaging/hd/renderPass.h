@@ -38,8 +38,8 @@ WABI_NAMESPACE_BEGIN
 class HdRenderIndex;
 class HdSceneDelegate;
 
-using HdDirtyListSharedPtr       = std::shared_ptr<class HdDirtyList>;
-using HdRenderPassSharedPtr      = std::shared_ptr<class HdRenderPass>;
+using HdDirtyListSharedPtr = std::shared_ptr<class HdDirtyList>;
+using HdRenderPassSharedPtr = std::shared_ptr<class HdRenderPass>;
 using HdRenderPassStateSharedPtr = std::shared_ptr<class HdRenderPassState>;
 
 /// \class HdRenderPass

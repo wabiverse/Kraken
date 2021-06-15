@@ -154,15 +154,15 @@ const char *_GetDeviceTypeFromID(uint32_t id)
 /**
  * Initialize members to ensure a sane starting state. */
 VkfDeviceCaps::VkfDeviceCaps()
-    : apiVersion(0),
-      driverVersion(0),
-      vendorID(0),
-      deviceID(0),
-      deviceType(VkPhysicalDeviceType::VK_PHYSICAL_DEVICE_TYPE_CPU),
-      deviceName(""),
-      pipelineCacheUUID({0}),
-      limits(),
-      sparseProperties()
+  : apiVersion(0),
+    driverVersion(0),
+    vendorID(0),
+    deviceID(0),
+    deviceType(VkPhysicalDeviceType::VK_PHYSICAL_DEVICE_TYPE_CPU),
+    deviceName(""),
+    pipelineCacheUUID({0}),
+    limits(),
+    sparseProperties()
 {}
 
 /* static */
@@ -196,37 +196,37 @@ void VkfDeviceCaps::VULKANDEVICE_LoadCaps()
    *
    * VULKANDEVICE_LoadCaps can also be called multiple times, so
    * not want to mix and match values in the event of an early out. */
-  apiVersion       = 0;
-  driverVersion    = 0;
-  vendorID         = 0;
-  deviceID         = 0;
-  deviceType       = VkPhysicalDeviceType::VK_PHYSICAL_DEVICE_TYPE_CPU;
-  limits           = VkPhysicalDeviceLimits();
+  apiVersion = 0;
+  driverVersion = 0;
+  vendorID = 0;
+  deviceID = 0;
+  deviceType = VkPhysicalDeviceType::VK_PHYSICAL_DEVICE_TYPE_CPU;
+  limits = VkPhysicalDeviceLimits();
   sparseProperties = VkPhysicalDeviceSparseProperties();
   strcpy(deviceName, "N/A");
   memset(pipelineCacheUUID, 0, sizeof(uint8_t) * VK_UUID_SIZE);
 
   VkApplicationInfo appInfo = {};
-  appInfo.sType             = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-  appInfo.pNext             = NULL;
-  appInfo.pApplicationName  = "Universal Scene Description";
-  appInfo.pEngineName       = "Pixar Hydra";
-  appInfo.apiVersion        = VK_API_VERSION_1_2;
+  appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+  appInfo.pNext = NULL;
+  appInfo.pApplicationName = "Universal Scene Description";
+  appInfo.pEngineName = "Pixar Hydra";
+  appInfo.apiVersion = VK_API_VERSION_1_2;
 
   VkInstanceCreateInfo createInfo = {};
-  createInfo.sType                = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-  createInfo.pNext                = NULL;
-  createInfo.flags                = 0;
-  createInfo.pApplicationInfo     = &appInfo;
+  createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+  createInfo.pNext = NULL;
+  createInfo.flags = 0;
+  createInfo.pApplicationInfo = &appInfo;
 
-  auto extensions                    = _GetRequiredExtensions();
-  createInfo.enabledExtensionCount   = static_cast<uint32_t>(extensions.size());
+  auto extensions = _GetRequiredExtensions();
+  createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
   createInfo.ppEnabledExtensionNames = extensions.data();
 
   vkCreateInstance(&createInfo, NULL, &vkInstance);
 
   VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-  uint32_t deviceCount            = 0;
+  uint32_t deviceCount = 0;
   vkEnumeratePhysicalDevices(vkInstance, &deviceCount, nullptr);
   if (!TF_VERIFY(deviceCount != 0))
     TF_CODING_ERROR("Failed to find GPUs with Vulkan support");
@@ -247,12 +247,12 @@ void VkfDeviceCaps::VULKANDEVICE_LoadCaps()
   VkPhysicalDeviceProperties props;
   vkGetPhysicalDeviceProperties(physicalDevice, &props);
 
-  apiVersion       = props.apiVersion;
-  driverVersion    = props.driverVersion;
-  vendorID         = props.vendorID;
-  deviceID         = props.deviceID;
-  deviceType       = props.deviceType;
-  limits           = props.limits;
+  apiVersion = props.apiVersion;
+  driverVersion = props.driverVersion;
+  vendorID = props.vendorID;
+  deviceID = props.deviceID;
+  deviceType = props.deviceType;
+  limits = props.limits;
   sparseProperties = props.sparseProperties;
   strcpy(deviceName, props.deviceName);
   memcpy(pipelineCacheUUID, props.pipelineCacheUUID, sizeof(uint8_t) * VK_UUID_SIZE);

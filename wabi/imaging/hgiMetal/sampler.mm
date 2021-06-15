@@ -38,18 +38,18 @@
 WABI_NAMESPACE_BEGIN
 
 HgiMetalSampler::HgiMetalSampler(HgiMetal *hgi, HgiSamplerDesc const &desc)
-    : HgiSampler(desc),
-      _samplerId(nil),
-      _label(nil)
+  : HgiSampler(desc),
+    _samplerId(nil),
+    _label(nil)
 {
   MTLSamplerDescriptor *smpDesc = [MTLSamplerDescriptor new];
 
   smpDesc.sAddressMode = HgiMetalConversions::GetSamplerAddressMode(desc.addressModeU);
   smpDesc.tAddressMode = HgiMetalConversions::GetSamplerAddressMode(desc.addressModeV);
   smpDesc.rAddressMode = HgiMetalConversions::GetSamplerAddressMode(desc.addressModeW);
-  smpDesc.minFilter    = HgiMetalConversions::GetMinMagFilter(desc.magFilter);
-  smpDesc.magFilter    = HgiMetalConversions::GetMinMagFilter(desc.minFilter);
-  smpDesc.mipFilter    = HgiMetalConversions::GetMipFilter(desc.mipFilter);
+  smpDesc.minFilter = HgiMetalConversions::GetMinMagFilter(desc.magFilter);
+  smpDesc.magFilter = HgiMetalConversions::GetMinMagFilter(desc.minFilter);
+  smpDesc.mipFilter = HgiMetalConversions::GetMipFilter(desc.mipFilter);
 
   HGIMETAL_DEBUG_LABEL(smpDesc, _descriptor.debugName.c_str());
 

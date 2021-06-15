@@ -126,9 +126,9 @@ class HgiGLGraphicsCmds final : public HgiGraphicsCmds {
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
-  HgiGLGraphicsCmds()        = delete;
+  HgiGLGraphicsCmds() = delete;
   HgiGLGraphicsCmds &operator=(const HgiGLGraphicsCmds &) = delete;
-  HgiGLGraphicsCmds(const HgiGLGraphicsCmds &)            = delete;
+  HgiGLGraphicsCmds(const HgiGLGraphicsCmds &) = delete;
 
   /// This performs multisample resolve when needed at the end of recording.
   void _AddResolveToOps(HgiGLDevice *device);

@@ -70,9 +70,7 @@ class SdfData : public SdfAbstractData {
   virtual SdfSpecType GetSpecType(const SdfPath &path) const;
 
   SDF_API
-  virtual bool Has(const SdfPath &path,
-                   const TfToken &fieldName,
-                   SdfAbstractDataValue *value) const;
+  virtual bool Has(const SdfPath &path, const TfToken &fieldName, SdfAbstractDataValue *value) const;
   SDF_API
   virtual bool Has(const SdfPath &path, const TfToken &fieldName, VtValue *value = NULL) const;
   SDF_API
@@ -92,9 +90,7 @@ class SdfData : public SdfAbstractData {
   SDF_API
   virtual void Set(const SdfPath &path, const TfToken &fieldName, const VtValue &value);
   SDF_API
-  virtual void Set(const SdfPath &path,
-                   const TfToken &fieldName,
-                   const SdfAbstractDataConstValue &value);
+  virtual void Set(const SdfPath &path, const TfToken &fieldName, const SdfAbstractDataConstValue &value);
   SDF_API
   virtual void Erase(const SdfPath &path, const TfToken &fieldName);
   SDF_API
@@ -119,9 +115,7 @@ class SdfData : public SdfAbstractData {
                                                double *tUpper) const;
 
   SDF_API
-  virtual bool QueryTimeSample(const SdfPath &path,
-                               double time,
-                               SdfAbstractDataValue *optionalValue) const;
+  virtual bool QueryTimeSample(const SdfPath &path, double time, SdfAbstractDataValue *optionalValue) const;
   SDF_API
   virtual bool QueryTimeSample(const SdfPath &path, double time, VtValue *value) const;
 

@@ -99,8 +99,8 @@ bool ZepFileSystemCPP::Write(const ZepPath &fileName, const void *pData, size_t 
 }
 
 void ZepFileSystemCPP::ScanDirectory(
-    const ZepPath &path,
-    std::function<bool(const ZepPath &path, bool &dont_recurse)> fnScan) const
+  const ZepPath &path,
+  std::function<bool(const ZepPath &path, bool &dont_recurse)> fnScan) const
 {
   for (auto itr = cpp_fs::recursive_directory_iterator(path.string());
        itr != cpp_fs::recursive_directory_iterator();
@@ -165,7 +165,7 @@ ZepPath ZepFileSystemCPP::Canonical(const ZepPath &path) const
 
 ZepPath ZepFileSystemCPP::GetSearchRoot(const ZepPath &start, bool &foundGit) const
 {
-  foundGit           = false;
+  foundGit = false;
   auto findStartPath = [&](const ZepPath &startPath) {
     if (!startPath.empty()) {
       auto testPath = startPath;
@@ -203,7 +203,7 @@ ZepPath ZepFileSystemCPP::GetSearchRoot(const ZepPath &start, bool &foundGit) co
   };
 
   ZepPath workingDir = GetWorkingDirectory();
-  auto startPath     = findStartPath(start);
+  auto startPath = findStartPath(start);
   if (startPath.empty()) {
     startPath = findStartPath(workingDir);
     if (startPath.empty()) {

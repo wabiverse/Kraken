@@ -21,8 +21,8 @@ limitations under the License.
 WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(
-    _tokens,
-    (roughness)(normal)(shadowColor)(midLevel)(midLevelMix)(midColor)(highlightLevel)(highlightLevelMix)(highlightColor)(interpolationMode)(Linear)(None));
+  _tokens,
+  (roughness)(normal)(shadowColor)(midLevel)(midLevelMix)(midColor)(highlightLevel)(highlightLevelMix)(highlightColor)(interpolationMode)(Linear)(None));
 
 template<typename ExpectedType, typename SmartPtr>
 bool ProcessInput(TfToken const &inputId,
@@ -50,21 +50,20 @@ class RprUsd_RprToonNode : public RprUsd_MaterialNode {
   {
 
     rpr::Status status;
-    m_toonClosureNode.reset(
-        ctx->rprContext->CreateMaterialNode(RPR_MATERIAL_NODE_TOON_CLOSURE, &status));
+    m_toonClosureNode.reset(ctx->rprContext->CreateMaterialNode(RPR_MATERIAL_NODE_TOON_CLOSURE, &status));
     if (!m_toonClosureNode) {
       throw RprUsd_NodeError(
-          RPR_GET_ERROR_MESSAGE(status, "Failed to create toon closure node", ctx->rprContext));
+        RPR_GET_ERROR_MESSAGE(status, "Failed to create toon closure node", ctx->rprContext));
     }
     m_rampNode.reset(ctx->rprContext->CreateMaterialNode(RPR_MATERIAL_NODE_TOON_RAMP, &status));
     if (!m_rampNode) {
       throw RprUsd_NodeError(
-          RPR_GET_ERROR_MESSAGE(status, "Failed to create toon ramp node", ctx->rprContext));
+        RPR_GET_ERROR_MESSAGE(status, "Failed to create toon ramp node", ctx->rprContext));
     }
     status = m_toonClosureNode->SetInput(RPR_MATERIAL_INPUT_DIFFUSE_RAMP, m_rampNode.get());
     if (status != RPR_SUCCESS) {
-      throw RprUsd_NodeError(RPR_GET_ERROR_MESSAGE(
-          status, "Failed to set ramp node input of closure node", ctx->rprContext));
+      throw RprUsd_NodeError(
+        RPR_GET_ERROR_MESSAGE(status, "Failed to set ramp node input of closure node", ctx->rprContext));
     }
   }
   ~RprUsd_RprToonNode() override = default;
@@ -100,14 +99,12 @@ class RprUsd_RprToonNode : public RprUsd_MaterialNode {
     else if (id == _tokens->interpolationMode) {
       if (value.IsHolding<int>()) {
         int interpolationModeInt = value.UncheckedGet<int>();
-        auto interpolationMode   = !interpolationModeInt ? RPR_INTERPOLATION_MODE_NONE :
-                                                           RPR_INTERPOLATION_MODE_LINEAR;
-        return m_rampNode->SetInput(RPR_MATERIAL_INPUT_INTERPOLATION, interpolationMode) ==
-               RPR_SUCCESS;
+        auto interpolationMode = !interpolationModeInt ? RPR_INTERPOLATION_MODE_NONE :
+                                                         RPR_INTERPOLATION_MODE_LINEAR;
+        return m_rampNode->SetInput(RPR_MATERIAL_INPUT_INTERPOLATION, interpolationMode) == RPR_SUCCESS;
       }
-      TF_RUNTIME_ERROR("Input `%s` has invalid type: %s, expected - `Token`",
-                       id.GetText(),
-                       value.GetTypeName().c_str());
+      TF_RUNTIME_ERROR(
+        "Input `%s` has invalid type: %s, expected - `Token`", id.GetText(), value.GetTypeName().c_str());
       return false;
     }
     else if (id == _tokens->roughness) {
@@ -128,11 +125,11 @@ class RprUsd_RprToonNode : public RprUsd_MaterialNode {
       return ret;
     }
 
-    ret            = new RprUsd_RprNodeInfo;
+    ret = new RprUsd_RprNodeInfo;
     auto &nodeInfo = *ret;
 
-    nodeInfo.name     = "rpr_toon";
-    nodeInfo.uiName   = "RPR Toon";
+    nodeInfo.name = "rpr_toon";
+    nodeInfo.uiName = "RPR Toon";
     nodeInfo.uiFolder = "Shaders";
 
     nodeInfo.inputs.emplace_back(_tokens->shadowColor, GfVec3f(0.0f));
@@ -145,13 +142,12 @@ class RprUsd_RprToonNode : public RprUsd_MaterialNode {
     nodeInfo.inputs.emplace_back(_tokens->highlightColor, GfVec3f(0.8f));
 
     RprUsd_RprNodeInput interpolationModeInput(_tokens->interpolationMode, _tokens->None);
-    interpolationModeInput.value       = VtValue(0);
+    interpolationModeInput.value = VtValue(0);
     interpolationModeInput.tokenValues = {_tokens->None, _tokens->Linear};
     nodeInfo.inputs.push_back(interpolationModeInput);
 
     nodeInfo.inputs.emplace_back(_tokens->roughness, 1.0f);
-    nodeInfo.inputs.emplace_back(
-        _tokens->normal, GfVec3f(0.0f), RprUsdMaterialNodeElement::kVector3, "");
+    nodeInfo.inputs.emplace_back(_tokens->normal, GfVec3f(0.0f), RprUsdMaterialNodeElement::kVector3, "");
 
     RprUsd_RprNodeOutput output(RprUsdMaterialNodeElement::kSurfaceShader);
     output.name = "surface";
@@ -169,21 +165,21 @@ ARCH_CONSTRUCTOR(RprUsd_InitDisplaceNode, 255, void)
 {
   auto nodeInfo = RprUsd_RprToonNode::GetInfo();
   RprUsdMaterialRegistry::GetInstance().Register(
-      TfToken(nodeInfo->name, TfToken::Immortal),
-      [](RprUsd_MaterialBuilderContext *context, std::map<TfToken, VtValue> const &parameters) {
-        auto node = new RprUsd_RprToonNode(context);
-        for (auto &input : RprUsd_RprToonNode::GetInfo()->inputs) {
-          auto it = parameters.find(input.name);
-          if (it == parameters.end()) {
-            node->SetInput(input.name, input.value);
-          }
-          else {
-            node->SetInput(input.name, it->second);
-          }
+    TfToken(nodeInfo->name, TfToken::Immortal),
+    [](RprUsd_MaterialBuilderContext *context, std::map<TfToken, VtValue> const &parameters) {
+      auto node = new RprUsd_RprToonNode(context);
+      for (auto &input : RprUsd_RprToonNode::GetInfo()->inputs) {
+        auto it = parameters.find(input.name);
+        if (it == parameters.end()) {
+          node->SetInput(input.name, input.value);
         }
-        return node;
-      },
-      nodeInfo);
+        else {
+          node->SetInput(input.name, it->second);
+        }
+      }
+      return node;
+    },
+    nodeInfo);
 }
 
 WABI_NAMESPACE_END

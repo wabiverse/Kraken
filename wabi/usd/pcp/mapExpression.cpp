@@ -44,8 +44,8 @@ static PcpMapFunction _AddRootIdentity(const PcpMapFunction &value)
   }
   // Re-create the function with an added root identity mapping.
   PcpMapFunction::PathMap sourceToTargetMap = value.GetSourceToTargetMap();
-  SdfPath const &absRoot                    = SdfPath::AbsoluteRootPath();
-  sourceToTargetMap[absRoot]                = absRoot;
+  SdfPath const &absRoot = SdfPath::AbsoluteRootPath();
+  sourceToTargetMap[absRoot] = absRoot;
   return PcpMapFunction::Create(sourceToTargetMap, value.GetTimeOffset());
 }
 
@@ -242,8 +242,7 @@ PcpMapExpression::_NodeRefPtr PcpMapExpression::_Node::New(_Op op_,
   if (key.op != _OpVariable) {
     // Check for existing instance to re-use
     _NodeMap::accessor accessor;
-    if (_nodeRegistry->map.insert(accessor, key) ||
-        accessor->second->_refCount.fetch_and_increment() == 0) {
+    if (_nodeRegistry->map.insert(accessor, key) || accessor->second->_refCount.fetch_and_increment() == 0) {
       // Either there was no node in the table, or there was but it had
       // begun dying (another client dropped its refcount to 0).  We have
       // to create a new node in the table.  When the client that is
@@ -260,11 +259,11 @@ PcpMapExpression::_NodeRefPtr PcpMapExpression::_Node::New(_Op op_,
 }
 
 PcpMapExpression::_Node::_Node(const Key &key_)
-    : key(key_),
-      expressionTreeAlwaysHasIdentity(_ExpressionTreeAlwaysHasIdentity(key))
+  : key(key_),
+    expressionTreeAlwaysHasIdentity(_ExpressionTreeAlwaysHasIdentity(key))
 {
   _hasCachedValue = false;
-  _refCount       = 0;
+  _refCount = 0;
   if (key.arg1) {
     tbb::spin_mutex::scoped_lock lock(key.arg1->_mutex);
     key.arg1->_dependentExpressions.insert(this);
@@ -305,7 +304,7 @@ const PcpMapExpression::Value &PcpMapExpression::_Node::EvaluateAndCache() const
   Value val = _EvaluateUncached();
   tbb::spin_mutex::scoped_lock lock(_mutex);
   if (!_hasCachedValue) {
-    _cachedValue    = val;
+    _cachedValue = val;
     _hasCachedValue = true;
   }
   return _cachedValue;
@@ -335,7 +334,7 @@ void PcpMapExpression::_Node::_Invalidate()
   // Caller must hold a lock on _mutex.
   if (_hasCachedValue) {
     _hasCachedValue = false;
-    _cachedValue    = Value();
+    _cachedValue = Value();
     for (auto dep : _dependentExpressions) {
       tbb::spin_mutex::scoped_lock lock(dep->_mutex);
       dep->_Invalidate();
@@ -370,8 +369,7 @@ inline size_t PcpMapExpression::_Node::Key::GetHash() const
 
 bool PcpMapExpression::_Node::Key::operator==(const Key &key) const
 {
-  return op == key.op && arg1 == key.arg1 && arg2 == key.arg2 &&
-         valueForConstant == key.valueForConstant;
+  return op == key.op && arg1 == key.arg1 && arg2 == key.arg2 && valueForConstant == key.valueForConstant;
 }
 
 void intrusive_ptr_add_ref(PcpMapExpression::_Node *p)

@@ -57,19 +57,19 @@ static bool _IsEnabledMaterialPrimvarFiltering()
 static TfTokenVector _CollectPrimvarNames(const HdPh_MaterialParamVector &params);
 
 HdPhSurfaceShader::HdPhSurfaceShader()
-    : HdPhShaderCode(),
-      _fragmentSource(),
-      _geometrySource(),
-      _params(),
-      _paramSpec(),
-      _paramArray(),
-      _primvarNames(_CollectPrimvarNames(_params)),
-      _isEnabledPrimvarFiltering(_IsEnabledMaterialPrimvarFiltering()),
-      _computedHash(0),
-      _isValidComputedHash(false),
-      _computedTextureSourceHash(0),
-      _isValidComputedTextureSourceHash(false),
-      _materialTag()
+  : HdPhShaderCode(),
+    _fragmentSource(),
+    _geometrySource(),
+    _params(),
+    _paramSpec(),
+    _paramArray(),
+    _primvarNames(_CollectPrimvarNames(_params)),
+    _isEnabledPrimvarFiltering(_IsEnabledMaterialPrimvarFiltering()),
+    _computedHash(0),
+    _isValidComputedHash(false),
+    _computedTextureSourceHash(0),
+    _isValidComputedTextureSourceHash(false),
+    _materialTag()
 {}
 
 HdPhSurfaceShader::~HdPhSurfaceShader() = default;
@@ -77,11 +77,11 @@ HdPhSurfaceShader::~HdPhSurfaceShader() = default;
 void HdPhSurfaceShader::_SetSource(TfToken const &shaderStageKey, std::string const &source)
 {
   if (shaderStageKey == HdShaderTokens->fragmentShader) {
-    _fragmentSource      = source;
+    _fragmentSource = source;
     _isValidComputedHash = false;
   }
   else if (shaderStageKey == HdShaderTokens->geometryShader) {
-    _geometrySource      = source;
+    _geometrySource = source;
     _isValidComputedHash = false;
   }
 }
@@ -167,7 +167,7 @@ HdPhShaderCode::ID HdPhSurfaceShader::ComputeHash() const
 {
   // All mutator methods that might affect the hash must reset this (fragile).
   if (!_isValidComputedHash) {
-    _computedHash        = _ComputeHash();
+    _computedHash = _ComputeHash();
     _isValidComputedHash = true;
   }
   return _computedHash;
@@ -177,7 +177,7 @@ HdPhShaderCode::ID HdPhSurfaceShader::ComputeHash() const
 HdPhShaderCode::ID HdPhSurfaceShader::ComputeTextureSourceHash() const
 {
   if (!_isValidComputedTextureSourceHash) {
-    _computedTextureSourceHash        = _ComputeTextureSourceHash();
+    _computedTextureSourceHash = _ComputeTextureSourceHash();
     _isValidComputedTextureSourceHash = true;
   }
   return _computedTextureSourceHash;
@@ -218,26 +218,26 @@ HdPhShaderCode::ID HdPhSurfaceShader::_ComputeTextureSourceHash() const
 
 void HdPhSurfaceShader::SetFragmentSource(const std::string &source)
 {
-  _fragmentSource      = source;
+  _fragmentSource = source;
   _isValidComputedHash = false;
 }
 
 void HdPhSurfaceShader::SetGeometrySource(const std::string &source)
 {
-  _geometrySource      = source;
+  _geometrySource = source;
   _isValidComputedHash = false;
 }
 
 void HdPhSurfaceShader::SetParams(const HdPh_MaterialParamVector &params)
 {
-  _params              = params;
-  _primvarNames        = _CollectPrimvarNames(_params);
+  _params = params;
+  _primvarNames = _CollectPrimvarNames(_params);
   _isValidComputedHash = false;
 }
 
 void HdPhSurfaceShader::SetNamedTextureHandles(const NamedTextureHandleVector &namedTextureHandles)
 {
-  _namedTextureHandles              = namedTextureHandles;
+  _namedTextureHandles = namedTextureHandles;
   _isValidComputedTextureSourceHash = false;
 }
 
@@ -259,7 +259,7 @@ void HdPhSurfaceShader::SetBufferSources(HdBufferSpecVector const &bufferSpecs,
 
       // establish a buffer range
       HdBufferArrayRangeSharedPtr range = resourceRegistry->AllocateShaderStorageBufferArrayRange(
-          HdTokens->materialParams, bufferSpecs, HdBufferArrayUsageHint());
+        HdTokens->materialParams, bufferSpecs, HdBufferArrayUsageHint());
 
       if (!TF_VERIFY(range->IsValid())) {
         _paramArray.reset();
@@ -285,7 +285,7 @@ TfToken HdPhSurfaceShader::GetMaterialTag() const
 
 void HdPhSurfaceShader::SetMaterialTag(TfToken const &tag)
 {
-  _materialTag         = tag;
+  _materialTag = tag;
   _isValidComputedHash = false;
 }
 
@@ -386,13 +386,11 @@ static TfTokenVector _CollectPrimvarNames(const HdPh_MaterialParamVector &params
     else if (param.IsPrimvarRedirect()) {
       primvarNames.push_back(param.name);
       // primvar redirect connections are encoded as sampler coords
-      primvarNames.insert(
-          primvarNames.end(), param.samplerCoords.begin(), param.samplerCoords.end());
+      primvarNames.insert(primvarNames.end(), param.samplerCoords.begin(), param.samplerCoords.end());
     }
     else if (param.IsTexture()) {
       // include sampler coords for textures
-      primvarNames.insert(
-          primvarNames.end(), param.samplerCoords.begin(), param.samplerCoords.end());
+      primvarNames.insert(primvarNames.end(), param.samplerCoords.begin(), param.samplerCoords.end());
     }
     else if (param.IsAdditionalPrimvar()) {
       primvarNames.push_back(param.name);
@@ -409,24 +407,20 @@ void HdPhSurfaceShader::AddResourcesFromTextures(ResourceContext &ctx) const
   // other texture metadata such as the sampling transform for
   // a field texture).
   HdBufferSourceSharedPtrVector result;
-  HdPh_TextureBinder::ComputeBufferSources(
-      GetNamedTextureHandles(), bindlessTextureEnabled, &result);
+  HdPh_TextureBinder::ComputeBufferSources(GetNamedTextureHandles(), bindlessTextureEnabled, &result);
 
   if (!result.empty()) {
     ctx.AddSources(GetShaderData(), std::move(result));
   }
 }
 
-void HdPhSurfaceShader::AddFallbackValueToSpecsAndSources(
-    const HdPh_MaterialParam &param,
-    HdBufferSpecVector *const specs,
-    HdBufferSourceSharedPtrVector *const sources)
+void HdPhSurfaceShader::AddFallbackValueToSpecsAndSources(const HdPh_MaterialParam &param,
+                                                          HdBufferSpecVector *const specs,
+                                                          HdBufferSourceSharedPtrVector *const sources)
 {
-  const TfToken sourceName(param.name.GetString() +
-                           HdPh_ResourceBindingSuffixTokens->fallback.GetString());
+  const TfToken sourceName(param.name.GetString() + HdPh_ResourceBindingSuffixTokens->fallback.GetString());
 
-  HdBufferSourceSharedPtr const source = std::make_shared<HdVtBufferSource>(sourceName,
-                                                                            param.fallbackValue);
+  HdBufferSourceSharedPtr const source = std::make_shared<HdVtBufferSource>(sourceName, param.fallbackValue);
   source->GetBufferSpecs(specs);
   sources->push_back(std::move(source));
 }

@@ -127,14 +127,14 @@ void TfLogCrash(const std::string &reason,
 {
   // Create a nicely formatted message describing the crash
   std::string fullMessage = TfStringPrintf(
-      "%s crashed. %s: %s\n"
-      "in %s at line %zu of %s\n",
-      ArchGetProgramNameForErrors(),
-      reason.c_str(),
-      message.c_str(),
-      context.GetFunction(),
-      context.GetLine(),
-      context.GetFile());
+    "%s crashed. %s: %s\n"
+    "in %s at line %zu of %s\n",
+    ArchGetProgramNameForErrors(),
+    reason.c_str(),
+    message.c_str(),
+    context.GetFunction(),
+    context.GetLine(),
+    context.GetFile());
 
   if (!additionalInfo.empty()) {
     fullMessage += additionalInfo + "\n";

@@ -43,8 +43,7 @@ static object _WrapSplitShaderIdentifier(const TfToken &identifier)
 {
   TfToken familyName, shaderName;
   NdrVersion version;
-  if (UsdShadeShaderDefUtils::SplitShaderIdentifier(
-          identifier, &familyName, &shaderName, &version)) {
+  if (UsdShadeShaderDefUtils::SplitShaderIdentifier(identifier, &familyName, &shaderName, &version)) {
     return boost::python::make_tuple(familyName, shaderName, version);
   }
   else {
@@ -57,21 +56,20 @@ static object _WrapSplitShaderIdentifier(const TfToken &identifier)
 void wrapUsdShadeShaderDefUtils()
 {
   scope thisScope = class_<UsdShadeShaderDefUtils>("ShaderDefUtils", no_init)
-                        .def(
-                            "SplitShaderIdentifier", _WrapSplitShaderIdentifier, arg("identifier"))
-                        .staticmethod("SplitShaderIdentifier")
-                        .def("GetNodeDiscoveryResults",
-                             &UsdShadeShaderDefUtils::GetNodeDiscoveryResults,
-                             (arg("shaderDef"), arg("sourceUri")),
-                             return_value_policy<TfPySequenceToList>())
-                        .staticmethod("GetNodeDiscoveryResults")
-                        .def("GetShaderProperties",
-                             &UsdShadeShaderDefUtils::GetShaderProperties,
-                             arg("shaderDef"),
-                             return_value_policy<TfPySequenceToList>())
-                        .staticmethod("GetShaderProperties")
-                        .def("GetPrimvarNamesMetadataString",
-                             &UsdShadeShaderDefUtils::GetPrimvarNamesMetadataString,
-                             (arg("metadata"), arg("shaderDef")))
-                        .staticmethod("GetPrimvarNamesMetadataString");
+                      .def("SplitShaderIdentifier", _WrapSplitShaderIdentifier, arg("identifier"))
+                      .staticmethod("SplitShaderIdentifier")
+                      .def("GetNodeDiscoveryResults",
+                           &UsdShadeShaderDefUtils::GetNodeDiscoveryResults,
+                           (arg("shaderDef"), arg("sourceUri")),
+                           return_value_policy<TfPySequenceToList>())
+                      .staticmethod("GetNodeDiscoveryResults")
+                      .def("GetShaderProperties",
+                           &UsdShadeShaderDefUtils::GetShaderProperties,
+                           arg("shaderDef"),
+                           return_value_policy<TfPySequenceToList>())
+                      .staticmethod("GetShaderProperties")
+                      .def("GetPrimvarNamesMetadataString",
+                           &UsdShadeShaderDefUtils::GetPrimvarNamesMetadataString,
+                           (arg("metadata"), arg("shaderDef")))
+                      .staticmethod("GetPrimvarNamesMetadataString");
 }

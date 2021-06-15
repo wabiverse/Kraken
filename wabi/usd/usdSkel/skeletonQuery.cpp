@@ -44,8 +44,8 @@ WABI_NAMESPACE_BEGIN
 
 UsdSkelSkeletonQuery::UsdSkelSkeletonQuery(const UsdSkel_SkelDefinitionRefPtr &definition,
                                            const UsdSkelAnimQuery &animQuery)
-    : _definition(definition),
-      _animQuery(animQuery)
+  : _definition(definition),
+    _animQuery(animQuery)
 {
   if (definition && animQuery) {
     _animToSkelMapper = UsdSkelAnimMapper(animQuery.GetJointOrder(), definition->GetJointOrder());
@@ -115,12 +115,12 @@ bool UsdSkelSkeletonQuery::_ComputeJointLocalTransforms(VtArray<Matrix4> *xforms
     // Need to first fill in rest transforms.
     if (!_definition->GetJointLocalRestTransforms(xforms)) {
       TF_WARN(
-          "%s -- Failed computing local space transforms: "
-          "the the animation source (<%s>) is sparse, but the "
-          "'restTransforms' of the Skeleton are either unset, "
-          "or do not match the number of joints.",
-          GetSkeleton().GetPrim().GetPath().GetText(),
-          GetAnimQuery().GetPrim().GetPath().GetText());
+        "%s -- Failed computing local space transforms: "
+        "the the animation source (<%s>) is sparse, but the "
+        "'restTransforms' of the Skeleton are either unset, "
+        "or do not match the number of joints.",
+        GetSkeleton().GetPrim().GetPath().GetText(),
+        GetAnimQuery().GetPrim().GetPath().GetText());
       return false;
     }
   }
@@ -242,10 +242,10 @@ bool UsdSkelSkeletonQuery::ComputeJointRestRelativeTransforms(VtArray<Matrix4> *
       }
       else {
         TF_WARN(
-            "%s -- Failed computing rest-relative transforms: "
-            "the 'restTransforms' of the Skeleton are either unset, "
-            "or do not have a matching number of joints.",
-            GetSkeleton().GetPrim().GetPath().GetText());
+          "%s -- Failed computing rest-relative transforms: "
+          "the 'restTransforms' of the Skeleton are either unset, "
+          "or do not have a matching number of joints.",
+          GetSkeleton().GetPrim().GetPath().GetText());
       }
     }
     else {
@@ -257,13 +257,11 @@ bool UsdSkelSkeletonQuery::ComputeJointRestRelativeTransforms(VtArray<Matrix4> *
   return false;
 }
 
-template USDSKEL_API bool UsdSkelSkeletonQuery::ComputeJointRestRelativeTransforms(
-    VtArray<GfMatrix4d> *,
-    UsdTimeCode) const;
+template USDSKEL_API bool UsdSkelSkeletonQuery::ComputeJointRestRelativeTransforms(VtArray<GfMatrix4d> *,
+                                                                                   UsdTimeCode) const;
 
-template USDSKEL_API bool UsdSkelSkeletonQuery::ComputeJointRestRelativeTransforms(
-    VtArray<GfMatrix4f> *,
-    UsdTimeCode) const;
+template USDSKEL_API bool UsdSkelSkeletonQuery::ComputeJointRestRelativeTransforms(VtArray<GfMatrix4f> *,
+                                                                                   UsdTimeCode) const;
 
 template<typename Matrix4>
 bool UsdSkelSkeletonQuery::ComputeJointWorldTransforms(VtArray<Matrix4> *xforms,
@@ -303,8 +301,7 @@ template USDSKEL_API bool UsdSkelSkeletonQuery::ComputeJointWorldTransforms(VtAr
                                                                             bool) const;
 
 template<typename Matrix4>
-bool UsdSkelSkeletonQuery::ComputeSkinningTransforms(VtArray<Matrix4> *xforms,
-                                                     UsdTimeCode time) const
+bool UsdSkelSkeletonQuery::ComputeSkinningTransforms(VtArray<Matrix4> *xforms, UsdTimeCode time) const
 {
   TRACE_FUNCTION();
 
@@ -326,8 +323,7 @@ template USDSKEL_API bool UsdSkelSkeletonQuery::ComputeSkinningTransforms(VtArra
                                                                           UsdTimeCode) const;
 
 template<typename Matrix4>
-bool UsdSkelSkeletonQuery::_ComputeSkinningTransforms(VtArray<Matrix4> *xforms,
-                                                      UsdTimeCode time) const
+bool UsdSkelSkeletonQuery::_ComputeSkinningTransforms(VtArray<Matrix4> *xforms, UsdTimeCode time) const
 {
   if (ComputeJointSkelTransforms(xforms, time)) {
 
@@ -338,10 +334,10 @@ bool UsdSkelSkeletonQuery::_ComputeSkinningTransforms(VtArray<Matrix4> *xforms,
     VtArray<Matrix4> inverseBindXforms;
     if (!_definition->GetJointWorldInverseBindTransforms(&inverseBindXforms)) {
       TF_WARN(
-          "%s -- Failed fetching bind transforms. The "
-          "'bindTransforms' attribute may be unauthored, "
-          "or may not match the number of joints.",
-          GetSkeleton().GetPrim().GetPath().GetText());
+        "%s -- Failed fetching bind transforms. The "
+        "'bindTransforms' attribute may be unauthored, "
+        "or may not match the number of joints.",
+        GetSkeleton().GetPrim().GetPath().GetText());
       return false;
     }
 
@@ -352,12 +348,12 @@ bool UsdSkelSkeletonQuery::_ComputeSkinningTransforms(VtArray<Matrix4> *xforms,
     }
     else {
       TF_WARN(
-          "%s -- Size of computed joints transforms [%zu] does not "
-          "match the number of elements in the 'bindTransforms' "
-          "attr [%zu].",
-          GetSkeleton().GetPrim().GetPath().GetText(),
-          xforms->size(),
-          inverseBindXforms.size());
+        "%s -- Size of computed joints transforms [%zu] does not "
+        "match the number of elements in the 'bindTransforms' "
+        "attr [%zu].",
+        GetSkeleton().GetPrim().GetPath().GetText(),
+        xforms->size(),
+        inverseBindXforms.size());
     }
   }
   return false;
@@ -373,10 +369,10 @@ bool UsdSkelSkeletonQuery::GetJointWorldBindTransforms(VtArray<Matrix4> *xforms)
 }
 
 template USDSKEL_API bool UsdSkelSkeletonQuery::GetJointWorldBindTransforms(
-    VtArray<GfMatrix4d> *xforms) const;
+  VtArray<GfMatrix4d> *xforms) const;
 
 template USDSKEL_API bool UsdSkelSkeletonQuery::GetJointWorldBindTransforms(
-    VtArray<GfMatrix4f> *xforms) const;
+  VtArray<GfMatrix4f> *xforms) const;
 
 UsdPrim UsdSkelSkeletonQuery::GetPrim() const
 {

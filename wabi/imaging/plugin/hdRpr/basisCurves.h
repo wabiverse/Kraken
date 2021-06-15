@@ -57,7 +57,7 @@ class HdRprBasisCurves : public HdRprBaseRprim<HdBasisCurves> {
   rpr::Curve *CreateBezierRprCurve(HdRprApi *rprApi);
 
  private:
-  rpr::Curve *m_rprCurve             = nullptr;
+  rpr::Curve *m_rprCurve = nullptr;
   RprUsdMaterial *m_fallbackMaterial = nullptr;
 
   HdBasisCurvesTopology m_topology;

@@ -111,15 +111,12 @@ void Tf_BuildPyInvokeKwArgs(boost::python::dict *kwArgsOut, const Arg &kwArg, Re
 {
   // This assertion will always be false, since TfPyKwArg will select the
   // overload below instead.
-  static_assert(std::is_same<Arg, TfPyKwArg>::value,
-                "Non-keyword args not allowed after keyword args");
+  static_assert(std::is_same<Arg, TfPyKwArg>::value, "Non-keyword args not allowed after keyword args");
 }
 
 // Recursive variadic template helper for keyword args.
 template<typename... RestArgs>
-void Tf_BuildPyInvokeKwArgs(boost::python::dict *kwArgsOut,
-                            const TfPyKwArg &kwArg,
-                            RestArgs... rest)
+void Tf_BuildPyInvokeKwArgs(boost::python::dict *kwArgsOut, const TfPyKwArg &kwArg, RestArgs... rest)
 {
   // Store mapping in kwargs dict.
   (*kwArgsOut)[kwArg.name] = kwArg.value.Get();

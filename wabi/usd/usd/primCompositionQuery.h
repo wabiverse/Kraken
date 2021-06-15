@@ -291,10 +291,8 @@ class UsdPrimCompositionQuery {
 
     bool operator==(const Filter &rhs)
     {
-      return arcIntroducedFilter == rhs.arcIntroducedFilter &&
-             arcTypeFilter == rhs.arcTypeFilter &&
-             dependencyTypeFilter == rhs.dependencyTypeFilter &&
-             hasSpecsFilter == rhs.hasSpecsFilter;
+      return arcIntroducedFilter == rhs.arcIntroducedFilter && arcTypeFilter == rhs.arcTypeFilter &&
+             dependencyTypeFilter == rhs.dependencyTypeFilter && hasSpecsFilter == rhs.hasSpecsFilter;
     };
 
     bool operator!=(const Filter &rhs)

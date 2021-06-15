@@ -98,10 +98,9 @@ bool HdPh_DrawBatch::Append(HdPhDrawItemInstance *drawItemInstance)
   // XXX: we'll soon refactor this function out and centralize batch
   // bucketing and reordering logic in HdPhCommandBuffer.
 
-  HdPhDrawItem const *drawItem = static_cast<const HdPhDrawItem *>(
-      drawItemInstance->GetDrawItem());
+  HdPhDrawItem const *drawItem = static_cast<const HdPhDrawItem *>(drawItemInstance->GetDrawItem());
   HdPhDrawItem const *batchItem = static_cast<const HdPhDrawItem *>(
-      _drawItemInstances.front()->GetDrawItem());
+    _drawItemInstances.front()->GetDrawItem());
   TF_VERIFY(batchItem);
 
   if (_IsAggregated(drawItem, batchItem)) {
@@ -118,27 +117,23 @@ bool HdPh_DrawBatch::Append(HdPhDrawItemInstance *drawItemInstance)
 /*static*/
 bool HdPh_DrawBatch::_IsAggregated(HdPhDrawItem const *drawItem0, HdPhDrawItem const *drawItem1)
 {
-  if (!HdPhSurfaceShader::CanAggregate(drawItem0->GetMaterialShader(),
-                                       drawItem1->GetMaterialShader())) {
+  if (!HdPhSurfaceShader::CanAggregate(drawItem0->GetMaterialShader(), drawItem1->GetMaterialShader())) {
     return false;
   }
 
   if (drawItem0->GetGeometricShader() == drawItem1->GetGeometricShader() &&
       drawItem0->GetInstancePrimvarNumLevels() == drawItem1->GetInstancePrimvarNumLevels() &&
       isAggregated(drawItem0->GetTopologyRange(), drawItem1->GetTopologyRange()) &&
-      isAggregated(drawItem0->GetTopologyVisibilityRange(),
-                   drawItem1->GetTopologyVisibilityRange()) &&
+      isAggregated(drawItem0->GetTopologyVisibilityRange(), drawItem1->GetTopologyVisibilityRange()) &&
       isAggregated(drawItem0->GetVertexPrimvarRange(), drawItem1->GetVertexPrimvarRange()) &&
       isAggregated(drawItem0->GetVaryingPrimvarRange(), drawItem1->GetVaryingPrimvarRange()) &&
       isAggregated(drawItem0->GetElementPrimvarRange(), drawItem1->GetElementPrimvarRange()) &&
-      isAggregated(drawItem0->GetFaceVaryingPrimvarRange(),
-                   drawItem1->GetFaceVaryingPrimvarRange()) &&
+      isAggregated(drawItem0->GetFaceVaryingPrimvarRange(), drawItem1->GetFaceVaryingPrimvarRange()) &&
       isAggregated(drawItem0->GetConstantPrimvarRange(), drawItem1->GetConstantPrimvarRange()) &&
       isAggregated(drawItem0->GetInstanceIndexRange(), drawItem1->GetInstanceIndexRange())) {
     int numLevels = drawItem0->GetInstancePrimvarNumLevels();
     for (int i = 0; i < numLevels; ++i) {
-      if (!isAggregated(drawItem0->GetInstancePrimvarRange(i),
-                        drawItem1->GetInstancePrimvarRange(i))) {
+      if (!isAggregated(drawItem0->GetInstancePrimvarRange(i), drawItem1->GetInstancePrimvarRange(i))) {
         return false;
       }
     }
@@ -196,9 +191,9 @@ static HdPhSurfaceShaderSharedPtr _GetFallbackSurfaceShader()
 }
 
 HdPh_DrawBatch::_DrawingProgram &HdPh_DrawBatch::_GetDrawingProgram(
-    HdPhRenderPassStateSharedPtr const &state,
-    bool indirect,
-    HdPhResourceRegistrySharedPtr const &resourceRegistry)
+  HdPhRenderPassStateSharedPtr const &state,
+  bool indirect,
+  HdPhResourceRegistrySharedPtr const &resourceRegistry)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -210,9 +205,9 @@ HdPh_DrawBatch::_DrawingProgram &HdPh_DrawBatch::_GetDrawingProgram(
   size_t shaderHash = state->GetShaderHash();
   boost::hash_combine(shaderHash, firstDrawItem->GetGeometricShader()->ComputeHash());
   HdPhShaderCodeSharedPtr surfaceShader = state->GetUseSceneMaterials() ?
-                                              firstDrawItem->GetMaterialShader() :
-                                              _GetFallbackSurfaceShader();
-  size_t surfaceHash                    = surfaceShader ? surfaceShader->ComputeHash() : 0;
+                                            firstDrawItem->GetMaterialShader() :
+                                            _GetFallbackSurfaceShader();
+  size_t surfaceHash = surfaceShader ? surfaceShader->ComputeHash() : 0;
   boost::hash_combine(shaderHash, surfaceHash);
   bool shaderChanged = (_shaderHash != shaderHash);
 
@@ -236,8 +231,7 @@ HdPh_DrawBatch::_DrawingProgram &HdPh_DrawBatch::_GetDrawingProgram(
 
       // While the code should gracefully handle shader compilation
       // failures, it is also undesirable for shaders to silently fail.
-      TF_CODING_ERROR("Failed to compile shader for prim %s.",
-                      firstDrawItem->GetRprimID().GetText());
+      TF_CODING_ERROR("Failed to compile shader for prim %s.", firstDrawItem->GetRprimID().GetText());
 
       // If we failed to compile the surface shader, replace it with the
       // fallback surface shader and try again.
@@ -260,10 +254,9 @@ HdPh_DrawBatch::_DrawingProgram &HdPh_DrawBatch::_GetDrawingProgram(
   return _program;
 }
 
-bool HdPh_DrawBatch::_DrawingProgram::CompileShader(
-    HdPhDrawItem const *drawItem,
-    bool indirect,
-    HdPhResourceRegistrySharedPtr const &resourceRegistry)
+bool HdPh_DrawBatch::_DrawingProgram::CompileShader(HdPhDrawItem const *drawItem,
+                                                    bool indirect,
+                                                    HdPhResourceRegistrySharedPtr const &resourceRegistry)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -291,14 +284,13 @@ bool HdPh_DrawBatch::_DrawingProgram::CompileShader(
   // let resourcebinder resolve bindings and populate metadata
   // which is owned by codegen.
   _resourceBinder.ResolveBindings(
-      drawItem, shaders, codeGen.GetMetaData(), indirect, instanceDraw, customBindings);
+    drawItem, shaders, codeGen.GetMetaData(), indirect, instanceDraw, customBindings);
 
   HdPhGLSLProgram::ID hash = codeGen.ComputeHash();
 
   {
     // ask registry to see if there's already compiled program
-    HdInstance<HdPhGLSLProgramSharedPtr> programInstance = resourceRegistry->RegisterGLSLProgram(
-        hash);
+    HdInstance<HdPhGLSLProgramSharedPtr> programInstance = resourceRegistry->RegisterGLSLProgram(hash);
 
     if (programInstance.IsFirstInstance()) {
       HdPhGLSLProgramSharedPtr glslProgram = codeGen.Compile(resourceRegistry.get());

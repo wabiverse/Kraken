@@ -63,8 +63,7 @@ SDF_DECLARE_HANDLES(SdfLayer);
 /// will be discarded.
 ///
 USDUTILS_API
-SdfLayerRefPtr UsdUtilsFlattenLayerStack(const UsdStagePtr &stage,
-                                         const std::string &tag = std::string());
+SdfLayerRefPtr UsdUtilsFlattenLayerStack(const UsdStagePtr &stage, const std::string &tag = std::string());
 
 /// Callback function for overloaded version of \c UsdUtilsFlattenLayerStack.
 ///
@@ -74,7 +73,7 @@ SdfLayerRefPtr UsdUtilsFlattenLayerStack(const UsdStagePtr &stage,
 ///
 /// \sa UsdUtilsFlattenLayerStackResolveAssetPath
 using UsdUtilsResolveAssetPathFn =
-    std::function<std::string(const SdfLayerHandle &sourceLayer, const std::string &assetPath)>;
+  std::function<std::string(const SdfLayerHandle &sourceLayer, const std::string &assetPath)>;
 
 /// Flatten the root layer stack of the given \p stage into a single layer with
 /// the given optional \p tag and using the \p resolveAssetPathFn to resolve

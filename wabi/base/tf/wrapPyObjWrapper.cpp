@@ -37,8 +37,7 @@ namespace {
 struct Tf_PyObjWrapperFromPython {
   Tf_PyObjWrapperFromPython()
   {
-    converter::registry::push_back(
-        &_convertible, &_construct, boost::python::type_id<TfPyObjWrapper>());
+    converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<TfPyObjWrapper>());
   }
 
  private:

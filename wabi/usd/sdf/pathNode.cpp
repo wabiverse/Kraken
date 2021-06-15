@@ -70,8 +70,8 @@ struct Sdf_PathNodePrivateAccess {
   static inline typename Pool::Handle New(Sdf_PathNode const *parent, Args const &...args)
   {
     typename Pool::Handle h = Pool::Allocate();
-    char *p                 = h.GetPtr();
-    T *tp                   = reinterpret_cast<T *>(p);
+    char *p = h.GetPtr();
+    T *tp = reinterpret_cast<T *>(p);
     new (tp) T(parent, args...);
     return h;
   }
@@ -95,7 +95,7 @@ template<class T> inline _ParentAnd<T> _MakeParentAnd(const Sdf_PathNode *parent
 {
   _ParentAnd<T> ret;
   ret.parent = parent;
-  ret.value  = value;
+  ret.value = value;
   return ret;
 }
 
@@ -138,7 +138,7 @@ template<> struct _HashParentAnd<_ParentAnd<void>> {
 };
 
 template<class T> struct _PrimTable {
-  using Pool       = Sdf_PathPrimPartPool;
+  using Pool = Sdf_PathPrimPartPool;
   using PoolHandle = Sdf_PathPrimHandle;
   using NodeHandle = Sdf_PathPrimNodeHandle;
   using Type = tbb::concurrent_hash_map<_ParentAnd<T>, PoolHandle, _HashParentAnd<_ParentAnd<T>>>;
@@ -147,7 +147,7 @@ template<class T> struct _PrimTable {
 };
 
 template<class T> struct _PropTable {
-  using Pool       = Sdf_PathPropPartPool;
+  using Pool = Sdf_PathPropPartPool;
   using PoolHandle = Sdf_PathPropHandle;
   using NodeHandle = Sdf_PathPropNodeHandle;
   using Type = tbb::concurrent_hash_map<_ParentAnd<T>, PoolHandle, _HashParentAnd<_ParentAnd<T>>>;
@@ -155,11 +155,11 @@ template<class T> struct _PropTable {
   Type map;
 };
 
-using _PrimTokenTable  = _PrimTable<TfToken>;
-using _PropTokenTable  = _PropTable<TfToken>;
+using _PrimTokenTable = _PrimTable<TfToken>;
+using _PropTokenTable = _PropTable<TfToken>;
 using _PrimVarSelTable = _PrimTable<Sdf_PathNode::VariantSelectionType>;
 using _PropTargetTable = _PropTable<SdfPath>;
-using _PropVoidTable   = _PropTable<void>;
+using _PropVoidTable = _PropTable<void>;
 
 template<class PathNode, class Table, class... Args>
 inline typename Table::NodeHandle _FindOrCreate(Table &table,
@@ -174,9 +174,8 @@ inline typename Table::NodeHandle _FindOrCreate(Table &table,
     // a new entry in the table.  When the client that is killing the other
     // node it looks for itself in the table, it will either not find itself
     // or will find a different node and so won't remove it.
-    typename Table::PoolHandle newNode = Access::New<PathNode, typename Table::Pool>(parent,
-                                                                                     args...);
-    accessor->second                   = newNode;
+    typename Table::PoolHandle newNode = Access::New<PathNode, typename Table::Pool>(parent, args...);
+    accessor->second = newNode;
   }
   return typename Table::NodeHandle(accessor->second, /* add_ref = */ false);
 }
@@ -248,8 +247,8 @@ TF_MAKE_STATIC_DATA(Sdf_PathNode const *, _relativeRootNode)
 Sdf_PathNode const *Sdf_RootPathNode::New(bool isAbsolute)
 {
   Sdf_PathPrimPartPool::Handle h = Sdf_PathPrimPartPool::Allocate();
-  char *p                        = h.GetPtr();
-  Sdf_RootPathNode *tp           = reinterpret_cast<Sdf_RootPathNode *>(p);
+  char *p = h.GetPtr();
+  Sdf_RootPathNode *tp = reinterpret_cast<Sdf_RootPathNode *>(p);
   new (tp) Sdf_RootPathNode(isAbsolute);
   return tp;
 }
@@ -264,8 +263,7 @@ Sdf_PathNode const *Sdf_PathNode::GetRelativeRootNode()
   return *_relativeRootNode;
 }
 
-Sdf_PathPrimNodeHandle Sdf_PathNode::FindOrCreatePrim(Sdf_PathNode const *parent,
-                                                      const TfToken &name)
+Sdf_PathPrimNodeHandle Sdf_PathNode::FindOrCreatePrim(Sdf_PathNode const *parent, const TfToken &name)
 {
   return _FindOrCreate<Sdf_PrimPathNode>(*_primNodes, parent, name);
 }
@@ -284,7 +282,7 @@ Sdf_PathPrimNodeHandle Sdf_PathNode::FindOrCreatePrimVariantSelection(Sdf_PathNo
                                                                       const TfToken &variant)
 {
   return _FindOrCreate<Sdf_PrimVariantSelectionNode>(
-      *_primVarSelNodes, parent, VariantSelectionType(variantSet, variant));
+    *_primVarSelNodes, parent, VariantSelectionType(variantSet, variant));
 }
 
 Sdf_PathPropNodeHandle Sdf_PathNode::FindOrCreateTarget(Sdf_PathNode const *parent,
@@ -305,8 +303,7 @@ Sdf_PathPropNodeHandle Sdf_PathNode ::FindOrCreateMapper(Sdf_PathNode const *par
   return _FindOrCreate<Sdf_MapperPathNode>(*_mapperNodes, parent, targetPath);
 }
 
-Sdf_PathPropNodeHandle Sdf_PathNode::FindOrCreateMapperArg(Sdf_PathNode const *parent,
-                                                           const TfToken &name)
+Sdf_PathPropNodeHandle Sdf_PathNode::FindOrCreateMapperArg(Sdf_PathNode const *parent, const TfToken &name)
 {
   return _FindOrCreate<Sdf_MapperArgPathNode>(*_mapperArgNodes, parent, name);
 }
@@ -317,13 +314,13 @@ Sdf_PathPropNodeHandle Sdf_PathNode::FindOrCreateExpression(Sdf_PathNode const *
 }
 
 Sdf_PathNode::Sdf_PathNode(bool isAbsolute)
-    : _refCount(1),
-      _elementCount(0),
-      _nodeType(RootNode),
-      _isAbsolute(isAbsolute),
-      _containsPrimVariantSelection(false),
-      _containsTargetPath(false),
-      _hasToken(false)
+  : _refCount(1),
+    _elementCount(0),
+    _nodeType(RootNode),
+    _isAbsolute(isAbsolute),
+    _containsPrimVariantSelection(false),
+    _containsTargetPath(false),
+    _hasToken(false)
 {}
 
 const Sdf_PathNode::VariantSelectionType &Sdf_PathNode::_GetEmptyVariantSelection() const
@@ -379,8 +376,7 @@ using _PrimToPropTokenTables = tbb::concurrent_hash_map<Sdf_PathNode const *, _P
 
 static TfStaticData<_PrimToPropTokenTables> _pathTokenTable;
 
-const TfToken &Sdf_PathNode::GetPathToken(Sdf_PathNode const *primPart,
-                                          Sdf_PathNode const *propPart)
+const TfToken &Sdf_PathNode::GetPathToken(Sdf_PathNode const *primPart, Sdf_PathNode const *propPart)
 {
   // Set the cache bit.  We only ever read this during the dtor, and that has
   // to be exclusive to all other execution.
@@ -397,9 +393,8 @@ const TfToken &Sdf_PathNode::GetPathToken(Sdf_PathNode const *primPart,
   // can cause reentry here (for embedded target paths).
   primAccessor.release();
 
-  return propToTokenTable.FindOrCreate(propPart, [primPart, propPart]() {
-    return Sdf_PathNode::_CreatePathToken(primPart, propPart);
-  });
+  return propToTokenTable.FindOrCreate(
+    propPart, [primPart, propPart]() { return Sdf_PathNode::_CreatePathToken(primPart, propPart); });
 }
 
 TfToken Sdf_PathNode::GetPathAsToken(Sdf_PathNode const *primPart, Sdf_PathNode const *propPart)
@@ -415,9 +410,8 @@ TfToken Sdf_PathNode::_CreatePathToken(Sdf_PathNode const *primPart, Sdf_PathNod
     return SdfPathTokens->relativeRoot;
   }
 
-  Sdf_PathNode const *const root = (primPart->IsAbsolutePath() ?
-                                        Sdf_PathNode::GetAbsoluteRootNode() :
-                                        Sdf_PathNode::GetRelativeRootNode());
+  Sdf_PathNode const *const root = (primPart->IsAbsolutePath() ? Sdf_PathNode::GetAbsoluteRootNode() :
+                                                                 Sdf_PathNode::GetRelativeRootNode());
 
   std::vector<const Sdf_PathNode *> nodes;
   nodes.reserve(primPart->GetElementCount() + (propPart ? propPart->GetElementCount() : 0));
@@ -443,7 +437,7 @@ TfToken Sdf_PathNode::_CreatePathToken(Sdf_PathNode const *primPart, Sdf_PathNod
   Sdf_PathNode::NodeType prevNodeType = Sdf_PathNode::NumNodeTypes;
   TF_REVERSE_FOR_ALL(i, nodes)
   {
-    const Sdf_PathNode *const node     = *i;
+    const Sdf_PathNode *const node = *i;
     Sdf_PathNode::NodeType curNodeType = node->GetNodeType();
     if (prevNodeType == Sdf_PathNode::PrimNode && (curNodeType == Sdf_PathNode::PrimNode ||
                                                    // This covers cases like '../.property'
@@ -523,8 +517,7 @@ Sdf_PrimPropertyPathNode::~Sdf_PrimPropertyPathNode()
 
 const TfToken &Sdf_PrimVariantSelectionNode::_GetNameImpl() const
 {
-  return _variantSelection->second.IsEmpty() ? _variantSelection->first :
-                                               _variantSelection->second;
+  return _variantSelection->second.IsEmpty() ? _variantSelection->first : _variantSelection->second;
 }
 
 void Sdf_PrimVariantSelectionNode::_AppendText(std::string *str) const
@@ -546,9 +539,9 @@ Sdf_PrimVariantSelectionNode::~Sdf_PrimVariantSelectionNode()
 
 void Sdf_TargetPathNode::_AppendText(std::string *str) const
 {
-  std::string const &open   = SdfPathTokens->relationshipTargetStart.GetString();
+  std::string const &open = SdfPathTokens->relationshipTargetStart.GetString();
   std::string const &target = _targetPath.GetString();
-  std::string const &close  = SdfPathTokens->relationshipTargetEnd.GetString();
+  std::string const &close = SdfPathTokens->relationshipTargetEnd.GetString();
   str->reserve(str->size() + open.size() + target.size() + close.size());
   str->append(open);
   str->append(target);
@@ -567,11 +560,11 @@ Sdf_RelationalAttributePathNode::~Sdf_RelationalAttributePathNode()
 
 void Sdf_MapperPathNode::_AppendText(std::string *str) const
 {
-  std::string const &delim           = SdfPathTokens->propertyDelimiter.GetString();
+  std::string const &delim = SdfPathTokens->propertyDelimiter.GetString();
   std::string const &mapperIndicator = SdfPathTokens->mapperIndicator.GetString();
-  std::string const &open            = SdfPathTokens->relationshipTargetStart.GetString();
-  std::string const &target          = _targetPath.GetString();
-  std::string const &close           = SdfPathTokens->relationshipTargetEnd.GetString();
+  std::string const &open = SdfPathTokens->relationshipTargetStart.GetString();
+  std::string const &target = _targetPath.GetString();
+  std::string const &close = SdfPathTokens->relationshipTargetEnd.GetString();
   str->reserve(str->size() + delim.size() + mapperIndicator.size() + open.size() + target.size() +
                close.size());
   str->append(delim);
@@ -589,7 +582,7 @@ Sdf_MapperPathNode::~Sdf_MapperPathNode()
 void Sdf_MapperArgPathNode::_AppendText(std::string *str) const
 {
   std::string const &delim = SdfPathTokens->propertyDelimiter.GetString();
-  std::string const &name  = _name.GetString();
+  std::string const &name = _name.GetString();
   str->reserve(str->size() + delim.size() + name.size());
   str->append(delim);
   str->append(name);
@@ -603,7 +596,7 @@ Sdf_MapperArgPathNode::~Sdf_MapperArgPathNode()
 void Sdf_ExpressionPathNode::_AppendText(std::string *str) const
 {
   std::string const &delim = SdfPathTokens->propertyDelimiter.GetString();
-  std::string const &expr  = SdfPathTokens->expressionIndicator.GetString();
+  std::string const &expr = SdfPathTokens->expressionIndicator.GetString();
   str->reserve(str->size() + delim.size() + expr.size());
   str->append(delim);
   str->append(expr);
@@ -681,7 +674,7 @@ static void _Visit(Sdf_PathNode const *path, Sdf_Stats *stats)
 void Sdf_DumpPathStats()
 {
   Sdf_Stats stats;
-  stats.numNodes    = 0;
+  stats.numNodes = 0;
   stats.numNodeRefs = 0;
   memset(stats.typeTable, 0, sizeof(stats.typeTable));
 
@@ -696,15 +689,15 @@ void Sdf_DumpPathStats()
 
   // XXX: Use TfEnum.
   char const *enumNameMap[Sdf_PathNode::NumNodeTypes];
-  enumNameMap[Sdf_PathNode::RootNode]                 = "RootNode";
-  enumNameMap[Sdf_PathNode::PrimNode]                 = "PrimNode";
-  enumNameMap[Sdf_PathNode::PrimPropertyNode]         = "PrimPropertyNode";
+  enumNameMap[Sdf_PathNode::RootNode] = "RootNode";
+  enumNameMap[Sdf_PathNode::PrimNode] = "PrimNode";
+  enumNameMap[Sdf_PathNode::PrimPropertyNode] = "PrimPropertyNode";
   enumNameMap[Sdf_PathNode::PrimVariantSelectionNode] = "PrimVariantSelectionNode";
-  enumNameMap[Sdf_PathNode::TargetNode]               = "TargetNode";
-  enumNameMap[Sdf_PathNode::RelationalAttributeNode]  = "RelationalAttributeNode";
-  enumNameMap[Sdf_PathNode::MapperNode]               = "MapperNode";
-  enumNameMap[Sdf_PathNode::MapperArgNode]            = "MapperArgNode";
-  enumNameMap[Sdf_PathNode::ExpressionNode]           = "ExpressionNode";
+  enumNameMap[Sdf_PathNode::TargetNode] = "TargetNode";
+  enumNameMap[Sdf_PathNode::RelationalAttributeNode] = "RelationalAttributeNode";
+  enumNameMap[Sdf_PathNode::MapperNode] = "MapperNode";
+  enumNameMap[Sdf_PathNode::MapperArgNode] = "MapperArgNode";
+  enumNameMap[Sdf_PathNode::ExpressionNode] = "ExpressionNode";
 
   printf("------------------------------------------------");
   printf("-- By Type\n");

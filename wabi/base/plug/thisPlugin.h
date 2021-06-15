@@ -41,8 +41,7 @@ WABI_NAMESPACE_BEGIN
 /// define for MFB_PACKAGE_NAME). Note that plugin registration occurs as a
 /// side effect of using this macro, at the point in time the code at the
 /// macro site is invoked.
-#define PLUG_THIS_PLUGIN \
-  PlugRegistry::GetInstance().GetPluginWithName(TF_PP_STRINGIZE(MFB_PACKAGE_NAME))
+#define PLUG_THIS_PLUGIN PlugRegistry::GetInstance().GetPluginWithName(TF_PP_STRINGIZE(MFB_PACKAGE_NAME))
 
 WABI_NAMESPACE_END
 

@@ -37,8 +37,7 @@ HdRendererPluginRegistry &HdRendererPluginRegistry::GetInstance()
   return TfSingleton<HdRendererPluginRegistry>::GetInstance();
 }
 
-HdRendererPluginRegistry::HdRendererPluginRegistry()
-    : HfPluginRegistry(TfType::Find<HdRendererPlugin>())
+HdRendererPluginRegistry::HdRendererPluginRegistry() : HfPluginRegistry(TfType::Find<HdRendererPlugin>())
 {}
 
 HdRendererPluginRegistry::~HdRendererPluginRegistry() = default;
@@ -82,8 +81,8 @@ HdRendererPluginHandle HdRendererPluginRegistry::GetOrCreateRendererPlugin(const
 }
 
 HdPluginRenderDelegateUniqueHandle HdRendererPluginRegistry::CreateRenderDelegate(
-    const TfToken &pluginId,
-    HdRenderSettingsMap const &settingsMap)
+  const TfToken &pluginId,
+  HdRenderSettingsMap const &settingsMap)
 {
   HdRendererPluginHandle plugin = GetOrCreateRendererPlugin(pluginId);
   if (!plugin) {

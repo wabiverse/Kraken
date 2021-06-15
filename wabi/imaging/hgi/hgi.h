@@ -237,8 +237,7 @@ class Hgi {
   /// Create a new resource binding object.
   /// Thread safety: Creation must happen on main thread. See notes above.
   HGI_API
-  virtual HgiResourceBindingsHandle CreateResourceBindings(
-      HgiResourceBindingsDesc const &desc) = 0;
+  virtual HgiResourceBindingsHandle CreateResourceBindings(HgiResourceBindingsDesc const &desc) = 0;
 
   /// Destroy a resource binding object.
   /// Thread safety: Destruction must happen on main thread. See notes above.
@@ -248,8 +247,7 @@ class Hgi {
   /// Create a new graphics pipeline state object.
   /// Thread safety: Creation must happen on main thread. See notes above.
   HGI_API
-  virtual HgiGraphicsPipelineHandle CreateGraphicsPipeline(
-      HgiGraphicsPipelineDesc const &pipeDesc) = 0;
+  virtual HgiGraphicsPipelineHandle CreateGraphicsPipeline(HgiGraphicsPipelineDesc const &pipeDesc) = 0;
 
   /// Destroy a graphics pipeline state object.
   /// Thread safety: Destruction must happen on main thread. See notes above.
@@ -259,8 +257,7 @@ class Hgi {
   /// Create a new compute pipeline state object.
   /// Thread safety: Creation must happen on main thread. See notes above.
   HGI_API
-  virtual HgiComputePipelineHandle CreateComputePipeline(
-      HgiComputePipelineDesc const &pipeDesc) = 0;
+  virtual HgiComputePipelineHandle CreateComputePipeline(HgiComputePipelineDesc const &pipeDesc) = 0;
 
   /// Destroy a compute pipeline state object.
   /// Thread safety: Destruction must happen on main thread. See notes above.
@@ -301,7 +298,7 @@ class Hgi {
 
  private:
   Hgi &operator=(const Hgi &) = delete;
-  Hgi(const Hgi &)            = delete;
+  Hgi(const Hgi &) = delete;
 
   std::atomic<uint64_t> _uniqueIdCounter;
 };

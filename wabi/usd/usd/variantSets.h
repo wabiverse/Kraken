@@ -161,7 +161,7 @@ class UsdVariantSet {
   /// See GetVariantEditTarget() for discussion of \p layer parameter
   USD_API
   std::pair<UsdStagePtr, UsdEditTarget> GetVariantEditContext(
-      const SdfLayerHandle &layer = SdfLayerHandle()) const;
+    const SdfLayerHandle &layer = SdfLayerHandle()) const;
 
   /// Return this VariantSet's held prim.
   UsdPrim const &GetPrim() const
@@ -190,8 +190,8 @@ class UsdVariantSet {
 
  private:
   UsdVariantSet(const UsdPrim &prim, const std::string &variantSetName)
-      : _prim(prim),
-        _variantSetName(variantSetName)
+    : _prim(prim),
+      _variantSetName(variantSetName)
   {}
 
   SdfPrimSpecHandle _CreatePrimSpecForEditing();

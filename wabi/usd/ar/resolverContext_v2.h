@@ -247,12 +247,12 @@ class ArResolverContext {
       return TfSafeTypeCompare(ti, GetTypeid());
     }
 
-    virtual _Untyped *Clone() const                  = 0;
-    virtual const std::type_info &GetTypeid() const  = 0;
+    virtual _Untyped *Clone() const = 0;
+    virtual const std::type_info &GetTypeid() const = 0;
     virtual bool LessThan(const _Untyped &rhs) const = 0;
-    virtual bool Equals(const _Untyped &rhs) const   = 0;
-    virtual size_t Hash() const                      = 0;
-    virtual std::string GetDebugString() const       = 0;
+    virtual bool Equals(const _Untyped &rhs) const = 0;
+    virtual size_t Hash() const = 0;
+    virtual std::string GetDebugString() const = 0;
 
 #  ifdef WITH_PYTHON
     virtual TfPyObjWrapper GetPythonObj() const = 0;
@@ -307,8 +307,7 @@ class ArResolverContext {
     Context _context;
   };
 
-  template<class HashState>
-  friend void TfHashAppend(HashState &h, const std::shared_ptr<_Untyped> &context)
+  template<class HashState> friend void TfHashAppend(HashState &h, const std::shared_ptr<_Untyped> &context)
   {
     h.Append(context->Hash());
   }

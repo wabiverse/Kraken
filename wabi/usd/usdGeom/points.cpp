@@ -131,8 +131,7 @@ UsdAttribute UsdGeomPoints::CreateIdsAttr(VtValue const &defaultValue, bool writ
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -146,11 +145,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdGeomPoints::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdGeomTokens->widths,
-      UsdGeomTokens->ids,
+    UsdGeomTokens->widths,
+    UsdGeomTokens->ids,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdGeomPointBased::GetSchemaAttributeNames(true), localNames);
+    UsdGeomPointBased::GetSchemaAttributeNames(true), localNames);
 
   if (includeInherited)
     return allNames;
@@ -194,10 +193,10 @@ bool UsdGeomPoints::SetWidthsInterpolation(TfToken const &interpolation)
   }
 
   TF_CODING_ERROR(
-      "Attempt to set invalid interpolation "
-      "\"%s\" for widths attr on prim %s",
-      interpolation.GetText(),
-      GetPrim().GetPath().GetString().c_str());
+    "Attempt to set invalid interpolation "
+    "\"%s\" for widths attr on prim %s",
+    interpolation.GetText(),
+    GetPrim().GetPath().GetString().c_str());
 
   return false;
 }

@@ -80,10 +80,10 @@ GarchGLPlatformDebugContextPrivate::GarchGLPlatformDebugContextPrivate(int major
                                                                        int minorVersion,
                                                                        bool coreProfile,
                                                                        bool directRendering)
-    : _dpy(NULL),
-      _ctx(NULL)
+  : _dpy(NULL),
+    _ctx(NULL)
 {
-  Display *shareDisplay   = glXGetCurrentDisplay();
+  Display *shareDisplay = glXGetCurrentDisplay();
   GLXContext shareContext = glXGetCurrentContext();
 
   int fbConfigId = 0;
@@ -92,13 +92,13 @@ GarchGLPlatformDebugContextPrivate::GarchGLPlatformDebugContextPrivate(int major
   glXQueryContext(shareDisplay, shareContext, GLX_SCREEN, &screen);
 
   int configSpec[] = {
-      GLX_FBCONFIG_ID,
-      fbConfigId,
-      None,
+    GLX_FBCONFIG_ID,
+    fbConfigId,
+    None,
   };
   GLXFBConfig *configs = NULL;
-  int configCount      = 0;
-  configs              = glXChooseFBConfig(shareDisplay, screen, configSpec, &configCount);
+  int configCount = 0;
+  configs = glXChooseFBConfig(shareDisplay, screen, configSpec, &configCount);
   if (!TF_VERIFY(configCount > 0)) {
     return;
   }
@@ -107,30 +107,29 @@ GarchGLPlatformDebugContextPrivate::GarchGLPlatformDebugContextPrivate(int major
                                     GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
 
   int attribs[] = {
-      GLX_CONTEXT_MAJOR_VERSION_ARB,
-      majorVersion,
-      GLX_CONTEXT_MINOR_VERSION_ARB,
-      minorVersion,
-      GLX_CONTEXT_PROFILE_MASK_ARB,
-      profile,
-      GLX_CONTEXT_FLAGS_ARB,
-      GLX_CONTEXT_DEBUG_BIT_ARB,
-      0,
+    GLX_CONTEXT_MAJOR_VERSION_ARB,
+    majorVersion,
+    GLX_CONTEXT_MINOR_VERSION_ARB,
+    minorVersion,
+    GLX_CONTEXT_PROFILE_MASK_ARB,
+    profile,
+    GLX_CONTEXT_FLAGS_ARB,
+    GLX_CONTEXT_DEBUG_BIT_ARB,
+    0,
   };
 
   // Extension entry points must be resolved at run-time.
   PFNGLXCREATECONTEXTATTRIBSARBPROC createContextAttribs = (PFNGLXCREATECONTEXTATTRIBSARBPROC)
-      glXGetProcAddressARB((const GLubyte *)"glXCreateContextAttribsARB");
+    glXGetProcAddressARB((const GLubyte *)"glXCreateContextAttribsARB");
 
   // Create a GL context with the requested capabilities.
   if (createContextAttribs) {
-    _ctx = (*createContextAttribs)(
-        shareDisplay, configs[0], shareContext, directRendering, attribs);
+    _ctx = (*createContextAttribs)(shareDisplay, configs[0], shareContext, directRendering, attribs);
   }
   else {
     TF_WARN("Unable to create GL debug context.");
     XVisualInfo *vis = glXGetVisualFromFBConfig(shareDisplay, configs[0]);
-    _ctx             = glXCreateContext(shareDisplay, vis, shareContext, directRendering);
+    _ctx = glXCreateContext(shareDisplay, vis, shareContext, directRendering);
   }
   if (!TF_VERIFY(_ctx)) {
     return;
@@ -225,14 +224,14 @@ GarchGLPlatformDebugContext::GarchGLPlatformDebugContext(int majorVersion,
                                                          int minorVersion,
                                                          bool coreProfile,
                                                          bool directRendering)
-    : _coreProfile(coreProfile)
+  : _coreProfile(coreProfile)
 
 {
   if (!GarchGLPlatformDebugContext::IsEnabledDebugOutput()) {
     return;
   }
-  _private.reset(new GarchGLPlatformDebugContextPrivate(
-      majorVersion, minorVersion, coreProfile, directRendering));
+  _private.reset(
+    new GarchGLPlatformDebugContextPrivate(majorVersion, minorVersion, coreProfile, directRendering));
 }
 
 GarchGLPlatformDebugContext::~GarchGLPlatformDebugContext()

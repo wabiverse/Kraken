@@ -88,11 +88,9 @@ template<class T> inline bool operator<(const NVec2<T> &lhs, const NVec2<T> &rhs
   }
   return lhs.y < rhs.y;
 }
-template<class T>
-inline NVec2<T> Clamp(const NVec2<T> &val, const NVec2<T> &min, const NVec2<T> &max)
+template<class T> inline NVec2<T> Clamp(const NVec2<T> &val, const NVec2<T> &min, const NVec2<T> &max)
 {
-  return NVec2<T>(std::min(max.x, std::max(min.x, val.x)),
-                  std::min(max.y, std::max(min.y, val.y)));
+  return NVec2<T>(std::min(max.x, std::max(min.x, val.x)), std::min(max.y, std::max(min.y, val.y)));
 }
 template<class T> inline T ManhattanDistance(const NVec2<T> &l, const NVec2<T> &r)
 {
@@ -171,8 +169,7 @@ template<class T> inline NVec4<T> &operator*=(NVec4<T> &lhs, float val)
   lhs.w *= val;
   return lhs;
 }
-template<class T>
-inline NVec4<T> Clamp(const NVec4<T> &val, const NVec4<T> &min, const NVec4<T> &max)
+template<class T> inline NVec4<T> Clamp(const NVec4<T> &val, const NVec4<T> &min, const NVec4<T> &max)
 {
   return NVec4<T>(std::min(max.x, std::max(min.x, val.x)),
                   std::min(max.y, std::max(min.y, val.y)),
@@ -228,7 +225,7 @@ inline float Luminosity(const NVec4<float> &intensity)
 inline NVec4<float> Mix(const NVec4<float> &c1, const NVec4<float> &c2, float factor)
 {
   NVec4<float> ret = c1 * (1.0f - factor);
-  ret              = ret + (c2 * factor);
+  ret = ret + (c2 * factor);
   return ret;
 }
 
@@ -310,13 +307,13 @@ using NVec4i = NVec4<long>;
 
 template<class T> struct NRect {
   NRect(const NVec2<T> &topLeft, const NVec2<T> &bottomRight)
-      : topLeftPx(topLeft),
-        bottomRightPx(bottomRight)
+    : topLeftPx(topLeft),
+      bottomRightPx(bottomRight)
   {}
 
   NRect(T left, T top, T width, T height)
-      : topLeftPx(NVec2<T>(left, top)),
-        bottomRightPx(NVec2<T>(left, top) + NVec2<T>(width, height))
+    : topLeftPx(NVec2<T>(left, top)),
+      bottomRightPx(NVec2<T>(left, top) + NVec2<T>(width, height))
   {}
 
   NRect()
@@ -327,8 +324,7 @@ template<class T> struct NRect {
 
   bool Contains(const NVec2<T> &pt) const
   {
-    return topLeftPx.x <= pt.x && topLeftPx.y <= pt.y && bottomRightPx.x > pt.x &&
-           bottomRightPx.y > pt.y;
+    return topLeftPx.x <= pt.x && topLeftPx.y <= pt.y && bottomRightPx.x > pt.x && bottomRightPx.y > pt.y;
   }
 
   NVec2f BottomLeft() const
@@ -378,7 +374,7 @@ template<class T> struct NRect {
   }
   void Clear()
   {
-    topLeftPx     = NRect<T>();
+    topLeftPx = NRect<T>();
     bottomRightPx = NRect<T>();
   }
 
@@ -405,10 +401,10 @@ template<class T> struct NRect {
 
   void Move(float x, float y)
   {
-    auto width      = Width();
-    auto height     = Height();
-    topLeftPx.x     = x;
-    topLeftPx.y     = y;
+    auto width = Width();
+    auto height = Height();
+    topLeftPx.x = x;
+    topLeftPx.y = y;
     bottomRightPx.x = x + width;
     bottomRightPx.y = y + height;
   }
@@ -444,8 +440,7 @@ template<class T> inline std::ostream &operator<<(std::ostream &str, const NRect
 
 enum FitCriteria { X, Y };
 
-template<class T>
-inline bool NRectFits(const NRect<T> &area, const NRect<T> &rect, FitCriteria criteria)
+template<class T> inline bool NRectFits(const NRect<T> &area, const NRect<T> &rect, FitCriteria criteria)
 {
   if (criteria == FitCriteria::X) {
     auto xDiff = rect.bottomRightPx.x - area.bottomRightPx.x;

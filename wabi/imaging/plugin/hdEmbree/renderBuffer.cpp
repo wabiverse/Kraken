@@ -35,16 +35,16 @@
 WABI_NAMESPACE_BEGIN
 
 HdEmbreeRenderBuffer::HdEmbreeRenderBuffer(SdfPath const &id)
-    : HdRenderBuffer(id),
-      _width(0),
-      _height(0),
-      _format(HdFormatInvalid),
-      _multiSampled(false),
-      _buffer(),
-      _sampleBuffer(),
-      _sampleCount(),
-      _mappers(0),
-      _converged(false)
+  : HdRenderBuffer(id),
+    _width(0),
+    _height(0),
+    _format(HdFormatInvalid),
+    _multiSampled(false),
+    _buffer(),
+    _sampleBuffer(),
+    _sampleCount(),
+    _mappers(0),
+    _converged(false)
 {}
 
 HdEmbreeRenderBuffer::~HdEmbreeRenderBuffer()
@@ -81,9 +81,9 @@ void HdEmbreeRenderBuffer::_Deallocate()
   // recovery path...
   TF_VERIFY(!IsMapped());
 
-  _width        = 0;
-  _height       = 0;
-  _format       = HdFormatInvalid;
+  _width = 0;
+  _height = 0;
+  _format = HdFormatInvalid;
   _multiSampled = false;
   _buffer.resize(0);
   _sampleBuffer.resize(0);
@@ -103,7 +103,7 @@ size_t HdEmbreeRenderBuffer::_GetBufferSize(GfVec2i const &dims, HdFormat format
 HdFormat HdEmbreeRenderBuffer::_GetSampleFormat(HdFormat format)
 {
   HdFormat component = HdGetComponentFormat(format);
-  size_t arity       = HdGetComponentCount(format);
+  size_t arity = HdGetComponentCount(format);
 
   if (component == HdFormatUNorm8 || component == HdFormatSNorm8 || component == HdFormatFloat16 ||
       component == HdFormatFloat32) {
@@ -144,16 +144,16 @@ bool HdEmbreeRenderBuffer::Allocate(GfVec3i const &dimensions, HdFormat format, 
 
   if (dimensions[2] != 1) {
     TF_WARN(
-        "Render buffer allocated with dims <%d, %d, %d> and"
-        " format %s; depth must be 1!",
-        dimensions[0],
-        dimensions[1],
-        dimensions[2],
-        TfEnum::GetName(format).c_str());
+      "Render buffer allocated with dims <%d, %d, %d> and"
+      " format %s; depth must be 1!",
+      dimensions[0],
+      dimensions[1],
+      dimensions[2],
+      TfEnum::GetName(format).c_str());
     return false;
   }
 
-  _width  = dimensions[0];
+  _width = dimensions[0];
   _height = dimensions[1];
   _format = format;
   _buffer.resize(_GetBufferSize(GfVec2i(_width, _height), format));
@@ -171,7 +171,7 @@ template<typename T>
 static void _WriteSample(HdFormat format, uint8_t *dst, size_t valueComponents, T const *value)
 {
   HdFormat componentFormat = HdGetComponentFormat(format);
-  size_t componentCount    = HdGetComponentCount(format);
+  size_t componentCount = HdGetComponentCount(format);
 
   for (size_t c = 0; c < componentCount; ++c) {
     if (componentFormat == HdFormatInt32) {
@@ -187,7 +187,7 @@ template<typename T>
 static void _WriteOutput(HdFormat format, uint8_t *dst, size_t valueComponents, T const *value)
 {
   HdFormat componentFormat = HdGetComponentFormat(format);
-  size_t componentCount    = HdGetComponentCount(format);
+  size_t componentCount = HdGetComponentCount(format);
 
   for (size_t c = 0; c < componentCount; ++c) {
     if (componentFormat == HdFormatInt32) {
@@ -213,13 +213,13 @@ void HdEmbreeRenderBuffer::Write(GfVec3i const &pixel, size_t numComponents, flo
   size_t idx = pixel[1] * _width + pixel[0];
   if (_multiSampled) {
     size_t formatSize = HdDataSizeOfFormat(_GetSampleFormat(_format));
-    uint8_t *dst      = &_sampleBuffer[idx * formatSize];
+    uint8_t *dst = &_sampleBuffer[idx * formatSize];
     _WriteSample(_format, dst, numComponents, value);
     _sampleCount[idx]++;
   }
   else {
     size_t formatSize = HdDataSizeOfFormat(_format);
-    uint8_t *dst      = &_buffer[idx * formatSize];
+    uint8_t *dst = &_buffer[idx * formatSize];
     _WriteOutput(_format, dst, numComponents, value);
   }
 }
@@ -229,13 +229,13 @@ void HdEmbreeRenderBuffer::Write(GfVec3i const &pixel, size_t numComponents, int
   size_t idx = pixel[1] * _width + pixel[0];
   if (_multiSampled) {
     size_t formatSize = HdDataSizeOfFormat(_GetSampleFormat(_format));
-    uint8_t *dst      = &_sampleBuffer[idx * formatSize];
+    uint8_t *dst = &_sampleBuffer[idx * formatSize];
     _WriteSample(_format, dst, numComponents, value);
     _sampleCount[idx]++;
   }
   else {
     size_t formatSize = HdDataSizeOfFormat(_format);
-    uint8_t *dst      = &_buffer[idx * formatSize];
+    uint8_t *dst = &_buffer[idx * formatSize];
     _WriteOutput(_format, dst, numComponents, value);
   }
 }
@@ -279,9 +279,9 @@ void HdEmbreeRenderBuffer::Resolve()
   }
 
   HdFormat componentFormat = HdGetComponentFormat(_format);
-  size_t componentCount    = HdGetComponentCount(_format);
-  size_t formatSize        = HdDataSizeOfFormat(_format);
-  size_t sampleSize        = HdDataSizeOfFormat(_GetSampleFormat(_format));
+  size_t componentCount = HdGetComponentCount(_format);
+  size_t formatSize = HdDataSizeOfFormat(_format);
+  size_t sampleSize = HdDataSizeOfFormat(_GetSampleFormat(_format));
 
   for (unsigned int i = 0; i < _width * _height; ++i) {
 

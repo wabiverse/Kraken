@@ -27,19 +27,18 @@
 WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(
-    _tokens,
-    ((baseGLSLFX, "frustumCull.glslfx"))((instancing,
-                                          "Instancing.Transform"))((counting,
-                                                                    "ViewFrustumCull.Counting"))((
-        noCounting,
-        "ViewFrustumCull.NoCounting"))((tinyCull, "ViewFrustumCull.TinyCull"))((
-        noTinyCull,
-        "ViewFrustumCull.NoTinyCull"))((isVisible, "ViewFrustumCull.IsVisible"))((
-        mainInstancingVS,
-        "ViewFrustumCull.VertexInstancing"))((mainVS, "ViewFrustumCull.Vertex")));
+  _tokens,
+  ((baseGLSLFX, "frustumCull.glslfx"))((instancing, "Instancing.Transform"))((counting,
+                                                                              "ViewFrustumCull.Counting"))((
+    noCounting,
+    "ViewFrustumCull.NoCounting"))((tinyCull, "ViewFrustumCull.TinyCull"))((noTinyCull,
+                                                                            "ViewFrustumCull.NoTinyCull"))((
+    isVisible,
+    "ViewFrustumCull.IsVisible"))((mainInstancingVS,
+                                   "ViewFrustumCull.VertexInstancing"))((mainVS, "ViewFrustumCull.Vertex")));
 
 HdPh_CullingShaderKey::HdPh_CullingShaderKey(bool instancing, bool tinyCull, bool counting)
-    : glslfx(_tokens->baseGLSLFX)
+  : glslfx(_tokens->baseGLSLFX)
 {
 
   VS[0] = _tokens->instancing;

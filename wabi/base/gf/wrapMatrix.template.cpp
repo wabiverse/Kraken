@@ -81,7 +81,7 @@
       return -1;
     }
     {{MAT}} &mat = extract<{{MAT}} &>(self);
-    *ptrptr      = static_cast<void *>(mat.GetArray());
+    *ptrptr = static_cast<void *>(mat.GetArray());
     // Return size in bytes.
     return sizeof({{MAT}});
   }
@@ -127,9 +127,9 @@
 
     {{MAT}} &mat = extract<{{MAT}} &>(self);
 
-    view->obj      = self;
-    view->buf      = static_cast<void *>(mat.GetArray());
-    view->len      = sizeof({{MAT}});
+    view->obj = self;
+    view->buf = static_cast<void *>(mat.GetArray());
+    view->len = sizeof({{MAT}});
     view->readonly = 0;
     view->itemsize = sizeof({{SCL}});
     if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT) {
@@ -139,23 +139,23 @@
       view->format = NULL;
     }
     if ((flags & PyBUF_ND) == PyBUF_ND) {
-      view->ndim                = 2;
+      view->ndim = 2;
       static Py_ssize_t shape[] = {{{DIM}}, {{DIM}}};
-      view->shape               = shape;
+      view->shape = shape;
     }
     else {
-      view->ndim  = 0;
+      view->ndim = 0;
       view->shape = NULL;
     }
     if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES) {
       static Py_ssize_t strides[] = {{{DIM}} * sizeof({{SCL}}), sizeof({{SCL}})};
-      view->strides               = strides;
+      view->strides = strides;
     }
     else {
       view->strides = NULL;
     }
     view->suboffsets = NULL;
-    view->internal   = NULL;
+    view->internal = NULL;
 
     Py_INCREF(self);  // need to retain a reference to self.
     return 0;
@@ -165,13 +165,13 @@
   // to the right buffer protocol functions.
   static PyBufferProcs bufferProcs = {
 #if PY_MAJOR_VERSION == 2
-      (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
-      (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
-      (segcountproc)getsegcount,    /*bf_getsegcount*/
-      (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
+    (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
+    (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
+    (segcountproc)getsegcount,    /*bf_getsegcount*/
+    (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
 #endif
-      (getbufferproc)getbuffer,
-      (releasebufferproc)0,
+    (getbufferproc)getbuffer,
+    (releasebufferproc)0,
   };
 
   // End python buffer protocol support.
@@ -232,12 +232,12 @@
     }
   }
   __getitem__{{SCL}}(
+    {
       {
-        {
-          MAT
-        }
-      } const &self,
-      tuple index)
+        MAT
+      }
+    } const &self,
+    tuple index)
   {
     int i1 = 0, i2 = 0;
     if (len(index) == 2) {
@@ -257,12 +257,12 @@
     }
   }
   __getitem__vector(
+    {
       {
-        {
-          MAT
-        }
-      } const &self,
-      int index)
+        MAT
+      }
+    } const &self,
+    int index)
   {
     return GfVec{{SUFFIX}}(self[normalizeIndex(index)]);
   }
@@ -285,13 +285,13 @@
   }
 
   static void __setitem__vector(
-      {{MAT}} & self,
-      int index,
-      GfVec {
-        {
-          SUFFIX
-        }
-      } value)
+    {{MAT}} & self,
+    int index,
+    GfVec {
+      {
+        SUFFIX
+      }
+    } value)
   {
     int ni = normalizeIndex(index);
     {
@@ -316,12 +316,12 @@
 
   // Check rows against GfVec
   static bool __contains__vector(
-      const {{MAT}} & self,
-      GfVec {
-        {
-          SUFFIX
-        }
-      } value)
+    const {{MAT}} & self,
+    GfVec {
+      {
+        SUFFIX
+      }
+    } value)
   {
     for (int i = 0; i < {{DIM}}; ++i)
       if (self.GetRow(i) == value)
@@ -363,9 +363,8 @@
     {
       MAT
     }
-  } _Pickle_Suite
-      : boost::python::pickle_suite{static boost::python::tuple getinitargs(const {{MAT}} & m){
-            return boost::python::make_tuple({{MATRIX("m[%(i)s][%(j)s]", indent = 12)}});
+  } _Pickle_Suite : boost::python::pickle_suite{static boost::python::tuple getinitargs(const {{MAT}} & m){
+                      return boost::python::make_tuple({{MATRIX("m[%(i)s][%(j)s]", indent = 12)}});
   }  // namespace
 };
 
@@ -406,66 +405,63 @@ void wrapMatrix{{SUFFIX}}()
   def("IsClose", (bool (*)(const {{MAT}} & m1, const {{MAT}} & m2, double)) GfIsClose);
 
   class_<This> cls("Matrix{{ SUFFIX }}", no_init);
-  cls.def_pickle({
-       {
-         MAT
-       }
-     } _Pickle_Suite())
-      .def("__init__", make_constructor(__init__))
-      .def(init<const GfMatrix {
-        {
-          DIM
-        }
-      } d &>())
-      .def(init<const GfMatrix {
-        {
-          DIM
-        }
-      } f &>())
-      .def(init<int>())
-      .def(init<{{SCL}}>())
-      .def(init<{{MATRIX(SCL, indent = 13)}}>())
-      .def(init<const GfVec{{SUFFIX}} &>())
-      .def(init<const vector<vector<float>> &>())
-      .def(init<const vector<vector<double>> &>()){ % block customInit % } {
-          % endblock customInit % }
+  cls
+    .def_pickle({
+      {
+        MAT
+      }
+    } _Pickle_Suite())
+    .def("__init__", make_constructor(__init__))
+    .def(init<const GfMatrix {
+      {
+        DIM
+      }
+    } d &>())
+    .def(init<const GfMatrix {
+      {
+        DIM
+      }
+    } f &>())
+    .def(init<int>())
+    .def(init<{{SCL}}>())
+    .def(init<{{MATRIX(SCL, indent = 13)}}>())
+    .def(init<const GfVec{{SUFFIX}} &>())
+    .def(init<const vector<vector<float>> &>())
+    .def(init<const vector<vector<double>> &>()){ % block customInit % } { % endblock customInit % }
 
-      .def(TfTypePythonClass())
+    .def(TfTypePythonClass())
 
-      .add_static_property("dimension", get_dimension)
-      .def("__len__", __len__, "Return number of rows")
+    .add_static_property("dimension", get_dimension)
+    .def("__len__", __len__, "Return number of rows")
 
-      .def("__getitem__", __getitem__{{SCL}})
-      .def("__getitem__", __getitem__vector)
-      .def("__setitem__", __setitem__{{SCL}})
-      .def("__setitem__", __setitem__vector)
-      .def("__contains__", __contains__{{SCL}})
-      .def("__contains__", __contains__vector, "Check rows against GfVec"){
-          % block customSpecialMethods % } { % endblock customSpecialMethods % }
+    .def("__getitem__", __getitem__{{SCL}})
+    .def("__getitem__", __getitem__vector)
+    .def("__setitem__", __setitem__{{SCL}})
+    .def("__setitem__", __setitem__vector)
+    .def("__contains__", __contains__{{SCL}})
+    .def("__contains__", __contains__vector, "Check rows against GfVec"){ % block customSpecialMethods % } {
+      % endblock customSpecialMethods % }
 
-      .def("Set", (This & (This::*)({{MATRIX(SCL, indent = 37)}})) & This::Set, return_self<>())
+    .def("Set", (This & (This::*)({{MATRIX(SCL, indent = 37)}})) & This::Set, return_self<>())
 
-      .def("SetIdentity", &This::SetIdentity, return_self<>())
-      .def("SetZero", &This::SetZero, return_self<>())
+    .def("SetIdentity", &This::SetIdentity, return_self<>())
+    .def("SetZero", &This::SetZero, return_self<>())
 
-      .def("SetDiagonal", (This & (This::*)({{SCL}})) & This::SetDiagonal, return_self<>())
-      .def("SetDiagonal",
-           (This & (This::*)(const GfVec{{SUFFIX}} &)) & This::SetDiagonal,
-           return_self<>())
+    .def("SetDiagonal", (This & (This::*)({{SCL}})) & This::SetDiagonal, return_self<>())
+    .def("SetDiagonal", (This & (This::*)(const GfVec{{SUFFIX}} &)) & This::SetDiagonal, return_self<>())
 
-      .def("SetRow", &This::SetRow)
-      .def("SetColumn", &This::SetColumn)
-      .def("GetRow", &This::GetRow)
-      .def("GetColumn", &This::GetColumn)
+    .def("SetRow", &This::SetRow)
+    .def("SetColumn", &This::SetColumn)
+    .def("GetRow", &This::GetRow)
+    .def("GetColumn", &This::GetColumn)
 
-      .def("GetTranspose", &This::GetTranspose)
-      .def("GetInverse", GetInverseWrapper)
+    .def("GetTranspose", &This::GetTranspose)
+    .def("GetInverse", GetInverseWrapper)
 
-      .def("GetDeterminant",
-           &This::GetDeterminant){ % block customDefs % } { % endblock customDefs % }
+    .def("GetDeterminant", &This::GetDeterminant){ % block customDefs % } { % endblock customDefs % }
 
-      .def(str(self))
-      .def(self == self)
+    .def(str(self))
+    .def(self == self)
   {
     % if SCL == 'float' %
   }
@@ -475,13 +471,13 @@ void wrapMatrix{{SUFFIX}}()
            DIM
          }
        } d()){ % elif SCL == 'double' % }
-      .def(self ==
-           GfMatrix {
-             {
-               DIM
-             }
-           } f()){ % endif % }
-      .def(self != self)
+    .def(self ==
+         GfMatrix {
+           {
+             DIM
+           }
+         } f()){ % endif % }
+    .def(self != self)
   {
     % if SCL == 'float' %
   }
@@ -491,25 +487,25 @@ void wrapMatrix{{SUFFIX}}()
            DIM
          }
        } d()){ % elif SCL == 'double' % }
-      .def(self !=
-           GfMatrix {
-             {
-               DIM
-             }
-           } f()){ % endif % }
-      .def(self *= self)
-      .def(self * self)
-      .def(self *= double())
-      .def(self * double())
-      .def(double() * self)
-      .def(self += self)
-      .def(self + self)
-      .def(self -= self)
-      .def(self - self)
-      .def(-self)
-      .def(self / self)
-      .def(self * GfVec{{SUFFIX}}())
-      .def(GfVec{{SUFFIX}}() * self)
+    .def(self !=
+         GfMatrix {
+           {
+             DIM
+           }
+         } f()){ % endif % }
+    .def(self *= self)
+    .def(self * self)
+    .def(self *= double())
+    .def(self * double())
+    .def(double() * self)
+    .def(self += self)
+    .def(self + self)
+    .def(self -= self)
+    .def(self - self)
+    .def(-self)
+    .def(self / self)
+    .def(self * GfVec{{SUFFIX}}())
+    .def(GfVec{{SUFFIX}}() * self)
   {
     % if SCL == 'double' %
   }
@@ -519,12 +515,12 @@ void wrapMatrix{{SUFFIX}}()
            DIM
          }
        } f())
-      .def(GfVec {
-        {
-          DIM
-        }
-      } f() *
-           self)
+    .def(GfVec {
+      {
+        DIM
+      }
+    } f() *
+         self)
   {
     % endif %
   }
@@ -535,18 +531,18 @@ void wrapMatrix{{SUFFIX}}()
   .def("__truediv__", __truediv__)
 #endif
 
-      { % block customXformDefs % } { % endblock customXformDefs % }
-          .def("__repr__", _Repr)
-          .def("__hash__", __hash__)
+    { % block customXformDefs % } { % endblock customXformDefs % }
+      .def("__repr__", _Repr)
+      .def("__hash__", __hash__)
 
-      ;
+    ;
   to_python_converter<std::vector<This>, TfPySequenceToPython<std::vector<This>>>();
 
   // Install buffer protocol: set the tp_as_buffer slot to point to a
   // structure of function pointers that implement the buffer protocol for
   // this type, and set the type flags to indicate that this type supports the
   // buffer protocol.
-  auto *typeObj         = reinterpret_cast<PyTypeObject *>(cls.ptr());
+  auto *typeObj = reinterpret_cast<PyTypeObject *>(cls.ptr());
   typeObj->tp_as_buffer = &bufferProcs;
   typeObj->tp_flags |= (TfPy_TPFLAGS_HAVE_NEWBUFFER | TfPy_TPFLAGS_HAVE_GETCHARBUFFER);
 }

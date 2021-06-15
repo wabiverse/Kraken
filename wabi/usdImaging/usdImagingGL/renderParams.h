@@ -115,48 +115,47 @@ class UsdImagingGLRenderParams {
 };
 
 UsdImagingGLRenderParams::UsdImagingGLRenderParams()
-    : frame(UsdTimeCode::EarliestTime()),
-      complexity(1.0),
-      drawMode(UsdImagingGLDrawMode::DRAW_SHADED_SMOOTH),
-      showGuides(false),
-      showProxy(true),
-      showRender(false),
-      forceRefresh(false),
-      flipFrontFacing(false),
-      cullStyle(UsdImagingGLCullStyle::CULL_STYLE_NOTHING),
-      enableIdRender(false),
-      enableLighting(true),
-      enableSampleAlphaToCoverage(false),
-      applyRenderState(true),
-      gammaCorrectColors(true),
-      highlight(false),
-      overrideColor(.0f, .0f, .0f, .0f),
-      wireframeColor(.0f, .0f, .0f, .0f),
-      alphaThreshold(-1),
-      clipPlanes(),
-      enableSceneMaterials(true),
-      enableSceneLights(true),
-      enableUsdDrawModes(true),
-      clearColor(0, 0, 0, 1),
-      lut3dSizeOCIO(65)
+  : frame(UsdTimeCode::EarliestTime()),
+    complexity(1.0),
+    drawMode(UsdImagingGLDrawMode::DRAW_SHADED_SMOOTH),
+    showGuides(false),
+    showProxy(true),
+    showRender(false),
+    forceRefresh(false),
+    flipFrontFacing(false),
+    cullStyle(UsdImagingGLCullStyle::CULL_STYLE_NOTHING),
+    enableIdRender(false),
+    enableLighting(true),
+    enableSampleAlphaToCoverage(false),
+    applyRenderState(true),
+    gammaCorrectColors(true),
+    highlight(false),
+    overrideColor(.0f, .0f, .0f, .0f),
+    wireframeColor(.0f, .0f, .0f, .0f),
+    alphaThreshold(-1),
+    clipPlanes(),
+    enableSceneMaterials(true),
+    enableSceneLights(true),
+    enableUsdDrawModes(true),
+    clearColor(0, 0, 0, 1),
+    lut3dSizeOCIO(65)
 {}
 
 bool UsdImagingGLRenderParams::operator==(const UsdImagingGLRenderParams &other) const
 {
   return frame == other.frame && complexity == other.complexity && drawMode == other.drawMode &&
-         showGuides == other.showGuides && showProxy == other.showProxy &&
-         showRender == other.showRender && forceRefresh == other.forceRefresh &&
-         flipFrontFacing == other.flipFrontFacing && cullStyle == other.cullStyle &&
-         enableIdRender == other.enableIdRender && enableLighting == other.enableLighting &&
+         showGuides == other.showGuides && showProxy == other.showProxy && showRender == other.showRender &&
+         forceRefresh == other.forceRefresh && flipFrontFacing == other.flipFrontFacing &&
+         cullStyle == other.cullStyle && enableIdRender == other.enableIdRender &&
+         enableLighting == other.enableLighting &&
          enableSampleAlphaToCoverage == other.enableSampleAlphaToCoverage &&
-         applyRenderState == other.applyRenderState &&
-         gammaCorrectColors == other.gammaCorrectColors && highlight == other.highlight &&
-         overrideColor == other.overrideColor && wireframeColor == other.wireframeColor &&
-         alphaThreshold == other.alphaThreshold && clipPlanes == other.clipPlanes &&
-         enableSceneMaterials == other.enableSceneMaterials &&
-         enableSceneLights == other.enableSceneLights &&
-         enableUsdDrawModes == other.enableUsdDrawModes && clearColor == other.clearColor &&
-         colorCorrectionMode == other.colorCorrectionMode && lut3dSizeOCIO == other.lut3dSizeOCIO;
+         applyRenderState == other.applyRenderState && gammaCorrectColors == other.gammaCorrectColors &&
+         highlight == other.highlight && overrideColor == other.overrideColor &&
+         wireframeColor == other.wireframeColor && alphaThreshold == other.alphaThreshold &&
+         clipPlanes == other.clipPlanes && enableSceneMaterials == other.enableSceneMaterials &&
+         enableSceneLights == other.enableSceneLights && enableUsdDrawModes == other.enableUsdDrawModes &&
+         clearColor == other.clearColor && colorCorrectionMode == other.colorCorrectionMode &&
+         lut3dSizeOCIO == other.lut3dSizeOCIO;
 }
 
 WABI_NAMESPACE_END

@@ -112,12 +112,10 @@ void wrapTestChangeProcessor()
   typedef TfWeakPtr<Pcp_PyTestChangeProcessor> ThisPtr;
 
   class_<This, ThisPtr, boost::noncopyable>("_TestChangeProcessor", init<PcpCache *>())
-      .def("__enter__", &This::Enter, return_self<>())
-      .def("__exit__", &This::Exit)
+    .def("__enter__", &This::Enter, return_self<>())
+    .def("__exit__", &This::Exit)
 
-      .def("GetSignificantChanges",
-           &This::GetSignificantChanges,
-           return_value_policy<TfPySequenceToList>())
-      .def("GetSpecChanges", &This::GetSpecChanges, return_value_policy<TfPySequenceToList>())
-      .def("GetPrimChanges", &This::GetPrimChanges, return_value_policy<TfPySequenceToList>());
+    .def("GetSignificantChanges", &This::GetSignificantChanges, return_value_policy<TfPySequenceToList>())
+    .def("GetSpecChanges", &This::GetSpecChanges, return_value_policy<TfPySequenceToList>())
+    .def("GetPrimChanges", &This::GetPrimChanges, return_value_policy<TfPySequenceToList>());
 }

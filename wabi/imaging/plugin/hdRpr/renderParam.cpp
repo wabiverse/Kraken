@@ -18,9 +18,8 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-HdRprVolumeFieldSubscription HdRprRenderParam::SubscribeVolumeForFieldUpdates(
-    HdRprVolume *volume,
-    SdfPath const &fieldId)
+HdRprVolumeFieldSubscription HdRprRenderParam::SubscribeVolumeForFieldUpdates(HdRprVolume *volume,
+                                                                              SdfPath const &fieldId)
 {
   auto sub = HdRprVolumeFieldSubscription(volume, [](HdRprVolume *volume) {});
   {
@@ -30,18 +29,16 @@ HdRprVolumeFieldSubscription HdRprRenderParam::SubscribeVolumeForFieldUpdates(
   return sub;
 }
 
-void HdRprRenderParam::NotifyVolumesAboutFieldChange(HdSceneDelegate *sceneDelegate,
-                                                     SdfPath const &fieldId)
+void HdRprRenderParam::NotifyVolumesAboutFieldChange(HdSceneDelegate *sceneDelegate, SdfPath const &fieldId)
 {
   std::lock_guard<std::mutex> lock(m_subscribedVolumesMutex);
-  for (auto subscriptionsIt = m_subscribedVolumes.begin();
-       subscriptionsIt != m_subscribedVolumes.end();) {
+  for (auto subscriptionsIt = m_subscribedVolumes.begin(); subscriptionsIt != m_subscribedVolumes.end();) {
     auto &subscriptions = subscriptionsIt->second;
     for (size_t i = 0; i < subscriptions.size(); ++i) {
       if (auto volume = subscriptions[i].lock()) {
         // Force HdVolume Sync
-        sceneDelegate->GetRenderIndex().GetChangeTracker().MarkRprimDirty(
-            volume->GetId(), HdChangeTracker::DirtyTopology);
+        sceneDelegate->GetRenderIndex().GetChangeTracker().MarkRprimDirty(volume->GetId(),
+                                                                          HdChangeTracker::DirtyTopology);
 
         // Possible Optimization: notify volume about exact changed field
         // Does not make sense right now because Hydra removes and creates
@@ -62,15 +59,13 @@ void HdRprRenderParam::NotifyVolumesAboutFieldChange(HdSceneDelegate *sceneDeleg
   }
 }
 
-void HdRprRenderParam::SubscribeForMaterialUpdates(SdfPath const &materialId,
-                                                   SdfPath const &rPrimId)
+void HdRprRenderParam::SubscribeForMaterialUpdates(SdfPath const &materialId, SdfPath const &rPrimId)
 {
   std::lock_guard<std::mutex> lock(m_materialSubscriptionsMutex);
   m_materialSubscriptions[materialId].insert(rPrimId);
 }
 
-void HdRprRenderParam::UnsubscribeFromMaterialUpdates(SdfPath const &materialId,
-                                                      SdfPath const &rPrimId)
+void HdRprRenderParam::UnsubscribeFromMaterialUpdates(SdfPath const &materialId, SdfPath const &rPrimId)
 {
   std::lock_guard<std::mutex> lock(m_materialSubscriptionsMutex);
   auto subscriptionsIt = m_materialSubscriptions.find(materialId);

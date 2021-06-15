@@ -285,7 +285,7 @@ class PcpErrorInconsistentAttributeType : public PcpErrorInconsistentPropertyBas
 // Forward declarations:
 class PcpErrorInconsistentAttributeVariability;
 typedef std::shared_ptr<PcpErrorInconsistentAttributeVariability>
-    PcpErrorInconsistentAttributeVariabilityPtr;
+  PcpErrorInconsistentAttributeVariabilityPtr;
 
 /// \class PcpErrorInconsistentAttributeVariability
 ///

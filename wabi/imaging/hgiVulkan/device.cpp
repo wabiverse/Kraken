@@ -66,7 +66,7 @@ static bool _SupportsPresentation(VkPhysicalDevice physicalDevice, uint32_t fami
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
   return vkGetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice, familyIndex);
 #elif defined(VK_USE_PLATFORM_XLIB_KHR)
-  Display *dsp      = XOpenDisplay(nullptr);
+  Display *dsp = XOpenDisplay(nullptr);
   VisualID visualID = XVisualIDFromVisual(DefaultVisual(dsp, DefaultScreen(dsp)));
   return vkGetPhysicalDeviceXlibPresentationSupportKHR(physicalDevice, familyIndex, dsp, visualID);
 #elif defined(VK_USE_PLATFORM_MACOS_MVK)
@@ -79,11 +79,11 @@ static bool _SupportsPresentation(VkPhysicalDevice physicalDevice, uint32_t fami
 }
 
 HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
-    : _vkPhysicalDevice(nullptr),
-      _vkDevice(nullptr),
-      _vmaAllocator(nullptr),
-      _commandQueue(nullptr),
-      _capabilities(nullptr)
+  : _vkPhysicalDevice(nullptr),
+    _vkDevice(nullptr),
+    _vmaAllocator(nullptr),
+    _commandQueue(nullptr),
+    _capabilities(nullptr)
 {
   //
   // Determine physical device
@@ -92,9 +92,8 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
   const uint32_t maxDevices = 64;
   VkPhysicalDevice physicalDevices[maxDevices];
   uint32_t physicalDeviceCount = maxDevices;
-  TF_VERIFY(vkEnumeratePhysicalDevices(instance->GetVulkanInstance(),
-                                       &physicalDeviceCount,
-                                       physicalDevices) == VK_SUCCESS);
+  TF_VERIFY(vkEnumeratePhysicalDevices(
+              instance->GetVulkanInstance(), &physicalDeviceCount, physicalDevices) == VK_SUCCESS);
 
   for (uint32_t i = 0; i < physicalDeviceCount; i++) {
     VkPhysicalDeviceProperties props;
@@ -117,12 +116,12 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
     // store the first non-discrete device as fallback in case we never
     // find a discrete device at all.
     if (props.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
-      _vkPhysicalDevice       = physicalDevices[i];
+      _vkPhysicalDevice = physicalDevices[i];
       _vkGfxsQueueFamilyIndex = familyIndex;
       break;
     }
     else if (!_vkPhysicalDevice) {
-      _vkPhysicalDevice       = physicalDevices[i];
+      _vkPhysicalDevice = physicalDevices[i];
       _vkGfxsQueueFamilyIndex = familyIndex;
     }
   }
@@ -137,13 +136,13 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
   //
 
   uint32_t extensionCount = 0;
-  TF_VERIFY(vkEnumerateDeviceExtensionProperties(
-                _vkPhysicalDevice, nullptr, &extensionCount, nullptr) == VK_SUCCESS);
+  TF_VERIFY(vkEnumerateDeviceExtensionProperties(_vkPhysicalDevice, nullptr, &extensionCount, nullptr) ==
+            VK_SUCCESS);
 
   _vkExtensions.resize(extensionCount);
 
   TF_VERIFY(vkEnumerateDeviceExtensionProperties(
-                _vkPhysicalDevice, nullptr, &extensionCount, _vkExtensions.data()) == VK_SUCCESS);
+              _vkPhysicalDevice, nullptr, &extensionCount, _vkExtensions.data()) == VK_SUCCESS);
 
   //
   // Create Device
@@ -151,10 +150,10 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
   _capabilities = new HgiVulkanCapabilities(this);
 
   VkDeviceQueueCreateInfo queueInfo = {VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO};
-  float queuePriorities[]           = {1.0f};
-  queueInfo.queueFamilyIndex        = _vkGfxsQueueFamilyIndex;
-  queueInfo.queueCount              = 1;
-  queueInfo.pQueuePriorities        = queuePriorities;
+  float queuePriorities[] = {1.0f};
+  queueInfo.queueFamilyIndex = _vkGfxsQueueFamilyIndex;
+  queueInfo.queueCount = 1;
+  queueInfo.pQueuePriorities = queuePriorities;
 
   std::vector<const char *> extensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 
@@ -197,8 +196,8 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
   }
   else {
     TF_WARN(
-        "Unsupported VK_EXT_scalar_block_layout."
-        "Update gfx driver?");
+      "Unsupported VK_EXT_scalar_block_layout."
+      "Update gfx driver?");
   }
 
   // This extension is needed to allow the viewport to be flipped in Y so that
@@ -215,16 +214,16 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
   features.features.multiDrawIndirect = _capabilities->vkDeviceFeatures.multiDrawIndirect;
   features.features.samplerAnisotropy = _capabilities->vkDeviceFeatures.samplerAnisotropy;
   features.features.shaderSampledImageArrayDynamicIndexing =
-      _capabilities->vkDeviceFeatures.shaderSampledImageArrayDynamicIndexing;
+    _capabilities->vkDeviceFeatures.shaderSampledImageArrayDynamicIndexing;
   features.features.shaderStorageImageArrayDynamicIndexing =
-      _capabilities->vkDeviceFeatures.shaderStorageImageArrayDynamicIndexing;
-  features.features.sampleRateShading  = _capabilities->vkDeviceFeatures.sampleRateShading;
+    _capabilities->vkDeviceFeatures.shaderStorageImageArrayDynamicIndexing;
+  features.features.sampleRateShading = _capabilities->vkDeviceFeatures.sampleRateShading;
   features.features.shaderClipDistance = _capabilities->vkDeviceFeatures.shaderClipDistance;
   features.features.tessellationShader = _capabilities->vkDeviceFeatures.tessellationShader;
 
   // Needed to write to storage buffers from vertex shader (eg. GPU culling).
   features.features.vertexPipelineStoresAndAtomics =
-      _capabilities->vkDeviceFeatures.vertexPipelineStoresAndAtomics;
+    _capabilities->vkDeviceFeatures.vertexPipelineStoresAndAtomics;
 
 #if !defined(VK_USE_PLATFORM_MACOS_MVK)
   // Needed for buffer address feature
@@ -233,15 +232,14 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
   features.features.geometryShader = _capabilities->vkDeviceFeatures.geometryShader;
 #endif
 
-  VkDeviceCreateInfo createInfo      = {VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO};
-  createInfo.queueCreateInfoCount    = 1;
-  createInfo.pQueueCreateInfos       = &queueInfo;
+  VkDeviceCreateInfo createInfo = {VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO};
+  createInfo.queueCreateInfoCount = 1;
+  createInfo.pQueueCreateInfos = &queueInfo;
   createInfo.ppEnabledExtensionNames = extensions.data();
-  createInfo.enabledExtensionCount   = (uint32_t)extensions.size();
-  createInfo.pNext                   = &features;
+  createInfo.enabledExtensionCount = (uint32_t)extensions.size();
+  createInfo.pNext = &features;
 
-  TF_VERIFY(vkCreateDevice(_vkPhysicalDevice, &createInfo, HgiVulkanAllocator(), &_vkDevice) ==
-            VK_SUCCESS);
+  TF_VERIFY(vkCreateDevice(_vkPhysicalDevice, &createInfo, HgiVulkanAllocator(), &_vkDevice) == VK_SUCCESS);
 
   HgiVulkanSetupDeviceDebug(instance, this);
 
@@ -249,17 +247,17 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
   // Extension function pointers
   //
 
-  vkCreateRenderPass2KHR = (PFN_vkCreateRenderPass2KHR)vkGetDeviceProcAddr(
-      _vkDevice, "vkCreateRenderPass2KHR");
+  vkCreateRenderPass2KHR = (PFN_vkCreateRenderPass2KHR)vkGetDeviceProcAddr(_vkDevice,
+                                                                           "vkCreateRenderPass2KHR");
 
   //
   // Memory allocator
   //
 
   VmaAllocatorCreateInfo allocatorInfo = {};
-  allocatorInfo.instance               = instance->GetVulkanInstance();
-  allocatorInfo.physicalDevice         = _vkPhysicalDevice;
-  allocatorInfo.device                 = _vkDevice;
+  allocatorInfo.instance = instance->GetVulkanInstance();
+  allocatorInfo.physicalDevice = _vkPhysicalDevice;
+  allocatorInfo.device = _vkDevice;
   if (dedicatedAllocations) {
     allocatorInfo.flags |= VMA_ALLOCATOR_CREATE_KHR_DEDICATED_ALLOCATION_BIT;
   }

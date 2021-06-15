@@ -64,21 +64,21 @@ class RprUsd_RprCatcherNode : public RprUsd_MaterialNode {
 
   static RprUsd_RprNodeInfo *GetInfo(std::string catcherType)
   {
-    auto ret       = new RprUsd_RprNodeInfo;
+    auto ret = new RprUsd_RprNodeInfo;
     auto &nodeInfo = *ret;
 
-    nodeInfo.uiName   = "RPR " + catcherType + " Catcher";
+    nodeInfo.uiName = "RPR " + catcherType + " Catcher";
     nodeInfo.uiFolder = "Shaders";
-    catcherType[0]    = std::tolower(catcherType[0], std::locale());
-    nodeInfo.name     = "rpr_" + catcherType + "_catcher";
+    catcherType[0] = std::tolower(catcherType[0], std::locale());
+    nodeInfo.name = "rpr_" + catcherType + "_catcher";
 
     RprUsd_RprNodeInput in(RprUsdMaterialNodeElement::kSurfaceShader);
     in.name = _tokens->in;
     nodeInfo.inputs.push_back(in);
 
     RprUsd_RprNodeInput enable(RprUsdMaterialNodeElement::kBoolean);
-    enable.name        = _tokens->enable;
-    enable.uiName      = "Enable";
+    enable.name = _tokens->enable;
+    enable.uiName = "Enable";
     enable.valueString = "true";
     nodeInfo.inputs.push_back(enable);
 
@@ -99,15 +99,14 @@ class RprUsd_RprCatcherNode : public RprUsd_MaterialNode {
   { \
     auto nodeInfo = RprUsd_RprCatcherNode::GetInfo(#CATCHER_TYPE); \
     RprUsdMaterialRegistry::GetInstance().Register( \
-        TfToken(nodeInfo->name, TfToken::Immortal), \
-        [](RprUsd_MaterialBuilderContext *context, \
-           std::map<TfToken, VtValue> const &parameters) { \
-          auto node = new RprUsd_RprCatcherNode(&context->is##CATCHER_TYPE##Catcher); \
-          for (auto &entry : parameters) \
-            node->SetInput(entry.first, entry.second); \
-          return node; \
-        }, \
-        nodeInfo); \
+      TfToken(nodeInfo->name, TfToken::Immortal), \
+      [](RprUsd_MaterialBuilderContext *context, std::map<TfToken, VtValue> const &parameters) { \
+        auto node = new RprUsd_RprCatcherNode(&context->is##CATCHER_TYPE##Catcher); \
+        for (auto &entry : parameters) \
+          node->SetInput(entry.first, entry.second); \
+        return node; \
+      }, \
+      nodeInfo); \
   }
 
 REGISTER_CATCHER_NODE(Shadow);

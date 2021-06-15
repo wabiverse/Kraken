@@ -49,20 +49,17 @@ WRAP_CUSTOM;
 
 static UsdAttribute _CreateHeightAttr(UsdGeomCone &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double),
-                               writeSparsely);
+  return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double), writeSparsely);
 }
 
 static UsdAttribute _CreateRadiusAttr(UsdGeomCone &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double),
-                               writeSparsely);
+  return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double), writeSparsely);
 }
 
 static UsdAttribute _CreateAxisAttr(UsdGeomCone &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateAxisAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                             writeSparsely);
+  return self.CreateAxisAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
 static UsdAttribute _CreateExtentAttr(UsdGeomCone &self, object defaultVal, bool writeSparsely)
@@ -86,49 +83,42 @@ void wrapUsdGeomCone()
   class_<This, bases<UsdGeomGprim>> cls("Cone");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetHeightAttr", &This::GetHeightAttr)
-      .def("CreateHeightAttr",
-           &_CreateHeightAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetHeightAttr", &This::GetHeightAttr)
+    .def(
+      "CreateHeightAttr", &_CreateHeightAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetRadiusAttr", &This::GetRadiusAttr)
-      .def("CreateRadiusAttr",
-           &_CreateRadiusAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRadiusAttr", &This::GetRadiusAttr)
+    .def(
+      "CreateRadiusAttr", &_CreateRadiusAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAxisAttr", &This::GetAxisAttr)
-      .def("CreateAxisAttr",
-           &_CreateAxisAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAxisAttr", &This::GetAxisAttr)
+    .def("CreateAxisAttr", &_CreateAxisAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetExtentAttr", &This::GetExtentAttr)
-      .def("CreateExtentAttr",
-           &_CreateExtentAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetExtentAttr", &This::GetExtentAttr)
+    .def(
+      "CreateExtentAttr", &_CreateExtentAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

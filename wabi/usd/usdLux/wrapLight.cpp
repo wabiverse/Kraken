@@ -56,51 +56,43 @@ WRAP_CUSTOM;
 
 static UsdAttribute _CreateIntensityAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                  writeSparsely);
+  return self.CreateIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
 static UsdAttribute _CreateExposureAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateExposureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                 writeSparsely);
+  return self.CreateExposureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
 static UsdAttribute _CreateDiffuseAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateDiffuseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                writeSparsely);
+  return self.CreateDiffuseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
 static UsdAttribute _CreateSpecularAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateSpecularAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                 writeSparsely);
+  return self.CreateSpecularAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
 static UsdAttribute _CreateNormalizeAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateNormalizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                  writeSparsely);
+  return self.CreateNormalizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
 }
 
 static UsdAttribute _CreateColorAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
-                              writeSparsely);
+  return self.CreateColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f), writeSparsely);
 }
 
 static UsdAttribute _CreateEnableColorTemperatureAttr(UsdLuxLight &self,
                                                       object defaultVal,
                                                       bool writeSparsely)
 {
-  return self.CreateEnableColorTemperatureAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
+  return self.CreateEnableColorTemperatureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                               writeSparsely);
 }
 
-static UsdAttribute _CreateColorTemperatureAttr(UsdLuxLight &self,
-                                                object defaultVal,
-                                                bool writeSparsely)
+static UsdAttribute _CreateColorTemperatureAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateColorTemperatureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                          writeSparsely);
@@ -121,68 +113,65 @@ void wrapUsdLuxLight()
   class_<This, bases<UsdGeomXformable>> cls("Light");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetIntensityAttr", &This::GetIntensityAttr)
-      .def("CreateIntensityAttr",
-           &_CreateIntensityAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetIntensityAttr", &This::GetIntensityAttr)
+    .def("CreateIntensityAttr",
+         &_CreateIntensityAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetExposureAttr", &This::GetExposureAttr)
-      .def("CreateExposureAttr",
-           &_CreateExposureAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetExposureAttr", &This::GetExposureAttr)
+    .def("CreateExposureAttr",
+         &_CreateExposureAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetDiffuseAttr", &This::GetDiffuseAttr)
-      .def("CreateDiffuseAttr",
-           &_CreateDiffuseAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetDiffuseAttr", &This::GetDiffuseAttr)
+    .def("CreateDiffuseAttr",
+         &_CreateDiffuseAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetSpecularAttr", &This::GetSpecularAttr)
-      .def("CreateSpecularAttr",
-           &_CreateSpecularAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetSpecularAttr", &This::GetSpecularAttr)
+    .def("CreateSpecularAttr",
+         &_CreateSpecularAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetNormalizeAttr", &This::GetNormalizeAttr)
-      .def("CreateNormalizeAttr",
-           &_CreateNormalizeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetNormalizeAttr", &This::GetNormalizeAttr)
+    .def("CreateNormalizeAttr",
+         &_CreateNormalizeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetColorAttr", &This::GetColorAttr)
-      .def("CreateColorAttr",
-           &_CreateColorAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetColorAttr", &This::GetColorAttr)
+    .def(
+      "CreateColorAttr", &_CreateColorAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetEnableColorTemperatureAttr", &This::GetEnableColorTemperatureAttr)
-      .def("CreateEnableColorTemperatureAttr",
-           &_CreateEnableColorTemperatureAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetEnableColorTemperatureAttr", &This::GetEnableColorTemperatureAttr)
+    .def("CreateEnableColorTemperatureAttr",
+         &_CreateEnableColorTemperatureAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetColorTemperatureAttr", &This::GetColorTemperatureAttr)
-      .def("CreateColorTemperatureAttr",
-           &_CreateColorTemperatureAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetColorTemperatureAttr", &This::GetColorTemperatureAttr)
+    .def("CreateColorTemperatureAttr",
+         &_CreateColorTemperatureAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetFiltersRel", &This::GetFiltersRel)
-      .def("CreateFiltersRel", &This::CreateFiltersRel)
-      .def("__repr__", ::_Repr);
+    .def("GetFiltersRel", &This::GetFiltersRel)
+    .def("CreateFiltersRel", &This::CreateFiltersRel)
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -213,25 +202,25 @@ namespace {
 WRAP_CUSTOM
 {
   _class.def(init<UsdShadeConnectableAPI>(arg("connectable")))
-      .def("ConnectableAPI", &UsdLuxLight::ConnectableAPI)
+    .def("ConnectableAPI", &UsdLuxLight::ConnectableAPI)
 
-      .def("CreateOutput", &UsdLuxLight::CreateOutput, (arg("name"), arg("type")))
-      .def("GetOutput", &UsdLuxLight::GetOutput, arg("name"))
-      .def("GetOutputs",
-           &UsdLuxLight::GetOutputs,
-           (arg("onlyAuthored") = true),
-           return_value_policy<TfPySequenceToList>())
+    .def("CreateOutput", &UsdLuxLight::CreateOutput, (arg("name"), arg("type")))
+    .def("GetOutput", &UsdLuxLight::GetOutput, arg("name"))
+    .def("GetOutputs",
+         &UsdLuxLight::GetOutputs,
+         (arg("onlyAuthored") = true),
+         return_value_policy<TfPySequenceToList>())
 
-      .def("CreateInput", &UsdLuxLight::CreateInput, (arg("name"), arg("type")))
-      .def("GetInput", &UsdLuxLight::GetInput, arg("name"))
-      .def("GetInputs",
-           &UsdLuxLight::GetInputs,
-           (arg("onlyAuthored") = true),
-           return_value_policy<TfPySequenceToList>())
+    .def("CreateInput", &UsdLuxLight::CreateInput, (arg("name"), arg("type")))
+    .def("GetInput", &UsdLuxLight::GetInput, arg("name"))
+    .def("GetInputs",
+         &UsdLuxLight::GetInputs,
+         (arg("onlyAuthored") = true),
+         return_value_policy<TfPySequenceToList>())
 
-      .def("ComputeBaseEmission", &UsdLuxLight::ComputeBaseEmission)
-      .def("GetLightLinkCollectionAPI", &UsdLuxLight::GetLightLinkCollectionAPI)
-      .def("GetShadowLinkCollectionAPI", &UsdLuxLight::GetShadowLinkCollectionAPI);
+    .def("ComputeBaseEmission", &UsdLuxLight::ComputeBaseEmission)
+    .def("GetLightLinkCollectionAPI", &UsdLuxLight::GetLightLinkCollectionAPI)
+    .def("GetShadowLinkCollectionAPI", &UsdLuxLight::GetShadowLinkCollectionAPI);
 }
 
 }  // namespace

@@ -16,8 +16,8 @@ float SizeForLayout(RegionLayoutType layout, const NVec2f &v)
 void LayoutRegion(Region &region)
 {
   float totalFixedSize = 0.0f;
-  float expanders      = 0.0f;
-  float padding        = 0.0f;
+  float expanders = 0.0f;
+  float padding = 0.0f;
   for (auto &r : region.children) {
     if (r->flags & RegionFlags::Fixed) {
       // This region needs its size plus margin
@@ -51,7 +51,7 @@ void LayoutRegion(Region &region)
       }
       else {
         rcChild->rect.bottomRightPx.y = rcChild->rect.Top() + perExpanding;
-        currentRect.topLeftPx.y       = rcChild->rect.Bottom() + rcChild->padding.y;
+        currentRect.topLeftPx.y = rcChild->rect.Bottom() + rcChild->padding.y;
       }
     }
     else if (region.layoutType == RegionLayoutType::HBox) {
@@ -63,7 +63,7 @@ void LayoutRegion(Region &region)
       }
       else {
         rcChild->rect.bottomRightPx.x = rcChild->rect.Left() + perExpanding;
-        currentRect.topLeftPx.x       = rcChild->rect.Right() + rcChild->padding.y;
+        currentRect.topLeftPx.x = rcChild->rect.Right() + rcChild->padding.y;
       }
     }
 
@@ -82,8 +82,8 @@ void LayoutRegion(Region &region)
 
       if (rcChild->flags & RegionFlags::AlignCenter) {
         auto diff = currentSize - rcChild->rect.Size();
-        diff.x    = std::max(0.0f, diff.x);
-        diff.y    = std::max(0.0f, diff.y);
+        diff.x = std::max(0.0f, diff.x);
+        diff.y = std::max(0.0f, diff.y);
         rcChild->rect.Adjust(diff.x / 2.0f, diff.y / 2.0f);
       }
     }

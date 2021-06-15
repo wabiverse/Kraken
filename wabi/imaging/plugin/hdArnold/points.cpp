@@ -21,21 +21,20 @@ WABI_NAMESPACE_BEGIN
 
 #if WABI_VERSION >= 2102
 HdArnoldPoints::HdArnoldPoints(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id)
-    : HdArnoldRprim<HdPoints>(str::points, renderDelegate, id)
+  : HdArnoldRprim<HdPoints>(str::points, renderDelegate, id)
 {}
 #else
 HdArnoldPoints::HdArnoldPoints(HdArnoldRenderDelegate *renderDelegate,
                                const SdfPath &id,
                                const SdfPath &instancerId)
-    : HdArnoldRprim<HdPoints>(str::points, renderDelegate, id, instancerId)
+  : HdArnoldRprim<HdPoints>(str::points, renderDelegate, id, instancerId)
 {}
 #endif
 
 HdDirtyBits HdArnoldPoints::GetInitialDirtyBitsMask() const
 {
-  return HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyTransform |
-         HdChangeTracker::DirtyVisibility | HdChangeTracker::DirtyPrimvar |
-         HdChangeTracker::DirtyWidths | HdChangeTracker::DirtyMaterialId |
+  return HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyVisibility |
+         HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyWidths | HdChangeTracker::DirtyMaterialId |
          HdArnoldShape::GetInitialDirtyBitsMask();
 }
 
@@ -74,7 +73,7 @@ void HdArnoldPoints::Sync(HdSceneDelegate *sceneDelegate,
     const auto materialId = sceneDelegate->GetMaterialId(id);
     _materialTracker.TrackSingleMaterial(GetRenderDelegate(), id, materialId);
     const auto *material = reinterpret_cast<const HdArnoldMaterial *>(
-        sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, materialId));
+      sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, materialId));
     if (material != nullptr) {
       AiNodeSetPtr(GetArnoldNode(), str::shader, material->GetSurfaceShader());
     }

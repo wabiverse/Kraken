@@ -124,7 +124,7 @@ class HdxFullscreenShader {
   HdxFullscreenShader() = delete;
 
   using TextureMap = std::map<TfToken, HgiTextureHandle>;
-  using BufferMap  = std::map<uint32_t, HgiBufferHandle>;
+  using BufferMap = std::map<uint32_t, HgiBufferHandle>;
 
   // Utility function to create buffer resources.
   void _CreateBufferResources();
@@ -139,9 +139,7 @@ class HdxFullscreenShader {
   void _CreateVertexBufferDescriptor();
 
   // Utility to create a pipeline
-  bool _CreatePipeline(HgiTextureHandle const &colorDst,
-                       HgiTextureHandle const &depthDst,
-                       bool depthWrite);
+  bool _CreatePipeline(HgiTextureHandle const &colorDst, HgiTextureHandle const &depthDst, bool depthWrite);
 
   // Utility to create a texture sampler
   bool _CreateSampler();

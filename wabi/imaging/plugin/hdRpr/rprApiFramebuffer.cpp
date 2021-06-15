@@ -19,11 +19,11 @@ limitations under the License.
 WABI_NAMESPACE_BEGIN
 
 HdRprApiFramebuffer::HdRprApiFramebuffer(rpr::Context *context, uint32_t width, uint32_t height)
-    : m_context(context),
-      m_rprFb(nullptr),
-      m_width(0),
-      m_height(0),
-      m_aov(kAovNone)
+  : m_context(context),
+    m_rprFb(nullptr),
+    m_width(0),
+    m_height(0),
+    m_aov(kAovNone)
 {
   if (!m_context) {
     RPR_THROW_ERROR_MSG("Failed to create framebuffer: missing rpr context");
@@ -45,15 +45,15 @@ HdRprApiFramebuffer::~HdRprApiFramebuffer()
 HdRprApiFramebuffer &HdRprApiFramebuffer::operator=(HdRprApiFramebuffer &&fb) noexcept
 {
   m_context = fb.m_context;
-  m_width   = fb.m_width;
-  m_height  = fb.m_height;
-  m_aov     = fb.m_aov;
-  m_rprFb   = fb.m_rprFb;
+  m_width = fb.m_width;
+  m_height = fb.m_height;
+  m_aov = fb.m_aov;
+  m_rprFb = fb.m_rprFb;
 
-  fb.m_width  = 0u;
+  fb.m_width = 0u;
   fb.m_height = 0u;
-  fb.m_aov    = kAovNone;
-  fb.m_rprFb  = nullptr;
+  fb.m_aov = kAovNone;
+  fb.m_rprFb = nullptr;
   return *this;
 }
 
@@ -136,8 +136,8 @@ size_t HdRprApiFramebuffer::GetSize() const
 rpr::FramebufferDesc HdRprApiFramebuffer::GetDesc() const
 {
   rpr::FramebufferDesc desc = {};
-  desc.fb_width             = m_width;
-  desc.fb_height            = m_height;
+  desc.fb_width = m_width;
+  desc.fb_height = m_height;
   return desc;
 }
 
@@ -157,12 +157,12 @@ void HdRprApiFramebuffer::Create(uint32_t width, uint32_t height)
   }
 
   rpr::FramebufferFormat format = {};
-  format.num_components         = kNumChannels;
-  format.type                   = RPR_COMPONENT_TYPE_FLOAT32;
+  format.num_components = kNumChannels;
+  format.type = RPR_COMPONENT_TYPE_FLOAT32;
 
   rpr::FramebufferDesc desc = {};
-  desc.fb_width             = width;
-  desc.fb_height            = height;
+  desc.fb_width = width;
+  desc.fb_height = height;
 
   rpr::Status status;
   m_rprFb = m_context->CreateFrameBuffer(format, desc, &status);
@@ -170,7 +170,7 @@ void HdRprApiFramebuffer::Create(uint32_t width, uint32_t height)
     RPR_ERROR_CHECK_THROW(status, "Failed to create framebuffer");
   }
 
-  m_width  = width;
+  m_width = width;
   m_height = height;
 }
 

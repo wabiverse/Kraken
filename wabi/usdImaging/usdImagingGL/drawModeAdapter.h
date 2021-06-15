@@ -129,24 +129,16 @@ class UsdImagingGLDrawModeAdapter : public UsdImagingPrimAdapter {
               VtIntArray *outIndices) const override;
 
   USDIMAGINGGL_API
-  HdCullStyle GetCullStyle(UsdPrim const &prim,
-                           SdfPath const &cachePath,
-                           UsdTimeCode time) const override;
+  HdCullStyle GetCullStyle(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
 
   USDIMAGINGGL_API
-  VtValue GetTopology(UsdPrim const &prim,
-                      SdfPath const &cachePath,
-                      UsdTimeCode time) const override;
+  VtValue GetTopology(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
 
   USDIMAGINGGL_API
-  GfRange3d GetExtent(UsdPrim const &prim,
-                      SdfPath const &cachePath,
-                      UsdTimeCode time) const override;
+  GfRange3d GetExtent(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
 
   USDIMAGINGGL_API
-  bool GetDoubleSided(UsdPrim const &prim,
-                      SdfPath const &cachePath,
-                      UsdTimeCode time) const override;
+  bool GetDoubleSided(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
 
   USDIMAGINGGL_API
   GfMatrix4d GetTransform(UsdPrim const &prim,
@@ -155,9 +147,7 @@ class UsdImagingGLDrawModeAdapter : public UsdImagingPrimAdapter {
                           bool ignoreRootTransform = false) const override;
 
   USDIMAGINGGL_API
-  SdfPath GetMaterialId(UsdPrim const &prim,
-                        SdfPath const &cachePath,
-                        UsdTimeCode time) const override;
+  SdfPath GetMaterialId(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
 
   USDIMAGING_API
   VtValue GetMaterialResource(UsdPrim const &prim,
@@ -171,9 +161,7 @@ class UsdImagingGLDrawModeAdapter : public UsdImagingPrimAdapter {
  private:
   // For cards rendering, check if we're rendering any faces with 0 area;
   // if so, issue a warning.
-  void _SanityCheckFaceSizes(SdfPath const &cachePath,
-                             GfRange3d const &extents,
-                             uint8_t axes_mask) const;
+  void _SanityCheckFaceSizes(SdfPath const &cachePath, GfRange3d const &extents, uint8_t axes_mask) const;
 
   void _ComputeGeometryData(UsdPrim const &prim,
                             SdfPath const &cachePath,

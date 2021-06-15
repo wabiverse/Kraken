@@ -81,8 +81,7 @@ class UsdAttributeQuery {
   /// the prim \p prim. The objects in the returned vector will line up
   /// 1-to-1 with \p attrNames.
   USD_API
-  static std::vector<UsdAttributeQuery> CreateQueries(const UsdPrim &prim,
-                                                      const TfTokenVector &attrNames);
+  static std::vector<UsdAttributeQuery> CreateQueries(const UsdPrim &prim, const TfTokenVector &attrNames);
 
   // --------------------------------------------------------------------- //
   /// \name Query information

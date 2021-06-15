@@ -82,17 +82,17 @@ using namespace ::Alembic::Abc;
 // types that don't map directly to Alembic.
 #define USD_ABC_PRIM_TYPE_NAMES \
   (BasisCurves)(Camera)( \
-      HermiteCurves)(Mesh)(NurbsCurves)(Points)(PolyMesh)(PseudoRoot)(Scope)(Xform)(GeomSubset) /* end */
+    HermiteCurves)(Mesh)(NurbsCurves)(Points)(PolyMesh)(PseudoRoot)(Scope)(Xform)(GeomSubset) /* end */
 
 TF_DECLARE_PUBLIC_TOKENS(UsdAbcPrimTypeNames, USD_ABC_PRIM_TYPE_NAMES);
 
 // Property names in the UsdGeom schema.
 #define USD_ABC_GPRIM_NAMES \
   (primvars)(userProperties)((defaultFamilyName, "materialBind"))(( \
-      defaultFamilyTypeAttributeName, "subsetFamily:materialBind:familyType")) /* end */
+    defaultFamilyTypeAttributeName, "subsetFamily:materialBind:familyType")) /* end */
 #define USD_ABC_POINTBASED_NAMES \
   ((uv, "primvars:uv"))((uvIndices, "primvars:uv:indices"))( \
-      (st, "primvars:st"))((stIndices, "primvars:st:indices")) /* end */
+    (st, "primvars:st"))((stIndices, "primvars:st:indices")) /* end */
 #define USD_ABC_PROPERTY_NAMES \
   USD_ABC_GPRIM_NAMES \
   USD_ABC_POINTBASED_NAMES \
@@ -126,20 +126,18 @@ struct UsdAbc_AlembicType : boost::totally_ordered<UsdAbc_AlembicType> {
 
   // An array or scalar type.
   UsdAbc_AlembicType(PlainOldDataType pod_, uint8_t extent_, bool_t array_)
-      : pod(pod_),
-        extent(extent_),
-        array(array_)
+    : pod(pod_),
+      extent(extent_),
+      array(array_)
   {
     // Do nothing
   }
 
   // An Alembic property's type.
   UsdAbc_AlembicType(const PropertyHeader &header)
-      : pod(header.getPropertyType() == kCompoundProperty ? kUnknownPOD :
-                                                            header.getDataType().getPod()),
-        extent(header.getPropertyType() == kCompoundProperty ? 0 :
-                                                               header.getDataType().getExtent()),
-        array(header.getPropertyType() == kArrayProperty)
+    : pod(header.getPropertyType() == kCompoundProperty ? kUnknownPOD : header.getDataType().getPod()),
+      extent(header.getPropertyType() == kCompoundProperty ? 0 : header.getDataType().getExtent()),
+      array(header.getPropertyType() == kArrayProperty)
   {
     // Do nothing
   }
@@ -299,7 +297,7 @@ template<class T> struct _ExtractSampleForAlembic<VtArray<T>> {
   const void *operator()(const VtValue &v, size_t *numSamples) const
   {
     const VtArray<T> &result = v.UncheckedGet<VtArray<T>>();
-    *numSamples              = result.size();
+    *numSamples = result.size();
     return result.cdata();
   }
 };
@@ -327,17 +325,16 @@ class _SampleForAlembic {
   /// A sample in error.  This doesn't have a value but does report an
   /// error message.
   _SampleForAlembic(const Error &error)
-      : _numSamples(0),
-        _value(_HolderValue(new _ErrorHolder(error.message)))
+    : _numSamples(0),
+      _value(_HolderValue(new _ErrorHolder(error.message)))
   {
     // Do nothing
   }
 
   /// A sample using a given scalar value of type T.
   template<class T>
-  _SampleForAlembic(const T &value)
-      : _numSamples(1),
-        _value(_HolderValue(new _RawHolder<T>(value)))
+  _SampleForAlembic(const T &value) : _numSamples(1),
+                                      _value(_HolderValue(new _RawHolder<T>(value)))
   {
     // Do nothing
   }
@@ -345,8 +342,8 @@ class _SampleForAlembic {
   /// A sample using a given std::vector of values of type T.
   template<class T>
   _SampleForAlembic(const std::vector<T> &value)
-      : _numSamples(value.size()),
-        _value(_MakeRawArrayHolder(value))
+    : _numSamples(value.size()),
+      _value(_MakeRawArrayHolder(value))
   {
     // Do nothing
   }
@@ -358,7 +355,7 @@ class _SampleForAlembic {
   /// the numSamples argument to the number of samples in the value.
   template<class E>
   _SampleForAlembic(const VtValue &value, const E &extractor)
-      : _value(_HolderValue(new _VtValueHolder(value, &_numSamples, extractor)))
+    : _value(_HolderValue(new _VtValueHolder(value, &_numSamples, extractor)))
   {
     // Do nothing
   }
@@ -366,8 +363,8 @@ class _SampleForAlembic {
   /// A sample using raw data from a shared pointer to a T.
   template<class T>
   _SampleForAlembic(const boost::shared_ptr<T> &value)
-      : _numSamples(1),
-        _value(_HolderValue(new _ScalarHolder<T>(value)))
+    : _numSamples(1),
+      _value(_HolderValue(new _ScalarHolder<T>(value)))
   {
     TF_VERIFY(value);
   }
@@ -375,8 +372,8 @@ class _SampleForAlembic {
   /// A sample using raw data from a shared pointer to a T[].
   template<class T>
   _SampleForAlembic(const boost::shared_array<T> &values, size_t count)
-      : _numSamples(count),
-        _value(_HolderValue(new _ArrayHolder<T>(values)))
+    : _numSamples(count),
+      _value(_HolderValue(new _ArrayHolder<T>(values)))
   {
     TF_VERIFY(values);
   }
@@ -485,8 +482,8 @@ class _SampleForAlembic {
    public:
     template<class E>
     _VtValueHolder(const VtValue &value, size_t *numSamples, const E &extractor)
-        : _value(new VtValue(value)),
-          _ptr(extractor(*_value, numSamples))
+      : _value(new VtValue(value)),
+        _ptr(extractor(*_value, numSamples))
     {}
     virtual ~_VtValueHolder();
     virtual const void *Get() const
@@ -580,8 +577,7 @@ template<class UsdType> struct _SampleForAlembicIdentityConverter {
 template<class UsdType, class AlembicType> struct _SampleForAlembicConstructConverter {
   _SampleForAlembic operator()(const VtValue &value) const
   {
-    return _SampleForAlembic(
-        boost::shared_ptr<AlembicType>(new AlembicType(value.UncheckedGet<UsdType>())));
+    return _SampleForAlembic(boost::shared_ptr<AlembicType>(new AlembicType(value.UncheckedGet<UsdType>())));
   }
 };
 // Special case to identity converter.
@@ -692,7 +688,7 @@ template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODToUs
   void operator()(UsdType *dst, const void *src, size_t size)
   {
     const uint8_t *typedSrc = reinterpret_cast<const uint8_t *>(src);
-    const size_t step       = extent * sizeof(AlembicType);
+    const size_t step = extent * sizeof(AlembicType);
     for (size_t i = 0, n = size; i != n; typedSrc += step, ++i) {
       dst[i] = _ConvertPODToUsd<UsdType, AlembicType, extent>()(typedSrc);
     }
@@ -819,8 +815,7 @@ template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODFrom
 };
 
 // Copy a scalar -- POD.
-template<class UsdType, class AlembicType>
-struct _ConvertPODFromUsdScalar<UsdType, AlembicType, 1> {
+template<class UsdType, class AlembicType> struct _ConvertPODFromUsdScalar<UsdType, AlembicType, 1> {
   _SampleForAlembic operator()(const VtValue &src) const
   {
     AlembicType dst;
@@ -834,7 +829,7 @@ template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODFrom
   _SampleForAlembic operator()(const VtValue &src)
   {
     const VtArray<UsdType> &data = src.UncheckedGet<VtArray<UsdType>>();
-    const size_t size            = data.size();
+    const size_t size = data.size();
     boost::shared_array<AlembicType> array(new AlembicType[size * extent]);
     AlembicType *ptr = array.get();
     for (size_t i = 0, n = size; i != n; ptr += extent, ++i) {
@@ -863,7 +858,7 @@ class UsdAbc_AlembicDataConversion {
                              const std::string &,
                              const ISampleSelector &,
                              const UsdAbc_AlembicDataAny &)>
-      ToUsdConverter;
+    ToUsdConverter;
 
   /// A reverse conversion function (Usd -> Alembic).  Returns the value
   /// as a \c _SampleForAlembic.  The converter can assume the VtValue
@@ -896,8 +891,7 @@ class UsdAbc_AlembicDataConversion {
   /// preferred conversion when there's a many-to-one mapping.
   template<class UsdType, class AlembicType, size_t extent> void AddConverter()
   {
-    AddConverter<UsdType, AlembicType, extent>(
-        SdfSchema::GetInstance().FindType(TfType::Find<UsdType>()));
+    AddConverter<UsdType, AlembicType, extent>(SdfSchema::GetInstance().FindType(TfType::Find<UsdType>()));
   }
 
   template<class UsdType, class AlembicType> void AddConverter(const SdfValueTypeName &usdType)
@@ -940,10 +934,10 @@ class UsdAbc_AlembicDataConversion {
                    const UsdAbc_AlembicType &abcType_,
                    const ToUsdConverter &toUsdFn_,
                    const FromUsdConverter &fromUsdFn_)
-        : usdType(usdType_),
-          abcType(abcType_),
-          toUsdFn(toUsdFn_),
-          fromUsdFn(fromUsdFn_)
+      : usdType(usdType_),
+        abcType(abcType_),
+        toUsdFn(toUsdFn_),
+        fromUsdFn(fromUsdFn_)
     {}
 
     SdfValueTypeName usdType;
@@ -973,8 +967,7 @@ std::string UsdAbc_FormatAlembicVersion(int32_t n);
 
 /// Reverse the order of the subsequences in \p values where the subsequence
 /// lengths are given by \p counts.
-template<class T>
-static bool UsdAbc_ReverseOrderImpl(VtArray<T> &values, const VtArray<int> &counts)
+template<class T> static bool UsdAbc_ReverseOrderImpl(VtArray<T> &values, const VtArray<int> &counts)
 {
   // Reverse items.
   for (size_t j = 0, n = values.size(), k = 0, m = counts.size(); k != m; ++k) {

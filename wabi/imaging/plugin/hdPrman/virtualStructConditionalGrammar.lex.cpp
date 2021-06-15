@@ -288,8 +288,7 @@ struct yy_buffer_state {
  *
  * Returns the top of the stack, or NULL.
  */
-#define YY_CURRENT_BUFFER \
-  (yyg->yy_buffer_stack ? yyg->yy_buffer_stack[yyg->yy_buffer_stack_top] : NULL)
+#define YY_CURRENT_BUFFER (yyg->yy_buffer_stack ? yyg->yy_buffer_stack[yyg->yy_buffer_stack_top] : NULL)
 
 /* Same as previous macro, but useful when we know that the buffer stack is not
  * NULL or when we need an lvalue. For internal use only.
@@ -297,31 +296,23 @@ struct yy_buffer_state {
 #define YY_CURRENT_BUFFER_LVALUE yyg->yy_buffer_stack[yyg->yy_buffer_stack_top]
 
 void virtualStructConditionalGrammarYyrestart(FILE *input_file, yyscan_t yyscanner);
-void virtualStructConditionalGrammarYy_switch_to_buffer(YY_BUFFER_STATE new_buffer,
-                                                        yyscan_t yyscanner);
-YY_BUFFER_STATE virtualStructConditionalGrammarYy_create_buffer(FILE *file,
-                                                                int size,
-                                                                yyscan_t yyscanner);
+void virtualStructConditionalGrammarYy_switch_to_buffer(YY_BUFFER_STATE new_buffer, yyscan_t yyscanner);
+YY_BUFFER_STATE virtualStructConditionalGrammarYy_create_buffer(FILE *file, int size, yyscan_t yyscanner);
 void virtualStructConditionalGrammarYy_delete_buffer(YY_BUFFER_STATE b, yyscan_t yyscanner);
 void virtualStructConditionalGrammarYy_flush_buffer(YY_BUFFER_STATE b, yyscan_t yyscanner);
-void virtualStructConditionalGrammarYypush_buffer_state(YY_BUFFER_STATE new_buffer,
-                                                        yyscan_t yyscanner);
+void virtualStructConditionalGrammarYypush_buffer_state(YY_BUFFER_STATE new_buffer, yyscan_t yyscanner);
 void virtualStructConditionalGrammarYypop_buffer_state(yyscan_t yyscanner);
 
 static void virtualStructConditionalGrammarYyensure_buffer_stack(yyscan_t yyscanner);
 static void virtualStructConditionalGrammarYy_load_buffer_state(yyscan_t yyscanner);
-static void virtualStructConditionalGrammarYy_init_buffer(YY_BUFFER_STATE b,
-                                                          FILE *file,
-                                                          yyscan_t yyscanner);
+static void virtualStructConditionalGrammarYy_init_buffer(YY_BUFFER_STATE b, FILE *file, yyscan_t yyscanner);
 
-#define YY_FLUSH_BUFFER \
-  virtualStructConditionalGrammarYy_flush_buffer(YY_CURRENT_BUFFER, yyscanner)
+#define YY_FLUSH_BUFFER virtualStructConditionalGrammarYy_flush_buffer(YY_CURRENT_BUFFER, yyscanner)
 
 YY_BUFFER_STATE virtualStructConditionalGrammarYy_scan_buffer(char *base,
                                                               yy_size_t size,
                                                               yyscan_t yyscanner);
-YY_BUFFER_STATE virtualStructConditionalGrammarYy_scan_string(yyconst char *yy_str,
-                                                              yyscan_t yyscanner);
+YY_BUFFER_STATE virtualStructConditionalGrammarYy_scan_string(yyconst char *yy_str, yyscan_t yyscanner);
 YY_BUFFER_STATE virtualStructConditionalGrammarYy_scan_bytes(yyconst char *bytes,
                                                              yy_size_t len,
                                                              yyscan_t yyscanner);
@@ -337,7 +328,7 @@ void virtualStructConditionalGrammarYyfree(void *, yyscan_t yyscanner);
     if (!YY_CURRENT_BUFFER) { \
       virtualStructConditionalGrammarYyensure_buffer_stack(yyscanner); \
       YY_CURRENT_BUFFER_LVALUE = virtualStructConditionalGrammarYy_create_buffer( \
-          yyin, YY_BUF_SIZE, yyscanner); \
+        yyin, YY_BUF_SIZE, yyscanner); \
     } \
     YY_CURRENT_BUFFER_LVALUE->yy_is_interactive = is_interactive; \
   }
@@ -347,7 +338,7 @@ void virtualStructConditionalGrammarYyfree(void *, yyscan_t yyscanner);
     if (!YY_CURRENT_BUFFER) { \
       virtualStructConditionalGrammarYyensure_buffer_stack(yyscanner); \
       YY_CURRENT_BUFFER_LVALUE = virtualStructConditionalGrammarYy_create_buffer( \
-          yyin, YY_BUF_SIZE, yyscanner); \
+        yyin, YY_BUF_SIZE, yyscanner); \
     } \
     YY_CURRENT_BUFFER_LVALUE->yy_at_bol = at_bol; \
   }
@@ -371,11 +362,11 @@ static void yy_fatal_error(yyconst char msg[], yyscan_t yyscanner);
  * corresponding action - sets up yytext.
  */
 #define YY_DO_BEFORE_ACTION \
-  yyg->yytext_ptr   = yy_bp; \
-  yyleng            = (size_t)(yy_cp - yy_bp); \
+  yyg->yytext_ptr = yy_bp; \
+  yyleng = (size_t)(yy_cp - yy_bp); \
   yyg->yy_hold_char = *yy_cp; \
-  *yy_cp            = '\0'; \
-  yyg->yy_c_buf_p   = yy_cp;
+  *yy_cp = '\0'; \
+  yyg->yy_c_buf_p = yy_cp;
 
 #define YY_NUM_RULES 27
 #define YY_END_OF_BUFFER 28
@@ -386,71 +377,65 @@ struct yy_trans_info {
   flex_int32_t yy_nxt;
 };
 static yyconst flex_int16_t yy_accept[86] = {
-    0,  0,  0,  28, 26, 25, 25, 26, 26, 26, 17, 18, 26, 26, 12, 22, 26, 21, 16, 16, 16, 16,
-    16, 16, 16, 20, 0,  14, 0,  0,  13, 0,  0,  12, 12, 12, 0,  24, 19, 23, 16, 0,  16, 16,
-    16, 4,  16, 1,  3,  16, 0,  12, 0,  0,  12, 0,  2,  16, 16, 16, 16, 0,  9,  0,  12, 0,
-    0,  12, 15, 16, 8,  5,  16, 0,  0,  12, 16, 16, 0,  16, 10, 7,  11, 16, 6,  0};
+  0,  0,  0,  28, 26, 25, 25, 26, 26, 26, 17, 18, 26, 26, 12, 22, 26, 21, 16, 16, 16, 16,
+  16, 16, 16, 20, 0,  14, 0,  0,  13, 0,  0,  12, 12, 12, 0,  24, 19, 23, 16, 0,  16, 16,
+  16, 4,  16, 1,  3,  16, 0,  12, 0,  0,  12, 0,  2,  16, 16, 16, 16, 0,  9,  0,  12, 0,
+  0,  12, 15, 16, 8,  5,  16, 0,  0,  12, 16, 16, 0,  16, 10, 7,  11, 16, 6,  0};
 
 static yyconst flex_int32_t yy_ec[256] = {
-    0,  1,  1,  1,  1,  1,  1,  1,  1,  2,  3,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1,
-    1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  4,  5,  6,  1,  1,  1,  1,  7,  8,  9,
-    1,  10, 1,  11, 12, 1,  13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 1,  1,  14, 15, 16,
-    1,  1,  17, 17, 17, 17, 18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
-    17, 17, 17, 17, 17, 17, 17, 19, 20, 21, 1,  17, 1,  22, 17, 23, 24,
+  0,  1,  1,  1,  1,  1,  1,  1,  1,  2,  3,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+  1,  1,  1,  1,  1,  1,  4,  5,  6,  1,  1,  1,  1,  7,  8,  9,  1,  10, 1,  11, 12, 1,  13, 13, 13, 13,
+  13, 13, 13, 13, 13, 13, 1,  1,  14, 15, 16, 1,  1,  17, 17, 17, 17, 18, 17, 17, 17, 17, 17, 17, 17, 17,
+  17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 19, 20, 21, 1,  17, 1,  22, 17, 23, 24,
 
-    25, 26, 27, 17, 28, 17, 17, 29, 17, 30, 31, 32, 17, 33, 34, 35, 17, 17, 17, 17, 36,
-    17, 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-    1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-    1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-    1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+  25, 26, 27, 17, 28, 17, 17, 29, 17, 30, 31, 32, 17, 33, 34, 35, 17, 17, 17, 17, 36, 17, 1,  1,  1,  1,
+  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
 
-    1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-    1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-    1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1};
+  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+  1,  1,  1};
 
 static yyconst flex_int32_t yy_meta[37] = {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 2,
                                            2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
 
 static yyconst flex_int16_t yy_base[89] = {
-    0,   0,   0,   162, 163, 163, 163, 146, 31,  32,  163, 163, 28,  147, 30,  144, 143, 142,
-    137, 19,  25,  28,  27,  26,  39,  163, 54,  163, 152, 43,  163, 151, 140, 53,  54,  55,
-    71,  163, 163, 163, 133, 138, 51,  57,  43,  131, 64,  81,  130, 67,  80,  79,  85,  135,
-    134, 86,  127, 82,  69,  84,  87,  115, 125, 130, 129, 100, 128, 127, 163, 89,  115, 114,
-    96,  101, 118, 115, 97,  98,  91,  100, 105, 163, 102, 106, 103, 163, 135, 137, 67};
+  0,   0,   0,   162, 163, 163, 163, 146, 31,  32,  163, 163, 28,  147, 30,  144, 143, 142,
+  137, 19,  25,  28,  27,  26,  39,  163, 54,  163, 152, 43,  163, 151, 140, 53,  54,  55,
+  71,  163, 163, 163, 133, 138, 51,  57,  43,  131, 64,  81,  130, 67,  80,  79,  85,  135,
+  134, 86,  127, 82,  69,  84,  87,  115, 125, 130, 129, 100, 128, 127, 163, 89,  115, 114,
+  96,  101, 118, 115, 97,  98,  91,  100, 105, 163, 102, 106, 103, 163, 135, 137, 67};
 
 static yyconst flex_int16_t yy_def[89] = {
-    0,  85, 1,  85, 85, 85, 85, 85, 86, 87, 85, 85, 85, 85, 85, 85, 85, 85, 88, 88, 88, 88, 88,
-    88, 88, 85, 86, 85, 86, 87, 85, 87, 85, 85, 85, 85, 85, 85, 85, 85, 88, 85, 88, 88, 88, 88,
-    88, 88, 88, 88, 85, 85, 85, 85, 85, 85, 88, 88, 88, 88, 88, 85, 88, 85, 85, 85, 85, 85, 85,
-    88, 88, 88, 88, 85, 85, 85, 88, 88, 85, 88, 88, 85, 88, 88, 88, 0,  85, 85, 85};
+  0,  85, 1,  85, 85, 85, 85, 85, 86, 87, 85, 85, 85, 85, 85, 85, 85, 85, 88, 88, 88, 88, 88,
+  88, 88, 85, 86, 85, 86, 87, 85, 87, 85, 85, 85, 85, 85, 85, 85, 85, 88, 85, 88, 88, 88, 88,
+  88, 88, 88, 88, 85, 85, 85, 85, 85, 85, 88, 88, 88, 88, 88, 85, 88, 85, 85, 85, 85, 85, 85,
+  88, 88, 88, 88, 85, 85, 85, 88, 88, 85, 88, 88, 85, 88, 88, 88, 0,  85, 85, 85};
 
 static yyconst flex_int16_t yy_nxt[200] = {
-    0,  4,  5,  6,  5,  7,  8,  9,  10, 11, 4,  12, 13, 14, 15, 16, 17, 18, 18, 4,  4,
-    4,  19, 20, 18, 21, 18, 18, 22, 18, 18, 23, 18, 18, 24, 18, 18, 27, 41, 30, 32, 33,
-    35, 33, 41, 41, 41, 41, 36, 42, 30, 28, 31, 45, 46, 36, 43, 44, 41, 48, 27, 47, 41,
-    31, 49, 35, 33, 34, 51, 40, 41, 36, 50, 52, 28, 56, 41, 59, 36, 50, 52, 53, 53, 41,
-    54, 61, 41, 57, 41, 58, 63, 63, 51, 64, 60, 66, 66, 65, 67, 55, 41,
+  0,  4,  5,  6,  5,  7,  8,  9,  10, 11, 4,  12, 13, 14, 15, 16, 17, 18, 18, 4,  4,  4,  19, 20, 18, 21,
+  18, 18, 22, 18, 18, 23, 18, 18, 24, 18, 18, 27, 41, 30, 32, 33, 35, 33, 41, 41, 41, 41, 36, 42, 30, 28,
+  31, 45, 46, 36, 43, 44, 41, 48, 27, 47, 41, 31, 49, 35, 33, 34, 51, 40, 41, 36, 50, 52, 28, 56, 41, 59,
+  36, 50, 52, 53, 53, 41, 54, 61, 41, 57, 41, 58, 63, 63, 51, 64, 60, 66, 66, 65, 67, 55, 41,
 
-    41, 62, 41, 65, 70, 41, 68, 41, 71, 74, 74, 69, 75, 76, 41, 41, 41, 72, 41, 79, 41,
-    41, 80, 41, 41, 81, 83, 75, 77, 84, 75, 78, 41, 41, 82, 26, 26, 29, 29, 67, 67, 64,
-    64, 41, 73, 41, 54, 54, 41, 41, 55, 41, 34, 85, 85, 41, 39, 38, 37, 34, 25, 85, 3,
-    85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85,
-    85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85
+  41, 62, 41, 65, 70, 41, 68, 41, 71, 74, 74, 69, 75, 76, 41, 41, 41, 72, 41, 79, 41, 41, 80, 41, 41, 81,
+  83, 75, 77, 84, 75, 78, 41, 41, 82, 26, 26, 29, 29, 67, 67, 64, 64, 41, 73, 41, 54, 54, 41, 41, 55, 41,
+  34, 85, 85, 41, 39, 38, 37, 34, 25, 85, 3,  85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85,
+  85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85
 
 };
 
 static yyconst flex_int16_t yy_chk[200] = {
-    0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-    1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  8,  19, 9,  12, 12,
-    14, 14, 20, 23, 22, 21, 14, 19, 29, 8,  9,  22, 22, 14, 20, 21, 24, 23, 26, 22, 44,
-    29, 24, 33, 33, 34, 35, 88, 42, 33, 34, 35, 26, 42, 43, 44, 33, 34, 35, 36, 36, 46,
-    36, 47, 49, 43, 58, 43, 50, 50, 51, 50, 46, 52, 52, 51, 52, 55, 47,
+  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  8,  19, 9,  12, 12, 14, 14, 20, 23, 22, 21, 14, 19, 29, 8,
+  9,  22, 22, 14, 20, 21, 24, 23, 26, 22, 44, 29, 24, 33, 33, 34, 35, 88, 42, 33, 34, 35, 26, 42, 43, 44,
+  33, 34, 35, 36, 36, 46, 36, 47, 49, 43, 58, 43, 50, 50, 51, 50, 46, 52, 52, 51, 52, 55, 47,
 
-    57, 49, 59, 51, 58, 60, 55, 69, 59, 65, 65, 57, 65, 69, 72, 76, 77, 60, 79, 76, 82,
-    84, 77, 80, 83, 78, 82, 75, 72, 83, 74, 73, 71, 70, 79, 86, 86, 87, 87, 67, 66, 64,
-    63, 62, 61, 56, 54, 53, 48, 45, 41, 40, 32, 31, 28, 18, 17, 16, 15, 13, 7,  3,  85,
-    85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85,
-    85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85
+  57, 49, 59, 51, 58, 60, 55, 69, 59, 65, 65, 57, 65, 69, 72, 76, 77, 60, 79, 76, 82, 84, 77, 80, 83, 78,
+  82, 75, 72, 83, 74, 73, 71, 70, 79, 86, 86, 87, 87, 67, 66, 64, 63, 62, 61, 56, 54, 53, 48, 45, 41, 40,
+  32, 31, 28, 18, 17, 16, 15, 13, 7,  3,  85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85,
+  85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85
 
 };
 
@@ -721,7 +706,7 @@ extern int virtualStructConditionalGrammarYylex(YYSTYPE *yylval_param,
 
 #  define YY_DECL \
     int virtualStructConditionalGrammarYylex( \
-        YYSTYPE *yylval_param, YYLTYPE *yylloc_param, yyscan_t yyscanner)
+      YYSTYPE *yylval_param, YYLTYPE *yylloc_param, yyscan_t yyscanner)
 #endif /* !YY_DECL */
 
 /* Code executed at the beginning of each rule, after yytext and yyleng
@@ -770,7 +755,7 @@ YY_DECL
     if (!YY_CURRENT_BUFFER) {
       virtualStructConditionalGrammarYyensure_buffer_stack(yyscanner);
       YY_CURRENT_BUFFER_LVALUE = virtualStructConditionalGrammarYy_create_buffer(
-          yyin, YY_BUF_SIZE, yyscanner);
+        yyin, YY_BUF_SIZE, yyscanner);
     }
 
     virtualStructConditionalGrammarYy_load_buffer_state(yyscanner);
@@ -799,7 +784,7 @@ YY_DECL
         register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
         if (yy_accept[yy_current_state]) {
           yyg->yy_last_accepting_state = yy_current_state;
-          yyg->yy_last_accepting_cpos  = yy_cp;
+          yyg->yy_last_accepting_cpos = yy_cp;
         }
         while (yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state) {
           yy_current_state = (int)yy_def[yy_current_state];
@@ -813,9 +798,9 @@ YY_DECL
     yy_find_action:
       yy_act = yy_accept[yy_current_state];
       if (yy_act == 0) { /* have to back up */
-        yy_cp            = yyg->yy_last_accepting_cpos;
+        yy_cp = yyg->yy_last_accepting_cpos;
         yy_current_state = yyg->yy_last_accepting_state;
-        yy_act           = yy_accept[yy_current_state];
+        yy_act = yy_accept[yy_current_state];
       }
 
       YY_DO_BEFORE_ACTION;
@@ -825,8 +810,8 @@ YY_DECL
       switch (yy_act) { /* beginning of action switch */
         case 0:         /* must back up */
           /* undo the effects of YY_DO_BEFORE_ACTION */
-          *yy_cp           = yyg->yy_hold_char;
-          yy_cp            = yyg->yy_last_accepting_cpos;
+          *yy_cp = yyg->yy_hold_char;
+          yy_cp = yyg->yy_last_accepting_cpos;
           yy_current_state = yyg->yy_last_accepting_state;
           goto yy_find_action;
 
@@ -920,8 +905,8 @@ YY_DECL
           YY_RULE_SETUP
 #line 85 "hdPrman/virtualStructConditionalGrammar.ll"
           {
-            char *str                       = virtualStructConditionalGrammarYyget_text(yyscanner);
-            yylval->string                  = strdup(str + 1);
+            char *str = virtualStructConditionalGrammarYyget_text(yyscanner);
+            yylval->string = strdup(str + 1);
             yylval->string[strlen(str) - 2] = '\0';
             return STRING;
           }
@@ -931,8 +916,8 @@ YY_DECL
           YY_RULE_SETUP
 #line 92 "hdPrman/virtualStructConditionalGrammar.ll"
           {
-            char *str                       = virtualStructConditionalGrammarYyget_text(yyscanner);
-            yylval->string                  = strdup(str + 1);
+            char *str = virtualStructConditionalGrammarYyget_text(yyscanner);
+            yylval->string = strdup(str + 1);
             yylval->string[strlen(str) - 2] = '\0';
             return STRING;
           }
@@ -1049,8 +1034,8 @@ YY_DECL
              * this is the first action (other than possibly a
              * back-up) that will match for the new input source.
              */
-            yyg->yy_n_chars                            = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
-            YY_CURRENT_BUFFER_LVALUE->yy_input_file    = yyin;
+            yyg->yy_n_chars = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
+            YY_CURRENT_BUFFER_LVALUE->yy_input_file = yyin;
             YY_CURRENT_BUFFER_LVALUE->yy_buffer_status = YY_BUFFER_NORMAL;
           }
 
@@ -1084,7 +1069,7 @@ YY_DECL
 
             if (yy_next_state) {
               /* Consume the NUL. */
-              yy_cp            = ++yyg->yy_c_buf_p;
+              yy_cp = ++yyg->yy_c_buf_p;
               yy_current_state = yy_next_state;
               goto yy_match;
             }
@@ -1160,8 +1145,8 @@ YY_DECL
  */
 static int yy_get_next_buffer(yyscan_t yyscanner)
 {
-  struct yyguts_t *yyg  = (struct yyguts_t *)yyscanner;
-  register char *dest   = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
+  struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
+  register char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
   register char *source = yyg->yytext_ptr;
   register int number_to_move, i;
   int ret_val;
@@ -1169,8 +1154,7 @@ static int yy_get_next_buffer(yyscan_t yyscanner)
   if (yyg->yy_c_buf_p > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[yyg->yy_n_chars + 1])
     YY_FATAL_ERROR("fatal flex scanner internal error--end of buffer missed");
 
-  if (YY_CURRENT_BUFFER_LVALUE->yy_fill_buffer ==
-      0) { /* Don't try to fill the buffer, so this is an EOF. */
+  if (YY_CURRENT_BUFFER_LVALUE->yy_fill_buffer == 0) { /* Don't try to fill the buffer, so this is an EOF. */
     if (yyg->yy_c_buf_p - yyg->yytext_ptr - YY_MORE_ADJ == 1) {
       /* We matched a single character, the EOB, so
        * treat this as a final EOF.
@@ -1219,9 +1203,8 @@ static int yy_get_next_buffer(yyscan_t yyscanner)
           b->yy_buf_size *= 2;
 
         b->yy_ch_buf = (char *)
-            /* Include room in for 2 EOB chars. */
-            virtualStructConditionalGrammarYyrealloc(
-                (void *)b->yy_ch_buf, b->yy_buf_size + 2, yyscanner);
+          /* Include room in for 2 EOB chars. */
+          virtualStructConditionalGrammarYyrealloc((void *)b->yy_ch_buf, b->yy_buf_size + 2, yyscanner);
       }
       else
         /* Can't grow it, we don't own it. */
@@ -1251,7 +1234,7 @@ static int yy_get_next_buffer(yyscan_t yyscanner)
     }
 
     else {
-      ret_val                                    = EOB_ACT_LAST_MATCH;
+      ret_val = EOB_ACT_LAST_MATCH;
       YY_CURRENT_BUFFER_LVALUE->yy_buffer_status = YY_BUFFER_EOF_PENDING;
     }
   }
@@ -1263,13 +1246,13 @@ static int yy_get_next_buffer(yyscan_t yyscanner)
     /* Extend the array by 50%, plus the number we really need. */
     yy_size_t new_size = yyg->yy_n_chars + number_to_move + (yyg->yy_n_chars >> 1);
     YY_CURRENT_BUFFER_LVALUE->yy_ch_buf = (char *)virtualStructConditionalGrammarYyrealloc(
-        (void *)YY_CURRENT_BUFFER_LVALUE->yy_ch_buf, new_size, yyscanner);
+      (void *)YY_CURRENT_BUFFER_LVALUE->yy_ch_buf, new_size, yyscanner);
     if (!YY_CURRENT_BUFFER_LVALUE->yy_ch_buf)
       YY_FATAL_ERROR("out of dynamic memory in yy_get_next_buffer()");
   }
 
   yyg->yy_n_chars += number_to_move;
-  YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[yyg->yy_n_chars]     = YY_END_OF_BUFFER_CHAR;
+  YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[yyg->yy_n_chars] = YY_END_OF_BUFFER_CHAR;
   YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[yyg->yy_n_chars + 1] = YY_END_OF_BUFFER_CHAR;
 
   yyg->yytext_ptr = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[0];
@@ -1291,7 +1274,7 @@ static yy_state_type yy_get_previous_state(yyscan_t yyscanner)
     register YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
     if (yy_accept[yy_current_state]) {
       yyg->yy_last_accepting_state = yy_current_state;
-      yyg->yy_last_accepting_cpos  = yy_cp;
+      yyg->yy_last_accepting_cpos = yy_cp;
     }
     while (yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state) {
       yy_current_state = (int)yy_def[yy_current_state];
@@ -1312,14 +1295,13 @@ static yy_state_type yy_get_previous_state(yyscan_t yyscanner)
 static yy_state_type yy_try_NUL_trans(yy_state_type yy_current_state, yyscan_t yyscanner)
 {
   register int yy_is_jam;
-  struct yyguts_t *yyg = (struct yyguts_t *)
-      yyscanner; /* This var may be unused depending upon options. */
+  struct yyguts_t *yyg = (struct yyguts_t *)yyscanner; /* This var may be unused depending upon options. */
   register char *yy_cp = yyg->yy_c_buf_p;
 
   register YY_CHAR yy_c = 1;
   if (yy_accept[yy_current_state]) {
     yyg->yy_last_accepting_state = yy_current_state;
-    yyg->yy_last_accepting_cpos  = yy_cp;
+    yyg->yy_last_accepting_cpos = yy_cp;
   }
   while (yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state) {
     yy_current_state = (int)yy_def[yy_current_state];
@@ -1327,7 +1309,7 @@ static yy_state_type yy_try_NUL_trans(yy_state_type yy_current_state, yyscan_t y
       yy_c = yy_meta[(unsigned int)yy_c];
   }
   yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int)yy_c];
-  yy_is_jam        = (yy_current_state == 85);
+  yy_is_jam = (yy_current_state == 85);
 
   (void)yyg;
   return yy_is_jam ? 0 : yy_current_state;
@@ -1396,8 +1378,8 @@ static int input(yyscan_t yyscanner)
     }
   }
 
-  c                 = *(unsigned char *)yyg->yy_c_buf_p; /* cast for 8-bit char's */
-  *yyg->yy_c_buf_p  = '\0';                              /* preserve yytext */
+  c = *(unsigned char *)yyg->yy_c_buf_p; /* cast for 8-bit char's */
+  *yyg->yy_c_buf_p = '\0';               /* preserve yytext */
   yyg->yy_hold_char = *++yyg->yy_c_buf_p;
 
   return c;
@@ -1415,8 +1397,7 @@ void virtualStructConditionalGrammarYyrestart(FILE *input_file, yyscan_t yyscann
 
   if (!YY_CURRENT_BUFFER) {
     virtualStructConditionalGrammarYyensure_buffer_stack(yyscanner);
-    YY_CURRENT_BUFFER_LVALUE = virtualStructConditionalGrammarYy_create_buffer(
-        yyin, YY_BUF_SIZE, yyscanner);
+    YY_CURRENT_BUFFER_LVALUE = virtualStructConditionalGrammarYy_create_buffer(yyin, YY_BUF_SIZE, yyscanner);
   }
 
   virtualStructConditionalGrammarYy_init_buffer(YY_CURRENT_BUFFER, input_file, yyscanner);
@@ -1427,8 +1408,7 @@ void virtualStructConditionalGrammarYyrestart(FILE *input_file, yyscan_t yyscann
  * @param new_buffer The new input buffer.
  * @param yyscanner The scanner object.
  */
-void virtualStructConditionalGrammarYy_switch_to_buffer(YY_BUFFER_STATE new_buffer,
-                                                        yyscan_t yyscanner)
+void virtualStructConditionalGrammarYy_switch_to_buffer(YY_BUFFER_STATE new_buffer, yyscan_t yyscanner)
 {
   struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
 
@@ -1443,7 +1423,7 @@ void virtualStructConditionalGrammarYy_switch_to_buffer(YY_BUFFER_STATE new_buff
 
   if (YY_CURRENT_BUFFER) {
     /* Flush out information for old buffer. */
-    *yyg->yy_c_buf_p                     = yyg->yy_hold_char;
+    *yyg->yy_c_buf_p = yyg->yy_hold_char;
     YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = yyg->yy_c_buf_p;
     YY_CURRENT_BUFFER_LVALUE->yy_n_chars = yyg->yy_n_chars;
   }
@@ -1462,10 +1442,10 @@ void virtualStructConditionalGrammarYy_switch_to_buffer(YY_BUFFER_STATE new_buff
 static void virtualStructConditionalGrammarYy_load_buffer_state(yyscan_t yyscanner)
 {
   struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
-  yyg->yy_n_chars      = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
+  yyg->yy_n_chars = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
   yyg->yytext_ptr = yyg->yy_c_buf_p = YY_CURRENT_BUFFER_LVALUE->yy_buf_pos;
-  yyin                              = YY_CURRENT_BUFFER_LVALUE->yy_input_file;
-  yyg->yy_hold_char                 = *yyg->yy_c_buf_p;
+  yyin = YY_CURRENT_BUFFER_LVALUE->yy_input_file;
+  yyg->yy_hold_char = *yyg->yy_c_buf_p;
 }
 
 /** Allocate and initialize an input buffer state.
@@ -1474,14 +1454,11 @@ static void virtualStructConditionalGrammarYy_load_buffer_state(yyscan_t yyscann
  * @param yyscanner The scanner object.
  * @return the allocated buffer state.
  */
-YY_BUFFER_STATE virtualStructConditionalGrammarYy_create_buffer(FILE *file,
-                                                                int size,
-                                                                yyscan_t yyscanner)
+YY_BUFFER_STATE virtualStructConditionalGrammarYy_create_buffer(FILE *file, int size, yyscan_t yyscanner)
 {
   YY_BUFFER_STATE b;
 
-  b = (YY_BUFFER_STATE)virtualStructConditionalGrammarYyalloc(sizeof(struct yy_buffer_state),
-                                                              yyscanner);
+  b = (YY_BUFFER_STATE)virtualStructConditionalGrammarYyalloc(sizeof(struct yy_buffer_state), yyscanner);
   if (!b)
     YY_FATAL_ERROR("out of dynamic memory in virtualStructConditionalGrammarYy_create_buffer()");
 
@@ -1525,17 +1502,15 @@ void virtualStructConditionalGrammarYy_delete_buffer(YY_BUFFER_STATE b, yyscan_t
  * This function is sometimes called more than once on the same buffer,
  * such as during a virtualStructConditionalGrammarYyrestart() or at EOF.
  */
-static void virtualStructConditionalGrammarYy_init_buffer(YY_BUFFER_STATE b,
-                                                          FILE *file,
-                                                          yyscan_t yyscanner)
+static void virtualStructConditionalGrammarYy_init_buffer(YY_BUFFER_STATE b, FILE *file, yyscan_t yyscanner)
 
 {
-  int oerrno           = errno;
+  int oerrno = errno;
   struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
 
   virtualStructConditionalGrammarYy_flush_buffer(b, yyscanner);
 
-  b->yy_input_file  = file;
+  b->yy_input_file = file;
   b->yy_fill_buffer = 1;
 
   /* If b is the current buffer, then virtualStructConditionalGrammarYy_init_buffer was _probably_
@@ -1573,7 +1548,7 @@ void virtualStructConditionalGrammarYy_flush_buffer(YY_BUFFER_STATE b, yyscan_t 
 
   b->yy_buf_pos = &b->yy_ch_buf[0];
 
-  b->yy_at_bol        = 1;
+  b->yy_at_bol = 1;
   b->yy_buffer_status = YY_BUFFER_NEW;
 
   if (b == YY_CURRENT_BUFFER)
@@ -1586,8 +1561,7 @@ void virtualStructConditionalGrammarYy_flush_buffer(YY_BUFFER_STATE b, yyscan_t 
  *  @param new_buffer The new state.
  *  @param yyscanner The scanner object.
  */
-void virtualStructConditionalGrammarYypush_buffer_state(YY_BUFFER_STATE new_buffer,
-                                                        yyscan_t yyscanner)
+void virtualStructConditionalGrammarYypush_buffer_state(YY_BUFFER_STATE new_buffer, yyscan_t yyscanner)
 {
   struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
   if (new_buffer == NULL)
@@ -1598,7 +1572,7 @@ void virtualStructConditionalGrammarYypush_buffer_state(YY_BUFFER_STATE new_buff
   /* This block is copied from virtualStructConditionalGrammarYy_switch_to_buffer. */
   if (YY_CURRENT_BUFFER) {
     /* Flush out information for old buffer. */
-    *yyg->yy_c_buf_p                     = yyg->yy_hold_char;
+    *yyg->yy_c_buf_p = yyg->yy_hold_char;
     YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = yyg->yy_c_buf_p;
     YY_CURRENT_BUFFER_LVALUE->yy_n_chars = yyg->yy_n_chars;
   }
@@ -1648,12 +1622,11 @@ static void virtualStructConditionalGrammarYyensure_buffer_stack(yyscan_t yyscan
      * scanner will even need a stack. We use 2 instead of 1 to avoid an
      * immediate realloc on the next call.
      */
-    num_to_alloc         = 1;
+    num_to_alloc = 1;
     yyg->yy_buffer_stack = (struct yy_buffer_state **)virtualStructConditionalGrammarYyalloc(
-        num_to_alloc * sizeof(struct yy_buffer_state *), yyscanner);
+      num_to_alloc * sizeof(struct yy_buffer_state *), yyscanner);
     if (!yyg->yy_buffer_stack)
-      YY_FATAL_ERROR(
-          "out of dynamic memory in virtualStructConditionalGrammarYyensure_buffer_stack()");
+      YY_FATAL_ERROR("out of dynamic memory in virtualStructConditionalGrammarYyensure_buffer_stack()");
 
     memset(yyg->yy_buffer_stack, 0, num_to_alloc * sizeof(struct yy_buffer_state *));
 
@@ -1667,17 +1640,14 @@ static void virtualStructConditionalGrammarYyensure_buffer_stack(yyscan_t yyscan
     /* Increase the buffer to prepare for a possible push. */
     int grow_size = 8 /* arbitrary grow size */;
 
-    num_to_alloc         = yyg->yy_buffer_stack_max + grow_size;
+    num_to_alloc = yyg->yy_buffer_stack_max + grow_size;
     yyg->yy_buffer_stack = (struct yy_buffer_state **)virtualStructConditionalGrammarYyrealloc(
-        yyg->yy_buffer_stack, num_to_alloc * sizeof(struct yy_buffer_state *), yyscanner);
+      yyg->yy_buffer_stack, num_to_alloc * sizeof(struct yy_buffer_state *), yyscanner);
     if (!yyg->yy_buffer_stack)
-      YY_FATAL_ERROR(
-          "out of dynamic memory in virtualStructConditionalGrammarYyensure_buffer_stack()");
+      YY_FATAL_ERROR("out of dynamic memory in virtualStructConditionalGrammarYyensure_buffer_stack()");
 
     /* zero only the new slots.*/
-    memset(yyg->yy_buffer_stack + yyg->yy_buffer_stack_max,
-           0,
-           grow_size * sizeof(struct yy_buffer_state *));
+    memset(yyg->yy_buffer_stack + yyg->yy_buffer_stack_max, 0, grow_size * sizeof(struct yy_buffer_state *));
     yyg->yy_buffer_stack_max = num_to_alloc;
   }
 }
@@ -1688,31 +1658,27 @@ static void virtualStructConditionalGrammarYyensure_buffer_stack(yyscan_t yyscan
  * @param yyscanner The scanner object.
  * @return the newly allocated buffer state object.
  */
-YY_BUFFER_STATE virtualStructConditionalGrammarYy_scan_buffer(char *base,
-                                                              yy_size_t size,
-                                                              yyscan_t yyscanner)
+YY_BUFFER_STATE virtualStructConditionalGrammarYy_scan_buffer(char *base, yy_size_t size, yyscan_t yyscanner)
 {
   YY_BUFFER_STATE b;
 
-  if (size < 2 || base[size - 2] != YY_END_OF_BUFFER_CHAR ||
-      base[size - 1] != YY_END_OF_BUFFER_CHAR)
+  if (size < 2 || base[size - 2] != YY_END_OF_BUFFER_CHAR || base[size - 1] != YY_END_OF_BUFFER_CHAR)
     /* They forgot to leave room for the EOB's. */
     return 0;
 
-  b = (YY_BUFFER_STATE)virtualStructConditionalGrammarYyalloc(sizeof(struct yy_buffer_state),
-                                                              yyscanner);
+  b = (YY_BUFFER_STATE)virtualStructConditionalGrammarYyalloc(sizeof(struct yy_buffer_state), yyscanner);
   if (!b)
     YY_FATAL_ERROR("out of dynamic memory in virtualStructConditionalGrammarYy_scan_buffer()");
 
   b->yy_buf_size = size - 2; /* "- 2" to take care of EOB's */
   b->yy_buf_pos = b->yy_ch_buf = base;
-  b->yy_is_our_buffer          = 0;
-  b->yy_input_file             = 0;
-  b->yy_n_chars                = b->yy_buf_size;
-  b->yy_is_interactive         = 0;
-  b->yy_at_bol                 = 1;
-  b->yy_fill_buffer            = 0;
-  b->yy_buffer_status          = YY_BUFFER_NEW;
+  b->yy_is_our_buffer = 0;
+  b->yy_input_file = 0;
+  b->yy_n_chars = b->yy_buf_size;
+  b->yy_is_interactive = 0;
+  b->yy_at_bol = 1;
+  b->yy_fill_buffer = 0;
+  b->yy_buffer_status = YY_BUFFER_NEW;
 
   virtualStructConditionalGrammarYy_switch_to_buffer(b, yyscanner);
 
@@ -1727,8 +1693,7 @@ YY_BUFFER_STATE virtualStructConditionalGrammarYy_scan_buffer(char *base,
  * @note If you want to scan bytes that may contain NUL values, then use
  *       virtualStructConditionalGrammarYy_scan_bytes() instead.
  */
-YY_BUFFER_STATE virtualStructConditionalGrammarYy_scan_string(yyconst char *yystr,
-                                                              yyscan_t yyscanner)
+YY_BUFFER_STATE virtualStructConditionalGrammarYy_scan_string(yyconst char *yystr, yyscan_t yyscanner)
 {
 
   return virtualStructConditionalGrammarYy_scan_bytes(yystr, strlen(yystr), yyscanner);
@@ -1751,7 +1716,7 @@ YY_BUFFER_STATE virtualStructConditionalGrammarYy_scan_bytes(yyconst char *yybyt
   yy_size_t i;
 
   /* Get memory for full buffer, including space for trailing EOB's. */
-  n   = _yybytes_len + 2;
+  n = _yybytes_len + 2;
   buf = (char *)virtualStructConditionalGrammarYyalloc(n, yyscanner);
   if (!buf)
     YY_FATAL_ERROR("out of dynamic memory in virtualStructConditionalGrammarYy_scan_bytes()");
@@ -1791,11 +1756,11 @@ static void yy_fatal_error(yyconst char *msg, yyscan_t yyscanner)
     /* Undo effects of setting up yytext. */ \
     int yyless_macro_arg = (n); \
     YY_LESS_LINENO(yyless_macro_arg); \
-    yytext[yyleng]    = yyg->yy_hold_char; \
-    yyg->yy_c_buf_p   = yytext + yyless_macro_arg; \
+    yytext[yyleng] = yyg->yy_hold_char; \
+    yyg->yy_c_buf_p = yytext + yyless_macro_arg; \
     yyg->yy_hold_char = *yyg->yy_c_buf_p; \
-    *yyg->yy_c_buf_p  = '\0'; \
-    yyleng            = yyless_macro_arg; \
+    *yyg->yy_c_buf_p = '\0'; \
+    yyleng = yyless_macro_arg; \
   } while (0)
 
 /* Accessor  methods (get/set functions) to struct members. */
@@ -1879,7 +1844,7 @@ char *virtualStructConditionalGrammarYyget_text(yyscan_t yyscanner)
 void virtualStructConditionalGrammarYyset_extra(YY_EXTRA_TYPE user_defined, yyscan_t yyscanner)
 {
   struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
-  yyextra              = user_defined;
+  yyextra = user_defined;
 }
 
 /** Set the current line number.
@@ -1921,13 +1886,13 @@ void virtualStructConditionalGrammarYyset_column(int column_no, yyscan_t yyscann
 void virtualStructConditionalGrammarYyset_in(FILE *in_str, yyscan_t yyscanner)
 {
   struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
-  yyin                 = in_str;
+  yyin = in_str;
 }
 
 void virtualStructConditionalGrammarYyset_out(FILE *out_str, yyscan_t yyscanner)
 {
   struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
-  yyout                = out_str;
+  yyout = out_str;
 }
 
 int virtualStructConditionalGrammarYyget_debug(yyscan_t yyscanner)
@@ -1939,7 +1904,7 @@ int virtualStructConditionalGrammarYyget_debug(yyscan_t yyscanner)
 void virtualStructConditionalGrammarYyset_debug(int bdebug, yyscan_t yyscanner)
 {
   struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
-  yy_flex_debug        = bdebug;
+  yy_flex_debug = bdebug;
 }
 
 /* Accessor methods for yylval and yylloc */
@@ -1953,7 +1918,7 @@ YYSTYPE *virtualStructConditionalGrammarYyget_lval(yyscan_t yyscanner)
 void virtualStructConditionalGrammarYyset_lval(YYSTYPE *yylval_param, yyscan_t yyscanner)
 {
   struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
-  yylval               = yylval_param;
+  yylval = yylval_param;
 }
 
 YYLTYPE *virtualStructConditionalGrammarYyget_lloc(yyscan_t yyscanner)
@@ -1965,7 +1930,7 @@ YYLTYPE *virtualStructConditionalGrammarYyget_lloc(yyscan_t yyscanner)
 void virtualStructConditionalGrammarYyset_lloc(YYLTYPE *yylloc_param, yyscan_t yyscanner)
 {
   struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
-  yylloc               = yylloc_param;
+  yylloc = yylloc_param;
 }
 
 /* User-visible API */
@@ -1983,8 +1948,7 @@ int virtualStructConditionalGrammarYylex_init(yyscan_t *ptr_yy_globals)
     return 1;
   }
 
-  *ptr_yy_globals = (yyscan_t)virtualStructConditionalGrammarYyalloc(sizeof(struct yyguts_t),
-                                                                     NULL);
+  *ptr_yy_globals = (yyscan_t)virtualStructConditionalGrammarYyalloc(sizeof(struct yyguts_t), NULL);
 
   if (*ptr_yy_globals == NULL) {
     errno = ENOMEM;
@@ -2005,8 +1969,7 @@ int virtualStructConditionalGrammarYylex_init(yyscan_t *ptr_yy_globals)
  * virtualStructConditionalGrammarYyalloc in the yyextra field.
  */
 
-int virtualStructConditionalGrammarYylex_init_extra(YY_EXTRA_TYPE yy_user_defined,
-                                                    yyscan_t *ptr_yy_globals)
+int virtualStructConditionalGrammarYylex_init_extra(YY_EXTRA_TYPE yy_user_defined, yyscan_t *ptr_yy_globals)
 
 {
   struct yyguts_t dummy_yyguts;
@@ -2018,8 +1981,7 @@ int virtualStructConditionalGrammarYylex_init_extra(YY_EXTRA_TYPE yy_user_define
     return 1;
   }
 
-  *ptr_yy_globals = (yyscan_t)virtualStructConditionalGrammarYyalloc(sizeof(struct yyguts_t),
-                                                                     &dummy_yyguts);
+  *ptr_yy_globals = (yyscan_t)virtualStructConditionalGrammarYyalloc(sizeof(struct yyguts_t), &dummy_yyguts);
 
   if (*ptr_yy_globals == NULL) {
     errno = ENOMEM;
@@ -2043,23 +2005,23 @@ static int yy_init_globals(yyscan_t yyscanner)
    * here.
    */
 
-  yyg->yy_buffer_stack     = 0;
+  yyg->yy_buffer_stack = 0;
   yyg->yy_buffer_stack_top = 0;
   yyg->yy_buffer_stack_max = 0;
-  yyg->yy_c_buf_p          = (char *)0;
-  yyg->yy_init             = 0;
-  yyg->yy_start            = 0;
+  yyg->yy_c_buf_p = (char *)0;
+  yyg->yy_init = 0;
+  yyg->yy_start = 0;
 
-  yyg->yy_start_stack_ptr   = 0;
+  yyg->yy_start_stack_ptr = 0;
   yyg->yy_start_stack_depth = 0;
-  yyg->yy_start_stack       = NULL;
+  yyg->yy_start_stack = NULL;
 
 /* Defined in main.c */
 #ifdef YY_STDINIT
-  yyin  = stdin;
+  yyin = stdin;
   yyout = stdout;
 #else
-  yyin  = (FILE *)0;
+  yyin = (FILE *)0;
   yyout = (FILE *)0;
 #endif
 

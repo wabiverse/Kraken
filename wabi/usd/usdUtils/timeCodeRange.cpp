@@ -44,7 +44,7 @@ TF_DEFINE_PUBLIC_TOKENS(UsdUtilsTimeCodeRangeTokens, USDUTILS_TIME_CODE_RANGE_TO
 /// Otherwise, \p value is left unchanged and false is returned.
 static bool _StringToDouble(const std::string &valueString, double &value)
 {
-  double tmpValue          = 0.0;
+  double tmpValue = 0.0;
   size_t numCharsConverted = 0u;
 
   try {
@@ -73,8 +73,8 @@ UsdUtilsTimeCodeRange UsdUtilsTimeCodeRange::CreateFromFrameSpec(const std::stri
   // FrameSpecs must contain at least one time code value, but check whether
   // it also contains the range separator. Issue an error and return an
   // invalid empty range if there is more than one separator.
-  std::vector<std::string> frameSpecParts = TfStringSplit(
-      frameSpec, UsdUtilsTimeCodeRangeTokens->RangeSeparator);
+  std::vector<std::string> frameSpecParts = TfStringSplit(frameSpec,
+                                                          UsdUtilsTimeCodeRangeTokens->RangeSeparator);
   if (frameSpecParts.size() > 2u) {
     TF_CODING_ERROR("Invalid FrameSpec: \"%s\"", frameSpec.c_str());
     return UsdUtilsTimeCodeRange();
@@ -130,8 +130,8 @@ std::ostream &operator<<(std::ostream &os, const UsdUtilsTimeCodeRange &timeCode
   }
 
   const UsdTimeCode startTimeCode = timeCodeRange.GetStartTimeCode();
-  const UsdTimeCode endTimeCode   = timeCodeRange.GetEndTimeCode();
-  const double stride             = timeCodeRange.GetStride();
+  const UsdTimeCode endTimeCode = timeCodeRange.GetEndTimeCode();
+  const double stride = timeCodeRange.GetStride();
 
   os << startTimeCode;
 

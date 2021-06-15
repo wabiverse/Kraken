@@ -65,9 +65,9 @@ WABI_NAMESPACE_BEGIN
 #if !defined(USE_DEPRECATED_GNU_HASH_SET)
 
 template<class Key,
-         class HashFn   = std::hash<Key>,
+         class HashFn = std::hash<Key>,
          class EqualKey = std::equal_to<Key>,
-         class Alloc    = std::allocator<Key>>
+         class Alloc = std::allocator<Key>>
 class TfHashSet : private std::unordered_set<Key, HashFn, EqualKey, Alloc> {
   typedef std::unordered_set<Key, HashFn, EqualKey, Alloc> _Base;
 
@@ -90,21 +90,21 @@ class TfHashSet : private std::unordered_set<Key, HashFn, EqualKey, Alloc> {
   TfHashSet() : _Base()
   {}
   explicit TfHashSet(size_type n,
-                     const hasher &hf            = hasher(),
-                     const key_equal &eql        = key_equal(),
+                     const hasher &hf = hasher(),
+                     const key_equal &eql = key_equal(),
                      const allocator_type &alloc = allocator_type())
-      : _Base(n, hf, eql, alloc)
+    : _Base(n, hf, eql, alloc)
   {}
   explicit TfHashSet(const allocator_type &alloc) : _Base(alloc)
   {}
   template<class InputIterator>
   TfHashSet(InputIterator first,
             InputIterator last,
-            size_type n                 = 0,
-            const hasher &hf            = hasher(),
-            const key_equal &eql        = key_equal(),
+            size_type n = 0,
+            const hasher &hf = hasher(),
+            const key_equal &eql = key_equal(),
             const allocator_type &alloc = allocator_type())
-      : _Base(first, last, n, hf, eql, alloc)
+    : _Base(first, last, n, hf, eql, alloc)
   {}
   TfHashSet(const TfHashSet &other) : _Base(other)
   {}
@@ -193,9 +193,9 @@ class TfHashSet : private std::unordered_set<Key, HashFn, EqualKey, Alloc> {
 };
 
 template<class Key,
-         class HashFn   = std::hash<Key>,
+         class HashFn = std::hash<Key>,
          class EqualKey = std::equal_to<Key>,
-         class Alloc    = std::allocator<Key>>
+         class Alloc = std::allocator<Key>>
 class TfHashMultiSet : private std::unordered_multiset<Key, HashFn, EqualKey, Alloc> {
   typedef std::unordered_multiset<Key, HashFn, EqualKey, Alloc> _Base;
 
@@ -218,21 +218,21 @@ class TfHashMultiSet : private std::unordered_multiset<Key, HashFn, EqualKey, Al
   TfHashMultiSet() : _Base()
   {}
   explicit TfHashMultiSet(size_type n,
-                          const hasher &hf            = hasher(),
-                          const key_equal &eql        = key_equal(),
+                          const hasher &hf = hasher(),
+                          const key_equal &eql = key_equal(),
                           const allocator_type &alloc = allocator_type())
-      : _Base(n, hf, eql, alloc)
+    : _Base(n, hf, eql, alloc)
   {}
   explicit TfHashMultiSet(const allocator_type &alloc) : _Base(alloc)
   {}
   template<class InputIterator>
   TfHashMultiSet(InputIterator first,
                  InputIterator last,
-                 size_type n                 = 0,
-                 const hasher &hf            = hasher(),
-                 const key_equal &eql        = key_equal(),
+                 size_type n = 0,
+                 const hasher &hf = hasher(),
+                 const key_equal &eql = key_equal(),
                  const allocator_type &alloc = allocator_type())
-      : _Base(first, last, n, hf, eql, alloc)
+    : _Base(first, last, n, hf, eql, alloc)
   {}
   TfHashMultiSet(const TfHashMultiSet &other) : _Base(other)
   {}
@@ -323,9 +323,9 @@ class TfHashMultiSet : private std::unordered_multiset<Key, HashFn, EqualKey, Al
 #else /* USE_DEPRECATED_GNU_HASH_SET */
 
 template<class Key,
-         class HashFn   = __gnu_cxx::hash<Key>,
+         class HashFn = __gnu_cxx::hash<Key>,
          class EqualKey = __gnu_cxx::equal_to<Key>,
-         class Alloc    = __gnu_cxx::allocator<Key>>
+         class Alloc = __gnu_cxx::allocator<Key>>
 class TfHashSet : private __gnu_cxx::hash_set<Key, HashFn, EqualKey, Alloc> {
   typedef __gnu_cxx::hash_set<Key, HashFn, EqualKey, Alloc> _Base;
 
@@ -348,21 +348,21 @@ class TfHashSet : private __gnu_cxx::hash_set<Key, HashFn, EqualKey, Alloc> {
   TfHashSet() : _Base()
   {}
   explicit TfHashSet(size_type n,
-                     const hasher &hf            = hasher(),
-                     const key_equal &eql        = key_equal(),
+                     const hasher &hf = hasher(),
+                     const key_equal &eql = key_equal(),
                      const allocator_type &alloc = allocator_type())
-      : _Base(n, hf, eql, alloc)
+    : _Base(n, hf, eql, alloc)
   {}
   explicit TfHashSet(const allocator_type &alloc) : _Base(0, hasher(), key_equal(), alloc)
   {}
   template<class InputIterator>
   TfHashSet(InputIterator first,
             InputIterator last,
-            size_type n                 = 0,
-            const hasher &hf            = hasher(),
-            const key_equal &eql        = key_equal(),
+            size_type n = 0,
+            const hasher &hf = hasher(),
+            const key_equal &eql = key_equal(),
             const allocator_type &alloc = allocator_type())
-      : _Base(first, last, n, hf, eql, alloc)
+    : _Base(first, last, n, hf, eql, alloc)
   {}
   TfHashSet(const TfHashSet &other) : _Base(other)
   {}
@@ -484,9 +484,9 @@ class TfHashSet : private __gnu_cxx::hash_set<Key, HashFn, EqualKey, Alloc> {
 };
 
 template<class Key,
-         class HashFn   = __gnu_cxx::hash<Key>,
+         class HashFn = __gnu_cxx::hash<Key>,
          class EqualKey = __gnu_cxx::equal_to<Key>,
-         class Alloc    = __gnu_cxx::allocator<Key>>
+         class Alloc = __gnu_cxx::allocator<Key>>
 class TfHashMultiSet : private __gnu_cxx::hash_multiset<Key, HashFn, EqualKey, Alloc> {
   typedef __gnu_cxx::hash_multiset<Key, HashFn, EqualKey, Alloc> _Base;
 
@@ -509,21 +509,21 @@ class TfHashMultiSet : private __gnu_cxx::hash_multiset<Key, HashFn, EqualKey, A
   TfHashMultiSet() : _Base()
   {}
   explicit TfHashMultiSet(size_type n,
-                          const hasher &hf            = hasher(),
-                          const key_equal &eql        = key_equal(),
+                          const hasher &hf = hasher(),
+                          const key_equal &eql = key_equal(),
                           const allocator_type &alloc = allocator_type())
-      : _Base(n, hf, eql, alloc)
+    : _Base(n, hf, eql, alloc)
   {}
   explicit TfHashMultiSet(const allocator_type &alloc) : _Base(0, hasher(), key_equal(), alloc)
   {}
   template<class InputIterator>
   TfHashMultiSet(InputIterator first,
                  InputIterator last,
-                 size_type n                 = 0,
-                 const hasher &hf            = hasher(),
-                 const key_equal &eql        = key_equal(),
+                 size_type n = 0,
+                 const hasher &hf = hasher(),
+                 const key_equal &eql = key_equal(),
                  const allocator_type &alloc = allocator_type())
-      : _Base(first, last, n, hf, eql, alloc)
+    : _Base(first, last, n, hf, eql, alloc)
   {}
   TfHashMultiSet(const TfHashMultiSet &other) : _Base(other)
   {}
@@ -647,8 +647,7 @@ class TfHashMultiSet : private __gnu_cxx::hash_multiset<Key, HashFn, EqualKey, A
 #endif /* USE_DEPRECATED_GNU_HASH_SET */
 
 template<class Key, class HashFn, class EqualKey, class Alloc>
-inline void swap(TfHashSet<Key, HashFn, EqualKey, Alloc> &lhs,
-                 TfHashSet<Key, HashFn, EqualKey, Alloc> &rhs)
+inline void swap(TfHashSet<Key, HashFn, EqualKey, Alloc> &lhs, TfHashSet<Key, HashFn, EqualKey, Alloc> &rhs)
 {
   lhs.swap(rhs);
 }

@@ -43,9 +43,7 @@ class HdRprLight : public HdLight {
 
   ~HdRprLight() override = default;
 
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 
@@ -57,7 +55,7 @@ class HdRprLight : public HdLight {
   void CreateAreaLightMesh(HdRprApi *rprApi, HdSceneDelegate *sceneDelegate);
   rpr::Shape *CreateDiskLightMesh(HdRprApi *rprApi);
   rpr::Shape *CreateRectLightMesh(HdRprApi *rprApi,
-                                  bool applyTransform         = false,
+                                  bool applyTransform = false,
                                   GfMatrix4f const &transform = GfMatrix4f(1.0f));
   rpr::Shape *CreateSphereLightMesh(HdRprApi *rprApi);
   rpr::Shape *CreateCylinderLightMesh(HdRprApi *rprApi);

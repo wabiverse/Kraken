@@ -157,8 +157,7 @@ class GfRange2f {
   /// operations of this type, the range is assumed to include its extrema.
   bool Contains(const GfVec2f &point) const
   {
-    return (point[0] >= _min[0] && point[0] <= _max[0] && point[1] >= _min[1] &&
-            point[1] <= _max[1]);
+    return (point[0] >= _min[0] && point[0] <= _max[0] && point[1] >= _min[1] && point[1] <= _max[1]);
   }
 
   /// Returns true if the \p range is located entirely inside the range. As
@@ -299,8 +298,8 @@ class GfRange2f {
     }
     else {
       GfVec2f tmp = _min;
-      _min        = _max * m;
-      _max        = tmp * m;
+      _min = _max * m;
+      _max = tmp * m;
     }
     return *this;
   }

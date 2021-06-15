@@ -86,8 +86,7 @@ class UsdRiPxrIntMultLightFilter : public UsdLuxLightFilter {
   /// Construct a UsdRiPxrIntMultLightFilter on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiPxrIntMultLightFilter(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiPxrIntMultLightFilter(const UsdSchemaBase &schemaObj)
-      : UsdLuxLightFilter(schemaObj)
+  explicit UsdRiPxrIntMultLightFilter(const UsdSchemaBase &schemaObj) : UsdLuxLightFilter(schemaObj)
   {}
 
   /// Destructor.
@@ -184,7 +183,7 @@ class UsdRiPxrIntMultLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiIntensityAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -208,7 +207,7 @@ class UsdRiPxrIntMultLightFilter : public UsdLuxLightFilter {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateColorSaturationAttr(VtValue const &defaultValue = VtValue(),
-                                         bool writeSparsely          = false) const;
+                                         bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

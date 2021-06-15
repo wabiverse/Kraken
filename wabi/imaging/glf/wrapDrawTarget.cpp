@@ -63,20 +63,20 @@ void wrapDrawTarget()
   typedef GlfDrawTargetPtr ThisPtr;
 
   class_<This, ThisPtr, boost::noncopyable>("DrawTarget", no_init)
-      .def(TfPyRefAndWeakPtr())
-      .def("__init__", TfMakePyConstructor(&_NewDrawTarget))
-      .def("__init__", TfMakePyConstructor(&_NewDrawTarget2))
-      .def("AddAttachment", &This::AddAttachment)
-      .def("Bind", &This::Bind)
-      .def("Unbind", &This::Unbind)
-      .def("WriteToFile",
-           &This::WriteToFile,
-           (arg("attachment"),
-            arg("filename"),
-            arg("viewMatrix")       = GfMatrix4d(1),
-            arg("projectionMatrix") = GfMatrix4d(1)))
+    .def(TfPyRefAndWeakPtr())
+    .def("__init__", TfMakePyConstructor(&_NewDrawTarget))
+    .def("__init__", TfMakePyConstructor(&_NewDrawTarget2))
+    .def("AddAttachment", &This::AddAttachment)
+    .def("Bind", &This::Bind)
+    .def("Unbind", &This::Unbind)
+    .def("WriteToFile",
+         &This::WriteToFile,
+         (arg("attachment"),
+          arg("filename"),
+          arg("viewMatrix") = GfMatrix4d(1),
+          arg("projectionMatrix") = GfMatrix4d(1)))
 
-      ;
+    ;
 }
 
 TF_REFPTR_CONST_VOLATILE_GET(GlfDrawTarget)

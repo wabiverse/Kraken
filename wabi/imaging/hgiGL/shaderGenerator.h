@@ -58,9 +58,9 @@ class HgiGLShaderGenerator final : public HgiShaderGenerator {
   void _Execute(std::ostream &ss, const std::string &originalShaderShader) override;
 
  private:
-  HgiGLShaderGenerator()        = delete;
+  HgiGLShaderGenerator() = delete;
   HgiGLShaderGenerator &operator=(const HgiGLShaderGenerator &) = delete;
-  HgiGLShaderGenerator(const HgiGLShaderGenerator &)            = delete;
+  HgiGLShaderGenerator(const HgiGLShaderGenerator &) = delete;
 
   void _WriteTextures(const HgiShaderFunctionTextureDescVector &textures);
 
@@ -69,8 +69,7 @@ class HgiGLShaderGenerator final : public HgiShaderGenerator {
   void _WriteConstantParams(const HgiShaderFunctionParamDescVector &parameters);
 
   // For writing shader inputs and outputs who are very similarly written
-  void _WriteInOuts(const HgiShaderFunctionParamDescVector &parameters,
-                    const std::string &qualifier);
+  void _WriteInOuts(const HgiShaderFunctionParamDescVector &parameters, const std::string &qualifier);
 
   HgiGLShaderSectionUniquePtrVector _shaderSections;
 };

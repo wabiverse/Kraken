@@ -85,9 +85,9 @@ class HgiGLShaderProgram final : public HgiShaderProgram {
   HgiGLShaderProgram(HgiShaderProgramDesc const &desc);
 
  private:
-  HgiGLShaderProgram()        = delete;
+  HgiGLShaderProgram() = delete;
   HgiGLShaderProgram &operator=(const HgiGLShaderProgram &) = delete;
-  HgiGLShaderProgram(const HgiGLShaderProgram &)            = delete;
+  HgiGLShaderProgram(const HgiGLShaderProgram &) = delete;
 
  private:
   std::string _errors;

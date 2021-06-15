@@ -41,13 +41,13 @@
 WABI_NAMESPACE_BEGIN
 
 HgiVulkanComputeCmds::HgiVulkanComputeCmds(HgiVulkan *hgi)
-    : HgiComputeCmds(),
-      _hgi(hgi),
-      _commandBuffer(nullptr),
-      _pipelineLayout(nullptr),
-      _pushConstantsDirty(false),
-      _pushConstants(nullptr),
-      _pushConstantsByteSize(0)
+  : HgiComputeCmds(),
+    _hgi(hgi),
+    _commandBuffer(nullptr),
+    _pipelineLayout(nullptr),
+    _pushConstantsDirty(false),
+    _pushConstants(nullptr),
+    _pushConstantsByteSize(0)
 {}
 
 HgiVulkanComputeCmds::~HgiVulkanComputeCmds()
@@ -95,7 +95,7 @@ void HgiVulkanComputeCmds::SetConstantValues(HgiComputePipelineHandle pipeline,
   // Delay pushing until we know for sure what the pipeline will be.
   if (!_pushConstants || _pushConstantsByteSize < byteSize) {
     delete[] _pushConstants;
-    _pushConstants         = new uint8_t[byteSize];
+    _pushConstants = new uint8_t[byteSize];
     _pushConstantsByteSize = byteSize;
   }
   memcpy(_pushConstants, data, byteSize);
@@ -116,7 +116,7 @@ bool HgiVulkanComputeCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
     return false;
   }
 
-  HgiVulkanDevice *device      = _commandBuffer->GetDevice();
+  HgiVulkanDevice *device = _commandBuffer->GetDevice();
   HgiVulkanCommandQueue *queue = device->GetCommandQueue();
 
   // Submit the GPU work and optionally do CPU - GPU synchronization.
@@ -132,13 +132,11 @@ void HgiVulkanComputeCmds::_BindResources()
   }
 
   if (_resourceBindings) {
-    HgiVulkanResourceBindings *rb = static_cast<HgiVulkanResourceBindings *>(
-        _resourceBindings.Get());
+    HgiVulkanResourceBindings *rb = static_cast<HgiVulkanResourceBindings *>(_resourceBindings.Get());
 
     if (rb) {
-      rb->BindResources(_commandBuffer->GetVulkanCommandBuffer(),
-                        VK_PIPELINE_BIND_POINT_COMPUTE,
-                        _pipelineLayout);
+      rb->BindResources(
+        _commandBuffer->GetVulkanCommandBuffer(), VK_PIPELINE_BIND_POINT_COMPUTE, _pipelineLayout);
     }
 
     // Make sure we bind only once
@@ -167,9 +165,9 @@ void HgiVulkanComputeCmds::MemoryBarrier(HgiMemoryBarrier barrier)
 void HgiVulkanComputeCmds::_CreateCommandBuffer()
 {
   if (!_commandBuffer) {
-    HgiVulkanDevice *device      = _hgi->GetPrimaryDevice();
+    HgiVulkanDevice *device = _hgi->GetPrimaryDevice();
     HgiVulkanCommandQueue *queue = device->GetCommandQueue();
-    _commandBuffer               = queue->AcquireCommandBuffer();
+    _commandBuffer = queue->AcquireCommandBuffer();
     TF_VERIFY(_commandBuffer);
   }
 }

@@ -123,12 +123,12 @@ void Tf_TerminateHandler()
   catch (std::bad_alloc &) {
     std::set_terminate(Tf_TerminateHandler);
     reason = "allocation failed (you've run out of memory)";
-    type   = "bad_alloc";
+    type = "bad_alloc";
   }
   catch (std::exception &exc) {
     std::set_terminate(Tf_TerminateHandler);
     reason = exc.what();
-    type   = typeid(exc).name();
+    type = typeid(exc).name();
   }
   catch (...) {
     std::set_terminate(Tf_TerminateHandler);
@@ -139,7 +139,7 @@ void Tf_TerminateHandler()
      * use of it here.
      */
     reason = "reason unknown";
-    type   = "";
+    type = "";
   }
 
   TF_FATAL_ERROR("%s : uncaught exception! : '%s'",
@@ -227,7 +227,7 @@ void TfInstallTerminateAndCrashHandlers()
   // Catch segvs and bus violations
   struct sigaction act;
   act.sa_sigaction = _fatalSignalHandler;
-  act.sa_flags     = SA_SIGINFO;
+  act.sa_flags = SA_SIGINFO;
 
   // The signal handler (more specifically ArchLogPostMortem) has a
   // flag to prevent it from running concurrently. If it is invoked

@@ -58,32 +58,24 @@ static UsdAttribute _CreateCookieModeAttr(UsdRiPxrCookieLightFilter &self,
                                           object defaultVal,
                                           bool writeSparsely)
 {
-  return self.CreateCookieModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                   writeSparsely);
+  return self.CreateCookieModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
-static UsdAttribute _CreateWidthAttr(UsdRiPxrCookieLightFilter &self,
-                                     object defaultVal,
-                                     bool writeSparsely)
+static UsdAttribute _CreateWidthAttr(UsdRiPxrCookieLightFilter &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateWidthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                              writeSparsely);
+  return self.CreateWidthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
-static UsdAttribute _CreateHeightAttr(UsdRiPxrCookieLightFilter &self,
-                                      object defaultVal,
-                                      bool writeSparsely)
+static UsdAttribute _CreateHeightAttr(UsdRiPxrCookieLightFilter &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                               writeSparsely);
+  return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
 static UsdAttribute _CreateTextureMapAttr(UsdRiPxrCookieLightFilter &self,
                                           object defaultVal,
                                           bool writeSparsely)
 {
-  return self.CreateTextureMapAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
-                                   writeSparsely);
+  return self.CreateTextureMapAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
 }
 
 static UsdAttribute _CreateTextureWrapModeAttr(UsdRiPxrCookieLightFilter &self,
@@ -98,16 +90,16 @@ static UsdAttribute _CreateTextureFillColorAttr(UsdRiPxrCookieLightFilter &self,
                                                 object defaultVal,
                                                 bool writeSparsely)
 {
-  return self.CreateTextureFillColorAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f), writeSparsely);
+  return self.CreateTextureFillColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
+                                         writeSparsely);
 }
 
 static UsdAttribute _CreateTexturePremultipliedAlphaAttr(UsdRiPxrCookieLightFilter &self,
                                                          object defaultVal,
                                                          bool writeSparsely)
 {
-  return self.CreateTexturePremultipliedAlphaAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
+  return self.CreateTexturePremultipliedAlphaAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                                  writeSparsely);
 }
 
 static UsdAttribute _CreateTextureInvertUAttr(UsdRiPxrCookieLightFilter &self,
@@ -162,8 +154,8 @@ static UsdAttribute _CreateAnalyticDirectionalAttr(UsdRiPxrCookieLightFilter &se
                                                    object defaultVal,
                                                    bool writeSparsely)
 {
-  return self.CreateAnalyticDirectionalAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
+  return self.CreateAnalyticDirectionalAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                            writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticShearXAttr(UsdRiPxrCookieLightFilter &self,
@@ -194,16 +186,16 @@ static UsdAttribute _CreateAnalyticUseLightDirectionAttr(UsdRiPxrCookieLightFilt
                                                          object defaultVal,
                                                          bool writeSparsely)
 {
-  return self.CreateAnalyticUseLightDirectionAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
+  return self.CreateAnalyticUseLightDirectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                                  writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticBlurAmountAttr(UsdRiPxrCookieLightFilter &self,
                                                   object defaultVal,
                                                   bool writeSparsely)
 {
-  return self.CreateAnalyticBlurAmountAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateAnalyticBlurAmountAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                           writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticBlurSMultAttr(UsdRiPxrCookieLightFilter &self,
@@ -226,112 +218,112 @@ static UsdAttribute _CreateAnalyticBlurNearDistanceAttr(UsdRiPxrCookieLightFilte
                                                         object defaultVal,
                                                         bool writeSparsely)
 {
-  return self.CreateAnalyticBlurNearDistanceAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateAnalyticBlurNearDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                 writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticBlurMidpointAttr(UsdRiPxrCookieLightFilter &self,
                                                     object defaultVal,
                                                     bool writeSparsely)
 {
-  return self.CreateAnalyticBlurMidpointAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateAnalyticBlurMidpointAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                             writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticBlurFarDistanceAttr(UsdRiPxrCookieLightFilter &self,
                                                        object defaultVal,
                                                        bool writeSparsely)
 {
-  return self.CreateAnalyticBlurFarDistanceAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateAnalyticBlurFarDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticBlurNearValueAttr(UsdRiPxrCookieLightFilter &self,
                                                      object defaultVal,
                                                      bool writeSparsely)
 {
-  return self.CreateAnalyticBlurNearValueAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateAnalyticBlurNearValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                              writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticBlurMidValueAttr(UsdRiPxrCookieLightFilter &self,
                                                     object defaultVal,
                                                     bool writeSparsely)
 {
-  return self.CreateAnalyticBlurMidValueAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateAnalyticBlurMidValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                             writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticBlurFarValueAttr(UsdRiPxrCookieLightFilter &self,
                                                     object defaultVal,
                                                     bool writeSparsely)
 {
-  return self.CreateAnalyticBlurFarValueAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateAnalyticBlurFarValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                             writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticBlurExponentAttr(UsdRiPxrCookieLightFilter &self,
                                                     object defaultVal,
                                                     bool writeSparsely)
 {
-  return self.CreateAnalyticBlurExponentAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateAnalyticBlurExponentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                             writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticDensityNearDistanceAttr(UsdRiPxrCookieLightFilter &self,
                                                            object defaultVal,
                                                            bool writeSparsely)
 {
-  return self.CreateAnalyticDensityNearDistanceAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateAnalyticDensityNearDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                    writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticDensityMidpointAttr(UsdRiPxrCookieLightFilter &self,
                                                        object defaultVal,
                                                        bool writeSparsely)
 {
-  return self.CreateAnalyticDensityMidpointAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateAnalyticDensityMidpointAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticDensityFarDistanceAttr(UsdRiPxrCookieLightFilter &self,
                                                           object defaultVal,
                                                           bool writeSparsely)
 {
-  return self.CreateAnalyticDensityFarDistanceAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateAnalyticDensityFarDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                   writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticDensityNearValueAttr(UsdRiPxrCookieLightFilter &self,
                                                         object defaultVal,
                                                         bool writeSparsely)
 {
-  return self.CreateAnalyticDensityNearValueAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateAnalyticDensityNearValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                 writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticDensityMidValueAttr(UsdRiPxrCookieLightFilter &self,
                                                        object defaultVal,
                                                        bool writeSparsely)
 {
-  return self.CreateAnalyticDensityMidValueAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateAnalyticDensityMidValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticDensityFarValueAttr(UsdRiPxrCookieLightFilter &self,
                                                        object defaultVal,
                                                        bool writeSparsely)
 {
-  return self.CreateAnalyticDensityFarValueAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateAnalyticDensityFarValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                writeSparsely);
 }
 
 static UsdAttribute _CreateAnalyticDensityExponentAttr(UsdRiPxrCookieLightFilter &self,
                                                        object defaultVal,
                                                        bool writeSparsely)
 {
-  return self.CreateAnalyticDensityExponentAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  return self.CreateAnalyticDensityExponentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                writeSparsely);
 }
 
 static UsdAttribute _CreateColorSaturationAttr(UsdRiPxrCookieLightFilter &self,
@@ -370,8 +362,7 @@ static UsdAttribute _CreateColorTintAttr(UsdRiPxrCookieLightFilter &self,
                                          object defaultVal,
                                          bool writeSparsely)
 {
-  return self.CreateColorTintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
-                                  writeSparsely);
+  return self.CreateColorTintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f), writeSparsely);
 }
 
 static std::string _Repr(const UsdRiPxrCookieLightFilter &self)
@@ -389,229 +380,225 @@ void wrapUsdRiPxrCookieLightFilter()
   class_<This, bases<UsdLuxLightFilter>> cls("wabiCookieLightFilter");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetCookieModeAttr", &This::GetCookieModeAttr)
-      .def("CreateCookieModeAttr",
-           &_CreateCookieModeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetCookieModeAttr", &This::GetCookieModeAttr)
+    .def("CreateCookieModeAttr",
+         &_CreateCookieModeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetWidthAttr", &This::GetWidthAttr)
-      .def("CreateWidthAttr",
-           &_CreateWidthAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetWidthAttr", &This::GetWidthAttr)
+    .def(
+      "CreateWidthAttr", &_CreateWidthAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetHeightAttr", &This::GetHeightAttr)
-      .def("CreateHeightAttr",
-           &_CreateHeightAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetHeightAttr", &This::GetHeightAttr)
+    .def(
+      "CreateHeightAttr", &_CreateHeightAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetTextureMapAttr", &This::GetTextureMapAttr)
-      .def("CreateTextureMapAttr",
-           &_CreateTextureMapAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTextureMapAttr", &This::GetTextureMapAttr)
+    .def("CreateTextureMapAttr",
+         &_CreateTextureMapAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetTextureWrapModeAttr", &This::GetTextureWrapModeAttr)
-      .def("CreateTextureWrapModeAttr",
-           &_CreateTextureWrapModeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTextureWrapModeAttr", &This::GetTextureWrapModeAttr)
+    .def("CreateTextureWrapModeAttr",
+         &_CreateTextureWrapModeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetTextureFillColorAttr", &This::GetTextureFillColorAttr)
-      .def("CreateTextureFillColorAttr",
-           &_CreateTextureFillColorAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTextureFillColorAttr", &This::GetTextureFillColorAttr)
+    .def("CreateTextureFillColorAttr",
+         &_CreateTextureFillColorAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetTexturePremultipliedAlphaAttr", &This::GetTexturePremultipliedAlphaAttr)
-      .def("CreateTexturePremultipliedAlphaAttr",
-           &_CreateTexturePremultipliedAlphaAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTexturePremultipliedAlphaAttr", &This::GetTexturePremultipliedAlphaAttr)
+    .def("CreateTexturePremultipliedAlphaAttr",
+         &_CreateTexturePremultipliedAlphaAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetTextureInvertUAttr", &This::GetTextureInvertUAttr)
-      .def("CreateTextureInvertUAttr",
-           &_CreateTextureInvertUAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTextureInvertUAttr", &This::GetTextureInvertUAttr)
+    .def("CreateTextureInvertUAttr",
+         &_CreateTextureInvertUAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetTextureInvertVAttr", &This::GetTextureInvertVAttr)
-      .def("CreateTextureInvertVAttr",
-           &_CreateTextureInvertVAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTextureInvertVAttr", &This::GetTextureInvertVAttr)
+    .def("CreateTextureInvertVAttr",
+         &_CreateTextureInvertVAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetTextureScaleUAttr", &This::GetTextureScaleUAttr)
-      .def("CreateTextureScaleUAttr",
-           &_CreateTextureScaleUAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTextureScaleUAttr", &This::GetTextureScaleUAttr)
+    .def("CreateTextureScaleUAttr",
+         &_CreateTextureScaleUAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetTextureScaleVAttr", &This::GetTextureScaleVAttr)
-      .def("CreateTextureScaleVAttr",
-           &_CreateTextureScaleVAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTextureScaleVAttr", &This::GetTextureScaleVAttr)
+    .def("CreateTextureScaleVAttr",
+         &_CreateTextureScaleVAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetTextureOffsetUAttr", &This::GetTextureOffsetUAttr)
-      .def("CreateTextureOffsetUAttr",
-           &_CreateTextureOffsetUAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTextureOffsetUAttr", &This::GetTextureOffsetUAttr)
+    .def("CreateTextureOffsetUAttr",
+         &_CreateTextureOffsetUAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetTextureOffsetVAttr", &This::GetTextureOffsetVAttr)
-      .def("CreateTextureOffsetVAttr",
-           &_CreateTextureOffsetVAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTextureOffsetVAttr", &This::GetTextureOffsetVAttr)
+    .def("CreateTextureOffsetVAttr",
+         &_CreateTextureOffsetVAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticDirectionalAttr", &This::GetAnalyticDirectionalAttr)
-      .def("CreateAnalyticDirectionalAttr",
-           &_CreateAnalyticDirectionalAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticDirectionalAttr", &This::GetAnalyticDirectionalAttr)
+    .def("CreateAnalyticDirectionalAttr",
+         &_CreateAnalyticDirectionalAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticShearXAttr", &This::GetAnalyticShearXAttr)
-      .def("CreateAnalyticShearXAttr",
-           &_CreateAnalyticShearXAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticShearXAttr", &This::GetAnalyticShearXAttr)
+    .def("CreateAnalyticShearXAttr",
+         &_CreateAnalyticShearXAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticShearYAttr", &This::GetAnalyticShearYAttr)
-      .def("CreateAnalyticShearYAttr",
-           &_CreateAnalyticShearYAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticShearYAttr", &This::GetAnalyticShearYAttr)
+    .def("CreateAnalyticShearYAttr",
+         &_CreateAnalyticShearYAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticApexAttr", &This::GetAnalyticApexAttr)
-      .def("CreateAnalyticApexAttr",
-           &_CreateAnalyticApexAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticApexAttr", &This::GetAnalyticApexAttr)
+    .def("CreateAnalyticApexAttr",
+         &_CreateAnalyticApexAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticUseLightDirectionAttr", &This::GetAnalyticUseLightDirectionAttr)
-      .def("CreateAnalyticUseLightDirectionAttr",
-           &_CreateAnalyticUseLightDirectionAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticUseLightDirectionAttr", &This::GetAnalyticUseLightDirectionAttr)
+    .def("CreateAnalyticUseLightDirectionAttr",
+         &_CreateAnalyticUseLightDirectionAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticBlurAmountAttr", &This::GetAnalyticBlurAmountAttr)
-      .def("CreateAnalyticBlurAmountAttr",
-           &_CreateAnalyticBlurAmountAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticBlurAmountAttr", &This::GetAnalyticBlurAmountAttr)
+    .def("CreateAnalyticBlurAmountAttr",
+         &_CreateAnalyticBlurAmountAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticBlurSMultAttr", &This::GetAnalyticBlurSMultAttr)
-      .def("CreateAnalyticBlurSMultAttr",
-           &_CreateAnalyticBlurSMultAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticBlurSMultAttr", &This::GetAnalyticBlurSMultAttr)
+    .def("CreateAnalyticBlurSMultAttr",
+         &_CreateAnalyticBlurSMultAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticBlurTMultAttr", &This::GetAnalyticBlurTMultAttr)
-      .def("CreateAnalyticBlurTMultAttr",
-           &_CreateAnalyticBlurTMultAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticBlurTMultAttr", &This::GetAnalyticBlurTMultAttr)
+    .def("CreateAnalyticBlurTMultAttr",
+         &_CreateAnalyticBlurTMultAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticBlurNearDistanceAttr", &This::GetAnalyticBlurNearDistanceAttr)
-      .def("CreateAnalyticBlurNearDistanceAttr",
-           &_CreateAnalyticBlurNearDistanceAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticBlurNearDistanceAttr", &This::GetAnalyticBlurNearDistanceAttr)
+    .def("CreateAnalyticBlurNearDistanceAttr",
+         &_CreateAnalyticBlurNearDistanceAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticBlurMidpointAttr", &This::GetAnalyticBlurMidpointAttr)
-      .def("CreateAnalyticBlurMidpointAttr",
-           &_CreateAnalyticBlurMidpointAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticBlurMidpointAttr", &This::GetAnalyticBlurMidpointAttr)
+    .def("CreateAnalyticBlurMidpointAttr",
+         &_CreateAnalyticBlurMidpointAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticBlurFarDistanceAttr", &This::GetAnalyticBlurFarDistanceAttr)
-      .def("CreateAnalyticBlurFarDistanceAttr",
-           &_CreateAnalyticBlurFarDistanceAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticBlurFarDistanceAttr", &This::GetAnalyticBlurFarDistanceAttr)
+    .def("CreateAnalyticBlurFarDistanceAttr",
+         &_CreateAnalyticBlurFarDistanceAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticBlurNearValueAttr", &This::GetAnalyticBlurNearValueAttr)
-      .def("CreateAnalyticBlurNearValueAttr",
-           &_CreateAnalyticBlurNearValueAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticBlurNearValueAttr", &This::GetAnalyticBlurNearValueAttr)
+    .def("CreateAnalyticBlurNearValueAttr",
+         &_CreateAnalyticBlurNearValueAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticBlurMidValueAttr", &This::GetAnalyticBlurMidValueAttr)
-      .def("CreateAnalyticBlurMidValueAttr",
-           &_CreateAnalyticBlurMidValueAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticBlurMidValueAttr", &This::GetAnalyticBlurMidValueAttr)
+    .def("CreateAnalyticBlurMidValueAttr",
+         &_CreateAnalyticBlurMidValueAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticBlurFarValueAttr", &This::GetAnalyticBlurFarValueAttr)
-      .def("CreateAnalyticBlurFarValueAttr",
-           &_CreateAnalyticBlurFarValueAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticBlurFarValueAttr", &This::GetAnalyticBlurFarValueAttr)
+    .def("CreateAnalyticBlurFarValueAttr",
+         &_CreateAnalyticBlurFarValueAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticBlurExponentAttr", &This::GetAnalyticBlurExponentAttr)
-      .def("CreateAnalyticBlurExponentAttr",
-           &_CreateAnalyticBlurExponentAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticBlurExponentAttr", &This::GetAnalyticBlurExponentAttr)
+    .def("CreateAnalyticBlurExponentAttr",
+         &_CreateAnalyticBlurExponentAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticDensityNearDistanceAttr", &This::GetAnalyticDensityNearDistanceAttr)
-      .def("CreateAnalyticDensityNearDistanceAttr",
-           &_CreateAnalyticDensityNearDistanceAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticDensityNearDistanceAttr", &This::GetAnalyticDensityNearDistanceAttr)
+    .def("CreateAnalyticDensityNearDistanceAttr",
+         &_CreateAnalyticDensityNearDistanceAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticDensityMidpointAttr", &This::GetAnalyticDensityMidpointAttr)
-      .def("CreateAnalyticDensityMidpointAttr",
-           &_CreateAnalyticDensityMidpointAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticDensityMidpointAttr", &This::GetAnalyticDensityMidpointAttr)
+    .def("CreateAnalyticDensityMidpointAttr",
+         &_CreateAnalyticDensityMidpointAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticDensityFarDistanceAttr", &This::GetAnalyticDensityFarDistanceAttr)
-      .def("CreateAnalyticDensityFarDistanceAttr",
-           &_CreateAnalyticDensityFarDistanceAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticDensityFarDistanceAttr", &This::GetAnalyticDensityFarDistanceAttr)
+    .def("CreateAnalyticDensityFarDistanceAttr",
+         &_CreateAnalyticDensityFarDistanceAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticDensityNearValueAttr", &This::GetAnalyticDensityNearValueAttr)
-      .def("CreateAnalyticDensityNearValueAttr",
-           &_CreateAnalyticDensityNearValueAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticDensityNearValueAttr", &This::GetAnalyticDensityNearValueAttr)
+    .def("CreateAnalyticDensityNearValueAttr",
+         &_CreateAnalyticDensityNearValueAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticDensityMidValueAttr", &This::GetAnalyticDensityMidValueAttr)
-      .def("CreateAnalyticDensityMidValueAttr",
-           &_CreateAnalyticDensityMidValueAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticDensityMidValueAttr", &This::GetAnalyticDensityMidValueAttr)
+    .def("CreateAnalyticDensityMidValueAttr",
+         &_CreateAnalyticDensityMidValueAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticDensityFarValueAttr", &This::GetAnalyticDensityFarValueAttr)
-      .def("CreateAnalyticDensityFarValueAttr",
-           &_CreateAnalyticDensityFarValueAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticDensityFarValueAttr", &This::GetAnalyticDensityFarValueAttr)
+    .def("CreateAnalyticDensityFarValueAttr",
+         &_CreateAnalyticDensityFarValueAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetAnalyticDensityExponentAttr", &This::GetAnalyticDensityExponentAttr)
-      .def("CreateAnalyticDensityExponentAttr",
-           &_CreateAnalyticDensityExponentAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetAnalyticDensityExponentAttr", &This::GetAnalyticDensityExponentAttr)
+    .def("CreateAnalyticDensityExponentAttr",
+         &_CreateAnalyticDensityExponentAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetColorSaturationAttr", &This::GetColorSaturationAttr)
-      .def("CreateColorSaturationAttr",
-           &_CreateColorSaturationAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetColorSaturationAttr", &This::GetColorSaturationAttr)
+    .def("CreateColorSaturationAttr",
+         &_CreateColorSaturationAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetColorMidpointAttr", &This::GetColorMidpointAttr)
-      .def("CreateColorMidpointAttr",
-           &_CreateColorMidpointAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetColorMidpointAttr", &This::GetColorMidpointAttr)
+    .def("CreateColorMidpointAttr",
+         &_CreateColorMidpointAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetColorContrastAttr", &This::GetColorContrastAttr)
-      .def("CreateColorContrastAttr",
-           &_CreateColorContrastAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetColorContrastAttr", &This::GetColorContrastAttr)
+    .def("CreateColorContrastAttr",
+         &_CreateColorContrastAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetColorWhitepointAttr", &This::GetColorWhitepointAttr)
-      .def("CreateColorWhitepointAttr",
-           &_CreateColorWhitepointAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetColorWhitepointAttr", &This::GetColorWhitepointAttr)
+    .def("CreateColorWhitepointAttr",
+         &_CreateColorWhitepointAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetColorTintAttr", &This::GetColorTintAttr)
-      .def("CreateColorTintAttr",
-           &_CreateColorTintAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetColorTintAttr", &This::GetColorTintAttr)
+    .def("CreateColorTintAttr",
+         &_CreateColorTintAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

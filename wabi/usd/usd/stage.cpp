@@ -134,8 +134,7 @@ TF_MAKE_STATIC_DATA(_ColorConfigurationFallbacks, _colorConfigurationFallbacks)
     JsValue dictVal;
     if (TfMapLookup(metadata, "UsdColorConfigFallbacks", &dictVal)) {
       if (!dictVal.Is<JsObject>()) {
-        TF_CODING_ERROR("%s[UsdColorConfigFallbacks] was not a dictionary.",
-                        plug->GetName().c_str());
+        TF_CODING_ERROR("%s[UsdColorConfigFallbacks] was not a dictionary.", plug->GetName().c_str());
         continue;
       }
 
@@ -145,9 +144,9 @@ TF_MAKE_STATIC_DATA(_ColorConfigurationFallbacks, _colorConfigurationFallbacks)
         if (key == SdfFieldKeys->ColorConfiguration) {
           if (!d.second.IsString()) {
             TF_CODING_ERROR(
-                "'colorConfiguration' value in "
-                "%s[UsdColorConfigFallbacks] must be a string.",
-                plug->GetName().c_str());
+              "'colorConfiguration' value in "
+              "%s[UsdColorConfigFallbacks] must be a string.",
+              plug->GetName().c_str());
             continue;
           }
           std::string colorConfig = d.second.GetString();
@@ -158,9 +157,9 @@ TF_MAKE_STATIC_DATA(_ColorConfigurationFallbacks, _colorConfigurationFallbacks)
         else if (key == SdfFieldKeys->ColorManagementSystem) {
           if (!d.second.IsString()) {
             TF_CODING_ERROR(
-                "'colorManagementSystem' value in "
-                "%s[UsdColorConfigFallbacks] must be a string.",
-                plug->GetName().c_str());
+              "'colorManagementSystem' value in "
+              "%s[UsdColorConfigFallbacks] must be a string.",
+              plug->GetName().c_str());
             continue;
           }
           std::string cms = d.second.GetString();
@@ -170,10 +169,10 @@ TF_MAKE_STATIC_DATA(_ColorConfigurationFallbacks, _colorConfigurationFallbacks)
         }
         else {
           TF_CODING_ERROR(
-              "Unknown key '%s' found in "
-              "%s[UsdColorConfigFallbacks].",
-              key.c_str(),
-              plug->GetName().c_str());
+            "Unknown key '%s' found in "
+            "%s[UsdColorConfigFallbacks].",
+            key.c_str(),
+            plug->GetName().c_str());
         }
       }
       // Once we file a plugInfo file with UsdColorConfigFallbacks and
@@ -207,10 +206,10 @@ TF_MAKE_STATIC_DATA(PcpVariantFallbackMap, _usdGlobalVariantFallbackMap)
         std::string vset = d.first;
         if (!d.second.IsArray()) {
           TF_CODING_ERROR(
-              "%s[UsdVariantFallbacks] value for %s must "
-              "be an arrays.",
-              plug->GetName().c_str(),
-              vset.c_str());
+            "%s[UsdVariantFallbacks] value for %s must "
+            "be an arrays.",
+            plug->GetName().c_str(),
+            vset.c_str());
           continue;
         }
         std::vector<std::string> vsels = d.second.GetArrayOf<std::string>();
@@ -257,8 +256,8 @@ static SdfLayerOffset _GetLayerToStageOffset(const PcpNodeRef &pcpNode, const La
   //
   SdfLayerOffset localOffset = nodeToRootNodeOffset;
 
-  if (const SdfLayerOffset *layerToRootLayerOffset =
-          pcpNode.GetLayerStack()->GetLayerOffsetForLayer(layer)) {
+  if (const SdfLayerOffset *layerToRootLayerOffset = pcpNode.GetLayerStack()->GetLayerOffsetForLayer(
+        layer)) {
     localOffset = localOffset * (*layerToRootLayerOffset);
   }
 
@@ -295,7 +294,7 @@ static ArResolverContext _CreatePathResolverContext(const SdfLayerHandle &layer)
     // initialized), use the file path.
     // XXX: This should ultimately not be based on repository path.
     return ArGetResolver().CreateDefaultContextForAsset(
-        layer->GetRepositoryPath().empty() ? layer->GetRealPath() : layer->GetRepositoryPath());
+      layer->GetRepositoryPath().empty() ? layer->GetRealPath() : layer->GetRepositoryPath());
   }
 
   return ArGetResolver().CreateDefaultContext();
@@ -334,13 +333,11 @@ static void _MakeResolvedAssetPathsImpl(const SdfLayerRefPtr &anchor,
   ArResolverContextBinder binder(context);
   for (size_t i = 0; i != numAssetPaths; ++i) {
     if (anchorAssetPathsOnly) {
-      assetPaths[i] = SdfAssetPath(
-          _AnchorAssetPathRelativeToLayer(anchor, assetPaths[i].GetAssetPath()));
+      assetPaths[i] = SdfAssetPath(_AnchorAssetPathRelativeToLayer(anchor, assetPaths[i].GetAssetPath()));
     }
     else {
-      assetPaths[i] = SdfAssetPath(
-          assetPaths[i].GetAssetPath(),
-          _ResolveAssetPathRelativeToLayer(anchor, assetPaths[i].GetAssetPath()));
+      assetPaths[i] = SdfAssetPath(assetPaths[i].GetAssetPath(),
+                                   _ResolveAssetPathRelativeToLayer(anchor, assetPaths[i].GetAssetPath()));
     }
   }
 }
@@ -356,7 +353,7 @@ void UsdStage::_MakeResolvedAssetPaths(UsdTimeCode time,
   auto anchor = _GetLayerWithStrongestValue(time, attr);
   if (anchor) {
     _MakeResolvedAssetPathsImpl(
-        anchor, GetPathResolverContext(), assetPaths, numAssetPaths, anchorAssetPathsOnly);
+      anchor, GetPathResolverContext(), assetPaths, numAssetPaths, anchorAssetPathsOnly);
   }
 }
 
@@ -374,8 +371,7 @@ void UsdStage::_MakeResolvedAssetPathsValue(UsdTimeCode time,
   else if (value->IsHolding<VtArray<SdfAssetPath>>()) {
     VtArray<SdfAssetPath> assetPaths;
     value->UncheckedSwap(assetPaths);
-    _MakeResolvedAssetPaths(
-        time, attr, assetPaths.data(), assetPaths.size(), anchorAssetPathsOnly);
+    _MakeResolvedAssetPaths(time, attr, assetPaths.data(), assetPaths.size(), anchorAssetPathsOnly);
     value->UncheckedSwap(assetPaths);
   }
 }
@@ -394,9 +390,7 @@ void UsdStage::_MakeResolvedTimeCodes(UsdTimeCode time,
   }
 }
 
-void UsdStage::_MakeResolvedAttributeValue(UsdTimeCode time,
-                                           const UsdAttribute &attr,
-                                           VtValue *value) const
+void UsdStage::_MakeResolvedAttributeValue(UsdTimeCode time, const UsdAttribute &attr, VtValue *value) const
 {
   if (value->IsHolding<SdfTimeCode>()) {
     SdfTimeCode timeCode;
@@ -418,8 +412,8 @@ void UsdStage::_MakeResolvedAttributeValue(UsdTimeCode time,
 static SdfLayerRefPtr _CreateAnonymousSessionLayer(const SdfLayerHandle &rootLayer)
 {
   return SdfLayer::CreateAnonymous(
-      TfStringGetBeforeSuffix(SdfLayer::GetDisplayNameFromIdentifier(rootLayer->GetIdentifier())) +
-      "-session.usda");
+    TfStringGetBeforeSuffix(SdfLayer::GetDisplayNameFromIdentifier(rootLayer->GetIdentifier())) +
+    "-session.usda");
 }
 
 UsdStage::UsdStage(const SdfLayerRefPtr &rootLayer,
@@ -427,36 +421,35 @@ UsdStage::UsdStage(const SdfLayerRefPtr &rootLayer,
                    const ArResolverContext &pathResolverContext,
                    const UsdStagePopulationMask &mask,
                    InitialLoadSet load)
-    : _pseudoRoot(nullptr),
-      _rootLayer(rootLayer),
-      _sessionLayer(sessionLayer),
-      _editTarget(_rootLayer),
-      _cache(new PcpCache(PcpLayerStackIdentifier(_rootLayer, _sessionLayer, pathResolverContext),
-                          UsdUsdFileFormatTokens->Target,
-                          /*usdMode=*/true)),
-      _clipCache(new Usd_ClipCache),
-      _instanceCache(new Usd_InstanceCache),
-      _usedLayersRevision(0),
-      _interpolationType(UsdInterpolationTypeLinear),
-      _lastChangeSerialNumber(0),
-      _initialLoadSet(load),
-      _populationMask(mask),
-      _isClosingStage(false),
-      _isWritingFallbackPrimTypes(false)
+  : _pseudoRoot(nullptr),
+    _rootLayer(rootLayer),
+    _sessionLayer(sessionLayer),
+    _editTarget(_rootLayer),
+    _cache(new PcpCache(PcpLayerStackIdentifier(_rootLayer, _sessionLayer, pathResolverContext),
+                        UsdUsdFileFormatTokens->Target,
+                        /*usdMode=*/true)),
+    _clipCache(new Usd_ClipCache),
+    _instanceCache(new Usd_InstanceCache),
+    _usedLayersRevision(0),
+    _interpolationType(UsdInterpolationTypeLinear),
+    _lastChangeSerialNumber(0),
+    _initialLoadSet(load),
+    _populationMask(mask),
+    _isClosingStage(false),
+    _isWritingFallbackPrimTypes(false)
 {
   if (!TF_VERIFY(_rootLayer))
     return;
 
   TF_DEBUG(USD_STAGE_LIFETIMES)
-      .Msg("UsdStage::UsdStage(rootLayer=@%s@, sessionLayer=@%s@)\n",
-           _rootLayer->GetIdentifier().c_str(),
-           _sessionLayer ? _sessionLayer->GetIdentifier().c_str() : "<null>");
+    .Msg("UsdStage::UsdStage(rootLayer=@%s@, sessionLayer=@%s@)\n",
+         _rootLayer->GetIdentifier().c_str(),
+         _sessionLayer ? _sessionLayer->GetIdentifier().c_str() : "<null>");
 
   ARCH_PRAGMA_PUSH
   ARCH_PRAGMA_DEPRECATED_POSIX_NAME
-  _mallocTagID = TfMallocTag::IsInitialized() ?
-                     strdup(_StageTag(rootLayer->GetIdentifier()).c_str()) :
-                     _dormantMallocTagID;
+  _mallocTagID = TfMallocTag::IsInitialized() ? strdup(_StageTag(rootLayer->GetIdentifier()).c_str()) :
+                                                _dormantMallocTagID;
   ARCH_PRAGMA_POP
 
   _cache->SetVariantFallbacks(GetGlobalVariantFallbacks());
@@ -465,9 +458,9 @@ UsdStage::UsdStage(const SdfLayerRefPtr &rootLayer,
 UsdStage::~UsdStage()
 {
   TF_DEBUG(USD_STAGE_LIFETIMES)
-      .Msg("UsdStage::~UsdStage(rootLayer=@%s@, sessionLayer=@%s@)\n",
-           _rootLayer ? _rootLayer->GetIdentifier().c_str() : "<null>",
-           _sessionLayer ? _sessionLayer->GetIdentifier().c_str() : "<null>");
+    .Msg("UsdStage::~UsdStage(rootLayer=@%s@, sessionLayer=@%s@)\n",
+         _rootLayer ? _rootLayer->GetIdentifier().c_str() : "<null>",
+         _sessionLayer ? _sessionLayer->GetIdentifier().c_str() : "<null>");
   _Close();
   if (_mallocTagID != _dormantMallocTagID) {
     free(const_cast<char *>(_mallocTagID));
@@ -534,9 +527,9 @@ struct _NameChildrenPred {
   explicit _NameChildrenPred(const UsdStagePopulationMask *mask,
                              const UsdStageLoadRules *loadRules,
                              Usd_InstanceCache *instanceCache)
-      : _mask(mask),
-        _loadRules(loadRules),
-        _instanceCache(instanceCache)
+    : _mask(mask),
+      _loadRules(loadRules),
+      _instanceCache(instanceCache)
   {}
 
   bool operator()(const PcpPrimIndex &index, TfTokenVector *childNamesToCompose) const
@@ -595,8 +588,7 @@ UsdStageRefPtr UsdStage::_InstantiateStage(const SdfLayerRefPtr &rootLayer,
 
   // Debug timing info
   TfStopwatch stopwatch;
-  const bool usdInstantiationTimeDebugCodeActive = TfDebug::IsEnabled(
-      USD_STAGE_INSTANTIATION_TIME);
+  const bool usdInstantiationTimeDebugCodeActive = TfDebug::IsEnabled(USD_STAGE_INSTANTIATION_TIME);
 
   if (usdInstantiationTimeDebugCodeActive) {
     stopwatch.Start();
@@ -606,20 +598,18 @@ UsdStageRefPtr UsdStage::_InstantiateStage(const SdfLayerRefPtr &rootLayer,
     return TfNullPtr;
 
   UsdStageRefPtr stage = TfCreateRefPtr(
-      new UsdStage(rootLayer, sessionLayer, pathResolverContext, mask, load));
+    new UsdStage(rootLayer, sessionLayer, pathResolverContext, mask, load));
 
   ArResolverScopedCache resolverCache;
 
   // Set the stage's load rules.
-  stage->_loadRules = (load == LoadAll) ? UsdStageLoadRules::LoadAll() :
-                                          UsdStageLoadRules::LoadNone();
+  stage->_loadRules = (load == LoadAll) ? UsdStageLoadRules::LoadAll() : UsdStageLoadRules::LoadNone();
 
   Usd_InstanceChanges instanceChanges;
   const SdfPath &absoluteRootPath = SdfPath::AbsoluteRootPath();
 
   // Populate the stage, request payloads according to InitialLoadSet load.
-  stage->_ComposePrimIndexesInParallel(
-      {absoluteRootPath}, "instantiating stage", &instanceChanges);
+  stage->_ComposePrimIndexesInParallel({absoluteRootPath}, "instantiating stage", &instanceChanges);
   stage->_pseudoRoot = stage->_InstantiatePrim(absoluteRootPath);
 
   const size_t subtreeCount = instanceChanges.newPrototypePrims.size() + 1;
@@ -633,7 +623,7 @@ UsdStageRefPtr UsdStage::_InstantiateStage(const SdfLayerRefPtr &rootLayer,
   // We only need to add new prototypes since, during stage initialization
   // there should not be any changed prototypes
   for (size_t i = 0; i != instanceChanges.newPrototypePrims.size(); ++i) {
-    const SdfPath &protoPath          = instanceChanges.newPrototypePrims[i];
+    const SdfPath &protoPath = instanceChanges.newPrototypePrims[i];
     const SdfPath &protoPrimIndexPath = instanceChanges.newPrototypePrimIndexes[i];
 
     Usd_PrimDataPtr protoPrim = stage->_InstantiatePrototypePrim(protoPath);
@@ -654,7 +644,7 @@ UsdStageRefPtr UsdStage::_InstantiateStage(const SdfLayerRefPtr &rootLayer,
   if (usdInstantiationTimeDebugCodeActive) {
     stopwatch.Stop();
     TF_DEBUG(USD_STAGE_INSTANTIATION_TIME)
-        .Msg("UsdStage::_InstantiateStage: Time elapsed (s): %f\n", stopwatch.GetSeconds());
+      .Msg("UsdStage::_InstantiateStage: Time elapsed (s): %f\n", stopwatch.GetSeconds());
   }
 
   return stage;
@@ -851,31 +841,31 @@ UsdStageRefPtr UsdStage::OpenMasked(const std::string &filePath,
 class Usd_StageOpenRequest : public UsdStageCacheRequest {
  public:
   Usd_StageOpenRequest(UsdStage::InitialLoadSet load, SdfLayerHandle const &rootLayer)
-      : _rootLayer(rootLayer),
-        _initialLoadSet(load)
+    : _rootLayer(rootLayer),
+      _initialLoadSet(load)
   {}
   Usd_StageOpenRequest(UsdStage::InitialLoadSet load,
                        SdfLayerHandle const &rootLayer,
                        SdfLayerHandle const &sessionLayer)
-      : _rootLayer(rootLayer),
-        _sessionLayer(sessionLayer),
-        _initialLoadSet(load)
+    : _rootLayer(rootLayer),
+      _sessionLayer(sessionLayer),
+      _initialLoadSet(load)
   {}
   Usd_StageOpenRequest(UsdStage::InitialLoadSet load,
                        SdfLayerHandle const &rootLayer,
                        ArResolverContext const &pathResolverContext)
-      : _rootLayer(rootLayer),
-        _pathResolverContext(pathResolverContext),
-        _initialLoadSet(load)
+    : _rootLayer(rootLayer),
+      _pathResolverContext(pathResolverContext),
+      _initialLoadSet(load)
   {}
   Usd_StageOpenRequest(UsdStage::InitialLoadSet load,
                        SdfLayerHandle const &rootLayer,
                        SdfLayerHandle const &sessionLayer,
                        ArResolverContext const &pathResolverContext)
-      : _rootLayer(rootLayer),
-        _sessionLayer(sessionLayer),
-        _pathResolverContext(pathResolverContext),
-        _initialLoadSet(load)
+    : _rootLayer(rootLayer),
+      _sessionLayer(sessionLayer),
+      _pathResolverContext(pathResolverContext),
+      _initialLoadSet(load)
   {}
 
   virtual ~Usd_StageOpenRequest()
@@ -898,18 +888,17 @@ class Usd_StageOpenRequest : public UsdStageCacheRequest {
     // Works if other's root layer matches and we either don't care about
     // the session layer or it matches, and we either don't care about the
     // path resolverContext or it matches.
-    return _rootLayer == req->_rootLayer &&
-           (!_sessionLayer || (_sessionLayer == req->_sessionLayer)) &&
+    return _rootLayer == req->_rootLayer && (!_sessionLayer || (_sessionLayer == req->_sessionLayer)) &&
            (!_pathResolverContext || (_pathResolverContext == req->_pathResolverContext));
   }
   virtual UsdStageRefPtr Manufacture()
   {
     return UsdStage::_InstantiateStage(
-        SdfLayerRefPtr(_rootLayer),
-        _sessionLayer ? SdfLayerRefPtr(*_sessionLayer) : _CreateAnonymousSessionLayer(_rootLayer),
-        _pathResolverContext ? *_pathResolverContext : _CreatePathResolverContext(_rootLayer),
-        UsdStagePopulationMask::All(),
-        _initialLoadSet);
+      SdfLayerRefPtr(_rootLayer),
+      _sessionLayer ? SdfLayerRefPtr(*_sessionLayer) : _CreateAnonymousSessionLayer(_rootLayer),
+      _pathResolverContext ? *_pathResolverContext : _CreatePathResolverContext(_rootLayer),
+      UsdStagePopulationMask::All(),
+      _initialLoadSet);
   }
 
  private:
@@ -920,8 +909,7 @@ class Usd_StageOpenRequest : public UsdStageCacheRequest {
 };
 
 /* static */
-template<class... Args>
-UsdStageRefPtr UsdStage::_OpenImpl(InitialLoadSet load, Args const &...args)
+template<class... Args> UsdStageRefPtr UsdStage::_OpenImpl(InitialLoadSet load, Args const &...args)
 {
   // Try to find a matching stage in read-only caches.
   for (const UsdStageCache *cache : UsdStageCacheContext::_GetReadableCaches()) {
@@ -962,9 +950,9 @@ UsdStageRefPtr UsdStage::Open(const SdfLayerHandle &rootLayer, InitialLoadSet lo
   }
 
   TF_DEBUG(USD_STAGE_OPEN)
-      .Msg("UsdStage::Open(rootLayer=@%s@, load=%s)\n",
-           rootLayer->GetIdentifier().c_str(),
-           TfStringify(load).c_str());
+    .Msg("UsdStage::Open(rootLayer=@%s@, load=%s)\n",
+         rootLayer->GetIdentifier().c_str(),
+         TfStringify(load).c_str());
 
   return _OpenImpl(load, rootLayer);
 }
@@ -980,10 +968,10 @@ UsdStageRefPtr UsdStage::Open(const SdfLayerHandle &rootLayer,
   }
 
   TF_DEBUG(USD_STAGE_OPEN)
-      .Msg("UsdStage::Open(rootLayer=@%s@, sessionLayer=@%s@, load=%s)\n",
-           rootLayer->GetIdentifier().c_str(),
-           sessionLayer ? sessionLayer->GetIdentifier().c_str() : "<null>",
-           TfStringify(load).c_str());
+    .Msg("UsdStage::Open(rootLayer=@%s@, sessionLayer=@%s@, load=%s)\n",
+         rootLayer->GetIdentifier().c_str(),
+         sessionLayer ? sessionLayer->GetIdentifier().c_str() : "<null>",
+         TfStringify(load).c_str());
 
   return _OpenImpl(load, rootLayer, sessionLayer);
 }
@@ -999,12 +987,12 @@ UsdStageRefPtr UsdStage::Open(const SdfLayerHandle &rootLayer,
   }
 
   TF_DEBUG(USD_STAGE_OPEN)
-      .Msg(
-          "UsdStage::Open(rootLayer=@%s@, pathResolverContext=%s, "
-          "load=%s)\n",
-          rootLayer->GetIdentifier().c_str(),
-          pathResolverContext.GetDebugString().c_str(),
-          TfStringify(load).c_str());
+    .Msg(
+      "UsdStage::Open(rootLayer=@%s@, pathResolverContext=%s, "
+      "load=%s)\n",
+      rootLayer->GetIdentifier().c_str(),
+      pathResolverContext.GetDebugString().c_str(),
+      TfStringify(load).c_str());
 
   return _OpenImpl(load, rootLayer, pathResolverContext);
 }
@@ -1021,13 +1009,13 @@ UsdStageRefPtr UsdStage::Open(const SdfLayerHandle &rootLayer,
   }
 
   TF_DEBUG(USD_STAGE_OPEN)
-      .Msg(
-          "UsdStage::Open(rootLayer=@%s@, sessionLayer=@%s@, "
-          "pathResolverContext=%s, load=%s)\n",
-          rootLayer->GetIdentifier().c_str(),
-          sessionLayer ? sessionLayer->GetIdentifier().c_str() : "<null>",
-          pathResolverContext.GetDebugString().c_str(),
-          TfStringify(load).c_str());
+    .Msg(
+      "UsdStage::Open(rootLayer=@%s@, sessionLayer=@%s@, "
+      "pathResolverContext=%s, load=%s)\n",
+      rootLayer->GetIdentifier().c_str(),
+      sessionLayer ? sessionLayer->GetIdentifier().c_str() : "<null>",
+      pathResolverContext.GetDebugString().c_str(),
+      TfStringify(load).c_str());
 
   return _OpenImpl(load, rootLayer, sessionLayer, pathResolverContext);
 }
@@ -1046,10 +1034,10 @@ UsdStageRefPtr UsdStage::OpenMasked(const SdfLayerHandle &rootLayer,
   }
 
   TF_DEBUG(USD_STAGE_OPEN)
-      .Msg("UsdStage::OpenMasked(rootLayer=@%s@, mask=%s, load=%s)\n",
-           rootLayer->GetIdentifier().c_str(),
-           TfStringify(mask).c_str(),
-           TfStringify(load).c_str());
+    .Msg("UsdStage::OpenMasked(rootLayer=@%s@, mask=%s, load=%s)\n",
+         rootLayer->GetIdentifier().c_str(),
+         TfStringify(mask).c_str(),
+         TfStringify(load).c_str());
 
   return _InstantiateStage(SdfLayerRefPtr(rootLayer),
                            _CreateAnonymousSessionLayer(rootLayer),
@@ -1070,13 +1058,13 @@ UsdStageRefPtr UsdStage::OpenMasked(const SdfLayerHandle &rootLayer,
   }
 
   TF_DEBUG(USD_STAGE_OPEN)
-      .Msg(
-          "UsdStage::OpenMasked(rootLayer=@%s@, sessionLayer=@%s@, "
-          "mask=%s, load=%s)\n",
-          rootLayer->GetIdentifier().c_str(),
-          sessionLayer ? sessionLayer->GetIdentifier().c_str() : "<null>",
-          TfStringify(mask).c_str(),
-          TfStringify(load).c_str());
+    .Msg(
+      "UsdStage::OpenMasked(rootLayer=@%s@, sessionLayer=@%s@, "
+      "mask=%s, load=%s)\n",
+      rootLayer->GetIdentifier().c_str(),
+      sessionLayer ? sessionLayer->GetIdentifier().c_str() : "<null>",
+      TfStringify(mask).c_str(),
+      TfStringify(load).c_str());
 
   return _InstantiateStage(SdfLayerRefPtr(rootLayer),
                            SdfLayerRefPtr(sessionLayer),
@@ -1097,19 +1085,16 @@ UsdStageRefPtr UsdStage::OpenMasked(const SdfLayerHandle &rootLayer,
   }
 
   TF_DEBUG(USD_STAGE_OPEN)
-      .Msg(
-          "UsdStage::OpenMasked(rootLayer=@%s@, pathResolverContext=%s, "
-          "mask=%s, load=%s)\n",
-          rootLayer->GetIdentifier().c_str(),
-          pathResolverContext.GetDebugString().c_str(),
-          TfStringify(mask).c_str(),
-          TfStringify(load).c_str());
+    .Msg(
+      "UsdStage::OpenMasked(rootLayer=@%s@, pathResolverContext=%s, "
+      "mask=%s, load=%s)\n",
+      rootLayer->GetIdentifier().c_str(),
+      pathResolverContext.GetDebugString().c_str(),
+      TfStringify(mask).c_str(),
+      TfStringify(load).c_str());
 
-  return _InstantiateStage(SdfLayerRefPtr(rootLayer),
-                           _CreateAnonymousSessionLayer(rootLayer),
-                           pathResolverContext,
-                           mask,
-                           load);
+  return _InstantiateStage(
+    SdfLayerRefPtr(rootLayer), _CreateAnonymousSessionLayer(rootLayer), pathResolverContext, mask, load);
 }
 
 /* static */
@@ -1125,17 +1110,17 @@ UsdStageRefPtr UsdStage::OpenMasked(const SdfLayerHandle &rootLayer,
   }
 
   TF_DEBUG(USD_STAGE_OPEN)
-      .Msg(
-          "UsdStage::OpenMasked(rootLayer=@%s@, sessionLayer=@%s@, "
-          "pathResolverContext=%s, mask=%s, load=%s)\n",
-          rootLayer->GetIdentifier().c_str(),
-          sessionLayer ? sessionLayer->GetIdentifier().c_str() : "<null>",
-          pathResolverContext.GetDebugString().c_str(),
-          TfStringify(mask).c_str(),
-          TfStringify(load).c_str());
+    .Msg(
+      "UsdStage::OpenMasked(rootLayer=@%s@, sessionLayer=@%s@, "
+      "pathResolverContext=%s, mask=%s, load=%s)\n",
+      rootLayer->GetIdentifier().c_str(),
+      sessionLayer ? sessionLayer->GetIdentifier().c_str() : "<null>",
+      pathResolverContext.GetDebugString().c_str(),
+      TfStringify(mask).c_str(),
+      TfStringify(load).c_str());
 
   return _InstantiateStage(
-      SdfLayerRefPtr(rootLayer), SdfLayerRefPtr(sessionLayer), pathResolverContext, mask, load);
+    SdfLayerRefPtr(rootLayer), SdfLayerRefPtr(sessionLayer), pathResolverContext, mask, load);
 }
 
 static inline SdfAttributeSpecHandle _GetSchemaPropSpec(SdfAttributeSpec *,
@@ -1159,16 +1144,14 @@ static inline SdfPropertySpecHandle _GetSchemaPropSpec(SdfPropertySpec *,
   return primDef.GetSchemaPropertySpec(attrName);
 }
 
-template<class PropType>
-SdfHandle<PropType> UsdStage::_GetSchemaPropertySpec(const UsdProperty &prop) const
+template<class PropType> SdfHandle<PropType> UsdStage::_GetSchemaPropertySpec(const UsdProperty &prop) const
 {
   Usd_PrimDataHandle const &primData = prop._Prim();
   if (!primData)
     return TfNullPtr;
 
   // Consult the registry.
-  return _GetSchemaPropSpec(
-      static_cast<PropType *>(nullptr), primData->GetPrimDefinition(), prop.GetName());
+  return _GetSchemaPropSpec(static_cast<PropType *>(nullptr), primData->GetPrimDefinition(), prop.GetName());
 }
 
 SdfPropertySpecHandle UsdStage::_GetSchemaPropertySpec(const UsdProperty &prop) const
@@ -1190,19 +1173,19 @@ bool UsdStage::_ValidateEditPrim(const UsdPrim &prim, const char *operation) con
 {
   if (ARCH_UNLIKELY(prim.IsInPrototype())) {
     TF_CODING_ERROR(
-        "Cannot %s at path <%s>; "
-        "authoring to an instancing prototype is not allowed.",
-        operation,
-        prim.GetPath().GetText());
+      "Cannot %s at path <%s>; "
+      "authoring to an instancing prototype is not allowed.",
+      operation,
+      prim.GetPath().GetText());
     return false;
   }
 
   if (ARCH_UNLIKELY(prim.IsInstanceProxy())) {
     TF_CODING_ERROR(
-        "Cannot %s at path <%s>; "
-        "authoring to an instance proxy is not allowed.",
-        operation,
-        prim.GetPath().GetText());
+      "Cannot %s at path <%s>; "
+      "authoring to an instance proxy is not allowed.",
+      operation,
+      prim.GetPath().GetText());
     return false;
   }
 
@@ -1213,19 +1196,19 @@ bool UsdStage::_ValidateEditPrimAtPath(const SdfPath &primPath, const char *oper
 {
   if (ARCH_UNLIKELY(Usd_InstanceCache::IsPathInPrototype(primPath))) {
     TF_CODING_ERROR(
-        "Cannot %s at path <%s>; "
-        "authoring to an instancing prototype is not allowed.",
-        operation,
-        primPath.GetText());
+      "Cannot %s at path <%s>; "
+      "authoring to an instancing prototype is not allowed.",
+      operation,
+      primPath.GetText());
     return false;
   }
 
   if (ARCH_UNLIKELY(_IsObjectDescendantOfInstance(primPath))) {
     TF_CODING_ERROR(
-        "Cannot %s at path <%s>; "
-        "authoring to an instance proxy is not allowed.",
-        operation,
-        primPath.GetText());
+      "Cannot %s at path <%s>; "
+      "authoring to an instance proxy is not allowed.",
+      operation,
+      primPath.GetText());
     return false;
   }
 
@@ -1257,15 +1240,14 @@ static SdfAttributeSpecHandle _StampNewPropertySpec(const SdfPrimSpecHandle &pri
                                                     const SdfAttributeSpecHandle &toCopy)
 {
   return SdfAttributeSpec::New(
-      primSpec, propName, toCopy->GetTypeName(), toCopy->GetVariability(), toCopy->IsCustom());
+    primSpec, propName, toCopy->GetTypeName(), toCopy->GetVariability(), toCopy->IsCustom());
 }
 
 static SdfRelationshipSpecHandle _StampNewPropertySpec(const SdfPrimSpecHandle &primSpec,
                                                        const TfToken &propName,
                                                        const SdfRelationshipSpecHandle &toCopy)
 {
-  return SdfRelationshipSpec::New(
-      primSpec, propName, toCopy->IsCustom(), toCopy->GetVariability());
+  return SdfRelationshipSpec::New(primSpec, propName, toCopy->IsCustom(), toCopy->GetVariability());
 }
 
 static SdfPropertySpecHandle _StampNewPropertySpec(const SdfPrimSpecHandle &primSpec,
@@ -1277,13 +1259,11 @@ static SdfPropertySpecHandle _StampNewPropertySpec(const SdfPrimSpecHandle &prim
     return _StampNewPropertySpec(primSpec, propName, attrSpec);
   }
   else {
-    return _StampNewPropertySpec(
-        primSpec, propName, TfStatic_cast<SdfRelationshipSpecHandle>(toCopy));
+    return _StampNewPropertySpec(primSpec, propName, TfStatic_cast<SdfRelationshipSpecHandle>(toCopy));
   }
 }
 
-template<class PropType>
-SdfHandle<PropType> UsdStage::_CreatePropertySpecForEditing(const UsdProperty &prop)
+template<class PropType> SdfHandle<PropType> UsdStage::_CreatePropertySpecForEditing(const UsdProperty &prop)
 {
   UsdPrim prim = prop.GetPrim();
   if (ARCH_UNLIKELY(!_ValidateEditPrim(prim, "create property spec"))) {
@@ -1306,13 +1286,13 @@ SdfHandle<PropType> UsdStage::_CreatePropertySpecForEditing(const UsdProperty &p
       return spec;
 
     TF_RUNTIME_ERROR(
-        "Spec type mismatch.  Failed to create %s for <%s> at "
-        "<%s> in @%s@.  %s already at that location.",
-        ArchGetDemangled<PropType>().c_str(),
-        propPath.GetText(),
-        editTarget.MapToSpecPath(propPath).GetText(),
-        editTarget.GetLayer()->GetIdentifier().c_str(),
-        TfStringify(propSpec->GetSpecType()).c_str());
+      "Spec type mismatch.  Failed to create %s for <%s> at "
+      "<%s> in @%s@.  %s already at that location.",
+      ArchGetDemangled<PropType>().c_str(),
+      propPath.GetText(),
+      editTarget.MapToSpecPath(propPath).GetText(),
+      editTarget.GetLayer()->GetIdentifier().c_str(),
+      TfStringify(propSpec->GetSpecType()).c_str());
     return TfNullPtr;
   }
 
@@ -1332,21 +1312,21 @@ SdfHandle<PropType> UsdStage::_CreatePropertySpecForEditing(const UsdProperty &p
     // so, we copy its required metadata.
     for (Usd_Resolver r(&prim.GetPrimIndex()); r.IsValid(); r.NextLayer()) {
       if (SdfPropertySpecHandle propSpec = r.GetLayer()->GetPropertyAtPath(
-              r.GetLocalPath().AppendProperty(propName))) {
+            r.GetLocalPath().AppendProperty(propName))) {
         if ((specToCopy = TfDynamic_cast<TypedSpecHandle>(propSpec)))
           break;
         // Type mismatch.
         TF_RUNTIME_ERROR(
-            "Spec type mismatch.  Failed to create %s for "
-            "<%s> at <%s> in @%s@.  Strongest existing "
-            "spec, %s at <%s> in @%s@",
-            ArchGetDemangled<PropType>().c_str(),
-            propPath.GetText(),
-            editTarget.MapToSpecPath(propPath).GetText(),
-            editTarget.GetLayer()->GetIdentifier().c_str(),
-            TfStringify(propSpec->GetSpecType()).c_str(),
-            propSpec->GetPath().GetText(),
-            propSpec->GetLayer()->GetIdentifier().c_str());
+          "Spec type mismatch.  Failed to create %s for "
+          "<%s> at <%s> in @%s@.  Strongest existing "
+          "spec, %s at <%s> in @%s@",
+          ArchGetDemangled<PropType>().c_str(),
+          propPath.GetText(),
+          editTarget.MapToSpecPath(propPath).GetText(),
+          editTarget.GetLayer()->GetIdentifier().c_str(),
+          TfStringify(propSpec->GetSpecType()).c_str(),
+          propSpec->GetPath().GetText(),
+          propSpec->GetLayer()->GetIdentifier().c_str());
         return TfNullPtr;
       }
     }
@@ -1439,11 +1419,9 @@ bool UsdStage::_SetEditTargetMappedMetadata(const UsdObject &obj,
                 "_SetEditTargetMappedMetadata can only be instantiated for "
                 "types that are edit target mappable.");
   return _SetMappedValueForEditTarget(
-      newValue,
-      GetEditTarget(),
-      [this, &obj, &fieldName, &keyPath](const SdfAbstractDataConstValue &in) {
-        return this->_SetMetadataImpl(obj, fieldName, keyPath, in);
-      });
+    newValue, GetEditTarget(), [this, &obj, &fieldName, &keyPath](const SdfAbstractDataConstValue &in) {
+      return this->_SetMetadataImpl(obj, fieldName, keyPath, in);
+    });
 }
 
 static const std::type_info &_GetTypeInfo(const SdfAbstractDataConstValue &value)
@@ -1479,30 +1457,30 @@ bool UsdStage::_SetMetadataImpl(const UsdObject &obj,
   }
   else {
     TF_CODING_ERROR(
-        "Cannot set metadata at path <%s> in layer @%s@; "
-        "a prim or property is required",
-        GetEditTarget().MapToSpecPath(obj.GetPath()).GetText(),
-        GetEditTarget().GetLayer()->GetIdentifier().c_str());
+      "Cannot set metadata at path <%s> in layer @%s@; "
+      "a prim or property is required",
+      GetEditTarget().MapToSpecPath(obj.GetPath()).GetText(),
+      GetEditTarget().GetLayer()->GetIdentifier().c_str());
     return false;
   }
 
   if (!spec) {
     TF_CODING_ERROR(
-        "Cannot set metadata. Failed to create spec <%s> in "
-        "layer @%s@",
-        GetEditTarget().MapToSpecPath(obj.GetPath()).GetText(),
-        GetEditTarget().GetLayer()->GetIdentifier().c_str());
+      "Cannot set metadata. Failed to create spec <%s> in "
+      "layer @%s@",
+      GetEditTarget().MapToSpecPath(obj.GetPath()).GetText(),
+      GetEditTarget().GetLayer()->GetIdentifier().c_str());
     return false;
   }
 
-  const auto &schema  = spec->GetSchema();
+  const auto &schema = spec->GetSchema();
   const auto specType = spec->GetSpecType();
   if (!schema.IsValidFieldForSpec(fieldName, specType)) {
     TF_CODING_ERROR(
-        "Cannot set metadata. '%s' is not registered "
-        "as valid metadata for spec type %s.",
-        fieldName.GetText(),
-        TfStringify(specType).c_str());
+      "Cannot set metadata. '%s' is not registered "
+      "as valid metadata for spec type %s.",
+      fieldName.GetText(),
+      TfStringify(specType).c_str());
     return false;
   }
 
@@ -1516,24 +1494,24 @@ bool UsdStage::_SetMetadataImpl(const UsdObject &obj,
 }
 
 template<class T>
-bool UsdStage::_SetEditTargetMappedValue(UsdTimeCode time,
-                                         const UsdAttribute &attr,
-                                         const T &newValue)
+bool UsdStage::_SetEditTargetMappedValue(UsdTimeCode time, const UsdAttribute &attr, const T &newValue)
 {
   static_assert(_IsEditTargetMappable<T>::value,
                 "_SetEditTargetMappedValue can only be instantiated for "
                 "types that are edit target mappable.");
   return _SetMappedValueForEditTarget(
-      newValue, GetEditTarget(), [this, &time, &attr](const SdfAbstractDataConstValue &in) {
-        return this->_SetValueImpl(time, attr, in);
-      });
+    newValue, GetEditTarget(), [this, &time, &attr](const SdfAbstractDataConstValue &in) {
+      return this->_SetValueImpl(time, attr, in);
+    });
 }
 
 // Default _SetValue implementation for most attribute value types that never
 // need to be mapped for an edit target.
 template<class T>
-typename std::enable_if<!UsdStage::_IsEditTargetMappable<T>::value, bool>::type UsdStage::
-    _SetValue(UsdTimeCode time, const UsdAttribute &attr, const T &newValue)
+typename std::enable_if<!UsdStage::_IsEditTargetMappable<T>::value, bool>::type UsdStage::_SetValue(
+  UsdTimeCode time,
+  const UsdAttribute &attr,
+  const T &newValue)
 {
   SdfAbstractDataConstTypedValue<T> in(&newValue);
   return _SetValueImpl<SdfAbstractDataConstValue>(time, attr, in);
@@ -1546,9 +1524,9 @@ typename std::enable_if<!UsdStage::_IsEditTargetMappable<T>::value, bool>::type 
 // they're not valid attribute value types.
 template<class T>
 typename std::enable_if<UsdStage::_IsEditTargetMappable<T>::value, bool>::type UsdStage::_SetValue(
-    UsdTimeCode time,
-    const UsdAttribute &attr,
-    const T &newValue)
+  UsdTimeCode time,
+  const UsdAttribute &attr,
+  const T &newValue)
 {
   return _SetEditTargetMappedValue(time, attr, newValue);
 }
@@ -1594,8 +1572,7 @@ bool UsdStage::_ClearValue(UsdTimeCode time, const UsdAttribute &attr)
     return false;
   }
 
-  const SdfLayerOffset stageToLayerOffset =
-      editTarget.GetMapFunction().GetTimeOffset().GetInverse();
+  const SdfLayerOffset stageToLayerOffset = editTarget.GetMapFunction().GetTimeOffset().GetInverse();
 
   const double layerTime = stageToLayerOffset * time.GetValue();
 
@@ -1604,9 +1581,7 @@ bool UsdStage::_ClearValue(UsdTimeCode time, const UsdAttribute &attr)
   return true;
 }
 
-bool UsdStage::_ClearMetadata(const UsdObject &obj,
-                              const TfToken &fieldName,
-                              const TfToken &keyPath)
+bool UsdStage::_ClearMetadata(const UsdObject &obj, const TfToken &fieldName, const TfToken &keyPath)
 {
   if (ARCH_UNLIKELY(!_ValidateEditPrim(obj.GetPrim(), "clear metadata"))) {
     return false;
@@ -1636,14 +1611,14 @@ bool UsdStage::_ClearMetadata(const UsdObject &obj,
     return false;
   }
 
-  const auto &schema  = spec->GetSchema();
+  const auto &schema = spec->GetSchema();
   const auto specType = spec->GetSpecType();
   if (!schema.IsValidFieldForSpec(fieldName, specType)) {
     TF_CODING_ERROR(
-        "Cannot clear metadata. '%s' is not registered "
-        "as valid metadata for spec type %s.",
-        fieldName.GetText(),
-        TfStringify(specType).c_str());
+      "Cannot clear metadata. '%s' is not registered "
+      "as valid metadata for spec type %s.",
+      fieldName.GetText(),
+      TfStringify(specType).c_str());
     return false;
   }
 
@@ -1689,7 +1664,7 @@ static bool _IsPrivateFieldKey(const TfToken &fieldKey)
     return true;
 
   // Implicitly excluded fields (child containers & readonly metadata).
-  SdfSchema const &schema                 = SdfSchema::GetInstance();
+  SdfSchema const &schema = SdfSchema::GetInstance();
   SdfSchema::FieldDefinition const *field = schema.GetFieldDefinition(fieldKey);
   if (field && (field->IsReadOnly() || field->HoldsChildren()))
     return true;
@@ -1706,9 +1681,8 @@ UsdPrim UsdStage::GetPseudoRoot() const
 UsdPrim UsdStage::GetDefaultPrim() const
 {
   TfToken name = GetRootLayer()->GetDefaultPrim();
-  return SdfPath::IsValidIdentifier(name) ?
-             GetPrimAtPath(SdfPath::AbsoluteRootPath().AppendChild(name)) :
-             UsdPrim();
+  return SdfPath::IsValidIdentifier(name) ? GetPrimAtPath(SdfPath::AbsoluteRootPath().AppendChild(name)) :
+                                            UsdPrim();
 }
 
 void UsdStage::SetDefaultPrim(const UsdPrim &prim)
@@ -1738,8 +1712,7 @@ UsdPrim UsdStage::GetPrimAtPath(const SdfPath &path) const
   // an instance proxy that uses the prim data from the corresponding
   // prim in the prototype but appears to be a prim at the given path.
   Usd_PrimDataConstPtr primData = _GetPrimDataAtPathOrInPrototype(path);
-  const SdfPath &proxyPrimPath  = primData && primData->GetPath() != path ? path :
-                                                                            SdfPath::EmptyPath();
+  const SdfPath &proxyPrimPath = primData && primData->GetPath() != path ? path : SdfPath::EmptyPath();
   return UsdPrim(primData, proxyPrimPath);
 }
 
@@ -1856,9 +1829,9 @@ bool UsdStage::_IsValidForLoad(const SdfPath &path) const
     // report error.
     if (parentPath == SdfPath::AbsoluteRootPath()) {
       TF_RUNTIME_ERROR(
-          "Attempt to load a path <%s> which is not "
-          "present in the stage",
-          path.GetString().c_str());
+        "Attempt to load a path <%s> which is not "
+        "present in the stage",
+        path.GetString().c_str());
       return false;
     }
   }
@@ -1886,28 +1859,27 @@ void UsdStage::_DiscoverPayloads(const SdfPath &rootPath,
   tbb::concurrent_vector<SdfPath> usdPrimPathsVec;
 
   auto addPrimPayload =
-      [this, unloadedOnly, primIndexPaths, usdPrimPaths, &primIndexPathsVec, &usdPrimPathsVec](
-          UsdPrim const &prim) {
-        // Inactive prims are never included in this query.  Prototypes are
-        // also never included, since they aren't independently loadable.
-        if (!prim.IsActive() || prim.IsPrototype())
-          return;
+    [this, unloadedOnly, primIndexPaths, usdPrimPaths, &primIndexPathsVec, &usdPrimPathsVec](
+      UsdPrim const &prim) {
+      // Inactive prims are never included in this query.  Prototypes are
+      // also never included, since they aren't independently loadable.
+      if (!prim.IsActive() || prim.IsPrototype())
+        return;
 
-        if (prim._GetSourcePrimIndex().HasAnyPayloads()) {
-          SdfPath const &payloadIncludePath = prim._GetSourcePrimIndex().GetPath();
-          if (!unloadedOnly || !_cache->IsPayloadIncluded(payloadIncludePath)) {
-            if (primIndexPaths)
-              primIndexPathsVec.push_back(payloadIncludePath);
-            if (usdPrimPaths)
-              usdPrimPathsVec.push_back(prim.GetPath());
-          }
+      if (prim._GetSourcePrimIndex().HasAnyPayloads()) {
+        SdfPath const &payloadIncludePath = prim._GetSourcePrimIndex().GetPath();
+        if (!unloadedOnly || !_cache->IsPayloadIncluded(payloadIncludePath)) {
+          if (primIndexPaths)
+            primIndexPathsVec.push_back(payloadIncludePath);
+          if (usdPrimPaths)
+            usdPrimPathsVec.push_back(prim.GetPath());
         }
-      };
+      }
+    };
 
   if (policy == UsdLoadWithDescendants) {
     if (UsdPrim root = GetPrimAtPath(rootPath)) {
-      UsdPrimRange children = UsdPrimRange(root,
-                                           UsdTraverseInstanceProxies(UsdPrimAllPrimsPredicate));
+      UsdPrimRange children = UsdPrimRange(root, UsdTraverseInstanceProxies(UsdPrimAllPrimsPredicate));
       WorkParallelForEach(children.begin(), children.end(), addPrimPayload);
     }
   }
@@ -1946,9 +1918,7 @@ void UsdStage::Unload(const SdfPath &path)
   LoadAndUnload(include, exclude);
 }
 
-void UsdStage::LoadAndUnload(const SdfPathSet &loadSet,
-                             const SdfPathSet &unloadSet,
-                             UsdLoadPolicy policy)
+void UsdStage::LoadAndUnload(const SdfPathSet &loadSet, const SdfPathSet &unloadSet, UsdLoadPolicy policy)
 {
   TfAutoMallocTag2 tag("Usd", _mallocTagID);
 
@@ -2045,26 +2015,25 @@ void UsdStage::LoadAndUnload(const SdfPathSet &loadSet,
   SdfPathSet currentIncludesAsSet(currentIncludes.begin(), currentIncludes.end());
   SdfPathSet payloadsToExclude;
   for (SdfPath const &p : recomposePaths) {
-    auto range = SdfPathFindPrefixedRange(
-        currentIncludesAsSet.begin(), currentIncludesAsSet.end(), p);
+    auto range = SdfPathFindPrefixedRange(currentIncludesAsSet.begin(), currentIncludesAsSet.end(), p);
     payloadsToExclude.insert(range.first, range.second);
   }
   _cache->RequestPayloads(SdfPathSet(), payloadsToExclude, &changes);
 
   if (TfDebug::IsEnabled(USD_PAYLOADS)) {
     TF_DEBUG(USD_PAYLOADS)
-        .Msg(
-            "UsdStage::LoadAndUnload()\n"
-            "  finalLoadSet: %s\n"
-            "  finalUnloadSet: %s\n"
-            "  _loadRules: %s\n"
-            "  payloadsToExclude: %s\n"
-            "  recomposePaths: %s\n",
-            TfStringify(finalLoadSet).c_str(),
-            TfStringify(finalUnloadSet).c_str(),
-            TfStringify(_loadRules).c_str(),
-            TfStringify(payloadsToExclude).c_str(),
-            TfStringify(recomposePaths).c_str());
+      .Msg(
+        "UsdStage::LoadAndUnload()\n"
+        "  finalLoadSet: %s\n"
+        "  finalUnloadSet: %s\n"
+        "  _loadRules: %s\n"
+        "  payloadsToExclude: %s\n"
+        "  recomposePaths: %s\n",
+        TfStringify(finalLoadSet).c_str(),
+        TfStringify(finalUnloadSet).c_str(),
+        TfStringify(_loadRules).c_str(),
+        TfStringify(payloadsToExclude).c_str(),
+        TfStringify(recomposePaths).c_str());
   }
 
   // Recompose, given the resulting changes from Pcp.
@@ -2172,20 +2141,18 @@ void UsdStage::ExpandPopulationMask(std::function<bool(UsdRelationship const &)>
   // include them in the mask.  If the mask changes, call SetPopulationMask()
   // and redo.  Continue until the mask ceases expansion.
   while (true) {
-    auto root               = GetPseudoRoot();
-    SdfPathVector tgtPaths  = root.FindAllRelationshipTargetPaths(relPred, false),
+    auto root = GetPseudoRoot();
+    SdfPathVector tgtPaths = root.FindAllRelationshipTargetPaths(relPred, false),
                   connPaths = root.FindAllAttributeConnectionPaths(attrPred, false);
 
-    tgtPaths.erase(
-        remove_if(tgtPaths.begin(),
-                  tgtPaths.end(),
-                  [this](SdfPath const &path) { return _populationMask.Includes(path); }),
-        tgtPaths.end());
-    connPaths.erase(
-        remove_if(connPaths.begin(),
-                  connPaths.end(),
-                  [this](SdfPath const &path) { return _populationMask.Includes(path); }),
-        connPaths.end());
+    tgtPaths.erase(remove_if(tgtPaths.begin(),
+                             tgtPaths.end(),
+                             [this](SdfPath const &path) { return _populationMask.Includes(path); }),
+                   tgtPaths.end());
+    connPaths.erase(remove_if(connPaths.begin(),
+                              connPaths.end(),
+                              [this](SdfPath const &path) { return _populationMask.Includes(path); }),
+                    connPaths.end());
 
     if (tgtPaths.empty() && connPaths.empty())
       break;
@@ -2229,8 +2196,7 @@ vector<UsdPrim> UsdStage::_GetInstancesForPrototype(const UsdPrim &prototypePrim
   }
 
   vector<UsdPrim> instances;
-  SdfPathVector instancePaths = _instanceCache->GetInstancePrimIndexesForPrototype(
-      prototypePrim.GetPath());
+  SdfPathVector instancePaths = _instanceCache->GetInstancePrimIndexesForPrototype(prototypePrim.GetPath());
   instances.reserve(instancePaths.size());
   for (const SdfPath &instancePath : instancePaths) {
     Usd_PrimDataConstPtr primData = _GetPrimDataAtPathOrInPrototype(instancePath);
@@ -2246,7 +2212,7 @@ Usd_PrimDataConstPtr UsdStage::_GetPrototypeForInstance(Usd_PrimDataConstPtr pri
   }
 
   const SdfPath protoPath = _instanceCache->GetPrototypeForInstanceablePrimIndexPath(
-      prim->GetPrimIndex().GetPath());
+    prim->GetPrimIndex().GetPath());
   return protoPath.IsEmpty() ? nullptr : _GetPrimDataAtPath(protoPath);
 }
 
@@ -2272,8 +2238,8 @@ SdfPath UsdStage::_GetPrimPathUsingPrimIndexAtPath(const SdfPath &primIndexPath)
     primPath = primIndexPath;
   }
   else if (_instanceCache->GetNumPrototypes() != 0) {
-    const vector<SdfPath> prototypesUsingPrimIndex =
-        _instanceCache->GetPrimsInPrototypesUsingPrimIndexPath(primIndexPath);
+    const vector<SdfPath> prototypesUsingPrimIndex = _instanceCache->GetPrimsInPrototypesUsingPrimIndexPath(
+      primIndexPath);
 
     for (const auto &pathInPrototype : prototypesUsingPrimIndex) {
       // If this path is a root prim path, it must be the path of a
@@ -2357,9 +2323,7 @@ struct _SecondLess {
 // This method has some subtle behavior to support minimal repopulation and
 // ideal allocation order.  See documentation for this method in the .h file for
 // important details regarding this method's behavior.
-void UsdStage::_ComposeChildren(Usd_PrimDataPtr prim,
-                                UsdStagePopulationMask const *mask,
-                                bool recurse)
+void UsdStage::_ComposeChildren(Usd_PrimDataPtr prim, UsdStagePopulationMask const *mask, bool recurse)
 {
   // If prim is deactivated, discard any existing children and return.
   if (!prim->IsActive()) {
@@ -2417,8 +2381,7 @@ void UsdStage::_ComposeChildren(Usd_PrimDataPtr prim,
 
   // Find the first mismatch between the prim's current child prims and
   // the new list of child prims specified in nameOrder.
-  Usd_PrimDataSiblingIterator begin = prim->_ChildrenBegin(), end = prim->_ChildrenEnd(),
-                              cur       = begin;
+  Usd_PrimDataSiblingIterator begin = prim->_ChildrenBegin(), end = prim->_ChildrenEnd(), cur = begin;
   TfTokenVector::const_iterator curName = nameOrder.begin(), nameEnd = nameOrder.end();
   for (; cur != end && curName != nameEnd; ++cur, ++curName) {
     if ((*cur)->GetName() != *curName)
@@ -2506,8 +2469,7 @@ void UsdStage::_ComposeChildren(Usd_PrimDataPtr prim,
   // other change to the prim's list of children. Do the general form
   // of preserving preexisting children and ordering them according
   // to nameOrder.
-  TF_DEBUG(USD_COMPOSITION)
-      .Msg("Require general children recomposition <%s>\n", prim->GetPath().GetText());
+  TF_DEBUG(USD_COMPOSITION).Msg("Require general children recomposition <%s>\n", prim->GetPath().GetText());
 
   // Make a vector of iterators into nameOrder from [curName, nameEnd).
   typedef vector<TfTokenVector::const_iterator> TokenVectorIterVec;
@@ -2523,10 +2485,9 @@ void UsdStage::_ComposeChildren(Usd_PrimDataPtr prim,
   vector<Usd_PrimDataPtr> oldChildren(cur, end);
   sort(oldChildren.begin(), oldChildren.end(), _PrimNameLess());
 
-  vector<Usd_PrimDataPtr>::const_iterator oldChildIt  = oldChildren.begin(),
-                                          oldChildEnd = oldChildren.end();
+  vector<Usd_PrimDataPtr>::const_iterator oldChildIt = oldChildren.begin(), oldChildEnd = oldChildren.end();
 
-  TokenVectorIterVec::const_iterator newNameItersIt  = nameOrderIters.begin(),
+  TokenVectorIterVec::const_iterator newNameItersIt = nameOrderIters.begin(),
                                      newNameItersEnd = nameOrderIters.end();
 
   // We build a vector of pairs of prims and the original name order
@@ -2609,8 +2570,7 @@ void UsdStage::_ComposeChildSubtree(Usd_PrimDataPtr prim,
     // If this UsdPrim is a child of an instance prototype, its
     // source prim index won't be at the same path as its stage path.
     // We need to construct the path from the parent's source index.
-    const SdfPath sourcePrimIndexPath = parent->GetSourcePrimIndex().GetPath().AppendChild(
-        prim->GetName());
+    const SdfPath sourcePrimIndexPath = parent->GetSourcePrimIndex().GetPath().AppendChild(prim->GetName());
     _ComposeSubtree(prim, parent, mask, sourcePrimIndexPath);
   }
   else {
@@ -2641,7 +2601,7 @@ void UsdStage::_ReportErrors(const PcpErrorVector &errors,
 
   if (!errors.empty() || !otherErrors.empty()) {
     std::string fullContext = TfStringPrintf(
-        "(%s on stage @%s@ <%p>)", context.c_str(), GetRootLayer()->GetIdentifier().c_str(), this);
+      "(%s on stage @%s@ <%p>)", context.c_str(), GetRootLayer()->GetIdentifier().c_str(), this);
     std::vector<std::string> allErrors;
     allErrors.reserve(errors.size() + otherErrors.size());
 
@@ -2731,7 +2691,7 @@ void UsdStage::_ComposeSubtreesInParallel(const vector<Usd_PrimDataPtr> &prims,
   // Begin a subtree composition in parallel.
   WorkWithScopedParallelism([this, &prims, &primIndexPaths]() {
     _primMapMutex = boost::in_place();
-    _dispatcher   = boost::in_place();
+    _dispatcher = boost::in_place();
     // We populate the clip cache concurrently during composition, so we
     // need to enable concurrent population here.
     Usd_ClipCache::ConcurrentPopulationContext clipConcurrentPopContext(*_clipCache);
@@ -2747,12 +2707,12 @@ void UsdStage::_ComposeSubtreesInParallel(const vector<Usd_PrimDataPtr> &prims,
       }
     }
     catch (...) {
-      _dispatcher   = boost::none;
+      _dispatcher = boost::none;
       _primMapMutex = boost::none;
       throw;
     }
 
-    _dispatcher   = boost::none;
+    _dispatcher = boost::none;
     _primMapMutex = boost::none;
   });
 }
@@ -2799,8 +2759,7 @@ void UsdStage::_ComposeSubtreeImpl(Usd_PrimDataPtr prim,
 
   // If this prim's parent is the pseudo-root and it has a different
   // path from its source prim index, it must represent a prototype prim.
-  const bool isPrototypePrim = (parent == _pseudoRoot &&
-                                prim->_primIndex->GetPath() != prim->GetPath());
+  const bool isPrototypePrim = (parent == _pseudoRoot && prim->_primIndex->GetPath() != prim->GetPath());
 
   if (parent && !isPrototypePrim) {
     // Compose the type info full type ID for the prim which includes
@@ -2808,8 +2767,7 @@ void UsdStage::_ComposeSubtreeImpl(Usd_PrimDataPtr prim,
     // if the stage specifies it.
     Usd_PrimTypeInfoCache::TypeId typeId(_ComposeTypeName(prim->_primIndex));
     _ComposeAuthoredAppliedSchemas(prim->_primIndex, &typeId.appliedAPISchemas);
-    if (const TfToken *fallbackType = TfMapLookupPtr(_invalidPrimTypeToFallbackMap,
-                                                     typeId.primTypeName)) {
+    if (const TfToken *fallbackType = TfMapLookupPtr(_invalidPrimTypeToFallbackMap, typeId.primTypeName)) {
       typeId.mappedTypeName = *fallbackType;
     }
 
@@ -2826,8 +2784,7 @@ void UsdStage::_ComposeSubtreeImpl(Usd_PrimDataPtr prim,
   // Pre-compute clip information for this prim to avoid doing so
   // at value resolution time.
   if (prim->GetPath() != SdfPath::AbsoluteRootPath()) {
-    bool primHasAuthoredClips = _clipCache->PopulateClipsForPrim(prim->GetPath(),
-                                                                 prim->GetPrimIndex());
+    bool primHasAuthoredClips = _clipCache->PopulateClipsForPrim(prim->GetPath(), prim->GetPrimIndex());
     prim->_SetMayHaveOpinionsInClips(primHasAuthoredClips || parent->MayHaveOpinionsInClips());
   }
   else {
@@ -2873,7 +2830,7 @@ void UsdStage::_DestroyPrimsInParallel(const vector<SdfPath> &paths)
 
   WorkWithScopedParallelism([&]() {
     _primMapMutex = boost::in_place();
-    _dispatcher   = boost::in_place();
+    _dispatcher = boost::in_place();
     for (const auto &path : paths) {
       Usd_PrimDataPtr prim = _GetPrimDataAtPath(path);
       // We *expect* every prim in paths to be valid as we iterate,
@@ -2884,7 +2841,7 @@ void UsdStage::_DestroyPrimsInParallel(const vector<SdfPath> &paths)
         _dispatcher->Run(&UsdStage::_DestroyPrim, this, prim);
       }
     }
-    _dispatcher   = boost::none;
+    _dispatcher = boost::none;
     _primMapMutex = boost::none;
   });
 }
@@ -3001,7 +2958,7 @@ void UsdStage::Save()
   const PcpLayerStackPtr localLayerStack = _GetPcpCache()->GetLayerStack();
   if (TF_VERIFY(localLayerStack)) {
     const SdfLayerHandleVector sessionLayers = localLayerStack->GetSessionLayers();
-    const auto isSessionLayer                = [&sessionLayers](const SdfLayerHandle &l) {
+    const auto isSessionLayer = [&sessionLayers](const SdfLayerHandle &l) {
       return std::find(sessionLayers.begin(), sessionLayers.end(), l) != sessionLayers.end();
     };
 
@@ -3031,8 +2988,7 @@ void UsdStage::WriteFallbackPrimTypes()
   // Any fallback types for schema prim types will be defined in the schemas
   // themselves. The schema registry provides the fallback prim type
   // dictionary for us to write in the metadata
-  const VtDictionary &schemaFallbackTypes =
-      UsdSchemaRegistry::GetInstance().GetFallbackPrimTypes();
+  const VtDictionary &schemaFallbackTypes = UsdSchemaRegistry::GetInstance().GetFallbackPrimTypes();
   if (!schemaFallbackTypes.empty()) {
     // The stage may already have metadata for fallback prim types, written
     // from this version of Usd, a different version of Usd, or possibly
@@ -3215,10 +3171,10 @@ UsdEditTarget UsdStage::GetEditTargetForLocalLayer(size_t i)
   const SdfLayerRefPtrVector &layers = _cache->GetLayerStack()->GetLayers();
   if (i >= layers.size()) {
     TF_CODING_ERROR(
-        "Layer index %zu is out of range: only %zu entries in "
-        "layer stack",
-        i,
-        layers.size());
+      "Layer index %zu is out of range: only %zu entries in "
+      "layer stack",
+      i,
+      layers.size());
     return UsdEditTarget();
   }
   const SdfLayerOffset *layerOffset = _cache->GetLayerStack()->GetLayerOffsetForLayer(i);
@@ -3245,10 +3201,10 @@ void UsdStage::SetEditTarget(const UsdEditTarget &editTarget)
   // Do some extra error checking if the EditTarget specifies a local layer.
   if (editTarget.GetMapFunction().IsIdentity() && !HasLocalLayer(editTarget.GetLayer())) {
     TF_CODING_ERROR(
-        "Layer @%s@ is not in the local LayerStack rooted "
-        "at @%s@",
-        editTarget.GetLayer()->GetIdentifier().c_str(),
-        GetRootLayer()->GetIdentifier().c_str());
+      "Layer @%s@ is not in the local LayerStack rooted "
+      "at @%s@",
+      editTarget.GetLayer()->GetIdentifier().c_str(),
+      GetRootLayer()->GetIdentifier().c_str());
     return;
   }
 
@@ -3287,10 +3243,9 @@ SdfLayerHandleVector UsdStage::GetLayerStack(bool includeSessionLayers) const
 
     // Copy everything if sublayers requested, otherwise copy from the root
     // layer to the end.
-    SdfLayerRefPtrVector::const_iterator copyBegin = includeSessionLayers ? layers.begin() :
-                                                                            find(layers.begin(),
-                                                                                 layers.end(),
-                                                                                 GetRootLayer());
+    SdfLayerRefPtrVector::const_iterator copyBegin = includeSessionLayers ?
+                                                       layers.begin() :
+                                                       find(layers.begin(), layers.end(), GetRootLayer());
 
     TF_VERIFY(copyBegin != layers.end(),
               "Root layer @%s@ not in LayerStack",
@@ -3341,8 +3296,7 @@ void UsdStage::MuteAndUnmuteLayers(const std::vector<std::string> &muteLayers,
 
   PcpChanges changes;
   std::vector<std::string> newMutedLayers, newUnMutedLayers;
-  _cache->RequestLayerMuting(
-      muteLayers, unmuteLayers, &changes, &newMutedLayers, &newUnMutedLayers);
+  _cache->RequestLayerMuting(muteLayers, unmuteLayers, &changes, &newMutedLayers, &newUnMutedLayers);
 
   UsdStageWeakPtr self(this);
 
@@ -3487,10 +3441,10 @@ static void _AddAffectedStagePaths(const SdfLayerHandle &layer,
   }
 
   TF_DEBUG(USD_CHANGES)
-      .Msg("Adding paths that use <%s> in layer @%s@: %s\n",
-           path.GetText(),
-           layer->GetIdentifier().c_str(),
-           _Stringify(*changedPaths).c_str());
+    .Msg("Adding paths that use <%s> in layer @%s@: %s\n",
+         path.GetText(),
+         layer->GetIdentifier().c_str(),
+         _Stringify(*changedPaths).c_str());
 }
 
 // Removes all elements from changedPaths whose paths are prefixed
@@ -3524,7 +3478,7 @@ static void _MergeAndRemoveDescendentEntries(ChangedPaths *stronger, ChangedPath
   // cache the end iterator here.
   auto weakIt = weaker->begin();
 
-  auto strongIt          = stronger->begin();
+  auto strongIt = stronger->begin();
   const auto strongEndIt = stronger->end();
 
   while (strongIt != strongEndIt && weakIt != weaker->end()) {
@@ -3536,8 +3490,7 @@ static void _MergeAndRemoveDescendentEntries(ChangedPaths *stronger, ChangedPath
     else if (weakIt->first == strongIt->first) {
       // If the same path exists in both weaker and stronger, merge the
       // weaker entry into stronger, then remove it from weaker.
-      strongIt->second.insert(
-          strongIt->second.end(), weakIt->second.begin(), weakIt->second.end());
+      strongIt->second.insert(strongIt->second.end(), weakIt->second.begin(), weakIt->second.end());
       weakIt = weaker->erase(weakIt);
     }
     else if (weakIt->first.HasPrefix(strongIt->first)) {
@@ -3572,13 +3525,13 @@ void UsdStage::_HandleLayersDidChange(const SdfNotice::LayersDidChangeSentPerLay
     // threading model -- concurrent edits to layers that apply to a single
     // stage are disallowed.
     TF_CODING_ERROR(
-        "Detected usd threading violation.  Concurrent changes "
-        "to layer(s) composed in stage %p rooted at @%s@.  "
-        "(serial=%zu, lastSerial=%zu).",
-        this,
-        GetRootLayer()->GetIdentifier().c_str(),
-        serial,
-        _lastChangeSerialNumber);
+      "Detected usd threading violation.  Concurrent changes "
+      "to layer(s) composed in stage %p rooted at @%s@.  "
+      "(serial=%zu, lastSerial=%zu).",
+      this,
+      GetRootLayer()->GetIdentifier().c_str(),
+      serial,
+      _lastChangeSerialNumber);
     return;
   }
 
@@ -3603,11 +3556,11 @@ void UsdStage::_HandleLayersDidChange(const SdfNotice::LayersDidChangeSentPerLay
   // ignore this layer metadata change to avoid unnecessarily recomposing
   // the whole stage.
   auto _IsFallbackPrimTypesChange =
-      [this](const SdfLayerHandle &layer, const SdfPath &sdfPath, const TfToken &infoKey) {
-        return infoKey == UsdTokens->fallbackPrimTypes && !this->_isWritingFallbackPrimTypes &&
-               sdfPath == SdfPath::AbsoluteRootPath() &&
-               (layer == this->GetRootLayer() || layer == this->GetSessionLayer());
-      };
+    [this](const SdfLayerHandle &layer, const SdfPath &sdfPath, const TfToken &infoKey) {
+      return infoKey == UsdTokens->fallbackPrimTypes && !this->_isWritingFallbackPrimTypes &&
+             sdfPath == SdfPath::AbsoluteRootPath() &&
+             (layer == this->GetRootLayer() || layer == this->GetSessionLayer());
+    };
 
   // Add dependent paths for any PrimSpecs whose fields have changed that may
   // affect cached prim information.
@@ -3628,7 +3581,7 @@ void UsdStage::_HandleLayersDidChange(const SdfNotice::LayersDidChangeSentPerLay
       // affect zero or more objects on the usd stage, depending on
       // reference structures, active state, etc.  We have to map these
       // paths to those objects on the stage that are affected.
-      const SdfPath &sdfPath            = entryList.first;
+      const SdfPath &sdfPath = entryList.first;
       const SdfChangeList::Entry &entry = entryList.second;
 
       // Skip target paths entirely -- we do not create target objects in
@@ -3637,7 +3590,7 @@ void UsdStage::_HandleLayersDidChange(const SdfNotice::LayersDidChangeSentPerLay
         continue;
 
       TF_DEBUG(USD_CHANGES)
-          .Msg("<%s> in @%s@ changed.\n", sdfPath.GetText(), layer->GetIdentifier().c_str());
+        .Msg("<%s> in @%s@ changed.\n", sdfPath.GetText(), layer->GetIdentifier().c_str());
 
       bool willRecompose = false;
       if (sdfPath == SdfPath::AbsoluteRootPath() || sdfPath.IsPrimOrPrimVariantSelectionPath()) {
@@ -3688,8 +3641,7 @@ void UsdStage::_HandleLayersDidChange(const SdfNotice::LayersDidChangeSentPerLay
       }
       else {
         willRecompose = sdfPath.IsPropertyPath() &&
-                        (entry.flags.didAddPropertyWithOnlyRequiredFields ||
-                         entry.flags.didAddProperty ||
+                        (entry.flags.didAddPropertyWithOnlyRequiredFields || entry.flags.didAddProperty ||
                          entry.flags.didRemovePropertyWithOnlyRequiredFields ||
                          entry.flags.didRemoveProperty);
 
@@ -3738,8 +3690,7 @@ void UsdStage::_HandleLayersDidChange(const SdfNotice::LayersDidChangeSentPerLay
         const SdfPath primIndexPath = it->first.GetAbsoluteRootOrPrimPath();
         for (const SdfPath &pathInPrototype :
              _instanceCache->GetPrimsInPrototypesUsingPrimIndexPath(primIndexPath)) {
-          prototypeChanges.emplace_back(it->first.ReplacePrefix(primIndexPath, pathInPrototype),
-                                        it->second);
+          prototypeChanges.emplace_back(it->first.ReplacePrefix(primIndexPath, pathInPrototype), it->second);
         }
         it = changes->erase(it);
         continue;
@@ -3772,8 +3723,7 @@ void UsdStage::_HandleLayersDidChange(const SdfNotice::LayersDidChangeSentPerLay
   // Collect the paths in otherChangedPaths that aren't under paths that
   // were recomposed.  If the pseudo-root had been recomposed, we can
   // just clear out otherChangedPaths since everything was recomposed.
-  if (!recomposeChanges.empty() &&
-      recomposeChanges.begin()->first == SdfPath::AbsoluteRootPath()) {
+  if (!recomposeChanges.empty() && recomposeChanges.begin()->first == SdfPath::AbsoluteRootPath()) {
     // If the pseudo-root is present, it should be the only path in the
     // changes.
     TF_VERIFY(recomposeChanges.size() == 1);
@@ -3820,7 +3770,7 @@ template<class T> void UsdStage::_Recompose(const PcpChanges &changes, T *initia
 
   for (const auto &layerStackChange : layerStackChanges) {
     const PcpLayerStackPtr &layerStack = layerStackChange.first;
-    const PcpErrorVector &errors       = layerStack->GetLocalErrors();
+    const PcpErrorVector &errors = layerStack->GetLocalErrors();
     if (!errors.empty()) {
       _ReportPcpErrors(errors, "Recomposing stage");
     }
@@ -3911,8 +3861,7 @@ template<class T> void UsdStage::_RecomposePrims(T *pathsToRecompose)
   typedef TfHashMap<SdfPath, SdfPath, SdfPath::Hash> _PrototypeToPrimIndexMap;
   _PrototypeToPrimIndexMap prototypeToPrimIndexMap;
 
-  const bool pathsContainsAbsRoot = pathsToRecompose->begin()->first ==
-                                    SdfPath::AbsoluteRootPath();
+  const bool pathsContainsAbsRoot = pathsToRecompose->begin()->first == SdfPath::AbsoluteRootPath();
 
   // If AbsoluteRootPath is present then that should be the only entry!
   TF_VERIFY(!pathsContainsAbsRoot || pathsToRecompose->size() == 1);
@@ -3922,8 +3871,7 @@ template<class T> void UsdStage::_RecomposePrims(T *pathsToRecompose)
     const SdfPath &path = entry.first;
     // Add corresponding inPrototypePaths for any instance or proxy paths in
     // pathsToRecompose
-    for (const SdfPath &inPrototypePath :
-         _instanceCache->GetPrimsInPrototypesUsingPrimIndexPath(path)) {
+    for (const SdfPath &inPrototypePath : _instanceCache->GetPrimsInPrototypesUsingPrimIndexPath(path)) {
       prototypeToPrimIndexMap[inPrototypePath] = path;
       (*pathsToRecompose)[inPrototypePath];
     }
@@ -3931,8 +3879,8 @@ template<class T> void UsdStage::_RecomposePrims(T *pathsToRecompose)
     // in pathsToRecompose
     for (const std::pair<SdfPath, SdfPath> &prototypeSourceIndexPair :
          _instanceCache->GetPrototypesUsingPrimIndexPathOrDescendents(path)) {
-      const SdfPath &prototypePath           = prototypeSourceIndexPair.first;
-      const SdfPath &sourceIndexPath         = prototypeSourceIndexPair.second;
+      const SdfPath &prototypePath = prototypeSourceIndexPair.first;
+      const SdfPath &sourceIndexPath = prototypeSourceIndexPair.second;
       prototypeToPrimIndexMap[prototypePath] = sourceIndexPath;
       (*pathsToRecompose)[prototypePath];
     }
@@ -3941,14 +3889,14 @@ template<class T> void UsdStage::_RecomposePrims(T *pathsToRecompose)
   // Add new prototypes paths to pathsToRecompose
   for (size_t i = 0; i != instanceChanges.newPrototypePrims.size(); ++i) {
     prototypeToPrimIndexMap[instanceChanges.newPrototypePrims[i]] =
-        instanceChanges.newPrototypePrimIndexes[i];
+      instanceChanges.newPrototypePrimIndexes[i];
     (*pathsToRecompose)[instanceChanges.newPrototypePrims[i]];
   }
 
   // Add changed prototypes paths to pathsToRecompose
   for (size_t i = 0; i != instanceChanges.changedPrototypePrims.size(); ++i) {
     prototypeToPrimIndexMap[instanceChanges.changedPrototypePrims[i]] =
-        instanceChanges.changedPrototypePrimIndexes[i];
+      instanceChanges.changedPrototypePrimIndexes[i];
     (*pathsToRecompose)[instanceChanges.changedPrototypePrims[i]];
   }
 
@@ -3979,7 +3927,7 @@ template<class T> void UsdStage::_RecomposePrims(T *pathsToRecompose)
     primIndexPathsForSubtrees.reserve(subtreesToRecompose.size());
     for (const auto &prim : subtreesToRecompose) {
       primIndexPathsForSubtrees.push_back(
-          TfMapLookupByValue(prototypeToPrimIndexMap, prim->GetPath(), prim->GetPath()));
+        TfMapLookupByValue(prototypeToPrimIndexMap, prim->GetPath(), prim->GetPath()));
     }
     _ComposeSubtreesInParallel(subtreesToRecompose, &primIndexPathsForSubtrees);
   }
@@ -4035,7 +3983,7 @@ void UsdStage::_ComputeSubtreesToRecompose(Iter i,
 
     // Collect all non-prototype prims (including descendants of prototypes)
     // to be added to subtreesToRecompute
-    SdfPath const &parentPath              = i->GetParentPath();
+    SdfPath const &parentPath = i->GetParentPath();
     PathToNodeMap::const_iterator parentIt = _primMap.find(parentPath);
     if (parentIt != _primMap.end()) {
 
@@ -4102,21 +4050,20 @@ void UsdStage::_ComposePrimIndexesInParallel(const std::vector<SdfPath> &primInd
     // Ensure not too much spew if primIndexPaths is big.
     constexpr size_t maxPaths = 16;
     std::vector<SdfPath> dbgPaths(primIndexPaths.begin(),
-                                  primIndexPaths.begin() +
-                                      std::min(maxPaths, primIndexPaths.size()));
+                                  primIndexPaths.begin() + std::min(maxPaths, primIndexPaths.size()));
     string msg = TfStringPrintf(
-        "Composing prim indexes: %s%s\n",
-        TfStringify(dbgPaths).c_str(),
-        primIndexPaths.size() > maxPaths ?
-            TfStringPrintf(" (and %zu more)", primIndexPaths.size() - maxPaths).c_str() :
-            "");
+      "Composing prim indexes: %s%s\n",
+      TfStringify(dbgPaths).c_str(),
+      primIndexPaths.size() > maxPaths ?
+        TfStringPrintf(" (and %zu more)", primIndexPaths.size() - maxPaths).c_str() :
+        "");
     TF_DEBUG(USD_COMPOSITION).Msg("%s", msg.c_str());
   }
 
   // We only want to compute prim indexes included by the stage's
   // population mask. As an optimization, if all prims are included the
   // name children predicate doesn't need to consider the mask at all.
-  static auto allMask                = UsdStagePopulationMask::All();
+  static auto allMask = UsdStagePopulationMask::All();
   const UsdStagePopulationMask *mask = _populationMask == allMask ? nullptr : &_populationMask;
 
   // Ask Pcp to compute all the prim indexes in parallel, stopping at
@@ -4174,13 +4121,12 @@ void UsdStage::_RegisterPerLayerNotices()
   }
 
   SdfLayerHandleSet usedLayers = _cache->GetUsedLayers();
-  _usedLayersRevision          = currentUsedLayersRevision;
+  _usedLayersRevision = currentUsedLayersRevision;
 
-  SdfLayerHandleSet::const_iterator usedLayersIter = usedLayers.begin(),
-                                    usedLayersEnd  = usedLayers.end();
+  SdfLayerHandleSet::const_iterator usedLayersIter = usedLayers.begin(), usedLayersEnd = usedLayers.end();
 
   _LayerAndNoticeKeyVec::iterator layerAndKeyIter = _layersAndNoticeKeys.begin(),
-                                  layerAndKeyEnd  = _layersAndNoticeKeys.end();
+                                  layerAndKeyEnd = _layersAndNoticeKeys.end();
 
   // We'll build a new vector and swap it into place at the end.  We can
   // preallocate space upfront since we know the resulting size will be
@@ -4197,9 +4143,8 @@ void UsdStage::_RegisterPerLayerNotices()
     if (layerAndKeyIter == layerAndKeyEnd ||
         (usedLayersIter != usedLayersEnd && *usedLayersIter < layerAndKeyIter->first)) {
       // This is a newly added layer.  Register for the notice and add it.
-      newLayersAndNoticeKeys.push_back(
-          make_pair(*usedLayersIter,
-                    TfNotice::Register(self, &UsdStage::_HandleLayersDidChange, *usedLayersIter)));
+      newLayersAndNoticeKeys.push_back(make_pair(
+        *usedLayersIter, TfNotice::Register(self, &UsdStage::_HandleLayersDidChange, *usedLayersIter)));
       ++usedLayersIter;
     }
     else if (usedLayersIter == usedLayersEnd ||
@@ -4224,8 +4169,7 @@ SdfPrimSpecHandle UsdStage::_GetPrimSpec(const SdfPath &path)
   return GetEditTarget().GetPrimSpecForScenePath(path);
 }
 
-SdfSpecType UsdStage::_GetDefiningSpecType(Usd_PrimDataConstPtr primData,
-                                           const TfToken &propName) const
+SdfSpecType UsdStage::_GetDefiningSpecType(Usd_PrimDataConstPtr primData, const TfToken &propName) const
 {
   if (!TF_VERIFY(primData) || !TF_VERIFY(!propName.IsEmpty()))
     return SdfSpecTypeUnknown;
@@ -4233,7 +4177,7 @@ SdfSpecType UsdStage::_GetDefiningSpecType(Usd_PrimDataConstPtr primData,
   // Check for a spec type in the definition registry, in case this is a
   // builtin property.
   const UsdPrimDefinition &primDef = primData->GetPrimDefinition();
-  SdfSpecType specType             = primDef.GetSpecType(propName);
+  SdfSpecType specType = primDef.GetSpecType(propName);
   if (specType != SdfSpecTypeUnknown)
     return specType;
 
@@ -4245,7 +4189,7 @@ SdfSpecType UsdStage::_GetDefiningSpecType(Usd_PrimDataConstPtr primData,
     const SdfLayerRefPtr &layer = res.GetLayer();
     if (layer->HasSpec(res.GetLocalPath())) {
       if (!curPathValid) {
-        curPath      = res.GetLocalPath().AppendProperty(propName);
+        curPath = res.GetLocalPath().AppendProperty(propName);
         curPathValid = true;
       }
       specType = layer->GetSpecType(curPath);
@@ -4281,8 +4225,7 @@ class Usd_FlattenAccess {
                                      VtValue *value)
   {
     // Asset path values are anchored for flatten operations
-    attr.GetStage()->_MakeResolvedAssetPathsValue(
-        time, attr, value, /* anchorAssetPathsOnly = */ true);
+    attr.GetStage()->_MakeResolvedAssetPathsValue(time, attr, value, /* anchorAssetPathsOnly = */ true);
     // Time based values are adjusted by layer offset when flattened to a
     // layer affected by an offset.
     if (!timeOffset.IsIdentity()) {
@@ -4339,16 +4282,16 @@ void _RemapTargetPaths(SdfPathVector *targetPaths, const _PathRemapping &pathRem
 void _RemovePrototypeTargetPaths(const UsdProperty &srcProp, SdfPathVector *targetPaths)
 {
   auto removeIt = std::remove_if(
-      targetPaths->begin(), targetPaths->end(), Usd_InstanceCache::IsPathInPrototype);
+    targetPaths->begin(), targetPaths->end(), Usd_InstanceCache::IsPathInPrototype);
   if (removeIt == targetPaths->end()) {
     return;
   }
 
   TF_WARN(
-      "Some %s paths from <%s> could not be flattened because "
-      "they targeted objects within an instancing prototype.",
-      srcProp.Is<UsdAttribute>() ? "attribute connection" : "relationship target",
-      srcProp.GetPath().GetText());
+    "Some %s paths from <%s> could not be flattened because "
+    "they targeted objects within an instancing prototype.",
+    srcProp.Is<UsdAttribute>() ? "attribute connection" : "relationship target",
+    srcProp.GetPath().GetText());
 
   targetPaths->erase(removeIt, targetPaths->end());
 }
@@ -4377,7 +4320,7 @@ _PathRemapping _GenerateFlattenedPrototypePath(const std::vector<UsdPrim> &proto
       // We want to ensure that we don't clash with user
       // prims in the unlikely even they named it Flatten_xxx
       flattenedPrototypePath = generatePathName();
-      const auto stage       = prototypePrim.GetStage();
+      const auto stage = prototypePrim.GetStage();
       while (stage->GetPrimAtPath(flattenedPrototypePath)) {
         flattenedPrototypePath = generatePathName();
       }
@@ -4430,9 +4373,9 @@ void _CopyProperty(const UsdProperty &prop,
 
     if (!attr.GetTypeName()) {
       TF_WARN(
-          "Attribute <%s> has unknown value type. "
-          "It will be omitted from the flattened result.",
-          attr.GetPath().GetText());
+        "Attribute <%s> has unknown value type. "
+        "It will be omitted from the flattened result.",
+        attr.GetPath().GetText());
       return;
     }
 
@@ -4459,8 +4402,7 @@ void _CopyProperty(const UsdProperty &prop,
     if (attr.HasAuthoredMetadata(SdfFieldKeys->Default)) {
       VtValue defaultValue;
       if (attr.Get(&defaultValue)) {
-        Usd_FlattenAccess::ResolveValueForFlatten(
-            UsdTimeCode::Default(), attr, timeOffset, &defaultValue);
+        Usd_FlattenAccess::ResolveValueForFlatten(UsdTimeCode::Default(), attr, timeOffset, &defaultValue);
       }
       else {
         defaultValue = SdfValueBlock();
@@ -4513,10 +4455,8 @@ void _CopyPrim(const UsdPrim &usdPrim,
   }
   else {
     // Note that the true value for spec will be populated in _CopyMetadata
-    newPrim = SdfPrimSpec::New(layer->GetPrimAtPath(path.GetParentPath()),
-                               path.GetName(),
-                               SdfSpecifierOver,
-                               usdPrim.GetTypeName());
+    newPrim = SdfPrimSpec::New(
+      layer->GetPrimAtPath(path.GetParentPath()), path.GetName(), SdfSpecifierOver, usdPrim.GetTypeName());
   }
 
   if (usdPrim.IsInstance()) {
@@ -4579,10 +4519,9 @@ bool _IsPrivateFallbackFieldKey(const TfToken &fieldKey)
 
 bool _HasAuthoredValue(const TfToken &fieldKey, const SdfPropertySpecHandleVector &propStack)
 {
-  return std::any_of(
-      propStack.begin(), propStack.end(), [&fieldKey](const SdfPropertySpecHandle &spec) {
-        return spec->HasInfo(fieldKey);
-      });
+  return std::any_of(propStack.begin(), propStack.end(), [&fieldKey](const SdfPropertySpecHandle &spec) {
+    return spec->HasInfo(fieldKey);
+  });
 }
 
 void _CopyFallbacks(const SdfPropertySpecHandle &srcPropDef,
@@ -4596,8 +4535,8 @@ void _CopyFallbacks(const SdfPropertySpecHandle &srcPropDef,
 
   std::vector<TfToken> fallbackFields = srcPropDef->ListFields();
   fallbackFields.erase(
-      std::remove_if(fallbackFields.begin(), fallbackFields.end(), _IsPrivateFallbackFieldKey),
-      fallbackFields.end());
+    std::remove_if(fallbackFields.begin(), fallbackFields.end(), _IsPrivateFallbackFieldKey),
+    fallbackFields.end());
 
   UsdMetadataValueMap fallbacks;
   for (const auto &fieldName : fallbackFields) {
@@ -4676,9 +4615,9 @@ SdfLayerRefPtr UsdStage::Flatten(bool addSourceFileComment) const
     }
 
     doc.append(
-        TfStringPrintf("Generated from Composed Stage "
-                       "of root layer %s\n",
-                       GetRootLayer()->GetRealPath().c_str()));
+      TfStringPrintf("Generated from Composed Stage "
+                     "of root layer %s\n",
+                     GetRootLayer()->GetRealPath().c_str()));
 
     flatLayer->SetDocumentation(doc);
   }
@@ -4710,10 +4649,10 @@ UsdProperty UsdStage::_FlattenProperty(const UsdProperty &srcProp,
     if ((srcProp.Is<UsdAttribute>() && !dstProp.Is<UsdAttribute>()) ||
         (srcProp.Is<UsdRelationship>() && !dstProp.Is<UsdRelationship>())) {
       TF_CODING_ERROR(
-          "Cannot flatten %s to %s because they are "
-          "different property types",
-          UsdDescribe(srcProp).c_str(),
-          UsdDescribe(dstProp).c_str());
+        "Cannot flatten %s to %s because they are "
+        "different property types",
+        UsdDescribe(srcProp).c_str(),
+        UsdDescribe(dstProp).c_str());
       return UsdProperty();
     }
 
@@ -4764,7 +4703,7 @@ UsdProperty UsdStage::_FlattenProperty(const UsdProperty &srcProp,
     // Use the edit target from the destination prim's stage, since it may
     // be different from this stage.
     const SdfLayerOffset stageToLayerOffset =
-        dstParent.GetStage()->GetEditTarget().GetMapFunction().GetTimeOffset().GetInverse();
+      dstParent.GetStage()->GetEditTarget().GetMapFunction().GetTimeOffset().GetInverse();
 
     // Copy authored property values and metadata.
     _CopyProperty(srcProp, primSpec, dstName, remapping, stageToLayerOffset);
@@ -4776,10 +4715,8 @@ UsdProperty UsdStage::_FlattenProperty(const UsdProperty &srcProp,
     dstProp = dstParent.GetProperty(dstName);
 
     // Copy fallback property values and metadata if needed.
-    _CopyFallbacks(_GetSchemaPropertySpec(srcProp),
-                   _GetSchemaPropertySpec(dstProp),
-                   dstPropSpec,
-                   dstPropStack);
+    _CopyFallbacks(
+      _GetSchemaPropertySpec(srcProp), _GetSchemaPropertySpec(dstProp), dstPropSpec, dstPropStack);
   }
 
   return dstProp;
@@ -4842,9 +4779,9 @@ namespace {
 struct LayerOffsetAccess {
  public:
   LayerOffsetAccess(const PcpNodeRef &node, const SdfLayerHandle &layer)
-      : _node(node),
-        _layer(layer),
-        _hasLayerOffset(false)
+    : _node(node),
+      _layer(layer),
+      _hasLayerOffset(false)
   {}
 
   const SdfLayerOffset &Get() const
@@ -4852,7 +4789,7 @@ struct LayerOffsetAccess {
     // Compute once and cache.
     if (!_hasLayerOffset) {
       _hasLayerOffset = true;
-      _layerOffset    = _GetLayerToStageOffset(_node, _layer);
+      _layerOffset = _GetLayerToStageOffset(_node, _layer);
     }
     return _layerOffset;
   }
@@ -4917,8 +4854,7 @@ static bool _TryResolveAssetPaths(Storage storage,
                                   bool anchorAssetPathsOnly)
 {
   return _TryResolveAssetPath<SdfAssetPath>(storage, context, layer, anchorAssetPathsOnly) ||
-         _TryResolveAssetPath<VtArray<SdfAssetPath>>(
-             storage, context, layer, anchorAssetPathsOnly);
+         _TryResolveAssetPath<VtArray<SdfAssetPath>>(storage, context, layer, anchorAssetPathsOnly);
 }
 
 template<class T, class Storage>
@@ -4967,17 +4903,16 @@ static void _ResolveValuesInDictionary(const SdfLayerRefPtr &anchor,
   // If there is no layer offset, don't bother with resolving time codes and
   // just resolve asset paths.
   if (offsetAccess) {
-    Usd_ResolveValuesInDictionary(
-        dict, [&anchor, &context, &offsetAccess, &anchorAssetPathsOnly](VtValue *value) {
-          _TryResolveAssetPaths(value, context, anchor, anchorAssetPathsOnly) ||
-              _TryResolveTimeCodes(value, *offsetAccess);
-        });
+    Usd_ResolveValuesInDictionary(dict,
+                                  [&anchor, &context, &offsetAccess, &anchorAssetPathsOnly](VtValue *value) {
+                                    _TryResolveAssetPaths(value, context, anchor, anchorAssetPathsOnly) ||
+                                      _TryResolveTimeCodes(value, *offsetAccess);
+                                  });
   }
   else {
-    Usd_ResolveValuesInDictionary(
-        dict, [&anchor, &context, &anchorAssetPathsOnly](VtValue *value) {
-          _TryResolveAssetPaths(value, context, anchor, anchorAssetPathsOnly);
-        });
+    Usd_ResolveValuesInDictionary(dict, [&anchor, &context, &anchorAssetPathsOnly](VtValue *value) {
+      _TryResolveAssetPaths(value, context, anchor, anchorAssetPathsOnly);
+    });
   }
 }
 
@@ -5026,9 +4961,9 @@ template<class Storage> struct ValueComposerBase {
  protected:
   // Protected constructor.
   explicit ValueComposerBase(Storage s, bool anchorAssetPathsOnly = false)
-      : _value(s),
-        _done(false),
-        _anchorAssetPathsOnly(anchorAssetPathsOnly)
+    : _value(s),
+      _done(false),
+      _anchorAssetPathsOnly(anchorAssetPathsOnly)
   {}
 
   // Gets the value from the layer spec.
@@ -5071,8 +5006,7 @@ template<class Storage> struct ValueComposerBase {
       LayerOffsetAccess layerOffsetAccess(node, layer);
 
       // Try resolving the values in the dictionary.
-      if (_TryResolveValuesInDictionary(
-              _value, layer, context, &layerOffsetAccess, _anchorAssetPathsOnly)) {
+      if (_TryResolveValuesInDictionary(_value, layer, context, &layerOffsetAccess, _anchorAssetPathsOnly)) {
         // Merge the resolved dictionary.
         VtDictionaryOverRecursive(&tmpDict, _UncheckedGet<VtDictionary>(_value));
         _UncheckedSwap(_value, tmpDict);
@@ -5116,7 +5050,7 @@ struct UntypedValueComposer : public ValueComposerBase<VtValue *> {
   using Base = ValueComposerBase<VtValue *>;
 
   explicit UntypedValueComposer(VtValue *s, bool anchorAssetPathsOnly = false)
-      : Base(s, anchorAssetPathsOnly)
+    : Base(s, anchorAssetPathsOnly)
   {}
 
   bool ConsumeAuthored(const PcpNodeRef &node,
@@ -5185,14 +5119,14 @@ struct UntypedValueComposer : public ValueComposerBase<VtValue *> {
     // here to the cover the case when the storage container starts as an
     // empty VtValue.
     if (_TryResolveValuesInDictionary(
-            this->_value, layer, context, &layerOffsetAccess, this->_anchorAssetPathsOnly)) {
+          this->_value, layer, context, &layerOffsetAccess, this->_anchorAssetPathsOnly)) {
     }
     else {
       // Otherwise try resolving each of the the other resolvable
       // types.
       _TryApplyLayerOffsetToValue<SdfTimeSampleMap>(this->_value, layerOffsetAccess) ||
-          _TryResolveAssetPaths(this->_value, context, layer, this->_anchorAssetPathsOnly) ||
-          _TryResolveTimeCodes(this->_value, layerOffsetAccess);
+        _TryResolveAssetPaths(this->_value, context, layer, this->_anchorAssetPathsOnly) ||
+        _TryResolveTimeCodes(this->_value, layerOffsetAccess);
     }
   }
 };
@@ -5205,8 +5139,7 @@ struct UntypedValueComposer : public ValueComposerBase<VtValue *> {
 struct StrongestValueComposer : public ValueComposerBase<SdfAbstractDataValue *> {
   using Base = ValueComposerBase<SdfAbstractDataValue *>;
 
-  explicit StrongestValueComposer(SdfAbstractDataValue *s)
-      : Base(s, /* anchorAssetPathsOnly = */ false)
+  explicit StrongestValueComposer(SdfAbstractDataValue *s) : Base(s, /* anchorAssetPathsOnly = */ false)
   {}
 
   bool ConsumeAuthored(const PcpNodeRef &node,
@@ -5238,13 +5171,12 @@ struct StrongestValueComposer : public ValueComposerBase<SdfAbstractDataValue *>
 // type specific value resolution then this is equivalent to using a
 // StrongestValueComposer. For types that have type specific value resolution,
 // this is specialized to perform the appropriate resolution.
-template<class T>
-struct TypeSpecificValueComposer : public ValueComposerBase<SdfAbstractDataValue *> {
+template<class T> struct TypeSpecificValueComposer : public ValueComposerBase<SdfAbstractDataValue *> {
   using Base = ValueComposerBase<SdfAbstractDataValue *>;
   friend Base;
 
   explicit TypeSpecificValueComposer(SdfAbstractDataTypedValue<T> *s)
-      : Base(s, /*anchorAssetPathsOnly = */ false)
+    : Base(s, /*anchorAssetPathsOnly = */ false)
   {}
 
   bool ConsumeAuthored(const PcpNodeRef &node,
@@ -5296,8 +5228,7 @@ void TypeSpecificValueComposer<SdfAssetPath>::_ResolveValue(const PcpNodeRef &no
                                                             const SdfLayerRefPtr &layer)
 {
   const ArResolverContext &context = node.GetLayerStack()->GetIdentifier().pathResolverContext;
-  _UncheckedResolveAssetPath<SdfAssetPath>(
-      _value, context, layer, /*anchorAssetPathsOnly = */ false);
+  _UncheckedResolveAssetPath<SdfAssetPath>(_value, context, layer, /*anchorAssetPathsOnly = */ false);
 }
 
 template<>
@@ -5306,7 +5237,7 @@ void TypeSpecificValueComposer<VtArray<SdfAssetPath>>::_ResolveValue(const PcpNo
 {
   const ArResolverContext &context = node.GetLayerStack()->GetIdentifier().pathResolverContext;
   _UncheckedResolveAssetPath<VtArray<SdfAssetPath>>(
-      _value, context, layer, /*anchorAssetPathsOnly = */ false);
+    _value, context, layer, /*anchorAssetPathsOnly = */ false);
 }
 
 template<>
@@ -5368,9 +5299,7 @@ struct ExistenceComposer {
 
   ExistenceComposer() : _done(false), _strongestLayer(nullptr)
   {}
-  explicit ExistenceComposer(SdfLayerRefPtr *strongestLayer)
-      : _done(false),
-        _strongestLayer(strongestLayer)
+  explicit ExistenceComposer(SdfLayerRefPtr *strongestLayer) : _done(false), _strongestLayer(strongestLayer)
   {}
 
   const std::type_info &GetHeldTypeid() const
@@ -5389,9 +5318,8 @@ struct ExistenceComposer {
                        const SdfLayerOffset & = SdfLayerOffset())
   {
     _done = keyPath.IsEmpty() ?
-                layer->HasField(specPath, fieldName, static_cast<VtValue *>(nullptr)) :
-                layer->HasFieldDictKey(
-                    specPath, fieldName, keyPath, static_cast<VtValue *>(nullptr));
+              layer->HasField(specPath, fieldName, static_cast<VtValue *>(nullptr)) :
+              layer->HasFieldDictKey(specPath, fieldName, keyPath, static_cast<VtValue *>(nullptr));
     if (_done && _strongestLayer)
       *_strongestLayer = layer;
     return _done;
@@ -5401,8 +5329,7 @@ struct ExistenceComposer {
                           const TfToken &fieldName,
                           const TfToken &keyPath)
   {
-    _done = Usd_GetFallbackValue(
-        primDef, propName, fieldName, keyPath, static_cast<VtValue *>(nullptr));
+    _done = Usd_GetFallbackValue(primDef, propName, fieldName, keyPath, static_cast<VtValue *>(nullptr));
     if (_strongestLayer)
       *_strongestLayer = TfNullPtr;
   }
@@ -5418,8 +5345,7 @@ struct ExistenceComposer {
 
 }  // namespace
 
-template<class T>
-bool UsdStage::_SetValueImpl(UsdTimeCode time, const UsdAttribute &attr, const T &newValue)
+template<class T> bool UsdStage::_SetValueImpl(UsdTimeCode time, const UsdAttribute &attr, const T &newValue)
 {
   // if we are setting a value block, we don't want type checking
   if (!Usd_ValueContainsBlock(&newValue)) {
@@ -5440,8 +5366,7 @@ bool UsdStage::_SetValueImpl(UsdTimeCode time, const UsdAttribute &attr, const T
     // Ensure this typeName is known to our schema.
     TfType valType = SdfSchema::GetInstance().FindType(typeName).GetType();
     if (valType.IsUnknown()) {
-      TF_RUNTIME_ERROR(
-          "Unknown typename for <%s>: '%s'", typeName.GetText(), attr.GetPath().GetText());
+      TF_RUNTIME_ERROR("Unknown typename for <%s>: '%s'", typeName.GetText(), attr.GetPath().GetText());
       return false;
     }
     // Check that the passed value is the expected type.
@@ -5460,11 +5385,11 @@ bool UsdStage::_SetValueImpl(UsdTimeCode time, const UsdAttribute &attr, const T
     if (TfDebug::IsEnabled(USD_VALIDATE_VARIABILITY) && time != UsdTimeCode::Default() &&
         _GetVariability(attr) == SdfVariabilityUniform) {
       TF_DEBUG(USD_VALIDATE_VARIABILITY)
-          .Msg(
-              "Warning: authoring time sample value on "
-              "uniform attribute <%s> at time %.3f\n",
-              UsdDescribe(attr).c_str(),
-              time.GetValue());
+        .Msg(
+          "Warning: authoring time sample value on "
+          "uniform attribute <%s> at time %.3f\n",
+          UsdDescribe(attr).c_str(),
+          time.GetValue());
     }
   }
 
@@ -5472,10 +5397,10 @@ bool UsdStage::_SetValueImpl(UsdTimeCode time, const UsdAttribute &attr, const T
 
   if (!attrSpec) {
     TF_RUNTIME_ERROR(
-        "Cannot set attribute value.  Failed to create "
-        "attribute spec <%s> in layer @%s@",
-        GetEditTarget().MapToSpecPath(attr.GetPath()).GetText(),
-        GetEditTarget().GetLayer()->GetIdentifier().c_str());
+      "Cannot set attribute value.  Failed to create "
+      "attribute spec <%s> in layer @%s@",
+      GetEditTarget().MapToSpecPath(attr.GetPath()).GetText(),
+      GetEditTarget().GetLayer()->GetIdentifier().c_str());
     return false;
   }
 
@@ -5490,8 +5415,7 @@ bool UsdStage::_SetValueImpl(UsdTimeCode time, const UsdAttribute &attr, const T
     // across two different reference arcs -- which may have
     // different time offsets.  perhaps we need the map function
     // to track a time offset for each path?
-    const SdfLayerOffset stageToLayerOffset =
-        GetEditTarget().GetMapFunction().GetTimeOffset().GetInverse();
+    const SdfLayerOffset stageToLayerOffset = GetEditTarget().GetMapFunction().GetTimeOffset().GetInverse();
 
     double localTime = stageToLayerOffset * time.GetValue();
 
@@ -5529,7 +5453,7 @@ static bool _ComposeGeneralMetadataImpl(Usd_PrimDataConstPtr primData,
 {
   // Main resolution loop.
   SdfPath specPath = res->GetLocalPath(propName);
-  bool gotOpinion  = false;
+  bool gotOpinion = false;
 
   for (bool isNewNode = false; res->IsValid(); isNewNode = res->NextLayer()) {
     if (isNewNode) {
@@ -5537,8 +5461,7 @@ static bool _ComposeGeneralMetadataImpl(Usd_PrimDataConstPtr primData,
     }
 
     // Consume an authored opinion here, if one exists.
-    gotOpinion |= composer->ConsumeAuthored(
-        res->GetNode(), res->GetLayer(), specPath, fieldName, keyPath);
+    gotOpinion |= composer->ConsumeAuthored(res->GetNode(), res->GetLayer(), specPath, fieldName, keyPath);
 
     if (composer->IsDone()) {
       return true;
@@ -5565,7 +5488,7 @@ static bool _ComposePseudoRootMetadataImpl(Usd_PrimDataConstPtr primData,
                                            Composer *composer)
 {
   const SdfPath &specPath = SdfPath::AbsoluteRootPath();
-  bool gotOpinion         = false;
+  bool gotOpinion = false;
 
   PcpNodeRef node = primData->GetPrimIndex().GetRootNode();
 
@@ -5592,9 +5515,7 @@ static bool _ComposePseudoRootMetadataImpl(Usd_PrimDataConstPtr primData,
 // --------------------------------------------------------------------- //
 
 template<class Composer>
-static bool _GetPrimSpecifierImpl(Usd_PrimDataConstPtr primData,
-                                  bool useFallbacks,
-                                  Composer *composer);
+static bool _GetPrimSpecifierImpl(Usd_PrimDataConstPtr primData, bool useFallbacks, Composer *composer);
 
 SdfSpecifier UsdStage::_GetSpecifier(Usd_PrimDataConstPtr primData)
 {
@@ -5610,7 +5531,7 @@ static bool _GetPrimKindImpl(Usd_PrimDataConstPtr primData, bool useFallbacks, C
 {
   Usd_Resolver resolver(&primData->GetPrimIndex());
   return _ComposeGeneralMetadataImpl(
-      primData, TfToken(), SdfFieldKeys->Kind, TfToken(), useFallbacks, &resolver, composer);
+    primData, TfToken(), SdfFieldKeys->Kind, TfToken(), useFallbacks, &resolver, composer);
 }
 
 TfToken UsdStage::_GetKind(Usd_PrimDataConstPtr primData)
@@ -5625,13 +5546,11 @@ TfToken UsdStage::_GetKind(Usd_PrimDataConstPtr primData)
 }
 
 template<class Composer>
-static bool _GetPrimActiveImpl(Usd_PrimDataConstPtr primData,
-                               bool useFallbacks,
-                               Composer *composer)
+static bool _GetPrimActiveImpl(Usd_PrimDataConstPtr primData, bool useFallbacks, Composer *composer)
 {
   Usd_Resolver resolver(&primData->GetPrimIndex());
   return _ComposeGeneralMetadataImpl(
-      primData, TfToken(), SdfFieldKeys->Active, TfToken(), useFallbacks, &resolver, composer);
+    primData, TfToken(), SdfFieldKeys->Active, TfToken(), useFallbacks, &resolver, composer);
 }
 
 bool UsdStage::_IsActive(Usd_PrimDataConstPtr primData)
@@ -5672,10 +5591,7 @@ bool UsdStage::_IsCustom(const UsdProperty &prop) const
     }
   }
 
-  return SdfSchema::GetInstance()
-      .GetFieldDefinition(SdfFieldKeys->Custom)
-      ->GetFallbackValue()
-      .Get<bool>();
+  return SdfSchema::GetInstance().GetFieldDefinition(SdfFieldKeys->Custom)->GetFallbackValue().Get<bool>();
 }
 
 SdfVariability UsdStage ::_GetVariability(const UsdProperty &prop) const
@@ -5711,9 +5627,9 @@ SdfVariability UsdStage ::_GetVariability(const UsdProperty &prop) const
 
   // Fall back to schema.
   return SdfSchema::GetInstance()
-      .GetFieldDefinition(SdfFieldKeys->Variability)
-      ->GetFallbackValue()
-      .Get<SdfVariability>();
+    .GetFieldDefinition(SdfFieldKeys->Variability)
+    ->GetFallbackValue()
+    .Get<SdfVariability>();
 }
 
 // --------------------------------------------------------------------- //
@@ -5828,8 +5744,7 @@ void UsdStage::_GetAttrTypeImpl(const UsdAttribute &attr,
                                 Composer *composer) const
 {
   TRACE_FUNCTION();
-  composer->ConsumeUsdFallback(
-      attr._Prim()->GetPrimDefinition(), attr.GetName(), fieldName, TfToken());
+  composer->ConsumeUsdFallback(attr._Prim()->GetPrimDefinition(), attr.GetName(), fieldName, TfToken());
   if (composer->IsDone()) {
     return;
   }
@@ -5839,13 +5754,11 @@ void UsdStage::_GetAttrTypeImpl(const UsdAttribute &attr,
 }
 
 template<class Composer>
-void UsdStage::_GetAttrVariabilityImpl(const UsdAttribute &attr,
-                                       bool useFallbacks,
-                                       Composer *composer) const
+void UsdStage::_GetAttrVariabilityImpl(const UsdAttribute &attr, bool useFallbacks, Composer *composer) const
 {
   TRACE_FUNCTION();
   composer->ConsumeUsdFallback(
-      attr._Prim()->GetPrimDefinition(), attr.GetName(), SdfFieldKeys->Variability, TfToken());
+    attr._Prim()->GetPrimDefinition(), attr.GetName(), SdfFieldKeys->Variability, TfToken());
   if (composer->IsDone()) {
     return;
   }
@@ -5868,16 +5781,14 @@ void UsdStage::_GetAttrVariabilityImpl(const UsdAttribute &attr,
 }
 
 template<class Composer>
-void UsdStage::_GetPropCustomImpl(const UsdProperty &prop,
-                                  bool useFallbacks,
-                                  Composer *composer) const
+void UsdStage::_GetPropCustomImpl(const UsdProperty &prop, bool useFallbacks, Composer *composer) const
 {
   TRACE_FUNCTION();
   // Custom is composed as true if there is no property definition and it is
   // true anywhere in the stack of opinions.
   if (_GetSchemaPropertySpec(prop)) {
     composer->ConsumeUsdFallback(
-        prop._Prim()->GetPrimDefinition(), prop.GetName(), SdfFieldKeys->Custom, TfToken());
+      prop._Prim()->GetPrimDefinition(), prop.GetName(), SdfFieldKeys->Custom, TfToken());
     return;
   }
 
@@ -5899,9 +5810,7 @@ void UsdStage::_GetPropCustomImpl(const UsdProperty &prop,
 }
 
 template<class Composer>
-static void _GetPrimTypeNameImpl(Usd_PrimDataConstPtr primData,
-                                 bool useFallbacks,
-                                 Composer *composer)
+static void _GetPrimTypeNameImpl(Usd_PrimDataConstPtr primData, bool useFallbacks, Composer *composer)
 {
   TRACE_FUNCTION();
   for (Usd_Resolver res(&primData->GetPrimIndex()); res.IsValid(); res.NextLayer()) {
@@ -5909,7 +5818,7 @@ static void _GetPrimTypeNameImpl(Usd_PrimDataConstPtr primData,
     if (res.GetLayer()->HasField(res.GetLocalPath(), SdfFieldKeys->TypeName, &tok)) {
       if (!tok.IsEmpty() && tok != SdfTokens->AnyTypeToken) {
         composer->ConsumeAuthored(
-            res.GetNode(), res.GetLayer(), res.GetLocalPath(), SdfFieldKeys->TypeName, TfToken());
+          res.GetNode(), res.GetLayer(), res.GetLocalPath(), SdfFieldKeys->TypeName, TfToken());
         if (composer->IsDone())
           return;
       }
@@ -5918,9 +5827,7 @@ static void _GetPrimTypeNameImpl(Usd_PrimDataConstPtr primData,
 }
 
 template<class Composer>
-static bool _GetPrimSpecifierImpl(Usd_PrimDataConstPtr primData,
-                                  bool useFallbacks,
-                                  Composer *composer)
+static bool _GetPrimSpecifierImpl(Usd_PrimDataConstPtr primData, bool useFallbacks, Composer *composer)
 {
   // The pseudo-root and instance prototype prims are always defined -- see
   // Usd_PrimData for details. Since the fallback for specifier is 'over', we
@@ -6012,7 +5919,7 @@ static bool _GetPrimSpecifierImpl(Usd_PrimDataConstPtr primData,
     // Use the specifier if it's stronger.
     if (curStrength > strength) {
       specifier = curSpecifier;
-      strength  = curStrength;
+      strength = curStrength;
 
       // We can stop as soon as we find a specifier with the strongest
       // strength.
@@ -6025,11 +5932,8 @@ static bool _GetPrimSpecifierImpl(Usd_PrimDataConstPtr primData,
   // least one PrimSpec, and 'specifier' is required, so it must be present.
   if (TF_VERIFY(specPos.GetLayer(), "No PrimSpecs for '%s'", primData->GetPath().GetText())) {
     // Let the composer see the deciding opinion.
-    composer->ConsumeAuthored(specPos.GetNode(),
-                              specPos.GetLayer(),
-                              specPos.GetLocalPath(),
-                              SdfFieldKeys->Specifier,
-                              TfToken());
+    composer->ConsumeAuthored(
+      specPos.GetNode(), specPos.GetLayer(), specPos.GetLocalPath(), SdfFieldKeys->Specifier, TfToken());
   }
   return true;
 }
@@ -6071,9 +5975,8 @@ static bool _GetListOpMetadataImpl(Usd_PrimDataConstPtr primData,
   // list op.
   if (!listOps.empty()) {
     typename ListOpType::ItemVector items;
-    std::for_each(listOps.crbegin(), listOps.crend(), [&items](const ListOpType &op) {
-      op.ApplyOperations(&items);
-    });
+    std::for_each(
+      listOps.crbegin(), listOps.crend(), [&items](const ListOpType &op) { op.ApplyOperations(&items); });
 
     ListOpType bakedListOp;
     bakedListOp.SetExplicitItems(std::move(items));
@@ -6170,16 +6073,12 @@ bool UsdStage::_GetMetadataImpl(const UsdObject &obj,
       // we don't need to check composer->IsDone(). IsDone will always
       // return false for dictionary metadata on the pseudo root since
       // we don't have fallbacks.
-      return _ComposePseudoRootMetadataImpl(get_pointer(obj._Prim()),
-                                            fieldName,
-                                            keyPath,
-                                            _rootLayer,
-                                            _sessionLayer,
-                                            composer) &&
+      return _ComposePseudoRootMetadataImpl(
+               get_pointer(obj._Prim()), fieldName, keyPath, _rootLayer, _sessionLayer, composer) &&
              m.IsClean();
     }
     else if (_GetSpecialPrimMetadataImpl(
-                 get_pointer(obj._Prim()), fieldName, keyPath, useFallbacks, composer)) {
+               get_pointer(obj._Prim()), fieldName, keyPath, useFallbacks, composer)) {
       return composer->IsDone() && m.IsClean();
     }
   }
@@ -6201,7 +6100,7 @@ bool UsdStage::_GetGeneralMetadataImpl(const UsdObject &obj,
 
   Usd_Resolver resolver(&primData->GetPrimIndex());
   if (!_ComposeGeneralMetadataImpl(
-          primData, propName, fieldName, keyPath, useFallbacks, &resolver, composer)) {
+        primData, propName, fieldName, keyPath, useFallbacks, &resolver, composer)) {
     return false;
   }
 
@@ -6214,27 +6113,27 @@ bool UsdStage::_GetGeneralMetadataImpl(const UsdObject &obj,
     const std::type_info &valueTypeId(composer->GetHeldTypeid());
     if (valueTypeId == typeid(SdfIntListOp)) {
       return _GetListOpMetadataImpl<SdfIntListOp>(
-          primData, propName, fieldName, useFallbacks, &resolver, composer);
+        primData, propName, fieldName, useFallbacks, &resolver, composer);
     }
     else if (valueTypeId == typeid(SdfInt64ListOp)) {
       return _GetListOpMetadataImpl<SdfInt64ListOp>(
-          primData, propName, fieldName, useFallbacks, &resolver, composer);
+        primData, propName, fieldName, useFallbacks, &resolver, composer);
     }
     else if (valueTypeId == typeid(SdfUIntListOp)) {
       return _GetListOpMetadataImpl<SdfUIntListOp>(
-          primData, propName, fieldName, useFallbacks, &resolver, composer);
+        primData, propName, fieldName, useFallbacks, &resolver, composer);
     }
     else if (valueTypeId == typeid(SdfUInt64ListOp)) {
       return _GetListOpMetadataImpl<SdfUInt64ListOp>(
-          primData, propName, fieldName, useFallbacks, &resolver, composer);
+        primData, propName, fieldName, useFallbacks, &resolver, composer);
     }
     else if (valueTypeId == typeid(SdfStringListOp)) {
       return _GetListOpMetadataImpl<SdfStringListOp>(
-          primData, propName, fieldName, useFallbacks, &resolver, composer);
+        primData, propName, fieldName, useFallbacks, &resolver, composer);
     }
     else if (valueTypeId == typeid(SdfTokenListOp)) {
       return _GetListOpMetadataImpl<SdfTokenListOp>(
-          primData, propName, fieldName, useFallbacks, &resolver, composer);
+        primData, propName, fieldName, useFallbacks, &resolver, composer);
     }
   }
 
@@ -6259,8 +6158,8 @@ static SdfSpecType _ListMetadataFieldsImpl(Usd_PrimDataConstPtr primData,
   TRACE_FUNCTION();
 
   Usd_Resolver res(&primData->GetPrimIndex());
-  SdfPath specPath     = res.GetLocalPath(propName);
-  PcpNodeRef lastNode  = res.GetNode();
+  SdfPath specPath = res.GetLocalPath(propName);
+  PcpNodeRef lastNode = res.GetNode();
   SdfSpecType specType = SdfSpecTypeUnknown;
 
   const UsdPrimDefinition &primDef = primData->GetPrimDefinition();
@@ -6289,9 +6188,8 @@ static SdfSpecType _ListMetadataFieldsImpl(Usd_PrimDataConstPtr primData,
   // If including fallbacks, add any defined metadata fields from the prim
   // definition for the property (or the prim if the prop name is empty).
   if (useFallbacks) {
-    const TfTokenVector fallbackFields = propName.IsEmpty() ?
-                                             primDef.ListMetadataFields() :
-                                             primDef.ListPropertyMetadataFields(propName);
+    const TfTokenVector fallbackFields = propName.IsEmpty() ? primDef.ListMetadataFields() :
+                                                              primDef.ListPropertyMetadataFields(propName);
     result->insert(result->end(), fallbackFields.begin(), fallbackFields.end());
   }
 
@@ -6306,7 +6204,7 @@ static SdfSpecType _ListPseudoRootMetadataFieldsImpl(Usd_PrimDataConstPtr primDa
   TRACE_FUNCTION();
 
   const SdfPath &specPath = SdfPath::AbsoluteRootPath();
-  PcpNodeRef node         = primData->GetPrimIndex().GetRootNode();
+  PcpNodeRef node = primData->GetPrimIndex().GetRootNode();
 
   // If we a have a session layer and it isn't muted, get its authored layer
   // metadata fields. The session layer will be the first layer in the
@@ -6336,7 +6234,7 @@ TfTokenVector UsdStage::_ListMetadataFields(const UsdObject &obj, bool useFallba
 
   TfTokenVector result;
 
-  SdfSpecType specType          = SdfSpecTypeUnknown;
+  SdfSpecType specType = SdfSpecTypeUnknown;
   Usd_PrimDataConstPtr primData = get_pointer(obj._Prim());
   if (obj.Is<UsdProperty>()) {
     // List metadata fields for property
@@ -6353,7 +6251,7 @@ TfTokenVector UsdStage::_ListMetadataFields(const UsdObject &obj, bool useFallba
 
   // Insert required fields for spec type.
   const SdfSchema::SpecDefinition *specDef = nullptr;
-  specDef                                  = SdfSchema::GetInstance().GetSpecDefinition(specType);
+  specDef = SdfSchema::GetInstance().GetSpecDefinition(specType);
   if (specDef) {
     for (const auto &fieldName : specDef->GetRequiredFields()) {
       if (!_IsPrivateFieldKey(fieldName))
@@ -6394,8 +6292,7 @@ static bool _ClipsApplyToLayerStackSite(const Usd_ClipSetRefPtr &clips,
                                         const PcpLayerStackPtr &layerStack,
                                         const SdfPath &primPathInLayerStack)
 {
-  return (layerStack == clips->sourceLayerStack &&
-          primPathInLayerStack.HasPrefix(clips->sourcePrimPath));
+  return (layerStack == clips->sourceLayerStack && primPathInLayerStack.HasPrefix(clips->sourcePrimPath));
 }
 
 static bool _ClipsApplyToNode(const Usd_ClipSetRefPtr &clips, const PcpNodeRef &node)
@@ -6404,8 +6301,7 @@ static bool _ClipsApplyToNode(const Usd_ClipSetRefPtr &clips, const PcpNodeRef &
           node.GetPath().HasPrefix(clips->sourcePrimPath));
 }
 
-static bool _ClipsContainValueForAttribute(const Usd_ClipSetRefPtr &clips,
-                                           const SdfPath &attrSpecPath)
+static bool _ClipsContainValueForAttribute(const Usd_ClipSetRefPtr &clips, const SdfPath &attrSpecPath)
 {
   // Only look for samples in clips for attributes that are
   // marked as varying in the clip manifest (if one is present).
@@ -6430,15 +6326,14 @@ static bool _ClipsContainValueForAttribute(const Usd_ClipSetRefPtr &clips,
 }
 
 static const std::vector<Usd_ClipSetRefPtr> _GetClipsThatApplyToNode(
-    const std::vector<Usd_ClipSetRefPtr> &clipsAffectingPrim,
-    const PcpNodeRef &node,
-    const SdfPath &specPath)
+  const std::vector<Usd_ClipSetRefPtr> &clipsAffectingPrim,
+  const PcpNodeRef &node,
+  const SdfPath &specPath)
 {
   std::vector<Usd_ClipSetRefPtr> relevantClips;
 
   for (const auto &localClips : clipsAffectingPrim) {
-    if (_ClipsApplyToNode(localClips, node) &&
-        _ClipsContainValueForAttribute(localClips, specPath)) {
+    if (_ClipsApplyToNode(localClips, node) && _ClipsContainValueForAttribute(localClips, specPath)) {
       relevantClips.push_back(localClips);
     }
   }
@@ -6449,8 +6344,8 @@ static const std::vector<Usd_ClipSetRefPtr> _GetClipsThatApplyToNode(
 static bool _HasTimeSamples(const SdfLayerRefPtr &source,
                             const SdfPath &specPath,
                             const double *time = nullptr,
-                            double *lower      = nullptr,
-                            double *upper      = nullptr)
+                            double *lower = nullptr,
+                            double *upper = nullptr)
 {
   if (time) {
     // If caller wants bracketing time samples as well, we can just use
@@ -6465,8 +6360,8 @@ static bool _HasTimeSamples(const SdfLayerRefPtr &source,
 static bool _HasTimeSamples(const Usd_ClipSetRefPtr &sourceClips,
                             const SdfPath &specPath,
                             const double *time = nullptr,
-                            double *lower      = nullptr,
-                            double *upper      = nullptr)
+                            double *lower = nullptr,
+                            double *upper = nullptr)
 {
   // Bail out immediately if this clip set does not contain values
   // for this attribute.
@@ -6518,10 +6413,9 @@ template<class T> struct Usd_AttrGetValueHelper {
  private:
   // Metafunction for selecting the appropriate interpolation object if the
   // given value type supports linear interpolation.
-  struct _SelectInterpolator
-      : public boost::mpl::if_c<UsdLinearInterpolationTraits<T>::isSupported,
-                                Usd_LinearInterpolator<T>,
-                                Usd_HeldInterpolator<T>> {
+  struct _SelectInterpolator : public boost::mpl::if_c<UsdLinearInterpolationTraits<T>::isSupported,
+                                                       Usd_LinearInterpolator<T>,
+                                                       Usd_HeldInterpolator<T>> {
   };
 
   // Gets the attribute value from the implementation with appropriate
@@ -6565,10 +6459,7 @@ template<class T> struct Usd_AttrGetValueHelper {
   }
 
   // Performs type specific value resolution.
-  static void _ResolveValue(const UsdStage &stage,
-                            UsdTimeCode time,
-                            const UsdAttribute &attr,
-                            T *result)
+  static void _ResolveValue(const UsdStage &stage, UsdTimeCode time, const UsdAttribute &attr, T *result)
   {
     // Do nothing for types without type specific value resolution.
     static_assert(!UsdStage::_HasTypeSpecificResolution<T>::value,
@@ -6655,15 +6546,12 @@ bool UsdStage::_GetValue(UsdTimeCode time, const UsdAttribute &attr, VtValue *re
                          UsdTimeCode time,
                          const UsdAttribute &attr,
                          Usd_InterpolatorBase *interpolator,
-                         VtValue *value) {
-    return stage._GetValueImpl(time, attr, interpolator, value);
-  };
+                         VtValue *value) { return stage._GetValueImpl(time, attr, interpolator, value); };
 
   return Usd_AttrGetUntypedValueHelper::GetValue(*this, time, attr, result, getValueImpl);
 }
 
-template<class T>
-bool UsdStage::_GetValue(UsdTimeCode time, const UsdAttribute &attr, T *result) const
+template<class T> bool UsdStage::_GetValue(UsdTimeCode time, const UsdAttribute &attr, T *result) const
 {
   auto getValueImpl = [](const UsdStage &stage,
                          UsdTimeCode time,
@@ -6687,9 +6575,9 @@ class UsdStage_ResolveInfoAccess {
                                   Usd_InterpolatorBase *interpolator,
                                   T *result)
   {
-    const SdfPath specPath      = info._primPathInLayerStack.AppendProperty(attr.GetName());
+    const SdfPath specPath = info._primPathInLayerStack.AppendProperty(attr.GetName());
     const SdfLayerHandle &layer = info._layer;
-    const double localTime      = info._layerToStageOffset.GetInverse() * time.GetValue();
+    const double localTime = info._layerToStageOffset.GetInverse() * time.GetValue();
 
     double upper = 0.0;
     double lower = 0.0;
@@ -6712,19 +6600,18 @@ class UsdStage_ResolveInfoAccess {
     }
 
     TF_DEBUG(USD_VALUE_RESOLUTION)
-        .Msg(
-            "RESOLVE: reading field %s:%s from @%s@, "
-            "with requested time = %.3f (local time = %.3f) "
-            "reading from sample %.3f \n",
-            specPath.GetText(),
-            SdfFieldKeys->TimeSamples.GetText(),
-            layer->GetIdentifier().c_str(),
-            time.GetValue(),
-            localTime,
-            lower);
+      .Msg(
+        "RESOLVE: reading field %s:%s from @%s@, "
+        "with requested time = %.3f (local time = %.3f) "
+        "reading from sample %.3f \n",
+        specPath.GetText(),
+        SdfFieldKeys->TimeSamples.GetText(),
+        layer->GetIdentifier().c_str(),
+        time.GetValue(),
+        localTime,
+        lower);
 
-    return Usd_GetOrInterpolateValue(
-        layer, specPath, localTime, lower, upper, interpolator, result);
+    return Usd_GetOrInterpolateValue(layer, specPath, localTime, lower, upper, interpolator, result);
   }
 
   template<class T>
@@ -6745,8 +6632,8 @@ class UsdStage_ResolveInfoAccess {
     // layer offsets, it is simpler to bake the effects of
     // those offsets into Usd_Clip.
     const double localTime = time.GetValue();
-    double upper           = 0.0;
-    double lower           = 0.0;
+    double upper = 0.0;
+    double lower = 0.0;
 
     if (lowerHint && upperHint) {
       lower = *lowerHint;
@@ -6757,18 +6644,17 @@ class UsdStage_ResolveInfoAccess {
     }
 
     TF_DEBUG(USD_VALUE_RESOLUTION)
-        .Msg(
-            "RESOLVE: reading field %s:%s from clip set %s, "
-            "with requested time = %.3f "
-            "reading from sample %.3f \n",
-            specPath.GetText(),
-            SdfFieldKeys->TimeSamples.GetText(),
-            clipSet->name.c_str(),
-            localTime,
-            lower);
+      .Msg(
+        "RESOLVE: reading field %s:%s from clip set %s, "
+        "with requested time = %.3f "
+        "reading from sample %.3f \n",
+        specPath.GetText(),
+        SdfFieldKeys->TimeSamples.GetText(),
+        clipSet->name.c_str(),
+        localTime,
+        lower);
 
-    return Usd_GetOrInterpolateValue(
-        clipSet, specPath, localTime, lower, upper, interpolator, result);
+    return Usd_GetOrInterpolateValue(clipSet, specPath, localTime, lower, upper, interpolator, result);
   }
 };
 
@@ -6793,14 +6679,12 @@ template<class T> struct UsdStage::_ExtraResolveInfo {
   Usd_ClipSetRefPtr clipSet;
 };
 
-SdfLayerRefPtr UsdStage::_GetLayerWithStrongestValue(UsdTimeCode time,
-                                                     const UsdAttribute &attr) const
+SdfLayerRefPtr UsdStage::_GetLayerWithStrongestValue(UsdTimeCode time, const UsdAttribute &attr) const
 {
   SdfLayerRefPtr resultLayer;
   if (time.IsDefault()) {
     ExistenceComposer getLayerComposer(&resultLayer);
-    _GetMetadataImpl(
-        attr, SdfFieldKeys->Default, TfToken(), /*useFallbacks=*/false, &getLayerComposer);
+    _GetMetadataImpl(attr, SdfFieldKeys->Default, TfToken(), /*useFallbacks=*/false, &getLayerComposer);
   }
   else {
     UsdResolveInfo resolveInfo;
@@ -6820,9 +6704,8 @@ SdfLayerRefPtr UsdStage::_GetLayerWithStrongestValue(UsdTimeCode time,
       // If the active clip has authored time samples, the value will
       // come from it (or at least be interpolated from it) so use that
       // clip's layer. Otherwise the value will come from the manifest.
-      resultLayer = activeClip->HasAuthoredTimeSamples(specPath) ?
-                        activeClip->GetLayer() :
-                        clipSet->manifestClip->GetLayer();
+      resultLayer = activeClip->HasAuthoredTimeSamples(specPath) ? activeClip->GetLayer() :
+                                                                   clipSet->manifestClip->GetLayer();
     }
   }
   return resultLayer;
@@ -6885,7 +6768,7 @@ struct UsdStage::_PropertyStackResolver {
                     const PcpNodeRef &node,
                     const double *time)
   {
-    const auto layer        = node.GetLayerStack()->GetLayers()[layerStackPosition];
+    const auto layer = node.GetLayerStack()->GetLayers()[layerStackPosition];
     const auto propertySpec = layer->GetPropertyAtPath(specPath);
     if (propertySpec) {
       propertyStack.push_back(propertySpec);
@@ -6913,8 +6796,8 @@ struct UsdStage::_PropertyStackResolver {
       // property spec from that clip. Otherwise the value will come
       // from the manifest.
       const Usd_ClipRefPtr &sourceClip = activeClip->HasAuthoredTimeSamples(specPath) ?
-                                             activeClip :
-                                             clipSet->manifestClip;
+                                           activeClip :
+                                           clipSet->manifestClip;
 
       if (!TF_VERIFY(sourceClip)) {
         return false;
@@ -6929,8 +6812,7 @@ struct UsdStage::_PropertyStackResolver {
   }
 };
 
-SdfPropertySpecHandleVector UsdStage::_GetPropertyStack(const UsdProperty &prop,
-                                                        UsdTimeCode time) const
+SdfPropertySpecHandleVector UsdStage::_GetPropertyStack(const UsdProperty &prop, UsdTimeCode time) const
 {
   _PropertyStackResolver resolver;
   _GetResolvedValueImpl(prop, &resolver, &time);
@@ -6942,15 +6824,15 @@ template<typename T> struct UsdStage::_ResolveInfoResolver {
   explicit _ResolveInfoResolver(const UsdAttribute &attr,
                                 UsdResolveInfo *resolveInfo,
                                 UsdStage::_ExtraResolveInfo<T> *extraInfo)
-      : _attr(attr),
-        _resolveInfo(resolveInfo),
-        _extraInfo(extraInfo)
+    : _attr(attr),
+      _resolveInfo(resolveInfo),
+      _extraInfo(extraInfo)
   {}
 
   bool ProcessFallback()
   {
     if (const bool hasFallback = _attr._Prim()->GetPrimDefinition().GetAttributeFallbackValue(
-            _attr.GetName(), _extraInfo->defaultOrFallbackValue)) {
+          _attr.GetName(), _extraInfo->defaultOrFallbackValue)) {
       _resolveInfo->_source = UsdResolveInfoSourceFallback;
       return true;
     }
@@ -6965,26 +6847,21 @@ template<typename T> struct UsdStage::_ResolveInfoResolver {
                     const PcpNodeRef &node,
                     const double *time)
   {
-    const PcpLayerStackRefPtr &nodeLayers   = node.GetLayerStack();
-    const SdfLayerRefPtrVector &layerStack  = nodeLayers->GetLayers();
-    const SdfLayerOffset layerToStageOffset = _GetLayerToStageOffset(
-        node, layerStack[layerStackPosition]);
+    const PcpLayerStackRefPtr &nodeLayers = node.GetLayerStack();
+    const SdfLayerRefPtrVector &layerStack = nodeLayers->GetLayers();
+    const SdfLayerOffset layerToStageOffset = _GetLayerToStageOffset(node, layerStack[layerStackPosition]);
     const SdfLayerRefPtr &layer = layerStack[layerStackPosition];
     boost::optional<double> localTime;
     if (time) {
       localTime = layerToStageOffset.GetInverse() * (*time);
     }
 
-    if (_HasTimeSamples(layer,
-                        specPath,
-                        localTime.get_ptr(),
-                        &_extraInfo->lowerSample,
-                        &_extraInfo->upperSample)) {
+    if (_HasTimeSamples(
+          layer, specPath, localTime.get_ptr(), &_extraInfo->lowerSample, &_extraInfo->upperSample)) {
       _resolveInfo->_source = UsdResolveInfoSourceTimeSamples;
     }
     else {
-      Usd_DefaultValueResult defValue = Usd_HasDefault(
-          layer, specPath, _extraInfo->defaultOrFallbackValue);
+      Usd_DefaultValueResult defValue = Usd_HasDefault(layer, specPath, _extraInfo->defaultOrFallbackValue);
       if (defValue == Usd_DefaultValueResult::Found) {
         _resolveInfo->_source = UsdResolveInfoSourceDefault;
       }
@@ -6995,11 +6872,11 @@ template<typename T> struct UsdStage::_ResolveInfoResolver {
     }
 
     if (_resolveInfo->_source != UsdResolveInfoSourceNone) {
-      _resolveInfo->_layerStack           = nodeLayers;
-      _resolveInfo->_layer                = layer;
+      _resolveInfo->_layerStack = nodeLayers;
+      _resolveInfo->_layer = layer;
       _resolveInfo->_primPathInLayerStack = node.GetPath();
-      _resolveInfo->_layerToStageOffset   = layerToStageOffset;
-      _resolveInfo->_node                 = node;
+      _resolveInfo->_layerToStageOffset = layerToStageOffset;
+      _resolveInfo->_node = node;
       return true;
     }
 
@@ -7011,17 +6888,16 @@ template<typename T> struct UsdStage::_ResolveInfoResolver {
                     const PcpNodeRef &node,
                     const double *time)
   {
-    if (!_HasTimeSamples(
-            clipSet, specPath, time, &_extraInfo->lowerSample, &_extraInfo->upperSample)) {
+    if (!_HasTimeSamples(clipSet, specPath, time, &_extraInfo->lowerSample, &_extraInfo->upperSample)) {
       return false;
     }
 
     _extraInfo->clipSet = clipSet;
 
-    _resolveInfo->_source               = UsdResolveInfoSourceValueClips;
-    _resolveInfo->_layerStack           = node.GetLayerStack();
+    _resolveInfo->_source = UsdResolveInfoSourceValueClips;
+    _resolveInfo->_layerStack = node.GetLayerStack();
     _resolveInfo->_primPathInLayerStack = node.GetPath();
-    _resolveInfo->_node                 = node;
+    _resolveInfo->_node = node;
 
     return true;
   }
@@ -7052,10 +6928,10 @@ void UsdStage::_GetResolveInfo(const UsdAttribute &attr,
       _GetVariability(attr) == SdfVariabilityUniform) {
 
     TF_DEBUG(USD_VALIDATE_VARIABILITY)
-        .Msg(
-            "Warning: detected time sample value on "
-            "uniform attribute <%s>\n",
-            UsdDescribe(attr).c_str());
+      .Msg(
+        "Warning: detected time sample value on "
+        "uniform attribute <%s>\n",
+        UsdDescribe(attr).c_str());
   }
 }
 
@@ -7092,16 +6968,15 @@ void UsdStage::_GetResolvedValueImpl(const UsdProperty &prop,
   // Usd_Resolver that we want to iterate over 'empty' nodes as well.
   const bool skipEmptyNodes = (bool)(!clipsAffectingPrim);
 
-  for (Usd_Resolver res(&primHandle->GetPrimIndex(), skipEmptyNodes); res.IsValid();
-       res.NextNode()) {
+  for (Usd_Resolver res(&primHandle->GetPrimIndex(), skipEmptyNodes); res.IsValid(); res.NextNode()) {
 
-    const PcpNodeRef &node  = res.GetNode();
+    const PcpNodeRef &node = res.GetNode();
     const bool nodeHasSpecs = node.HasSpecs();
     if (!nodeHasSpecs && !clipsAffectingPrim) {
       continue;
     }
 
-    const SdfPath specPath                 = node.GetPath().AppendProperty(prop.GetName());
+    const SdfPath specPath = node.GetPath().AppendProperty(prop.GetName());
     const SdfLayerRefPtrVector &layerStack = node.GetLayerStack()->GetLayers();
     boost::optional<std::vector<Usd_ClipSetRefPtr>> clips;
     for (size_t i = 0, e = layerStack.size(); i < e; ++i) {
@@ -7165,29 +7040,28 @@ bool UsdStage::_GetValueFromResolveInfoImpl(const UsdResolveInfo &info,
 {
   if (info._source == UsdResolveInfoSourceTimeSamples) {
     return UsdStage_ResolveInfoAccess::_GetTimeSampleValue(
-        time, attr, info, nullptr, nullptr, interpolator, result);
+      time, attr, info, nullptr, nullptr, interpolator, result);
   }
   else if (info._source == UsdResolveInfoSourceDefault) {
-    const SdfPath specPath      = info._primPathInLayerStack.AppendProperty(attr.GetName());
+    const SdfPath specPath = info._primPathInLayerStack.AppendProperty(attr.GetName());
     const SdfLayerHandle &layer = info._layer;
 
     TF_DEBUG(USD_VALUE_RESOLUTION)
-        .Msg(
-            "RESOLVE: reading field %s:%s from @%s@, with t = %.3f"
-            " as default\n",
-            specPath.GetText(),
-            SdfFieldKeys->TimeSamples.GetText(),
-            layer->GetIdentifier().c_str(),
-            time.GetValue());
+      .Msg(
+        "RESOLVE: reading field %s:%s from @%s@, with t = %.3f"
+        " as default\n",
+        specPath.GetText(),
+        SdfFieldKeys->TimeSamples.GetText(),
+        layer->GetIdentifier().c_str(),
+        time.GetValue());
 
     return TF_VERIFY(layer->HasField(specPath, SdfFieldKeys->Default, result));
   }
   else if (info._source == UsdResolveInfoSourceValueClips) {
     const SdfPath specPath = info._primPathInLayerStack.AppendProperty(attr.GetName());
 
-    const UsdPrim prim                                       = attr.GetPrim();
-    const std::vector<Usd_ClipSetRefPtr> &clipsAffectingPrim = _clipCache->GetClipsForPrim(
-        prim.GetPath());
+    const UsdPrim prim = attr.GetPrim();
+    const std::vector<Usd_ClipSetRefPtr> &clipsAffectingPrim = _clipCache->GetClipsForPrim(prim.GetPath());
 
     for (const auto &clipSet : clipsAffectingPrim) {
       if (!_ClipsApplyToLayerStackSite(clipSet, info._layerStack, info._primPathInLayerStack) ||
@@ -7196,7 +7070,7 @@ bool UsdStage::_GetValueFromResolveInfoImpl(const UsdResolveInfo &info,
       }
 
       return UsdStage_ResolveInfoAccess::_GetClipValue(
-          time, attr, info, clipSet, nullptr, nullptr, interpolator, result);
+        time, attr, info, clipSet, nullptr, nullptr, interpolator, result);
     }
   }
   else if (info._source == UsdResolveInfoSourceFallback) {
@@ -7268,28 +7142,28 @@ bool UsdStage::_GetTimeSamplesInIntervalFromResolveInfo(const UsdResolveInfo &in
   // queries clear out the return vector
   times->clear();
   const auto copySamplesInInterval =
-      [](const std::set<double> &samples, vector<double> *target, const GfInterval &interval) {
-        std::set<double>::iterator samplesBegin, samplesEnd;
+    [](const std::set<double> &samples, vector<double> *target, const GfInterval &interval) {
+      std::set<double>::iterator samplesBegin, samplesEnd;
 
-        if (interval.IsMinOpen()) {
-          samplesBegin = std::upper_bound(samples.begin(), samples.end(), interval.GetMin());
-        }
-        else {
-          samplesBegin = std::lower_bound(samples.begin(), samples.end(), interval.GetMin());
-        }
+      if (interval.IsMinOpen()) {
+        samplesBegin = std::upper_bound(samples.begin(), samples.end(), interval.GetMin());
+      }
+      else {
+        samplesBegin = std::lower_bound(samples.begin(), samples.end(), interval.GetMin());
+      }
 
-        if (interval.IsMaxOpen()) {
-          samplesEnd = std::lower_bound(samplesBegin, samples.end(), interval.GetMax());
-        }
-        else {
-          samplesEnd = std::upper_bound(samplesBegin, samples.end(), interval.GetMax());
-        }
+      if (interval.IsMaxOpen()) {
+        samplesEnd = std::lower_bound(samplesBegin, samples.end(), interval.GetMax());
+      }
+      else {
+        samplesEnd = std::upper_bound(samplesBegin, samples.end(), interval.GetMax());
+      }
 
-        target->insert(target->end(), samplesBegin, samplesEnd);
-      };
+      target->insert(target->end(), samplesBegin, samplesEnd);
+    };
 
   if (info._source == UsdResolveInfoSourceTimeSamples) {
-    const SdfPath specPath      = info._primPathInLayerStack.AppendProperty(attr.GetName());
+    const SdfPath specPath = info._primPathInLayerStack.AppendProperty(attr.GetName());
     const SdfLayerHandle &layer = info._layer;
 
     const std::set<double> samples = layer->ListTimeSamplesForPath(specPath);
@@ -7302,8 +7176,7 @@ bool UsdStage::_GetTimeSamplesInIntervalFromResolveInfo(const UsdResolveInfo &in
       else {
         // Map the interval (expressed in stage time) to layer time.
         const SdfLayerOffset stageToLayer = info._layerToStageOffset.GetInverse();
-        const GfInterval layerInterval    = interval * stageToLayer.GetScale() +
-                                         stageToLayer.GetOffset();
+        const GfInterval layerInterval = interval * stageToLayer.GetScale() + stageToLayer.GetOffset();
         copySamplesInInterval(samples, times, layerInterval);
         // Map the layer sample times to stage times.
         for (auto &time : *times) {
@@ -7318,8 +7191,7 @@ bool UsdStage::_GetTimeSamplesInIntervalFromResolveInfo(const UsdResolveInfo &in
     const UsdPrim prim = attr.GetPrim();
 
     // See comments in _GetValueImpl regarding clips.
-    const std::vector<Usd_ClipSetRefPtr> &clipsAffectingPrim = _clipCache->GetClipsForPrim(
-        prim.GetPath());
+    const std::vector<Usd_ClipSetRefPtr> &clipsAffectingPrim = _clipCache->GetClipsForPrim(prim.GetPath());
 
     const SdfPath specPath = info._primPathInLayerStack.AppendProperty(attr.GetName());
 
@@ -7354,7 +7226,7 @@ size_t UsdStage::_GetNumTimeSamplesFromResolveInfo(const UsdResolveInfo &info,
                                                    const UsdAttribute &attr) const
 {
   if (info._source == UsdResolveInfoSourceTimeSamples) {
-    const SdfPath specPath      = info._primPathInLayerStack.AppendProperty(attr.GetName());
+    const SdfPath specPath = info._primPathInLayerStack.AppendProperty(attr.GetName());
     const SdfLayerHandle &layer = info._layer;
 
     return layer->GetNumTimeSamplesForPath(specPath);
@@ -7370,8 +7242,7 @@ size_t UsdStage::_GetNumTimeSamplesFromResolveInfo(const UsdResolveInfo &info,
     // ask the question of whether there is more than one sample directly.
     //
     std::vector<double> timesFromAllClips;
-    _GetTimeSamplesInIntervalFromResolveInfo(
-        info, attr, GfInterval::GetFullInterval(), &timesFromAllClips);
+    _GetTimeSamplesInIntervalFromResolveInfo(info, attr, GfInterval::GetFullInterval(), &timesFromAllClips);
     return timesFromAllClips.size();
   }
 
@@ -7410,14 +7281,14 @@ bool UsdStage::_GetBracketingTimeSamples(const UsdAttribute &attr,
     return true;
   }
   else if (resolveInfo._source == UsdResolveInfoSourceValueClips) {
-    *lower      = extraInfo.lowerSample;
-    *upper      = extraInfo.upperSample;
+    *lower = extraInfo.lowerSample;
+    *upper = extraInfo.upperSample;
     *hasSamples = true;
     return true;
   }
 
   return _GetBracketingTimeSamplesFromResolveInfo(
-      resolveInfo, attr, desiredTime, requireAuthored, lower, upper, hasSamples);
+    resolveInfo, attr, desiredTime, requireAuthored, lower, upper, hasSamples);
 }
 
 bool UsdStage::_GetBracketingTimeSamplesFromResolveInfo(const UsdResolveInfo &info,
@@ -7429,9 +7300,9 @@ bool UsdStage::_GetBracketingTimeSamplesFromResolveInfo(const UsdResolveInfo &in
                                                         bool *hasSamples) const
 {
   if (info._source == UsdResolveInfoSourceTimeSamples) {
-    const SdfPath specPath      = info._primPathInLayerStack.AppendProperty(attr.GetName());
+    const SdfPath specPath = info._primPathInLayerStack.AppendProperty(attr.GetName());
     const SdfLayerHandle &layer = info._layer;
-    const double layerTime      = info._layerToStageOffset.GetInverse() * desiredTime;
+    const double layerTime = info._layerToStageOffset.GetInverse() * desiredTime;
 
     if (layer->GetBracketingTimeSamplesForPath(specPath, layerTime, lower, upper)) {
 
@@ -7454,8 +7325,7 @@ bool UsdStage::_GetBracketingTimeSamplesFromResolveInfo(const UsdResolveInfo &in
     const UsdPrim prim = attr.GetPrim();
 
     // See comments in _GetValueImpl regarding clips.
-    const std::vector<Usd_ClipSetRefPtr> &clipsAffectingPrim = _clipCache->GetClipsForPrim(
-        prim.GetPath());
+    const std::vector<Usd_ClipSetRefPtr> &clipsAffectingPrim = _clipCache->GetClipsForPrim(prim.GetPath());
 
     for (const auto &clipSet : clipsAffectingPrim) {
       if (!_ClipsApplyToLayerStackSite(clipSet, info._layerStack, info._primPathInLayerStack) ||
@@ -7489,15 +7359,13 @@ bool UsdStage::_GetBracketingTimeSamplesFromResolveInfo(const UsdResolveInfo &in
   return false;
 }
 
-static bool _ValueFromClipsMightBeTimeVarying(const Usd_ClipSetRefPtr &clipSet,
-                                              const SdfPath &attrSpecPath)
+static bool _ValueFromClipsMightBeTimeVarying(const Usd_ClipSetRefPtr &clipSet, const SdfPath &attrSpecPath)
 {
   // If there is only one clip active over all time and it has more than one
   // time sample for the attribute, it might be time varying. Otherwise the
   // attribute's value must be constant over all time.
   if (clipSet->valueClips.size() == 1) {
-    const size_t numTimeSamples = clipSet->valueClips.front()->GetNumTimeSamplesForPath(
-        attrSpecPath);
+    const size_t numTimeSamples = clipSet->valueClips.front()->GetNumTimeSamplesForPath(attrSpecPath);
     return numTimeSamples > 1;
   }
 
@@ -7533,7 +7401,7 @@ bool UsdStage::_ValueMightBeTimeVaryingFromResolveInfo(const UsdResolveInfo &inf
     const SdfPath specPath = info._primPathInLayerStack.AppendProperty(attr.GetName());
 
     const std::vector<Usd_ClipSetRefPtr> &clipsAffectingPrim = _clipCache->GetClipsForPrim(
-        attr.GetPrim().GetPath());
+      attr.GetPrim().GetPath());
     for (const auto &clipSet : clipsAffectingPrim) {
       if (!_ClipsApplyToLayerStackSite(clipSet, info._layerStack, info._primPathInLayerStack)) {
         continue;
@@ -7626,16 +7494,16 @@ static bool _SetStageMetadataOrDictKey(const UsdStage &stage,
                                        const TfToken &keyPath,
                                        const VtValue &val)
 {
-  SdfLayerHandle rootLayer    = stage.GetRootLayer();
+  SdfLayerHandle rootLayer = stage.GetRootLayer();
   SdfLayerHandle sessionLayer = stage.GetSessionLayer();
-  const SdfSchema &schema     = SdfSchema::GetInstance();
+  const SdfSchema &schema = SdfSchema::GetInstance();
 
   if (!schema.IsValidFieldForSpec(key, SdfSpecTypePseudoRoot)) {
     TF_CODING_ERROR(
-        "Metadata '%s' is not registered as valid Layer "
-        "metadata, and cannot be set on UsdStage %s.",
-        key.GetText(),
-        rootLayer->GetIdentifier().c_str());
+      "Metadata '%s' is not registered as valid Layer "
+      "metadata, and cannot be set on UsdStage %s.",
+      key.GetText(),
+      rootLayer->GetIdentifier().c_str());
     return false;
   }
 
@@ -7645,12 +7513,12 @@ static bool _SetStageMetadataOrDictKey(const UsdStage &stage,
   }
   else {
     TF_CODING_ERROR(
-        "Cannot set layer metadata '%s' in current edit "
-        "target \"%s\", as it is not the root layer or "
-        "session layer of stage \"%s\".",
-        key.GetText(),
-        editTargetLayer->GetIdentifier().c_str(),
-        rootLayer->GetIdentifier().c_str());
+      "Cannot set layer metadata '%s' in current edit "
+      "target \"%s\", as it is not the root layer or "
+      "session layer of stage \"%s\".",
+      key.GetText(),
+      editTargetLayer->GetIdentifier().c_str(),
+      rootLayer->GetIdentifier().c_str());
     return false;
   }
 
@@ -7662,20 +7530,18 @@ bool UsdStage::SetMetadata(const TfToken &key, const VtValue &value) const
   return _SetStageMetadataOrDictKey(*this, key, TfToken(), value);
 }
 
-static bool _ClearStageMetadataOrDictKey(const UsdStage &stage,
-                                         const TfToken &key,
-                                         const TfToken &keyPath)
+static bool _ClearStageMetadataOrDictKey(const UsdStage &stage, const TfToken &key, const TfToken &keyPath)
 {
-  SdfLayerHandle rootLayer    = stage.GetRootLayer();
+  SdfLayerHandle rootLayer = stage.GetRootLayer();
   SdfLayerHandle sessionLayer = stage.GetSessionLayer();
-  const SdfSchema &schema     = SdfSchema::GetInstance();
+  const SdfSchema &schema = SdfSchema::GetInstance();
 
   if (!schema.IsValidFieldForSpec(key, SdfSpecTypePseudoRoot)) {
     TF_CODING_ERROR(
-        "Metadata '%s' is not registered as valid Layer "
-        "metadata, and cannot be cleared on UsdStage %s.",
-        key.GetText(),
-        rootLayer->GetIdentifier().c_str());
+      "Metadata '%s' is not registered as valid Layer "
+      "metadata, and cannot be cleared on UsdStage %s.",
+      key.GetText(),
+      rootLayer->GetIdentifier().c_str());
     return false;
   }
 
@@ -7685,12 +7551,12 @@ static bool _ClearStageMetadataOrDictKey(const UsdStage &stage,
   }
   else {
     TF_CODING_ERROR(
-        "Cannot clear layer metadata '%s' in current edit "
-        "target \"%s\", as it is not the root layer or "
-        "session layer of stage \"%s\".",
-        key.GetText(),
-        editTargetLayer->GetIdentifier().c_str(),
-        rootLayer->GetIdentifier().c_str());
+      "Cannot clear layer metadata '%s' in current edit "
+      "target \"%s\", as it is not the root layer or "
+      "session layer of stage \"%s\".",
+      key.GetText(),
+      editTargetLayer->GetIdentifier().c_str(),
+      rootLayer->GetIdentifier().c_str());
     return false;
   }
 
@@ -7702,19 +7568,17 @@ bool UsdStage::ClearMetadata(const TfToken &key) const
   return _ClearStageMetadataOrDictKey(*this, key, TfToken());
 }
 
-bool UsdStage::GetMetadataByDictKey(const TfToken &key,
-                                    const TfToken &keyPath,
-                                    VtValue *value) const
+bool UsdStage::GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, VtValue *value) const
 {
   if (keyPath.IsEmpty())
     return false;
 
   if (!value) {
     TF_CODING_ERROR(
-        "Null out-param 'value' for UsdStage::GetMetadataByDictKey"
-        "(\"%s\", \"%s\")",
-        key.GetText(),
-        keyPath.GetText());
+      "Null out-param 'value' for UsdStage::GetMetadataByDictKey"
+      "(\"%s\", \"%s\")",
+      key.GetText(),
+      keyPath.GetText());
     return false;
   }
   const SdfSchema &schema = SdfSchema::GetInstance();
@@ -7735,7 +7599,7 @@ bool UsdStage::GetMetadataByDictKey(const TfToken &key,
   }
   else if (value->IsHolding<VtDictionary>()) {
     const VtDictionary &fallback = SdfSchema::GetInstance().GetFallback(key).Get<VtDictionary>();
-    const VtValue *elt           = fallback.GetValueAtPath(keyPath);
+    const VtValue *elt = fallback.GetValueAtPath(keyPath);
     if (elt && elt->IsHolding<VtDictionary>()) {
       VtDictionary dict;
       value->UncheckedSwap<VtDictionary>(dict);
@@ -7760,8 +7624,7 @@ bool UsdStage::HasMetadataDictKey(const TfToken &key, const TfToken &keyPath) co
 
   const VtValue &fallback = schema.GetFallback(key);
 
-  return ((!fallback.IsEmpty()) &&
-          (fallback.Get<VtDictionary>().GetValueAtPath(keyPath) != nullptr));
+  return ((!fallback.IsEmpty()) && (fallback.Get<VtDictionary>().GetValueAtPath(keyPath) != nullptr));
 }
 
 bool UsdStage::HasAuthoredMetadataDictKey(const TfToken &key, const TfToken &keyPath) const
@@ -7772,9 +7635,7 @@ bool UsdStage::HasAuthoredMetadataDictKey(const TfToken &key, const TfToken &key
   return GetPseudoRoot().HasAuthoredMetadataDictKey(key, keyPath);
 }
 
-bool UsdStage::SetMetadataByDictKey(const TfToken &key,
-                                    const TfToken &keyPath,
-                                    const VtValue &value) const
+bool UsdStage::SetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, const VtValue &value) const
 {
   if (keyPath.IsEmpty())
     return false;
@@ -7872,7 +7733,7 @@ void UsdStage::SetEndTimeCode(double endTime)
 
 bool UsdStage::HasAuthoredTimeCodeRange() const
 {
-  SdfLayerHandle rootLayer    = GetRootLayer();
+  SdfLayerHandle rootLayer = GetRootLayer();
   SdfLayerHandle sessionLayer = GetSessionLayer();
 
   return (sessionLayer && ((sessionLayer->HasStartTimeCode() && sessionLayer->HasEndTimeCode()) ||
@@ -7936,8 +7797,7 @@ TfToken UsdStage::GetColorManagementSystem() const
 }
 
 /* static */
-void UsdStage::GetColorConfigFallbacks(SdfAssetPath *colorConfiguration,
-                                       TfToken *colorManagementSystem)
+void UsdStage::GetColorConfigFallbacks(SdfAssetPath *colorConfiguration, TfToken *colorManagementSystem)
 {
   if (colorConfiguration) {
     *colorConfiguration = _colorConfigurationFallbacks->first;
@@ -7965,20 +7825,20 @@ std::string UsdStage::ResolveIdentifierToEditTarget(std::string const &identifie
   if (SdfLayerHandle lyr = SdfLayer::Find(identifier)) {
     if (lyr->IsAnonymous()) {
       TF_DEBUG(USD_PATH_RESOLUTION)
-          .Msg(
-              "Resolved identifier %s because "
-              "it was anonymous\n",
-              identifier.c_str());
+        .Msg(
+          "Resolved identifier %s because "
+          "it was anonymous\n",
+          identifier.c_str());
       return identifier;
     }
     else if (anchor->IsAnonymous() && ArGetResolver().IsRelativePath(identifier)) {
       TF_DEBUG(USD_PATH_RESOLUTION)
-          .Msg(
-              "Cannot resolve identifier %s "
-              "because anchoring layer %s is"
-              "anonymous\n",
-              identifier.c_str(),
-              anchor->GetIdentifier().c_str());
+        .Msg(
+          "Cannot resolve identifier %s "
+          "because anchoring layer %s is"
+          "anonymous\n",
+          identifier.c_str(),
+          anchor->GetIdentifier().c_str());
       return std::string();
     }
   }
@@ -7988,12 +7848,12 @@ std::string UsdStage::ResolveIdentifierToEditTarget(std::string const &identifie
   // Handles non-relative paths also
   const std::string resolved = _ResolveAssetPathRelativeToLayer(anchor, identifier);
   TF_DEBUG(USD_PATH_RESOLUTION)
-      .Msg(
-          "Resolved identifier \"%s\" against layer "
-          "@%s@ to: \"%s\"\n",
-          identifier.c_str(),
-          anchor->GetIdentifier().c_str(),
-          resolved.c_str());
+    .Msg(
+      "Resolved identifier \"%s\" against layer "
+      "@%s@ to: \"%s\"\n",
+      identifier.c_str(),
+      anchor->GetIdentifier().c_str(),
+      resolved.c_str());
   return resolved;
 }
 
@@ -8022,13 +7882,12 @@ std::string UsdDescribe(const UsdStage *stage)
     return "null stage";
   }
   else {
-    return TfStringPrintf("stage with rootLayer @%s@%s",
-                          stage->GetRootLayer()->GetIdentifier().c_str(),
-                          (stage->GetSessionLayer() ?
-                               TfStringPrintf(", sessionLayer @%s@",
-                                              stage->GetSessionLayer()->GetIdentifier().c_str())
-                                   .c_str() :
-                               ""));
+    return TfStringPrintf(
+      "stage with rootLayer @%s@%s",
+      stage->GetRootLayer()->GetIdentifier().c_str(),
+      (stage->GetSessionLayer() ?
+         TfStringPrintf(", sessionLayer @%s@", stage->GetSessionLayer()->GetIdentifier().c_str()).c_str() :
+         ""));
   }
 }
 
@@ -8050,23 +7909,18 @@ std::string UsdDescribe(const UsdStageRefPtr &stage)
 // Explicitly instantiate templated getters and setters for all Sdf value
 // types.
 #define _INSTANTIATE_GET(r, unused, elem) \
-  template bool UsdStage::_GetValue( \
-      UsdTimeCode, const UsdAttribute &, SDF_VALUE_CPP_TYPE(elem) *) const; \
-  template bool UsdStage::_GetValue( \
-      UsdTimeCode, const UsdAttribute &, SDF_VALUE_CPP_ARRAY_TYPE(elem) *) const; \
+  template bool UsdStage::_GetValue(UsdTimeCode, const UsdAttribute &, SDF_VALUE_CPP_TYPE(elem) *) const; \
+  template bool UsdStage::_GetValue(UsdTimeCode, const UsdAttribute &, SDF_VALUE_CPP_ARRAY_TYPE(elem) *) \
+    const; \
 \
   template bool UsdStage::_GetValueFromResolveInfo( \
-      const UsdResolveInfo &, UsdTimeCode, const UsdAttribute &, SDF_VALUE_CPP_TYPE(elem) *) \
-      const; \
-  template bool UsdStage::_GetValueFromResolveInfo(const UsdResolveInfo &, \
-                                                   UsdTimeCode, \
-                                                   const UsdAttribute &, \
-                                                   SDF_VALUE_CPP_ARRAY_TYPE(elem) *) const; \
+    const UsdResolveInfo &, UsdTimeCode, const UsdAttribute &, SDF_VALUE_CPP_TYPE(elem) *) const; \
+  template bool UsdStage::_GetValueFromResolveInfo( \
+    const UsdResolveInfo &, UsdTimeCode, const UsdAttribute &, SDF_VALUE_CPP_ARRAY_TYPE(elem) *) const; \
 \
+  template bool UsdStage::_SetValue(UsdTimeCode, const UsdAttribute &, const SDF_VALUE_CPP_TYPE(elem) &); \
   template bool UsdStage::_SetValue( \
-      UsdTimeCode, const UsdAttribute &, const SDF_VALUE_CPP_TYPE(elem) &); \
-  template bool UsdStage::_SetValue( \
-      UsdTimeCode, const UsdAttribute &, const SDF_VALUE_CPP_ARRAY_TYPE(elem) &);
+    UsdTimeCode, const UsdAttribute &, const SDF_VALUE_CPP_ARRAY_TYPE(elem) &);
 
 BOOST_PP_SEQ_FOR_EACH(_INSTANTIATE_GET, ~, SDF_VALUE_TYPES)
 #undef _INSTANTIATE_GET
@@ -8081,11 +7935,11 @@ template bool UsdStage::_SetValue(UsdTimeCode, const UsdAttribute &, const SdfVa
 // _HasTypeSpecificResolution<T> and _IsEditTargetMappable<T>.
 #define INSTANTIATE_SET_MAPPED_METADATA(elem) \
   template USD_API bool UsdStage::_SetEditTargetMappedMetadata( \
-      const UsdObject &, const TfToken &, const TfToken &, const elem &);
+    const UsdObject &, const TfToken &, const TfToken &, const elem &);
 
 #define INSTANTIATE_GET_TYPE_RESOLVED_METADATA(elem) \
   template USD_API bool UsdStage::_GetTypeSpecificResolvedMetadata( \
-      const UsdObject &, const TfToken &, const TfToken &, bool, elem *) const;
+    const UsdObject &, const TfToken &, const TfToken &, bool, elem *) const;
 
 #define INSTANTIATE_GET_TYPE_RESOLVED_AND_SET_MAPPED_METADATA(elem) \
   INSTANTIATE_GET_TYPE_RESOLVED_METADATA(elem); \

@@ -115,8 +115,7 @@ std::string GetDefaultCacheDir(const char *cacheType)
   return cacheDir;
 }
 
-template<typename T>
-bool InitJsonProperty(const char *propertyName, T const &defaultValue, json *json)
+template<typename T> bool InitJsonProperty(const char *propertyName, T const &defaultValue, json *json)
 {
   bool setDefaultValue = false;
 
@@ -157,8 +156,8 @@ template<typename T> bool GetJsonProperty(const char *propertyName, json const &
 }
 
 const char *kShowRestartRequiredMessage = "ShowRestartRequiredMessage";
-const char *kTextureCacheDir            = "TextureCacheDir";
-const char *kKernelCacheDir             = "KernelCacheDir";
+const char *kTextureCacheDir = "TextureCacheDir";
+const char *kKernelCacheDir = "KernelCacheDir";
 
 }  // namespace
 

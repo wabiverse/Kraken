@@ -47,9 +47,7 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateVelocityScaleAttr(UsdGeomMotionAPI &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
+static UsdAttribute _CreateVelocityScaleAttr(UsdGeomMotionAPI &self, object defaultVal, bool writeSparsely)
 {
   return self.CreateVelocityScaleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                       writeSparsely);
@@ -70,34 +68,32 @@ void wrapUsdGeomMotionAPI()
   class_<This, bases<UsdAPISchemaBase>> cls("MotionAPI");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Apply", &This::Apply, (arg("prim")))
-      .staticmethod("Apply")
+    .def("Apply", &This::Apply, (arg("prim")))
+    .staticmethod("Apply")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetVelocityScaleAttr", &This::GetVelocityScaleAttr)
-      .def("CreateVelocityScaleAttr",
-           &_CreateVelocityScaleAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetVelocityScaleAttr", &This::GetVelocityScaleAttr)
+    .def("CreateVelocityScaleAttr",
+         &_CreateVelocityScaleAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -125,9 +121,8 @@ namespace {
 
 WRAP_CUSTOM
 {
-  _class.def("ComputeVelocityScale",
-             &UsdGeomMotionAPI::ComputeVelocityScale,
-             (arg("time") = UsdTimeCode::Default()));
+  _class.def(
+    "ComputeVelocityScale", &UsdGeomMotionAPI::ComputeVelocityScale, (arg("time") = UsdTimeCode::Default()));
 }
 
 }  // anonymous namespace

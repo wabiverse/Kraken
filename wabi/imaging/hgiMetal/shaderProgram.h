@@ -92,9 +92,9 @@ class HgiMetalShaderProgram final : public HgiShaderProgram {
   HgiMetalShaderProgram(HgiShaderProgramDesc const &desc);
 
  private:
-  HgiMetalShaderProgram()        = delete;
+  HgiMetalShaderProgram() = delete;
   HgiMetalShaderProgram &operator=(const HgiMetalShaderProgram &) = delete;
-  HgiMetalShaderProgram(const HgiMetalShaderProgram &)            = delete;
+  HgiMetalShaderProgram(const HgiMetalShaderProgram &) = delete;
 
  private:
   std::string _errors;

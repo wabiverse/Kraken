@@ -85,7 +85,7 @@ class ZepFont_Qt : public ZepFont {
 
  private:
   float m_fontScale = 1.0f;
-  float m_descent   = 0.0f;
+  float m_descent = 0.0f;
   QFont m_font;
 };
 
@@ -131,10 +131,7 @@ class ZepDisplay_Qt : public ZepDisplay {
                          QString::fromUtf8((char *)text_begin, text_end - text_begin));
   }
 
-  void DrawLine(const NVec2f &start,
-                const NVec2f &end,
-                const NVec4f &color,
-                float width) const override
+  void DrawLine(const NVec2f &start, const NVec2f &end, const NVec4f &color, float width) const override
   {
     QPoint p0 = toQPoint(start);
     QPoint p1 = toQPoint(end);
@@ -145,7 +142,7 @@ class ZepDisplay_Qt : public ZepDisplay {
   void DrawRectFilled(const NRectf &a, const NVec4f &color) const override
   {
     QPoint start = toQPoint(a.topLeftPx);
-    QPoint end   = toQPoint(a.bottomRightPx);
+    QPoint end = toQPoint(a.bottomRightPx);
     m_pPainter->fillRect(QRect(start, end), QColor::fromRgbF(color.x, color.y, color.z, color.w));
   }
 
@@ -154,7 +151,7 @@ class ZepDisplay_Qt : public ZepDisplay {
     m_clipRect = rc;
     if (m_clipRect.Width() > 0) {
       auto clip = QRect(
-          m_clipRect.topLeftPx.x, m_clipRect.topLeftPx.y, m_clipRect.Width(), m_clipRect.Height());
+        m_clipRect.topLeftPx.x, m_clipRect.topLeftPx.y, m_clipRect.Width(), m_clipRect.Height());
       m_pPainter->setClipRect(clip);
     }
     else {

@@ -57,15 +57,13 @@ SdfPath UsdImagingBasisCurvesAdapter::Populate(UsdPrim const &prim,
                                                UsdImagingIndexProxy *index,
                                                UsdImagingInstancerContext const *instancerContext)
 {
-  return _AddRprim(
-      HdPrimTypeTokens->basisCurves, prim, index, GetMaterialUsdPath(prim), instancerContext);
+  return _AddRprim(HdPrimTypeTokens->basisCurves, prim, index, GetMaterialUsdPath(prim), instancerContext);
 }
 
-void UsdImagingBasisCurvesAdapter::TrackVariability(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    HdDirtyBits *timeVaryingBits,
-    UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingBasisCurvesAdapter::TrackVariability(UsdPrim const &prim,
+                                                    SdfPath const &cachePath,
+                                                    HdDirtyBits *timeVaryingBits,
+                                                    UsdImagingInstancerContext const *instancerContext) const
 {
   BaseAdapter::TrackVariability(prim, cachePath, timeVaryingBits, instancerContext);
 
@@ -149,17 +147,16 @@ bool UsdImagingBasisCurvesAdapter::_IsBuiltinPrimvar(TfToken const &primvarName)
          UsdImagingGprimAdapter::_IsBuiltinPrimvar(primvarName);
 }
 
-void UsdImagingBasisCurvesAdapter::UpdateForTime(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    UsdTimeCode time,
-    HdDirtyBits requestedBits,
-    UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingBasisCurvesAdapter::UpdateForTime(UsdPrim const &prim,
+                                                 SdfPath const &cachePath,
+                                                 UsdTimeCode time,
+                                                 HdDirtyBits requestedBits,
+                                                 UsdImagingInstancerContext const *instancerContext) const
 {
   BaseAdapter::UpdateForTime(prim, cachePath, time, requestedBits, instancerContext);
 
   UsdImagingPrimvarDescCache *primvarDescCache = _GetPrimvarDescCache();
-  HdPrimvarDescriptorVector &primvars          = primvarDescCache->GetPrimvars(cachePath);
+  HdPrimvarDescriptorVector &primvars = primvarDescCache->GetPrimvars(cachePath);
 
   if (requestedBits & HdChangeTracker::DirtyWidths) {
     // First check for "primvars:widths"
@@ -224,9 +221,8 @@ HdDirtyBits UsdImagingBasisCurvesAdapter::ProcessPropertyChange(UsdPrim const &p
   if (propertyName == UsdGeomTokens->points) {
     return HdChangeTracker::DirtyPoints;
   }
-  else if (propertyName == UsdGeomTokens->curveVertexCounts ||
-           propertyName == UsdGeomTokens->basis || propertyName == UsdGeomTokens->type ||
-           propertyName == UsdGeomTokens->wrap) {
+  else if (propertyName == UsdGeomTokens->curveVertexCounts || propertyName == UsdGeomTokens->basis ||
+           propertyName == UsdGeomTokens->type || propertyName == UsdGeomTokens->wrap) {
     return HdChangeTracker::DirtyTopology;
 
     // Handle attributes that are treated as "built-in" primvars.
@@ -234,31 +230,31 @@ HdDirtyBits UsdImagingBasisCurvesAdapter::ProcessPropertyChange(UsdPrim const &p
   else if (propertyName == UsdGeomTokens->widths) {
     UsdGeomCurves curves(prim);
     return UsdImagingPrimAdapter::_ProcessNonPrefixedPrimvarPropertyChange(
-        prim,
-        cachePath,
-        propertyName,
-        HdTokens->widths,
-        _UsdToHdInterpolation(curves.GetWidthsInterpolation()),
-        HdChangeTracker::DirtyWidths);
+      prim,
+      cachePath,
+      propertyName,
+      HdTokens->widths,
+      _UsdToHdInterpolation(curves.GetWidthsInterpolation()),
+      HdChangeTracker::DirtyWidths);
   }
   else if (propertyName == UsdGeomTokens->normals) {
     UsdGeomPointBased pb(prim);
     return UsdImagingPrimAdapter::_ProcessNonPrefixedPrimvarPropertyChange(
-        prim,
-        cachePath,
-        propertyName,
-        HdTokens->normals,
-        _UsdToHdInterpolation(pb.GetNormalsInterpolation()),
-        HdChangeTracker::DirtyNormals);
+      prim,
+      cachePath,
+      propertyName,
+      HdTokens->normals,
+      _UsdToHdInterpolation(pb.GetNormalsInterpolation()),
+      HdChangeTracker::DirtyNormals);
   }
   // Handle prefixed primvars that use special dirty bits.
   else if (propertyName == UsdImagingTokens->primvarsWidths) {
     return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(
-        prim, cachePath, propertyName, HdChangeTracker::DirtyWidths);
+      prim, cachePath, propertyName, HdChangeTracker::DirtyWidths);
   }
   else if (propertyName == UsdImagingTokens->primvarsNormals) {
     return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(
-        prim, cachePath, propertyName, HdChangeTracker::DirtyNormals);
+      prim, cachePath, propertyName, HdChangeTracker::DirtyNormals);
   }
 
   // Allow base class to handle change processing.
@@ -277,8 +273,8 @@ VtValue UsdImagingBasisCurvesAdapter::GetTopology(UsdPrim const &prim,
   UsdTimeCode unvarying = UsdTimeCode::Default();
   TfToken topoCurveBasis, topoCurveType, topoCurveWrap;
   TfToken curveBasis = _Get<TfToken>(prim, UsdGeomTokens->basis, unvarying);
-  TfToken curveType  = _Get<TfToken>(prim, UsdGeomTokens->type, unvarying);
-  TfToken curveWrap  = _Get<TfToken>(prim, UsdGeomTokens->wrap, unvarying);
+  TfToken curveType = _Get<TfToken>(prim, UsdGeomTokens->type, unvarying);
+  TfToken curveWrap = _Get<TfToken>(prim, UsdGeomTokens->wrap, unvarying);
 
   if (curveBasis == UsdGeomTokens->bezier) {
     topoCurveBasis = HdTokens->bezier;
@@ -292,8 +288,7 @@ VtValue UsdImagingBasisCurvesAdapter::GetTopology(UsdPrim const &prim,
   else {
     topoCurveBasis = HdTokens->bezier;
     if (!curveBasis.IsEmpty()) {
-      TF_WARN(
-          "Unknown curve basis '%s', using '%s'", curveBasis.GetText(), topoCurveBasis.GetText());
+      TF_WARN("Unknown curve basis '%s', using '%s'", curveBasis.GetText(), topoCurveBasis.GetText());
     }
   }
 

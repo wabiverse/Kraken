@@ -211,7 +211,7 @@ class TfDiagnosticBase {
   std::string _codeString;
   TfDiagnosticInfo _info;
   size_t _serial = 0;
-  bool _quiet    = false;
+  bool _quiet = false;
 
   friend class TfDiagnosticMgr;
   friend class TfErrorTransport;

@@ -39,14 +39,14 @@ WABI_NAMESPACE_BEGIN
 ///
 struct HdxColorizeSelectionTaskParams {
   HdxColorizeSelectionTaskParams()
-      : enableSelection(false),
-        selectionColor(0),
-        locateColor(0),
-        enableOutline(false),
-        outlineRadius(5),
-        primIdBufferPath(),
-        instanceIdBufferPath(),
-        elementIdBufferPath()
+    : enableSelection(false),
+      selectionColor(0),
+      locateColor(0),
+      enableOutline(false),
+      outlineRadius(5),
+      primIdBufferPath(),
+      instanceIdBufferPath(),
+      elementIdBufferPath()
   {}
 
   bool enableSelection;
@@ -119,8 +119,7 @@ class HdxColorizeSelectionTask : public HdxTask {
 
     bool operator==(const _ParameterBuffer &other) const
     {
-      return texelSize == other.texelSize && enableOutline == other.enableOutline &&
-             radius == other.radius;
+      return texelSize == other.texelSize && enableOutline == other.enableOutline && radius == other.radius;
     }
   };
 
@@ -150,11 +149,9 @@ class HdxColorizeSelectionTask : public HdxTask {
 HDX_API
 std::ostream &operator<<(std::ostream &out, const HdxColorizeSelectionTaskParams &pv);
 HDX_API
-bool operator==(const HdxColorizeSelectionTaskParams &lhs,
-                const HdxColorizeSelectionTaskParams &rhs);
+bool operator==(const HdxColorizeSelectionTaskParams &lhs, const HdxColorizeSelectionTaskParams &rhs);
 HDX_API
-bool operator!=(const HdxColorizeSelectionTaskParams &lhs,
-                const HdxColorizeSelectionTaskParams &rhs);
+bool operator!=(const HdxColorizeSelectionTaskParams &lhs, const HdxColorizeSelectionTaskParams &rhs);
 
 WABI_NAMESPACE_END
 

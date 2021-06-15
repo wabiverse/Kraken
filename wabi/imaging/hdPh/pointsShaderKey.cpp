@@ -28,25 +28,23 @@
 WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(
-    _tokens,
-    ((baseGLSLFX, "points.glslfx"))
+  _tokens,
+  ((baseGLSLFX, "points.glslfx"))
 
-    // point id mixins (for point picking & selection)
-    ((pointIdVS, "PointId.Vertex.PointParam"))((pointIdSelDecodeUtilsVS,
-                                                "Selection.DecodeUtils"))((
-        pointIdSelPointSelVS,
-        "Selection.Vertex.PointSel"))((pointIdFS, "PointId.Fragment.PointParam"))
+  // point id mixins (for point picking & selection)
+  ((pointIdVS, "PointId.Vertex.PointParam"))((pointIdSelDecodeUtilsVS, "Selection.DecodeUtils"))((
+    pointIdSelPointSelVS,
+    "Selection.Vertex.PointSel"))((pointIdFS, "PointId.Fragment.PointParam"))
 
-    // main for all the shader stages
-    ((mainVS, "Point.Vertex"))((mainFS, "Point.Fragment"))
+  // main for all the shader stages
+  ((mainVS, "Point.Vertex"))((mainFS, "Point.Fragment"))
 
-    // terminals
-    ((commonFS, "Fragment.CommonTerminals"))((surfaceFS,
-                                              "Fragment.Surface"))((noScalarOverrideFS,
-                                                                    "Fragment.NoScalarOverride"))
+  // terminals
+  ((commonFS, "Fragment.CommonTerminals"))((surfaceFS, "Fragment.Surface"))((noScalarOverrideFS,
+                                                                             "Fragment.NoScalarOverride"))
 
-    // instancing
-    ((instancing, "Instancing.Transform")));
+  // instancing
+  ((instancing, "Instancing.Transform")));
 
 HdPh_PointsShaderKey::HdPh_PointsShaderKey() : glslfx(_tokens->baseGLSLFX)
 {

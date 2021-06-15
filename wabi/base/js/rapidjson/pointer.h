@@ -26,7 +26,7 @@ RAPIDJSON_DIAG_OFF(switch - enum)
 RAPIDJSON_NAMESPACE_BEGIN
 
 static const SizeType kPointerInvalidIndex = ~SizeType(
-    0);  //!< Represents an invalid index in GenericPointer::Token
+  0);  //!< Represents an invalid index in GenericPointer::Token
 
 //! Error code of parsing.
 /*! \ingroup RAPIDJSON_ERRORS
@@ -104,13 +104,13 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
 
   //! Default constructor.
   GenericPointer(Allocator *allocator = 0)
-      : allocator_(allocator),
-        ownAllocator_(),
-        nameBuffer_(),
-        tokens_(),
-        tokenCount_(),
-        parseErrorOffset_(),
-        parseErrorCode_(kPointerParseErrorNone)
+    : allocator_(allocator),
+      ownAllocator_(),
+      nameBuffer_(),
+      tokens_(),
+      tokenCount_(),
+      parseErrorOffset_(),
+      parseErrorCode_(kPointerParseErrorNone)
   {}
 
   //! Constructor that parses a string or URI fragment representation.
@@ -120,13 +120,13 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
      creates a self-owned one.
   */
   explicit GenericPointer(const Ch *source, Allocator *allocator = 0)
-      : allocator_(allocator),
-        ownAllocator_(),
-        nameBuffer_(),
-        tokens_(),
-        tokenCount_(),
-        parseErrorOffset_(),
-        parseErrorCode_(kPointerParseErrorNone)
+    : allocator_(allocator),
+      ownAllocator_(),
+      nameBuffer_(),
+      tokens_(),
+      tokenCount_(),
+      parseErrorOffset_(),
+      parseErrorCode_(kPointerParseErrorNone)
   {
     Parse(source, internal::StrLen(source));
   }
@@ -140,13 +140,13 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
      RAPIDJSON_HAS_STDSTRING.
   */
   explicit GenericPointer(const std::basic_string<Ch> &source, Allocator *allocator = 0)
-      : allocator_(allocator),
-        ownAllocator_(),
-        nameBuffer_(),
-        tokens_(),
-        tokenCount_(),
-        parseErrorOffset_(),
-        parseErrorCode_(kPointerParseErrorNone)
+    : allocator_(allocator),
+      ownAllocator_(),
+      nameBuffer_(),
+      tokens_(),
+      tokenCount_(),
+      parseErrorOffset_(),
+      parseErrorCode_(kPointerParseErrorNone)
   {
     Parse(source.c_str(), source.size());
   }
@@ -161,13 +161,13 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
      creates a self-owned one. \note Slightly faster than the overload without length.
   */
   GenericPointer(const Ch *source, size_t length, Allocator *allocator = 0)
-      : allocator_(allocator),
-        ownAllocator_(),
-        nameBuffer_(),
-        tokens_(),
-        tokenCount_(),
-        parseErrorOffset_(),
-        parseErrorCode_(kPointerParseErrorNone)
+    : allocator_(allocator),
+      ownAllocator_(),
+      nameBuffer_(),
+      tokens_(),
+      tokenCount_(),
+      parseErrorOffset_(),
+      parseErrorCode_(kPointerParseErrorNone)
   {
     Parse(source, length);
   }
@@ -195,24 +195,24 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
       \endcode
   */
   GenericPointer(const Token *tokens, size_t tokenCount)
-      : allocator_(),
-        ownAllocator_(),
-        nameBuffer_(),
-        tokens_(const_cast<Token *>(tokens)),
-        tokenCount_(tokenCount),
-        parseErrorOffset_(),
-        parseErrorCode_(kPointerParseErrorNone)
+    : allocator_(),
+      ownAllocator_(),
+      nameBuffer_(),
+      tokens_(const_cast<Token *>(tokens)),
+      tokenCount_(tokenCount),
+      parseErrorOffset_(),
+      parseErrorCode_(kPointerParseErrorNone)
   {}
 
   //! Copy constructor.
   GenericPointer(const GenericPointer &rhs, Allocator *allocator = 0)
-      : allocator_(allocator),
-        ownAllocator_(),
-        nameBuffer_(),
-        tokens_(),
-        tokenCount_(),
-        parseErrorOffset_(),
-        parseErrorCode_(kPointerParseErrorNone)
+    : allocator_(allocator),
+      ownAllocator_(),
+      nameBuffer_(),
+      tokens_(),
+      tokenCount_(),
+      parseErrorOffset_(),
+      parseErrorCode_(kPointerParseErrorNone)
   {
     *this = rhs;
   }
@@ -234,14 +234,14 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
       if (nameBuffer_)
         Allocator::Free(tokens_);
 
-      tokenCount_       = rhs.tokenCount_;
+      tokenCount_ = rhs.tokenCount_;
       parseErrorOffset_ = rhs.parseErrorOffset_;
-      parseErrorCode_   = rhs.parseErrorCode_;
+      parseErrorCode_ = rhs.parseErrorCode_;
 
       if (rhs.nameBuffer_)
         CopyFromRaw(rhs);  // Normally parsed tokens.
       else {
-        tokens_     = rhs.tokens_;  // User supplied const tokens.
+        tokens_ = rhs.tokens_;  // User supplied const tokens.
         nameBuffer_ = 0;
       }
     }
@@ -263,11 +263,11 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
   {
     GenericPointer r;
     r.allocator_ = allocator;
-    Ch *p        = r.CopyFromRaw(*this, 1, token.length + 1);
+    Ch *p = r.CopyFromRaw(*this, 1, token.length + 1);
     std::memcpy(p, token.name, (token.length + 1) * sizeof(Ch));
-    r.tokens_[tokenCount_].name   = p;
+    r.tokens_[tokenCount_].name = p;
     r.tokens_[tokenCount_].length = token.length;
-    r.tokens_[tokenCount_].index  = token.index;
+    r.tokens_[tokenCount_].index = token.index;
     return r;
   }
 
@@ -292,8 +292,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
   */
   template<typename T>
   RAPIDJSON_DISABLEIF_RETURN(
-      (internal::NotExpr<internal::IsSame<typename internal::RemoveConst<T>::Type, Ch>>),
-      (GenericPointer))
+    (internal::NotExpr<internal::IsSame<typename internal::RemoveConst<T>::Type, Ch>>),
+    (GenericPointer))
   Append(T *name, Allocator *allocator = 0) const
   {
     return Append(name, StrLen(name), allocator);
@@ -321,10 +321,9 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
   GenericPointer Append(SizeType index, Allocator *allocator = 0) const
   {
     char buffer[21];
-    char *end       = sizeof(SizeType) == 4 ? internal::u32toa(index, buffer) :
-                                              internal::u64toa(index, buffer);
+    char *end = sizeof(SizeType) == 4 ? internal::u32toa(index, buffer) : internal::u64toa(index, buffer);
     SizeType length = static_cast<SizeType>(end - buffer);
-    buffer[length]  = '\0';
+    buffer[length] = '\0';
 
     if (sizeof(Ch) == 1) {
       Token token = {reinterpret_cast<Ch *>(buffer), length, index};
@@ -417,8 +416,7 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
     for (size_t i = 0; i < tokenCount_; i++) {
       if (tokens_[i].index != rhs.tokens_[i].index || tokens_[i].length != rhs.tokens_[i].length ||
           (tokens_[i].length != 0 &&
-           std::memcmp(tokens_[i].name, rhs.tokens_[i].name, sizeof(Ch) * tokens_[i].length) !=
-               0)) {
+           std::memcmp(tokens_[i].name, rhs.tokens_[i].name, sizeof(Ch) * tokens_[i].length) != 0)) {
         return false;
       }
     }
@@ -487,11 +485,11 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
   {
     RAPIDJSON_ASSERT(IsValid());
     ValueType *v = &root;
-    bool exist   = true;
+    bool exist = true;
     for (const Token *t = tokens_; t != tokens_ + tokenCount_; ++t) {
       if (v->IsArray() && t->name[0] == '-' && t->length == 1) {
         v->PushBack(ValueType().Move(), allocator);
-        v     = &((*v)[v->Size() - 1]);
+        v = &((*v)[v->Size() - 1]);
         exist = false;
       }
       else {
@@ -514,12 +512,10 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
           v = &((*v)[t->index]);
         }
         else {
-          typename ValueType::MemberIterator m = v->FindMember(
-              GenericStringRef<Ch>(t->name, t->length));
+          typename ValueType::MemberIterator m = v->FindMember(GenericStringRef<Ch>(t->name, t->length));
           if (m == v->MemberEnd()) {
-            v->AddMember(
-                ValueType(t->name, t->length, allocator).Move(), ValueType().Move(), allocator);
-            v     = &(--v->MemberEnd())->value;  // Assumes AddMember() appends at the end
+            v->AddMember(ValueType(t->name, t->length, allocator).Move(), ValueType().Move(), allocator);
+            v = &(--v->MemberEnd())->value;  // Assumes AddMember() appends at the end
             exist = false;
           }
           else
@@ -542,8 +538,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
   */
   template<typename stackAllocator>
   ValueType &Create(
-      GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
-      bool *alreadyExist = 0) const
+    GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
+    bool *alreadyExist = 0) const
   {
     return Create(document, document.GetAllocator(), alreadyExist);
   }
@@ -575,8 +571,7 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
     for (const Token *t = tokens_; t != tokens_ + tokenCount_; ++t) {
       switch (v->GetType()) {
         case kObjectType: {
-          typename ValueType::MemberIterator m = v->FindMember(
-              GenericStringRef<Ch>(t->name, t->length));
+          typename ValueType::MemberIterator m = v->FindMember(GenericStringRef<Ch>(t->name, t->length));
           if (m == v->MemberEnd())
             break;
           v = &m->value;
@@ -660,12 +655,9 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
       \tparam T Either \ref Type, \c int, \c unsigned, \c int64_t, \c uint64_t, \c bool
   */
   template<typename T>
-  RAPIDJSON_DISABLEIF_RETURN(
-      (internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
-      (ValueType &))
-  GetWithDefault(ValueType &root,
-                 T defaultValue,
-                 typename ValueType::AllocatorType &allocator) const
+  RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
+                             (ValueType &))
+  GetWithDefault(ValueType &root, T defaultValue, typename ValueType::AllocatorType &allocator) const
   {
     return GetWithDefault(root, ValueType(defaultValue).Move(), allocator);
   }
@@ -673,8 +665,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
   //! Query a value in a document with default value.
   template<typename stackAllocator>
   ValueType &GetWithDefault(
-      GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
-      const ValueType &defaultValue) const
+    GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
+    const ValueType &defaultValue) const
   {
     return GetWithDefault(document, defaultValue, document.GetAllocator());
   }
@@ -682,8 +674,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
   //! Query a value in a document with default null-terminated string.
   template<typename stackAllocator>
   ValueType &GetWithDefault(
-      GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
-      const Ch *defaultValue) const
+    GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
+    const Ch *defaultValue) const
   {
     return GetWithDefault(document, defaultValue, document.GetAllocator());
   }
@@ -692,8 +684,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
   //! Query a value in a document with default std::basic_string.
   template<typename stackAllocator>
   ValueType &GetWithDefault(
-      GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
-      const std::basic_string<Ch> &defaultValue) const
+    GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
+    const std::basic_string<Ch> &defaultValue) const
   {
     return GetWithDefault(document, defaultValue, document.GetAllocator());
   }
@@ -704,12 +696,10 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
       \tparam T Either \ref Type, \c int, \c unsigned, \c int64_t, \c uint64_t, \c bool
   */
   template<typename T, typename stackAllocator>
-  RAPIDJSON_DISABLEIF_RETURN(
-      (internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
-      (ValueType &))
-  GetWithDefault(
-      GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
-      T defaultValue) const
+  RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
+                             (ValueType &))
+  GetWithDefault(GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
+                 T defaultValue) const
   {
     return GetWithDefault(document, defaultValue, document.GetAllocator());
   }
@@ -728,25 +718,19 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
      document root. \param value Value to be set. \param allocator Allocator for creating the
      values if the specified value or its parents are not exist. \see Create()
   */
-  ValueType &Set(ValueType &root,
-                 ValueType &value,
-                 typename ValueType::AllocatorType &allocator) const
+  ValueType &Set(ValueType &root, ValueType &value, typename ValueType::AllocatorType &allocator) const
   {
     return Create(root, allocator) = value;
   }
 
   //! Set a value in a subtree, with copy semantics.
-  ValueType &Set(ValueType &root,
-                 const ValueType &value,
-                 typename ValueType::AllocatorType &allocator) const
+  ValueType &Set(ValueType &root, const ValueType &value, typename ValueType::AllocatorType &allocator) const
   {
     return Create(root, allocator).CopyFrom(value, allocator);
   }
 
   //! Set a null-terminated string in a subtree.
-  ValueType &Set(ValueType &root,
-                 const Ch *value,
-                 typename ValueType::AllocatorType &allocator) const
+  ValueType &Set(ValueType &root, const Ch *value, typename ValueType::AllocatorType &allocator) const
   {
     return Create(root, allocator) = ValueType(value, allocator).Move();
   }
@@ -766,9 +750,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
       \tparam T Either \ref Type, \c int, \c unsigned, \c int64_t, \c uint64_t, \c bool
   */
   template<typename T>
-  RAPIDJSON_DISABLEIF_RETURN(
-      (internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
-      (ValueType &))
+  RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
+                             (ValueType &))
   Set(ValueType &root, T value, typename ValueType::AllocatorType &allocator) const
   {
     return Create(root, allocator) = ValueType(value).Move();
@@ -776,27 +759,24 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
 
   //! Set a value in a document, with move semantics.
   template<typename stackAllocator>
-  ValueType &Set(
-      GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
-      ValueType &value) const
+  ValueType &Set(GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
+                 ValueType &value) const
   {
     return Create(document) = value;
   }
 
   //! Set a value in a document, with copy semantics.
   template<typename stackAllocator>
-  ValueType &Set(
-      GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
-      const ValueType &value) const
+  ValueType &Set(GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
+                 const ValueType &value) const
   {
     return Create(document).CopyFrom(value, document.GetAllocator());
   }
 
   //! Set a null-terminated string in a document.
   template<typename stackAllocator>
-  ValueType &Set(
-      GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
-      const Ch *value) const
+  ValueType &Set(GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
+                 const Ch *value) const
   {
     return Create(document) = ValueType(value, document.GetAllocator()).Move();
   }
@@ -804,9 +784,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
 #if RAPIDJSON_HAS_STDSTRING
   //! Sets a std::basic_string in a document.
   template<typename stackAllocator>
-  ValueType &Set(
-      GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
-      const std::basic_string<Ch> &value) const
+  ValueType &Set(GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
+                 const std::basic_string<Ch> &value) const
   {
     return Create(document) = ValueType(value, document.GetAllocator()).Move();
   }
@@ -817,9 +796,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
   \tparam T Either \ref Type, \c int, \c unsigned, \c int64_t, \c uint64_t, \c bool
   */
   template<typename T, typename stackAllocator>
-  RAPIDJSON_DISABLEIF_RETURN(
-      (internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
-      (ValueType &))
+  RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T>>),
+                             (ValueType &))
   Set(GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
       T value) const
   {
@@ -840,18 +818,15 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
      document root. \param value Value to be swapped. \param allocator Allocator for creating the
      values if the specified value or its parents are not exist. \see Create()
   */
-  ValueType &Swap(ValueType &root,
-                  ValueType &value,
-                  typename ValueType::AllocatorType &allocator) const
+  ValueType &Swap(ValueType &root, ValueType &value, typename ValueType::AllocatorType &allocator) const
   {
     return Create(root, allocator).Swap(value);
   }
 
   //! Swap a value with a value in a document.
   template<typename stackAllocator>
-  ValueType &Swap(
-      GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
-      ValueType &value) const
+  ValueType &Swap(GenericDocument<EncodingType, typename ValueType::AllocatorType, stackAllocator> &document,
+                  ValueType &value) const
   {
     return Create(document).Swap(value);
   }
@@ -872,13 +847,12 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
     if (tokenCount_ == 0)  // Cannot erase the root
       return false;
 
-    ValueType *v      = &root;
+    ValueType *v = &root;
     const Token *last = tokens_ + (tokenCount_ - 1);
     for (const Token *t = tokens_; t != last; ++t) {
       switch (v->GetType()) {
         case kObjectType: {
-          typename ValueType::MemberIterator m = v->FindMember(
-              GenericStringRef<Ch>(t->name, t->length));
+          typename ValueType::MemberIterator m = v->FindMember(GenericStringRef<Ch>(t->name, t->length));
           if (m == v->MemberEnd())
             return false;
           v = &m->value;
@@ -924,8 +898,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
       nameBufferSize += t->length;
 
     tokenCount_ = rhs.tokenCount_ + extraToken;
-    tokens_     = static_cast<Token *>(allocator_->Malloc(
-        tokenCount_ * sizeof(Token) + (nameBufferSize + extraNameBufferSize) * sizeof(Ch)));
+    tokens_ = static_cast<Token *>(
+      allocator_->Malloc(tokenCount_ * sizeof(Token) + (nameBufferSize + extraNameBufferSize) * sizeof(Ch)));
     nameBuffer_ = reinterpret_cast<Ch *>(tokens_ + tokenCount_);
     std::memcpy(tokens_, rhs.tokens_, rhs.tokenCount_ * sizeof(Token));
     std::memcpy(nameBuffer_, rhs.nameBuffer_, nameBufferSize * sizeof(Ch));
@@ -945,17 +919,17 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
   */
   bool NeedPercentEncode(Ch c) const
   {
-    return !((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
-             c == '-' || c == '.' || c == '_' || c == '~');
+    return !((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '-' ||
+             c == '.' || c == '_' || c == '~');
   }
 
   //! Parse a JSON String or its URI fragment representation into tokens.
 #ifndef __clang__  // -Wdocumentation
                    /*!
                        \param source Either a JSON Pointer string, or its URI fragment representation. Not need to
-                      be null terminated.                  \param length Length of the source string.                  \note Source
-                      cannot be JSON                  String Representation of JSON Pointer, e.g. In "/\u0000",
-                      \u0000 will not be                  unescaped.
+                      be null terminated.                  \param length Length of the source string.                  \note
+                      Source                  cannot be JSON                  String Representation of JSON Pointer, e.g. In
+                      "/\u0000",                  \u0000                  will not be                  unescaped.
                    */
 #endif
   void Parse(const Ch *source, size_t length)
@@ -975,9 +949,9 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
         tokenCount_++;
 
     Token *token = tokens_ = static_cast<Token *>(
-        allocator_->Malloc(tokenCount_ * sizeof(Token) + length * sizeof(Ch)));
+      allocator_->Malloc(tokenCount_ * sizeof(Token) + length * sizeof(Ch)));
     Ch *name = nameBuffer_ = reinterpret_cast<Ch *>(tokens_ + tokenCount_);
-    size_t i               = 0;
+    size_t i = 0;
 
     // Detect if it is a URI fragment
     bool uriFragment = false;
@@ -995,7 +969,7 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
       RAPIDJSON_ASSERT(source[i] == '/');
       i++;  // consumes '/'
 
-      token->name   = name;
+      token->name = name;
       bool isNumber = true;
 
       while (i < length && source[i] != '/') {
@@ -1087,9 +1061,9 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
 
   error:
     Allocator::Free(tokens_);
-    nameBuffer_       = 0;
-    tokens_           = 0;
-    tokenCount_       = 0;
+    nameBuffer_ = 0;
+    tokens_ = 0;
+    tokenCount_ = 0;
     parseErrorOffset_ = i;
     return;
   }
@@ -1149,10 +1123,10 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
         \param end Past-the-end of the stream.
     */
     PercentDecodeStream(const Ch *source, const Ch *end)
-        : src_(source),
-          head_(source),
-          end_(end),
-          valid_(true)
+      : src_(source),
+        head_(source),
+        end_(end),
+        valid_(true)
     {}
 
     Ch Take()
@@ -1204,9 +1178,9 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
     {}
     void Put(char c)
     {  // UTF-8 must be byte
-      unsigned char u                 = static_cast<unsigned char>(c);
+      unsigned char u = static_cast<unsigned char>(c);
       static const char hexDigits[16] = {
-          '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
       os_.Put('%');
       os_.Put(hexDigits[u >> 4]);
       os_.Put(hexDigits[u & 15]);
@@ -1216,13 +1190,13 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
     OutputStream &os_;
   };
 
-  Allocator *allocator_;     //!< The current allocator. It is either user-supplied or equal to
-                             //!< ownAllocator_.
-  Allocator *ownAllocator_;  //!< Allocator owned by this Pointer.
-  Ch *nameBuffer_;           //!< A buffer containing all names in tokens.
-  Token *tokens_;            //!< A list of tokens.
-  size_t tokenCount_;        //!< Number of tokens in tokens_.
-  size_t parseErrorOffset_;  //!< Offset in code unit when parsing fail.
+  Allocator *allocator_;                  //!< The current allocator. It is either user-supplied or equal to
+                                          //!< ownAllocator_.
+  Allocator *ownAllocator_;               //!< Allocator owned by this Pointer.
+  Ch *nameBuffer_;                        //!< A buffer containing all names in tokens.
+  Token *tokens_;                         //!< A list of tokens.
+  size_t tokenCount_;                     //!< Number of tokens in tokens_.
+  size_t parseErrorOffset_;               //!< Offset in code unit when parsing fail.
   PointerParseErrorCode parseErrorCode_;  //!< Parsing error code.
 };
 
@@ -1254,15 +1228,14 @@ typename T::ValueType &CreateValueByPointer(T &root,
 
 template<typename DocumentType>
 typename DocumentType::ValueType &CreateValueByPointer(
-    DocumentType &document,
-    const GenericPointer<typename DocumentType::ValueType> &pointer)
+  DocumentType &document,
+  const GenericPointer<typename DocumentType::ValueType> &pointer)
 {
   return pointer.Create(document);
 }
 
 template<typename DocumentType, typename CharType, size_t N>
-typename DocumentType::ValueType &CreateValueByPointer(DocumentType &document,
-                                                       const CharType (&source)[N])
+typename DocumentType::ValueType &CreateValueByPointer(DocumentType &document, const CharType (&source)[N])
 {
   return GenericPointer<typename DocumentType::ValueType>(source, N - 1).Create(document);
 }
@@ -1278,10 +1251,9 @@ typename T::ValueType *GetValueByPointer(T &root,
 }
 
 template<typename T>
-const typename T::ValueType *GetValueByPointer(
-    const T &root,
-    const GenericPointer<typename T::ValueType> &pointer,
-    size_t *unresolvedTokenIndex = 0)
+const typename T::ValueType *GetValueByPointer(const T &root,
+                                               const GenericPointer<typename T::ValueType> &pointer,
+                                               size_t *unresolvedTokenIndex = 0)
 {
   return pointer.Get(root, unresolvedTokenIndex);
 }
@@ -1305,41 +1277,37 @@ const typename T::ValueType *GetValueByPointer(const T &root,
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-typename T::ValueType &GetValueByPointerWithDefault(
-    T &root,
-    const GenericPointer<typename T::ValueType> &pointer,
-    const typename T::ValueType &defaultValue,
-    typename T::AllocatorType &a)
+typename T::ValueType &GetValueByPointerWithDefault(T &root,
+                                                    const GenericPointer<typename T::ValueType> &pointer,
+                                                    const typename T::ValueType &defaultValue,
+                                                    typename T::AllocatorType &a)
 {
   return pointer.GetWithDefault(root, defaultValue, a);
 }
 
 template<typename T>
-typename T::ValueType &GetValueByPointerWithDefault(
-    T &root,
-    const GenericPointer<typename T::ValueType> &pointer,
-    const typename T::Ch *defaultValue,
-    typename T::AllocatorType &a)
+typename T::ValueType &GetValueByPointerWithDefault(T &root,
+                                                    const GenericPointer<typename T::ValueType> &pointer,
+                                                    const typename T::Ch *defaultValue,
+                                                    typename T::AllocatorType &a)
 {
   return pointer.GetWithDefault(root, defaultValue, a);
 }
 
 #if RAPIDJSON_HAS_STDSTRING
 template<typename T>
-typename T::ValueType &GetValueByPointerWithDefault(
-    T &root,
-    const GenericPointer<typename T::ValueType> &pointer,
-    const std::basic_string<typename T::Ch> &defaultValue,
-    typename T::AllocatorType &a)
+typename T::ValueType &GetValueByPointerWithDefault(T &root,
+                                                    const GenericPointer<typename T::ValueType> &pointer,
+                                                    const std::basic_string<typename T::Ch> &defaultValue,
+                                                    typename T::AllocatorType &a)
 {
   return pointer.GetWithDefault(root, defaultValue, a);
 }
 #endif
 
 template<typename T, typename T2>
-RAPIDJSON_DISABLEIF_RETURN(
-    (internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
-    (typename T::ValueType &))
+RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
+                           (typename T::ValueType &))
 GetValueByPointerWithDefault(T &root,
                              const GenericPointer<typename T::ValueType> &pointer,
                              T2 defaultValue,
@@ -1354,8 +1322,7 @@ typename T::ValueType &GetValueByPointerWithDefault(T &root,
                                                     const typename T::ValueType &defaultValue,
                                                     typename T::AllocatorType &a)
 {
-  return GenericPointer<typename T::ValueType>(source, N - 1)
-      .GetWithDefault(root, defaultValue, a);
+  return GenericPointer<typename T::ValueType>(source, N - 1).GetWithDefault(root, defaultValue, a);
 }
 
 template<typename T, typename CharType, size_t N>
@@ -1364,52 +1331,47 @@ typename T::ValueType &GetValueByPointerWithDefault(T &root,
                                                     const typename T::Ch *defaultValue,
                                                     typename T::AllocatorType &a)
 {
-  return GenericPointer<typename T::ValueType>(source, N - 1)
-      .GetWithDefault(root, defaultValue, a);
+  return GenericPointer<typename T::ValueType>(source, N - 1).GetWithDefault(root, defaultValue, a);
 }
 
 #if RAPIDJSON_HAS_STDSTRING
 template<typename T, typename CharType, size_t N>
-typename T::ValueType &GetValueByPointerWithDefault(
-    T &root,
-    const CharType (&source)[N],
-    const std::basic_string<typename T::Ch> &defaultValue,
-    typename T::AllocatorType &a)
+typename T::ValueType &GetValueByPointerWithDefault(T &root,
+                                                    const CharType (&source)[N],
+                                                    const std::basic_string<typename T::Ch> &defaultValue,
+                                                    typename T::AllocatorType &a)
 {
-  return GenericPointer<typename T::ValueType>(source, N - 1)
-      .GetWithDefault(root, defaultValue, a);
+  return GenericPointer<typename T::ValueType>(source, N - 1).GetWithDefault(root, defaultValue, a);
 }
 #endif
 
 template<typename T, typename CharType, size_t N, typename T2>
-RAPIDJSON_DISABLEIF_RETURN(
-    (internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
-    (typename T::ValueType &))
+RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
+                           (typename T::ValueType &))
 GetValueByPointerWithDefault(T &root,
                              const CharType (&source)[N],
                              T2 defaultValue,
                              typename T::AllocatorType &a)
 {
-  return GenericPointer<typename T::ValueType>(source, N - 1)
-      .GetWithDefault(root, defaultValue, a);
+  return GenericPointer<typename T::ValueType>(source, N - 1).GetWithDefault(root, defaultValue, a);
 }
 
 // No allocator parameter
 
 template<typename DocumentType>
 typename DocumentType::ValueType &GetValueByPointerWithDefault(
-    DocumentType &document,
-    const GenericPointer<typename DocumentType::ValueType> &pointer,
-    const typename DocumentType::ValueType &defaultValue)
+  DocumentType &document,
+  const GenericPointer<typename DocumentType::ValueType> &pointer,
+  const typename DocumentType::ValueType &defaultValue)
 {
   return pointer.GetWithDefault(document, defaultValue);
 }
 
 template<typename DocumentType>
 typename DocumentType::ValueType &GetValueByPointerWithDefault(
-    DocumentType &document,
-    const GenericPointer<typename DocumentType::ValueType> &pointer,
-    const typename DocumentType::Ch *defaultValue)
+  DocumentType &document,
+  const GenericPointer<typename DocumentType::ValueType> &pointer,
+  const typename DocumentType::Ch *defaultValue)
 {
   return pointer.GetWithDefault(document, defaultValue);
 }
@@ -1417,18 +1379,17 @@ typename DocumentType::ValueType &GetValueByPointerWithDefault(
 #if RAPIDJSON_HAS_STDSTRING
 template<typename DocumentType>
 typename DocumentType::ValueType &GetValueByPointerWithDefault(
-    DocumentType &document,
-    const GenericPointer<typename DocumentType::ValueType> &pointer,
-    const std::basic_string<typename DocumentType::Ch> &defaultValue)
+  DocumentType &document,
+  const GenericPointer<typename DocumentType::ValueType> &pointer,
+  const std::basic_string<typename DocumentType::Ch> &defaultValue)
 {
   return pointer.GetWithDefault(document, defaultValue);
 }
 #endif
 
 template<typename DocumentType, typename T2>
-RAPIDJSON_DISABLEIF_RETURN(
-    (internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
-    (typename DocumentType::ValueType &))
+RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
+                           (typename DocumentType::ValueType &))
 GetValueByPointerWithDefault(DocumentType &document,
                              const GenericPointer<typename DocumentType::ValueType> &pointer,
                              T2 defaultValue)
@@ -1438,44 +1399,42 @@ GetValueByPointerWithDefault(DocumentType &document,
 
 template<typename DocumentType, typename CharType, size_t N>
 typename DocumentType::ValueType &GetValueByPointerWithDefault(
-    DocumentType &document,
-    const CharType (&source)[N],
-    const typename DocumentType::ValueType &defaultValue)
+  DocumentType &document,
+  const CharType (&source)[N],
+  const typename DocumentType::ValueType &defaultValue)
 {
   return GenericPointer<typename DocumentType::ValueType>(source, N - 1)
-      .GetWithDefault(document, defaultValue);
+    .GetWithDefault(document, defaultValue);
 }
 
 template<typename DocumentType, typename CharType, size_t N>
-typename DocumentType::ValueType &GetValueByPointerWithDefault(
-    DocumentType &document,
-    const CharType (&source)[N],
-    const typename DocumentType::Ch *defaultValue)
+typename DocumentType::ValueType &GetValueByPointerWithDefault(DocumentType &document,
+                                                               const CharType (&source)[N],
+                                                               const typename DocumentType::Ch *defaultValue)
 {
   return GenericPointer<typename DocumentType::ValueType>(source, N - 1)
-      .GetWithDefault(document, defaultValue);
+    .GetWithDefault(document, defaultValue);
 }
 
 #if RAPIDJSON_HAS_STDSTRING
 template<typename DocumentType, typename CharType, size_t N>
 typename DocumentType::ValueType &GetValueByPointerWithDefault(
-    DocumentType &document,
-    const CharType (&source)[N],
-    const std::basic_string<typename DocumentType::Ch> &defaultValue)
+  DocumentType &document,
+  const CharType (&source)[N],
+  const std::basic_string<typename DocumentType::Ch> &defaultValue)
 {
   return GenericPointer<typename DocumentType::ValueType>(source, N - 1)
-      .GetWithDefault(document, defaultValue);
+    .GetWithDefault(document, defaultValue);
 }
 #endif
 
 template<typename DocumentType, typename CharType, size_t N, typename T2>
-RAPIDJSON_DISABLEIF_RETURN(
-    (internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
-    (typename DocumentType::ValueType &))
+RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
+                           (typename DocumentType::ValueType &))
 GetValueByPointerWithDefault(DocumentType &document, const CharType (&source)[N], T2 defaultValue)
 {
   return GenericPointer<typename DocumentType::ValueType>(source, N - 1)
-      .GetWithDefault(document, defaultValue);
+    .GetWithDefault(document, defaultValue);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1519,9 +1478,8 @@ typename T::ValueType &SetValueByPointer(T &root,
 #endif
 
 template<typename T, typename T2>
-RAPIDJSON_DISABLEIF_RETURN(
-    (internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
-    (typename T::ValueType &))
+RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
+                           (typename T::ValueType &))
 SetValueByPointer(T &root,
                   const GenericPointer<typename T::ValueType> &pointer,
                   T2 value,
@@ -1569,9 +1527,8 @@ typename T::ValueType &SetValueByPointer(T &root,
 #endif
 
 template<typename T, typename CharType, size_t N, typename T2>
-RAPIDJSON_DISABLEIF_RETURN(
-    (internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
-    (typename T::ValueType &))
+RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
+                           (typename T::ValueType &))
 SetValueByPointer(T &root, const CharType (&source)[N], T2 value, typename T::AllocatorType &a)
 {
   return GenericPointer<typename T::ValueType>(source, N - 1).Set(root, value, a);
@@ -1581,27 +1538,27 @@ SetValueByPointer(T &root, const CharType (&source)[N], T2 value, typename T::Al
 
 template<typename DocumentType>
 typename DocumentType::ValueType &SetValueByPointer(
-    DocumentType &document,
-    const GenericPointer<typename DocumentType::ValueType> &pointer,
-    typename DocumentType::ValueType &value)
+  DocumentType &document,
+  const GenericPointer<typename DocumentType::ValueType> &pointer,
+  typename DocumentType::ValueType &value)
 {
   return pointer.Set(document, value);
 }
 
 template<typename DocumentType>
 typename DocumentType::ValueType &SetValueByPointer(
-    DocumentType &document,
-    const GenericPointer<typename DocumentType::ValueType> &pointer,
-    const typename DocumentType::ValueType &value)
+  DocumentType &document,
+  const GenericPointer<typename DocumentType::ValueType> &pointer,
+  const typename DocumentType::ValueType &value)
 {
   return pointer.Set(document, value);
 }
 
 template<typename DocumentType>
 typename DocumentType::ValueType &SetValueByPointer(
-    DocumentType &document,
-    const GenericPointer<typename DocumentType::ValueType> &pointer,
-    const typename DocumentType::Ch *value)
+  DocumentType &document,
+  const GenericPointer<typename DocumentType::ValueType> &pointer,
+  const typename DocumentType::Ch *value)
 {
   return pointer.Set(document, value);
 }
@@ -1609,18 +1566,17 @@ typename DocumentType::ValueType &SetValueByPointer(
 #if RAPIDJSON_HAS_STDSTRING
 template<typename DocumentType>
 typename DocumentType::ValueType &SetValueByPointer(
-    DocumentType &document,
-    const GenericPointer<typename DocumentType::ValueType> &pointer,
-    const std::basic_string<typename DocumentType::Ch> &value)
+  DocumentType &document,
+  const GenericPointer<typename DocumentType::ValueType> &pointer,
+  const std::basic_string<typename DocumentType::Ch> &value)
 {
   return pointer.Set(document, value);
 }
 #endif
 
 template<typename DocumentType, typename T2>
-RAPIDJSON_DISABLEIF_RETURN(
-    (internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
-    (typename DocumentType::ValueType &))
+RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
+                           (typename DocumentType::ValueType &))
 SetValueByPointer(DocumentType &document,
                   const GenericPointer<typename DocumentType::ValueType> &pointer,
                   T2 value)
@@ -1655,18 +1611,17 @@ typename DocumentType::ValueType &SetValueByPointer(DocumentType &document,
 #if RAPIDJSON_HAS_STDSTRING
 template<typename DocumentType, typename CharType, size_t N>
 typename DocumentType::ValueType &SetValueByPointer(
-    DocumentType &document,
-    const CharType (&source)[N],
-    const std::basic_string<typename DocumentType::Ch> &value)
+  DocumentType &document,
+  const CharType (&source)[N],
+  const std::basic_string<typename DocumentType::Ch> &value)
 {
   return GenericPointer<typename DocumentType::ValueType>(source, N - 1).Set(document, value);
 }
 #endif
 
 template<typename DocumentType, typename CharType, size_t N, typename T2>
-RAPIDJSON_DISABLEIF_RETURN(
-    (internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
-    (typename DocumentType::ValueType &))
+RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T2>, internal::IsGenericValue<T2>>),
+                           (typename DocumentType::ValueType &))
 SetValueByPointer(DocumentType &document, const CharType (&source)[N], T2 value)
 {
   return GenericPointer<typename DocumentType::ValueType>(source, N - 1).Set(document, value);
@@ -1694,9 +1649,9 @@ typename T::ValueType &SwapValueByPointer(T &root,
 
 template<typename DocumentType>
 typename DocumentType::ValueType &SwapValueByPointer(
-    DocumentType &document,
-    const GenericPointer<typename DocumentType::ValueType> &pointer,
-    typename DocumentType::ValueType &value)
+  DocumentType &document,
+  const GenericPointer<typename DocumentType::ValueType> &pointer,
+  typename DocumentType::ValueType &value)
 {
   return pointer.Swap(document, value);
 }
@@ -1711,8 +1666,7 @@ typename DocumentType::ValueType &SwapValueByPointer(DocumentType &document,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-bool EraseValueByPointer(T &root, const GenericPointer<typename T::ValueType> &pointer)
+template<typename T> bool EraseValueByPointer(T &root, const GenericPointer<typename T::ValueType> &pointer)
 {
   return pointer.Erase(root);
 }

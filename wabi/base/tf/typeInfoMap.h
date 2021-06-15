@@ -149,9 +149,9 @@ template<class VALUE> class TfTypeInfoMap : public boost::noncopyable {
     if (i != _stringCache.end())
       i->second->value = value;
     else {
-      _Entry *e     = &_nameMap[key];
+      _Entry *e = &_nameMap[key];
       e->primaryKey = key;
-      e->value      = value;
+      e->value = value;
 
       _stringCache[key] = e;
       e->stringAliases.push_back(key);

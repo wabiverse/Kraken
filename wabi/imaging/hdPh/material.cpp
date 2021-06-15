@@ -51,14 +51,14 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens, (limitSurfaceEvaluation)(opacity));
 HioGlslfx *HdPhMaterial::_fallbackGlslfx = nullptr;
 
 HdPhMaterial::HdPhMaterial(SdfPath const &id)
-    : HdMaterial(id),
-      _surfaceShader(std::make_shared<HdPhSurfaceShader>()),
-      _isInitialized(false),
-      _hasPtex(false),
-      _hasLimitSurfaceEvaluation(false),
-      _hasDisplacement(false),
-      _materialTag(HdPhMaterialTagTokens->defaultMaterialTag),
-      _textureHash(0)
+  : HdMaterial(id),
+    _surfaceShader(std::make_shared<HdPhSurfaceShader>()),
+    _isInitialized(false),
+    _hasPtex(false),
+    _hasLimitSurfaceEvaluation(false),
+    _hasDisplacement(false),
+    _materialTag(HdPhMaterialTagTokens->defaultMaterialTag),
+    _textureHash(0)
 {
   TF_DEBUG(HDPH_MATERIAL_ADDED).Msg("HdPhMaterial Created: %s\n", id.GetText());
 }
@@ -71,9 +71,8 @@ HdPhMaterial::~HdPhMaterial()
 // Check whether the texture node points to a render buffer and
 // use information from it to get the texture identifier.
 //
-static HdPhTextureIdentifier _GetTextureIdentifier(
-    HdPhMaterialNetwork::TextureDescriptor const &desc,
-    HdSceneDelegate *const sceneDelegate)
+static HdPhTextureIdentifier _GetTextureIdentifier(HdPhMaterialNetwork::TextureDescriptor const &desc,
+                                                   HdSceneDelegate *const sceneDelegate)
 {
   if (!desc.useTexturePrimToFindTexture) {
     return desc.textureId;
@@ -81,12 +80,11 @@ static HdPhTextureIdentifier _GetTextureIdentifier(
 
   // Get render buffer texture node is pointing to.
   if (HdPhRenderBuffer *const renderBuffer = dynamic_cast<HdPhRenderBuffer *>(
-          sceneDelegate->GetRenderIndex().GetBprim(HdPrimTypeTokens->renderBuffer,
-                                                   desc.texturePrim))) {
+        sceneDelegate->GetRenderIndex().GetBprim(HdPrimTypeTokens->renderBuffer, desc.texturePrim))) {
 
     if (desc.type == HdTextureType::Uv) {
       return renderBuffer->GetTextureIdentifier(
-          /* multiSampled = */ false);
+        /* multiSampled = */ false);
     }
 
     TF_CODING_ERROR("Non-UV texture type in descriptor using render buffer.");
@@ -108,24 +106,24 @@ static size_t _GetTextureHandleHash(HdPhTextureHandleSharedPtr const &textureHan
 }
 
 void HdPhMaterial::_ProcessTextureDescriptors(
-    HdSceneDelegate *const sceneDelegate,
-    HdPhResourceRegistrySharedPtr const &resourceRegistry,
-    std::weak_ptr<HdPhShaderCode> const &shaderCode,
-    HdPhMaterialNetwork::TextureDescriptorVector const &descs,
-    HdPhShaderCode::NamedTextureHandleVector *const texturesFromPhoenix,
-    HdBufferSpecVector *const specs,
-    HdBufferSourceSharedPtrVector *const sources)
+  HdSceneDelegate *const sceneDelegate,
+  HdPhResourceRegistrySharedPtr const &resourceRegistry,
+  std::weak_ptr<HdPhShaderCode> const &shaderCode,
+  HdPhMaterialNetwork::TextureDescriptorVector const &descs,
+  HdPhShaderCode::NamedTextureHandleVector *const texturesFromPhoenix,
+  HdBufferSpecVector *const specs,
+  HdBufferSourceSharedPtrVector *const sources)
 {
   const bool bindlessTextureEnabled = GlfContextCaps::GetInstance().bindlessTextureEnabled;
 
   for (HdPhMaterialNetwork::TextureDescriptor const &desc : descs) {
     HdPhTextureHandleSharedPtr const textureHandle = resourceRegistry->AllocateTextureHandle(
-        _GetTextureIdentifier(desc, sceneDelegate),
-        desc.type,
-        desc.samplerParameters,
-        desc.memoryRequest,
-        bindlessTextureEnabled,
-        shaderCode);
+      _GetTextureIdentifier(desc, sceneDelegate),
+      desc.type,
+      desc.samplerParameters,
+      desc.memoryRequest,
+      bindlessTextureEnabled,
+      shaderCode);
 
     // Note about batching hashes:
     // If this is our first sync, try to hash using the asset path.
@@ -150,26 +148,23 @@ void HdPhMaterial::_ProcessTextureDescriptors(
     // textures are to change.  Maybe in the future...
 
     texturesFromPhoenix->push_back(
-        {desc.name,
-         desc.type,
-         textureHandle,
-         _isInitialized ? hash_value(desc.texturePrim) : _GetTextureHandleHash(textureHandle)});
+      {desc.name,
+       desc.type,
+       textureHandle,
+       _isInitialized ? hash_value(desc.texturePrim) : _GetTextureHandleHash(textureHandle)});
   }
 
   HdPh_TextureBinder::GetBufferSpecs(*texturesFromPhoenix, bindlessTextureEnabled, specs);
 }
 
 /* virtual */
-void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate,
-                        HdRenderParam *renderParam,
-                        HdDirtyBits *dirtyBits)
+void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  HdPhResourceRegistrySharedPtr const &resourceRegistry =
-      std::static_pointer_cast<HdPhResourceRegistry>(
-          sceneDelegate->GetRenderIndex().GetResourceRegistry());
+  HdPhResourceRegistrySharedPtr const &resourceRegistry = std::static_pointer_cast<HdPhResourceRegistry>(
+    sceneDelegate->GetRenderIndex().GetResourceRegistry());
 
   HdDirtyBits bits = *dirtyBits;
 
@@ -179,7 +174,7 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate,
   }
 
   bool needsRprimMaterialStateUpdate = false;
-  bool markBatchesDirty              = false;
+  bool markBatchesDirty = false;
 
   std::string fragmentSource;
   std::string geometrySource;
@@ -193,11 +188,11 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate,
     HdMaterialNetworkMap const &hdNetworkMap = vtMat.UncheckedGet<HdMaterialNetworkMap>();
     if (!hdNetworkMap.terminals.empty() && !hdNetworkMap.map.empty()) {
       _networkProcessor.ProcessMaterialNetwork(GetId(), hdNetworkMap, resourceRegistry.get());
-      fragmentSource     = _networkProcessor.GetFragmentCode();
-      geometrySource     = _networkProcessor.GetGeometryCode();
-      materialMetadata   = _networkProcessor.GetMetadata();
-      materialTag        = _networkProcessor.GetMaterialTag();
-      params             = _networkProcessor.GetMaterialParams();
+      fragmentSource = _networkProcessor.GetFragmentCode();
+      geometrySource = _networkProcessor.GetGeometryCode();
+      materialMetadata = _networkProcessor.GetMetadata();
+      materialTag = _networkProcessor.GetMaterialTag();
+      params = _networkProcessor.GetMaterialParams();
       textureDescriptors = _networkProcessor.GetTextureDescriptors();
     }
   }
@@ -207,7 +202,7 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate,
     fragmentSource = _fallbackGlslfx->GetSurfaceSource();
     // Note that we don't want displacement on purpose for the
     // fallback material.
-    geometrySource   = std::string();
+    geometrySource = std::string();
     materialMetadata = _fallbackGlslfx->GetMetadata();
   }
 
@@ -216,8 +211,7 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate,
   std::string const &oldFragmentSource = _surfaceShader->GetSource(HdShaderTokens->fragmentShader);
   std::string const &oldGeometrySource = _surfaceShader->GetSource(HdShaderTokens->geometryShader);
 
-  markBatchesDirty |= (oldFragmentSource != fragmentSource) ||
-                      (oldGeometrySource != geometrySource);
+  markBatchesDirty |= (oldFragmentSource != fragmentSource) || (oldGeometrySource != geometrySource);
 
   _surfaceShader->SetFragmentSource(fragmentSource);
   _surfaceShader->SetGeometrySource(geometrySource);
@@ -225,14 +219,14 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate,
   bool hasDisplacement = !(geometrySource.empty());
 
   if (_hasDisplacement != hasDisplacement) {
-    _hasDisplacement              = hasDisplacement;
+    _hasDisplacement = hasDisplacement;
     needsRprimMaterialStateUpdate = true;
   }
 
   bool hasLimitSurfaceEvaluation = _GetHasLimitSurfaceEvaluation(materialMetadata);
 
   if (_hasLimitSurfaceEvaluation != hasLimitSurfaceEvaluation) {
-    _hasLimitSurfaceEvaluation    = hasLimitSurfaceEvaluation;
+    _hasLimitSurfaceEvaluation = hasLimitSurfaceEvaluation;
     needsRprimMaterialStateUpdate = true;
   }
 
@@ -274,13 +268,8 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate,
   // Textures created using Phoenix texture system.
   HdPhShaderCode::NamedTextureHandleVector textures;
 
-  _ProcessTextureDescriptors(sceneDelegate,
-                             resourceRegistry,
-                             _surfaceShader,
-                             textureDescriptors,
-                             &textures,
-                             &specs,
-                             &sources);
+  _ProcessTextureDescriptors(
+    sceneDelegate, resourceRegistry, _surfaceShader, textureDescriptors, &textures, &specs, &sources);
 
   // Check if the texture hash has changed; if so, we need to ask for a
   // re-batch.  We only look at NamedTextureHandles because the legacy system
@@ -292,7 +281,7 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate,
   }
 
   if (_textureHash != textureHash) {
-    _textureHash     = textureHash;
+    _textureHash = textureHash;
     markBatchesDirty = true;
   }
 
@@ -300,7 +289,7 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate,
   _surfaceShader->SetBufferSources(specs, std::move(sources), resourceRegistry);
 
   if (_hasPtex != hasPtex) {
-    _hasPtex                      = hasPtex;
+    _hasPtex = hasPtex;
     needsRprimMaterialStateUpdate = true;
   }
 
@@ -321,7 +310,7 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate,
   }
 
   _isInitialized = true;
-  *dirtyBits     = Clean;
+  *dirtyBits = Clean;
 }
 
 /*virtual*/

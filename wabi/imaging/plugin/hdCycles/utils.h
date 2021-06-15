@@ -107,11 +107,10 @@ const char *_HdInterpolationStr(const HdInterpolation &i);
  * @param id
  * @return Cycles Transform
  */
-HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(
-    ccl::Object *object,
-    HdSceneDelegate *delegate,
-    const SdfPath &id,
-    bool use_motion);
+HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(ccl::Object *object,
+                                                                           HdSceneDelegate *delegate,
+                                                                           const SdfPath &id,
+                                                                           bool use_motion);
 
 ccl::Transform HdCyclesExtractTransform(HdSceneDelegate *delegate, const SdfPath &id);
 
@@ -323,10 +322,10 @@ struct HdCyclesPrimvar {
   bool dirtied;                   // If the primvar has been dirtied
 
   HdCyclesPrimvar(const VtValue &a_value, const TfToken &a_role, HdInterpolation a_interpolation)
-      : value(a_value),
-        role(a_role),
-        interpolation(a_interpolation),
-        dirtied(true)
+    : value(a_value),
+      role(a_role),
+      interpolation(a_interpolation),
+      dirtied(true)
   {}
 };
 
@@ -415,7 +414,7 @@ template<typename F> void _CheckForVec2iValue(const VtValue &value, F &&f)
 template<typename T>
 T _HdCyclesGetVtValue(VtValue a_value,
                       T a_default,
-                      bool *a_hasChanged      = nullptr,
+                      bool *a_hasChanged = nullptr,
                       bool a_checkWithDefault = false)
 {
   if (!a_value.IsEmpty()) {
@@ -436,10 +435,7 @@ T _HdCyclesGetVtValue(VtValue a_value,
 // Bool specialization
 
 template<>
-bool _HdCyclesGetVtValue<bool>(VtValue a_value,
-                               bool a_default,
-                               bool *a_hasChanged,
-                               bool a_checkWithDefault);
+bool _HdCyclesGetVtValue<bool>(VtValue a_value, bool a_default, bool *a_hasChanged, bool a_checkWithDefault);
 
 // Get abitrary param
 
@@ -529,10 +525,7 @@ T _HdCyclesGetCurveParam(HdDirtyBits *a_dirtyBits,
 // Get light param
 
 template<typename T>
-T _HdCyclesGetLightParam(const SdfPath &a_id,
-                         HdSceneDelegate *a_scene,
-                         TfToken a_token,
-                         T a_default)
+T _HdCyclesGetLightParam(const SdfPath &a_id, HdSceneDelegate *a_scene, TfToken a_token, T a_default)
 {
   VtValue v = a_scene->GetLightParamValue(a_id, a_token);
   return _HdCyclesGetVtValue<T>(v, a_default);
@@ -619,10 +612,7 @@ void mikk_get_texture_coordinate(const SMikkTSpaceContext *context,
                                  const int face_num,
                                  const int vert_num);
 
-void mikk_get_normal(const SMikkTSpaceContext *context,
-                     float N[3],
-                     const int face_num,
-                     const int vert_num);
+void mikk_get_normal(const SMikkTSpaceContext *context, float N[3], const int face_num, const int vert_num);
 
 void mikk_set_tangent_space(const SMikkTSpaceContext *context,
                             const float T[],
@@ -630,10 +620,7 @@ void mikk_set_tangent_space(const SMikkTSpaceContext *context,
                             const int face_num,
                             const int vert_num);
 
-void mikk_compute_tangents(const char *layer_name,
-                           ccl::Mesh *mesh,
-                           bool need_sign,
-                           bool active_render);
+void mikk_compute_tangents(const char *layer_name, ccl::Mesh *mesh, bool need_sign, bool active_render);
 
 WABI_NAMESPACE_END
 

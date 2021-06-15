@@ -73,8 +73,7 @@ bool UsdPrim::_IsA(const TfType &schemaType, bool validateSchemaType) const
   if (validateSchemaType) {
     // Check Schema TfType
     if (schemaType.IsUnknown()) {
-      TF_CODING_ERROR("Unknown schema type (%s) is invalid for IsA query",
-                      schemaType.GetTypeName().c_str());
+      TF_CODING_ERROR("Unknown schema type (%s) is invalid for IsA query", schemaType.GetTypeName().c_str());
       return false;
     }
   }
@@ -89,55 +88,51 @@ bool UsdPrim::IsA(const TfType &schemaType) const
   return _IsA(schemaType, true);
 }
 
-bool UsdPrim::_HasAPI(const TfType &schemaType,
-                      bool validateSchemaType,
-                      const TfToken &instanceName) const
+bool UsdPrim::_HasAPI(const TfType &schemaType, bool validateSchemaType, const TfToken &instanceName) const
 {
   TRACE_FUNCTION();
 
   static const auto apiSchemaBaseType = TfType::Find<UsdAPISchemaBase>();
 
   const bool isMultipleApplyAPISchema = UsdSchemaRegistry::GetInstance().IsMultipleApplyAPISchema(
-      schemaType);
+    schemaType);
 
   // Note that this block of code is only hit in python code paths,
   // C++ clients would hit the static_asserts defined inline in
   // UsdPrim::HasAPI().
   if (validateSchemaType) {
     if (schemaType.IsUnknown()) {
-      TF_CODING_ERROR("HasAPI: Invalid unknown schema type (%s) ",
-                      schemaType.GetTypeName().c_str());
+      TF_CODING_ERROR("HasAPI: Invalid unknown schema type (%s) ", schemaType.GetTypeName().c_str());
       return false;
     }
 
     if (UsdSchemaRegistry::GetInstance().IsTyped(schemaType)) {
-      TF_CODING_ERROR("HasAPI: provided schema type ( %s ) is typed.",
-                      schemaType.GetTypeName().c_str());
+      TF_CODING_ERROR("HasAPI: provided schema type ( %s ) is typed.", schemaType.GetTypeName().c_str());
       return false;
     }
 
     if (!UsdSchemaRegistry::GetInstance().IsAppliedAPISchema(schemaType)) {
       TF_CODING_ERROR(
-          "HasAPI: provided schema type ( %s ) is not an "
-          "applied API schema type.",
-          schemaType.GetTypeName().c_str());
+        "HasAPI: provided schema type ( %s ) is not an "
+        "applied API schema type.",
+        schemaType.GetTypeName().c_str());
       return false;
     }
 
     if (!schemaType.IsA(apiSchemaBaseType) || schemaType == apiSchemaBaseType) {
       TF_CODING_ERROR(
-          "HasAPI: provided schema type ( %s ) does not "
-          "derive from UsdAPISchemaBase.",
-          schemaType.GetTypeName().c_str());
+        "HasAPI: provided schema type ( %s ) does not "
+        "derive from UsdAPISchemaBase.",
+        schemaType.GetTypeName().c_str());
       return false;
     }
 
     if (!isMultipleApplyAPISchema && !instanceName.IsEmpty()) {
       TF_CODING_ERROR(
-          "HasAPI: single application API schemas like %s do "
-          "not contain an application instanceName ( %s ).",
-          schemaType.GetTypeName().c_str(),
-          instanceName.GetText());
+        "HasAPI: single application API schemas like %s do "
+        "not contain an application instanceName ( %s ).",
+        schemaType.GetTypeName().c_str(),
+        instanceName.GetText());
       return false;
     }
   }
@@ -148,28 +143,25 @@ bool UsdPrim::_HasAPI(const TfType &schemaType,
     return false;
   }
 
-  auto foundMatch = [&appliedSchemas, isMultipleApplyAPISchema, &instanceName](
-                        const std::string &alias) {
+  auto foundMatch = [&appliedSchemas, isMultipleApplyAPISchema, &instanceName](const std::string &alias) {
     // If instanceName is not empty, look for an exact match in the
     // apiSchemas list.
     if (!instanceName.IsEmpty()) {
       const TfToken apiName(SdfPath::JoinIdentifier(alias, instanceName.GetString()));
-      return std::find(appliedSchemas.begin(), appliedSchemas.end(), apiName) !=
-             appliedSchemas.end();
+      return std::find(appliedSchemas.begin(), appliedSchemas.end(), apiName) != appliedSchemas.end();
     }
     // If we're looking for a multiple-apply API schema, then we return
     // true if we find an applied schema name that starts with "<alias>:".
     else if (isMultipleApplyAPISchema) {
       return std::any_of(
-          appliedSchemas.begin(), appliedSchemas.end(), [&alias](const TfToken &appliedSchema) {
-            return TfStringStartsWith(appliedSchema, alias + UsdObject::GetNamespaceDelimiter());
-          });
+        appliedSchemas.begin(), appliedSchemas.end(), [&alias](const TfToken &appliedSchema) {
+          return TfStringStartsWith(appliedSchema, alias + UsdObject::GetNamespaceDelimiter());
+        });
     }
     else {
       // If instanceName is empty and if schemaType is not a multiple
       // apply API schema, then we can look for an exact match.
-      return std::find(appliedSchemas.begin(), appliedSchemas.end(), alias) !=
-             appliedSchemas.end();
+      return std::find(appliedSchemas.begin(), appliedSchemas.end(), alias) != appliedSchemas.end();
     }
   };
 
@@ -211,9 +203,9 @@ static bool _ValidateSingleApplySchemaType(const TfType &schemaType, std::string
   if (UsdSchemaRegistry::GetSchemaKind(schemaType) != UsdSchemaKind::SingleApplyAPI) {
     if (reason) {
       *reason = TfStringPrintf(
-          "Provided schema type '%s' is not a single-apply API schema "
-          "type.",
-          schemaType.GetTypeName().c_str());
+        "Provided schema type '%s' is not a single-apply API schema "
+        "type.",
+        schemaType.GetTypeName().c_str());
     }
     return false;
   }
@@ -228,9 +220,9 @@ static bool _ValidateMultipleApplySchemaType(const TfType &schemaType, std::stri
   if (UsdSchemaRegistry::GetSchemaKind(schemaType) != UsdSchemaKind::MultipleApplyAPI) {
     if (reason) {
       *reason = TfStringPrintf(
-          "Provided schema type '%s' is not a mutiple-apply API schema "
-          "type.",
-          schemaType.GetTypeName().c_str());
+        "Provided schema type '%s' is not a mutiple-apply API schema "
+        "type.",
+        schemaType.GetTypeName().c_str());
     }
     return false;
   }
@@ -247,8 +239,8 @@ static bool _IsPrimTypeValidApplyToTarget(const TfType &primType,
                                           std::string *whyNot)
 {
   // Get the list of prim types this API "can only apply to" if any.
-  const TfTokenVector &canOnlyApplyToTypes =
-      UsdSchemaRegistry::GetAPISchemaCanOnlyApplyToTypeNames(apiSchemaTypeName, instanceName);
+  const TfTokenVector &canOnlyApplyToTypes = UsdSchemaRegistry::GetAPISchemaCanOnlyApplyToTypeNames(
+    apiSchemaTypeName, instanceName);
 
   // If no "can only apply to" types are found, the schema can be
   // applied to any prim type (including empty or invalid prims types)
@@ -260,8 +252,7 @@ static bool _IsPrimTypeValidApplyToTarget(const TfType &primType,
   // valid!
   if (!primType.IsUnknown()) {
     for (const TfToken &allowedPrimTypeName : canOnlyApplyToTypes) {
-      const TfType allowedPrimType = UsdSchemaRegistry::GetTypeFromSchemaTypeName(
-          allowedPrimTypeName);
+      const TfType allowedPrimType = UsdSchemaRegistry::GetTypeFromSchemaTypeName(allowedPrimTypeName);
       if (primType.IsA(allowedPrimType)) {
         return true;
       }
@@ -271,10 +262,10 @@ static bool _IsPrimTypeValidApplyToTarget(const TfType &primType,
   // Otherwise, it wasn't in the list and can't be applied to.
   if (whyNot) {
     *whyNot = TfStringPrintf(
-        "API schema '%s' can only be applied to prims of the following "
-        "types: %s.",
-        SdfPath::JoinIdentifier(apiSchemaTypeName, instanceName).c_str(),
-        TfStringJoin(canOnlyApplyToTypes.begin(), canOnlyApplyToTypes.end(), ", ").c_str());
+      "API schema '%s' can only be applied to prims of the following "
+      "types: %s.",
+      SdfPath::JoinIdentifier(apiSchemaTypeName, instanceName).c_str(),
+      TfStringJoin(canOnlyApplyToTypes.begin(), canOnlyApplyToTypes.end(), ", ").c_str());
   }
   return false;
 }
@@ -314,9 +305,9 @@ bool UsdPrim::_CanApplyAPI(const TfType &apiSchemaType,
   // treat an empty instance for a multiple apply schema as a coding error.
   if (instanceName.IsEmpty()) {
     TF_CODING_ERROR(
-        "CanApplyAPI: for multiple apply API schema %s, a "
-        "non-empty instance name must be provided.",
-        apiSchemaType.GetTypeName().c_str());
+      "CanApplyAPI: for multiple apply API schema %s, a "
+      "non-empty instance name must be provided.",
+      apiSchemaType.GetTypeName().c_str());
     return false;
   }
 
@@ -335,10 +326,10 @@ bool UsdPrim::_CanApplyAPI(const TfType &apiSchemaType,
   if (!UsdSchemaRegistry::IsAllowedAPISchemaInstanceName(apiSchemaTypeName, instanceName)) {
     if (whyNot) {
       *whyNot = TfStringPrintf(
-          "'%s' is not an allowed instance name for multiple apply API "
-          "schema '%s'.",
-          instanceName.GetText(),
-          apiSchemaTypeName.GetText());
+        "'%s' is not an allowed instance name for multiple apply API "
+        "schema '%s'.",
+        instanceName.GetText(),
+        apiSchemaTypeName.GetText());
     }
     return false;
   }
@@ -346,7 +337,7 @@ bool UsdPrim::_CanApplyAPI(const TfType &apiSchemaType,
   // Return whether this prim's type is a valid target for applying the given
   // API schema and instance name.
   return _IsPrimTypeValidApplyToTarget(
-      GetPrimTypeInfo().GetSchemaType(), apiSchemaTypeName, instanceName, whyNot);
+    GetPrimTypeInfo().GetSchemaType(), apiSchemaTypeName, instanceName, whyNot);
 }
 
 bool UsdPrim::CanApplyAPI(const TfType &schemaType, std::string *whyNot) const
@@ -365,9 +356,7 @@ bool UsdPrim::CanApplyAPI(const TfType &schemaType, std::string *whyNot) const
   return _CanApplyAPI(schemaType, whyNot);
 }
 
-bool UsdPrim::CanApplyAPI(const TfType &schemaType,
-                          const TfToken &instanceName,
-                          std::string *whyNot) const
+bool UsdPrim::CanApplyAPI(const TfType &schemaType, const TfToken &instanceName, std::string *whyNot) const
 {
   // Validate that this function is being called on a multiple apply API
   // schema. Failure is a coding error as the matching template function would
@@ -417,9 +406,9 @@ bool UsdPrim::_ApplyAPI(const TfType &schemaType, const TfToken &instanceName) c
   // treat an empty instance for a multiple apply schema as a coding error.
   if (instanceName.IsEmpty()) {
     TF_CODING_ERROR(
-        "ApplyAPI: for mutiple apply API schema %s, a "
-        "non-empty instance name must be provided.",
-        schemaType.GetTypeName().c_str());
+      "ApplyAPI: for mutiple apply API schema %s, a "
+      "non-empty instance name must be provided.",
+      schemaType.GetTypeName().c_str());
     return false;
   }
 
@@ -488,9 +477,9 @@ bool UsdPrim::_RemoveAPI(const TfType &schemaType, const TfToken &instanceName) 
   // treat an empty instance for a multiple apply schema as a coding error.
   if (instanceName.IsEmpty()) {
     TF_CODING_ERROR(
-        "RemoveAPI: for mutiple apply API schema %s, a "
-        "non-empty instance name must be provided.",
-        schemaType.GetTypeName().c_str());
+      "RemoveAPI: for mutiple apply API schema %s, a "
+      "non-empty instance name must be provided.",
+      schemaType.GetTypeName().c_str());
     return false;
   }
 
@@ -535,10 +524,10 @@ bool UsdPrim::AddAppliedSchema(const TfToken &appliedSchemaName) const
   // in case of a failure.
   if (!primSpec) {
     TF_WARN(
-        "Unable to create primSpec at path <%s> in edit target '%s'. "
-        "Failed to add applied API schema.",
-        GetPath().GetText(),
-        _GetStage()->GetEditTarget().GetLayer()->GetIdentifier().c_str());
+      "Unable to create primSpec at path <%s> in edit target '%s'. "
+      "Failed to add applied API schema.",
+      GetPath().GetText(),
+      _GetStage()->GetEditTarget().GetLayer()->GetIdentifier().c_str());
     return false;
   }
 
@@ -571,8 +560,7 @@ bool UsdPrim::AddAppliedSchema(const TfToken &appliedSchemaName) const
       return true;
     }
     // Use ReplaceOperations to append in place.
-    if (!listOp.ReplaceOperations(
-            SdfListOpTypePrepended, preItems.size(), 0, {appliedSchemaName})) {
+    if (!listOp.ReplaceOperations(SdfListOpTypePrepended, preItems.size(), 0, {appliedSchemaName})) {
       return false;
     }
   }
@@ -592,10 +580,10 @@ bool UsdPrim::RemoveAppliedSchema(const TfToken &appliedSchemaName) const
   // in case of a failure.
   if (!primSpec) {
     TF_WARN(
-        "Unable to create primSpec at path <%s> in edit target '%s'. "
-        "Failed to remove applied API schema.",
-        GetPath().GetText(),
-        _GetStage()->GetEditTarget().GetLayer()->GetIdentifier().c_str());
+      "Unable to create primSpec at path <%s> in edit target '%s'. "
+      "Failed to remove applied API schema.",
+      GetPath().GetText(),
+      _GetStage()->GetEditTarget().GetLayer()->GetIdentifier().c_str());
     return false;
   }
 
@@ -613,10 +601,10 @@ bool UsdPrim::RemoveAppliedSchema(const TfToken &appliedSchemaName) const
   }
   else {
     TF_CODING_ERROR(
-        "Failed to apply list op edits to 'apiSchemas' on spec "
-        "at path <%s> in layer '%s'",
-        primSpec->GetLayer()->GetIdentifier().c_str(),
-        primSpec->GetPath().GetText());
+      "Failed to apply list op edits to 'apiSchemas' on spec "
+      "at path <%s> in layer '%s'",
+      primSpec->GetLayer()->GetIdentifier().c_str(),
+      primSpec->GetPath().GetText());
     return false;
   }
 }
@@ -721,8 +709,7 @@ static void _ComposePrimPropertyNames(const PcpPrimIndex &primIndex,
   // Compose the site's local names over the current result.
   if (node.CanContributeSpecs()) {
     for (auto &layer : node.GetLayerStack()->GetLayers()) {
-      if (layer->HasField<TfTokenVector>(
-              node.GetPath(), SdfChildrenKeys->PropertyChildren, localNames)) {
+      if (layer->HasField<TfTokenVector>(node.GetPath(), SdfChildrenKeys->PropertyChildren, localNames)) {
         // If predicate is valid, then append only the names that pass
         // the predicate. If not, add all names (including duplicates).
         if (predicate) {
@@ -811,22 +798,20 @@ TfTokenVector UsdPrim::GetPropertyNames(const UsdPrim::PropertyPredicateFunc &pr
                            predicate);
 }
 
-TfTokenVector UsdPrim::GetAuthoredPropertyNames(
-    const UsdPrim::PropertyPredicateFunc &predicate) const
+TfTokenVector UsdPrim::GetAuthoredPropertyNames(const UsdPrim::PropertyPredicateFunc &predicate) const
 {
   return _GetPropertyNames(/*onlyAuthored=*/true,
                            /*applyOrder*/ true,
                            predicate);
 }
 
-std::vector<UsdProperty> UsdPrim::GetProperties(
-    const UsdPrim::PropertyPredicateFunc &predicate) const
+std::vector<UsdProperty> UsdPrim::GetProperties(const UsdPrim::PropertyPredicateFunc &predicate) const
 {
   return _MakeProperties(GetPropertyNames(predicate));
 }
 
 std::vector<UsdProperty> UsdPrim::GetAuthoredProperties(
-    const UsdPrim::PropertyPredicateFunc &predicate) const
+  const UsdPrim::PropertyPredicateFunc &predicate) const
 {
   return _MakeProperties(GetAuthoredPropertyNames(predicate));
 }
@@ -846,13 +831,12 @@ std::vector<UsdProperty> UsdPrim::_GetPropertiesInNamespace(const std::string &n
   const size_t terminator = namespaces.size() - (*namespaces.rbegin() == delim);
 
   TfTokenVector names = _GetPropertyNames(
-      onlyAuthored,
-      /*applyOrder=*/true,
-      /*predicate*/ [&namespaces, terminator, delim](const TfToken &name) {
-        const std::string &s = name.GetString();
-        return s.size() > terminator && TfStringStartsWith(s, namespaces) &&
-               s[terminator] == delim;
-      });
+    onlyAuthored,
+    /*applyOrder=*/true,
+    /*predicate*/ [&namespaces, terminator, delim](const TfToken &name) {
+      const std::string &s = name.GetString();
+      return s.size() > terminator && TfStringStartsWith(s, namespaces) && s[terminator] == delim;
+    });
 
   return _MakeProperties(names);
 }
@@ -862,20 +846,18 @@ std::vector<UsdProperty> UsdPrim::GetPropertiesInNamespace(const std::string &na
   return _GetPropertiesInNamespace(namespaces, /*onlyAuthored=*/false);
 }
 
-std::vector<UsdProperty> UsdPrim::GetAuthoredPropertiesInNamespace(
-    const std::string &namespaces) const
+std::vector<UsdProperty> UsdPrim::GetAuthoredPropertiesInNamespace(const std::string &namespaces) const
 {
   return _GetPropertiesInNamespace(namespaces, /*onlyAuthored=*/true);
 }
 
-std::vector<UsdProperty> UsdPrim::GetPropertiesInNamespace(
-    const std::vector<std::string> &namespaces) const
+std::vector<UsdProperty> UsdPrim::GetPropertiesInNamespace(const std::vector<std::string> &namespaces) const
 {
   return GetPropertiesInNamespace(SdfPath::JoinIdentifier(namespaces));
 }
 
 std::vector<UsdProperty> UsdPrim::GetAuthoredPropertiesInNamespace(
-    const std::vector<std::string> &namespaces) const
+  const std::vector<std::string> &namespaces) const
 {
   return GetAuthoredPropertiesInNamespace(SdfPath::JoinIdentifier(namespaces));
 }
@@ -902,8 +884,7 @@ UsdAttribute UsdPrim::CreateAttribute(const std::vector<std::string> &nameElts,
                                       bool custom,
                                       SdfVariability variability) const
 {
-  return CreateAttribute(
-      TfToken(SdfPath::JoinIdentifier(nameElts)), typeName, custom, variability);
+  return CreateAttribute(TfToken(SdfPath::JoinIdentifier(nameElts)), typeName, custom, variability);
 }
 
 UsdAttribute UsdPrim::CreateAttribute(const std::vector<std::string> &nameElts,
@@ -960,8 +941,7 @@ UsdRelationship UsdPrim::CreateRelationship(const TfToken &name, bool custom) co
   return rel;
 }
 
-UsdRelationship UsdPrim::CreateRelationship(const std::vector<std::string> &nameElts,
-                                            bool custom) const
+UsdRelationship UsdPrim::CreateRelationship(const std::vector<std::string> &nameElts, bool custom) const
 {
   return CreateRelationship(TfToken(SdfPath::JoinIdentifier(nameElts)), custom);
 }
@@ -1016,10 +996,10 @@ template<class PropertyType, class Derived> struct UsdPrim_TargetFinder {
 
  private:
   explicit UsdPrim_TargetFinder(UsdPrim const &prim, Predicate const &pred, bool recurse)
-      : _prim(prim),
-        _consumerTask(_dispatcher, [this]() { _ConsumerTask(); }),
-        _predicate(pred),
-        _recurse(recurse)
+    : _prim(prim),
+      _consumerTask(_dispatcher, [this]() { _ConsumerTask(); }),
+      _predicate(pred),
+      _recurse(recurse)
   {}
 
   void _Visit(UsdRelationship const &rel)
@@ -1073,8 +1053,7 @@ template<class PropertyType, class Derived> struct UsdPrim_TargetFinder {
   {
     _VisitPrim(prim);
     auto range = prim.GetDescendants();
-    WorkParallelForEach(
-        range.begin(), range.end(), [this](UsdPrim const &desc) { _VisitPrim(desc); });
+    WorkParallelForEach(range.begin(), range.end(), [this](UsdPrim const &desc) { _VisitPrim(desc); });
   }
 
   void _Find()
@@ -1108,8 +1087,7 @@ template<class PropertyType, class Derived> struct UsdPrim_TargetFinder {
   bool _recurse;
 };
 
-struct UsdPrim_RelTargetFinder
-    : public UsdPrim_TargetFinder<UsdRelationship, UsdPrim_RelTargetFinder> {
+struct UsdPrim_RelTargetFinder : public UsdPrim_TargetFinder<UsdRelationship, UsdPrim_RelTargetFinder> {
   std::vector<UsdRelationship> _GetProperties(UsdPrim const &prim) const
   {
     return prim._GetRelationships(/*onlyAuthored=*/true,
@@ -1118,7 +1096,7 @@ struct UsdPrim_RelTargetFinder
 };
 
 struct UsdPrim_AttrConnectionFinder
-    : public UsdPrim_TargetFinder<UsdAttribute, UsdPrim_AttrConnectionFinder> {
+  : public UsdPrim_TargetFinder<UsdAttribute, UsdPrim_AttrConnectionFinder> {
   std::vector<UsdAttribute> _GetProperties(UsdPrim const &prim) const
   {
     return prim._GetAttributes(/*onlyAuthored=*/true,
@@ -1128,15 +1106,15 @@ struct UsdPrim_AttrConnectionFinder
 
 USD_API
 SdfPathVector UsdPrim::FindAllAttributeConnectionPaths(
-    std::function<bool(UsdAttribute const &)> const &predicate,
-    bool recurseOnSources) const
+  std::function<bool(UsdAttribute const &)> const &predicate,
+  bool recurseOnSources) const
 {
   return UsdPrim_AttrConnectionFinder ::Find(*this, predicate, recurseOnSources);
 }
 
 SdfPathVector UsdPrim::FindAllRelationshipTargetPaths(
-    std::function<bool(UsdRelationship const &)> const &predicate,
-    bool recurseOnTargets) const
+  std::function<bool(UsdRelationship const &)> const &predicate,
+  bool recurseOnTargets) const
 {
   return UsdPrim_RelTargetFinder::Find(*this, predicate, recurseOnTargets);
 }
@@ -1293,10 +1271,9 @@ UsdPrim UsdPrim::GetNextSibling() const
 
 UsdPrim UsdPrim::GetFilteredNextSibling(const Usd_PrimFlagsPredicate &inPred) const
 {
-  Usd_PrimDataConstPtr sibling      = get_pointer(_Prim());
-  SdfPath siblingPath               = _ProxyPrimPath();
-  const Usd_PrimFlagsPredicate pred = Usd_CreatePredicateForTraversal(
-      sibling, siblingPath, inPred);
+  Usd_PrimDataConstPtr sibling = get_pointer(_Prim());
+  SdfPath siblingPath = _ProxyPrimPath();
+  const Usd_PrimFlagsPredicate pred = Usd_CreatePredicateForTraversal(sibling, siblingPath, inPred);
 
   if (Usd_MoveToNextSiblingOrParent(sibling, siblingPath, pred)) {
     return UsdPrim();
@@ -1334,8 +1311,7 @@ SdfPrimSpecHandleVector UsdPrim::GetPrimStack() const
 {
   SdfPrimSpecHandleVector primStack;
 
-  for (Usd_Resolver resolver(&(_Prim()->GetPrimIndex())); resolver.IsValid();
-       resolver.NextLayer()) {
+  for (Usd_Resolver resolver(&(_Prim()->GetPrimIndex())); resolver.IsValid(); resolver.NextLayer()) {
 
     auto primSpec = resolver.GetLayer()->GetPrimAtPath(resolver.GetLocalPath());
 
@@ -1358,15 +1334,14 @@ PcpPrimIndex UsdPrim::ComputeExpandedPrimIndex() const
   }
 
   const SdfPath &primIndexPath = cachedPrimIndex.GetPath();
-  PcpCache *cache              = _GetStage()->_GetPcpCache();
+  PcpCache *cache = _GetStage()->_GetPcpCache();
 
   PcpPrimIndexOutputs outputs;
   PcpComputePrimIndex(
-      primIndexPath, cache->GetLayerStack(), cache->GetPrimIndexInputs().Cull(false), &outputs);
+    primIndexPath, cache->GetLayerStack(), cache->GetPrimIndexInputs().Cull(false), &outputs);
 
   _GetStage()->_ReportPcpErrors(
-      outputs.allErrors,
-      TfStringPrintf("computing expanded prim index for <%s>", GetPath().GetText()));
+    outputs.allErrors, TfStringPrintf("computing expanded prim index for <%s>", GetPath().GetText()));
 
   return outputs.primIndex;
 }

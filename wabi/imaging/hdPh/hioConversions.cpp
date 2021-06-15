@@ -27,43 +27,43 @@
 WABI_NAMESPACE_BEGIN
 
 static const HioFormat FORMAT_DESC[] = {
-    // HioFormat            // HdFormat
-    HioFormatUNorm8,      // HdFormatUNorm8,
-    HioFormatUNorm8Vec2,  // HdFormatUNorm8Vec2,
-    HioFormatUNorm8Vec3,  // HdFormatUNorm8Vec3,
-    HioFormatUNorm8Vec4,  // HdFormatUNorm8Vec4,
+  // HioFormat            // HdFormat
+  HioFormatUNorm8,      // HdFormatUNorm8,
+  HioFormatUNorm8Vec2,  // HdFormatUNorm8Vec2,
+  HioFormatUNorm8Vec3,  // HdFormatUNorm8Vec3,
+  HioFormatUNorm8Vec4,  // HdFormatUNorm8Vec4,
 
-    HioFormatSNorm8,      // HdFormatSNorm8,
-    HioFormatSNorm8Vec2,  // HdFormatSNorm8Vec2,
-    HioFormatSNorm8Vec3,  // HdFormatSNorm8Vec3,
-    HioFormatSNorm8Vec4,  // HdFormatSNorm8Vec4,
+  HioFormatSNorm8,      // HdFormatSNorm8,
+  HioFormatSNorm8Vec2,  // HdFormatSNorm8Vec2,
+  HioFormatSNorm8Vec3,  // HdFormatSNorm8Vec3,
+  HioFormatSNorm8Vec4,  // HdFormatSNorm8Vec4,
 
-    HioFormatFloat16,      // HdFormatFloat16,
-    HioFormatFloat16Vec2,  // HdFormatFloat16Vec2,
-    HioFormatFloat16Vec3,  // HdFormatFloat16Vec3,
-    HioFormatFloat16Vec4,  // HdFormatFloat16Vec4,
+  HioFormatFloat16,      // HdFormatFloat16,
+  HioFormatFloat16Vec2,  // HdFormatFloat16Vec2,
+  HioFormatFloat16Vec3,  // HdFormatFloat16Vec3,
+  HioFormatFloat16Vec4,  // HdFormatFloat16Vec4,
 
-    HioFormatFloat32,      // HdFormatFloat32,
-    HioFormatFloat32Vec2,  // HdFormatFloat32Vec2,
-    HioFormatFloat32Vec3,  // HdFormatFloat32Vec3,
-    HioFormatFloat32Vec4,  // HdFormatFloat32Vec4,
+  HioFormatFloat32,      // HdFormatFloat32,
+  HioFormatFloat32Vec2,  // HdFormatFloat32Vec2,
+  HioFormatFloat32Vec3,  // HdFormatFloat32Vec3,
+  HioFormatFloat32Vec4,  // HdFormatFloat32Vec4,
 
-    HioFormatInt16,      // HdFormatInt16,
-    HioFormatInt16Vec2,  // HdFormatInt16Vec2,
-    HioFormatInt16Vec3,  // HdFormatInt16Vec3,
-    HioFormatInt16Vec4,  // HdFormatInt16Vec4,
+  HioFormatInt16,      // HdFormatInt16,
+  HioFormatInt16Vec2,  // HdFormatInt16Vec2,
+  HioFormatInt16Vec3,  // HdFormatInt16Vec3,
+  HioFormatInt16Vec4,  // HdFormatInt16Vec4,
 
-    HioFormatUInt16,      // HdFormatUInt16,
-    HioFormatUInt16Vec2,  // HdFormatUInt16Vec2,
-    HioFormatUInt16Vec3,  // HdFormatUInt16Vec3,
-    HioFormatUInt16Vec4,  // HdFormatUInt16Vec4,
+  HioFormatUInt16,      // HdFormatUInt16,
+  HioFormatUInt16Vec2,  // HdFormatUInt16Vec2,
+  HioFormatUInt16Vec3,  // HdFormatUInt16Vec3,
+  HioFormatUInt16Vec4,  // HdFormatUInt16Vec4,
 
-    HioFormatInt32,      // HdFormatInt32,
-    HioFormatInt32Vec2,  // HdFormatInt32Vec2,
-    HioFormatInt32Vec3,  // HdFormatInt32Vec3,
-    HioFormatInt32Vec4,  // HdFormatInt32Vec4,
+  HioFormatInt32,      // HdFormatInt32,
+  HioFormatInt32Vec2,  // HdFormatInt32Vec2,
+  HioFormatInt32Vec3,  // HdFormatInt32Vec3,
+  HioFormatInt32Vec4,  // HdFormatInt32Vec4,
 
-    HioFormatFloat32,  // HdFormatFloat32UInt8
+  HioFormatFloat32,  // HdFormatFloat32UInt8
 };
 static_assert(TfArraySize(FORMAT_DESC) == HdFormatCount,
               "hioConversion FORMAT_DESC to HdFormat enum mismatch");

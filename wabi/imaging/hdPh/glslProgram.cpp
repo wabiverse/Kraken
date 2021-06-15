@@ -56,11 +56,11 @@ static bool _ParseLineNumberOfError(std::string const &error, unsigned int *line
   // 0(279) : error C1031: swizzle mask element not present in operand "xyz"
   // 279 is the line number here.
   std::string::size_type start = error.find('(');
-  std::string::size_type end   = error.find(')');
+  std::string::size_type end = error.find(')');
   if (start != std::string::npos && end != std::string::npos) {
     std::string lineNumStr = error.substr(start + 1, end - 1);
-    unsigned long num      = strtoul(lineNumStr.c_str(), nullptr, 10);
-    *lineNum               = (unsigned int)num;
+    unsigned long num = strtoul(lineNumStr.c_str(), nullptr, 10);
+    *lineNum = (unsigned int)num;
     if (num == ULONG_MAX || num == 0) {
       // Out of range, or no valid conversion could be performed.
       return false;
@@ -92,7 +92,7 @@ static std::string _GetCompileErrorCodeContext(std::string const &shader,
                                                unsigned int contextSize)
 {
   unsigned int numLinesToSkip = std::max<unsigned int>(0, lineNum - contextSize - 1);
-  std::string::size_type i    = 0;
+  std::string::size_type i = 0;
   for (unsigned int line = 0; line < numLinesToSkip && i != std::string::npos; line++) {
     i = shader.find('\n', i + 1);  // find the next occurrance
   }
@@ -110,7 +110,7 @@ static std::string _GetCompileErrorCodeContext(std::string const &shader,
 
   // Copy error line with annotation.
   start = i + 1;
-  i     = shader.find('\n', start);
+  i = shader.find('\n', start);
   context += _GetSubstring(shader, start, i - 1) + " <<< ERROR!\n";
 
   // Copy context after error line.
@@ -141,8 +141,7 @@ static bool _ValidateCompilation(HgiShaderFunctionHandle shaderFn,
       (TfDebug::IsEnabled(HDPH_DUMP_FAILING_SHADER_SOURCEFILE) && !shaderFn->IsValid())) {
     std::stringstream fnameStream;
     static size_t debugShaderID = 0;
-    fnameStream << "program" << debugID << "_shader" << debugShaderID++ << "_" << shaderType
-                << ".glsl";
+    fnameStream << "program" << debugID << "_shader" << debugShaderID++ << "_" << shaderType << ".glsl";
     fname = fnameStream.str();
     std::fstream output(fname.c_str(), std::ios::out);
     output << shaderSource;
@@ -153,7 +152,7 @@ static bool _ValidateCompilation(HgiShaderFunctionHandle shaderFn,
 
   if (!shaderFn->IsValid()) {
     std::string logString = shaderFn->GetCompileErrors();
-    unsigned int lineNum  = 0;
+    unsigned int lineNum = 0;
     if (_ParseLineNumberOfError(logString, &lineNum)) {
       // Get lines surrounding the erroring line for context.
       std::string errorContext = _GetCompileErrorCodeContext(shaderSource, lineNum, 3);
@@ -180,11 +179,11 @@ static bool _ValidateCompilation(HgiShaderFunctionHandle shaderFn,
 }
 
 HdPhGLSLProgram::HdPhGLSLProgram(TfToken const &role, HdPhResourceRegistry *const registry)
-    : _registry(registry),
-      _role(role)
+  : _registry(registry),
+    _role(role)
 {
   static size_t globalDebugID = 0;
-  _debugID                    = globalDebugID++;
+  _debugID = globalDebugID++;
 }
 
 HdPhGLSLProgram::~HdPhGLSLProgram()
@@ -204,9 +203,9 @@ HdPhGLSLProgram::ID HdPhGLSLProgram::ComputeHash(TfToken const &sourceFile)
 {
   HD_TRACE_FUNCTION();
 
-  uint32_t hash               = 0;
+  uint32_t hash = 0;
   std::string const &filename = sourceFile.GetString();
-  hash                        = ArchHash(filename.c_str(), filename.size(), hash);
+  hash = ArchHash(filename.c_str(), filename.size(), hash);
 
   return hash;
 }
@@ -259,8 +258,8 @@ bool HdPhGLSLProgram::CompileShader(HgiShaderStage stage, std::string const &sha
 
   // Create a shader, compile it
   HgiShaderFunctionDesc shaderFnDesc;
-  shaderFnDesc.shaderCode          = shaderSource.c_str();
-  shaderFnDesc.shaderStage         = stage;
+  shaderFnDesc.shaderCode = shaderSource.c_str();
+  shaderFnDesc.shaderStage = stage;
   HgiShaderFunctionHandle shaderFn = hgi->CreateShaderFunction(shaderFnDesc);
 
   if (!_ValidateCompilation(shaderFn, shaderType, shaderSource, _debugID)) {
@@ -364,12 +363,12 @@ HdPhGLSLProgramSharedPtr HdPhGLSLProgram::GetComputeProgram(TfToken const &shade
 {
   // Find the program from registry
   HdInstance<HdPhGLSLProgramSharedPtr> programInstance = resourceRegistry->RegisterGLSLProgram(
-      HdPhGLSLProgram::ComputeHash(shaderToken));
+    HdPhGLSLProgram::ComputeHash(shaderToken));
 
   if (programInstance.IsFirstInstance()) {
     // if not exists, create new one
-    HdPhGLSLProgramSharedPtr newProgram = std::make_shared<HdPhGLSLProgram>(
-        HdTokens->computeShader, resourceRegistry);
+    HdPhGLSLProgramSharedPtr newProgram = std::make_shared<HdPhGLSLProgram>(HdTokens->computeShader,
+                                                                            resourceRegistry);
 
     HioGlslfx glslfx(shaderFileName);
     std::string errorString;
@@ -378,8 +377,7 @@ HdPhGLSLProgramSharedPtr HdPhGLSLProgram::GetComputeProgram(TfToken const &shade
       return nullptr;
     }
     std::string version = "#version 430\n";
-    if (!newProgram->CompileShader(HgiShaderStageCompute,
-                                   version + glslfx.GetSource(shaderToken))) {
+    if (!newProgram->CompileShader(HgiShaderStageCompute, version + glslfx.GetSource(shaderToken))) {
       TF_CODING_ERROR("Fail to compile " + shaderToken.GetString());
       return nullptr;
     }
@@ -392,14 +390,13 @@ HdPhGLSLProgramSharedPtr HdPhGLSLProgram::GetComputeProgram(TfToken const &shade
   return programInstance.GetValue();
 }
 
-HdPhGLSLProgramSharedPtr HdPhGLSLProgram::GetComputeProgram(
-    TfToken const &shaderToken,
-    HdPhResourceRegistry *resourceRegistry,
-    PopulateDescriptorCallback populateDescriptor)
+HdPhGLSLProgramSharedPtr HdPhGLSLProgram::GetComputeProgram(TfToken const &shaderToken,
+                                                            HdPhResourceRegistry *resourceRegistry,
+                                                            PopulateDescriptorCallback populateDescriptor)
 {
   // Find the program from registry
   HdInstance<HdPhGLSLProgramSharedPtr> programInstance = resourceRegistry->RegisterGLSLProgram(
-      HdPhGLSLProgram::ComputeHash(shaderToken));
+    HdPhGLSLProgram::ComputeHash(shaderToken));
 
   if (programInstance.IsFirstInstance()) {
     // if not exists, create new one
@@ -415,8 +412,8 @@ HdPhGLSLProgramSharedPtr HdPhGLSLProgram::GetComputeProgram(
 
     HgiShaderFunctionDesc computeDesc;
     std::string sourceCode(
-        "#version 430\n"
-        "layout(local_size_x=1, local_size_y=1, local_size_z=1) in;\n");
+      "#version 430\n"
+      "layout(local_size_x=1, local_size_y=1, local_size_z=1) in;\n");
 
     populateDescriptor(computeDesc);
 
@@ -433,8 +430,8 @@ HdPhGLSLProgramSharedPtr HdPhGLSLProgram::GetComputeProgram(
       return nullptr;
     }
 
-    HdPhGLSLProgramSharedPtr newProgram = std::make_shared<HdPhGLSLProgram>(
-        HdTokens->computeShader, resourceRegistry);
+    HdPhGLSLProgramSharedPtr newProgram = std::make_shared<HdPhGLSLProgram>(HdTokens->computeShader,
+                                                                            resourceRegistry);
 
     newProgram->_programDesc.shaderFunctions.push_back(computeFn);
     if (!newProgram->Link()) {

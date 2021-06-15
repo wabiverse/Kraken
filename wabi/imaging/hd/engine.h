@@ -38,7 +38,7 @@ class HdRenderIndex;
 class HdRenderDelegate;
 class HdResourceRegistry;
 
-using HdRenderPassSharedPtr      = std::shared_ptr<class HdRenderPass>;
+using HdRenderPassSharedPtr = std::shared_ptr<class HdRenderPass>;
 using HdRenderPassStateSharedPtr = std::shared_ptr<class HdRenderPassState>;
 
 /// \class HdEngine

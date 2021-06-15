@@ -112,8 +112,7 @@ UsdAttribute UsdRiPxrAovLight::GetAovNameAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->aovName);
 }
 
-UsdAttribute UsdRiPxrAovLight::CreateAovNameAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdRiPxrAovLight::CreateAovNameAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->aovName,
                                     SdfValueTypeNames->String,
@@ -128,8 +127,7 @@ UsdAttribute UsdRiPxrAovLight::GetInPrimaryHitAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->inPrimaryHit);
 }
 
-UsdAttribute UsdRiPxrAovLight::CreateInPrimaryHitAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdRiPxrAovLight::CreateInPrimaryHitAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->inPrimaryHit,
                                     SdfValueTypeNames->Bool,
@@ -144,8 +142,7 @@ UsdAttribute UsdRiPxrAovLight::GetInReflectionAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->inReflection);
 }
 
-UsdAttribute UsdRiPxrAovLight::CreateInReflectionAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdRiPxrAovLight::CreateInReflectionAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->inReflection,
                                     SdfValueTypeNames->Bool,
@@ -160,8 +157,7 @@ UsdAttribute UsdRiPxrAovLight::GetInRefractionAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->inRefraction);
 }
 
-UsdAttribute UsdRiPxrAovLight::CreateInRefractionAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdRiPxrAovLight::CreateInRefractionAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->inRefraction,
                                     SdfValueTypeNames->Bool,
@@ -176,8 +172,7 @@ UsdAttribute UsdRiPxrAovLight::GetInvertAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->invert);
 }
 
-UsdAttribute UsdRiPxrAovLight::CreateInvertAttr(VtValue const &defaultValue,
-                                                bool writeSparsely) const
+UsdAttribute UsdRiPxrAovLight::CreateInvertAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->invert,
                                     SdfValueTypeNames->Bool,
@@ -208,8 +203,7 @@ UsdAttribute UsdRiPxrAovLight::GetUseColorAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->useColor);
 }
 
-UsdAttribute UsdRiPxrAovLight::CreateUseColorAttr(VtValue const &defaultValue,
-                                                  bool writeSparsely) const
+UsdAttribute UsdRiPxrAovLight::CreateUseColorAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->useColor,
                                     SdfValueTypeNames->Bool,
@@ -224,8 +218,7 @@ UsdAttribute UsdRiPxrAovLight::GetUseThroughputAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->useThroughput);
 }
 
-UsdAttribute UsdRiPxrAovLight::CreateUseThroughputAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdRiPxrAovLight::CreateUseThroughputAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->useThroughput,
                                     SdfValueTypeNames->Bool,
@@ -236,8 +229,7 @@ UsdAttribute UsdRiPxrAovLight::CreateUseThroughputAttr(VtValue const &defaultVal
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -251,17 +243,17 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRiPxrAovLight::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRiTokens->aovName,
-      UsdRiTokens->inPrimaryHit,
-      UsdRiTokens->inReflection,
-      UsdRiTokens->inRefraction,
-      UsdRiTokens->invert,
-      UsdRiTokens->onVolumeBoundaries,
-      UsdRiTokens->useColor,
-      UsdRiTokens->useThroughput,
+    UsdRiTokens->aovName,
+    UsdRiTokens->inPrimaryHit,
+    UsdRiTokens->inReflection,
+    UsdRiTokens->inRefraction,
+    UsdRiTokens->invert,
+    UsdRiTokens->onVolumeBoundaries,
+    UsdRiTokens->useColor,
+    UsdRiTokens->useThroughput,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdLuxLight::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdLuxLight::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

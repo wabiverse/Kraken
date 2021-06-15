@@ -36,10 +36,10 @@ WABI_NAMESPACE_BEGIN
 // Storing MaterialX-Hydra counterparts and other Hydra specific information
 struct MxHdInfo {
   MxHdInfo()
-      : textureMap(MaterialX::StringMap()),
-        primvarMap(MaterialX::StringMap()),
-        defaultTexcoordName("st"),
-        materialTag(HdPhMaterialTagTokens->defaultMaterialTag.GetString())
+    : textureMap(MaterialX::StringMap()),
+      primvarMap(MaterialX::StringMap()),
+      defaultTexcoordName("st"),
+      materialTag(HdPhMaterialTagTokens->defaultMaterialTag.GetString())
   {}
   MaterialX::StringMap textureMap;
   MaterialX::StringMap primvarMap;

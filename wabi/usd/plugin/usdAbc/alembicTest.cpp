@@ -141,13 +141,11 @@ struct UsdAbc_AlembicWriteVisitor : public SdfAbstractDataSpecVisitor {
           if (value.IsArrayValued()) {
             if (_Truncate<bool>(value) || _Truncate<double>(value) || _Truncate<float>(value) ||
                 _Truncate<GfMatrix2d>(value) || _Truncate<GfMatrix3d>(value) ||
-                _Truncate<GfMatrix4d>(value) || _Truncate<GfVec2d>(value) ||
-                _Truncate<GfVec2f>(value) || _Truncate<GfVec2i>(value) ||
-                _Truncate<GfVec3d>(value) || _Truncate<GfVec3f>(value) ||
-                _Truncate<GfVec3i>(value) || _Truncate<GfVec4d>(value) ||
-                _Truncate<GfVec4f>(value) || _Truncate<GfVec4i>(value) || _Truncate<int>(value) ||
-                _Truncate<SdfAssetPath>(value) || _Truncate<std::string>(value) ||
-                _Truncate<TfToken>(value)) {
+                _Truncate<GfMatrix4d>(value) || _Truncate<GfVec2d>(value) || _Truncate<GfVec2f>(value) ||
+                _Truncate<GfVec2i>(value) || _Truncate<GfVec3d>(value) || _Truncate<GfVec3f>(value) ||
+                _Truncate<GfVec3i>(value) || _Truncate<GfVec4d>(value) || _Truncate<GfVec4f>(value) ||
+                _Truncate<GfVec4i>(value) || _Truncate<int>(value) || _Truncate<SdfAssetPath>(value) ||
+                _Truncate<std::string>(value) || _Truncate<TfToken>(value)) {
               trailing = "...";
             }
           }
@@ -161,7 +159,7 @@ struct UsdAbc_AlembicWriteVisitor : public SdfAbstractDataSpecVisitor {
           fprintf(stdout, " = %s\n", s.c_str());
         }
 
-        VtValue samples        = data.Get(path, SdfFieldKeys->TimeSamples);
+        VtValue samples = data.Get(path, SdfFieldKeys->TimeSamples);
         std::set<double> times = data.ListTimeSamplesForPath(path);
         if (samples.IsEmpty()) {
           if (times.size() <= 1) {
@@ -309,7 +307,7 @@ bool UsdAbc_TestAlembic(const std::string &pathname)
 
         // Verify no samples at times not listed.
         if (times.size() > 1) {
-          double t      = floor(*times.begin());
+          double t = floor(*times.begin());
           double tUpper = ceil(*times.rbegin());
           for (; t <= tUpper; t += 1.0) {
             if (times.find(t) == times.end()) {

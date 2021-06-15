@@ -84,9 +84,8 @@ struct Tf_PyWeakObjectDeleter {
 int Tf_PyWeakObjectDeleter::WrapIfNecessary()
 {
   if (TfPyIsNone(TfPyGetClassObject<Tf_PyWeakObjectDeleter>())) {
-    boost::python::class_<Tf_PyWeakObjectDeleter>("Tf_PyWeakObject__Deleter",
-                                                  boost::python::no_init)
-        .def("__call__", &Tf_PyWeakObjectDeleter::Deleted);
+    boost::python::class_<Tf_PyWeakObjectDeleter>("Tf_PyWeakObject__Deleter", boost::python::no_init)
+      .def("__call__", &Tf_PyWeakObjectDeleter::Deleted);
   }
   return 1;
 }
@@ -121,7 +120,7 @@ Tf_PyWeakObjectPtr Tf_PyWeakObject::GetOrCreate(boost::python::object const &obj
 boost::python::object Tf_PyWeakObject::GetObject() const
 {
   return boost::python::object(
-      boost::python::handle<>(boost::python::borrowed(PyWeakref_GetObject(_weakRef.get()))));
+    boost::python::handle<>(boost::python::borrowed(PyWeakref_GetObject(_weakRef.get()))));
 }
 
 void Tf_PyWeakObject::Delete()
@@ -131,9 +130,8 @@ void Tf_PyWeakObject::Delete()
 }
 
 Tf_PyWeakObject::Tf_PyWeakObject(boost::python::object const &obj)
-    : _weakRef(PyWeakref_NewRef(
-          obj.ptr(),
-          boost::python::object(Tf_PyWeakObjectDeleter(TfCreateWeakPtr(this))).ptr()))
+  : _weakRef(PyWeakref_NewRef(obj.ptr(),
+                              boost::python::object(Tf_PyWeakObjectDeleter(TfCreateWeakPtr(this))).ptr()))
 {
   Tf_PyWeakObjectPtr self(this);
 

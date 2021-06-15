@@ -85,8 +85,7 @@ class HdEmbreeRenderPass final : public HdRenderPass {
   ///   \param renderPassState Input parameters (including viewer parameters)
   ///                          for this renderpass.
   ///   \param renderTags Which rendertags should be drawn this pass.
-  void _Execute(HdRenderPassStateSharedPtr const &renderPassState,
-                TfTokenVector const &renderTags) override;
+  void _Execute(HdRenderPassStateSharedPtr const &renderPassState, TfTokenVector const &renderTags) override;
 
   /// Update internal tracking to reflect a dirty collection.
   void _MarkCollectionDirty() override

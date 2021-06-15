@@ -184,9 +184,9 @@ class UsdSkelBlendShapeQuery {
     _SubShape() = default;
 
     _SubShape(unsigned blendShapeIndex, int inbetweenIndex, float weight)
-        : _blendShapeIndex(blendShapeIndex),
-          _inbetweenIndex(inbetweenIndex),
-          _weight(weight)
+      : _blendShapeIndex(blendShapeIndex),
+        _inbetweenIndex(inbetweenIndex),
+        _weight(weight)
     {}
 
     unsigned GetBlendShapeIndex() const
@@ -219,8 +219,8 @@ class UsdSkelBlendShapeQuery {
 
    private:
     unsigned _blendShapeIndex = 0;
-    int _inbetweenIndex       = 0;
-    float _weight             = 0;
+    int _inbetweenIndex = 0;
+    float _weight = 0;
   };
 
   struct _SubShapeCompareByWeight {
@@ -238,7 +238,7 @@ class UsdSkelBlendShapeQuery {
   struct _BlendShape {
     UsdSkelBlendShape shape;
     size_t firstSubShape = 0;
-    size_t numSubShapes  = 0;
+    size_t numSubShapes = 0;
   };
 
   UsdPrim _prim;

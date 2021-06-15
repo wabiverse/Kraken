@@ -498,9 +498,8 @@ struct Tf_RefPtr_UniqueChangedCounter {
   {
     if (refBase) {
       // Check to see if we need to invoke the unique changed listener.
-      return refBase->_shouldInvokeUniqueChangedListener ?
-                 _RemoveRef(refBase) :
-                 refBase->GetRefCount()._DecrementAndTestIfZero();
+      return refBase->_shouldInvokeUniqueChangedListener ? _RemoveRef(refBase) :
+                                                           refBase->GetRefCount()._DecrementAndTestIfZero();
     }
     return false;
   }
@@ -516,7 +515,7 @@ struct Tf_RefPtr_UniqueChangedCounter {
     }
     else {
       auto &counter = ptr->GetRefCount()._counter;
-      auto val      = counter.load();
+      auto val = counter.load();
       do {
         if (val == 0)
           return false;
@@ -554,7 +553,7 @@ struct Tf_RefPtr_Counter {
     if (!ptr)
       return false;
     auto &counter = ptr->GetRefCount()._counter;
-    auto val      = counter.load();
+    auto val = counter.load();
     do {
       if (val == 0)
         return false;
@@ -581,7 +580,7 @@ struct Tf_RefPtr_Counter {
 template<class T> class TfRefPtr {
   // Select the counter based on whether T supports unique changed listeners.
   typedef typename boost::mpl::if_c<Tf_SupportsUniqueChanged<T>::Value &&
-                                        !boost::is_convertible<T *, TfSimpleRefBase *>::value,
+                                      !boost::is_convertible<T *, TfSimpleRefBase *>::value,
                                     Tf_RefPtr_UniqueChangedCounter,
                                     Tf_RefPtr_Counter>::type _Counter;
 
@@ -677,10 +676,8 @@ template<class T> class TfRefPtr {
   /// NOT use this constructor (either implicitly or explicitly) from within
   /// a \c New() function.  Use \c TfCreateRefPtr() instead.
   template<class U>
-  explicit TfRefPtr(
-      U *ptr,
-      typename std::enable_if<std::is_convertible<U *, T *>::value>::type * = nullptr)
-      : _refBase(ptr)
+  explicit TfRefPtr(U *ptr, typename std::enable_if<std::is_convertible<U *, T *>::value>::type * = nullptr)
+    : _refBase(ptr)
   {
     _AddRef();
     Tf_RefPtrTracker_New(this, _GetObjectForTracking());
@@ -731,7 +728,7 @@ template<class T> class TfRefPtr {
     Tf_RefPtrTracker_Assign(this, p._GetObjectForTracking(), _GetObjectForTracking());
 
     const TfRefBase *tmp = _refBase;
-    _refBase             = p._refBase;
+    _refBase = p._refBase;
 
     p._AddRef();      // first!
     _RemoveRef(tmp);  // second!
@@ -751,8 +748,8 @@ template<class T> class TfRefPtr {
     Tf_RefPtrTracker_Assign(&p, nullptr, p._GetObjectForTracking());
 
     const TfRefBase *tmp = _refBase;
-    _refBase             = p._refBase;
-    p._refBase           = nullptr;
+    _refBase = p._refBase;
+    p._refBase = nullptr;
 
     _RemoveRef(tmp);
     return *this;
@@ -853,10 +850,9 @@ template<class T> class TfRefPtr {
         _CheckTypeAssignability<U>();
     }
 
-    Tf_RefPtrTracker_Assign(
-        this, reinterpret_cast<T *>(p._GetObjectForTracking()), _GetObjectForTracking());
+    Tf_RefPtrTracker_Assign(this, reinterpret_cast<T *>(p._GetObjectForTracking()), _GetObjectForTracking());
     const TfRefBase *tmp = _refBase;
-    _refBase             = p._GetData();
+    _refBase = p._GetData();
     p._AddRef();      // first!
     _RemoveRef(tmp);  // second!
     return *this;
@@ -883,12 +879,11 @@ template<class T> class TfRefPtr {
         _CheckTypeAssignability<U>();
     }
 
-    Tf_RefPtrTracker_Assign(
-        this, reinterpret_cast<T *>(p._GetObjectForTracking()), _GetObjectForTracking());
+    Tf_RefPtrTracker_Assign(this, reinterpret_cast<T *>(p._GetObjectForTracking()), _GetObjectForTracking());
     Tf_RefPtrTracker_Assign(&p, nullptr, reinterpret_cast<T *>(p._GetObjectForTracking()));
     const TfRefBase *tmp = _refBase;
-    _refBase             = p._GetData();
-    p._refBase           = nullptr;
+    _refBase = p._GetData();
+    p._refBase = nullptr;
     _RemoveRef(tmp);
     return *this;
   }
@@ -1023,8 +1018,7 @@ template<class T> class TfRefPtr {
  private:
   const TfRefBase *_refBase;
 
-  template<class HashState, class U>
-  friend inline void TfHashAppend(HashState &, const TfRefPtr<U> &);
+  template<class HashState, class U> friend inline void TfHashAppend(HashState &, const TfRefPtr<U> &);
   template<class U> friend inline size_t hash_value(const TfRefPtr<U> &);
 
   friend T *get_pointer(TfRefPtr const &p)
@@ -1066,11 +1060,9 @@ template<class T> class TfRefPtr {
   // Sanitized for documentation:
   template<class D> friend inline TfRef<D> TfDynamic_cast(const TfRefPtr<T> &);
 #else
-  template<class D, class B>
-  friend TfRefPtr<typename D::DataType> TfDynamic_cast(const TfRefPtr<B> &);
+  template<class D, class B> friend TfRefPtr<typename D::DataType> TfDynamic_cast(const TfRefPtr<B> &);
 
-  template<class D, class B>
-  friend TfRefPtr<typename D::DataType> TfSafeDynamic_cast(const TfRefPtr<B> &);
+  template<class D, class B> friend TfRefPtr<typename D::DataType> TfSafeDynamic_cast(const TfRefPtr<B> &);
 #endif
 
   /// Allows static casting of a \c TfRefPtr.
@@ -1093,8 +1085,7 @@ template<class T> class TfRefPtr {
   // Sanitized for documentation:
   template<class D> friend inline TfRefPtr<D> TfStatic_cast(const TfRefPtr<T> &);
 #else
-  template<class D, class B>
-  friend TfRefPtr<typename D::DataType> TfStatic_cast(const TfRefPtr<B> &);
+  template<class D, class B> friend TfRefPtr<typename D::DataType> TfStatic_cast(const TfRefPtr<B> &);
 
 #endif
 
@@ -1243,22 +1234,19 @@ template<class T> const std::type_info &TfTypeid(const TfRefPtr<T> &ptr)
   return typeid(*ptr._GetData());
 }
 
-template<class D, class T>
-inline TfRefPtr<typename D::DataType> TfDynamic_cast(const TfRefPtr<T> &ptr)
+template<class D, class T> inline TfRefPtr<typename D::DataType> TfDynamic_cast(const TfRefPtr<T> &ptr)
 {
   typedef TfRefPtr<typename D::DataType> RefPtr;
   return RefPtr(dynamic_cast<typename D::DataType *>(ptr._GetData()));
 }
 
-template<class D, class T>
-inline TfRefPtr<typename D::DataType> TfSafeDynamic_cast(const TfRefPtr<T> &ptr)
+template<class D, class T> inline TfRefPtr<typename D::DataType> TfSafeDynamic_cast(const TfRefPtr<T> &ptr)
 {
   typedef TfRefPtr<typename D::DataType> RefPtr;
   return RefPtr(TfSafeDynamic_cast<typename D::DataType *>(ptr._GetData()));
 }
 
-template<class D, class T>
-inline TfRefPtr<typename D::DataType> TfStatic_cast(const TfRefPtr<T> &ptr)
+template<class D, class T> inline TfRefPtr<typename D::DataType> TfStatic_cast(const TfRefPtr<T> &ptr)
 {
   typedef TfRefPtr<typename D::DataType> RefPtr;
   return RefPtr(static_cast<typename D::DataType *>(ptr._GetData()));

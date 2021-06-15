@@ -87,12 +87,12 @@ MachO::MachO(const struct mach_header *mh, intptr_t slide) : _mh(mh), _slide(sli
 {
   if (_mh->magic == MH_MAGIC_64) {
     auto header = get<struct mach_header_64>(0);
-    _ncmds      = header->ncmds;
+    _ncmds = header->ncmds;
     _cmdsOffset = sizeof(struct mach_header_64);
   }
   else if (_mh->magic == MH_MAGIC) {
     auto header = get<struct mach_header>(0);
-    _ncmds      = header->ncmds;
+    _ncmds = header->ncmds;
     _cmdsOffset = sizeof(struct mach_header);
   }
   else if (_mh->magic == MH_CIGAM_64 || _mh->magic == MH_CIGAM) {
@@ -105,7 +105,7 @@ MachO::MachO(const struct mach_header *mh, intptr_t slide) : _mh(mh), _slide(sli
 
 MachO::SectionInfo MachO::find(const char *segname, const char *sectname) const
 {
-  bool is_64    = false;
+  bool is_64 = false;
   size_t nsects = 0;
   size_t offset = _cmdsOffset;
   for (size_t i = 0; i != _ncmds; ++i) {
@@ -134,8 +134,7 @@ MachO::SectionInfo MachO::find(const char *segname, const char *sectname) const
     for (size_t i = 0; i != nsects; ++i) {
       auto section = get<struct section_64>(offset);
       if (strcmp(section->sectname, sectname) == 0) {
-        return {static_cast<intptr_t>(section->addr) + _slide,
-                static_cast<ptrdiff_t>(section->size)};
+        return {static_cast<intptr_t>(section->addr) + _slide, static_cast<ptrdiff_t>(section->size)};
       }
       offset += sizeof(*section);
     }
@@ -144,8 +143,7 @@ MachO::SectionInfo MachO::find(const char *segname, const char *sectname) const
     for (size_t i = 0; i != nsects; ++i) {
       auto section = get<struct section>(offset);
       if (strcmp(section->sectname, sectname) == 0) {
-        return {static_cast<intptr_t>(section->addr) + _slide,
-                static_cast<ptrdiff_t>(section->size)};
+        return {static_cast<intptr_t>(section->addr) + _slide, static_cast<ptrdiff_t>(section->size)};
       }
       offset += sizeof(*section);
     }
@@ -172,16 +170,14 @@ static std::vector<Arch_ConstructorEntry> GetConstructorEntries(const struct mac
 
   // Copy the entries for sorting.  We could sort in place but we want
   // to return a vector anyway.
-  const Arch_ConstructorEntry *entries = reinterpret_cast<const Arch_ConstructorEntry *>(
-      info.address);
+  const Arch_ConstructorEntry *entries = reinterpret_cast<const Arch_ConstructorEntry *>(info.address);
   result.assign(entries, entries + numEntries);
 
   // Sort.
-  std::sort(result.begin(),
-            result.end(),
-            [](const Arch_ConstructorEntry &lhs, const Arch_ConstructorEntry &rhs) {
-              return lhs.priority < rhs.priority;
-            });
+  std::sort(
+    result.begin(), result.end(), [](const Arch_ConstructorEntry &lhs, const Arch_ConstructorEntry &rhs) {
+      return lhs.priority < rhs.priority;
+    });
 
   return result;
 }
@@ -266,17 +262,15 @@ class ImageNT {
 ImageNT::SectionInfo ImageNT::Find(const char *sectname) const
 {
   // Get the section headers and the number of sections.
-  intptr_t base                              = reinterpret_cast<intptr_t>(_hModule);
-  const IMAGE_DOS_HEADER *dosHeader          = reinterpret_cast<IMAGE_DOS_HEADER *>(base);
-  const IMAGE_NT_HEADERS *ntHeader           = reinterpret_cast<IMAGE_NT_HEADERS *>(base +
-                                                                          dosHeader->e_lfanew);
+  intptr_t base = reinterpret_cast<intptr_t>(_hModule);
+  const IMAGE_DOS_HEADER *dosHeader = reinterpret_cast<IMAGE_DOS_HEADER *>(base);
+  const IMAGE_NT_HEADERS *ntHeader = reinterpret_cast<IMAGE_NT_HEADERS *>(base + dosHeader->e_lfanew);
   const IMAGE_SECTION_HEADER *sectionHeaders = IMAGE_FIRST_SECTION(ntHeader);
 
   // Search for the section by name.
   for (WORD i = 0; i != ntHeader->FileHeader.NumberOfSections; ++i) {
     const auto &section = sectionHeaders[i];
-    if (strncmp(reinterpret_cast<const char *>(section.Name), sectname, sizeof(section.Name)) ==
-        0) {
+    if (strncmp(reinterpret_cast<const char *>(section.Name), sectname, sizeof(section.Name)) == 0) {
       return {base + section.VirtualAddress, section.Misc.VirtualSize};
     }
   }
@@ -284,8 +278,7 @@ ImageNT::SectionInfo ImageNT::Find(const char *sectname) const
   return {0, 0};
 }
 
-static std::vector<Arch_ConstructorEntry> GetConstructorEntries(HMODULE hModule,
-                                                                const char *sectname)
+static std::vector<Arch_ConstructorEntry> GetConstructorEntries(HMODULE hModule, const char *sectname)
 {
   std::vector<Arch_ConstructorEntry> result;
 
@@ -300,16 +293,14 @@ static std::vector<Arch_ConstructorEntry> GetConstructorEntries(HMODULE hModule,
 
   // Copy the entries for sorting.  We could sort in place but we want
   // to return a vector anyway.
-  const Arch_ConstructorEntry *entries = reinterpret_cast<const Arch_ConstructorEntry *>(
-      info.address);
+  const Arch_ConstructorEntry *entries = reinterpret_cast<const Arch_ConstructorEntry *>(info.address);
   result.assign(entries, entries + numEntries);
 
   // Sort.
-  std::sort(result.begin(),
-            result.end(),
-            [](const Arch_ConstructorEntry &lhs, const Arch_ConstructorEntry &rhs) {
-              return lhs.priority < rhs.priority;
-            });
+  std::sort(
+    result.begin(), result.end(), [](const Arch_ConstructorEntry &lhs, const Arch_ConstructorEntry &rhs) {
+      return lhs.priority < rhs.priority;
+    });
 
   return result;
 }
@@ -352,8 +343,7 @@ static void RunDestructors(HMODULE hModule)
 static HMODULE GetCurrentModule(void *ptr)
 {
   HMODULE result;
-  GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
-                        GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+  GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
                     reinterpret_cast<LPCTSTR>(ptr),
                     &result);
   return result;

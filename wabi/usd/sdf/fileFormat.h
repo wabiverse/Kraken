@@ -194,7 +194,7 @@ class SdfFileFormat : public TfRefBase, public TfWeakBase {
   SDF_API
   virtual bool WriteToFile(const SdfLayer &layer,
                            const std::string &filePath,
-                           const std::string &comment      = std::string(),
+                           const std::string &comment = std::string(),
                            const FileFormatArguments &args = FileFormatArguments()) const;
 
   /// Reads data in the string \p str into the layer \p layer. If
@@ -264,8 +264,7 @@ class SdfFileFormat : public TfRefBase, public TfWeakBase {
   /// matching extension is not found, this returns a null file format
   /// pointer.
   SDF_API
-  static SdfFileFormatConstPtr FindByExtension(const std::string &path,
-                                               const FileFormatArguments &args);
+  static SdfFileFormatConstPtr FindByExtension(const std::string &path, const FileFormatArguments &args);
 
  protected:
   /// Constructor.
@@ -418,7 +417,7 @@ template<typename T> class Sdf_FileFormatFactory : public Sdf_FileFormatFactoryB
 template<class FileFormat, class... BaseFormats> void SdfDefineFileFormat()
 {
   TfType::Define<FileFormat, TfType::Bases<BaseFormats...>>()
-      .template SetFactory<Sdf_FileFormatFactory<FileFormat>>();
+    .template SetFactory<Sdf_FileFormatFactory<FileFormat>>();
 }
 #endif  // doxygen
 

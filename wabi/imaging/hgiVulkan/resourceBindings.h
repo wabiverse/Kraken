@@ -70,9 +70,9 @@ class HgiVulkanResourceBindings final : public HgiResourceBindings {
   HgiVulkanResourceBindings(HgiVulkanDevice *device, HgiResourceBindingsDesc const &desc);
 
  private:
-  HgiVulkanResourceBindings()        = delete;
+  HgiVulkanResourceBindings() = delete;
   HgiVulkanResourceBindings &operator=(const HgiVulkanResourceBindings &) = delete;
-  HgiVulkanResourceBindings(const HgiVulkanResourceBindings &)            = delete;
+  HgiVulkanResourceBindings(const HgiVulkanResourceBindings &) = delete;
 
   HgiVulkanDevice *_device;
   uint64_t _inflightBits;

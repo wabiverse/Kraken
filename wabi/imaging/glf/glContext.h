@@ -78,8 +78,7 @@ class GlfGLContext {
 
   /// Returns \c true if \a context1 and \a context2 are sharing.
   GLF_API
-  static bool AreSharing(GlfGLContextSharedPtr const &context1,
-                         GlfGLContextSharedPtr const &context2);
+  static bool AreSharing(GlfGLContextSharedPtr const &context1, GlfGLContextSharedPtr const &context2);
 
   /// Returns whether this interface has been initialized.
   GLF_API

@@ -44,8 +44,7 @@ template<typename T> struct ToRprUsdMaterialNodeInputType;
 
 #define DEFINE_TYPE_CONVERSION(c_type, material_type) \
   template<> struct ToRprUsdMaterialNodeInputType<c_type> { \
-    static constexpr RprUsdMaterialNodeInput::Type value = \
-        RprUsdMaterialNodeInput::k##material_type; \
+    static constexpr RprUsdMaterialNodeInput::Type value = RprUsdMaterialNodeInput::k##material_type; \
   };
 
 DEFINE_TYPE_CONVERSION(bool, Boolean);
@@ -103,18 +102,17 @@ struct RprUsd_RprNodeInput : public RprUsdMaterialNodeInput {
   RprUsd_RprNodeInput(TfToken const &name,
                       T defaultValue,
                       RprUsdMaterialNodeInput::Type type = RprUsdMaterialNodeInput::kInvalid,
-                      const char *uiName                 = nullptr)
-      : RprUsdMaterialNodeInput(type != RprUsdMaterialNodeInput::kInvalid ?
-                                    type :
-                                    ToRprUsdMaterialNodeInputType<T>::value),
-        name(name),
-        uiSoftMin("0"),
-        uiSoftMax("1"),
-        value(VtValue(defaultValue)),
-        valueString(std::to_string(defaultValue))
+                      const char *uiName = nullptr)
+    : RprUsdMaterialNodeInput(
+        type != RprUsdMaterialNodeInput::kInvalid ? type : ToRprUsdMaterialNodeInputType<T>::value),
+      name(name),
+      uiSoftMin("0"),
+      uiSoftMax("1"),
+      value(VtValue(defaultValue)),
+      valueString(std::to_string(defaultValue))
   {
     if (!uiName) {
-      this->uiName    = name.GetString();
+      this->uiName = name.GetString();
       this->uiName[0] = ::toupper(this->uiName[0]);
     }
     else {

@@ -66,12 +66,12 @@ template<> class numeric_limits<WABI_NS::wabi_half::half> {
     return WABI_HALF_MAX;
   }
 
-  static const int digits      = WABI_HALF_MANT_DIG;
-  static const int digits10    = WABI_HALF_DIG;
-  static const bool is_signed  = true;
+  static const int digits = WABI_HALF_MANT_DIG;
+  static const int digits10 = WABI_HALF_DIG;
+  static const bool is_signed = true;
   static const bool is_integer = false;
-  static const bool is_exact   = false;
-  static const int radix       = WABI_HALF_RADIX;
+  static const bool is_exact = false;
+  static const int radix = WABI_HALF_RADIX;
   static half epsilon() throw()
   {
     return WABI_HALF_EPSILON;
@@ -81,16 +81,16 @@ template<> class numeric_limits<WABI_NS::wabi_half::half> {
     return WABI_HALF_EPSILON / 2;
   }
 
-  static const int min_exponent   = WABI_HALF_MIN_EXP;
+  static const int min_exponent = WABI_HALF_MIN_EXP;
   static const int min_exponent10 = WABI_HALF_MIN_10_EXP;
-  static const int max_exponent   = WABI_HALF_MAX_EXP;
+  static const int max_exponent = WABI_HALF_MAX_EXP;
   static const int max_exponent10 = WABI_HALF_MAX_10_EXP;
 
-  static const bool has_infinity             = true;
-  static const bool has_quiet_NaN            = true;
-  static const bool has_signaling_NaN        = true;
+  static const bool has_infinity = true;
+  static const bool has_quiet_NaN = true;
+  static const bool has_signaling_NaN = true;
   static const float_denorm_style has_denorm = denorm_present;
-  static const bool has_denorm_loss          = false;
+  static const bool has_denorm_loss = false;
   static half infinity() throw()
   {
     return half::posInf();
@@ -108,12 +108,12 @@ template<> class numeric_limits<WABI_NS::wabi_half::half> {
     return WABI_HALF_MIN;
   }
 
-  static const bool is_iec559  = false;
+  static const bool is_iec559 = false;
   static const bool is_bounded = false;
-  static const bool is_modulo  = false;
+  static const bool is_modulo = false;
 
-  static const bool traps                    = true;
-  static const bool tinyness_before          = false;
+  static const bool traps = true;
+  static const bool tinyness_before = false;
   static const float_round_style round_style = round_to_nearest;
 
 #if __cplusplus >= 201103L

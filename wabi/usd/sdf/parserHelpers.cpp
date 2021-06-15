@@ -104,10 +104,9 @@ inline void MakeScalarValueImpl(SdfTimeCode *out, vector<Value> const &vars, siz
 }
 
 template<class Int>
-inline std::enable_if_t<std::is_integral<Int>::value> MakeScalarValueImpl(
-    Int *out,
-    vector<Value> const &vars,
-    size_t &index)
+inline std::enable_if_t<std::is_integral<Int>::value> MakeScalarValueImpl(Int *out,
+                                                                          vector<Value> const &vars,
+                                                                          size_t &index)
 {
   CHECK_BOUNDS(1, ArchGetDemangled<Int>().c_str());
   *out = vars[index++].Get<Int>();
@@ -308,9 +307,9 @@ inline VtValue MakeScalarValueTemplate(vector<unsigned int> const &,
   }
   catch (const boost::bad_get &) {
     *errStrPtr = TfStringPrintf(
-        "Failed to parse value (at sub-part %zd "
-        "if there are multiple parts)",
-        (index - origIndex) - 1);
+      "Failed to parse value (at sub-part %zd "
+      "if there are multiple parts)",
+      (index - origIndex) - 1);
     return VtValue();
   }
   return VtValue(t);
@@ -331,7 +330,7 @@ inline VtValue MakeShapedValueTemplate(vector<unsigned int> const &shape,
 
   VtArray<T> array(size);
   size_t shapeIndex = 0;
-  size_t origIndex  = index;
+  size_t origIndex = index;
   try {
     TF_FOR_ALL(i, array)
     {
@@ -341,11 +340,11 @@ inline VtValue MakeShapedValueTemplate(vector<unsigned int> const &shape,
   }
   catch (const boost::bad_get &) {
     *errStrPtr = TfStringPrintf(
-        "Failed to parse at element %zd "
-        "(at sub-part %zd if there are "
-        "multiple parts)",
-        shapeIndex,
-        (index - origIndex) - 1);
+      "Failed to parse at element %zd "
+      "(at sub-part %zd if there are "
+      "multiple parts)",
+      shapeIndex,
+      (index - origIndex) - 1);
     return VtValue();
   }
   return VtValue(array);
@@ -366,14 +365,13 @@ struct _MakeFactoryMap {
     const SdfValueTypeName array = scalar.GetArrayType();
 
     const std::string scalarName = alias ? std::string(alias) : scalar.GetAsToken().GetString();
-    const std::string arrayName  = alias ? std::string(alias) + "[]" :
-                                           array.GetAsToken().GetString();
+    const std::string arrayName = alias ? std::string(alias) + "[]" : array.GetAsToken().GetString();
 
     _ValueFactoryMap &f = *_factories;
-    f[scalarName]       = ValueFactory(
-        scalarName, scalar.GetDimensions(), !isShaped, MakeScalarValueTemplate<CppType>);
+    f[scalarName] = ValueFactory(
+      scalarName, scalar.GetDimensions(), !isShaped, MakeScalarValueTemplate<CppType>);
     f[arrayName] = ValueFactory(
-        arrayName, array.GetDimensions(), isShaped, MakeShapedValueTemplate<CppType>);
+      arrayName, array.GetDimensions(), isShaped, MakeShapedValueTemplate<CppType>);
   }
 
   _ValueFactoryMap *_factories;
@@ -492,8 +490,7 @@ TF_MAKE_STATIC_DATA(_ValueFactoryMap, _valueFactories)
   builder.add<TfToken>(SdfValueTypeNames->Token, "Schema");
 
   // Set up the special None factory.
-  (*_valueFactories)[std::string("None")] = ValueFactory(
-      std::string(""), SdfTupleDimensions(), false, NULL);
+  (*_valueFactories)[std::string("None")] = ValueFactory(std::string(""), SdfTupleDimensions(), false, NULL);
 }
 
 ValueFactory const &GetValueFactoryForMenvaName(std::string const &name, bool *found)
@@ -506,7 +503,7 @@ ValueFactory const &GetValueFactoryForMenvaName(std::string const &name, bool *f
 
   // No factory for given name.
   static ValueFactory const &none = (*_valueFactories)[std::string("None")];
-  *found                          = false;
+  *found = false;
   return none;
 }
 
@@ -539,10 +536,7 @@ bool Sdf_BoolFromString(const std::string &str, bool *parseOk)
   return true;
 }
 
-std::string Sdf_EvalQuotedString(const char *x,
-                                 size_t n,
-                                 size_t trimBothSides,
-                                 unsigned int *numLines)
+std::string Sdf_EvalQuotedString(const char *x, size_t n, size_t trimBothSides, unsigned int *numLines)
 {
   std::string ret;
 

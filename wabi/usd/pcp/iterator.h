@@ -49,10 +49,10 @@ class PcpPropertyIndex;
 /// order.
 ///
 class PcpNodeIterator : public boost::iterator_facade<
-                            /* Derived =   */ PcpNodeIterator,
-                            /* ValueType = */ PcpNodeRef,
-                            /* Category =  */ boost::random_access_traversal_tag,
-                            /* RefType =   */ PcpNodeRef> {
+                          /* Derived =   */ PcpNodeIterator,
+                          /* ValueType = */ PcpNodeRef,
+                          /* Category =  */ boost::random_access_traversal_tag,
+                          /* RefType =   */ PcpNodeRef> {
  public:
   /// Constructs an invalid iterator.
   PcpNodeIterator() : _graph(0), _nodeIdx(PCP_INVALID_INDEX)
@@ -111,7 +111,7 @@ class PcpNodeReverseIterator : public boost::reverse_iterator<PcpNodeIterator> {
   PcpNodeReverseIterator()
   {}
   explicit PcpNodeReverseIterator(const PcpNodeIterator &iter)
-      : boost::reverse_iterator<PcpNodeIterator>(iter)
+    : boost::reverse_iterator<PcpNodeIterator>(iter)
   {}
 };
 
@@ -121,10 +121,10 @@ class PcpNodeReverseIterator : public boost::reverse_iterator<PcpNodeIterator> {
 /// strong-to-weak order.
 ///
 class PcpPrimIterator : public boost::iterator_facade<
-                            /* Derived  = */ PcpPrimIterator,
-                            /* Value    = */ SdfSite,
-                            /* Category = */ boost::random_access_traversal_tag,
-                            /* Ref      = */ SdfSite> {
+                          /* Derived  = */ PcpPrimIterator,
+                          /* Value    = */ SdfSite,
+                          /* Category = */ boost::random_access_traversal_tag,
+                          /* Ref      = */ SdfSite> {
  public:
   /// Constructs an invalid iterator.
   PCP_API
@@ -174,7 +174,7 @@ class PcpPrimReverseIterator : public boost::reverse_iterator<PcpPrimIterator> {
   PcpPrimReverseIterator()
   {}
   explicit PcpPrimReverseIterator(const PcpPrimIterator &iter)
-      : boost::reverse_iterator<PcpPrimIterator>(iter)
+    : boost::reverse_iterator<PcpPrimIterator>(iter)
   {}
 
   PcpNodeRef GetNode() const
@@ -196,9 +196,9 @@ class PcpPrimReverseIterator : public boost::reverse_iterator<PcpPrimIterator> {
 /// strong-to-weak order.
 ///
 class PcpPropertyIterator : public boost::iterator_facade<
-                                /* Derived  = */ PcpPropertyIterator,
-                                /* Value    = */ const SdfPropertySpecHandle,
-                                /* Category = */ boost::random_access_traversal_tag> {
+                              /* Derived  = */ PcpPropertyIterator,
+                              /* Value    = */ const SdfPropertySpecHandle,
+                              /* Category = */ boost::random_access_traversal_tag> {
  public:
   /// Constructs an invalid iterator.
   PCP_API
@@ -248,7 +248,7 @@ class PcpPropertyReverseIterator : public boost::reverse_iterator<PcpPropertyIte
   PcpPropertyReverseIterator()
   {}
   explicit PcpPropertyReverseIterator(const PcpPropertyIterator &iter)
-      : boost::reverse_iterator<PcpPropertyIterator>(iter)
+    : boost::reverse_iterator<PcpPropertyIterator>(iter)
   {}
 
   PcpNodeRef GetNode() const

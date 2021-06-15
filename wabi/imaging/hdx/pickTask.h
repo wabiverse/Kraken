@@ -50,11 +50,11 @@ WABI_NAMESPACE_BEGIN
   /* Task context */ \
   (pickParams) \
 \
-      /* Pick target */ \
-      (pickPrimsAndInstances)(pickFaces)(pickEdges)(pickPoints) \
+    /* Pick target */ \
+    (pickPrimsAndInstances)(pickFaces)(pickEdges)(pickPoints) \
 \
-      /* Resolve mode */ \
-      (resolveNearestToCamera)(resolveNearestToCenter)(resolveUnique)(resolveAll)
+    /* Resolve mode */ \
+    (resolveNearestToCamera)(resolveNearestToCenter)(resolveUnique)(resolveAll)
 
 TF_DECLARE_PUBLIC_TOKENS(HdxPickTokens, HDX_API, HDX_PICK_TOKENS);
 
@@ -131,16 +131,16 @@ struct HdxPickTaskContextParams {
   using DepthMaskCallback = std::function<void(void)>;
 
   HdxPickTaskContextParams()
-      : resolution(128, 128),
-        pickTarget(HdxPickTokens->pickPrimsAndInstances),
-        resolveMode(HdxPickTokens->resolveNearestToCamera),
-        doUnpickablesOcclude(false),
-        viewMatrix(1),
-        projectionMatrix(1),
-        clipPlanes(),
-        depthMaskCallback(nullptr),
-        collection(),
-        outHits(nullptr)
+    : resolution(128, 128),
+      pickTarget(HdxPickTokens->pickPrimsAndInstances),
+      resolveMode(HdxPickTokens->resolveNearestToCamera),
+      doUnpickablesOcclude(false),
+      viewMatrix(1),
+      projectionMatrix(1),
+      clipPlanes(),
+      depthMaskCallback(nullptr),
+      collection(),
+      outHits(nullptr)
   {}
 
   GfVec2i resolution;
@@ -224,7 +224,7 @@ class HdxPickTask : public HdTask {
   // be shared, we clone the attachments on each request.
   GlfDrawTargetRefPtr _drawTarget;
 
-  HdxPickTask()                    = delete;
+  HdxPickTask() = delete;
   HdxPickTask(const HdxPickTask &) = delete;
   HdxPickTask &operator=(const HdxPickTask &) = delete;
 };

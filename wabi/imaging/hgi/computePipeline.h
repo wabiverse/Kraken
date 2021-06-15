@@ -62,12 +62,10 @@ struct HgiComputeShaderConstantsDesc {
 };
 
 HGI_API
-bool operator==(const HgiComputeShaderConstantsDesc &lhs,
-                const HgiComputeShaderConstantsDesc &rhs);
+bool operator==(const HgiComputeShaderConstantsDesc &lhs, const HgiComputeShaderConstantsDesc &rhs);
 
 HGI_API
-bool operator!=(const HgiComputeShaderConstantsDesc &lhs,
-                const HgiComputeShaderConstantsDesc &rhs);
+bool operator!=(const HgiComputeShaderConstantsDesc &lhs, const HgiComputeShaderConstantsDesc &rhs);
 
 /// \struct HgiComputePipelineDesc
 ///
@@ -120,12 +118,12 @@ class HgiComputePipeline {
   HgiComputePipelineDesc _descriptor;
 
  private:
-  HgiComputePipeline()        = delete;
+  HgiComputePipeline() = delete;
   HgiComputePipeline &operator=(const HgiComputePipeline &) = delete;
-  HgiComputePipeline(const HgiComputePipeline &)            = delete;
+  HgiComputePipeline(const HgiComputePipeline &) = delete;
 };
 
-using HgiComputePipelineHandle       = HgiHandle<class HgiComputePipeline>;
+using HgiComputePipelineHandle = HgiHandle<class HgiComputePipeline>;
 using HgiComputePipelineHandleVector = std::vector<HgiComputePipelineHandle>;
 
 WABI_NAMESPACE_END

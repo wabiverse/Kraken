@@ -27,8 +27,8 @@
 WABI_NAMESPACE_BEGIN
 
 Hd_ExtCompInputSource::Hd_ExtCompInputSource(const TfToken &inputName)
-    : HdNullBufferSource(),
-      _inputName(inputName)
+  : HdNullBufferSource(),
+    _inputName(inputName)
 {}
 
 TfToken const &Hd_ExtCompInputSource::GetName() const

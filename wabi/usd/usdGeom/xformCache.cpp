@@ -73,8 +73,7 @@ bool UsdGeomXformCache::GetResetXformStack(const UsdPrim &prim)
   return false;
 }
 
-bool UsdGeomXformCache::IsAttributeIncludedInLocalTransform(const UsdPrim &prim,
-                                                            const TfToken &attrName)
+bool UsdGeomXformCache::IsAttributeIncludedInLocalTransform(const UsdPrim &prim, const TfToken &attrName)
 {
   // Get or create an entry for the prim in the CTM cache.
   // The validity of the ctm value itself is irrelevant here.
@@ -87,7 +86,7 @@ bool UsdGeomXformCache::IsAttributeIncludedInLocalTransform(const UsdPrim &prim,
 
 UsdGeomXformCache::_Entry *UsdGeomXformCache::_GetCacheEntryForPrim(const UsdPrim &prim)
 {
-  auto iresult   = _ctmCache.insert({prim, _Entry()});
+  auto iresult = _ctmCache.insert({prim, _Entry()});
   _Entry *result = &iresult.first->second;
   if (iresult.second) {
     if (UsdGeomXformable xf = UsdGeomXformable(prim)) {
@@ -162,7 +161,7 @@ GfMatrix4d const *UsdGeomXformCache::_GetCtm(const UsdPrim &prim)
   xform = !resetsXformStack ? (xform * (*_GetCtm(prim.GetParent()))) : xform;
 
   // Return the address of the inserted Matrix.
-  entry->ctm        = xform;
+  entry->ctm = xform;
   entry->ctmIsValid = true;
 
   return &entry->ctm;

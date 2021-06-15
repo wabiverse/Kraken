@@ -50,10 +50,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPhCommandBuffer::HdPhCommandBuffer()
-    : _visibleSize(0),
-      _visChangeCount(0),
-      _drawBatchesVersion(0)
+HdPhCommandBuffer::HdPhCommandBuffer() : _visibleSize(0), _visChangeCount(0), _drawBatchesVersion(0)
 {
   /*NOTHING*/
 }
@@ -122,10 +119,10 @@ void HdPhCommandBuffer::RebuildDrawBatchesIfNeeded(unsigned currentBatchesVersio
 
   if (TfDebug::IsEnabled(HDPH_DRAW_BATCH) && !_drawBatches.empty()) {
     TfDebug::Helper().Msg(
-        "Command buffer %p : RebuildDrawBatchesIfNeeded "
-        "(deepValidation=%d)\n",
-        (void *)(this),
-        deepValidation);
+      "Command buffer %p : RebuildDrawBatchesIfNeeded "
+      "(deepValidation=%d)\n",
+      (void *)(this),
+      deepValidation);
   }
 
   // Force rebuild of all batches for debugging purposes. This helps quickly
@@ -178,8 +175,7 @@ void HdPhCommandBuffer::_RebuildDrawBatches()
 {
   HD_TRACE_FUNCTION();
 
-  TF_DEBUG(HDPH_DRAW_BATCH)
-      .Msg("Rebuilding all draw batches for command buffer %p ...\n", (void *)this);
+  TF_DEBUG(HDPH_DRAW_BATCH).Msg("Rebuilding all draw batches for command buffer %p ...\n", (void *)this);
 
   _visibleSize = 0;
 
@@ -203,7 +199,7 @@ void HdPhCommandBuffer::_RebuildDrawBatches()
     {}
     void Update(size_t _key, HdPh_DrawBatchSharedPtr &_batch)
     {
-      key   = _key;
+      key = _key;
       batch = _batch;
     }
     size_t key;
@@ -248,8 +244,8 @@ void HdPhCommandBuffer::_RebuildDrawBatches()
     }
 
     _DrawBatchMap::iterator const batchIter = batchMap.find(key);
-    bool const foundKey                     = batchIter != batchMap.end();
-    bool batched                            = false;
+    bool const foundKey = batchIter != batchMap.end();
+    bool batched = false;
     if (foundKey) {
       HdPh_DrawBatchSharedPtrVector &batches = batchIter->second;
       for (HdPh_DrawBatchSharedPtr &batch : batches) {
@@ -277,9 +273,7 @@ void HdPhCommandBuffer::_RebuildDrawBatches()
   }
 
   TF_DEBUG(HDPH_DRAW_BATCH)
-      .Msg("   %lu draw batches created for %lu draw items\n",
-           _drawBatches.size(),
-           _drawItems.size());
+    .Msg("   %lu draw batches created for %lu draw items\n", _drawBatches.size(), _drawItems.size());
 }
 
 void HdPhCommandBuffer::SyncDrawItemVisibility(unsigned visChangeCount)
@@ -295,35 +289,33 @@ void HdPhCommandBuffer::SyncDrawItemVisibility(unsigned visChangeCount)
   }
 
   _visibleSize = 0;
-  int const N  = 10000;
+  int const N = 10000;
   tbb::enumerable_thread_specific<size_t> visCounts;
 
-  WorkParallelForN(_drawItemInstances.size() / N + 1,
-                   [&visCounts, this, N](size_t start, size_t end) {
-                     TRACE_SCOPE("SetVis");
-                     start *= N;
-                     end           = std::min(end * N, _drawItemInstances.size());
-                     size_t &count = visCounts.local();
-                     for (size_t i = start; i < end; ++i) {
-                       HdPhDrawItem const *item = _drawItemInstances[i].GetDrawItem();
+  WorkParallelForN(_drawItemInstances.size() / N + 1, [&visCounts, this, N](size_t start, size_t end) {
+    TRACE_SCOPE("SetVis");
+    start *= N;
+    end = std::min(end * N, _drawItemInstances.size());
+    size_t &count = visCounts.local();
+    for (size_t i = start; i < end; ++i) {
+      HdPhDrawItem const *item = _drawItemInstances[i].GetDrawItem();
 
-                       bool visible = item->GetVisible();
-                       // DrawItemInstance->SetVisible is not only an inline function but
-                       // also internally calling virtual HdDrawBatch
-                       // DrawItemInstanceChanged.  shortcut by looking IsVisible(), which
-                       // is inline, if it's not actually changing.
+      bool visible = item->GetVisible();
+      // DrawItemInstance->SetVisible is not only an inline function but
+      // also internally calling virtual HdDrawBatch
+      // DrawItemInstanceChanged.  shortcut by looking IsVisible(), which
+      // is inline, if it's not actually changing.
 
-                       // however, if this is an instancing prim and visible, it always has
-                       // to be called since instanceCount may changes over time.
-                       if ((_drawItemInstances[i].IsVisible() != visible) ||
-                           (visible && item->HasInstancer())) {
-                         _drawItemInstances[i].SetVisible(visible);
-                       }
-                       if (visible) {
-                         ++count;
-                       }
-                     }
-                   });
+      // however, if this is an instancing prim and visible, it always has
+      // to be called since instanceCount may changes over time.
+      if ((_drawItemInstances[i].IsVisible() != visible) || (visible && item->HasInstancer())) {
+        _drawItemInstances[i].SetVisible(visible);
+      }
+      if (visible) {
+        ++count;
+      }
+    }
+  });
 
   for (size_t i : visCounts) {
     _visibleSize += i;
@@ -348,7 +340,7 @@ void HdPhCommandBuffer::FrustumCull(GfMatrix4d const &viewProjMatrix)
     {
       for (size_t i = begin; i < end; i++) {
         HdPhDrawItemInstance &itemInstance = (*drawItemInstances)[i];
-        HdPhDrawItem const *item           = itemInstance.GetDrawItem();
+        HdPhDrawItem const *item = itemInstance.GetDrawItem();
         bool visible = item->GetVisible() && item->IntersectsViewVolume(viewProjMatrix);
         if ((itemInstance.IsVisible() != visible) || (visible && item->HasInstancer())) {
           itemInstance.SetVisible(visible);

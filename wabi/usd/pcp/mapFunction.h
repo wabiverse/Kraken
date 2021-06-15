@@ -199,8 +199,8 @@ class PcpMapFunction {
     _Data(){};
 
     _Data(PathPair const *begin, PathPair const *end, bool hasRootIdentity)
-        : numPairs(end - begin),
-          hasRootIdentity(hasRootIdentity)
+      : numPairs(end - begin),
+        hasRootIdentity(hasRootIdentity)
     {
       if (numPairs == 0)
         return;
@@ -209,7 +209,7 @@ class PcpMapFunction {
       }
       else {
         new (&remotePairs)
-            std::shared_ptr<PathPair>(new PathPair[numPairs], std::default_delete<PathPair[]>());
+          std::shared_ptr<PathPair>(new PathPair[numPairs], std::default_delete<PathPair[]>());
         std::copy(begin, end, remotePairs.get());
       }
     }
@@ -226,8 +226,8 @@ class PcpMapFunction {
     _Data(_Data &&other) : numPairs(other.numPairs), hasRootIdentity(other.hasRootIdentity)
     {
       if (numPairs <= _MaxLocalPairs) {
-        PathPair *dst    = localPairs;
-        PathPair *src    = other.localPairs;
+        PathPair *dst = localPairs;
+        PathPair *src = other.localPairs;
         PathPair *srcEnd = other.localPairs + other.numPairs;
         for (; src != srcEnd; ++src, ++dst) {
           ::new (static_cast<void *>(std::addressof(*dst))) PathPair(std::move(*src));
@@ -296,7 +296,7 @@ class PcpMapFunction {
       std::shared_ptr<PathPair> remotePairs;
     };
     typedef int PairCount;
-    PairCount numPairs   = 0;
+    PairCount numPairs = 0;
     bool hasRootIdentity = false;
   };
 

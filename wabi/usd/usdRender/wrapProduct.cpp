@@ -54,20 +54,14 @@ namespace {
 // fwd decl.
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateProductTypeAttr(UsdRenderProduct &self,
-                                           object defaultVal,
-                                           bool writeSparsely)
+static UsdAttribute _CreateProductTypeAttr(UsdRenderProduct &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateProductTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                    writeSparsely);
+  return self.CreateProductTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
-static UsdAttribute _CreateProductNameAttr(UsdRenderProduct &self,
-                                           object defaultVal,
-                                           bool writeSparsely)
+static UsdAttribute _CreateProductNameAttr(UsdRenderProduct &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateProductNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                    writeSparsely);
+  return self.CreateProductNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
 static std::string _Repr(const UsdRenderProduct &self)
@@ -85,41 +79,39 @@ void wrapUsdRenderProduct()
   class_<This, bases<UsdRenderSettingsBase>> cls("Product");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetProductTypeAttr", &This::GetProductTypeAttr)
-      .def("CreateProductTypeAttr",
-           &_CreateProductTypeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetProductTypeAttr", &This::GetProductTypeAttr)
+    .def("CreateProductTypeAttr",
+         &_CreateProductTypeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetProductNameAttr", &This::GetProductNameAttr)
-      .def("CreateProductNameAttr",
-           &_CreateProductNameAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetProductNameAttr", &This::GetProductNameAttr)
+    .def("CreateProductNameAttr",
+         &_CreateProductNameAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetOrderedVarsRel", &This::GetOrderedVarsRel)
-      .def("CreateOrderedVarsRel", &This::CreateOrderedVarsRel)
-      .def("__repr__", ::_Repr);
+    .def("GetOrderedVarsRel", &This::GetOrderedVarsRel)
+    .def("CreateOrderedVarsRel", &This::CreateOrderedVarsRel)
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

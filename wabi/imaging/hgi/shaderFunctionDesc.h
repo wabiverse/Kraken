@@ -184,7 +184,7 @@ bool operator!=(const HgiShaderFunctionDesc &lhs, const HgiShaderFunctionDesc &r
 HGI_API
 void HgiShaderFunctionAddTexture(HgiShaderFunctionDesc *desc,
                                  const std::string &nameInShader,
-                                 uint32_t dimensions     = 2,
+                                 uint32_t dimensions = 2,
                                  const HgiFormat &format = HgiFormatFloat32Vec4);
 
 /// Adds buffer descriptor to given shader function descriptor.
@@ -199,8 +199,8 @@ HGI_API
 void HgiShaderFunctionAddConstantParam(HgiShaderFunctionDesc *desc,
                                        const std::string &nameInShader,
                                        const std::string &type,
-                                       const std::string &role           = std::string(),
-                                       const std::string &attribute      = std::string(),
+                                       const std::string &role = std::string(),
+                                       const std::string &attribute = std::string(),
                                        const std::string &attributeIndex = std::string());
 
 /// Adds stage input function param descriptor to given shader function
@@ -209,8 +209,8 @@ HGI_API
 void HgiShaderFunctionAddStageInput(HgiShaderFunctionDesc *desc,
                                     const std::string &nameInShader,
                                     const std::string &type,
-                                    const std::string &role           = std::string(),
-                                    const std::string &attribute      = std::string(),
+                                    const std::string &role = std::string(),
+                                    const std::string &attribute = std::string(),
                                     const std::string &attributeIndex = std::string());
 
 /// Adds stage output function param descriptor to given shader function
@@ -219,8 +219,8 @@ HGI_API
 void HgiShaderFunctionAddStageOutput(HgiShaderFunctionDesc *desc,
                                      const std::string &nameInShader,
                                      const std::string &type,
-                                     const std::string &role           = std::string(),
-                                     const std::string &attribute      = std::string(),
+                                     const std::string &role = std::string(),
+                                     const std::string &attribute = std::string(),
                                      const std::string &attributeIndex = std::string());
 
 WABI_NAMESPACE_END

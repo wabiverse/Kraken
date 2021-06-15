@@ -82,7 +82,7 @@ static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
     return -1;
   }
   GfVec3f &vec = extract<GfVec3f &>(self);
-  *ptrptr      = static_cast<void *>(vec.data());
+  *ptrptr = static_cast<void *>(vec.data());
   // Return size in bytes.
   return sizeof(GfVec3f);
 }
@@ -128,9 +128,9 @@ static int getbuffer(PyObject *self, Py_buffer *view, int flags)
 
   GfVec3f &vec = extract<GfVec3f &>(self);
 
-  view->obj      = self;
-  view->buf      = static_cast<void *>(vec.data());
-  view->len      = sizeof(GfVec3f);
+  view->obj = self;
+  view->buf = static_cast<void *>(vec.data());
+  view->len = sizeof(GfVec3f);
   view->readonly = 0;
   view->itemsize = sizeof(float);
   if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT) {
@@ -140,23 +140,23 @@ static int getbuffer(PyObject *self, Py_buffer *view, int flags)
     view->format = NULL;
   }
   if ((flags & PyBUF_ND) == PyBUF_ND) {
-    view->ndim              = 1;
+    view->ndim = 1;
     static Py_ssize_t shape = 3;
-    view->shape             = &shape;
+    view->shape = &shape;
   }
   else {
-    view->ndim  = 0;
+    view->ndim = 0;
     view->shape = NULL;
   }
   if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES) {
     static Py_ssize_t strides = sizeof(float);
-    view->strides             = &strides;
+    view->strides = &strides;
   }
   else {
     view->strides = NULL;
   }
   view->suboffsets = NULL;
-  view->internal   = NULL;
+  view->internal = NULL;
 
   Py_INCREF(self);  // need to retain a reference to self.
   return 0;
@@ -166,13 +166,13 @@ static int getbuffer(PyObject *self, Py_buffer *view, int flags)
 // to the right buffer protocol functions.
 static PyBufferProcs bufferProcs = {
 #if PY_MAJOR_VERSION == 2
-    (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
-    (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
-    (segcountproc)getsegcount,    /*bf_getsegcount*/
-    (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
+  (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
+  (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
+  (segcountproc)getsegcount,    /*bf_getsegcount*/
+  (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
 #endif
-    (getbufferproc)getbuffer,
-    (releasebufferproc)0,
+  (getbufferproc)getbuffer,
+  (releasebufferproc)0,
 };
 
 // End python buffer protocol support.
@@ -244,7 +244,7 @@ static list __getslice__(const GfVec3f &self, slice indices)
   list result;
 
   const float *begin = self.data();
-  const float *end   = begin + 3;
+  const float *end = begin + 3;
 
   slice::range<const float *> bounds;
   try {
@@ -300,7 +300,7 @@ static void __setslice__(GfVec3f &self, slice indices, object values)
   }
 
   float *begin = self.data();
-  float *end   = begin + 3;
+  float *end = begin + 3;
 
   Py_ssize_t sliceLength = -1;
 
@@ -309,8 +309,8 @@ static void __setslice__(GfVec3f &self, slice indices, object values)
   // Convince g++ that we're not using uninitialized values.
   //
   bounds.start = 0;
-  bounds.stop  = 0;
-  bounds.step  = 0;
+  bounds.stop = 0;
+  bounds.step = 0;
 
   try {
     // This appears to be a typo in the boost headers.  The method
@@ -330,10 +330,9 @@ static void __setslice__(GfVec3f &self, slice indices, object values)
   }
 
   if (PySequence_Length(valuesObj) != sliceLength) {
-    TfPyThrowValueError(
-        TfStringPrintf("attempt to assign sequence of size %zd to slice of size %zd",
-                       PySequence_Length(valuesObj),
-                       sliceLength));
+    TfPyThrowValueError(TfStringPrintf("attempt to assign sequence of size %zd to slice of size %zd",
+                                       PySequence_Length(valuesObj),
+                                       sliceLength));
   }
 
   // Short circuit for empty slices
@@ -400,8 +399,7 @@ struct FromPythonTuple {
     // XXX: Would like to allow general sequences, but currently clients
     // depend on this behavior.
     if ((PyTuple_Check(obj_ptr) || PyList_Check(obj_ptr)) && PySequence_Size(obj_ptr) == 3 &&
-        _SequenceCheckItem(obj_ptr, 0) && _SequenceCheckItem(obj_ptr, 1) &&
-        _SequenceCheckItem(obj_ptr, 2)) {
+        _SequenceCheckItem(obj_ptr, 0) && _SequenceCheckItem(obj_ptr, 1) && _SequenceCheckItem(obj_ptr, 2)) {
       return obj_ptr;
     }
     return 0;
@@ -411,8 +409,8 @@ struct FromPythonTuple {
   {
     typedef float Scalar;
     void *storage = ((converter::rvalue_from_python_storage<GfVec3f> *)data)->storage.bytes;
-    new (storage) GfVec3f(
-        _SequenceGetItem(obj_ptr, 0), _SequenceGetItem(obj_ptr, 1), _SequenceGetItem(obj_ptr, 2));
+    new (storage)
+      GfVec3f(_SequenceGetItem(obj_ptr, 0), _SequenceGetItem(obj_ptr, 1), _SequenceGetItem(obj_ptr, 2));
     data->convertible = storage;
   }
 };
@@ -435,16 +433,14 @@ void wrapVec3f()
   typedef float Scalar;
 
   static const size_t _dimension = 3;
-  static const bool _true        = true;
+  static const bool _true = true;
 
   def("Dot", (Scalar(*)(const Vec &, const Vec &))GfDot);
 
   def("CompDiv", (Vec(*)(const Vec &v1, const Vec &v2))GfCompDiv);
   def("CompMult", (Vec(*)(const Vec &v1, const Vec &v2))GfCompMult);
   def("GetLength", (Scalar(*)(const Vec &v))GfGetLength);
-  def("GetNormalized",
-      (Vec(*)(const Vec &v, Scalar eps))GfGetNormalized,
-      GetNormalized_overloads());
+  def("GetNormalized", (Vec(*)(const Vec &v, Scalar eps))GfGetNormalized, GetNormalized_overloads());
   def("GetProjection", (Vec(*)(const Vec &a, const Vec &b))GfGetProjection);
   def("GetComplement", (Vec(*)(const Vec &a, const Vec &b))GfGetComplement);
   def("IsClose", (bool (*)(const Vec &v1, const Vec &v2, double))GfIsClose);
@@ -454,94 +450,95 @@ void wrapVec3f()
   def("Slerp", (Vec(*)(double alpha, const Vec &v0, const Vec &v1))GfSlerp);
 
   class_<GfVec3f> cls("Vec3f", no_init);
-  cls.def("__init__", make_constructor(__init__<Vec>))
+  cls
+    .def("__init__", make_constructor(__init__<Vec>))
 
-      // A tag indicating that this is a GfVec class, for internal use.
-      .def_readonly("__isGfVec", _true)
+    // A tag indicating that this is a GfVec class, for internal use.
+    .def_readonly("__isGfVec", _true)
 
-      .def_pickle(PickleSuite())
+    .def_pickle(PickleSuite())
 
-      // Conversion from other vec types.
-      .def(init<GfVec3d>())
-      .def(init<GfVec3h>())
-      .def(init<GfVec3i>())
+    // Conversion from other vec types.
+    .def(init<GfVec3d>())
+    .def(init<GfVec3h>())
+    .def(init<GfVec3i>())
 
-      .def(init<Vec>())
-      .def(init<Scalar>())
-      .def(init<Scalar, Scalar, Scalar>())
+    .def(init<Vec>())
+    .def(init<Scalar>())
+    .def(init<Scalar, Scalar, Scalar>())
 
-      .def(TfTypePythonClass())
+    .def(TfTypePythonClass())
 
-      .def("__len__", __len__)
-      .def("__getitem__", __getitem__)
-      .def("__getitem__", __getslice__)
-      .def("__setitem__", __setitem__)
-      .def("__setitem__", __setslice__)
-      .def("__contains__", __contains__)
+    .def("__len__", __len__)
+    .def("__getitem__", __getitem__)
+    .def("__getitem__", __getslice__)
+    .def("__setitem__", __setitem__)
+    .def("__setitem__", __setslice__)
+    .def("__contains__", __contains__)
 
-      .def_readonly("dimension", _dimension)
+    .def_readonly("dimension", _dimension)
 
-      // Comparison to other vec types.
-      .def(self == GfVec3h())
-      .def(self != GfVec3h())
-      .def(self == GfVec3i())
-      .def(self != GfVec3i())
+    // Comparison to other vec types.
+    .def(self == GfVec3h())
+    .def(self != GfVec3h())
+    .def(self == GfVec3i())
+    .def(self != GfVec3i())
 
-      .def(self == self)
-      .def(self != self)
-      .def(self += self)
-      .def(self -= self)
-      .def(self *= double())
-      .def(self * double())
-      .def(double() * self)
-      .def(self /= float())
-      .def(self / float())
-      .def(-self)
-      .def(self + self)
-      .def(self - self)
-      .def(self * self)
-      .def(str(self))
+    .def(self == self)
+    .def(self != self)
+    .def(self += self)
+    .def(self -= self)
+    .def(self *= double())
+    .def(self * double())
+    .def(double() * self)
+    .def(self /= float())
+    .def(self / float())
+    .def(-self)
+    .def(self + self)
+    .def(self - self)
+    .def(self * self)
+    .def(str(self))
 
 #if PY_MAJOR_VERSION == 2
-      // Needed only to support "from __future__ import division" in
-      // python 2. In python 3 builds boost::python adds this for us.
-      .def("__truediv__", __truediv__)
-      .def("__itruediv__", __itruediv__)
+    // Needed only to support "from __future__ import division" in
+    // python 2. In python 3 builds boost::python adds this for us.
+    .def("__truediv__", __truediv__)
+    .def("__itruediv__", __itruediv__)
 #endif
 
-      .def("Axis", &Vec::Axis)
-      .staticmethod("Axis")
+    .def("Axis", &Vec::Axis)
+    .staticmethod("Axis")
 
-      .def("XAxis", &Vec::XAxis)
-      .staticmethod("XAxis")
-      .def("YAxis", &Vec::YAxis)
-      .staticmethod("YAxis")
-      .def("ZAxis", &Vec::ZAxis)
-      .staticmethod("ZAxis")
+    .def("XAxis", &Vec::XAxis)
+    .staticmethod("XAxis")
+    .def("YAxis", &Vec::YAxis)
+    .staticmethod("YAxis")
+    .def("ZAxis", &Vec::ZAxis)
+    .staticmethod("ZAxis")
 
-      .def("GetDot", (Scalar(*)(const Vec &, const Vec &))GfDot)
+    .def("GetDot", (Scalar(*)(const Vec &, const Vec &))GfDot)
 
-      .def("GetComplement", &Vec::GetComplement)
-      .def("GetLength", &Vec::GetLength)
-      .def("GetNormalized", &Vec::GetNormalized, VecGetNormalized_overloads())
-      .def("GetProjection", &Vec::GetProjection)
-      .def("Normalize", &Vec::Normalize, VecNormalize_overloads())
-      .def(self ^ self)
-      .def("GetCross", (Vec(*)(const Vec &v1, const Vec &v2))GfCross)
-      .def("OrthogonalizeBasis", OrthogonalizeBasisHelper, OrthogonalizeBasis_overloads())
-      .staticmethod("OrthogonalizeBasis")
+    .def("GetComplement", &Vec::GetComplement)
+    .def("GetLength", &Vec::GetLength)
+    .def("GetNormalized", &Vec::GetNormalized, VecGetNormalized_overloads())
+    .def("GetProjection", &Vec::GetProjection)
+    .def("Normalize", &Vec::Normalize, VecNormalize_overloads())
+    .def(self ^ self)
+    .def("GetCross", (Vec(*)(const Vec &v1, const Vec &v2))GfCross)
+    .def("OrthogonalizeBasis", OrthogonalizeBasisHelper, OrthogonalizeBasis_overloads())
+    .staticmethod("OrthogonalizeBasis")
 
-      .def("BuildOrthonormalFrame", BuildOrthonormalFrameHelper, BuildOrthonormalFrame_overloads())
+    .def("BuildOrthonormalFrame", BuildOrthonormalFrameHelper, BuildOrthonormalFrame_overloads())
 
-      .def("__repr__", __repr__)
-      .def("__hash__", __hash__);
+    .def("__repr__", __repr__)
+    .def("__hash__", __hash__);
   to_python_converter<std::vector<GfVec3f>, TfPySequenceToPython<std::vector<GfVec3f>>>();
 
   // Install buffer protocol: set the tp_as_buffer slot to point to a
   // structure of function pointers that implement the buffer protocol for
   // this type, and set the type flags to indicate that this type supports the
   // buffer protocol.
-  auto *typeObj         = reinterpret_cast<PyTypeObject *>(cls.ptr());
+  auto *typeObj = reinterpret_cast<PyTypeObject *>(cls.ptr());
   typeObj->tp_as_buffer = &bufferProcs;
   typeObj->tp_flags |= (TfPy_TPFLAGS_HAVE_NEWBUFFER | TfPy_TPFLAGS_HAVE_GETCHARBUFFER);
 
@@ -549,7 +546,6 @@ void wrapVec3f()
   FromPythonTuple();
 
   // Allow conversion of lists of GfVec3f to std::vector<GfVec3f>
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<GfVec3f>,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<GfVec3f>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 }

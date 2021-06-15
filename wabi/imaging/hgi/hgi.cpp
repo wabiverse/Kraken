@@ -37,9 +37,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(HGI_ENABLE_VULKAN,
-                      false,
-                      "Enable Vulkan as platform default Hgi backend (WIP)");
+TF_DEFINE_ENV_SETTING(HGI_ENABLE_VULKAN, false, "Enable Vulkan as platform default Hgi backend (WIP)");
 
 TF_REGISTRY_FUNCTION(TfType)
 {
@@ -70,13 +68,13 @@ static Hgi *_MakeNewPlatformDefaultHgi()
 
   const char *hgiType =
 #if defined(ARCH_OS_LINUX)
-      "HgiGL";
+    "HgiGL";
 #elif defined(ARCH_OS_DARWIN)
-      "HgiMetal";
+    "HgiMetal";
 #elif defined(ARCH_OS_WINDOWS)
-      "HgiGL";
+    "HgiGL";
 #else
-      "";
+    "";
 #  error Unknown Platform
   return nullptr;
 #endif
@@ -100,15 +98,13 @@ static Hgi *_MakeNewPlatformDefaultHgi()
 
   HgiFactoryBase *factory = plugType.GetFactory<HgiFactoryBase>();
   if (!factory) {
-    TF_CODING_ERROR("[PluginLoad] Cannot manufacture type '%s' \n",
-                    plugType.GetTypeName().c_str());
+    TF_CODING_ERROR("[PluginLoad] Cannot manufacture type '%s' \n", plugType.GetTypeName().c_str());
     return nullptr;
   }
 
   Hgi *instance = factory->New();
   if (!instance) {
-    TF_CODING_ERROR("[PluginLoad] Cannot construct instance of type '%s'\n",
-                    plugType.GetTypeName().c_str());
+    TF_CODING_ERROR("[PluginLoad] Cannot construct instance of type '%s'\n", plugType.GetTypeName().c_str());
     return nullptr;
   }
 
@@ -118,8 +114,8 @@ static Hgi *_MakeNewPlatformDefaultHgi()
 Hgi *Hgi::GetPlatformDefaultHgi()
 {
   TF_WARN(
-      "GetPlatformDefaultHgi is deprecated. "
-      "Please use CreatePlatformDefaultHgi");
+    "GetPlatformDefaultHgi is deprecated. "
+    "Please use CreatePlatformDefaultHgi");
 
   return _MakeNewPlatformDefaultHgi();
 }

@@ -78,30 +78,30 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
   // Ensure that the source prim is the closest ancestor container of the
   // NodeGraph owning the input.
   auto encapsulationCheckForInputSources = [&input, &source](std::string *reason) {
-    const SdfPath inputPrimPath  = input.GetPrim().GetPath();
+    const SdfPath inputPrimPath = input.GetPrim().GetPath();
     const SdfPath sourcePrimPath = source.GetPrim().GetPath();
 
     if (!UsdShadeConnectableAPI(source.GetPrim()).IsContainer()) {
       if (reason) {
         *reason = TfStringPrintf(
-            "Encapsulation check failed - "
-            "prim '%s' owning the input source '%s' is not a "
-            "container.",
-            sourcePrimPath.GetText(),
-            source.GetName().GetText());
+          "Encapsulation check failed - "
+          "prim '%s' owning the input source '%s' is not a "
+          "container.",
+          sourcePrimPath.GetText(),
+          source.GetName().GetText());
       }
       return false;
     }
     if (inputPrimPath.GetParentPath() != sourcePrimPath) {
       if (reason) {
         *reason = TfStringPrintf(
-            "Encapsulation check failed - "
-            "input source prim '%s' is not the closest ancestor "
-            "container of the NodeGraph '%s' owning the input "
-            "attribute '%s'.",
-            sourcePrimPath.GetText(),
-            inputPrimPath.GetText(),
-            input.GetFullName().GetText());
+          "Encapsulation check failed - "
+          "input source prim '%s' is not the closest ancestor "
+          "container of the NodeGraph '%s' owning the input "
+          "attribute '%s'.",
+          sourcePrimPath.GetText(),
+          inputPrimPath.GetText(),
+          input.GetFullName().GetText());
       }
       return false;
     }
@@ -114,7 +114,7 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
   // for these make sure source prim is an immediate descendent of the input
   // prim.
   auto encapsulationCheckForOutputSources = [&input, &source, &nodeType](std::string *reason) {
-    const SdfPath inputPrimPath  = input.GetPrim().GetPath();
+    const SdfPath inputPrimPath = input.GetPrim().GetPath();
     const SdfPath sourcePrimPath = source.GetPrim().GetPath();
 
     switch (nodeType) {
@@ -122,24 +122,24 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
         if (!UsdShadeConnectableAPI(input.GetPrim()).IsContainer()) {
           if (reason) {
             *reason = TfStringPrintf(
-                "Encapsulation check failed - "
-                "For input's prim type '%s', prim owning the "
-                "input '%s' is not a container.",
-                input.GetPrim().GetTypeName().GetText(),
-                input.GetAttr().GetPath().GetText());
+              "Encapsulation check failed - "
+              "For input's prim type '%s', prim owning the "
+              "input '%s' is not a container.",
+              input.GetPrim().GetTypeName().GetText(),
+              input.GetAttr().GetPath().GetText());
           }
           return false;
         }
         if (sourcePrimPath.GetParentPath() != inputPrimPath) {
           if (reason) {
             *reason = TfStringPrintf(
-                "Encapsulation check failed - "
-                "For input's prim type '%s', Output source's "
-                "prim '%s' is not an immediate descendent of "
-                "the input's prim '%s'.",
-                input.GetPrim().GetTypeName().GetText(),
-                sourcePrimPath.GetText(),
-                inputPrimPath.GetText());
+              "Encapsulation check failed - "
+              "For input's prim type '%s', Output source's "
+              "prim '%s' is not an immediate descendent of "
+              "the input's prim '%s'.",
+              input.GetPrim().GetTypeName().GetText(),
+              sourcePrimPath.GetText(),
+              inputPrimPath.GetText());
           }
           return false;
         }
@@ -151,26 +151,26 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
         if (!UsdShadeConnectableAPI(input.GetPrim().GetParent()).IsContainer()) {
           if (reason) {
             *reason = TfStringPrintf(
-                "Encapsulation check failed - "
-                "For input's prim type '%s', Immediate ancestor"
-                " '%s' for the prim owning the output source "
-                "'%s' is not a container.",
-                input.GetPrim().GetTypeName().GetText(),
-                sourcePrimPath.GetParentPath().GetText(),
-                source.GetPath().GetText());
+              "Encapsulation check failed - "
+              "For input's prim type '%s', Immediate ancestor"
+              " '%s' for the prim owning the output source "
+              "'%s' is not a container.",
+              input.GetPrim().GetTypeName().GetText(),
+              sourcePrimPath.GetParentPath().GetText(),
+              source.GetPath().GetText());
           }
           return false;
         }
         if (inputPrimPath.GetParentPath() != sourcePrimPath.GetParentPath()) {
           if (reason) {
             *reason = TfStringPrintf(
-                "Encapsulation check failed - "
-                "For input's prim type '%s', Input's prim '%s' "
-                "and source's prim '%s' are not contained by "
-                "the same container prim.",
-                input.GetPrim().GetTypeName().GetText(),
-                inputPrimPath.GetText(),
-                sourcePrimPath.GetText());
+              "Encapsulation check failed - "
+              "For input's prim type '%s', Input's prim '%s' "
+              "and source's prim '%s' are not contained by "
+              "the same container prim.",
+              input.GetPrim().GetTypeName().GetText(),
+              inputPrimPath.GetText(),
+              sourcePrimPath.GetText());
           }
           return false;
         }
@@ -205,8 +205,8 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
       else {
         if (reason) {
           *reason =
-              "Input connectability is 'interfaceOnly' and "
-              "source does not have 'interfaceOnly' connectability.";
+            "Input connectability is 'interfaceOnly' and "
+            "source does not have 'interfaceOnly' connectability.";
         }
         return false;
       }
@@ -214,8 +214,8 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
     else {
       if (reason) {
         *reason =
-            "Input connectability is 'interfaceOnly' but "
-            "source is not an input";
+          "Input connectability is 'interfaceOnly' but "
+          "source is not an input";
         return false;
       }
     }
@@ -257,11 +257,11 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectOutputToSource(const UsdShadeOut
     if (nodeType == ConnectableNodeTypes::DerivedContainerNodes) {
       if (reason) {
         *reason = TfStringPrintf(
-            "Encapsulation check failed - "
-            "passthrough usage is not allowed for output prim '%s' "
-            "of type '%s'.",
-            outputPrimPath.GetText(),
-            output.GetPrim().GetTypeName().GetText());
+          "Encapsulation check failed - "
+          "passthrough usage is not allowed for output prim '%s' "
+          "of type '%s'.",
+          outputPrimPath.GetText(),
+          output.GetPrim().GetTypeName().GetText());
       }
       return false;
     }
@@ -270,11 +270,11 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectOutputToSource(const UsdShadeOut
     if (sourcePrimPath != outputPrimPath) {
       if (reason) {
         *reason = TfStringPrintf(
-            "Encapsulation check failed - output "
-            "'%s' and input source '%s' must be encapsulated by "
-            "the same container prim",
-            output.GetAttr().GetPath().GetText(),
-            source.GetPath().GetText());
+          "Encapsulation check failed - output "
+          "'%s' and input source '%s' must be encapsulated by "
+          "the same container prim",
+          output.GetAttr().GetPath().GetText(),
+          source.GetPath().GetText());
       }
       return false;
     }
@@ -286,11 +286,11 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectOutputToSource(const UsdShadeOut
     if (sourcePrimPath.GetParentPath() != outputPrimPath) {
       if (reason) {
         *reason = TfStringPrintf(
-            "Encapsulation check failed - prim "
-            "owning the output '%s' is not an immediate descendent "
-            " of the prim owning the output source '%s'.",
-            output.GetAttr().GetPath().GetText(),
-            source.GetPath().GetText());
+          "Encapsulation check failed - prim "
+          "owning the output '%s' is not an immediate descendent "
+          " of the prim owning the output source '%s'.",
+          output.GetAttr().GetPath().GetText(),
+          source.GetPath().GetText());
       }
       return false;
     }
@@ -357,9 +357,9 @@ class _BehaviorRegistry : public TfWeakBase {
 
     if (!didInsert) {
       TF_CODING_ERROR(
-          "UsdShade Connectable behavior already registered for "
-          "prim type '%s'",
-          connectablePrimType.GetTypeName().c_str());
+        "UsdShade Connectable behavior already registered for "
+        "prim type '%s'",
+        connectablePrimType.GetTypeName().c_str());
     }
   }
 
@@ -434,7 +434,7 @@ class _BehaviorRegistry : public TfWeakBase {
     PlugRegistry &plugReg = PlugRegistry::GetInstance();
 
     const JsValue implementsUsdShadeConnectableAPIBehavior = plugReg.GetDataFromPluginMetaData(
-        type, "implementsUsdShadeConnectableAPIBehavior");
+      type, "implementsUsdShadeConnectableAPIBehavior");
     if (!implementsUsdShadeConnectableAPIBehavior.Is<bool>() ||
         !implementsUsdShadeConnectableAPIBehavior.Get<bool>()) {
       return false;
@@ -469,8 +469,7 @@ class _BehaviorRegistry : public TfWeakBase {
   using _RWMutex = tbb::queuing_rw_mutex;
   mutable _RWMutex _mutex;
 
-  using _Registry =
-      std::unordered_map<TfType, std::shared_ptr<UsdShadeConnectableAPIBehavior>, TfHash>;
+  using _Registry = std::unordered_map<TfType, std::shared_ptr<UsdShadeConnectableAPIBehavior>, TfHash>;
   _Registry _registry;
 
   std::atomic<bool> _initialized;
@@ -480,9 +479,8 @@ class _BehaviorRegistry : public TfWeakBase {
 
 TF_INSTANTIATE_SINGLETON(_BehaviorRegistry);
 
-void UsdShadeRegisterConnectableAPIBehavior(
-    const TfType &connectablePrimType,
-    const std::shared_ptr<UsdShadeConnectableAPIBehavior> &behavior)
+void UsdShadeRegisterConnectableAPIBehavior(const TfType &connectablePrimType,
+                                            const std::shared_ptr<UsdShadeConnectableAPIBehavior> &behavior)
 {
   if (!behavior || connectablePrimType.IsUnknown()) {
     TF_CODING_ERROR("Invalid behavior registration for prim type '%s'",
@@ -515,7 +513,7 @@ bool UsdShadeConnectableAPI::CanConnect(const UsdShadeInput &input, const UsdAtt
   // validation in USD.
   std::string reason;
   if (UsdShadeConnectableAPIBehavior *behavior = _BehaviorRegistry::GetInstance().GetBehavior(
-          input.GetPrim())) {
+        input.GetPrim())) {
     return behavior->CanConnectInputToSource(input, source, &reason);
   }
   return false;
@@ -528,7 +526,7 @@ bool UsdShadeConnectableAPI::CanConnect(const UsdShadeOutput &output, const UsdA
   // validation in USD.
   std::string reason;
   if (UsdShadeConnectableAPIBehavior *behavior = _BehaviorRegistry::GetInstance().GetBehavior(
-          output.GetPrim())) {
+        output.GetPrim())) {
     return behavior->CanConnectOutputToSource(output, source, &reason);
   }
   return false;
@@ -542,8 +540,7 @@ bool UsdShadeConnectableAPI::HasConnectableAPI(const TfType &schemaType)
 
 bool UsdShadeConnectableAPI::IsContainer() const
 {
-  if (UsdShadeConnectableAPIBehavior *behavior = _BehaviorRegistry::GetInstance().GetBehavior(
-          GetPrim())) {
+  if (UsdShadeConnectableAPIBehavior *behavior = _BehaviorRegistry::GetInstance().GetBehavior(GetPrim())) {
     return behavior->IsContainer();
   }
   return false;

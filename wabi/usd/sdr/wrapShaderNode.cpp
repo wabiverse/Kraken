@@ -70,21 +70,21 @@ void wrapShaderNode()
   to_python_converter<SdrShaderNodeConstPtr, SdrShaderNodeConstPtrToPythonConverter>();
 
   class_<This, ThisPtr, bases<NdrNode>, boost::noncopyable>("ShaderNode", no_init)
-      .def("GetShaderInput", &This::GetShaderInput, return_internal_reference<>())
-      .def("GetShaderOutput", &This::GetShaderOutput, return_internal_reference<>())
-      .def("GetAssetIdentifierInputNames",
-           &This::GetAssetIdentifierInputNames,
-           return_value_policy<TfPySequenceToList>())
-      .def("GetDefaultInput", &This::GetDefaultInput, return_internal_reference<>())
-      .def("GetLabel", &This::GetLabel, copyRefPolicy)
-      .def("GetCategory", &This::GetCategory, copyRefPolicy)
-      .def("GetHelp", &This::GetHelp)
-      .def("GetDepartments", &This::GetDepartments, copyRefPolicy)
-      .def("GetPages", &This::GetPages, copyRefPolicy)
-      .def("GetPrimvars", &This::GetPrimvars, copyRefPolicy)
-      .def("GetAdditionalPrimvarProperties", &This::GetAdditionalPrimvarProperties, copyRefPolicy)
-      .def("GetImplementationName", &This::GetImplementationName)
-      .def("GetRole", &This::GetRole)
-      .def("GetPropertyNamesForPage", &This::GetPropertyNamesForPage)
-      .def("GetAllVstructNames", &This::GetAllVstructNames);
+    .def("GetShaderInput", &This::GetShaderInput, return_internal_reference<>())
+    .def("GetShaderOutput", &This::GetShaderOutput, return_internal_reference<>())
+    .def("GetAssetIdentifierInputNames",
+         &This::GetAssetIdentifierInputNames,
+         return_value_policy<TfPySequenceToList>())
+    .def("GetDefaultInput", &This::GetDefaultInput, return_internal_reference<>())
+    .def("GetLabel", &This::GetLabel, copyRefPolicy)
+    .def("GetCategory", &This::GetCategory, copyRefPolicy)
+    .def("GetHelp", &This::GetHelp)
+    .def("GetDepartments", &This::GetDepartments, copyRefPolicy)
+    .def("GetPages", &This::GetPages, copyRefPolicy)
+    .def("GetPrimvars", &This::GetPrimvars, copyRefPolicy)
+    .def("GetAdditionalPrimvarProperties", &This::GetAdditionalPrimvarProperties, copyRefPolicy)
+    .def("GetImplementationName", &This::GetImplementationName)
+    .def("GetRole", &This::GetRole)
+    .def("GetPropertyNamesForPage", &This::GetPropertyNamesForPage)
+    .def("GetAllVstructNames", &This::GetAllVstructNames);
 }

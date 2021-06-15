@@ -53,7 +53,7 @@ void Work_EnsureDetachedTaskProgress()
     if (detachedWaiter.compare_exchange_strong(c, newThread)) {
       // We won the race, so start the waiter thread.
       WorkDispatcher &dispatcher = Work_GetDetachedDispatcher();
-      *newThread                 = std::move(std::thread([&dispatcher]() {
+      *newThread = std::move(std::thread([&dispatcher]() {
         while (true) {
           // Process detached tasks.
           dispatcher.Wait();

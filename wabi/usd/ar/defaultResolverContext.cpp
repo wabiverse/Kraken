@@ -52,9 +52,9 @@ ArDefaultResolverContext::ArDefaultResolverContext(const std::vector<std::string
     const std::string absPath = TfAbsPath(p);
     if (absPath.empty()) {
       TF_WARN(
-          "Could not determine absolute path for search path prefix "
-          "'%s'",
-          p.c_str());
+        "Could not determine absolute path for search path prefix "
+        "'%s'",
+        p.c_str());
       continue;
     }
 

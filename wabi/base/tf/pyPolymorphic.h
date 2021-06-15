@@ -70,11 +70,10 @@ struct TfPyPolymorphic : public TfType::PyPolymorphicBase, public boost::python:
       // using pythons mro, get the attribute string that represents
       // the named function. this will return something valid if it exists
       // in this or any ancestor class
-      if (handle<> m = handle<>(
-              allow_null(PyObject_GetAttrString(m_self, const_cast<char *>(func))))) {
+      if (handle<> m = handle<>(allow_null(PyObject_GetAttrString(m_self, const_cast<char *>(func))))) {
         // now get the typehandle to the class. we will use this to
         // determine if this method exists on the derived class
-        type_handle typeHandle     = objects::registered_class_object(typeid(Derived));
+        type_handle typeHandle = objects::registered_class_object(typeid(Derived));
         PyTypeObject *class_object = typeHandle.get();
 
         PyObject *func_object = 0;
@@ -82,8 +81,8 @@ struct TfPyPolymorphic : public TfType::PyPolymorphicBase, public boost::python:
         if (PyMethod_Check(m.get()) && ((PyMethodObject *)m.get())->im_self == m_self &&
             class_object->tp_dict != 0) {
           // look for the method on the class object.
-          handle<> borrowed_f(allow_null(
-              PyObject_GetAttrString((PyObject *)class_object, const_cast<char *>(func))));
+          handle<> borrowed_f(
+            allow_null(PyObject_GetAttrString((PyObject *)class_object, const_cast<char *>(func))));
 
           // Don't leave an exception if there's no base class method
           PyErr_Clear();
@@ -120,7 +119,7 @@ struct TfPyPolymorphic : public TfType::PyPolymorphicBase, public boost::python:
                       TfStringPrintf("Pure virtual method '%s' called -- "
                                      "must provide a python implementation.",
                                      func)
-                          .c_str());
+                        .c_str());
       TfPyConvertPythonExceptionToTfErrors();
     }
     return ret;
@@ -136,8 +135,7 @@ struct TfPyPolymorphic : public TfType::PyPolymorphicBase, public boost::python:
   std::function<Ret(Arg...)> CallVirtual(char const *fname, Ret (Cls::*defaultImpl)(Arg...));
 
   template<class Ret, class Cls, typename... Arg>
-  std::function<Ret(Arg...)> CallVirtual(char const *fname,
-                                         Ret (Cls::*defaultImpl)(Arg...) const) const;
+  std::function<Ret(Arg...)> CallVirtual(char const *fname, Ret (Cls::*defaultImpl)(Arg...) const) const;
 
  protected:
   virtual ~TfPyPolymorphic();
@@ -146,9 +144,8 @@ struct TfPyPolymorphic : public TfType::PyPolymorphicBase, public boost::python:
   // Helper to bind a pointer-to-member-function and a pointer to an
   // instance.
   template<class Ret, class Cls, typename... Args> struct _BindMemFn {
-    using MemFn = typename std::conditional<std::is_const<Cls>::value,
-                                            Ret (Cls::*)(Args...) const,
-                                            Ret (Cls::*)(Args...)>::type;
+    using MemFn = typename std::
+      conditional<std::is_const<Cls>::value, Ret (Cls::*)(Args...) const, Ret (Cls::*)(Args...)>::type;
 
     _BindMemFn(MemFn memFn, Cls *obj) : _memFn(memFn), _obj(obj)
     {}
@@ -169,9 +166,8 @@ template<typename Derived> TfPyPolymorphic<Derived>::~TfPyPolymorphic()
 
 template<typename Derived>
 template<class Ret, class Cls, typename... Args>
-inline std::function<Ret(Args...)> TfPyPolymorphic<Derived>::CallVirtual(
-    char const *fname,
-    Ret (Cls::*defaultImpl)(Args...))
+inline std::function<Ret(Args...)> TfPyPolymorphic<Derived>::CallVirtual(char const *fname,
+                                                                         Ret (Cls::*defaultImpl)(Args...))
 {
   static_assert(std::is_base_of<This, Cls>::value, "This must be a base of Cls.");
   TfPyLock lock;
@@ -182,9 +178,9 @@ inline std::function<Ret(Args...)> TfPyPolymorphic<Derived>::CallVirtual(
 
 template<typename Derived>
 template<class Ret, class Cls, typename... Args>
-inline std::function<Ret(Args...)> TfPyPolymorphic<Derived>::CallVirtual(
-    char const *fname,
-    Ret (Cls::*defaultImpl)(Args...) const) const
+inline std::function<Ret(Args...)> TfPyPolymorphic<Derived>::CallVirtual(char const *fname,
+                                                                         Ret (Cls::*defaultImpl)(Args...)
+                                                                           const) const
 {
   static_assert(std::is_base_of<This, Cls>::value, "This must be a base of Cls.");
   TfPyLock lock;

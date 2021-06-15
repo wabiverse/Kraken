@@ -54,17 +54,17 @@ HdPh_GeometricShader::HdPh_GeometricShader(std::string const &glslfxString,
                                            FvarPatchType fvarPatchType,
                                            SdfPath const &debugId,
                                            float lineWidth)
-    : HdPhShaderCode(),
-      _primType(primType),
-      _cullStyle(cullStyle),
-      _useHardwareFaceCulling(useHardwareFaceCulling),
-      _hasMirroredTransform(hasMirroredTransform),
-      _doubleSided(doubleSided),
-      _polygonMode(polygonMode),
-      _lineWidth(lineWidth),
-      _frustumCullingPass(cullingPass),
-      _fvarPatchType(fvarPatchType),
-      _hash(0)
+  : HdPhShaderCode(),
+    _primType(primType),
+    _cullStyle(cullStyle),
+    _useHardwareFaceCulling(useHardwareFaceCulling),
+    _hasMirroredTransform(hasMirroredTransform),
+    _doubleSided(doubleSided),
+    _polygonMode(polygonMode),
+    _lineWidth(lineWidth),
+    _frustumCullingPass(cullingPass),
+    _fvarPatchType(fvarPatchType),
+    _hash(0)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -170,8 +170,8 @@ void HdPh_GeometricShader::BindResources(const int program,
           glEnable(GL_CULL_FACE);
           glCullFace(GL_FRONT);
         }
-        else if (_hasMirroredTransform && (cullstyle == HdCullStyleFront ||
-                                           cullstyle == HdCullStyleFrontUnlessDoubleSided)) {
+        else if (_hasMirroredTransform &&
+                 (cullstyle == HdCullStyleFront || cullstyle == HdCullStyleFrontUnlessDoubleSided)) {
           glEnable(GL_CULL_FACE);
           glCullFace(GL_BACK);
         }
@@ -359,26 +359,26 @@ int HdPh_GeometricShader::GetNumPrimitiveVertsForGeometryShader() const
 
 /*static*/
 HdPh_GeometricShaderSharedPtr HdPh_GeometricShader::Create(
-    HdPh_ShaderKey const &shaderKey,
-    HdPhResourceRegistrySharedPtr const &resourceRegistry)
+  HdPh_ShaderKey const &shaderKey,
+  HdPhResourceRegistrySharedPtr const &resourceRegistry)
 {
   // Use the shaderKey hash to deduplicate geometric shaders.
   HdInstance<HdPh_GeometricShaderSharedPtr> geometricShaderInstance =
-      resourceRegistry->RegisterGeometricShader(shaderKey.ComputeHash());
+    resourceRegistry->RegisterGeometricShader(shaderKey.ComputeHash());
 
   if (geometricShaderInstance.IsFirstInstance()) {
     geometricShaderInstance.SetValue(
-        std::make_shared<HdPh_GeometricShader>(shaderKey.GetGlslfxString(),
-                                               shaderKey.GetPrimitiveType(),
-                                               shaderKey.GetCullStyle(),
-                                               shaderKey.UseHardwareFaceCulling(),
-                                               shaderKey.HasMirroredTransform(),
-                                               shaderKey.IsDoubleSided(),
-                                               shaderKey.GetPolygonMode(),
-                                               shaderKey.IsFrustumCullingPass(),
-                                               shaderKey.GetFvarPatchType(),
-                                               /*debugId=*/SdfPath(),
-                                               shaderKey.GetLineWidth()));
+      std::make_shared<HdPh_GeometricShader>(shaderKey.GetGlslfxString(),
+                                             shaderKey.GetPrimitiveType(),
+                                             shaderKey.GetCullStyle(),
+                                             shaderKey.UseHardwareFaceCulling(),
+                                             shaderKey.HasMirroredTransform(),
+                                             shaderKey.IsDoubleSided(),
+                                             shaderKey.GetPolygonMode(),
+                                             shaderKey.IsFrustumCullingPass(),
+                                             shaderKey.GetFvarPatchType(),
+                                             /*debugId=*/SdfPath(),
+                                             shaderKey.GetLineWidth()));
   }
   return geometricShaderInstance.GetValue();
 }

@@ -78,20 +78,18 @@ Index of this file:
 
 // Visual Studio warnings
 #  ifdef _MSC_VER
-#    pragma warning(disable : 4127)  // condition expression is constant
-#    pragma warning(disable : 4505)  // unreferenced local function has been removed (stb stuff)
-#    pragma warning(disable : 4996)  // 'This function or variable may be unsafe': strcpy, strdup,
-                                     // sprintf, vsnprintf, sscanf, fopen
-#    pragma warning( \
-      disable : 6255)  // [Static Analyzer] _alloca indicates failure by raising a stack overflow
-                       // exception.  Consider using _malloca instead.
+#    pragma warning(disable : 4127)   // condition expression is constant
+#    pragma warning(disable : 4505)   // unreferenced local function has been removed (stb stuff)
+#    pragma warning(disable : 4996)   // 'This function or variable may be unsafe': strcpy, strdup,
+                                      // sprintf, vsnprintf, sscanf, fopen
+#    pragma warning(disable : 6255)   // [Static Analyzer] _alloca indicates failure by raising a stack
+                                      // overflow exception.  Consider using _malloca instead.
 #    pragma warning(disable : 26451)  // [Static Analyzer] Arithmetic overflow : Using operator
                                       // 'xxx' on a 4 byte value and then casting the result to a 8
                                       // byte value. Cast the value to the wider type before
                                       // calling operator 'xxx' to avoid overflow(io.2).
-#    pragma warning( \
-      disable : 26812)  // [Static Analyzer] The enum type 'xxx' is unscoped. Prefer 'enum class'
-                        // over 'enum' (Enum.3). [MSVC Static Analyzer)
+#    pragma warning(disable : 26812)  // [Static Analyzer] The enum type 'xxx' is unscoped. Prefer 'enum
+                                      // class' over 'enum' (Enum.3). [MSVC Static Analyzer)
 #  endif
 
 // Clang/GCC warnings with -Weverything
@@ -116,14 +114,12 @@ Index of this file:
 #    pragma clang diagnostic ignored \
       "-Wglobal-constructors"  // warning: declaration requires a global destructor         //
                                // similar to above, not sure what the exact difference is.
-#    pragma clang diagnostic ignored \
-      "-Wsign-conversion"  // warning: implicit conversion changes signedness
+#    pragma clang diagnostic ignored "-Wsign-conversion"  // warning: implicit conversion changes signedness
 #    pragma clang diagnostic ignored \
       "-Wzero-as-null-pointer-constant"         // warning: zero as null pointer constant // some
                                                 // standard header variations use #define NULL 0
 #    pragma clang diagnostic ignored "-Wcomma"  // warning: possible misuse of comma operator here
-#    pragma clang diagnostic ignored \
-      "-Wreserved-id-macro"  // warning: macro name is a reserved identifier
+#    pragma clang diagnostic ignored "-Wreserved-id-macro"  // warning: macro name is a reserved identifier
 #    pragma clang diagnostic ignored \
       "-Wdouble-promotion"  // warning: implicit conversion from 'float' to 'double' when passing
                             // argument to function  // using printf() is a misery with this as
@@ -134,15 +130,13 @@ Index of this file:
 #  elif defined(__GNUC__)
 #    pragma GCC diagnostic ignored \
       "-Wpragmas"  // warning: unknown option after '#pragma GCC diagnostic' kind
-#    pragma GCC diagnostic ignored "-Wunused-function"  // warning: 'xxxx' defined but not used
-#    pragma GCC diagnostic ignored \
-      "-Wdouble-promotion"  // warning: implicit conversion from 'float' to 'double' when passing
-                            // argument to function
+#    pragma GCC diagnostic ignored "-Wunused-function"   // warning: 'xxxx' defined but not used
+#    pragma GCC diagnostic ignored "-Wdouble-promotion"  // warning: implicit conversion from 'float' to
+                                                         // 'double' when passing argument to function
 #    pragma GCC diagnostic ignored \
       "-Wconversion"  // warning: conversion to 'xxxx' from 'xxxx' may alter its value
-#    pragma GCC diagnostic ignored \
-      "-Wstack-protector"  // warning: stack protector not protecting local variables: variable
-                           // length buffer
+#    pragma GCC diagnostic ignored "-Wstack-protector"  // warning: stack protector not protecting local
+                                                        // variables: variable length buffer
 #    pragma GCC diagnostic ignored \
       "-Wclass-memaccess"  // [__GNUC__ >= 8] warning: 'memset/memcpy' clearing/writing an object
                            // of type 'xxxx' with no trivial copy-assignment; use assignment or
@@ -168,9 +162,8 @@ namespace ANCHOR_STB_NAMESPACE {
 #    pragma warning(push)
 #    pragma warning(disable : 4456)  // declaration of 'xx' hides previous local declaration
 #    pragma warning(disable : 6011)  // (stb_rectpack) Dereferencing NULL pointer 'cur->next'.
-#    pragma warning( \
-      disable : 6385)  // (stb_truetype) Reading invalid data from 'buffer':  the readable size
-                       // is '_Old_3`kernel_width' bytes, but '3' bytes may be read.
+#    pragma warning(disable : 6385)  // (stb_truetype) Reading invalid data from 'buffer':  the readable size
+                                     // is '_Old_3`kernel_width' bytes, but '3' bytes may be read.
 #    pragma warning(disable : 28182)  // (stb_rectpack) Dereferencing NULL pointer. 'cur' contains
                                       // the same NULL value as 'cur->next' did.
 #  endif
@@ -188,8 +181,8 @@ namespace ANCHOR_STB_NAMESPACE {
 #    pragma GCC diagnostic push
 #    pragma GCC diagnostic ignored "-Wtype-limits"  // warning: comparison is always true due to
                                                     // limited range of data type [-Wtype-limits]
-#    pragma GCC diagnostic ignored "-Wcast-qual"  // warning: cast from type 'const xxxx *' to type
-                                                  // 'xxxx *' casts away qualifiers
+#    pragma GCC diagnostic ignored "-Wcast-qual"    // warning: cast from type 'const xxxx *' to type
+                                                    // 'xxxx *' casts away qualifiers
 #  endif
 
 #  ifndef STB_RECT_PACK_IMPLEMENTATION  // in case the user already have an implementation in the
@@ -304,13 +297,11 @@ void ANCHOR::StyleColorsDark(ANCHOR_Style *dst)
   colors[ANCHOR_Col_ResizeGrip] = GfVec4f(0.26f, 0.59f, 0.98f, 0.20f);
   colors[ANCHOR_Col_ResizeGripHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
   colors[ANCHOR_Col_ResizeGripActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
-  colors[ANCHOR_Col_Tab] = ImLerp(
-    colors[ANCHOR_Col_Header], colors[ANCHOR_Col_TitleBgActive], 0.80f);
+  colors[ANCHOR_Col_Tab] = ImLerp(colors[ANCHOR_Col_Header], colors[ANCHOR_Col_TitleBgActive], 0.80f);
   colors[ANCHOR_Col_TabHovered] = colors[ANCHOR_Col_HeaderHovered];
   colors[ANCHOR_Col_TabActive] = ImLerp(
     colors[ANCHOR_Col_HeaderActive], colors[ANCHOR_Col_TitleBgActive], 0.60f);
-  colors[ANCHOR_Col_TabUnfocused] = ImLerp(
-    colors[ANCHOR_Col_Tab], colors[ANCHOR_Col_TitleBg], 0.80f);
+  colors[ANCHOR_Col_TabUnfocused] = ImLerp(colors[ANCHOR_Col_Tab], colors[ANCHOR_Col_TitleBg], 0.80f);
   colors[ANCHOR_Col_TabUnfocusedActive] = ImLerp(
     colors[ANCHOR_Col_TabActive], colors[ANCHOR_Col_TitleBg], 0.40f);
   colors[ANCHOR_Col_PlotLines] = GfVec4f(0.61f, 0.61f, 0.61f, 1.00f);
@@ -318,10 +309,8 @@ void ANCHOR::StyleColorsDark(ANCHOR_Style *dst)
   colors[ANCHOR_Col_PlotHistogram] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
   colors[ANCHOR_Col_PlotHistogramHovered] = GfVec4f(1.00f, 0.60f, 0.00f, 1.00f);
   colors[ANCHOR_Col_TableHeaderBg] = GfVec4f(0.19f, 0.19f, 0.20f, 1.00f);
-  colors[ANCHOR_Col_TableBorderStrong] = GfVec4f(
-    0.31f, 0.31f, 0.35f, 1.00f);  // Prefer using Alpha=1.0 here
-  colors[ANCHOR_Col_TableBorderLight] = GfVec4f(
-    0.23f, 0.23f, 0.25f, 1.00f);  // Prefer using Alpha=1.0 here
+  colors[ANCHOR_Col_TableBorderStrong] = GfVec4f(0.31f, 0.31f, 0.35f, 1.00f);  // Prefer using Alpha=1.0 here
+  colors[ANCHOR_Col_TableBorderLight] = GfVec4f(0.23f, 0.23f, 0.25f, 1.00f);   // Prefer using Alpha=1.0 here
   colors[ANCHOR_Col_TableRowBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
   colors[ANCHOR_Col_TableRowBgAlt] = GfVec4f(1.00f, 1.00f, 1.00f, 0.06f);
   colors[ANCHOR_Col_TextSelectedBg] = GfVec4f(0.26f, 0.59f, 0.98f, 0.35f);
@@ -370,13 +359,11 @@ void ANCHOR::StyleColorsDefault(ANCHOR_Style *dst)
   colors[ANCHOR_Col_ResizeGrip] = GfVec4f(1.00f, 1.00f, 1.00f, 0.10f);
   colors[ANCHOR_Col_ResizeGripHovered] = GfVec4f(0.78f, 0.82f, 1.00f, 0.60f);
   colors[ANCHOR_Col_ResizeGripActive] = GfVec4f(0.78f, 0.82f, 1.00f, 0.90f);
-  colors[ANCHOR_Col_Tab] = ImLerp(
-    colors[ANCHOR_Col_Header], colors[ANCHOR_Col_TitleBgActive], 0.80f);
+  colors[ANCHOR_Col_Tab] = ImLerp(colors[ANCHOR_Col_Header], colors[ANCHOR_Col_TitleBgActive], 0.80f);
   colors[ANCHOR_Col_TabHovered] = colors[ANCHOR_Col_HeaderHovered];
   colors[ANCHOR_Col_TabActive] = ImLerp(
     colors[ANCHOR_Col_HeaderActive], colors[ANCHOR_Col_TitleBgActive], 0.60f);
-  colors[ANCHOR_Col_TabUnfocused] = ImLerp(
-    colors[ANCHOR_Col_Tab], colors[ANCHOR_Col_TitleBg], 0.80f);
+  colors[ANCHOR_Col_TabUnfocused] = ImLerp(colors[ANCHOR_Col_Tab], colors[ANCHOR_Col_TitleBg], 0.80f);
   colors[ANCHOR_Col_TabUnfocusedActive] = ImLerp(
     colors[ANCHOR_Col_TabActive], colors[ANCHOR_Col_TitleBg], 0.40f);
   colors[ANCHOR_Col_PlotLines] = GfVec4f(1.00f, 1.00f, 1.00f, 1.00f);
@@ -384,10 +371,8 @@ void ANCHOR::StyleColorsDefault(ANCHOR_Style *dst)
   colors[ANCHOR_Col_PlotHistogram] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
   colors[ANCHOR_Col_PlotHistogramHovered] = GfVec4f(1.00f, 0.60f, 0.00f, 1.00f);
   colors[ANCHOR_Col_TableHeaderBg] = GfVec4f(0.27f, 0.27f, 0.38f, 1.00f);
-  colors[ANCHOR_Col_TableBorderStrong] = GfVec4f(
-    0.31f, 0.31f, 0.45f, 1.00f);  // Prefer using Alpha=1.0 here
-  colors[ANCHOR_Col_TableBorderLight] = GfVec4f(
-    0.26f, 0.26f, 0.28f, 1.00f);  // Prefer using Alpha=1.0 here
+  colors[ANCHOR_Col_TableBorderStrong] = GfVec4f(0.31f, 0.31f, 0.45f, 1.00f);  // Prefer using Alpha=1.0 here
+  colors[ANCHOR_Col_TableBorderLight] = GfVec4f(0.26f, 0.26f, 0.28f, 1.00f);   // Prefer using Alpha=1.0 here
   colors[ANCHOR_Col_TableRowBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
   colors[ANCHOR_Col_TableRowBgAlt] = GfVec4f(1.00f, 1.00f, 1.00f, 0.07f);
   colors[ANCHOR_Col_TextSelectedBg] = GfVec4f(0.00f, 0.00f, 1.00f, 0.35f);
@@ -437,13 +422,11 @@ void ANCHOR::StyleColorsLight(ANCHOR_Style *dst)
   colors[ANCHOR_Col_ResizeGrip] = GfVec4f(0.35f, 0.35f, 0.35f, 0.17f);
   colors[ANCHOR_Col_ResizeGripHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
   colors[ANCHOR_Col_ResizeGripActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
-  colors[ANCHOR_Col_Tab] = ImLerp(
-    colors[ANCHOR_Col_Header], colors[ANCHOR_Col_TitleBgActive], 0.90f);
+  colors[ANCHOR_Col_Tab] = ImLerp(colors[ANCHOR_Col_Header], colors[ANCHOR_Col_TitleBgActive], 0.90f);
   colors[ANCHOR_Col_TabHovered] = colors[ANCHOR_Col_HeaderHovered];
   colors[ANCHOR_Col_TabActive] = ImLerp(
     colors[ANCHOR_Col_HeaderActive], colors[ANCHOR_Col_TitleBgActive], 0.60f);
-  colors[ANCHOR_Col_TabUnfocused] = ImLerp(
-    colors[ANCHOR_Col_Tab], colors[ANCHOR_Col_TitleBg], 0.80f);
+  colors[ANCHOR_Col_TabUnfocused] = ImLerp(colors[ANCHOR_Col_Tab], colors[ANCHOR_Col_TitleBg], 0.80f);
   colors[ANCHOR_Col_TabUnfocusedActive] = ImLerp(
     colors[ANCHOR_Col_TabActive], colors[ANCHOR_Col_TitleBg], 0.40f);
   colors[ANCHOR_Col_PlotLines] = GfVec4f(0.39f, 0.39f, 0.39f, 1.00f);
@@ -451,10 +434,8 @@ void ANCHOR::StyleColorsLight(ANCHOR_Style *dst)
   colors[ANCHOR_Col_PlotHistogram] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
   colors[ANCHOR_Col_PlotHistogramHovered] = GfVec4f(1.00f, 0.45f, 0.00f, 1.00f);
   colors[ANCHOR_Col_TableHeaderBg] = GfVec4f(0.78f, 0.87f, 0.98f, 1.00f);
-  colors[ANCHOR_Col_TableBorderStrong] = GfVec4f(
-    0.57f, 0.57f, 0.64f, 1.00f);  // Prefer using Alpha=1.0 here
-  colors[ANCHOR_Col_TableBorderLight] = GfVec4f(
-    0.68f, 0.68f, 0.74f, 1.00f);  // Prefer using Alpha=1.0 here
+  colors[ANCHOR_Col_TableBorderStrong] = GfVec4f(0.57f, 0.57f, 0.64f, 1.00f);  // Prefer using Alpha=1.0 here
+  colors[ANCHOR_Col_TableBorderLight] = GfVec4f(0.68f, 0.68f, 0.74f, 1.00f);   // Prefer using Alpha=1.0 here
   colors[ANCHOR_Col_TableRowBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
   colors[ANCHOR_Col_TableRowBgAlt] = GfVec4f(0.30f, 0.30f, 0.30f, 0.09f);
   colors[ANCHOR_Col_TextSelectedBg] = GfVec4f(0.26f, 0.59f, 0.98f, 0.35f);
@@ -489,9 +470,8 @@ void ImDrawListSharedData::SetCircleTessellationMaxError(float max_error)
   CircleSegmentMaxError = max_error;
   for (int i = 0; i < ANCHOR_ARRAYSIZE(CircleSegmentCounts); i++) {
     const float radius = (float)i;
-    CircleSegmentCounts[i] = (AnchorU8)((i > 0) ? IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(
-                                                    radius, CircleSegmentMaxError) :
-                                                  0);
+    CircleSegmentCounts[i] =
+      (AnchorU8)((i > 0) ? IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(radius, CircleSegmentMaxError) : 0);
   }
   ArcFastRadiusCutoff = IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC_R(IM_DRAWLIST_ARCFAST_SAMPLE_MAX,
                                                                CircleSegmentMaxError);
@@ -505,8 +485,7 @@ void ImDrawList::_ResetForNewFrame()
   // doesn't compile with GCC)
   ANCHOR_ASSERT(ANCHOR_OFFSETOF(ImDrawCmd, ClipRect) == 0);
   ANCHOR_ASSERT(ANCHOR_OFFSETOF(ImDrawCmd, TextureId) == sizeof(GfVec4f));
-  ANCHOR_ASSERT(ANCHOR_OFFSETOF(ImDrawCmd, VtxOffset) ==
-                sizeof(GfVec4f) + sizeof(AnchorTextureID));
+  ANCHOR_ASSERT(ANCHOR_OFFSETOF(ImDrawCmd, VtxOffset) == sizeof(GfVec4f) + sizeof(AnchorTextureID));
 
   CmdBuffer.resize(0);
   IdxBuffer.resize(0);
@@ -603,8 +582,7 @@ void ImDrawList::_OnChangedClipRect()
 {
   // If current command is used with different settings we need to add a new command
   ImDrawCmd *curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
-  if (curr_cmd->ElemCount != 0 &&
-      memcmp(&curr_cmd->ClipRect, &_CmdHeader.ClipRect, sizeof(GfVec4f)) != 0) {
+  if (curr_cmd->ElemCount != 0 && memcmp(&curr_cmd->ClipRect, &_CmdHeader.ClipRect, sizeof(GfVec4f)) != 0) {
     AddDrawCmd();
     return;
   }
@@ -670,9 +648,7 @@ int ImDrawList::_CalcCircleAutoSegmentCount(float radius) const
 // Render-level scissoring. This is passed down to your render function but not used for CPU-side
 // coarse clipping. Prefer using higher-level ANCHOR::PushClipRect() to affect logic (hit-testing
 // and widget culling)
-void ImDrawList::PushClipRect(GfVec2f cr_min,
-                              GfVec2f cr_max,
-                              bool intersect_with_current_clip_rect)
+void ImDrawList::PushClipRect(GfVec2f cr_min, GfVec2f cr_max, bool intersect_with_current_clip_rect)
 {
   GfVec4f cr(cr_min[0], cr_min[1], cr_max[0], cr_max[1]);
   if (intersect_with_current_clip_rect) {
@@ -718,9 +694,8 @@ void ImDrawList::PushTextureID(AnchorTextureID texture_id)
 void ImDrawList::PopTextureID()
 {
   _TextureIdStack.pop_back();
-  _CmdHeader.TextureId = (_TextureIdStack.Size == 0) ?
-                           (AnchorTextureID)NULL :
-                           _TextureIdStack.Data[_TextureIdStack.Size - 1];
+  _CmdHeader.TextureId = (_TextureIdStack.Size == 0) ? (AnchorTextureID)NULL :
+                                                       _TextureIdStack.Data[_TextureIdStack.Size - 1];
   _OnChangedTextureID();
 }
 
@@ -897,8 +872,7 @@ void ImDrawList::AddPolyline(const GfVec2f *points,
 
   const bool closed = (flags & ImDrawFlags_Closed) != 0;
   const GfVec2f opaque_uv = _Data->TexUvWhitePixel;
-  const int count = closed ? points_count :
-                             points_count - 1;  // The number of line segments we need to draw
+  const int count = closed ? points_count : points_count - 1;  // The number of line segments we need to draw
   const bool thick_line = (thickness > _FringeScale);
 
   if (Flags & ImDrawListFlags_AntiAliasedLines) {
@@ -921,8 +895,8 @@ void ImDrawList::AddPolyline(const GfVec2f *points,
 
     // We should never hit this, because NewFrame() doesn't set
     // ImDrawListFlags_AntiAliasedLinesUseTex unless AnchorFontAtlasFlags_NoBakedLines is off
-    ANCHOR_ASSERT_PARANOID(
-      !use_texture || !(_Data->Font->ContainerAtlas->Flags & AnchorFontAtlasFlags_NoBakedLines));
+    ANCHOR_ASSERT_PARANOID(!use_texture ||
+                           !(_Data->Font->ContainerAtlas->Flags & AnchorFontAtlasFlags_NoBakedLines));
 
     const int idx_count = use_texture ? (count * 6) : (thick_line ? count * 18 : count * 12);
     const int vtx_count = use_texture ? (points_count * 2) :
@@ -932,8 +906,8 @@ void ImDrawList::AddPolyline(const GfVec2f *points,
     // Temporary buffer
     // The first <points_count> items are normals at each line point, then after that there are
     // either 2 or 4 temp points for each line point
-    GfVec2f *temp_normals = (GfVec2f *)alloca(
-      points_count * ((use_texture || !thick_line) ? 3 : 5) * sizeof(GfVec2f));  //-V630
+    GfVec2f *temp_normals = (GfVec2f *)alloca(points_count * ((use_texture || !thick_line) ? 3 : 5) *
+                                              sizeof(GfVec2f));  //-V630
     GfVec2f *temp_points = temp_normals + points_count;
 
     // Calculate normals (tangents) for each line segment
@@ -983,13 +957,10 @@ void ImDrawList::AddPolyline(const GfVec2f *points,
       unsigned int idx1 = _VtxCurrentIdx;  // Vertex index for start of line segment
       for (int i1 = 0; i1 < count; i1++)   // i1 is the first point of the line segment
       {
-        const int i2 = (i1 + 1) == points_count ?
-                         0 :
-                         i1 + 1;  // i2 is the second point of the line segment
+        const int i2 = (i1 + 1) == points_count ? 0 : i1 + 1;  // i2 is the second point of the line segment
         const unsigned int idx2 = ((i1 + 1) == points_count) ?
                                     _VtxCurrentIdx :
-                                    (idx1 +
-                                     (use_texture ? 2 : 3));  // Vertex index for end of segment
+                                    (idx1 + (use_texture ? 2 : 3));  // Vertex index for end of segment
 
         // Average normals
         float dm_x = (temp_normals[i1][0] + temp_normals[i2][0]) * 0.5f;
@@ -1090,15 +1061,13 @@ void ImDrawList::AddPolyline(const GfVec2f *points,
         temp_points[2] = points[0] - temp_normals[0] * (half_inner_thickness);
         temp_points[3] = points[0] - temp_normals[0] * (half_inner_thickness + AA_SIZE);
         temp_points[points_last * 4 + 0] = points[points_last] +
-                                           temp_normals[points_last] *
-                                             (half_inner_thickness + AA_SIZE);
+                                           temp_normals[points_last] * (half_inner_thickness + AA_SIZE);
         temp_points[points_last * 4 + 1] = points[points_last] +
                                            temp_normals[points_last] * (half_inner_thickness);
         temp_points[points_last * 4 + 2] = points[points_last] -
                                            temp_normals[points_last] * (half_inner_thickness);
         temp_points[points_last * 4 + 3] = points[points_last] -
-                                           temp_normals[points_last] *
-                                             (half_inner_thickness + AA_SIZE);
+                                           temp_normals[points_last] * (half_inner_thickness + AA_SIZE);
       }
 
       // Generate the indices to form a number of triangles for each line segment, and the vertices
@@ -1108,12 +1077,10 @@ void ImDrawList::AddPolyline(const GfVec2f *points,
       unsigned int idx1 = _VtxCurrentIdx;  // Vertex index for start of line segment
       for (int i1 = 0; i1 < count; i1++)   // i1 is the first point of the line segment
       {
-        const int i2 = (i1 + 1) == points_count ?
-                         0 :
-                         (i1 + 1);  // i2 is the second point of the line segment
-        const unsigned int idx2 = (i1 + 1) == points_count ?
-                                    _VtxCurrentIdx :
-                                    (idx1 + 4);  // Vertex index for end of segment
+        const int i2 = (i1 + 1) == points_count ? 0 :
+                                                  (i1 + 1);  // i2 is the second point of the line segment
+        const unsigned int idx2 = (i1 + 1) == points_count ? _VtxCurrentIdx :
+                                                             (idx1 + 4);  // Vertex index for end of segment
 
         // Average normals
         float dm_x = (temp_normals[i1][0] + temp_normals[i2][0]) * 0.5f;
@@ -1408,11 +1375,7 @@ void ImDrawList::_PathArcToFastEx(const GfVec2f &center,
   ANCHOR_ASSERT_PARANOID(_Path.Data + _Path.Size == out_ptr);
 }
 
-void ImDrawList::_PathArcToN(const GfVec2f &center,
-                             float radius,
-                             float a_min,
-                             float a_max,
-                             int num_segments)
+void ImDrawList::_PathArcToN(const GfVec2f &center, float radius, float a_min, float a_max, int num_segments)
 {
   if (radius <= 0.0f) {
     _Path.push_back(center);
@@ -1429,10 +1392,7 @@ void ImDrawList::_PathArcToN(const GfVec2f &center,
 }
 
 // 0: East, 3: South, 6: West, 9: North, 12: East
-void ImDrawList::PathArcToFast(const GfVec2f &center,
-                               float radius,
-                               int a_min_of_12,
-                               int a_max_of_12)
+void ImDrawList::PathArcToFast(const GfVec2f &center, float radius, int a_min_of_12, int a_max_of_12)
 {
   if (radius <= 0.0f) {
     _Path.push_back(center);
@@ -1445,11 +1405,7 @@ void ImDrawList::PathArcToFast(const GfVec2f &center,
                    0);
 }
 
-void ImDrawList::PathArcTo(const GfVec2f &center,
-                           float radius,
-                           float a_min,
-                           float a_max,
-                           int num_segments)
+void ImDrawList::PathArcTo(const GfVec2f &center, float radius, float a_min, float a_max, int num_segments)
 {
   if (radius <= 0.0f) {
     _Path.push_back(center);
@@ -1470,10 +1426,8 @@ void ImDrawList::PathArcTo(const GfVec2f &center,
     const float a_min_sample_f = IM_DRAWLIST_ARCFAST_SAMPLE_MAX * a_min / (IM_PI * 2.0f);
     const float a_max_sample_f = IM_DRAWLIST_ARCFAST_SAMPLE_MAX * a_max / (IM_PI * 2.0f);
 
-    const int a_min_sample = a_is_reverse ? (int)ImFloorSigned(a_min_sample_f) :
-                                            (int)ImCeil(a_min_sample_f);
-    const int a_max_sample = a_is_reverse ? (int)ImCeil(a_max_sample_f) :
-                                            (int)ImFloorSigned(a_max_sample_f);
+    const int a_min_sample = a_is_reverse ? (int)ImFloorSigned(a_min_sample_f) : (int)ImCeil(a_min_sample_f);
+    const int a_max_sample = a_is_reverse ? (int)ImCeil(a_max_sample_f) : (int)ImFloorSigned(a_max_sample_f);
     const int a_mid_samples = a_is_reverse ? AnchorMax(a_min_sample - a_max_sample, 0) :
                                              AnchorMax(a_max_sample - a_min_sample, 0);
 
@@ -1482,23 +1436,19 @@ void ImDrawList::PathArcTo(const GfVec2f &center,
     const bool a_emit_start = (a_min_segment_angle - a_min) != 0.0f;
     const bool a_emit_end = (a_max - a_max_segment_angle) != 0.0f;
 
-    _Path.reserve(_Path.Size +
-                  (a_mid_samples + 1 + (a_emit_start ? 1 : 0) + (a_emit_end ? 1 : 0)));
+    _Path.reserve(_Path.Size + (a_mid_samples + 1 + (a_emit_start ? 1 : 0) + (a_emit_end ? 1 : 0)));
     if (a_emit_start)
-      _Path.push_back(
-        GfVec2f(center[0] + ImCos(a_min) * radius, center[1] + ImSin(a_min) * radius));
+      _Path.push_back(GfVec2f(center[0] + ImCos(a_min) * radius, center[1] + ImSin(a_min) * radius));
     if (a_mid_samples > 0)
       _PathArcToFastEx(center, radius, a_min_sample, a_max_sample, 0);
     if (a_emit_end)
-      _Path.push_back(
-        GfVec2f(center[0] + ImCos(a_max) * radius, center[1] + ImSin(a_max) * radius));
+      _Path.push_back(GfVec2f(center[0] + ImCos(a_max) * radius, center[1] + ImSin(a_max) * radius));
   }
   else {
     const float arc_length = ImAbs(a_max - a_min);
     const int circle_segment_count = _CalcCircleAutoSegmentCount(radius);
-    const int arc_segment_count = AnchorMax(
-      (int)ImCeil(circle_segment_count * arc_length / (IM_PI * 2.0f)),
-      (int)(2.0f * IM_PI / arc_length));
+    const int arc_segment_count = AnchorMax((int)ImCeil(circle_segment_count * arc_length / (IM_PI * 2.0f)),
+                                            (int)(2.0f * IM_PI / arc_length));
     _PathArcToN(center, radius, a_min, a_max, arc_segment_count);
   }
 }
@@ -1556,10 +1506,8 @@ static void PathBezierCubicCurveToCasteljau(AnchorVector<GfVec2f> *path,
     float x123 = (x12 + x23) * 0.5f, y123 = (y12 + y23) * 0.5f;
     float x234 = (x23 + x34) * 0.5f, y234 = (y23 + y34) * 0.5f;
     float x1234 = (x123 + x234) * 0.5f, y1234 = (y123 + y234) * 0.5f;
-    PathBezierCubicCurveToCasteljau(
-      path, x1, y1, x12, y12, x123, y123, x1234, y1234, tess_tol, level + 1);
-    PathBezierCubicCurveToCasteljau(
-      path, x1234, y1234, x234, y234, x34, y34, x4, y4, tess_tol, level + 1);
+    PathBezierCubicCurveToCasteljau(path, x1, y1, x12, y12, x123, y123, x1234, y1234, tess_tol, level + 1);
+    PathBezierCubicCurveToCasteljau(path, x1234, y1234, x234, y234, x34, y34, x4, y4, tess_tol, level + 1);
   }
 }
 
@@ -1673,25 +1621,22 @@ static inline ImDrawFlags FixRectCornerFlags(ImDrawFlags flags)
 void ImDrawList::PathRect(const GfVec2f &a, const GfVec2f &b, float rounding, ImDrawFlags flags)
 {
   flags = FixRectCornerFlags(flags);
-  rounding = ImMin(
-    rounding,
-    ImFabs(b[0] - a[0]) *
-        (((flags & ImDrawFlags_RoundCornersTop) == ImDrawFlags_RoundCornersTop) ||
-             ((flags & ImDrawFlags_RoundCornersBottom) == ImDrawFlags_RoundCornersBottom) ?
-           0.5f :
-           1.0f) -
-      1.0f);
-  rounding = ImMin(
-    rounding,
-    ImFabs(b[1] - a[1]) *
-        (((flags & ImDrawFlags_RoundCornersLeft) == ImDrawFlags_RoundCornersLeft) ||
-             ((flags & ImDrawFlags_RoundCornersRight) == ImDrawFlags_RoundCornersRight) ?
-           0.5f :
-           1.0f) -
-      1.0f);
+  rounding = ImMin(rounding,
+                   ImFabs(b[0] - a[0]) *
+                       (((flags & ImDrawFlags_RoundCornersTop) == ImDrawFlags_RoundCornersTop) ||
+                            ((flags & ImDrawFlags_RoundCornersBottom) == ImDrawFlags_RoundCornersBottom) ?
+                          0.5f :
+                          1.0f) -
+                     1.0f);
+  rounding = ImMin(rounding,
+                   ImFabs(b[1] - a[1]) *
+                       (((flags & ImDrawFlags_RoundCornersLeft) == ImDrawFlags_RoundCornersLeft) ||
+                            ((flags & ImDrawFlags_RoundCornersRight) == ImDrawFlags_RoundCornersRight) ?
+                          0.5f :
+                          1.0f) -
+                     1.0f);
 
-  if (rounding <= 0.0f ||
-      (flags & ImDrawFlags_RoundCornersMask_) == ImDrawFlags_RoundCornersNone) {
+  if (rounding <= 0.0f || (flags & ImDrawFlags_RoundCornersMask_) == ImDrawFlags_RoundCornersNone) {
     PathLineTo(a);
     PathLineTo(GfVec2f(b[0], a[1]));
     PathLineTo(b);
@@ -1747,8 +1692,7 @@ void ImDrawList::AddRectFilled(const GfVec2f &p_min,
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
-  if (rounding <= 0.0f ||
-      (flags & ImDrawFlags_RoundCornersMask_) == ImDrawFlags_RoundCornersNone) {
+  if (rounding <= 0.0f || (flags & ImDrawFlags_RoundCornersMask_) == ImDrawFlags_RoundCornersNone) {
     PrimReserve(6, 4);
     PrimRect(p_min, p_max, col);
   }
@@ -1831,10 +1775,7 @@ void ImDrawList::AddTriangle(const GfVec2f &p1,
   PathStroke(col, ImDrawFlags_Closed, thickness);
 }
 
-void ImDrawList::AddTriangleFilled(const GfVec2f &p1,
-                                   const GfVec2f &p2,
-                                   const GfVec2f &p3,
-                                   AnchorU32 col)
+void ImDrawList::AddTriangleFilled(const GfVec2f &p1, const GfVec2f &p2, const GfVec2f &p3, AnchorU32 col)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
@@ -1873,10 +1814,7 @@ void ImDrawList::AddCircle(const GfVec2f &center,
   PathStroke(col, ImDrawFlags_Closed, thickness);
 }
 
-void ImDrawList::AddCircleFilled(const GfVec2f &center,
-                                 float radius,
-                                 AnchorU32 col,
-                                 int num_segments)
+void ImDrawList::AddCircleFilled(const GfVec2f &center, float radius, AnchorU32 col, int num_segments)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0 || radius <= 0.0f)
     return;
@@ -1917,10 +1855,7 @@ void ImDrawList::AddNgon(const GfVec2f &center,
 }
 
 // Guaranteed to honor 'num_segments'
-void ImDrawList::AddNgonFilled(const GfVec2f &center,
-                               float radius,
-                               AnchorU32 col,
-                               int num_segments)
+void ImDrawList::AddNgonFilled(const GfVec2f &center, float radius, AnchorU32 col, int num_segments)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0 || num_segments <= 2)
     return;
@@ -1998,21 +1933,11 @@ void ImDrawList::AddText(const AnchorFont *font,
     clip_rect[2] = ImMin(clip_rect[2], cpu_fine_clip_rect->data()[2]);
     clip_rect[3] = ImMin(clip_rect[3], cpu_fine_clip_rect->data()[3]);
   }
-  font->RenderText(this,
-                   font_size,
-                   pos,
-                   col,
-                   clip_rect,
-                   text_begin,
-                   text_end,
-                   wrap_width,
-                   cpu_fine_clip_rect != NULL);
+  font->RenderText(
+    this, font_size, pos, col, clip_rect, text_begin, text_end, wrap_width, cpu_fine_clip_rect != NULL);
 }
 
-void ImDrawList::AddText(const GfVec2f &pos,
-                         AnchorU32 col,
-                         const char *text_begin,
-                         const char *text_end)
+void ImDrawList::AddText(const GfVec2f &pos, AnchorU32 col, const char *text_begin, const char *text_end)
 {
   AddText(NULL, 0.0f, pos, col, text_begin, text_end);
 }
@@ -2076,8 +2001,7 @@ void ImDrawList::AddImageRounded(AnchorTextureID user_texture_id,
     return;
 
   flags = FixRectCornerFlags(flags);
-  if (rounding <= 0.0f ||
-      (flags & ImDrawFlags_RoundCornersMask_) == ImDrawFlags_RoundCornersNone) {
+  if (rounding <= 0.0f || (flags & ImDrawFlags_RoundCornersMask_) == ImDrawFlags_RoundCornersNone) {
     AddImage(user_texture_id, p_min, p_max, uv_min, uv_max, col);
     return;
   }
@@ -2090,8 +2014,7 @@ void ImDrawList::AddImageRounded(AnchorTextureID user_texture_id,
   PathRect(p_min, p_max, rounding, flags);
   PathFillConvex(col);
   int vert_end_idx = VtxBuffer.Size;
-  ANCHOR::ShadeVertsLinearUV(
-    this, vert_start_idx, vert_end_idx, p_min, p_max, uv_min, uv_max, true);
+  ANCHOR::ShadeVertsLinearUV(this, vert_start_idx, vert_end_idx, p_min, p_max, uv_min, uv_max, true);
 
   if (push_texture_id)
     PopTextureID();
@@ -2161,9 +2084,7 @@ void ImDrawListSplitter::Merge(ImDrawList *draw_list)
   // Calculate our final buffer sizes. Also fix the incorrect IdxOffset values in each command.
   int new_cmd_buffer_count = 0;
   int new_idx_buffer_count = 0;
-  ImDrawCmd *last_cmd = (_Count > 0 && draw_list->CmdBuffer.Size > 0) ?
-                          &draw_list->CmdBuffer.back() :
-                          NULL;
+  ImDrawCmd *last_cmd = (_Count > 0 && draw_list->CmdBuffer.Size > 0) ? &draw_list->CmdBuffer.back() : NULL;
   int idx_offset = last_cmd ? last_cmd->IdxOffset + last_cmd->ElemCount : 0;
   for (int i = 1; i < _Count; i++) {
     ImDrawChannel &ch = _Channels[i];
@@ -2198,10 +2119,8 @@ void ImDrawListSplitter::Merge(ImDrawList *draw_list)
 
   // Write commands and indices in order (they are fairly small structures, we don't copy vertices
   // only indices)
-  ImDrawCmd *cmd_write = draw_list->CmdBuffer.Data + draw_list->CmdBuffer.Size -
-                         new_cmd_buffer_count;
-  ImDrawIdx *idx_write = draw_list->IdxBuffer.Data + draw_list->IdxBuffer.Size -
-                         new_idx_buffer_count;
+  ImDrawCmd *cmd_write = draw_list->CmdBuffer.Data + draw_list->CmdBuffer.Size - new_cmd_buffer_count;
+  ImDrawIdx *idx_write = draw_list->IdxBuffer.Data + draw_list->IdxBuffer.Size - new_idx_buffer_count;
   for (int i = 1; i < _Count; i++) {
     ImDrawChannel &ch = _Channels[i];
     if (int sz = ch._CmdBuffer.Size) {
@@ -2237,10 +2156,8 @@ void ImDrawListSplitter::SetCurrentChannel(ImDrawList *draw_list, int idx)
 
   // Overwrite AnchorVector (12/16 bytes), four times. This is merely a silly optimization instead
   // of doing .swap()
-  memcpy(
-    &_Channels.Data[_Current]._CmdBuffer, &draw_list->CmdBuffer, sizeof(draw_list->CmdBuffer));
-  memcpy(
-    &_Channels.Data[_Current]._IdxBuffer, &draw_list->IdxBuffer, sizeof(draw_list->IdxBuffer));
+  memcpy(&_Channels.Data[_Current]._CmdBuffer, &draw_list->CmdBuffer, sizeof(draw_list->CmdBuffer));
+  memcpy(&_Channels.Data[_Current]._IdxBuffer, &draw_list->IdxBuffer, sizeof(draw_list->IdxBuffer));
   _Current = idx;
   memcpy(&draw_list->CmdBuffer, &_Channels.Data[idx]._CmdBuffer, sizeof(draw_list->CmdBuffer));
   memcpy(&draw_list->IdxBuffer, &_Channels.Data[idx]._IdxBuffer, sizeof(draw_list->IdxBuffer));
@@ -2328,8 +2245,8 @@ void ANCHOR::ShadeVertsLinearColorGradientKeepAlpha(ImDrawList *draw_list,
     int r = (int)(col0_r + col_delta_r * t);
     int g = (int)(col0_g + col_delta_g * t);
     int b = (int)(col0_b + col_delta_b * t);
-    vert->col = (r << ANCHOR_COL32_R_SHIFT) | (g << ANCHOR_COL32_G_SHIFT) |
-                (b << ANCHOR_COL32_B_SHIFT) | (vert->col & ANCHOR_COL32_A_MASK);
+    vert->col = (r << ANCHOR_COL32_R_SHIFT) | (g << ANCHOR_COL32_G_SHIFT) | (b << ANCHOR_COL32_B_SHIFT) |
+                (vert->col & ANCHOR_COL32_A_MASK);
   }
 }
 
@@ -2354,8 +2271,7 @@ void ANCHOR::ShadeVertsLinearUV(ImDrawList *draw_list,
     const GfVec2f min = ImMin(uv_a, uv_b);
     const GfVec2f max = AnchorMax(uv_a, uv_b);
     for (ImDrawVert *vertex = vert_start; vertex < vert_end; ++vertex)
-      vertex->uv = ImClamp(
-        uv_a + ImMul(GfVec2f(vertex->pos[0], vertex->pos[1]) - a, scale), min, max);
+      vertex->uv = ImClamp(uv_a + ImMul(GfVec2f(vertex->pos[0], vertex->pos[1]) - a, scale), min, max);
   }
   else {
     for (ImDrawVert *vertex = vert_start; vertex < vert_end; ++vertex)
@@ -2387,63 +2303,62 @@ AnchorFontConfig::AnchorFontConfig()
 // filled shapes.
 const int FONT_ATLAS_DEFAULT_TEX_DATA_W = 108;  // Actual texture will be 2 times that + 1 spacing.
 const int FONT_ATLAS_DEFAULT_TEX_DATA_H = 27;
-static const char FONT_ATLAS_DEFAULT_TEX_DATA_PIXELS[FONT_ATLAS_DEFAULT_TEX_DATA_W *
-                                                       FONT_ATLAS_DEFAULT_TEX_DATA_H +
-                                                     1] = {
-  "..-         -XXXXXXX-    X    -           X           -XXXXXXX          -          XXXXXXX-  "
-  "   XX          "
-  "..-         -X.....X-   X.X   -          X.X          -X.....X          -          X.....X-  "
-  "  X..X         "
-  "---         -XXX.XXX-  X...X  -         X...X         -X....X           -           X....X-  "
-  "  X..X         "
-  "X           -  X.X  - X.....X -        X.....X        -X...X            -            X...X-  "
-  "  X..X         "
-  "XX          -  X.X  -X.......X-       X.......X       -X..X.X           -           X.X..X-  "
-  "  X..X         "
-  "X.X         -  X.X  -XXXX.XXXX-       XXXX.XXXX       -X.X X.X          -          X.X X.X-  "
-  "  X..XXX       "
-  "X..X        -  X.X  -   X.X   -          X.X          -XX   X.X         -         X.X   XX-  "
-  "  X..X..XXX    "
-  "X...X       -  X.X  -   X.X   -    XX    X.X    XX    -      X.X        -        X.X      -  "
-  "  X..X..X..XX  "
-  "X....X      -  X.X  -   X.X   -   X.X    X.X    X.X   -       X.X       -       X.X       -  "
-  "  X..X..X..X.X "
-  "X.....X     -  X.X  -   X.X   -  X..X    X.X    X..X  -        X.X      -      X.X        "
-  "-XXX X..X..X..X..X"
-  "X......X    -  X.X  -   X.X   - X...XXXXXX.XXXXXX...X -         X.X   XX-XX   X.X         "
-  "-X..XX........X..X"
-  "X.......X   -  X.X  -   X.X   -X.....................X-          X.X X.X-X.X X.X          "
-  "-X...X...........X"
-  "X........X  -  X.X  -   X.X   - X...XXXXXX.XXXXXX...X -           X.X..X-X..X.X           - "
-  "X..............X"
-  "X.........X -XXX.XXX-   X.X   -  X..X    X.X    X..X  -            X...X-X...X            -  "
-  "X.............X"
-  "X..........X-X.....X-   X.X   -   X.X    X.X    X.X   -           X....X-X....X           -  "
-  "X.............X"
-  "X......XXXXX-XXXXXXX-   X.X   -    XX    X.X    XX    -          X.....X-X.....X          -  "
-  " X............X"
-  "X...X..X    ---------   X.X   -          X.X          -          XXXXXXX-XXXXXXX          -  "
-  " X...........X "
-  "X..X X..X   -       -XXXX.XXXX-       XXXX.XXXX       -------------------------------------  "
-  "  X..........X "
-  "X.X  X..X   -       -X.......X-       X.......X       -    XX           XX    -           -  "
-  "  X..........X "
-  "XX    X..X  -       - X.....X -        X.....X        -   X.X           X.X   -           -  "
-  "   X........X  "
-  "      X..X          -  X...X  -         X...X         -  X..X           X..X  -           -  "
-  "   X........X  "
-  "       XX           -   X.X   -          X.X          - X...XXXXXXXXXXXXX...X -           -  "
-  "   XXXXXXXXXX  "
-  "------------        -    X    -           X           -X.....................X-           "
-  "------------------"
-  "                    ----------------------------------- X...XXXXXXXXXXXXX...X -              "
-  "               "
-  "                                                      -  X..X           X..X  -              "
-  "               "
-  "                                                      -   X.X           X.X   -              "
-  "               "
-  "                                                      -    XX           XX    -              "
-  "               "};
+static const char
+  FONT_ATLAS_DEFAULT_TEX_DATA_PIXELS[FONT_ATLAS_DEFAULT_TEX_DATA_W * FONT_ATLAS_DEFAULT_TEX_DATA_H + 1] = {
+    "..-         -XXXXXXX-    X    -           X           -XXXXXXX          -          XXXXXXX-  "
+    "   XX          "
+    "..-         -X.....X-   X.X   -          X.X          -X.....X          -          X.....X-  "
+    "  X..X         "
+    "---         -XXX.XXX-  X...X  -         X...X         -X....X           -           X....X-  "
+    "  X..X         "
+    "X           -  X.X  - X.....X -        X.....X        -X...X            -            X...X-  "
+    "  X..X         "
+    "XX          -  X.X  -X.......X-       X.......X       -X..X.X           -           X.X..X-  "
+    "  X..X         "
+    "X.X         -  X.X  -XXXX.XXXX-       XXXX.XXXX       -X.X X.X          -          X.X X.X-  "
+    "  X..XXX       "
+    "X..X        -  X.X  -   X.X   -          X.X          -XX   X.X         -         X.X   XX-  "
+    "  X..X..XXX    "
+    "X...X       -  X.X  -   X.X   -    XX    X.X    XX    -      X.X        -        X.X      -  "
+    "  X..X..X..XX  "
+    "X....X      -  X.X  -   X.X   -   X.X    X.X    X.X   -       X.X       -       X.X       -  "
+    "  X..X..X..X.X "
+    "X.....X     -  X.X  -   X.X   -  X..X    X.X    X..X  -        X.X      -      X.X        "
+    "-XXX X..X..X..X..X"
+    "X......X    -  X.X  -   X.X   - X...XXXXXX.XXXXXX...X -         X.X   XX-XX   X.X         "
+    "-X..XX........X..X"
+    "X.......X   -  X.X  -   X.X   -X.....................X-          X.X X.X-X.X X.X          "
+    "-X...X...........X"
+    "X........X  -  X.X  -   X.X   - X...XXXXXX.XXXXXX...X -           X.X..X-X..X.X           - "
+    "X..............X"
+    "X.........X -XXX.XXX-   X.X   -  X..X    X.X    X..X  -            X...X-X...X            -  "
+    "X.............X"
+    "X..........X-X.....X-   X.X   -   X.X    X.X    X.X   -           X....X-X....X           -  "
+    "X.............X"
+    "X......XXXXX-XXXXXXX-   X.X   -    XX    X.X    XX    -          X.....X-X.....X          -  "
+    " X............X"
+    "X...X..X    ---------   X.X   -          X.X          -          XXXXXXX-XXXXXXX          -  "
+    " X...........X "
+    "X..X X..X   -       -XXXX.XXXX-       XXXX.XXXX       -------------------------------------  "
+    "  X..........X "
+    "X.X  X..X   -       -X.......X-       X.......X       -    XX           XX    -           -  "
+    "  X..........X "
+    "XX    X..X  -       - X.....X -        X.....X        -   X.X           X.X   -           -  "
+    "   X........X  "
+    "      X..X          -  X...X  -         X...X         -  X..X           X..X  -           -  "
+    "   X........X  "
+    "       XX           -   X.X   -          X.X          - X...XXXXXXXXXXXXX...X -           -  "
+    "   XXXXXXXXXX  "
+    "------------        -    X    -           X           -X.....................X-           "
+    "------------------"
+    "                    ----------------------------------- X...XXXXXXXXXXXXX...X -              "
+    "               "
+    "                                                      -  X..X           X..X  -              "
+    "               "
+    "                                                      -   X.X           X.X   -              "
+    "               "
+    "                                                      -    XX           XX    -              "
+    "               "};
 
 static const GfVec2f FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[ANCHOR_MouseCursor_COUNT][3] = {
   // Pos ........ Size ......... Offset ......
@@ -2466,15 +2381,15 @@ AnchorFontAtlas::AnchorFontAtlas()
 
 AnchorFontAtlas::~AnchorFontAtlas()
 {
-  ANCHOR_ASSERT(
-    !Locked && "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
+  ANCHOR_ASSERT(!Locked &&
+                "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
   Clear();
 }
 
 void AnchorFontAtlas::ClearInputData()
 {
-  ANCHOR_ASSERT(
-    !Locked && "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
+  ANCHOR_ASSERT(!Locked &&
+                "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
   for (int i = 0; i < ConfigData.Size; i++)
     if (ConfigData[i].FontData && ConfigData[i].FontDataOwnedByAtlas) {
       IM_FREE(ConfigData[i].FontData);
@@ -2496,8 +2411,8 @@ void AnchorFontAtlas::ClearInputData()
 
 void AnchorFontAtlas::ClearTexData()
 {
-  ANCHOR_ASSERT(
-    !Locked && "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
+  ANCHOR_ASSERT(!Locked &&
+                "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
   if (TexPixelsAlpha8)
     IM_FREE(TexPixelsAlpha8);
   if (TexPixelsRGBA32)
@@ -2509,8 +2424,8 @@ void AnchorFontAtlas::ClearTexData()
 
 void AnchorFontAtlas::ClearFonts()
 {
-  ANCHOR_ASSERT(
-    !Locked && "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
+  ANCHOR_ASSERT(!Locked &&
+                "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
   for (int i = 0; i < Fonts.Size; i++)
     IM_DELETE(Fonts[i]);
   Fonts.clear();
@@ -2575,8 +2490,8 @@ void AnchorFontAtlas::GetTexDataAsRGBA32(unsigned char **out_pixels,
 
 AnchorFont *AnchorFontAtlas::AddFont(const AnchorFontConfig *font_cfg)
 {
-  ANCHOR_ASSERT(
-    !Locked && "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
+  ANCHOR_ASSERT(!Locked &&
+                "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
   ANCHOR_ASSERT(font_cfg->FontData != NULL && font_cfg->FontDataSize > 0);
   ANCHOR_ASSERT(font_cfg->SizePixels > 0.0f);
 
@@ -2584,12 +2499,11 @@ AnchorFont *AnchorFontAtlas::AddFont(const AnchorFontConfig *font_cfg)
   if (!font_cfg->MergeMode)
     Fonts.push_back(IM_NEW(AnchorFont));
   else
-    ANCHOR_ASSERT(
-      !Fonts.empty() &&
-      "Cannot use MergeMode for the first font");  // When using MergeMode make sure that a font
-                                                   // has already been added before. You can use
-                                                   // ANCHOR::GetIO().Fonts->AddFontDefault() to
-                                                   // add the default ANCHOR font.
+    ANCHOR_ASSERT(!Fonts.empty() &&
+                  "Cannot use MergeMode for the first font");  // When using MergeMode make sure that a font
+                                                               // has already been added before. You can use
+                                                               // ANCHOR::GetIO().Fonts->AddFontDefault() to
+                                                               // add the default ANCHOR font.
 
   ConfigData.push_back(*font_cfg);
   AnchorFontConfig &new_font_cfg = ConfigData.back();
@@ -2612,9 +2526,7 @@ AnchorFont *AnchorFontAtlas::AddFont(const AnchorFontConfig *font_cfg)
 // Default font TTF is compressed with stb_compress then base85 encoded (see
 // misc/fonts/binary_to_compressed_c.cpp for encoder)
 static unsigned int stb_decompress_length(const unsigned char *input);
-static unsigned int stb_decompress(unsigned char *output,
-                                   const unsigned char *input,
-                                   unsigned int length);
+static unsigned int stb_decompress(unsigned char *output, const unsigned char *input, unsigned int length);
 static const char *GetDefaultCompressedFontDataTTFBase85();
 static unsigned int Decode85Byte(char c)
 {
@@ -2647,13 +2559,10 @@ AnchorFont *AnchorFontAtlas::AddFontDefault(const AnchorFontConfig *font_cfg_tem
   if (font_cfg.SizePixels <= 0.0f)
     font_cfg.SizePixels = 13.0f * 1.0f;
   if (font_cfg.Name[0] == '\0')
-    ImFormatString(font_cfg.Name,
-                   ANCHOR_ARRAYSIZE(font_cfg.Name),
-                   "ProggyClean.ttf, %dpx",
-                   (int)font_cfg.SizePixels);
+    ImFormatString(
+      font_cfg.Name, ANCHOR_ARRAYSIZE(font_cfg.Name), "ProggyClean.ttf, %dpx", (int)font_cfg.SizePixels);
   font_cfg.EllipsisChar = (AnchorWChar)0x0085;
-  font_cfg.GlyphOffset[1] = 1.0f *
-                            IM_FLOOR(font_cfg.SizePixels / 13.0f);  // Add +1 offset per 13 units
+  font_cfg.GlyphOffset[1] = 1.0f * IM_FLOOR(font_cfg.SizePixels / 13.0f);  // Add +1 offset per 13 units
 
   const char *ttf_compressed_base85 = GetDefaultCompressedFontDataTTFBase85();
   const AnchorWChar *glyph_ranges = font_cfg.GlyphRanges != NULL ? font_cfg.GlyphRanges :
@@ -2668,8 +2577,8 @@ AnchorFont *AnchorFontAtlas::AddFontFromFileTTF(const char *filename,
                                                 const AnchorFontConfig *font_cfg_template,
                                                 const AnchorWChar *glyph_ranges)
 {
-  ANCHOR_ASSERT(
-    !Locked && "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
+  ANCHOR_ASSERT(!Locked &&
+                "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
   size_t data_size = 0;
   void *data = ImFileLoadToMemory(filename, "rb", &data_size, 0);
   if (!data) {
@@ -2696,8 +2605,8 @@ AnchorFont *AnchorFontAtlas::AddFontFromMemoryTTF(void *ttf_data,
                                                   const AnchorFontConfig *font_cfg_template,
                                                   const AnchorWChar *glyph_ranges)
 {
-  ANCHOR_ASSERT(
-    !Locked && "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
+  ANCHOR_ASSERT(!Locked &&
+                "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
   AnchorFontConfig font_cfg = font_cfg_template ? *font_cfg_template : AnchorFontConfig();
   ANCHOR_ASSERT(font_cfg.FontData == NULL);
   font_cfg.FontData = ttf_data;
@@ -2708,19 +2617,17 @@ AnchorFont *AnchorFontAtlas::AddFontFromMemoryTTF(void *ttf_data,
   return AddFont(&font_cfg);
 }
 
-AnchorFont *AnchorFontAtlas::AddFontFromMemoryCompressedTTF(
-  const void *compressed_ttf_data,
-  int compressed_ttf_size,
-  float size_pixels,
-  const AnchorFontConfig *font_cfg_template,
-  const AnchorWChar *glyph_ranges)
+AnchorFont *AnchorFontAtlas::AddFontFromMemoryCompressedTTF(const void *compressed_ttf_data,
+                                                            int compressed_ttf_size,
+                                                            float size_pixels,
+                                                            const AnchorFontConfig *font_cfg_template,
+                                                            const AnchorWChar *glyph_ranges)
 {
   const unsigned int buf_decompressed_size = stb_decompress_length(
     (const unsigned char *)compressed_ttf_data);
   unsigned char *buf_decompressed_data = (unsigned char *)IM_ALLOC(buf_decompressed_size);
-  stb_decompress(buf_decompressed_data,
-                 (const unsigned char *)compressed_ttf_data,
-                 (unsigned int)compressed_ttf_size);
+  stb_decompress(
+    buf_decompressed_data, (const unsigned char *)compressed_ttf_data, (unsigned int)compressed_ttf_size);
 
   AnchorFontConfig font_cfg = font_cfg_template ? *font_cfg_template : AnchorFontConfig();
   ANCHOR_ASSERT(font_cfg.FontData == NULL);
@@ -2729,11 +2636,10 @@ AnchorFont *AnchorFontAtlas::AddFontFromMemoryCompressedTTF(
     buf_decompressed_data, (int)buf_decompressed_size, size_pixels, &font_cfg, glyph_ranges);
 }
 
-AnchorFont *AnchorFontAtlas::AddFontFromMemoryCompressedBase85TTF(
-  const char *compressed_ttf_data_base85,
-  float size_pixels,
-  const AnchorFontConfig *font_cfg,
-  const AnchorWChar *glyph_ranges)
+AnchorFont *AnchorFontAtlas::AddFontFromMemoryCompressedBase85TTF(const char *compressed_ttf_data_base85,
+                                                                  float size_pixels,
+                                                                  const AnchorFontConfig *font_cfg,
+                                                                  const AnchorWChar *glyph_ranges)
 {
   int compressed_ttf_size = (((int)strlen(compressed_ttf_data_base85) + 4) / 5) * 4;
   void *compressed_ttf = IM_ALLOC((size_t)compressed_ttf_size);
@@ -2784,8 +2690,7 @@ void AnchorFontAtlas::CalcCustomRectUV(const AnchorFontAtlasCustomRect *rect,
                                        GfVec2f *out_uv_max) const
 {
   ANCHOR_ASSERT(TexWidth > 0 &&
-                TexHeight >
-                  0);  // Font atlas needs to be built before we can calculate UV coordinates
+                TexHeight > 0);     // Font atlas needs to be built before we can calculate UV coordinates
   ANCHOR_ASSERT(rect->IsPacked());  // Make sure the rectangle has been packed
   *out_uv_min = GfVec2f((float)rect->X * TexUvScale[0], (float)rect->Y * TexUvScale[1]);
   *out_uv_max = GfVec2f((float)(rect->X + rect->Width) * TexUvScale[0],
@@ -2805,16 +2710,14 @@ bool AnchorFontAtlas::GetMouseCursorTexData(ANCHOR_MouseCursor cursor_type,
 
   ANCHOR_ASSERT(PackIdMouseCursors != -1);
   AnchorFontAtlasCustomRect *r = GetCustomRectByIndex(PackIdMouseCursors);
-  GfVec2f pos = FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[cursor_type][0] +
-                GfVec2f((float)r->X, (float)r->Y);
+  GfVec2f pos = FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[cursor_type][0] + GfVec2f((float)r->X, (float)r->Y);
   GfVec2f size = FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[cursor_type][1];
   *out_size = size;
   *out_offset = FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[cursor_type][2];
 
   /** todo::check_math */
   out_uv_border[0] = GfVec2f((pos[0]) * TexUvScale[0], (pos[1]) * TexUvScale[1]);
-  out_uv_border[1] = GfVec2f((pos[0] + size[0]) * TexUvScale[0],
-                             (pos[1] + size[1]) * TexUvScale[1]);
+  out_uv_border[1] = GfVec2f((pos[0] + size[0]) * TexUvScale[0], (pos[1] + size[1]) * TexUvScale[1]);
   pos[0] += FONT_ATLAS_DEFAULT_TEX_DATA_W + 1;
   out_uv_fill[0] = GfVec2f((pos[0]) * TexUvScale[0], (pos[1]) * TexUvScale[1]);
   out_uv_fill[1] = GfVec2f((pos[0] + size[0]) * TexUvScale[0], (pos[1] + size[1]) * TexUvScale[1]);
@@ -2823,8 +2726,8 @@ bool AnchorFontAtlas::GetMouseCursorTexData(ANCHOR_MouseCursor cursor_type,
 
 bool AnchorFontAtlas::Build()
 {
-  ANCHOR_ASSERT(
-    !Locked && "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
+  ANCHOR_ASSERT(!Locked &&
+                "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
 
   // Select builder
   // - Note that we do not reassign to atlas->FontBuilderIO, since it is likely to point to static
@@ -2848,8 +2751,7 @@ bool AnchorFontAtlas::Build()
   return builder_io->FontBuilder_Build(this);
 }
 
-void AnchorFontAtlasBuildMultiplyCalcLookupTable(unsigned char out_table[256],
-                                                 float in_brighten_factor)
+void AnchorFontAtlasBuildMultiplyCalcLookupTable(unsigned char out_table[256], float in_brighten_factor)
 {
   for (unsigned int i = 0; i < 256; i++) {
     unsigned int value = (unsigned int)(i * in_brighten_factor);
@@ -2877,17 +2779,16 @@ void AnchorFontAtlasBuildMultiplyRectAlpha8(const unsigned char table[256],
 // declare the type here.)
 struct AnchorFontBuildSrcData {
   stbtt_fontinfo FontInfo;
-  stbtt_pack_range
-    PackRange;  // Hold the list of codepoints to pack (essentially points to Codepoints.Data)
-  stbrp_rect *Rects;  // Rectangle to pack. We first fill in their size and the packer will give us
-                      // their position.
+  stbtt_pack_range PackRange;  // Hold the list of codepoints to pack (essentially points to Codepoints.Data)
+  stbrp_rect *Rects;           // Rectangle to pack. We first fill in their size and the packer will give us
+                               // their position.
   stbtt_packedchar *PackedChars;  // Output glyphs
   const AnchorWChar *SrcRanges;   // Ranges as requested by user (user is allowed to request too
                                   // much, e.g. 0x0020..0xFFFF)
   int DstIndex;                   // Index into atlas->Fonts[] and dst_tmp_array[]
   int GlyphsHighest;              // Highest requested codepoint
-  int GlyphsCount;  // Glyph count (excluding missing glyphs and glyphs already set by an earlier
-                    // source font)
+  int GlyphsCount;            // Glyph count (excluding missing glyphs and glyphs already set by an earlier
+                              // source font)
   AnchorBitVector GlyphsSet;  // Glyph bit map (random access, 1-bit per codepoint. This will be a
                               // maximum of 8KB)
   AnchorVector<int> GlyphsList;  // Glyph codepoints list (flattened version of GlyphsMap)
@@ -2940,8 +2841,7 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
   for (int src_i = 0; src_i < atlas->ConfigData.Size; src_i++) {
     AnchorFontBuildSrcData &src_tmp = src_tmp_array[src_i];
     AnchorFontConfig &cfg = atlas->ConfigData[src_i];
-    ANCHOR_ASSERT(cfg.DstFont &&
-                  (!cfg.DstFont->IsLoaded() || cfg.DstFont->ContainerAtlas == atlas));
+    ANCHOR_ASSERT(cfg.DstFont && (!cfg.DstFont->IsLoaded() || cfg.DstFont->ContainerAtlas == atlas));
 
     // Find index from cfg.DstFont (we allow the user to set cfg.DstFont. Also it makes casual
     // debugging nicer than when storing indices)
@@ -2950,8 +2850,7 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
       if (cfg.DstFont == atlas->Fonts[output_i])
         src_tmp.DstIndex = output_i;
     if (src_tmp.DstIndex == -1) {
-      ANCHOR_ASSERT(src_tmp.DstIndex !=
-                    -1);  // cfg.DstFont not pointing within atlas->Fonts[] array?
+      ANCHOR_ASSERT(src_tmp.DstIndex != -1);  // cfg.DstFont not pointing within atlas->Fonts[] array?
       return false;
     }
     // Initialize helper structure for font loading and verify that the TTF/OTF data is correct
@@ -2963,8 +2862,7 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
     // Measure highest codepoints
     AnchorFontBuildDstData &dst_tmp = dst_tmp_array[src_tmp.DstIndex];
     src_tmp.SrcRanges = cfg.GlyphRanges ? cfg.GlyphRanges : atlas->GetGlyphRangesDefault();
-    for (const AnchorWChar *src_range = src_tmp.SrcRanges; src_range[0] && src_range[1];
-         src_range += 2)
+    for (const AnchorWChar *src_range = src_tmp.SrcRanges; src_range[0] && src_range[1]; src_range += 2)
       src_tmp.GlyphsHighest = AnchorMax(src_tmp.GlyphsHighest, (int)src_range[1]);
     dst_tmp.SrcCount++;
     dst_tmp.GlyphsHighest = AnchorMax(dst_tmp.GlyphsHighest, src_tmp.GlyphsHighest);
@@ -2980,12 +2878,10 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
     if (dst_tmp.GlyphsSet.Storage.empty())
       dst_tmp.GlyphsSet.Create(dst_tmp.GlyphsHighest + 1);
 
-    for (const AnchorWChar *src_range = src_tmp.SrcRanges; src_range[0] && src_range[1];
-         src_range += 2)
+    for (const AnchorWChar *src_range = src_tmp.SrcRanges; src_range[0] && src_range[1]; src_range += 2)
       for (unsigned int codepoint = src_range[0]; codepoint <= src_range[1]; codepoint++) {
-        if (dst_tmp.GlyphsSet.TestBit(
-              codepoint))  // Don't overwrite existing glyphs. We could make this an option for
-                           // MergeMode (e.g. MergeOverwrite==true)
+        if (dst_tmp.GlyphsSet.TestBit(codepoint))  // Don't overwrite existing glyphs. We could make this an
+                                                   // option for MergeMode (e.g. MergeOverwrite==true)
           continue;
         if (!stbtt_FindGlyphIndex(&src_tmp.FontInfo, codepoint))  // It is actually in the font?
           continue;
@@ -3054,8 +2950,7 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
     const int padding = atlas->TexGlyphPadding;
     for (int glyph_i = 0; glyph_i < src_tmp.GlyphsList.Size; glyph_i++) {
       int x0, y0, x1, y1;
-      const int glyph_index_in_font = stbtt_FindGlyphIndex(&src_tmp.FontInfo,
-                                                           src_tmp.GlyphsList[glyph_i]);
+      const int glyph_index_in_font = stbtt_FindGlyphIndex(&src_tmp.FontInfo, src_tmp.GlyphsList[glyph_i]);
       ANCHOR_ASSERT(glyph_index_in_font != 0);
       stbtt_GetGlyphBitmapBoxSubpixel(&src_tmp.FontInfo,
                                       glyph_index_in_font,
@@ -3109,8 +3004,7 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
     // or if a single if larger than TexWidth?)
     for (int glyph_i = 0; glyph_i < src_tmp.GlyphsCount; glyph_i++)
       if (src_tmp.Rects[glyph_i].was_packed)
-        atlas->TexHeight = AnchorMax(atlas->TexHeight,
-                                     src_tmp.Rects[glyph_i].y + src_tmp.Rects[glyph_i].h);
+        atlas->TexHeight = AnchorMax(atlas->TexHeight, src_tmp.Rects[glyph_i].y + src_tmp.Rects[glyph_i].h);
   }
 
   // 7. Allocate texture
@@ -3130,8 +3024,7 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
     if (src_tmp.GlyphsCount == 0)
       continue;
 
-    stbtt_PackFontRangesRenderIntoRects(
-      &spc, &src_tmp.FontInfo, &src_tmp.PackRange, 1, src_tmp.Rects);
+    stbtt_PackFontRangesRenderIntoRects(&spc, &src_tmp.FontInfo, &src_tmp.PackRange, 1, src_tmp.Rects);
 
     // Apply multiply operator
     if (cfg.RasterizerMultiply != 1.0f) {
@@ -3164,13 +3057,10 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
 
     const float font_scale = stbtt_ScaleForPixelHeight(&src_tmp.FontInfo, cfg.SizePixels);
     int unscaled_ascent, unscaled_descent, unscaled_line_gap;
-    stbtt_GetFontVMetrics(
-      &src_tmp.FontInfo, &unscaled_ascent, &unscaled_descent, &unscaled_line_gap);
+    stbtt_GetFontVMetrics(&src_tmp.FontInfo, &unscaled_ascent, &unscaled_descent, &unscaled_line_gap);
 
-    const float ascent = ImFloor(unscaled_ascent * font_scale +
-                                 ((unscaled_ascent > 0.0f) ? +1 : -1));
-    const float descent = ImFloor(unscaled_descent * font_scale +
-                                  ((unscaled_descent > 0.0f) ? +1 : -1));
+    const float ascent = ImFloor(unscaled_ascent * font_scale + ((unscaled_ascent > 0.0f) ? +1 : -1));
+    const float descent = ImFloor(unscaled_descent * font_scale + ((unscaled_descent > 0.0f) ? +1 : -1));
     AnchorFontAtlasBuildSetupFont(atlas, dst_font, &cfg, ascent, descent);
     const float font_off_x = cfg.GlyphOffset[0];
     const float font_off_y = cfg.GlyphOffset[1] + IM_ROUND(dst_font->Ascent);
@@ -3181,14 +3071,8 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
       const stbtt_packedchar &pc = src_tmp.PackedChars[glyph_i];
       stbtt_aligned_quad q;
       float unused_x = 0.0f, unused_y = 0.0f;
-      stbtt_GetPackedQuad(src_tmp.PackedChars,
-                          atlas->TexWidth,
-                          atlas->TexHeight,
-                          glyph_i,
-                          &unused_x,
-                          &unused_y,
-                          &q,
-                          0);
+      stbtt_GetPackedQuad(
+        src_tmp.PackedChars, atlas->TexWidth, atlas->TexHeight, glyph_i, &unused_x, &unused_y, &q, 0);
       dst_font->AddGlyph(&cfg,
                          (AnchorWChar)codepoint,
                          q.x0 + font_off_x,
@@ -3259,8 +3143,7 @@ void AnchorFontAtlasBuildPackCustomRects(AnchorFontAtlas *atlas, void *stbrp_con
     if (pack_rects[i].was_packed) {
       user_rects[i].X = pack_rects[i].x;
       user_rects[i].Y = pack_rects[i].y;
-      ANCHOR_ASSERT(pack_rects[i].w == user_rects[i].Width &&
-                    pack_rects[i].h == user_rects[i].Height);
+      ANCHOR_ASSERT(pack_rects[i].w == user_rects[i].Width && pack_rects[i].h == user_rects[i].Height);
       atlas->TexHeight = AnchorMax(atlas->TexHeight, pack_rects[i].y + pack_rects[i].h);
     }
 }
@@ -3359,8 +3242,7 @@ static void AnchorFontAtlasBuildRenderDefaultTexData(AnchorFontAtlas *atlas)
     }
     else {
       atlas->TexPixelsRGBA32[offset] = atlas->TexPixelsRGBA32[offset + 1] =
-        atlas->TexPixelsRGBA32[offset + w] = atlas->TexPixelsRGBA32[offset + w + 1] =
-          ANCHOR_COL32_WHITE;
+        atlas->TexPixelsRGBA32[offset + w] = atlas->TexPixelsRGBA32[offset + w + 1] = ANCHOR_COL32_WHITE;
     }
   }
   atlas->TexUvWhitePixel = GfVec2f((r->X + 0.5f) * atlas->TexUvScale[0],
@@ -3376,8 +3258,7 @@ static void AnchorFontAtlasBuildRenderLinesTexData(AnchorFontAtlas *atlas)
   // of each other to allow interpolation between them
   AnchorFontAtlasCustomRect *r = atlas->GetCustomRectByIndex(atlas->PackIdLines);
   ANCHOR_ASSERT(r->IsPacked());
-  for (unsigned int n = 0; n < IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 1;
-       n++)  // +1 because of the zero-width row
+  for (unsigned int n = 0; n < IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 1; n++)  // +1 because of the zero-width row
   {
     // Each line consists of at least two empty pixels at the ends, with a line of solid pixels in
     // the middle
@@ -3415,18 +3296,15 @@ static void AnchorFontAtlasBuildRenderLinesTexData(AnchorFontAtlas *atlas)
 
     // Calculate UVs for this line
     /** todo::check_math */
-    GfVec2f uv0 = GfVec2f(
-      GfVec2f((float)(r->X + pad_left - 1), (float)(r->Y + y))[0] * atlas->TexUvScale[0],
-      GfVec2f((float)(r->X + pad_left - 1), (float)(r->Y + y))[1] * atlas->TexUvScale[1]);
+    GfVec2f uv0 = GfVec2f(GfVec2f((float)(r->X + pad_left - 1), (float)(r->Y + y))[0] * atlas->TexUvScale[0],
+                          GfVec2f((float)(r->X + pad_left - 1), (float)(r->Y + y))[1] *
+                            atlas->TexUvScale[1]);
 
     GfVec2f uv1 = GfVec2f(
-      GfVec2f((float)(r->X + pad_left + line_width + 1), (float)(r->Y + y + 1))[0] *
-        atlas->TexUvScale[0],
-      GfVec2f((float)(r->X + pad_left + line_width + 1), (float)(r->Y + y + 1))[1] *
-        atlas->TexUvScale[1]);
-    float half_v =
-      (uv0[1] + uv1[1]) *
-      0.5f;  // Calculate a constant V in the middle of the row to avoid sampling artifacts
+      GfVec2f((float)(r->X + pad_left + line_width + 1), (float)(r->Y + y + 1))[0] * atlas->TexUvScale[0],
+      GfVec2f((float)(r->X + pad_left + line_width + 1), (float)(r->Y + y + 1))[1] * atlas->TexUvScale[1]);
+    float half_v = (uv0[1] + uv1[1]) *
+                   0.5f;  // Calculate a constant V in the middle of the row to avoid sampling artifacts
     atlas->TexUvLines[n] = GfVec4f(uv0[0], half_v, uv1[0], half_v);
   }
 }
@@ -3437,8 +3315,8 @@ void AnchorFontAtlasBuildInit(AnchorFontAtlas *atlas)
   // Register texture region for mouse cursors or standard white pixels
   if (atlas->PackIdMouseCursors < 0) {
     if (!(atlas->Flags & AnchorFontAtlasFlags_NoMouseCursors))
-      atlas->PackIdMouseCursors = atlas->AddCustomRectRegular(
-        FONT_ATLAS_DEFAULT_TEX_DATA_W * 2 + 1, FONT_ATLAS_DEFAULT_TEX_DATA_H);
+      atlas->PackIdMouseCursors = atlas->AddCustomRectRegular(FONT_ATLAS_DEFAULT_TEX_DATA_W * 2 + 1,
+                                                              FONT_ATLAS_DEFAULT_TEX_DATA_H);
     else
       atlas->PackIdMouseCursors = atlas->AddCustomRectRegular(2, 2);
   }
@@ -3581,131 +3459,115 @@ const AnchorWChar *AnchorFontAtlas::GetGlyphRangesChineseSimplifiedCommon()
   // initial unicode codepoint 0x4E00. This encoding is designed to helps us compact the source
   // code size.)
   static const short accumulative_offsets_from_0x4E00[] = {
-    0,   1,  2,  4,  1,   1,  1,  1,   2,   1,   3,   2,  1,  2,   2,   1,   1,   1,   1,   1,
-    5,   2,  1,  2,  3,   3,  3,  2,   2,   4,   1,   1,  1,  2,   1,   5,   2,   3,   1,   2,
-    1,   2,  1,  1,  2,   1,  1,  2,   2,   1,   4,   1,  1,  1,   1,   5,   10,  1,   2,   19,
-    2,   1,  2,  1,  2,   1,  2,  1,   2,   1,   5,   1,  6,  3,   2,   1,   2,   2,   1,   1,
-    1,   4,  8,  5,  1,   1,  4,  1,   1,   3,   1,   2,  1,  5,   1,   2,   1,   1,   1,   10,
-    1,   1,  5,  2,  4,   6,  1,  4,   2,   2,   2,   12, 2,  1,   1,   6,   1,   1,   1,   4,
-    1,   1,  4,  6,  5,   1,  4,  2,   2,   4,   10,  7,  1,  1,   4,   2,   4,   2,   1,   4,
-    3,   6,  10, 12, 5,   7,  2,  14,  2,   9,   1,   1,  6,  7,   10,  4,   7,   13,  1,   5,
-    4,   8,  4,  1,  1,   2,  28, 5,   6,   1,   1,   5,  2,  5,   20,  2,   2,   9,   8,   11,
-    2,   9,  17, 1,  8,   6,  8,  27,  4,   6,   9,   20, 11, 27,  6,   68,  2,   2,   1,   1,
-    1,   2,  1,  2,  2,   7,  6,  11,  3,   3,   1,   1,  3,  1,   2,   1,   1,   1,   1,   1,
-    3,   1,  1,  8,  3,   4,  1,  5,   7,   2,   1,   4,  4,  8,   4,   2,   1,   2,   1,   1,
-    4,   5,  6,  3,  6,   2,  12, 3,   1,   3,   9,   2,  4,  3,   4,   1,   5,   3,   3,   1,
-    3,   7,  1,  5,  1,   1,  1,  1,   2,   3,   4,   5,  2,  3,   2,   6,   1,   1,   2,   1,
-    7,   1,  7,  3,  4,   5,  15, 2,   2,   1,   5,   3,  22, 19,  2,   1,   1,   1,   1,   2,
-    5,   1,  1,  1,  6,   1,  1,  12,  8,   2,   9,   18, 22, 4,   1,   1,   5,   1,   16,  1,
-    2,   7,  10, 15, 1,   1,  6,  2,   4,   1,   2,   4,  1,  6,   1,   1,   3,   2,   4,   1,
-    6,   4,  5,  1,  2,   1,  1,  2,   1,   10,  3,   1,  3,  2,   1,   9,   3,   2,   5,   7,
-    2,   19, 4,  3,  6,   1,  1,  1,   1,   1,   4,   3,  2,  1,   1,   1,   2,   5,   3,   1,
-    1,   1,  2,  2,  1,   1,  2,  1,   1,   2,   1,   3,  1,  1,   1,   3,   7,   1,   4,   1,
-    1,   2,  1,  1,  2,   1,  2,  4,   4,   3,   8,   1,  1,  1,   2,   1,   3,   5,   1,   3,
-    1,   3,  4,  6,  2,   2,  14, 4,   6,   6,   11,  9,  1,  15,  3,   1,   28,  5,   2,   5,
-    5,   3,  1,  3,  4,   5,  4,  6,   14,  3,   2,   3,  5,  21,  2,   7,   20,  10,  1,   2,
-    19,  2,  4,  28, 28,  2,  3,  2,   1,   14,  4,   1,  26, 28,  42,  12,  40,  3,   52,  79,
-    5,   14, 17, 3,  2,   2,  11, 3,   4,   6,   3,   1,  8,  2,   23,  4,   5,   8,   10,  4,
-    2,   7,  3,  5,  1,   1,  6,  3,   1,   2,   2,   2,  5,  28,  1,   1,   7,   7,   20,  5,
-    3,   29, 3,  17, 26,  1,  8,  4,   27,  3,   6,   11, 23, 5,   3,   4,   6,   13,  24,  16,
-    6,   5,  10, 25, 35,  7,  3,  2,   3,   3,   14,  3,  6,  2,   6,   1,   4,   2,   3,   8,
-    2,   1,  1,  3,  3,   3,  4,  1,   1,   13,  2,   2,  4,  5,   2,   1,   14,  14,  1,   2,
-    2,   1,  4,  5,  2,   3,  1,  14,  3,   12,  3,   17, 2,  16,  5,   1,   2,   1,   8,   9,
-    3,   19, 4,  2,  2,   4,  17, 25,  21,  20,  28,  75, 1,  10,  29,  103, 4,   1,   2,   1,
-    1,   4,  2,  4,  1,   2,  3,  24,  2,   2,   2,   1,  1,  2,   1,   3,   8,   1,   1,   1,
-    2,   1,  1,  3,  1,   1,  1,  6,   1,   5,   3,   1,  1,  1,   3,   4,   1,   1,   5,   2,
-    1,   5,  6,  13, 9,   16, 1,  1,   1,   1,   3,   2,  3,  2,   4,   5,   2,   5,   2,   2,
-    3,   7,  13, 7,  2,   2,  1,  1,   1,   1,   2,   3,  3,  2,   1,   6,   4,   9,   2,   1,
-    14,  2,  14, 2,  1,   18, 3,  4,   14,  4,   11,  41, 15, 23,  15,  23,  176, 1,   3,   4,
-    1,   1,  1,  1,  5,   3,  1,  2,   3,   7,   3,   1,  1,  2,   1,   2,   4,   4,   6,   2,
-    4,   1,  9,  7,  1,   10, 5,  8,   16,  29,  1,   1,  2,  2,   3,   1,   3,   5,   2,   4,
-    5,   4,  1,  1,  2,   2,  3,  3,   7,   1,   6,   10, 1,  17,  1,   44,  4,   6,   2,   1,
-    1,   6,  5,  4,  2,   10, 1,  6,   9,   2,   8,   1,  24, 1,   2,   13,  7,   8,   8,   2,
-    1,   4,  1,  3,  1,   3,  3,  5,   2,   5,   10,  9,  4,  9,   12,  2,   1,   6,   1,   10,
-    1,   1,  7,  7,  4,   10, 8,  3,   1,   13,  4,   3,  1,  6,   1,   3,   5,   2,   1,   2,
-    17,  16, 5,  2,  16,  6,  1,  4,   2,   1,   3,   3,  6,  8,   5,   11,  11,  1,   3,   3,
-    2,   4,  6,  10, 9,   5,  7,  4,   7,   4,   7,   1,  1,  4,   2,   1,   3,   6,   8,   7,
-    1,   6,  11, 5,  5,   3,  24, 9,   4,   2,   7,   13, 5,  1,   8,   82,  16,  61,  1,   1,
-    1,   4,  2,  2,  16,  10, 3,  8,   1,   1,   6,   4,  2,  1,   3,   1,   1,   1,   4,   3,
-    8,   4,  2,  2,  1,   1,  1,  1,   1,   6,   3,   5,  1,  1,   4,   6,   9,   2,   1,   1,
-    1,   2,  1,  7,  2,   1,  6,  1,   5,   4,   4,   3,  1,  8,   1,   3,   3,   1,   3,   2,
-    2,   2,  2,  3,  1,   6,  1,  2,   1,   2,   1,   3,  7,  1,   8,   2,   1,   2,   1,   5,
-    2,   5,  3,  5,  10,  1,  2,  1,   1,   3,   2,   5,  11, 3,   9,   3,   5,   1,   1,   5,
-    9,   1,  2,  1,  5,   7,  9,  9,   8,   1,   3,   3,  3,  6,   8,   2,   3,   2,   1,   1,
-    32,  6,  1,  2,  15,  9,  3,  7,   13,  1,   3,   10, 13, 2,   14,  1,   13,  10,  2,   1,
-    3,   10, 4,  15, 2,   15, 15, 10,  1,   3,   9,   6,  9,  32,  25,  26,  47,  7,   3,   2,
-    3,   1,  6,  3,  4,   3,  2,  8,   5,   4,   1,   9,  4,  2,   2,   19,  10,  6,   2,   3,
-    8,   1,  2,  2,  4,   2,  1,  9,   4,   4,   4,   6,  4,  8,   9,   2,   3,   1,   1,   1,
-    1,   3,  5,  5,  1,   3,  8,  4,   6,   2,   1,   4,  12, 1,   5,   3,   7,   13,  2,   5,
-    8,   1,  6,  1,  2,   5,  14, 6,   1,   5,   2,   4,  8,  15,  5,   1,   23,  6,   62,  2,
-    10,  1,  1,  8,  1,   2,  2,  10,  4,   2,   2,   9,  2,  1,   1,   3,   2,   3,   1,   5,
-    3,   3,  2,  1,  3,   8,  1,  1,   1,   11,  3,   1,  1,  4,   3,   7,   1,   14,  1,   2,
-    3,   12, 5,  2,  5,   1,  6,  7,   5,   7,   14,  11, 1,  3,   1,   8,   9,   12,  2,   1,
-    11,  8,  4,  4,  2,   6,  10, 9,   13,  1,   1,   3,  1,  5,   1,   3,   2,   4,   4,   1,
-    18,  2,  3,  14, 11,  4,  29, 4,   2,   7,   1,   3,  13, 9,   2,   2,   5,   3,   5,   20,
-    7,   16, 8,  5,  72,  34, 6,  4,   22,  12,  12,  28, 45, 36,  9,   7,   39,  9,   191, 1,
-    1,   1,  4,  11, 8,   4,  9,  2,   3,   22,  1,   1,  1,  1,   4,   17,  1,   7,   7,   1,
-    11,  31, 10, 2,  4,   8,  2,  3,   2,   1,   4,   2,  16, 4,   32,  2,   3,   19,  13,  4,
-    9,   1,  5,  2,  14,  8,  1,  1,   3,   6,   19,  6,  5,  1,   16,  6,   2,   10,  8,   5,
-    1,   2,  3,  1,  5,   5,  1,  11,  6,   6,   1,   3,  3,  2,   6,   3,   8,   1,   1,   4,
-    10,  7,  5,  7,  7,   5,  8,  9,   2,   1,   3,   4,  1,  1,   3,   1,   3,   3,   2,   6,
-    16,  1,  4,  6,  3,   1,  10, 6,   1,   3,   15,  2,  9,  2,   10,  25,  13,  9,   16,  6,
-    2,   2,  10, 11, 4,   3,  9,  1,   2,   6,   6,   5,  4,  30,  40,  1,   10,  7,   12,  14,
-    33,  6,  3,  6,  7,   3,  1,  3,   1,   11,  14,  4,  9,  5,   12,  11,  49,  18,  51,  31,
-    140, 31, 2,  2,  1,   5,  1,  8,   1,   10,  1,   4,  4,  3,   24,  1,   10,  1,   3,   6,
-    6,   16, 3,  4,  5,   2,  1,  4,   2,   57,  10,  6,  22, 2,   22,  3,   7,   22,  6,   10,
-    11,  36, 18, 16, 33,  36, 2,  5,   5,   1,   1,   1,  4,  10,  1,   4,   13,  2,   7,   5,
-    2,   9,  3,  4,  1,   7,  43, 3,   7,   3,   9,   14, 7,  9,   1,   11,  1,   1,   3,   7,
-    4,   18, 13, 1,  14,  1,  3,  6,   10,  73,  2,   2,  30, 6,   1,   11,  18,  19,  13,  22,
-    3,   46, 42, 37, 89,  7,  3,  16,  34,  2,   2,   3,  9,  1,   7,   1,   1,   1,   2,   2,
-    4,   10, 7,  3,  10,  3,  9,  5,   28,  9,   2,   6,  13, 7,   3,   1,   3,   10,  2,   7,
-    2,   11, 3,  6,  21,  54, 85, 2,   1,   4,   2,   2,  1,  39,  3,   21,  2,   2,   5,   1,
-    1,   1,  4,  1,  1,   3,  4,  15,  1,   3,   2,   4,  4,  2,   3,   8,   2,   20,  1,   8,
-    7,   13, 4,  1,  26,  6,  2,  9,   34,  4,   21,  52, 10, 4,   4,   1,   5,   12,  2,   11,
-    1,   7,  2,  30, 12,  44, 2,  30,  1,   1,   3,   6,  16, 9,   17,  39,  82,  2,   2,   24,
-    7,   1,  7,  3,  16,  9,  14, 44,  2,   1,   2,   1,  2,  3,   5,   2,   4,   1,   6,   7,
-    5,   3,  2,  6,  1,   11, 5,  11,  2,   1,   18,  19, 8,  1,   3,   24,  29,  2,   1,   3,
-    5,   2,  2,  1,  13,  6,  5,  1,   46,  11,  3,   5,  1,  1,   5,   8,   2,   10,  6,   12,
-    6,   3,  7,  11, 2,   4,  16, 13,  2,   5,   1,   1,  2,  2,   5,   2,   28,  5,   2,   23,
-    10,  8,  4,  4,  22,  39, 95, 38,  8,   14,  9,   5,  1,  13,  5,   4,   3,   13,  12,  11,
-    1,   9,  1,  27, 37,  2,  5,  4,   4,   63,  211, 95, 2,  2,   2,   1,   3,   5,   2,   1,
-    1,   2,  2,  1,  1,   1,  3,  2,   4,   1,   2,   1,  1,  5,   2,   2,   1,   1,   2,   3,
-    1,   3,  1,  1,  1,   3,  1,  4,   2,   1,   3,   6,  1,  1,   3,   7,   15,  5,   3,   2,
-    5,   3,  9,  11, 4,   2,  22, 1,   6,   3,   8,   7,  1,  4,   28,  4,   16,  3,   3,   25,
-    4,   4,  27, 27, 1,   4,  1,  2,   2,   7,   1,   3,  5,  2,   28,  8,   2,   14,  1,   8,
-    6,   16, 25, 3,  3,   3,  14, 3,   3,   1,   1,   2,  1,  4,   6,   3,   8,   4,   1,   1,
-    1,   2,  3,  6,  10,  6,  2,  3,   18,  3,   2,   5,  5,  4,   3,   1,   5,   2,   5,   4,
-    23,  7,  6,  12, 6,   4,  17, 11,  9,   5,   1,   1,  10, 5,   12,  1,   1,   11,  26,  33,
-    7,   3,  6,  1,  17,  7,  1,  5,   12,  1,   11,  2,  4,  1,   8,   14,  17,  23,  1,   2,
-    1,   7,  8,  16, 11,  9,  6,  5,   2,   6,   4,   16, 2,  8,   14,  1,   11,  8,   9,   1,
-    1,   1,  9,  25, 4,   11, 19, 7,   2,   15,  2,   12, 8,  52,  7,   5,   19,  2,   16,  4,
-    36,  8,  1,  16, 8,   24, 26, 4,   6,   2,   9,   5,  4,  36,  3,   28,  12,  25,  15,  37,
-    27,  17, 12, 59, 38,  5,  32, 127, 1,   2,   9,   17, 14, 4,   1,   2,   1,   1,   8,   11,
-    50,  4,  14, 2,  19,  16, 4,  17,  5,   4,   5,   26, 12, 45,  2,   23,  45,  104, 30,  12,
-    8,   3,  10, 2,  2,   3,  3,  1,   4,   20,  7,   2,  9,  6,   15,  2,   20,  1,   3,   16,
-    4,   11, 15, 6,  134, 2,  5,  59,  1,   2,   2,   2,  1,  9,   17,  3,   26,  137, 10,  211,
-    59,  1,  2,  4,  1,   4,  1,  1,   1,   2,   6,   2,  3,  1,   1,   2,   3,   2,   3,   1,
-    3,   4,  4,  2,  3,   3,  1,  4,   3,   1,   7,   2,  2,  3,   1,   2,   1,   3,   3,   3,
-    2,   2,  3,  2,  1,   3,  14, 6,   1,   3,   2,   9,  6,  15,  27,  9,   34,  145, 1,   1,
-    2,   1,  1,  1,  1,   2,  1,  1,   1,   1,   2,   2,  2,  3,   1,   2,   1,   1,   1,   2,
-    3,   5,  8,  3,  5,   2,  4,  1,   3,   2,   2,   2,  12, 4,   1,   1,   1,   10,  4,   5,
-    1,   20, 4,  16, 1,   15, 9,  5,   12,  2,   9,   2,  5,  4,   2,   26,  19,  7,   1,   26,
-    4,   30, 12, 15, 42,  1,  6,  8,   172, 1,   1,   4,  2,  1,   1,   11,  2,   2,   4,   2,
-    1,   2,  1,  10, 8,   1,  2,  1,   4,   5,   1,   2,  5,  1,   8,   4,   1,   3,   4,   2,
-    1,   6,  2,  1,  3,   4,  1,  2,   1,   1,   1,   1,  12, 5,   7,   2,   4,   3,   1,   1,
-    1,   3,  3,  6,  1,   2,  2,  3,   3,   3,   2,   1,  2,  12,  14,  11,  6,   6,   4,   12,
-    2,   8,  1,  7,  10,  1,  35, 7,   4,   13,  15,  4,  3,  23,  21,  28,  52,  5,   26,  5,
-    6,   1,  7,  10, 2,   7,  53, 3,   2,   1,   1,   1,  2,  163, 532, 1,   10,  11,  1,   3,
-    3,   4,  8,  2,  8,   6,  2,  2,   23,  22,  4,   2,  2,  4,   2,   1,   3,   1,   3,   3,
-    5,   9,  8,  2,  1,   2,  8,  1,   10,  2,   12,  21, 20, 15,  105, 2,   3,   1,   1,   3,
-    2,   3,  1,  1,  2,   5,  1,  4,   15,  11,  19,  1,  1,  1,   1,   5,   4,   5,   1,   1,
-    2,   5,  3,  5,  12,  1,  2,  5,   1,   11,  1,   1,  15, 9,   1,   4,   5,   3,   26,  8,
-    2,   1,  3,  1,  1,   15, 19, 2,   12,  1,   2,   5,  2,  7,   2,   19,  2,   20,  6,   26,
-    7,   5,  2,  2,  7,   34, 21, 13,  70,  2,   128, 1,  1,  2,   1,   1,   2,   1,   1,   3,
-    2,   2,  2,  15, 1,   4,  1,  3,   4,   42,  10,  6,  1,  49,  85,  8,   1,   2,   1,   1,
-    4,   4,  2,  3,  6,   1,  5,  7,   4,   3,   211, 4,  1,  2,   1,   2,   5,   1,   2,   4,
-    2,   2,  6,  5,  6,   10, 3,  4,   48,  100, 6,   2,  16, 296, 5,   27,  387, 2,   2,   3,
-    7,   16, 8,  5,  38,  15, 39, 21,  9,   10,  3,   7,  59, 13,  27,  21,  47,  5,   21,  6};
+    0,  1,   2,   4,   1,  1,  1,  1,  2,   1,   3,   2,   1,   2,  2,  1,   1,   1,   1,   1,  5,   2,  1,
+    2,  3,   3,   3,   2,  2,  4,  1,  1,   1,   2,   1,   5,   2,  3,  1,   2,   1,   2,   1,  1,   2,  1,
+    1,  2,   2,   1,   4,  1,  1,  1,  1,   5,   10,  1,   2,   19, 2,  1,   2,   1,   2,   1,  2,   1,  2,
+    1,  5,   1,   6,   3,  2,  1,  2,  2,   1,   1,   1,   4,   8,  5,  1,   1,   4,   1,   1,  3,   1,  2,
+    1,  5,   1,   2,   1,  1,  1,  10, 1,   1,   5,   2,   4,   6,  1,  4,   2,   2,   2,   12, 2,   1,  1,
+    6,  1,   1,   1,   4,  1,  1,  4,  6,   5,   1,   4,   2,   2,  4,  10,  7,   1,   1,   4,  2,   4,  2,
+    1,  4,   3,   6,   10, 12, 5,  7,  2,   14,  2,   9,   1,   1,  6,  7,   10,  4,   7,   13, 1,   5,  4,
+    8,  4,   1,   1,   2,  28, 5,  6,  1,   1,   5,   2,   5,   20, 2,  2,   9,   8,   11,  2,  9,   17, 1,
+    8,  6,   8,   27,  4,  6,  9,  20, 11,  27,  6,   68,  2,   2,  1,  1,   1,   2,   1,   2,  2,   7,  6,
+    11, 3,   3,   1,   1,  3,  1,  2,  1,   1,   1,   1,   1,   3,  1,  1,   8,   3,   4,   1,  5,   7,  2,
+    1,  4,   4,   8,   4,  2,  1,  2,  1,   1,   4,   5,   6,   3,  6,  2,   12,  3,   1,   3,  9,   2,  4,
+    3,  4,   1,   5,   3,  3,  1,  3,  7,   1,   5,   1,   1,   1,  1,  2,   3,   4,   5,   2,  3,   2,  6,
+    1,  1,   2,   1,   7,  1,  7,  3,  4,   5,   15,  2,   2,   1,  5,  3,   22,  19,  2,   1,  1,   1,  1,
+    2,  5,   1,   1,   1,  6,  1,  1,  12,  8,   2,   9,   18,  22, 4,  1,   1,   5,   1,   16, 1,   2,  7,
+    10, 15,  1,   1,   6,  2,  4,  1,  2,   4,   1,   6,   1,   1,  3,  2,   4,   1,   6,   4,  5,   1,  2,
+    1,  1,   2,   1,   10, 3,  1,  3,  2,   1,   9,   3,   2,   5,  7,  2,   19,  4,   3,   6,  1,   1,  1,
+    1,  1,   4,   3,   2,  1,  1,  1,  2,   5,   3,   1,   1,   1,  2,  2,   1,   1,   2,   1,  1,   2,  1,
+    3,  1,   1,   1,   3,  7,  1,  4,  1,   1,   2,   1,   1,   2,  1,  2,   4,   4,   3,   8,  1,   1,  1,
+    2,  1,   3,   5,   1,  3,  1,  3,  4,   6,   2,   2,   14,  4,  6,  6,   11,  9,   1,   15, 3,   1,  28,
+    5,  2,   5,   5,   3,  1,  3,  4,  5,   4,   6,   14,  3,   2,  3,  5,   21,  2,   7,   20, 10,  1,  2,
+    19, 2,   4,   28,  28, 2,  3,  2,  1,   14,  4,   1,   26,  28, 42, 12,  40,  3,   52,  79, 5,   14, 17,
+    3,  2,   2,   11,  3,  4,  6,  3,  1,   8,   2,   23,  4,   5,  8,  10,  4,   2,   7,   3,  5,   1,  1,
+    6,  3,   1,   2,   2,  2,  5,  28, 1,   1,   7,   7,   20,  5,  3,  29,  3,   17,  26,  1,  8,   4,  27,
+    3,  6,   11,  23,  5,  3,  4,  6,  13,  24,  16,  6,   5,   10, 25, 35,  7,   3,   2,   3,  3,   14, 3,
+    6,  2,   6,   1,   4,  2,  3,  8,  2,   1,   1,   3,   3,   3,  4,  1,   1,   13,  2,   2,  4,   5,  2,
+    1,  14,  14,  1,   2,  2,  1,  4,  5,   2,   3,   1,   14,  3,  12, 3,   17,  2,   16,  5,  1,   2,  1,
+    8,  9,   3,   19,  4,  2,  2,  4,  17,  25,  21,  20,  28,  75, 1,  10,  29,  103, 4,   1,  2,   1,  1,
+    4,  2,   4,   1,   2,  3,  24, 2,  2,   2,   1,   1,   2,   1,  3,  8,   1,   1,   1,   2,  1,   1,  3,
+    1,  1,   1,   6,   1,  5,  3,  1,  1,   1,   3,   4,   1,   1,  5,  2,   1,   5,   6,   13, 9,   16, 1,
+    1,  1,   1,   3,   2,  3,  2,  4,  5,   2,   5,   2,   2,   3,  7,  13,  7,   2,   2,   1,  1,   1,  1,
+    2,  3,   3,   2,   1,  6,  4,  9,  2,   1,   14,  2,   14,  2,  1,  18,  3,   4,   14,  4,  11,  41, 15,
+    23, 15,  23,  176, 1,  3,  4,  1,  1,   1,   1,   5,   3,   1,  2,  3,   7,   3,   1,   1,  2,   1,  2,
+    4,  4,   6,   2,   4,  1,  9,  7,  1,   10,  5,   8,   16,  29, 1,  1,   2,   2,   3,   1,  3,   5,  2,
+    4,  5,   4,   1,   1,  2,  2,  3,  3,   7,   1,   6,   10,  1,  17, 1,   44,  4,   6,   2,  1,   1,  6,
+    5,  4,   2,   10,  1,  6,  9,  2,  8,   1,   24,  1,   2,   13, 7,  8,   8,   2,   1,   4,  1,   3,  1,
+    3,  3,   5,   2,   5,  10, 9,  4,  9,   12,  2,   1,   6,   1,  10, 1,   1,   7,   7,   4,  10,  8,  3,
+    1,  13,  4,   3,   1,  6,  1,  3,  5,   2,   1,   2,   17,  16, 5,  2,   16,  6,   1,   4,  2,   1,  3,
+    3,  6,   8,   5,   11, 11, 1,  3,  3,   2,   4,   6,   10,  9,  5,  7,   4,   7,   4,   7,  1,   1,  4,
+    2,  1,   3,   6,   8,  7,  1,  6,  11,  5,   5,   3,   24,  9,  4,  2,   7,   13,  5,   1,  8,   82, 16,
+    61, 1,   1,   1,   4,  2,  2,  16, 10,  3,   8,   1,   1,   6,  4,  2,   1,   3,   1,   1,  1,   4,  3,
+    8,  4,   2,   2,   1,  1,  1,  1,  1,   6,   3,   5,   1,   1,  4,  6,   9,   2,   1,   1,  1,   2,  1,
+    7,  2,   1,   6,   1,  5,  4,  4,  3,   1,   8,   1,   3,   3,  1,  3,   2,   2,   2,   2,  3,   1,  6,
+    1,  2,   1,   2,   1,  3,  7,  1,  8,   2,   1,   2,   1,   5,  2,  5,   3,   5,   10,  1,  2,   1,  1,
+    3,  2,   5,   11,  3,  9,  3,  5,  1,   1,   5,   9,   1,   2,  1,  5,   7,   9,   9,   8,  1,   3,  3,
+    3,  6,   8,   2,   3,  2,  1,  1,  32,  6,   1,   2,   15,  9,  3,  7,   13,  1,   3,   10, 13,  2,  14,
+    1,  13,  10,  2,   1,  3,  10, 4,  15,  2,   15,  15,  10,  1,  3,  9,   6,   9,   32,  25, 26,  47, 7,
+    3,  2,   3,   1,   6,  3,  4,  3,  2,   8,   5,   4,   1,   9,  4,  2,   2,   19,  10,  6,  2,   3,  8,
+    1,  2,   2,   4,   2,  1,  9,  4,  4,   4,   6,   4,   8,   9,  2,  3,   1,   1,   1,   1,  3,   5,  5,
+    1,  3,   8,   4,   6,  2,  1,  4,  12,  1,   5,   3,   7,   13, 2,  5,   8,   1,   6,   1,  2,   5,  14,
+    6,  1,   5,   2,   4,  8,  15, 5,  1,   23,  6,   62,  2,   10, 1,  1,   8,   1,   2,   2,  10,  4,  2,
+    2,  9,   2,   1,   1,  3,  2,  3,  1,   5,   3,   3,   2,   1,  3,  8,   1,   1,   1,   11, 3,   1,  1,
+    4,  3,   7,   1,   14, 1,  2,  3,  12,  5,   2,   5,   1,   6,  7,  5,   7,   14,  11,  1,  3,   1,  8,
+    9,  12,  2,   1,   11, 8,  4,  4,  2,   6,   10,  9,   13,  1,  1,  3,   1,   5,   1,   3,  2,   4,  4,
+    1,  18,  2,   3,   14, 11, 4,  29, 4,   2,   7,   1,   3,   13, 9,  2,   2,   5,   3,   5,  20,  7,  16,
+    8,  5,   72,  34,  6,  4,  22, 12, 12,  28,  45,  36,  9,   7,  39, 9,   191, 1,   1,   1,  4,   11, 8,
+    4,  9,   2,   3,   22, 1,  1,  1,  1,   4,   17,  1,   7,   7,  1,  11,  31,  10,  2,   4,  8,   2,  3,
+    2,  1,   4,   2,   16, 4,  32, 2,  3,   19,  13,  4,   9,   1,  5,  2,   14,  8,   1,   1,  3,   6,  19,
+    6,  5,   1,   16,  6,  2,  10, 8,  5,   1,   2,   3,   1,   5,  5,  1,   11,  6,   6,   1,  3,   3,  2,
+    6,  3,   8,   1,   1,  4,  10, 7,  5,   7,   7,   5,   8,   9,  2,  1,   3,   4,   1,   1,  3,   1,  3,
+    3,  2,   6,   16,  1,  4,  6,  3,  1,   10,  6,   1,   3,   15, 2,  9,   2,   10,  25,  13, 9,   16, 6,
+    2,  2,   10,  11,  4,  3,  9,  1,  2,   6,   6,   5,   4,   30, 40, 1,   10,  7,   12,  14, 33,  6,  3,
+    6,  7,   3,   1,   3,  1,  11, 14, 4,   9,   5,   12,  11,  49, 18, 51,  31,  140, 31,  2,  2,   1,  5,
+    1,  8,   1,   10,  1,  4,  4,  3,  24,  1,   10,  1,   3,   6,  6,  16,  3,   4,   5,   2,  1,   4,  2,
+    57, 10,  6,   22,  2,  22, 3,  7,  22,  6,   10,  11,  36,  18, 16, 33,  36,  2,   5,   5,  1,   1,  1,
+    4,  10,  1,   4,   13, 2,  7,  5,  2,   9,   3,   4,   1,   7,  43, 3,   7,   3,   9,   14, 7,   9,  1,
+    11, 1,   1,   3,   7,  4,  18, 13, 1,   14,  1,   3,   6,   10, 73, 2,   2,   30,  6,   1,  11,  18, 19,
+    13, 22,  3,   46,  42, 37, 89, 7,  3,   16,  34,  2,   2,   3,  9,  1,   7,   1,   1,   1,  2,   2,  4,
+    10, 7,   3,   10,  3,  9,  5,  28, 9,   2,   6,   13,  7,   3,  1,  3,   10,  2,   7,   2,  11,  3,  6,
+    21, 54,  85,  2,   1,  4,  2,  2,  1,   39,  3,   21,  2,   2,  5,  1,   1,   1,   4,   1,  1,   3,  4,
+    15, 1,   3,   2,   4,  4,  2,  3,  8,   2,   20,  1,   8,   7,  13, 4,   1,   26,  6,   2,  9,   34, 4,
+    21, 52,  10,  4,   4,  1,  5,  12, 2,   11,  1,   7,   2,   30, 12, 44,  2,   30,  1,   1,  3,   6,  16,
+    9,  17,  39,  82,  2,  2,  24, 7,  1,   7,   3,   16,  9,   14, 44, 2,   1,   2,   1,   2,  3,   5,  2,
+    4,  1,   6,   7,   5,  3,  2,  6,  1,   11,  5,   11,  2,   1,  18, 19,  8,   1,   3,   24, 29,  2,  1,
+    3,  5,   2,   2,   1,  13, 6,  5,  1,   46,  11,  3,   5,   1,  1,  5,   8,   2,   10,  6,  12,  6,  3,
+    7,  11,  2,   4,   16, 13, 2,  5,  1,   1,   2,   2,   5,   2,  28, 5,   2,   23,  10,  8,  4,   4,  22,
+    39, 95,  38,  8,   14, 9,  5,  1,  13,  5,   4,   3,   13,  12, 11, 1,   9,   1,   27,  37, 2,   5,  4,
+    4,  63,  211, 95,  2,  2,  2,  1,  3,   5,   2,   1,   1,   2,  2,  1,   1,   1,   3,   2,  4,   1,  2,
+    1,  1,   5,   2,   2,  1,  1,  2,  3,   1,   3,   1,   1,   1,  3,  1,   4,   2,   1,   3,  6,   1,  1,
+    3,  7,   15,  5,   3,  2,  5,  3,  9,   11,  4,   2,   22,  1,  6,  3,   8,   7,   1,   4,  28,  4,  16,
+    3,  3,   25,  4,   4,  27, 27, 1,  4,   1,   2,   2,   7,   1,  3,  5,   2,   28,  8,   2,  14,  1,  8,
+    6,  16,  25,  3,   3,  3,  14, 3,  3,   1,   1,   2,   1,   4,  6,  3,   8,   4,   1,   1,  1,   2,  3,
+    6,  10,  6,   2,   3,  18, 3,  2,  5,   5,   4,   3,   1,   5,  2,  5,   4,   23,  7,   6,  12,  6,  4,
+    17, 11,  9,   5,   1,  1,  10, 5,  12,  1,   1,   11,  26,  33, 7,  3,   6,   1,   17,  7,  1,   5,  12,
+    1,  11,  2,   4,   1,  8,  14, 17, 23,  1,   2,   1,   7,   8,  16, 11,  9,   6,   5,   2,  6,   4,  16,
+    2,  8,   14,  1,   11, 8,  9,  1,  1,   1,   9,   25,  4,   11, 19, 7,   2,   15,  2,   12, 8,   52, 7,
+    5,  19,  2,   16,  4,  36, 8,  1,  16,  8,   24,  26,  4,   6,  2,  9,   5,   4,   36,  3,  28,  12, 25,
+    15, 37,  27,  17,  12, 59, 38, 5,  32,  127, 1,   2,   9,   17, 14, 4,   1,   2,   1,   1,  8,   11, 50,
+    4,  14,  2,   19,  16, 4,  17, 5,  4,   5,   26,  12,  45,  2,  23, 45,  104, 30,  12,  8,  3,   10, 2,
+    2,  3,   3,   1,   4,  20, 7,  2,  9,   6,   15,  2,   20,  1,  3,  16,  4,   11,  15,  6,  134, 2,  5,
+    59, 1,   2,   2,   2,  1,  9,  17, 3,   26,  137, 10,  211, 59, 1,  2,   4,   1,   4,   1,  1,   1,  2,
+    6,  2,   3,   1,   1,  2,  3,  2,  3,   1,   3,   4,   4,   2,  3,  3,   1,   4,   3,   1,  7,   2,  2,
+    3,  1,   2,   1,   3,  3,  3,  2,  2,   3,   2,   1,   3,   14, 6,  1,   3,   2,   9,   6,  15,  27, 9,
+    34, 145, 1,   1,   2,  1,  1,  1,  1,   2,   1,   1,   1,   1,  2,  2,   2,   3,   1,   2,  1,   1,  1,
+    2,  3,   5,   8,   3,  5,  2,  4,  1,   3,   2,   2,   2,   12, 4,  1,   1,   1,   10,  4,  5,   1,  20,
+    4,  16,  1,   15,  9,  5,  12, 2,  9,   2,   5,   4,   2,   26, 19, 7,   1,   26,  4,   30, 12,  15, 42,
+    1,  6,   8,   172, 1,  1,  4,  2,  1,   1,   11,  2,   2,   4,  2,  1,   2,   1,   10,  8,  1,   2,  1,
+    4,  5,   1,   2,   5,  1,  8,  4,  1,   3,   4,   2,   1,   6,  2,  1,   3,   4,   1,   2,  1,   1,  1,
+    1,  12,  5,   7,   2,  4,  3,  1,  1,   1,   3,   3,   6,   1,  2,  2,   3,   3,   3,   2,  1,   2,  12,
+    14, 11,  6,   6,   4,  12, 2,  8,  1,   7,   10,  1,   35,  7,  4,  13,  15,  4,   3,   23, 21,  28, 52,
+    5,  26,  5,   6,   1,  7,  10, 2,  7,   53,  3,   2,   1,   1,  1,  2,   163, 532, 1,   10, 11,  1,  3,
+    3,  4,   8,   2,   8,  6,  2,  2,  23,  22,  4,   2,   2,   4,  2,  1,   3,   1,   3,   3,  5,   9,  8,
+    2,  1,   2,   8,   1,  10, 2,  12, 21,  20,  15,  105, 2,   3,  1,  1,   3,   2,   3,   1,  1,   2,  5,
+    1,  4,   15,  11,  19, 1,  1,  1,  1,   5,   4,   5,   1,   1,  2,  5,   3,   5,   12,  1,  2,   5,  1,
+    11, 1,   1,   15,  9,  1,  4,  5,  3,   26,  8,   2,   1,   3,  1,  1,   15,  19,  2,   12, 1,   2,  5,
+    2,  7,   2,   19,  2,  20, 6,  26, 7,   5,   2,   2,   7,   34, 21, 13,  70,  2,   128, 1,  1,   2,  1,
+    1,  2,   1,   1,   3,  2,  2,  2,  15,  1,   4,   1,   3,   4,  42, 10,  6,   1,   49,  85, 8,   1,  2,
+    1,  1,   4,   4,   2,  3,  6,  1,  5,   7,   4,   3,   211, 4,  1,  2,   1,   2,   5,   1,  2,   4,  2,
+    2,  6,   5,   6,   10, 3,  4,  48, 100, 6,   2,   16,  296, 5,  27, 387, 2,   2,   3,   7,  16,  8,  5,
+    38, 15,  39,  21,  9,  10, 3,  7,  59,  13,  27,  21,  47,  5,  21, 6};
   static AnchorWChar base_ranges[] =  // not zero-terminated
     {
       0x0020,
@@ -3759,143 +3621,131 @@ const AnchorWChar *AnchorFontAtlas::GetGlyphRangesJapanese()
   // ranges or adding new characters. (Stored as accumulative offsets from the initial unicode
   // codepoint 0x4E00. This encoding is designed to helps us compact the source code size.)
   static const short accumulative_offsets_from_0x4E00[] = {
-    0,  1,  2,  4,  1,  1,  1,   1,  2,  1,  3,  3,   2,  2,  1,  5,   3,     5,  7,  5,  6,   1,
-    2,  1,  7,  2,  6,  3,  1,   8,  1,  1,  4,  1,   1,  18, 2,  11,  2,     6,  2,  1,  2,   1,
-    5,  1,  2,  1,  3,  1,  2,   1,  2,  3,  3,  1,   1,  2,  3,  1,   1,     1,  12, 7,  9,   1,
-    4,  5,  1,  1,  2,  1,  10,  1,  1,  9,  2,  2,   4,  5,  6,  9,   3,     1,  1,  1,  1,   9,
-    3,  18, 5,  2,  2,  2,  2,   1,  6,  3,  7,  1,   1,  1,  1,  2,   2,     4,  2,  1,  23,  2,
-    10, 4,  3,  5,  2,  4,  10,  2,  4,  13, 1,  6,   1,  9,  3,  1,   1,     6,  6,  7,  6,   3,
-    1,  2,  11, 3,  2,  2,  3,   2,  15, 2,  2,  5,   4,  3,  6,  4,   1,     2,  5,  2,  12,  16,
-    6,  13, 9,  13, 2,  1,  1,   7,  16, 4,  7,  1,   19, 1,  5,  1,   2,     2,  7,  7,  8,   2,
-    6,  5,  4,  9,  18, 7,  4,   5,  9,  13, 11, 8,   15, 2,  1,  1,   1,     2,  1,  2,  2,   1,
-    2,  2,  8,  2,  9,  3,  3,   1,  1,  4,  4,  1,   1,  1,  4,  9,   1,     4,  3,  5,  5,   2,
-    7,  5,  3,  4,  8,  2,  1,   13, 2,  3,  3,  1,   14, 1,  1,  4,   5,     1,  3,  6,  1,   5,
-    2,  1,  1,  3,  3,  3,  3,   1,  1,  2,  7,  6,   6,  7,  1,  4,   7,     6,  1,  1,  1,   1,
-    1,  12, 3,  3,  9,  5,  2,   6,  1,  5,  6,  1,   2,  3,  18, 2,   4,     14, 4,  1,  3,   6,
-    1,  1,  6,  3,  5,  5,  3,   2,  2,  2,  2,  12,  3,  1,  4,  2,   3,     2,  3,  11, 1,   7,
-    4,  1,  2,  1,  3,  17, 1,   9,  1,  24, 1,  1,   4,  2,  2,  4,   1,     2,  7,  1,  1,   1,
-    3,  1,  2,  2,  4,  15, 1,   1,  2,  1,  1,  2,   1,  5,  2,  5,   20,    2,  5,  9,  1,   10,
-    8,  7,  6,  1,  1,  1,  1,   1,  1,  6,  2,  1,   2,  8,  1,  1,   1,     1,  5,  1,  1,   3,
-    1,  1,  1,  1,  3,  1,  1,   12, 4,  1,  3,  1,   1,  1,  1,  1,   10,    3,  1,  7,  5,   13,
-    1,  2,  3,  4,  6,  1,  1,   30, 2,  9,  9,  1,   15, 38, 11, 3,   1,     8,  24, 7,  1,   9,
-    8,  10, 2,  1,  9,  31, 2,   13, 6,  2,  9,  4,   49, 5,  2,  15,  2,     1,  10, 2,  1,   1,
-    1,  2,  2,  6,  15, 30, 35,  3,  14, 18, 8,  1,   16, 10, 28, 12,  19,    45, 38, 1,  3,   2,
-    3,  13, 2,  1,  7,  3,  6,   5,  3,  4,  3,  1,   5,  7,  8,  1,   5,     3,  18, 5,  3,   6,
-    1,  21, 4,  24, 9,  24, 40,  3,  14, 3,  21, 3,   2,  1,  2,  4,   2,     3,  1,  15, 15,  6,
-    5,  1,  1,  3,  1,  5,  6,   1,  9,  7,  3,  3,   2,  1,  4,  3,   8,     21, 5,  16, 4,   5,
-    2,  10, 11, 11, 3,  6,  3,   2,  9,  3,  6,  13,  1,  2,  1,  1,   1,     1,  11, 12, 6,   6,
-    1,  4,  2,  6,  5,  2,  1,   1,  3,  3,  6,  13,  3,  1,  1,  5,   1,     2,  3,  3,  14,  2,
-    1,  2,  2,  2,  5,  1,  9,   5,  1,  1,  6,  12,  3,  12, 3,  4,   13,    2,  14, 2,  8,   1,
-    17, 5,  1,  16, 4,  2,  2,   21, 8,  9,  6,  23,  20, 12, 25, 19,  9,     38, 8,  3,  21,  40,
-    25, 33, 13, 4,  3,  1,  4,   1,  2,  4,  1,  2,   5,  26, 2,  1,   1,     2,  1,  3,  6,   2,
-    1,  1,  1,  1,  1,  1,  2,   3,  1,  1,  1,  9,   2,  3,  1,  1,   1,     3,  6,  3,  2,   1,
-    1,  6,  6,  1,  8,  2,  2,   2,  1,  4,  1,  2,   3,  2,  7,  3,   2,     4,  1,  2,  1,   2,
-    2,  1,  1,  1,  1,  1,  3,   1,  2,  5,  4,  10,  9,  4,  9,  1,   1,     1,  1,  1,  1,   5,
-    3,  2,  1,  6,  4,  9,  6,   1,  10, 2,  31, 17,  8,  3,  7,  5,   40,    1,  7,  7,  1,   6,
-    5,  2,  10, 7,  8,  4,  15,  39, 25, 6,  28, 47,  18, 10, 7,  1,   3,     1,  1,  2,  1,   1,
-    1,  3,  3,  3,  1,  1,  1,   3,  4,  2,  1,  4,   1,  3,  6,  10,  7,     8,  6,  2,  2,   1,
-    3,  3,  2,  5,  8,  7,  9,   12, 2,  15, 1,  1,   4,  1,  2,  1,   1,     1,  3,  2,  1,   3,
-    3,  5,  6,  2,  3,  2,  10,  1,  4,  2,  8,  1,   1,  1,  11, 6,   1,     21, 4,  16, 3,   1,
-    3,  1,  4,  2,  3,  6,  5,   1,  3,  1,  1,  3,   3,  4,  6,  1,   1,     10, 4,  2,  7,   10,
-    4,  7,  4,  2,  9,  4,  3,   1,  1,  1,  4,  1,   8,  3,  4,  1,   3,     1,  6,  1,  4,   2,
-    1,  4,  7,  2,  1,  8,  1,   4,  5,  1,  1,  2,   2,  4,  6,  2,   7,     1,  10, 1,  1,   3,
-    4,  11, 10, 8,  21, 4,  6,   1,  3,  5,  2,  1,   2,  28, 5,  5,   2,     3,  13, 1,  2,   3,
-    1,  4,  2,  1,  5,  20, 3,   8,  11, 1,  3,  3,   3,  1,  8,  10,  9,     2,  10, 9,  2,   3,
-    1,  1,  2,  4,  1,  8,  3,   6,  1,  7,  8,  6,   11, 1,  4,  29,  8,     4,  3,  1,  2,   7,
-    13, 1,  4,  1,  6,  2,  6,   12, 12, 2,  20, 3,   2,  3,  6,  4,   8,     9,  2,  7,  34,  5,
-    1,  18, 6,  1,  1,  4,  4,   5,  7,  9,  1,  2,   2,  4,  3,  4,   1,     7,  2,  2,  2,   6,
-    2,  3,  25, 5,  3,  6,  1,   4,  6,  7,  4,  2,   1,  4,  2,  13,  6,     4,  4,  3,  1,   5,
-    3,  4,  4,  3,  2,  1,  1,   4,  1,  2,  1,  1,   3,  1,  11, 1,   6,     3,  1,  7,  3,   6,
-    2,  8,  8,  6,  9,  3,  4,   11, 3,  2,  10, 12,  2,  5,  11, 1,   6,     4,  5,  3,  1,   8,
-    5,  4,  6,  6,  3,  5,  1,   1,  3,  2,  1,  2,   2,  6,  17, 12,  1,     10, 1,  6,  12,  1,
-    6,  6,  19, 9,  6,  16, 1,   13, 4,  4,  15, 7,   17, 6,  11, 9,   15,    12, 6,  7,  2,   1,
-    2,  2,  15, 9,  3,  21, 4,   6,  49, 18, 7,  3,   2,  3,  1,  6,   8,     2,  2,  6,  2,   9,
-    1,  3,  6,  4,  4,  1,  2,   16, 2,  5,  2,  1,   6,  2,  3,  5,   3,     1,  2,  5,  1,   2,
-    1,  9,  3,  1,  8,  6,  4,   8,  11, 3,  1,  1,   1,  1,  3,  1,   13,    8,  4,  1,  3,   2,
-    2,  1,  4,  1,  11, 1,  5,   2,  1,  5,  2,  5,   8,  6,  1,  1,   7,     4,  3,  8,  3,   2,
-    7,  2,  1,  5,  1,  5,  2,   4,  7,  6,  2,  8,   5,  1,  11, 4,   5,     3,  6,  18, 1,   2,
-    13, 3,  3,  1,  21, 1,  1,   4,  1,  4,  1,  1,   1,  8,  1,  2,   2,     7,  1,  2,  4,   2,
-    2,  9,  2,  1,  1,  1,  4,   3,  6,  3,  12, 5,   1,  1,  1,  5,   6,     3,  2,  4,  8,   2,
-    2,  4,  2,  7,  1,  8,  9,   5,  2,  3,  2,  1,   3,  2,  13, 7,   14,    6,  5,  1,  1,   2,
-    1,  4,  2,  23, 2,  1,  1,   6,  3,  1,  4,  1,   15, 3,  1,  7,   3,     9,  14, 1,  3,   1,
-    4,  1,  1,  5,  8,  1,  3,   8,  3,  8,  15, 11,  4,  14, 4,  4,   2,     5,  5,  1,  7,   1,
-    6,  14, 7,  7,  8,  5,  15,  4,  8,  6,  5,  6,   2,  1,  13, 1,   20,    15, 11, 9,  2,   5,
-    6,  2,  11, 2,  6,  2,  5,   1,  5,  8,  4,  13,  19, 25, 4,  1,   1,     11, 1,  34, 2,   5,
-    9,  14, 6,  2,  2,  6,  1,   1,  14, 1,  3,  14,  13, 1,  6,  12,  21,    14, 14, 6,  32,  17,
-    8,  32, 9,  28, 1,  2,  4,   11, 8,  3,  1,  14,  2,  5,  15, 1,   1,     1,  1,  3,  6,   4,
-    1,  3,  4,  11, 3,  1,  1,   11, 30, 1,  5,  1,   4,  1,  5,  8,   1,     1,  3,  2,  4,   3,
-    17, 35, 2,  6,  12, 17, 3,   1,  6,  2,  1,  1,   12, 2,  7,  3,   3,     2,  1,  16, 2,   8,
-    3,  6,  5,  4,  7,  3,  3,   8,  1,  9,  8,  5,   1,  2,  1,  3,   2,     8,  1,  2,  9,   12,
-    1,  1,  2,  3,  8,  3,  24,  12, 4,  3,  7,  5,   8,  3,  3,  3,   3,     3,  3,  1,  23,  10,
-    3,  1,  2,  2,  6,  3,  1,   16, 1,  16, 22, 3,   10, 4,  11, 6,   9,     7,  7,  3,  6,   2,
-    2,  2,  4,  10, 2,  1,  1,   2,  8,  7,  1,  6,   4,  1,  3,  3,   3,     5,  10, 12, 12,  2,
-    3,  12, 8,  15, 1,  1,  16,  6,  6,  1,  5,  9,   11, 4,  11, 4,   2,     6,  12, 1,  17,  5,
-    13, 1,  4,  9,  5,  1,  11,  2,  1,  8,  1,  5,   7,  28, 8,  3,   5,     10, 2,  17, 3,   38,
-    22, 1,  2,  18, 12, 10, 4,   38, 18, 1,  4,  44,  19, 4,  1,  8,   4,     1,  12, 1,  4,   31,
-    12, 1,  14, 7,  75, 7,  5,   10, 6,  6,  13, 3,   2,  11, 11, 3,   2,     5,  28, 15, 6,   18,
-    18, 5,  6,  4,  3,  16, 1,   7,  18, 7,  36, 3,   5,  3,  1,  7,   1,     9,  1,  10, 7,   2,
-    4,  2,  6,  2,  9,  7,  4,   3,  32, 12, 3,  7,   10, 2,  23, 16,  3,     1,  12, 3,  31,  4,
-    11, 1,  3,  8,  9,  5,  1,   30, 15, 6,  12, 3,   2,  2,  11, 19,  9,     14, 2,  6,  2,   3,
-    19, 13, 17, 5,  3,  3,  25,  3,  14, 1,  1,  1,   36, 1,  3,  2,   19,    3,  13, 36, 9,   13,
-    31, 6,  4,  16, 34, 2,  5,   4,  2,  3,  3,  5,   1,  1,  1,  4,   3,     1,  17, 3,  2,   3,
-    5,  3,  1,  3,  2,  3,  5,   6,  3,  12, 11, 1,   3,  1,  2,  26,  7,     12, 7,  2,  14,  3,
-    3,  7,  7,  11, 25, 25, 28,  16, 4,  36, 1,  2,   1,  6,  2,  1,   9,     3,  27, 17, 4,   3,
-    4,  13, 4,  1,  3,  2,  2,   1,  10, 4,  2,  4,   6,  3,  8,  2,   1,     18, 1,  1,  24,  2,
-    2,  4,  33, 2,  3,  63, 7,   1,  6,  40, 7,  3,   4,  4,  2,  4,   15,    18, 1,  16, 1,   1,
-    11, 2,  41, 14, 1,  3,  18,  13, 3,  2,  4,  16,  2,  17, 7,  15,  24,    7,  18, 13, 44,  2,
-    2,  3,  6,  1,  1,  7,  5,   1,  7,  1,  4,  3,   3,  5,  10, 8,   2,     3,  1,  8,  1,   1,
-    27, 4,  2,  1,  12, 1,  2,   1,  10, 6,  1,  6,   7,  5,  2,  3,   7,     11, 5,  11, 3,   6,
-    6,  2,  3,  15, 4,  9,  1,   1,  2,  1,  2,  11,  2,  8,  12, 8,   5,     4,  2,  3,  1,   5,
-    2,  2,  1,  14, 1,  12, 11,  4,  1,  11, 17, 17,  4,  3,  2,  5,   5,     7,  3,  1,  5,   9,
-    9,  8,  2,  5,  6,  6,  13,  13, 2,  1,  2,  6,   1,  2,  2,  49,  4,     9,  1,  2,  10,  16,
-    7,  8,  4,  3,  2,  23, 4,   58, 3,  29, 1,  14,  19, 19, 11, 11,  2,     7,  5,  1,  3,   4,
-    6,  2,  18, 5,  12, 12, 17,  17, 3,  3,  2,  4,   1,  6,  2,  3,   4,     3,  1,  1,  1,   1,
-    5,  1,  1,  9,  1,  3,  1,   3,  6,  1,  8,  1,   1,  2,  6,  4,   14,    3,  1,  4,  11,  4,
-    1,  3,  32, 1,  2,  4,  13,  4,  1,  2,  4,  2,   1,  3,  1,  11,  1,     4,  2,  1,  4,   4,
-    6,  3,  5,  1,  6,  5,  7,   6,  3,  23, 3,  5,   3,  5,  3,  3,   13,    3,  9,  10, 1,   12,
-    10, 2,  3,  18, 13, 7,  160, 52, 4,  2,  2,  3,   2,  14, 5,  4,   12,    4,  6,  4,  1,   20,
-    4,  11, 6,  2,  12, 27, 1,   4,  1,  2,  2,  7,   4,  5,  2,  28,  3,     7,  25, 8,  3,   19,
-    3,  6,  10, 2,  2,  1,  10,  2,  5,  4,  1,  3,   4,  1,  5,  3,   2,     6,  9,  3,  6,   2,
-    16, 3,  3,  16, 4,  5,  5,   3,  2,  1,  2,  16,  15, 8,  2,  6,   21,    2,  4,  1,  22,  5,
-    8,  1,  1,  21, 11, 2,  1,   11, 11, 19, 13, 12,  4,  2,  3,  2,   3,     6,  1,  8,  11,  1,
-    4,  2,  9,  5,  2,  1,  11,  2,  9,  1,  1,  2,   14, 31, 9,  3,   4,     21, 14, 4,  8,   1,
-    7,  2,  2,  2,  5,  1,  4,   20, 3,  3,  4,  10,  1,  11, 9,  8,   2,     1,  4,  5,  14,  12,
-    14, 2,  17, 9,  6,  31, 4,   14, 1,  20, 13, 26,  5,  2,  7,  3,   6,     13, 2,  4,  2,   19,
-    6,  2,  2,  18, 9,  3,  5,   12, 12, 14, 4,  6,   2,  3,  6,  9,   5,     22, 4,  5,  25,  6,
-    4,  8,  5,  2,  6,  27, 2,   35, 2,  16, 3,  7,   8,  8,  6,  6,   5,     9,  17, 2,  20,  6,
-    19, 2,  13, 3,  1,  1,  1,   4,  17, 12, 2,  14,  7,  1,  4,  18,  12,    38, 33, 2,  10,  1,
-    1,  2,  13, 14, 17, 11, 50,  6,  33, 20, 26, 74,  16, 23, 45, 50,  13,    38, 33, 6,  6,   7,
-    4,  4,  2,  1,  3,  2,  5,   8,  7,  8,  9,  3,   11, 21, 9,  13,  1,     3,  10, 6,  7,   1,
-    2,  2,  18, 5,  5,  1,  9,   9,  2,  68, 9,  19,  13, 2,  5,  1,   4,     4,  7,  4,  13,  3,
-    9,  10, 21, 17, 3,  26, 2,   1,  5,  2,  4,  5,   4,  1,  7,  4,   7,     3,  4,  2,  1,   6,
-    1,  1,  20, 4,  1,  9,  2,   2,  1,  3,  3,  2,   3,  2,  1,  1,   1,     20, 2,  3,  1,   6,
-    2,  3,  6,  2,  4,  8,  1,   3,  2,  10, 3,  5,   3,  4,  4,  3,   4,     16, 1,  6,  1,   10,
-    2,  4,  2,  1,  1,  2,  10,  11, 2,  2,  3,  1,   24, 31, 4,  10,  10,    2,  5,  12, 16,  164,
-    15, 4,  16, 7,  9,  15, 19,  17, 1,  2,  1,  1,   5,  1,  1,  1,   1,     1,  3,  1,  4,   3,
-    1,  3,  1,  3,  1,  2,  1,   1,  3,  3,  7,  2,   8,  1,  2,  2,   2,     1,  3,  4,  3,   7,
-    8,  12, 92, 2,  10, 3,  1,   3,  14, 5,  25, 16,  42, 4,  7,  7,   4,     2,  21, 5,  27,  26,
-    27, 21, 25, 30, 31, 2,  1,   5,  13, 3,  22, 5,   6,  6,  11, 9,   12,    1,  5,  9,  7,   5,
-    5,  22, 60, 3,  5,  13, 1,   1,  8,  1,  1,  3,   3,  2,  1,  9,   3,     3,  18, 4,  1,   2,
-    3,  7,  6,  3,  1,  2,  3,   9,  1,  3,  1,  3,   2,  1,  3,  1,   1,     1,  2,  1,  11,  3,
-    1,  6,  9,  1,  3,  2,  3,   1,  2,  1,  5,  1,   1,  4,  3,  4,   1,     2,  2,  4,  4,   1,
-    7,  2,  1,  2,  2,  3,  5,   13, 18, 3,  4,  14,  9,  9,  4,  16,  3,     7,  5,  8,  2,   6,
-    48, 28, 3,  1,  1,  4,  2,   14, 8,  2,  9,  2,   1,  15, 2,  4,   3,     2,  10, 16, 12,  8,
-    7,  1,  1,  3,  1,  1,  1,   2,  7,  4,  1,  6,   4,  38, 39, 16,  23,    7,  15, 15, 3,   2,
-    12, 7,  21, 37, 27, 6,  5,   4,  8,  2,  10, 8,   8,  6,  5,  1,   2,     1,  3,  24, 1,   16,
-    17, 9,  23, 10, 17, 6,  1,   51, 55, 44, 13, 294, 9,  3,  6,  2,   4,     2,  2,  15, 1,   1,
-    1,  13, 21, 17, 68, 14, 8,   9,  4,  1,  4,  9,   3,  11, 7,  1,   1,     1,  5,  6,  3,   2,
-    1,  1,  1,  2,  3,  8,  1,   2,  2,  4,  1,  5,   5,  2,  1,  4,   3,     7,  13, 4,  1,   4,
-    1,  3,  1,  1,  1,  5,  5,   10, 1,  6,  1,  5,   2,  1,  5,  2,   4,     1,  4,  5,  7,   3,
-    18, 2,  9,  11, 32, 4,  3,   3,  2,  4,  7,  11,  16, 9,  11, 8,   13,    38, 32, 8,  4,   2,
-    1,  1,  2,  1,  2,  4,  4,   1,  1,  1,  4,  1,   21, 3,  11, 1,   16,    1,  1,  6,  1,   3,
-    2,  4,  9,  8,  57, 7,  44,  1,  3,  3,  13, 3,   10, 1,  1,  7,   5,     2,  7,  21, 47,  63,
-    3,  15, 4,  7,  1,  16, 1,   1,  2,  8,  2,  3,   42, 15, 4,  1,   29,    7,  22, 10, 3,   78,
-    16, 12, 20, 18, 4,  67, 11,  5,  1,  3,  15, 6,   21, 31, 32, 27,  18,    13, 71, 35, 5,   142,
-    4,  10, 1,  2,  50, 19, 33,  16, 35, 37, 16, 19,  27, 7,  1,  133, 19,    1,  4,  8,  7,   20,
-    1,  4,  4,  1,  10, 3,  1,   6,  1,  2,  51, 5,   40, 15, 24, 43,  22928, 11, 1,  13, 154, 70,
-    3,  1,  1,  7,  4,  10, 1,   2,  1,  1,  2,  1,   2,  1,  2,  2,   1,     1,  2,  1,  1,   1,
-    1,  1,  2,  1,  1,  1,  1,   1,  1,  1,  1,  1,   1,  1,  1,  1,   2,     1,  1,  1,  3,   2,
-    1,  1,  1,  1,  2,  1,  1,
+    0,  1,  2,  4,  1,  1,   1,  1,  2,  1,  3,   3,  2,  2,  1,     5,   3,  5,  7,   5,  6,  1,  2,  1,
+    7,  2,  6,  3,  1,  8,   1,  1,  4,  1,  1,   18, 2,  11, 2,     6,   2,  1,  2,   1,  5,  1,  2,  1,
+    3,  1,  2,  1,  2,  3,   3,  1,  1,  2,  3,   1,  1,  1,  12,    7,   9,  1,  4,   5,  1,  1,  2,  1,
+    10, 1,  1,  9,  2,  2,   4,  5,  6,  9,  3,   1,  1,  1,  1,     9,   3,  18, 5,   2,  2,  2,  2,  1,
+    6,  3,  7,  1,  1,  1,   1,  2,  2,  4,  2,   1,  23, 2,  10,    4,   3,  5,  2,   4,  10, 2,  4,  13,
+    1,  6,  1,  9,  3,  1,   1,  6,  6,  7,  6,   3,  1,  2,  11,    3,   2,  2,  3,   2,  15, 2,  2,  5,
+    4,  3,  6,  4,  1,  2,   5,  2,  12, 16, 6,   13, 9,  13, 2,     1,   1,  7,  16,  4,  7,  1,  19, 1,
+    5,  1,  2,  2,  7,  7,   8,  2,  6,  5,  4,   9,  18, 7,  4,     5,   9,  13, 11,  8,  15, 2,  1,  1,
+    1,  2,  1,  2,  2,  1,   2,  2,  8,  2,  9,   3,  3,  1,  1,     4,   4,  1,  1,   1,  4,  9,  1,  4,
+    3,  5,  5,  2,  7,  5,   3,  4,  8,  2,  1,   13, 2,  3,  3,     1,   14, 1,  1,   4,  5,  1,  3,  6,
+    1,  5,  2,  1,  1,  3,   3,  3,  3,  1,  1,   2,  7,  6,  6,     7,   1,  4,  7,   6,  1,  1,  1,  1,
+    1,  12, 3,  3,  9,  5,   2,  6,  1,  5,  6,   1,  2,  3,  18,    2,   4,  14, 4,   1,  3,  6,  1,  1,
+    6,  3,  5,  5,  3,  2,   2,  2,  2,  12, 3,   1,  4,  2,  3,     2,   3,  11, 1,   7,  4,  1,  2,  1,
+    3,  17, 1,  9,  1,  24,  1,  1,  4,  2,  2,   4,  1,  2,  7,     1,   1,  1,  3,   1,  2,  2,  4,  15,
+    1,  1,  2,  1,  1,  2,   1,  5,  2,  5,  20,  2,  5,  9,  1,     10,  8,  7,  6,   1,  1,  1,  1,  1,
+    1,  6,  2,  1,  2,  8,   1,  1,  1,  1,  5,   1,  1,  3,  1,     1,   1,  1,  3,   1,  1,  12, 4,  1,
+    3,  1,  1,  1,  1,  1,   10, 3,  1,  7,  5,   13, 1,  2,  3,     4,   6,  1,  1,   30, 2,  9,  9,  1,
+    15, 38, 11, 3,  1,  8,   24, 7,  1,  9,  8,   10, 2,  1,  9,     31,  2,  13, 6,   2,  9,  4,  49, 5,
+    2,  15, 2,  1,  10, 2,   1,  1,  1,  2,  2,   6,  15, 30, 35,    3,   14, 18, 8,   1,  16, 10, 28, 12,
+    19, 45, 38, 1,  3,  2,   3,  13, 2,  1,  7,   3,  6,  5,  3,     4,   3,  1,  5,   7,  8,  1,  5,  3,
+    18, 5,  3,  6,  1,  21,  4,  24, 9,  24, 40,  3,  14, 3,  21,    3,   2,  1,  2,   4,  2,  3,  1,  15,
+    15, 6,  5,  1,  1,  3,   1,  5,  6,  1,  9,   7,  3,  3,  2,     1,   4,  3,  8,   21, 5,  16, 4,  5,
+    2,  10, 11, 11, 3,  6,   3,  2,  9,  3,  6,   13, 1,  2,  1,     1,   1,  1,  11,  12, 6,  6,  1,  4,
+    2,  6,  5,  2,  1,  1,   3,  3,  6,  13, 3,   1,  1,  5,  1,     2,   3,  3,  14,  2,  1,  2,  2,  2,
+    5,  1,  9,  5,  1,  1,   6,  12, 3,  12, 3,   4,  13, 2,  14,    2,   8,  1,  17,  5,  1,  16, 4,  2,
+    2,  21, 8,  9,  6,  23,  20, 12, 25, 19, 9,   38, 8,  3,  21,    40,  25, 33, 13,  4,  3,  1,  4,  1,
+    2,  4,  1,  2,  5,  26,  2,  1,  1,  2,  1,   3,  6,  2,  1,     1,   1,  1,  1,   1,  2,  3,  1,  1,
+    1,  9,  2,  3,  1,  1,   1,  3,  6,  3,  2,   1,  1,  6,  6,     1,   8,  2,  2,   2,  1,  4,  1,  2,
+    3,  2,  7,  3,  2,  4,   1,  2,  1,  2,  2,   1,  1,  1,  1,     1,   3,  1,  2,   5,  4,  10, 9,  4,
+    9,  1,  1,  1,  1,  1,   1,  5,  3,  2,  1,   6,  4,  9,  6,     1,   10, 2,  31,  17, 8,  3,  7,  5,
+    40, 1,  7,  7,  1,  6,   5,  2,  10, 7,  8,   4,  15, 39, 25,    6,   28, 47, 18,  10, 7,  1,  3,  1,
+    1,  2,  1,  1,  1,  3,   3,  3,  1,  1,  1,   3,  4,  2,  1,     4,   1,  3,  6,   10, 7,  8,  6,  2,
+    2,  1,  3,  3,  2,  5,   8,  7,  9,  12, 2,   15, 1,  1,  4,     1,   2,  1,  1,   1,  3,  2,  1,  3,
+    3,  5,  6,  2,  3,  2,   10, 1,  4,  2,  8,   1,  1,  1,  11,    6,   1,  21, 4,   16, 3,  1,  3,  1,
+    4,  2,  3,  6,  5,  1,   3,  1,  1,  3,  3,   4,  6,  1,  1,     10,  4,  2,  7,   10, 4,  7,  4,  2,
+    9,  4,  3,  1,  1,  1,   4,  1,  8,  3,  4,   1,  3,  1,  6,     1,   4,  2,  1,   4,  7,  2,  1,  8,
+    1,  4,  5,  1,  1,  2,   2,  4,  6,  2,  7,   1,  10, 1,  1,     3,   4,  11, 10,  8,  21, 4,  6,  1,
+    3,  5,  2,  1,  2,  28,  5,  5,  2,  3,  13,  1,  2,  3,  1,     4,   2,  1,  5,   20, 3,  8,  11, 1,
+    3,  3,  3,  1,  8,  10,  9,  2,  10, 9,  2,   3,  1,  1,  2,     4,   1,  8,  3,   6,  1,  7,  8,  6,
+    11, 1,  4,  29, 8,  4,   3,  1,  2,  7,  13,  1,  4,  1,  6,     2,   6,  12, 12,  2,  20, 3,  2,  3,
+    6,  4,  8,  9,  2,  7,   34, 5,  1,  18, 6,   1,  1,  4,  4,     5,   7,  9,  1,   2,  2,  4,  3,  4,
+    1,  7,  2,  2,  2,  6,   2,  3,  25, 5,  3,   6,  1,  4,  6,     7,   4,  2,  1,   4,  2,  13, 6,  4,
+    4,  3,  1,  5,  3,  4,   4,  3,  2,  1,  1,   4,  1,  2,  1,     1,   3,  1,  11,  1,  6,  3,  1,  7,
+    3,  6,  2,  8,  8,  6,   9,  3,  4,  11, 3,   2,  10, 12, 2,     5,   11, 1,  6,   4,  5,  3,  1,  8,
+    5,  4,  6,  6,  3,  5,   1,  1,  3,  2,  1,   2,  2,  6,  17,    12,  1,  10, 1,   6,  12, 1,  6,  6,
+    19, 9,  6,  16, 1,  13,  4,  4,  15, 7,  17,  6,  11, 9,  15,    12,  6,  7,  2,   1,  2,  2,  15, 9,
+    3,  21, 4,  6,  49, 18,  7,  3,  2,  3,  1,   6,  8,  2,  2,     6,   2,  9,  1,   3,  6,  4,  4,  1,
+    2,  16, 2,  5,  2,  1,   6,  2,  3,  5,  3,   1,  2,  5,  1,     2,   1,  9,  3,   1,  8,  6,  4,  8,
+    11, 3,  1,  1,  1,  1,   3,  1,  13, 8,  4,   1,  3,  2,  2,     1,   4,  1,  11,  1,  5,  2,  1,  5,
+    2,  5,  8,  6,  1,  1,   7,  4,  3,  8,  3,   2,  7,  2,  1,     5,   1,  5,  2,   4,  7,  6,  2,  8,
+    5,  1,  11, 4,  5,  3,   6,  18, 1,  2,  13,  3,  3,  1,  21,    1,   1,  4,  1,   4,  1,  1,  1,  8,
+    1,  2,  2,  7,  1,  2,   4,  2,  2,  9,  2,   1,  1,  1,  4,     3,   6,  3,  12,  5,  1,  1,  1,  5,
+    6,  3,  2,  4,  8,  2,   2,  4,  2,  7,  1,   8,  9,  5,  2,     3,   2,  1,  3,   2,  13, 7,  14, 6,
+    5,  1,  1,  2,  1,  4,   2,  23, 2,  1,  1,   6,  3,  1,  4,     1,   15, 3,  1,   7,  3,  9,  14, 1,
+    3,  1,  4,  1,  1,  5,   8,  1,  3,  8,  3,   8,  15, 11, 4,     14,  4,  4,  2,   5,  5,  1,  7,  1,
+    6,  14, 7,  7,  8,  5,   15, 4,  8,  6,  5,   6,  2,  1,  13,    1,   20, 15, 11,  9,  2,  5,  6,  2,
+    11, 2,  6,  2,  5,  1,   5,  8,  4,  13, 19,  25, 4,  1,  1,     11,  1,  34, 2,   5,  9,  14, 6,  2,
+    2,  6,  1,  1,  14, 1,   3,  14, 13, 1,  6,   12, 21, 14, 14,    6,   32, 17, 8,   32, 9,  28, 1,  2,
+    4,  11, 8,  3,  1,  14,  2,  5,  15, 1,  1,   1,  1,  3,  6,     4,   1,  3,  4,   11, 3,  1,  1,  11,
+    30, 1,  5,  1,  4,  1,   5,  8,  1,  1,  3,   2,  4,  3,  17,    35,  2,  6,  12,  17, 3,  1,  6,  2,
+    1,  1,  12, 2,  7,  3,   3,  2,  1,  16, 2,   8,  3,  6,  5,     4,   7,  3,  3,   8,  1,  9,  8,  5,
+    1,  2,  1,  3,  2,  8,   1,  2,  9,  12, 1,   1,  2,  3,  8,     3,   24, 12, 4,   3,  7,  5,  8,  3,
+    3,  3,  3,  3,  3,  1,   23, 10, 3,  1,  2,   2,  6,  3,  1,     16,  1,  16, 22,  3,  10, 4,  11, 6,
+    9,  7,  7,  3,  6,  2,   2,  2,  4,  10, 2,   1,  1,  2,  8,     7,   1,  6,  4,   1,  3,  3,  3,  5,
+    10, 12, 12, 2,  3,  12,  8,  15, 1,  1,  16,  6,  6,  1,  5,     9,   11, 4,  11,  4,  2,  6,  12, 1,
+    17, 5,  13, 1,  4,  9,   5,  1,  11, 2,  1,   8,  1,  5,  7,     28,  8,  3,  5,   10, 2,  17, 3,  38,
+    22, 1,  2,  18, 12, 10,  4,  38, 18, 1,  4,   44, 19, 4,  1,     8,   4,  1,  12,  1,  4,  31, 12, 1,
+    14, 7,  75, 7,  5,  10,  6,  6,  13, 3,  2,   11, 11, 3,  2,     5,   28, 15, 6,   18, 18, 5,  6,  4,
+    3,  16, 1,  7,  18, 7,   36, 3,  5,  3,  1,   7,  1,  9,  1,     10,  7,  2,  4,   2,  6,  2,  9,  7,
+    4,  3,  32, 12, 3,  7,   10, 2,  23, 16, 3,   1,  12, 3,  31,    4,   11, 1,  3,   8,  9,  5,  1,  30,
+    15, 6,  12, 3,  2,  2,   11, 19, 9,  14, 2,   6,  2,  3,  19,    13,  17, 5,  3,   3,  25, 3,  14, 1,
+    1,  1,  36, 1,  3,  2,   19, 3,  13, 36, 9,   13, 31, 6,  4,     16,  34, 2,  5,   4,  2,  3,  3,  5,
+    1,  1,  1,  4,  3,  1,   17, 3,  2,  3,  5,   3,  1,  3,  2,     3,   5,  6,  3,   12, 11, 1,  3,  1,
+    2,  26, 7,  12, 7,  2,   14, 3,  3,  7,  7,   11, 25, 25, 28,    16,  4,  36, 1,   2,  1,  6,  2,  1,
+    9,  3,  27, 17, 4,  3,   4,  13, 4,  1,  3,   2,  2,  1,  10,    4,   2,  4,  6,   3,  8,  2,  1,  18,
+    1,  1,  24, 2,  2,  4,   33, 2,  3,  63, 7,   1,  6,  40, 7,     3,   4,  4,  2,   4,  15, 18, 1,  16,
+    1,  1,  11, 2,  41, 14,  1,  3,  18, 13, 3,   2,  4,  16, 2,     17,  7,  15, 24,  7,  18, 13, 44, 2,
+    2,  3,  6,  1,  1,  7,   5,  1,  7,  1,  4,   3,  3,  5,  10,    8,   2,  3,  1,   8,  1,  1,  27, 4,
+    2,  1,  12, 1,  2,  1,   10, 6,  1,  6,  7,   5,  2,  3,  7,     11,  5,  11, 3,   6,  6,  2,  3,  15,
+    4,  9,  1,  1,  2,  1,   2,  11, 2,  8,  12,  8,  5,  4,  2,     3,   1,  5,  2,   2,  1,  14, 1,  12,
+    11, 4,  1,  11, 17, 17,  4,  3,  2,  5,  5,   7,  3,  1,  5,     9,   9,  8,  2,   5,  6,  6,  13, 13,
+    2,  1,  2,  6,  1,  2,   2,  49, 4,  9,  1,   2,  10, 16, 7,     8,   4,  3,  2,   23, 4,  58, 3,  29,
+    1,  14, 19, 19, 11, 11,  2,  7,  5,  1,  3,   4,  6,  2,  18,    5,   12, 12, 17,  17, 3,  3,  2,  4,
+    1,  6,  2,  3,  4,  3,   1,  1,  1,  1,  5,   1,  1,  9,  1,     3,   1,  3,  6,   1,  8,  1,  1,  2,
+    6,  4,  14, 3,  1,  4,   11, 4,  1,  3,  32,  1,  2,  4,  13,    4,   1,  2,  4,   2,  1,  3,  1,  11,
+    1,  4,  2,  1,  4,  4,   6,  3,  5,  1,  6,   5,  7,  6,  3,     23,  3,  5,  3,   5,  3,  3,  13, 3,
+    9,  10, 1,  12, 10, 2,   3,  18, 13, 7,  160, 52, 4,  2,  2,     3,   2,  14, 5,   4,  12, 4,  6,  4,
+    1,  20, 4,  11, 6,  2,   12, 27, 1,  4,  1,   2,  2,  7,  4,     5,   2,  28, 3,   7,  25, 8,  3,  19,
+    3,  6,  10, 2,  2,  1,   10, 2,  5,  4,  1,   3,  4,  1,  5,     3,   2,  6,  9,   3,  6,  2,  16, 3,
+    3,  16, 4,  5,  5,  3,   2,  1,  2,  16, 15,  8,  2,  6,  21,    2,   4,  1,  22,  5,  8,  1,  1,  21,
+    11, 2,  1,  11, 11, 19,  13, 12, 4,  2,  3,   2,  3,  6,  1,     8,   11, 1,  4,   2,  9,  5,  2,  1,
+    11, 2,  9,  1,  1,  2,   14, 31, 9,  3,  4,   21, 14, 4,  8,     1,   7,  2,  2,   2,  5,  1,  4,  20,
+    3,  3,  4,  10, 1,  11,  9,  8,  2,  1,  4,   5,  14, 12, 14,    2,   17, 9,  6,   31, 4,  14, 1,  20,
+    13, 26, 5,  2,  7,  3,   6,  13, 2,  4,  2,   19, 6,  2,  2,     18,  9,  3,  5,   12, 12, 14, 4,  6,
+    2,  3,  6,  9,  5,  22,  4,  5,  25, 6,  4,   8,  5,  2,  6,     27,  2,  35, 2,   16, 3,  7,  8,  8,
+    6,  6,  5,  9,  17, 2,   20, 6,  19, 2,  13,  3,  1,  1,  1,     4,   17, 12, 2,   14, 7,  1,  4,  18,
+    12, 38, 33, 2,  10, 1,   1,  2,  13, 14, 17,  11, 50, 6,  33,    20,  26, 74, 16,  23, 45, 50, 13, 38,
+    33, 6,  6,  7,  4,  4,   2,  1,  3,  2,  5,   8,  7,  8,  9,     3,   11, 21, 9,   13, 1,  3,  10, 6,
+    7,  1,  2,  2,  18, 5,   5,  1,  9,  9,  2,   68, 9,  19, 13,    2,   5,  1,  4,   4,  7,  4,  13, 3,
+    9,  10, 21, 17, 3,  26,  2,  1,  5,  2,  4,   5,  4,  1,  7,     4,   7,  3,  4,   2,  1,  6,  1,  1,
+    20, 4,  1,  9,  2,  2,   1,  3,  3,  2,  3,   2,  1,  1,  1,     20,  2,  3,  1,   6,  2,  3,  6,  2,
+    4,  8,  1,  3,  2,  10,  3,  5,  3,  4,  4,   3,  4,  16, 1,     6,   1,  10, 2,   4,  2,  1,  1,  2,
+    10, 11, 2,  2,  3,  1,   24, 31, 4,  10, 10,  2,  5,  12, 16,    164, 15, 4,  16,  7,  9,  15, 19, 17,
+    1,  2,  1,  1,  5,  1,   1,  1,  1,  1,  3,   1,  4,  3,  1,     3,   1,  3,  1,   2,  1,  1,  3,  3,
+    7,  2,  8,  1,  2,  2,   2,  1,  3,  4,  3,   7,  8,  12, 92,    2,   10, 3,  1,   3,  14, 5,  25, 16,
+    42, 4,  7,  7,  4,  2,   21, 5,  27, 26, 27,  21, 25, 30, 31,    2,   1,  5,  13,  3,  22, 5,  6,  6,
+    11, 9,  12, 1,  5,  9,   7,  5,  5,  22, 60,  3,  5,  13, 1,     1,   8,  1,  1,   3,  3,  2,  1,  9,
+    3,  3,  18, 4,  1,  2,   3,  7,  6,  3,  1,   2,  3,  9,  1,     3,   1,  3,  2,   1,  3,  1,  1,  1,
+    2,  1,  11, 3,  1,  6,   9,  1,  3,  2,  3,   1,  2,  1,  5,     1,   1,  4,  3,   4,  1,  2,  2,  4,
+    4,  1,  7,  2,  1,  2,   2,  3,  5,  13, 18,  3,  4,  14, 9,     9,   4,  16, 3,   7,  5,  8,  2,  6,
+    48, 28, 3,  1,  1,  4,   2,  14, 8,  2,  9,   2,  1,  15, 2,     4,   3,  2,  10,  16, 12, 8,  7,  1,
+    1,  3,  1,  1,  1,  2,   7,  4,  1,  6,  4,   38, 39, 16, 23,    7,   15, 15, 3,   2,  12, 7,  21, 37,
+    27, 6,  5,  4,  8,  2,   10, 8,  8,  6,  5,   1,  2,  1,  3,     24,  1,  16, 17,  9,  23, 10, 17, 6,
+    1,  51, 55, 44, 13, 294, 9,  3,  6,  2,  4,   2,  2,  15, 1,     1,   1,  13, 21,  17, 68, 14, 8,  9,
+    4,  1,  4,  9,  3,  11,  7,  1,  1,  1,  5,   6,  3,  2,  1,     1,   1,  2,  3,   8,  1,  2,  2,  4,
+    1,  5,  5,  2,  1,  4,   3,  7,  13, 4,  1,   4,  1,  3,  1,     1,   1,  5,  5,   10, 1,  6,  1,  5,
+    2,  1,  5,  2,  4,  1,   4,  5,  7,  3,  18,  2,  9,  11, 32,    4,   3,  3,  2,   4,  7,  11, 16, 9,
+    11, 8,  13, 38, 32, 8,   4,  2,  1,  1,  2,   1,  2,  4,  4,     1,   1,  1,  4,   1,  21, 3,  11, 1,
+    16, 1,  1,  6,  1,  3,   2,  4,  9,  8,  57,  7,  44, 1,  3,     3,   13, 3,  10,  1,  1,  7,  5,  2,
+    7,  21, 47, 63, 3,  15,  4,  7,  1,  16, 1,   1,  2,  8,  2,     3,   42, 15, 4,   1,  29, 7,  22, 10,
+    3,  78, 16, 12, 20, 18,  4,  67, 11, 5,  1,   3,  15, 6,  21,    31,  32, 27, 18,  13, 71, 35, 5,  142,
+    4,  10, 1,  2,  50, 19,  33, 16, 35, 37, 16,  19, 27, 7,  1,     133, 19, 1,  4,   8,  7,  20, 1,  4,
+    4,  1,  10, 3,  1,  6,   1,  2,  51, 5,  40,  15, 24, 43, 22928, 11,  1,  13, 154, 70, 3,  1,  1,  7,
+    4,  10, 1,  2,  1,  1,   2,  1,  2,  1,  2,   2,  1,  1,  2,     1,   1,  1,  1,   1,  2,  1,  1,  1,
+    1,  1,  1,  1,  1,  1,   1,  1,  1,  1,  2,   1,  1,  1,  3,     2,   1,  1,  1,   1,  2,  1,  1,
   };
   static AnchorWChar base_ranges[] =  // not zero-terminated
     {
@@ -4077,8 +3927,7 @@ void AnchorFont::BuildLookupTable()
   // FIXME: Needs proper TAB handling but it needs to be contextualized (or we could arbitrary say
   // that each string starts at "column 0" ?)
   if (FindGlyph((AnchorWChar)' ')) {
-    if (Glyphs.back().Codepoint !=
-        '\t')  // So we can call this function multiple times (FIXME: Flaky)
+    if (Glyphs.back().Codepoint != '\t')  // So we can call this function multiple times (FIXME: Flaky)
       Glyphs.resize(Glyphs.Size + 1);
     AnchorFontGlyph &tab_glyph = Glyphs.back();
     tab_glyph = *FindGlyph((AnchorWChar)' ');
@@ -4195,9 +4044,8 @@ void AnchorFont::AddGlyph(const AnchorFontConfig *cfg,
 
 void AnchorFont::AddRemapChar(AnchorWChar dst, AnchorWChar src, bool overwrite_dst)
 {
-  ANCHOR_ASSERT(IndexLookup.Size >
-                0);  // Currently this can only be called AFTER the font has been built, aka after
-                     // calling AnchorFontAtlas::GetTexDataAs*() function.
+  ANCHOR_ASSERT(IndexLookup.Size > 0);  // Currently this can only be called AFTER the font has been built,
+                                        // aka after calling AnchorFontAtlas::GetTexDataAs*() function.
   unsigned int index_size = (unsigned int)IndexLookup.Size;
 
   if (dst < index_size && IndexLookup.Data[dst] == (AnchorWChar)-1 &&
@@ -4285,8 +4133,7 @@ const char *AnchorFont::CalcWordWrapPositionA(float scale,
       }
     }
 
-    const float char_width = ((int)c < IndexAdvanceX.Size ? IndexAdvanceX.Data[c] :
-                                                            FallbackAdvanceX);
+    const float char_width = ((int)c < IndexAdvanceX.Size ? IndexAdvanceX.Data[c] : FallbackAdvanceX);
     if (ImCharIsBlankW(c)) {
       if (inside_word) {
         line_width += blank_width;
@@ -4353,8 +4200,8 @@ GfVec2f AnchorFont::CalcTextSizeA(float size,
         word_wrap_eol = CalcWordWrapPositionA(scale, s, text_end, wrap_width - line_width);
         if (word_wrap_eol == s)  // Wrap_width is too small to fit anything. Force displaying 1
                                  // character to minimize the height discontinuity.
-          word_wrap_eol++;  // +1 may not be a character start point in UTF-8 but it's ok because
-                            // we use s >= word_wrap_eol below
+          word_wrap_eol++;       // +1 may not be a character start point in UTF-8 but it's ok because
+                                 // we use s >= word_wrap_eol below
       }
 
       if (s >= word_wrap_eol) {
@@ -4405,8 +4252,7 @@ GfVec2f AnchorFont::CalcTextSizeA(float size,
         continue;
     }
 
-    const float char_width = ((int)c < IndexAdvanceX.Size ? IndexAdvanceX.Data[c] :
-                                                            FallbackAdvanceX) *
+    const float char_width = ((int)c < IndexAdvanceX.Size ? IndexAdvanceX.Data[c] : FallbackAdvanceX) *
                              scale;
     if (line_width + char_width >= max_width) {
       s = prev_s;
@@ -4465,9 +4311,8 @@ void AnchorFont::RenderText(ImDrawList *draw_list,
                             bool cpu_fine_clip) const
 {
   if (!text_end)
-    text_end = text_begin +
-               strlen(text_begin);  // ANCHOR:: functions generally already provides a valid
-                                    // text_end, so this is merely to handle direct calls.
+    text_end = text_begin + strlen(text_begin);  // ANCHOR:: functions generally already provides a valid
+                                                 // text_end, so this is merely to handle direct calls.
 
   // Align to be pixel perfect
   pos[0] = IM_FLOOR(pos[0]);
@@ -4527,8 +4372,8 @@ void AnchorFont::RenderText(ImDrawList *draw_list,
         word_wrap_eol = CalcWordWrapPositionA(scale, s, text_end, wrap_width - (x - pos[0]));
         if (word_wrap_eol == s)  // Wrap_width is too small to fit anything. Force displaying 1
                                  // character to minimize the height discontinuity.
-          word_wrap_eol++;  // +1 may not be a character start point in UTF-8 but it's ok because
-                            // we use s >= word_wrap_eol below
+          word_wrap_eol++;       // +1 may not be a character start point in UTF-8 but it's ok because
+                                 // we use s >= word_wrap_eol below
       }
 
       if (s >= word_wrap_eol) {
@@ -4664,8 +4509,7 @@ void AnchorFont::RenderText(ImDrawList *draw_list,
 
   // Give back unused vertices (clipped ones, blanks) ~ this is essentially a PrimUnreserve()
   // action.
-  draw_list->VtxBuffer.Size = (int)(vtx_write -
-                                    draw_list->VtxBuffer.Data);  // Same as calling shrink()
+  draw_list->VtxBuffer.Size = (int)(vtx_write - draw_list->VtxBuffer.Data);  // Same as calling shrink()
   draw_list->IdxBuffer.Size = (int)(idx_write - draw_list->IdxBuffer.Data);
   draw_list->CmdBuffer[draw_list->CmdBuffer.Size - 1].ElemCount -= (idx_expected_size -
                                                                     draw_list->IdxBuffer.Size);
@@ -4691,11 +4535,7 @@ void AnchorFont::RenderText(ImDrawList *draw_list,
 
 // Render an arrow aimed to be aligned with text (p_min is a position in the same space text would
 // be positioned). To e.g. denote expanded/collapsed state
-void ANCHOR::RenderArrow(ImDrawList *draw_list,
-                         GfVec2f pos,
-                         AnchorU32 col,
-                         ANCHOR_Dir dir,
-                         float scale)
+void ANCHOR::RenderArrow(ImDrawList *draw_list, GfVec2f pos, AnchorU32 col, ANCHOR_Dir dir, float scale)
 {
   const float h = draw_list->_Data->FontSize * 1.00f;
   float r = h * 0.40f * scale;
@@ -4765,18 +4605,10 @@ void ANCHOR::RenderMouseCursor(ImDrawList *draw_list,
     pos -= offset;
     AnchorTextureID tex_id = font_atlas->TexID;
     draw_list->PushTextureID(tex_id);
-    draw_list->AddImage(tex_id,
-                        pos + GfVec2f(1, 0) * scale,
-                        pos + (GfVec2f(1, 0) + size) * scale,
-                        uv[2],
-                        uv[3],
-                        col_shadow);
-    draw_list->AddImage(tex_id,
-                        pos + GfVec2f(2, 0) * scale,
-                        pos + (GfVec2f(2, 0) + size) * scale,
-                        uv[2],
-                        uv[3],
-                        col_shadow);
+    draw_list->AddImage(
+      tex_id, pos + GfVec2f(1, 0) * scale, pos + (GfVec2f(1, 0) + size) * scale, uv[2], uv[3], col_shadow);
+    draw_list->AddImage(
+      tex_id, pos + GfVec2f(2, 0) * scale, pos + (GfVec2f(2, 0) + size) * scale, uv[2], uv[3], col_shadow);
     draw_list->AddImage(tex_id, pos, pos + size * scale, uv[2], uv[3], col_border);
     draw_list->AddImage(tex_id, pos, pos + size * scale, uv[0], uv[1], col_fill);
     draw_list->PopTextureID();
@@ -4854,9 +4686,7 @@ void ANCHOR::RenderRectFilledRangeH(ImDrawList *draw_list,
   }
 
   rounding = ImClamp(
-    ImMin((rect.Max[0] - rect.Min[0]) * 0.5f, (rect.Max[1] - rect.Min[1]) * 0.5f) - 1.0f,
-    0.0f,
-    rounding);
+    ImMin((rect.Max[0] - rect.Min[0]) * 0.5f, (rect.Max[1] - rect.Min[1]) * 0.5f) - 1.0f, 0.0f, rounding);
   const float inv_rounding = 1.0f / rounding;
   const float arc0_b = ImAcos01(1.0f - (p0[0] - rect.Min[0]) * inv_rounding);
   const float arc0_e = ImAcos01(1.0f - (p1[0] - rect.Min[0]) * inv_rounding);
@@ -4872,10 +4702,8 @@ void ANCHOR::RenderRectFilledRangeH(ImDrawList *draw_list,
     draw_list->PathArcToFast(GfVec2f(x0, p0[1] + rounding), rounding, 6, 9);  // TR
   }
   else {
-    draw_list->PathArcTo(
-      GfVec2f(x0, p1[1] - rounding), rounding, IM_PI - arc0_e, IM_PI - arc0_b, 3);  // BL
-    draw_list->PathArcTo(
-      GfVec2f(x0, p0[1] + rounding), rounding, IM_PI + arc0_b, IM_PI + arc0_e, 3);  // TR
+    draw_list->PathArcTo(GfVec2f(x0, p1[1] - rounding), rounding, IM_PI - arc0_e, IM_PI - arc0_b, 3);  // BL
+    draw_list->PathArcTo(GfVec2f(x0, p0[1] + rounding), rounding, IM_PI + arc0_b, IM_PI + arc0_e, 3);  // TR
   }
   if (p1[0] > rect.Min[0] + rounding) {
     const float arc1_b = ImAcos01(1.0f - (rect.Max[0] - p1[0]) * inv_rounding);
@@ -4989,8 +4817,7 @@ void ANCHOR::RenderColorRectWithAlphaCheckerboard(ImDrawList *draw_list,
       float y1 = ImClamp(y, p_min[1], p_max[1]), y2 = ImMin(y + grid_step, p_max[1]);
       if (y2 <= y1)
         continue;
-      for (float x = p_min[0] + grid_off[0] + (yi & 1) * grid_step; x < p_max[0];
-           x += grid_step * 2.0f) {
+      for (float x = p_min[0] + grid_off[0] + (yi & 1) * grid_step; x < p_max[0]; x += grid_step * 2.0f) {
         float x1 = ImClamp(x, p_min[0], p_max[0]), x2 = ImMin(x + grid_step, p_max[0]);
         if (x2 <= x1)
           continue;
@@ -5009,8 +4836,7 @@ void ANCHOR::RenderColorRectWithAlphaCheckerboard(ImDrawList *draw_list,
         }
 
         // Combine flags
-        cell_flags = (flags == ImDrawFlags_RoundCornersNone ||
-                      cell_flags == ImDrawFlags_RoundCornersNone) ?
+        cell_flags = (flags == ImDrawFlags_RoundCornersNone || cell_flags == ImDrawFlags_RoundCornersNone) ?
                        ImDrawFlags_RoundCornersNone :
                        (cell_flags & flags);
         draw_list->AddRectFilled(GfVec2f(x1, y1), GfVec2f(x2, y2), col_bg2, rounding, cell_flags);
@@ -5133,9 +4959,7 @@ static unsigned int stb_adler32(unsigned int adler32, unsigned char *buffer, uns
   return (unsigned int)(s2 << 16) + (unsigned int)s1;
 }
 
-static unsigned int stb_decompress(unsigned char *output,
-                                   const unsigned char *i,
-                                   unsigned int /*length*/)
+static unsigned int stb_decompress(unsigned char *output, const unsigned char *i, unsigned int /*length*/)
 {
   if (stb__in4(0) != 0x57bC0000)
     return 0;

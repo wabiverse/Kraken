@@ -100,11 +100,11 @@ struct ValueRep {
   {}
 
   constexpr ValueRep(TypeEnum t, bool isInlined, bool isArray, uint64_t payload)
-      : data(_Combine(t, isInlined, isArray, payload))
+    : data(_Combine(t, isInlined, isArray, payload))
   {}
 
-  static const uint64_t _IsArrayBit      = 1ull << 63;
-  static const uint64_t _IsInlinedBit    = 1ull << 62;
+  static const uint64_t _IsArrayBit = 1ull << 63;
+  static const uint64_t _IsInlinedBit = 1ull << 62;
   static const uint64_t _IsCompressedBit = 1ull << 61;
 
   static const uint64_t _PayloadMask = ((1ull << 48) - 1);
@@ -181,8 +181,8 @@ struct ValueRep {
  private:
   static constexpr uint64_t _Combine(TypeEnum t, bool isInlined, bool isArray, uint64_t payload)
   {
-    return (isArray ? _IsArrayBit : 0) | (isInlined ? _IsInlinedBit : 0) |
-           (static_cast<uint64_t>(t) << 48) | (payload & _PayloadMask);
+    return (isArray ? _IsArrayBit : 0) | (isInlined ? _IsInlinedBit : 0) | (static_cast<uint64_t>(t) << 48) |
+           (payload & _PayloadMask);
   }
 
   uint64_t data;
@@ -355,28 +355,28 @@ class CrateFile {
   struct _FileRange {
     _FileRange() = default;
     _FileRange(FILE *file, int64_t startOffset, int64_t length, bool hasOwnership)
-        : file(file),
-          startOffset(startOffset),
-          length(file && length == -1 ? ArchGetFileLength(file) - startOffset : length),
-          hasOwnership(hasOwnership)
+      : file(file),
+        startOffset(startOffset),
+        length(file && length == -1 ? ArchGetFileLength(file) - startOffset : length),
+        hasOwnership(hasOwnership)
     {}
     ~_FileRange();
     _FileRange(_FileRange &&other)
-        : file(other.file),
-          startOffset(other.startOffset),
-          length(other.length),
-          hasOwnership(other.hasOwnership)
+      : file(other.file),
+        startOffset(other.startOffset),
+        length(other.length),
+        hasOwnership(other.hasOwnership)
     {
       other.file = nullptr;
     }
     _FileRange &operator=(_FileRange &&other)
     {
       if (this != &other) {
-        file         = other.file;
-        startOffset  = other.startOffset;
-        length       = other.length;
+        file = other.file;
+        startOffset = other.startOffset;
+        length = other.length;
         hasOwnership = other.hasOwnership;
-        other.file   = nullptr;
+        other.file = nullptr;
       }
       return *this;
     }
@@ -391,10 +391,10 @@ class CrateFile {
       return length;
     }
 
-    FILE *file          = nullptr;
+    FILE *file = nullptr;
     int64_t startOffset = 0;
-    int64_t length      = 0;
-    bool hasOwnership   = false;
+    int64_t length = 0;
+    bool hasOwnership = false;
   };
 
   // This structure pulls together the underlying ArchMutableFileMapping
@@ -417,10 +417,10 @@ class CrateFile {
       // must be copy constructible until version 2017 update 1.  Remove
       // this once we're on or past that version of tbb.
       ZeroCopySource(ZeroCopySource const &other)
-          : Vt_ArrayForeignDataSource(other._detachedFn, other._refCount),
-            _mapping(other._mapping),
-            _addr(other._addr),
-            _numBytes(other._numBytes)
+        : Vt_ArrayForeignDataSource(other._detachedFn, other._refCount),
+          _mapping(other._mapping),
+          _addr(other._addr),
+          _numBytes(other._numBytes)
       {}
       // XXX --------------------------------
 
@@ -473,10 +473,10 @@ class CrateFile {
     _FileMapping() : _refCount(0){};
 
     explicit _FileMapping(ArchMutableFileMapping mapping, int64_t offset = 0, int64_t length = -1)
-        : _refCount(0),
-          _mapping(std::move(mapping)),
-          _start(_mapping.get() + offset),
-          _length(length == -1 ? ArchGetFileMappingLength(_mapping) : length)
+      : _refCount(0),
+        _mapping(std::move(mapping)),
+        _start(_mapping.get() + offset),
+        _length(length == -1 ? ArchGetFileMappingLength(_mapping) : length)
     {}
 
     ~_FileMapping();
@@ -603,9 +603,9 @@ class CrateFile {
     Spec()
     {}
     Spec(PathIndex pi, SdfSpecType type, FieldSetIndex fsi)
-        : pathIndex(pi),
-          fieldSetIndex(fsi),
-          specType(type)
+      : pathIndex(pi),
+        fieldSetIndex(fsi),
+        specType(type)
     {}
     Spec(Spec_0_0_1 const &);
     bool operator==(const Spec &other) const
@@ -646,9 +646,9 @@ class CrateFile {
     Spec_0_0_1()
     {}
     Spec_0_0_1(PathIndex pi, SdfSpecType type, FieldSetIndex fsi)
-        : pathIndex(pi),
-          fieldSetIndex(fsi),
-          specType(type)
+      : pathIndex(pi),
+        fieldSetIndex(fsi),
+        specType(type)
     {}
     Spec_0_0_1(Spec const &);
     bool operator==(const Spec_0_0_1 &other) const
@@ -694,9 +694,7 @@ class CrateFile {
     ~Packer();
 
     // Pack an additional spec in the crate.
-    inline void PackSpec(const SdfPath &path,
-                         SdfSpecType type,
-                         const std::vector<FieldValuePair> &fields)
+    inline void PackSpec(const SdfPath &path, SdfSpecType type, const std::vector<FieldValuePair> &fields)
     {
       _crate->_AddSpec(path, type, fields);
     }
@@ -1026,11 +1024,11 @@ class CrateFile {
                   vector<FieldIndex> &&of,
                   vector<FieldValuePair> &&dof,
                   vector<pair<TfToken, TimeSamples>> &&ts)
-        : path(p),
-          specType(t),
-          ordinaryFields(std::move(of)),
-          deferredOrdinaryFields(std::move(dof)),
-          timeSampleFields(std::move(ts))
+      : path(p),
+        specType(t),
+        ordinaryFields(std::move(of)),
+        deferredOrdinaryFields(std::move(dof)),
+        timeSampleFields(std::move(ts))
     {}
     PathIndex path;
     SdfSpecType specType;
@@ -1064,18 +1062,14 @@ class CrateFile {
   mutable tbb::spin_rw_mutex _sharedTimesMutex;
 
   // functions to write VtValues to file by type.
-  boost::container::flat_map<std::type_index, std::function<ValueRep(VtValue const &)>>
-      _packValueFunctions;
+  boost::container::flat_map<std::type_index, std::function<ValueRep(VtValue const &)>> _packValueFunctions;
 
   // functions to read VtValues from file by type.
-  std::function<void(ValueRep, VtValue *)>
-      _unpackValueFunctionsPread[static_cast<int>(TypeEnum::NumTypes)];
+  std::function<void(ValueRep, VtValue *)> _unpackValueFunctionsPread[static_cast<int>(TypeEnum::NumTypes)];
 
-  std::function<void(ValueRep, VtValue *)>
-      _unpackValueFunctionsMmap[static_cast<int>(TypeEnum::NumTypes)];
+  std::function<void(ValueRep, VtValue *)> _unpackValueFunctionsMmap[static_cast<int>(TypeEnum::NumTypes)];
 
-  std::function<void(ValueRep, VtValue *)>
-      _unpackValueFunctionsAsset[static_cast<int>(TypeEnum::NumTypes)];
+  std::function<void(ValueRep, VtValue *)> _unpackValueFunctionsAsset[static_cast<int>(TypeEnum::NumTypes)];
 
   _ValueHandlerBase *_valueHandlers[static_cast<int>(TypeEnum::NumTypes)];
 

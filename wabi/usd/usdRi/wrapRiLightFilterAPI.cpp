@@ -62,52 +62,36 @@ static UsdAttribute _CreateRiCombineModeAttr(UsdRiRiLightFilterAPI &self,
                                       writeSparsely);
 }
 
-static UsdAttribute _CreateRiDensityAttr(UsdRiRiLightFilterAPI &self,
-                                         object defaultVal,
-                                         bool writeSparsely)
+static UsdAttribute _CreateRiDensityAttr(UsdRiRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateRiDensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                  writeSparsely);
+  return self.CreateRiDensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
-static UsdAttribute _CreateRiInvertAttr(UsdRiRiLightFilterAPI &self,
-                                        object defaultVal,
-                                        bool writeSparsely)
+static UsdAttribute _CreateRiInvertAttr(UsdRiRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateRiInvertAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                 writeSparsely);
+  return self.CreateRiInvertAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
 }
 
 static UsdAttribute _CreateRiIntensityAttr(UsdRiRiLightFilterAPI &self,
                                            object defaultVal,
                                            bool writeSparsely)
 {
-  return self.CreateRiIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                    writeSparsely);
+  return self.CreateRiIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
-static UsdAttribute _CreateRiExposureAttr(UsdRiRiLightFilterAPI &self,
-                                          object defaultVal,
-                                          bool writeSparsely)
+static UsdAttribute _CreateRiExposureAttr(UsdRiRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateRiExposureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                   writeSparsely);
+  return self.CreateRiExposureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
-static UsdAttribute _CreateRiDiffuseAttr(UsdRiRiLightFilterAPI &self,
-                                         object defaultVal,
-                                         bool writeSparsely)
+static UsdAttribute _CreateRiDiffuseAttr(UsdRiRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateRiDiffuseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                  writeSparsely);
+  return self.CreateRiDiffuseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
-static UsdAttribute _CreateRiSpecularAttr(UsdRiRiLightFilterAPI &self,
-                                          object defaultVal,
-                                          bool writeSparsely)
+static UsdAttribute _CreateRiSpecularAttr(UsdRiRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateRiSpecularAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                   writeSparsely);
+  return self.CreateRiSpecularAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
 }  // anonymous namespace
@@ -119,61 +103,59 @@ void wrapUsdRiRiLightFilterAPI()
   class_<This, bases<UsdSchemaBase>> cls("RiLightFilterAPI");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetRiCombineModeAttr", &This::GetRiCombineModeAttr)
-      .def("CreateRiCombineModeAttr",
-           &_CreateRiCombineModeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRiCombineModeAttr", &This::GetRiCombineModeAttr)
+    .def("CreateRiCombineModeAttr",
+         &_CreateRiCombineModeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetRiDensityAttr", &This::GetRiDensityAttr)
-      .def("CreateRiDensityAttr",
-           &_CreateRiDensityAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRiDensityAttr", &This::GetRiDensityAttr)
+    .def("CreateRiDensityAttr",
+         &_CreateRiDensityAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetRiInvertAttr", &This::GetRiInvertAttr)
-      .def("CreateRiInvertAttr",
-           &_CreateRiInvertAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRiInvertAttr", &This::GetRiInvertAttr)
+    .def("CreateRiInvertAttr",
+         &_CreateRiInvertAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetRiIntensityAttr", &This::GetRiIntensityAttr)
-      .def("CreateRiIntensityAttr",
-           &_CreateRiIntensityAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRiIntensityAttr", &This::GetRiIntensityAttr)
+    .def("CreateRiIntensityAttr",
+         &_CreateRiIntensityAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetRiExposureAttr", &This::GetRiExposureAttr)
-      .def("CreateRiExposureAttr",
-           &_CreateRiExposureAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRiExposureAttr", &This::GetRiExposureAttr)
+    .def("CreateRiExposureAttr",
+         &_CreateRiExposureAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetRiDiffuseAttr", &This::GetRiDiffuseAttr)
-      .def("CreateRiDiffuseAttr",
-           &_CreateRiDiffuseAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRiDiffuseAttr", &This::GetRiDiffuseAttr)
+    .def("CreateRiDiffuseAttr",
+         &_CreateRiDiffuseAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetRiSpecularAttr", &This::GetRiSpecularAttr)
-      .def("CreateRiSpecularAttr",
-           &_CreateRiSpecularAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRiSpecularAttr", &This::GetRiSpecularAttr)
+    .def("CreateRiSpecularAttr",
+         &_CreateRiSpecularAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      ;
+    ;
 
   _CustomWrapCode(cls);
 }

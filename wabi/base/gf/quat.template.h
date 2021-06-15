@@ -119,44 +119,44 @@ class {
       SCL
     }
   } realVal)
-      : _imaginary(0),
-        _real(realVal){}
+    : _imaginary(0),
+      _real(realVal){}
 
-        /// Initialize the real and imaginary coefficients.
-        {{QUAT}}(
-            {
-              {
-                SCL
-              }
-            } real,
-            {
-              {
-                SCL
-              }
-            } i,
-            {
-              {
-                SCL
-              }
-            } j,
-            {
-              {
-                SCL
-              }
-            } k)
-      : _imaginary(i, j, k),
-        _real(real){}
+      /// Initialize the real and imaginary coefficients.
+      {{QUAT}}(
+        {
+          {
+            SCL
+          }
+        } real,
+        {
+          {
+            SCL
+          }
+        } i,
+        {
+          {
+            SCL
+          }
+        } j,
+        {
+          {
+            SCL
+          }
+        } k)
+    : _imaginary(i, j, k),
+      _real(real){}
 
-        /// Initialize the real and imaginary coefficients.
-        {{QUAT}}(
-            {
-              {
-                SCL
-              }
-            } real,
-            const GfVec3{{SUFFIX}} & imaginary)
-      : _imaginary(imaginary),
-        _real(real){}
+      /// Initialize the real and imaginary coefficients.
+      {{QUAT}}(
+        {
+          {
+            SCL
+          }
+        } real,
+        const GfVec3{{SUFFIX}} & imaginary)
+    : _imaginary(imaginary),
+      _real(real){}
 
   {% for S in SCALARS if S != SCL %
   }
@@ -219,21 +219,21 @@ class {
 
   /// Set the imaginary coefficients.
   void SetImaginary(
+    {
       {
-        {
-          SCL
-        }
-      } i,
+        SCL
+      }
+    } i,
+    {
       {
-        {
-          SCL
-        }
-      } j,
+        SCL
+      }
+    } j,
+    {
       {
-        {
-          SCL
-        }
-      } k)
+        SCL
+      }
+    } k)
   {
     _imaginary.Set(i, j, k);
   }
@@ -463,12 +463,12 @@ class {
     }
   }
   operator*(
+    {
       {
-        {
-          SCL
-        }
-      } s,
-      const {{QUAT}} & q)
+        SCL
+      }
+    } s,
+    const {{QUAT}} & q)
   {
     return {{QUAT}}(q) *= s;
   }
@@ -546,16 +546,16 @@ inline
   }
 }
 GfDot(
+  {
     {
-      {
-        QUAT
-      }
-    } const &q1,
+      QUAT
+    }
+  } const &q1,
+  {
     {
-      {
-        QUAT
-      }
-    } const &q2)
+      QUAT
+    }
+  } const &q2)
 {
   return GfDot(q1.GetImaginary(), q2.GetImaginary()) + q1.GetReal() * q2.GetReal();
 }

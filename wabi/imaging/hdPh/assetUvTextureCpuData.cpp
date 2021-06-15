@@ -48,20 +48,18 @@ static GfVec3i _GetDimensions(HioImageSharedPtr const &image)
   return GfVec3i(image->GetWidth(), image->GetHeight(), 1);
 }
 
-HdPhAssetUvTextureCpuData::HdPhAssetUvTextureCpuData(
-    std::string const &filePath,
-    const size_t targetMemory,
-    const bool premultiplyAlpha,
-    const HioImage::ImageOriginLocation originLocation,
-    const HioImage::SourceColorSpace sourceColorSpace)
-    : _generateMipmaps(false),
-      _wrapInfo{HdWrapNoOpinion, HdWrapNoOpinion}
+HdPhAssetUvTextureCpuData::HdPhAssetUvTextureCpuData(std::string const &filePath,
+                                                     const size_t targetMemory,
+                                                     const bool premultiplyAlpha,
+                                                     const HioImage::ImageOriginLocation originLocation,
+                                                     const HioImage::SourceColorSpace sourceColorSpace)
+  : _generateMipmaps(false),
+    _wrapInfo{HdWrapNoOpinion, HdWrapNoOpinion}
 {
   TRACE_FUNCTION();
 
   // Open all mips for the image.
-  const std::vector<HioImageSharedPtr> mips = HdPhTextureUtils::GetAllMipImages(filePath,
-                                                                                sourceColorSpace);
+  const std::vector<HioImageSharedPtr> mips = HdPhTextureUtils::GetAllMipImages(filePath, sourceColorSpace);
   if (mips.empty()) {
     return;
   }
@@ -88,12 +86,11 @@ HdPhAssetUvTextureCpuData::HdPhAssetUvTextureCpuData(
   // dimensions of the GPU texture (which can be even smaller than
   // that of the mip image).
   //
-  _textureDesc.dimensions = HdPhTextureUtils::ComputeDimensionsFromTargetMemory(
-      mips,
-      _textureDesc.format,
-      /* tileCount = */ 1,
-      targetMemory,
-      &firstMip);
+  _textureDesc.dimensions = HdPhTextureUtils::ComputeDimensionsFromTargetMemory(mips,
+                                                                                _textureDesc.format,
+                                                                                /* tileCount = */ 1,
+                                                                                targetMemory,
+                                                                                &firstMip);
 
   // Compute the GPU mip sizes.
   const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(_textureDesc.format,
@@ -116,14 +113,14 @@ HdPhAssetUvTextureCpuData::HdPhAssetUvTextureCpuData(
   }
   else {
     // No authored mips, generate the mipmaps from the image.
-    _generateMipmaps       = true;
+    _generateMipmaps = true;
     _textureDesc.mipLevels = mipInfos.size();
   }
 
   // Compute how much memory we need to allocate to upload the
   // desirable mips.
   const HgiMipInfo &lastMipInfo = mipInfos[numUsableMips - 1];
-  const size_t memSize          = lastMipInfo.byteOffset + lastMipInfo.byteSizePerLayer;
+  const size_t memSize = lastMipInfo.byteOffset + lastMipInfo.byteSizePerLayer;
   {
     TRACE_FUNCTION_SCOPE("allocating memory");
     _rawBuffer = std::make_unique<unsigned char[]>(memSize);
@@ -136,8 +133,7 @@ HdPhAssetUvTextureCpuData::HdPhAssetUvTextureCpuData(
 
     for (size_t i = 0; i < numUsableMips; ++i) {
       if (!HdPhTextureUtils::ReadAndConvertImage(mips[firstMip + i],
-                                                 /* flipped = */ originLocation ==
-                                                     HioImage::OriginLowerLeft,
+                                                 /* flipped = */ originLocation == HioImage::OriginLowerLeft,
                                                  premultiplyAlpha,
                                                  mipInfos[i],
                                                  /* layer = */ 0,
@@ -151,7 +147,7 @@ HdPhAssetUvTextureCpuData::HdPhAssetUvTextureCpuData(
   // Handle grayscale textures by expanding value to green and blue.
   if (HgiGetComponentCount(_textureDesc.format) == 1) {
     _textureDesc.componentMapping = {
-        HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleOne};
+      HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleOne};
   }
 
   _textureDesc.debugName = filePath + " - flipVertically=" +
@@ -161,7 +157,7 @@ HdPhAssetUvTextureCpuData::HdPhAssetUvTextureCpuData(
 
   // We successfully made it to the end of the function. Indicate that
   // the texture descriptor is valid by setting the data and its size.
-  _textureDesc.initialData    = _rawBuffer.get();
+  _textureDesc.initialData = _rawBuffer.get();
   _textureDesc.pixelsByteSize = memSize;
 }
 
@@ -190,7 +186,7 @@ static HdWrap _GetWrapMode(HioImageSharedPtr const &image, const HioAddressDimen
 
 void HdPhAssetUvTextureCpuData::_SetWrapInfo(HioImageSharedPtr const &image)
 {
-  _wrapInfo.first  = _GetWrapMode(image, HioAddressDimensionU);
+  _wrapInfo.first = _GetWrapMode(image, HioAddressDimensionU);
   _wrapInfo.second = _GetWrapMode(image, HioAddressDimensionV);
 }
 

@@ -57,9 +57,9 @@ static void UsdImagingGL_UnitTestHelper_InitPlugins()
 {
   // Unfortunately, in order to properly find plugins in our test setup, we
   // need to know where the test is running.
-  std::string testDir   = TfGetPathName(ArchGetExecutablePath());
-  std::string pluginDir = TfStringCatPaths(
-      testDir, "UsdImagingPlugins/lib/UsdImagingTest.framework/Resources");
+  std::string testDir = TfGetPathName(ArchGetExecutablePath());
+  std::string pluginDir = TfStringCatPaths(testDir,
+                                           "UsdImagingPlugins/lib/UsdImagingTest.framework/Resources");
   printf("registering plugins in: %s\n", pluginDir.c_str());
 
   PlugRegistry::GetInstance().RegisterPlugins(pluginDir);
@@ -96,8 +96,8 @@ class UsdImagingGL_UnitTestWindow : public GarchGLDebugWindow {
 UsdImagingGL_UnitTestWindow::UsdImagingGL_UnitTestWindow(UsdImagingGL_UnitTestGLDrawing *unitTest,
                                                          int w,
                                                          int h)
-    : GarchGLDebugWindow("UsdImagingGL Test", w, h),
-      _unitTest(unitTest)
+  : GarchGLDebugWindow("UsdImagingGL Test", w, h),
+    _unitTest(unitTest)
 {}
 
 UsdImagingGL_UnitTestWindow::~UsdImagingGL_UnitTestWindow()
@@ -139,7 +139,7 @@ void UsdImagingGL_UnitTestWindow::OnPaintGL()
   // Update the draw target's size and execute the unit test with
   // the draw target bound.
   //
-  int width  = GetWidth();
+  int width = GetWidth();
   int height = GetHeight();
   _drawTarget->Bind();
   _drawTarget->SetSize(GfVec2i(width, height));
@@ -171,8 +171,7 @@ void UsdImagingGL_UnitTestWindow::DrawOffscreen()
   _drawTarget->Unbind();
 }
 
-bool UsdImagingGL_UnitTestWindow::WriteToFile(std::string const &attachment,
-                                              std::string const &filename)
+bool UsdImagingGL_UnitTestWindow::WriteToFile(std::string const &attachment, std::string const &filename)
 {
   // We need to unbind the draw target before writing to file to be sure the
   // attachment is in a good state.
@@ -219,20 +218,20 @@ void UsdImagingGL_UnitTestWindow::OnMouseMove(int x, int y, int modKeys)
 ////////////////////////////////////////////////////////////
 
 UsdImagingGL_UnitTestGLDrawing::UsdImagingGL_UnitTestGLDrawing()
-    : _widget(NULL),
-      _testLighting(false),
-      _sceneLights(false),
-      _cameraLight(false),
-      _testIdRender(false),
-      _complexity(1.0f),
-      _drawMode(UsdImagingGLDrawMode::DRAW_SHADED_SMOOTH),
-      _shouldFrameAll(false),
-      _cullStyle(UsdImagingGLCullStyle::CULL_STYLE_NOTHING),
-      _showGuides(UsdImagingGLRenderParams().showGuides),
-      _showRender(UsdImagingGLRenderParams().showRender),
-      _showProxy(UsdImagingGLRenderParams().showProxy),
-      _clearOnce(false),
-      _presentDisabled(false)
+  : _widget(NULL),
+    _testLighting(false),
+    _sceneLights(false),
+    _cameraLight(false),
+    _testIdRender(false),
+    _complexity(1.0f),
+    _drawMode(UsdImagingGLDrawMode::DRAW_SHADED_SMOOTH),
+    _shouldFrameAll(false),
+    _cullStyle(UsdImagingGLCullStyle::CULL_STYLE_NOTHING),
+    _showGuides(UsdImagingGLRenderParams().showGuides),
+    _showRender(UsdImagingGLRenderParams().showRender),
+    _showProxy(UsdImagingGLRenderParams().showProxy),
+    _clearOnce(false),
+    _presentDisabled(false)
 {}
 
 UsdImagingGL_UnitTestGLDrawing::~UsdImagingGL_UnitTestGLDrawing()
@@ -256,13 +255,13 @@ bool UsdImagingGL_UnitTestGLDrawing::WriteToFile(std::string const &attachment,
 
 struct UsdImagingGL_UnitTestGLDrawing::_Args {
   _Args()
-      : offscreen(false),
-        clearColor{1.0f, 0.5f, 0.1f, 1.0f},
-        translate{0.0f, -1000.0f, -2500.0f},
-        widgetSize{640, 480},
-        pixelAspectRatio(1.0f),
-        dataWindow{0, 0, 0, 0},
-        displayWindow{0.0f, 0.0f, 0.0f, 0.0f}
+    : offscreen(false),
+      clearColor{1.0f, 0.5f, 0.1f, 1.0f},
+      translate{0.0f, -1000.0f, -2500.0f},
+      widgetSize{640, 480},
+      pixelAspectRatio(1.0f),
+      dataWindow{0, 0, 0, 0},
+      displayWindow{0.0f, 0.0f, 0.0f, 0.0f}
   {}
 
   std::string unresolvedStageFilePath;
@@ -306,75 +305,75 @@ static void ParseError(const char *pname, const char *fmt, ...)
 static void Usage(int argc, char *argv[])
 {
   static const char usage[] =
-      "%s [-stage filePath] [-write filePath]\n"
-      "                           [-offscreen] [-lighting] [-idRender]\n"
-      "                           [-camera pathToCamera]\n"
-      "                           [-complexity complexity]\n"
-      "                           [-renderer rendererName]\n"
-      "                           [-shading [flat|smooth|wire|wireOnSurface]]\n"
-      "                           [-frameAll]\n"
-      "                           [-clipPlane clipPlane1 ... clipPlane4]\n"
-      "                           [-complexities complexities1 complexities2 ...]\n"
-      "                           [-times times1 times2 ...] [-cullStyle cullStyle]\n"
-      "                           [-clear r g b a] [-clearOnce] [-translate x y z]\n"
-      "                           [-renderSetting name type value]\n"
-      "                           [-rendererAov name]\n"
-      "                           [-perfStatsFile path]\n"
-      "                           [-traceFile path] [...]\n"
-      "\n"
-      "  usdImaging basic drawing test\n"
-      "\n"
-      "options:\n"
-      "  -stage filePath     name of usd stage to open []\n"
-      "  -write filePath     name of image file to write (suffix determines type) []\n"
-      "  -offscreen          execute without mapping a window\n"
-      "  -lighting           use simple lighting override shader\n"
-      "  -sceneLights        use in combination with -lighting to utilize the lights \n"
-      "                      defined in the scene\n"
-      "  -camLight           use a single camera light\n"
-      "  -idRender           ID rendering\n"
-      "  -complexity complexity\n"
-      "                      Set the fallback complexity [1]\n"
-      "  -renderer rendererName\n"
-      "                      use the specified renderer plugin []\n"
-      "  -shading [flat|smooth|wire|wireOnSurface]\n"
-      "                      force specific type of shading\n"
-      "                      [flat|smooth|wire|wireOnSurface] []\n"
-      "  -frameAll           set the view to frame all root prims on the stage\n"
-      "  -clipPlane clipPlane1 ... clipPlane4\n"
-      "                      set an additional camera clipping plane [()]\n"
-      "  -complexities complexities1 complexities2 ...\n"
-      "                      One or more complexities, each complexity will\n"
-      "                      produce an image [()]\n"
-      "  -times times1 times2 ...\n"
-      "                      One or more time samples, each time will produce\n"
-      "                      an image [()]\n"
-      "  -cullStyle          Set face cull style\n"
-      "  -clear r g b a      clear color\n"
-      "  -clearOnce          Clear the framebuffer only once at the start \n"
-      "                      instead of before each render.\n"
-      "  -translate x y z    default camera translation\n"
-      "  -rendererAov name   Name of AOV to display or write out\n"
-      "  -perfStatsFile path Path to file performance stats are written to\n"
-      "  -traceFile path     Path to trace file to write\n"
-      "  -renderSetting name type value\n"
-      "                      Specifies a setting with given name, type (such as\n"
-      "                      float) and value passed to renderer. -renderSetting\n"
-      "                      can be given multiple times to specify different\n"
-      "                      settings\n"
-      "  -guidesPurpose [show|hide]\n"
-      "                      force prims of purpose 'guide' to be shown or hidden\n"
-      "  -renderPurpose [show|hide]\n"
-      "                      force prims of purpose 'render' to be shown or hidden\n"
-      "  -proxyPurpose [show|hide]\n"
-      "                      force prims of purpose 'proxy' to be shown or hidden\n"
-      "  -widgetSize w h     width and height of widget and render buffers\n"
-      "  -pixelAspectRatio a\n"
-      "                      width of pixel divided by height of pixel\n"
-      "  -dataWindow x y width height\n"
-      "                      Specifies data window for rendering\n"
-      "  -displayWindow x y width height\n"
-      "                      Specifies display window for rendering\n";
+    "%s [-stage filePath] [-write filePath]\n"
+    "                           [-offscreen] [-lighting] [-idRender]\n"
+    "                           [-camera pathToCamera]\n"
+    "                           [-complexity complexity]\n"
+    "                           [-renderer rendererName]\n"
+    "                           [-shading [flat|smooth|wire|wireOnSurface]]\n"
+    "                           [-frameAll]\n"
+    "                           [-clipPlane clipPlane1 ... clipPlane4]\n"
+    "                           [-complexities complexities1 complexities2 ...]\n"
+    "                           [-times times1 times2 ...] [-cullStyle cullStyle]\n"
+    "                           [-clear r g b a] [-clearOnce] [-translate x y z]\n"
+    "                           [-renderSetting name type value]\n"
+    "                           [-rendererAov name]\n"
+    "                           [-perfStatsFile path]\n"
+    "                           [-traceFile path] [...]\n"
+    "\n"
+    "  usdImaging basic drawing test\n"
+    "\n"
+    "options:\n"
+    "  -stage filePath     name of usd stage to open []\n"
+    "  -write filePath     name of image file to write (suffix determines type) []\n"
+    "  -offscreen          execute without mapping a window\n"
+    "  -lighting           use simple lighting override shader\n"
+    "  -sceneLights        use in combination with -lighting to utilize the lights \n"
+    "                      defined in the scene\n"
+    "  -camLight           use a single camera light\n"
+    "  -idRender           ID rendering\n"
+    "  -complexity complexity\n"
+    "                      Set the fallback complexity [1]\n"
+    "  -renderer rendererName\n"
+    "                      use the specified renderer plugin []\n"
+    "  -shading [flat|smooth|wire|wireOnSurface]\n"
+    "                      force specific type of shading\n"
+    "                      [flat|smooth|wire|wireOnSurface] []\n"
+    "  -frameAll           set the view to frame all root prims on the stage\n"
+    "  -clipPlane clipPlane1 ... clipPlane4\n"
+    "                      set an additional camera clipping plane [()]\n"
+    "  -complexities complexities1 complexities2 ...\n"
+    "                      One or more complexities, each complexity will\n"
+    "                      produce an image [()]\n"
+    "  -times times1 times2 ...\n"
+    "                      One or more time samples, each time will produce\n"
+    "                      an image [()]\n"
+    "  -cullStyle          Set face cull style\n"
+    "  -clear r g b a      clear color\n"
+    "  -clearOnce          Clear the framebuffer only once at the start \n"
+    "                      instead of before each render.\n"
+    "  -translate x y z    default camera translation\n"
+    "  -rendererAov name   Name of AOV to display or write out\n"
+    "  -perfStatsFile path Path to file performance stats are written to\n"
+    "  -traceFile path     Path to trace file to write\n"
+    "  -renderSetting name type value\n"
+    "                      Specifies a setting with given name, type (such as\n"
+    "                      float) and value passed to renderer. -renderSetting\n"
+    "                      can be given multiple times to specify different\n"
+    "                      settings\n"
+    "  -guidesPurpose [show|hide]\n"
+    "                      force prims of purpose 'guide' to be shown or hidden\n"
+    "  -renderPurpose [show|hide]\n"
+    "                      force prims of purpose 'render' to be shown or hidden\n"
+    "  -proxyPurpose [show|hide]\n"
+    "                      force prims of purpose 'proxy' to be shown or hidden\n"
+    "  -widgetSize w h     width and height of widget and render buffers\n"
+    "  -pixelAspectRatio a\n"
+    "                      width of pixel divided by height of pixel\n"
+    "  -dataWindow x y width height\n"
+    "                      Specifies data window for rendering\n"
+    "  -displayWindow x y width height\n"
+    "                      Specifies display window for rendering\n";
 
   Die(usage, TfGetBaseName(argv[0]).c_str());
 }
@@ -600,7 +599,7 @@ void UsdImagingGL_UnitTestGLDrawing::_Parse(int argc, char *argv[], _Args *args)
     else if (strcmp(argv[i], "-renderSetting") == 0) {
       CheckForMissingArguments(i, 2, argc, argv);
       const char *const key = ParseString(i, argc, argv);
-      _renderSettings[key]  = ParseVtValue(i, argc, argv);
+      _renderSettings[key] = ParseVtValue(i, argc, argv);
     }
     else if (strcmp(argv[i], "-guidesPurpose") == 0) {
       ParseShowHide(i, argc, argv, &_showGuides);
@@ -650,14 +649,14 @@ void UsdImagingGL_UnitTestGLDrawing::RunTest(int argc, char *argv[])
   for (size_t i = 0; i < args.clipPlaneCoords.size() / 4; ++i) {
     _clipPlanes.push_back(GfVec4d(&args.clipPlaneCoords[i * 4]));
   }
-  _clearColor       = GfVec4f(args.clearColor);
-  _translate        = GfVec3f(args.translate);
+  _clearColor = GfVec4f(args.clearColor);
+  _translate = GfVec3f(args.translate);
   _pixelAspectRatio = args.pixelAspectRatio;
-  _displayWindow    = GfRange2f(GfVec2f(args.displayWindow[0], args.displayWindow[1]),
-                             GfVec2f(args.displayWindow[0] + args.displayWindow[2],
-                                     args.displayWindow[1] + args.displayWindow[3]));
-  _dataWindow       = GfRect2i(
-      GfVec2i(args.dataWindow[0], args.dataWindow[1]), args.dataWindow[2], args.dataWindow[3]);
+  _displayWindow = GfRange2f(
+    GfVec2f(args.displayWindow[0], args.displayWindow[1]),
+    GfVec2f(args.displayWindow[0] + args.displayWindow[2], args.displayWindow[1] + args.displayWindow[3]));
+  _dataWindow = GfRect2i(
+    GfVec2i(args.dataWindow[0], args.dataWindow[1]), args.dataWindow[2], args.dataWindow[3]);
 
   _drawMode = UsdImagingGLDrawMode::DRAW_SHADED_SMOOTH;
 

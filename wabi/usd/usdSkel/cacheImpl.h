@@ -146,17 +146,14 @@ class UsdSkel_CacheImpl {
   };
 
  private:
-  using _PrimToAnimMap =
-      tbb::concurrent_hash_map<UsdPrim, UsdSkel_AnimQueryImplRefPtr, UsdSkel_HashPrim>;
+  using _PrimToAnimMap = tbb::concurrent_hash_map<UsdPrim, UsdSkel_AnimQueryImplRefPtr, UsdSkel_HashPrim>;
 
   using _PrimToSkelDefinitionMap =
-      tbb::concurrent_hash_map<UsdPrim, UsdSkel_SkelDefinitionRefPtr, UsdSkel_HashPrim>;
+    tbb::concurrent_hash_map<UsdPrim, UsdSkel_SkelDefinitionRefPtr, UsdSkel_HashPrim>;
 
-  using _PrimToSkelQueryMap =
-      tbb::concurrent_hash_map<UsdPrim, UsdSkelSkeletonQuery, UsdSkel_HashPrim>;
+  using _PrimToSkelQueryMap = tbb::concurrent_hash_map<UsdPrim, UsdSkelSkeletonQuery, UsdSkel_HashPrim>;
 
-  using _PrimToSkinningQueryMap =
-      tbb::concurrent_hash_map<UsdPrim, UsdSkelSkinningQuery, UsdSkel_HashPrim>;
+  using _PrimToSkinningQueryMap = tbb::concurrent_hash_map<UsdPrim, UsdSkelSkinningQuery, UsdSkel_HashPrim>;
 
   using _RWMutex = tbb::queuing_rw_mutex;
 

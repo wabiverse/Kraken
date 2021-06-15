@@ -105,12 +105,12 @@ bool ArResolverContext::operator<(const ArResolverContext &rhs) const
 void ArResolverContext::_Add(std::shared_ptr<_Untyped> &&context)
 {
   auto insertIt = std::lower_bound(
-      _contexts.begin(),
-      _contexts.end(),
-      context,
-      [](const std::shared_ptr<_Untyped> &a, const std::shared_ptr<_Untyped> &b) {
-        return std::type_index(a->GetTypeid()) < std::type_index(b->GetTypeid());
-      });
+    _contexts.begin(),
+    _contexts.end(),
+    context,
+    [](const std::shared_ptr<_Untyped> &a, const std::shared_ptr<_Untyped> &b) {
+      return std::type_index(a->GetTypeid()) < std::type_index(b->GetTypeid());
+    });
 
   if (insertIt != _contexts.end() && (*insertIt)->IsHolding(context->GetTypeid())) {
     return;

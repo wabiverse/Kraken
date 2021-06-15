@@ -39,11 +39,10 @@ WABI_NAMESPACE_BEGIN
 
 const PxOsdMeshTopology &UsdImagingGetUnitSphereMeshTopology()
 {
-  static const VtIntArray numVerts{4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                                   4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                                   4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                                   4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                                   3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+  static const VtIntArray numVerts{
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
   static const VtIntArray verts{// Quads
                                 0,
                                 1,
@@ -427,60 +426,59 @@ const PxOsdMeshTopology &UsdImagingGetUnitSphereMeshTopology()
                                 80,
                                 91};
   static const PxOsdMeshTopology sphereTopo(
-      PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->rightHanded, numVerts, verts);
+    PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->rightHanded, numVerts, verts);
 
   return sphereTopo;
 }
 
 const VtVec3fArray &UsdImagingGetUnitSphereMeshPoints()
 {
-  static const VtVec3fArray points{
-      GfVec3f(0.1250, 0.0908, -0.4755),   GfVec3f(0.0477, 0.1469, -0.4755),
-      GfVec3f(-0.0477, 0.1469, -0.4755),  GfVec3f(-0.1250, 0.0908, -0.4755),
-      GfVec3f(-0.1545, -0.0000, -0.4755), GfVec3f(-0.1250, -0.0908, -0.4755),
-      GfVec3f(-0.0477, -0.1469, -0.4755), GfVec3f(0.0477, -0.1469, -0.4755),
-      GfVec3f(0.1250, -0.0908, -0.4755),  GfVec3f(0.1545, -0.0000, -0.4755),
-      GfVec3f(0.2378, 0.1727, -0.4045),   GfVec3f(0.0908, 0.2795, -0.4045),
-      GfVec3f(-0.0908, 0.2795, -0.4045),  GfVec3f(-0.2378, 0.1727, -0.4045),
-      GfVec3f(-0.2939, -0.0000, -0.4045), GfVec3f(-0.2378, -0.1727, -0.4045),
-      GfVec3f(-0.0908, -0.2795, -0.4045), GfVec3f(0.0908, -0.2795, -0.4045),
-      GfVec3f(0.2378, -0.1727, -0.4045),  GfVec3f(0.2939, -0.0000, -0.4045),
-      GfVec3f(0.3273, 0.2378, -0.2939),   GfVec3f(0.1250, 0.3847, -0.2939),
-      GfVec3f(-0.1250, 0.3847, -0.2939),  GfVec3f(-0.3273, 0.2378, -0.2939),
-      GfVec3f(-0.4045, -0.0000, -0.2939), GfVec3f(-0.3273, -0.2378, -0.2939),
-      GfVec3f(-0.1250, -0.3847, -0.2939), GfVec3f(0.1250, -0.3847, -0.2939),
-      GfVec3f(0.3273, -0.2378, -0.2939),  GfVec3f(0.4045, -0.0000, -0.2939),
-      GfVec3f(0.3847, 0.2795, -0.1545),   GfVec3f(0.1469, 0.4523, -0.1545),
-      GfVec3f(-0.1469, 0.4523, -0.1545),  GfVec3f(-0.3847, 0.2795, -0.1545),
-      GfVec3f(-0.4755, -0.0000, -0.1545), GfVec3f(-0.3847, -0.2795, -0.1545),
-      GfVec3f(-0.1469, -0.4523, -0.1545), GfVec3f(0.1469, -0.4523, -0.1545),
-      GfVec3f(0.3847, -0.2795, -0.1545),  GfVec3f(0.4755, -0.0000, -0.1545),
-      GfVec3f(0.4045, 0.2939, -0.0000),   GfVec3f(0.1545, 0.4755, -0.0000),
-      GfVec3f(-0.1545, 0.4755, -0.0000),  GfVec3f(-0.4045, 0.2939, -0.0000),
-      GfVec3f(-0.5000, -0.0000, 0.0000),  GfVec3f(-0.4045, -0.2939, 0.0000),
-      GfVec3f(-0.1545, -0.4755, 0.0000),  GfVec3f(0.1545, -0.4755, 0.0000),
-      GfVec3f(0.4045, -0.2939, 0.0000),   GfVec3f(0.5000, 0.0000, 0.0000),
-      GfVec3f(0.3847, 0.2795, 0.1545),    GfVec3f(0.1469, 0.4523, 0.1545),
-      GfVec3f(-0.1469, 0.4523, 0.1545),   GfVec3f(-0.3847, 0.2795, 0.1545),
-      GfVec3f(-0.4755, -0.0000, 0.1545),  GfVec3f(-0.3847, -0.2795, 0.1545),
-      GfVec3f(-0.1469, -0.4523, 0.1545),  GfVec3f(0.1469, -0.4523, 0.1545),
-      GfVec3f(0.3847, -0.2795, 0.1545),   GfVec3f(0.4755, 0.0000, 0.1545),
-      GfVec3f(0.3273, 0.2378, 0.2939),    GfVec3f(0.1250, 0.3847, 0.2939),
-      GfVec3f(-0.1250, 0.3847, 0.2939),   GfVec3f(-0.3273, 0.2378, 0.2939),
-      GfVec3f(-0.4045, -0.0000, 0.2939),  GfVec3f(-0.3273, -0.2378, 0.2939),
-      GfVec3f(-0.1250, -0.3847, 0.2939),  GfVec3f(0.1250, -0.3847, 0.2939),
-      GfVec3f(0.3273, -0.2378, 0.2939),   GfVec3f(0.4045, 0.0000, 0.2939),
-      GfVec3f(0.2378, 0.1727, 0.4045),    GfVec3f(0.0908, 0.2795, 0.4045),
-      GfVec3f(-0.0908, 0.2795, 0.4045),   GfVec3f(-0.2378, 0.1727, 0.4045),
-      GfVec3f(-0.2939, -0.0000, 0.4045),  GfVec3f(-0.2378, -0.1727, 0.4045),
-      GfVec3f(-0.0908, -0.2795, 0.4045),  GfVec3f(0.0908, -0.2795, 0.4045),
-      GfVec3f(0.2378, -0.1727, 0.4045),   GfVec3f(0.2939, 0.0000, 0.4045),
-      GfVec3f(0.1250, 0.0908, 0.4755),    GfVec3f(0.0477, 0.1469, 0.4755),
-      GfVec3f(-0.0477, 0.1469, 0.4755),   GfVec3f(-0.1250, 0.0908, 0.4755),
-      GfVec3f(-0.1545, -0.0000, 0.4755),  GfVec3f(-0.1250, -0.0908, 0.4755),
-      GfVec3f(-0.0477, -0.1469, 0.4755),  GfVec3f(0.0477, -0.1469, 0.4755),
-      GfVec3f(0.1250, -0.0908, 0.4755),   GfVec3f(0.1545, 0.0000, 0.4755),
-      GfVec3f(0.0000, -0.0000, -0.5000),  GfVec3f(0.0000, 0.0000, 0.5000)};
+  static const VtVec3fArray points{GfVec3f(0.1250, 0.0908, -0.4755),   GfVec3f(0.0477, 0.1469, -0.4755),
+                                   GfVec3f(-0.0477, 0.1469, -0.4755),  GfVec3f(-0.1250, 0.0908, -0.4755),
+                                   GfVec3f(-0.1545, -0.0000, -0.4755), GfVec3f(-0.1250, -0.0908, -0.4755),
+                                   GfVec3f(-0.0477, -0.1469, -0.4755), GfVec3f(0.0477, -0.1469, -0.4755),
+                                   GfVec3f(0.1250, -0.0908, -0.4755),  GfVec3f(0.1545, -0.0000, -0.4755),
+                                   GfVec3f(0.2378, 0.1727, -0.4045),   GfVec3f(0.0908, 0.2795, -0.4045),
+                                   GfVec3f(-0.0908, 0.2795, -0.4045),  GfVec3f(-0.2378, 0.1727, -0.4045),
+                                   GfVec3f(-0.2939, -0.0000, -0.4045), GfVec3f(-0.2378, -0.1727, -0.4045),
+                                   GfVec3f(-0.0908, -0.2795, -0.4045), GfVec3f(0.0908, -0.2795, -0.4045),
+                                   GfVec3f(0.2378, -0.1727, -0.4045),  GfVec3f(0.2939, -0.0000, -0.4045),
+                                   GfVec3f(0.3273, 0.2378, -0.2939),   GfVec3f(0.1250, 0.3847, -0.2939),
+                                   GfVec3f(-0.1250, 0.3847, -0.2939),  GfVec3f(-0.3273, 0.2378, -0.2939),
+                                   GfVec3f(-0.4045, -0.0000, -0.2939), GfVec3f(-0.3273, -0.2378, -0.2939),
+                                   GfVec3f(-0.1250, -0.3847, -0.2939), GfVec3f(0.1250, -0.3847, -0.2939),
+                                   GfVec3f(0.3273, -0.2378, -0.2939),  GfVec3f(0.4045, -0.0000, -0.2939),
+                                   GfVec3f(0.3847, 0.2795, -0.1545),   GfVec3f(0.1469, 0.4523, -0.1545),
+                                   GfVec3f(-0.1469, 0.4523, -0.1545),  GfVec3f(-0.3847, 0.2795, -0.1545),
+                                   GfVec3f(-0.4755, -0.0000, -0.1545), GfVec3f(-0.3847, -0.2795, -0.1545),
+                                   GfVec3f(-0.1469, -0.4523, -0.1545), GfVec3f(0.1469, -0.4523, -0.1545),
+                                   GfVec3f(0.3847, -0.2795, -0.1545),  GfVec3f(0.4755, -0.0000, -0.1545),
+                                   GfVec3f(0.4045, 0.2939, -0.0000),   GfVec3f(0.1545, 0.4755, -0.0000),
+                                   GfVec3f(-0.1545, 0.4755, -0.0000),  GfVec3f(-0.4045, 0.2939, -0.0000),
+                                   GfVec3f(-0.5000, -0.0000, 0.0000),  GfVec3f(-0.4045, -0.2939, 0.0000),
+                                   GfVec3f(-0.1545, -0.4755, 0.0000),  GfVec3f(0.1545, -0.4755, 0.0000),
+                                   GfVec3f(0.4045, -0.2939, 0.0000),   GfVec3f(0.5000, 0.0000, 0.0000),
+                                   GfVec3f(0.3847, 0.2795, 0.1545),    GfVec3f(0.1469, 0.4523, 0.1545),
+                                   GfVec3f(-0.1469, 0.4523, 0.1545),   GfVec3f(-0.3847, 0.2795, 0.1545),
+                                   GfVec3f(-0.4755, -0.0000, 0.1545),  GfVec3f(-0.3847, -0.2795, 0.1545),
+                                   GfVec3f(-0.1469, -0.4523, 0.1545),  GfVec3f(0.1469, -0.4523, 0.1545),
+                                   GfVec3f(0.3847, -0.2795, 0.1545),   GfVec3f(0.4755, 0.0000, 0.1545),
+                                   GfVec3f(0.3273, 0.2378, 0.2939),    GfVec3f(0.1250, 0.3847, 0.2939),
+                                   GfVec3f(-0.1250, 0.3847, 0.2939),   GfVec3f(-0.3273, 0.2378, 0.2939),
+                                   GfVec3f(-0.4045, -0.0000, 0.2939),  GfVec3f(-0.3273, -0.2378, 0.2939),
+                                   GfVec3f(-0.1250, -0.3847, 0.2939),  GfVec3f(0.1250, -0.3847, 0.2939),
+                                   GfVec3f(0.3273, -0.2378, 0.2939),   GfVec3f(0.4045, 0.0000, 0.2939),
+                                   GfVec3f(0.2378, 0.1727, 0.4045),    GfVec3f(0.0908, 0.2795, 0.4045),
+                                   GfVec3f(-0.0908, 0.2795, 0.4045),   GfVec3f(-0.2378, 0.1727, 0.4045),
+                                   GfVec3f(-0.2939, -0.0000, 0.4045),  GfVec3f(-0.2378, -0.1727, 0.4045),
+                                   GfVec3f(-0.0908, -0.2795, 0.4045),  GfVec3f(0.0908, -0.2795, 0.4045),
+                                   GfVec3f(0.2378, -0.1727, 0.4045),   GfVec3f(0.2939, 0.0000, 0.4045),
+                                   GfVec3f(0.1250, 0.0908, 0.4755),    GfVec3f(0.0477, 0.1469, 0.4755),
+                                   GfVec3f(-0.0477, 0.1469, 0.4755),   GfVec3f(-0.1250, 0.0908, 0.4755),
+                                   GfVec3f(-0.1545, -0.0000, 0.4755),  GfVec3f(-0.1250, -0.0908, 0.4755),
+                                   GfVec3f(-0.0477, -0.1469, 0.4755),  GfVec3f(0.0477, -0.1469, 0.4755),
+                                   GfVec3f(0.1250, -0.0908, 0.4755),   GfVec3f(0.1545, 0.0000, 0.4755),
+                                   GfVec3f(0.0000, -0.0000, -0.5000),  GfVec3f(0.0000, 0.0000, 0.5000)};
 
   return points;
 }
@@ -490,10 +488,9 @@ const VtVec3fArray &UsdImagingGetUnitSphereMeshPoints()
 const PxOsdMeshTopology &UsdImagingGetUnitCubeMeshTopology()
 {
   static const VtIntArray numVerts{4, 4, 4, 4, 4, 4};
-  static const VtIntArray verts{0, 1, 2, 3, 4, 5, 6, 7, 0, 6, 5, 1,
-                                4, 7, 3, 2, 0, 3, 7, 6, 4, 2, 1, 5};
+  static const VtIntArray verts{0, 1, 2, 3, 4, 5, 6, 7, 0, 6, 5, 1, 4, 7, 3, 2, 0, 3, 7, 6, 4, 2, 1, 5};
   static const PxOsdMeshTopology cubeTopo(
-      PxOsdOpenSubdivTokens->bilinear, PxOsdOpenSubdivTokens->rightHanded, numVerts, verts);
+    PxOsdOpenSubdivTokens->bilinear, PxOsdOpenSubdivTokens->rightHanded, numVerts, verts);
 
   return cubeTopo;
 }
@@ -590,7 +587,7 @@ const PxOsdMeshTopology &UsdImagingGetUnitConeMeshTopology()
                                 21,
                                 30};
   static const PxOsdMeshTopology coneTopo(
-      PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->rightHanded, numVerts, verts);
+    PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->rightHanded, numVerts, verts);
 
   return coneTopo;
 }
@@ -600,23 +597,22 @@ const VtVec3fArray &UsdImagingGetUnitConeMeshPoints()
   // Note: This is a faithful capture of what was being procedurally generated
   // previously, but it certainly appears it (and the topology) could stand to
   // be optimized a bit to remove redundant points.
-  static const VtVec3fArray points{
-      GfVec3f(0.0000, 0.0000, -0.5000),   GfVec3f(0.5000, 0.0000, -0.5000),
-      GfVec3f(0.4045, 0.2939, -0.5000),   GfVec3f(0.1545, 0.4755, -0.5000),
-      GfVec3f(-0.1545, 0.4755, -0.5000),  GfVec3f(-0.4045, 0.2939, -0.5000),
-      GfVec3f(-0.5000, 0.0000, -0.5000),  GfVec3f(-0.4045, -0.2939, -0.5000),
-      GfVec3f(-0.1545, -0.4755, -0.5000), GfVec3f(0.1545, -0.4755, -0.5000),
-      GfVec3f(0.4045, -0.2939, -0.5000),  GfVec3f(0.5000, 0.0000, -0.5000),
-      GfVec3f(0.4045, 0.2939, -0.5000),   GfVec3f(0.1545, 0.4755, -0.5000),
-      GfVec3f(-0.1545, 0.4755, -0.5000),  GfVec3f(-0.4045, 0.2939, -0.5000),
-      GfVec3f(-0.5000, 0.0000, -0.5000),  GfVec3f(-0.4045, -0.2939, -0.5000),
-      GfVec3f(-0.1545, -0.4755, -0.5000), GfVec3f(0.1545, -0.4755, -0.5000),
-      GfVec3f(0.4045, -0.2939, -0.5000),  GfVec3f(0.0000, 0.0000, 0.5000),
-      GfVec3f(0.0000, 0.0000, 0.5000),    GfVec3f(0.0000, 0.0000, 0.5000),
-      GfVec3f(0.0000, 0.0000, 0.5000),    GfVec3f(0.0000, 0.0000, 0.5000),
-      GfVec3f(0.0000, 0.0000, 0.5000),    GfVec3f(0.0000, 0.0000, 0.5000),
-      GfVec3f(0.0000, 0.0000, 0.5000),    GfVec3f(0.0000, 0.0000, 0.5000),
-      GfVec3f(0.0000, 0.0000, 0.5000)};
+  static const VtVec3fArray points{GfVec3f(0.0000, 0.0000, -0.5000),   GfVec3f(0.5000, 0.0000, -0.5000),
+                                   GfVec3f(0.4045, 0.2939, -0.5000),   GfVec3f(0.1545, 0.4755, -0.5000),
+                                   GfVec3f(-0.1545, 0.4755, -0.5000),  GfVec3f(-0.4045, 0.2939, -0.5000),
+                                   GfVec3f(-0.5000, 0.0000, -0.5000),  GfVec3f(-0.4045, -0.2939, -0.5000),
+                                   GfVec3f(-0.1545, -0.4755, -0.5000), GfVec3f(0.1545, -0.4755, -0.5000),
+                                   GfVec3f(0.4045, -0.2939, -0.5000),  GfVec3f(0.5000, 0.0000, -0.5000),
+                                   GfVec3f(0.4045, 0.2939, -0.5000),   GfVec3f(0.1545, 0.4755, -0.5000),
+                                   GfVec3f(-0.1545, 0.4755, -0.5000),  GfVec3f(-0.4045, 0.2939, -0.5000),
+                                   GfVec3f(-0.5000, 0.0000, -0.5000),  GfVec3f(-0.4045, -0.2939, -0.5000),
+                                   GfVec3f(-0.1545, -0.4755, -0.5000), GfVec3f(0.1545, -0.4755, -0.5000),
+                                   GfVec3f(0.4045, -0.2939, -0.5000),  GfVec3f(0.0000, 0.0000, 0.5000),
+                                   GfVec3f(0.0000, 0.0000, 0.5000),    GfVec3f(0.0000, 0.0000, 0.5000),
+                                   GfVec3f(0.0000, 0.0000, 0.5000),    GfVec3f(0.0000, 0.0000, 0.5000),
+                                   GfVec3f(0.0000, 0.0000, 0.5000),    GfVec3f(0.0000, 0.0000, 0.5000),
+                                   GfVec3f(0.0000, 0.0000, 0.5000),    GfVec3f(0.0000, 0.0000, 0.5000),
+                                   GfVec3f(0.0000, 0.0000, 0.5000)};
 
   return points;
 }
@@ -731,35 +727,34 @@ const PxOsdMeshTopology &UsdImagingGetUnitCylinderMeshTopology()
                                 31,
                                 41};
   static const PxOsdMeshTopology cylinderTopo(
-      PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->rightHanded, numVerts, verts);
+    PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->rightHanded, numVerts, verts);
 
   return cylinderTopo;
 }
 
 const VtVec3fArray &UsdImagingGetUnitCylinderMeshPoints()
 {
-  static const VtVec3fArray points{
-      GfVec3f(0.0000, 0.0000, -0.5000),   GfVec3f(0.5000, 0.0000, -0.5000),
-      GfVec3f(0.4045, 0.2939, -0.5000),   GfVec3f(0.1545, 0.4755, -0.5000),
-      GfVec3f(-0.1545, 0.4755, -0.5000),  GfVec3f(-0.4045, 0.2939, -0.5000),
-      GfVec3f(-0.5000, 0.0000, -0.5000),  GfVec3f(-0.4045, -0.2939, -0.5000),
-      GfVec3f(-0.1545, -0.4755, -0.5000), GfVec3f(0.1545, -0.4755, -0.5000),
-      GfVec3f(0.4045, -0.2939, -0.5000),  GfVec3f(0.5000, 0.0000, -0.5000),
-      GfVec3f(0.4045, 0.2939, -0.5000),   GfVec3f(0.1545, 0.4755, -0.5000),
-      GfVec3f(-0.1545, 0.4755, -0.5000),  GfVec3f(-0.4045, 0.2939, -0.5000),
-      GfVec3f(-0.5000, 0.0000, -0.5000),  GfVec3f(-0.4045, -0.2939, -0.5000),
-      GfVec3f(-0.1545, -0.4755, -0.5000), GfVec3f(0.1545, -0.4755, -0.5000),
-      GfVec3f(0.4045, -0.2939, -0.5000),  GfVec3f(0.5000, 0.0000, 0.5000),
-      GfVec3f(0.4045, 0.2939, 0.5000),    GfVec3f(0.1545, 0.4755, 0.5000),
-      GfVec3f(-0.1545, 0.4755, 0.5000),   GfVec3f(-0.4045, 0.2939, 0.5000),
-      GfVec3f(-0.5000, 0.0000, 0.5000),   GfVec3f(-0.4045, -0.2939, 0.5000),
-      GfVec3f(-0.1545, -0.4755, 0.5000),  GfVec3f(0.1545, -0.4755, 0.5000),
-      GfVec3f(0.4045, -0.2939, 0.5000),   GfVec3f(0.5000, 0.0000, 0.5000),
-      GfVec3f(0.4045, 0.2939, 0.5000),    GfVec3f(0.1545, 0.4755, 0.5000),
-      GfVec3f(-0.1545, 0.4755, 0.5000),   GfVec3f(-0.4045, 0.2939, 0.5000),
-      GfVec3f(-0.5000, 0.0000, 0.5000),   GfVec3f(-0.4045, -0.2939, 0.5000),
-      GfVec3f(-0.1545, -0.4755, 0.5000),  GfVec3f(0.1545, -0.4755, 0.5000),
-      GfVec3f(0.4045, -0.2939, 0.5000),   GfVec3f(0.0000, 0.0000, 0.5000)};
+  static const VtVec3fArray points{GfVec3f(0.0000, 0.0000, -0.5000),   GfVec3f(0.5000, 0.0000, -0.5000),
+                                   GfVec3f(0.4045, 0.2939, -0.5000),   GfVec3f(0.1545, 0.4755, -0.5000),
+                                   GfVec3f(-0.1545, 0.4755, -0.5000),  GfVec3f(-0.4045, 0.2939, -0.5000),
+                                   GfVec3f(-0.5000, 0.0000, -0.5000),  GfVec3f(-0.4045, -0.2939, -0.5000),
+                                   GfVec3f(-0.1545, -0.4755, -0.5000), GfVec3f(0.1545, -0.4755, -0.5000),
+                                   GfVec3f(0.4045, -0.2939, -0.5000),  GfVec3f(0.5000, 0.0000, -0.5000),
+                                   GfVec3f(0.4045, 0.2939, -0.5000),   GfVec3f(0.1545, 0.4755, -0.5000),
+                                   GfVec3f(-0.1545, 0.4755, -0.5000),  GfVec3f(-0.4045, 0.2939, -0.5000),
+                                   GfVec3f(-0.5000, 0.0000, -0.5000),  GfVec3f(-0.4045, -0.2939, -0.5000),
+                                   GfVec3f(-0.1545, -0.4755, -0.5000), GfVec3f(0.1545, -0.4755, -0.5000),
+                                   GfVec3f(0.4045, -0.2939, -0.5000),  GfVec3f(0.5000, 0.0000, 0.5000),
+                                   GfVec3f(0.4045, 0.2939, 0.5000),    GfVec3f(0.1545, 0.4755, 0.5000),
+                                   GfVec3f(-0.1545, 0.4755, 0.5000),   GfVec3f(-0.4045, 0.2939, 0.5000),
+                                   GfVec3f(-0.5000, 0.0000, 0.5000),   GfVec3f(-0.4045, -0.2939, 0.5000),
+                                   GfVec3f(-0.1545, -0.4755, 0.5000),  GfVec3f(0.1545, -0.4755, 0.5000),
+                                   GfVec3f(0.4045, -0.2939, 0.5000),   GfVec3f(0.5000, 0.0000, 0.5000),
+                                   GfVec3f(0.4045, 0.2939, 0.5000),    GfVec3f(0.1545, 0.4755, 0.5000),
+                                   GfVec3f(-0.1545, 0.4755, 0.5000),   GfVec3f(-0.4045, 0.2939, 0.5000),
+                                   GfVec3f(-0.5000, 0.0000, 0.5000),   GfVec3f(-0.4045, -0.2939, 0.5000),
+                                   GfVec3f(-0.1545, -0.4755, 0.5000),  GfVec3f(0.1545, -0.4755, 0.5000),
+                                   GfVec3f(0.4045, -0.2939, 0.5000),   GfVec3f(0.0000, 0.0000, 0.5000)};
 
   return points;
 }
@@ -781,7 +776,7 @@ const PxOsdMeshTopology &UsdImagingGetCapsuleMeshTopology()
   // other primitives, but it's not a bad idea to keep the code around as long
   // as we also have to generate the points dynamically.
   static const PxOsdMeshTopology capsuleTopo = []() {
-    const int numCounts  = _capsuleSlices * (_capsuleStacks + 2 * _capsuleCapStacks);
+    const int numCounts = _capsuleSlices * (_capsuleStacks + 2 * _capsuleCapStacks);
     const int numIndices = 4 * _capsuleSlices * _capsuleStacks                 // cylinder quads
                            + 4 * 2 * _capsuleSlices * (_capsuleCapStacks - 1)  // hemisphere quads
                            + 3 * 2 * _capsuleSlices;                           // end cap tris
@@ -798,7 +793,7 @@ const PxOsdMeshTopology &UsdImagingGetCapsuleMeshTopology()
     // base hemisphere end cap triangles
     int base = p++;
     for (int i = 0; i < _capsuleSlices; ++i) {
-      counts[face++]   = 3;
+      counts[face++] = 3;
       indices[index++] = p + (i + 1) % _capsuleSlices;
       indices[index++] = p + i;
       indices[index++] = base;
@@ -807,11 +802,11 @@ const PxOsdMeshTopology &UsdImagingGetCapsuleMeshTopology()
     // middle and hemisphere quads
     for (int i = 0; i < _capsuleStacks + 2 * (_capsuleCapStacks - 1); ++i) {
       for (int j = 0; j < _capsuleSlices; ++j) {
-        float x0         = 0;
-        float x1         = x0 + _capsuleSlices;
-        float y0         = j;
-        float y1         = (j + 1) % _capsuleSlices;
-        counts[face++]   = 4;
+        float x0 = 0;
+        float x1 = x0 + _capsuleSlices;
+        float y0 = j;
+        float y1 = (j + 1) % _capsuleSlices;
+        counts[face++] = 4;
         indices[index++] = p + x0 + y0;
         indices[index++] = p + x0 + y1;
         indices[index++] = p + x1 + y1;
@@ -823,7 +818,7 @@ const PxOsdMeshTopology &UsdImagingGetCapsuleMeshTopology()
     // top hemisphere end cap triangles
     int top = p + _capsuleSlices;
     for (int i = 0; i < _capsuleSlices; ++i) {
-      counts[face++]   = 3;
+      counts[face++] = 3;
       indices[index++] = p + i;
       indices[index++] = p + (i + 1) % _capsuleSlices;
       indices[index++] = top;
@@ -831,10 +826,8 @@ const PxOsdMeshTopology &UsdImagingGetCapsuleMeshTopology()
 
     TF_VERIFY(face == numCounts && index == numIndices);
 
-    return PxOsdMeshTopology(PxOsdOpenSubdivTokens->catmullClark,
-                             PxOsdOpenSubdivTokens->rightHanded,
-                             countsArray,
-                             indicesArray);
+    return PxOsdMeshTopology(
+      PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->rightHanded, countsArray, indicesArray);
   }();
 
   return capsuleTopo;
@@ -852,18 +845,18 @@ VtVec3fArray UsdImagingGenerateCapsuleMeshPoints(const double height,
   // choose basis vectors aligned with the spine axis
   GfVec3f u, v, spine;
   if (axis == UsdGeomTokens->x) {
-    u     = GfVec3f::YAxis();
-    v     = GfVec3f::ZAxis();
+    u = GfVec3f::YAxis();
+    v = GfVec3f::ZAxis();
     spine = GfVec3f::XAxis();
   }
   else if (axis == UsdGeomTokens->y) {
-    u     = GfVec3f::ZAxis();
-    v     = GfVec3f::XAxis();
+    u = GfVec3f::ZAxis();
+    v = GfVec3f::XAxis();
     spine = GfVec3f::YAxis();
   }
   else {  // (axis == UsdGeomTokens->z)
-    u     = GfVec3f::XAxis();
-    v     = GfVec3f::YAxis();
+    u = GfVec3f::XAxis();
+    v = GfVec3f::YAxis();
     spine = GfVec3f::ZAxis();
   }
 
@@ -925,8 +918,7 @@ VtVec3fArray UsdImagingGenerateCapsuleMeshPoints(const double height,
 
 GfMatrix4d UsdImagingGenerateSphereOrCubeTransform(const double size)
 {
-  return GfMatrix4d(
-      size, 0.0, 0.0, 0.0, 0.0, size, 0.0, 0.0, 0.0, 0.0, size, 0.0, 0.0, 0.0, 0.0, 1.0);
+  return GfMatrix4d(size, 0.0, 0.0, 0.0, 0.0, size, 0.0, 0.0, 0.0, 0.0, size, 0.0, 0.0, 0.0, 0.0, 1.0);
 }
 
 GfMatrix4d UsdImagingGenerateConeOrCylinderTransform(const double height,
@@ -935,58 +927,16 @@ GfMatrix4d UsdImagingGenerateConeOrCylinderTransform(const double height,
 {
   const double diameter = 2.0 * radius;
   if (axis == UsdGeomTokens->x) {
-    return GfMatrix4d(0.0,
-                      diameter,
-                      0.0,
-                      0.0,
-                      0.0,
-                      0.0,
-                      diameter,
-                      0.0,
-                      height,
-                      0.0,
-                      0.0,
-                      0.0,
-                      0.0,
-                      0.0,
-                      0.0,
-                      1.0);
+    return GfMatrix4d(
+      0.0, diameter, 0.0, 0.0, 0.0, 0.0, diameter, 0.0, height, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
   }
   else if (axis == UsdGeomTokens->y) {
-    return GfMatrix4d(0.0,
-                      0.0,
-                      diameter,
-                      0.0,
-                      diameter,
-                      0.0,
-                      0.0,
-                      0.0,
-                      0.0,
-                      height,
-                      0.0,
-                      0.0,
-                      0.0,
-                      0.0,
-                      0.0,
-                      1.0);
+    return GfMatrix4d(
+      0.0, 0.0, diameter, 0.0, diameter, 0.0, 0.0, 0.0, 0.0, height, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
   }
   else {  // (axis == UsdGeomTokens->z)
-    return GfMatrix4d(diameter,
-                      0.0,
-                      0.0,
-                      0.0,
-                      0.0,
-                      diameter,
-                      0.0,
-                      0.0,
-                      0.0,
-                      0.0,
-                      height,
-                      0.0,
-                      0.0,
-                      0.0,
-                      0.0,
-                      1.0);
+    return GfMatrix4d(
+      diameter, 0.0, 0.0, 0.0, 0.0, diameter, 0.0, 0.0, 0.0, 0.0, height, 0.0, 0.0, 0.0, 0.0, 1.0);
   }
 }
 

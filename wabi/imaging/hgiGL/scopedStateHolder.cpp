@@ -41,26 +41,26 @@
 WABI_NAMESPACE_BEGIN
 
 HgiGL_ScopedStateHolder::HgiGL_ScopedStateHolder()
-    : _restoreDrawFramebuffer(0),
-      _restoreReadFramebuffer(0),
-      _restoreRenderBuffer(0),
-      _restoreVao(0),
-      _restoreDepthTest(false),
-      _restoreDepthWriteMask(false),
-      _restoreStencilWriteMask(0),
-      _restoreDepthFunc(0),
-      _restoreViewport{0, 0, 0, 0},
-      _restoreblendEnabled(false),
-      _restoreColorOp(0),
-      _restoreAlphaOp(0),
-      _restoreAlphaToCoverage(false),
-      _restoreSampleAlphaToOne(false),
-      _lineWidth(1.0f),
-      _cullFace(true),
-      _cullMode(GL_BACK),
-      _frontFace(GL_CCW),
-      _rasterizerDiscard(true),
-      _restoreFramebufferSRGB(false)
+  : _restoreDrawFramebuffer(0),
+    _restoreReadFramebuffer(0),
+    _restoreRenderBuffer(0),
+    _restoreVao(0),
+    _restoreDepthTest(false),
+    _restoreDepthWriteMask(false),
+    _restoreStencilWriteMask(0),
+    _restoreDepthFunc(0),
+    _restoreViewport{0, 0, 0, 0},
+    _restoreblendEnabled(false),
+    _restoreColorOp(0),
+    _restoreAlphaOp(0),
+    _restoreAlphaToCoverage(false),
+    _restoreSampleAlphaToOne(false),
+    _lineWidth(1.0f),
+    _cullFace(true),
+    _cullMode(GL_BACK),
+    _frontFace(GL_CCW),
+    _rasterizerDiscard(true),
+    _restoreFramebufferSRGB(false)
 {
   TRACE_FUNCTION();
 
@@ -128,7 +128,7 @@ HgiGL_ScopedStateHolder::~HgiGL_ScopedStateHolder()
   }
 
   glBlendFuncSeparate(
-      _restoreColorSrcFnOp, _restoreColorDstFnOp, _restoreAlphaSrcFnOp, _restoreAlphaDstFnOp);
+    _restoreColorSrcFnOp, _restoreColorDstFnOp, _restoreAlphaSrcFnOp, _restoreAlphaDstFnOp);
   glBlendEquationSeparate(_restoreColorOp, _restoreAlphaOp);
 
   if (_restoreblendEnabled) {

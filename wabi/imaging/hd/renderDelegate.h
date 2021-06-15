@@ -46,10 +46,10 @@ class HdRenderPass;
 class HdInstancer;
 class HdDriver;
 
-using HdRenderPassSharedPtr       = std::shared_ptr<class HdRenderPass>;
-using HdRenderPassStateSharedPtr  = std::shared_ptr<class HdRenderPassState>;
+using HdRenderPassSharedPtr = std::shared_ptr<class HdRenderPass>;
+using HdRenderPassStateSharedPtr = std::shared_ptr<class HdRenderPassState>;
 using HdResourceRegistrySharedPtr = std::shared_ptr<class HdResourceRegistry>;
-using HdDriverVector              = std::vector<HdDriver *>;
+using HdDriverVector = std::vector<HdDriver *>;
 
 ///
 /// The HdRenderParam is an opaque (to core Hydra) handle, to an object

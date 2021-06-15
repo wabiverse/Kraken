@@ -76,8 +76,8 @@ class TfType {
 
  public:
   enum LegacyFlags {
-    ABSTRACT       = 0x01,  ///< Abstract (unmanufacturable and unclonable)
-    CONCRETE       = 0x02,  ///< Not abstract
+    ABSTRACT = 0x01,        ///< Abstract (unmanufacturable and unclonable)
+    CONCRETE = 0x02,        ///< Not abstract
     MANUFACTURABLE = 0x08,  ///< Manufacturable type (implies concrete)
   };
 
@@ -672,19 +672,18 @@ class TfType {
 
   // PyPolymorphic case.
   template<class T>
-  static
-      typename std::enable_if<std::is_base_of<PyPolymorphicBase, T>::value, TfType const &>::type
-      _FindImpl(T const *rawPtr)
+  static typename std::enable_if<std::is_base_of<PyPolymorphicBase, T>::value, TfType const &>::type
+  _FindImpl(T const *rawPtr)
   {
     return _FindImplPyPolymorphic(static_cast<PyPolymorphicBase const *>(rawPtr));
   }
 
   // Polymorphic.
   template<class T>
-  static typename std::enable_if<std::is_polymorphic<T>::value &&
-                                     !std::is_base_of<PyPolymorphicBase, T>::value,
-                                 TfType const &>::type
-  _FindImpl(T const *rawPtr)
+  static
+    typename std::enable_if<std::is_polymorphic<T>::value && !std::is_base_of<PyPolymorphicBase, T>::value,
+                            TfType const &>::type
+    _FindImpl(T const *rawPtr)
   {
     if (auto ptr = dynamic_cast<PyPolymorphicBase const *>(rawPtr))
       return _FindImplPyPolymorphic(ptr);
@@ -693,7 +692,7 @@ class TfType {
 
   template<class T>
   static typename std::enable_if<!std::is_polymorphic<T>::value, TfType const &>::type _FindImpl(
-      T const *rawPtr)
+    T const *rawPtr)
   {
     return Find(typeid(T));
   }
@@ -701,14 +700,14 @@ class TfType {
 #else
   template<class T>
   static typename std::enable_if<std::is_polymorphic<T>::value, TfType const &>::type _FindImpl(
-      T const *rawPtr)
+    T const *rawPtr)
   {
     return Find(typeid(*rawPtr));
   }
 
   template<class T>
   static typename std::enable_if<!std::is_polymorphic<T>::value, TfType const &>::type _FindImpl(
-      T const *rawPtr)
+    T const *rawPtr)
   {
     return Find(typeid(T));
   }
@@ -742,10 +741,7 @@ class TfType {
 
   // Define this TfType to have the given type_info.
   TF_API
-  void _DefineCppType(const std::type_info &,
-                      size_t sizeofType,
-                      bool isPodType,
-                      bool isEnumType) const;
+  void _DefineCppType(const std::type_info &, size_t sizeofType, bool isPodType, bool isEnumType) const;
 
   // Execute the definition callback if one exists.
   void _ExecuteDefinitionCallback() const;

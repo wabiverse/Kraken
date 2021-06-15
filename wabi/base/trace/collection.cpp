@@ -74,7 +74,7 @@ void TraceCollection::_Iterate(Visitor &visitor, bool doReverse) const
   visitor.OnBeginCollection();
   for (const EventTable::value_type &i : _eventsPerThread) {
     const TraceThreadId &threadIndex = i.first;
-    const EventListPtr &events       = i.second;
+    const EventListPtr &events = i.second;
     visitor.OnBeginThread(threadIndex);
 
     if (doReverse) {

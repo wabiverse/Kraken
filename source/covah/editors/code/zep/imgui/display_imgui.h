@@ -24,9 +24,7 @@ static AnchorWChar greek_range[] = {0x300, 0x52F, 0x1f00, 0x1fff, 0, 0};
 
 class ZepFont_ANCHOR : public ZepFont {
  public:
-  ZepFont_ANCHOR(ZepDisplay &display, AnchorFont *pFont, int pixelHeight)
-      : ZepFont(display),
-        m_pFont(pFont)
+  ZepFont_ANCHOR(ZepDisplay &display, AnchorFont *pFont, int pixelHeight) : ZepFont(display), m_pFont(pFont)
   {
     SetPixelHeight(pixelHeight);
   }
@@ -41,14 +39,14 @@ class ZepFont_ANCHOR : public ZepFont {
   {
     // This is the code from ANCHOR internals; we can't call GetTextSize, because it doesn't return
     // the correct 'advance' formula, which we need as we draw one character at a time...
-    const float font_size   = m_pFont->FontSize;
+    const float font_size = m_pFont->FontSize;
     wabi::GfVec2f text_size = m_pFont->CalcTextSizeA(
-        float(GetPixelHeight()), FLT_MAX, FLT_MAX, (const char *)pBegin, (const char *)pEnd, NULL);
+      float(GetPixelHeight()), FLT_MAX, FLT_MAX, (const char *)pBegin, (const char *)pEnd, NULL);
     if (text_size[0] == 0.0) {
       // Make invalid characters a default fixed_size
       const char chDefault = 'A';
-      text_size            = m_pFont->CalcTextSizeA(
-          float(GetPixelHeight()), FLT_MAX, FLT_MAX, &chDefault, (&chDefault + 1), NULL);
+      text_size = m_pFont->CalcTextSizeA(
+        float(GetPixelHeight()), FLT_MAX, FLT_MAX, &chDefault, (&chDefault + 1), NULL);
     }
 
     return toNVec2f(text_size);
@@ -75,7 +73,7 @@ class ZepDisplay_ANCHOR : public ZepDisplay {
                  const uint8_t *text_begin,
                  const uint8_t *text_end) const override
   {
-    auto imFont          = static_cast<ZepFont_ANCHOR &>(font).GetAnchorFont();
+    auto imFont = static_cast<ZepFont_ANCHOR &>(font).GetAnchorFont();
     ImDrawList *drawList = ANCHOR::GetWindowDrawList();
     if (text_end == nullptr) {
       text_end = text_begin + strlen((const char *)text_begin);
@@ -100,10 +98,7 @@ class ZepDisplay_ANCHOR : public ZepDisplay {
     }
   }
 
-  void DrawLine(const NVec2f &start,
-                const NVec2f &end,
-                const NVec4f &color,
-                float width) const override
+  void DrawLine(const NVec2f &start, const NVec2f &end, const NVec4f &color, float width) const override
   {
     ImDrawList *drawList = ANCHOR::GetWindowDrawList();
     // Background rect for numbers
@@ -122,13 +117,11 @@ class ZepDisplay_ANCHOR : public ZepDisplay {
     ImDrawList *drawList = ANCHOR::GetWindowDrawList();
     // Background rect for numbers
     if (m_clipRect.Width() == 0) {
-      drawList->AddRectFilled(
-          toNVec2f(rc.topLeftPx), toNVec2f(rc.bottomRightPx), ToPackedABGR(color));
+      drawList->AddRectFilled(toNVec2f(rc.topLeftPx), toNVec2f(rc.bottomRightPx), ToPackedABGR(color));
     }
     else {
       drawList->PushClipRect(toNVec2f(m_clipRect.topLeftPx), toNVec2f(m_clipRect.bottomRightPx));
-      drawList->AddRectFilled(
-          toNVec2f(rc.topLeftPx), toNVec2f(rc.bottomRightPx), ToPackedABGR(color));
+      drawList->AddRectFilled(toNVec2f(rc.topLeftPx), toNVec2f(rc.bottomRightPx), ToPackedABGR(color));
       drawList->PopClipRect();
     }
   }
@@ -142,7 +135,7 @@ class ZepDisplay_ANCHOR : public ZepDisplay {
   {
     if (m_fonts[(int)type] == nullptr) {
       m_fonts[(int)type] = std::make_shared<ZepFont_ANCHOR>(
-          *this, ANCHOR::GetIO().Fonts[0].Fonts[FONT_DANKMONO], int(16.0f * GetPixelScale().y));
+        *this, ANCHOR::GetIO().Fonts[0].Fonts[FONT_DANKMONO], int(16.0f * GetPixelScale().y));
     }
     return *m_fonts[(int)type];
   }

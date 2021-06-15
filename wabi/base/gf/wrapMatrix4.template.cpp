@@ -99,95 +99,77 @@ RemoveScaleShearWrapper(const {{MAT}} & self)
 { % endblock customFunctions % }
 
 { % block customInit % }
-    .def(init<const vector<float> &,
-              const vector<float> &,
-              const vector<float> &,
-              const vector<float> &>())
-    .def(init<const vector<double> &,
-              const vector<double> &,
-              const vector<double> &,
-              const vector<double> &>())
-    .def(init<const GfMatrix3{{SCL[0]}} &, const GfVec3{{SCL[0]}}>())
-    .def(init<const GfRotation &, const GfVec3{{SCL[0]}}>()){ % endblock customInit % }
+  .def(init<const vector<float> &, const vector<float> &, const vector<float> &, const vector<float> &>())
+  .def(
+    init<const vector<double> &, const vector<double> &, const vector<double> &, const vector<double> &>())
+  .def(init<const GfMatrix3{{SCL[0]}} &, const GfVec3{{SCL[0]}}>())
+  .def(init<const GfRotation &, const GfVec3{{SCL[0]}}>()){ % endblock customInit % }
 
 { % block customDefs % }
-    .def("GetRow3", &This::GetRow3)
-    .def("SetRow3", &This::SetRow3)
-    .def("GetDeterminant3", &This::GetDeterminant3)
-    .def("HasOrthogonalRows3", &This::HasOrthogonalRows3)
+  .def("GetRow3", &This::GetRow3)
+  .def("SetRow3", &This::SetRow3)
+  .def("GetDeterminant3", &This::GetDeterminant3)
+  .def("HasOrthogonalRows3", &This::HasOrthogonalRows3)
 
-    .def("GetHandedness", &This::GetHandedness)
-    .def("IsLeftHanded", &This::IsLeftHanded)
-    .def("IsRightHanded", &This::IsRightHanded)
+  .def("GetHandedness", &This::GetHandedness)
+  .def("IsLeftHanded", &This::IsLeftHanded)
+  .def("IsRightHanded", &This::IsRightHanded)
 
-    .def("Orthonormalize", &This::Orthonormalize, (arg("issueWarning") = true))
-    .def("GetOrthonormalized", &This::GetOrthonormalized, (arg("issueWarning") = true)){
-        % endblock customDefs % }
+  .def("Orthonormalize", &This::Orthonormalize, (arg("issueWarning") = true))
+  .def("GetOrthonormalized", &This::GetOrthonormalized, (arg("issueWarning") = true)){
+    % endblock customDefs % }
 
 { % block customXformDefs % }
-    .def("SetTransform",
-         (This & (This::*)(const GfRotation &, const GfVec3{{SCL[0]}} &)) & This::SetTransform,
-         return_self<>())
-    .def("SetTransform",
-         (This & (This::*)(const GfMatrix3{{SCL[0]}} &, const GfVec3{{SCL[0]}} &)) &
-             This::SetTransform,
-         return_self<>())
+  .def("SetTransform",
+       (This & (This::*)(const GfRotation &, const GfVec3{{SCL[0]}} &)) & This::SetTransform,
+       return_self<>())
+  .def("SetTransform",
+       (This & (This::*)(const GfMatrix3{{SCL[0]}} &, const GfVec3{{SCL[0]}} &)) & This::SetTransform,
+       return_self<>())
 
-    .def("SetScale",
-         (This & (This::*)(const GfVec3{{SCL[0]}} &)) & This::SetScale,
-         return_self<>())
+  .def("SetScale", (This & (This::*)(const GfVec3{{SCL[0]}} &)) & This::SetScale, return_self<>())
 
-    .def("SetTranslate", &This::SetTranslate, return_self<>())
-    .def("SetTranslateOnly", &This::SetTranslateOnly, return_self<>())
+  .def("SetTranslate", &This::SetTranslate, return_self<>())
+  .def("SetTranslateOnly", &This::SetTranslateOnly, return_self<>())
 
-    .def("SetRotate",
-         (This & (This::*)(const GfQuat{{SCL[0]}} &)) & This::SetRotate,
-         return_self<>())
-    .def("SetRotateOnly",
-         (This & (This::*)(const GfQuat{{SCL[0]}} &)) & This::SetRotateOnly,
-         return_self<>())
+  .def("SetRotate", (This & (This::*)(const GfQuat{{SCL[0]}} &)) & This::SetRotate, return_self<>())
+  .def("SetRotateOnly", (This & (This::*)(const GfQuat{{SCL[0]}} &)) & This::SetRotateOnly, return_self<>())
 
-    .def("SetRotate", (This & (This::*)(const GfRotation &)) & This::SetRotate, return_self<>())
-    .def("SetRotateOnly",
-         (This & (This::*)(const GfRotation &)) & This::SetRotateOnly,
-         return_self<>())
+  .def("SetRotate", (This & (This::*)(const GfRotation &)) & This::SetRotate, return_self<>())
+  .def("SetRotateOnly", (This & (This::*)(const GfRotation &)) & This::SetRotateOnly, return_self<>())
 
-    .def("SetRotate",
-         (This & (This::*)(const GfMatrix3{{SCL[0]}} &)) & This::SetRotate,
-         return_self<>())
-    .def("SetRotateOnly",
-         (This & (This::*)(const GfMatrix3{{SCL[0]}} &)) & This::SetRotateOnly,
-         return_self<>())
+  .def("SetRotate", (This & (This::*)(const GfMatrix3{{SCL[0]}} &)) & This::SetRotate, return_self<>())
+  .def("SetRotateOnly",
+       (This & (This::*)(const GfMatrix3{{SCL[0]}} &)) & This::SetRotateOnly,
+       return_self<>())
 
-    .def("SetLookAt",
-         (This & (This::*)(const GfVec3{{SCL[0]}} &,
-                           const GfVec3{{SCL[0]}} &,
-                           const GfVec3{{SCL[0]}} &)) &
-             This::SetLookAt,
-         return_self<>())
+  .def("SetLookAt",
+       (This & (This::*)(const GfVec3{{SCL[0]}} &, const GfVec3{{SCL[0]}} &, const GfVec3{{SCL[0]}} &)) &
+         This::SetLookAt,
+       return_self<>())
 
-    .def("SetLookAt",
-         (This & (This::*)(const GfVec3{{SCL[0]}} &, const GfRotation &)) & This::SetLookAt,
-         return_self<>())
+  .def("SetLookAt",
+       (This & (This::*)(const GfVec3{{SCL[0]}} &, const GfRotation &)) & This::SetLookAt,
+       return_self<>())
 
-    .def("ExtractTranslation", &This::ExtractTranslation)
-    .def("ExtractRotation", &This::ExtractRotation)
-    .def("ExtractRotationMatrix", &This::ExtractRotationMatrix)
-    .def("ExtractRotationQuat", &This::ExtractRotationQuat)
+  .def("ExtractTranslation", &This::ExtractTranslation)
+  .def("ExtractRotation", &This::ExtractRotation)
+  .def("ExtractRotationMatrix", &This::ExtractRotationMatrix)
+  .def("ExtractRotationQuat", &This::ExtractRotationQuat)
 
-    .def("Factor", FactorWithEpsilon)
-    .def("Factor", Factor)
-    .def("RemoveScaleShear", RemoveScaleShearWrapper)
+  .def("Factor", FactorWithEpsilon)
+  .def("Factor", Factor)
+  .def("RemoveScaleShear", RemoveScaleShearWrapper)
 
-    .def("Transform", (GfVec3f(This::*)(const GfVec3f &) const) & This::Transform)
-    .def("Transform", (GfVec3d(This::*)(const GfVec3d &) const) & This::Transform)
+  .def("Transform", (GfVec3f(This::*)(const GfVec3f &) const) & This::Transform)
+  .def("Transform", (GfVec3d(This::*)(const GfVec3d &) const) & This::Transform)
 
-    .def("TransformDir", (GfVec3f(This::*)(const GfVec3f &) const) & This::TransformDir)
-    .def("TransformDir", (GfVec3d(This::*)(const GfVec3d &) const) & This::TransformDir)
+  .def("TransformDir", (GfVec3f(This::*)(const GfVec3f &) const) & This::TransformDir)
+  .def("TransformDir", (GfVec3d(This::*)(const GfVec3d &) const) & This::TransformDir)
 
-    .def("TransformAffine", (GfVec3f(This::*)(const GfVec3f &) const) & This::TransformAffine)
-    .def("TransformAffine", (GfVec3d(This::*)(const GfVec3d &) const) & This::TransformAffine)
-    .def("SetScale", (This & (This::*)({{SCL}})) & This::SetScale, return_self<>())
+  .def("TransformAffine", (GfVec3f(This::*)(const GfVec3f &) const) & This::TransformAffine)
+  .def("TransformAffine", (GfVec3d(This::*)(const GfVec3d &) const) & This::TransformAffine)
+  .def("SetScale", (This & (This::*)({{SCL}})) & This::SetScale, return_self<>())
 
 {
   % endblock customXformDefs %

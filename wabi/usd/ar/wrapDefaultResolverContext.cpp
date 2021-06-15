@@ -63,17 +63,17 @@ void wrapDefaultResolverContext()
   using This = ArDefaultResolverContext;
 
   class_<This>("DefaultResolverContext", no_init)
-      .def(init<>())
-      .def(init<const std::vector<std::string> &>(arg("searchPaths")))
+    .def(init<>())
+    .def(init<const std::vector<std::string> &>(arg("searchPaths")))
 
-      .def(self == self)
-      .def(self != self)
+    .def(self == self)
+    .def(self != self)
 
-      .def("GetSearchPath", &This::GetSearchPath, return_value_policy<return_by_value>())
+    .def("GetSearchPath", &This::GetSearchPath, return_value_policy<return_by_value>())
 
-      .def("__str__", &This::GetAsString)
-      .def("__repr__", &_Repr)
-      .def("__hash__", &_Hash);
+    .def("__str__", &This::GetAsString)
+    .def("__repr__", &_Repr)
+    .def("__hash__", &_Hash);
 
   ArWrapResolverContextForPython<This>();
 }

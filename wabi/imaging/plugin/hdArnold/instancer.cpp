@@ -45,14 +45,14 @@ void _AccumulateSampleTimes(const HdArnoldSampledType<T1> &in, HdArnoldSampledTy
 HdArnoldInstancer::HdArnoldInstancer(HdArnoldRenderDelegate *renderDelegate,
                                      HdSceneDelegate *sceneDelegate,
                                      const SdfPath &id)
-    : HdInstancer(sceneDelegate, id)
+  : HdInstancer(sceneDelegate, id)
 {}
 #else
 HdArnoldInstancer::HdArnoldInstancer(HdArnoldRenderDelegate *renderDelegate,
                                      HdSceneDelegate *sceneDelegate,
                                      const SdfPath &id,
                                      const SdfPath &parentInstancerId)
-    : HdInstancer(sceneDelegate, id, parentInstancerId)
+  : HdInstancer(sceneDelegate, id, parentInstancerId)
 {}
 #endif
 
@@ -71,12 +71,12 @@ void HdArnoldInstancer::Sync(HdSceneDelegate *sceneDelegate,
 
 void HdArnoldInstancer::_SyncPrimvars(
 #if WABI_VERSION >= 2102
-    HdDirtyBits dirtyBits
+  HdDirtyBits dirtyBits
 #endif
 )
 {
   auto &changeTracker = GetDelegate()->GetRenderIndex().GetChangeTracker();
-  const auto &id      = GetId();
+  const auto &id = GetId();
 
 #if WABI_VERSION < 2102
   auto dirtyBits = changeTracker.GetInstancerDirtyBits(id);
@@ -194,7 +194,7 @@ void HdArnoldInstancer::CalculateInstanceMatrices(const SdfPath &prototypeId,
 
     for (auto instance = decltype(numInstances){0}; instance < numInstances; instance += 1) {
       const auto instanceIndex = instanceIndices[instance];
-      auto matrix              = instancerTransform;
+      auto matrix = instancerTransform;
       if (translates.size() > static_cast<size_t>(instanceIndex)) {
         GfMatrix4d m(1.0);
         m.SetTranslate(translates[instanceIndex]);
@@ -228,7 +228,7 @@ void HdArnoldInstancer::CalculateInstanceMatrices(const SdfPath &prototypeId,
   }
 
   auto *parentInstancer = dynamic_cast<HdArnoldInstancer *>(
-      GetDelegate()->GetRenderIndex().GetInstancer(parentId));
+    GetDelegate()->GetRenderIndex().GetInstancer(parentId));
   if (ARCH_UNLIKELY(parentInstancer == nullptr)) {
     return;
   }
@@ -245,7 +245,7 @@ void HdArnoldInstancer::CalculateInstanceMatrices(const SdfPath &prototypeId,
     const float t = sampleArray.times[sample];
 
     auto currentParentMatrices = parentMatrices.Resample(t);
-    auto currentChildMatrices  = childMatrices.Resample(t);
+    auto currentChildMatrices = childMatrices.Resample(t);
 
     sampleArray.values[sample].resize(currentParentMatrices.size() * currentChildMatrices.size());
     size_t matrix = 0;

@@ -101,8 +101,7 @@ class ArDefaultResolver : public ArResolver {
   virtual void ConfigureResolverForAsset(const std::string &path) override;
 
   AR_API
-  virtual std::string AnchorRelativePath(const std::string &anchorPath,
-                                         const std::string &path) override;
+  virtual std::string AnchorRelativePath(const std::string &anchorPath, const std::string &path) override;
 
   AR_API
   virtual bool IsRelativePath(const std::string &path) override;
@@ -181,7 +180,7 @@ class ArDefaultResolver : public ArResolver {
  private:
   struct _Cache;
   using _PerThreadCache = ArThreadLocalScopedCache<_Cache>;
-  using _CachePtr       = _PerThreadCache::CachePtr;
+  using _CachePtr = _PerThreadCache::CachePtr;
   _CachePtr _GetCurrentCache();
 
   const ArDefaultResolverContext *_GetCurrentContextPtr();
@@ -194,7 +193,7 @@ class ArDefaultResolver : public ArResolver {
 
   _PerThreadCache _threadCache;
 
-  using _ContextStack          = std::vector<const ArDefaultResolverContext *>;
+  using _ContextStack = std::vector<const ArDefaultResolverContext *>;
   using _PerThreadContextStack = tbb::enumerable_thread_specific<_ContextStack>;
   _PerThreadContextStack _threadContextStack;
 };

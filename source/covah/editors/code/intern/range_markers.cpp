@@ -7,13 +7,13 @@ namespace Zep {
 RangeMarker::RangeMarker(ZepBuffer &buffer) : m_buffer(buffer)
 {
   onPreBufferInsert = buffer.sigPreInsert.connect(
-      [=](ZepBuffer &buffer, const GlyphIterator &itrStart, const std::string &str) {
-        HandleBufferInsert(buffer, itrStart, str);
-      });
+    [=](ZepBuffer &buffer, const GlyphIterator &itrStart, const std::string &str) {
+      HandleBufferInsert(buffer, itrStart, str);
+    });
   onPreBufferDelete = buffer.sigPreDelete.connect(
-      [=](ZepBuffer &buffer, const GlyphIterator &itrStart, const GlyphIterator itrEnd) {
-        HandleBufferDelete(buffer, itrStart, itrEnd);
-      });
+    [=](ZepBuffer &buffer, const GlyphIterator &itrStart, const GlyphIterator itrEnd) {
+      HandleBufferDelete(buffer, itrStart, itrEnd);
+    });
 }
 
 bool RangeMarker::ContainsLocation(GlyphIterator loc) const
@@ -68,8 +68,8 @@ void RangeMarker::SetHighlightColor(ThemeColor color)
 void RangeMarker::SetColors(ThemeColor back, ThemeColor text, ThemeColor highlight)
 {
   m_backgroundColor = back;
-  m_textColor       = text;
-  m_highlightColor  = highlight;
+  m_textColor = text;
+  m_highlightColor = highlight;
 }
 
 void RangeMarker::SetAlpha(float a)
@@ -118,7 +118,7 @@ void RangeMarker::HandleBufferInsert(ZepBuffer &buffer,
   else {
     auto itrEnd = itrStart + long(str.size());
     if (itrEnd.Index() <= (GetRange().first + 1)) {
-      auto distance     = itrEnd.Index() - itrStart.Index();
+      auto distance = itrEnd.Index() - itrStart.Index();
       auto currentRange = GetRange();
       SetRange(ByteRange(currentRange.first + distance, currentRange.second + distance));
     }
@@ -141,13 +141,11 @@ void RangeMarker::HandleBufferDelete(ZepBuffer &buffer,
     return;
   }
   else {
-    ZLOG(INFO,
-         "Range: " << itrStart.Index() << ", " << itrEnd.Index()
-                   << " : mark: " << GetRange().first);
+    ZLOG(INFO, "Range: " << itrStart.Index() << ", " << itrEnd.Index() << " : mark: " << GetRange().first);
 
     // It's OK to move on the first char; since that is like a shove
     if (itrEnd.Index() < (GetRange().first + 1)) {
-      auto distance     = std::min(itrEnd.Index(), GetRange().first) - itrStart.Index();
+      auto distance = std::min(itrEnd.Index(), GetRange().first) - itrStart.Index();
       auto currentRange = GetRange();
       SetRange(ByteRange(currentRange.first - distance, currentRange.second - distance));
     }

@@ -148,7 +148,7 @@ GfMatrix2f GfMatrix2f::GetInverse(double *detPtr, double eps) const
 
   if (GfAbs(det) > eps) {
 
-    double rcp         = 1.0 / det;
+    double rcp = 1.0 / det;
     inverse._mtx[0][0] = static_cast<float>(_mtx[1][1] * rcp);
     inverse._mtx[0][1] = static_cast<float>(_mtx[0][1] * -rcp);
     inverse._mtx[1][0] = static_cast<float>(_mtx[1][0] * -rcp);

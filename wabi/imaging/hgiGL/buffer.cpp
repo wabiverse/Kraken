@@ -36,10 +36,10 @@
 WABI_NAMESPACE_BEGIN
 
 HgiGLBuffer::HgiGLBuffer(HgiBufferDesc const &desc)
-    : HgiBuffer(desc),
-      _bufferId(0),
-      _mapped(nullptr),
-      _cpuStaging(nullptr)
+  : HgiBuffer(desc),
+    _bufferId(0),
+    _mapped(nullptr),
+    _cpuStaging(nullptr)
 {
 
   if (desc.byteSize == 0) {
@@ -57,11 +57,10 @@ HgiGLBuffer::HgiGLBuffer(HgiBufferDesc const &desc)
     glNamedBufferData(_bufferId, _descriptor.byteSize, _descriptor.initialData, GL_STATIC_DRAW);
   }
   else if (_descriptor.usage & HgiBufferUsageStorage) {
-    GLbitfield flags = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT |
-                       GL_MAP_COHERENT_BIT;
+    GLbitfield flags = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
 
     glNamedBufferStorage(
-        _bufferId, _descriptor.byteSize, _descriptor.initialData, flags | GL_DYNAMIC_STORAGE_BIT);
+      _bufferId, _descriptor.byteSize, _descriptor.initialData, flags | GL_DYNAMIC_STORAGE_BIT);
 
     _mapped = glMapNamedBufferRange(_bufferId, 0, desc.byteSize, flags);
   }

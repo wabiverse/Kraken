@@ -35,25 +35,24 @@ WABI_NAMESPACE_BEGIN
 
 const size_t HdExtCompCpuComputation::INVALID_OUTPUT_INDEX = std::numeric_limits<size_t>::max();
 
-HdExtCompCpuComputation::HdExtCompCpuComputation(
-    const SdfPath &id,
-    const Hd_ExtCompInputSourceSharedPtrVector &inputs,
-    const TfTokenVector &outputs,
-    int numElements,
-    HdSceneDelegate *sceneDelegate)
-    : HdNullBufferSource(),
-      _id(id),
-      _inputs(inputs),
-      _outputs(outputs),
-      _numElements(numElements),
-      _sceneDelegate(sceneDelegate),
-      _outputValues()
+HdExtCompCpuComputation::HdExtCompCpuComputation(const SdfPath &id,
+                                                 const Hd_ExtCompInputSourceSharedPtrVector &inputs,
+                                                 const TfTokenVector &outputs,
+                                                 int numElements,
+                                                 HdSceneDelegate *sceneDelegate)
+  : HdNullBufferSource(),
+    _id(id),
+    _inputs(inputs),
+    _outputs(outputs),
+    _numElements(numElements),
+    _sceneDelegate(sceneDelegate),
+    _outputValues()
 {}
 
 HdExtCompCpuComputationSharedPtr HdExtCompCpuComputation::CreateComputation(
-    HdSceneDelegate *sceneDelegate,
-    const HdExtComputation &computation,
-    HdBufferSourceSharedPtrVector *computationSources)
+  HdSceneDelegate *sceneDelegate,
+  const HdExtComputation &computation,
+  HdBufferSourceSharedPtrVector *computationSources)
 {
   HdRenderIndex &renderIndex = sceneDelegate->GetRenderIndex();
 
@@ -62,8 +61,7 @@ HdExtCompCpuComputationSharedPtr HdExtCompCpuComputation::CreateComputation(
   Hd_ExtCompInputSourceSharedPtrVector inputs;
   for (const TfToken &inputName : computation.GetSceneInputNames()) {
     VtValue inputValue = sceneDelegate->GetExtComputationInput(id, inputName);
-    Hd_ExtCompInputSourceSharedPtr inputSource(
-        new Hd_SceneExtCompInputSource(inputName, inputValue));
+    Hd_ExtCompInputSourceSharedPtr inputSource(new Hd_SceneExtCompInputSource(inputName, inputValue));
     computationSources->push_back(inputSource);
     inputs.push_back(inputSource);
   }
@@ -71,7 +69,7 @@ HdExtCompCpuComputationSharedPtr HdExtCompCpuComputation::CreateComputation(
   for (const HdExtComputationInputDescriptor &compInput : computation.GetComputationInputs()) {
 
     HdExtComputation const *sourceComp = static_cast<HdExtComputation const *>(
-        renderIndex.GetSprim(HdPrimTypeTokens->extComputation, compInput.sourceComputationId));
+      renderIndex.GetSprim(HdPrimTypeTokens->extComputation, compInput.sourceComputationId));
 
     if (sourceComp != nullptr) {
 
@@ -82,17 +80,17 @@ HdExtCompCpuComputationSharedPtr HdExtCompCpuComputation::CreateComputation(
         VtValue inputValue = sceneDelegate->GetExtComputationInput(compInput.sourceComputationId,
                                                                    compInput.name);
         Hd_ExtCompInputSourceSharedPtr inputSource(
-            new Hd_SceneExtCompInputSource(compInput.name, inputValue));
+          new Hd_SceneExtCompInputSource(compInput.name, inputValue));
         computationSources->push_back(inputSource);
         inputs.push_back(inputSource);
         continue;
       }
 
       HdExtCompCpuComputationSharedPtr sourceComputation = CreateComputation(
-          sceneDelegate, *sourceComp, computationSources);
+        sceneDelegate, *sourceComp, computationSources);
 
       Hd_ExtCompInputSourceSharedPtr inputSource(new Hd_CompExtCompInputSource(
-          compInput.name, sourceComputation, compInput.sourceComputationOutputName));
+        compInput.name, sourceComputation, compInput.sourceComputationOutputName));
 
       computationSources->push_back(inputSource);
       inputs.push_back(inputSource);
@@ -100,7 +98,7 @@ HdExtCompCpuComputationSharedPtr HdExtCompCpuComputation::CreateComputation(
   }
 
   HdExtCompCpuComputationSharedPtr result(new HdExtCompCpuComputation(
-      id, inputs, computation.GetOutputNames(), computation.GetElementCount(), sceneDelegate));
+    id, inputs, computation.GetOutputNames(), computation.GetElementCount(), sceneDelegate));
 
   computationSources->push_back(result);
 

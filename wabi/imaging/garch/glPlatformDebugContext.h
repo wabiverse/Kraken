@@ -55,8 +55,8 @@ class GarchGLPlatformDebugContext : public TfRefBase, public TfWeakBase {
                                                bool coreProfile,
                                                bool directRenderering)
   {
-    return TfCreateRefPtr(new GarchGLPlatformDebugContext(
-        majorVersion, minorVersion, coreProfile, directRenderering));
+    return TfCreateRefPtr(
+      new GarchGLPlatformDebugContext(majorVersion, minorVersion, coreProfile, directRenderering));
   }
 
   virtual ~GarchGLPlatformDebugContext();
@@ -79,10 +79,7 @@ class GarchGLPlatformDebugContext : public TfRefBase, public TfWeakBase {
 
  protected:
   GARCH_API
-  GarchGLPlatformDebugContext(int majorVersion,
-                              int minorVersion,
-                              bool coreProfile,
-                              bool directRenderering);
+  GarchGLPlatformDebugContext(int majorVersion, int minorVersion, bool coreProfile, bool directRenderering);
 };
 
 WABI_NAMESPACE_END

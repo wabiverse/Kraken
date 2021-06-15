@@ -119,14 +119,14 @@ TfTokenVector UsdNotice::ObjectsChanged::GetChangedFields(const UsdObject &obj) 
 
 TfTokenVector UsdNotice::ObjectsChanged::GetChangedFields(const SdfPath &path) const
 {
-  PathRange range              = GetResyncedPaths();
+  PathRange range = GetResyncedPaths();
   PathRange::const_iterator it = range.find(path);
   if (it != range.end()) {
     return it.GetChangedFields();
   }
 
   range = GetChangedInfoOnlyPaths();
-  it    = range.find(path);
+  it = range.find(path);
   if (it != range.end()) {
     return it.GetChangedFields();
   }
@@ -141,14 +141,14 @@ bool UsdNotice::ObjectsChanged::HasChangedFields(const UsdObject &obj) const
 
 bool UsdNotice::ObjectsChanged::HasChangedFields(const SdfPath &path) const
 {
-  PathRange range              = GetResyncedPaths();
+  PathRange range = GetResyncedPaths();
   PathRange::const_iterator it = range.find(path);
   if (it != range.end()) {
     return it.HasChangedFields();
   }
 
   range = GetChangedInfoOnlyPaths();
-  it    = range.find(path);
+  it = range.find(path);
   if (it != range.end()) {
     return it.HasChangedFields();
   }

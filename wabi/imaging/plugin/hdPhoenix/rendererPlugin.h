@@ -38,7 +38,7 @@ WABI_NAMESPACE_BEGIN
 
 class HdPhoenixRendererPlugin final : public HdRendererPlugin {
  public:
-  HdPhoenixRendererPlugin()          = default;
+  HdPhoenixRendererPlugin() = default;
   virtual ~HdPhoenixRendererPlugin() = default;
 
   virtual HdRenderDelegate *CreateRenderDelegate() override;

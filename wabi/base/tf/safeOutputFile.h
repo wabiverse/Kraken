@@ -54,19 +54,19 @@ class TfSafeOutputFile {
   TfSafeOutputFile() = default;
 
   TfSafeOutputFile(TfSafeOutputFile &&other)
-      : _file(other._file),
-        _targetFileName(std::move(other._targetFileName)),
-        _tempFileName(std::move(other._tempFileName))
+    : _file(other._file),
+      _targetFileName(std::move(other._targetFileName)),
+      _tempFileName(std::move(other._tempFileName))
   {
     other._file = nullptr;
   }
 
   TfSafeOutputFile &operator=(TfSafeOutputFile &&other)
   {
-    _file           = other._file;
+    _file = other._file;
     _targetFileName = std::move(other._targetFileName);
-    _tempFileName   = std::move(other._tempFileName);
-    other._file     = nullptr;
+    _tempFileName = std::move(other._tempFileName);
+    other._file = nullptr;
     return *this;
   }
 

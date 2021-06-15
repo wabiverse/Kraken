@@ -54,9 +54,7 @@ class HioOpenVDB_TextureData final : public HioFieldTextureData {
  public:
   using Base = HioFieldTextureData;
 
-  HioOpenVDB_TextureData(std::string const &filePath,
-                         std::string const &gridName,
-                         size_t targetMemory);
+  HioOpenVDB_TextureData(std::string const &filePath, std::string const &gridName, size_t targetMemory);
   ~HioOpenVDB_TextureData() override;
 
   const GfBBox3d &GetBoundingBox() const override;

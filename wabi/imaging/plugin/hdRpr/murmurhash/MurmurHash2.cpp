@@ -40,7 +40,7 @@ uint32_t MurmurHash2(const void *key, int len, uint32_t seed)
   // They're not really 'magic', they just happen to work well.
 
   const uint32_t m = 0x5bd1e995;
-  const int r      = 24;
+  const int r = 24;
 
   // Initialize the hash to a 'random' value
 
@@ -97,12 +97,12 @@ uint32_t MurmurHash2(const void *key, int len, uint32_t seed)
 uint64_t MurmurHash64A(const void *key, int len, uint64_t seed)
 {
   const uint64_t m = BIG_CONSTANT(0xc6a4a7935bd1e995);
-  const int r      = 47;
+  const int r = 47;
 
   uint64_t h = seed ^ (len * m);
 
   const uint64_t *data = (const uint64_t *)key;
-  const uint64_t *end  = data + (len / 8);
+  const uint64_t *end = data + (len / 8);
 
   while (data != end) {
     uint64_t k = *data++;
@@ -147,7 +147,7 @@ uint64_t MurmurHash64A(const void *key, int len, uint64_t seed)
 uint64_t MurmurHash64B(const void *key, int len, uint64_t seed)
 {
   const uint32_t m = 0x5bd1e995;
-  const int r      = 24;
+  const int r = 24;
 
   uint32_t h1 = uint32_t(seed) ^ len;
   uint32_t h2 = uint32_t(seed >> 32);
@@ -231,8 +231,8 @@ uint64_t MurmurHash64B(const void *key, int len, uint64_t seed)
 uint32_t MurmurHash2A(const void *key, int len, uint32_t seed)
 {
   const uint32_t m = 0x5bd1e995;
-  const int r      = 24;
-  uint32_t l       = len;
+  const int r = 24;
+  uint32_t l = len;
 
   const unsigned char *data = (const unsigned char *)key;
 
@@ -288,10 +288,10 @@ class CMurmurHash2A {
  public:
   void Begin(uint32_t seed = 0)
   {
-    m_hash  = seed;
-    m_tail  = 0;
+    m_hash = seed;
+    m_tail = 0;
     m_count = 0;
-    m_size  = 0;
+    m_size = 0;
   }
 
   void Add(const unsigned char *data, int len)
@@ -326,7 +326,7 @@ class CMurmurHash2A {
 
  private:
   static const uint32_t m = 0x5bd1e995;
-  static const int r      = 24;
+  static const int r = 24;
 
   void MixTail(const unsigned char *&data, int &len)
   {
@@ -338,7 +338,7 @@ class CMurmurHash2A {
 
       if (m_count == 4) {
         mmix(m_hash, m_tail);
-        m_tail  = 0;
+        m_tail = 0;
         m_count = 0;
       }
     }
@@ -359,7 +359,7 @@ class CMurmurHash2A {
 uint32_t MurmurHashNeutral2(const void *key, int len, uint32_t seed)
 {
   const uint32_t m = 0x5bd1e995;
-  const int r      = 24;
+  const int r = 24;
 
   uint32_t h = seed ^ len;
 
@@ -421,7 +421,7 @@ uint32_t MurmurHashNeutral2(const void *key, int len, uint32_t seed)
 uint32_t MurmurHashAligned2(const void *key, int len, uint32_t seed)
 {
   const uint32_t m = 0x5bd1e995;
-  const int r      = 24;
+  const int r = 24;
 
   const unsigned char *data = (const unsigned char *)key;
 

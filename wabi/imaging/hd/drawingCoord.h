@@ -83,20 +83,20 @@ WABI_NAMESPACE_BEGIN
 class HdDrawingCoord {
  public:
   static const int CustomSlotsBegin = 8;
-  static const int DefaultNumSlots  = 3; /* Constant, Vertex, Topology */
-  static const int Unassigned       = -1;
+  static const int DefaultNumSlots = 3; /* Constant, Vertex, Topology */
+  static const int Unassigned = -1;
 
   HdDrawingCoord()
-      :  // default slots:
-        _constantPrimvar(0),
-        _vertexPrimvar(1),
-        _topology(2),
-        _elementPrimvar(3),
-        _instanceIndex(4),
-        _faceVaryingPrimvar(5),
-        _topologyVisibility(6),
-        _varyingPrimvar(7),
-        _instancePrimvar(Unassigned)
+    :  // default slots:
+      _constantPrimvar(0),
+      _vertexPrimvar(1),
+      _topology(2),
+      _elementPrimvar(3),
+      _instanceIndex(4),
+      _faceVaryingPrimvar(5),
+      _topologyVisibility(6),
+      _varyingPrimvar(7),
+      _instancePrimvar(Unassigned)
   {}
 
   int GetConstantPrimvarIndex() const

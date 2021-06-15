@@ -49,9 +49,9 @@ class ZepEditor_ANCHOR : public ZepEditor {
  public:
   ZepEditor_ANCHOR(const ZepPath &root,
                    const NVec2f &pixelScale,
-                   uint32_t flags              = 0,
+                   uint32_t flags = 0,
                    IZepFileSystem *pFileSystem = nullptr)
-      : ZepEditor(new ZepDisplay_ANCHOR(pixelScale), root, flags, pFileSystem)
+    : ZepEditor(new ZepDisplay_ANCHOR(pixelScale), root, flags, pFileSystem)
   {}
 
   void HandleInput()
@@ -113,7 +113,7 @@ class ZepEditor_ANCHOR : public ZepEditor {
       mod |= ModifierKey::Shift;
     }
 
-    auto pWindow       = GetActiveTabWindow()->GetActiveWindow();
+    auto pWindow = GetActiveTabWindow()->GetActiveWindow();
     const auto &buffer = pWindow->GetBuffer();
 
     // Check USB Keys

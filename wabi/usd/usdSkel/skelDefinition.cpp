@@ -42,11 +42,11 @@ enum _Flags {
   _HaveBindPose = 1 << 0,
   _HaveRestPose = 1 << 1,
   // Matrix4dArray computations
-  _SkelRestXforms4dComputed         = 1 << 2,
+  _SkelRestXforms4dComputed = 1 << 2,
   _WorldInverseBindXforms4dComputed = 1 << 3,
   _LocalInverseRestXforms4dComputed = 1 << 4,
   // Matrix4fArray computations
-  _SkelRestXforms4fComputed         = 1 << 5,
+  _SkelRestXforms4fComputed = 1 << 5,
   _WorldInverseBindXforms4fComputed = 1 << 6,
   _LocalInverseRestXforms4fComputed = 1 << 7,
 };
@@ -104,11 +104,11 @@ bool UsdSkel_SkelDefinition::_Init(const UsdSkelSkeleton &skel)
   }
   else {
     TF_WARN(
-        "%s -- size of 'bindTransforms' attr [%zu] does not "
-        "match the number of joints in the 'joints' attr [%zu].",
-        skel.GetPrim().GetPath().GetText(),
-        _jointWorldBindXforms.size(),
-        _jointOrder.size());
+      "%s -- size of 'bindTransforms' attr [%zu] does not "
+      "match the number of joints in the 'joints' attr [%zu].",
+      skel.GetPrim().GetPath().GetText(),
+      _jointWorldBindXforms.size(),
+      _jointOrder.size());
   }
 
   skel.GetRestTransformsAttr().Get(&_jointLocalRestXforms);
@@ -117,11 +117,11 @@ bool UsdSkel_SkelDefinition::_Init(const UsdSkelSkeleton &skel)
   }
   else {
     TF_WARN(
-        "%s -- size of 'restTransforms' attr [%zu] does not "
-        "match the number of joints in the 'joints' attr [%zu].",
-        skel.GetPrim().GetPath().GetText(),
-        _jointLocalRestXforms.size(),
-        _jointOrder.size());
+      "%s -- size of 'restTransforms' attr [%zu] does not "
+      "match the number of joints in the 'joints' attr [%zu].",
+      skel.GetPrim().GetPath().GetText(),
+      _jointLocalRestXforms.size(),
+      _jointOrder.size());
   }
 
   _skel = skel;
@@ -213,8 +213,7 @@ template<> bool UsdSkel_SkelDefinition::GetJointSkelRestTransforms(VtMatrix4fArr
   return _GetJointSkelRestTransforms<_SkelRestXforms4fComputed>(xforms);
 }
 
-template<int ComputeFlag, typename Matrix4>
-bool UsdSkel_SkelDefinition::_ComputeJointSkelRestTransforms()
+template<int ComputeFlag, typename Matrix4> bool UsdSkel_SkelDefinition::_ComputeJointSkelRestTransforms()
 {
   TRACE_FUNCTION();
 

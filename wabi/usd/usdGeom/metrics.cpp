@@ -71,10 +71,10 @@ bool UsdGeomSetStageUpAxis(const UsdStageWeakPtr &stage, const TfToken &axis)
 
   if (axis != UsdGeomTokens->y && axis != UsdGeomTokens->z) {
     TF_CODING_ERROR(
-        "UsdStage upAxis can only be set to \"Y\" or \"Z\", "
-        "not attempted \"%s\" on stage %s.",
-        axis.GetText(),
-        stage->GetRootLayer()->GetIdentifier().c_str());
+      "UsdStage upAxis can only be set to \"Y\" or \"Z\", "
+      "not attempted \"%s\" on stage %s.",
+      axis.GetText(),
+      stage->GetRootLayer()->GetIdentifier().c_str());
     return false;
   }
 
@@ -85,14 +85,13 @@ TF_MAKE_STATIC_DATA(TfToken, _fallbackUpAxis)
 {
   TfToken upAxis;
   std::string definingPluginName;
-  TfToken schemaFallback =
-      SdfSchema::GetInstance().GetFallback(UsdGeomTokens->upAxis).Get<TfToken>();
+  TfToken schemaFallback = SdfSchema::GetInstance().GetFallback(UsdGeomTokens->upAxis).Get<TfToken>();
 
   PlugPluginPtrVector plugs = PlugRegistry::GetInstance().GetAllPlugins();
   TF_FOR_ALL(plugIter, plugs)
   {
     PlugPluginPtr plug = *plugIter;
-    JsObject metadata  = plug->GetMetadata();
+    JsObject metadata = plug->GetMetadata();
     JsValue metricsDictValue;
     if (TfMapLookup(metadata, _tokens->UsdGeomMetrics, &metricsDictValue)) {
       if (!metricsDictValue.Is<JsObject>()) {
@@ -123,31 +122,31 @@ TF_MAKE_STATIC_DATA(TfToken, _fallbackUpAxis)
         }
         else {
           TF_CODING_ERROR(
-              "%s[%s][%s] had value \"%s\", but only \"Y\" and"
-              " \"Z\" are allowed.",
-              plug->GetName().c_str(),
-              _tokens->UsdGeomMetrics.GetText(),
-              UsdGeomTokens->upAxis.GetText(),
-              axisStr.c_str());
+            "%s[%s][%s] had value \"%s\", but only \"Y\" and"
+            " \"Z\" are allowed.",
+            plug->GetName().c_str(),
+            _tokens->UsdGeomMetrics.GetText(),
+            UsdGeomTokens->upAxis.GetText(),
+            axisStr.c_str());
           continue;
         }
 
         if (!upAxis.IsEmpty() && upAxis != axisToken) {
           TF_CODING_ERROR(
-              "Plugins %s and %s provided different"
-              " fallback values for %s.  Ignoring all"
-              " plugins and using schema fallback of"
-              " \"%s\"",
-              definingPluginName.c_str(),
-              plug->GetName().c_str(),
-              UsdGeomTokens->upAxis.GetText(),
-              schemaFallback.GetText());
+            "Plugins %s and %s provided different"
+            " fallback values for %s.  Ignoring all"
+            " plugins and using schema fallback of"
+            " \"%s\"",
+            definingPluginName.c_str(),
+            plug->GetName().c_str(),
+            UsdGeomTokens->upAxis.GetText(),
+            schemaFallback.GetText());
           *_fallbackUpAxis = schemaFallback;
           return;
         }
         else if (upAxis.IsEmpty()) {
           definingPluginName = plug->GetName();
-          upAxis             = axisToken;
+          upAxis = axisToken;
         }
       }
     }

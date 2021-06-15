@@ -49,7 +49,7 @@ size_t TfFastCompression::GetCompressedBufferSize(size_t inputSize)
     return LZ4_compressBound(inputSize) + 1;
   }
   size_t nWholeChunks = inputSize / LZ4_MAX_INPUT_SIZE;
-  size_t partChunkSz  = inputSize % LZ4_MAX_INPUT_SIZE;
+  size_t partChunkSz = inputSize % LZ4_MAX_INPUT_SIZE;
   size_t sz = 1 + nWholeChunks * (LZ4_compressBound(LZ4_MAX_INPUT_SIZE) + sizeof(int32_t));
   if (partChunkSz)
     sz += LZ4_compressBound(partChunkSz) + sizeof(int32_t);
@@ -60,10 +60,10 @@ size_t TfFastCompression::CompressToBuffer(char const *input, char *compressed, 
 {
   if (inputSize > GetMaxInputSize()) {
     TF_CODING_ERROR(
-        "Attempted to compress a buffer of %zu bytes, "
-        "more than the maximum supported %zu",
-        inputSize,
-        GetMaxInputSize());
+      "Attempted to compress a buffer of %zu bytes, "
+      "more than the maximum supported %zu",
+      inputSize,
+      GetMaxInputSize());
     return 0;
   }
 
@@ -71,14 +71,14 @@ size_t TfFastCompression::CompressToBuffer(char const *input, char *compressed, 
   char const *const origCompressed = compressed;
   if (inputSize <= LZ4_MAX_INPUT_SIZE) {
     compressed[0] = 0;  // < zero byte means one chunk.
-    compressed += 1 + LZ4_compress_default(
-                          input, compressed + 1, inputSize, GetCompressedBufferSize(inputSize));
+    compressed += 1 +
+                  LZ4_compress_default(input, compressed + 1, inputSize, GetCompressedBufferSize(inputSize));
   }
   else {
     size_t nWholeChunks = inputSize / LZ4_MAX_INPUT_SIZE;
-    size_t partChunkSz  = inputSize % LZ4_MAX_INPUT_SIZE;
-    *compressed++       = nWholeChunks + (partChunkSz ? 1 : 0);
-    auto writeChunk     = [](char const *&input, char *&output, size_t size) {
+    size_t partChunkSz = inputSize % LZ4_MAX_INPUT_SIZE;
+    *compressed++ = nWholeChunks + (partChunkSz ? 1 : 0);
+    auto writeChunk = [](char const *&input, char *&output, size_t size) {
       char *o = output;
       output += sizeof(int32_t);
       int32_t n = LZ4_compress_default(input, output, size, LZ4_compressBound(size));
@@ -109,9 +109,9 @@ size_t TfFastCompression::DecompressFromBuffer(char const *compressed,
     int nDecompressed = LZ4_decompress_safe(compressed, output, compressedSize - 1, maxOutputSize);
     if (nDecompressed < 0) {
       TF_RUNTIME_ERROR(
-          "Failed to decompress data, possibly corrupt? "
-          "LZ4 error code: %d",
-          nDecompressed);
+        "Failed to decompress data, possibly corrupt? "
+        "LZ4 error code: %d",
+        nDecompressed);
       return 0;
     }
     return nDecompressed;
@@ -124,12 +124,12 @@ size_t TfFastCompression::DecompressFromBuffer(char const *compressed,
       memcpy(&chunkSize, compressed, sizeof(chunkSize));
       compressed += sizeof(chunkSize);
       int nDecompressed = LZ4_decompress_safe(
-          compressed, output, chunkSize, std::min<size_t>(LZ4_MAX_INPUT_SIZE, maxOutputSize));
+        compressed, output, chunkSize, std::min<size_t>(LZ4_MAX_INPUT_SIZE, maxOutputSize));
       if (nDecompressed < 0) {
         TF_RUNTIME_ERROR(
-            "Failed to decompress data, possibly corrupt? "
-            "LZ4 error code: %d",
-            nDecompressed);
+          "Failed to decompress data, possibly corrupt? "
+          "LZ4 error code: %d",
+          nDecompressed);
         return 0;
       }
       compressed += chunkSize;

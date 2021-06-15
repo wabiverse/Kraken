@@ -57,7 +57,7 @@ class PcpLayerStackIdentifier : boost::totally_ordered<PcpLayerStackIdentifier> 
   /// then the result is identical to the default constructed object.
   PCP_API
   PcpLayerStackIdentifier(const SdfLayerHandle &rootLayer_,
-                          const SdfLayerHandle &sessionLayer_           = TfNullPtr,
+                          const SdfLayerHandle &sessionLayer_ = TfNullPtr,
                           const ArResolverContext &pathResolverContext_ = ArResolverContext());
 
   // XXX: Allow assignment because there are clients using this
@@ -121,10 +121,9 @@ class PcpLayerStackIdentifierStr : boost::totally_ordered<PcpLayerStackIdentifie
   /// are empty strings and default-constructed ArResolverContext, then the
   /// result is identical to the default constructed object.
   PCP_API
-  explicit PcpLayerStackIdentifierStr(
-      std::string const &rootLayerId           = std::string(),
-      std::string const &sessionLayerId        = std::string(),
-      ArResolverContext const &resolverContext = ArResolverContext());
+  explicit PcpLayerStackIdentifierStr(std::string const &rootLayerId = std::string(),
+                                      std::string const &sessionLayerId = std::string(),
+                                      ArResolverContext const &resolverContext = ArResolverContext());
 
   /// Allow implicit conversion from PcpLayerStackIdentifier
   PCP_API

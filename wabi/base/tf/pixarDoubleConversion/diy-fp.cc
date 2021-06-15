@@ -4,7 +4,7 @@
  * Portions of this file are derived from original work by Pixar
  * distributed with Universal Scene Description, a project of the
  * Academy Software Foundation (ASWF). https://www.aswf.io/
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "Apache License")
  * with the following modification; you may not use this file except in
  * compliance with the Apache License and the following modification:
@@ -16,9 +16,9 @@
  *    of the License and to reproduce the content of the NOTICE file.
  *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Apache License with the above modification is
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
@@ -29,7 +29,6 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
-
 #include "diy-fp.h"
 #include "utils.h"
 
@@ -39,7 +38,8 @@ WABI_NAMESPACE_BEGIN
 
 namespace wabi_double_conversion {
 
-void DiyFp::Multiply(const DiyFp& other) {
+void DiyFp::Multiply(const DiyFp &other)
+{
   // Simply "emulates" a 128 bit multiplication.
   // However: the resulting number only contains 64 bits. The least
   // significant 64 bits are only used for rounding the most significant 64

@@ -112,8 +112,7 @@ UsdAttribute UsdRiPxrEnvDayLight::GetDayAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->day);
 }
 
-UsdAttribute UsdRiPxrEnvDayLight::CreateDayAttr(VtValue const &defaultValue,
-                                                bool writeSparsely) const
+UsdAttribute UsdRiPxrEnvDayLight::CreateDayAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->day,
                                     SdfValueTypeNames->Int,
@@ -128,8 +127,7 @@ UsdAttribute UsdRiPxrEnvDayLight::GetHazinessAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->haziness);
 }
 
-UsdAttribute UsdRiPxrEnvDayLight::CreateHazinessAttr(VtValue const &defaultValue,
-                                                     bool writeSparsely) const
+UsdAttribute UsdRiPxrEnvDayLight::CreateHazinessAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->haziness,
                                     SdfValueTypeNames->Float,
@@ -144,8 +142,7 @@ UsdAttribute UsdRiPxrEnvDayLight::GetHourAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->hour);
 }
 
-UsdAttribute UsdRiPxrEnvDayLight::CreateHourAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdRiPxrEnvDayLight::CreateHourAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->hour,
                                     SdfValueTypeNames->Float,
@@ -160,8 +157,7 @@ UsdAttribute UsdRiPxrEnvDayLight::GetLatitudeAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->latitude);
 }
 
-UsdAttribute UsdRiPxrEnvDayLight::CreateLatitudeAttr(VtValue const &defaultValue,
-                                                     bool writeSparsely) const
+UsdAttribute UsdRiPxrEnvDayLight::CreateLatitudeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->latitude,
                                     SdfValueTypeNames->Float,
@@ -176,8 +172,7 @@ UsdAttribute UsdRiPxrEnvDayLight::GetLongitudeAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->longitude);
 }
 
-UsdAttribute UsdRiPxrEnvDayLight::CreateLongitudeAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdRiPxrEnvDayLight::CreateLongitudeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->longitude,
                                     SdfValueTypeNames->Float,
@@ -192,8 +187,7 @@ UsdAttribute UsdRiPxrEnvDayLight::GetMonthAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->month);
 }
 
-UsdAttribute UsdRiPxrEnvDayLight::CreateMonthAttr(VtValue const &defaultValue,
-                                                  bool writeSparsely) const
+UsdAttribute UsdRiPxrEnvDayLight::CreateMonthAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->month,
                                     SdfValueTypeNames->Int,
@@ -208,8 +202,7 @@ UsdAttribute UsdRiPxrEnvDayLight::GetSkyTintAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->skyTint);
 }
 
-UsdAttribute UsdRiPxrEnvDayLight::CreateSkyTintAttr(VtValue const &defaultValue,
-                                                    bool writeSparsely) const
+UsdAttribute UsdRiPxrEnvDayLight::CreateSkyTintAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->skyTint,
                                     SdfValueTypeNames->Color3f,
@@ -240,8 +233,7 @@ UsdAttribute UsdRiPxrEnvDayLight::GetSunSizeAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->sunSize);
 }
 
-UsdAttribute UsdRiPxrEnvDayLight::CreateSunSizeAttr(VtValue const &defaultValue,
-                                                    bool writeSparsely) const
+UsdAttribute UsdRiPxrEnvDayLight::CreateSunSizeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->sunSize,
                                     SdfValueTypeNames->Float,
@@ -256,8 +248,7 @@ UsdAttribute UsdRiPxrEnvDayLight::GetSunTintAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->sunTint);
 }
 
-UsdAttribute UsdRiPxrEnvDayLight::CreateSunTintAttr(VtValue const &defaultValue,
-                                                    bool writeSparsely) const
+UsdAttribute UsdRiPxrEnvDayLight::CreateSunTintAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->sunTint,
                                     SdfValueTypeNames->Color3f,
@@ -272,8 +263,7 @@ UsdAttribute UsdRiPxrEnvDayLight::GetYearAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->year);
 }
 
-UsdAttribute UsdRiPxrEnvDayLight::CreateYearAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdRiPxrEnvDayLight::CreateYearAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->year,
                                     SdfValueTypeNames->Int,
@@ -288,8 +278,7 @@ UsdAttribute UsdRiPxrEnvDayLight::GetZoneAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->zone);
 }
 
-UsdAttribute UsdRiPxrEnvDayLight::CreateZoneAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdRiPxrEnvDayLight::CreateZoneAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->zone,
                                     SdfValueTypeNames->Float,
@@ -300,8 +289,7 @@ UsdAttribute UsdRiPxrEnvDayLight::CreateZoneAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -315,21 +303,21 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRiPxrEnvDayLight::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRiTokens->day,
-      UsdRiTokens->haziness,
-      UsdRiTokens->hour,
-      UsdRiTokens->latitude,
-      UsdRiTokens->longitude,
-      UsdRiTokens->month,
-      UsdRiTokens->skyTint,
-      UsdRiTokens->sunDirection,
-      UsdRiTokens->sunSize,
-      UsdRiTokens->sunTint,
-      UsdRiTokens->year,
-      UsdRiTokens->zone,
+    UsdRiTokens->day,
+    UsdRiTokens->haziness,
+    UsdRiTokens->hour,
+    UsdRiTokens->latitude,
+    UsdRiTokens->longitude,
+    UsdRiTokens->month,
+    UsdRiTokens->skyTint,
+    UsdRiTokens->sunDirection,
+    UsdRiTokens->sunSize,
+    UsdRiTokens->sunTint,
+    UsdRiTokens->year,
+    UsdRiTokens->zone,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdLuxLight::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdLuxLight::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

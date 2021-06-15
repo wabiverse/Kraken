@@ -70,21 +70,21 @@ class HdExtComputation : public HdSprim {
   /// Change tracking
   ///
   enum DirtyBits : HdDirtyBits {
-    Clean          = 0,
+    Clean = 0,
     DirtyInputDesc = 1 << 0,     ///< The list of inputs or input
                                  ///  bindings changed
-    DirtyOutputDesc   = 1 << 1,  ///< The list of outputs changed
+    DirtyOutputDesc = 1 << 1,    ///< The list of outputs changed
     DirtyElementCount = 1 << 2,  ///< The number of elements in the
                                  ///  output arrays changed
     DirtySceneInput = 1 << 3,    ///< A scene input changed value
-    DirtyCompInput  = 1 << 4,    ///< A computation input changed value
-    DirtyKernel     = 1 << 5,    ///< The compute kernel binding changed
+    DirtyCompInput = 1 << 4,     ///< A computation input changed value
+    DirtyKernel = 1 << 5,        ///< The compute kernel binding changed
 
     DirtyDispatchCount = 1 << 6,  ///< The number of kernel
                                   ///  invocations to execute changed
 
-    AllDirty = (DirtyInputDesc | DirtyOutputDesc | DirtyElementCount | DirtySceneInput |
-                DirtyCompInput | DirtyKernel | DirtyDispatchCount)
+    AllDirty = (DirtyInputDesc | DirtyOutputDesc | DirtyElementCount | DirtySceneInput | DirtyCompInput |
+                DirtyKernel | DirtyDispatchCount)
   };
 
   HD_API
@@ -150,7 +150,7 @@ class HdExtComputation : public HdSprim {
   std::string _gpuKernelSource;
 
   // No default construction or copying
-  HdExtComputation()                         = delete;
+  HdExtComputation() = delete;
   HdExtComputation(const HdExtComputation &) = delete;
   HdExtComputation &operator=(const HdExtComputation &) = delete;
 };

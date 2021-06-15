@@ -58,18 +58,16 @@ class UsdImagingPointInstancerAdapter : public UsdImagingPrimAdapter {
   /// \name Parallel Setup and Resolve
   // ---------------------------------------------------------------------- //
 
-  virtual void TrackVariability(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      HdDirtyBits *timeVaryingBits,
-      UsdImagingInstancerContext const *instancerContext = NULL) const override;
+  virtual void TrackVariability(UsdPrim const &prim,
+                                SdfPath const &cachePath,
+                                HdDirtyBits *timeVaryingBits,
+                                UsdImagingInstancerContext const *instancerContext = NULL) const override;
 
-  virtual void UpdateForTime(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      UsdTimeCode time,
-      HdDirtyBits requestedBits,
-      UsdImagingInstancerContext const *instancerContext = NULL) const override;
+  virtual void UpdateForTime(UsdPrim const &prim,
+                             SdfPath const &cachePath,
+                             UsdTimeCode time,
+                             HdDirtyBits requestedBits,
+                             UsdImagingInstancerContext const *instancerContext = NULL) const override;
 
   // ---------------------------------------------------------------------- //
   /// \name Change Processing
@@ -129,8 +127,7 @@ class UsdImagingPointInstancerAdapter : public UsdImagingPrimAdapter {
 
   SdfPath GetInstancerId(UsdPrim const &usdPrim, SdfPath const &cachePath) const override;
 
-  SdfPathVector GetInstancerPrototypes(UsdPrim const &usdPrim,
-                                       SdfPath const &cachePath) const override;
+  SdfPathVector GetInstancerPrototypes(UsdPrim const &usdPrim, SdfPath const &cachePath) const override;
 
   GfMatrix4d GetTransform(UsdPrim const &prim,
                           SdfPath const &cachePath,
@@ -163,53 +160,41 @@ class UsdImagingPointInstancerAdapter : public UsdImagingPrimAdapter {
                      SdfPath const &cachePath,
                      TfToken const &instanceInheritablePurpose) const override;
 
-  VtValue GetTopology(UsdPrim const &prim,
-                      SdfPath const &cachePath,
-                      UsdTimeCode time) const override;
+  VtValue GetTopology(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
 
-  HdCullStyle GetCullStyle(UsdPrim const &prim,
-                           SdfPath const &cachePath,
-                           UsdTimeCode time) const override;
+  HdCullStyle GetCullStyle(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
 
-  GfRange3d GetExtent(UsdPrim const &usdPrim,
-                      SdfPath const &cachePath,
-                      UsdTimeCode time) const override;
+  GfRange3d GetExtent(UsdPrim const &usdPrim, SdfPath const &cachePath, UsdTimeCode time) const override;
 
-  bool GetDoubleSided(UsdPrim const &usdPrim,
-                      SdfPath const &cachePath,
-                      UsdTimeCode time) const override;
+  bool GetDoubleSided(UsdPrim const &usdPrim, SdfPath const &cachePath, UsdTimeCode time) const override;
 
-  SdfPath GetMaterialId(UsdPrim const &prim,
-                        SdfPath const &cachePath,
-                        UsdTimeCode time) const override;
+  SdfPath GetMaterialId(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
 
   HdExtComputationInputDescriptorVector GetExtComputationInputs(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      const UsdImagingInstancerContext *instancerContext) const override;
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    const UsdImagingInstancerContext *instancerContext) const override;
 
   HdExtComputationOutputDescriptorVector GetExtComputationOutputs(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      const UsdImagingInstancerContext *instancerContext) const override;
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    const UsdImagingInstancerContext *instancerContext) const override;
 
   HdExtComputationPrimvarDescriptorVector GetExtComputationPrimvars(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      HdInterpolation interpolation,
-      const UsdImagingInstancerContext *instancerContext) const override;
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    HdInterpolation interpolation,
+    const UsdImagingInstancerContext *instancerContext) const override;
 
-  VtValue GetExtComputationInput(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      TfToken const &name,
-      UsdTimeCode time,
-      const UsdImagingInstancerContext *instancerContext) const override;
+  VtValue GetExtComputationInput(UsdPrim const &prim,
+                                 SdfPath const &cachePath,
+                                 TfToken const &name,
+                                 UsdTimeCode time,
+                                 const UsdImagingInstancerContext *instancerContext) const override;
 
-  std::string GetExtComputationKernel(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      const UsdImagingInstancerContext *instancerContext) const override;
+  std::string GetExtComputationKernel(UsdPrim const &prim,
+                                      SdfPath const &cachePath,
+                                      const UsdImagingInstancerContext *instancerContext) const override;
 
   VtValue GetInstanceIndices(UsdPrim const &instancerPrim,
                              SdfPath const &instancerCachePath,
@@ -391,8 +376,7 @@ class UsdImagingPointInstancerAdapter : public UsdImagingPrimAdapter {
   // A map of instancer data, one entry per instancer prim that has been
   // populated.
   // Note: this is accessed in multithreaded code paths and must be protected
-  typedef std::unordered_map<SdfPath /*instancerPath*/, _InstancerData, SdfPath::Hash>
-      _InstancerDataMap;
+  typedef std::unordered_map<SdfPath /*instancerPath*/, _InstancerData, SdfPath::Hash> _InstancerDataMap;
   _InstancerDataMap _instancerData;
 };
 

@@ -138,8 +138,8 @@ bool GfFindClosestPoints(const GfLine &line,
                          const GfLineSeg &seg,
                          GfVec3d *p1 = nullptr,
                          GfVec3d *p2 = nullptr,
-                         double *t1  = nullptr,
-                         double *t2  = nullptr);
+                         double *t1 = nullptr,
+                         double *t2 = nullptr);
 
 /// Computes the closets points on two line segments, \p seg1 and \p seg2. The
 /// two points are returned in \p p1 and \p p2. The parametric distances of \p
@@ -153,8 +153,8 @@ bool GfFindClosestPoints(const GfLineSeg &seg1,
                          const GfLineSeg &seg2,
                          GfVec3d *p1 = nullptr,
                          GfVec3d *p2 = nullptr,
-                         double *t1  = nullptr,
-                         double *t2  = nullptr);
+                         double *t1 = nullptr,
+                         double *t2 = nullptr);
 
 /// Output a GfLineSeg.
 /// \ingroup group_gf_DebuggingOutput

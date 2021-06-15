@@ -58,8 +58,8 @@ static UsdAttribute _CreateIncludedPurposesAttr(UsdRenderSettings &self,
                                                 object defaultVal,
                                                 bool writeSparsely)
 {
-  return self.CreateIncludedPurposesAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray), writeSparsely);
+  return self.CreateIncludedPurposesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
+                                         writeSparsely);
 }
 
 static UsdAttribute _CreateMaterialBindingPurposesAttr(UsdRenderSettings &self,
@@ -67,7 +67,7 @@ static UsdAttribute _CreateMaterialBindingPurposesAttr(UsdRenderSettings &self,
                                                        bool writeSparsely)
 {
   return self.CreateMaterialBindingPurposesAttr(
-      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray), writeSparsely);
+    UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray), writeSparsely);
 }
 
 static std::string _Repr(const UsdRenderSettings &self)
@@ -85,41 +85,39 @@ void wrapUsdRenderSettings()
   class_<This, bases<UsdRenderSettingsBase>> cls("Settings");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetIncludedPurposesAttr", &This::GetIncludedPurposesAttr)
-      .def("CreateIncludedPurposesAttr",
-           &_CreateIncludedPurposesAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetIncludedPurposesAttr", &This::GetIncludedPurposesAttr)
+    .def("CreateIncludedPurposesAttr",
+         &_CreateIncludedPurposesAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetMaterialBindingPurposesAttr", &This::GetMaterialBindingPurposesAttr)
-      .def("CreateMaterialBindingPurposesAttr",
-           &_CreateMaterialBindingPurposesAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetMaterialBindingPurposesAttr", &This::GetMaterialBindingPurposesAttr)
+    .def("CreateMaterialBindingPurposesAttr",
+         &_CreateMaterialBindingPurposesAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetProductsRel", &This::GetProductsRel)
-      .def("CreateProductsRel", &This::CreateProductsRel)
-      .def("__repr__", ::_Repr);
+    .def("GetProductsRel", &This::GetProductsRel)
+    .def("CreateProductsRel", &This::CreateProductsRel)
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -148,7 +146,7 @@ namespace {
 WRAP_CUSTOM
 {
   _class.def("GetStageRenderSettings", &UsdRenderSettings::GetStageRenderSettings)
-      .staticmethod("GetStageRenderSettings");
+    .staticmethod("GetStageRenderSettings");
 }
 
 }  // namespace

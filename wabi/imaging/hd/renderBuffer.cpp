@@ -39,9 +39,7 @@ HdDirtyBits HdRenderBuffer::GetInitialDirtyBitsMask() const
 }
 
 /*virtual*/
-void HdRenderBuffer::Sync(HdSceneDelegate *sceneDelegate,
-                          HdRenderParam *renderParam,
-                          HdDirtyBits *dirtyBits)
+void HdRenderBuffer::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
   if (*dirtyBits & DirtyDescription) {
     const HdRenderBufferDescriptor desc = sceneDelegate->GetRenderBufferDescriptor(GetId());

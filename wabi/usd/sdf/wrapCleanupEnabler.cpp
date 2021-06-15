@@ -80,9 +80,9 @@ void wrapCleanupEnabler()
 
   class_<This, boost::noncopyable>("CleanupEnabler", init<>())
 
-      // Callbacks for the python 'with' statement
-      .def("__enter__", &This::Enter)
-      .def("__exit__", &This::Exit)
+    // Callbacks for the python 'with' statement
+    .def("__enter__", &This::Enter)
+    .def("__exit__", &This::Exit)
 
-      ;
+    ;
 }

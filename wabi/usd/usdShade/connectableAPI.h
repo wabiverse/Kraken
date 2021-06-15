@@ -221,8 +221,7 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase {
   /// owned by a descendant of the node-graph owning the output.
   ///
   USDSHADE_API
-  static bool CanConnect(const UsdShadeOutput &output,
-                         const UsdAttribute &source = UsdAttribute());
+  static bool CanConnect(const UsdShadeOutput &output, const UsdAttribute &source = UsdAttribute());
 
   /// \overload
   USDSHADE_API
@@ -288,22 +287,20 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase {
   /// UsdShadeConnectionSourceInfo to describe the upstream source
   /// \overload
   USDSHADE_API
-  static bool ConnectToSource(
-      UsdAttribute const &shadingAttr,
-      UsdShadeConnectableAPI const &source,
-      TfToken const &sourceName,
-      UsdShadeAttributeType const sourceType = UsdShadeAttributeType::Output,
-      SdfValueTypeName typeName              = SdfValueTypeName());
+  static bool ConnectToSource(UsdAttribute const &shadingAttr,
+                              UsdShadeConnectableAPI const &source,
+                              TfToken const &sourceName,
+                              UsdShadeAttributeType const sourceType = UsdShadeAttributeType::Output,
+                              SdfValueTypeName typeName = SdfValueTypeName());
 
   /// \deprecated
   /// \overload
   USDSHADE_API
-  static bool ConnectToSource(
-      UsdShadeInput const &input,
-      UsdShadeConnectableAPI const &source,
-      TfToken const &sourceName,
-      UsdShadeAttributeType const sourceType = UsdShadeAttributeType::Output,
-      SdfValueTypeName typeName              = SdfValueTypeName())
+  static bool ConnectToSource(UsdShadeInput const &input,
+                              UsdShadeConnectableAPI const &source,
+                              TfToken const &sourceName,
+                              UsdShadeAttributeType const sourceType = UsdShadeAttributeType::Output,
+                              SdfValueTypeName typeName = SdfValueTypeName())
   {
     return ConnectToSource(input.GetAttr(), source, sourceName, sourceType, typeName);
   }
@@ -311,12 +308,11 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase {
   /// \deprecated
   /// \overload
   USDSHADE_API
-  static bool ConnectToSource(
-      UsdShadeOutput const &output,
-      UsdShadeConnectableAPI const &source,
-      TfToken const &sourceName,
-      UsdShadeAttributeType const sourceType = UsdShadeAttributeType::Output,
-      SdfValueTypeName typeName              = SdfValueTypeName())
+  static bool ConnectToSource(UsdShadeOutput const &output,
+                              UsdShadeConnectableAPI const &source,
+                              TfToken const &sourceName,
+                              UsdShadeAttributeType const sourceType = UsdShadeAttributeType::Output,
+                              SdfValueTypeName typeName = SdfValueTypeName())
   {
     return ConnectToSource(output.GetAttr(), source, sourceName, sourceType, typeName);
   }
@@ -500,8 +496,7 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase {
   /// Returns the "raw" (authored) connected source paths for the given
   /// shading attribute.
   USDSHADE_API
-  static bool GetRawConnectedSourcePaths(UsdAttribute const &shadingAttr,
-                                         SdfPathVector *sourcePaths);
+  static bool GetRawConnectedSourcePaths(UsdAttribute const &shadingAttr, SdfPathVector *sourcePaths);
 
   /// \deprecated
   /// \overload
@@ -591,16 +586,14 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase {
 
   /// \overload
   USDSHADE_API
-  static bool DisconnectSource(UsdShadeInput const &input,
-                               UsdAttribute const &sourceAttr = UsdAttribute())
+  static bool DisconnectSource(UsdShadeInput const &input, UsdAttribute const &sourceAttr = UsdAttribute())
   {
     return DisconnectSource(input.GetAttr(), sourceAttr);
   }
 
   /// \overload
   USDSHADE_API
-  static bool DisconnectSource(UsdShadeOutput const &output,
-                               UsdAttribute const &sourceAttr = UsdAttribute())
+  static bool DisconnectSource(UsdShadeOutput const &output, UsdAttribute const &sourceAttr = UsdAttribute())
   {
     return DisconnectSource(output.GetAttr(), sourceAttr);
   }
@@ -748,22 +741,22 @@ struct UsdShadeConnectionSourceInfo {
                                         TfToken const &sourceName_,
                                         UsdShadeAttributeType sourceType_,
                                         SdfValueTypeName typeName_ = SdfValueTypeName())
-      : source(source_),
-        sourceName(sourceName_),
-        sourceType(sourceType_),
-        typeName(typeName_)
+    : source(source_),
+      sourceName(sourceName_),
+      sourceType(sourceType_),
+      typeName(typeName_)
   {}
   explicit UsdShadeConnectionSourceInfo(UsdShadeInput const &input)
-      : source(input.GetPrim()),
-        sourceName(input.GetBaseName()),
-        sourceType(UsdShadeAttributeType::Input),
-        typeName(input.GetAttr().GetTypeName())
+    : source(input.GetPrim()),
+      sourceName(input.GetBaseName()),
+      sourceType(UsdShadeAttributeType::Input),
+      typeName(input.GetAttr().GetTypeName())
   {}
   explicit UsdShadeConnectionSourceInfo(UsdShadeOutput const &output)
-      : source(output.GetPrim()),
-        sourceName(output.GetBaseName()),
-        sourceType(UsdShadeAttributeType::Output),
-        typeName(output.GetAttr().GetTypeName())
+    : source(output.GetPrim()),
+      sourceName(output.GetBaseName()),
+      sourceType(UsdShadeAttributeType::Output),
+      typeName(output.GetAttr().GetTypeName())
   {}
   /// Construct the information for this struct from a property path. The
   /// source attribute does not have to exist, but the \p sourcePath needs to
@@ -780,8 +773,7 @@ struct UsdShadeConnectionSourceInfo {
     // Note, for the source we only check that the prim is valid. We do not
     // verify that the prim is compatibel with UsdShadeConnectableAPI. This
     // makes it possible to target pure overs
-    return (sourceType != UsdShadeAttributeType::Invalid) && !sourceName.IsEmpty() &&
-           (bool)source.GetPrim();
+    return (sourceType != UsdShadeAttributeType::Invalid) && !sourceName.IsEmpty() && (bool)source.GetPrim();
   }
   explicit operator bool() const
   {

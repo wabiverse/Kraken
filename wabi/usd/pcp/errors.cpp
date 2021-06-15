@@ -151,8 +151,7 @@ PcpErrorArcPermissionDeniedPtr PcpErrorArcPermissionDenied::New()
   return PcpErrorArcPermissionDeniedPtr(new PcpErrorArcPermissionDenied);
 }
 
-PcpErrorArcPermissionDenied::PcpErrorArcPermissionDenied()
-    : PcpErrorBase(PcpErrorType_ArcPermissionDenied)
+PcpErrorArcPermissionDenied::PcpErrorArcPermissionDenied() : PcpErrorBase(PcpErrorType_ArcPermissionDenied)
 {}
 
 PcpErrorArcPermissionDenied::~PcpErrorArcPermissionDenied()
@@ -193,8 +192,7 @@ PcpErrorCapacityExceededPtr PcpErrorCapacityExceeded::New(PcpErrorType errorType
   return PcpErrorCapacityExceededPtr(new PcpErrorCapacityExceeded(errorType));
 }
 
-PcpErrorCapacityExceeded::PcpErrorCapacityExceeded(PcpErrorType errorType)
-    : PcpErrorBase(errorType)
+PcpErrorCapacityExceeded::PcpErrorCapacityExceeded(PcpErrorType errorType) : PcpErrorBase(errorType)
 {}
 
 PcpErrorCapacityExceeded::~PcpErrorCapacityExceeded()
@@ -209,7 +207,7 @@ std::string PcpErrorCapacityExceeded::ToString() const
 ///////////////////////////////////////////////////////////////////////////////
 
 PcpErrorInconsistentPropertyBase::PcpErrorInconsistentPropertyBase(TfEnum errorType)
-    : PcpErrorBase(errorType)
+  : PcpErrorBase(errorType)
 {}
 
 // virtual
@@ -224,7 +222,7 @@ PcpErrorInconsistentPropertyTypePtr PcpErrorInconsistentPropertyType::New()
 }
 
 PcpErrorInconsistentPropertyType::PcpErrorInconsistentPropertyType()
-    : PcpErrorInconsistentPropertyBase(PcpErrorType_InconsistentPropertyType)
+  : PcpErrorInconsistentPropertyBase(PcpErrorType_InconsistentPropertyType)
 {}
 
 PcpErrorInconsistentPropertyType::~PcpErrorInconsistentPropertyType()
@@ -234,17 +232,17 @@ PcpErrorInconsistentPropertyType::~PcpErrorInconsistentPropertyType()
 std::string PcpErrorInconsistentPropertyType::ToString() const
 {
   return TfStringPrintf(
-      "The property <%s> has inconsistent spec types.  "
-      "The defining spec is @%s@<%s> and is %s spec.  "
-      "The conflicting spec is @%s@<%s> and is %s spec.  "
-      "The conflicting spec will be ignored.",
-      rootSite.path.GetString().c_str(),
-      definingLayerIdentifier.c_str(),
-      definingSpecPath.GetString().c_str(),
-      (definingSpecType == SdfSpecTypeAttribute ? "an attribute" : "a relationship"),
-      conflictingLayerIdentifier.c_str(),
-      conflictingSpecPath.GetString().c_str(),
-      (conflictingSpecType == SdfSpecTypeAttribute ? "an attribute" : "a relationship"));
+    "The property <%s> has inconsistent spec types.  "
+    "The defining spec is @%s@<%s> and is %s spec.  "
+    "The conflicting spec is @%s@<%s> and is %s spec.  "
+    "The conflicting spec will be ignored.",
+    rootSite.path.GetString().c_str(),
+    definingLayerIdentifier.c_str(),
+    definingSpecPath.GetString().c_str(),
+    (definingSpecType == SdfSpecTypeAttribute ? "an attribute" : "a relationship"),
+    conflictingLayerIdentifier.c_str(),
+    conflictingSpecPath.GetString().c_str(),
+    (conflictingSpecType == SdfSpecTypeAttribute ? "an attribute" : "a relationship"));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -255,7 +253,7 @@ PcpErrorInconsistentAttributeTypePtr PcpErrorInconsistentAttributeType::New()
 }
 
 PcpErrorInconsistentAttributeType::PcpErrorInconsistentAttributeType()
-    : PcpErrorInconsistentPropertyBase(PcpErrorType_InconsistentAttributeType)
+  : PcpErrorInconsistentPropertyBase(PcpErrorType_InconsistentAttributeType)
 {}
 
 PcpErrorInconsistentAttributeType::~PcpErrorInconsistentAttributeType()
@@ -265,17 +263,17 @@ PcpErrorInconsistentAttributeType::~PcpErrorInconsistentAttributeType()
 std::string PcpErrorInconsistentAttributeType::ToString() const
 {
   return TfStringPrintf(
-      "The attribute <%s> has specs with inconsistent value types.  "
-      "The defining spec is @%s@<%s> with value type '%s'.  "
-      "The conflicting spec is @%s@<%s> with value type '%s'.  "
-      "The conflicting spec will be ignored.",
-      rootSite.path.GetString().c_str(),
-      definingLayerIdentifier.c_str(),
-      definingSpecPath.GetString().c_str(),
-      definingValueType.GetText(),
-      conflictingLayerIdentifier.c_str(),
-      conflictingSpecPath.GetString().c_str(),
-      conflictingValueType.GetText());
+    "The attribute <%s> has specs with inconsistent value types.  "
+    "The defining spec is @%s@<%s> with value type '%s'.  "
+    "The conflicting spec is @%s@<%s> with value type '%s'.  "
+    "The conflicting spec will be ignored.",
+    rootSite.path.GetString().c_str(),
+    definingLayerIdentifier.c_str(),
+    definingSpecPath.GetString().c_str(),
+    definingValueType.GetText(),
+    conflictingLayerIdentifier.c_str(),
+    conflictingSpecPath.GetString().c_str(),
+    conflictingValueType.GetText());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -286,7 +284,7 @@ PcpErrorInconsistentAttributeVariabilityPtr PcpErrorInconsistentAttributeVariabi
 }
 
 PcpErrorInconsistentAttributeVariability::PcpErrorInconsistentAttributeVariability()
-    : PcpErrorInconsistentPropertyBase(PcpErrorType_InconsistentAttributeVariability)
+  : PcpErrorInconsistentPropertyBase(PcpErrorType_InconsistentAttributeVariability)
 {}
 
 PcpErrorInconsistentAttributeVariability::~PcpErrorInconsistentAttributeVariability()
@@ -296,17 +294,17 @@ PcpErrorInconsistentAttributeVariability::~PcpErrorInconsistentAttributeVariabil
 std::string PcpErrorInconsistentAttributeVariability::ToString() const
 {
   return TfStringPrintf(
-      "The attribute <%s> has specs with inconsistent variability.  "
-      "The defining spec is @%s@<%s> with variability '%s'.  The "
-      "conflicting spec is @%s@<%s> with variability '%s'.  The "
-      "conflicting variability will be ignored.",
-      rootSite.path.GetString().c_str(),
-      definingLayerIdentifier.c_str(),
-      definingSpecPath.GetString().c_str(),
-      TfEnum::GetName(definingVariability).c_str(),
-      conflictingLayerIdentifier.c_str(),
-      conflictingSpecPath.GetString().c_str(),
-      TfEnum::GetName(conflictingVariability).c_str());
+    "The attribute <%s> has specs with inconsistent variability.  "
+    "The defining spec is @%s@<%s> with variability '%s'.  The "
+    "conflicting spec is @%s@<%s> with variability '%s'.  The "
+    "conflicting variability will be ignored.",
+    rootSite.path.GetString().c_str(),
+    definingLayerIdentifier.c_str(),
+    definingSpecPath.GetString().c_str(),
+    TfEnum::GetName(definingVariability).c_str(),
+    conflictingLayerIdentifier.c_str(),
+    conflictingSpecPath.GetString().c_str(),
+    TfEnum::GetName(conflictingVariability).c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -316,8 +314,7 @@ PcpErrorInternalAssetPathPtr PcpErrorInternalAssetPath::New()
   return PcpErrorInternalAssetPathPtr(new PcpErrorInternalAssetPath);
 }
 
-PcpErrorInternalAssetPath::PcpErrorInternalAssetPath()
-    : PcpErrorBase(PcpErrorType_InternalAssetPath)
+PcpErrorInternalAssetPath::PcpErrorInternalAssetPath() : PcpErrorBase(PcpErrorType_InternalAssetPath)
 {}
 
 PcpErrorInternalAssetPath::~PcpErrorInternalAssetPath()
@@ -327,11 +324,11 @@ PcpErrorInternalAssetPath::~PcpErrorInternalAssetPath()
 std::string PcpErrorInternalAssetPath::ToString() const
 {
   return TfStringPrintf(
-      "Ignoring %s path on prim <%s> because asset @%s@ "
-      "is internal.",
-      TfEnum::GetDisplayName(arcType).c_str(),
-      site.path.GetText(),
-      resolvedAssetPath.c_str());
+    "Ignoring %s path on prim <%s> because asset @%s@ "
+    "is internal.",
+    TfEnum::GetDisplayName(arcType).c_str(),
+    site.path.GetText(),
+    resolvedAssetPath.c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -351,17 +348,16 @@ PcpErrorInvalidPrimPath::~PcpErrorInvalidPrimPath()
 std::string PcpErrorInvalidPrimPath::ToString() const
 {
   return TfStringPrintf(
-      "Invalid %s path <%s> on prim %s "
-      "-- must be an absolute prim path.",
-      TfEnum::GetDisplayName(arcType).c_str(),
-      primPath.GetText(),
-      TfStringify(site).c_str());
+    "Invalid %s path <%s> on prim %s "
+    "-- must be an absolute prim path.",
+    TfEnum::GetDisplayName(arcType).c_str(),
+    primPath.GetText(),
+    TfStringify(site).c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-PcpErrorInvalidAssetPathBase::PcpErrorInvalidAssetPathBase(TfEnum errorType)
-    : PcpErrorBase(errorType)
+PcpErrorInvalidAssetPathBase::PcpErrorInvalidAssetPathBase(TfEnum errorType) : PcpErrorBase(errorType)
 {}
 
 // virtual
@@ -376,7 +372,7 @@ PcpErrorInvalidAssetPathPtr PcpErrorInvalidAssetPath::New()
 }
 
 PcpErrorInvalidAssetPath::PcpErrorInvalidAssetPath()
-    : PcpErrorInvalidAssetPathBase(PcpErrorType_InvalidAssetPath)
+  : PcpErrorInvalidAssetPathBase(PcpErrorType_InvalidAssetPath)
 {}
 
 PcpErrorInvalidAssetPath::~PcpErrorInvalidAssetPath()
@@ -400,8 +396,7 @@ PcpErrorMutedAssetPathPtr PcpErrorMutedAssetPath::New()
   return PcpErrorMutedAssetPathPtr(new PcpErrorMutedAssetPath);
 }
 
-PcpErrorMutedAssetPath::PcpErrorMutedAssetPath()
-    : PcpErrorInvalidAssetPathBase(PcpErrorType_MutedAssetPath)
+PcpErrorMutedAssetPath::PcpErrorMutedAssetPath() : PcpErrorInvalidAssetPathBase(PcpErrorType_MutedAssetPath)
 {}
 
 PcpErrorMutedAssetPath::~PcpErrorMutedAssetPath()
@@ -432,7 +427,7 @@ PcpErrorInvalidInstanceTargetPathPtr PcpErrorInvalidInstanceTargetPath::New()
 }
 
 PcpErrorInvalidInstanceTargetPath::PcpErrorInvalidInstanceTargetPath()
-    : PcpErrorTargetPathBase(PcpErrorType_InvalidInstanceTargetPath)
+  : PcpErrorTargetPathBase(PcpErrorType_InvalidInstanceTargetPath)
 {}
 
 PcpErrorInvalidInstanceTargetPath::~PcpErrorInvalidInstanceTargetPath()
@@ -443,12 +438,12 @@ std::string PcpErrorInvalidInstanceTargetPath::ToString() const
 {
   TF_VERIFY(ownerSpecType == SdfSpecTypeAttribute || ownerSpecType == SdfSpecTypeRelationship);
   return TfStringPrintf(
-      "The %s <%s> from <%s> in layer @%s@ is authored in a class "
-      "but refers to an instance of that class.  Ignoring.",
-      (ownerSpecType == SdfSpecTypeAttribute ? "attribute connection" : "relationship target"),
-      targetPath.GetText(),
-      owningPath.GetText(),
-      layer->GetIdentifier().c_str());
+    "The %s <%s> from <%s> in layer @%s@ is authored in a class "
+    "but refers to an instance of that class.  Ignoring.",
+    (ownerSpecType == SdfSpecTypeAttribute ? "attribute connection" : "relationship target"),
+    targetPath.GetText(),
+    owningPath.GetText(),
+    layer->GetIdentifier().c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -459,7 +454,7 @@ PcpErrorInvalidExternalTargetPathPtr PcpErrorInvalidExternalTargetPath::New()
 }
 
 PcpErrorInvalidExternalTargetPath::PcpErrorInvalidExternalTargetPath()
-    : PcpErrorTargetPathBase(PcpErrorType_InvalidExternalTargetPath)
+  : PcpErrorTargetPathBase(PcpErrorType_InvalidExternalTargetPath)
 {}
 
 PcpErrorInvalidExternalTargetPath::~PcpErrorInvalidExternalTargetPath()
@@ -470,15 +465,15 @@ std::string PcpErrorInvalidExternalTargetPath::ToString() const
 {
   TF_VERIFY(ownerSpecType == SdfSpecTypeAttribute || ownerSpecType == SdfSpecTypeRelationship);
   return TfStringPrintf(
-      "The %s <%s> from <%s> in layer @%s@ refers "
-      "to a path outside the scope of the %s from <%s>.  "
-      "Ignoring.",
-      (ownerSpecType == SdfSpecTypeAttribute ? "attribute connection" : "relationship target"),
-      targetPath.GetText(),
-      owningPath.GetText(),
-      layer->GetIdentifier().c_str(),
-      TfEnum::GetDisplayName(TfEnum(ownerArcType)).c_str(),
-      ownerIntroPath.GetText());
+    "The %s <%s> from <%s> in layer @%s@ refers "
+    "to a path outside the scope of the %s from <%s>.  "
+    "Ignoring.",
+    (ownerSpecType == SdfSpecTypeAttribute ? "attribute connection" : "relationship target"),
+    targetPath.GetText(),
+    owningPath.GetText(),
+    layer->GetIdentifier().c_str(),
+    TfEnum::GetDisplayName(TfEnum(ownerArcType)).c_str(),
+    ownerIntroPath.GetText());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -489,7 +484,7 @@ PcpErrorInvalidTargetPathPtr PcpErrorInvalidTargetPath::New()
 }
 
 PcpErrorInvalidTargetPath::PcpErrorInvalidTargetPath()
-    : PcpErrorTargetPathBase(PcpErrorType_InvalidTargetPath)
+  : PcpErrorTargetPathBase(PcpErrorType_InvalidTargetPath)
 {}
 
 PcpErrorInvalidTargetPath::~PcpErrorInvalidTargetPath()
@@ -500,13 +495,13 @@ std::string PcpErrorInvalidTargetPath::ToString() const
 {
   TF_VERIFY(ownerSpecType == SdfSpecTypeAttribute || ownerSpecType == SdfSpecTypeRelationship);
   return TfStringPrintf(
-      "The %s <%s> from <%s> in layer @%s@ is invalid.  This may be "
-      "because the path is the pre-relocated source path of a "
-      "relocated prim.  Ignoring.",
-      (ownerSpecType == SdfSpecTypeAttribute ? "attribute connection" : "relationship target"),
-      targetPath.GetText(),
-      owningPath.GetText(),
-      layer->GetIdentifier().c_str());
+    "The %s <%s> from <%s> in layer @%s@ is invalid.  This may be "
+    "because the path is the pre-relocated source path of a "
+    "relocated prim.  Ignoring.",
+    (ownerSpecType == SdfSpecTypeAttribute ? "attribute connection" : "relationship target"),
+    targetPath.GetText(),
+    owningPath.GetText(),
+    layer->GetIdentifier().c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -517,7 +512,7 @@ PcpErrorInvalidSublayerOffsetPtr PcpErrorInvalidSublayerOffset::New()
 }
 
 PcpErrorInvalidSublayerOffset::PcpErrorInvalidSublayerOffset()
-    : PcpErrorBase(PcpErrorType_InvalidSublayerOffset)
+  : PcpErrorBase(PcpErrorType_InvalidSublayerOffset)
 {}
 
 PcpErrorInvalidSublayerOffset::~PcpErrorInvalidSublayerOffset()
@@ -527,11 +522,11 @@ PcpErrorInvalidSublayerOffset::~PcpErrorInvalidSublayerOffset()
 std::string PcpErrorInvalidSublayerOffset::ToString() const
 {
   return TfStringPrintf(
-      "Invalid sublayer offset %s in sublayer @%s@ of "
-      "layer @%s@. Using no offset instead.",
-      TfStringify(offset).c_str(),
-      sublayer->GetIdentifier().c_str(),
-      layer->GetIdentifier().c_str());
+    "Invalid sublayer offset %s in sublayer @%s@ of "
+    "layer @%s@. Using no offset instead.",
+    TfStringify(offset).c_str(),
+    sublayer->GetIdentifier().c_str(),
+    layer->GetIdentifier().c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -542,7 +537,7 @@ PcpErrorInvalidReferenceOffsetPtr PcpErrorInvalidReferenceOffset::New()
 }
 
 PcpErrorInvalidReferenceOffset::PcpErrorInvalidReferenceOffset()
-    : PcpErrorBase(PcpErrorType_InvalidReferenceOffset)
+  : PcpErrorBase(PcpErrorType_InvalidReferenceOffset)
 {}
 
 PcpErrorInvalidReferenceOffset::~PcpErrorInvalidReferenceOffset()
@@ -552,11 +547,11 @@ PcpErrorInvalidReferenceOffset::~PcpErrorInvalidReferenceOffset()
 std::string PcpErrorInvalidReferenceOffset::ToString() const
 {
   return TfStringPrintf(
-      "Invalid reference offset %s at %s on "
-      "asset path '%s'. Using no offset instead.",
-      TfStringify(offset).c_str(),
-      TfStringify(PcpSite(layer, sourcePath)).c_str(),
-      assetPath.c_str());
+    "Invalid reference offset %s at %s on "
+    "asset path '%s'. Using no offset instead.",
+    TfStringify(offset).c_str(),
+    TfStringify(PcpSite(layer, sourcePath)).c_str(),
+    assetPath.c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -567,7 +562,7 @@ PcpErrorInvalidSublayerOwnershipPtr PcpErrorInvalidSublayerOwnership::New()
 }
 
 PcpErrorInvalidSublayerOwnership::PcpErrorInvalidSublayerOwnership()
-    : PcpErrorBase(PcpErrorType_InvalidSublayerOwnership)
+  : PcpErrorBase(PcpErrorType_InvalidSublayerOwnership)
 {}
 
 PcpErrorInvalidSublayerOwnership::~PcpErrorInvalidSublayerOwnership()
@@ -582,11 +577,11 @@ std::string PcpErrorInvalidSublayerOwnership::ToString() const
     sublayerStrVec.push_back("@" + (*sublayer)->GetIdentifier() + "@");
   }
   return TfStringPrintf(
-      "The following sublayers for layer @%s@ have the "
-      "same owner '%s': %s",
-      layer->GetIdentifier().c_str(),
-      owner.c_str(),
-      TfStringJoin(sublayerStrVec, ", ").c_str());
+    "The following sublayers for layer @%s@ have the "
+    "same owner '%s': %s",
+    layer->GetIdentifier().c_str(),
+    owner.c_str(),
+    TfStringJoin(sublayerStrVec, ", ").c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -596,8 +591,7 @@ PcpErrorInvalidSublayerPathPtr PcpErrorInvalidSublayerPath::New()
   return PcpErrorInvalidSublayerPathPtr(new PcpErrorInvalidSublayerPath);
 }
 
-PcpErrorInvalidSublayerPath::PcpErrorInvalidSublayerPath()
-    : PcpErrorBase(PcpErrorType_InvalidSublayerPath)
+PcpErrorInvalidSublayerPath::PcpErrorInvalidSublayerPath() : PcpErrorBase(PcpErrorType_InvalidSublayerPath)
 {}
 
 PcpErrorInvalidSublayerPath::~PcpErrorInvalidSublayerPath()
@@ -607,12 +601,12 @@ PcpErrorInvalidSublayerPath::~PcpErrorInvalidSublayerPath()
 std::string PcpErrorInvalidSublayerPath::ToString() const
 {
   return TfStringPrintf(
-      "Could not load sublayer @%s@ of layer @%s@%s%s; "
-      "skipping.",
-      sublayerPath.c_str(),
-      layer ? layer->GetIdentifier().c_str() : "<NULL>",
-      messages.empty() ? "" : " -- ",
-      messages.c_str());
+    "Could not load sublayer @%s@ of layer @%s@%s%s; "
+    "skipping.",
+    sublayerPath.c_str(),
+    layer ? layer->GetIdentifier().c_str() : "<NULL>",
+    messages.empty() ? "" : " -- ",
+    messages.c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -623,7 +617,7 @@ PcpErrorInvalidVariantSelectionPtr PcpErrorInvalidVariantSelection::New()
 }
 
 PcpErrorInvalidVariantSelection::PcpErrorInvalidVariantSelection()
-    : PcpErrorBase(PcpErrorType_InvalidVariantSelection)
+  : PcpErrorBase(PcpErrorType_InvalidVariantSelection)
 {}
 
 PcpErrorInvalidVariantSelection::~PcpErrorInvalidVariantSelection()
@@ -633,12 +627,12 @@ PcpErrorInvalidVariantSelection::~PcpErrorInvalidVariantSelection()
 std::string PcpErrorInvalidVariantSelection::ToString() const
 {
   return TfStringPrintf(
-      "Invalid variant selection {%s = %s} at <%s> "
-      "in @%s@.",
-      vset.c_str(),
-      vsel.c_str(),
-      sitePath.GetText(),
-      siteAssetPath.c_str());
+    "Invalid variant selection {%s = %s} at <%s> "
+    "in @%s@.",
+    vset.c_str(),
+    vsel.c_str(),
+    sitePath.GetText(),
+    siteAssetPath.c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -649,7 +643,7 @@ PcpErrorOpinionAtRelocationSourcePtr PcpErrorOpinionAtRelocationSource::New()
 }
 
 PcpErrorOpinionAtRelocationSource::PcpErrorOpinionAtRelocationSource()
-    : PcpErrorBase(PcpErrorType_OpinionAtRelocationSource)
+  : PcpErrorBase(PcpErrorType_OpinionAtRelocationSource)
 {}
 
 PcpErrorOpinionAtRelocationSource::~PcpErrorOpinionAtRelocationSource()
@@ -659,11 +653,11 @@ PcpErrorOpinionAtRelocationSource::~PcpErrorOpinionAtRelocationSource()
 std::string PcpErrorOpinionAtRelocationSource::ToString() const
 {
   return TfStringPrintf(
-      "The layer @%s@ has an invalid opinion at the "
-      "relocation source path <%s>, which will be "
-      "ignored.",
-      layer->GetIdentifier().c_str(),
-      path.GetText());
+    "The layer @%s@ has an invalid opinion at the "
+    "relocation source path <%s>, which will be "
+    "ignored.",
+    layer->GetIdentifier().c_str(),
+    path.GetText());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -674,7 +668,7 @@ PcpErrorPrimPermissionDeniedPtr PcpErrorPrimPermissionDenied::New()
 }
 
 PcpErrorPrimPermissionDenied::PcpErrorPrimPermissionDenied()
-    : PcpErrorBase(PcpErrorType_PrimPermissionDenied)
+  : PcpErrorBase(PcpErrorType_PrimPermissionDenied)
 {}
 
 PcpErrorPrimPermissionDenied::~PcpErrorPrimPermissionDenied()
@@ -684,12 +678,12 @@ PcpErrorPrimPermissionDenied::~PcpErrorPrimPermissionDenied()
 std::string PcpErrorPrimPermissionDenied::ToString() const
 {
   return TfStringPrintf(
-      "%s\n"
-      "will be ignored because:\n"
-      "%s\n"
-      "is private and overrides its opinions.",
-      TfStringify(site).c_str(),
-      TfStringify(privateSite).c_str());
+    "%s\n"
+    "will be ignored because:\n"
+    "%s\n"
+    "is private and overrides its opinions.",
+    TfStringify(site).c_str(),
+    TfStringify(privateSite).c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -700,7 +694,7 @@ PcpErrorPropertyPermissionDeniedPtr PcpErrorPropertyPermissionDenied::New()
 }
 
 PcpErrorPropertyPermissionDenied::PcpErrorPropertyPermissionDenied()
-    : PcpErrorBase(PcpErrorType_PropertyPermissionDenied)
+  : PcpErrorBase(PcpErrorType_PropertyPermissionDenied)
 {}
 
 PcpErrorPropertyPermissionDenied::~PcpErrorPropertyPermissionDenied()
@@ -710,12 +704,12 @@ PcpErrorPropertyPermissionDenied::~PcpErrorPropertyPermissionDenied()
 std::string PcpErrorPropertyPermissionDenied::ToString() const
 {
   return TfStringPrintf(
-      "The layer at @%s@ has an illegal opinion about "
-      "%s <%s> which is private across a reference, "
-      "inherit, or variant.  Ignoring.",
-      layerPath.c_str(),
-      propType == SdfSpecTypeAttribute ? "an attribute" : "a relationship",
-      propPath.GetText());
+    "The layer at @%s@ has an illegal opinion about "
+    "%s <%s> which is private across a reference, "
+    "inherit, or variant.  Ignoring.",
+    layerPath.c_str(),
+    propType == SdfSpecTypeAttribute ? "an attribute" : "a relationship",
+    propPath.GetText());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -735,11 +729,11 @@ PcpErrorSublayerCycle::~PcpErrorSublayerCycle()
 std::string PcpErrorSublayerCycle::ToString() const
 {
   return TfStringPrintf(
-      "Sublayer hierarchy with root layer @%s@ has cycles. "
-      "Detected when layer @%s@ was seen in the layer "
-      "stack for the second time.",
-      layer->GetIdentifier().c_str(),
-      sublayer->GetIdentifier().c_str());
+    "Sublayer hierarchy with root layer @%s@ has cycles. "
+    "Detected when layer @%s@ was seen in the layer "
+    "stack for the second time.",
+    layer->GetIdentifier().c_str(),
+    sublayer->GetIdentifier().c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -750,7 +744,7 @@ PcpErrorTargetPermissionDeniedPtr PcpErrorTargetPermissionDenied::New()
 }
 
 PcpErrorTargetPermissionDenied::PcpErrorTargetPermissionDenied()
-    : PcpErrorTargetPathBase(PcpErrorType_TargetPermissionDenied)
+  : PcpErrorTargetPathBase(PcpErrorType_TargetPermissionDenied)
 {}
 
 PcpErrorTargetPermissionDenied::~PcpErrorTargetPermissionDenied()
@@ -761,14 +755,14 @@ std::string PcpErrorTargetPermissionDenied::ToString() const
 {
   TF_VERIFY(ownerSpecType == SdfSpecTypeAttribute || ownerSpecType == SdfSpecTypeRelationship);
   return TfStringPrintf(
-      "The %s <%s> from <%s> in layer @%s@ targets an object that is "
-      "private on the far side of a reference or inherit.  This %s "
-      "will be ignored.",
-      (ownerSpecType == SdfSpecTypeAttribute ? "attribute connection" : "relationship target"),
-      targetPath.GetText(),
-      owningPath.GetText(),
-      layer->GetIdentifier().c_str(),
-      (ownerSpecType == SdfSpecTypeAttribute ? "connection" : "target"));
+    "The %s <%s> from <%s> in layer @%s@ targets an object that is "
+    "private on the far side of a reference or inherit.  This %s "
+    "will be ignored.",
+    (ownerSpecType == SdfSpecTypeAttribute ? "attribute connection" : "relationship target"),
+    targetPath.GetText(),
+    owningPath.GetText(),
+    layer->GetIdentifier().c_str(),
+    (ownerSpecType == SdfSpecTypeAttribute ? "connection" : "target"));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -778,8 +772,7 @@ PcpErrorUnresolvedPrimPathPtr PcpErrorUnresolvedPrimPath::New()
   return PcpErrorUnresolvedPrimPathPtr(new PcpErrorUnresolvedPrimPath);
 }
 
-PcpErrorUnresolvedPrimPath::PcpErrorUnresolvedPrimPath()
-    : PcpErrorBase(PcpErrorType_UnresolvedPrimPath)
+PcpErrorUnresolvedPrimPath::PcpErrorUnresolvedPrimPath() : PcpErrorBase(PcpErrorType_UnresolvedPrimPath)
 {}
 
 PcpErrorUnresolvedPrimPath::~PcpErrorUnresolvedPrimPath()

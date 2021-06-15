@@ -45,8 +45,7 @@ HdBasisCurves::~HdBasisCurves()
 /* virtual */
 TfTokenVector const &HdBasisCurves::GetBuiltinPrimvarNames() const
 {
-  static const TfTokenVector primvarNames = {
-      HdTokens->points, HdTokens->normals, HdTokens->widths};
+  static const TfTokenVector primvarNames = {HdTokens->points, HdTokens->normals, HdTokens->widths};
   return primvarNames;
 }
 
@@ -72,8 +71,7 @@ void HdBasisCurves::ConfigureRepr(TfToken const &reprName, HdBasisCurvesReprDesc
 }
 
 /* static */
-HdBasisCurves::_BasisCurvesReprConfig::DescArray HdBasisCurves::_GetReprDesc(
-    TfToken const &reprName)
+HdBasisCurves::_BasisCurvesReprConfig::DescArray HdBasisCurves::_GetReprDesc(TfToken const &reprName)
 {
   return _reprDescConfig.Find(reprName);
 }

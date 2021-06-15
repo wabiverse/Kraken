@@ -45,28 +45,23 @@ namespace {
 
 float GetDiskLightNormalization(GfMatrix4f const &transform, float radius)
 {
-  const double sx = GfVec3d(transform[0][0], transform[1][0], transform[2][0]).GetLength() *
-                    radius;
-  const double sy = GfVec3d(transform[0][1], transform[1][1], transform[2][1]).GetLength() *
-                    radius;
+  const double sx = GfVec3d(transform[0][0], transform[1][0], transform[2][0]).GetLength() * radius;
+  const double sy = GfVec3d(transform[0][1], transform[1][1], transform[2][1]).GetLength() * radius;
 
   float scaleFactor = 1.0f;
   if (sx != 0.0 && sy != 0.0) {
     constexpr float unitDiskArea = M_PI;
-    float diskArea               = M_PI * sx * sy;
-    scaleFactor                  = diskArea / unitDiskArea;
+    float diskArea = M_PI * sx * sy;
+    scaleFactor = diskArea / unitDiskArea;
   }
   return scaleFactor;
 }
 
 float GetSphereLightNormalization(GfMatrix4f const &transform, float radius)
 {
-  const double sx = GfVec3d(transform[0][0], transform[1][0], transform[2][0]).GetLength() *
-                    radius;
-  const double sy = GfVec3d(transform[0][1], transform[1][1], transform[2][1]).GetLength() *
-                    radius;
-  const double sz = GfVec3d(transform[0][2], transform[1][2], transform[2][2]).GetLength() *
-                    radius;
+  const double sx = GfVec3d(transform[0][0], transform[1][0], transform[2][0]).GetLength() * radius;
+  const double sy = GfVec3d(transform[0][1], transform[1][1], transform[2][1]).GetLength() * radius;
+  const double sz = GfVec3d(transform[0][2], transform[1][2], transform[2][2]).GetLength() * radius;
 
   float scaleFactor = 1.0f;
   if (sx != 0.0 && sy != 0.0 && sz != 0.0) {
@@ -77,11 +72,11 @@ float GetSphereLightNormalization(GfMatrix4f const &transform, float radius)
     else {
       // Approximating the area of a stretched ellipsoid using the Knud Thomsen formula:
       // http://www.numericana.com/answer/ellipsoid.htm
-      constexpr const double p    = 1.6075;
+      constexpr const double p = 1.6075;
       constexpr const double pinv = 1. / 1.6075;
-      double sx_p                 = pow(sx, p);
-      double sy_p                 = pow(sy, p);
-      double sz_p                 = pow(sz, p);
+      double sx_p = pow(sx, p);
+      double sy_p = pow(sy, p);
+      double sz_p = pow(sz, p);
 
       scaleFactor = 1.0f / pow(3. / (sx_p * sy_p + sx_p * sz_p + sy_p * sz_p), pinv);
     }
@@ -106,12 +101,9 @@ float GetRectLightNormalization(GfMatrix4f const &transform, float width, float 
 
 float GetCylinderLightNormalization(GfMatrix4f const &transform, float length, float radius)
 {
-  const auto scaledLength =
-      GfVec3d(transform[0][0], transform[1][0], transform[2][0]).GetLength() * length;
-  const auto scaledRadiusX =
-      GfVec3d(transform[0][1], transform[1][1], transform[2][1]).GetLength() * radius;
-  const auto scaledRadiusY =
-      GfVec3d(transform[0][2], transform[1][2], transform[2][2]).GetLength() * radius;
+  const auto scaledLength = GfVec3d(transform[0][0], transform[1][0], transform[2][0]).GetLength() * length;
+  const auto scaledRadiusX = GfVec3d(transform[0][1], transform[1][1], transform[2][1]).GetLength() * radius;
+  const auto scaledRadiusY = GfVec3d(transform[0][2], transform[1][2], transform[2][2]).GetLength() * radius;
 
   float scaleFactor = 1.0f;
   if (scaledRadiusX != 0.0 && scaledRadiusY != 0.0 && scaledLength != 0.0) {
@@ -119,9 +111,9 @@ float GetCylinderLightNormalization(GfMatrix4f const &transform, float length, f
 
     float cylinderArea = 1.0f;
     if (std::abs(scaledRadiusX - scaledRadiusY) < 1e4) {
-      float capArea  = M_PI * scaledRadiusX * scaledRadiusX;
+      float capArea = M_PI * scaledRadiusX * scaledRadiusX;
       float sideArea = 2.0f * M_PI * scaledRadiusX * scaledLength;
-      cylinderArea   = 2.0f * capArea + sideArea;
+      cylinderArea = 2.0f * capArea + sideArea;
     }
     else {
       float capArea = M_PI * scaledRadiusX * scaledRadiusY;
@@ -132,7 +124,7 @@ float GetCylinderLightNormalization(GfMatrix4f const &transform, float length, f
       float circumference = M_PI * (scaledRadiusX + scaledRadiusY) *
                             (1.0f + (3.0f * h) / (10.0f + std::sqrt(4.0f - 3.0f * h)));
       float sideArea = circumference * scaledLength;
-      cylinderArea   = 2.0f * capArea + sideArea;
+      cylinderArea = 2.0f * capArea + sideArea;
     }
 
     scaleFactor = cylinderArea / unitCylinderArea;
@@ -150,7 +142,7 @@ float ComputeLightIntensity(float intensity, float exposure)
 rpr::Shape *HdRprLight::CreateDiskLightMesh(HdRprApi *rprApi)
 {
   constexpr uint32_t kDiskVertexCount = 32;
-  constexpr float kRadius             = 0.5f;
+  constexpr float kRadius = 0.5f;
 
   VtVec3fArray points;
   VtIntArray pointIndices;
@@ -175,14 +167,8 @@ rpr::Shape *HdRprLight::CreateDiskLightMesh(HdRprApi *rprApi)
     pointIndices.push_back(centerPointIndex);
   }
 
-  return rprApi->CreateMesh(points,
-                            pointIndices,
-                            normals,
-                            normalIndices,
-                            VtVec2fArray(),
-                            VtIntArray(),
-                            vpf,
-                            HdTokens->rightHanded);
+  return rprApi->CreateMesh(
+    points, pointIndices, normals, normalIndices, VtVec2fArray(), VtIntArray(), vpf, HdTokens->rightHanded);
 }
 
 rpr::Shape *HdRprLight::CreateRectLightMesh(HdRprApi *rprApi,
@@ -190,11 +176,11 @@ rpr::Shape *HdRprLight::CreateRectLightMesh(HdRprApi *rprApi,
                                             GfMatrix4f const &transform)
 {
   constexpr float kHalfSize = 0.5f;
-  VtVec3fArray points       = {
-      GfVec3f(kHalfSize, kHalfSize, 0.0f),
-      GfVec3f(kHalfSize, -kHalfSize, 0.0f),
-      GfVec3f(-kHalfSize, -kHalfSize, 0.0f),
-      GfVec3f(-kHalfSize, kHalfSize, 0.0f),
+  VtVec3fArray points = {
+    GfVec3f(kHalfSize, kHalfSize, 0.0f),
+    GfVec3f(kHalfSize, -kHalfSize, 0.0f),
+    GfVec3f(-kHalfSize, -kHalfSize, 0.0f),
+    GfVec3f(-kHalfSize, kHalfSize, 0.0f),
   };
   VtIntArray pointIndices = {0, 1, 2, 0, 2, 3};
   VtIntArray vpf(pointIndices.size() / 3, 3);
@@ -218,7 +204,7 @@ rpr::Shape *HdRprLight::CreateRectLightMesh(HdRprApi *rprApi,
 rpr::Shape *HdRprLight::CreateSphereLightMesh(HdRprApi *rprApi)
 {
   auto &topology = UsdImagingGetUnitSphereMeshTopology();
-  auto &points   = UsdImagingGetUnitSphereMeshPoints();
+  auto &points = UsdImagingGetUnitSphereMeshPoints();
 
   return rprApi->CreateMesh(points,
                             topology.GetFaceVertexIndices(),
@@ -233,7 +219,7 @@ rpr::Shape *HdRprLight::CreateSphereLightMesh(HdRprApi *rprApi)
 rpr::Shape *HdRprLight::CreateCylinderLightMesh(HdRprApi *rprApi)
 {
   auto &topology = UsdImagingGetUnitCylinderMeshTopology();
-  auto &points   = UsdImagingGetUnitCylinderMeshPoints();
+  auto &points = UsdImagingGetUnitCylinderMeshPoints();
 
   return rprApi->CreateMesh(points,
                             topology.GetFaceVertexIndices(),
@@ -247,12 +233,10 @@ rpr::Shape *HdRprLight::CreateCylinderLightMesh(HdRprApi *rprApi)
 
 void HdRprLight::SyncAreaLightGeomParams(HdSceneDelegate *sceneDelegate, float *intensity)
 {
-  bool normalizeIntensity =
-      sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->normalize).Get<bool>();
+  bool normalizeIntensity = sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->normalize).Get<bool>();
 
   if (m_lightType == HdPrimTypeTokens->diskLight || m_lightType == HdPrimTypeTokens->sphereLight) {
-    float radius = std::abs(
-        sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->radius).Get<float>());
+    float radius = std::abs(sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->radius).Get<float>());
 
     m_localTransform = GfMatrix4f(1.0f).SetScale(GfVec3f(radius * 2.0f));
 
@@ -266,10 +250,8 @@ void HdRprLight::SyncAreaLightGeomParams(HdSceneDelegate *sceneDelegate, float *
     }
   }
   else if (m_lightType == HdPrimTypeTokens->rectLight) {
-    float width = std::abs(
-        sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->width).Get<float>());
-    float height = std::abs(
-        sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->height).Get<float>());
+    float width = std::abs(sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->width).Get<float>());
+    float height = std::abs(sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->height).Get<float>());
 
     m_localTransform = GfMatrix4f(1.0f).SetScale(GfVec3f(width, height, 1.0f));
 
@@ -278,10 +260,8 @@ void HdRprLight::SyncAreaLightGeomParams(HdSceneDelegate *sceneDelegate, float *
     }
   }
   else if (m_lightType == HdPrimTypeTokens->cylinderLight) {
-    float radius = std::abs(
-        sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->radius).Get<float>());
-    float length = std::abs(
-        sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->length).Get<float>());
+    float radius = std::abs(sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->radius).Get<float>());
+    float length = std::abs(sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->length).Get<float>());
 
     m_localTransform = GfMatrix4f(1.0f).SetRotate(GfRotation(GfVec3d(0.0, 1.0, 0.0), 90.0)) *
                        GfMatrix4f(1.0f).SetScale(GfVec3f(length, radius * 2.0f, radius * 2.0f));
@@ -325,7 +305,7 @@ void HdRprLight::CreateAreaLightMesh(HdRprApi *rprApi, HdSceneDelegate *sceneDel
       // Rescale rect so that total emission power equals to emission power of approximated shape
       // (area equality) pi*(R/2)^2 = a^2 -> a = R * sqrt(pi) / 2
       if (auto mesh = CreateRectLightMesh(
-              rprApi, true, GfMatrix4f(1.0f).SetScale(GfVec3f(sqrt(M_PI) / 2.0)))) {
+            rprApi, true, GfMatrix4f(1.0f).SetScale(GfVec3f(sqrt(M_PI) / 2.0)))) {
         light->meshes.push_back(mesh);
       }
     }
@@ -335,23 +315,22 @@ void HdRprLight::CreateAreaLightMesh(HdRprApi *rprApi, HdSceneDelegate *sceneDel
       constexpr float kHalfSize = 0.5f;
 
       GfMatrix4f sideTransforms[6] = {
-          GfMatrix4f(1.0)
-              .SetRotate(GfRotation(GfVec3d(1.0, 0.0, 0.0), 90.0))
-              .SetTranslateOnly(GfVec3f(0.0f, kHalfSize, 0.0f)),  // top (XZ plane)
-          GfMatrix4f(1.0)
-              .SetRotate(GfRotation(GfVec3d(1.0, 0.0, 0.0), -90.0))
-              .SetTranslateOnly(GfVec3f(0.0f, -kHalfSize, 0.0f)),  // bottom (XZ plane)
-          GfMatrix4f(1.0)
-              .SetRotate(GfRotation(GfVec3d(0.0, 1.0, 0.0), -90.0))
-              .SetTranslateOnly(GfVec3f(kHalfSize, 0.0, 0.0)),  // side_0 (ZY plane, front)
-          GfMatrix4f(1.0)
-              .SetRotate(GfRotation(GfVec3d(0.0, 1.0, 0.0), 90.0))
-              .SetTranslateOnly(GfVec3f(-kHalfSize, 0.0, 0.0)),  // side_1 (ZY plane, back)
-          GfMatrix4f(1.0)
-              .SetRotate(GfRotation(GfVec3d(0.0, 1.0, 0.0), 180.0))
-              .SetTranslateOnly(GfVec3f(0.0f, 0.0, kHalfSize)),  // side_2 (XY plane, front)
-          GfMatrix4f(1.0).SetTranslateOnly(
-              GfVec3f(0.0f, 0.0, -kHalfSize)),  // side_3 (XY plane, back)
+        GfMatrix4f(1.0)
+          .SetRotate(GfRotation(GfVec3d(1.0, 0.0, 0.0), 90.0))
+          .SetTranslateOnly(GfVec3f(0.0f, kHalfSize, 0.0f)),  // top (XZ plane)
+        GfMatrix4f(1.0)
+          .SetRotate(GfRotation(GfVec3d(1.0, 0.0, 0.0), -90.0))
+          .SetTranslateOnly(GfVec3f(0.0f, -kHalfSize, 0.0f)),  // bottom (XZ plane)
+        GfMatrix4f(1.0)
+          .SetRotate(GfRotation(GfVec3d(0.0, 1.0, 0.0), -90.0))
+          .SetTranslateOnly(GfVec3f(kHalfSize, 0.0, 0.0)),  // side_0 (ZY plane, front)
+        GfMatrix4f(1.0)
+          .SetRotate(GfRotation(GfVec3d(0.0, 1.0, 0.0), 90.0))
+          .SetTranslateOnly(GfVec3f(-kHalfSize, 0.0, 0.0)),  // side_1 (ZY plane, back)
+        GfMatrix4f(1.0)
+          .SetRotate(GfRotation(GfVec3d(0.0, 1.0, 0.0), 180.0))
+          .SetTranslateOnly(GfVec3f(0.0f, 0.0, kHalfSize)),                // side_2 (XY plane, front)
+        GfMatrix4f(1.0).SetTranslateOnly(GfVec3f(0.0f, 0.0, -kHalfSize)),  // side_3 (XY plane, back)
       };
 
       // Rescale cube so that total emission power equals to emission power of approximated shape
@@ -399,9 +378,9 @@ struct HdRprLight::LightParameterSetter : public BOOST_NS::static_visitor<void> 
   bool emissionColorIsDirty;
 
   LightParameterSetter(HdRprApi *rprApi, GfVec3f const &emissionColor, bool emissionColorIsDirty)
-      : rprApi(rprApi),
-        emissionColor(emissionColor),
-        emissionColorIsDirty(emissionColorIsDirty)
+    : rprApi(rprApi),
+      emissionColor(emissionColor),
+      emissionColorIsDirty(emissionColorIsDirty)
   {}
 
   void operator()(LightVariantEmpty) const
@@ -459,9 +438,7 @@ struct HdRprLight::LightTransformSetter : public BOOST_NS::static_visitor<> {
   HdRprApi *rprApi;
   GfMatrix4f const &transform;
 
-  LightTransformSetter(HdRprApi *rprApi, GfMatrix4f const &transform)
-      : rprApi(rprApi),
-        transform(transform)
+  LightTransformSetter(HdRprApi *rprApi, GfMatrix4f const &transform) : rprApi(rprApi), transform(transform)
   {}
 
   void operator()(LightVariantEmpty) const
@@ -479,22 +456,19 @@ struct HdRprLight::LightTransformSetter : public BOOST_NS::static_visitor<> {
   }
 };
 
-void HdRprLight::Sync(HdSceneDelegate *sceneDelegate,
-                      HdRenderParam *renderParam,
-                      HdDirtyBits *dirtyBits)
+void HdRprLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
   auto rprRenderParam = static_cast<HdRprRenderParam *>(renderParam);
-  auto rprApi         = rprRenderParam->AcquireRprApiForEdit();
+  auto rprApi = rprRenderParam->AcquireRprApiForEdit();
 
   SdfPath const &id = GetId();
-  HdDirtyBits bits  = *dirtyBits;
+  HdDirtyBits bits = *dirtyBits;
 
   if (bits & DirtyBits::DirtyTransform) {
 #if WABI_VERSION >= 2011
     m_transform = GfMatrix4f(sceneDelegate->GetTransform(id));
 #else
-    m_transform = GfMatrix4f(
-        sceneDelegate->GetLightParamValue(id, HdTokens->transform).Get<GfMatrix4d>());
+    m_transform = GfMatrix4f(sceneDelegate->GetLightParamValue(id, HdTokens->transform).Get<GfMatrix4d>());
 #endif
   }
 
@@ -509,44 +483,41 @@ void HdRprLight::Sync(HdSceneDelegate *sceneDelegate,
     }
 
     bool newLight = false;
-    auto iesFile  = sceneDelegate->GetLightParamValue(id, USD_LUX_TOKEN_SHAPING_IES_FILE);
+    auto iesFile = sceneDelegate->GetLightParamValue(id, USD_LUX_TOKEN_SHAPING_IES_FILE);
     if (iesFile.IsHolding<SdfAssetPath>()) {
       auto &path = iesFile.UncheckedGet<SdfAssetPath>();
       if (!path.GetResolvedPath().empty()) {
         if (auto light = rprApi->CreateIESLight(path.GetResolvedPath())) {
-          m_light  = light;
+          m_light = light;
           newLight = true;
         }
       }
     }
     else {
-      auto coneAngle    = sceneDelegate->GetLightParamValue(id, USD_LUX_TOKEN_SHAPING_CONE_ANGLE);
-      auto coneSoftness = sceneDelegate->GetLightParamValue(id,
-                                                            USD_LUX_TOKEN_SHAPING_CONE_SOFTNESS);
+      auto coneAngle = sceneDelegate->GetLightParamValue(id, USD_LUX_TOKEN_SHAPING_CONE_ANGLE);
+      auto coneSoftness = sceneDelegate->GetLightParamValue(id, USD_LUX_TOKEN_SHAPING_CONE_SOFTNESS);
       if (coneAngle.IsHolding<float>() && coneSoftness.IsHolding<float>()) {
         if (auto light = rprApi->CreateSpotLight(coneAngle.UncheckedGet<float>(),
                                                  coneSoftness.UncheckedGet<float>())) {
-          m_light  = light;
+          m_light = light;
           newLight = true;
         }
       }
-      else if (sceneDelegate->GetLightParamValue(id, UsdLuxTokens->treatAsPoint)
-                   .GetWithDefault(false)) {
+      else if (sceneDelegate->GetLightParamValue(id, UsdLuxTokens->treatAsPoint).GetWithDefault(false)) {
         if (auto light = rprApi->CreatePointLight()) {
-          m_light  = light;
+          m_light = light;
           newLight = true;
         }
       }
       else {
         if (rprApi->IsSphereAndDiskLightSupported() &&
-            (m_lightType == HdPrimTypeTokens->sphereLight ||
-             m_lightType == HdPrimTypeTokens->diskLight)) {
+            (m_lightType == HdPrimTypeTokens->sphereLight || m_lightType == HdPrimTypeTokens->diskLight)) {
 
           if (m_lightType == HdPrimTypeTokens->sphereLight) {
             if (auto light = rprApi->CreateSphereLight()) {
               rprApi->SetLightRadius(light, 0.5f);
 
-              m_light  = light;
+              m_light = light;
               newLight = true;
             }
           }
@@ -555,7 +526,7 @@ void HdRprLight::Sync(HdSceneDelegate *sceneDelegate,
               rprApi->SetLightRadius(light, 0.5f);
               rprApi->SetLightAngle(light, float(M_PI_2));
 
-              m_light  = light;
+              m_light = light;
               newLight = true;
             }
           }
@@ -573,14 +544,13 @@ void HdRprLight::Sync(HdSceneDelegate *sceneDelegate,
     }
 
     float intensity = sceneDelegate->GetLightParamValue(id, HdLightTokens->intensity).Get<float>();
-    float exposure  = sceneDelegate->GetLightParamValue(id, HdLightTokens->exposure).Get<float>();
-    intensity       = ComputeLightIntensity(intensity, exposure);
+    float exposure = sceneDelegate->GetLightParamValue(id, HdLightTokens->exposure).Get<float>();
+    intensity = ComputeLightIntensity(intensity, exposure);
 
-    GfVec3f color =
-        sceneDelegate->GetLightParamValue(id, HdPrimvarRoleTokens->color).Get<GfVec3f>();
+    GfVec3f color = sceneDelegate->GetLightParamValue(id, HdPrimvarRoleTokens->color).Get<GfVec3f>();
     if (sceneDelegate->GetLightParamValue(id, HdLightTokens->enableColorTemperature).Get<bool>()) {
       GfVec3f temperatureColor = UsdLuxBlackbodyTemperatureAsRgb(
-          sceneDelegate->GetLightParamValue(id, HdLightTokens->colorTemperature).Get<float>());
+        sceneDelegate->GetLightParamValue(id, HdLightTokens->colorTemperature).Get<float>());
       color[0] *= temperatureColor[0];
       color[1] *= temperatureColor[1];
       color[2] *= temperatureColor[2];
@@ -591,14 +561,13 @@ void HdRprLight::Sync(HdSceneDelegate *sceneDelegate,
       SyncAreaLightGeomParams(sceneDelegate, &intensity);
     }
 
-    auto emissionColor        = color * intensity;
+    auto emissionColor = color * intensity;
     bool isEmissionColorDirty = newLight || m_emisionColor != emissionColor;
     if (isEmissionColorDirty) {
       m_emisionColor = emissionColor;
     }
 
-    BOOST_NS::apply_visitor(LightParameterSetter{rprApi, emissionColor, isEmissionColorDirty},
-                            m_light);
+    BOOST_NS::apply_visitor(LightParameterSetter{rprApi, emissionColor, isEmissionColorDirty}, m_light);
 
     if (newLight && RprUsdIsLeakCheckEnabled()) {
       BOOST_NS::apply_visitor(LightNameSetter{rprApi, id.GetText()}, m_light);

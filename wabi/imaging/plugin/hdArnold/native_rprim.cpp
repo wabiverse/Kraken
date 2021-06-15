@@ -25,16 +25,16 @@ WABI_NAMESPACE_BEGIN
 HdArnoldNativeRprim::HdArnoldNativeRprim(HdArnoldRenderDelegate *renderDelegate,
                                          const AtString &arnoldType,
                                          const SdfPath &id)
-    : HdArnoldRprim<HdRprim>(arnoldType, renderDelegate, id),
-      _paramList(renderDelegate->GetNativeRprimParamList(arnoldType))
+  : HdArnoldRprim<HdRprim>(arnoldType, renderDelegate, id),
+    _paramList(renderDelegate->GetNativeRprimParamList(arnoldType))
 {}
 #else
 HdArnoldNativeRprim::HdArnoldNativeRprim(HdArnoldRenderDelegate *renderDelegate,
                                          const AtString &arnoldType,
                                          const SdfPath &id,
                                          const SdfPath &instancerId)
-    : HdArnoldRprim<HdRprim>(arnoldType, renderDelegate, id, instancerId),
-      _paramList(renderDelegate->GetNativeRprimParamList(arnoldType))
+  : HdArnoldRprim<HdRprim>(arnoldType, renderDelegate, id, instancerId),
+    _paramList(renderDelegate->GetNativeRprimParamList(arnoldType))
 {}
 #endif
 
@@ -57,7 +57,7 @@ void HdArnoldNativeRprim::Sync(HdSceneDelegate *sceneDelegate,
         const auto *nodeEntry = AiNodeGetNodeEntry(GetArnoldNode());
         for (const auto &param : val.UncheckedGet<ArnoldUsdParamValueList>()) {
           HdArnoldSetParameter(
-              GetArnoldNode(), AiNodeEntryLookUpParameter(nodeEntry, param.first), param.second);
+            GetArnoldNode(), AiNodeEntryLookUpParameter(nodeEntry, param.first), param.second);
         }
       }
 #else
@@ -88,7 +88,7 @@ void HdArnoldNativeRprim::Sync(HdSceneDelegate *sceneDelegate,
     const auto materialId = sceneDelegate->GetMaterialId(id);
     _materialTracker.TrackSingleMaterial(GetRenderDelegate(), id, materialId);
     const auto *material = reinterpret_cast<const HdArnoldMaterial *>(
-        sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, materialId));
+      sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, materialId));
     if (material != nullptr) {
       AiNodeSetPtr(GetArnoldNode(), str::shader, material->GetSurfaceShader());
     }

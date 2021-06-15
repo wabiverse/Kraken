@@ -73,13 +73,7 @@ class HioImage {
   ///
   class StorageSpec {
    public:
-    StorageSpec()
-        : width(0),
-          height(0),
-          depth(0),
-          format(HioFormatInvalid),
-          flipped(false),
-          data(0)
+    StorageSpec() : width(0), height(0), depth(0), format(HioFormatInvalid), flipped(false), data(0)
     {}
 
     int width, height, depth;
@@ -109,12 +103,11 @@ class HioImage {
   /// \a mip, using \a sourceColorSpace to help determine the color space
   /// with which to interpret the texture
   HIO_API
-  static HioImageSharedPtr OpenForReading(
-      std::string const &filename,
-      int subimage                      = 0,
-      int mip                           = 0,
-      SourceColorSpace sourceColorSpace = SourceColorSpace::Auto,
-      bool suppressErrors               = false);
+  static HioImageSharedPtr OpenForReading(std::string const &filename,
+                                          int subimage = 0,
+                                          int mip = 0,
+                                          SourceColorSpace sourceColorSpace = SourceColorSpace::Auto,
+                                          bool suppressErrors = false);
 
   /// Reads the image file into \a storage.
   virtual bool Read(StorageSpec const &storage) = 0;
@@ -136,8 +129,7 @@ class HioImage {
   static HioImageSharedPtr OpenForWriting(std::string const &filename);
 
   /// Writes the image with \a metadata.
-  virtual bool Write(StorageSpec const &storage,
-                     VtDictionary const &metadata = VtDictionary()) = 0;
+  virtual bool Write(StorageSpec const &storage, VtDictionary const &metadata = VtDictionary()) = 0;
 
   /// }@
 

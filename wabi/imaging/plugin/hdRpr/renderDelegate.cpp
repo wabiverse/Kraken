@@ -60,8 +60,7 @@ class HdRprDiagnosticMgrDelegate : public TfDiagnosticMgr::Delegate {
     else {
       m_outputFile = fopen(logFile.c_str(), "a+");
       if (!m_outputFile) {
-        TF_RUNTIME_ERROR("Failed to open error output file: \"%s\". Defaults to stderr\n",
-                         logFile.c_str());
+        TF_RUNTIME_ERROR("Failed to open error output file: \"%s\". Defaults to stderr\n", logFile.c_str());
         m_output = stderr;
       }
       else {
@@ -128,11 +127,11 @@ class HdRprDiagnosticMgrDelegate : public TfDiagnosticMgr::Delegate {
 TF_DEFINE_PRIVATE_TOKENS(_tokens, (openvdbAsset)(percentDone)(RPR));
 
 const TfTokenVector HdRprDelegate::SUPPORTED_RPRIM_TYPES = {
-    HdPrimTypeTokens->mesh,
-    HdPrimTypeTokens->basisCurves,
-    HdPrimTypeTokens->points,
+  HdPrimTypeTokens->mesh,
+  HdPrimTypeTokens->basisCurves,
+  HdPrimTypeTokens->points,
 #ifdef USE_VOLUME
-    HdPrimTypeTokens->volume,
+  HdPrimTypeTokens->volume,
 #endif
 };
 
@@ -148,9 +147,9 @@ const TfTokenVector HdRprDelegate::SUPPORTED_SPRIM_TYPES = {HdPrimTypeTokens->ca
 
 const TfTokenVector HdRprDelegate::SUPPORTED_BPRIM_TYPES = {
 #ifdef USE_VOLUME
-    _tokens->openvdbAsset,
+  _tokens->openvdbAsset,
 #endif
-    HdPrimTypeTokens->renderBuffer};
+  HdPrimTypeTokens->renderBuffer};
 
 HdRprDelegate::HdRprDelegate(HdRenderSettingsMap const &renderSettings)
 {
@@ -173,10 +172,10 @@ HdRprDelegate::HdRprDelegate(HdRenderSettingsMap const &renderSettings)
   auto errorOutputFile = TfGetenv("HD_RPR_ERROR_OUTPUT_FILE");
   if (!errorOutputFile.empty()) {
     m_diagnosticMgrDelegate = DiagnostMgrDelegatePtr(
-        new HdRprDiagnosticMgrDelegate(errorOutputFile), [](HdRprDiagnosticMgrDelegate *delegate) {
-          TfDiagnosticMgr::GetInstance().RemoveDelegate(delegate);
-          delete delegate;
-        });
+      new HdRprDiagnosticMgrDelegate(errorOutputFile), [](HdRprDiagnosticMgrDelegate *delegate) {
+        TfDiagnosticMgr::GetInstance().RemoveDelegate(delegate);
+        delete delegate;
+      });
     TfDiagnosticMgr::GetInstance().AddDelegate(m_diagnosticMgrDelegate.get());
   }
 }
@@ -363,9 +362,9 @@ HdAovDescriptor HdRprDelegate::GetDefaultAovDescriptor(TfToken const &name) cons
   auto &rprAovDesc = HdRprAovRegistry::GetInstance().GetAovDesc(name);
 
   HdAovDescriptor hdAovDesc;
-  hdAovDesc.format       = rprAovDesc.format;
+  hdAovDesc.format = rprAovDesc.format;
   hdAovDesc.multiSampled = rprAovDesc.multiSampled;
-  hdAovDesc.clearValue   = VtValue(rprAovDesc.clearValue);
+  hdAovDesc.clearValue = VtValue(rprAovDesc.clearValue);
 
   return hdAovDesc;
 }
@@ -381,8 +380,8 @@ VtDictionary HdRprDelegate::GetRenderStats() const
 
   VtDictionary stats;
   stats[_tokens->percentDone.GetString()] = rprStats.percentDone;
-  stats["averageRenderTimePerSample"]     = rprStats.averageRenderTimePerSample;
-  stats["averageResolveTimePerSample"]    = rprStats.averageResolveTimePerSample;
+  stats["averageRenderTimePerSample"] = rprStats.averageRenderTimePerSample;
+  stats["averageResolveTimePerSample"] = rprStats.averageResolveTimePerSample;
   return stats;
 }
 
@@ -443,7 +442,7 @@ void HdRprDelegate::SetDrivers(HdDriverVector const &drivers)
       // [Client] Present Frame_1
       // [Plugin] [Wake up] Flush Frame_2, continue work
       std::condition_variable *presentedConditionVariable =
-          dictionary["presented_condition_variable"].Get<std::condition_variable *>();
+        dictionary["presented_condition_variable"].Get<std::condition_variable *>();
       bool *presentedCondition = dictionary["presented_condition"].Get<bool *>();
 
       // Set condition to true to render first frame
@@ -480,7 +479,7 @@ char *HdRprGetRenderQuality()
   }
   auto currentRenderQuality = WABI_INTERNAL_NS::g_rprApi->GetCurrentRenderQuality().GetText();
 
-  auto len  = std::strlen(currentRenderQuality);
+  auto len = std::strlen(currentRenderQuality);
   auto copy = (char *)malloc(len + 1);
   copy[len] = '\0';
   std::strncpy(copy, currentRenderQuality, len);

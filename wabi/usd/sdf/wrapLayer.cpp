@@ -75,19 +75,19 @@ class Sdf_SubLayerOffsetsProxy {
     using namespace boost::python;
 
     class_<Sdf_SubLayerOffsetsProxy>("SubLayerOffsetsProxy", no_init)
-        .def("__len__", &This::_GetSize)
-        .def("__eq__", &This::_EqVec)
-        .def("__ne__", &This::_NeVec)
-        .def("__eq__", &This::_EqProxy)
-        .def("__ne__", &This::_NeProxy)
-        .def("__getitem__", &This::_GetItemByIndex)
-        .def("__getitem__", &This::_GetItemByPath)
-        .def("__repr__", &This::_GetRepr)
-        .def("count", &This::_Count)
-        .def("copy", &This::_GetValues, return_value_policy<TfPySequenceToList>())
-        .def("index", &This::_FindIndexForValue)
-        .def("__setitem__", &This::_SetItemByIndex)
-        .def("__setitem__", &This::_SetItemByPath);
+      .def("__len__", &This::_GetSize)
+      .def("__eq__", &This::_EqVec)
+      .def("__ne__", &This::_NeVec)
+      .def("__eq__", &This::_EqProxy)
+      .def("__ne__", &This::_NeProxy)
+      .def("__getitem__", &This::_GetItemByIndex)
+      .def("__getitem__", &This::_GetItemByPath)
+      .def("__repr__", &This::_GetRepr)
+      .def("count", &This::_Count)
+      .def("copy", &This::_GetValues, return_value_policy<TfPySequenceToList>())
+      .def("index", &This::_FindIndexForValue)
+      .def("__setitem__", &This::_SetItemByIndex)
+      .def("__setitem__", &This::_SetItemByPath);
   }
 
   // Helper function to check for container expiry and return a raw ptr
@@ -123,7 +123,7 @@ class Sdf_SubLayerOffsetsProxy {
 
   int _EqProxy(const This &rhs)
   {
-    SdfLayerOffsetVector values    = _GetValues();
+    SdfLayerOffsetVector values = _GetValues();
     SdfLayerOffsetVector rhsValues = rhs._GetValues();
     return (values == rhsValues) ? 1 : 0;
   }
@@ -165,7 +165,7 @@ class Sdf_SubLayerOffsetsProxy {
   SdfLayerOffset _GetItemByIndex(int index) const
   {
     size_t size = GetLayer()->GetNumSubLayerPaths();
-    index       = TfPyNormalizeIndex(index, size, true);
+    index = TfPyNormalizeIndex(index, size, true);
     return GetLayer()->GetSubLayerOffset(index);
   }
 
@@ -233,8 +233,7 @@ static Sdf_SubLayerOffsetsProxy _WrapGetSubLayerOffsets(const SdfLayerHandle &se
 
 ////////////////////////////////////////////////////////////////////////
 
-static bool _ExtractFileFormatArguments(const boost::python::dict &dict,
-                                        SdfLayer::FileFormatArguments *args)
+static bool _ExtractFileFormatArguments(const boost::python::dict &dict, SdfLayer::FileFormatArguments *args)
 {
   std::string errMsg;
   if (!SdfFileFormatArgumentsFromPython(dict, args, &errMsg)) {
@@ -304,9 +303,7 @@ static tuple _GetBracketingTimeSamples(const SdfLayerHandle &layer, double time)
   return boost::python::make_tuple(found, tLower, tUpper);
 }
 
-static tuple _GetBracketingTimeSamplesForPath(const SdfLayerHandle &layer,
-                                              const SdfPath &path,
-                                              double time)
+static tuple _GetBracketingTimeSamplesForPath(const SdfLayerHandle &layer, const SdfPath &path, double time)
 {
   double tLower = 0, tUpper = 0;
   bool found = layer->GetBracketingTimeSamplesForPath(path, time, &tLower, &tUpper);
@@ -459,407 +456,382 @@ void wrapLayer()
   def("_TestTakeOwnership", &_TestTakeOwnership);
 
   scope s =
-      class_<This, ThisHandle, boost::noncopyable>("Layer", no_init)
+    class_<This, ThisHandle, boost::noncopyable>("Layer", no_init)
 
-          .def(TfPyRefAndWeakPtr())
+      .def(TfPyRefAndWeakPtr())
 
-          .def("__repr__", _Repr)
+      .def("__repr__", _Repr)
 
-          .def("GetFileFormat", &This::GetFileFormat, return_value_policy<return_by_value>())
-          .def("GetFileFormatArguments",
-               &This::GetFileFormatArguments,
-               return_value_policy<return_by_value>())
+      .def("GetFileFormat", &This::GetFileFormat, return_value_policy<return_by_value>())
+      .def("GetFileFormatArguments", &This::GetFileFormatArguments, return_value_policy<return_by_value>())
 
-          .def("CreateNew",
-               &_CreateNew,
-               (arg("identifier"), arg("args") = boost::python::dict()),
-               return_value_policy<TfPyRefPtrFactory<ThisHandle>>())
-          .staticmethod("CreateNew")
+      .def("CreateNew",
+           &_CreateNew,
+           (arg("identifier"), arg("args") = boost::python::dict()),
+           return_value_policy<TfPyRefPtrFactory<ThisHandle>>())
+      .staticmethod("CreateNew")
 
-          .def("CreateAnonymous",
-               (SdfLayerRefPtr(*)(const std::string &, const boost::python::dict &)) &
-                   _CreateAnonymous,
-               return_value_policy<TfPyRefPtrFactory<ThisHandle>>(),
-               (arg("tag") = std::string(), arg("args") = boost::python::dict()))
-          .def("CreateAnonymous",
-               (SdfLayerRefPtr(*)(const std::string &,
-                                  const SdfFileFormatConstPtr &,
-                                  const boost::python::dict &)) &
-                   _CreateAnonymous,
-               return_value_policy<TfPyRefPtrFactory<ThisHandle>>(),
-               (arg("tag"), arg("format"), arg("args") = boost::python::dict()))
-          .staticmethod("CreateAnonymous")
+      .def("CreateAnonymous",
+           (SdfLayerRefPtr(*)(const std::string &, const boost::python::dict &)) & _CreateAnonymous,
+           return_value_policy<TfPyRefPtrFactory<ThisHandle>>(),
+           (arg("tag") = std::string(), arg("args") = boost::python::dict()))
+      .def("CreateAnonymous",
+           (SdfLayerRefPtr(*)(
+             const std::string &, const SdfFileFormatConstPtr &, const boost::python::dict &)) &
+             _CreateAnonymous,
+           return_value_policy<TfPyRefPtrFactory<ThisHandle>>(),
+           (arg("tag"), arg("format"), arg("args") = boost::python::dict()))
+      .staticmethod("CreateAnonymous")
 
-          .def("New",
-               &_New,
-               (arg("fileFormat"), arg("identifier"), arg("args") = boost::python::dict()),
-               return_value_policy<TfPyRefPtrFactory<ThisHandle>>())
-          .staticmethod("New")
+      .def("New",
+           &_New,
+           (arg("fileFormat"), arg("identifier"), arg("args") = boost::python::dict()),
+           return_value_policy<TfPyRefPtrFactory<ThisHandle>>())
+      .staticmethod("New")
 
-          .def("FindOrOpen",
-               &_FindOrOpen,
-               (arg("identifier"), arg("args") = boost::python::dict()),
-               return_value_policy<TfPyRefPtrFactory<ThisHandle>>())
-          .staticmethod("FindOrOpen")
+      .def("FindOrOpen",
+           &_FindOrOpen,
+           (arg("identifier"), arg("args") = boost::python::dict()),
+           return_value_policy<TfPyRefPtrFactory<ThisHandle>>())
+      .staticmethod("FindOrOpen")
 
-          .def("FindOrOpenRelativeToLayer",
-               &_FindOrOpenRelativeToLayer,
-               (arg("anchor"), arg("identifier"), arg("args") = boost::python::dict()),
-               return_value_policy<TfPyRefPtrFactory<ThisHandle>>())
-          .staticmethod("FindOrOpenRelativeToLayer")
+      .def("FindOrOpenRelativeToLayer",
+           &_FindOrOpenRelativeToLayer,
+           (arg("anchor"), arg("identifier"), arg("args") = boost::python::dict()),
+           return_value_policy<TfPyRefPtrFactory<ThisHandle>>())
+      .staticmethod("FindOrOpenRelativeToLayer")
 
-          .def("OpenAsAnonymous",
-               This::OpenAsAnonymous,
-               (arg("filePath")     = std::string(),
-                arg("metadataOnly") = false,
-                arg("tag")          = std::string()),
-               return_value_policy<TfPyRefPtrFactory<ThisHandle>>())
-          .staticmethod("OpenAsAnonymous")
+      .def("OpenAsAnonymous",
+           This::OpenAsAnonymous,
+           (arg("filePath") = std::string(), arg("metadataOnly") = false, arg("tag") = std::string()),
+           return_value_policy<TfPyRefPtrFactory<ThisHandle>>())
+      .staticmethod("OpenAsAnonymous")
 
-          .def("Save", &This::Save, (arg("force") = false))
-          .def("Export",
-               &_Export,
-               (arg("filename"),
-                arg("comment") = std::string(),
-                arg("args")    = boost::python::dict()))
+      .def("Save", &This::Save, (arg("force") = false))
+      .def("Export",
+           &_Export,
+           (arg("filename"), arg("comment") = std::string(), arg("args") = boost::python::dict()))
 
-          .def("ExportToString",
-               &_ExportToString,
-               "Returns the string representation of the layer.\n")
+      .def("ExportToString", &_ExportToString, "Returns the string representation of the layer.\n")
 
-          .def("ImportFromString", &SdfLayer::ImportFromString)
+      .def("ImportFromString", &SdfLayer::ImportFromString)
 
-          .def("Clear", &This::Clear)
+      .def("Clear", &This::Clear)
 
-          .def("Reload", &This::Reload, (arg("force") = false))
+      .def("Reload", &This::Reload, (arg("force") = false))
 
-          .def("ReloadLayers", &This::ReloadLayers, (arg("force") = false))
-          .staticmethod("ReloadLayers")
+      .def("ReloadLayers", &This::ReloadLayers, (arg("force") = false))
+      .staticmethod("ReloadLayers")
 
-          .def("Import", &This::Import)
+      .def("Import", &This::Import)
 
-          .def("TransferContent", &SdfLayer::TransferContent)
+      .def("TransferContent", &SdfLayer::TransferContent)
 
-          .add_property("empty", &This::IsEmpty)
+      .add_property("empty", &This::IsEmpty)
 
-          .add_property("dirty", &This::IsDirty)
+      .add_property("dirty", &This::IsDirty)
 
-          .add_property("anonymous", &This::IsAnonymous)
+      .add_property("anonymous", &This::IsAnonymous)
 
-          .def("IsAnonymousLayerIdentifier", &This::IsAnonymousLayerIdentifier)
-          .staticmethod("IsAnonymousLayerIdentifier")
+      .def("IsAnonymousLayerIdentifier", &This::IsAnonymousLayerIdentifier)
+      .staticmethod("IsAnonymousLayerIdentifier")
 
-          .def("GetDisplayNameFromIdentifier", &This::GetDisplayNameFromIdentifier)
-          .staticmethod("GetDisplayNameFromIdentifier")
+      .def("GetDisplayNameFromIdentifier", &This::GetDisplayNameFromIdentifier)
+      .staticmethod("GetDisplayNameFromIdentifier")
 
-          .def("SplitIdentifier", &_SplitIdentifier)
-          .staticmethod("SplitIdentifier")
+      .def("SplitIdentifier", &_SplitIdentifier)
+      .staticmethod("SplitIdentifier")
 
-          .def("CreateIdentifier", &This::CreateIdentifier)
-          .staticmethod("CreateIdentifier")
+      .def("CreateIdentifier", &This::CreateIdentifier)
+      .staticmethod("CreateIdentifier")
 
-          .add_property(
-              "identifier",
-              make_function(&This::GetIdentifier, return_value_policy<return_by_value>()),
-              &This::SetIdentifier,
-              "The layer's identifier.")
+      .add_property("identifier",
+                    make_function(&This::GetIdentifier, return_value_policy<return_by_value>()),
+                    &This::SetIdentifier,
+                    "The layer's identifier.")
 
-          .add_property(
-              "resolvedPath",
-              make_function(&This::GetResolvedPath, return_value_policy<return_by_value>()),
-              "The layer's resolved path.")
+      .add_property("resolvedPath",
+                    make_function(&This::GetResolvedPath, return_value_policy<return_by_value>()),
+                    "The layer's resolved path.")
 
-          .add_property("realPath",
-                        make_function(&This::GetRealPath, return_value_policy<return_by_value>()),
-                        "The layer's resolved path.")
+      .add_property("realPath",
+                    make_function(&This::GetRealPath, return_value_policy<return_by_value>()),
+                    "The layer's resolved path.")
 
-          .add_property("fileExtension", &This::GetFileExtension, "The layer's file extension.")
+      .add_property("fileExtension", &This::GetFileExtension, "The layer's file extension.")
 
-          .add_property("version",
-                        make_function(&This::GetVersion, return_value_policy<return_by_value>()),
-                        "The layer's version.")
+      .add_property("version",
+                    make_function(&This::GetVersion, return_value_policy<return_by_value>()),
+                    "The layer's version.")
 
-          .add_property(
-              "repositoryPath",
-              make_function(&This::GetRepositoryPath, return_value_policy<return_by_value>()),
-              "The layer's associated repository path")
+      .add_property("repositoryPath",
+                    make_function(&This::GetRepositoryPath, return_value_policy<return_by_value>()),
+                    "The layer's associated repository path")
 
-          .def("GetAssetName", &This::GetAssetName, return_value_policy<return_by_value>())
+      .def("GetAssetName", &This::GetAssetName, return_value_policy<return_by_value>())
 
-          .def("GetAssetInfo", &This::GetAssetInfo, return_value_policy<return_by_value>())
+      .def("GetAssetInfo", &This::GetAssetInfo, return_value_policy<return_by_value>())
 
-          .def("GetDisplayName", &This::GetDisplayName)
+      .def("GetDisplayName", &This::GetDisplayName)
 
 #if AR_VERSION == 1
-          .def("UpdateAssetInfo", &This::UpdateAssetInfo, (arg("fileVersion") = std::string()))
+      .def("UpdateAssetInfo", &This::UpdateAssetInfo, (arg("fileVersion") = std::string()))
 #else
-          .def("UpdateAssetInfo", &This::UpdateAssetInfo)
+      .def("UpdateAssetInfo", &This::UpdateAssetInfo)
 #endif
 
-          .def("ComputeAbsolutePath", &This::ComputeAbsolutePath)
+      .def("ComputeAbsolutePath", &This::ComputeAbsolutePath)
 
-          .def("ScheduleRemoveIfInert", &This::ScheduleRemoveIfInert)
+      .def("ScheduleRemoveIfInert", &This::ScheduleRemoveIfInert)
 
-          .def("RemoveInertSceneDescription", &This::RemoveInertSceneDescription)
+      .def("RemoveInertSceneDescription", &This::RemoveInertSceneDescription)
 
-          .def("UpdateExternalReference", &This::UpdateExternalReference)
+      .def("UpdateExternalReference", &This::UpdateExternalReference)
 
-          .def("SetMuted", &This::SetMuted)
+      .def("SetMuted", &This::SetMuted)
 
-          .def("IsMuted", &_WrapIsMuted)
+      .def("IsMuted", &_WrapIsMuted)
 
-          .def("AddToMutedLayers", &This::AddToMutedLayers)
-          .staticmethod("AddToMutedLayers")
+      .def("AddToMutedLayers", &This::AddToMutedLayers)
+      .staticmethod("AddToMutedLayers")
 
-          .def("RemoveFromMutedLayers", &This::RemoveFromMutedLayers)
-          .staticmethod("RemoveFromMutedLayers")
+      .def("RemoveFromMutedLayers", &This::RemoveFromMutedLayers)
+      .staticmethod("RemoveFromMutedLayers")
 
-          .def("GetMutedLayers",
-               make_function(&This::GetMutedLayers, return_value_policy<TfPySequenceToList>()),
-               "Return list of muted layers.\n")
-          .staticmethod("GetMutedLayers")
+      .def("GetMutedLayers",
+           make_function(&This::GetMutedLayers, return_value_policy<TfPySequenceToList>()),
+           "Return list of muted layers.\n")
+      .staticmethod("GetMutedLayers")
 
-          .def("Traverse", &This::Traverse, (arg("path"), arg("func")))
+      .def("Traverse", &This::Traverse, (arg("path"), arg("func")))
 
-          .add_property("colorConfiguration",
-                        &This::GetColorConfiguration,
-                        &This::SetColorConfiguration,
-                        "The color configuration asset-path of this layer.")
+      .add_property("colorConfiguration",
+                    &This::GetColorConfiguration,
+                    &This::SetColorConfiguration,
+                    "The color configuration asset-path of this layer.")
 
-          .def("HasColorConfiguration", &This::HasColorConfiguration)
-          .def("ClearColorConfiguration", &This::ClearColorConfiguration)
+      .def("HasColorConfiguration", &This::HasColorConfiguration)
+      .def("ClearColorConfiguration", &This::ClearColorConfiguration)
 
-          .add_property("colorManagementSystem",
-                        &This::GetColorManagementSystem,
-                        &This::SetColorManagementSystem,
-                        "The name of the color management system used to interpret the "
-                        "colorConfiguration asset.")
+      .add_property("colorManagementSystem",
+                    &This::GetColorManagementSystem,
+                    &This::SetColorManagementSystem,
+                    "The name of the color management system used to interpret the "
+                    "colorConfiguration asset.")
 
-          .def("HasColorManagementSystem", &This::HasColorManagementSystem)
-          .def("ClearColorManagementSystem", &This::ClearColorManagementSystem)
+      .def("HasColorManagementSystem", &This::HasColorManagementSystem)
+      .def("ClearColorManagementSystem", &This::ClearColorManagementSystem)
 
-          .add_property(
-              "comment", &This::GetComment, &This::SetComment, "The layer's comment string.")
+      .add_property("comment", &This::GetComment, &This::SetComment, "The layer's comment string.")
 
-          .add_property("documentation",
-                        &This::GetDocumentation,
-                        &This::SetDocumentation,
-                        "The layer's documentation string.")
+      .add_property("documentation",
+                    &This::GetDocumentation,
+                    &This::SetDocumentation,
+                    "The layer's documentation string.")
 
-          .add_property("defaultPrim",
-                        &This::GetDefaultPrim,
-                        &This::SetDefaultPrim,
-                        "The layer's default reference target token.")
-          .def("HasDefaultPrim", &This::HasDefaultPrim)
-          .def("ClearDefaultPrim", &This::ClearDefaultPrim)
+      .add_property("defaultPrim",
+                    &This::GetDefaultPrim,
+                    &This::SetDefaultPrim,
+                    "The layer's default reference target token.")
+      .def("HasDefaultPrim", &This::HasDefaultPrim)
+      .def("ClearDefaultPrim", &This::ClearDefaultPrim)
 
-          .add_property("customLayerData",
-                        &This::GetCustomLayerData,
-                        &This::SetCustomLayerData,
-                        "The customLayerData dictionary associated with this layer.")
+      .add_property("customLayerData",
+                    &This::GetCustomLayerData,
+                    &This::SetCustomLayerData,
+                    "The customLayerData dictionary associated with this layer.")
 
-          .def("HasCustomLayerData", &This::HasCustomLayerData)
-          .def("ClearCustomLayerData", &This::ClearCustomLayerData)
+      .def("HasCustomLayerData", &This::HasCustomLayerData)
+      .def("ClearCustomLayerData", &This::ClearCustomLayerData)
 
-          .add_property("startTimeCode",
-                        &This::GetStartTimeCode,
-                        &This::SetStartTimeCode,
-                        "The start timeCode of this layer.\n\n"
-                        "The start timeCode of a layer is not a hard limit, but is \n"
-                        "more of a hint.  A layer's time-varying content is not limited to \n"
-                        "the timeCode range of the layer.")
+      .add_property("startTimeCode",
+                    &This::GetStartTimeCode,
+                    &This::SetStartTimeCode,
+                    "The start timeCode of this layer.\n\n"
+                    "The start timeCode of a layer is not a hard limit, but is \n"
+                    "more of a hint.  A layer's time-varying content is not limited to \n"
+                    "the timeCode range of the layer.")
 
-          .def("HasStartTimeCode", &This::HasStartTimeCode)
-          .def("ClearStartTimeCode", &This::ClearStartTimeCode)
+      .def("HasStartTimeCode", &This::HasStartTimeCode)
+      .def("ClearStartTimeCode", &This::ClearStartTimeCode)
 
-          .add_property("endTimeCode",
-                        &This::GetEndTimeCode,
-                        &This::SetEndTimeCode,
-                        "The end timeCode of this layer.\n\n"
-                        "The end timeCode of a layer is not a hard limit, but is \n"
-                        "more of a hint. A layer's time-varying content is not limited to\n"
-                        "the timeCode range of the layer.")
+      .add_property("endTimeCode",
+                    &This::GetEndTimeCode,
+                    &This::SetEndTimeCode,
+                    "The end timeCode of this layer.\n\n"
+                    "The end timeCode of a layer is not a hard limit, but is \n"
+                    "more of a hint. A layer's time-varying content is not limited to\n"
+                    "the timeCode range of the layer.")
 
-          .def("HasEndTimeCode", &This::HasEndTimeCode)
-          .def("ClearEndTimeCode", &This::ClearEndTimeCode)
+      .def("HasEndTimeCode", &This::HasEndTimeCode)
+      .def("ClearEndTimeCode", &This::ClearEndTimeCode)
 
-          .add_property("timeCodesPerSecond",
-                        &This::GetTimeCodesPerSecond,
-                        &This::SetTimeCodesPerSecond,
-                        "The timeCodes per second used in this layer.")
+      .add_property("timeCodesPerSecond",
+                    &This::GetTimeCodesPerSecond,
+                    &This::SetTimeCodesPerSecond,
+                    "The timeCodes per second used in this layer.")
 
-          .def("HasTimeCodesPerSecond", &This::HasTimeCodesPerSecond)
-          .def("ClearTimeCodesPerSecond", &This::ClearTimeCodesPerSecond)
+      .def("HasTimeCodesPerSecond", &This::HasTimeCodesPerSecond)
+      .def("ClearTimeCodesPerSecond", &This::ClearTimeCodesPerSecond)
 
-          .add_property("framesPerSecond",
-                        &This::GetFramesPerSecond,
-                        &This::SetFramesPerSecond,
-                        "The frames per second used in this layer.")
+      .add_property("framesPerSecond",
+                    &This::GetFramesPerSecond,
+                    &This::SetFramesPerSecond,
+                    "The frames per second used in this layer.")
 
-          .def("HasFramesPerSecond", &This::HasFramesPerSecond)
-          .def("ClearFramesPerSecond", &This::ClearFramesPerSecond)
+      .def("HasFramesPerSecond", &This::HasFramesPerSecond)
+      .def("ClearFramesPerSecond", &This::ClearFramesPerSecond)
 
-          .add_property("framePrecision",
-                        &This::GetFramePrecision,
-                        &This::SetFramePrecision,
-                        "The number of digits of precision used in times in this layer.")
+      .add_property("framePrecision",
+                    &This::GetFramePrecision,
+                    &This::SetFramePrecision,
+                    "The number of digits of precision used in times in this layer.")
 
-          .def("HasFramePrecision", &This::HasFramePrecision)
-          .def("ClearFramePrecision", &This::ClearFramePrecision)
+      .def("HasFramePrecision", &This::HasFramePrecision)
+      .def("ClearFramePrecision", &This::ClearFramePrecision)
 
-          .add_property("owner", &This::GetOwner, &This::SetOwner, "The owner of this layer.")
+      .add_property("owner", &This::GetOwner, &This::SetOwner, "The owner of this layer.")
 
-          .def("HasOwner", &This::HasOwner)
-          .def("ClearOwner", &This::ClearOwner)
+      .def("HasOwner", &This::HasOwner)
+      .def("ClearOwner", &This::ClearOwner)
 
-          .add_property("sessionOwner",
-                        &This::GetSessionOwner,
-                        &This::SetSessionOwner,
-                        "The session owner of this layer. Only intended for use with "
-                        "session layers.")
+      .add_property("sessionOwner",
+                    &This::GetSessionOwner,
+                    &This::SetSessionOwner,
+                    "The session owner of this layer. Only intended for use with "
+                    "session layers.")
 
-          .def("HasSessionOwner", &This::HasSessionOwner)
-          .def("ClearSessionOwner", &This::ClearSessionOwner)
+      .def("HasSessionOwner", &This::HasSessionOwner)
+      .def("ClearSessionOwner", &This::ClearSessionOwner)
 
-          .add_property("hasOwnedSubLayers",
-                        &This::GetHasOwnedSubLayers,
-                        &This::SetHasOwnedSubLayers,
-                        "Whether this layer's sub layers are expected to have owners.")
+      .add_property("hasOwnedSubLayers",
+                    &This::GetHasOwnedSubLayers,
+                    &This::SetHasOwnedSubLayers,
+                    "Whether this layer's sub layers are expected to have owners.")
 
-          .add_property("pseudoRoot", &This::GetPseudoRoot, "The pseudo-root of the layer.")
+      .add_property("pseudoRoot", &This::GetPseudoRoot, "The pseudo-root of the layer.")
 
-          .add_property("rootPrims",
-                        &_WrapGetRootPrims,
-                        "The root prims of this layer, as an ordered dictionary.\n\n"
-                        "The prims may be accessed by index or by name.\n"
-                        "Although this property claims it is read only, you can modify "
-                        "the contents of this dictionary to add, remove, or reorder "
-                        "the contents.")
+      .add_property("rootPrims",
+                    &_WrapGetRootPrims,
+                    "The root prims of this layer, as an ordered dictionary.\n\n"
+                    "The prims may be accessed by index or by name.\n"
+                    "Although this property claims it is read only, you can modify "
+                    "the contents of this dictionary to add, remove, or reorder "
+                    "the contents.")
 
-          .add_property("rootPrimOrder",
-                        &This::GetRootPrimOrder,
-                        &This::SetRootPrimOrder,
-                        "Get/set the list of root prim names for this layer's 'reorder "
-                        "rootPrims' statement.")
+      .add_property("rootPrimOrder",
+                    &This::GetRootPrimOrder,
+                    &This::SetRootPrimOrder,
+                    "Get/set the list of root prim names for this layer's 'reorder "
+                    "rootPrims' statement.")
 
-          .def("GetObjectAtPath", &This::GetObjectAtPath)
-          .def("GetPrimAtPath", &This::GetPrimAtPath)
-          .def("GetPropertyAtPath", &This::GetPropertyAtPath)
-          .def("GetAttributeAtPath", &This::GetAttributeAtPath)
-          .def("GetRelationshipAtPath", &This::GetRelationshipAtPath)
+      .def("GetObjectAtPath", &This::GetObjectAtPath)
+      .def("GetPrimAtPath", &This::GetPrimAtPath)
+      .def("GetPropertyAtPath", &This::GetPropertyAtPath)
+      .def("GetAttributeAtPath", &This::GetAttributeAtPath)
+      .def("GetRelationshipAtPath", &This::GetRelationshipAtPath)
 
-          .def("SetPermissionToEdit", &This::SetPermissionToEdit)
-          .def("SetPermissionToSave", &This::SetPermissionToSave)
+      .def("SetPermissionToEdit", &This::SetPermissionToEdit)
+      .def("SetPermissionToSave", &This::SetPermissionToSave)
 
-          .def("CanApply", &_CanApplyNamespaceEdit)
-          .def("Apply", &This::Apply)
+      .def("CanApply", &_CanApplyNamespaceEdit)
+      .def("Apply", &This::Apply)
 
-          .add_property("subLayerPaths",
-                        &This::GetSubLayerPaths,
-                        &This::SetSubLayerPaths,
-                        "The sublayer paths of this layer, as a list.  Although this "
-                        "property is claimed to be read only, you can modify the contents "
-                        "of this list.")
+      .add_property("subLayerPaths",
+                    &This::GetSubLayerPaths,
+                    &This::SetSubLayerPaths,
+                    "The sublayer paths of this layer, as a list.  Although this "
+                    "property is claimed to be read only, you can modify the contents "
+                    "of this list.")
 
-          .add_property("subLayerOffsets",
-                        &_WrapGetSubLayerOffsets,
-                        "The sublayer offsets of this layer, as a list.  Although this "
-                        "property is claimed to be read only, you can modify the contents "
-                        "of this list by assigning new layer offsets to specific indices.")
+      .add_property("subLayerOffsets",
+                    &_WrapGetSubLayerOffsets,
+                    "The sublayer offsets of this layer, as a list.  Although this "
+                    "property is claimed to be read only, you can modify the contents "
+                    "of this list by assigning new layer offsets to specific indices.")
 
-          .def("GetLoadedLayers",
-               make_function(&This::GetLoadedLayers, return_value_policy<TfPySequenceToList>()),
-               "Return list of loaded layers.\n")
-          .staticmethod("GetLoadedLayers")
+      .def("GetLoadedLayers",
+           make_function(&This::GetLoadedLayers, return_value_policy<TfPySequenceToList>()),
+           "Return list of loaded layers.\n")
+      .staticmethod("GetLoadedLayers")
 
-          .def("Find",
-               &_Find,
-               (arg("identifier"), arg("args") = boost::python::dict()),
-               "Find(filename) -> LayerPtr\n\n"
-               "filename : string\n\n"
-               "Returns the open layer with the given filename, or None.  "
-               "Note that this is a static class method.")
-          .staticmethod("Find")
+      .def("Find",
+           &_Find,
+           (arg("identifier"), arg("args") = boost::python::dict()),
+           "Find(filename) -> LayerPtr\n\n"
+           "filename : string\n\n"
+           "Returns the open layer with the given filename, or None.  "
+           "Note that this is a static class method.")
+      .staticmethod("Find")
 
-          .def("FindRelativeToLayer",
-               &_FindRelativeToLayer,
-               (arg("anchor"), arg("assetPath"), arg("args") = boost::python::dict()),
-               "Returns the open layer with the given filename, or None.  "
-               "If the filename is a relative path then it's found relative "
-               "to the given layer.  "
-               "Note that this is a static class method.")
-          .staticmethod("FindRelativeToLayer")
+      .def("FindRelativeToLayer",
+           &_FindRelativeToLayer,
+           (arg("anchor"), arg("assetPath"), arg("args") = boost::python::dict()),
+           "Returns the open layer with the given filename, or None.  "
+           "If the filename is a relative path then it's found relative "
+           "to the given layer.  "
+           "Note that this is a static class method.")
+      .staticmethod("FindRelativeToLayer")
 
-          .def("DumpLayerInfo",
-               &This::DumpLayerInfo,
-               "Debug helper to examine content of the current layer registry and\n"
-               "the asset/real path of all layers in the registry.")
-          .staticmethod("DumpLayerInfo")
+      .def("DumpLayerInfo",
+           &This::DumpLayerInfo,
+           "Debug helper to examine content of the current layer registry and\n"
+           "the asset/real path of all layers in the registry.")
+      .staticmethod("DumpLayerInfo")
 
-          .def("GetExternalReferences",
-               make_function(&This::GetExternalReferences,
-                             return_value_policy<TfPySequenceToTuple>()),
-               "Return a list of asset paths for\n"
-               "this layer.")
+      .def("GetExternalReferences",
+           make_function(&This::GetExternalReferences, return_value_policy<TfPySequenceToTuple>()),
+           "Return a list of asset paths for\n"
+           "this layer.")
 
-          .add_property("externalReferences",
-                        make_function(&This::GetExternalReferences,
-                                      return_value_policy<TfPySequenceToList>()),
-                        "Return unique list of asset paths of external references for\n"
-                        "given layer.")
+      .add_property("externalReferences",
+                    make_function(&This::GetExternalReferences, return_value_policy<TfPySequenceToList>()),
+                    "Return unique list of asset paths of external references for\n"
+                    "given layer.")
 
-          .def("GetExternalAssetDependencies",
-               make_function(&This::GetExternalAssetDependencies,
-                             return_value_policy<TfPySequenceToList>()))
+      .def("GetExternalAssetDependencies",
+           make_function(&This::GetExternalAssetDependencies, return_value_policy<TfPySequenceToList>()))
 
-          .add_property("permissionToSave",
-                        &This::PermissionToSave,
-                        "Return true if permitted to be saved, false otherwise.\n")
+      .add_property("permissionToSave",
+                    &This::PermissionToSave,
+                    "Return true if permitted to be saved, false otherwise.\n")
 
-          .add_property("permissionToEdit",
-                        &This::PermissionToEdit,
-                        "Return true if permitted to be edited (modified), false otherwise.\n")
+      .add_property("permissionToEdit",
+                    &This::PermissionToEdit,
+                    "Return true if permitted to be edited (modified), false otherwise.\n")
 
-          .def("ApplyRootPrimOrder",
-               &_ApplyRootPrimOrder,
-               return_value_policy<TfPySequenceToList>())
+      .def("ApplyRootPrimOrder", &_ApplyRootPrimOrder, return_value_policy<TfPySequenceToList>())
 
-          .setattr("ColorConfigurationKey", SdfFieldKeys->ColorConfiguration)
-          .setattr("ColorManagementSystemKey", SdfFieldKeys->ColorManagementSystem)
-          .setattr("CommentKey", SdfFieldKeys->Comment)
-          .setattr("DocumentationKey", SdfFieldKeys->Documentation)
-          .setattr("HasOwnedSubLayers", SdfFieldKeys->HasOwnedSubLayers)
-          .setattr("StartFrameKey", SdfFieldKeys->StartFrame)
-          .setattr("EndFrameKey", SdfFieldKeys->EndFrame)
-          .setattr("StartTimeCodeKey", SdfFieldKeys->StartTimeCode)
-          .setattr("EndTimeCodeKey", SdfFieldKeys->EndTimeCode)
-          .setattr("FramesPerSecondKey", SdfFieldKeys->FramesPerSecond)
-          .setattr("FramePrecisionKey", SdfFieldKeys->FramePrecision)
-          .setattr("OwnerKey", SdfFieldKeys->Owner)
-          .setattr("SessionOwnerKey", SdfFieldKeys->SessionOwner)
-          .setattr("TimeCodesPerSecondKey", SdfFieldKeys->TimeCodesPerSecond)
+      .setattr("ColorConfigurationKey", SdfFieldKeys->ColorConfiguration)
+      .setattr("ColorManagementSystemKey", SdfFieldKeys->ColorManagementSystem)
+      .setattr("CommentKey", SdfFieldKeys->Comment)
+      .setattr("DocumentationKey", SdfFieldKeys->Documentation)
+      .setattr("HasOwnedSubLayers", SdfFieldKeys->HasOwnedSubLayers)
+      .setattr("StartFrameKey", SdfFieldKeys->StartFrame)
+      .setattr("EndFrameKey", SdfFieldKeys->EndFrame)
+      .setattr("StartTimeCodeKey", SdfFieldKeys->StartTimeCode)
+      .setattr("EndTimeCodeKey", SdfFieldKeys->EndTimeCode)
+      .setattr("FramesPerSecondKey", SdfFieldKeys->FramesPerSecond)
+      .setattr("FramePrecisionKey", SdfFieldKeys->FramePrecision)
+      .setattr("OwnerKey", SdfFieldKeys->Owner)
+      .setattr("SessionOwnerKey", SdfFieldKeys->SessionOwner)
+      .setattr("TimeCodesPerSecondKey", SdfFieldKeys->TimeCodesPerSecond)
 
-          .def("_WriteDataFile", &SdfLayer::WriteDataFile)
+      .def("_WriteDataFile", &SdfLayer::WriteDataFile)
 
-          .def("ListAllTimeSamples",
-               &SdfLayer::ListAllTimeSamples,
-               return_value_policy<TfPySequenceToList>())
-          .def("ListTimeSamplesForPath",
-               &_ListTimeSamplesForPath,
-               return_value_policy<TfPySequenceToList>())
-          .def("GetNumTimeSamplesForPath", &_GetNumTimeSamplesForPath)
-          .def("GetBracketingTimeSamples", &_GetBracketingTimeSamples)
-          .def("GetBracketingTimeSamplesForPath", &_GetBracketingTimeSamplesForPath)
-          .def("QueryTimeSample", &_QueryTimeSample)
-          .def("SetTimeSample", &_SetTimeSample)
-          .def("EraseTimeSample", &_EraseTimeSample);
+      .def("ListAllTimeSamples", &SdfLayer::ListAllTimeSamples, return_value_policy<TfPySequenceToList>())
+      .def("ListTimeSamplesForPath", &_ListTimeSamplesForPath, return_value_policy<TfPySequenceToList>())
+      .def("GetNumTimeSamplesForPath", &_GetNumTimeSamplesForPath)
+      .def("GetBracketingTimeSamples", &_GetBracketingTimeSamples)
+      .def("GetBracketingTimeSamplesForPath", &_GetBracketingTimeSamplesForPath)
+      .def("QueryTimeSample", &_QueryTimeSample)
+      .def("SetTimeSample", &_SetTimeSample)
+      .def("EraseTimeSample", &_EraseTimeSample);
 
-  TfPyContainerConversions::from_python_sequence<SdfLayerHandleSet,
-                                                 TfPyContainerConversions::set_policy>();
+  TfPyContainerConversions::from_python_sequence<SdfLayerHandleSet, TfPyContainerConversions::set_policy>();
 
-  TfPyContainerConversions::from_python_sequence<
-      SdfLayerHandleVector,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<SdfLayerHandleVector,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 }
 
 TF_REFPTR_CONST_VOLATILE_GET(SdfLayer)

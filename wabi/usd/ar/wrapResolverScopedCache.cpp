@@ -72,6 +72,6 @@ void wrapResolverScopedCache()
   typedef _PyResolverScopedCache This;
 
   class_<This, boost::noncopyable>("ResolverScopedCache")
-      .def("__enter__", &This::Enter)
-      .def("__exit__", &This::Exit);
+    .def("__enter__", &This::Enter)
+    .def("__exit__", &This::Exit);
 }

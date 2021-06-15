@@ -38,19 +38,17 @@
 WABI_NAMESPACE_BEGIN
 
 #define HD_LIGHT_TOKENS \
-  (angle)(color)( \
-      colorTemperature)(enableColorTemperature)(exposure)(height)(intensity)(radius)(length)(( \
-      textureFile, "texture:file"))(( \
-      textureFormat, "texture:format"))(width)(diffuse)(specular)(normalize)((shapingFocus, \
-                                                                              "shaping:focus"))(( \
-      shapingFocusTint, "shaping:focusTint"))((shapingConeAngle, "shaping:cone:angle"))(( \
-      shapingConeSoftness, "shaping:cone:softness"))((shapingIesFile, "shaping:ies:file"))(( \
-      shapingIesAngleScale, "shaping:ies:angleScale"))(( \
-      shapingIesNormalize, "shaping:ies:normalize"))((shadowEnable, "shadow:enable"))(( \
-      shadowColor, "shadow:color"))((shadowDistance, "shadow:distance"))(( \
-      shadowFalloff, "shadow:falloff"))((shadowFalloffGamma, "shadow:falloffGamma")) \
+  (angle)(color)(colorTemperature)(enableColorTemperature)(exposure)(height)(intensity)(radius)(length)(( \
+    textureFile, "texture:file"))(( \
+    textureFormat, "texture:format"))(width)(diffuse)(specular)(normalize)((shapingFocus, \
+                                                                            "shaping:focus"))(( \
+    shapingFocusTint, "shaping:focusTint"))((shapingConeAngle, "shaping:cone:angle"))(( \
+    shapingConeSoftness, "shaping:cone:softness"))((shapingIesFile, "shaping:ies:file"))(( \
+    shapingIesAngleScale, "shaping:ies:angleScale"))((shapingIesNormalize, "shaping:ies:normalize"))(( \
+    shadowEnable, "shadow:enable"))((shadowColor, "shadow:color"))((shadowDistance, "shadow:distance"))(( \
+    shadowFalloff, "shadow:falloff"))((shadowFalloffGamma, "shadow:falloffGamma")) \
 \
-      (params)(shadowCollection)(shadowParams)
+    (params)(shadowCollection)(shadowParams)
 
 TF_DECLARE_PUBLIC_TOKENS(HdLightTokens, HD_API, HD_LIGHT_TOKENS);
 
@@ -70,12 +68,12 @@ class HdLight : public HdSprim {
 
   // Change tracking for HdLight
   enum DirtyBits : HdDirtyBits {
-    Clean             = 0,
-    DirtyTransform    = 1 << 0,
-    DirtyParams       = 1 << 1,
+    Clean = 0,
+    DirtyTransform = 1 << 0,
+    DirtyParams = 1 << 1,
     DirtyShadowParams = 1 << 2,
-    DirtyCollection   = 1 << 3,
-    DirtyResource     = 1 << 4,
+    DirtyCollection = 1 << 3,
+    DirtyResource = 1 << 4,
     AllDirty = (DirtyTransform | DirtyParams | DirtyShadowParams | DirtyCollection | DirtyResource)
   };
 };

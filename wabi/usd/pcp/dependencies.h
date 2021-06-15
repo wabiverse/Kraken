@@ -74,8 +74,7 @@ class Pcp_Dependencies {
   /// Assumptions:
   /// - A computed prim index will be added exactly once
   /// - Parent indices will be added before children
-  void Add(const PcpPrimIndex &primIndex,
-           PcpDynamicFileFormatDependencyData &&fileFormatDependencyData);
+  void Add(const PcpPrimIndex &primIndex, PcpDynamicFileFormatDependencyData &&fileFormatDependencyData);
 
   /// Remove dependency information for the given PcpPrimIndex.
   /// Any layer stacks in use by any site are added to \p lifeboat,
@@ -156,7 +155,7 @@ class Pcp_Dependencies {
     }
     if (includeAncestral) {
       for (SdfPath ancestorSitePath = sitePath.GetParentPath(); !ancestorSitePath.IsEmpty();
-           ancestorSitePath         = ancestorSitePath.GetParentPath()) {
+           ancestorSitePath = ancestorSitePath.GetParentPath()) {
         _SiteDepMap::const_iterator j = siteDepMap.find(ancestorSitePath);
         if (j != siteDepMap.end()) {
           for (const SdfPath &ancestorPrimIndexPath : j->second) {
@@ -204,7 +203,7 @@ class Pcp_Dependencies {
   /// dependency data if either there is no cache prim index for the path or
   /// if the prim index has no dynamic file formats that it depends on.
   const PcpDynamicFileFormatDependencyData &GetDynamicFileFormatArgumentDependencyData(
-      const SdfPath &primIndexPath) const;
+    const SdfPath &primIndexPath) const;
 
   /// @}
 
@@ -231,7 +230,7 @@ class Pcp_Dependencies {
   // Map of prim index paths to the dynamic file format dependency info for
   // the prim index.
   using _FileFormatArgumentDependencyMap =
-      std::unordered_map<SdfPath, PcpDynamicFileFormatDependencyData, SdfPath::Hash>;
+    std::unordered_map<SdfPath, PcpDynamicFileFormatDependencyData, SdfPath::Hash>;
   _FileFormatArgumentDependencyMap _fileFormatArgumentDependencyMap;
 
   // Map of field name to the number of cached prim indices that depend on

@@ -175,7 +175,7 @@ class UsdLuxShadowAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateShadowEnableAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -199,7 +199,7 @@ class UsdLuxShadowAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateShadowColorAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -224,7 +224,7 @@ class UsdLuxShadowAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateShadowDistanceAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely          = false) const;
+                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -249,7 +249,7 @@ class UsdLuxShadowAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateShadowFalloffAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -274,7 +274,7 @@ class UsdLuxShadowAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
   UsdAttribute CreateShadowFalloffGammaAttr(VtValue const &defaultValue = VtValue(),
-                                            bool writeSparsely          = false) const;
+                                            bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

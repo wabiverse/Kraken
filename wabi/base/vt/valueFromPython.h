@@ -56,8 +56,8 @@ class Vt_ValueFromPythonRegistry {
   {
     if (!TfPyIsInitialized()) {
       TF_FATAL_ERROR(
-          "Tried to register a VtValue from python conversion "
-          "but python is not initialized!");
+        "Tried to register a VtValue from python conversion "
+        "but python is not initialized!");
     }
     _GetInstance()._RegisterLValue(_Extractor::MakeLValue<T>());
     if (registerRvalue)

@@ -29,7 +29,7 @@ class Object {
   Object(void *objectHandle) : m_rifObjectHandle(objectHandle)
   {}
 
-  Object()               = default;
+  Object() = default;
   Object(Object const &) = delete;
   Object &operator=(Object const &) = delete;
 

@@ -30,8 +30,7 @@ WABI_NAMESPACE_BEGIN
 static bool _IsQueryTrivial(UsdCollectionAPI::MembershipQuery const &query)
 {
   // XXX Should be a faster way to do this!
-  UsdCollectionAPI::MembershipQuery::PathExpansionRuleMap ruleMap =
-      query.GetAsPathExpansionRuleMap();
+  UsdCollectionAPI::MembershipQuery::PathExpansionRuleMap ruleMap = query.GetAsPathExpansionRuleMap();
   return ruleMap.size() == 1 && ruleMap.begin()->first == SdfPath::AbsoluteRootPath() &&
          ruleMap.begin()->second == UsdTokens->expandPrims;
 }
@@ -42,12 +41,11 @@ TfToken UsdImaging_CollectionCache::UpdateCollection(UsdCollectionAPI const &c)
 
   std::lock_guard<std::mutex> lock(_mutex);
 
-  SdfPath path                            = c.GetCollectionPath();
+  SdfPath path = c.GetCollectionPath();
   UsdCollectionAPI::MembershipQuery query = c.ComputeMembershipQuery();
 
   if (_IsQueryTrivial(query)) {
-    TF_DEBUG(USDIMAGING_COLLECTIONS)
-        .Msg("UsdImaging_CollectionCache: trivial for <%s>\n", path.GetText());
+    TF_DEBUG(USDIMAGING_COLLECTIONS).Msg("UsdImaging_CollectionCache: trivial for <%s>\n", path.GetText());
     return TfToken();
   }
 
@@ -56,18 +54,16 @@ TfToken UsdImaging_CollectionCache::UpdateCollection(UsdCollectionAPI const &c)
   auto const &idForQueryEntry = _idForQuery.find(query);
   if (idForQueryEntry == _idForQuery.end()) {
     // Assign new id.  Use token form of collection path.
-    id                 = path.GetToken();
+    id = path.GetToken();
     _idForQuery[query] = id;
-    _queryForId[id]    = query;
-    TF_DEBUG(USDIMAGING_COLLECTIONS)
-        .Msg("UsdImaging_CollectionCache: Assigned new id '%s'\n", id.GetText());
+    _queryForId[id] = query;
+    TF_DEBUG(USDIMAGING_COLLECTIONS).Msg("UsdImaging_CollectionCache: Assigned new id '%s'\n", id.GetText());
   }
   else {
     // Share an existing query id.
     id = idForQueryEntry->second;
     TF_DEBUG(USDIMAGING_COLLECTIONS)
-        .Msg(
-            "UsdImaging_CollectionCache: Shared id '%s' for <%s>\n", id.GetText(), path.GetText());
+      .Msg("UsdImaging_CollectionCache: Shared id '%s' for <%s>\n", id.GetText(), path.GetText());
   }
 
   // Establish Path <=> Id mapping.
@@ -81,7 +77,7 @@ void UsdImaging_CollectionCache::RemoveCollection(UsdCollectionAPI const &c)
 {
   std::lock_guard<std::mutex> lock(_mutex);
 
-  SdfPath path          = c.GetCollectionPath();
+  SdfPath path = c.GetCollectionPath();
   auto const &pathEntry = _idForPath.find(path);
   if (pathEntry == _idForPath.end()) {
     // No pathEntry -- bail.  This can happen if the collection was
@@ -101,7 +97,7 @@ void UsdImaging_CollectionCache::RemoveCollection(UsdCollectionAPI const &c)
   auto const &pathsForQueryEntry = _pathsForQuery.find(queryRef);
   pathsForQueryEntry->second.erase(path);
   TF_DEBUG(USDIMAGING_COLLECTIONS)
-      .Msg("UsdImaging_CollectionCache: Id '%s' disused <%s>\n", id.GetText(), path.GetText());
+    .Msg("UsdImaging_CollectionCache: Id '%s' disused <%s>\n", id.GetText(), path.GetText());
 
   // Reap _pathsForQuery entries when the last path is removed.
   // This also reaps the associated identifier.
@@ -109,14 +105,13 @@ void UsdImaging_CollectionCache::RemoveCollection(UsdCollectionAPI const &c)
     _pathsForQuery.erase(pathsForQueryEntry);
     _idForQuery.erase(queryRef);
     _queryForId.erase(queryEntry);
-    TF_DEBUG(USDIMAGING_COLLECTIONS)
-        .Msg("UsdImaging_CollectionCache: Dropped id '%s'", id.GetText());
+    TF_DEBUG(USDIMAGING_COLLECTIONS).Msg("UsdImaging_CollectionCache: Dropped id '%s'", id.GetText());
   }
 };
 
 TfToken UsdImaging_CollectionCache::GetIdForCollection(UsdCollectionAPI const &c)
 {
-  SdfPath path          = c.GetCollectionPath();
+  SdfPath path = c.GetCollectionPath();
   auto const &pathEntry = _idForPath.find(path);
   if (pathEntry == _idForPath.end()) {
     // No entry, so assume this was cached as the trivial default.
@@ -125,8 +120,7 @@ TfToken UsdImaging_CollectionCache::GetIdForCollection(UsdCollectionAPI const &c
   return pathEntry->second;
 }
 
-VtArray<TfToken> UsdImaging_CollectionCache::ComputeCollectionsContainingPath(
-    SdfPath const &path) const
+VtArray<TfToken> UsdImaging_CollectionCache::ComputeCollectionsContainingPath(SdfPath const &path) const
 {
   TRACE_FUNCTION();
   VtArray<TfToken> result;

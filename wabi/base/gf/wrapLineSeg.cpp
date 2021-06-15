@@ -119,22 +119,22 @@ void wrapLineSeg()
   object getDirection = make_function(&This::GetDirection, return_value_policy<return_by_value>());
 
   class_<This>("LineSeg", "Line segment class", init<>())
-      .def(init<const GfVec3d &, const GfVec3d &>())
+    .def(init<const GfVec3d &, const GfVec3d &>())
 
-      .def(TfTypePythonClass())
+    .def(TfTypePythonClass())
 
-      .def("GetDirection", getDirection)
-      .def("GetLength", &This::GetLength)
-      .def("GetPoint", &This::GetPoint)
+    .def("GetDirection", getDirection)
+    .def("GetLength", &This::GetLength)
+    .def("GetPoint", &This::GetPoint)
 
-      .add_property("direction", getDirection)
-      .add_property("length", &This::GetLength)
+    .add_property("direction", getDirection)
+    .add_property("length", &This::GetLength)
 
-      .def("FindClosestPoint", FindClosestPointHelper)
+    .def("FindClosestPoint", FindClosestPointHelper)
 
-      .def(str(self))
-      .def(self == self)
-      .def(self != self)
+    .def(str(self))
+    .def(self == self)
+    .def(self != self)
 
-      .def("__repr__", _Repr);
+    .def("__repr__", _Repr);
 }

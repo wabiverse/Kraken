@@ -323,10 +323,10 @@ typedef std::vector<PcpNodeRef> PcpNodeRefVector;
 /// node in the prim index graph in strong-to-weak order.
 ///
 class PcpNodeRef_ChildrenIterator : public boost::iterator_facade<
-                                        /* Derived =   */ PcpNodeRef_ChildrenIterator,
-                                        /* ValueType = */ PcpNodeRef,
-                                        /* Category =  */ boost::forward_traversal_tag,
-                                        /* RefType =   */ PcpNodeRef> {
+                                      /* Derived =   */ PcpNodeRef_ChildrenIterator,
+                                      /* ValueType = */ PcpNodeRef,
+                                      /* Category =  */ boost::forward_traversal_tag,
+                                      /* RefType =   */ PcpNodeRef> {
  public:
   /// Constructs an invalid iterator.
   PCP_API
@@ -367,12 +367,11 @@ class PcpNodeRef_ChildrenIterator : public boost::iterator_facade<
 /// Object used to iterate over nodes in the prim index graph in weak-to-strong
 /// order.
 ///
-class PcpNodeRef_ChildrenReverseIterator
-    : public boost::iterator_facade<
-          /* Derived =   */ PcpNodeRef_ChildrenReverseIterator,
-          /* ValueType = */ PcpNodeRef,
-          /* Category =  */ boost::forward_traversal_tag,
-          /* RefType =   */ PcpNodeRef> {
+class PcpNodeRef_ChildrenReverseIterator : public boost::iterator_facade<
+                                             /* Derived =   */ PcpNodeRef_ChildrenReverseIterator,
+                                             /* ValueType = */ PcpNodeRef,
+                                             /* Category =  */ boost::forward_traversal_tag,
+                                             /* RefType =   */ PcpNodeRef> {
  public:
   /// Constructs an invalid iterator.
   PCP_API

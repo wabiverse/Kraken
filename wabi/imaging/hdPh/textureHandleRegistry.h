@@ -43,13 +43,13 @@ class HdPhTextureIdentifier;
 class HdSamplerParameters;
 class HdPh_SamplerObjectRegistry;
 
-using HdPhTextureHandlePtr       = std::weak_ptr<class HdPhTextureHandle>;
+using HdPhTextureHandlePtr = std::weak_ptr<class HdPhTextureHandle>;
 using HdPhTextureHandleSharedPtr = std::shared_ptr<class HdPhTextureHandle>;
-using HdPhTextureObjectPtr       = std::weak_ptr<class HdPhTextureObject>;
+using HdPhTextureObjectPtr = std::weak_ptr<class HdPhTextureObject>;
 using HdPhTextureObjectSharedPtr = std::shared_ptr<class HdPhTextureObject>;
 using HdPhSamplerObjectSharedPtr = std::shared_ptr<class HdPhSamplerObject>;
-using HdPhShaderCodePtr          = std::weak_ptr<class HdPhShaderCode>;
-using HdPhShaderCodeSharedPtr    = std::shared_ptr<class HdPhShaderCode>;
+using HdPhShaderCodePtr = std::weak_ptr<class HdPhShaderCode>;
+using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
 
 /// \class HdPh_TextureHandleRegistry
 ///

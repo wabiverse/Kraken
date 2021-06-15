@@ -123,12 +123,12 @@ class HgiShaderProgram {
   HgiShaderProgramDesc _descriptor;
 
  private:
-  HgiShaderProgram()        = delete;
+  HgiShaderProgram() = delete;
   HgiShaderProgram &operator=(const HgiShaderProgram &) = delete;
-  HgiShaderProgram(const HgiShaderProgram &)            = delete;
+  HgiShaderProgram(const HgiShaderProgram &) = delete;
 };
 
-using HgiShaderProgramHandle       = HgiHandle<class HgiShaderProgram>;
+using HgiShaderProgramHandle = HgiHandle<class HgiShaderProgram>;
 using HgiShaderProgramHandleVector = std::vector<HgiShaderProgramHandle>;
 
 WABI_NAMESPACE_END

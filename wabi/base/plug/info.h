@@ -109,9 +109,7 @@ void Plug_ReadPlugInfo(const std::vector<std::string> &pathnames,
 /// messages that should be reported when plugins are registered (if any).
 /// The priority order of elements of the path is honored if pathsAreOrdered.
 /// Defined in registry.cpp.
-void Plug_SetPaths(const std::vector<std::string> &,
-                   const std::vector<std::string> &,
-                   bool pathsAreOrdered);
+void Plug_SetPaths(const std::vector<std::string> &, const std::vector<std::string> &, bool pathsAreOrdered);
 
 WABI_NAMESPACE_END
 

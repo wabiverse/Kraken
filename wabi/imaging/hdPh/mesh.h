@@ -43,8 +43,8 @@ class HdPhDrawItem;
 class HdSceneDelegate;
 
 using Hd_VertexAdjacencySharedPtr = std::shared_ptr<class Hd_VertexAdjacency>;
-using HdBufferSourceSharedPtr     = std::shared_ptr<class HdBufferSource>;
-using HdPh_MeshTopologySharedPtr  = std::shared_ptr<class HdPh_MeshTopology>;
+using HdBufferSourceSharedPtr = std::shared_ptr<class HdBufferSource>;
+using HdPh_MeshTopologySharedPtr = std::shared_ptr<class HdPh_MeshTopology>;
 
 using HdPhResourceRegistrySharedPtr = std::shared_ptr<class HdPhResourceRegistry>;
 
@@ -93,15 +93,14 @@ class HdPhMesh final : public HdMesh {
                    HdDirtyBits *dirtyBitsState);
 
   HdBufferArrayRangeSharedPtr _GetSharedPrimvarRange(
-      uint64_t primvarId,
-      HdBufferSpecVector const &updatedOrAddedSpecs,
-      HdBufferSpecVector const &removedSpecs,
-      HdBufferArrayRangeSharedPtr const &curRange,
-      bool *isFirstInstance,
-      HdPhResourceRegistrySharedPtr const &resourceRegistry) const;
+    uint64_t primvarId,
+    HdBufferSpecVector const &updatedOrAddedSpecs,
+    HdBufferSpecVector const &removedSpecs,
+    HdBufferArrayRangeSharedPtr const &curRange,
+    bool *isFirstInstance,
+    HdPhResourceRegistrySharedPtr const &resourceRegistry) const;
 
-  bool _UseQuadIndices(const HdRenderIndex &renderIndex,
-                       HdPh_MeshTopologySharedPtr const &topology) const;
+  bool _UseQuadIndices(const HdRenderIndex &renderIndex, HdPh_MeshTopologySharedPtr const &topology) const;
 
   bool _UseLimitRefinement(const HdRenderIndex &renderIndex) const;
 
@@ -200,8 +199,8 @@ class HdPhMesh final : public HdMesh {
     {
       for (size_t i = 0; i < _topologies.size(); ++i) {
         _topologies[i].second.erase(
-            std::find(_topologies[i].second.begin(), _topologies[i].second.end(), primvar),
-            _topologies[i].second.end());
+          std::find(_topologies[i].second.begin(), _topologies[i].second.end(), primvar),
+          _topologies[i].second.end());
       }
     }
 
@@ -261,9 +260,9 @@ class HdPhMesh final : public HdMesh {
 
   enum DirtyBits : HdDirtyBits {
     DirtySmoothNormals = HdChangeTracker::CustomBitsBegin,
-    DirtyFlatNormals   = (DirtySmoothNormals << 1),
-    DirtyIndices       = (DirtyFlatNormals << 1),
-    DirtyHullIndices   = (DirtyIndices << 1),
+    DirtyFlatNormals = (DirtySmoothNormals << 1),
+    DirtyIndices = (DirtyFlatNormals << 1),
+    DirtyHullIndices = (DirtyIndices << 1),
     DirtyPointsIndices = (DirtyHullIndices << 1)
   };
 

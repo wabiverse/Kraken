@@ -101,7 +101,7 @@ bool ArchRegex::_Impl::Match(const char *query) const
       return true;
     }
     query = eol + 1;
-    eol   = strchr(query, '\n');
+    eol = strchr(query, '\n');
   }
   return std::regex_search(query, result, _regex);
 }
@@ -120,8 +120,7 @@ class ArchRegex::_Impl {
 
 ArchRegex::_Impl::_Impl(const std::string &pattern, unsigned int flags, std::string *error)
 {
-  const int regflags = REG_EXTENDED | REG_NEWLINE |
-                       ((flags & ArchRegex::CASE_INSENSITIVE) ? REG_ICASE : 0);
+  const int regflags = REG_EXTENDED | REG_NEWLINE | ((flags & ArchRegex::CASE_INSENSITIVE) ? REG_ICASE : 0);
 
   const int result = regcomp(&_regex, pattern.c_str(), regflags);
   if (result != 0) {
@@ -171,9 +170,9 @@ ArchRegex::ArchRegex(const std::string &pattern, unsigned int flags) : _flags(fl
 }
 
 ArchRegex::ArchRegex(ArchRegex &&rhs) noexcept
-    : _flags(std::move(rhs._flags)),
-      _error(std::move(rhs._error)),
-      _impl(std::move(rhs._impl))
+  : _flags(std::move(rhs._flags)),
+    _error(std::move(rhs._error)),
+    _impl(std::move(rhs._impl))
 {
   // Do nothing
 }
@@ -182,7 +181,7 @@ ArchRegex &ArchRegex::operator=(ArchRegex &&rhs) noexcept
 {
   _flags = std::move(rhs._flags);
   _error = std::move(rhs._error);
-  _impl  = std::move(rhs._impl);
+  _impl = std::move(rhs._impl);
   return *this;
 }
 

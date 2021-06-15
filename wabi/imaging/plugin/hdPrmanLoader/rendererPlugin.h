@@ -55,7 +55,7 @@ class HdPrmanLoaderRendererPlugin final : public HdRendererPlugin {
 // These macros are used to shim the actual hdPrman delegate implementation
 #define HDPRMAN_LOADER_CREATE_DELEGATE \
   extern "C" ARCH_EXPORT HdRenderDelegate *HdPrmanLoaderCreateDelegate( \
-      HdRenderSettingsMap const &settingsMap)
+    HdRenderSettingsMap const &settingsMap)
 #define HDPRMAN_LOADER_DELETE_DELEGATE \
   extern "C" ARCH_EXPORT void HdPrmanLoaderDeleteDelegate(HdRenderDelegate *renderDelegate)
 

@@ -60,7 +60,7 @@ bool Tf_RefPtr_UniqueChangedCounter::_AddRefIfNonzero(TfRefBase const *refBase)
   TfRefBase::UniqueChangedListener const &listener = TfRefBase::_uniqueChangedListener;
   listener.lock();
   auto &counter = refBase->GetRefCount()._counter;
-  int oldValue  = counter.load(std::memory_order_relaxed);
+  int oldValue = counter.load(std::memory_order_relaxed);
   if (oldValue == 0)
     return false;
   if (oldValue == 1) {
@@ -74,7 +74,7 @@ bool Tf_RefPtr_UniqueChangedCounter::_AddRefIfNonzero(TfRefBase const *refBase)
 void Tf_PostNullSmartPtrDereferenceFatalError(const TfCallContext &ctx, const std::type_info &ti)
 {
   Tf_DiagnosticHelper(ctx, TF_DIAGNOSTIC_FATAL_ERROR_TYPE)
-      .IssueFatalError("attempted member lookup on NULL %s", ArchGetDemangled(ti).c_str());
+    .IssueFatalError("attempted member lookup on NULL %s", ArchGetDemangled(ti).c_str());
   // Currently, Tf fatal diagnostics are not themselves marked as noreturn
   // even though they should not return.  See bug 162691.
   ArchAbort();

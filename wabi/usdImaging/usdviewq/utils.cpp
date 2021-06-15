@@ -44,15 +44,13 @@
 WABI_NAMESPACE_BEGIN
 
 /*static*/
-std::vector<UsdPrim> UsdviewqUtils::_GetAllPrimsOfType(UsdStagePtr const &stage,
-                                                       TfType const &schemaType)
+std::vector<UsdPrim> UsdviewqUtils::_GetAllPrimsOfType(UsdStagePtr const &stage, TfType const &schemaType)
 {
   std::vector<UsdPrim> result;
   UsdPrimRange range = stage->Traverse();
-  std::copy_if(range.begin(),
-               range.end(),
-               std::back_inserter(result),
-               [schemaType](UsdPrim const &prim) { return prim.IsA(schemaType); });
+  std::copy_if(range.begin(), range.end(), std::back_inserter(result), [schemaType](UsdPrim const &prim) {
+    return prim.IsA(schemaType);
+  });
   return result;
 }
 
@@ -63,11 +61,11 @@ UsdviewqUtils::PrimInfo::PrimInfo(const UsdPrim &prim, const UsdTimeCode time)
   hasCompositionArcs = (prim.HasAuthoredReferences() || prim.HasAuthoredPayloads() ||
                         prim.HasAuthoredInherits() || prim.HasAuthoredSpecializes() ||
                         prim.HasVariantSets());
-  isActive           = prim.IsActive();
+  isActive = prim.IsActive();
   UsdGeomImageable img(prim);
   isImageable = static_cast<bool>(img);
-  isDefined   = prim.IsDefined();
-  isAbstract  = prim.IsAbstract();
+  isDefined = prim.IsDefined();
+  isAbstract = prim.IsAbstract();
 
   // isInPrototype is meant to guide UI to consider the prim's "source", so
   // even if the prim is a proxy prim, then unlike the core
@@ -80,14 +78,14 @@ UsdviewqUtils::PrimInfo::PrimInfo(const UsdPrim &prim, const UsdTimeCode time)
   supportsDrawMode = isActive && isDefined && !isInPrototype &&
                      prim.GetPath() != SdfPath::AbsoluteRootPath() && UsdModelAPI(prim).IsModel();
 
-  isInstance            = prim.IsInstance();
+  isInstance = prim.IsInstance();
   isVisibilityInherited = false;
   if (img) {
     UsdAttributeQuery query(img.GetVisibilityAttr());
     TfToken visibility = UsdGeomTokens->inherited;
     query.Get(&visibility, time);
     isVisibilityInherited = (visibility == UsdGeomTokens->inherited);
-    visVaries             = query.ValueMightBeTimeVarying();
+    visVaries = query.ValueMightBeTimeVarying();
   }
   else {
     visVaries = false;

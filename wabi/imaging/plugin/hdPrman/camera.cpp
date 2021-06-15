@@ -41,9 +41,7 @@ HdPrmanCamera::HdPrmanCamera(SdfPath const &id) : HdCamera(id), _dirtyParams(fal
 HdPrmanCamera::~HdPrmanCamera() = default;
 
 /* virtual */
-void HdPrmanCamera::Sync(HdSceneDelegate *sceneDelegate,
-                         HdRenderParam *renderParam,
-                         HdDirtyBits *dirtyBits)
+void HdPrmanCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -74,7 +72,7 @@ void HdPrmanCamera::Sync(HdSceneDelegate *sceneDelegate,
 bool HdPrmanCamera::GetAndResetHasParamsChanged()
 {
   bool paramsChanged = _dirtyParams;
-  _dirtyParams       = false;
+  _dirtyParams = false;
   return paramsChanged;
 }
 

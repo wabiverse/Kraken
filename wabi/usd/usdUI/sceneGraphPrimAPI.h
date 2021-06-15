@@ -181,7 +181,7 @@ class UsdUISceneGraphPrimAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDUI_API
   UsdAttribute CreateDisplayNameAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely          = false) const;
+                                     bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -209,7 +209,7 @@ class UsdUISceneGraphPrimAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDUI_API
   UsdAttribute CreateDisplayGroupAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

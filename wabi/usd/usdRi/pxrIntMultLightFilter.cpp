@@ -55,8 +55,7 @@ UsdRiPxrIntMultLightFilter::~UsdRiPxrIntMultLightFilter()
 {}
 
 /* static */
-UsdRiPxrIntMultLightFilter UsdRiPxrIntMultLightFilter::Get(const UsdStagePtr &stage,
-                                                           const SdfPath &path)
+UsdRiPxrIntMultLightFilter UsdRiPxrIntMultLightFilter::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
   if (!stage) {
     TF_CODING_ERROR("Invalid stage");
@@ -66,8 +65,7 @@ UsdRiPxrIntMultLightFilter UsdRiPxrIntMultLightFilter::Get(const UsdStagePtr &st
 }
 
 /* static */
-UsdRiPxrIntMultLightFilter UsdRiPxrIntMultLightFilter::Define(const UsdStagePtr &stage,
-                                                              const SdfPath &path)
+UsdRiPxrIntMultLightFilter UsdRiPxrIntMultLightFilter::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("wabiIntMultLightFilter");
   if (!stage) {
@@ -142,8 +140,7 @@ UsdAttribute UsdRiPxrIntMultLightFilter::CreateColorSaturationAttr(VtValue const
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -157,11 +154,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRiPxrIntMultLightFilter::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRiTokens->riIntensity,
-      UsdRiTokens->colorSaturation,
+    UsdRiTokens->riIntensity,
+    UsdRiTokens->colorSaturation,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdLuxLightFilter::GetSchemaAttributeNames(true), localNames);
+    UsdLuxLightFilter::GetSchemaAttributeNames(true), localNames);
 
   if (includeInherited)
     return allNames;

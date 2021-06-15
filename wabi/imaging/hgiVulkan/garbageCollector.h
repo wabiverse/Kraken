@@ -45,14 +45,14 @@ WABI_NAMESPACE_BEGIN
 class HgiVulkan;
 class HgiVulkanDevice;
 
-using HgiVulkanBufferVector           = std::vector<class HgiVulkanBuffer *>;
-using HgiVulkanTextureVector          = std::vector<class HgiVulkanTexture *>;
-using HgiVulkanSamplerVector          = std::vector<class HgiVulkanSampler *>;
-using HgiVulkanShaderFunctionVector   = std::vector<class HgiVulkanShaderFunction *>;
-using HgiVulkanShaderProgramVector    = std::vector<class HgiVulkanShaderProgram *>;
+using HgiVulkanBufferVector = std::vector<class HgiVulkanBuffer *>;
+using HgiVulkanTextureVector = std::vector<class HgiVulkanTexture *>;
+using HgiVulkanSamplerVector = std::vector<class HgiVulkanSampler *>;
+using HgiVulkanShaderFunctionVector = std::vector<class HgiVulkanShaderFunction *>;
+using HgiVulkanShaderProgramVector = std::vector<class HgiVulkanShaderProgram *>;
 using HgiVulkanResourceBindingsVector = std::vector<class HgiVulkanResourceBindings *>;
 using HgiVulkanGraphicsPipelineVector = std::vector<class HgiVulkanGraphicsPipeline *>;
-using HgiVulkanComputePipelineVector  = std::vector<class HgiVulkanComputePipeline *>;
+using HgiVulkanComputePipelineVector = std::vector<class HgiVulkanComputePipeline *>;
 
 /// \class HgiVulkanGarbageCollector
 ///
@@ -87,7 +87,7 @@ class HgiVulkanGarbageCollector final {
 
  private:
   HgiVulkanGarbageCollector &operator=(const HgiVulkanGarbageCollector &) = delete;
-  HgiVulkanGarbageCollector(const HgiVulkanGarbageCollector &)            = delete;
+  HgiVulkanGarbageCollector(const HgiVulkanGarbageCollector &) = delete;
 
   /// Returns a thread_local vector in which to store a object handle.
   /// Thread safety: The returned vector is a thread_local vector so this call

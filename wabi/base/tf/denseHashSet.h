@@ -49,10 +49,7 @@ WABI_NAMESPACE_BEGIN
 /// \warning This differs from a TfHashSet in so far that inserting and
 /// removing elements invalidate all iterators of the container.
 ///
-template<class Element,
-         class HashFn,
-         class EqualElement = std::equal_to<Element>,
-         unsigned Threshold = 128>
+template<class Element, class HashFn, class EqualElement = std::equal_to<Element>, unsigned Threshold = 128>
 class TfDenseHashSet {
  public:
   typedef Element value_type;
@@ -83,11 +80,10 @@ class TfDenseHashSet {
  public:
   /// Ctor.
   ///
-  explicit TfDenseHashSet(const HashFn &hashFn             = HashFn(),
-                          const EqualElement &equalElement = EqualElement())
+  explicit TfDenseHashSet(const HashFn &hashFn = HashFn(), const EqualElement &equalElement = EqualElement())
   {
     _hash() = hashFn;
-    _equ()  = equalElement;
+    _equ() = equalElement;
   }
 
   /// Copy Ctor.
@@ -456,8 +452,7 @@ class TfDenseHashSet {
   // sizeof(EqualElement) == 0 in many cases we use a compressed_pair to not
   // pay a size penalty.
 
-  typedef boost::compressed_pair<boost::compressed_pair<_Vector, HashFn>, EqualElement>
-      _VectorHashFnEqualFn;
+  typedef boost::compressed_pair<boost::compressed_pair<_Vector, HashFn>, EqualElement> _VectorHashFnEqualFn;
 
   _VectorHashFnEqualFn _vectorHashFnEqualFn;
 

@@ -46,11 +46,11 @@ static std::string _ExtractVersionString(const std::string &originalShader)
 }
 
 HgiShaderGenerator::HgiShaderGenerator(const HgiShaderFunctionDesc &descriptor)
-    // As we append to the top of complete GLSLFX files, the version
-    // string has to be hoisted for OpenGL and removed for Metal
-    : _version(_ExtractVersionString(descriptor.shaderCode)),
-      _originalShader(descriptor.shaderCode),
-      _stage(descriptor.shaderStage)
+  // As we append to the top of complete GLSLFX files, the version
+  // string has to be hoisted for OpenGL and removed for Metal
+  : _version(_ExtractVersionString(descriptor.shaderCode)),
+    _originalShader(descriptor.shaderCode),
+    _stage(descriptor.shaderStage)
 {}
 
 HgiShaderGenerator::~HgiShaderGenerator() = default;

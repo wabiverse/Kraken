@@ -42,8 +42,8 @@ class BigInteger {
   BigInteger(const char *decimals, size_t length) : count_(1)
   {
     RAPIDJSON_ASSERT(length > 0);
-    digits_[0]                         = 0;
-    size_t i                           = 0;
+    digits_[0] = 0;
+    size_t i = 0;
     const size_t kMaxDigitPerIteration = 19;  // 2^64 = 18446744073709551616 > 10^19
     while (length >= kMaxDigitPerIteration) {
       AppendDecimal64(decimals + i, decimals + i + kMaxDigitPerIteration);
@@ -67,7 +67,7 @@ class BigInteger {
   BigInteger &operator=(uint64_t u)
   {
     digits_[0] = u;
-    count_     = 1;
+    count_ = 1;
     return *this;
   }
 
@@ -102,7 +102,7 @@ class BigInteger {
     for (size_t i = 0; i < count_; i++) {
       uint64_t hi;
       digits_[i] = MulAdd64(digits_[i], u, k, &hi);
-      k          = hi;
+      k = hi;
     }
 
     if (k > 0)
@@ -122,14 +122,14 @@ class BigInteger {
 
     uint64_t k = 0;
     for (size_t i = 0; i < count_; i++) {
-      const uint64_t c  = digits_[i] >> 32;
-      const uint64_t d  = digits_[i] & 0xFFFFFFFF;
+      const uint64_t c = digits_[i] >> 32;
+      const uint64_t d = digits_[i] & 0xFFFFFFFF;
       const uint64_t uc = u * c;
       const uint64_t ud = u * d;
       const uint64_t p0 = ud + k;
       const uint64_t p1 = uc + (p0 >> 32);
-      digits_[i]        = (p0 & 0xFFFFFFFF) | (p1 << 32);
-      k                 = p1 >> 32;
+      digits_[i] = (p0 & 0xFFFFFFFF) | (p1 << 32);
+      k = p1 >> 32;
     }
 
     if (k > 0)
@@ -143,7 +143,7 @@ class BigInteger {
     if (IsZero() || shift == 0)
       return *this;
 
-    size_t offset     = shift / kTypeBit;
+    size_t offset = shift / kTypeBit;
     size_t interShift = shift % kTypeBit;
     RAPIDJSON_ASSERT(count_ + offset <= kCapacity);
 
@@ -154,8 +154,7 @@ class BigInteger {
     else {
       digits_[count_] = 0;
       for (size_t i = count_; i > 0; i--)
-        digits_[i + offset] = (digits_[i] << interShift) |
-                              (digits_[i - 1] >> (kTypeBit - interShift));
+        digits_[i + offset] = (digits_[i] << interShift) | (digits_[i - 1] >> (kTypeBit - interShift));
       digits_[offset] = digits_[0] << interShift;
       count_ += offset;
       if (digits_[count_])
@@ -211,13 +210,13 @@ class BigInteger {
     const BigInteger *a, *b;  // Makes a > b
     bool ret;
     if (cmp < 0) {
-      a   = &rhs;
-      b   = this;
+      a = &rhs;
+      b = this;
       ret = true;
     }
     else {
-      a   = this;
-      b   = &rhs;
+      a = this;
+      b = &rhs;
       ret = false;
     }
 
@@ -226,7 +225,7 @@ class BigInteger {
       Type d = a->digits_[i] - borrow;
       if (i < b->count_)
         d -= b->digits_[i];
-      borrow          = (d > a->digits_[i]) ? 1 : 0;
+      borrow = (d > a->digits_[i]) ? 1 : 0;
       out->digits_[i] = d;
       if (d != 0)
         out->count_ = i + 1;
@@ -323,7 +322,7 @@ class BigInteger {
 
   static const size_t kBitCount = 3328;  // 64bit * 54 > 10^1000
   static const size_t kCapacity = kBitCount / sizeof(Type);
-  static const size_t kTypeBit  = sizeof(Type) * 8;
+  static const size_t kTypeBit = sizeof(Type) * 8;
 
   Type digits_[kCapacity];
   size_t count_;

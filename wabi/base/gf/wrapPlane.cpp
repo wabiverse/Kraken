@@ -77,45 +77,45 @@ void wrapPlane()
   def("FitPlaneToPoints", _FitPlaneToPoints);
 
   class_<This>("Plane", init<>())
-      .def(init<const GfVec3d &, double>())
-      .def(init<const GfVec3d &, const GfVec3d &>())
-      .def(init<const GfVec3d &, const GfVec3d &, const GfVec3d &>())
-      .def(init<const GfVec4d &>())
+    .def(init<const GfVec3d &, double>())
+    .def(init<const GfVec3d &, const GfVec3d &>())
+    .def(init<const GfVec3d &, const GfVec3d &, const GfVec3d &>())
+    .def(init<const GfVec4d &>())
 
-      .def(TfTypePythonClass())
+    .def(TfTypePythonClass())
 
-      .def("Set", (void (This::*)(const GfVec3d &, double)) & This::Set, return_self<>())
-      .def("Set", (void (This::*)(const GfVec3d &, const GfVec3d &)) & This::Set, return_self<>())
-      .def("Set",
-           (void (This::*)(const GfVec3d &, const GfVec3d &, const GfVec3d &)) & This::Set,
-           return_self<>())
-      .def("Set", (void (This::*)(const GfVec4d &)) & This::Set, return_self<>())
+    .def("Set", (void (This::*)(const GfVec3d &, double)) & This::Set, return_self<>())
+    .def("Set", (void (This::*)(const GfVec3d &, const GfVec3d &)) & This::Set, return_self<>())
+    .def("Set",
+         (void (This::*)(const GfVec3d &, const GfVec3d &, const GfVec3d &)) & This::Set,
+         return_self<>())
+    .def("Set", (void (This::*)(const GfVec4d &)) & This::Set, return_self<>())
 
-      .add_property("normal", getNormal)
-      .add_property("distanceFromOrigin", &This::GetDistanceFromOrigin)
+    .add_property("normal", getNormal)
+    .add_property("distanceFromOrigin", &This::GetDistanceFromOrigin)
 
-      .def("GetDistance", &This::GetDistance)
-      .def("GetDistanceFromOrigin", &This::GetDistanceFromOrigin)
-      .def("GetNormal", getNormal)
-      .def("GetEquation", &This::GetEquation)
-      .def("Project", &This::Project)
+    .def("GetDistance", &This::GetDistance)
+    .def("GetDistanceFromOrigin", &This::GetDistanceFromOrigin)
+    .def("GetNormal", getNormal)
+    .def("GetEquation", &This::GetEquation)
+    .def("Project", &This::Project)
 
-      .def("Transform", &This::Transform, return_self<>())
+    .def("Transform", &This::Transform, return_self<>())
 
-      .def("Reorient", &This::Reorient, return_self<>())
+    .def("Reorient", &This::Reorient, return_self<>())
 
-      .def("IntersectsPositiveHalfSpace",
-           (bool (This::*)(const GfRange3d &) const) & This::IntersectsPositiveHalfSpace)
+    .def("IntersectsPositiveHalfSpace",
+         (bool (This::*)(const GfRange3d &) const) & This::IntersectsPositiveHalfSpace)
 
-      .def("IntersectsPositiveHalfSpace",
-           (bool (This::*)(const GfVec3d &) const) & This::IntersectsPositiveHalfSpace)
+    .def("IntersectsPositiveHalfSpace",
+         (bool (This::*)(const GfVec3d &) const) & This::IntersectsPositiveHalfSpace)
 
-      .def(str(self))
-      .def(self == self)
-      .def(self != self)
+    .def(str(self))
+    .def(self == self)
+    .def(self != self)
 
-      .def("__repr__", _Repr)
+    .def("__repr__", _Repr)
 
-      ;
+    ;
   to_python_converter<std::vector<This>, TfPySequenceToPython<std::vector<This>>>();
 }

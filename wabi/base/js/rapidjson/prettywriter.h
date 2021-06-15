@@ -28,8 +28,8 @@ RAPIDJSON_NAMESPACE_BEGIN
 /*! \see PrettyWriter::SetFormatOptions
  */
 enum PrettyFormatOptions {
-  kFormatDefault         = 0,  //!< Default pretty formatting.
-  kFormatSingleLineArray = 1   //!< Format arrays on a single line.
+  kFormatDefault = 0,         //!< Default pretty formatting.
+  kFormatSingleLineArray = 1  //!< Format arrays on a single line.
 };
 
 //! Writer with indentation and spacing.
@@ -43,9 +43,9 @@ template<typename OutputStream,
          typename SourceEncoding = UTF8<>,
          typename TargetEncoding = UTF8<>,
          typename StackAllocator = CrtAllocator,
-         unsigned writeFlags     = kWriteDefaultFlags>
+         unsigned writeFlags = kWriteDefaultFlags>
 class PrettyWriter
-    : public Writer<OutputStream, SourceEncoding, TargetEncoding, StackAllocator, writeFlags> {
+  : public Writer<OutputStream, SourceEncoding, TargetEncoding, StackAllocator, writeFlags> {
  public:
   typedef Writer<OutputStream, SourceEncoding, TargetEncoding, StackAllocator> Base;
   typedef typename Base::Ch Ch;
@@ -57,18 +57,17 @@ class PrettyWriter
   */
   explicit PrettyWriter(OutputStream &os,
                         StackAllocator *allocator = 0,
-                        size_t levelDepth         = Base::kDefaultLevelDepth)
-      : Base(os, allocator, levelDepth),
-        indentChar_(' '),
-        indentCharCount_(4),
-        formatOptions_(kFormatDefault)
+                        size_t levelDepth = Base::kDefaultLevelDepth)
+    : Base(os, allocator, levelDepth),
+      indentChar_(' '),
+      indentCharCount_(4),
+      formatOptions_(kFormatDefault)
   {}
 
-  explicit PrettyWriter(StackAllocator *allocator = 0,
-                        size_t levelDepth         = Base::kDefaultLevelDepth)
-      : Base(allocator, levelDepth),
-        indentChar_(' '),
-        indentCharCount_(4)
+  explicit PrettyWriter(StackAllocator *allocator = 0, size_t levelDepth = Base::kDefaultLevelDepth)
+    : Base(allocator, levelDepth),
+      indentChar_(' '),
+      indentCharCount_(4)
   {}
 
   //! Set custom indentation.
@@ -78,9 +77,8 @@ class PrettyWriter
   */
   PrettyWriter &SetIndent(Ch indentChar, unsigned indentCharCount)
   {
-    RAPIDJSON_ASSERT(indentChar == ' ' || indentChar == '\t' || indentChar == '\n' ||
-                     indentChar == '\r');
-    indentChar_      = indentChar;
+    RAPIDJSON_ASSERT(indentChar == ' ' || indentChar == '\t' || indentChar == '\n' || indentChar == '\r');
+    indentChar_ = indentChar;
     indentCharCount_ = indentCharCount;
     return *this;
   }
@@ -281,8 +279,7 @@ class PrettyWriter
           WriteIndent();
       }
       if (!level->inArray && level->valueCount % 2 == 0)
-        RAPIDJSON_ASSERT(type ==
-                         kStringType);  // if it's in object, then even number should be a name
+        RAPIDJSON_ASSERT(type == kStringType);  // if it's in object, then even number should be a name
       level->valueCount++;
     }
     else {
@@ -293,8 +290,7 @@ class PrettyWriter
 
   void WriteIndent()
   {
-    size_t count = (Base::level_stack_.GetSize() / sizeof(typename Base::Level)) *
-                   indentCharCount_;
+    size_t count = (Base::level_stack_.GetSize() / sizeof(typename Base::Level)) * indentCharCount_;
     PutN(*Base::os_, static_cast<typename TargetEncoding::Ch>(indentChar_), count);
   }
 

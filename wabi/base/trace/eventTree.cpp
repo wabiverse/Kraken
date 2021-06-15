@@ -54,7 +54,7 @@ TraceEventTreeRefPtr TraceEventTree::New(const TraceCollection &collection,
 
 TraceEventTreeRefPtr TraceEventTree::Add(const TraceCollection &collection)
 {
-  CounterMap currentCounters    = GetFinalCounterValues();
+  CounterMap currentCounters = GetFinalCounterValues();
   TraceEventTreeRefPtr newGraph = New(collection, &currentCounters);
   Merge(newGraph);
   return newGraph;
@@ -68,10 +68,9 @@ void TraceEventTree::Merge(const TraceEventTreeRefPtr &tree)
     const TraceEventNodeRefPtrVector &threadNodes = _root->GetChildrenRef();
 
     // Find if the tree already has a node for child thread.
-    auto it = std::find_if(
-        threadNodes.begin(), threadNodes.end(), [&](const TraceEventNodeRefPtr &node) {
-          return node->GetKey() == newThreadNode->GetKey();
-        });
+    auto it = std::find_if(threadNodes.begin(), threadNodes.end(), [&](const TraceEventNodeRefPtr &node) {
+      return node->GetKey() == newThreadNode->GetKey();
+    });
 
     if (it != threadNodes.end()) {
       // Add the nodes thread children from child into the current tree.
@@ -133,8 +132,7 @@ static void TraceEventTree_WriteToJsonArray(const TraceEventNodeRefPtr &node,
   std::string categoryList("");
 
   // Add begin time
-  std::vector<std::string> catList = TraceCategory::GetInstance().GetCategories(
-      node->GetCategory());
+  std::vector<std::string> catList = TraceCategory::GetInstance().GetCategories(node->GetCategory());
   for (const std::string &catName : catList) {
     if (categoryList.length() > 0) {
       categoryList.append(",");
@@ -162,16 +160,15 @@ static void TraceEventTree_WriteToJsonArray(const TraceEventNodeRefPtr &node,
       if (visitedKeys.find(it.first) == visitedKeys.end()) {
         visitedKeys.insert(it.first);
         using AttrItr = AttributeMap::const_iterator;
-        using Range   = std::pair<AttrItr, AttrItr>;
-        Range range   = node->GetAttributes().equal_range(it.first);
+        using Range = std::pair<AttrItr, AttrItr>;
+        Range range = node->GetAttributes().equal_range(it.first);
         if (std::distance(range.first, range.second) == 1) {
           js.WriteKey(range.first->first.GetString());
           range.first->second.WriteJson(js);
         }
         else {
           js.WriteKey(it.first.GetString());
-          js.WriteArray(
-              range.first, range.second, [](JsWriter &js, AttrItr i) { i->second.WriteJson(js); });
+          js.WriteArray(range.first, range.second, [](JsWriter &js, AttrItr i) { i->second.WriteJson(js); });
         }
       }
     }
@@ -180,8 +177,7 @@ static void TraceEventTree_WriteToJsonArray(const TraceEventNodeRefPtr &node,
 
   if (!node->IsFromSeparateEvents()) {
     js.WriteKeyValue("ph", "X");  // Complete event
-    js.WriteKeyValue("dur",
-                     _TimeStampToChromeTraceValue(node->GetEndTime() - node->GetBeginTime()));
+    js.WriteKeyValue("dur", _TimeStampToChromeTraceValue(node->GetEndTime() - node->GetBeginTime()));
     js.EndObject();
   }
   else {

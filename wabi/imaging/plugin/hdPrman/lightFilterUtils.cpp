@@ -205,7 +205,7 @@ bool HdPrmanLightFilterPopulateParams(riley::ShadingNode *filter,
   // filter->params.SetString(RtUString("linkingGroups"), RtUString(""));
   // XX -- not sure how to handle this param
 
-  bool genCoordSys     = false;
+  bool genCoordSys = false;
   bool genParentShader = false;
 
   if (filterType == _tokens->PxrIntMultLightFilter) {
@@ -220,12 +220,12 @@ bool HdPrmanLightFilterPopulateParams(riley::ShadingNode *filter,
     }
   }
   else if (filterType == _tokens->PxrBarnLightFilter) {
-    filter->name    = RtUString("PxrBarnLightFilter");
-    genCoordSys     = true;
+    filter->name = RtUString("PxrBarnLightFilter");
+    genCoordSys = true;
     genParentShader = true;
 
     TfToken barnMode = _tokens->physical;
-    pval             = sceneDelegate->GetLightParamValue(filterPath, _tokens->barnMode);
+    pval = sceneDelegate->GetLightParamValue(filterPath, _tokens->barnMode);
     if (pval.IsHolding<TfToken>()) {
       barnMode = pval.UncheckedGet<TfToken>();
       TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("      barnMode %s\n", barnMode.GetText());
@@ -284,47 +284,42 @@ bool HdPrmanLightFilterPopulateParams(riley::ShadingNode *filter,
       if (pval.IsHolding<bool>()) {
         bool useLightDirection = pval.UncheckedGet<bool>();
         TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING)
-            .Msg("      analytic:useLightDirection %d\n", useLightDirection);
+          .Msg("      analytic:useLightDirection %d\n", useLightDirection);
         filter->params.SetInteger(RtUString("useLightDirection"), useLightDirection);
       }
       pval = sceneDelegate->GetLightParamValue(filterPath, _tokens->analyticDensityNearDistance);
       if (pval.IsHolding<float>()) {
         float nearDistance = pval.UncheckedGet<float>();
-        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING)
-            .Msg("      analytic:density:nearDistance %f\n", nearDistance);
+        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("      analytic:density:nearDistance %f\n", nearDistance);
         filter->params.SetFloat(RtUString("densityNear"), nearDistance);
       }
       pval = sceneDelegate->GetLightParamValue(filterPath, _tokens->analyticDensityFarDistance);
       if (pval.IsHolding<float>()) {
         float farDistance = pval.UncheckedGet<float>();
-        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING)
-            .Msg("      analytic:density:farDistance %f\n", farDistance);
+        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("      analytic:density:farDistance %f\n", farDistance);
         filter->params.SetFloat(RtUString("densityFar"), farDistance);
       }
       pval = sceneDelegate->GetLightParamValue(filterPath, _tokens->analyticDensityNearValue);
       if (pval.IsHolding<float>()) {
         float nearValue = pval.UncheckedGet<float>();
-        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING)
-            .Msg("      analytic:density:nearValue %f\n", nearValue);
+        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("      analytic:density:nearValue %f\n", nearValue);
         filter->params.SetFloat(RtUString("densityNearVal"), nearValue);
       }
       pval = sceneDelegate->GetLightParamValue(filterPath, _tokens->analyticDensityFarValue);
       if (pval.IsHolding<float>()) {
         float farValue = pval.UncheckedGet<float>();
-        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING)
-            .Msg("      analytic:density:farValue %f\n", farValue);
+        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("      analytic:density:farValue %f\n", farValue);
         filter->params.SetFloat(RtUString("densityFarVal"), farValue);
       }
       pval = sceneDelegate->GetLightParamValue(filterPath, _tokens->analyticDensityExponent);
       if (pval.IsHolding<float>()) {
         float exponent = pval.UncheckedGet<float>();
-        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING)
-            .Msg("      analytic:density:exponent %f\n", exponent);
+        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("      analytic:density:exponent %f\n", exponent);
         filter->params.SetFloat(RtUString("densityPow"), exponent);
       }
     }
     float edgeThickness = 0.0;
-    pval                = sceneDelegate->GetLightParamValue(filterPath, _tokens->edgeThickness);
+    pval = sceneDelegate->GetLightParamValue(filterPath, _tokens->edgeThickness);
     if (pval.IsHolding<float>()) {
       edgeThickness = pval.UncheckedGet<float>();
       TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("      edgeThickness %f\n", edgeThickness);
@@ -409,7 +404,7 @@ bool HdPrmanLightFilterPopulateParams(riley::ShadingNode *filter,
   }
   else if (filterType == _tokens->PxrRodLightFilter) {
     filter->name = RtUString("PxrRodLightFilter");
-    genCoordSys  = true;
+    genCoordSys = true;
 
     pval = sceneDelegate->GetLightParamValue(filterPath, _tokens->width);
     if (pval.IsHolding<float>()) {
@@ -436,7 +431,7 @@ bool HdPrmanLightFilterPopulateParams(riley::ShadingNode *filter,
       filter->params.SetFloat(RtUString("radius"), radius);
     }
     float edgeThickness = 0.0;
-    pval                = sceneDelegate->GetLightParamValue(filterPath, _tokens->edgeThickness);
+    pval = sceneDelegate->GetLightParamValue(filterPath, _tokens->edgeThickness);
     if (pval.IsHolding<float>()) {
       edgeThickness = pval.UncheckedGet<float>();
       TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("      edgeThickness %f\n", edgeThickness);
@@ -546,8 +541,7 @@ bool HdPrmanLightFilterPopulateParams(riley::ShadingNode *filter,
     if (pval.IsHolding<std::vector<float>>()) {
       const std::vector<float> &v = pval.UncheckedGet<std::vector<float>>();
       if (TfDebug::IsEnabled(HDPRMAN_LIGHT_FILTER_LINKING)) {
-        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING)
-            .Msg("      falloff:knots size %d\n", (int)(v.size()));
+        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("      falloff:knots size %d\n", (int)(v.size()));
         for (size_t ii = 0; ii < v.size(); ii++)
           TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("        %2zu: %f\n", ii, v[ii]);
       }
@@ -559,8 +553,7 @@ bool HdPrmanLightFilterPopulateParams(riley::ShadingNode *filter,
     if (pval.IsHolding<std::vector<float>>()) {
       const std::vector<float> &v = pval.UncheckedGet<std::vector<float>>();
       if (TfDebug::IsEnabled(HDPRMAN_LIGHT_FILTER_LINKING)) {
-        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING)
-            .Msg("      falloff:floats size %d\n", (int)(v.size()));
+        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("      falloff:floats size %d\n", (int)(v.size()));
         for (size_t ii = 0; ii < v.size(); ii++)
           TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("        %2zu: %f\n", ii, v[ii]);
       }
@@ -570,17 +563,15 @@ bool HdPrmanLightFilterPopulateParams(riley::ShadingNode *filter,
     if (pval.IsHolding<TfToken>()) {
       TfToken interpolation = pval.UncheckedGet<TfToken>();
       TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING)
-          .Msg("      falloff:interpolation %s\n", interpolation.GetText());
-      filter->params.SetString(RtUString("falloff_Interpolation"),
-                               RtUString(interpolation.GetText()));
+        .Msg("      falloff:interpolation %s\n", interpolation.GetText());
+      filter->params.SetString(RtUString("falloff_Interpolation"), RtUString(interpolation.GetText()));
     }
     // XXX -- handle the colorRamp spline
     pval = sceneDelegate->GetLightParamValue(filterPath, _tokens->colorRampKnots);
     if (pval.IsHolding<std::vector<float>>()) {
       const std::vector<float> &v = pval.UncheckedGet<std::vector<float>>();
       if (TfDebug::IsEnabled(HDPRMAN_LIGHT_FILTER_LINKING)) {
-        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING)
-            .Msg("      colorRamp:knots size %d\n", (int)(v.size()));
+        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("      colorRamp:knots size %d\n", (int)(v.size()));
         for (size_t ii = 0; ii < v.size(); ii++)
           TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("        %2zu: %f\n", ii, v[ii]);
       }
@@ -592,22 +583,20 @@ bool HdPrmanLightFilterPopulateParams(riley::ShadingNode *filter,
     if (pval.IsHolding<std::vector<GfVec3f>>()) {
       const std::vector<GfVec3f> &v = pval.UncheckedGet<std::vector<GfVec3f>>();
       if (TfDebug::IsEnabled(HDPRMAN_LIGHT_FILTER_LINKING)) {
-        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING)
-            .Msg("      colorRamp:colors size %d\n", (int)(v.size()));
+        TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("      colorRamp:colors size %d\n", (int)(v.size()));
         for (size_t ii = 0; ii < v.size(); ii++)
           TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING)
-              .Msg("      %2zu: %f %f %f\n", ii, v[ii][0], v[ii][1], v[ii][2]);
+            .Msg("      %2zu: %f %f %f\n", ii, v[ii][0], v[ii][1], v[ii][2]);
       }
       filter->params.SetColorArray(
-          RtUString("colorRamp_Colors"), reinterpret_cast<const RtColorRGB *>(&v[0]), v.size());
+        RtUString("colorRamp_Colors"), reinterpret_cast<const RtColorRGB *>(&v[0]), v.size());
     }
     pval = sceneDelegate->GetLightParamValue(filterPath, _tokens->colorRampInterpolation);
     if (pval.IsHolding<TfToken>()) {
       TfToken interpolation = pval.UncheckedGet<TfToken>();
       TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING)
-          .Msg("      colorRamp:spline:interpolation %s\n", interpolation.GetText());
-      filter->params.SetString(RtUString("colorRamp_Interpolation"),
-                               RtUString(interpolation.GetText()));
+        .Msg("      colorRamp:spline:interpolation %s\n", interpolation.GetText());
+      filter->params.SetString(RtUString("colorRamp_Interpolation"), RtUString(interpolation.GetText()));
     }
   }
   else {
@@ -657,9 +646,9 @@ bool HdPrmanLightFilterPopulateParams(riley::ShadingNode *filter,
     // geometry must subscribe to that grouping.
     filter->params.SetString(RtUString("linkingGroups"), RtUString(lightFilterLink.GetText()));
     TF_DEBUG(HDPRMAN_LIGHT_LINKING)
-        .Msg("HdPrman: Light filter <%s> linkingGroups \"%s\"\n",
-             filterPath.GetText(),
-             lightFilterLink.GetText());
+      .Msg("HdPrman: Light filter <%s> linkingGroups \"%s\"\n",
+           filterPath.GetText(),
+           lightFilterLink.GetText());
   }
 
   return true;

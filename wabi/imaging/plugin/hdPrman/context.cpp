@@ -53,18 +53,17 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_MAKE_STATIC_DATA(std::vector<HdPrman_Context::IntegratorCameraCallback>,
-                    _integratorCameraCallbacks)
+TF_MAKE_STATIC_DATA(std::vector<HdPrman_Context::IntegratorCameraCallback>, _integratorCameraCallbacks)
 {
   _integratorCameraCallbacks->clear();
 }
 
 HdPrman_Context::HdPrman_Context()
-    : rix(nullptr),
-      ri(nullptr),
-      mgr(nullptr),
-      riley(nullptr),
-      _instantaneousShutter(false)
+  : rix(nullptr),
+    ri(nullptr),
+    mgr(nullptr),
+    riley(nullptr),
+    _instantaneousShutter(false)
 {
   /* NOTHING */
 }
@@ -407,8 +406,7 @@ static bool _SetParamValue(RtUString const &name,
   return true;
 }
 
-static RtUString _GetPrmanPrimvarName(TfToken const &hdPrimvarName,
-                                      RtDetailType const & /*detail*/)
+static RtUString _GetPrmanPrimvarName(TfToken const &hdPrimvarName, RtDetailType const & /*detail*/)
 {
   // Handle cases where Hydra built-in primvars map to Renderman
   // built-in primvars.
@@ -453,54 +451,53 @@ static bool _IsMasterAttribute(TfToken const &primvarName)
   // This list was created based on this doc page:
   //   https://rmanwiki.pixar.com/display/REN23/Primitive+Variables
   typedef std::unordered_set<TfToken, TfToken::HashFunctor> TfTokenSet;
-  static const TfTokenSet masterAttributes = {
-      // Common
-      TfToken("ri:attributes:identifier:object"),
-      // Shading
-      TfToken("ri:attributes:derivatives:extrapolate"),
-      TfToken("ri:attributes:displacement:ignorereferenceinstance"),
-      TfToken("ri:attributes:displacementbound:CoordinateSystem"),
-      TfToken("ri:attributes:displacementbound:offscreen"),
-      TfToken("ri:attributes:displacementbound:sphere"),
-      TfToken("ri:attributes:Ri:Orientation"),
-      TfToken("ri:attributes:trace:autobias"),
-      TfToken("ri:attributes:trace:bias"),
-      TfToken("ri:attributes:trace:sssautobias"),
-      TfToken("ri:attributes:trace:sssbias"),
-      TfToken("ri:attributes:trace:displacements"),
-      // Dicing
-      TfToken("ri:attributes:dice:micropolygonlength"),
-      TfToken("ri:attributes:dice:offscreenstrategy"),
-      TfToken("ri:attributes:dice:rasterorient"),
-      TfToken("ri:attributes:dice:referencecamera"),
-      TfToken("ri:attributes:dice:referenceinstance"),
-      TfToken("ri:attributes:dice:strategy"),
-      TfToken("ri:attributes:dice:worlddistancelength"),
-      TfToken("ri:attributes:Ri:GeometricApproximationFocusFactor"),
-      TfToken("ri:attributes:Ri:GeometricApproximationMotionFactor"),
-      // Points
-      TfToken("ri:attributes:falloffpower"),
-      // Volume
-      TfToken("ri:attributes:dice:minlength"),
-      TfToken("ri:attributes:dice:minlengthspace"),
-      TfToken("ri:attributes:Ri:Bound"),
-      TfToken("ri:attributes:volume:dsominmax"),
-      TfToken("ri:attributes:volume:aggregate"),
-      // SubdivisionMesh
-      TfToken("ri:attributes:dice:pretessellate"),
-      TfToken("ri:attributes:dice:watertight"),
-      TfToken("ri:attributes:shade:faceset"),
-      TfToken("ri:attributes:stitchbound:CoordinateSystem"),
-      TfToken("ri:attributes:stitchbound:sphere"),
-      // NuPatch
-      TfToken("ri:attributes:trimcurve:sense"),
-      // PolygonMesh
-      TfToken("ri:attributes:polygon:concave"),
-      TfToken("ri:attributes:polygon:smoothdisplacement"),
-      TfToken("ri:attributes:polygon:smoothnormals"),
-      // Procedural
-      TfToken("ri:attributes:procedural:immediatesubdivide"),
-      TfToken("ri:attributes:procedural:reentrant")};
+  static const TfTokenSet masterAttributes = {// Common
+                                              TfToken("ri:attributes:identifier:object"),
+                                              // Shading
+                                              TfToken("ri:attributes:derivatives:extrapolate"),
+                                              TfToken("ri:attributes:displacement:ignorereferenceinstance"),
+                                              TfToken("ri:attributes:displacementbound:CoordinateSystem"),
+                                              TfToken("ri:attributes:displacementbound:offscreen"),
+                                              TfToken("ri:attributes:displacementbound:sphere"),
+                                              TfToken("ri:attributes:Ri:Orientation"),
+                                              TfToken("ri:attributes:trace:autobias"),
+                                              TfToken("ri:attributes:trace:bias"),
+                                              TfToken("ri:attributes:trace:sssautobias"),
+                                              TfToken("ri:attributes:trace:sssbias"),
+                                              TfToken("ri:attributes:trace:displacements"),
+                                              // Dicing
+                                              TfToken("ri:attributes:dice:micropolygonlength"),
+                                              TfToken("ri:attributes:dice:offscreenstrategy"),
+                                              TfToken("ri:attributes:dice:rasterorient"),
+                                              TfToken("ri:attributes:dice:referencecamera"),
+                                              TfToken("ri:attributes:dice:referenceinstance"),
+                                              TfToken("ri:attributes:dice:strategy"),
+                                              TfToken("ri:attributes:dice:worlddistancelength"),
+                                              TfToken("ri:attributes:Ri:GeometricApproximationFocusFactor"),
+                                              TfToken("ri:attributes:Ri:GeometricApproximationMotionFactor"),
+                                              // Points
+                                              TfToken("ri:attributes:falloffpower"),
+                                              // Volume
+                                              TfToken("ri:attributes:dice:minlength"),
+                                              TfToken("ri:attributes:dice:minlengthspace"),
+                                              TfToken("ri:attributes:Ri:Bound"),
+                                              TfToken("ri:attributes:volume:dsominmax"),
+                                              TfToken("ri:attributes:volume:aggregate"),
+                                              // SubdivisionMesh
+                                              TfToken("ri:attributes:dice:pretessellate"),
+                                              TfToken("ri:attributes:dice:watertight"),
+                                              TfToken("ri:attributes:shade:faceset"),
+                                              TfToken("ri:attributes:stitchbound:CoordinateSystem"),
+                                              TfToken("ri:attributes:stitchbound:sphere"),
+                                              // NuPatch
+                                              TfToken("ri:attributes:trimcurve:sense"),
+                                              // PolygonMesh
+                                              TfToken("ri:attributes:polygon:concave"),
+                                              TfToken("ri:attributes:polygon:smoothdisplacement"),
+                                              TfToken("ri:attributes:polygon:smoothnormals"),
+                                              // Procedural
+                                              TfToken("ri:attributes:procedural:immediatesubdivide"),
+                                              TfToken("ri:attributes:procedural:reentrant")};
 
   return masterAttributes.count(primvarName) > 0;
 }
@@ -521,21 +518,18 @@ static void _Convert(HdSceneDelegate *sceneDelegate,
   const RtDetailType detail = _RixDetailForHdInterpolation(hdInterp);
 
   TF_DEBUG(HDPRMAN_PRIMVARS)
-      .Msg("HdPrman: _Convert called -- <%s> %s %s\n",
-           id.GetText(),
-           TfEnum::GetName(hdInterp).c_str(),
-           label);
+    .Msg("HdPrman: _Convert called -- <%s> %s %s\n", id.GetText(), TfEnum::GetName(hdInterp).c_str(), label);
 
   // Computed primvars
   if (paramType == _ParamTypePrimvar) {
     // XXX: Prman doesn't seem to check dirtyness before pulling a value.
     // Passing AllDirty until we plumb/respect change tracking.
     HdExtComputationPrimvarDescriptorVector computedPrimvars = _GetComputedPrimvars(
-        sceneDelegate, id, hdInterp, HdChangeTracker::AllDirty);
+      sceneDelegate, id, hdInterp, HdChangeTracker::AllDirty);
     if (!computedPrimvars.empty()) {
       // Execute the computations
-      HdExtComputationUtils::ValueStore valueStore =
-          HdExtComputationUtils::GetComputedPrimvarValues(computedPrimvars, sceneDelegate);
+      HdExtComputationUtils::ValueStore valueStore = HdExtComputationUtils::GetComputedPrimvarValues(
+        computedPrimvars, sceneDelegate);
 
       for (auto const &compPrimvar : computedPrimvars) {
         auto const it = valueStore.find(compPrimvar.name);
@@ -550,25 +544,25 @@ static void _Convert(HdSceneDelegate *sceneDelegate,
         RtUString name = _GetPrmanPrimvarName(compPrimvar.name, detail);
 
         TF_DEBUG(HDPRMAN_PRIMVARS)
-            .Msg(
-                "HdPrman: <%s> %s %s "
-                "Computed Primvar \"%s\" (%s) = \"%s\"\n",
-                id.GetText(),
-                TfEnum::GetName(hdInterp).c_str(),
-                label,
-                compPrimvar.name.GetText(),
-                name.CStr(),
-                TfStringify(val).c_str());
+          .Msg(
+            "HdPrman: <%s> %s %s "
+            "Computed Primvar \"%s\" (%s) = \"%s\"\n",
+            id.GetText(),
+            TfEnum::GetName(hdInterp).c_str(),
+            label,
+            compPrimvar.name.GetText(),
+            name.CStr(),
+            TfStringify(val).c_str());
 
         if (val.IsArrayValued() && val.GetArraySize() != static_cast<size_t>(expectedSize)) {
           TF_WARN(
-              "<%s> %s '%s' size (%zu) did not match "
-              "expected (%d)",
-              id.GetText(),
-              label,
-              compPrimvar.name.GetText(),
-              val.GetArraySize(),
-              expectedSize);
+            "<%s> %s '%s' size (%zu) did not match "
+            "expected (%d)",
+            id.GetText(),
+            label,
+            compPrimvar.name.GetText(),
+            val.GetArraySize(),
+            expectedSize);
           continue;
         }
 
@@ -586,11 +580,11 @@ static void _Convert(HdSceneDelegate *sceneDelegate,
   // Authored primvars
   for (HdPrimvarDescriptor const &primvar : sceneDelegate->GetPrimvarDescriptors(id, hdInterp)) {
     TF_DEBUG(HDPRMAN_PRIMVARS)
-        .Msg("HdPrman: authored id <%s> hdInterp %s label %s primvar \"%s\"\n",
-             id.GetText(),
-             TfEnum::GetName(hdInterp).c_str(),
-             label,
-             primvar.name.GetText());
+      .Msg("HdPrman: authored id <%s> hdInterp %s label %s primvar \"%s\"\n",
+           id.GetText(),
+           TfEnum::GetName(hdInterp).c_str(),
+           label,
+           primvar.name.GetText());
 
     // Skip params with special handling.
     if (primvar.name == HdTokens->points) {
@@ -607,9 +601,9 @@ static void _Convert(HdSceneDelegate *sceneDelegate,
     RtUString name;
     if (hdInterp == HdInterpolationConstant) {
       static const char *userAttrPrefix = "user:";
-      static const char *riAttrPrefix   = "ri:attributes:";
+      static const char *riAttrPrefix = "ri:attributes:";
 
-      bool hasUserPrefix         = TfStringStartsWith(primvar.name.GetString(), userAttrPrefix);
+      bool hasUserPrefix = TfStringStartsWith(primvar.name.GetString(), userAttrPrefix);
       bool hasRiAttributesPrefix = TfStringStartsWith(primvar.name.GetString(), riAttrPrefix);
 
       bool skipPrimvar = false;
@@ -669,13 +663,13 @@ static void _Convert(HdSceneDelegate *sceneDelegate,
     VtValue val;
     sceneDelegate->SamplePrimvar(id, primvar.name, maxNumTimeSamples, times, &val);
     TF_DEBUG(HDPRMAN_PRIMVARS)
-        .Msg("HdPrman: <%s> %s %s \"%s\" (%s) = \"%s\"\n",
-             id.GetText(),
-             TfEnum::GetName(hdInterp).c_str(),
-             label,
-             primvar.name.GetText(),
-             name.CStr(),
-             TfStringify(val).c_str());
+      .Msg("HdPrman: <%s> %s %s \"%s\" (%s) = \"%s\"\n",
+           id.GetText(),
+           TfEnum::GetName(hdInterp).c_str(),
+           label,
+           primvar.name.GetText(),
+           name.CStr(),
+           TfStringify(val).c_str());
 
     if (val.IsEmpty() || (val.IsArrayValued() && val.GetArraySize() == 0)) {
       continue;
@@ -683,13 +677,13 @@ static void _Convert(HdSceneDelegate *sceneDelegate,
 
     if (val.IsArrayValued() && val.GetArraySize() != static_cast<size_t>(expectedSize)) {
       TF_WARN(
-          "<%s> %s '%s' size (%zu) did not match "
-          "expected (%d)",
-          id.GetText(),
-          label,
-          primvar.name.GetText(),
-          val.GetArraySize(),
-          expectedSize);
+        "<%s> %s '%s' size (%zu) did not match "
+        "expected (%d)",
+        id.GetText(),
+        label,
+        primvar.name.GetText(),
+        val.GetArraySize(),
+        expectedSize);
       continue;
     }
 
@@ -712,16 +706,16 @@ void HdPrman_ConvertPrimvars(HdSceneDelegate *sceneDelegate,
                              int numFaceVarying)
 {
   const HdInterpolation hdInterpValues[] = {
-      HdInterpolationConstant,
-      HdInterpolationUniform,
-      HdInterpolationVertex,
-      HdInterpolationVarying,
-      HdInterpolationFaceVarying,
+    HdInterpolationConstant,
+    HdInterpolationUniform,
+    HdInterpolationVertex,
+    HdInterpolationVarying,
+    HdInterpolationFaceVarying,
   };
   // The expected size of each interpolation mode. -1 means any size is
   // acceptable.
   const int primvarSizes[] = {1, numUniform, numVertex, numVarying, numFaceVarying};
-  const int modeCount      = 5;
+  const int modeCount = 5;
   for (size_t i = 0; i < modeCount; ++i) {
     _Convert(sceneDelegate, id, hdInterpValues[i], primvars, _ParamTypePrimvar, primvarSizes[i]);
   }
@@ -734,7 +728,7 @@ RtParamList HdPrman_Context::ConvertAttributes(HdSceneDelegate *sceneDelegate, S
   // Convert Hydra instance-rate primvars, and "user:" prefixed
   // constant  primvars, to Riley attributes.
   const HdInterpolation hdInterpValues[] = {
-      HdInterpolationConstant,
+    HdInterpolationConstant,
   };
   for (HdInterpolation hdInterp : hdInterpValues) {
     _Convert(sceneDelegate, id, hdInterp, attrs, _ParamTypeAttribute, 1);
@@ -765,7 +759,7 @@ void HdPrman_Context::ConvertCategoriesToAttributes(SdfPath const &id,
     attrs.SetString(RixStr.k_lightfilter_subset, RtUString(""));
     attrs.SetString(RixStr.k_lighting_subset, RtUString("default"));
     TF_DEBUG(HDPRMAN_LIGHT_LINKING)
-        .Msg("HdPrman: <%s> no categories; lighting:subset = \"default\"\n", id.GetText());
+      .Msg("HdPrman: <%s> no categories; lighting:subset = \"default\"\n", id.GetText());
     return;
   }
 
@@ -785,7 +779,7 @@ void HdPrman_Context::ConvertCategoriesToAttributes(SdfPath const &id,
   }
   attrs.SetString(RixStr.k_grouping_membership, RtUString(membership.c_str()));
   TF_DEBUG(HDPRMAN_LIGHT_LINKING)
-      .Msg("HdPrman: <%s> grouping:membership = \"%s\"\n", id.GetText(), membership.c_str());
+    .Msg("HdPrman: <%s> grouping:membership = \"%s\"\n", id.GetText(), membership.c_str());
 
   // Light linking:
   // Geometry subscribes to categories of lights illuminating it.
@@ -802,7 +796,7 @@ void HdPrman_Context::ConvertCategoriesToAttributes(SdfPath const &id,
   }
   attrs.SetString(RixStr.k_lighting_subset, RtUString(lightingSubset.c_str()));
   TF_DEBUG(HDPRMAN_LIGHT_LINKING)
-      .Msg("HdPrman: <%s> lighting:subset = \"%s\"\n", id.GetText(), lightingSubset.c_str());
+    .Msg("HdPrman: <%s> lighting:subset = \"%s\"\n", id.GetText(), lightingSubset.c_str());
 
   // Light filter linking:
   // Geometry subscribes to categories of light filters applied to it.
@@ -819,7 +813,7 @@ void HdPrman_Context::ConvertCategoriesToAttributes(SdfPath const &id,
   }
   attrs.SetString(RixStr.k_lightfilter_subset, RtUString(lightFilterSubset.c_str()));
   TF_DEBUG(HDPRMAN_LIGHT_LINKING)
-      .Msg("HdPrman: <%s> lightFilter:subset = \"%s\"\n", id.GetText(), lightFilterSubset.c_str());
+    .Msg("HdPrman: <%s> lightFilter:subset = \"%s\"\n", id.GetText(), lightFilterSubset.c_str());
 }
 
 bool HdPrman_ResolveMaterial(HdSceneDelegate *sceneDelegate,
@@ -833,7 +827,7 @@ bool HdPrman_ResolveMaterial(HdSceneDelegate *sceneDelegate,
       const HdPrmanMaterial *material = dynamic_cast<const HdPrmanMaterial *>(sprim);
       if (material && material->IsValid()) {
         *materialId = material->GetMaterialId();
-        *dispId     = material->GetDisplacementId();
+        *dispId = material->GetDisplacementId();
         return true;
       }
     }
@@ -842,8 +836,8 @@ bool HdPrman_ResolveMaterial(HdSceneDelegate *sceneDelegate,
 }
 
 HdPrman_Context::RileyCoordSysIdVecRefPtr HdPrman_Context::ConvertAndRetainCoordSysBindings(
-    HdSceneDelegate *sceneDelegate,
-    SdfPath const &id)
+  HdSceneDelegate *sceneDelegate,
+  SdfPath const &id)
 {
   // Query Hydra coordinate system bindings.
   HdIdVectorSharedPtr hdIdVecPtr = sceneDelegate->GetCoordSysBindings(id);
@@ -865,8 +859,7 @@ HdPrman_Context::RileyCoordSysIdVecRefPtr HdPrman_Context::ConvertAndRetainCoord
   rileyIdVec.reserve(hdIdVecPtr->size());
   for (SdfPath const &hdId : *hdIdVecPtr) {
     // Look up sprim for binding.
-    const HdSprim *sprim = sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->coordSys,
-                                                                    hdId);
+    const HdSprim *sprim = sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->coordSys, hdId);
     // Expect there to be an sprim with this id.
     if (TF_VERIFY(sprim)) {
       // Expect it to be an HdPrmanCoordSys.
@@ -879,8 +872,8 @@ HdPrman_Context::RileyCoordSysIdVecRefPtr HdPrman_Context::ConvertAndRetainCoord
   }
   // Establish a cache entry.
   RileyCoordSysIdVecRefPtr rileyIdVecPtr = std::make_shared<RileyCoordSysIdVec>(rileyIdVec);
-  _hdToRileyCoordSysMap[hdIdVecPtr]      = rileyIdVecPtr;
-  _geomToHdCoordSysMap[id]               = hdIdVecPtr;
+  _hdToRileyCoordSysMap[hdIdVecPtr] = rileyIdVecPtr;
+  _geomToHdCoordSysMap[id] = hdIdVecPtr;
   return rileyIdVecPtr;
 }
 
@@ -902,22 +895,20 @@ void HdPrman_Context::ReleaseCoordSysBindings(SdfPath const &id)
   _geomToHdCoordSysMap.erase(geomIt);
 }
 
-static void _GetShutterInterval(HdRenderSettingsMap &renderSettings,
-                                float *shutterOpen,
-                                float *shutterClose)
+static void _GetShutterInterval(HdRenderSettingsMap &renderSettings, float *shutterOpen, float *shutterClose)
 {
-  auto const &shutterOpenEntry  = renderSettings.find(HdPrmanRenderSettingsTokens->shutterOpen);
+  auto const &shutterOpenEntry = renderSettings.find(HdPrmanRenderSettingsTokens->shutterOpen);
   auto const &shutterCloseEntry = renderSettings.find(HdPrmanRenderSettingsTokens->shutterClose);
 
   if (shutterOpenEntry != renderSettings.end() && shutterCloseEntry != renderSettings.end()) {
-    VtValue shutterOpenVal  = shutterOpenEntry->second;
+    VtValue shutterOpenVal = shutterOpenEntry->second;
     VtValue shutterCloseVal = shutterCloseEntry->second;
 
     if (shutterOpenVal.IsHolding<float>()) {
       *shutterOpen = shutterOpenVal.UncheckedGet<float>();
     }
     else if (shutterOpenVal.IsHolding<double>()) {
-      double v     = shutterOpenVal.UncheckedGet<double>();
+      double v = shutterOpenVal.UncheckedGet<double>();
       *shutterOpen = static_cast<float>(v);
     }
 
@@ -925,7 +916,7 @@ static void _GetShutterInterval(HdRenderSettingsMap &renderSettings,
       *shutterOpen = shutterCloseVal.UncheckedGet<float>();
     }
     else if (shutterCloseVal.IsHolding<double>()) {
-      double v      = shutterCloseVal.UncheckedGet<double>();
+      double v = shutterCloseVal.UncheckedGet<double>();
       *shutterClose = static_cast<float>(v);
     }
   }
@@ -938,7 +929,7 @@ void HdPrman_Context::SetOptionsFromRenderSettings(HdPrmanRenderDelegate *render
 
   for (auto const &entry : renderSettings) {
     TfToken token = entry.first;
-    VtValue val   = entry.second;
+    VtValue val = entry.second;
 
     bool hasRiPrefix = TfStringStartsWith(token.GetText(), "ri:");
     if (hasRiPrefix) {
@@ -979,7 +970,7 @@ void HdPrman_Context::SetOptionsFromRenderSettings(HdPrmanRenderDelegate *render
     }
   }
 
-  float shutterOpen  = 0.0f;
+  float shutterOpen = 0.0f;
   float shutterClose = 0.0f;
   _GetShutterInterval(renderSettings, &shutterOpen, &shutterClose);
   float shutterInterval[2] = {shutterOpen, shutterOpen};
@@ -1001,7 +992,7 @@ void HdPrman_Context::SetIntegratorParamsFromRenderSettings(HdPrmanRenderDelegat
   TfToken preFix(std::string("ri:integrator:") + integratorName);
   for (auto const &entry : renderSettings) {
     TfToken token = entry.first;
-    VtValue val   = entry.second;
+    VtValue val = entry.second;
 
     bool hasRiPrefix = TfStringStartsWith(token.GetText(), preFix.GetText());
     if (hasRiPrefix) {
@@ -1021,7 +1012,7 @@ void HdPrman_UpdateSearchPathsFromEnvironment(RtParamList &options)
   if (!shaderpath.empty()) {
     // RenderMan expects ':' as path separator, regardless of platform
     NdrStringVec paths = TfStringSplit(shaderpath, ARCH_PATH_LIST_SEP);
-    shaderpath         = TfStringJoin(paths, ":");
+    shaderpath = TfStringJoin(paths, ":");
     options.SetString(RixStr.k_searchpath_shader, RtUString(shaderpath.c_str()));
   }
   else {
@@ -1048,7 +1039,7 @@ void HdPrman_UpdateSearchPathsFromEnvironment(RtParamList &options)
   if (!rixpluginpath.empty()) {
     // RenderMan expects ':' as path separator, regardless of platform
     NdrStringVec paths = TfStringSplit(rixpluginpath, ARCH_PATH_LIST_SEP);
-    rixpluginpath      = TfStringJoin(paths, ":");
+    rixpluginpath = TfStringJoin(paths, ":");
     options.SetString(RixStr.k_searchpath_rixplugin, RtUString(rixpluginpath.c_str()));
   }
   else {
@@ -1067,7 +1058,7 @@ void HdPrman_UpdateSearchPathsFromEnvironment(RtParamList &options)
   if (!texturepath.empty()) {
     // RenderMan expects ':' as path separator, regardless of platform
     NdrStringVec paths = TfStringSplit(texturepath, ARCH_PATH_LIST_SEP);
-    texturepath        = TfStringJoin(paths, ":");
+    texturepath = TfStringJoin(paths, ":");
     options.SetString(RixStr.k_searchpath_texture, RtUString(texturepath.c_str()));
   }
   else {
@@ -1097,7 +1088,7 @@ void HdPrman_UpdateSearchPathsFromEnvironment(RtParamList &options)
   if (!proceduralpath.empty()) {
     // RenderMan expects ':' as path separator, regardless of platform
     NdrStringVec paths = TfStringSplit(proceduralpath, ARCH_PATH_LIST_SEP);
-    proceduralpath     = TfStringJoin(paths, ":");
+    proceduralpath = TfStringJoin(paths, ":");
     options.SetString(RixStr.k_searchpath_procedural, RtUString(proceduralpath.c_str()));
   }
 }

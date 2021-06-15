@@ -47,8 +47,7 @@ class HdxPrman_RenderPass final : public HdRenderPass {
   bool IsConverged() const override;
 
  protected:
-  void _Execute(HdRenderPassStateSharedPtr const &renderPassState,
-                TfTokenVector const &renderTags) override;
+  void _Execute(HdRenderPassStateSharedPtr const &renderPassState, TfTokenVector const &renderTags) override;
 
  private:
   bool _converged;

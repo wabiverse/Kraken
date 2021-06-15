@@ -28,9 +28,7 @@ class HdRprCamera : public HdCamera {
   HdRprCamera(SdfPath const &id);
   ~HdRprCamera() override = default;
 
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 

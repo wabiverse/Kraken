@@ -12,10 +12,7 @@ namespace Zep {
 class ZepWindow;
 class ZepMode_Search : public ZepMode {
  public:
-  ZepMode_Search(ZepEditor &editor,
-                 ZepWindow &previousWindow,
-                 ZepWindow &window,
-                 const ZepPath &startPath);
+  ZepMode_Search(ZepEditor &editor, ZepWindow &previousWindow, ZepWindow &window, const ZepPath &startPath);
   ~ZepMode_Search();
 
   virtual void AddKeyPress(uint32_t key, uint32_t modifiers = 0) override;
@@ -51,7 +48,7 @@ class ZepMode_Search : public ZepMode {
  private:
   // List of lines in the file result, with last found char
   struct SearchResult {
-    uint32_t index    = 0;
+    uint32_t index = 0;
     uint32_t location = 0;
   };
 

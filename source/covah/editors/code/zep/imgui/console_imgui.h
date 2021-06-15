@@ -58,30 +58,29 @@ struct ZepConsole : Zep::IZepComponent {
     ANCHOR::PushStyleVar(ANCHOR_StyleVar_WindowRounding, 0.0f);
     ANCHOR::SetNextWindowSize(wabi::GfVec2f(targetRect[2], targetRect[3]), ANCHOR_Cond_Always);
     ANCHOR::SetNextWindowPos(
-        wabi::GfVec2f(targetRect[0], (targetRect[1] - targetRect[3]) + (targetRect[3] * blend)),
-        ANCHOR_Cond_Always);
+      wabi::GfVec2f(targetRect[0], (targetRect[1] - targetRect[3]) + (targetRect[3] * blend)),
+      ANCHOR_Cond_Always);
 
     if (!ANCHOR::Begin(title,
                        p_open,
                        ANCHOR_WindowFlags_NoTitleBar | ANCHOR_WindowFlags_NoResize |
-                           ANCHOR_WindowFlags_NoScrollbar)) {
+                         ANCHOR_WindowFlags_NoScrollbar)) {
       ANCHOR::PopStyleVar(1);
       ANCHOR::PopStyleColor(1);
       ANCHOR::End();
       return;
     }
 
-    auto size   = ANCHOR::GetWindowContentRegionMax();
+    auto size = ANCHOR::GetWindowContentRegionMax();
     auto cursor = ANCHOR::GetCursorScreenPos();
 
-    zepEditor.SetDisplayRegion(Zep::NVec2f(cursor[0], cursor[1]),
-                               Zep::NVec2f(size[0], size[1] - cursor[1]));
+    zepEditor.SetDisplayRegion(Zep::NVec2f(cursor[0], cursor[1]), Zep::NVec2f(size[0], size[1] - cursor[1]));
     zepEditor.Display();
     zepEditor.HandleInput();
 
     if (pendingScroll) {
       zepEditor.GetActiveTabWindow()->GetActiveWindow()->MoveCursorY(
-          zepEditor.GetActiveTabWindow()->GetActiveWindow()->GetMaxDisplayLines() - 2);
+        zepEditor.GetActiveTabWindow()->GetActiveWindow()->GetMaxDisplayLines() - 2);
       pendingScroll = false;
     }
 
@@ -90,7 +89,7 @@ struct ZepConsole : Zep::IZepComponent {
       // I think the intention here is to ensure the mode is reset while it is dropping down. I
       // don't recall.
       zepEditor.GetActiveTabWindow()->GetActiveWindow()->GetBuffer().GetMode()->Begin(
-          zepEditor.GetActiveTabWindow()->GetActiveWindow());
+        zepEditor.GetActiveTabWindow()->GetActiveWindow());
     }
 
     ANCHOR::End();

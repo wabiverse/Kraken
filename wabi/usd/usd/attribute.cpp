@@ -99,18 +99,16 @@ bool UsdAttribute::GetBracketingTimeSamples(double desiredTime,
                                             bool *hasTimeSamples) const
 {
   return _GetStage()->_GetBracketingTimeSamples(
-      *this, desiredTime, /*requireAuthored*/ false, lower, upper, hasTimeSamples);
+    *this, desiredTime, /*requireAuthored*/ false, lower, upper, hasTimeSamples);
 }
 
-bool UsdAttribute::GetTimeSamplesInInterval(const GfInterval &interval,
-                                            std::vector<double> *times) const
+bool UsdAttribute::GetTimeSamplesInInterval(const GfInterval &interval, std::vector<double> *times) const
 {
   return _GetStage()->_GetTimeSamplesInInterval(*this, interval, times);
 }
 
 /* static */
-bool UsdAttribute::GetUnionedTimeSamples(const std::vector<UsdAttribute> &attrs,
-                                         std::vector<double> *times)
+bool UsdAttribute::GetUnionedTimeSamples(const std::vector<UsdAttribute> &attrs, std::vector<double> *times)
 {
   return GetUnionedTimeSamplesInInterval(attrs, GfInterval::GetFullInterval(), times);
 }
@@ -143,8 +141,7 @@ bool UsdAttribute::GetUnionedTimeSamplesInInterval(const std::vector<UsdAttribut
 
     // This will work even if the attributes belong to different
     // USD stages.
-    success = attr.GetStage()->_GetTimeSamplesInInterval(attr, interval, &attrSampleTimes) &&
-              success;
+    success = attr.GetStage()->_GetTimeSamplesInInterval(attr, interval, &attrSampleTimes) && success;
 
     // Merge attrSamplesTimes into the times vector.
     Usd_MergeTimeSamples(times, attrSampleTimes, &tempUnionSampleTimes);
@@ -274,7 +271,7 @@ SdfAttributeSpecHandle UsdAttribute::_CreateSpec(const SdfValueTypeName &typeNam
   if (m.IsClean()) {
     SdfChangeBlock block;
     return SdfAttributeSpec::New(
-        stage->_CreatePrimSpecForEditing(GetPrim()), _PropName(), typeName, variability, custom);
+      stage->_CreatePrimSpecForEditing(GetPrim()), _PropName(), typeName, variability, custom);
   }
   return TfNullPtr;
 }
@@ -300,8 +297,7 @@ ARCH_PRAGMA_INSTANTIATION_AFTER_SPECIALIZATION
   template USD_API bool UsdAttribute::_Get(SDF_VALUE_CPP_TYPE(elem) *, UsdTimeCode) const; \
   template USD_API bool UsdAttribute::_Get(SDF_VALUE_CPP_ARRAY_TYPE(elem) *, UsdTimeCode) const; \
   template USD_API bool UsdAttribute::_Set(const SDF_VALUE_CPP_TYPE(elem) &, UsdTimeCode) const; \
-  template USD_API bool UsdAttribute::_Set(const SDF_VALUE_CPP_ARRAY_TYPE(elem) &, UsdTimeCode) \
-      const;
+  template USD_API bool UsdAttribute::_Set(const SDF_VALUE_CPP_ARRAY_TYPE(elem) &, UsdTimeCode) const;
 
 BOOST_PP_SEQ_FOR_EACH(_INSTANTIATE_GET, ~, SDF_VALUE_TYPES)
 #undef _INSTANTIATE_GET
@@ -320,8 +316,8 @@ SdfPath UsdAttribute::_GetPathForAuthoring(const SdfPath &path, std::string *why
     if (Usd_InstanceCache::IsPathInPrototype(absPath)) {
       if (whyNot) {
         *whyNot =
-            "Cannot refer to a prototype or an object within a "
-            "prototype.";
+          "Cannot refer to a prototype or an object within a "
+          "prototype.";
       }
       return result;
     }
@@ -335,10 +331,9 @@ SdfPath UsdAttribute::_GetPathForAuthoring(const SdfPath &path, std::string *why
   }
   else {
     const SdfPath anchorPrim = GetPath().GetPrimPath();
-    const SdfPath translatedAnchorPrim =
-        editTarget.MapToSpecPath(anchorPrim).StripAllVariantSelections();
+    const SdfPath translatedAnchorPrim = editTarget.MapToSpecPath(anchorPrim).StripAllVariantSelections();
     const SdfPath translatedPath =
-        editTarget.MapToSpecPath(path.MakeAbsolutePath(anchorPrim)).StripAllVariantSelections();
+      editTarget.MapToSpecPath(path.MakeAbsolutePath(anchorPrim)).StripAllVariantSelections();
     result = translatedPath.MakeRelativePath(translatedAnchorPrim);
   }
 

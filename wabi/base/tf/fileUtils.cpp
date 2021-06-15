@@ -163,8 +163,7 @@ bool TfIsFile(string const &path, bool resolveSymlinks)
 {
 #if defined(ARCH_OS_WINDOWS)
   // Report not a file if path is a symlink and resolveSymlinks is false.
-  return Tf_HasAttribute(
-      path, resolveSymlinks, FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_REPARSE_POINT, 0);
+  return Tf_HasAttribute(path, resolveSymlinks, FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_REPARSE_POINT, 0);
 #else
   ArchStatType st;
   if (Tf_Stat(path, resolveSymlinks, &st)) {
@@ -213,8 +212,7 @@ bool TfIsDirEmpty(string const &path)
   if (DIR *dirp = opendir(path.c_str())) {
     struct dirent *dent;
     while ((dent = readdir(dirp)) != NULL) {
-      if ((dent->d_ino > 0) && (strcmp(dent->d_name, ".") != 0) &&
-          (strcmp(dent->d_name, "..") != 0)) {
+      if ((dent->d_ino > 0) && (strcmp(dent->d_name, ".") != 0) && (strcmp(dent->d_name, "..") != 0)) {
         (void)closedir(dirp);
         return false;
       }
@@ -229,8 +227,7 @@ bool TfIsDirEmpty(string const &path)
 bool TfSymlink(string const &src, string const &dst)
 {
 #if defined(ARCH_OS_WINDOWS)
-  if (CreateSymbolicLink(
-          dst.c_str(), src.c_str(), TfIsDir(src) ? SYMBOLIC_LINK_FLAG_DIRECTORY : 0)) {
+  if (CreateSymbolicLink(dst.c_str(), src.c_str(), TfIsDir(src) ? SYMBOLIC_LINK_FLAG_DIRECTORY : 0)) {
     return true;
   }
 
@@ -357,8 +354,7 @@ bool TfReadDir(const string &dirPath,
     return false;
   }
 
-  for (rc = readdir_r(dir, &entry, &result); result && rc == 0;
-       rc = readdir_r(dir, &entry, &result)) {
+  for (rc = readdir_r(dir, &entry, &result); result && rc == 0; rc = readdir_r(dir, &entry, &result)) {
 
     if (strcmp(entry.d_name, ".") == 0 || strcmp(entry.d_name, "..") == 0)
       continue;
@@ -538,10 +534,9 @@ static bool Tf_RmTree(string const &dirpath,
       // not writable by us, or the parent directory is not writable by
       // us.
       if (onError) {
-        onError(dirpath,
-                TfStringPrintf("ArchUnlinkFile failed for '%s': %s",
-                               path.c_str(),
-                               ArchStrerror(errno).c_str()));
+        onError(
+          dirpath,
+          TfStringPrintf("ArchUnlinkFile failed for '%s': %s", path.c_str(), ArchStrerror(errno).c_str()));
       }
       // CODE_COVERAGE_ON
     }
@@ -552,8 +547,7 @@ static bool Tf_RmTree(string const &dirpath,
     // ArchUnlinkFile above could fail.
     if (onError) {
       onError(dirpath,
-              TfStringPrintf(
-                  "rmdir failed for '%s': %s", dirpath.c_str(), ArchStrerror(errno).c_str()));
+              TfStringPrintf("rmdir failed for '%s': %s", dirpath.c_str(), ArchStrerror(errno).c_str()));
     }
     // CODE_COVERAGE_ON
   }

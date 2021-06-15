@@ -44,14 +44,14 @@ NdrProperty::NdrProperty(const TfToken &name,
                          size_t arraySize,
                          bool isDynamicArray,
                          const NdrTokenMap &metadata)
-    : _name(name),
-      _type(type),
-      _defaultValue(defaultValue),
-      _isOutput(isOutput),
-      _arraySize(arraySize),
-      _isDynamicArray(isDynamicArray),
-      _isConnectable(true),
-      _metadata(metadata)
+  : _name(name),
+    _type(type),
+    _defaultValue(defaultValue),
+    _isOutput(isOutput),
+    _arraySize(arraySize),
+    _isDynamicArray(isDynamicArray),
+    _isConnectable(true),
+    _metadata(metadata)
 {}
 
 NdrProperty::~NdrProperty()
@@ -62,7 +62,7 @@ NdrProperty::~NdrProperty()
 std::string NdrProperty::GetInfoString() const
 {
   return TfStringPrintf(
-      "%s (type: '%s'); %s", _name.GetText(), _type.GetText(), _isOutput ? "output" : "input");
+    "%s (type: '%s'); %s", _name.GetText(), _type.GetText(), _isOutput ? "output" : "input");
 }
 
 bool NdrProperty::IsConnectable() const

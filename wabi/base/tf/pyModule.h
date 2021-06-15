@@ -120,40 +120,38 @@ extern "C" ARCH_EXPORT PyObject *BOOST_PP_CAT(PyInit__, MFB_PACKAGE_NAME)()
 {
 
   static struct PyModuleDef moduledef = {
-      PyModuleDef_HEAD_INIT,
-      TF_PP_STRINGIZE(BOOST_PP_CAT(_, MFB_PACKAGE_NAME)),  // m_name
-      0,                                                   // m_doc
-      -1,                                                  // m_size
-      NULL,                                                // m_methods
-      0,                                                   // m_reload
-      0,                                                   // m_traverse
-      0,                                                   // m_clear
-      0,                                                   // m_free
+    PyModuleDef_HEAD_INIT,
+    TF_PP_STRINGIZE(BOOST_PP_CAT(_, MFB_PACKAGE_NAME)),  // m_name
+    0,                                                   // m_doc
+    -1,                                                  // m_size
+    NULL,                                                // m_methods
+    0,                                                   // m_reload
+    0,                                                   // m_traverse
+    0,                                                   // m_clear
+    0,                                                   // m_free
   };
 
   WABI_NAMESPACE_USING
-  return boost::python::detail::init_module(moduledef,
-                                            BOOST_PP_CAT(init_module_, MFB_PACKAGE_NAME));
+  return boost::python::detail::init_module(moduledef, BOOST_PP_CAT(init_module_, MFB_PACKAGE_NAME));
 }
 
 extern "C" ARCH_EXPORT PyObject *BOOST_PP_CAT(PyInit_lib, MFB_PACKAGE_NAME)()
 {
 
   static struct PyModuleDef moduledef = {
-      PyModuleDef_HEAD_INIT,
-      TF_PP_STRINGIZE(BOOST_PP_CAT(lib, MFB_PACKAGE_NAME)),  // m_name
-      0,                                                     // m_doc
-      -1,                                                    // m_size
-      NULL,                                                  // m_methods
-      0,                                                     // m_reload
-      0,                                                     // m_traverse
-      0,                                                     // m_clear
-      0,                                                     // m_free
+    PyModuleDef_HEAD_INIT,
+    TF_PP_STRINGIZE(BOOST_PP_CAT(lib, MFB_PACKAGE_NAME)),  // m_name
+    0,                                                     // m_doc
+    -1,                                                    // m_size
+    NULL,                                                  // m_methods
+    0,                                                     // m_reload
+    0,                                                     // m_traverse
+    0,                                                     // m_clear
+    0,                                                     // m_free
   };
 
   WABI_NAMESPACE_USING
-  return boost::python::detail::init_module(moduledef,
-                                            BOOST_PP_CAT(init_module_, MFB_PACKAGE_NAME));
+  return boost::python::detail::init_module(moduledef, BOOST_PP_CAT(init_module_, MFB_PACKAGE_NAME));
 }
 
 #endif

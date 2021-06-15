@@ -130,10 +130,10 @@ class UsdZipFile {
       std::string _s;
     };
 
-    using difference_type   = std::ptrdiff_t;
-    using value_type        = std::string;
-    using pointer           = _ArrowProxy;
-    using reference         = std::string;
+    using difference_type = std::ptrdiff_t;
+    using value_type = std::string;
+    using pointer = _ArrowProxy;
+    using reference = std::string;
     using iterator_category = std::forward_iterator_tag;
 
     USD_API
@@ -263,8 +263,7 @@ class UsdZipFileWriter {
   /// not be the same as \p filePath or \p filePathInArchive. Returns an
   /// empty string on failure.
   USD_API
-  std::string AddFile(const std::string &filePath,
-                      const std::string &filePathInArchive = std::string());
+  std::string AddFile(const std::string &filePath, const std::string &filePathInArchive = std::string());
 
   /// Finalizes the zip archive and saves it to the destination file path.
   /// Once saved, the file writer is invalid and may not be reused.

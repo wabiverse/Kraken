@@ -47,8 +47,7 @@ HdRenderDelegate *HdPhoenixRendererPlugin::CreateRenderDelegate()
   return new HdPhRenderDelegate();
 }
 
-HdRenderDelegate *HdPhoenixRendererPlugin::CreateRenderDelegate(
-    HdRenderSettingsMap const &settingsMap)
+HdRenderDelegate *HdPhoenixRendererPlugin::CreateRenderDelegate(HdRenderSettingsMap const &settingsMap)
 {
   return new HdPhRenderDelegate(settingsMap);
 }

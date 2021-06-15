@@ -72,9 +72,9 @@ class HgiMetalTexture final : public HgiTexture {
   HgiMetalTexture(HgiMetal *hgi, HgiTextureViewDesc const &desc);
 
  private:
-  HgiMetalTexture()        = delete;
+  HgiMetalTexture() = delete;
   HgiMetalTexture &operator=(const HgiMetalTexture &) = delete;
-  HgiMetalTexture(const HgiMetalTexture &)            = delete;
+  HgiMetalTexture(const HgiMetalTexture &) = delete;
 
   id<MTLTexture> _textureId;
 };

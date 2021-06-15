@@ -50,8 +50,8 @@ void xoreq(slice &a, slice &b)
 template<typename hashtype> void Bitslice(std::vector<hashtype> &hashes, slice_vec &slices)
 {
   const int hashbytes = sizeof(hashtype);
-  const int hashbits  = hashbytes * 8;
-  const int slicelen  = ((int)hashes.size() + 31) / 32;
+  const int hashbits = hashbytes * 8;
+  const int slicelen = ((int)hashes.size() + 31) / 32;
 
   slices.clear();
   slices.resize(hashbits);

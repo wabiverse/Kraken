@@ -181,7 +181,7 @@ class UsdRiLightAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiSamplingFixedSampleCountAttr(VtValue const &defaultValue = VtValue(),
-                                                    bool writeSparsely          = false) const;
+                                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -204,7 +204,7 @@ class UsdRiLightAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiSamplingImportanceMultiplierAttr(VtValue const &defaultValue = VtValue(),
-                                                        bool writeSparsely          = false) const;
+                                                        bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -230,7 +230,7 @@ class UsdRiLightAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiIntensityNearDistAttr(VtValue const &defaultValue = VtValue(),
-                                             bool writeSparsely          = false) const;
+                                             bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -255,7 +255,7 @@ class UsdRiLightAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiLightGroupAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -282,7 +282,7 @@ class UsdRiLightAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiShadowThinShadowAttr(VtValue const &defaultValue = VtValue(),
-                                            bool writeSparsely          = false) const;
+                                            bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -309,7 +309,7 @@ class UsdRiLightAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateRiTraceLightPathsAttr(VtValue const &defaultValue = VtValue(),
-                                           bool writeSparsely          = false) const;
+                                           bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

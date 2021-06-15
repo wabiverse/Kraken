@@ -59,7 +59,7 @@ TF_DEFINE_PRIVATE_TOKENS(
 void HdxPrman_RenderThreadCallback(HdxPrman_InteractiveContext *context)
 {
   riley::RenderSettings settings;
-  settings.mode       = riley::RenderMode::k_Interactive;
+  settings.mode = riley::RenderMode::k_Interactive;
   bool renderComplete = false;
   while (!renderComplete) {
     while (context->renderThread.IsPauseRequested()) {
@@ -78,10 +78,10 @@ void HdxPrman_RenderThreadCallback(HdxPrman_InteractiveContext *context)
 }
 
 HdxPrman_InteractiveContext::HdxPrman_InteractiveContext()
-    : sceneLightCount(0),
-      resolution{0, 0},
-      _fallbackLightEnabled(false),
-      _didBeginRiley(false)
+  : sceneLightCount(0),
+    resolution{0, 0},
+    _fallbackLightEnabled(false),
+    _didBeginRiley(false)
 {
   TfRegistryManager::GetInstance().SubscribeTo<HdPrman_Context>();
   renderThread.SetRenderCallback(std::bind(HdxPrman_RenderThreadCallback, this));
@@ -93,9 +93,7 @@ HdxPrman_InteractiveContext::~HdxPrman_InteractiveContext()
   End();
 }
 
-TF_DEFINE_ENV_SETTING(HDX_PRMAN_ENABLE_MOTIONBLUR,
-                      true,
-                      "bool env setting to control hdPrman motion blur");
+TF_DEFINE_ENV_SETTING(HDX_PRMAN_ENABLE_MOTIONBLUR, true, "bool env setting to control hdPrman motion blur");
 TF_DEFINE_ENV_SETTING(HDX_PRMAN_NTHREADS, 0, "override number of threads used by hdPrman");
 TF_DEFINE_ENV_SETTING(HDX_PRMAN_OSL_VERBOSE, 0, "override osl verbose in hdPrman");
 
@@ -113,7 +111,7 @@ void HdxPrman_InteractiveContext::_Initialize()
   }
 
   // Must invoke PRManBegin() before we start using Riley.
-  char arg0[]  = "hdxPrman";
+  char arg0[] = "hdxPrman";
   char *argv[] = {arg0};
   ri->PRManBegin(1, argv);
 
@@ -132,7 +130,7 @@ void HdxPrman_InteractiveContext::_Initialize()
             "There may be a compile/link version mismatch.");
 
   // Acquire Riley instance.
-  mgr   = (RixRileyManager *)rix->GetRixInterface(k_RixRileyManager);
+  mgr = (RixRileyManager *)rix->GetRixInterface(k_RixRileyManager);
   riley = mgr->CreateRiley(nullptr);
 
   if (!riley) {
@@ -197,7 +195,7 @@ void HdxPrman_InteractiveContext::Begin(HdRenderDelegate *renderDelegate)
   {
     // Set thread limit for Renderman. Leave a few threads for app.
     static const unsigned appThreads = 4;
-    unsigned nThreads                = std::max(WorkGetConcurrencyLimit() - appThreads, 1u);
+    unsigned nThreads = std::max(WorkGetConcurrencyLimit() - appThreads, 1u);
     // Check the environment
     unsigned nThreadsEnv = TfGetEnvSetting(HDX_PRMAN_NTHREADS);
     if (nThreadsEnv > 0) {
@@ -205,8 +203,7 @@ void HdxPrman_InteractiveContext::Begin(HdRenderDelegate *renderDelegate)
     }
     else {
       // Otherwise check for a render setting
-      VtValue vtThreads =
-          renderDelegate->GetRenderSetting(HdRenderSettingsTokens->threadLimit).Cast<int>();
+      VtValue vtThreads = renderDelegate->GetRenderSetting(HdRenderSettingsTokens->threadLimit).Cast<int>();
       if (!vtThreads.IsEmpty()) {
         nThreads = vtThreads.UncheckedGet<int>();
       }
@@ -214,22 +211,20 @@ void HdxPrman_InteractiveContext::Begin(HdRenderDelegate *renderDelegate)
     _options.SetInteger(RixStr.k_limits_threads, nThreads);
 
     // Set resolution from render settings
-    const VtValue resolutionVal = renderDelegate->GetRenderSetting(
-        HdPrmanRenderSettingsTokens->resolution);
+    const VtValue resolutionVal = renderDelegate->GetRenderSetting(HdPrmanRenderSettingsTokens->resolution);
 
     if (resolutionVal.IsHolding<GfVec2i>()) {
       auto const &res = resolutionVal.UncheckedGet<GfVec2i>();
-      resolution[0]   = res[0];
-      resolution[1]   = res[1];
+      resolution[0] = res[0];
+      resolution[1] = res[1];
       _options.SetIntegerArray(RixStr.k_Ri_FormatResolution, resolution, 2);
     }
 
     // Read the maxSamples out of settings (if it exists). Use a default
     // of 1024, so we don't cut the progressive render off early.
     // Setting a lower value here would be useful for unit tests.
-    VtValue vtMaxSamples = renderDelegate
-                               ->GetRenderSetting(HdRenderSettingsTokens->convergedSamplesPerPixel)
-                               .Cast<int>();
+    VtValue vtMaxSamples =
+      renderDelegate->GetRenderSetting(HdRenderSettingsTokens->convergedSamplesPerPixel).Cast<int>();
     int maxSamples = TF_VERIFY(!vtMaxSamples.IsEmpty()) ? vtMaxSamples.UncheckedGet<int>() : 1024;
     _options.SetInteger(RixStr.k_hider_minsamples, 1);
     _options.SetInteger(RixStr.k_hider_maxsamples, maxSamples);
@@ -237,10 +232,9 @@ void HdxPrman_InteractiveContext::Begin(HdRenderDelegate *renderDelegate)
     // Read the variance threshold out of settings (if it exists). Use a
     // default of 0.001.
     VtValue vtPixelVariance =
-        renderDelegate->GetRenderSetting(HdRenderSettingsTokens->convergedVariance).Cast<float>();
-    float pixelVariance = TF_VERIFY(!vtPixelVariance.IsEmpty()) ?
-                              vtPixelVariance.UncheckedGet<float>() :
-                              0.001f;
+      renderDelegate->GetRenderSetting(HdRenderSettingsTokens->convergedVariance).Cast<float>();
+    float pixelVariance = TF_VERIFY(!vtPixelVariance.IsEmpty()) ? vtPixelVariance.UncheckedGet<float>() :
+                                                                  0.001f;
     _options.SetFloat(RixStr.k_Ri_PixelVariance, pixelVariance);
 
     HdPrman_UpdateSearchPathsFromEnvironment(_options);
@@ -275,15 +269,14 @@ void HdxPrman_InteractiveContext::Begin(HdRenderDelegate *renderDelegate)
   integratorId = riley::IntegratorId::k_InvalidId;
   {
     std::string integratorName = renderDelegate->GetRenderSetting<std::string>(
-        HdPrmanRenderSettingsTokens->integratorName,
-        HdPrmanIntegratorTokens->PxrPathTracer.GetString());
+      HdPrmanRenderSettingsTokens->integratorName, HdPrmanIntegratorTokens->PxrPathTracer.GetString());
     RtParamList params;
 
     SetIntegratorParamsFromRenderSettings(
-        static_cast<HdPrmanRenderDelegate *>(renderDelegate), integratorName, params);
+      static_cast<HdPrmanRenderDelegate *>(renderDelegate), integratorName, params);
     RtUString rmanIntegrator(integratorName.c_str());
     riley::ShadingNode integratorNode{
-        riley::ShadingNode::k_Integrator, rmanIntegrator, rmanIntegrator, params};
+      riley::ShadingNode::k_Integrator, rmanIntegrator, rmanIntegrator, params};
     integratorId = riley->CreateIntegrator(integratorNode);
   }
 
@@ -301,15 +294,13 @@ void HdxPrman_InteractiveContext::Begin(HdRenderDelegate *renderDelegate)
     camParams.SetFloatArray(RixStr.k_shutteropening, shutterCurve + 2, 8);
 
     // Projection
-    riley::ShadingNode cameraNode = riley::ShadingNode{riley::ShadingNode::k_Projection,
-                                                       us_PxrPerspective,
-                                                       us_main_cam_projection,
-                                                       RtParamList()};
+    riley::ShadingNode cameraNode = riley::ShadingNode{
+      riley::ShadingNode::k_Projection, us_PxrPerspective, us_main_cam_projection, RtParamList()};
     cameraNode.params.SetFloat(RixStr.k_fov, 60.0f);
 
     // Transform
     float const zerotime = 0.0f;
-    RtMatrix4x4 matrix   = RixConstants::k_IdentityMatrix;
+    RtMatrix4x4 matrix = RixConstants::k_IdentityMatrix;
     matrix.Translate(0.f, 0.f, -5.0f);
     riley::Transform xform = {1, &matrix, &zerotime};
 
@@ -329,8 +320,8 @@ void HdxPrman_InteractiveContext::Begin(HdRenderDelegate *renderDelegate)
     _fallbackLightShader = riley->CreateLightShader(&lightNode, 1, nullptr, 0);
 
     // Constant identity transform
-    float const zerotime   = 0.0f;
-    RtMatrix4x4 matrix     = RixConstants::k_IdentityMatrix;
+    float const zerotime = 0.0f;
+    RtMatrix4x4 matrix = RixConstants::k_IdentityMatrix;
     riley::Transform xform = {1, &matrix, &zerotime};
 
     // Light instance
@@ -345,7 +336,7 @@ void HdxPrman_InteractiveContext::Begin(HdRenderDelegate *renderDelegate)
     _fallbackLightAttrs.SetInteger(RixStr.k_visibility_transmission, 1);
     _fallbackLight = riley->CreateLightInstance(riley::GeometryMasterId::k_InvalidId,  // no group
                                                 riley::GeometryMasterId::k_InvalidId,  // no geo
-                                                riley::MaterialId::k_InvalidId,  // no material
+                                                riley::MaterialId::k_InvalidId,        // no material
                                                 _fallbackLightShader,
                                                 k_NoCoordsys,
                                                 xform,
@@ -358,8 +349,8 @@ void HdxPrman_InteractiveContext::Begin(HdRenderDelegate *renderDelegate)
     std::vector<riley::ShadingNode> materialNodes;
 
     riley::ShadingNode pxrPrimvar_node;
-    pxrPrimvar_node.type   = riley::ShadingNode::k_Pattern;
-    pxrPrimvar_node.name   = us_PxrPrimvar;
+    pxrPrimvar_node.type = riley::ShadingNode::k_Pattern;
+    pxrPrimvar_node.name = us_PxrPrimvar;
     pxrPrimvar_node.handle = us_pv_color;
     pxrPrimvar_node.params.SetString(us_varname, us_displayColor);
     // Note: this 0.5 gray is to match UsdImaging's fallback.
@@ -368,8 +359,8 @@ void HdxPrman_InteractiveContext::Begin(HdRenderDelegate *renderDelegate)
     materialNodes.push_back(pxrPrimvar_node);
 
     riley::ShadingNode pxrSurface_node;
-    pxrSurface_node.type   = riley::ShadingNode::k_Bxdf;
-    pxrSurface_node.name   = us_PxrSurface;
+    pxrSurface_node.type = riley::ShadingNode::k_Bxdf;
+    pxrSurface_node.name = us_PxrSurface;
     pxrSurface_node.handle = us_simpleTestSurface;
     pxrSurface_node.params.ReferenceColor(us_diffuseColor, us_pv_color_resultRGB);
     pxrSurface_node.params.SetInteger(us_specularModelType, 1);
@@ -385,8 +376,8 @@ void HdxPrman_InteractiveContext::Begin(HdRenderDelegate *renderDelegate)
   {
     std::vector<riley::ShadingNode> materialNodes;
     riley::ShadingNode pxrVolume_node;
-    pxrVolume_node.type   = riley::ShadingNode::k_Bxdf;
-    pxrVolume_node.name   = us_PxrVolume;
+    pxrVolume_node.type = riley::ShadingNode::k_Bxdf;
+    pxrVolume_node.name = us_PxrVolume;
     pxrVolume_node.handle = us_simpleVolume;
     pxrVolume_node.params.SetString(us_densityFloatPrimVar, us_density);
     materialNodes.push_back(pxrVolume_node);
@@ -484,7 +475,7 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
   // Proceed with creating displays if the number has changed
   // or the display names don't match what we have.
   bool needCreate = false;
-  bool needClear  = false;
+  bool needClear = false;
   if (framebuffer.aovs.size() != aovBindings.size()) {
     needCreate = true;
   }
@@ -503,9 +494,9 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
         // where some buckets may get discarded or cleared with
         // the wrong value.
         StopRender();
-        framebuffer.pendingClear         = true;
+        framebuffer.pendingClear = true;
         framebuffer.aovs[aov].clearValue = aovBindings[aov].clearValue;
-        needClear                        = true;
+        needClear = true;
       }
     }
   }
@@ -546,7 +537,7 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
     RtUString aovName(aovBindings[aov].aovName.GetText());
     RtUString sourceName;
     riley::RenderOutputType rt = riley::RenderOutputType::k_Float;
-    RtUString filterName       = RixStr.k_filter;
+    RtUString filterName = RixStr.k_filter;
 
     HdFormat aovFormat = aovBindings[aov].renderBuffer->GetFormat();
 
@@ -580,15 +571,14 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
     // might be an lpe or a standard aov name.
     // When no source is specified, we'll assume the aov name
     // is standard and also use that as the source.
-    for (auto it = aovBindings[aov].aovSettings.begin(); it != aovBindings[aov].aovSettings.end();
-         it++) {
+    for (auto it = aovBindings[aov].aovSettings.begin(); it != aovBindings[aov].aovSettings.end(); it++) {
       if (it->first == _tokens->sourceName) {
         VtValue val = it->second;
-        sourceName  = RtUString(val.UncheckedGet<TfToken>().GetString().c_str());
+        sourceName = RtUString(val.UncheckedGet<TfToken>().GetString().c_str());
       }
       else if (it->first == _tokens->sourceType) {
         VtValue val = it->second;
-        sourceType  = val.UncheckedGet<TfToken>().GetString();
+        sourceType = val.UncheckedGet<TfToken>().GetString();
       }
     }
 
@@ -604,7 +594,7 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
     // Map some standard hydra aov names to their equivalent prman names
     if (aovBindings[aov].aovName == HdAovTokens->color ||
         aovBindings[aov].aovName.GetString() == us_ci.CStr()) {
-      aovName    = RixStr.k_Ci;
+      aovName = RixStr.k_Ci;
       sourceName = RixStr.k_Ci;
     }
     else if (aovBindings[aov].aovName == HdAovTokens->depth) {
@@ -614,15 +604,15 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
       sourceName = RixStr.k_Nn;
     }
     else if (aovBindings[aov].aovName == HdAovTokens->primId) {
-      aovName    = RixStr.k_id;
+      aovName = RixStr.k_id;
       sourceName = RixStr.k_id;
     }
     else if (aovBindings[aov].aovName == HdAovTokens->instanceId) {
-      aovName    = RixStr.k_id2;
+      aovName = RixStr.k_id2;
       sourceName = RixStr.k_id2;
     }
     else if (aovBindings[aov].aovName == HdAovTokens->elementId) {
-      aovName    = RixStr.k_faceindex;
+      aovName = RixStr.k_faceindex;
       sourceName = RixStr.k_faceindex;
     }
     else if (aovName == us_primvars_st) {
@@ -655,7 +645,7 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
     }
 
     renderOutputs.push_back(riley->CreateRenderOutput(
-        aovName, rt, sourceName, filterName, RixStr.k_box, filterwidth, 1.0f, renderOutputParams));
+      aovName, rt, sourceName, filterName, RixStr.k_box, filterwidth, 1.0f, renderOutputParams));
     framebuffer.AddAov(aovBindings[aov].aovName, aovFormat, aovBindings[aov].clearValue);
 
     // When a float4 color is requested, assume we require alpha as well.
@@ -673,9 +663,9 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
   }
 
   uint32_t renderTargetFormat[3] = {
-      static_cast<uint32_t>(resolution[0]), static_cast<uint32_t>(resolution[1]), 1};
+    static_cast<uint32_t>(resolution[0]), static_cast<uint32_t>(resolution[1]), 1};
   RtParamList renderTargetParams;
-  rtid             = riley->CreateRenderTarget((uint32_t)renderOutputs.size(),
+  rtid = riley->CreateRenderTarget((uint32_t)renderOutputs.size(),
                                    renderOutputs.data(),
                                    renderTargetFormat,
                                    RtUString("weighted"),

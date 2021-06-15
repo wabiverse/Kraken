@@ -68,7 +68,7 @@ class RtxHioImagePlugin : public RtxPlugin {
 };
 
 RtxHioImagePlugin::RtxHioImagePlugin(RixContext *rixCtx, const char *pluginName)
-    : m_msgHandler((RixMessages *)rixCtx->GetRixInterface(k_RixMessages))
+  : m_msgHandler((RixMessages *)rixCtx->GetRixInterface(k_RixMessages))
 {}
 
 RtxHioImagePlugin::~RtxHioImagePlugin()
@@ -87,10 +87,10 @@ static bool _ConvertWrapMode(HioAddressMode hioWrapMode,
       return true;
     case HioAddressModeMirrorRepeat:
       msgs->ErrorAlways(
-          "RtxHioImagePlugin: "
-          "Texture %s has unsupported HioAddressModeMirrorRepeat; using "
-          "k_Periodic instead.",
-          filename.c_str());
+        "RtxHioImagePlugin: "
+        "Texture %s has unsupported HioAddressModeMirrorRepeat; using "
+        "k_Periodic instead.",
+        filename.c_str());
       *rmanWrapMode = RtxPlugin::TextureCtx::k_Periodic;
       return true;
     case HioAddressModeClampToEdge:
@@ -98,10 +98,10 @@ static bool _ConvertWrapMode(HioAddressMode hioWrapMode,
       return true;
     case HioAddressModeClampToBorderColor:
       msgs->ErrorAlways(
-          "RtxHioImagePlugin: "
-          "Texture %s has unsupported HioAddressModeClampToBorderColor; using "
-          "k_Black instead.",
-          filename.c_str());
+        "RtxHioImagePlugin: "
+        "Texture %s has unsupported HioAddressModeClampToBorderColor; using "
+        "k_Black instead.",
+        filename.c_str());
       *rmanWrapMode = RtxPlugin::TextureCtx::k_Black;
       return true;
     default:
@@ -110,10 +110,7 @@ static bool _ConvertWrapMode(HioAddressMode hioWrapMode,
 }
 
 template<class T>
-static void _ConvertSRGBtoLinear(T *dest,
-                                 unsigned nPixels,
-                                 unsigned nChannels,
-                                 unsigned channelOffset)
+static void _ConvertSRGBtoLinear(T *dest, unsigned nPixels, unsigned nChannels, unsigned channelOffset)
 {
   const bool hasAlphaChannel = (channelOffset + nChannels == 4);
 
@@ -153,23 +150,23 @@ int RtxHioImagePlugin::Open(TextureCtx &tCtx)
   HioImageSharedPtr image = HioImage::OpenForReading(filename);
   if (!image) {
     m_msgHandler->ErrorAlways(
-        "RtxHioImagePlugin %p: "
-        "failed to open '%s'\n",
-        this,
-        filename.c_str());
+      "RtxHioImagePlugin %p: "
+      "failed to open '%s'\n",
+      this,
+      filename.c_str());
     return 1;
   }
 
   // Set up Renderman texture context.
-  tCtx.isLocked     = false;
+  tCtx.isLocked = false;
   tCtx.retryOnError = true;
-  tCtx.numLayers    = 1;
-  tCtx.pyramidType  = TextureCtx::k_MIP;
-  tCtx.minRes.X     = 1;
-  tCtx.minRes.Y     = 1;
-  tCtx.maxRes.X     = image->GetWidth();
-  tCtx.maxRes.Y     = image->GetHeight();
-  tCtx.numChannels  = HioGetComponentCount(image->GetFormat());
+  tCtx.numLayers = 1;
+  tCtx.pyramidType = TextureCtx::k_MIP;
+  tCtx.minRes.X = 1;
+  tCtx.minRes.Y = 1;
+  tCtx.maxRes.X = image->GetWidth();
+  tCtx.maxRes.Y = image->GetHeight();
+  tCtx.numChannels = HioGetComponentCount(image->GetFormat());
   // Component data type.
   HioType channelType = HioGetHioType(image->GetFormat());
   switch (channelType) {
@@ -181,10 +178,10 @@ int RtxHioImagePlugin::Open(TextureCtx &tCtx)
       break;
     default:
       m_msgHandler->ErrorAlways(
-          "RtxHioImagePlugin %p: "
-          "unsupported data type for %s\n",
-          this,
-          filename.c_str());
+        "RtxHioImagePlugin %p: "
+        "unsupported data type for %s\n",
+        this,
+        filename.c_str());
       return 1;
   }
   // Wrapping mode.
@@ -226,8 +223,8 @@ int RtxHioImagePlugin::Open(TextureCtx &tCtx)
   // Allocate storage for this context.  Renderman will
   // request as tiles, which we will service from this buffer.
   RtxHioImagePluginUserData *data = new RtxHioImagePluginUserData();
-  tCtx.userData                   = data;
-  data->image                     = image;
+  tCtx.userData = data;
+  data->image = image;
 
   return 0;
 }
@@ -251,9 +248,9 @@ int RtxHioImagePlugin::Fill(TextureCtx &tCtx, FillRequest &fillReq)
     }
     if (!level.data) {
       // Allocate a new MIP level.
-      level.width  = fillReq.imgRes.X;
+      level.width = fillReq.imgRes.X;
       level.height = fillReq.imgRes.Y;
-      level.depth  = data->image->GetBytesPerPixel();
+      level.depth = data->image->GetBytesPerPixel();
       level.format = data->image->GetFormat();
 
       if (tCtx.dataType != TextureCtx::k_Byte && tCtx.dataType != TextureCtx::k_Float) {
@@ -262,26 +259,26 @@ int RtxHioImagePlugin::Fill(TextureCtx &tCtx, FillRequest &fillReq)
       }
 
       const int numBytes = level.width * level.height * level.depth;
-      level.data         = new char[numBytes];
+      level.data = new char[numBytes];
       data->image->Read(level);
       data->mipLevels.push_back(level);
     }
   }
 
-  const bool isSRGB         = data->image->IsColorSpaceSRGB();
+  const bool isSRGB = data->image->IsColorSpaceSRGB();
   const HioType channelType = HioGetHioType(data->image->GetFormat());
 
   const int numImageChannels = HioGetComponentCount(level.format);
-  const int bytesPerChannel  = HioGetDataSizeOfType(channelType);
+  const int bytesPerChannel = HioGetDataSizeOfType(channelType);
 
   // Copy out tile data, one row at a time.
   const int bytesPerImagePixel = level.depth;
-  const int bytesPerImageRow   = bytesPerImagePixel * level.width;
-  const int bytesPerTilePixel  = bytesPerChannel * fillReq.numChannels;
-  const int bytesPerTileRow    = bytesPerTilePixel * fillReq.tile.size.X;
-  const RtInt startX           = fillReq.tile.offset.X * fillReq.tile.size.X;
-  const RtInt startY           = fillReq.tile.offset.Y * fillReq.tile.size.Y;
-  const RtInt endY             = startY + fillReq.tile.size.Y;
+  const int bytesPerImageRow = bytesPerImagePixel * level.width;
+  const int bytesPerTilePixel = bytesPerChannel * fillReq.numChannels;
+  const int bytesPerTileRow = bytesPerTilePixel * fillReq.tile.size.X;
+  const RtInt startX = fillReq.tile.offset.X * fillReq.tile.size.X;
+  const RtInt startY = fillReq.tile.offset.Y * fillReq.tile.size.Y;
+  const RtInt endY = startY + fillReq.tile.size.Y;
   char *src = (char *)level.data + (startY * level.width + startX) * bytesPerImagePixel +
               (fillReq.channelOffset * bytesPerChannel);
   char *dest = (char *)fillReq.tileData;

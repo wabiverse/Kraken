@@ -60,11 +60,10 @@ class NdrDiscoveryPluginContext;
 /// be empty.  The caller is expected to adjust these as appropriate.  A
 /// naive client with no versions and no family will work correctly.
 NDR_API
-NdrNodeDiscoveryResultVec NdrFsHelpersDiscoverNodes(
-    const NdrStringVec &searchPaths,
-    const NdrStringVec &allowedExtensions,
-    bool followSymlinks                      = true,
-    const NdrDiscoveryPluginContext *context = nullptr);
+NdrNodeDiscoveryResultVec NdrFsHelpersDiscoverNodes(const NdrStringVec &searchPaths,
+                                                    const NdrStringVec &allowedExtensions,
+                                                    bool followSymlinks = true,
+                                                    const NdrDiscoveryPluginContext *context = nullptr);
 
 WABI_NAMESPACE_END
 

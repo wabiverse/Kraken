@@ -77,13 +77,12 @@ Usd_UsdzResolverCache::AssetAndZipFile Usd_UsdzResolverCache::_OpenZipFile(const
 }
 
 Usd_UsdzResolverCache::AssetAndZipFile Usd_UsdzResolverCache::FindOrOpenZipFile(
-    const std::string &packagePath)
+  const std::string &packagePath)
 {
   _CachePtr currentCache = _GetCurrentCache();
   if (currentCache) {
     _Cache::_Map::accessor accessor;
-    if (currentCache->_pathToEntryMap.insert(accessor,
-                                             std::make_pair(packagePath, AssetAndZipFile()))) {
+    if (currentCache->_pathToEntryMap.insert(accessor, std::make_pair(packagePath, AssetAndZipFile()))) {
       accessor->second = _OpenZipFile(packagePath);
     }
     return accessor->second;
@@ -109,8 +108,7 @@ void Usd_UsdzResolver::EndCacheScope(VtValue *cacheScopeData)
   Usd_UsdzResolverCache::GetInstance().EndCacheScope(cacheScopeData);
 }
 
-std::string Usd_UsdzResolver::Resolve(const std::string &packagePath,
-                                      const std::string &packagedPath)
+std::string Usd_UsdzResolver::Resolve(const std::string &packagePath, const std::string &packagedPath)
 {
   std::shared_ptr<ArAsset> asset;
   UsdZipFile zipFile;
@@ -138,11 +136,11 @@ class _Asset : public ArAsset {
                   const char *dataInZipFile,
                   size_t offsetInZipFile,
                   size_t sizeInZipFile)
-      : _sourceAsset(std::move(sourceAsset)),
-        _zipFile(std::move(zipFile)),
-        _dataInZipFile(dataInZipFile),
-        _offsetInZipFile(offsetInZipFile),
-        _sizeInZipFile(sizeInZipFile)
+    : _sourceAsset(std::move(sourceAsset)),
+      _zipFile(std::move(zipFile)),
+      _dataInZipFile(dataInZipFile),
+      _offsetInZipFile(offsetInZipFile),
+      _sizeInZipFile(sizeInZipFile)
   {}
 
   size_t GetSize() override
@@ -206,21 +204,19 @@ std::shared_ptr<ArAsset> Usd_UsdzResolver::OpenAsset(const std::string &packageP
   const UsdZipFile::FileInfo info = iter.GetFileInfo();
 
   if (info.compressionMethod != 0) {
-    TF_RUNTIME_ERROR("Cannot open %s in %s: compressed files are not supported",
-                     packagedPath.c_str(),
-                     packagePath.c_str());
+    TF_RUNTIME_ERROR(
+      "Cannot open %s in %s: compressed files are not supported", packagedPath.c_str(), packagePath.c_str());
     return nullptr;
   }
 
   if (info.encrypted) {
-    TF_RUNTIME_ERROR("Cannot open %s in %s: encrypted files are not supported",
-                     packagedPath.c_str(),
-                     packagePath.c_str());
+    TF_RUNTIME_ERROR(
+      "Cannot open %s in %s: encrypted files are not supported", packagedPath.c_str(), packagePath.c_str());
     return nullptr;
   }
 
-  return std::shared_ptr<ArAsset>(new _Asset(
-      std::move(asset), std::move(zipFile), iter.GetFile(), info.dataOffset, info.size));
+  return std::shared_ptr<ArAsset>(
+    new _Asset(std::move(asset), std::move(zipFile), iter.GetFile(), info.dataOffset, info.size));
 }
 
 WABI_NAMESPACE_END

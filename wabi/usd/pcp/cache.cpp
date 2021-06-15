@@ -106,13 +106,13 @@ class Pcp_CacheChangesHelper {
 PcpCache::PcpCache(const PcpLayerStackIdentifier &layerStackIdentifier,
                    const std::string &fileFormatTarget,
                    bool usd)
-    : _rootLayer(layerStackIdentifier.rootLayer),
-      _sessionLayer(layerStackIdentifier.sessionLayer),
-      _layerStackIdentifier(layerStackIdentifier),
-      _usd(usd),
-      _fileFormatTarget(fileFormatTarget),
-      _layerStackCache(Pcp_LayerStackRegistry::New(_fileFormatTarget, _usd)),
-      _primDependencies(new Pcp_Dependencies())
+  : _rootLayer(layerStackIdentifier.rootLayer),
+    _sessionLayer(layerStackIdentifier.sessionLayer),
+    _layerStackIdentifier(layerStackIdentifier),
+    _usd(usd),
+    _fileFormatTarget(fileFormatTarget),
+    _layerStackCache(Pcp_LayerStackRegistry::New(_fileFormatTarget, _usd)),
+    _primDependencies(new Pcp_Dependencies())
 {
   // Do nothing
 }
@@ -175,8 +175,7 @@ bool PcpCache::UsesLayerStack(const PcpLayerStackPtr &layerStack) const
   return _layerStackCache->Contains(layerStack);
 }
 
-const PcpLayerStackPtrVector &PcpCache::FindAllLayerStacksUsingLayer(
-    const SdfLayerHandle &layer) const
+const PcpLayerStackPtrVector &PcpCache::FindAllLayerStacksUsingLayer(const SdfLayerHandle &layer) const
 {
   return _layerStackCache->FindAllUsingLayer(layer);
 }
@@ -316,19 +315,17 @@ void PcpCache::RequestLayerMuting(const std::vector<std::string> &layersToMute,
       }
 
       for (const auto &error : primIndex.GetLocalErrors()) {
-        PcpErrorMutedAssetPathPtr typedError = std::dynamic_pointer_cast<PcpErrorMutedAssetPath>(
-            error);
+        PcpErrorMutedAssetPathPtr typedError = std::dynamic_pointer_cast<PcpErrorMutedAssetPath>(error);
         if (!typedError) {
           continue;
         }
 
         const bool assetWasUnmuted = std::find(finalLayersToUnmute.begin(),
                                                finalLayersToUnmute.end(),
-                                               typedError->resolvedAssetPath) !=
-                                     finalLayersToUnmute.end();
+                                               typedError->resolvedAssetPath) != finalLayersToUnmute.end();
         if (assetWasUnmuted) {
           cacheChanges->DidMaybeFixAsset(
-              this, typedError->site, typedError->layer, typedError->resolvedAssetPath);
+            this, typedError->site, typedError->layer, typedError->resolvedAssetPath);
         }
       }
     }
@@ -363,15 +360,14 @@ bool PcpCache::IsLayerMuted(const SdfLayerHandle &anchorLayer,
 PcpPrimIndexInputs PcpCache::GetPrimIndexInputs()
 {
   return PcpPrimIndexInputs()
-      .Cache(this)
-      .VariantFallbacks(&_variantFallbackMap)
-      .IncludedPayloads(&_includedPayloads)
-      .Cull(TfGetEnvSetting(PCP_CULLING))
-      .FileFormatTarget(_fileFormatTarget);
+    .Cache(this)
+    .VariantFallbacks(&_variantFallbackMap)
+    .IncludedPayloads(&_includedPayloads)
+    .Cull(TfGetEnvSetting(PCP_CULLING))
+    .FileFormatTarget(_fileFormatTarget);
 }
 
-PcpLayerStackRefPtr PcpCache::ComputeLayerStack(const PcpLayerStackIdentifier &id,
-                                                PcpErrorVector *allErrors)
+PcpLayerStackRefPtr PcpCache::ComputeLayerStack(const PcpLayerStackIdentifier &id, PcpErrorVector *allErrors)
 {
   PcpLayerStackRefPtr result = _layerStackCache->FindOrCreate(id, allErrors);
 
@@ -489,7 +485,7 @@ PcpDependencyVector PcpCache::FindSiteDependencies(const SdfLayerHandle &layer,
   PcpDependencyVector result;
   for (const auto &layerStack : FindAllLayerStacksUsingLayer(layer)) {
     PcpDependencyVector deps = FindSiteDependencies(
-        layerStack, sitePath, depMask, recurseOnSite, recurseOnIndex, filterForExistingCachesOnly);
+      layerStack, sitePath, depMask, recurseOnSite, recurseOnIndex, filterForExistingCachesOnly);
     for (PcpDependency dep : deps) {
       // Fold in any sublayer offset.
       if (const SdfLayerOffset *sublayerOffset = layerStack->GetLayerOffsetForLayer(layer)) {
@@ -517,26 +513,25 @@ PcpDependencyVector PcpCache::FindSiteDependencies(const PcpLayerStackPtr &siteL
   //
   if (!(depMask & (PcpDependencyTypeVirtual | PcpDependencyTypeNonVirtual))) {
     TF_CODING_ERROR(
-        "depMask must include at least one of "
-        "{PcpDependencyTypeVirtual, "
-        "PcpDependencyTypeNonVirtual}");
+      "depMask must include at least one of "
+      "{PcpDependencyTypeVirtual, "
+      "PcpDependencyTypeNonVirtual}");
     return deps;
   }
-  if (!(depMask &
-        (PcpDependencyTypeRoot | PcpDependencyTypeDirect | PcpDependencyTypeAncestral))) {
+  if (!(depMask & (PcpDependencyTypeRoot | PcpDependencyTypeDirect | PcpDependencyTypeAncestral))) {
     TF_CODING_ERROR(
-        "depMask must include at least one of "
-        "{PcpDependencyTypeRoot, "
-        "PcpDependencyTypePurelyDirect, "
-        "PcpDependencyTypePartlyDirect, "
-        "PcpDependencyTypeAncestral}");
+      "depMask must include at least one of "
+      "{PcpDependencyTypeRoot, "
+      "PcpDependencyTypePurelyDirect, "
+      "PcpDependencyTypePartlyDirect, "
+      "PcpDependencyTypeAncestral}");
     return deps;
   }
   if ((depMask & PcpDependencyTypeRoot) && !(depMask & PcpDependencyTypeNonVirtual)) {
     // Root deps are only ever non-virtual.
     TF_CODING_ERROR(
-        "depMask of PcpDependencyTypeRoot requires "
-        "PcpDependencyTypeNonVirtual");
+      "depMask of PcpDependencyTypeRoot requires "
+      "PcpDependencyTypeNonVirtual");
     return deps;
   }
   if (siteLayerStack->_registry != _layerStackCache) {
@@ -569,9 +564,8 @@ PcpDependencyVector PcpCache::FindSiteDependencies(const PcpLayerStackPtr &siteL
   SdfPath tmpPath;
   const SdfPath *sitePrimPath = &sitePath;
   if (ARCH_UNLIKELY(!sitePath.IsPrimOrPrimVariantSelectionPath())) {
-    tmpPath      = (sitePath == SdfPath::AbsoluteRootPath()) ?
-                       sitePath :
-                       sitePath.GetPrimOrPrimVariantSelectionPath();
+    tmpPath = (sitePath == SdfPath::AbsoluteRootPath()) ? sitePath :
+                                                          sitePath.GetPrimOrPrimVariantSelectionPath();
     sitePrimPath = &tmpPath;
   }
 
@@ -597,15 +591,15 @@ PcpDependencyVector PcpCache::FindSiteDependencies(const PcpLayerStackPtr &siteL
     // dependencies, since they are considered ancestral by descendants.
     const PcpDependencyFlags localMask = (depPrimSitePath != *sitePrimPath &&
                                           sitePrimPath->HasPrefix(depPrimSitePath)) ?
-                                             (depMask | PcpDependencyTypeDirect) :
-                                             depMask;
+                                           (depMask | PcpDependencyTypeDirect) :
+                                           depMask;
 
     // If we have recursed below sitePath, use that site;
     // otherwise use the site the caller requested.
     const SdfPath localSitePath = (depPrimSitePath != *sitePrimPath &&
                                    depPrimSitePath.HasPrefix(*sitePrimPath)) ?
-                                      depPrimSitePath :
-                                      sitePath;
+                                    depPrimSitePath :
+                                    sitePath;
 
     auto visitNodeFn = [&](const SdfPath &depPrimIndexPath, const PcpNodeRef &node) {
       // Skip computing the node's dependency type if we aren't looking
@@ -628,8 +622,8 @@ PcpDependencyVector PcpCache::FindSiteDependencies(const PcpLayerStackPtr &siteL
         // to step out of the relocate, then continue
         // with regular path translation.
         const PcpNodeRef parent = node.GetParentNode();
-        depIndexPath            = PcpTranslatePathFromNodeToRoot(
-            parent, localSitePath.ReplacePrefix(node.GetPath(), parent.GetPath()), &valid);
+        depIndexPath = PcpTranslatePathFromNodeToRoot(
+          parent, localSitePath.ReplacePrefix(node.GetPath(), parent.GetPath()), &valid);
       }
       else {
         depIndexPath = PcpTranslatePathFromNodeToRoot(node, localSitePath, &valid);
@@ -638,13 +632,11 @@ PcpDependencyVector PcpCache::FindSiteDependencies(const PcpLayerStackPtr &siteL
         deps.push_back(PcpDependency{depIndexPath, localSitePath, node.GetMapToRoot().Evaluate()});
       }
     };
-    Pcp_ForEachDependentNode(
-        depPrimSitePath, siteLayerStack, depPrimIndexPath, *this, visitNodeFn);
+    Pcp_ForEachDependentNode(depPrimSitePath, siteLayerStack, depPrimIndexPath, *this, visitNodeFn);
   };
   _primDependencies->ForEachDependencyOnSite(siteLayerStack,
                                              *sitePrimPath,
-                                             /* includeAncestral = */ depMask &
-                                                 PcpDependencyTypeAncestral,
+                                             /* includeAncestral = */ depMask & PcpDependencyTypeAncestral,
                                              recurseOnSite,
                                              visitSiteFn);
 
@@ -682,22 +674,22 @@ PcpDependencyVector PcpCache::FindSiteDependencies(const PcpLayerStackPtr &siteL
         }
 
         for (auto entryIter = primRange.first; entryIter != primRange.second; ++entryIter) {
-          const SdfPath &subPath           = entryIter->first;
+          const SdfPath &subPath = entryIter->first;
           const PcpPrimIndex &subPrimIndex = entryIter->second;
           if (subPrimIndex.IsValid()) {
-            expandedDeps.push_back(PcpDependency{
-                subPath, subPath.ReplacePrefix(indexPath, dep.sitePath), dep.mapFunc});
+            expandedDeps.push_back(
+              PcpDependency{subPath, subPath.ReplacePrefix(indexPath, dep.sitePath), dep.mapFunc});
           }
         }
       }
       // Recurse on child property entries.
       const auto propRange = _propertyIndexCache.FindSubtreeRange(indexPath);
       for (auto entryIter = propRange.first; entryIter != propRange.second; ++entryIter) {
-        const SdfPath &subPath               = entryIter->first;
+        const SdfPath &subPath = entryIter->first;
         const PcpPropertyIndex &subPropIndex = entryIter->second;
         if (!subPropIndex.IsEmpty()) {
           expandedDeps.push_back(
-              PcpDependency{subPath, subPath.ReplacePrefix(indexPath, dep.sitePath), dep.mapFunc});
+            PcpDependency{subPath, subPath.ReplacePrefix(indexPath, dep.sitePath), dep.mapFunc});
         }
       }
     }
@@ -754,8 +746,8 @@ std::vector<std::string> PcpCache::GetInvalidSublayerIdentifiers() const
     PcpErrorVector errs = (*layerStack)->GetLocalErrors();
     TF_FOR_ALL(e, errs)
     {
-      if (PcpErrorInvalidSublayerPathPtr typedErr =
-              std::dynamic_pointer_cast<PcpErrorInvalidSublayerPath>(*e)) {
+      if (PcpErrorInvalidSublayerPathPtr typedErr = std::dynamic_pointer_cast<PcpErrorInvalidSublayerPath>(
+            *e)) {
         result.insert(typedErr->sublayerPath);
       }
     }
@@ -768,13 +760,12 @@ bool PcpCache::IsInvalidSublayerIdentifier(const std::string &identifier) const
 {
   TRACE_FUNCTION();
 
-  std::vector<std::string> layers            = GetInvalidSublayerIdentifiers();
+  std::vector<std::string> layers = GetInvalidSublayerIdentifiers();
   std::vector<std::string>::const_iterator i = std::find(layers.begin(), layers.end(), identifier);
   return i != layers.end();
 }
 
-std::map<SdfPath, std::vector<std::string>, SdfPath::FastLessThan> PcpCache::GetInvalidAssetPaths()
-    const
+std::map<SdfPath, std::vector<std::string>, SdfPath::FastLessThan> PcpCache::GetInvalidAssetPaths() const
 {
   TRACE_FUNCTION();
 
@@ -782,13 +773,12 @@ std::map<SdfPath, std::vector<std::string>, SdfPath::FastLessThan> PcpCache::Get
 
   TF_FOR_ALL(it, _primIndexCache)
   {
-    const SdfPath &primPath       = it->first;
+    const SdfPath &primPath = it->first;
     const PcpPrimIndex &primIndex = it->second;
     if (primIndex.IsValid()) {
       PcpErrorVector errors = primIndex.GetLocalErrors();
       for (const auto &e : errors) {
-        if (PcpErrorInvalidAssetPathPtr typedErr =
-                std::dynamic_pointer_cast<PcpErrorInvalidAssetPath>(e)) {
+        if (PcpErrorInvalidAssetPathPtr typedErr = std::dynamic_pointer_cast<PcpErrorInvalidAssetPath>(e)) {
           result[primPath].push_back(typedErr->resolvedAssetPath);
         }
       }
@@ -802,8 +792,7 @@ bool PcpCache::IsInvalidAssetPath(const std::string &resolvedAssetPath) const
 {
   TRACE_FUNCTION();
 
-  std::map<SdfPath, std::vector<std::string>, SdfPath::FastLessThan> pathMap =
-      GetInvalidAssetPaths();
+  std::map<SdfPath, std::vector<std::string>, SdfPath::FastLessThan> pathMap = GetInvalidAssetPaths();
   TF_FOR_ALL(i, pathMap)
   {
     TF_FOR_ALL(j, i->second)
@@ -827,7 +816,7 @@ bool PcpCache::IsPossibleDynamicFileFormatArgumentField(const TfToken &field) co
 }
 
 const PcpDynamicFileFormatDependencyData &PcpCache::GetDynamicFileFormatArgumentDependencyData(
-    const SdfPath &primIndexPath) const
+  const SdfPath &primIndexPath) const
 {
   return _primDependencies->GetDynamicFileFormatArgumentDependencyData(primIndexPath);
 }
@@ -995,8 +984,8 @@ void PcpCache::Reload(PcpChanges *changes)
   {
     const PcpErrorVector errors = (*layerStack)->GetLocalErrors();
     for (const auto &e : errors) {
-      if (PcpErrorInvalidSublayerPathPtr typedErr =
-              std::dynamic_pointer_cast<PcpErrorInvalidSublayerPath>(e)) {
+      if (PcpErrorInvalidSublayerPathPtr typedErr = std::dynamic_pointer_cast<PcpErrorInvalidSublayerPath>(
+            e)) {
         changes->DidMaybeFixSublayer(this, typedErr->layer, typedErr->sublayerPath);
       }
     }
@@ -1007,10 +996,8 @@ void PcpCache::Reload(PcpChanges *changes)
     if (primIndex.IsValid()) {
       const PcpErrorVector errors = primIndex.GetLocalErrors();
       for (const auto &e : errors) {
-        if (PcpErrorInvalidAssetPathPtr typedErr =
-                std::dynamic_pointer_cast<PcpErrorInvalidAssetPath>(e)) {
-          changes->DidMaybeFixAsset(
-              this, typedErr->site, typedErr->layer, typedErr->resolvedAssetPath);
+        if (PcpErrorInvalidAssetPathPtr typedErr = std::dynamic_pointer_cast<PcpErrorInvalidAssetPath>(e)) {
+          changes->DidMaybeFixAsset(this, typedErr->site, typedErr->layer, typedErr->resolvedAssetPath);
         }
       }
     }
@@ -1038,15 +1025,13 @@ void PcpCache::ReloadReferences(PcpChanges *changes, const SdfPath &primPath)
   std::set<PcpLayerStackPtr> layerStacksAtOrUnderPrim;
   const auto range = _primIndexCache.FindSubtreeRange(primPath);
   for (auto entryIter = range.first; entryIter != range.second; ++entryIter) {
-    const auto &entry             = *entryIter;
+    const auto &entry = *entryIter;
     const PcpPrimIndex &primIndex = entry.second;
     if (primIndex.IsValid()) {
       PcpErrorVector errors = primIndex.GetLocalErrors();
       for (const auto &e : errors) {
-        if (PcpErrorInvalidAssetPathPtr typedErr =
-                std::dynamic_pointer_cast<PcpErrorInvalidAssetPath>(e)) {
-          changes->DidMaybeFixAsset(
-              this, typedErr->site, typedErr->layer, typedErr->resolvedAssetPath);
+        if (PcpErrorInvalidAssetPathPtr typedErr = std::dynamic_pointer_cast<PcpErrorInvalidAssetPath>(e)) {
+          changes->DidMaybeFixAsset(this, typedErr->site, typedErr->layer, typedErr->resolvedAssetPath);
         }
       }
       for (const PcpNodeRef &node : primIndex.GetNodeRange()) {
@@ -1060,8 +1045,8 @@ void PcpCache::ReloadReferences(PcpChanges *changes, const SdfPath &primPath)
     // Scan errors for a sublayer error.
     PcpErrorVector errs = layerStack->GetLocalErrors();
     for (const PcpErrorBasePtr &err : errs) {
-      if (PcpErrorInvalidSublayerPathPtr typedErr =
-              std::dynamic_pointer_cast<PcpErrorInvalidSublayerPath>(err)) {
+      if (PcpErrorInvalidSublayerPathPtr typedErr = std::dynamic_pointer_cast<PcpErrorInvalidSublayerPath>(
+            err)) {
         changes->DidMaybeFixSublayer(this, typedErr->layer, typedErr->sublayerPath);
       }
     }
@@ -1093,8 +1078,8 @@ void PcpCache::_RemovePrimCache(const SdfPath &primPath, PcpLifeboat *lifeboat)
 
 void PcpCache::_RemovePrimAndPropertyCaches(const SdfPath &root, PcpLifeboat *lifeboat)
 {
-  std::pair<_PrimIndexCache::iterator, _PrimIndexCache::iterator> range =
-      _primIndexCache.FindSubtreeRange(root);
+  std::pair<_PrimIndexCache::iterator, _PrimIndexCache::iterator> range = _primIndexCache.FindSubtreeRange(
+    root);
   for (_PrimIndexCache::iterator i = range.first; i != range.second; ++i) {
     _primDependencies->Remove(i->second, lifeboat);
   }
@@ -1118,7 +1103,7 @@ void PcpCache::_RemovePropertyCache(const SdfPath &root, PcpLifeboat *lifeboat)
 void PcpCache::_RemovePropertyCaches(const SdfPath &root, PcpLifeboat *lifeboat)
 {
   std::pair<_PropertyIndexCache::iterator, _PropertyIndexCache::iterator> range =
-      _propertyIndexCache.FindSubtreeRange(root);
+    _propertyIndexCache.FindSubtreeRange(root);
 
   if (range.first != range.second) {
     _propertyIndexCache.erase(range.first);
@@ -1156,9 +1141,9 @@ struct PcpCache::_ParallelIndexer {
   using This = _ParallelIndexer;
 
   explicit _ParallelIndexer(PcpCache *cache, const PcpLayerStackPtr &layerStack)
-      : _cache(cache),
-        _layerStack(layerStack),
-        _resolver(ArGetResolver())
+    : _cache(cache),
+      _layerStack(layerStack),
+      _resolver(ArGetResolver())
   {}
 
   void Prepare(_UntypedIndexingChildrenPredicate childrenPred,
@@ -1169,13 +1154,13 @@ struct PcpCache::_ParallelIndexer {
                const char *mallocTag2)
   {
     _childrenPredicate = childrenPred;
-    _baseInputs        = baseInputs;
+    _baseInputs = baseInputs;
     // Set the includedPayloadsMutex in _baseInputs.
     _baseInputs.IncludedPayloadsMutex(&_includedPayloadsMutex);
-    _allErrors   = allErrors;
+    _allErrors = allErrors;
     _parentCache = parentCache;
-    _mallocTag1  = mallocTag1;
-    _mallocTag2  = mallocTag2;
+    _mallocTag1 = mallocTag1;
+    _mallocTag2 = mallocTag2;
 
     // Clear the roots to compute.
     _toCompute.clear();
@@ -1259,7 +1244,7 @@ struct PcpCache::_ParallelIndexer {
 
       // Establish inputs.
       PcpPrimIndexInputs inputs = _baseInputs;
-      inputs.parentIndex        = parentIndex;
+      inputs.parentIndex = parentIndex;
 
       TF_VERIFY(parentIndex || path == SdfPath::AbsoluteRootPath());
 
@@ -1290,10 +1275,8 @@ struct PcpCache::_ParallelIndexer {
       {
         tbb::spin_rw_mutex::scoped_lock lock(_primIndexCacheMutex);
         PcpPrimIndex *mutableIndex = &_cache->_primIndexCache[path];
-        index                      = mutableIndex;
-        TF_VERIFY(!index->IsValid(),
-                  "PrimIndex for %s already exists in cache",
-                  index->GetPath().GetText());
+        index = mutableIndex;
+        TF_VERIFY(!index->IsValid(), "PrimIndex for %s already exists in cache", index->GetPath().GetText());
         mutableIndex->Swap(outputs.primIndex);
         lock.release();
         _cache->_primDependencies->Add(*index, std::move(outputs.dynamicFileFormatDependency));
@@ -1309,8 +1292,7 @@ struct PcpCache::_ParallelIndexer {
       index->ComputePrimChildNames(&names, &prohibitedNames);
       for (const auto &name : names) {
         if (!namesToCompose.empty() &&
-            std::find(namesToCompose.begin(), namesToCompose.end(), name) ==
-                namesToCompose.end()) {
+            std::find(namesToCompose.begin(), namesToCompose.end(), name) == namesToCompose.end()) {
           continue;
         }
 
@@ -1349,8 +1331,8 @@ void PcpCache::_ComputePrimIndexesInParallel(const SdfPathVector &roots,
 {
   if (!IsUsd()) {
     TF_CODING_ERROR(
-        "Computing prim indexes in parallel only supported "
-        "for USD caches.");
+      "Computing prim indexes in parallel only supported "
+      "for USD caches.");
     return;
   }
 
@@ -1384,9 +1366,9 @@ void PcpCache::_ComputePrimIndexesInParallel(const SdfPathVector &roots,
     // Obtain the parent index, if this is not the absolute root.  Note that
     // the call to ComputePrimIndex below is not concurrency safe.
     const PcpPrimIndex *parentIndex = rootPath == SdfPath::AbsoluteRootPath() ?
-                                          nullptr :
-                                          &_ComputePrimIndexWithCompatibleInputs(
-                                              rootPath.GetParentPath(), inputs, allErrors);
+                                        nullptr :
+                                        &_ComputePrimIndexWithCompatibleInputs(
+                                          rootPath.GetParentPath(), inputs, allErrors);
     indexer->ComputeIndex(parentIndex, rootPath);
   }
 
@@ -1399,10 +1381,9 @@ const PcpPrimIndex &PcpCache::ComputePrimIndex(const SdfPath &path, PcpErrorVect
   return _ComputePrimIndexWithCompatibleInputs(path, GetPrimIndexInputs().USD(_usd), allErrors);
 }
 
-const PcpPrimIndex &PcpCache::_ComputePrimIndexWithCompatibleInputs(
-    const SdfPath &path,
-    const PcpPrimIndexInputs &inputs,
-    PcpErrorVector *allErrors)
+const PcpPrimIndex &PcpCache::_ComputePrimIndexWithCompatibleInputs(const SdfPath &path,
+                                                                    const PcpPrimIndexInputs &inputs,
+                                                                    PcpErrorVector *allErrors)
 {
   // NOTE:TRACE_FUNCTION() is too much overhead here.
 
@@ -1462,8 +1443,7 @@ const PcpPropertyIndex *PcpCache::_GetPropertyIndex(const SdfPath &path) const
   return NULL;
 }
 
-const PcpPropertyIndex &PcpCache::ComputePropertyIndex(const SdfPath &path,
-                                                       PcpErrorVector *allErrors)
+const PcpPropertyIndex &PcpCache::ComputePropertyIndex(const SdfPath &path, PcpErrorVector *allErrors)
 {
   TRACE_FUNCTION();
 
@@ -1481,10 +1461,10 @@ const PcpPropertyIndex &PcpCache::ComputePropertyIndex(const SdfPath &path,
     //      decide if they want this; if they don't, they should just
     //      avoid calling ComputePropertyIndex?
     TF_CODING_ERROR(
-        "PcpCache will not compute a cached property index in "
-        "USD mode; use PcpBuildPropertyIndex() instead.  Path "
-        "was <%s>",
-        path.GetText());
+      "PcpCache will not compute a cached property index in "
+      "USD mode; use PcpBuildPropertyIndex() instead.  Path "
+      "was <%s>",
+      path.GetText());
     return nullIndex;
   }
 

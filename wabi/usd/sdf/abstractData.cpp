@@ -254,8 +254,7 @@ bool SdfAbstractData::HasSpecAndField(const SdfPath &path,
   return *specType != SdfSpecTypeUnknown && Has(path, fieldName, value);
 }
 
-std::type_info const &SdfAbstractData::GetTypeid(const SdfPath &path,
-                                                 const TfToken &fieldName) const
+std::type_info const &SdfAbstractData::GetTypeid(const SdfPath &path, const TfToken &fieldName) const
 {
   return Get(path, fieldName).GetTypeid();
 }

@@ -105,90 +105,88 @@ void wrapSpec()
   typedef SdfSpec This;
 
   class_<This, SdfHandle<This>, boost::noncopyable>("Spec", no_init)
-      .def(SdfPyAbstractSpec())
+    .def(SdfPyAbstractSpec())
 
-      .add_property("layer", &This::GetLayer, "The owning layer.")
-      .add_property("path", &This::GetPath, "The absolute scene path.")
+    .add_property("layer", &This::GetLayer, "The owning layer.")
+    .add_property("path", &This::GetPath, "The absolute scene path.")
 
-      .def("GetAsText", &_GetAsText)
+    .def("GetAsText", &_GetAsText)
 
-      .def("ListInfoKeys", &This::ListInfoKeys, return_value_policy<TfPySequenceToList>())
-      .def("GetMetaDataInfoKeys",
-           &This::GetMetaDataInfoKeys,
-           return_value_policy<TfPySequenceToList>())
+    .def("ListInfoKeys", &This::ListInfoKeys, return_value_policy<TfPySequenceToList>())
+    .def("GetMetaDataInfoKeys", &This::GetMetaDataInfoKeys, return_value_policy<TfPySequenceToList>())
 
-      .def("GetMetaDataDisplayGroup", &This::GetMetaDataDisplayGroup)
+    .def("GetMetaDataDisplayGroup", &This::GetMetaDataDisplayGroup)
 
-      .def("GetInfo", &_WrapGetInfo)
-      .def("SetInfo", &_WrapSetInfo)
-      .def("SetInfoDictionaryValue", &This::SetInfoDictionaryValue)
-      .def("HasInfo",
-           &This::HasInfo,
-           "HasInfo(key) -> bool\n\n"
+    .def("GetInfo", &_WrapGetInfo)
+    .def("SetInfo", &_WrapSetInfo)
+    .def("SetInfoDictionaryValue", &This::SetInfoDictionaryValue)
+    .def("HasInfo",
+         &This::HasInfo,
+         "HasInfo(key) -> bool\n\n"
 
-           "key : string\n\n"
+         "key : string\n\n"
 
-           "Returns whether there is a setting for the scene spec "
-           "info with the given key.\n\n"
+         "Returns whether there is a setting for the scene spec "
+         "info with the given key.\n\n"
 
-           "When asked for a value for one of its scene spec info, a "
-           "valid value will always be returned. But if this API returns "
-           "false for a scene spec info, the value of that info will be "
-           "the defined default value. \n\n"
-           "(XXX: This may change such that it is an error to "
-           "ask for a value when there is none).\n\n"
+         "When asked for a value for one of its scene spec info, a "
+         "valid value will always be returned. But if this API returns "
+         "false for a scene spec info, the value of that info will be "
+         "the defined default value. \n\n"
+         "(XXX: This may change such that it is an error to "
+         "ask for a value when there is none).\n\n"
 
-           "When dealing with a composedLayer, it is not necessary to worry "
-           "about whether a scene spec info 'has a value' because the "
-           "composed layer will always have a valid value, even if it is the "
-           "default.\n\n"
+         "When dealing with a composedLayer, it is not necessary to worry "
+         "about whether a scene spec info 'has a value' because the "
+         "composed layer will always have a valid value, even if it is the "
+         "default.\n\n"
 
-           "A spec may or may not have an expressed value for "
-           "some of its scene spec info.")
+         "A spec may or may not have an expressed value for "
+         "some of its scene spec info.")
 
-      .def("ClearInfo",
-           &This::ClearInfo,
-           "ClearInfo(key)\n\n"
+    .def("ClearInfo",
+         &This::ClearInfo,
+         "ClearInfo(key)\n\n"
 
-           "key : string\nn"
+         "key : string\nn"
 
-           "Clears the value for scene spec info with the given key. "
-           "After calling this, HasInfo() will return false. "
-           "To make HasInfo() return true, set a value for that scene "
-           "spec info.",
-           (arg("key")))
+         "Clears the value for scene spec info with the given key. "
+         "After calling this, HasInfo() will return false. "
+         "To make HasInfo() return true, set a value for that scene "
+         "spec info.",
+         (arg("key")))
 
-      .def("GetTypeForInfo",
-           &This::GetTypeForInfo,
-           "GetTypeForInfo(key)\n\n"
+    .def("GetTypeForInfo",
+         &This::GetTypeForInfo,
+         "GetTypeForInfo(key)\n\n"
 
-           "key : string\n\n"
+         "key : string\n\n"
 
-           "Returns the type of value for the given key. ")
+         "Returns the type of value for the given key. ")
 
-      .def("GetFallbackForInfo",
-           make_function(&This::GetFallbackForInfo, return_value_policy<return_by_value>()),
-           "GetFallbackForInfo(key)\n\n"
+    .def("GetFallbackForInfo",
+         make_function(&This::GetFallbackForInfo, return_value_policy<return_by_value>()),
+         "GetFallbackForInfo(key)\n\n"
 
-           "key : string\n\n"
+         "key : string\n\n"
 
-           "Returns the fallback value for the given key. ")
+         "Returns the fallback value for the given key. ")
 
-      .add_property("isInert",
-                    &_WrapIsInertProperty,
-                    "Indicates whether this spec has any significant data. This is "
-                    "for backwards compatibility, use IsInert instead.\n\n"
+    .add_property("isInert",
+                  &_WrapIsInertProperty,
+                  "Indicates whether this spec has any significant data. This is "
+                  "for backwards compatibility, use IsInert instead.\n\n"
 
-                    "Compatibility note: prior to presto 1.9, isInert (then isEmpty) "
-                    "was true for otherwise inert PrimSpecs with inert inherits, "
-                    "references, or variant sets. isInert is now false in such "
-                    "conditions.")
+                  "Compatibility note: prior to presto 1.9, isInert (then isEmpty) "
+                  "was true for otherwise inert PrimSpecs with inert inherits, "
+                  "references, or variant sets. isInert is now false in such "
+                  "conditions.")
 
-      .def("IsInert",
-           &This::IsInert,
-           (arg("ignoreChildren") = false),
+    .def("IsInert",
+         &This::IsInert,
+         (arg("ignoreChildren") = false),
 
-           "Indicates whether this spec has any significant data. "
-           "If ignoreChildren is true, child scenegraph objects will be "
-           "ignored.");
+         "Indicates whether this spec has any significant data. "
+         "If ignoreChildren is true, child scenegraph objects will be "
+         "ignored.");
 }

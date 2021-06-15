@@ -268,15 +268,14 @@ class UsdSkelSkinningQuery {
   std::string GetDescription() const;
 
  private:
-  void _InitializeJointInfluenceBindings(const UsdAttribute &jointIndices,
-                                         const UsdAttribute &jointWeights);
+  void _InitializeJointInfluenceBindings(const UsdAttribute &jointIndices, const UsdAttribute &jointWeights);
 
   void _InitializeBlendShapeBindings(const UsdAttribute &blendShapes,
                                      const UsdRelationship &blendShapeTargets);
 
   UsdPrim _prim;
   int _numInfluencesPerComponent = 1;
-  int _flags                     = 0;
+  int _flags = 0;
   TfToken _interpolation;
 
   UsdGeomPrimvar _jointIndicesPrimvar;

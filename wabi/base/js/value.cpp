@@ -68,7 +68,7 @@ struct JsValue::_Holder {
                          double,
                          Js_Null,
                          uint64_t>
-      Variant;
+    Variant;
 
   _Holder() : value(Js_Null()), type(JsValue::NullType)
   {}

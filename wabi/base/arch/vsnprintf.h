@@ -63,9 +63,9 @@ WABI_NAMESPACE_BEGIN
 ARCH_API
 int ArchVsnprintf(char *str, size_t size, const char *format, va_list ap)
 #ifndef doxygen
-    ARCH_PRINTF_FUNCTION(3, 0)
+  ARCH_PRINTF_FUNCTION(3, 0)
 #endif /* doxygen */
-        ;
+    ;
 
 /// Returns a string formed by a printf()-like specification.
 ///
@@ -86,9 +86,9 @@ int ArchVsnprintf(char *str, size_t size, const char *format, va_list ap)
 ARCH_API
 std::string ArchStringPrintf(const char *fmt, ...)
 #ifndef doxygen
-    ARCH_PRINTF_FUNCTION(1, 2)
+  ARCH_PRINTF_FUNCTION(1, 2)
 #endif /* doxygen */
-        ;
+    ;
 
 /// Returns a string formed by a printf()-like specification.
 ///
@@ -101,7 +101,7 @@ std::string ArchStringPrintf(const char *fmt, ...)
 ARCH_API
 std::string ArchVStringPrintf(const char *fmt, va_list ap)
 #ifndef doxygen
-    ARCH_PRINTF_FUNCTION(1, 0);
+  ARCH_PRINTF_FUNCTION(1, 0);
 #endif
 
 /// @}

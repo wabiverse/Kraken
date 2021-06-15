@@ -37,22 +37,20 @@ WABI_NAMESPACE_USING
 void wrapUsdShadeTypes()
 {
   enum_<UsdShadeAttributeType>("AttributeType")
-      .value("Invalid", UsdShadeAttributeType::Invalid)
-      .value("Input", UsdShadeAttributeType::Input)
-      .value("Output", UsdShadeAttributeType::Output);
+    .value("Invalid", UsdShadeAttributeType::Invalid)
+    .value("Input", UsdShadeAttributeType::Input)
+    .value("Output", UsdShadeAttributeType::Output);
 
   enum_<UsdShadeConnectionModification>("ConnectionModification")
-      .value("Replace", UsdShadeConnectionModification::Replace)
-      .value("Prepend", UsdShadeConnectionModification::Prepend)
-      .value("Append", UsdShadeConnectionModification::Append);
+    .value("Replace", UsdShadeConnectionModification::Replace)
+    .value("Prepend", UsdShadeConnectionModification::Prepend)
+    .value("Append", UsdShadeConnectionModification::Append);
 
   to_python_converter<UsdShadeAttributeVector, TfPySequenceToPython<UsdShadeAttributeVector>>();
-  TfPyContainerConversions::from_python_sequence<
-      UsdShadeAttributeVector,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<UsdShadeAttributeVector,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 
   to_python_converter<UsdShadeSourceInfoVector, TfPySequenceToPython<UsdShadeSourceInfoVector>>();
-  TfPyContainerConversions::from_python_sequence<
-      UsdShadeSourceInfoVector,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<UsdShadeSourceInfoVector,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 }

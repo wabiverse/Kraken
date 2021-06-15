@@ -39,20 +39,20 @@ HdEmbreeRenderPass::HdEmbreeRenderPass(HdRenderIndex *index,
                                        HdRenderThread *renderThread,
                                        HdEmbreeRenderer *renderer,
                                        std::atomic<int> *sceneVersion)
-    : HdRenderPass(index, collection),
-      _renderThread(renderThread),
-      _renderer(renderer),
-      _sceneVersion(sceneVersion),
-      _lastSceneVersion(0),
-      _lastSettingsVersion(0),
-      _viewMatrix(1.0f)  // == identity
-      ,
-      _projMatrix(1.0f)  // == identity
-      ,
-      _aovBindings(),
-      _colorBuffer(SdfPath::EmptyPath()),
-      _depthBuffer(SdfPath::EmptyPath()),
-      _converged(false)
+  : HdRenderPass(index, collection),
+    _renderThread(renderThread),
+    _renderer(renderer),
+    _sceneVersion(sceneVersion),
+    _lastSceneVersion(0),
+    _lastSettingsVersion(0),
+    _viewMatrix(1.0f)  // == identity
+    ,
+    _projMatrix(1.0f)  // == identity
+    ,
+    _aovBindings(),
+    _colorBuffer(SdfPath::EmptyPath()),
+    _depthBuffer(SdfPath::EmptyPath()),
+    _converged(false)
 {}
 
 HdEmbreeRenderPass::~HdEmbreeRenderPass()
@@ -101,35 +101,35 @@ void HdEmbreeRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassSt
   // XXX: Add clip planes support.
 
   // Determine whether the scene has changed since the last time we rendered.
-  bool needStartRender    = false;
+  bool needStartRender = false;
   int currentSceneVersion = _sceneVersion->load();
   if (_lastSceneVersion != currentSceneVersion) {
-    needStartRender   = true;
+    needStartRender = true;
     _lastSceneVersion = currentSceneVersion;
   }
 
   // Likewise the render settings.
   HdRenderDelegate *renderDelegate = GetRenderIndex()->GetRenderDelegate();
-  int currentSettingsVersion       = renderDelegate->GetRenderSettingsVersion();
+  int currentSettingsVersion = renderDelegate->GetRenderSettingsVersion();
   if (_lastSettingsVersion != currentSettingsVersion) {
     _renderThread->StopRender();
     _lastSettingsVersion = currentSettingsVersion;
 
-    _renderer->SetSamplesToConvergence(renderDelegate->GetRenderSetting<int>(
-        HdRenderSettingsTokens->convergedSamplesPerPixel, 1));
+    _renderer->SetSamplesToConvergence(
+      renderDelegate->GetRenderSetting<int>(HdRenderSettingsTokens->convergedSamplesPerPixel, 1));
 
     bool enableAmbientOcclusion = renderDelegate->GetRenderSetting<bool>(
-        HdEmbreeRenderSettingsTokens->enableAmbientOcclusion, false);
+      HdEmbreeRenderSettingsTokens->enableAmbientOcclusion, false);
     if (enableAmbientOcclusion) {
-      _renderer->SetAmbientOcclusionSamples(renderDelegate->GetRenderSetting<int>(
-          HdEmbreeRenderSettingsTokens->ambientOcclusionSamples, 0));
+      _renderer->SetAmbientOcclusionSamples(
+        renderDelegate->GetRenderSetting<int>(HdEmbreeRenderSettingsTokens->ambientOcclusionSamples, 0));
     }
     else {
       _renderer->SetAmbientOcclusionSamples(0);
     }
 
-    _renderer->SetEnableSceneColors(renderDelegate->GetRenderSetting<bool>(
-        HdEmbreeRenderSettingsTokens->enableSceneColors, true));
+    _renderer->SetEnableSceneColors(
+      renderDelegate->GetRenderSetting<bool>(HdEmbreeRenderSettingsTokens->enableSceneColors, true));
 
     needStartRender = true;
   }
@@ -190,14 +190,14 @@ void HdEmbreeRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassSt
     _renderThread->StopRender();
     if (aovBindings.empty()) {
       HdRenderPassAovBinding colorAov;
-      colorAov.aovName      = HdAovTokens->color;
+      colorAov.aovName = HdAovTokens->color;
       colorAov.renderBuffer = &_colorBuffer;
-      colorAov.clearValue   = VtValue(GfVec4f(0.0707f, 0.0707f, 0.0707f, 1.0f));
+      colorAov.clearValue = VtValue(GfVec4f(0.0707f, 0.0707f, 0.0707f, 1.0f));
       aovBindings.push_back(colorAov);
       HdRenderPassAovBinding depthAov;
-      depthAov.aovName      = HdAovTokens->depth;
+      depthAov.aovName = HdAovTokens->depth;
       depthAov.renderBuffer = &_depthBuffer;
-      depthAov.clearValue   = VtValue(1.0f);
+      depthAov.clearValue = VtValue(1.0f);
       aovBindings.push_back(depthAov);
     }
     _renderer->SetAovBindings(aovBindings);

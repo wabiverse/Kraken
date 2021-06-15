@@ -50,12 +50,12 @@ static HgiTextureUsage _GetTextureUsage(HdFormat format, TfToken const &name)
 }
 
 HdPhRenderBuffer::HdPhRenderBuffer(HdPhResourceRegistry *const resourceRegistry, SdfPath const &id)
-    : HdRenderBuffer(id),
-      _resourceRegistry(resourceRegistry),
-      _format(HdFormatInvalid),
-      _msaaSampleCount(4),
-      _mappers(0),
-      _mappedBuffer()
+  : HdRenderBuffer(id),
+    _resourceRegistry(resourceRegistry),
+    _format(HdFormatInvalid),
+    _msaaSampleCount(4),
+    _mappers(0),
+    _mappedBuffer()
 {}
 
 HdPhRenderBuffer::~HdPhRenderBuffer() = default;
@@ -113,14 +113,12 @@ static void _CreateTexture(HdPhDynamicUvTextureObjectSharedPtr const &textureObj
   textureObject->CreateTexture(desc);
 }
 
-bool HdPhRenderBuffer::Allocate(GfVec3i const &dimensions,
-                                const HdFormat format,
-                                const bool multiSampled)
+bool HdPhRenderBuffer::Allocate(GfVec3i const &dimensions, const HdFormat format, const bool multiSampled)
 {
   _format = format;
 
   if (_format == HdFormatInvalid) {
-    _textureObject     = nullptr;
+    _textureObject = nullptr;
     _textureMSAAObject = nullptr;
     return false;
   }
@@ -128,8 +126,8 @@ bool HdPhRenderBuffer::Allocate(GfVec3i const &dimensions,
   if (!_textureObject) {
     // Allocate texture object if necessary.
     _textureObject = std::dynamic_pointer_cast<HdPhDynamicUvTextureObject>(
-        _resourceRegistry->AllocateTextureObject(GetTextureIdentifier(/*multiSampled = */ false),
-                                                 HdTextureType::Uv));
+      _resourceRegistry->AllocateTextureObject(GetTextureIdentifier(/*multiSampled = */ false),
+                                               HdTextureType::Uv));
     if (!_textureObject) {
       TF_CODING_ERROR("Expected HdPhDynamicUvTextureObject");
       return false;
@@ -140,8 +138,8 @@ bool HdPhRenderBuffer::Allocate(GfVec3i const &dimensions,
     if (!_textureMSAAObject) {
       // Allocate texture object if necessary
       _textureMSAAObject = std::dynamic_pointer_cast<HdPhDynamicUvTextureObject>(
-          _resourceRegistry->AllocateTextureObject(GetTextureIdentifier(/*multiSampled = */ true),
-                                                   HdTextureType::Uv));
+        _resourceRegistry->AllocateTextureObject(GetTextureIdentifier(/*multiSampled = */ true),
+                                                 HdTextureType::Uv));
       if (!_textureMSAAObject) {
         TF_CODING_ERROR("Expected HdPhDynamicUvTextureObject");
         return false;
@@ -154,18 +152,18 @@ bool HdPhRenderBuffer::Allocate(GfVec3i const &dimensions,
   }
 
   HgiTextureDesc texDesc;
-  texDesc.debugName   = _GetDebugName(_textureObject);
-  texDesc.dimensions  = dimensions;
-  texDesc.type        = (dimensions[2] > 1) ? HgiTextureType3D : HgiTextureType2D;
-  texDesc.format      = HdPhHgiConversions::GetHgiFormat(format);
-  texDesc.usage       = _GetTextureUsage(format, GetId().GetNameToken());
+  texDesc.debugName = _GetDebugName(_textureObject);
+  texDesc.dimensions = dimensions;
+  texDesc.type = (dimensions[2] > 1) ? HgiTextureType3D : HgiTextureType2D;
+  texDesc.format = HdPhHgiConversions::GetHgiFormat(format);
+  texDesc.usage = _GetTextureUsage(format, GetId().GetNameToken());
   texDesc.sampleCount = HgiSampleCount1;
 
   // Allocate actual GPU resource
   _CreateTexture(_textureObject, texDesc);
 
   if (multiSampled) {
-    texDesc.debugName   = _GetDebugName(_textureMSAAObject);
+    texDesc.debugName = _GetDebugName(_textureMSAAObject);
     texDesc.sampleCount = HgiSampleCount(_msaaSampleCount);
 
     // Allocate actual GPU resource
@@ -177,7 +175,7 @@ bool HdPhRenderBuffer::Allocate(GfVec3i const &dimensions,
 
 void HdPhRenderBuffer::_Deallocate()
 {
-  _textureObject     = nullptr;
+  _textureObject = nullptr;
   _textureMSAAObject = nullptr;
 }
 
@@ -195,7 +193,7 @@ void *HdPhRenderBuffer::Map()
   }
 
   const HgiTextureDesc &desc = texture->GetDescriptor();
-  const size_t dataByteSize  = desc.dimensions[0] * desc.dimensions[1] * desc.dimensions[2] *
+  const size_t dataByteSize = desc.dimensions[0] * desc.dimensions[1] * desc.dimensions[2] *
                               HgiGetDataSizeOfFormat(desc.format);
 
   if (dataByteSize == 0) {
@@ -218,11 +216,11 @@ void *HdPhRenderBuffer::Map()
 
   {
     HgiTextureGpuToCpuOp copyOp;
-    copyOp.gpuSourceTexture          = texture;
-    copyOp.sourceTexelOffset         = GfVec3i(0);
-    copyOp.mipLevel                  = 0;
-    copyOp.cpuDestinationBuffer      = _mappedBuffer.data();
-    copyOp.destinationByteOffset     = 0;
+    copyOp.gpuSourceTexture = texture;
+    copyOp.sourceTexelOffset = GfVec3i(0);
+    copyOp.mipLevel = 0;
+    copyOp.cpuDestinationBuffer = _mappedBuffer.data();
+    copyOp.destinationByteOffset = 0;
     copyOp.destinationBufferByteSize = dataByteSize;
     blitCmds->CopyTextureGpuToCpu(copyOp);
   }

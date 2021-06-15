@@ -42,7 +42,7 @@
 WABI_NAMESPACE_BEGIN
 
 HgiMetalComputePipeline::HgiMetalComputePipeline(HgiMetal *hgi, HgiComputePipelineDesc const &desc)
-    : HgiComputePipeline(desc)
+  : HgiComputePipeline(desc)
 {
   MTLComputePipelineDescriptor *stateDesc = [[MTLComputePipelineDescriptor alloc] init];
 
@@ -50,16 +50,16 @@ HgiMetalComputePipeline::HgiMetalComputePipeline(HgiMetal *hgi, HgiComputePipeli
   HGIMETAL_DEBUG_LABEL(stateDesc, _descriptor.debugName.c_str());
 
   HgiMetalShaderProgram const *metalProgram = static_cast<HgiMetalShaderProgram *>(
-      _descriptor.shaderProgram.Get());
+    _descriptor.shaderProgram.Get());
 
   stateDesc.computeFunction = metalProgram->GetComputeFunction();
 
-  NSError *error        = NULL;
+  NSError *error = NULL;
   _computePipelineState = [hgi->GetPrimaryDevice()
-      newComputePipelineStateWithDescriptor:stateDesc
-                                    options:MTLPipelineOptionNone
-                                 reflection:nil
-                                      error:&error];
+    newComputePipelineStateWithDescriptor:stateDesc
+                                  options:MTLPipelineOptionNone
+                               reflection:nil
+                                    error:&error];
   [stateDesc release];
 
   if (!_computePipelineState) {

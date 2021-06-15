@@ -56,9 +56,9 @@ class HgiVulkanPipelineCache final {
   VkPipelineCache GetVulkanPipelineCache() const;
 
  private:
-  HgiVulkanPipelineCache()        = delete;
+  HgiVulkanPipelineCache() = delete;
   HgiVulkanPipelineCache &operator=(const HgiVulkanPipelineCache &) = delete;
-  HgiVulkanPipelineCache(const HgiVulkanPipelineCache &)            = delete;
+  HgiVulkanPipelineCache(const HgiVulkanPipelineCache &) = delete;
 
   HgiVulkanDevice *_device;
   VkPipelineCache _vkPipelineCache;

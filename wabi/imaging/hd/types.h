@@ -62,8 +62,8 @@ enum HdWrap {
   HdWrapNoOpinion,
   HdWrapLegacyNoOpinionFallbackRepeat,  // deprecated
 
-  HdWrapUseMetadata = HdWrapNoOpinion,                     // deprecated alias
-  HdWrapLegacy      = HdWrapLegacyNoOpinionFallbackRepeat  // deprecated alias
+  HdWrapUseMetadata = HdWrapNoOpinion,                // deprecated alias
+  HdWrapLegacy = HdWrapLegacyNoOpinionFallbackRepeat  // deprecated alias
 };
 
 /// \enum HdMinFilter
@@ -163,16 +163,16 @@ struct HdVec4f_2_10_10_10_REV {
   HdVec4f_2_10_10_10_REV(int const value)
   {
     HdVec4f_2_10_10_10_REV const *other = reinterpret_cast<HdVec4f_2_10_10_10_REV const *>(&value);
-    x                                   = other->x;
-    y                                   = other->y;
-    z                                   = other->z;
-    w                                   = other->w;
+    x = other->x;
+    y = other->y;
+    z = other->z;
+    w = other->w;
   }
 
   template<typename Vec3Type> Vec3Type GetAsVec() const
   {
     return Vec3Type(
-        HdConvertFixedToFloat(x, 10), HdConvertFixedToFloat(y, 10), HdConvertFixedToFloat(z, 10));
+      HdConvertFixedToFloat(x, 10), HdConvertFixedToFloat(y, 10), HdConvertFixedToFloat(z, 10));
   }
 
   int GetAsInt() const

@@ -110,8 +110,7 @@ class UsdEditTarget {
   /// LayerStack.  The \p varSelPath must be a prim variant selection path
   /// (see SdfPath::IsPrimVariantSelectionPath()).
   USD_API
-  static UsdEditTarget ForLocalDirectVariant(const SdfLayerHandle &layer,
-                                             const SdfPath &varSelPath);
+  static UsdEditTarget ForLocalDirectVariant(const SdfLayerHandle &layer, const SdfPath &varSelPath);
 
   /// Equality comparison.
   USD_API

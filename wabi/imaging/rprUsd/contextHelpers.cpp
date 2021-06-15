@@ -73,8 +73,7 @@ std::string GetRprSdkPath()
     }
     char *code_ptr = NULL;
     uint64_t size;
-    code_ptr = getsectdatafromheader_64(
-        (const mach_header_64 *)header, SEG_TEXT, SECT_TEXT, &size);
+    code_ptr = getsectdatafromheader_64((const mach_header_64 *)header, SEG_TEXT, SECT_TEXT, &size);
     if (!code_ptr) {
       continue;
     }
@@ -124,24 +123,23 @@ void SetupRprTracing()
     if (!tracingDir.empty()) {
       printf("RPR tracing directory: %s\n", tracingDir.c_str());
     }
-    RPR_ERROR_CHECK(
-        rprContextSetParameterByKeyString(nullptr, RPR_CONTEXT_TRACING_PATH, tracingDir.c_str()),
-        "Failed to set tracing directory parameter");
+    RPR_ERROR_CHECK(rprContextSetParameterByKeyString(nullptr, RPR_CONTEXT_TRACING_PATH, tracingDir.c_str()),
+                    "Failed to set tracing directory parameter");
   }
 }
 
 const std::map<RprUsdPluginType, const char *> kPluginLibNames = {
 #ifdef WIN32
-    {kPluginTahoe, "Tahoe64.dll"},
-    {kPluginNorthstar, "Northstar64.dll"},
-    {kPluginHybrid, "Hybrid.dll"},
+  {kPluginTahoe, "Tahoe64.dll"},
+  {kPluginNorthstar, "Northstar64.dll"},
+  {kPluginHybrid, "Hybrid.dll"},
 #elif defined __linux__
-    {kPluginNorthstar, "libNorthstar64.so"},
-    {kPluginTahoe, "libTahoe64.so"},
-    {kPluginHybrid, "Hybrid.so"},
+  {kPluginNorthstar, "libNorthstar64.so"},
+  {kPluginTahoe, "libTahoe64.so"},
+  {kPluginHybrid, "Hybrid.so"},
 #elif defined __APPLE__
-    {kPluginTahoe, "libTahoe64.dylib"},
-    {kPluginNorthstar, "libNorthstar64.dylib"},
+  {kPluginTahoe, "libTahoe64.dylib"},
+  {kPluginNorthstar, "libNorthstar64.dylib"},
 #endif
 };
 
@@ -156,16 +154,11 @@ rpr::CreationFlags getAllCompatibleGpuFlags(rpr_int pluginID, const char *cacheP
   auto contextIsCreatable = [additionalFlags, pluginID, cachePath](rpr::CreationFlags creationFlag,
                                                                    rpr_context_info contextInfo) {
     rpr_context temporaryContext = nullptr;
-    rpr_int id                   = pluginID;
-    auto status                  = rprCreateContext(RPR_API_VERSION,
-                                   &id,
-                                   1,
-                                   creationFlag | additionalFlags,
-                                   nullptr,
-                                   cachePath,
-                                   &temporaryContext);
+    rpr_int id = pluginID;
+    auto status = rprCreateContext(
+      RPR_API_VERSION, &id, 1, creationFlag | additionalFlags, nullptr, cachePath, &temporaryContext);
     if (status == RPR_SUCCESS) {
-      size_t size     = 0;
+      size_t size = 0;
       auto infoStatus = rprContextGetInfo(temporaryContext, contextInfo, 0, 0, &size);
       if (infoStatus == RPR_SUCCESS) {
         std::string deviceName;
@@ -250,7 +243,7 @@ rpr::Context *RprUsdCreateContext(RprUsdContextMetadata *metadata)
 
   RprUsdConfig *config;
   auto configLock = RprUsdConfig::GetInstance(&config);
-  auto cachePath  = config->GetKernelCacheDir();
+  auto cachePath = config->GetKernelCacheDir();
 
   auto pluginLibNameIter = kPluginLibNames.find(metadata->pluginType);
   if (pluginLibNameIter == kPluginLibNames.end()) {
@@ -260,12 +253,11 @@ rpr::Context *RprUsdCreateContext(RprUsdContextMetadata *metadata)
   auto pluginLibName = pluginLibNameIter->second;
 
   const std::string rprSdkPath = GetRprSdkPath();
-  const std::string pluginPath = rprSdkPath.empty() ? pluginLibName :
-                                                      rprSdkPath + "/" + pluginLibName;
-  rpr_int pluginID             = rprRegisterPlugin(pluginPath.c_str());
+  const std::string pluginPath = rprSdkPath.empty() ? pluginLibName : rprSdkPath + "/" + pluginLibName;
+  rpr_int pluginID = rprRegisterPlugin(pluginPath.c_str());
   if (pluginID == -1) {
     PRINT_CONTEXT_CREATION_DEBUG_INFO(
-        "Failed to register %s plugin located at \"%s\"", pluginLibName, pluginPath.c_str());
+      "Failed to register %s plugin located at \"%s\"", pluginLibName, pluginPath.c_str());
     return nullptr;
   }
 
@@ -298,10 +290,8 @@ rpr::Context *RprUsdCreateContext(RprUsdContextMetadata *metadata)
   }
 
   if (metadata->isGlInteropEnabled) {
-    if (metadata->renderDeviceType == RprUsdRenderDeviceType::CPU ||
-        metadata->pluginType == kPluginHybrid) {
-      PRINT_CONTEXT_CREATION_DEBUG_INFO(
-          "GL interop could not be used with CPU rendering or Hybrid plugin");
+    if (metadata->renderDeviceType == RprUsdRenderDeviceType::CPU || metadata->pluginType == kPluginHybrid) {
+      PRINT_CONTEXT_CREATION_DEBUG_INFO("GL interop could not be used with CPU rendering or Hybrid plugin");
       metadata->isGlInteropEnabled = false;
     }
     else if (!RprUsdInitGLApi()) {
@@ -327,8 +317,8 @@ rpr::Context *RprUsdCreateContext(RprUsdContextMetadata *metadata)
   if (metadata->pluginType == RprUsdPluginType::kPluginHybrid && metadata->interopInfo) {
     // Create interop context for hybrid
     // TODO: should not it be configurable?
-    constexpr std::uint32_t MB     = 1024u * 1024u;
-    static std::uint32_t acc_size  = 1024 * MB;
+    constexpr std::uint32_t MB = 1024u * 1024u;
+    static std::uint32_t acc_size = 1024 * MB;
     static std::uint32_t vbuf_size = 1024 * MB;
     static std::uint32_t ibuf_size = 512 * MB;
     static std::uint32_t sbuf_size = 512 * MB;
@@ -345,7 +335,7 @@ rpr::Context *RprUsdCreateContext(RprUsdContextMetadata *metadata)
 
   rpr::Status status;
   rpr::Context *context = rpr::Context::Create(
-      RPR_API_VERSION, &pluginID, 1, flags, contextProperties.data(), cachePath.c_str(), &status);
+    RPR_API_VERSION, &pluginID, 1, flags, contextProperties.data(), cachePath.c_str(), &status);
 
   if (context) {
     if (RPR_ERROR_CHECK(context->SetActivePlugin(pluginID), "Failed to set active plugin")) {
@@ -358,8 +348,8 @@ rpr::Context *RprUsdCreateContext(RprUsdContextMetadata *metadata)
   }
 
   RPR_ERROR_CHECK(
-      context->SetParameter(RPR_CONTEXT_TEXTURE_CACHE_PATH, config->GetTextureCacheDir().c_str()),
-      "Failed to set texture cache path");
+    context->SetParameter(RPR_CONTEXT_TEXTURE_CACHE_PATH, config->GetTextureCacheDir().c_str()),
+    "Failed to set texture cache path");
 
   return context;
 }

@@ -34,15 +34,14 @@
 WABI_NAMESPACE_BEGIN
 
 HgiMetalShaderProgram::HgiMetalShaderProgram(HgiShaderProgramDesc const &desc)
-    : HgiShaderProgram(desc),
-      _vertexFunction(nil),
-      _fragmentFunction(nil),
-      _computeFunction(nil)
+  : HgiShaderProgram(desc),
+    _vertexFunction(nil),
+    _fragmentFunction(nil),
+    _computeFunction(nil)
 {
   HgiShaderFunctionHandleVector const &shaderFuncs = desc.shaderFunctions;
   for (auto const &func : shaderFuncs) {
-    HgiMetalShaderFunction const *metalFunction = static_cast<HgiMetalShaderFunction *>(
-        func.Get());
+    HgiMetalShaderFunction const *metalFunction = static_cast<HgiMetalShaderFunction *>(func.Get());
     switch (metalFunction->GetDescriptor().shaderStage) {
       case HgiShaderStageVertex:
         _vertexFunction = metalFunction->GetShaderId();

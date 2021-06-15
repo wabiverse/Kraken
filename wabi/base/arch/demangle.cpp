@@ -40,8 +40,8 @@
 
 using std::string;
 
-#if (ARCH_COMPILER_GCC_MAJOR == 3 && ARCH_COMPILER_GCC_MINOR >= 1) || \
-    ARCH_COMPILER_GCC_MAJOR > 3 || defined(ARCH_COMPILER_CLANG)
+#if (ARCH_COMPILER_GCC_MAJOR == 3 && ARCH_COMPILER_GCC_MINOR >= 1) || ARCH_COMPILER_GCC_MAJOR > 3 || \
+  defined(ARCH_COMPILER_CLANG)
 #  define _AT_LEAST_GCC_THREE_ONE_OR_CLANG
 #endif
 
@@ -80,7 +80,7 @@ static string *_NewDemangledStringTypeName();
 static void _FixupStringNames(string *name)
 {
   static string *from = _NewDemangledStringTypeName();
-  static string *to   = new string("string");
+  static string *to = new string("string");
 
   /* Replace occurrences of stringRttiName with "string" */
 
@@ -96,8 +96,7 @@ static void _FixupStringNames(string *name)
     // but on clang this comes in as Foo<std::__1::basic_string<...> >.
     // In both cases, we want to end the outer loop with Foo<std::string>.
     string::size_type numSpaces = 0;
-    for (string::size_type i = pos, e = name->size(); i != e && (*name)[i] == ' ';
-         ++i, ++numSpaces) {
+    for (string::size_type i = pos, e = name->size(); i != e && (*name)[i] == ' '; ++i, ++numSpaces) {
     }
     name->erase(pos, numSpaces);
   }
@@ -133,9 +132,9 @@ static void _FixupStringNames(string *name)
 static void _StripPxrInternalNamespace(string *name)
 {
   // Note that this assumes WABI_INTERNAL_NS to be non-empty
-  constexpr const char nsQualifier[]   = ARCH_STRINGIZE(WABI_INTERNAL_NS) "::";
+  constexpr const char nsQualifier[] = ARCH_STRINGIZE(WABI_INTERNAL_NS) "::";
   constexpr const auto nsQualifierSize = sizeof(nsQualifier);
-  size_t lastNsQualifierEndPos         = name->find(nsQualifier);
+  size_t lastNsQualifierEndPos = name->find(nsQualifier);
   while (lastNsQualifierEndPos != std::string::npos) {
     name->erase(lastNsQualifierEndPos, nsQualifierSize - 1);
     lastNsQualifierEndPos = name->find(nsQualifier);
@@ -191,7 +190,7 @@ static bool _DemangleNewRaw(string *mangledTypeName)
     size_t len = strlen(realName);
     if (len > 1 && realName[len - 1] == '*') {
       *mangledTypeName = string(&realName[0], len - 1);
-      ok               = true;
+      ok = true;
     }
 
     free(realName);

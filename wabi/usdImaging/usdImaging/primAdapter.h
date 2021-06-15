@@ -142,22 +142,20 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
   /// cache.
   ///
   /// This method is expected to be called from multiple threads.
-  virtual void TrackVariability(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      HdDirtyBits *timeVaryingBits,
-      UsdImagingInstancerContext const *instancerContext = nullptr) const = 0;
+  virtual void TrackVariability(UsdPrim const &prim,
+                                SdfPath const &cachePath,
+                                HdDirtyBits *timeVaryingBits,
+                                UsdImagingInstancerContext const *instancerContext = nullptr) const = 0;
 
   /// Populates the \p cache for the given \p prim, \p time and \p
   /// requestedBits.
   ///
   /// This method is expected to be called from multiple threads.
-  virtual void UpdateForTime(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      UsdTimeCode time,
-      HdDirtyBits requestedBits,
-      UsdImagingInstancerContext const *instancerContext = nullptr) const = 0;
+  virtual void UpdateForTime(UsdPrim const &prim,
+                             SdfPath const &cachePath,
+                             UsdTimeCode time,
+                             HdDirtyBits requestedBits,
+                             UsdImagingInstancerContext const *instancerContext = nullptr) const = 0;
 
   // ---------------------------------------------------------------------- //
   /// \name Change Processing
@@ -206,9 +204,7 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
                                     UsdImagingIndexProxy *index);
 
   USDIMAGING_API
-  virtual void MarkReprDirty(UsdPrim const &prim,
-                             SdfPath const &cachePath,
-                             UsdImagingIndexProxy *index);
+  virtual void MarkReprDirty(UsdPrim const &prim, SdfPath const &cachePath, UsdImagingIndexProxy *index);
 
   USDIMAGING_API
   virtual void MarkCullStyleDirty(UsdPrim const &prim,
@@ -231,9 +227,7 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
                                    UsdImagingIndexProxy *index);
 
   USDIMAGING_API
-  virtual void MarkMaterialDirty(UsdPrim const &prim,
-                                 SdfPath const &cachePath,
-                                 UsdImagingIndexProxy *index);
+  virtual void MarkMaterialDirty(UsdPrim const &prim, SdfPath const &cachePath, UsdImagingIndexProxy *index);
 
   USDIMAGING_API
   virtual void MarkLightParamsDirty(UsdPrim const &prim,
@@ -282,8 +276,7 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
 
   /// Return the list of known prototypes of this prim.
   USDIMAGING_API
-  virtual SdfPathVector GetInstancerPrototypes(UsdPrim const &usdPrim,
-                                               SdfPath const &cachePath) const;
+  virtual SdfPathVector GetInstancerPrototypes(UsdPrim const &usdPrim, SdfPath const &cachePath) const;
 
   /// Sample the primvar for the given prim. If *sampleIndices is not nullptr
   /// and the primvar has indices, it will sample the unflattened primvar and
@@ -440,9 +433,7 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
 
   /// Gets the cullstyle of a specific path in the scene graph.
   USDIMAGING_API
-  virtual HdCullStyle GetCullStyle(UsdPrim const &prim,
-                                   SdfPath const &cachePath,
-                                   UsdTimeCode time) const;
+  virtual HdCullStyle GetCullStyle(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const;
 
   /// Gets the material path for the given prim, walking up namespace if
   /// necessary.
@@ -467,32 +458,22 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
   /// if it is of type basis curves, it will return an HdBasisCurvesTopology.
   /// If the adapter does not have a topology, it returns an empty VtValue.
   USDIMAGING_API
-  virtual VtValue GetTopology(UsdPrim const &prim,
-                              SdfPath const &cachePath,
-                              UsdTimeCode time) const;
+  virtual VtValue GetTopology(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const;
 
   /// Reads the extent from the given prim. If the extent is not authored,
   /// an empty GfRange3d is returned, the extent will not be computed.
   USDIMAGING_API
-  virtual GfRange3d GetExtent(UsdPrim const &prim,
-                              SdfPath const &cachePath,
-                              UsdTimeCode time) const;
+  virtual GfRange3d GetExtent(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const;
 
   /// Reads double-sided from the given prim. If not authored, returns false
   USDIMAGING_API
-  virtual bool GetDoubleSided(UsdPrim const &prim,
-                              SdfPath const &cachePath,
-                              UsdTimeCode time) const;
+  virtual bool GetDoubleSided(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const;
 
   USDIMAGING_API
-  virtual SdfPath GetMaterialId(UsdPrim const &prim,
-                                SdfPath const &cachePath,
-                                UsdTimeCode time) const;
+  virtual SdfPath GetMaterialId(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const;
 
   USDIMAGING_API
-  virtual VtValue GetMaterialResource(UsdPrim const &prim,
-                                      SdfPath const &cachePath,
-                                      UsdTimeCode time) const;
+  virtual VtValue GetMaterialResource(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const;
 
   // ---------------------------------------------------------------------- //
   /// \name ExtComputations
@@ -502,22 +483,22 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
 
   USDIMAGING_API
   virtual HdExtComputationInputDescriptorVector GetExtComputationInputs(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      const UsdImagingInstancerContext *instancerContext) const;
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    const UsdImagingInstancerContext *instancerContext) const;
 
   USDIMAGING_API
   virtual HdExtComputationOutputDescriptorVector GetExtComputationOutputs(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      const UsdImagingInstancerContext *instancerContext) const;
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    const UsdImagingInstancerContext *instancerContext) const;
 
   USDIMAGING_API
   virtual HdExtComputationPrimvarDescriptorVector GetExtComputationPrimvars(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      HdInterpolation interpolation,
-      const UsdImagingInstancerContext *instancerContext) const;
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    HdInterpolation interpolation,
+    const UsdImagingInstancerContext *instancerContext) const;
 
   USDIMAGING_API
   virtual VtValue GetExtComputationInput(UsdPrim const &prim,
@@ -537,10 +518,9 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
                                            VtValue *sampleValues);
 
   USDIMAGING_API
-  virtual std::string GetExtComputationKernel(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      const UsdImagingInstancerContext *instancerContext) const;
+  virtual std::string GetExtComputationKernel(UsdPrim const &prim,
+                                              SdfPath const &cachePath,
+                                              const UsdImagingInstancerContext *instancerContext) const;
 
   USDIMAGING_API
   virtual VtValue GetInstanceIndices(UsdPrim const &instancerPrim,
@@ -561,16 +541,14 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
  protected:
   using Keys = UsdImagingPrimvarDescCache::Key;
 
-  template<typename T>
-  T _Get(UsdPrim const &prim, TfToken const &attrToken, UsdTimeCode time) const
+  template<typename T> T _Get(UsdPrim const &prim, TfToken const &attrToken, UsdTimeCode time) const
   {
     T value;
     prim.GetAttribute(attrToken).Get<T>(&value, time);
     return value;
   }
 
-  template<typename T>
-  void _GetPtr(UsdPrim const &prim, TfToken const &key, UsdTimeCode time, T *out) const
+  template<typename T> void _GetPtr(UsdPrim const &prim, TfToken const &key, UsdTimeCode time, T *out) const
   {
     prim.GetAttribute(key).Get<T>(out, time);
   }
@@ -671,7 +649,7 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
                      TfToken const &name,
                      HdInterpolation interp,
                      TfToken const &role = TfToken(),
-                     bool indexed        = false) const;
+                     bool indexed = false) const;
 
   // Convenience method for removing a primvar descriptor.
   USDIMAGING_API
@@ -703,22 +681,22 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
   // name passed to Hydra.
   USDIMAGING_API
   HdDirtyBits _ProcessNonPrefixedPrimvarPropertyChange(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      TfToken const &propertyName,
-      TfToken const &primvarName,
-      HdInterpolation const &primvarInterp,
-      HdDirtyBits valueChangeDirtyBit = HdChangeTracker::DirtyPrimvar) const;
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    TfToken const &propertyName,
+    TfToken const &primvarName,
+    HdInterpolation const &primvarInterp,
+    HdDirtyBits valueChangeDirtyBit = HdChangeTracker::DirtyPrimvar) const;
 
   // Handle UsdGeomPrimvars that use the "primvars:" prefix, while also
   // accommodating inheritance.
   USDIMAGING_API
   HdDirtyBits _ProcessPrefixedPrimvarPropertyChange(
-      UsdPrim const &prim,
-      SdfPath const &cachePath,
-      TfToken const &propertyName,
-      HdDirtyBits valueChangeDirtyBit = HdChangeTracker::DirtyPrimvar,
-      bool inherited                  = true) const;
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    TfToken const &propertyName,
+    HdDirtyBits valueChangeDirtyBit = HdChangeTracker::DirtyPrimvar,
+    bool inherited = true) const;
 
   virtual void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index) = 0;
 

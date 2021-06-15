@@ -49,7 +49,7 @@ bool PcpVariantFallbackMapFromPython(const dict &d, PcpVariantFallbackMap *resul
 {
   object iterItems = d.items();
   for (int i = 0; i < len(iterItems); ++i) {
-    object key   = iterItems[i][0];
+    object key = iterItems[i][0];
     object value = iterItems[i][1];
     std::string k;
     std::vector<std::string> v;

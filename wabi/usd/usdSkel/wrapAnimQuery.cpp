@@ -57,8 +57,7 @@ VtMatrix4dArray _ComputeJointLocalTransforms(const UsdSkelAnimQuery &self, UsdTi
   return xforms;
 }
 
-boost::python::tuple _ComputeJointLocalTransformComponents(const UsdSkelAnimQuery &self,
-                                                           UsdTimeCode time)
+boost::python::tuple _ComputeJointLocalTransformComponents(const UsdSkelAnimQuery &self, UsdTimeCode time)
 {
   VtVec3fArray translations;
   VtQuatfArray rotations;
@@ -112,43 +111,39 @@ void wrapUsdSkelAnimQuery()
 
   class_<This>("AnimQuery", no_init)
 
-      .def(!self)
-      .def(self == self)
-      .def(self != self)
+    .def(!self)
+    .def(self == self)
+    .def(self != self)
 
-      .def("__str__", &This::GetDescription)
+    .def("__str__", &This::GetDescription)
 
-      .def("GetPrim", &This::GetPrim)
+    .def("GetPrim", &This::GetPrim)
 
-      .def("ComputeJointLocalTransforms",
-           &_ComputeJointLocalTransforms,
-           (arg("time") = UsdTimeCode::Default()))
+    .def(
+      "ComputeJointLocalTransforms", &_ComputeJointLocalTransforms, (arg("time") = UsdTimeCode::Default()))
 
-      .def("ComputeJointLocalTransformComponents",
-           &_ComputeJointLocalTransformComponents,
-           (arg("time") = UsdTimeCode::Default()))
+    .def("ComputeJointLocalTransformComponents",
+         &_ComputeJointLocalTransformComponents,
+         (arg("time") = UsdTimeCode::Default()))
 
-      .def("ComputeBlendShapeWeights",
-           &_ComputeBlendShapeWeights,
-           (arg("time") = UsdTimeCode::Default()))
+    .def("ComputeBlendShapeWeights", &_ComputeBlendShapeWeights, (arg("time") = UsdTimeCode::Default()))
 
-      .def("GetJointTransformTimeSamples", &_GetJointTransformTimeSamples)
+    .def("GetJointTransformTimeSamples", &_GetJointTransformTimeSamples)
 
-      .def("GetJointTransformTimeSamplesInInterval",
-           &_GetJointTransformTimeSamplesInInterval,
-           (arg("interval")))
+    .def(
+      "GetJointTransformTimeSamplesInInterval", &_GetJointTransformTimeSamplesInInterval, (arg("interval")))
 
-      .def("JointTransformsMightBeTimeVarying", &This::JointTransformsMightBeTimeVarying)
+    .def("JointTransformsMightBeTimeVarying", &This::JointTransformsMightBeTimeVarying)
 
-      .def("GetBlendShapeWeightTimeSamples", &_GetBlendShapeWeightTimeSamples)
+    .def("GetBlendShapeWeightTimeSamples", &_GetBlendShapeWeightTimeSamples)
 
-      .def("GetBlendShapeWeightTimeSamplesInInterval",
-           &_GetBlendShapeWeightTimeSamplesInInterval,
-           (arg("interval")))
+    .def("GetBlendShapeWeightTimeSamplesInInterval",
+         &_GetBlendShapeWeightTimeSamplesInInterval,
+         (arg("interval")))
 
-      .def("BlendShapeWeightsMightBeTimeVarying", &This::BlendShapeWeightsMightBeTimeVarying)
+    .def("BlendShapeWeightsMightBeTimeVarying", &This::BlendShapeWeightsMightBeTimeVarying)
 
-      .def("GetJointOrder", &This::GetJointOrder)
+    .def("GetJointOrder", &This::GetJointOrder)
 
-      .def("GetBlendShapeOrder", &This::GetBlendShapeOrder);
+    .def("GetBlendShapeOrder", &This::GetBlendShapeOrder);
 }

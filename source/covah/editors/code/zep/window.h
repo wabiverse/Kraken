@@ -29,11 +29,10 @@ struct SpanInfo {
                             // one beyond the end.
   std::vector<LineCharInfo> lineCodePoints;  // Codepoints
   long bufferLineNumber = 0;                 // Line in the original buffer, not the screen line
-  float yOffsetPx =
-      0.0f;  // Position in the buffer in pixels, if the screen was as big as the buffer.
+  float yOffsetPx = 0.0f;  // Position in the buffer in pixels, if the screen was as big as the buffer.
   NVec2f lineTextSizePx = NVec2f(0.0f);  // Pixel size of the text
-  int spanLineIndex     = 0;  // The index of this line in spans; might be more than buffer index
-  NVec2f padding        = NVec2f(1.0f, 1.0f);  // Padding above and below the line
+  int spanLineIndex = 0;                 // The index of this line in spans; might be more than buffer index
+  NVec2f padding = NVec2f(1.0f, 1.0f);   // Padding above and below the line
   bool isSplitContinuation = false;
   NVec2f lineWidgetHeights;
   ZepFont *pFont = nullptr;
@@ -70,16 +69,16 @@ enum class DisplayMode { Normal, Vim };
 
 namespace WindowFlags {
 enum {
-  None            = (0),
-  ShowWhiteSpace  = (1 << 0),
-  ShowCR          = (1 << 1),
+  None = (0),
+  ShowWhiteSpace = (1 << 0),
+  ShowCR = (1 << 1),
   ShowLineNumbers = (1 << 2),
-  ShowIndicators  = (1 << 3),
-  HideScrollBar   = (1 << 4),
-  Modal           = (1 << 5),
-  WrapText        = (1 << 6),  // Warning: this is not for general use yet. Has issues
-  HideSplitMark   = (1 << 7),
-  GridStyle       = (1 << 8)
+  ShowIndicators = (1 << 3),
+  HideScrollBar = (1 << 4),
+  Modal = (1 << 5),
+  WrapText = (1 << 6),  // Warning: this is not for general use yet. Has issues
+  HideSplitMark = (1 << 7),
+  GridStyle = (1 << 8)
 };
 }
 
@@ -97,9 +96,9 @@ struct Airline {
 // Clients should return the marker information if appropriate
 struct ToolTipMessage : public ZepMessage {
   ToolTipMessage(ZepBuffer *pBuff, const NVec2f &pos, const GlyphIterator &loc = GlyphIterator())
-      : ZepMessage(Msg::ToolTip, pos),
-        pBuffer(pBuff),
-        location(loc)
+    : ZepMessage(Msg::ToolTip, pos),
+      pBuffer(pBuff),
+      location(loc)
   {}
 
   ZepBuffer *pBuffer;
@@ -125,8 +124,7 @@ class ZepWindow : public ZepComponent {
   // Cursor
   virtual GlyphIterator GetBufferCursor();
   virtual void SetBufferCursor(GlyphIterator location);
-  virtual void MoveCursorY(int yDistance,
-                           LineLocation clampLocation = LineLocation::LineLastNonCR);
+  virtual void MoveCursorY(int yDistance, LineLocation clampLocation = LineLocation::LineLastNonCR);
   virtual NVec2i BufferToDisplay();
 
   // Flags
@@ -220,10 +218,10 @@ class ZepWindow : public ZepComponent {
   // This will indeed stop lines wrapping though!  You just can't move to the far right and have
   // the text scroll; which isn't a big deal, but a work item.
   // TODO Use flags instead
-  bool m_layoutDirty             = true;
+  bool m_layoutDirty = true;
   bool m_scrollVisibilityChanged = true;
-  bool m_cursorMoved             = true;
-  uint32_t m_windowFlags         = WindowFlags::ShowWhiteSpace | WindowFlags::ShowIndicators |
+  bool m_cursorMoved = true;
+  uint32_t m_windowFlags = WindowFlags::ShowWhiteSpace | WindowFlags::ShowIndicators |
                            WindowFlags::ShowLineNumbers | WindowFlags::WrapText;
 
   // Cursor
@@ -238,21 +236,20 @@ class ZepWindow : public ZepComponent {
   // Setup of displayed lines
   std::vector<SpanInfo *> m_windowLines;  // Information about the currently displayed lines
   float m_textOffsetPx = 0.0f;            // The Scroll position within the text
-  NVec2f m_textSizePx;  // The calculated size of the buffer text, containing just the text
-  NVec2i m_visibleLineIndices = {0, 0};  // Index of the line spans that are visible
-  long m_maxDisplayLines      = 0;
-  int m_defaultLineSize       = 0;
-  float m_xPad                = 0.0f;
+  NVec2f m_textSizePx;                    // The calculated size of the buffer text, containing just the text
+  NVec2i m_visibleLineIndices = {0, 0};   // Index of the line spans that are visible
+  long m_maxDisplayLines = 0;
+  int m_defaultLineSize = 0;
+  float m_xPad = 0.0f;
 
   // Tooltips
   timer m_toolTipTimer;                 // Timer for when the tip is shown
   NVec2f m_mouseHoverPos;               // Current location for the tip
   GlyphIterator m_mouseBufferLocation;  // The character in the buffer the tip pos is over, or -1
   NVec2f m_lastTipQueryPos;             // last query location for the tip
-  bool m_tipDisabledTillMove =
-      false;  // Certain operations will stop the tip until the mouse is moved
+  bool m_tipDisabledTillMove = false;   // Certain operations will stop the tip until the mouse is moved
   std::map<NVec2f, std::shared_ptr<RangeMarker>>
-      m_toolTips;  // All tooltips for a given position, currently only 1 at a time
+    m_toolTips;  // All tooltips for a given position, currently only 1 at a time
 };
 
 }  // namespace Zep

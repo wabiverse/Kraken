@@ -47,9 +47,7 @@ class HdPhRenderBuffer : public HdRenderBuffer {
   ~HdPhRenderBuffer() override;
 
   HDPH_API
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   HDPH_API
   bool Allocate(GfVec3i const &dimensions, HdFormat format, bool multiSampled) override;

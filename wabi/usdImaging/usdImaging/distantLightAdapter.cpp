@@ -56,8 +56,7 @@ SdfPath UsdImagingDistantLightAdapter::Populate(UsdPrim const &prim,
   return prim.GetPath();
 }
 
-void UsdImagingDistantLightAdapter::_RemovePrim(SdfPath const &cachePath,
-                                                UsdImagingIndexProxy *index)
+void UsdImagingDistantLightAdapter::_RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index)
 {
   index->RemoveSprim(HdPrimTypeTokens->distantLight, cachePath);
 }

@@ -74,15 +74,15 @@ class ArnoldShaderProperty : public SdrShaderProperty {
                        const NdrTokenMap &metadata,
                        const NdrTokenMap &hints,
                        const NdrOptionVec &options)
-      : SdrShaderProperty(name,
-                          typeName.GetAsToken(),
-                          defaultValue,
-                          isOutput,
-                          arraySize,
-                          metadata,
-                          hints,
-                          options),
-        _typeName(typeName)
+    : SdrShaderProperty(name,
+                        typeName.GetAsToken(),
+                        defaultValue,
+                        isOutput,
+                        arraySize,
+                        metadata,
+                        hints,
+                        options),
+      _typeName(typeName)
   {}
 
   const SdfTypeIndicator GetTypeAsSdfType() const override
@@ -110,12 +110,11 @@ NdrNodeUniquePtr NdrArnoldParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
   // similarly to the render delegate, as older versions of Hydra did not validate
   // the node ids against the shader registry.
   if (TfStringStartsWith(discoveryResult.identifier.GetText(), _tokens->arnoldPrefix)) {
-    prim = shaderDefs->GetPrimAtPath(SdfPath(TfStringPrintf(
-        "/%s", discoveryResult.identifier.GetText() + _tokens->arnoldPrefix.size())));
+    prim = shaderDefs->GetPrimAtPath(
+      SdfPath(TfStringPrintf("/%s", discoveryResult.identifier.GetText() + _tokens->arnoldPrefix.size())));
   }
   else {
-    prim = shaderDefs->GetPrimAtPath(
-        SdfPath(TfStringPrintf("/%s", discoveryResult.identifier.GetText())));
+    prim = shaderDefs->GetPrimAtPath(SdfPath(TfStringPrintf("/%s", discoveryResult.identifier.GetText())));
   }
   if (!prim) {
     return nullptr;
@@ -140,16 +139,16 @@ NdrNodeUniquePtr NdrArnoldParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
     // parameter types, so we just have to blindly pass all required
     // parametrs.
     // TODO(pal): Read metadata and hints.
-    properties.emplace_back(SdrShaderPropertyUniquePtr(
-        new ArnoldShaderProperty(propertyName,                         // name
-                                 propertyStack.back()->GetTypeName(),  // type
-                                 v,                                    // defaultValue
-                                 false,                                // isOutput
-                                 0,                                    // arraySize
-                                 NdrTokenMap(),                        // metadata
-                                 NdrTokenMap(),                        // hints
-                                 NdrOptionVec()                        // options
-                                 )));
+    properties.emplace_back(
+      SdrShaderPropertyUniquePtr(new ArnoldShaderProperty(propertyName,                         // name
+                                                          propertyStack.back()->GetTypeName(),  // type
+                                                          v,              // defaultValue
+                                                          false,          // isOutput
+                                                          0,              // arraySize
+                                                          NdrTokenMap(),  // metadata
+                                                          NdrTokenMap(),  // hints
+                                                          NdrOptionVec()  // options
+                                                          )));
   }
   return NdrNodeUniquePtr(new SdrShaderNode(discoveryResult.identifier,     // identifier
                                             discoveryResult.version,        // version

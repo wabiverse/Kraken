@@ -128,8 +128,7 @@ class ArPackageResolver {
   ///
   /// \see ArResolver::Resolve
   AR_API
-  virtual std::string Resolve(const std::string &resolvedPackagePath,
-                              const std::string &packagedPath) = 0;
+  virtual std::string Resolve(const std::string &resolvedPackagePath, const std::string &packagedPath) = 0;
 
   /// @}
 

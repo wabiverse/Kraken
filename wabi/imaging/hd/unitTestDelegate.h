@@ -74,11 +74,11 @@ class HdUnitTestDelegate : public HdSceneDelegate {
                VtVec3fArray const &points,
                VtIntArray const &numVerts,
                VtIntArray const &verts,
-               bool guide                 = false,
+               bool guide = false,
                SdfPath const &instancerId = SdfPath(),
-               TfToken const &scheme      = PxOsdOpenSubdivTokens->catmullClark,
+               TfToken const &scheme = PxOsdOpenSubdivTokens->catmullClark,
                TfToken const &orientation = HdTokens->rightHanded,
-               bool doubleSided           = false);
+               bool doubleSided = false);
 
   HD_API
   void AddMesh(SdfPath const &id,
@@ -92,11 +92,11 @@ class HdUnitTestDelegate : public HdSceneDelegate {
                HdInterpolation colorInterpolation,
                VtValue const &opacity,
                HdInterpolation opacityInterpolation,
-               bool guide                 = false,
+               bool guide = false,
                SdfPath const &instancerId = SdfPath(),
-               TfToken const &scheme      = PxOsdOpenSubdivTokens->catmullClark,
+               TfToken const &scheme = PxOsdOpenSubdivTokens->catmullClark,
                TfToken const &orientation = HdTokens->rightHanded,
-               bool doubleSided           = false);
+               bool doubleSided = false);
 
   HD_API
   void AddMesh(SdfPath const &id,
@@ -112,19 +112,19 @@ class HdUnitTestDelegate : public HdSceneDelegate {
                VtValue const &opacity,
                VtIntArray const &opacityIndices,
                HdInterpolation opacityInterpolation,
-               bool guide                 = false,
+               bool guide = false,
                SdfPath const &instancerId = SdfPath(),
-               TfToken const &scheme      = PxOsdOpenSubdivTokens->catmullClark,
+               TfToken const &scheme = PxOsdOpenSubdivTokens->catmullClark,
                TfToken const &orientation = HdTokens->rightHanded,
-               bool doubleSided           = false);
+               bool doubleSided = false);
 
   /// Add a cube
   HD_API
   void AddCube(SdfPath const &id,
                GfMatrix4f const &transform,
-               bool guide                 = false,
+               bool guide = false,
                SdfPath const &instancerId = SdfPath(),
-               TfToken const &scheme      = PxOsdOpenSubdivTokens->catmullClark);
+               TfToken const &scheme = PxOsdOpenSubdivTokens->catmullClark);
 
   /// Add a grid with division x*y
   HD_API
@@ -132,8 +132,8 @@ class HdUnitTestDelegate : public HdSceneDelegate {
                int x,
                int y,
                GfMatrix4f const &transform,
-               bool rightHanded           = true,
-               bool doubleSided           = false,
+               bool rightHanded = true,
+               bool doubleSided = false,
                SdfPath const &instancerId = SdfPath());
 
   /// Add a grid with division x*y
@@ -142,8 +142,8 @@ class HdUnitTestDelegate : public HdSceneDelegate {
                             int x,
                             int y,
                             GfMatrix4f const &transform,
-                            bool rightHanded           = true,
-                            bool doubleSided           = false,
+                            bool rightHanded = true,
+                            bool doubleSided = false,
                             SdfPath const &instancerId = SdfPath());
 
   /// Add a grid with division x*y
@@ -152,8 +152,8 @@ class HdUnitTestDelegate : public HdSceneDelegate {
                               int x,
                               int y,
                               GfMatrix4f const &transform,
-                              bool rightHanded           = true,
-                              bool doubleSided           = false,
+                              bool rightHanded = true,
+                              bool doubleSided = false,
                               SdfPath const &instancerId = SdfPath());
 
   /// Add a grid with division x*y
@@ -162,8 +162,8 @@ class HdUnitTestDelegate : public HdSceneDelegate {
                                    int x,
                                    int y,
                                    GfMatrix4f const &transform,
-                                   bool rightHanded           = true,
-                                   bool doubleSided           = false,
+                                   bool rightHanded = true,
+                                   bool doubleSided = false,
                                    SdfPath const &instancerId = SdfPath());
 
   // Add a grid with division x*y and a custom color
@@ -174,8 +174,8 @@ class HdUnitTestDelegate : public HdSceneDelegate {
                               GfMatrix4f const &transform,
                               VtValue const &color,
                               HdInterpolation colorInterpolation,
-                              bool rightHanded           = true,
-                              bool doubleSided           = false,
+                              bool rightHanded = true,
+                              bool doubleSided = false,
                               SdfPath const &instancerId = SdfPath());
 
   /// Add a triangle, quad and pentagon.
@@ -194,9 +194,7 @@ class HdUnitTestDelegate : public HdSceneDelegate {
 
   /// Add a subdiv with various tags
   HD_API
-  void AddSubdiv(SdfPath const &id,
-                 GfMatrix4f const &transform,
-                 SdfPath const &insatancerId = SdfPath());
+  void AddSubdiv(SdfPath const &id, GfMatrix4f const &transform, SdfPath const &insatancerId = SdfPath());
 
   // -----------------------------------------------------------------------
 
@@ -223,8 +221,8 @@ class HdUnitTestDelegate : public HdSceneDelegate {
                  GfMatrix4f const &transform,
                  HdInterpolation colorInterp = HdInterpolationConstant,
                  HdInterpolation widthInterp = HdInterpolationConstant,
-                 bool authoredNormals        = false,
-                 SdfPath const &instancerId  = SdfPath());
+                 bool authoredNormals = false,
+                 SdfPath const &instancerId = SdfPath());
 
   HD_API
   void AddPoints(SdfPath const &id,
@@ -243,12 +241,12 @@ class HdUnitTestDelegate : public HdSceneDelegate {
                  GfMatrix4f const &transform,
                  HdInterpolation colorInterp = HdInterpolationConstant,
                  HdInterpolation widthInterp = HdInterpolationConstant,
-                 SdfPath const &instancerId  = SdfPath());
+                 SdfPath const &instancerId = SdfPath());
 
   /// Instancer
   HD_API
   void AddInstancer(SdfPath const &id,
-                    SdfPath const &parentId         = SdfPath(),
+                    SdfPath const &parentId = SdfPath(),
                     GfMatrix4f const &rootTransform = GfMatrix4f(1));
 
   HD_API
@@ -392,9 +390,7 @@ class HdUnitTestDelegate : public HdSceneDelegate {
   HD_API
   virtual VtValue Get(SdfPath const &id, TfToken const &key) override;
   HD_API
-  virtual VtValue GetIndexedPrimvar(SdfPath const &id,
-                                    TfToken const &key,
-                                    VtIntArray *outIndices) override;
+  virtual VtValue GetIndexedPrimvar(SdfPath const &id, TfToken const &key, VtIntArray *outIndices) override;
   HD_API
   virtual HdReprSelector GetReprSelector(SdfPath const &id) override;
   HD_API
@@ -402,8 +398,7 @@ class HdUnitTestDelegate : public HdSceneDelegate {
                                                           HdInterpolation interpolation) override;
 
   HD_API
-  virtual VtIntArray GetInstanceIndices(SdfPath const &instancerId,
-                                        SdfPath const &prototypeId) override;
+  virtual VtIntArray GetInstanceIndices(SdfPath const &instancerId, SdfPath const &prototypeId) override;
 
   HD_API
   virtual GfMatrix4d GetInstancerTransform(SdfPath const &instancerId) override;
@@ -445,16 +440,16 @@ class HdUnitTestDelegate : public HdSceneDelegate {
           PxOsdSubdivTags const &subdivTags,
           bool guide,
           bool doubleSided)
-        : scheme(scheme),
-          orientation(orientation),
-          transform(transform),
-          points(points),
-          numVerts(numVerts),
-          verts(verts),
-          holes(holes),
-          subdivTags(subdivTags),
-          guide(guide),
-          doubleSided(doubleSided)
+      : scheme(scheme),
+        orientation(orientation),
+        transform(transform),
+        points(points),
+        numVerts(numVerts),
+        verts(verts),
+        holes(holes),
+        subdivTags(subdivTags),
+        guide(guide),
+        doubleSided(doubleSided)
     {}
 
     TfToken scheme;
@@ -476,10 +471,10 @@ class HdUnitTestDelegate : public HdSceneDelegate {
             VtIntArray const &curveVertexCounts,
             TfToken const &type,
             TfToken const &basis)
-        : points(points),
-          curveVertexCounts(curveVertexCounts),
-          type(type),
-          basis(basis)
+      : points(points),
+        curveVertexCounts(curveVertexCounts),
+        type(type),
+        basis(basis)
     {}
 
     VtVec3fArray points;
@@ -502,10 +497,10 @@ class HdUnitTestDelegate : public HdSceneDelegate {
                VtVec4fArray const &rotate,
                VtVec3fArray const &translate,
                GfMatrix4f const &rootTransform)
-        : scale(scale),
-          rotate(rotate),
-          translate(translate),
-          rootTransform(rootTransform)
+      : scale(scale),
+        rotate(rotate),
+        translate(translate),
+        rootTransform(rootTransform)
     {}
     VtVec3fArray scale;
     VtVec4fArray rotate;
@@ -523,11 +518,11 @@ class HdUnitTestDelegate : public HdSceneDelegate {
              HdInterpolation const &_interp,
              TfToken const &_role,
              VtIntArray const &_indices = VtIntArray(0))
-        : name(_name),
-          value(_value),
-          interp(_interp),
-          role(_role),
-          indices(_indices)
+      : name(_name),
+        value(_value),
+        interp(_interp),
+        role(_role),
+        indices(_indices)
     {}
 
     TfToken name;

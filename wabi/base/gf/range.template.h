@@ -132,10 +132,10 @@ class {
     {
       % if DIM == 1 %
     }
-    _min                                              = FLT_MAX;
-    _max                                              = -FLT_MAX;
+    _min = FLT_MAX;
+    _max = -FLT_MAX;
     { % else % } {{LIST("_min[%(i)s]", sep = " = ")}} = FLT_MAX;
-    {{LIST("_max[%(i)s]", sep = " = ")}}              = -FLT_MAX;
+    {{LIST("_max[%(i)s]", sep = " = ")}} = -FLT_MAX;
     {
       % endif %
     }
@@ -149,18 +149,18 @@ class {
 
   /// This constructor initializes the minimum and maximum points.
   {{RNG}}(
+    {
       {
-        {
-          MINMAXPARM
-        }
-      } min,
+        MINMAXPARM
+      }
+    } min,
+    {
       {
-        {
-          MINMAXPARM
-        }
-      } max)
-      : _min(min),
-        _max(max){}
+        MINMAXPARM
+      }
+    } max)
+    : _min(min),
+      _max(max){}
 
   /// Returns the minimum value of the range.
   {
@@ -277,8 +277,8 @@ class {
     {
       % else %
     }
-    return ({{LIST("point[%(i)s] >= _min[%(i)s] && point[%(i)s] <= _max[%(i)s]",
-                   sep = "\n             && ")}});
+    return (
+      {{LIST("point[%(i)s] >= _min[%(i)s] && point[%(i)s] <= _max[%(i)s]", sep = "\n             && ")}});
     {
       % endif %
     }
@@ -497,7 +497,7 @@ class {
           MINMAX
         }
       }
-      tmp  = _min;
+      tmp = _min;
       _min = _max * m;
       _max = tmp * m;
     }
@@ -698,8 +698,8 @@ class {
     }
     if (point < dest)
       dest = point;
-    { % else % } {{LIST("if (point[%(i)s] < dest[%(i)s]) dest[%(i)s] = point[%(i)s];",
-                        sep = "\n        ")}} {
+    { %
+      else % } {{LIST("if (point[%(i)s] < dest[%(i)s]) dest[%(i)s] = point[%(i)s];", sep = "\n        ")}} {
       % endif %
     }
   }
@@ -716,8 +716,8 @@ class {
     }
     if (point > dest)
       dest = point;
-    { % else % } {{LIST("if (point[%(i)s] > dest[%(i)s]) dest[%(i)s] = point[%(i)s];",
-                        sep = "\n        ")}} {
+    { %
+      else % } {{LIST("if (point[%(i)s] > dest[%(i)s]) dest[%(i)s] = point[%(i)s];", sep = "\n        ")}} {
       % endif %
     }
   }

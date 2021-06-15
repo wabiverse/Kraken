@@ -98,8 +98,7 @@ ANCHOR_ISystemWindow *ANCHOR_WindowManager::getFullScreenWindow(void) const
   return m_fullScreenWindow;
 }
 
-eAnchorStatus ANCHOR_WindowManager::beginFullScreen(ANCHOR_ISystemWindow *window,
-                                                    bool /*stereoVisual*/)
+eAnchorStatus ANCHOR_WindowManager::beginFullScreen(ANCHOR_ISystemWindow *window, bool /*stereoVisual*/)
 {
   eAnchorStatus success = ANCHOR_ERROR;
   ANCHOR_ASSERT(window);

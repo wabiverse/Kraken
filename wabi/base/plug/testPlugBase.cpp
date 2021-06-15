@@ -38,8 +38,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<int N>
-TfRefPtr<_TestPlugBase<N>> _TestPlugBase<N>::Manufacture(const std::string &subclass)
+template<int N> TfRefPtr<_TestPlugBase<N>> _TestPlugBase<N>::Manufacture(const std::string &subclass)
 {
   // Lookup TfType for subclass
   const TfType &t = PlugRegistry::FindTypeByName(subclass);
@@ -92,7 +91,7 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<_TestPlugBase4>().SetFactory<_TestPlugFactory<_TestPlugBase4>>();
 
   TfType::Define<_TestPlugDerived0, TfType::Bases<_TestPlugBase1>>()
-      .SetFactory<_TestPlugFactory<_TestPlugDerived0>>();
+    .SetFactory<_TestPlugFactory<_TestPlugDerived0>>();
 }
 
 WABI_NAMESPACE_END

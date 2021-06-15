@@ -50,8 +50,7 @@ TF_DEBUG_CODES(HGIMETAL_DEBUG_ERROR_STACKTRACE);
 
 TF_REGISTRY_FUNCTION(TfDebug)
 {
-  TF_DEBUG_ENVIRONMENT_SYMBOL(HGIMETAL_DEBUG_ERROR_STACKTRACE,
-                              "HgiMetal dump stack trace on Metal error");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HGIMETAL_DEBUG_ERROR_STACKTRACE, "HgiMetal dump stack trace on Metal error");
 }
 
 bool HgiMetalDebugEnabled()

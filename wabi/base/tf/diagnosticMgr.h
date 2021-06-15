@@ -290,9 +290,9 @@ class TfDiagnosticMgr : public TfWeakBase {
   class ErrorHelper {
    public:
     ErrorHelper(TfCallContext const &context, TfEnum errorCode, const char *errorCodeString)
-        : _context(context),
-          _errorCode(errorCode),
-          _errorCodeString(errorCodeString)
+      : _context(context),
+        _errorCode(errorCode),
+        _errorCodeString(errorCodeString)
     {}
 
     TF_API
@@ -318,9 +318,9 @@ class TfDiagnosticMgr : public TfWeakBase {
 
   struct WarningHelper {
     WarningHelper(TfCallContext const &context, TfEnum warningCode, const char *warningCodeString)
-        : _context(context),
-          _warningCode(warningCode),
-          _warningCodeString(warningCodeString)
+      : _context(context),
+        _warningCode(warningCode),
+        _warningCodeString(warningCodeString)
     {}
 
     TF_API
@@ -346,9 +346,9 @@ class TfDiagnosticMgr : public TfWeakBase {
 
   struct StatusHelper {
     StatusHelper(TfCallContext const &context, TfEnum statusCode, const char *statusCodeString)
-        : _context(context),
-          _statusCode(statusCode),
-          _statusCodeString(statusCodeString)
+      : _context(context),
+        _statusCode(statusCode),
+        _statusCodeString(statusCodeString)
     {}
 
     TF_API
@@ -373,9 +373,7 @@ class TfDiagnosticMgr : public TfWeakBase {
   };
 
   struct FatalHelper {
-    FatalHelper(TfCallContext const &context, TfEnum statusCode)
-        : _context(context),
-          _statusCode(statusCode)
+    FatalHelper(TfCallContext const &context, TfEnum statusCode) : _context(context), _statusCode(statusCode)
     {}
 
     void Post(const std::string &str) const
@@ -461,10 +459,8 @@ class TfDiagnosticMgr : public TfWeakBase {
 
   // Thread-specific error mark counts.  Use a native key for best performance
   // here.
-  tbb::enumerable_thread_specific<size_t,
-                                  tbb::cache_aligned_allocator<size_t>,
-                                  tbb::ets_key_per_instance>
-      _errorMarkCounts;
+  tbb::enumerable_thread_specific<size_t, tbb::cache_aligned_allocator<size_t>, tbb::ets_key_per_instance>
+    _errorMarkCounts;
 
   bool _quiet;
 

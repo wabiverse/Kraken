@@ -50,10 +50,10 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 UsdDracoFileFormat::UsdDracoFileFormat()
-    : SdfFileFormat(UsdDracoFileFormatTokens->Id,
-                    UsdDracoFileFormatTokens->Version,
-                    UsdDracoFileFormatTokens->Target,
-                    UsdDracoFileFormatTokens->Id)
+  : SdfFileFormat(UsdDracoFileFormatTokens->Id,
+                  UsdDracoFileFormatTokens->Version,
+                  UsdDracoFileFormatTokens->Target,
+                  UsdDracoFileFormatTokens->Id)
 {}
 
 UsdDracoFileFormat::~UsdDracoFileFormat()
@@ -78,7 +78,7 @@ bool UsdDracoFileFormat::_ReadFromChars(SdfLayer *layer,
 
   // Determine whether Draco data is a mesh or a point cloud.
   const draco::StatusOr<draco::EncodedGeometryType> maybeGeometryType =
-      draco::Decoder::GetEncodedGeometryType(&buffer);
+    draco::Decoder::GetEncodedGeometryType(&buffer);
   if (!maybeGeometryType.ok()) {
     *outErr = "Failed to determine geometry type from Draco stream.";
     return false;
@@ -96,8 +96,7 @@ bool UsdDracoFileFormat::_ReadFromChars(SdfLayer *layer,
     // Scope to delete decoder before translation, to reduce peak memory.
     {
       draco::Decoder decoder;
-      draco::StatusOr<std::unique_ptr<draco::Mesh>> maybeMesh = decoder.DecodeMeshFromBuffer(
-          &buffer);
+      draco::StatusOr<std::unique_ptr<draco::Mesh>> maybeMesh = decoder.DecodeMeshFromBuffer(&buffer);
       mesh = std::move(maybeMesh).value();
       if (!maybeMesh.ok() || mesh == nullptr) {
         *outErr = "Failed to decode mesh from Draco stream.";
@@ -118,9 +117,7 @@ bool UsdDracoFileFormat::_ReadFromChars(SdfLayer *layer,
   return true;
 }
 
-bool UsdDracoFileFormat::Read(SdfLayer *layer,
-                              const std::string &resolvedPath,
-                              bool metadataOnly) const
+bool UsdDracoFileFormat::Read(SdfLayer *layer, const std::string &resolvedPath, bool metadataOnly) const
 {
   // Open an asset with Draco data.
   std::shared_ptr<ArAsset> asset = ArGetResolver().OpenAsset(ArResolvedPath(resolvedPath));
@@ -131,8 +128,7 @@ bool UsdDracoFileFormat::Read(SdfLayer *layer,
 
   std::string error;
   if (!_ReadFromChars(layer, asset->GetBuffer().get(), asset->GetSize(), metadataOnly, &error)) {
-    TF_RUNTIME_ERROR(
-        "Failed to read from Draco file \"%s\": %s", resolvedPath.c_str(), error.c_str());
+    TF_RUNTIME_ERROR("Failed to read from Draco file \"%s\": %s", resolvedPath.c_str(), error.c_str());
     return false;
   }
   return true;
@@ -165,9 +161,7 @@ bool UsdDracoFileFormat::WriteToString(const SdfLayer &layer,
   return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToString(layer, str, comment);
 }
 
-bool UsdDracoFileFormat::WriteToStream(const SdfSpecHandle &spec,
-                                       std::ostream &out,
-                                       size_t indent) const
+bool UsdDracoFileFormat::WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const
 {
   // Draco format can only describe a subset of USD content, so falling back
   // to USDA file format instead.

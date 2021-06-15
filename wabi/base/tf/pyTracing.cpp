@@ -107,11 +107,11 @@ static int _TracePythonFn(PyObject *, PyFrameObject *frame, int what, PyObject *
 {
   // Build up a trace info struct.
   TfPyTraceInfo info;
-  info.arg      = arg;
+  info.arg = arg;
   info.funcName = TfPyString_AsString(frame->f_code->co_name);
   info.fileName = TfPyString_AsString(frame->f_code->co_filename);
   info.funcLine = frame->f_code->co_firstlineno;
-  info.what     = what;
+  info.what = what;
 
   _InvokeTraceFns(info);
 

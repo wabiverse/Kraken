@@ -38,17 +38,15 @@
 WABI_NAMESPACE_BEGIN
 
 HdxOitVolumeRenderTask::HdxOitVolumeRenderTask(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdxRenderTask(delegate, id),
-      _oitVolumeRenderPassShader(
-          std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassOitVolumeShader())),
-      _isOitEnabled(HdxOitBufferAccessor::IsOitEnabled())
+  : HdxRenderTask(delegate, id),
+    _oitVolumeRenderPassShader(
+      std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassOitVolumeShader())),
+    _isOitEnabled(HdxOitBufferAccessor::IsOitEnabled())
 {}
 
 HdxOitVolumeRenderTask::~HdxOitVolumeRenderTask() = default;
 
-void HdxOitVolumeRenderTask::_Sync(HdSceneDelegate *delegate,
-                                   HdTaskContext *ctx,
-                                   HdDirtyBits *dirtyBits)
+void HdxOitVolumeRenderTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -73,8 +71,7 @@ void HdxOitVolumeRenderTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIn
     }
 
     if (HdRenderPassStateSharedPtr const state = _GetRenderPassState(ctx)) {
-      _oitVolumeRenderPassShader->UpdateAovInputTextures(state->GetAovInputBindings(),
-                                                         renderIndex);
+      _oitVolumeRenderPassShader->UpdateAovInputTextures(state->GetAovInputBindings(), renderIndex);
     }
   }
 }

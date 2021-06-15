@@ -56,9 +56,7 @@ std::vector<HgiVulkanGraphicsPipelineVector *> HgiVulkanGarbageCollector::_graph
 std::vector<HgiVulkanComputePipelineVector *> HgiVulkanGarbageCollector::_computePipelineList;
 
 template<class T>
-static void _EmptyTrash(std::vector<std::vector<T *> *> *list,
-                        VkDevice vkDevice,
-                        uint64_t queueInflightBits)
+static void _EmptyTrash(std::vector<std::vector<T *> *> *list, VkDevice vkDevice, uint64_t queueInflightBits)
 {
   // Loop the garbage vectors of each thread
   for (auto vec : *list) {
@@ -82,9 +80,7 @@ static void _EmptyTrash(std::vector<std::vector<T *> *> *list,
   }
 }
 
-HgiVulkanGarbageCollector::HgiVulkanGarbageCollector(HgiVulkan *hgi)
-    : _hgi(hgi),
-      _isDestroying(false)
+HgiVulkanGarbageCollector::HgiVulkanGarbageCollector(HgiVulkan *hgi) : _hgi(hgi), _isDestroying(false)
 {}
 
 HgiVulkanGarbageCollector::~HgiVulkanGarbageCollector() = default;
@@ -169,8 +165,8 @@ void HgiVulkanGarbageCollector::PerformGarbageCollection(HgiVulkanDevice *device
 
   // Check what command buffers are in-flight on the device queue.
   HgiVulkanCommandQueue *queue = device->GetCommandQueue();
-  uint64_t queueBits           = queue->GetInflightCommandBuffersBits();
-  VkDevice vkDevice            = device->GetVulkanDevice();
+  uint64_t queueBits = queue->GetInflightCommandBuffersBits();
+  VkDevice vkDevice = device->GetVulkanDevice();
 
   _EmptyTrash(&_bufferList, vkDevice, queueBits);
   _EmptyTrash(&_textureList, vkDevice, queueBits);
@@ -184,8 +180,7 @@ void HgiVulkanGarbageCollector::PerformGarbageCollection(HgiVulkanDevice *device
   _isDestroying = false;
 }
 
-template<class T>
-T *HgiVulkanGarbageCollector::_GetThreadLocalStorageList(std::vector<T *> *collector)
+template<class T> T *HgiVulkanGarbageCollector::_GetThreadLocalStorageList(std::vector<T *> *collector)
 {
   if (ARCH_UNLIKELY(_isDestroying)) {
     TF_CODING_ERROR("Cannot destroy object during garbage collection ");

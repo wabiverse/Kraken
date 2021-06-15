@@ -69,8 +69,8 @@ class GfInterval {
 
   /// Construct an interval with the given arguments.
   GfInterval(double min, double max, bool minClosed = true, bool maxClosed = true)
-      : _min(min, minClosed),
-        _max(max, maxClosed)
+    : _min(min, minClosed),
+      _max(max, maxClosed)
   {}
 
   ///@}
@@ -200,8 +200,7 @@ class GfInterval {
   /// Return true iff the interval is empty.
   bool IsEmpty() const
   {
-    return (_min.value > _max.value) ||
-           ((_min.value == _max.value) && (!_min.closed || !_max.closed));
+    return (_min.value > _max.value) || ((_min.value == _max.value) && (!_min.closed || !_max.closed));
   }
 
   /// Width of the interval.
@@ -330,8 +329,8 @@ class GfInterval {
     const _Bound b = _min * rhs._max;
     const _Bound c = _max * rhs._min;
     const _Bound d = _max * rhs._max;
-    _max           = _Max(_Max(a, b), _Max(c, d));
-    _min           = _Min(_Min(a, b), _Min(c, d));
+    _max = _Max(_Max(a, b), _Max(c, d));
+    _min = _Min(_Min(a, b), _Min(c, d));
     return *this;
   }
 
@@ -406,10 +405,8 @@ class GfInterval {
   /// Returns the full interval (-inf, inf).
   static GfInterval GetFullInterval()
   {
-    return GfInterval(-std::numeric_limits<double>::infinity(),
-                      std::numeric_limits<double>::infinity(),
-                      false,
-                      false);
+    return GfInterval(
+      -std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(), false, false);
   }
 
  private:
@@ -448,7 +445,7 @@ class GfInterval {
 
     _Bound &operator=(const _Bound &rhs)
     {
-      value  = rhs.value;
+      value = rhs.value;
       closed = rhs.closed;
       return *this;
     }

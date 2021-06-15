@@ -35,12 +35,12 @@
 WABI_NAMESPACE_BEGIN
 
 HdxAovInputTask::HdxAovInputTask(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdxTask(id),
-      _converged(false),
-      _aovBufferPath(),
-      _depthBufferPath(),
-      _aovBuffer(nullptr),
-      _depthBuffer(nullptr)
+  : HdxTask(id),
+    _converged(false),
+    _aovBufferPath(),
+    _depthBufferPath(),
+    _aovBuffer(nullptr),
+    _depthBuffer(nullptr)
 {}
 
 HdxAovInputTask::~HdxAovInputTask()
@@ -70,7 +70,7 @@ void HdxAovInputTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDir
     HdxAovInputTaskParams params;
 
     if (_GetTaskParams(delegate, &params)) {
-      _aovBufferPath   = params.aovBufferPath;
+      _aovBufferPath = params.aovBufferPath;
       _depthBufferPath = params.depthBufferPath;
     }
   }
@@ -84,18 +84,18 @@ void HdxAovInputTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
   // This is important for Hgi garbage collection to run.
   _GetHgi()->StartFrame();
 
-  _aovBuffer   = nullptr;
+  _aovBuffer = nullptr;
   _depthBuffer = nullptr;
 
   // An empty _aovBufferPath disables the task
   if (!_aovBufferPath.IsEmpty()) {
     _aovBuffer = static_cast<HdRenderBuffer *>(
-        renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, _aovBufferPath));
+      renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, _aovBufferPath));
   }
 
   if (!_depthBufferPath.IsEmpty()) {
     _depthBuffer = static_cast<HdRenderBuffer *>(
-        renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, _depthBufferPath));
+      renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, _depthBufferPath));
   }
 
   // Create / update the texture that will be used to ping-pong between color
@@ -141,11 +141,11 @@ void HdxAovInputTask::Execute(HdTaskContext *ctx)
   // The lifetime management of that HgiTexture remains with the aov.
 
   bool hgiHandleProvidedByAov = false;
-  const bool mulSmp           = false;
+  const bool mulSmp = false;
 
   VtValue aov = _aovBuffer->GetResource(mulSmp);
   if (aov.IsHolding<HgiTextureHandle>()) {
-    hgiHandleProvidedByAov     = true;
+    hgiHandleProvidedByAov = true;
     (*ctx)[HdAovTokens->color] = aov;
   }
 
@@ -180,18 +180,16 @@ void HdxAovInputTask::Execute(HdTaskContext *ctx)
   }
 }
 
-void HdxAovInputTask::_UpdateTexture(HdTaskContext *ctx,
-                                     HgiTextureHandle &texture,
-                                     HdRenderBuffer *buffer)
+void HdxAovInputTask::_UpdateTexture(HdTaskContext *ctx, HgiTextureHandle &texture, HdRenderBuffer *buffer)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
   GfVec3i dim(buffer->GetWidth(), buffer->GetHeight(), buffer->GetDepth());
 
-  HgiFormat bufFormat  = HdxHgiConversions::GetHgiFormat(buffer->GetFormat());
+  HgiFormat bufFormat = HdxHgiConversions::GetHgiFormat(buffer->GetFormat());
   size_t pixelByteSize = HdDataSizeOfFormat(buffer->GetFormat());
-  size_t dataByteSize  = dim[0] * dim[1] * dim[2] * pixelByteSize;
+  size_t dataByteSize = dim[0] * dim[1] * dim[2] * pixelByteSize;
 
   // Update the existing texture if specs are compatible. This is more
   // efficient than re-creating, because the underlying framebuffer that
@@ -200,9 +198,9 @@ void HdxAovInputTask::_UpdateTexture(HdTaskContext *ctx,
       texture->GetDescriptor().format == bufFormat) {
     const void *pixelData = buffer->Map();
     HgiTextureCpuToGpuOp copyOp;
-    copyOp.bufferByteSize         = dataByteSize;
-    copyOp.cpuSourceBuffer        = pixelData;
-    copyOp.gpuDestinationTexture  = texture;
+    copyOp.bufferByteSize = dataByteSize;
+    copyOp.cpuSourceBuffer = pixelData;
+    copyOp.gpuDestinationTexture = texture;
     HgiBlitCmdsUniquePtr blitCmds = _GetHgi()->CreateBlitCmds();
     blitCmds->PushDebugGroup("Upload CPU texels");
     blitCmds->CopyTextureCpuToGpu(copyOp);
@@ -213,18 +211,18 @@ void HdxAovInputTask::_UpdateTexture(HdTaskContext *ctx,
   else {
     // Create a new texture
     HgiTextureDesc texDesc;
-    texDesc.debugName  = "AovInput Texture";
+    texDesc.debugName = "AovInput Texture";
     texDesc.dimensions = dim;
 
     const void *pixelData = buffer->Map();
 
-    texDesc.format         = bufFormat;
-    texDesc.initialData    = pixelData;
-    texDesc.layerCount     = 1;
-    texDesc.mipLevels      = 1;
+    texDesc.format = bufFormat;
+    texDesc.initialData = pixelData;
+    texDesc.layerCount = 1;
+    texDesc.mipLevels = 1;
     texDesc.pixelsByteSize = dataByteSize;
-    texDesc.sampleCount    = HgiSampleCount1;
-    texDesc.usage          = HgiTextureUsageBitsColorTarget | HgiTextureUsageBitsShaderRead;
+    texDesc.sampleCount = HgiSampleCount1;
+    texDesc.usage = HgiTextureUsageBitsColorTarget | HgiTextureUsageBitsShaderRead;
 
     texture = _GetHgi()->CreateTexture(texDesc);
 
@@ -247,14 +245,14 @@ void HdxAovInputTask::_UpdateIntermediateTexture(HgiTextureHandle &texture, HdRe
   if (!_aovTextureIntermediate) {
 
     HgiTextureDesc texDesc;
-    texDesc.debugName  = "AovInput Intermediate Texture";
+    texDesc.debugName = "AovInput Intermediate Texture";
     texDesc.dimensions = dim;
 
-    texDesc.format      = hgiFormat;
-    texDesc.layerCount  = 1;
-    texDesc.mipLevels   = 1;
+    texDesc.format = hgiFormat;
+    texDesc.layerCount = 1;
+    texDesc.mipLevels = 1;
     texDesc.sampleCount = HgiSampleCount1;
-    texDesc.usage       = HgiTextureUsageBitsColorTarget | HgiTextureUsageBitsShaderRead;
+    texDesc.usage = HgiTextureUsageBitsColorTarget | HgiTextureUsageBitsShaderRead;
 
     texture = _GetHgi()->CreateTexture(texDesc);
   }

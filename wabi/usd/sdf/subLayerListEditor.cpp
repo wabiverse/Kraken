@@ -34,7 +34,7 @@
 WABI_NAMESPACE_BEGIN
 
 Sdf_SubLayerListEditor::Sdf_SubLayerListEditor(const SdfLayerHandle &owner)
-    : Parent(owner->GetPseudoRoot(), SdfFieldKeys->SubLayers, SdfListOpTypeOrdered)
+  : Parent(owner->GetPseudoRoot(), SdfFieldKeys->SubLayers, SdfListOpTypeOrdered)
 {}
 
 Sdf_SubLayerListEditor::~Sdf_SubLayerListEditor() = default;
@@ -46,7 +46,7 @@ void Sdf_SubLayerListEditor::_OnEdit(SdfListOpType op,
   // When sublayer paths are added or removed, we need to keep the
   // sublayer offsets vector (stored in a separate field) in sync.
   const SdfLayerOffsetVector oldLayerOffsets = _GetOwner()->GetFieldAs<SdfLayerOffsetVector>(
-      SdfFieldKeys->SubLayerOffsets);
+    SdfFieldKeys->SubLayerOffsets);
 
   // If this is ever the case, bad things will probably happen as code
   // in SdfLayer assumes the two vectors are in sync.
@@ -61,13 +61,13 @@ void Sdf_SubLayerListEditor::_OnEdit(SdfListOpType op,
     const std::string &newLayer = newValues[i];
 
     std::vector<std::string>::const_iterator oldValuesIt = std::find(
-        oldValues.begin(), oldValues.end(), newLayer);
+      oldValues.begin(), oldValues.end(), newLayer);
     if (oldValuesIt == oldValues.end()) {
       continue;
     }
 
     const size_t oldLayerOffsetIndex = std::distance(oldValues.begin(), oldValuesIt);
-    newLayerOffsets[i]               = oldLayerOffsets[oldLayerOffsetIndex];
+    newLayerOffsets[i] = oldLayerOffsets[oldLayerOffsetIndex];
   }
 
   _GetOwner()->SetField(SdfFieldKeys->SubLayerOffsets, newLayerOffsets);

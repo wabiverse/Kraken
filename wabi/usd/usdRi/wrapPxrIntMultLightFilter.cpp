@@ -58,8 +58,7 @@ static UsdAttribute _CreateRiIntensityAttr(UsdRiPxrIntMultLightFilter &self,
                                            object defaultVal,
                                            bool writeSparsely)
 {
-  return self.CreateRiIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                    writeSparsely);
+  return self.CreateRiIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
 static UsdAttribute _CreateColorSaturationAttr(UsdRiPxrIntMultLightFilter &self,
@@ -85,39 +84,37 @@ void wrapUsdRiPxrIntMultLightFilter()
   class_<This, bases<UsdLuxLightFilter>> cls("wabiIntMultLightFilter");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetRiIntensityAttr", &This::GetRiIntensityAttr)
-      .def("CreateRiIntensityAttr",
-           &_CreateRiIntensityAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetRiIntensityAttr", &This::GetRiIntensityAttr)
+    .def("CreateRiIntensityAttr",
+         &_CreateRiIntensityAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetColorSaturationAttr", &This::GetColorSaturationAttr)
-      .def("CreateColorSaturationAttr",
-           &_CreateColorSaturationAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetColorSaturationAttr", &This::GetColorSaturationAttr)
+    .def("CreateColorSaturationAttr",
+         &_CreateColorSaturationAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

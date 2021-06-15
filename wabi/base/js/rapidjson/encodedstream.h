@@ -53,7 +53,7 @@ template<typename Encoding, typename InputByteStream> class EncodedInputStream {
   }
   Ch Take()
   {
-    Ch c     = current_;
+    Ch c = current_;
     current_ = Encoding::Take(is_);
     return c;
   }
@@ -214,16 +214,13 @@ template<typename CharType, typename InputByteStream> class AutoUTFInputStream {
       \param is input stream to be wrapped.
       \param type UTF encoding type if it is not detected from the stream.
   */
-  AutoUTFInputStream(InputByteStream &is, UTFType type = kUTF8)
-      : is_(&is),
-        type_(type),
-        hasBOM_(false)
+  AutoUTFInputStream(InputByteStream &is, UTFType type = kUTF8) : is_(&is), type_(type), hasBOM_(false)
   {
     RAPIDJSON_ASSERT(type >= kUTF8 && type <= kUTF32BE);
     DetectType();
     static const TakeFunc f[] = {RAPIDJSON_ENCODINGS_FUNC(Take)};
-    takeFunc_                 = f[type_];
-    current_                  = takeFunc_(*is_);
+    takeFunc_ = f[type_];
+    current_ = takeFunc_(*is_);
   }
 
   UTFType GetType() const
@@ -241,7 +238,7 @@ template<typename CharType, typename InputByteStream> class AutoUTFInputStream {
   }
   Ch Take()
   {
-    Ch c     = current_;
+    Ch c = current_;
     current_ = takeFunc_(*is_);
     return c;
   }
@@ -289,9 +286,9 @@ template<typename CharType, typename InputByteStream> class AutoUTFInputStream {
       return;
 
     unsigned bom = static_cast<unsigned>(c[0] | (c[1] << 8) | (c[2] << 16) | (c[3] << 24));
-    hasBOM_      = false;
+    hasBOM_ = false;
     if (bom == 0xFFFE0000) {
-      type_   = kUTF32BE;
+      type_ = kUTF32BE;
       hasBOM_ = true;
       is_->Take();
       is_->Take();
@@ -299,7 +296,7 @@ template<typename CharType, typename InputByteStream> class AutoUTFInputStream {
       is_->Take();
     }
     else if (bom == 0x0000FEFF) {
-      type_   = kUTF32LE;
+      type_ = kUTF32LE;
       hasBOM_ = true;
       is_->Take();
       is_->Take();
@@ -307,19 +304,19 @@ template<typename CharType, typename InputByteStream> class AutoUTFInputStream {
       is_->Take();
     }
     else if ((bom & 0xFFFF) == 0xFFFE) {
-      type_   = kUTF16BE;
+      type_ = kUTF16BE;
       hasBOM_ = true;
       is_->Take();
       is_->Take();
     }
     else if ((bom & 0xFFFF) == 0xFEFF) {
-      type_   = kUTF16LE;
+      type_ = kUTF16LE;
       hasBOM_ = true;
       is_->Take();
       is_->Take();
     }
     else if ((bom & 0xFFFFFF) == 0xBFBBEF) {
-      type_   = kUTF8;
+      type_ = kUTF8;
       hasBOM_ = true;
       is_->Take();
       is_->Take();
@@ -405,7 +402,7 @@ template<typename CharType, typename OutputByteStream> class AutoUTFOutputStream
       RAPIDJSON_ASSERT(sizeof(Ch) >= 4);
 
     static const PutFunc f[] = {RAPIDJSON_ENCODINGS_FUNC(Put)};
-    putFunc_                 = f[type_];
+    putFunc_ = f[type_];
 
     if (putBOM)
       PutBOM();

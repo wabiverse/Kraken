@@ -75,8 +75,8 @@ std::string ArchStrSysError(unsigned long errorCode)
     return std::string();
 
   LPSTR buffer = nullptr;
-  size_t len   = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-                                 FORMAT_MESSAGE_IGNORE_INSERTS,
+  size_t len = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+                               FORMAT_MESSAGE_IGNORE_INSERTS,
                              nullptr,
                              errorCode,
                              MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),

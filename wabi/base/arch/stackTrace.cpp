@@ -112,9 +112,9 @@ using namespace std;
 typedef int (*ForkFunc)(void);
 ForkFunc Arch_nonLockingFork =
 #  if defined(ARCH_OS_LINUX)
-    (ForkFunc)dlsym(RTLD_NEXT, "__libc_fork");
+  (ForkFunc)dlsym(RTLD_NEXT, "__libc_fork");
 #  elif defined(ARCH_OS_DARWIN)
-    NULL;
+  NULL;
 #  else
 #    error Unknown architecture.
 #  endif
@@ -135,7 +135,7 @@ static bool _shouldLogStackToDb = false;
 static const char *_logStackToDbCmd = nullptr;
 
 // Arguments to _logStackToDbCmd for non-crash and crash reports, respectively.
-static const char *const *_sessionLogArgv      = nullptr;
+static const char *const *_sessionLogArgv = nullptr;
 static const char *const *_sessionCrashLogArgv = nullptr;
 
 // This string stores the program name to be used when
@@ -243,8 +243,7 @@ class Arch_LogInfo {
   mutable std::mutex _logInfoForErrorsMutex;
 };
 
-void Arch_LogInfo::SetExtraLogInfoForErrors(const std::string &key,
-                                            std::vector<std::string> const *lines)
+void Arch_LogInfo::SetExtraLogInfoForErrors(const std::string &key, std::vector<std::string> const *lines)
 {
   std::lock_guard<std::mutex> lock(_logInfoForErrorsMutex);
   if (!lines || lines->empty()) {
@@ -261,8 +260,7 @@ void Arch_LogInfo::EmitAnyExtraLogInfo(FILE *outFile, size_t max) const
   // XXX -- std::string::c_str and fprintf can do allocations.
   std::lock_guard<std::mutex> lock(_logInfoForErrorsMutex);
   size_t n = 0;
-  for (_LogInfoMap::const_iterator i = _logInfoForErrors.begin(), end = _logInfoForErrors.end();
-       i != end;
+  for (_LogInfoMap::const_iterator i = _logInfoForErrors.begin(), end = _logInfoForErrors.end(); i != end;
        ++i) {
     fputs("\n", outFile);
     fputs(i->first.c_str(), outFile);
@@ -270,9 +268,9 @@ void Arch_LogInfo::EmitAnyExtraLogInfo(FILE *outFile, size_t max) const
     for (std::string const &line : *i->second) {
       if (max && n++ >= max) {
         fputs(
-            "... full diagnostics reported in the stack trace "
-            "file.\n",
-            outFile);
+          "... full diagnostics reported in the stack trace "
+          "file.\n",
+          outFile);
         return;
       }
       fputs(line.c_str(), outFile);
@@ -300,8 +298,8 @@ void ArchEnableSessionLogging()
 }
 
 static const char *const stackTracePrefix = "st";
-static const char *stackTraceCmd          = nullptr;
-static const char *const *stackTraceArgv  = nullptr;
+static const char *stackTraceCmd = nullptr;
+static const char *const *stackTraceArgv = nullptr;
 
 static long _GetAppElapsedTime();
 
@@ -380,11 +378,10 @@ const char *asgetenv(const char *name)
 }
 
 // Minimum safe size for a buffer to hold a long converted to decimal ASCII.
-static constexpr int numericBufferSize =
-    std::numeric_limits<long>::digits10 + 1  // sign
-    + 1   // overflow (digits10 doesn't necessarily count the high digit)
-    + 1   // trailing NUL
-    + 1;  // paranoia
+static constexpr int numericBufferSize = std::numeric_limits<long>::digits10 + 1  // sign
+                                         + 1  // overflow (digits10 doesn't necessarily count the high digit)
+                                         + 1  // trailing NUL
+                                         + 1;  // paranoia
 
 // Return the number of digits in the decimal string representation of x.
 size_t asNumDigits(long x)
@@ -407,13 +404,13 @@ char *asitoa(char *s, long x)
 {
   // Write the minus sign.
   if (x < 0) {
-    x  = -x;
+    x = -x;
     *s = '-';
   }
 
   // Skip to the end and write the terminating NUL.
   char *end = s += asNumDigits(x);
-  *s        = '\0';
+  *s = '\0';
 
   // Write each digit, starting with the 1's column, working backwards.
   if (x == 0) {
@@ -583,17 +580,17 @@ static int nonLockingLinux__execve(const char *file, char *const argv[], char *c
 
   unsigned long result;
   __asm__ __volatile__(
-      "mov    %0, %%rdi    \n\t"
-      "mov    %%rcx, %%rsi \n\t"
-      "mov    %%rdx, %%rdx \n\t"
-      "mov    $0x3b, %%rax \n\t"
-      "syscall             \n\t"
-      : "=a"(result)
-      : "0"(file), "c"(argv), "d"(envp)
-      : "memory", "cc", "r11");
+    "mov    %0, %%rdi    \n\t"
+    "mov    %%rcx, %%rsi \n\t"
+    "mov    %%rdx, %%rdx \n\t"
+    "mov    $0x3b, %%rax \n\t"
+    "syscall             \n\t"
+    : "=a"(result)
+    : "0"(file), "c"(argv), "d"(envp)
+    : "memory", "cc", "r11");
 
   if (result >= 0xfffffffffffff000) {
-    errno  = -result;
+    errno = -result;
     result = (unsigned int)-1;
   }
 
@@ -627,7 +624,7 @@ static int nonLockingExecv(const char *path, char *const argv[])
 static std::string getBase(const char *path)
 {
 #if defined(ARCH_OS_WINDOWS)
-  const std::string tmp    = path;
+  const std::string tmp = path;
   std::string::size_type i = tmp.find_last_of("/\\");
   if (i != std::string::npos) {
     std::string::size_type j = tmp.find(".exe");
@@ -673,8 +670,7 @@ static int _LogStackTraceForPid(const char *logfile)
   char pidBuffer[numericBufferSize], timeBuffer[numericBufferSize];
   asitoa(pidBuffer, getpid());
   asitoa(timeBuffer, _GetAppElapsedTime());
-  const char *const substitutions[3][2] = {
-      {"$pid", pidBuffer}, {"$log", logfile}, {"$time", timeBuffer}};
+  const char *const substitutions[3][2] = {{"$pid", pidBuffer}, {"$log", logfile}, {"$time", timeBuffer}};
 
   // Build the argument list.
   static constexpr size_t maxArgs = 32;
@@ -686,14 +682,13 @@ static int _LogStackTraceForPid(const char *logfile)
   }
 
   // Invoke the command.
-  ArchCrashHandlerSystemv(
-      argv[0], (char *const *)argv, 300 /* wait up to 300 seconds */, NULL, NULL);
+  ArchCrashHandlerSystemv(argv[0], (char *const *)argv, 300 /* wait up to 300 seconds */, NULL, NULL);
   return 1;
 }
 
 void ArchSetPostMortem(const char *command, const char *const argv[])
 {
-  stackTraceCmd  = command;
+  stackTraceCmd = command;
   stackTraceArgv = argv;
 }
 
@@ -834,7 +829,7 @@ static long _GetAppElapsedTime()
 static void _InvokeSessionLogger(const char *progname, const char *stackTrace)
 {
   // Get the command to run.
-  const char *cmd            = asgetenv("ARCH_LOGSESSION");
+  const char *cmd = asgetenv("ARCH_LOGSESSION");
   const char *const *srcArgv = stackTrace ? _sessionCrashLogArgv : _sessionLogArgv;
   if (!cmd) {
     cmd = _logStackToDbCmd;
@@ -849,7 +844,7 @@ static void _InvokeSessionLogger(const char *progname, const char *stackTrace)
   asitoa(pidBuffer, getpid());
   asitoa(timeBuffer, _GetAppElapsedTime());
   const char *const substitutions[4][2] = {
-      {"$pid", pidBuffer}, {"$time", timeBuffer}, {"$prog", progname}, {"$stack", stackTrace}};
+    {"$pid", pidBuffer}, {"$time", timeBuffer}, {"$prog", progname}, {"$stack", stackTrace}};
 
   // Build the argument list.
   static constexpr size_t maxArgs = 32;
@@ -861,8 +856,7 @@ static void _InvokeSessionLogger(const char *progname, const char *stackTrace)
   }
 
   // Invoke the command.
-  ArchCrashHandlerSystemv(
-      argv[0], (char *const *)argv, 60 /* wait up to 60 seconds */, NULL, NULL);
+  ArchCrashHandlerSystemv(argv[0], (char *const *)argv, 60 /* wait up to 60 seconds */, NULL, NULL);
 }
 
 /*
@@ -904,12 +898,10 @@ void ArchLogSessionInfo(const char *crashStackTrace)
   }
 }
 
-void ArchSetLogSession(const char *command,
-                       const char *const argv[],
-                       const char *const crashArgv[])
+void ArchSetLogSession(const char *command, const char *const argv[], const char *const crashArgv[])
 {
-  _logStackToDbCmd     = command;
-  _sessionLogArgv      = argv;
+  _logStackToDbCmd = command;
+  _sessionLogArgv = argv;
   _sessionCrashLogArgv = crashArgv;
 }
 
@@ -1009,8 +1001,7 @@ void ArchLogPostMortem(const char *reason,
   fputs("------------------------------------------------------------------\n", stderr);
 
   if (loggedStack) {
-    _FinishLoggingFatalStackTrace(
-        progname, logfile, NULL /*session log*/, true /* crashing hard? */);
+    _FinishLoggingFatalStackTrace(progname, logfile, NULL /*session log*/, true /* crashing hard? */);
   }
 
   busy.clear(std::memory_order_release);
@@ -1035,8 +1026,8 @@ void ArchLogStackTrace(const std::string &progname,
                        const string &sessionLog)
 {
   string tmpFile;
-  int fd = ArchMakeTmpFile(
-      ArchStringPrintf("%s_%s", stackTracePrefix, ArchGetProgramNameForErrors()), &tmpFile);
+  int fd = ArchMakeTmpFile(ArchStringPrintf("%s_%s", stackTracePrefix, ArchGetProgramNameForErrors()),
+                           &tmpFile);
 
   /* get hostname for printing out in the error message only */
   char hostname[MAXHOSTNAMELEN];
@@ -1162,8 +1153,7 @@ void ArchPrintStackTrace(ostream &oss, const std::string &programName, const std
 
 #if defined(ARCH_OS_DARWIN)
 
-  _LogStackTraceToOutputIterator(
-      ostream_iterator<string>(oss), numeric_limits<size_t>::max(), true);
+  _LogStackTraceToOutputIterator(ostream_iterator<string>(oss), numeric_limits<size_t>::max(), true);
 
 #else
 
@@ -1190,9 +1180,9 @@ void ArchGetStackFrames(size_t maxDepth, vector<uintptr_t> *frames)
 struct Arch_UnwindContext {
  public:
   Arch_UnwindContext(size_t inMaxdepth, size_t inSkip, vector<uintptr_t> *inFrames)
-      : maxdepth(inMaxdepth),
-        skip(inSkip),
-        frames(inFrames)
+    : maxdepth(inMaxdepth),
+      skip(inSkip),
+      frames(inFrames)
   {}
 
  public:
@@ -1281,11 +1271,8 @@ static std::string Arch_DefaultStackTraceCallback(uintptr_t address)
   // here without decoding assembly instructions.)
   std::string objectPath, symbolName;
   void *baseAddress, *symbolAddress;
-  if (ArchGetAddressInfo(reinterpret_cast<void *>(address - 1),
-                         &objectPath,
-                         &baseAddress,
-                         &symbolName,
-                         &symbolAddress) &&
+  if (ArchGetAddressInfo(
+        reinterpret_cast<void *>(address - 1), &objectPath, &baseAddress, &symbolName, &symbolAddress) &&
       symbolAddress) {
     Arch_DemangleFunctionName(&symbolName);
     const uintptr_t symbolOffset = (uint64_t)(address - (uintptr_t)symbolAddress);
@@ -1333,8 +1320,8 @@ vector<string> Arch_GetStackTrace(const vector<uintptr_t> &frames)
 
   if (frames.empty()) {
     rv.push_back(
-        "No frames saved, stack traces probably not supported "
-        "on this architecture.");
+      "No frames saved, stack traces probably not supported "
+      "on this architecture.");
     return rv;
   }
 

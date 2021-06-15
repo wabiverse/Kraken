@@ -61,29 +61,29 @@ void wrapResolvedPath()
   using This = ArResolvedPath;
 
   class_<This>("ResolvedPath")
-      .def(init<>())
-      .def(init<const std::string &>())
+    .def(init<>())
+    .def(init<const std::string &>())
 
-      .def(self == self)
-      .def(self != self)
-      .def(self < self)
-      .def(self > self)
-      .def(self <= self)
-      .def(self >= self)
+    .def(self == self)
+    .def(self != self)
+    .def(self < self)
+    .def(self > self)
+    .def(self <= self)
+    .def(self >= self)
 
-      .def(self == std::string())
-      .def(self != std::string())
-      .def(self < std::string())
-      .def(self > std::string())
-      .def(self <= std::string())
-      .def(self >= std::string())
+    .def(self == std::string())
+    .def(self != std::string())
+    .def(self < std::string())
+    .def(self > std::string())
+    .def(self <= std::string())
+    .def(self >= std::string())
 
-      .def(TfPyBoolBuiltinFuncName, _NonZero)
-      .def("__hash__", &This::GetHash)
-      .def("__repr__", &_Repr)
-      .def("__str__", &This::GetPathString, return_value_policy<return_by_value>())
+    .def(TfPyBoolBuiltinFuncName, _NonZero)
+    .def("__hash__", &This::GetHash)
+    .def("__repr__", &_Repr)
+    .def("__str__", &This::GetPathString, return_value_policy<return_by_value>())
 
-      .def("GetPathString", &This::GetPathString, return_value_policy<return_by_value>());
+    .def("GetPathString", &This::GetPathString, return_value_policy<return_by_value>());
 
   implicitly_convertible<This, std::string>();
 }

@@ -60,8 +60,7 @@ static std::vector<double> _GetTimeSamples(const UsdGeomXformOp &self)
   return result;
 }
 
-static std::vector<double> _GetTimeSamplesInInterval(const UsdGeomXformOp &self,
-                                                     const GfInterval &interval)
+static std::vector<double> _GetTimeSamplesInInterval(const UsdGeomXformOp &self, const GfInterval &interval)
 {
   std::vector<double> result;
   self.GetTimeSamplesInInterval(interval, &result);
@@ -133,47 +132,48 @@ void wrapUsdGeomXformOp()
   TF_PY_WRAP_PUBLIC_TOKENS("XformOpTypes", UsdGeomXformOpTypes, USDGEOM_XFORM_OP_TYPES);
 
   class_<XformOp> cls("XformOp");
-  scope s = cls.def(init<UsdAttribute, bool>((arg("attr"), arg("isInverseOp") = false)))
+  scope s = cls
+              .def(init<UsdAttribute, bool>((arg("attr"), arg("isInverseOp") = false)))
 
-                .def(!self)
-                .def(self == self)
-                .def(self != self)
+              .def(!self)
+              .def(self == self)
+              .def(self != self)
 
-                .def("GetAttr", &XformOp::GetAttr, return_value_policy<return_by_value>())
+              .def("GetAttr", &XformOp::GetAttr, return_value_policy<return_by_value>())
 
-                .def("IsInverseOp", &XformOp::IsInverseOp)
-                .def("IsDefined", &XformOp::IsDefined)
-                .def("GetName", &XformOp::GetName, return_value_policy<return_by_value>())
-                .def("GetBaseName", &XformOp::GetBaseName)
-                .def("GetNamespace", &XformOp::GetNamespace)
-                .def("SplitName", &XformOp::SplitName, return_value_policy<TfPySequenceToList>())
-                .def("GetTypeName", &XformOp::GetTypeName)
+              .def("IsInverseOp", &XformOp::IsInverseOp)
+              .def("IsDefined", &XformOp::IsDefined)
+              .def("GetName", &XformOp::GetName, return_value_policy<return_by_value>())
+              .def("GetBaseName", &XformOp::GetBaseName)
+              .def("GetNamespace", &XformOp::GetNamespace)
+              .def("SplitName", &XformOp::SplitName, return_value_policy<TfPySequenceToList>())
+              .def("GetTypeName", &XformOp::GetTypeName)
 
-                .def("Get", _Get, (arg("time") = UsdTimeCode::Default()))
-                .def("Set", _Set, (arg("value"), arg("time") = UsdTimeCode::Default()))
+              .def("Get", _Get, (arg("time") = UsdTimeCode::Default()))
+              .def("Set", _Set, (arg("value"), arg("time") = UsdTimeCode::Default()))
 
-                .def("GetTimeSamples", _GetTimeSamples, return_value_policy<TfPySequenceToList>())
+              .def("GetTimeSamples", _GetTimeSamples, return_value_policy<TfPySequenceToList>())
 
-                .def("GetTimeSamplesInInterval",
-                     _GetTimeSamplesInInterval,
-                     return_value_policy<TfPySequenceToList>())
+              .def("GetTimeSamplesInInterval",
+                   _GetTimeSamplesInInterval,
+                   return_value_policy<TfPySequenceToList>())
 
-                .def("GetNumTimeSamples", &XformOp::GetNumTimeSamples)
+              .def("GetNumTimeSamples", &XformOp::GetNumTimeSamples)
 
-                .def("GetOpTransform", _GetOpTransform)
-                .def("GetOpName", _GetOpName)
+              .def("GetOpTransform", _GetOpTransform)
+              .def("GetOpName", _GetOpName)
 
-                .def("GetOpType", &XformOp::GetOpType)
+              .def("GetOpType", &XformOp::GetOpType)
 
-                .def("GetPrecision", &XformOp::GetPrecision)
+              .def("GetPrecision", &XformOp::GetPrecision)
 
-                .def("GetOpTypeToken", _GetOpTypeToken)
-                .staticmethod("GetOpTypeToken")
+              .def("GetOpTypeToken", _GetOpTypeToken)
+              .staticmethod("GetOpTypeToken")
 
-                .def("GetOpTypeEnum", _GetOpTypeEnum)
-                .staticmethod("GetOpTypeEnum")
+              .def("GetOpTypeEnum", _GetOpTypeEnum)
+              .staticmethod("GetOpTypeEnum")
 
-                .def("MightBeTimeVarying", &XformOp::MightBeTimeVarying);
+              .def("MightBeTimeVarying", &XformOp::MightBeTimeVarying);
 
   TfPyWrapEnum<UsdGeomXformOp::Type>();
   TfPyWrapEnum<UsdGeomXformOp::Precision>();
@@ -183,12 +183,10 @@ void wrapUsdGeomXformOp()
   implicitly_convertible<XformOp, UsdObject>();
 
   // Register to and from vector conversions.
-  boost::python::to_python_converter<std::vector<XformOp>,
-                                     TfPySequenceToPython<std::vector<XformOp>>>();
+  boost::python::to_python_converter<std::vector<XformOp>, TfPySequenceToPython<std::vector<XformOp>>>();
 
-  TfPyContainerConversions::from_python_sequence<
-      std::vector<XformOp>,
-      TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<std::vector<XformOp>,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 
   // Save existing __getattribute__ and replace.
   *_object__getattribute__ = object(cls.attr("__getattribute__"));

@@ -190,7 +190,7 @@ class UsdVolField3DAsset : public UsdVolFieldAsset {
   /// the default for \p writeSparsely is \c false.
   USDVOL_API
   UsdAttribute CreateFieldDataTypeAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -215,7 +215,7 @@ class UsdVolField3DAsset : public UsdVolFieldAsset {
   /// the default for \p writeSparsely is \c false.
   USDVOL_API
   UsdAttribute CreateFieldPurposeAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

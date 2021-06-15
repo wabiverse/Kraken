@@ -86,22 +86,22 @@ template<typename VALUE> class HdInstance {
                       ValueType const &value,
                       RegistryLock &&registryLock,
                       Dictionary *container)
-      : _key(key),
-        _value(value),
-        _registryLock(std::move(registryLock)),
-        _container(container),
-        _isFirstInstance(!bool(_value))
+    : _key(key),
+      _value(value),
+      _registryLock(std::move(registryLock)),
+      _container(container),
+      _isFirstInstance(!bool(_value))
   {}
 
   /// Construct an instance with no lock or registry container. This
   /// is used to present a consistent interface to clients in cases
   /// where shared resource registration is disabled.
   explicit HdInstance(KeyType const &key)
-      : _key(key),
-        _value(ValueType()),
-        _registryLock(),
-        _container(nullptr),
-        _isFirstInstance(!bool(_value))
+    : _key(key),
+      _value(ValueType()),
+      _registryLock(),
+      _container(nullptr),
+      _isFirstInstance(!bool(_value))
   {}
 
   /// Returns the key
@@ -157,8 +157,8 @@ template<typename VALUE> class HdInstanceRegistry {
   /// Copy constructor.  Need as HdInstanceRegistry is placed in a map
   /// and mutex is not copy constructable, so can't use default
   HdInstanceRegistry(const HdInstanceRegistry &other)
-      : _dictionary(other._dictionary),
-        _registryMutex()  // mutex is not copied
+    : _dictionary(other._dictionary),
+      _registryMutex()  // mutex is not copied
   {}
 
   /// Returns a shared instance for given key.
@@ -210,8 +210,7 @@ template<typename VALUE> class HdInstanceRegistry {
 // instance registry impl
 
 template<typename VALUE>
-HdInstance<VALUE> HdInstanceRegistry<VALUE>::GetInstance(
-    typename HdInstance<VALUE>::KeyType const &key)
+HdInstance<VALUE> HdInstanceRegistry<VALUE>::GetInstance(typename HdInstance<VALUE>::KeyType const &key)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -231,9 +230,8 @@ HdInstance<VALUE> HdInstanceRegistry<VALUE>::GetInstance(
 }
 
 template<typename VALUE>
-HdInstance<VALUE> HdInstanceRegistry<VALUE>::FindInstance(
-    typename HdInstance<VALUE>::KeyType const &key,
-    bool *found)
+HdInstance<VALUE> HdInstanceRegistry<VALUE>::FindInstance(typename HdInstance<VALUE>::KeyType const &key,
+                                                          bool *found)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -265,8 +263,7 @@ template<typename VALUE> size_t HdInstanceRegistry<VALUE>::GarbageCollect(int re
   }
 
   size_t inUseCount = 0;
-  for (typename InstanceType::Dictionary::iterator it = _dictionary.begin();
-       it != _dictionary.end();) {
+  for (typename InstanceType::Dictionary::iterator it = _dictionary.begin(); it != _dictionary.end();) {
 
     // erase instance which isn't referred from anyone
     bool isUnique = _IsUnique(it->second.value);

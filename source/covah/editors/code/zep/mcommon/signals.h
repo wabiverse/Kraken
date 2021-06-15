@@ -45,8 +45,8 @@ class connection {
   /// Move constructor
   /// @param other   The instance to move from.
   connection(connection &&other)
-      : _weak_disconnector(std::move(other._weak_disconnector)),
-        _index(other._index)
+    : _weak_disconnector(std::move(other._weak_disconnector)),
+      _index(other._index)
   {}
 
   /// Move assign operator.
@@ -54,7 +54,7 @@ class connection {
   connection &operator=(connection &&other)
   {
     _weak_disconnector = std::move(other._weak_disconnector);
-    _index             = other._index;
+    _index = other._index;
     return *this;
   }
 
@@ -84,8 +84,8 @@ class connection {
   ///                              object.
   /// @param index                 The slot index of the connection.
   connection(std::shared_ptr<detail::disconnector> const &shared_disconnector, std::size_t index)
-      : _weak_disconnector(shared_disconnector),
-        _index(index)
+    : _weak_disconnector(shared_disconnector),
+      _index(index)
   {}
 
   /// Weak pointer to the current disconnector functor.
@@ -157,7 +157,7 @@ class scoped_connection {
   connection release()
   {
     connection c = std::move(_connection);
-    _connection  = connection{};
+    _connection = connection{};
     return c;
   }
 
@@ -193,7 +193,7 @@ class scoped_connection {
 /// This policy is used in the `nod::signal` type provided
 /// by the library.
 struct multithread_policy {
-  using mutex_type      = std::mutex;
+  using mutex_type = std::mutex;
   using mutex_lock_type = std::unique_lock<mutex_type>;
   /// Function that yields the current thread, allowing
   /// the OS to reschedule.
@@ -351,9 +351,9 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
   {
     mutex_lock_type lock{other._mutex};
     _slot_count = std::move(other._slot_count);
-    _slots      = std::move(other._slots);
+    _slots = std::move(other._slots);
     if (other._shared_disconnector != nullptr) {
-      _disconnector        = disconnector{this};
+      _disconnector = disconnector{this};
       _shared_disconnector = std::move(other._shared_disconnector);
       // replace the disconnector with our own disconnector
       *static_cast<disconnector *>(_shared_disconnector.get()) = _disconnector;
@@ -362,14 +362,14 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
   /// signals are move assignable
   signal_type &operator=(signal_type &&other)
   {
-    auto lock       = thread_policy::defer_lock(_mutex);
+    auto lock = thread_policy::defer_lock(_mutex);
     auto other_lock = thread_policy::defer_lock(other._mutex);
     thread_policy::lock(lock, other_lock);
 
     _slot_count = std::move(other._slot_count);
-    _slots      = std::move(other._slots);
+    _slots = std::move(other._slots);
     if (other._shared_disconnector != nullptr) {
-      _disconnector        = disconnector{this};
+      _disconnector = disconnector{this};
       _shared_disconnector = std::move(other._shared_disconnector);
       // replace the disconnector with our own disconnector
       *static_cast<disconnector *>(_shared_disconnector.get()) = _disconnector;
@@ -406,9 +406,8 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
     _slots.push_back(std::forward<T>(slot));
     std::size_t index = _slots.size() - 1;
     if (_shared_disconnector == nullptr) {
-      _disconnector        = disconnector{this};
-      _shared_disconnector = std::shared_ptr<detail::disconnector>{&_disconnector,
-                                                                   detail::no_delete};
+      _disconnector = disconnector{this};
+      _shared_disconnector = std::shared_ptr<detail::disconnector>{&_disconnector, detail::no_delete};
     }
     ++_slot_count;
     return connection{_shared_disconnector, index};
@@ -466,8 +465,7 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
   ///                 - The type `S::slot_type::result_type` (return type of
   ///                   the signals slots) must be implicitly convertible to
   ///                   type `T2`.
-  template<class T, class F>
-  signal_accumulator<signal_type, T, F, A...> accumulate(T init, F op) const
+  template<class T, class F> signal_accumulator<signal_type, T, F, A...> accumulate(T init, F op) const
   {
     static_assert(std::is_same<R, void>::value == false,
                   "Unable to accumulate slot return values with 'void' as return type.");
@@ -574,9 +572,9 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
   /// Implementation of the signal accumulator function call
   template<class T, class F>
   typename signal_accumulator<signal_type, T, F, A...>::result_type trigger_with_accumulator(
-      T value,
-      F &func,
-      A const &...args) const
+    T value,
+    F &func,
+    A const &...args) const
   {
     for (auto const &slot : copy_slots()) {
       if (slot) {

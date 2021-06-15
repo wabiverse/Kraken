@@ -40,8 +40,7 @@ HdPoints::~HdPoints()
 /* virtual */
 TfTokenVector const &HdPoints::GetBuiltinPrimvarNames() const
 {
-  static const TfTokenVector primvarNames = {
-      HdTokens->points, HdTokens->normals, HdTokens->widths};
+  static const TfTokenVector primvarNames = {HdTokens->points, HdTokens->normals, HdTokens->widths};
   return primvarNames;
 }
 

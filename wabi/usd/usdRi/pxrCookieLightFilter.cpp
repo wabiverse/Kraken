@@ -55,8 +55,7 @@ UsdRiPxrCookieLightFilter::~UsdRiPxrCookieLightFilter()
 {}
 
 /* static */
-UsdRiPxrCookieLightFilter UsdRiPxrCookieLightFilter::Get(const UsdStagePtr &stage,
-                                                         const SdfPath &path)
+UsdRiPxrCookieLightFilter UsdRiPxrCookieLightFilter::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
   if (!stage) {
     TF_CODING_ERROR("Invalid stage");
@@ -66,8 +65,7 @@ UsdRiPxrCookieLightFilter UsdRiPxrCookieLightFilter::Get(const UsdStagePtr &stag
 }
 
 /* static */
-UsdRiPxrCookieLightFilter UsdRiPxrCookieLightFilter::Define(const UsdStagePtr &stage,
-                                                            const SdfPath &path)
+UsdRiPxrCookieLightFilter UsdRiPxrCookieLightFilter::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("wabiCookieLightFilter");
   if (!stage) {
@@ -210,9 +208,8 @@ UsdAttribute UsdRiPxrCookieLightFilter::GetTexturePremultipliedAlphaAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->texturePremultipliedAlpha);
 }
 
-UsdAttribute UsdRiPxrCookieLightFilter::CreateTexturePremultipliedAlphaAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrCookieLightFilter::CreateTexturePremultipliedAlphaAttr(VtValue const &defaultValue,
+                                                                            bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->texturePremultipliedAlpha,
                                     SdfValueTypeNames->Bool,
@@ -387,9 +384,8 @@ UsdAttribute UsdRiPxrCookieLightFilter::GetAnalyticUseLightDirectionAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->analyticUseLightDirection);
 }
 
-UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticUseLightDirectionAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticUseLightDirectionAttr(VtValue const &defaultValue,
+                                                                            bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticUseLightDirection,
                                     SdfValueTypeNames->Bool,
@@ -452,9 +448,8 @@ UsdAttribute UsdRiPxrCookieLightFilter::GetAnalyticBlurNearDistanceAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->analyticBlurNearDistance);
 }
 
-UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticBlurNearDistanceAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticBlurNearDistanceAttr(VtValue const &defaultValue,
+                                                                           bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticBlurNearDistance,
                                     SdfValueTypeNames->Float,
@@ -485,9 +480,8 @@ UsdAttribute UsdRiPxrCookieLightFilter::GetAnalyticBlurFarDistanceAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->analyticBlurFarDistance);
 }
 
-UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticBlurFarDistanceAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticBlurFarDistanceAttr(VtValue const &defaultValue,
+                                                                          bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticBlurFarDistance,
                                     SdfValueTypeNames->Float,
@@ -502,9 +496,8 @@ UsdAttribute UsdRiPxrCookieLightFilter::GetAnalyticBlurNearValueAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->analyticBlurNearValue);
 }
 
-UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticBlurNearValueAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticBlurNearValueAttr(VtValue const &defaultValue,
+                                                                        bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticBlurNearValue,
                                     SdfValueTypeNames->Float,
@@ -567,9 +560,8 @@ UsdAttribute UsdRiPxrCookieLightFilter::GetAnalyticDensityNearDistanceAttr() con
   return GetPrim().GetAttribute(UsdRiTokens->analyticDensityNearDistance);
 }
 
-UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticDensityNearDistanceAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticDensityNearDistanceAttr(VtValue const &defaultValue,
+                                                                              bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticDensityNearDistance,
                                     SdfValueTypeNames->Float,
@@ -584,9 +576,8 @@ UsdAttribute UsdRiPxrCookieLightFilter::GetAnalyticDensityMidpointAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->analyticDensityMidpoint);
 }
 
-UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticDensityMidpointAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticDensityMidpointAttr(VtValue const &defaultValue,
+                                                                          bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticDensityMidpoint,
                                     SdfValueTypeNames->Float,
@@ -601,9 +592,8 @@ UsdAttribute UsdRiPxrCookieLightFilter::GetAnalyticDensityFarDistanceAttr() cons
   return GetPrim().GetAttribute(UsdRiTokens->analyticDensityFarDistance);
 }
 
-UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticDensityFarDistanceAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticDensityFarDistanceAttr(VtValue const &defaultValue,
+                                                                             bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticDensityFarDistance,
                                     SdfValueTypeNames->Float,
@@ -618,9 +608,8 @@ UsdAttribute UsdRiPxrCookieLightFilter::GetAnalyticDensityNearValueAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->analyticDensityNearValue);
 }
 
-UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticDensityNearValueAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticDensityNearValueAttr(VtValue const &defaultValue,
+                                                                           bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticDensityNearValue,
                                     SdfValueTypeNames->Float,
@@ -635,9 +624,8 @@ UsdAttribute UsdRiPxrCookieLightFilter::GetAnalyticDensityMidValueAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->analyticDensityMidValue);
 }
 
-UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticDensityMidValueAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticDensityMidValueAttr(VtValue const &defaultValue,
+                                                                          bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticDensityMidValue,
                                     SdfValueTypeNames->Float,
@@ -652,9 +640,8 @@ UsdAttribute UsdRiPxrCookieLightFilter::GetAnalyticDensityFarValueAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->analyticDensityFarValue);
 }
 
-UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticDensityFarValueAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticDensityFarValueAttr(VtValue const &defaultValue,
+                                                                          bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticDensityFarValue,
                                     SdfValueTypeNames->Float,
@@ -669,9 +656,8 @@ UsdAttribute UsdRiPxrCookieLightFilter::GetAnalyticDensityExponentAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->analyticDensityExponent);
 }
 
-UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticDensityExponentAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrCookieLightFilter::CreateAnalyticDensityExponentAttr(VtValue const &defaultValue,
+                                                                          bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticDensityExponent,
                                     SdfValueTypeNames->Float,
@@ -762,8 +748,7 @@ UsdAttribute UsdRiPxrCookieLightFilter::CreateColorTintAttr(VtValue const &defau
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -777,49 +762,49 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRiPxrCookieLightFilter::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRiTokens->cookieMode,
-      UsdRiTokens->width,
-      UsdRiTokens->height,
-      UsdRiTokens->textureMap,
-      UsdRiTokens->textureWrapMode,
-      UsdRiTokens->textureFillColor,
-      UsdRiTokens->texturePremultipliedAlpha,
-      UsdRiTokens->textureInvertU,
-      UsdRiTokens->textureInvertV,
-      UsdRiTokens->textureScaleU,
-      UsdRiTokens->textureScaleV,
-      UsdRiTokens->textureOffsetU,
-      UsdRiTokens->textureOffsetV,
-      UsdRiTokens->analyticDirectional,
-      UsdRiTokens->analyticShearX,
-      UsdRiTokens->analyticShearY,
-      UsdRiTokens->analyticApex,
-      UsdRiTokens->analyticUseLightDirection,
-      UsdRiTokens->analyticBlurAmount,
-      UsdRiTokens->analyticBlurSMult,
-      UsdRiTokens->analyticBlurTMult,
-      UsdRiTokens->analyticBlurNearDistance,
-      UsdRiTokens->analyticBlurMidpoint,
-      UsdRiTokens->analyticBlurFarDistance,
-      UsdRiTokens->analyticBlurNearValue,
-      UsdRiTokens->analyticBlurMidValue,
-      UsdRiTokens->analyticBlurFarValue,
-      UsdRiTokens->analyticBlurExponent,
-      UsdRiTokens->analyticDensityNearDistance,
-      UsdRiTokens->analyticDensityMidpoint,
-      UsdRiTokens->analyticDensityFarDistance,
-      UsdRiTokens->analyticDensityNearValue,
-      UsdRiTokens->analyticDensityMidValue,
-      UsdRiTokens->analyticDensityFarValue,
-      UsdRiTokens->analyticDensityExponent,
-      UsdRiTokens->colorSaturation,
-      UsdRiTokens->colorMidpoint,
-      UsdRiTokens->colorContrast,
-      UsdRiTokens->colorWhitepoint,
-      UsdRiTokens->colorTint,
+    UsdRiTokens->cookieMode,
+    UsdRiTokens->width,
+    UsdRiTokens->height,
+    UsdRiTokens->textureMap,
+    UsdRiTokens->textureWrapMode,
+    UsdRiTokens->textureFillColor,
+    UsdRiTokens->texturePremultipliedAlpha,
+    UsdRiTokens->textureInvertU,
+    UsdRiTokens->textureInvertV,
+    UsdRiTokens->textureScaleU,
+    UsdRiTokens->textureScaleV,
+    UsdRiTokens->textureOffsetU,
+    UsdRiTokens->textureOffsetV,
+    UsdRiTokens->analyticDirectional,
+    UsdRiTokens->analyticShearX,
+    UsdRiTokens->analyticShearY,
+    UsdRiTokens->analyticApex,
+    UsdRiTokens->analyticUseLightDirection,
+    UsdRiTokens->analyticBlurAmount,
+    UsdRiTokens->analyticBlurSMult,
+    UsdRiTokens->analyticBlurTMult,
+    UsdRiTokens->analyticBlurNearDistance,
+    UsdRiTokens->analyticBlurMidpoint,
+    UsdRiTokens->analyticBlurFarDistance,
+    UsdRiTokens->analyticBlurNearValue,
+    UsdRiTokens->analyticBlurMidValue,
+    UsdRiTokens->analyticBlurFarValue,
+    UsdRiTokens->analyticBlurExponent,
+    UsdRiTokens->analyticDensityNearDistance,
+    UsdRiTokens->analyticDensityMidpoint,
+    UsdRiTokens->analyticDensityFarDistance,
+    UsdRiTokens->analyticDensityNearValue,
+    UsdRiTokens->analyticDensityMidValue,
+    UsdRiTokens->analyticDensityFarValue,
+    UsdRiTokens->analyticDensityExponent,
+    UsdRiTokens->colorSaturation,
+    UsdRiTokens->colorMidpoint,
+    UsdRiTokens->colorContrast,
+    UsdRiTokens->colorWhitepoint,
+    UsdRiTokens->colorTint,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdLuxLightFilter::GetSchemaAttributeNames(true), localNames);
+    UsdLuxLightFilter::GetSchemaAttributeNames(true), localNames);
 
   if (includeInherited)
     return allNames;

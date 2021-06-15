@@ -137,7 +137,7 @@ TF_REGISTRY_FUNCTION(UsdShadeConnectableAPI)
 }
 
 UsdShadeShader::UsdShadeShader(const UsdShadeConnectableAPI &connectable)
-    : UsdShadeShader(connectable.GetPrim())
+  : UsdShadeShader(connectable.GetPrim())
 {}
 
 UsdShadeConnectableAPI UsdShadeShader::ConnectableAPI() const
@@ -211,8 +211,7 @@ bool UsdShadeShader::GetShaderId(TfToken *id) const
   return UsdShadeNodeDefAPI(GetPrim()).GetShaderId(id);
 }
 
-bool UsdShadeShader::SetSourceAsset(const SdfAssetPath &sourceAsset,
-                                    const TfToken &sourceType) const
+bool UsdShadeShader::SetSourceAsset(const SdfAssetPath &sourceAsset, const TfToken &sourceType) const
 {
   return UsdShadeNodeDefAPI(GetPrim()).SetSourceAsset(sourceAsset, sourceType);
 }
@@ -228,8 +227,7 @@ bool UsdShadeShader::SetSourceAssetSubIdentifier(const TfToken &subIdentifier,
   return UsdShadeNodeDefAPI(GetPrim()).SetSourceAssetSubIdentifier(subIdentifier, sourceType);
 }
 
-bool UsdShadeShader::GetSourceAssetSubIdentifier(TfToken *subIdentifier,
-                                                 const TfToken &sourceType) const
+bool UsdShadeShader::GetSourceAssetSubIdentifier(TfToken *subIdentifier, const TfToken &sourceType) const
 {
   return UsdShadeNodeDefAPI(GetPrim()).GetSourceAssetSubIdentifier(subIdentifier, sourceType);
 }

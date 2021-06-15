@@ -54,8 +54,7 @@ bool UsdImagingVolumeAdapter::IsSupported(UsdImagingIndexProxy const *index) con
   return index->IsRprimTypeSupported(HdPrimTypeTokens->volume);
 }
 
-bool UsdImagingVolumeAdapter::_GatherVolumeData(UsdPrim const &prim,
-                                                UsdVolVolume::FieldMap *fieldMap) const
+bool UsdImagingVolumeAdapter::_GatherVolumeData(UsdPrim const &prim, UsdVolVolume::FieldMap *fieldMap) const
 {
   UsdVolVolume volume(prim);
 
@@ -73,15 +72,13 @@ SdfPath UsdImagingVolumeAdapter::Populate(UsdPrim const &prim,
                                           UsdImagingIndexProxy *index,
                                           UsdImagingInstancerContext const *instancerContext)
 {
-  return _AddRprim(
-      HdPrimTypeTokens->volume, prim, index, GetMaterialUsdPath(prim), instancerContext);
+  return _AddRprim(HdPrimTypeTokens->volume, prim, index, GetMaterialUsdPath(prim), instancerContext);
 }
 
-void UsdImagingVolumeAdapter::TrackVariability(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    HdDirtyBits *timeVaryingBits,
-    UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingVolumeAdapter::TrackVariability(UsdPrim const &prim,
+                                               SdfPath const &cachePath,
+                                               HdDirtyBits *timeVaryingBits,
+                                               UsdImagingInstancerContext const *instancerContext) const
 {
   // Just call the base class to test for a time-varying transform.
   BaseAdapter::TrackVariability(prim, cachePath, timeVaryingBits, instancerContext);
@@ -93,21 +90,19 @@ void UsdImagingVolumeAdapter::TrackVariability(
 
 // Thread safe.
 //  * Populate dirty bits for the given \p time.
-void UsdImagingVolumeAdapter::UpdateForTime(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    UsdTimeCode time,
-    HdDirtyBits requestedBits,
-    UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingVolumeAdapter::UpdateForTime(UsdPrim const &prim,
+                                            SdfPath const &cachePath,
+                                            UsdTimeCode time,
+                                            HdDirtyBits requestedBits,
+                                            UsdImagingInstancerContext const *instancerContext) const
 {
   // Call the base class to update the transform.
   BaseAdapter::UpdateForTime(prim, cachePath, time, requestedBits, instancerContext);
 }
 
-HdVolumeFieldDescriptorVector UsdImagingVolumeAdapter::GetVolumeFieldDescriptors(
-    UsdPrim const &usdPrim,
-    SdfPath const &id,
-    UsdTimeCode time) const
+HdVolumeFieldDescriptorVector UsdImagingVolumeAdapter::GetVolumeFieldDescriptors(UsdPrim const &usdPrim,
+                                                                                 SdfPath const &id,
+                                                                                 UsdTimeCode time) const
 {
   HdVolumeFieldDescriptorVector descriptors;
   std::map<TfToken, SdfPath> fieldMap;
@@ -130,8 +125,8 @@ HdVolumeFieldDescriptorVector UsdImagingVolumeAdapter::GetVolumeFieldDescriptors
           // as cachePath here -- we should do the correct
           // mapping in order for instancing to work.
           SdfPath const &cachePath = fieldUsdPrim.GetPath();
-          descriptors.push_back(HdVolumeFieldDescriptor(
-              it->first, fieldPrimType, _ConvertCachePathToIndexPath(cachePath)));
+          descriptors.push_back(
+            HdVolumeFieldDescriptor(it->first, fieldPrimType, _ConvertCachePathToIndexPath(cachePath)));
         }
       }
     }

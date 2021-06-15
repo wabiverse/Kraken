@@ -127,7 +127,7 @@ class PxOsdMeshTopologyValidation {
     std::unique_ptr<std::vector<Invalidation>> _value;
 
    public:
-    _OptionalInvalidationVector()                               = default;
+    _OptionalInvalidationVector() = default;
     _OptionalInvalidationVector(_OptionalInvalidationVector &&) = default;
     _OptionalInvalidationVector &operator=(_OptionalInvalidationVector &&) = default;
     _OptionalInvalidationVector(_OptionalInvalidationVector const &other) : _value(nullptr)
@@ -181,10 +181,10 @@ class PxOsdMeshTopologyValidation {
   PxOsdMeshTopologyValidation(PxOsdMeshTopology const &);
 
  public:
-  PxOsdMeshTopologyValidation()                               = default;
+  PxOsdMeshTopologyValidation() = default;
   PxOsdMeshTopologyValidation(PxOsdMeshTopologyValidation &&) = default;
   PxOsdMeshTopologyValidation &operator=(PxOsdMeshTopologyValidation &&) = default;
-  PxOsdMeshTopologyValidation(PxOsdMeshTopologyValidation const &other)  = default;
+  PxOsdMeshTopologyValidation(PxOsdMeshTopologyValidation const &other) = default;
   PxOsdMeshTopologyValidation &operator=(PxOsdMeshTopologyValidation const &other) = default;
 
   /// Return true if the topology is valid
@@ -193,7 +193,7 @@ class PxOsdMeshTopologyValidation {
     return !_invalidations || _invalidations.value().empty();
   }
 
-  using iterator       = std::vector<Invalidation>::const_iterator;
+  using iterator = std::vector<Invalidation>::const_iterator;
   using const_iterator = std::vector<Invalidation>::const_iterator;
 
   /// Returns an iterator for the beginning of the invalidation vector

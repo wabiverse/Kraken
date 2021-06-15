@@ -127,8 +127,7 @@ class HgiVulkan final : public Hgi {
   void DestroyResourceBindings(HgiResourceBindingsHandle *resHandle) override;
 
   HGIVULKAN_API
-  HgiGraphicsPipelineHandle CreateGraphicsPipeline(
-      HgiGraphicsPipelineDesc const &pipeDesc) override;
+  HgiGraphicsPipelineHandle CreateGraphicsPipeline(HgiGraphicsPipelineDesc const &pipeDesc) override;
 
   HGIVULKAN_API
   void DestroyGraphicsPipeline(HgiGraphicsPipelineHandle *pipeHandle) override;
@@ -172,10 +171,10 @@ class HgiVulkan final : public Hgi {
   /// This is helpful to avoid destroying GPU resources still in-flight.
   template<class T, class H> void TrashObject(H *handle, std::vector<T *> *collector)
   {
-    T *object                    = static_cast<T *>(handle->Get());
-    HgiVulkanDevice *device      = object->GetDevice();
+    T *object = static_cast<T *>(handle->Get());
+    HgiVulkanDevice *device = object->GetDevice();
     HgiVulkanCommandQueue *queue = device->GetCommandQueue();
-    object->GetInflightBits()    = queue->GetInflightCommandBuffersBits();
+    object->GetInflightBits() = queue->GetInflightCommandBuffersBits();
     collector->push_back(object);
     *handle = H();
   }
@@ -186,7 +185,7 @@ class HgiVulkan final : public Hgi {
 
  private:
   HgiVulkan &operator=(const HgiVulkan &) = delete;
-  HgiVulkan(const HgiVulkan &)            = delete;
+  HgiVulkan(const HgiVulkan &) = delete;
 
   // Perform low frequency actions, such as garbage collection.
   // Thread safety: No. Must be called from main thread.

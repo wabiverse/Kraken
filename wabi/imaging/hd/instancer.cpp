@@ -30,9 +30,9 @@
 WABI_NAMESPACE_BEGIN
 
 HdInstancer::HdInstancer(HdSceneDelegate *delegate, SdfPath const &id)
-    : _delegate(delegate),
-      _id(id),
-      _parentId()
+  : _delegate(delegate),
+    _id(id),
+    _parentId()
 {}
 
 HdInstancer::~HdInstancer() = default;
@@ -43,8 +43,8 @@ int HdInstancer::GetInstancerNumLevels(HdRenderIndex &index, HdRprim const &rpri
   // Walk up the instancing hierarchy to figure out how many levels of
   // instancing the passed-in rprim has.
 
-  int instancerLevels    = 0;
-  SdfPath parent         = rprim.GetInstancerId();
+  int instancerLevels = 0;
+  SdfPath parent = rprim.GetInstancerId();
   HdInstancer *instancer = nullptr;
   while (!parent.IsEmpty()) {
     instancerLevels++;
@@ -65,9 +65,7 @@ TfTokenVector const &HdInstancer::GetBuiltinPrimvarNames()
   return primvarNames;
 }
 
-void HdInstancer::Sync(HdSceneDelegate *sceneDelegate,
-                       HdRenderParam *renderParam,
-                       HdDirtyBits *dirtyBits)
+void HdInstancer::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {}
 
 void HdInstancer::Finalize(HdRenderParam *renderParam)
@@ -76,7 +74,7 @@ void HdInstancer::Finalize(HdRenderParam *renderParam)
 void HdInstancer::_SyncInstancerAndParents(HdRenderIndex &renderIndex, SdfPath const &instancerId)
 {
   HdRenderParam *renderParam = renderIndex.GetRenderDelegate()->GetRenderParam();
-  SdfPath id                 = instancerId;
+  SdfPath id = instancerId;
   while (!id.IsEmpty()) {
     HdInstancer *instancer = renderIndex.GetInstancer(id);
     if (!TF_VERIFY(instancer)) {

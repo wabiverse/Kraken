@@ -79,8 +79,8 @@ static SdfPathVector _RemoveAncestorPaths(SdfPathVector paths)
 
 static object _FindPrefixedRange(SdfPathVector const &paths, SdfPath const &prefix)
 {
-  pair<SdfPathVector::const_iterator, SdfPathVector::const_iterator> result =
-      SdfPathFindPrefixedRange(paths.begin(), paths.end(), prefix);
+  pair<SdfPathVector::const_iterator, SdfPathVector::const_iterator> result = SdfPathFindPrefixedRange(
+    paths.begin(), paths.end(), prefix);
   object start(result.first - paths.begin());
   object stop(result.second - paths.begin());
   handle<> slice(PySlice_New(start.ptr(), stop.ptr(), NULL));
@@ -89,8 +89,7 @@ static object _FindPrefixedRange(SdfPathVector const &paths, SdfPath const &pref
 
 static object _FindLongestPrefix(SdfPathVector const &paths, SdfPath const &path)
 {
-  SdfPathVector::const_iterator result = SdfPathFindLongestPrefix(
-      paths.begin(), paths.end(), path);
+  SdfPathVector::const_iterator result = SdfPathFindLongestPrefix(paths.begin(), paths.end(), path);
   if (result == paths.end())
     return object();
   return object(*result);
@@ -98,16 +97,14 @@ static object _FindLongestPrefix(SdfPathVector const &paths, SdfPath const &path
 
 static object _FindLongestStrictPrefix(SdfPathVector const &paths, SdfPath const &path)
 {
-  SdfPathVector::const_iterator result = SdfPathFindLongestStrictPrefix(
-      paths.begin(), paths.end(), path);
+  SdfPathVector::const_iterator result = SdfPathFindLongestStrictPrefix(paths.begin(), paths.end(), path);
   if (result == paths.end())
     return object();
   return object(*result);
 }
 
 struct Sdf_PathIsValidPathStringResult : public TfPyAnnotatedBoolResult<string> {
-  Sdf_PathIsValidPathStringResult(bool val, string const &msg)
-      : TfPyAnnotatedBoolResult<string>(val, msg)
+  Sdf_PathIsValidPathStringResult(bool val, string const &msg) : TfPyAnnotatedBoolResult<string>(val, msg)
   {}
 };
 
@@ -130,16 +127,16 @@ static bool __nonzero__(SdfPath const &self)
   return !self.IsEmpty();
 }
 
-constexpr size_t NumStressPaths    = 1 << 28;
-constexpr size_t NumStressThreads  = 16;
-constexpr size_t StressIters       = 3;
+constexpr size_t NumStressPaths = 1 << 28;
+constexpr size_t NumStressThreads = 16;
+constexpr size_t StressIters = 3;
 constexpr size_t MaxStressPathSize = 16;
 
 static void _PathStressTask(size_t index, std::vector<SdfPath> &paths)
 {
   auto pathsPerThread = NumStressPaths / NumStressThreads;
-  auto begin          = paths.begin() + pathsPerThread * index;
-  auto end            = begin + pathsPerThread;
+  auto begin = paths.begin() + pathsPerThread * index;
+  auto end = begin + pathsPerThread;
 
   for (size_t stressIter = 0; stressIter != StressIters; ++stressIter) {
     for (auto i = begin; i != end; ++i) {
@@ -149,7 +146,7 @@ static void _PathStressTask(size_t index, std::vector<SdfPath> &paths)
         char name[2];
         name[0] = 'a' + (rand() % 26);
         name[1] = '\0';
-        p       = p.AppendChild(TfToken(name));
+        p = p.AppendChild(TfToken(name));
       }
       // if ((i-begin) % 1000 == 0) {
       // printf("%zu: storing path %zu: <%s>\n",
@@ -180,8 +177,8 @@ static void _PathStress()
 struct Sdf_PyPathAncestorsRangeIterator {
   Sdf_PyPathAncestorsRangeIterator(const SdfPathAncestorsRange::iterator &begin,
                                    const SdfPathAncestorsRange::iterator &end)
-      : _it(begin),
-        _end(end)
+    : _it(begin),
+      _end(end)
   {}
 
   SdfPath next()
@@ -218,8 +215,8 @@ void Sdf_wrapAncestorsRange()
   using This = SdfPathAncestorsRange;
 
   scope s = class_<This>("AncestorsRange", init<const SdfPath &>())
-                .def("GetPath", &This::GetPath, return_value_policy<return_by_value>())
-                .def("__iter__", &Sdf_GetIterator);
+              .def("GetPath", &This::GetPath, return_value_policy<return_by_value>())
+              .def("__iter__", &Sdf_GetIterator);
 
   using Iter = Sdf_PyPathAncestorsRangeIterator;
   class_<Iter>("_iterator", no_init).def(TfPyIteratorNextMethodName, &Iter::next);
@@ -235,206 +232,191 @@ void wrapPath()
   def("_DumpPathStats", &Sdf_DumpPathStats);
 
   scope s =
-      class_<This>("Path", init<const string &>())
-          .def(init<const SdfPath &>())
-          .def(init<>())
+    class_<This>("Path", init<const string &>())
+      .def(init<const SdfPath &>())
+      .def(init<>())
 
-          // XXX: Document constants
-          .def_readonly("absoluteRootPath",
-                        &SdfPath::AbsoluteRootPath(),
-                        "The absolute path representing the top of the \n"
-                        "namespace hierarchy (</>).")
-          .def_readonly("reflexiveRelativePath",
-                        &SdfPath::ReflexiveRelativePath(),
-                        "The relative path representing 'self' (<.>).")
-          .def_readonly("emptyPath", &SdfPath::EmptyPath(), "The empty path.")
+      // XXX: Document constants
+      .def_readonly("absoluteRootPath",
+                    &SdfPath::AbsoluteRootPath(),
+                    "The absolute path representing the top of the \n"
+                    "namespace hierarchy (</>).")
+      .def_readonly("reflexiveRelativePath",
+                    &SdfPath::ReflexiveRelativePath(),
+                    "The relative path representing 'self' (<.>).")
+      .def_readonly("emptyPath", &SdfPath::EmptyPath(), "The empty path.")
 
-          .add_property("pathElementCount",
-                        &This::GetPathElementCount,
-                        "The number of path elements in this path.")
-          .add_property("pathString",
-                        make_function(&This::GetAsString),
-                        "The string representation of this path.")
-          .add_property("name",
-                        make_function(&This::GetName, return_value_policy<copy_const_reference>()),
-                        "The name of the prim, property or relational\n"
-                        "attribute identified by the path.\n\n"
-                        "'' for EmptyPath.  '.' for ReflexiveRelativePath.\n"
-                        "'..' for a path ending in ParentPathElement.\n")
-          .add_property(
-              "elementString",
-              make_function(&This::GetElementString, return_value_policy<return_by_value>()),
-              "The string representation of the terminal component of this path."
-              "\nThis path can be reconstructed via \n"
-              "thisPath.GetParentPath().AppendElementString(thisPath.element).\n"
-              "None of absoluteRootPath, reflexiveRelativePath, nor emptyPath\n"
-              "possess the above quality; their .elementString is the empty string.")
-          .add_property(
-              "targetPath",
-              make_function(&This::GetTargetPath, return_value_policy<copy_const_reference>()),
-              "The relational attribute target path for this path.\n\n"
-              "EmptyPath if this is not a relational attribute path.")
+      .add_property(
+        "pathElementCount", &This::GetPathElementCount, "The number of path elements in this path.")
+      .add_property(
+        "pathString", make_function(&This::GetAsString), "The string representation of this path.")
+      .add_property("name",
+                    make_function(&This::GetName, return_value_policy<copy_const_reference>()),
+                    "The name of the prim, property or relational\n"
+                    "attribute identified by the path.\n\n"
+                    "'' for EmptyPath.  '.' for ReflexiveRelativePath.\n"
+                    "'..' for a path ending in ParentPathElement.\n")
+      .add_property("elementString",
+                    make_function(&This::GetElementString, return_value_policy<return_by_value>()),
+                    "The string representation of the terminal component of this path."
+                    "\nThis path can be reconstructed via \n"
+                    "thisPath.GetParentPath().AppendElementString(thisPath.element).\n"
+                    "None of absoluteRootPath, reflexiveRelativePath, nor emptyPath\n"
+                    "possess the above quality; their .elementString is the empty string.")
+      .add_property("targetPath",
+                    make_function(&This::GetTargetPath, return_value_policy<copy_const_reference>()),
+                    "The relational attribute target path for this path.\n\n"
+                    "EmptyPath if this is not a relational attribute path.")
 
-          .def("GetAllTargetPathsRecursively",
-               &_WrapGetAllTargetPathsRecursively,
-               return_value_policy<TfPySequenceToList>())
+      .def("GetAllTargetPathsRecursively",
+           &_WrapGetAllTargetPathsRecursively,
+           return_value_policy<TfPySequenceToList>())
 
-          .def("GetVariantSelection",
-               &This::GetVariantSelection,
-               return_value_policy<TfPyPairToTuple>())
+      .def("GetVariantSelection", &This::GetVariantSelection, return_value_policy<TfPyPairToTuple>())
 
-          .def("IsAbsolutePath", &This::IsAbsolutePath)
-          .def("IsAbsoluteRootPath", &This::IsAbsoluteRootPath)
-          .def("IsPrimPath", &This::IsPrimPath)
-          .def("IsAbsoluteRootOrPrimPath", &This::IsAbsoluteRootOrPrimPath)
-          .def("IsRootPrimPath", &This::IsRootPrimPath)
-          .def("IsPropertyPath", &This::IsPropertyPath)
-          .def("IsPrimPropertyPath", &This::IsPrimPropertyPath)
-          .def("IsNamespacedPropertyPath", &This::IsNamespacedPropertyPath)
-          .def("IsPrimVariantSelectionPath", &This::IsPrimVariantSelectionPath)
-          .def("ContainsPrimVariantSelection", &This::ContainsPrimVariantSelection)
-          .def("ContainsPropertyElements", &This::ContainsPropertyElements)
-          .def("IsRelationalAttributePath", &This::IsRelationalAttributePath)
-          .def("IsTargetPath", &This::IsTargetPath)
-          .def("ContainsTargetPath", &This::ContainsTargetPath)
-          .def("IsMapperPath", &This::IsMapperPath)
-          .def("IsMapperArgPath", &This::IsMapperArgPath)
-          .def("IsExpressionPath", &This::IsExpressionPath)
+      .def("IsAbsolutePath", &This::IsAbsolutePath)
+      .def("IsAbsoluteRootPath", &This::IsAbsoluteRootPath)
+      .def("IsPrimPath", &This::IsPrimPath)
+      .def("IsAbsoluteRootOrPrimPath", &This::IsAbsoluteRootOrPrimPath)
+      .def("IsRootPrimPath", &This::IsRootPrimPath)
+      .def("IsPropertyPath", &This::IsPropertyPath)
+      .def("IsPrimPropertyPath", &This::IsPrimPropertyPath)
+      .def("IsNamespacedPropertyPath", &This::IsNamespacedPropertyPath)
+      .def("IsPrimVariantSelectionPath", &This::IsPrimVariantSelectionPath)
+      .def("ContainsPrimVariantSelection", &This::ContainsPrimVariantSelection)
+      .def("ContainsPropertyElements", &This::ContainsPropertyElements)
+      .def("IsRelationalAttributePath", &This::IsRelationalAttributePath)
+      .def("IsTargetPath", &This::IsTargetPath)
+      .def("ContainsTargetPath", &This::ContainsTargetPath)
+      .def("IsMapperPath", &This::IsMapperPath)
+      .def("IsMapperArgPath", &This::IsMapperArgPath)
+      .def("IsExpressionPath", &This::IsExpressionPath)
 
-          .add_property("isEmpty", &This::IsEmpty)
+      .add_property("isEmpty", &This::IsEmpty)
 
-          .def("HasPrefix", &This::HasPrefix)
+      .def("HasPrefix", &This::HasPrefix)
 
-          .def("MakeAbsolutePath", &This::MakeAbsolutePath)
-          .def("MakeRelativePath", &This::MakeRelativePath)
+      .def("MakeAbsolutePath", &This::MakeAbsolutePath)
+      .def("MakeRelativePath", &This::MakeRelativePath)
 
-          .def("GetPrefixes",
-               GetPrefixesHelper,
-               return_value_policy<TfPySequenceToList>(),
-               "Returns the prefix paths of this path.")
+      .def("GetPrefixes",
+           GetPrefixesHelper,
+           return_value_policy<TfPySequenceToList>(),
+           "Returns the prefix paths of this path.")
 
-          .def("GetAncestorsRange", &This::GetAncestorsRange)
+      .def("GetAncestorsRange", &This::GetAncestorsRange)
 
-          .def("GetParentPath", &This::GetParentPath)
-          .def("GetPrimPath", &This::GetPrimPath)
-          .def("GetPrimOrPrimVariantSelectionPath", &This::GetPrimOrPrimVariantSelectionPath)
-          .def("GetAbsoluteRootOrPrimPath", &This::GetAbsoluteRootOrPrimPath)
-          .def("StripAllVariantSelections", &This::StripAllVariantSelections)
+      .def("GetParentPath", &This::GetParentPath)
+      .def("GetPrimPath", &This::GetPrimPath)
+      .def("GetPrimOrPrimVariantSelectionPath", &This::GetPrimOrPrimVariantSelectionPath)
+      .def("GetAbsoluteRootOrPrimPath", &This::GetAbsoluteRootOrPrimPath)
+      .def("StripAllVariantSelections", &This::StripAllVariantSelections)
 
-          .def("AppendPath", &This::AppendPath)
-          .def("AppendChild", &This::AppendChild)
-          .def("AppendProperty", &This::AppendProperty)
-          .def("AppendVariantSelection", &This::AppendVariantSelection)
-          .def("AppendTarget", &This::AppendTarget)
-          .def("AppendRelationalAttribute", &This::AppendRelationalAttribute)
-          .def("AppendMapper", &This::AppendMapper)
-          .def("AppendMapperArg", &This::AppendMapperArg)
-          .def("AppendExpression", &This::AppendExpression)
-          .def("AppendElementString", &This::AppendElementString)
+      .def("AppendPath", &This::AppendPath)
+      .def("AppendChild", &This::AppendChild)
+      .def("AppendProperty", &This::AppendProperty)
+      .def("AppendVariantSelection", &This::AppendVariantSelection)
+      .def("AppendTarget", &This::AppendTarget)
+      .def("AppendRelationalAttribute", &This::AppendRelationalAttribute)
+      .def("AppendMapper", &This::AppendMapper)
+      .def("AppendMapperArg", &This::AppendMapperArg)
+      .def("AppendExpression", &This::AppendExpression)
+      .def("AppendElementString", &This::AppendElementString)
 
-          .def("ReplacePrefix",
-               &This::ReplacePrefix,
-               (arg("oldPrefix"), arg("newPrefix"), arg("fixTargetPaths") = true))
-          .def("GetCommonPrefix", &This::GetCommonPrefix)
-          .def("RemoveCommonSuffix",
-               &This::RemoveCommonSuffix,
-               arg("stopAtRootPrim") = false,
-               return_value_policy<TfPyPairToTuple>())
-          .def("ReplaceName", &This::ReplaceName)
-          .def("ReplaceTargetPath", &This::ReplaceTargetPath)
-          .def("MakeAbsolutePath", &This::MakeAbsolutePath)
-          .def("MakeRelativePath", &This::MakeRelativePath)
+      .def("ReplacePrefix",
+           &This::ReplacePrefix,
+           (arg("oldPrefix"), arg("newPrefix"), arg("fixTargetPaths") = true))
+      .def("GetCommonPrefix", &This::GetCommonPrefix)
+      .def("RemoveCommonSuffix",
+           &This::RemoveCommonSuffix,
+           arg("stopAtRootPrim") = false,
+           return_value_policy<TfPyPairToTuple>())
+      .def("ReplaceName", &This::ReplaceName)
+      .def("ReplaceTargetPath", &This::ReplaceTargetPath)
+      .def("MakeAbsolutePath", &This::MakeAbsolutePath)
+      .def("MakeRelativePath", &This::MakeRelativePath)
 
-          .def("GetConciseRelativePaths",
-               &This::GetConciseRelativePaths,
-               return_value_policy<TfPySequenceToList>())
-          .staticmethod("GetConciseRelativePaths")
+      .def(
+        "GetConciseRelativePaths", &This::GetConciseRelativePaths, return_value_policy<TfPySequenceToList>())
+      .staticmethod("GetConciseRelativePaths")
 
-          .def("RemoveDescendentPaths",
-               _RemoveDescendentPaths,
-               return_value_policy<TfPySequenceToList>())
-          .staticmethod("RemoveDescendentPaths")
-          .def("RemoveAncestorPaths",
-               _RemoveAncestorPaths,
-               return_value_policy<TfPySequenceToList>())
-          .staticmethod("RemoveAncestorPaths")
+      .def("RemoveDescendentPaths", _RemoveDescendentPaths, return_value_policy<TfPySequenceToList>())
+      .staticmethod("RemoveDescendentPaths")
+      .def("RemoveAncestorPaths", _RemoveAncestorPaths, return_value_policy<TfPySequenceToList>())
+      .staticmethod("RemoveAncestorPaths")
 
-          .def("IsValidIdentifier", &This::IsValidIdentifier)
-          .staticmethod("IsValidIdentifier")
+      .def("IsValidIdentifier", &This::IsValidIdentifier)
+      .staticmethod("IsValidIdentifier")
 
-          .def("IsValidNamespacedIdentifier", &This::IsValidNamespacedIdentifier)
-          .staticmethod("IsValidNamespacedIdentifier")
+      .def("IsValidNamespacedIdentifier", &This::IsValidNamespacedIdentifier)
+      .staticmethod("IsValidNamespacedIdentifier")
 
-          .def("TokenizeIdentifier", &This::TokenizeIdentifier)
-          .staticmethod("TokenizeIdentifier")
-          .def("JoinIdentifier",
-               (std::string(*)(const std::vector<std::string> &)) & This::JoinIdentifier)
-          .def("JoinIdentifier",
-               (std::string(*)(const std::string &, const std::string &)) & This::JoinIdentifier)
-          .staticmethod("JoinIdentifier")
+      .def("TokenizeIdentifier", &This::TokenizeIdentifier)
+      .staticmethod("TokenizeIdentifier")
+      .def("JoinIdentifier", (std::string(*)(const std::vector<std::string> &)) & This::JoinIdentifier)
+      .def("JoinIdentifier",
+           (std::string(*)(const std::string &, const std::string &)) & This::JoinIdentifier)
+      .staticmethod("JoinIdentifier")
 
-          .def("StripNamespace", (std::string(*)(const std::string &)) & This::StripNamespace)
-          .staticmethod("StripNamespace")
-          .def("StripPrefixNamespace",
-               &This::StripPrefixNamespace,
-               return_value_policy<TfPyPairToTuple>())
-          .staticmethod("StripPrefixNamespace")
+      .def("StripNamespace", (std::string(*)(const std::string &)) & This::StripNamespace)
+      .staticmethod("StripNamespace")
+      .def("StripPrefixNamespace", &This::StripPrefixNamespace, return_value_policy<TfPyPairToTuple>())
+      .staticmethod("StripPrefixNamespace")
 
-          .def("IsValidPathString", &_IsValidPathString)
-          .staticmethod("IsValidPathString")
+      .def("IsValidPathString", &_IsValidPathString)
+      .staticmethod("IsValidPathString")
 
-          .def("FindPrefixedRange", _FindPrefixedRange)
-          .staticmethod("FindPrefixedRange")
+      .def("FindPrefixedRange", _FindPrefixedRange)
+      .staticmethod("FindPrefixedRange")
 
-          .def("FindLongestPrefix", _FindLongestPrefix)
-          .staticmethod("FindLongestPrefix")
+      .def("FindLongestPrefix", _FindLongestPrefix)
+      .staticmethod("FindLongestPrefix")
 
-          .def("FindLongestStrictPrefix", _FindLongestStrictPrefix)
-          .staticmethod("FindLongestStrictPrefix")
+      .def("FindLongestStrictPrefix", _FindLongestStrictPrefix)
+      .staticmethod("FindLongestStrictPrefix")
 
-          .def("__str__", make_function(&This::GetAsString))
+      .def("__str__", make_function(&This::GetAsString))
 
-          .def(TfPyBoolBuiltinFuncName, __nonzero__)
+      .def(TfPyBoolBuiltinFuncName, __nonzero__)
 
-          .def(self == self)
-          .def(self != self)
-          .def(self < self)
-          .def(self > self)
-          .def(self <= self)
-          .def(self >= self)
-          .def("__repr__", _Repr)
-          .def("__hash__", &This::GetHash);
+      .def(self == self)
+      .def(self != self)
+      .def(self < self)
+      .def(self > self)
+      .def(self <= self)
+      .def(self >= self)
+      .def("__repr__", _Repr)
+      .def("__hash__", &This::GetHash);
 
-  s.attr("menvaStart")              = SdfPathTokens->menvaStart;
-  s.attr("menvaEnd")                = &SdfPathTokens->menvaEnd;
-  s.attr("absoluteIndicator")       = &SdfPathTokens->absoluteIndicator;
-  s.attr("childDelimiter")          = &SdfPathTokens->childDelimiter;
-  s.attr("propertyDelimiter")       = &SdfPathTokens->propertyDelimiter;
+  s.attr("menvaStart") = SdfPathTokens->menvaStart;
+  s.attr("menvaEnd") = &SdfPathTokens->menvaEnd;
+  s.attr("absoluteIndicator") = &SdfPathTokens->absoluteIndicator;
+  s.attr("childDelimiter") = &SdfPathTokens->childDelimiter;
+  s.attr("propertyDelimiter") = &SdfPathTokens->propertyDelimiter;
   s.attr("relationshipTargetStart") = &SdfPathTokens->relationshipTargetStart;
-  s.attr("relationshipTargetEnd")   = &SdfPathTokens->relationshipTargetEnd;
-  s.attr("parentPathElement")       = &SdfPathTokens->parentPathElement;
-  s.attr("mapperIndicator")         = &SdfPathTokens->mapperIndicator;
-  s.attr("expressionIndicator")     = &SdfPathTokens->expressionIndicator;
-  s.attr("mapperArgDelimiter")      = &SdfPathTokens->mapperArgDelimiter;
-  s.attr("namespaceDelimiter")      = &SdfPathTokens->namespaceDelimiter;
+  s.attr("relationshipTargetEnd") = &SdfPathTokens->relationshipTargetEnd;
+  s.attr("parentPathElement") = &SdfPathTokens->parentPathElement;
+  s.attr("mapperIndicator") = &SdfPathTokens->mapperIndicator;
+  s.attr("expressionIndicator") = &SdfPathTokens->expressionIndicator;
+  s.attr("mapperArgDelimiter") = &SdfPathTokens->mapperArgDelimiter;
+  s.attr("namespaceDelimiter") = &SdfPathTokens->namespaceDelimiter;
 
   // Register conversion for python list <-> vector<SdfPath>
   to_python_converter<SdfPathVector, TfPySequenceToPython<SdfPathVector>>();
   TfPyContainerConversions::from_python_sequence<
-      SdfPathVector,
-      TfPyContainerConversions::variable_capacity_all_items_convertible_policy>();
+    SdfPathVector,
+    TfPyContainerConversions::variable_capacity_all_items_convertible_policy>();
 
   // Register conversion for python list <-> set<SdfPath>
   to_python_converter<SdfPathSet, TfPySequenceToPython<SdfPathSet>>();
-  TfPyContainerConversions::from_python_sequence<std::set<SdfPath>,
-                                                 TfPyContainerConversions::set_policy>();
+  TfPyContainerConversions::from_python_sequence<std::set<SdfPath>, TfPyContainerConversions::set_policy>();
 
   implicitly_convertible<string, This>();
 
   VtValueFromPython<SdfPath>();
 
-  Sdf_PathIsValidPathStringResult::Wrap<Sdf_PathIsValidPathStringResult>(
-      "_IsValidPathStringResult", "errorMessage");
+  Sdf_PathIsValidPathStringResult::Wrap<Sdf_PathIsValidPathStringResult>("_IsValidPathStringResult",
+                                                                         "errorMessage");
 
   Sdf_wrapAncestorsRange();
 }

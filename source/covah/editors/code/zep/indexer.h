@@ -20,7 +20,7 @@ struct FileIndexResult {
 };
 
 struct SymbolDetails {
-  int line   = 0;
+  int line = 0;
   int column = 0;
 };
 

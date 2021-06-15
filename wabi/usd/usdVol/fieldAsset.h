@@ -165,8 +165,7 @@ class UsdVolFieldAsset : public UsdVolFieldBase {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDVOL_API
-  UsdAttribute CreateFilePathAttr(VtValue const &defaultValue = VtValue(),
-                                  bool writeSparsely          = false) const;
+  UsdAttribute CreateFilePathAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -190,7 +189,7 @@ class UsdVolFieldAsset : public UsdVolFieldBase {
   /// the default for \p writeSparsely is \c false.
   USDVOL_API
   UsdAttribute CreateFieldNameAttr(VtValue const &defaultValue = VtValue(),
-                                   bool writeSparsely          = false) const;
+                                   bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -216,7 +215,7 @@ class UsdVolFieldAsset : public UsdVolFieldBase {
   /// the default for \p writeSparsely is \c false.
   USDVOL_API
   UsdAttribute CreateFieldIndexAttr(VtValue const &defaultValue = VtValue(),
-                                    bool writeSparsely          = false) const;
+                                    bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -243,7 +242,7 @@ class UsdVolFieldAsset : public UsdVolFieldBase {
   /// the default for \p writeSparsely is \c false.
   USDVOL_API
   UsdAttribute CreateFieldDataTypeAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -270,7 +269,7 @@ class UsdVolFieldAsset : public UsdVolFieldBase {
   /// the default for \p writeSparsely is \c false.
   USDVOL_API
   UsdAttribute CreateVectorDataRoleHintAttr(VtValue const &defaultValue = VtValue(),
-                                            bool writeSparsely          = false) const;
+                                            bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

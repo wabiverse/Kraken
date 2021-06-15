@@ -74,7 +74,7 @@ uint32_t MurmurHash1(const void *key, int len, uint32_t seed)
 unsigned int MurmurHash1Aligned(const void *key, int len, unsigned int seed)
 {
   const unsigned int m = 0xc6a4a793;
-  const int r          = 16;
+  const int r = 16;
 
   const unsigned char *data = (const unsigned char *)key;
 

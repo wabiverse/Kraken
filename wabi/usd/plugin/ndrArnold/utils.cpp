@@ -54,7 +54,7 @@ namespace {
 struct DefaultValueConversion {
   const SdfValueTypeName &type;
   using Convert = VtValue (*)(const AtParamValue &, const AtParamEntry *);
-  Convert f     = nullptr;
+  Convert f = nullptr;
 
   template<typename F>
   DefaultValueConversion(const SdfValueTypeName &_type, F &&_f) : type(_type),
@@ -67,11 +67,9 @@ struct DefaultValueConversion {
 struct ArrayConversion {
   const SdfValueTypeName &type;
   using Convert = VtValue (*)(const AtArray *);
-  Convert f     = nullptr;
+  Convert f = nullptr;
 
-  template<typename F>
-  ArrayConversion(const SdfValueTypeName &_type, F &&_f) : type(_type),
-                                                           f(std::move(_f))
+  template<typename F> ArrayConversion(const SdfValueTypeName &_type, F &&_f) : type(_type), f(std::move(_f))
   {}
 
   ArrayConversion() = delete;
@@ -105,8 +103,7 @@ template<> inline void _Convert<std::string, AtString>(std::string &l, const AtS
 };
 
 template<typename T, typename R = T>
-inline VtValue _ExportArray(const AtArray *arr,
-                            R (*f)(const AtArray *, uint32_t, const char *, int32_t))
+inline VtValue _ExportArray(const AtArray *arr, R (*f)(const AtArray *, uint32_t, const char *, int32_t))
 {
   // we already check the validity of the array before this call
   const auto nelements = AiArrayGetNumElements(arr);
@@ -131,87 +128,71 @@ inline VtValue _ExportArray(const AtArray *arr,
 const std::unordered_map<uint8_t, DefaultValueConversion> &_DefaultValueConversionMap()
 {
   const static std::unordered_map<uint8_t, DefaultValueConversion> ret{
-      {AI_TYPE_BYTE,
-       {SdfValueTypeNames->UChar,
-        [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
-          return VtValue(pv.BYTE());
-        }}},
-      {AI_TYPE_INT,
-       {SdfValueTypeNames->Int,
-        [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
-          return VtValue(pv.INT());
-        }}},
-      {AI_TYPE_UINT,
-       {SdfValueTypeNames->UInt,
-        [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
-          return VtValue(pv.UINT());
-        }}},
-      {AI_TYPE_BOOLEAN,
-       {SdfValueTypeNames->Bool,
-        [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
-          return VtValue(pv.BOOL());
-        }}},
-      {AI_TYPE_FLOAT,
-       {SdfValueTypeNames->Float,
-        [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
-          return VtValue(pv.FLT());
-        }}},
-      {AI_TYPE_RGB,
-       {SdfValueTypeNames->Color3f,
-        [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
-          const auto &v = pv.RGB();
-          return VtValue(GfVec3f(v.r, v.g, v.b));
-        }}},
-      {AI_TYPE_RGBA,
-       {SdfValueTypeNames->Color4f,
-        [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
-          const auto &v = pv.RGBA();
-          return VtValue(GfVec4f(v.r, v.g, v.b, v.a));
-        }}},
-      {AI_TYPE_VECTOR,
-       {SdfValueTypeNames->Vector3f,
-        [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
-          const auto &v = pv.VEC();
-          return VtValue(GfVec3f(v.x, v.y, v.z));
-        }}},
-      {AI_TYPE_VECTOR2,
-       {SdfValueTypeNames->Float2,
-        [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
-          const auto &v = pv.VEC2();
-          return VtValue(GfVec2f(v.x, v.y));
-        }}},
-      {AI_TYPE_STRING,
-       {SdfValueTypeNames->String,
-        [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
-          return VtValue(pv.STR().c_str());
-        }}},
-      {AI_TYPE_POINTER, {SdfValueTypeNames->String, nullptr}},
-      {AI_TYPE_NODE, {SdfValueTypeNames->String, nullptr}},
-      {AI_TYPE_MATRIX,
-       {SdfValueTypeNames->Matrix4d,
-        [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
-          return VtValue(_ConvertMatrix(*pv.pMTX()));
-        }}},
-      {AI_TYPE_ENUM,
-       {SdfValueTypeNames->String,
-        [](const AtParamValue &pv, const AtParamEntry *pe) -> VtValue {
-          if (pe == nullptr) {
-            return VtValue("");
-          }
-          const auto enums = AiParamGetEnum(pe);
-          return VtValue(AiEnumGetString(enums, pv.INT()));
-        }}},
-      {AI_TYPE_CLOSURE, {SdfValueTypeNames->String, nullptr}},
-      {AI_TYPE_USHORT,
-       {SdfValueTypeNames->UInt,
-        [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
-          return VtValue(pv.UINT());
-        }}},
-      {AI_TYPE_HALF,
-       {SdfValueTypeNames->Half,
-        [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
-          return VtValue(pv.FLT());
-        }}},
+    {AI_TYPE_BYTE,
+     {SdfValueTypeNames->UChar,
+      [](const AtParamValue &pv, const AtParamEntry *) -> VtValue { return VtValue(pv.BYTE()); }}},
+    {AI_TYPE_INT,
+     {SdfValueTypeNames->Int,
+      [](const AtParamValue &pv, const AtParamEntry *) -> VtValue { return VtValue(pv.INT()); }}},
+    {AI_TYPE_UINT,
+     {SdfValueTypeNames->UInt,
+      [](const AtParamValue &pv, const AtParamEntry *) -> VtValue { return VtValue(pv.UINT()); }}},
+    {AI_TYPE_BOOLEAN,
+     {SdfValueTypeNames->Bool,
+      [](const AtParamValue &pv, const AtParamEntry *) -> VtValue { return VtValue(pv.BOOL()); }}},
+    {AI_TYPE_FLOAT,
+     {SdfValueTypeNames->Float,
+      [](const AtParamValue &pv, const AtParamEntry *) -> VtValue { return VtValue(pv.FLT()); }}},
+    {AI_TYPE_RGB,
+     {SdfValueTypeNames->Color3f,
+      [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
+        const auto &v = pv.RGB();
+        return VtValue(GfVec3f(v.r, v.g, v.b));
+      }}},
+    {AI_TYPE_RGBA,
+     {SdfValueTypeNames->Color4f,
+      [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
+        const auto &v = pv.RGBA();
+        return VtValue(GfVec4f(v.r, v.g, v.b, v.a));
+      }}},
+    {AI_TYPE_VECTOR,
+     {SdfValueTypeNames->Vector3f,
+      [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
+        const auto &v = pv.VEC();
+        return VtValue(GfVec3f(v.x, v.y, v.z));
+      }}},
+    {AI_TYPE_VECTOR2,
+     {SdfValueTypeNames->Float2,
+      [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
+        const auto &v = pv.VEC2();
+        return VtValue(GfVec2f(v.x, v.y));
+      }}},
+    {AI_TYPE_STRING,
+     {SdfValueTypeNames->String,
+      [](const AtParamValue &pv, const AtParamEntry *) -> VtValue { return VtValue(pv.STR().c_str()); }}},
+    {AI_TYPE_POINTER, {SdfValueTypeNames->String, nullptr}},
+    {AI_TYPE_NODE, {SdfValueTypeNames->String, nullptr}},
+    {AI_TYPE_MATRIX,
+     {SdfValueTypeNames->Matrix4d,
+      [](const AtParamValue &pv, const AtParamEntry *) -> VtValue {
+        return VtValue(_ConvertMatrix(*pv.pMTX()));
+      }}},
+    {AI_TYPE_ENUM,
+     {SdfValueTypeNames->String,
+      [](const AtParamValue &pv, const AtParamEntry *pe) -> VtValue {
+        if (pe == nullptr) {
+          return VtValue("");
+        }
+        const auto enums = AiParamGetEnum(pe);
+        return VtValue(AiEnumGetString(enums, pv.INT()));
+      }}},
+    {AI_TYPE_CLOSURE, {SdfValueTypeNames->String, nullptr}},
+    {AI_TYPE_USHORT,
+     {SdfValueTypeNames->UInt,
+      [](const AtParamValue &pv, const AtParamEntry *) -> VtValue { return VtValue(pv.UINT()); }}},
+    {AI_TYPE_HALF,
+     {SdfValueTypeNames->Half,
+      [](const AtParamValue &pv, const AtParamEntry *) -> VtValue { return VtValue(pv.FLT()); }}},
   };
   return ret;
 }
@@ -219,74 +200,62 @@ const std::unordered_map<uint8_t, DefaultValueConversion> &_DefaultValueConversi
 const std::unordered_map<uint8_t, ArrayConversion> &_ArrayTypeConversionMap()
 {
   const static std::unordered_map<uint8_t, ArrayConversion> ret{
-      {AI_TYPE_BYTE,
-       {SdfValueTypeNames->UCharArray,
-        [](const AtArray *a) -> VtValue { return _ExportArray<uint8_t>(a, AiArrayGetByteFunc); }}},
-      {AI_TYPE_INT,
-       {SdfValueTypeNames->IntArray,
-        [](const AtArray *a) -> VtValue { return _ExportArray<int32_t>(a, AiArrayGetIntFunc); }}},
-      {AI_TYPE_UINT,
-       {SdfValueTypeNames->UIntArray,
-        [](const AtArray *a) -> VtValue {
-          return _ExportArray<uint32_t>(a, AiArrayGetUIntFunc);
-        }}},
-      {AI_TYPE_BOOLEAN,
-       {SdfValueTypeNames->BoolArray,
-        [](const AtArray *a) -> VtValue { return _ExportArray<bool>(a, AiArrayGetBoolFunc); }}},
-      {AI_TYPE_FLOAT,
-       {SdfValueTypeNames->FloatArray,
-        [](const AtArray *a) -> VtValue { return _ExportArray<float>(a, AiArrayGetFltFunc); }}},
-      {AI_TYPE_RGB,
-       {SdfValueTypeNames->Color3fArray,
-        [](const AtArray *a) -> VtValue {
-          return _ExportArray<GfVec3f, AtRGB>(a, AiArrayGetRGBFunc);
-        }}},
-      {AI_TYPE_RGBA,
-       {SdfValueTypeNames->Color4fArray,
-        [](const AtArray *a) -> VtValue {
-          return _ExportArray<GfVec4f, AtRGBA>(a, AiArrayGetRGBAFunc);
-        }}},
-      {AI_TYPE_VECTOR,
-       {SdfValueTypeNames->Vector3fArray,
-        [](const AtArray *a) -> VtValue {
-          return _ExportArray<GfVec3f, AtVector>(a, AiArrayGetVecFunc);
-        }}},
-      {AI_TYPE_VECTOR2,
-       {SdfValueTypeNames->Float2Array,
-        [](const AtArray *a) -> VtValue {
-          return _ExportArray<GfVec2f, AtVector2>(a, AiArrayGetVec2Func);
-        }}},
-      {AI_TYPE_STRING,
-       {SdfValueTypeNames->StringArray,
-        [](const AtArray *a) -> VtValue {
-          return _ExportArray<std::string, AtString>(a, AiArrayGetStrFunc);
-        }}},
-      {AI_TYPE_POINTER, {SdfValueTypeNames->StringArray, nullptr}},
-      {AI_TYPE_NODE, {SdfValueTypeNames->StringArray, nullptr}},
-      // Not supporting arrays of arrays. I don't think it's even possible
-      // in the arnold core.
-      {AI_TYPE_MATRIX,
-       {SdfValueTypeNames->Matrix4dArray,
-        [](const AtArray *a) -> VtValue {
-          const auto nelements = AiArrayGetNumElements(a);
-          VtArray<GfMatrix4d> arr(nelements);
-          for (auto i = 0u; i < nelements; ++i) {
-            arr[i] = _ArrayGetMatrix(a, i, __FILE__, __LINE__);
-          }
-          return VtValue(arr);
-        }}},  // TODO: implement
-      {AI_TYPE_ENUM,
-       {SdfValueTypeNames->IntArray,
-        [](const AtArray *a) -> VtValue { return _ExportArray<int32_t>(a, AiArrayGetIntFunc); }}},
-      {AI_TYPE_CLOSURE, {SdfValueTypeNames->StringArray, nullptr}},
-      {AI_TYPE_USHORT,
-       {SdfValueTypeNames->UIntArray,
-        [](const AtArray *a) -> VtValue {
-          return _ExportArray<uint32_t>(a, AiArrayGetUIntFunc);
-        }}},
-      {AI_TYPE_HALF,
-       {SdfValueTypeNames->HalfArray,
-        [](const AtArray *a) -> VtValue { return _ExportArray<float>(a, AiArrayGetFltFunc); }}},
+    {AI_TYPE_BYTE,
+     {SdfValueTypeNames->UCharArray,
+      [](const AtArray *a) -> VtValue { return _ExportArray<uint8_t>(a, AiArrayGetByteFunc); }}},
+    {AI_TYPE_INT,
+     {SdfValueTypeNames->IntArray,
+      [](const AtArray *a) -> VtValue { return _ExportArray<int32_t>(a, AiArrayGetIntFunc); }}},
+    {AI_TYPE_UINT,
+     {SdfValueTypeNames->UIntArray,
+      [](const AtArray *a) -> VtValue { return _ExportArray<uint32_t>(a, AiArrayGetUIntFunc); }}},
+    {AI_TYPE_BOOLEAN,
+     {SdfValueTypeNames->BoolArray,
+      [](const AtArray *a) -> VtValue { return _ExportArray<bool>(a, AiArrayGetBoolFunc); }}},
+    {AI_TYPE_FLOAT,
+     {SdfValueTypeNames->FloatArray,
+      [](const AtArray *a) -> VtValue { return _ExportArray<float>(a, AiArrayGetFltFunc); }}},
+    {AI_TYPE_RGB,
+     {SdfValueTypeNames->Color3fArray,
+      [](const AtArray *a) -> VtValue { return _ExportArray<GfVec3f, AtRGB>(a, AiArrayGetRGBFunc); }}},
+    {AI_TYPE_RGBA,
+     {SdfValueTypeNames->Color4fArray,
+      [](const AtArray *a) -> VtValue { return _ExportArray<GfVec4f, AtRGBA>(a, AiArrayGetRGBAFunc); }}},
+    {AI_TYPE_VECTOR,
+     {SdfValueTypeNames->Vector3fArray,
+      [](const AtArray *a) -> VtValue { return _ExportArray<GfVec3f, AtVector>(a, AiArrayGetVecFunc); }}},
+    {AI_TYPE_VECTOR2,
+     {SdfValueTypeNames->Float2Array,
+      [](const AtArray *a) -> VtValue { return _ExportArray<GfVec2f, AtVector2>(a, AiArrayGetVec2Func); }}},
+    {AI_TYPE_STRING,
+     {SdfValueTypeNames->StringArray,
+      [](const AtArray *a) -> VtValue {
+        return _ExportArray<std::string, AtString>(a, AiArrayGetStrFunc);
+      }}},
+    {AI_TYPE_POINTER, {SdfValueTypeNames->StringArray, nullptr}},
+    {AI_TYPE_NODE, {SdfValueTypeNames->StringArray, nullptr}},
+    // Not supporting arrays of arrays. I don't think it's even possible
+    // in the arnold core.
+    {AI_TYPE_MATRIX,
+     {SdfValueTypeNames->Matrix4dArray,
+      [](const AtArray *a) -> VtValue {
+        const auto nelements = AiArrayGetNumElements(a);
+        VtArray<GfMatrix4d> arr(nelements);
+        for (auto i = 0u; i < nelements; ++i) {
+          arr[i] = _ArrayGetMatrix(a, i, __FILE__, __LINE__);
+        }
+        return VtValue(arr);
+      }}},  // TODO: implement
+    {AI_TYPE_ENUM,
+     {SdfValueTypeNames->IntArray,
+      [](const AtArray *a) -> VtValue { return _ExportArray<int32_t>(a, AiArrayGetIntFunc); }}},
+    {AI_TYPE_CLOSURE, {SdfValueTypeNames->StringArray, nullptr}},
+    {AI_TYPE_USHORT,
+     {SdfValueTypeNames->UIntArray,
+      [](const AtArray *a) -> VtValue { return _ExportArray<uint32_t>(a, AiArrayGetUIntFunc); }}},
+    {AI_TYPE_HALF,
+     {SdfValueTypeNames->HalfArray,
+      [](const AtArray *a) -> VtValue { return _ExportArray<float>(a, AiArrayGetFltFunc); }}},
   };
   return ret;
 }
@@ -296,7 +265,7 @@ const std::unordered_map<uint8_t, ArrayConversion> &_ArrayTypeConversionMap()
 const DefaultValueConversion *_GetDefaultValueConversion(uint8_t type)
 {
   const auto &dvcm = _DefaultValueConversionMap();
-  const auto it    = dvcm.find(type);
+  const auto it = dvcm.find(type);
   if (it != dvcm.end()) {
     return &it->second;
   }
@@ -308,7 +277,7 @@ const DefaultValueConversion *_GetDefaultValueConversion(uint8_t type)
 const ArrayConversion *_GetArrayConversion(uint8_t type)
 {
   const auto &atm = _ArrayTypeConversionMap();
-  const auto it   = atm.find(type);
+  const auto it = atm.find(type);
   if (it != atm.end()) {
     return &it->second;
   }
@@ -323,13 +292,12 @@ const ArrayConversion *_GetArrayConversion(uint8_t type)
 void _ReadArnoldShaderDef(UsdPrim &prim, const AtNodeEntry *nodeEntry)
 {
   const auto filename = AiNodeEntryGetFilename(nodeEntry);
-  prim.SetMetadata(_tokens->filename,
-                   VtValue(TfToken(filename == nullptr ? "<built-in>" : filename)));
+  prim.SetMetadata(_tokens->filename, VtValue(TfToken(filename == nullptr ? "<built-in>" : filename)));
 
   auto paramIter = AiNodeEntryGetParamIterator(nodeEntry);
 
   while (!AiParamIteratorFinished(paramIter)) {
-    const auto *pentry   = AiParamIteratorGetNext(paramIter);
+    const auto *pentry = AiParamIteratorGetNext(paramIter);
     const auto paramType = AiParamGetType(pentry);
 
     if (paramType == AI_TYPE_ARRAY) {
@@ -341,13 +309,12 @@ void _ReadArnoldShaderDef(UsdPrim &prim, const AtNodeEntry *nodeEntry)
       if (array == nullptr) {
         continue;
       }
-      const auto elemType    = AiArrayGetType(array);
+      const auto elemType = AiArrayGetType(array);
       const auto *conversion = _GetArrayConversion(elemType);
       if (conversion == nullptr) {
         continue;
       }
-      auto attr = prim.CreateAttribute(
-          TfToken(AiParamGetName(pentry).c_str()), conversion->type, false);
+      auto attr = prim.CreateAttribute(TfToken(AiParamGetName(pentry).c_str()), conversion->type, false);
 
       if (conversion->f != nullptr) {
         attr.Set(conversion->f(array));
@@ -358,8 +325,7 @@ void _ReadArnoldShaderDef(UsdPrim &prim, const AtNodeEntry *nodeEntry)
       if (conversion == nullptr) {
         continue;
       }
-      auto attr = prim.CreateAttribute(
-          TfToken(AiParamGetName(pentry).c_str()), conversion->type, false);
+      auto attr = prim.CreateAttribute(TfToken(AiParamGetName(pentry).c_str()), conversion->type, false);
 
       if (conversion->f != nullptr) {
         attr.Set(conversion->f(*AiParamGetDefault(pentry), pentry));

@@ -59,15 +59,13 @@ SdfPath UsdImagingConeAdapter::Populate(UsdPrim const &prim,
                                         UsdImagingIndexProxy *index,
                                         UsdImagingInstancerContext const *instancerContext)
 {
-  return _AddRprim(
-      HdPrimTypeTokens->mesh, prim, index, GetMaterialUsdPath(prim), instancerContext);
+  return _AddRprim(HdPrimTypeTokens->mesh, prim, index, GetMaterialUsdPath(prim), instancerContext);
 }
 
-void UsdImagingConeAdapter::TrackVariability(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    HdDirtyBits *timeVaryingBits,
-    UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingConeAdapter::TrackVariability(UsdPrim const &prim,
+                                             SdfPath const &cachePath,
+                                             HdDirtyBits *timeVaryingBits,
+                                             UsdImagingInstancerContext const *instancerContext) const
 {
   BaseAdapter::TrackVariability(prim, cachePath, timeVaryingBits, instancerContext);
 
@@ -124,13 +122,11 @@ static GfMatrix4d _GetImplicitGeomScaleTransform(UsdPrim const &prim, UsdTimeCod
 
   double height = 2.0;
   if (!cone.GetHeightAttr().Get(&height, time)) {
-    TF_WARN("Could not evaluate double-valued height attribute on prim %s",
-            prim.GetPath().GetText());
+    TF_WARN("Could not evaluate double-valued height attribute on prim %s", prim.GetPath().GetText());
   }
   double radius = 1.0;
   if (!cone.GetRadiusAttr().Get(&radius, time)) {
-    TF_WARN("Could not evaluate double-valued radius attribute on prim %s",
-            prim.GetPath().GetText());
+    TF_WARN("Could not evaluate double-valued radius attribute on prim %s", prim.GetPath().GetText());
   }
   TfToken axis = UsdGeomTokens->z;
   if (!cone.GetAxisAttr().Get(&axis, time)) {
@@ -145,7 +141,7 @@ VtValue UsdImagingConeAdapter::GetMeshPoints(UsdPrim const &prim, UsdTimeCode ti
 {
   // Return scaled points (and not that of a unit geometry)
   VtVec3fArray points = UsdImagingGetUnitConeMeshPoints();
-  GfMatrix4d scale    = _GetImplicitGeomScaleTransform(prim, time);
+  GfMatrix4d scale = _GetImplicitGeomScaleTransform(prim, time);
   for (GfVec3f &pt : points) {
     pt = scale.Transform(pt);
   }

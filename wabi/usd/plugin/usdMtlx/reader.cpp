@@ -155,8 +155,7 @@ inline static std::vector<mx::ElementPtr> _Children(const std::shared_ptr<T> &mt
 class _Attr {
  public:
   template<typename T>
-  _Attr(const std::shared_ptr<T> &element, const std::string &name)
-      : _Attr(element->getAttribute(name))
+  _Attr(const std::shared_ptr<T> &element, const std::string &name) : _Attr(element->getAttribute(name))
   {}
 
   explicit operator bool() const
@@ -205,8 +204,7 @@ template<typename T> inline static const std::string &_Type(const std::shared_pt
 
 // Returns the attribute named \p name on element \p mtlx as a T in \p value
 // if possible and returns true, otherwise returns false.
-template<typename T>
-static bool _Value(T *value, const mx::ConstElementPtr &mtlx, const std::string &name)
+template<typename T> static bool _Value(T *value, const mx::ConstElementPtr &mtlx, const std::string &name)
 {
   // Fail if the attribute doesn't exist.  This allows us to distinguish
   // an empty string from a missing string.
@@ -237,8 +235,7 @@ static TfToken _MakeName(const mx::ConstElementPtr &mtlx)
 }
 
 // Create a USD input on connectable that conforms to mtlx.
-template<typename C>
-static UsdShadeInput _MakeInput(C &connectable, const mx::ConstTypedElementPtr &mtlx)
+template<typename C> static UsdShadeInput _MakeInput(C &connectable, const mx::ConstTypedElementPtr &mtlx)
 {
   // Get the MaterialX type name.
   auto &&type = _Type(mtlx);
@@ -251,7 +248,7 @@ static UsdShadeInput _MakeInput(C &connectable, const mx::ConstTypedElementPtr &
   TfToken renderType;
   auto converted = UsdMtlxGetUsdType(type).valueTypeName;
   if (!converted) {
-    converted  = SdfValueTypeNames->Token;
+    converted = SdfValueTypeNames->Token;
     renderType = TfToken(type);
   }
 
@@ -320,11 +317,11 @@ static mx::ConstNodeDefPtr _FindMatchingNodeDef(const mx::ConstDocumentPtr &mtlx
 // If the nodedef is not found in the document then the standard
 // library is also checked.
 static mx::ConstNodeDefPtr _FindMatchingNodeDef(
-    const mx::ConstNodePtr &mtlxShaderNode,
-    const std::string &family,
-    const NdrVersion &version,
-    const std::string &target,
-    const mx::ConstInterfaceElementPtr &mtlxInterface = mx::NodeDefPtr())
+  const mx::ConstNodePtr &mtlxShaderNode,
+  const std::string &family,
+  const NdrVersion &version,
+  const std::string &target,
+  const mx::ConstInterfaceElementPtr &mtlxInterface = mx::NodeDefPtr())
 {
   auto nodeDef = _FindMatchingNodeDef(mtlxShaderNode->getDocument(),
                                       mtlxInterface,
@@ -357,18 +354,14 @@ static mx::ConstNodeDefPtr _GetNodeDef(const mx::ConstNodePtr &mtlxNode)
   }
 
   auto mtlxType = mtlxNode->getType();
-  if (mtlxType == mx::SURFACE_SHADER_TYPE_STRING ||
-      mtlxType == mx::DISPLACEMENT_SHADER_TYPE_STRING ||
+  if (mtlxType == mx::SURFACE_SHADER_TYPE_STRING || mtlxType == mx::DISPLACEMENT_SHADER_TYPE_STRING ||
       mtlxType == mx::VOLUME_SHADER_TYPE_STRING || mtlxType == mx::LIGHT_SHADER_TYPE_STRING) {
     return _FindMatchingNodeDef(
-        mtlxNode, mtlxNode->getCategory(), UsdMtlxGetVersion(mtlxNode), mtlxNode->getTarget());
+      mtlxNode, mtlxNode->getCategory(), UsdMtlxGetVersion(mtlxNode), mtlxNode->getTarget());
   }
   else {
-    return _FindMatchingNodeDef(mtlxNode,
-                                mtlxNode->getCategory(),
-                                UsdMtlxGetVersion(mtlxNode),
-                                mtlxNode->getTarget(),
-                                mtlxNode);
+    return _FindMatchingNodeDef(
+      mtlxNode, mtlxNode->getCategory(), UsdMtlxGetVersion(mtlxNode), mtlxNode->getTarget(), mtlxNode);
   }
 }
 
@@ -403,21 +396,19 @@ static void _CopyValue(const UsdShadeInput &usd, const mx::ConstValueElementPtr 
       auto range = UsdMtlxGetPackedUsdValues(valuerange, "integer");
       if (range.size() == 2) {
         const int first = range[0].Get<int>();
-        const int last  = range[1].Get<int>();
+        const int last = range[1].Get<int>();
         if (last < first) {
-          TF_WARN(TfStringPrintf("Invalid valuerange [%d,%d] on '%s';  ignoring",
-                                 first,
-                                 last,
-                                 mtlx->getNamePath().c_str()));
+          TF_WARN(TfStringPrintf(
+            "Invalid valuerange [%d,%d] on '%s';  ignoring", first, last, mtlx->getNamePath().c_str()));
         }
         else if (values.size() != size_t(last - first + 1)) {
           TF_WARN(
-              TfStringPrintf("valuerange [%d,%d] doesn't match valuecurve size "
-                             "%zd on '%s';  ignoring",
-                             first,
-                             last,
-                             values.size(),
-                             mtlx->getNamePath().c_str()));
+            TfStringPrintf("valuerange [%d,%d] doesn't match valuecurve size "
+                           "%zd on '%s';  ignoring",
+                           first,
+                           last,
+                           values.size(),
+                           mtlx->getNamePath().c_str()));
         }
         else {
           auto frame = first;
@@ -427,9 +418,8 @@ static void _CopyValue(const UsdShadeInput &usd, const mx::ConstValueElementPtr 
         }
       }
       else {
-        TF_WARN(TfStringPrintf("Malformed valuerange '%s' on '%s';  ignoring",
-                               valuerange.c_str(),
-                               mtlx->getNamePath().c_str()));
+        TF_WARN(TfStringPrintf(
+          "Malformed valuerange '%s' on '%s';  ignoring", valuerange.c_str(), mtlx->getNamePath().c_str()));
       }
     }
     else {
@@ -520,8 +510,7 @@ static void _SetUIAttributes(const UsdShadeInput &usd, const mx::ConstElementPtr
 /// Returns an inheritance sequence with the most derived at the end
 /// of the sequence.
 template<typename T>
-static std::vector<std::shared_ptr<T>> _GetInheritanceStack(
-    const std::shared_ptr<T> &mtlxMostDerived)
+static std::vector<std::shared_ptr<T>> _GetInheritanceStack(const std::shared_ptr<T> &mtlxMostDerived)
 {
   std::vector<std::shared_ptr<T>> result;
 
@@ -529,7 +518,7 @@ static std::vector<std::shared_ptr<T>> _GetInheritanceStack(
   std::set<std::shared_ptr<T>> visited;
   auto document = mtlxMostDerived->getDocument();
   for (auto mtlx = mtlxMostDerived; mtlx;
-       mtlx      = std::dynamic_pointer_cast<T>(document->getChild(_Attr(mtlx, names.inherit)))) {
+       mtlx = std::dynamic_pointer_cast<T>(document->getChild(_Attr(mtlx, names.inherit)))) {
     if (!visited.insert(mtlx).second) {
       throw mx::ExceptionFoundCycle("Encountered cycle at element: " + mtlx->asString());
     }
@@ -546,19 +535,17 @@ class _NodeGraphBuilder {
  public:
   using ShaderNamesByOutputName = std::map<std::string, TfToken>;
 
-  _NodeGraphBuilder()                          = default;
+  _NodeGraphBuilder() = default;
   _NodeGraphBuilder(const _NodeGraphBuilder &) = delete;
-  _NodeGraphBuilder(_NodeGraphBuilder &&)      = delete;
+  _NodeGraphBuilder(_NodeGraphBuilder &&) = delete;
   _NodeGraphBuilder &operator=(const _NodeGraphBuilder &) = delete;
   _NodeGraphBuilder &operator=(_NodeGraphBuilder &&) = delete;
-  ~_NodeGraphBuilder()                               = default;
+  ~_NodeGraphBuilder() = default;
 
   void SetInterface(const mx::ConstNodeDefPtr &);
   void SetContainer(const mx::ConstElementPtr &);
   void SetTarget(const UsdStagePtr &, const SdfPath &targetPath);
-  void SetTarget(const UsdStagePtr &,
-                 const SdfPath &parentPath,
-                 const mx::ConstElementPtr &childName);
+  void SetTarget(const UsdStagePtr &, const SdfPath &parentPath, const mx::ConstElementPtr &childName);
   UsdPrim Build(ShaderNamesByOutputName *outputs);
 
  private:
@@ -582,8 +569,7 @@ class _NodeGraphBuilder {
                      const U &usdUpstream,
                      const D &usdDownstream);
   void _ConnectNodes();
-  void _ConnectTerminals(const mx::ConstElementPtr &iface,
-                         const UsdShadeConnectableAPI &connectable);
+  void _ConnectTerminals(const mx::ConstElementPtr &iface, const UsdShadeConnectableAPI &connectable);
 
  private:
   mx::ConstNodeDefPtr _mtlxNodeDef;
@@ -608,7 +594,7 @@ void _NodeGraphBuilder::SetContainer(const mx::ConstElementPtr &mtlxContainer)
 void _NodeGraphBuilder::SetTarget(const UsdStagePtr &stage, const SdfPath &path)
 {
   _usdStage = stage;
-  _usdPath  = path;
+  _usdPath = path;
 }
 
 void _NodeGraphBuilder::SetTarget(const UsdStagePtr &stage,
@@ -694,9 +680,9 @@ void _NodeGraphBuilder::_AddNode(const mx::ConstNodePtr &mtlxNode, const UsdPrim
       return;
     }
   }
-  auto stage      = usdParent.GetStage();
+  auto stage = usdParent.GetStage();
   auto shaderPath = usdParent.GetPath().AppendChild(_MakeName(mtlxNode));
-  auto usdShader  = UsdShadeShader::Define(stage, shaderPath);
+  auto usdShader = UsdShadeShader::Define(stage, shaderPath);
   if (!shaderId.IsEmpty()) {
     usdShader.CreateIdAttr(VtValue(TfToken(shaderId)));
   }
@@ -781,9 +767,8 @@ UsdShadeOutput _NodeGraphBuilder::_AddOutput(const mx::ConstTypedElementPtr &mtl
   // Choose the type.  USD uses Token for shader semantic types.
   TfToken renderType;
   SdfValueTypeName usdType;
-  if (context == "surface" || context == "displacement" || context == "volume" ||
-      context == "light" || mtlxType == mx::SURFACE_SHADER_TYPE_STRING ||
-      mtlxType == mx::DISPLACEMENT_SHADER_TYPE_STRING ||
+  if (context == "surface" || context == "displacement" || context == "volume" || context == "light" ||
+      mtlxType == mx::SURFACE_SHADER_TYPE_STRING || mtlxType == mx::DISPLACEMENT_SHADER_TYPE_STRING ||
       mtlxType == mx::VOLUME_SHADER_TYPE_STRING || mtlxType == mx::LIGHT_SHADER_TYPE_STRING) {
     usdType = SdfValueTypeNames->Token;
   }
@@ -794,7 +779,7 @@ UsdShadeOutput _NodeGraphBuilder::_AddOutput(const mx::ConstTypedElementPtr &mtl
   else {
     usdType = UsdMtlxGetUsdType(mtlxType).valueTypeName;
     if (!usdType) {
-      usdType    = SdfValueTypeNames->Token;
+      usdType = SdfValueTypeNames->Token;
       renderType = TfToken(mtlxType);
     }
   }
@@ -816,8 +801,7 @@ UsdShadeOutput _NodeGraphBuilder::_AddOutput(const mx::ConstTypedElementPtr &mtl
 }
 
 template<typename D>
-void _NodeGraphBuilder::_ConnectPorts(const mx::ConstPortElementPtr &mtlxDownstream,
-                                      const D &usdDownstream)
+void _NodeGraphBuilder::_ConnectPorts(const mx::ConstPortElementPtr &mtlxDownstream, const D &usdDownstream)
 {
   if (auto nodeName = _Attr(mtlxDownstream, names.nodename)) {
     auto i = _outputs.find(nodeName.str());
@@ -911,9 +895,9 @@ _NodeGraph::_NodeGraph()
 }
 
 _NodeGraph::_NodeGraph(const _NodeGraph &other, const UsdPrim &referencer)
-    : _usdOwnerPrim(other._usdOwnerPrim),
-      _outputs(other._outputs),
-      _referencer(referencer.GetPath())
+  : _usdOwnerPrim(other._usdOwnerPrim),
+    _outputs(other._outputs),
+    _referencer(referencer.GetPath())
 {
   // Do nothing
 }
@@ -923,15 +907,14 @@ void _NodeGraph::SetImplementation(_NodeGraphBuilder &builder)
   if (auto usdOwnerPrim = builder.Build(&_outputs)) {
     // Success.  Cut over.
     _usdOwnerPrim = usdOwnerPrim;
-    _referencer   = SdfPath();
+    _referencer = SdfPath();
   }
 }
 
 UsdShadeOutput _NodeGraph::GetOutputByName(const std::string &name) const
 {
-  auto nodeGraph = _referencer.IsEmpty() ?
-                       UsdShadeNodeGraph(_usdOwnerPrim) :
-                       UsdShadeNodeGraph::Get(_usdOwnerPrim.GetStage(), _referencer);
+  auto nodeGraph = _referencer.IsEmpty() ? UsdShadeNodeGraph(_usdOwnerPrim) :
+                                           UsdShadeNodeGraph::Get(_usdOwnerPrim.GetStage(), _referencer);
   if (nodeGraph) {
     return nodeGraph.GetOutput(TfToken(name));
   }
@@ -940,9 +923,9 @@ UsdShadeOutput _NodeGraph::GetOutputByName(const std::string &name) const
   // child shader.
   auto i = _outputs.find(name);
   if (i != _outputs.end()) {
-    auto child = _referencer.IsEmpty() ? UsdShadeShader(_usdOwnerPrim.GetChild(i->second)) :
-                                         UsdShadeShader::Get(_usdOwnerPrim.GetStage(),
-                                                             _referencer.AppendChild(i->second));
+    auto child = _referencer.IsEmpty() ?
+                   UsdShadeShader(_usdOwnerPrim.GetChild(i->second)) :
+                   UsdShadeShader::Get(_usdOwnerPrim.GetStage(), _referencer.AppendChild(i->second));
     if (child) {
       return child.GetOutput(UsdMtlxTokens->DefaultOutputName);
     }
@@ -988,8 +971,8 @@ _NodeGraph _NodeGraph::AddReference(const SdfPath &referencingPath) const
 /// It also provides enough accessors to implement the reader.
 class _Context {
  public:
-  using VariantName     = std::string;
-  using VariantSetName  = std::string;
+  using VariantName = std::string;
+  using VariantSetName = std::string;
   using VariantSetOrder = std::vector<VariantSetName>;
 
   _Context(const UsdStagePtr &stage, const SdfPath &internalPath);
@@ -1011,12 +994,11 @@ class _Context {
   std::set<VariantName> GetVariants(const VariantSetName &) const;
   UsdShadeMaterial GetMaterial(const std::string &mtlxMaterialName) const;
   SdfPath GetCollectionsPath() const;
-  UsdCollectionAPI GetCollection(const mx::ConstGeomElementPtr &,
-                                 const UsdPrim &prim = UsdPrim()) const;
+  UsdCollectionAPI GetCollection(const mx::ConstGeomElementPtr &, const UsdPrim &prim = UsdPrim()) const;
 
  private:
-  using Variant           = std::map<std::string, mx::ConstValueElementPtr>;
-  using VariantSet        = std::map<VariantName, Variant>;
+  using Variant = std::map<std::string, mx::ConstValueElementPtr>;
+  using VariantSet = std::map<VariantName, Variant>;
   using VariantSetsByName = std::map<VariantSetName, VariantSet>;
 
   // A 'collection' attribute key is the collection name.
@@ -1073,12 +1055,12 @@ class _Context {
 };
 
 _Context::_Context(const UsdStagePtr &stage, const SdfPath &internalPath)
-    : _stage(stage),
-      _collectionsPath(internalPath.AppendChild(TfToken("Collections"))),
-      _looksPath(internalPath.AppendChild(TfToken("Looks"))),
-      _materialsPath(internalPath.AppendChild(TfToken("Materials"))),
-      _nodeGraphsPath(internalPath.AppendChild(TfToken("NodeGraphs"))),
-      _shadersPath(internalPath.AppendChild(TfToken("Shaders")))
+  : _stage(stage),
+    _collectionsPath(internalPath.AppendChild(TfToken("Collections"))),
+    _looksPath(internalPath.AppendChild(TfToken("Looks"))),
+    _materialsPath(internalPath.AppendChild(TfToken("Materials"))),
+    _nodeGraphsPath(internalPath.AppendChild(TfToken("NodeGraphs"))),
+    _shadersPath(internalPath.AppendChild(TfToken("Shaders")))
 {
   // Do nothing
 }
@@ -1106,7 +1088,7 @@ void _Context::AddVariants(const mx::ConstElementPtr &mtlx)
 
     // Keep the variant set iff there was something in it.
     if (!variantSet.empty()) {
-      auto &variantSetName         = _Name(mtlxVariantSet);
+      auto &variantSetName = _Name(mtlxVariantSet);
       _variantSets[variantSetName] = std::move(variantSet);
       _variantSetGlobalOrder.push_back(variantSetName);
     }
@@ -1136,15 +1118,15 @@ _NodeGraph _Context::_AddNodeGraph(const mx::ConstNodeGraphPtr &mtlxNodeGraph,
     // don't make a USD nodegraph.
     if (mtlxNodeGraph) {
       TF_DEBUG(USDMTLX_READER)
-          .Msg("Add node graph: %s at path %s\n",
-               mtlxNodeGraph->getName().c_str(),
-               _nodeGraphsPath.GetString().c_str());
+        .Msg("Add node graph: %s at path %s\n",
+             mtlxNodeGraph->getName().c_str(),
+             _nodeGraphsPath.GetString().c_str());
       builder.SetContainer(mtlxNodeGraph);
       builder.SetTarget(_stage, _nodeGraphsPath, mtlxNodeGraph);
     }
     else {
       TF_DEBUG(USDMTLX_READER)
-          .Msg("Add implicit node graph at path %s\n", _nodeGraphsPath.GetString().c_str());
+        .Msg("Add implicit node graph at path %s\n", _nodeGraphsPath.GetString().c_str());
       builder.SetContainer(mtlxDocument);
       builder.SetTarget(_stage, _nodeGraphsPath);
     }
@@ -1182,7 +1164,7 @@ UsdShadeMaterial _Context::BeginMaterial(const mx::ConstNodePtr &mtlxMaterial)
 
       // Cut over.
       _mtlxMaterial = mtlxMaterial;
-      _usdMaterial  = usdMaterial;
+      _usdMaterial = usdMaterial;
     }
   }
   return _usdMaterial;
@@ -1195,8 +1177,8 @@ void _Context::EndMaterial()
   }
 
   _materials[_Name(_mtlxMaterial)] = _usdMaterial;
-  _mtlxMaterial                    = nullptr;
-  _usdMaterial                     = UsdShadeMaterial();
+  _mtlxMaterial = nullptr;
+  _usdMaterial = UsdShadeMaterial();
 }
 
 UsdShadeShader _Context::AddShaderNode(const mx::ConstNodePtr &mtlxShaderNode)
@@ -1252,9 +1234,7 @@ UsdShadeShader _Context::AddShaderNode(const mx::ConstNodePtr &mtlxShaderNode)
   }
   else if ((usdShaderImpl = UsdShadeShader::Define(_stage, shaderImplPath))) {
     TF_DEBUG(USDMTLX_READER)
-        .Msg("Created shader mtlx %s, as usd %s\n",
-             mtlxNodeDef->getName().c_str(),
-             name.GetString().c_str());
+      .Msg("Created shader mtlx %s, as usd %s\n", mtlxNodeDef->getName().c_str(), name.GetString().c_str());
     usdShaderImpl.CreateIdAttr(VtValue(TfToken(shaderId)));
     auto connectable = usdShaderImpl.ConnectableAPI();
     _SetCoreUIAttributes(usdShaderImpl.GetPrim(), mtlxShaderNode);
@@ -1271,7 +1251,7 @@ UsdShadeShader _Context::AddShaderNode(const mx::ConstNodePtr &mtlxShaderNode)
   // Reference the shader under the material.  We need to reference it
   // so variants will be stronger, in case we have any variants.
   auto shaderPath = _usdMaterial.GetPath().AppendChild(name);
-  auto usdShader  = UsdShadeShader::Define(_stage, shaderPath);
+  auto usdShader = UsdShadeShader::Define(_stage, shaderPath);
   usdShader.GetPrim().GetReferences().AddInternalReference(shaderImplPath);
 
   // Record the referencing shader for later variants.
@@ -1280,7 +1260,7 @@ UsdShadeShader _Context::AddShaderNode(const mx::ConstNodePtr &mtlxShaderNode)
   // Connect to material interface.
   for (auto &i : _GetInheritanceStack(mtlxNodeDef)) {
     for (auto mtlxValue : i->getInputs()) {
-      auto shaderInput   = _MakeInput(usdShader, mtlxValue);
+      auto shaderInput = _MakeInput(usdShader, mtlxValue);
       auto materialInput = _MakeInput(_usdMaterial, mtlxValue);
       shaderInput.ConnectToSource(materialInput);
     }
@@ -1297,12 +1277,10 @@ UsdShadeShader _Context::AddShaderNode(const mx::ConstNodePtr &mtlxShaderNode)
       // The "nodegraph" attribute is optional.  If missing then
       // we create a USD nodegraph from the nodes and outputs on
       // the document and use that.
-      auto mtlxNodeGraph = mtlxInput->getDocument()->getNodeGraph(
-          _Attr(mtlxInput, names.nodegraph).str());
+      auto mtlxNodeGraph = mtlxInput->getDocument()->getNodeGraph(_Attr(mtlxInput, names.nodegraph).str());
       if (auto usdNodeGraph = mtlxNodeGraph ? AddNodeGraph(mtlxNodeGraph) :
                                               AddImplicitNodeGraph(mtlxInput->getDocument())) {
-        _BindNodeGraph(
-            mtlxInput, _usdMaterial.GetPath(), UsdShadeConnectableAPI(usdShader), usdNodeGraph);
+        _BindNodeGraph(mtlxInput, _usdMaterial.GetPath(), UsdShadeConnectableAPI(usdShader), usdNodeGraph);
       }
     }
   }
@@ -1310,8 +1288,8 @@ UsdShadeShader _Context::AddShaderNode(const mx::ConstNodePtr &mtlxShaderNode)
     for (auto mtlxToken : mtlxShaderNode->getChildren()) {
       if (mtlxToken->getCategory() == names.token) {
         // Always use the string type for MaterialX tokens.
-        auto primvar = UsdGeomPrimvarsAPI(_usdMaterial)
-                           .CreatePrimvar(_MakeName(mtlxToken), SdfValueTypeNames->String);
+        auto primvar =
+          UsdGeomPrimvarsAPI(_usdMaterial).CreatePrimvar(_MakeName(mtlxToken), SdfValueTypeNames->String);
         primvar.Set(VtValue(_Attr(mtlxToken, names.value).str()));
       }
     }
@@ -1319,21 +1297,21 @@ UsdShadeShader _Context::AddShaderNode(const mx::ConstNodePtr &mtlxShaderNode)
 
   // Connect the shader's outputs to the material.
   if (auto output = usdShader.GetOutput(UsdShadeTokens->surface)) {
-    UsdShadeConnectableAPI::ConnectToSource(
-        _usdMaterial.CreateSurfaceOutput(_tokens->mtlxRenderContext), output);
+    UsdShadeConnectableAPI::ConnectToSource(_usdMaterial.CreateSurfaceOutput(_tokens->mtlxRenderContext),
+                                            output);
   }
   if (auto output = usdShader.GetOutput(UsdShadeTokens->displacement)) {
     UsdShadeConnectableAPI::ConnectToSource(
-        _usdMaterial.CreateDisplacementOutput(_tokens->mtlxRenderContext), output);
+      _usdMaterial.CreateDisplacementOutput(_tokens->mtlxRenderContext), output);
   }
   if (auto output = usdShader.GetOutput(UsdShadeTokens->volume)) {
-    UsdShadeConnectableAPI::ConnectToSource(
-        _usdMaterial.CreateVolumeOutput(_tokens->mtlxRenderContext), output);
+    UsdShadeConnectableAPI::ConnectToSource(_usdMaterial.CreateVolumeOutput(_tokens->mtlxRenderContext),
+                                            output);
   }
   if (auto output = usdShader.GetOutput(_tokens->light)) {
     // USD doesn't support this type.
     UsdShadeConnectableAPI::ConnectToSource(
-        _usdMaterial.CreateOutput(_tokens->light, SdfValueTypeNames->Token), output);
+      _usdMaterial.CreateOutput(_tokens->light, SdfValueTypeNames->Token), output);
   }
 
   // Connect other semantic shader outputs.
@@ -1341,8 +1319,8 @@ UsdShadeShader _Context::AddShaderNode(const mx::ConstNodePtr &mtlxShaderNode)
     auto name = output.GetBaseName();
     if (name != UsdShadeTokens->surface && name != UsdShadeTokens->displacement &&
         name != UsdShadeTokens->volume && name != _tokens->light) {
-      UsdShadeConnectableAPI::ConnectToSource(
-          _usdMaterial.CreateOutput(name, SdfValueTypeNames->Token), output);
+      UsdShadeConnectableAPI::ConnectToSource(_usdMaterial.CreateOutput(name, SdfValueTypeNames->Token),
+                                              output);
     }
   }
 
@@ -1365,17 +1343,17 @@ void _Context::AddMaterialVariant(const std::string &mtlxMaterialName,
   }
 
   // Create the variant set on the material.
-  auto usdMaterial   = GetMaterial(mtlxMaterialName);
+  auto usdMaterial = GetMaterial(mtlxMaterialName);
   auto usdVariantSet = usdMaterial.GetPrim().GetVariantSet(variantSetName);
 
   // Create the variant on the material.
   if (!usdVariantSet.AddVariant(variantName)) {
     TF_CODING_ERROR(
-        "Failed to author material variant '%s' "
-        "in variant set '%s' on <%s>",
-        variantName.c_str(),
-        variantSetName.c_str(),
-        usdMaterial.GetPath().GetText());
+      "Failed to author material variant '%s' "
+      "in variant set '%s' on <%s>",
+      variantName.c_str(),
+      variantSetName.c_str(),
+      usdMaterial.GetPath().GetText());
     return;
   }
 
@@ -1408,9 +1386,8 @@ UsdCollectionAPI _Context::AddGeometryReference(const mx::ConstGeomElementPtr &m
       result = i->second;
     }
     else {
-      TF_WARN("Unknown collection '%s' in %s",
-              mtlxCollection.c_str(),
-              mtlxGeomElement->getNamePath().c_str());
+      TF_WARN(
+        "Unknown collection '%s' in %s", mtlxCollection.c_str(), mtlxGeomElement->getNamePath().c_str());
     }
   }
 
@@ -1436,15 +1413,14 @@ UsdCollectionAPI _Context::_AddCollection(const mx::ConstCollectionPtr &mtlxColl
 
   // Create the collection.
   auto &usdCollection = _collections[_Name(mtlxCollection)] = UsdCollectionAPI::Apply(
-      usdPrim, _MakeName(mtlxCollection));
+    usdPrim, _MakeName(mtlxCollection));
   _SetCoreUIAttributes(usdCollection.CreateIncludesRel(), mtlxCollection);
 
   // Add the included collections (recursively creating them if necessary)
   // and the included and excluded geometry.
   if (auto inclcol = _Attr(mtlxCollection, names.includecollection)) {
     for (auto &collectionName : UsdMtlxSplitStringArray(inclcol.str())) {
-      if (auto mtlxChildCollection = mtlxCollection->getDocument()->getCollection(
-              collectionName)) {
+      if (auto mtlxChildCollection = mtlxCollection->getDocument()->getCollection(collectionName)) {
         if (auto usdChildCollection = _AddCollection(mtlxChildCollection, visited)) {
           usdCollection.IncludePath(usdChildCollection.GetCollectionPath());
         }
@@ -1479,8 +1455,7 @@ UsdCollectionAPI _Context::_AddGeomExpr(const mx::ConstGeomElementPtr &mtlxGeomE
   // and join to make a key.
   auto geomexprArray = UsdMtlxSplitStringArray(geom.str());
   std::sort(geomexprArray.begin(), geomexprArray.end());
-  geomexprArray.erase(std::unique(geomexprArray.begin(), geomexprArray.end()),
-                      geomexprArray.end());
+  geomexprArray.erase(std::unique(geomexprArray.begin(), geomexprArray.end()), geomexprArray.end());
   _GeomKey key = TfStringJoin(geomexprArray, ",");
 
   // See if this key exists.
@@ -1491,16 +1466,16 @@ UsdCollectionAPI _Context::_AddGeomExpr(const mx::ConstGeomElementPtr &mtlxGeomE
   }
 
   // Nope, new collection.  Make a unique name for it.
-  int &k       = _nextGeomIndex;
-  auto name    = "geom_";
+  int &k = _nextGeomIndex;
+  auto name = "geom_";
   auto usdPrim = _stage->DefinePrim(_collectionsPath);
   while (UsdCollectionAPI(usdPrim, TfToken(name + std::to_string(k)))) {
     ++k;
   }
 
   // Create the collection.
-  auto &usdCollection = i.first->second = UsdCollectionAPI::Apply(
-      usdPrim, TfToken(name + std::to_string(k)));
+  auto &usdCollection = i.first->second = UsdCollectionAPI::Apply(usdPrim,
+                                                                  TfToken(name + std::to_string(k)));
 
   // Add the geometry expressions.
   auto &geomprefix = mtlxGeomElement->getActiveGeomPrefix();
@@ -1515,13 +1490,11 @@ void _Context::_AddGeom(const UsdRelationship &rel, const std::string &pathStrin
 {
   std::string errMsg;
   if (SdfPath::IsValidPathString(pathString, &errMsg)) {
-    rel.AddTarget(
-        SdfPath(pathString).ReplacePrefix(SdfPath::AbsoluteRootPath(), _collectionsPath));
+    rel.AddTarget(SdfPath(pathString).ReplacePrefix(SdfPath::AbsoluteRootPath(), _collectionsPath));
   }
   else {
-    TF_WARN("Ignored non-path '%s' on collection relationship <%s>",
-            pathString.c_str(),
-            rel.GetPath().GetText());
+    TF_WARN(
+      "Ignored non-path '%s' on collection relationship <%s>", pathString.c_str(), rel.GetPath().GetText());
   }
 }
 
@@ -1568,11 +1541,9 @@ void _Context::_BindNodeGraph(const mx::ConstInputPtr &mtlxInput,
 {
   // Reference the instantiation.
   auto referencingPath = referencingPathParent.AppendChild(
-      usdNodeGraph.GetOwnerPrim().GetPath().GetNameToken());
+    usdNodeGraph.GetOwnerPrim().GetPath().GetNameToken());
   TF_DEBUG(USDMTLX_READER)
-      .Msg("_BindNodeGraph %s %s\n",
-           mtlxInput->getName().c_str(),
-           referencingPath.GetString().c_str());
+    .Msg("_BindNodeGraph %s %s\n", mtlxInput->getName().c_str(), referencingPath.GetString().c_str());
   auto refNodeGraph = usdNodeGraph.AddReference(referencingPath);
   if (!refNodeGraph) {
     return;
@@ -1623,7 +1594,7 @@ UsdShadeOutput _Context::_AddShaderOutput(const mx::ConstTypedElementPtr &mtlxTy
     }
   }
   TF_DEBUG(USDMTLX_READER)
-      .Msg("Add shader output %s of type %s\n", mtlxTyped->getName().c_str(), type.c_str());
+    .Msg("Add shader output %s of type %s\n", mtlxTyped->getName().c_str(), type.c_str());
   if (context == "surface" || type == mx::SURFACE_SHADER_TYPE_STRING) {
     return connectable.CreateOutput(UsdShadeTokens->surface, SdfValueTypeNames->Token);
   }
@@ -1657,8 +1628,7 @@ const _Context::Variant *_Context::_GetVariant(const VariantSetName &variantSetN
   return nullptr;
 }
 
-void _Context::_CopyVariant(const UsdShadeConnectableAPI &connectable,
-                            const Variant &variant) const
+void _Context::_CopyVariant(const UsdShadeConnectableAPI &connectable, const Variant &variant) const
 {
   for (auto &nameAndValue : variant) {
     auto &mtlxValue = nameAndValue.second;
@@ -1670,13 +1640,13 @@ void _Context::_CopyVariant(const UsdShadeConnectableAPI &connectable,
 /// are created using the VariantAssignmentsBuilder helper.
 class VariantAssignments {
  public:
-  using VariantName         = _Context::VariantName;
-  using VariantSetName      = _Context::VariantSetName;
-  using VariantSetOrder     = _Context::VariantSetOrder;
-  using VariantSelection    = std::pair<VariantSetName, VariantName>;
+  using VariantName = _Context::VariantName;
+  using VariantSetName = _Context::VariantSetName;
+  using VariantSetOrder = _Context::VariantSetOrder;
+  using VariantSelection = std::pair<VariantSetName, VariantName>;
   using VariantSelectionSet = std::set<VariantSelection>;
-  using MaterialAssignPtr   = mx::ConstMaterialAssignPtr;
-  using MaterialAssigns     = std::vector<MaterialAssignPtr>;
+  using MaterialAssignPtr = mx::ConstMaterialAssignPtr;
+  using MaterialAssigns = std::vector<MaterialAssignPtr>;
 
   /// Add the variant assignments from \p mtlx to this object.
   void Add(const mx::ConstElementPtr &mtlx);
@@ -1758,14 +1728,14 @@ const VariantAssignments::MaterialAssigns &VariantAssignments::GetMaterialAssign
 }
 
 VariantAssignments::VariantSetOrder VariantAssignments::GetVariantSetOrder(
-    const MaterialAssignPtr &mtlxMaterialAssign) const
+  const MaterialAssignPtr &mtlxMaterialAssign) const
 {
   // We could compute and store an order per material assign instead.
   return _globalVariantSetOrder;
 }
 
 const VariantAssignments::VariantSelectionSet &VariantAssignments::GetVariantSelections(
-    const MaterialAssignPtr &mtlxMaterialAssign) const
+  const MaterialAssignPtr &mtlxMaterialAssign) const
 {
   auto mtlxMaterial = _selections.find(mtlxMaterialAssign);
   if (mtlxMaterial != _selections.end()) {
@@ -1854,8 +1824,8 @@ VariantAssignments VariantAssignmentsBuilder::Build(const _Context &context)
   for (auto &i : _data) {
     auto &mtlxMaterialAssign = i.first;
     auto &variantAssignments = i.second;
-    auto &selections         = result._selections[mtlxMaterialAssign];
-    auto materialName        = _Attr(mtlxMaterialAssign, names.material).str();
+    auto &selections = result._selections[mtlxMaterialAssign];
+    auto materialName = _Attr(mtlxMaterialAssign, names.material).str();
 
     // Record all material assigns.
     result._materialAssigns.emplace_back(mtlxMaterialAssign);
@@ -1863,7 +1833,7 @@ VariantAssignments VariantAssignmentsBuilder::Build(const _Context &context)
     // Process all variants.
     for (auto &variantSelection : variantAssignments) {
       auto &variantSetName = variantSelection.first;
-      auto &variantName    = variantSelection.second;
+      auto &variantName = variantSelection.second;
 
       // Note the variant selection.
       selections.emplace(variantSetName, variantName);
@@ -1924,26 +1894,24 @@ static void _TranslateShaderNodes(_Context &context,
   for (auto mtlxShaderNode : mx::getShaderNodes(mtlxMaterial, mtlxShaderType)) {
     // Translate shader node.
     TF_DEBUG(USDMTLX_READER)
-        .Msg("Adding shaderNode '%s' type: '%s'\n",
-             _Name(mtlxShaderNode).c_str(),
-             mtlxShaderType.c_str());
+      .Msg("Adding shaderNode '%s' type: '%s'\n", _Name(mtlxShaderNode).c_str(), mtlxShaderType.c_str());
     if (auto usdShader = context.AddShaderNode(mtlxShaderNode)) {
       // Do nothing.
     }
     else {
       if (auto nodedef = _Attr(mtlxShaderNode, names.nodedef)) {
         TF_WARN(
-            "Failed to create shaderNode '%s' "
-            "to nodedef '%s'",
-            _Name(mtlxShaderNode).c_str(),
-            nodedef.c_str());
+          "Failed to create shaderNode '%s' "
+          "to nodedef '%s'",
+          _Name(mtlxShaderNode).c_str(),
+          nodedef.c_str());
       }
       else if (auto node = _Attr(mtlxShaderNode, names.node)) {
         TF_WARN(
-            "Failed to create shaderNode '%s' "
-            "to node '%s'",
-            _Name(mtlxShaderNode).c_str(),
-            node.c_str());
+          "Failed to create shaderNode '%s' "
+          "to node '%s'",
+          _Name(mtlxShaderNode).c_str(),
+          node.c_str());
       }
       else {
         // Ignore -- no node was specified.
@@ -1983,18 +1951,18 @@ static void ReadMaterials(mx::ConstDocumentPtr mtlx, _Context &context)
         if (auto usdInherited = context.GetMaterial(name)) {
           usdMaterial.GetPrim().GetSpecializes().AddSpecialize(usdInherited.GetPath());
           TF_DEBUG(USDMTLX_READER)
-              .Msg(
-                  "Material '%s' inherit from "
-                  " '%s'\n",
-                  _Name(mtlxMaterial).c_str(),
-                  name.c_str());
+            .Msg(
+              "Material '%s' inherit from "
+              " '%s'\n",
+              _Name(mtlxMaterial).c_str(),
+              name.c_str());
         }
         else {
           TF_WARN(
-              "Material '%s' attempted to inherit from "
-              "unknown material '%s'",
-              _Name(mtlxMaterial).c_str(),
-              name.c_str());
+            "Material '%s' attempted to inherit from "
+            "unknown material '%s'",
+            _Name(mtlxMaterial).c_str(),
+            name.c_str());
         }
       }
     }
@@ -2115,11 +2083,11 @@ static void ReadLook(const mx::ConstLookPtr &mtlxLook,
     // Make a unique material name.  If possible use the name of
     // the materialassign.
     auto materialName = _MakeName(mtlxMaterialAssign);
-    int &n            = materialNames[materialName];
+    int &n = materialNames[materialName];
     if (n) {
       // Make a unique name.
-      auto stage  = lookMaterialsPrim.GetStage();
-      auto base   = lookMaterialsPrim.GetPath();
+      auto stage = lookMaterialsPrim.GetStage();
+      auto base = lookMaterialsPrim.GetPath();
       auto prefix = materialName.GetString() + "_";
       do {
         materialName = TfToken(prefix + std::to_string(n++));
@@ -2135,7 +2103,7 @@ static void ReadLook(const mx::ConstLookPtr &mtlxLook,
     // multiple times with different variants to different
     // collections (so we can't use the material name itself).
     auto lookMaterialPrim = lookMaterialsPrim.GetStage()->DefinePrim(
-        lookMaterialsPrim.GetPath().AppendChild(materialName));
+      lookMaterialsPrim.GetPath().AppendChild(materialName));
     _SetGlobalCoreUIAttributes(lookMaterialPrim, mtlxMaterialAssign);
 
     // Reference the original material.
@@ -2287,11 +2255,11 @@ void UsdMtlxRead(const MaterialX::ConstDocumentPtr &mtlx,
       }
       else {
         TF_CODING_ERROR(
-            "Failed to author look variant '%s' "
-            "in variant set '%s' on <%s>",
-            lookName.c_str(),
-            lookVariantSet.GetName().c_str(),
-            root.GetPath().GetText());
+          "Failed to author look variant '%s' "
+          "in variant set '%s' on <%s>",
+          lookName.c_str(),
+          lookVariantSet.GetName().c_str(),
+          root.GetPath().GetText());
       }
     }
   }

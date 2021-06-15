@@ -93,15 +93,14 @@ class PcpInstanceKey {
 
   struct _Arc {
     explicit _Arc(const PcpNodeRef &node)
-        : _arcType(node.GetArcType()),
-          _sourceSite(node.GetSite()),
-          _timeOffset(node.GetMapToRoot().GetTimeOffset())
+      : _arcType(node.GetArcType()),
+        _sourceSite(node.GetSite()),
+        _timeOffset(node.GetMapToRoot().GetTimeOffset())
     {}
 
     bool operator==(const _Arc &rhs) const
     {
-      return _arcType == rhs._arcType && _sourceSite == rhs._sourceSite &&
-             _timeOffset == rhs._timeOffset;
+      return _arcType == rhs._arcType && _sourceSite == rhs._sourceSite && _timeOffset == rhs._timeOffset;
     }
 
     size_t GetHash() const

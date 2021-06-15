@@ -191,9 +191,7 @@ template<class PrimType> class Hd_PrimTypeIndex {
 
   static HdDirtyBits _TrackerGetPrimDirtyBits(HdChangeTracker &tracker, const SdfPath &path);
 
-  static void _TrackerMarkPrimClean(HdChangeTracker &tracker,
-                                    const SdfPath &path,
-                                    HdDirtyBits dirtyBits);
+  static void _TrackerMarkPrimClean(HdChangeTracker &tracker, const SdfPath &path, HdDirtyBits dirtyBits);
 
   static PrimType *_RenderDelegateCreatePrim(HdRenderDelegate *renderDelegate,
                                              const TfToken &typeId,

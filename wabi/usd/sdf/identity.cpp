@@ -32,9 +32,9 @@ WABI_NAMESPACE_BEGIN
 //
 
 Sdf_Identity::Sdf_Identity(Sdf_IdentityRegistry *registry, const SdfPath &path)
-    : _refCount(0),
-      _registry(registry),
-      _path(path)
+  : _refCount(0),
+    _registry(registry),
+    _path(path)
 {}
 
 Sdf_Identity::~Sdf_Identity()
@@ -56,7 +56,7 @@ const SdfLayerHandle &Sdf_Identity::GetLayer() const
 
 void Sdf_Identity::_Forget()
 {
-  _path     = SdfPath();
+  _path = SdfPath();
   _registry = NULL;
 }
 
@@ -188,8 +188,7 @@ void Sdf_IdentityRegistry::MoveIdentity(const SdfPath &oldPath, const SdfPath &n
 
   // Insert an entry in the identity map for the new path. If an identity
   // already exists there, make sure we stomp it first.
-  std::pair<_IdMap::iterator, bool> newIdStatus = _ids.insert(
-      std::make_pair(newPath, (Sdf_Identity *)NULL));
+  std::pair<_IdMap::iterator, bool> newIdStatus = _ids.insert(std::make_pair(newPath, (Sdf_Identity *)NULL));
   if (!newIdStatus.second) {
     if (TF_VERIFY(newIdStatus.first->second)) {
       newIdStatus.first->second->_Forget();
@@ -198,8 +197,8 @@ void Sdf_IdentityRegistry::MoveIdentity(const SdfPath &oldPath, const SdfPath &n
 
   // Copy the identity from the entry at the old path to the new path and
   // update it to point at the new path.
-  _IdMap::iterator oldIdIt         = _ids.find(oldPath);
-  newIdStatus.first->second        = oldIdIt->second;
+  _IdMap::iterator oldIdIt = _ids.find(oldPath);
+  newIdStatus.first->second = oldIdIt->second;
   newIdStatus.first->second->_path = newPath;
 
   // Erase the old identity map entry.

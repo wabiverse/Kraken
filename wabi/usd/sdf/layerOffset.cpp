@@ -135,8 +135,7 @@ size_t SdfLayerOffset::GetHash() const
 
 std::ostream &operator<<(std::ostream &out, const SdfLayerOffset &layerOffset)
 {
-  return out << "SdfLayerOffset(" << layerOffset.GetOffset() << ", " << layerOffset.GetScale()
-             << ")";
+  return out << "SdfLayerOffset(" << layerOffset.GetOffset() << ", " << layerOffset.GetScale() << ")";
 }
 
 WABI_NAMESPACE_END

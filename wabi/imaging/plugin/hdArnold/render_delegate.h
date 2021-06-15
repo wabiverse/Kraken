@@ -88,8 +88,7 @@ class HdArnoldRenderDelegate final : public HdRenderDelegate {
  public:
   HDARNOLD_API
   HdArnoldRenderDelegate(
-      HdArnoldRenderContext context =
-          HdArnoldRenderContext::Hydra);  ///< Constructor for the Render Delegate.
+    HdArnoldRenderContext context = HdArnoldRenderContext::Hydra);  ///< Constructor for the Render Delegate.
   HDARNOLD_API
   ~HdArnoldRenderDelegate() override;  ///< Destuctor for the Render Delegate.
   /// Returns an instance of HdArnoldRenderParam.
@@ -156,8 +155,7 @@ class HdArnoldRenderDelegate final : public HdRenderDelegate {
   ///  Pass.
   /// @return A shared pointer to the new Render Pass or nullptr on error.
   HDARNOLD_API
-  HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index,
-                                         HdRprimCollection const &collection) override;
+  HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index, HdRprimCollection const &collection) override;
 #if WABI_VERSION >= 2102
   /// Request to create a new instancer.
   ///
@@ -197,9 +195,7 @@ class HdArnoldRenderDelegate final : public HdRenderDelegate {
   /// @param instancerId Path to the parent Point Instancer.
   /// @return Pointer to the newly created RPrim or nullptr on error.
   HDARNOLD_API
-  HdRprim *CreateRprim(TfToken const &typeId,
-                       SdfPath const &rprimId,
-                       SdfPath const &instancerId) override;
+  HdRprim *CreateRprim(TfToken const &typeId, SdfPath const &rprimId, SdfPath const &instancerId) override;
 #endif
   /// Destroys an RPrim.
   ///
@@ -367,8 +363,7 @@ class HdArnoldRenderDelegate final : public HdRenderDelegate {
   bool Resume() override;
 
 #if WABI_VERSION >= 2011
-  using NativeRprimParamList =
-      std::unordered_map<TfToken, const AtParamEntry *, TfToken::HashFunctor>;
+  using NativeRprimParamList = std::unordered_map<TfToken, const AtParamEntry *, TfToken::HashFunctor>;
 #else
   using NativeRprimParamList = std::vector<std::pair<TfToken, const AtParamEntry *>>;
 #endif
@@ -423,13 +418,12 @@ class HdArnoldRenderDelegate final : public HdRenderDelegate {
   /// Pointer to the shared Resource Registry.
   static HdResourceRegistrySharedPtr _resourceRegistry;
 
-  using LightLinkingMap =
-      std::unordered_map<TfToken, std::vector<HdLight *>, TfToken::HashFunctor>;
+  using LightLinkingMap = std::unordered_map<TfToken, std::vector<HdLight *>, TfToken::HashFunctor>;
   using NativeRprimTypeMap = std::unordered_map<TfToken, AtString, TfToken::HashFunctor>;
-  using NativeRprimParams  = std::unordered_map<AtString, NativeRprimParamList, AtStringHash>;
+  using NativeRprimParams = std::unordered_map<AtString, NativeRprimParamList, AtStringHash>;
   // Should we use a std::vector here instead?
   using MaterialToShapeMap =
-      std::unordered_map<SdfPath, std::unordered_set<SdfPath, SdfPath::Hash>, SdfPath::Hash>;
+    std::unordered_map<SdfPath, std::unordered_set<SdfPath, SdfPath::Hash>, SdfPath::Hash>;
   using MaterialChangesQueue = tbb::concurrent_queue<SdfPath>;
 
   struct ShapeMaterialChange {
@@ -439,30 +433,26 @@ class HdArnoldRenderDelegate final : public HdRenderDelegate {
     ShapeMaterialChange() = default;
 
     ShapeMaterialChange(const SdfPath &_shape, const VtArray<SdfPath> &_materials)
-        : shape(_shape),
-          materials(_materials)
+      : shape(_shape),
+        materials(_materials)
     {}
   };
   using ShapeMaterialChangesQueue = tbb::concurrent_queue<ShapeMaterialChange>;
 
-  MaterialChangesQueue _materialDirtyQueue;    ///< Queue to track material terminal dirty events.
-  MaterialChangesQueue _materialRemovalQueue;  ///< Queue to track material removal events.
+  MaterialChangesQueue _materialDirtyQueue;            ///< Queue to track material terminal dirty events.
+  MaterialChangesQueue _materialRemovalQueue;          ///< Queue to track material removal events.
+  ShapeMaterialChangesQueue _shapeMaterialTrackQueue;  ///< Queue to track shape material assignment changes.
   ShapeMaterialChangesQueue
-      _shapeMaterialTrackQueue;  ///< Queue to track shape material assignment changes.
-  ShapeMaterialChangesQueue
-      _shapeMaterialUntrackQueue;  ///< Queue to untrack shape material assignment changes.
-  MaterialToShapeMap
-      _materialToShapeMap;  ///< Map to track dependencies between materials and shapes.
+    _shapeMaterialUntrackQueue;            ///< Queue to untrack shape material assignment changes.
+  MaterialToShapeMap _materialToShapeMap;  ///< Map to track dependencies between materials and shapes.
 
-  std::mutex _lightLinkingMutex;           ///< Mutex to lock all light linking operations.
-  LightLinkingMap _lightLinks;             ///< Light Link categories.
-  LightLinkingMap _shadowLinks;            ///< Shadow Link categories.
-  std::atomic<bool> _lightLinkingChanged;  ///< Whether or not Light Linking have changed.
-  DelegateRenderProducts
-      _delegateRenderProducts;         ///< Delegate Render Products for batch renders via husk.
-  TfTokenVector _supportedRprimTypes;  ///< List of supported rprim types.
-  NativeRprimTypeMap
-      _nativeRprimTypes;  ///< Remapping between the native rprim type names and arnold types.
+  std::mutex _lightLinkingMutex;                   ///< Mutex to lock all light linking operations.
+  LightLinkingMap _lightLinks;                     ///< Light Link categories.
+  LightLinkingMap _shadowLinks;                    ///< Shadow Link categories.
+  std::atomic<bool> _lightLinkingChanged;          ///< Whether or not Light Linking have changed.
+  DelegateRenderProducts _delegateRenderProducts;  ///< Delegate Render Products for batch renders via husk.
+  TfTokenVector _supportedRprimTypes;              ///< List of supported rprim types.
+  NativeRprimTypeMap _nativeRprimTypes;  ///< Remapping between the native rprim type names and arnold types.
   NativeRprimParams _nativeRprimParams;  ///< List of parameters for native rprims.
   /// Pointer to an instance of HdArnoldRenderParam.
   ///
@@ -477,10 +467,10 @@ class HdArnoldRenderDelegate final : public HdRenderDelegate {
   std::string _logFile;
   /// Top level render context using Hydra. Ie. Hydra, Solaris, Husk.
   HdArnoldRenderContext _context = HdArnoldRenderContext::Hydra;
-  int _verbosityLogFlags         = AI_LOG_WARNINGS | AI_LOG_ERRORS;
-  float _shutterOpen             = 0.0f;  ///< Saved Shutter Open value of the active camera.
-  float _shutterClose            = 0.0f;  ///< Saved Shutter Close value of the active camera.
-  bool _ignoreVerbosityLogFlags  = false;
+  int _verbosityLogFlags = AI_LOG_WARNINGS | AI_LOG_ERRORS;
+  float _shutterOpen = 0.0f;   ///< Saved Shutter Open value of the active camera.
+  float _shutterClose = 0.0f;  ///< Saved Shutter Close value of the active camera.
+  bool _ignoreVerbosityLogFlags = false;
 };
 
 WABI_NAMESPACE_END

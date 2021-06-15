@@ -58,7 +58,7 @@ VtDictionary::VtDictionary(VtDictionary const &other)
 }
 
 VtDictionary::VtDictionary(std::initializer_list<value_type> init)
-    : _dictMap(new _Map(init.begin(), init.end()))
+  : _dictMap(new _Map(init.begin(), init.end()))
 {}
 
 VtDictionary &VtDictionary::operator=(VtDictionary const &other)
@@ -99,8 +99,7 @@ void VtDictionary::erase(iterator f, iterator l)
 {
   if (!_dictMap)
     return;
-  _dictMap->erase(f.GetUnderlyingIterator(_dictMap.get()),
-                  l.GetUnderlyingIterator(_dictMap.get()));
+  _dictMap->erase(f.GetUnderlyingIterator(_dictMap.get()), l.GetUnderlyingIterator(_dictMap.get()));
 }
 
 void VtDictionary::clear()
@@ -235,9 +234,7 @@ void VtDictionary::_SetValueAtPathImpl(vector<string>::const_iterator curKeyElem
   i->second.Swap(newDict);
 }
 
-void VtDictionary::SetValueAtPath(string const &keyPath,
-                                  VtValue const &value,
-                                  char const *delimiters)
+void VtDictionary::SetValueAtPath(string const &keyPath, VtValue const &value, char const *delimiters)
 {
   vector<string> keyElems = TfStringSplit(keyPath, delimiters);
   if (keyElems.empty())
@@ -322,9 +319,7 @@ VtDictionary VtDictionaryOver(const VtDictionary &strong,
   return result;
 }
 
-void VtDictionaryOver(VtDictionary *strong,
-                      const VtDictionary &weak,
-                      bool coerceToWeakerOpinionType)
+void VtDictionaryOver(VtDictionary *strong, const VtDictionary &weak, bool coerceToWeakerOpinionType)
 {
   if (!strong) {
     TF_CODING_ERROR("VtDictionaryOver: NULL dictionary pointer.");
@@ -343,9 +338,7 @@ void VtDictionaryOver(VtDictionary *strong,
   }
 }
 
-void VtDictionaryOver(const VtDictionary &strong,
-                      VtDictionary *weak,
-                      bool coerceToWeakerOpinionType)
+void VtDictionaryOver(const VtDictionary &strong, VtDictionary *weak, bool coerceToWeakerOpinionType)
 {
   if (!weak) {
     TF_CODING_ERROR("VtDictionaryOver: NULL dictionary pointer");

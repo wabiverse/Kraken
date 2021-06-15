@@ -62,26 +62,24 @@ void wrapUsdShadeCoordSysAPI()
   class_<This, bases<UsdAPISchemaBase>> cls("CoordSysAPI");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -110,8 +108,7 @@ namespace {
 struct _BindingToTuple {
   static PyObject *convert(UsdShadeCoordSysAPI::Binding const &b)
   {
-    boost::python::tuple result = boost::python::make_tuple(
-        b.name, b.bindingRelPath, b.coordSysPrimPath);
+    boost::python::tuple result = boost::python::make_tuple(b.name, b.bindingRelPath, b.coordSysPrimPath);
     return boost::python::incref(result.ptr());
   }
 };
@@ -119,19 +116,18 @@ struct _BindingToTuple {
 WRAP_CUSTOM
 {
   _class.def("HasLocalBindings", &UsdShadeCoordSysAPI::HasLocalBindings)
-      .def("GetLocalBindings",
-           &UsdShadeCoordSysAPI::GetLocalBindings,
-           return_value_policy<TfPySequenceToList>())
-      .def("FindBindingsWithInheritance",
-           &UsdShadeCoordSysAPI::FindBindingsWithInheritance,
-           return_value_policy<TfPySequenceToList>())
-      .def("Bind", &UsdShadeCoordSysAPI::Bind)
-      .def("ClearBinding", &UsdShadeCoordSysAPI::ClearBinding)
-      .def("BlockBinding", &UsdShadeCoordSysAPI::BlockBinding)
-      .def("GetCoordSysRelationshipName", &UsdShadeCoordSysAPI::GetCoordSysRelationshipName)
-      .staticmethod("GetCoordSysRelationshipName")
-      .def("CanContainPropertyName", &UsdShadeCoordSysAPI::CanContainPropertyName, arg("name"))
-      .staticmethod("CanContainPropertyName");
+    .def(
+      "GetLocalBindings", &UsdShadeCoordSysAPI::GetLocalBindings, return_value_policy<TfPySequenceToList>())
+    .def("FindBindingsWithInheritance",
+         &UsdShadeCoordSysAPI::FindBindingsWithInheritance,
+         return_value_policy<TfPySequenceToList>())
+    .def("Bind", &UsdShadeCoordSysAPI::Bind)
+    .def("ClearBinding", &UsdShadeCoordSysAPI::ClearBinding)
+    .def("BlockBinding", &UsdShadeCoordSysAPI::BlockBinding)
+    .def("GetCoordSysRelationshipName", &UsdShadeCoordSysAPI::GetCoordSysRelationshipName)
+    .staticmethod("GetCoordSysRelationshipName")
+    .def("CanContainPropertyName", &UsdShadeCoordSysAPI::CanContainPropertyName, arg("name"))
+    .staticmethod("CanContainPropertyName");
 
   // Register to and from python conversion for parameter pairs
   to_python_converter<UsdShadeCoordSysAPI::Binding, _BindingToTuple>();

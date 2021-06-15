@@ -103,10 +103,10 @@ struct UsdMtlxUsdTypeInfo {
                      bool valueTypeNameIsExact,
                      TfToken shaderPropertyType,
                      int arraySize = 0)
-      : valueTypeName(valueTypeName),
-        shaderPropertyType(shaderPropertyType),
-        arraySize(arraySize),
-        valueTypeNameIsExact(valueTypeNameIsExact)
+    : valueTypeName(valueTypeName),
+      shaderPropertyType(shaderPropertyType),
+      arraySize(arraySize),
+      valueTypeNameIsExact(valueTypeNameIsExact)
   {}
 
   /// The value type name that most closely matches the MaterialX type.

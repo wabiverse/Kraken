@@ -44,7 +44,7 @@
 WABI_NAMESPACE_BEGIN
 
 HdEmbreeInstancer::HdEmbreeInstancer(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdInstancer(delegate, id)
+  : HdInstancer(delegate, id)
 {}
 
 HdEmbreeInstancer::~HdEmbreeInstancer()
@@ -56,9 +56,7 @@ HdEmbreeInstancer::~HdEmbreeInstancer()
   _primvarMap.clear();
 }
 
-void HdEmbreeInstancer::Sync(HdSceneDelegate *delegate,
-                             HdRenderParam *renderParam,
-                             HdDirtyBits *dirtyBits)
+void HdEmbreeInstancer::Sync(HdSceneDelegate *delegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
   _UpdateInstancer(delegate, dirtyBits);
 
@@ -74,8 +72,7 @@ void HdEmbreeInstancer::_SyncPrimvars(HdSceneDelegate *delegate, HdDirtyBits dir
 
   SdfPath const &id = GetId();
 
-  HdPrimvarDescriptorVector primvars = delegate->GetPrimvarDescriptors(id,
-                                                                       HdInterpolationInstance);
+  HdPrimvarDescriptorVector primvars = delegate->GetPrimvarDescriptors(id, HdInterpolationInstance);
 
   for (HdPrimvarDescriptor const &pv : primvars) {
     if (HdChangeTracker::IsPrimvarDirty(dirtyBits, id, pv.name)) {
@@ -103,7 +100,7 @@ VtMatrix4dArray HdEmbreeInstancer::ComputeInstanceTransforms(SdfPath const &prot
   // If any transform isn't provided, it's assumed to be the identity.
 
   GfMatrix4d instancerTransform = GetDelegate()->GetInstancerTransform(GetId());
-  VtIntArray instanceIndices    = GetDelegate()->GetInstanceIndices(GetId(), prototypeId);
+  VtIntArray instanceIndices = GetDelegate()->GetInstanceIndices(GetId(), prototypeId);
 
   VtMatrix4dArray transforms(instanceIndices.size());
   for (size_t i = 0; i < instanceIndices.size(); ++i) {
@@ -175,7 +172,7 @@ VtMatrix4dArray HdEmbreeInstancer::ComputeInstanceTransforms(SdfPath const &prot
   //     parentXf * xf
   // }
   VtMatrix4dArray parentTransforms =
-      static_cast<HdEmbreeInstancer *>(parentInstancer)->ComputeInstanceTransforms(GetId());
+    static_cast<HdEmbreeInstancer *>(parentInstancer)->ComputeInstanceTransforms(GetId());
 
   VtMatrix4dArray final(parentTransforms.size() * transforms.size());
   for (size_t i = 0; i < parentTransforms.size(); ++i) {

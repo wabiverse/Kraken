@@ -50,29 +50,24 @@ static bool _FanTriangulate(T *dst, T const *src, int offset, int index, int siz
   if (offset + index + 2 >= size) {
     *dst++ = T(0);
     *dst++ = T(0);
-    *dst   = T(0);
+    *dst = T(0);
     return false;
   }
 
   if (flip) {
     *dst++ = src[offset];
     *dst++ = src[offset + index + 2];
-    *dst   = src[offset + index + 1];
+    *dst = src[offset + index + 1];
   }
   else {
     *dst++ = src[offset];
     *dst++ = src[offset + index + 1];
-    *dst   = src[offset + index + 2];
+    *dst = src[offset + index + 2];
   }
   return true;
 }
 
-static bool _FanTriangulate(GfVec3i *dst,
-                            int const *src,
-                            int offset,
-                            int index,
-                            int size,
-                            bool flip)
+static bool _FanTriangulate(GfVec3i *dst, int const *src, int offset, int index, int size, bool flip)
 {
   return _FanTriangulate(dst->data(), src, offset, index, size, flip);
 }
@@ -94,15 +89,15 @@ void HdMeshUtil::ComputeTriangleIndices(VtVec3iArray *indices,
 
   // generate triangle index buffer
 
-  int const *numVertsPtr  = _topology->GetFaceVertexCounts().cdata();
-  int const *vertsPtr     = _topology->GetFaceVertexIndices().cdata();
+  int const *numVertsPtr = _topology->GetFaceVertexCounts().cdata();
+  int const *vertsPtr = _topology->GetFaceVertexIndices().cdata();
   int const *holeFacesPtr = _topology->GetHoleIndices().cdata();
-  int numFaces            = _topology->GetFaceVertexCounts().size();
-  int numVertIndices      = _topology->GetFaceVertexIndices().size();
-  int numTris             = 0;
-  int numHoleFaces        = _topology->GetHoleIndices().size();
-  bool invalidTopology    = false;
-  int holeIndex           = 0;
+  int numFaces = _topology->GetFaceVertexCounts().size();
+  int numVertIndices = _topology->GetFaceVertexIndices().size();
+  int numTris = 0;
+  int numHoleFaces = _topology->GetHoleIndices().size();
+  bool invalidTopology = false;
+  int holeIndex = 0;
   for (int i = 0; i < numFaces; ++i) {
     int nv = numVertsPtr[i] - 2;
     if (nv < 1) {
@@ -162,7 +157,7 @@ void HdMeshUtil::ComputeTriangleIndices(VtVec3iArray *indices,
       //    B       2        hide [0-1]
       //    C       3        hide [0-1] and [2-0]
       //
-      int edgeFlag  = 0;
+      int edgeFlag = 0;
       int edgeIndex = ev;
       for (int j = 0; j < nv - 2; ++j) {
         if (!_FanTriangulate(&(*indices)[tv], vertsPtr, v, j, numVertIndices, flip)) {
@@ -230,9 +225,9 @@ static void _TriangulateFaceVarying(SdfPath const &id,
 
   // CPU face-varying triangulation
   bool invalidTopology = false;
-  int numFVarValues    = 0;
-  int holeIndex        = 0;
-  int numHoleFaces     = holeFaces.size();
+  int numFVarValues = 0;
+  int holeIndex = 0;
+  int numHoleFaces = holeFaces.size();
   for (int i = 0; i < (int)faceVertexCounts.size(); ++i) {
     int nv = faceVertexCounts[i] - 2;
     if (nv < 1) {
@@ -326,35 +321,35 @@ bool HdMeshUtil::ComputeTriangulatedFaceVaryingPrimvar(void const *source,
   switch (dataType) {
     case HdTypeFloat:
       _TriangulateFaceVarying<float>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
       break;
     case HdTypeFloatVec2:
       _TriangulateFaceVarying<GfVec2f>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
       break;
     case HdTypeFloatVec3:
       _TriangulateFaceVarying<GfVec3f>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
       break;
     case HdTypeFloatVec4:
       _TriangulateFaceVarying<GfVec4f>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
       break;
     case HdTypeDouble:
       _TriangulateFaceVarying<double>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
       break;
     case HdTypeDoubleVec2:
       _TriangulateFaceVarying<GfVec2d>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
       break;
     case HdTypeDoubleVec3:
       _TriangulateFaceVarying<GfVec3d>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
       break;
     case HdTypeDoubleVec4:
       _TriangulateFaceVarying<GfVec4d>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, triangulated);
       break;
     default:
       TF_CODING_ERROR("Unsupported primvar type for triangulation [%s]", _id.GetText());
@@ -373,12 +368,12 @@ int HdMeshUtil::_ComputeNumQuads(VtIntArray const &numVerts,
 {
   HD_TRACE_FUNCTION();
 
-  int numFaces            = numVerts.size();
-  int numHoleFaces        = holeFaces.size();
-  int numQuads            = 0;
-  int const *numVertsPtr  = numVerts.cdata();
+  int numFaces = numVerts.size();
+  int numHoleFaces = holeFaces.size();
+  int numQuads = 0;
+  int const *numVertsPtr = numVerts.cdata();
   int const *holeFacesPtr = holeFaces.cdata();
-  int holeIndex           = 0;
+  int holeIndex = 0;
 
   for (int i = 0; i < numFaces; ++i) {
     int nv = numVertsPtr[i];
@@ -412,23 +407,23 @@ void HdMeshUtil::ComputeQuadInfo(HdQuadInfo *quadInfo) const
     return;
   }
 
-  int const *numVertsPtr  = _topology->GetFaceVertexCounts().cdata();
-  int const *vertsPtr     = _topology->GetFaceVertexIndices().cdata();
+  int const *numVertsPtr = _topology->GetFaceVertexCounts().cdata();
+  int const *vertsPtr = _topology->GetFaceVertexIndices().cdata();
   int const *holeFacesPtr = _topology->GetHoleIndices().cdata();
-  int numFaces            = _topology->GetFaceVertexCounts().size();
-  int numVertIndices      = _topology->GetFaceVertexIndices().size();
-  int numHoleFaces        = _topology->GetHoleIndices().size();
-  int numPoints           = _topology->GetNumPoints();
+  int numFaces = _topology->GetFaceVertexCounts().size();
+  int numVertIndices = _topology->GetFaceVertexIndices().size();
+  int numHoleFaces = _topology->GetHoleIndices().size();
+  int numPoints = _topology->GetNumPoints();
 
   quadInfo->numVerts.clear();
   quadInfo->verts.clear();
   quadInfo->pointsOffset = numPoints;
 
-  int vertIndex           = 0;
+  int vertIndex = 0;
   int numAdditionalPoints = 0;
-  int maxNumVert          = 0;
-  int holeIndex           = 0;
-  bool invalidTopology    = false;
+  int maxNumVert = 0;
+  int holeIndex = 0;
+  bool invalidTopology = false;
   for (int i = 0; i < numFaces; ++i) {
     int nv = numVertsPtr[i];
 
@@ -468,7 +463,7 @@ void HdMeshUtil::ComputeQuadInfo(HdQuadInfo *quadInfo) const
     maxNumVert = std::max(maxNumVert, nv);
   }
   quadInfo->numAdditionalPoints = numAdditionalPoints;
-  quadInfo->maxNumVert          = maxNumVert;
+  quadInfo->maxNumVert = maxNumVert;
 
   if (invalidTopology) {
     TF_WARN("numVerts and verts are incosistent [%s]", _id.GetText());
@@ -490,18 +485,18 @@ void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
     return;
   }
 
-  int const *numVertsPtr  = _topology->GetFaceVertexCounts().cdata();
-  int const *vertsPtr     = _topology->GetFaceVertexIndices().cdata();
+  int const *numVertsPtr = _topology->GetFaceVertexCounts().cdata();
+  int const *vertsPtr = _topology->GetFaceVertexIndices().cdata();
   int const *holeFacesPtr = _topology->GetHoleIndices().cdata();
-  int numFaces            = _topology->GetFaceVertexCounts().size();
-  int numVertIndices      = _topology->GetFaceVertexIndices().size();
-  int numHoleFaces        = _topology->GetHoleIndices().size();
-  int numPoints           = _topology->GetNumPoints();
+  int numFaces = _topology->GetFaceVertexCounts().size();
+  int numVertIndices = _topology->GetFaceVertexIndices().size();
+  int numHoleFaces = _topology->GetHoleIndices().size();
+  int numPoints = _topology->GetNumPoints();
 
   // count num quads
   bool invalidTopology = false;
-  int numQuads         = _ComputeNumQuads(
-      _topology->GetFaceVertexCounts(), _topology->GetHoleIndices(), &invalidTopology);
+  int numQuads = _ComputeNumQuads(
+    _topology->GetFaceVertexCounts(), _topology->GetHoleIndices(), &invalidTopology);
   if (invalidTopology) {
     TF_WARN("degenerated face found [%s]", _id.GetText());
     invalidTopology = false;
@@ -516,7 +511,7 @@ void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
   }
 
   // quadrangulated verts is added to the end.
-  bool flip     = (_topology->GetOrientation() != HdTokens->rightHanded);
+  bool flip = (_topology->GetOrientation() != HdTokens->rightHanded);
   int vertIndex = numPoints;
 
   // i  -> authored face index [0, numFaces)
@@ -695,7 +690,7 @@ static void _Quadrangulate(SdfPath const &id,
       const int i1 = qi->verts[index + (i + 1) % nv];
 
       // midpoint
-      T edge              = (results[i0] + results[i1]) * 0.5;
+      T edge = (results[i0] + results[i1]) * 0.5;
       results[dstIndex++] = edge;
 
       // accumulate center
@@ -774,9 +769,9 @@ static void _QuadrangulateFaceVarying(SdfPath const &id,
 
   // CPU face-varying quadrangulation
   bool invalidTopology = false;
-  int numFVarValues    = 0;
-  int holeIndex        = 0;
-  int numHoleFaces     = holeFaces.size();
+  int numFVarValues = 0;
+  int holeIndex = 0;
+  int numHoleFaces = holeFaces.size();
   for (int i = 0; i < (int)faceVertexCounts.size(); ++i) {
     int nVerts = faceVertexCounts[i];
     if (nVerts < 3) {
@@ -816,7 +811,7 @@ static void _QuadrangulateFaceVarying(SdfPath const &id,
     else if (nVerts == 4) {
       // copy
       if (v + nVerts > numElements) {
-        invalidTopology     = true;
+        invalidTopology = true;
         results[dstIndex++] = T(0);
         results[dstIndex++] = T(0);
         results[dstIndex++] = T(0);
@@ -930,35 +925,35 @@ bool HdMeshUtil::ComputeQuadrangulatedFaceVaryingPrimvar(void const *source,
   switch (dataType) {
     case HdTypeFloat:
       _QuadrangulateFaceVarying<float>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
       break;
     case HdTypeFloatVec2:
       _QuadrangulateFaceVarying<GfVec2f>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
       break;
     case HdTypeFloatVec3:
       _QuadrangulateFaceVarying<GfVec3f>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
       break;
     case HdTypeFloatVec4:
       _QuadrangulateFaceVarying<GfVec4f>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
       break;
     case HdTypeDouble:
       _QuadrangulateFaceVarying<double>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
       break;
     case HdTypeDoubleVec2:
       _QuadrangulateFaceVarying<GfVec2d>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
       break;
     case HdTypeDoubleVec3:
       _QuadrangulateFaceVarying<GfVec3d>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
       break;
     case HdTypeDoubleVec4:
       _QuadrangulateFaceVarying<GfVec4d>(
-          _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
+        _id, faceVertexCounts, holeFaces, flip, source, numElements, quadrangulated);
       break;
     default:
       TF_CODING_ERROR("Unsupported primvar type for quadrangulation [%s]", _id.GetText());
@@ -982,8 +977,8 @@ void HdMeshUtil::EnumerateEdges(std::vector<GfVec2i> *edgeVerticesOut) const
   }
 
   int const *numVertsPtr = _topology->GetFaceVertexCounts().cdata();
-  int const *vertsPtr    = _topology->GetFaceVertexIndices().cdata();
-  int const numFaces     = _topology->GetFaceVertexCounts().size();
+  int const *vertsPtr = _topology->GetFaceVertexIndices().cdata();
+  int const numFaces = _topology->GetFaceVertexCounts().size();
 
   int numEdges = 0;
   for (int i = 0; i < numFaces; ++i) {
@@ -1066,7 +1061,7 @@ bool HdMeshEdgeIndexTable::GetEdgeIndices(GfVec2i const &edgeVertices,
 {
   const _Edge edge(edgeVertices);
   auto matchingEdges = std::equal_range(
-      _edgesByIndex.begin(), _edgesByIndex.end(), edge, _CompareEdgeVertices());
+    _edgesByIndex.begin(), _edgesByIndex.end(), edge, _CompareEdgeVertices());
 
   if (matchingEdges.first == matchingEdges.second) {
     return false;

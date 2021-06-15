@@ -41,13 +41,12 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiVulkanShaderFunction::HgiVulkanShaderFunction(HgiVulkanDevice *device,
-                                                 HgiShaderFunctionDesc const &desc)
-    : HgiShaderFunction(desc),
-      _device(device),
-      _spirvByteSize(0),
-      _vkShaderModule(nullptr),
-      _inflightBits(0)
+HgiVulkanShaderFunction::HgiVulkanShaderFunction(HgiVulkanDevice *device, HgiShaderFunctionDesc const &desc)
+  : HgiShaderFunction(desc),
+    _device(device),
+    _spirvByteSize(0),
+    _vkShaderModule(nullptr),
+    _inflightBits(0)
 {
   VkShaderModuleCreateInfo shaderCreateInfo = {VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO};
 
@@ -58,7 +57,7 @@ HgiVulkanShaderFunction::HgiVulkanShaderFunction(HgiVulkanDevice *device,
   HgiVulkanShaderGenerator shaderGenerator{desc};
   std::stringstream ss;
   shaderGenerator.Execute(ss);
-  std::string shaderStr  = ss.str();
+  std::string shaderStr = ss.str();
   const char *shaderCode = shaderStr.c_str();
 
   // Compile shader and capture errors
@@ -69,18 +68,17 @@ HgiVulkanShaderFunction::HgiVulkanShaderFunction(HgiVulkanDevice *device,
     _spirvByteSize = spirv.size() * sizeof(unsigned int);
 
     shaderCreateInfo.codeSize = _spirvByteSize;
-    shaderCreateInfo.pCode    = (uint32_t *)spirv.data();
+    shaderCreateInfo.pCode = (uint32_t *)spirv.data();
 
-    TF_VERIFY(vkCreateShaderModule(device->GetVulkanDevice(),
-                                   &shaderCreateInfo,
-                                   HgiVulkanAllocator(),
-                                   &_vkShaderModule) == VK_SUCCESS);
+    TF_VERIFY(vkCreateShaderModule(
+                device->GetVulkanDevice(), &shaderCreateInfo, HgiVulkanAllocator(), &_vkShaderModule) ==
+              VK_SUCCESS);
 
     // Debug label
     if (!_descriptor.debugName.empty()) {
       std::string debugLabel = "ShaderModule " + _descriptor.debugName;
       HgiVulkanSetDebugName(
-          device, (uint64_t)_vkShaderModule, VK_OBJECT_TYPE_SHADER_MODULE, debugLabel.c_str());
+        device, (uint64_t)_vkShaderModule, VK_OBJECT_TYPE_SHADER_MODULE, debugLabel.c_str());
     }
 
     // Perform reflection on spirv to create descriptor set info for

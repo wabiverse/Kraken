@@ -128,8 +128,7 @@ UsdAttribute UsdVolOpenVDBAsset::GetFieldClassAttr() const
   return GetPrim().GetAttribute(UsdVolTokens->fieldClass);
 }
 
-UsdAttribute UsdVolOpenVDBAsset::CreateFieldClassAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdVolOpenVDBAsset::CreateFieldClassAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdVolTokens->fieldClass,
                                     SdfValueTypeNames->Token,
@@ -140,8 +139,7 @@ UsdAttribute UsdVolOpenVDBAsset::CreateFieldClassAttr(VtValue const &defaultValu
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -155,11 +153,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdVolOpenVDBAsset::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdVolTokens->fieldDataType,
-      UsdVolTokens->fieldClass,
+    UsdVolTokens->fieldDataType,
+    UsdVolTokens->fieldClass,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdVolFieldAsset::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdVolFieldAsset::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

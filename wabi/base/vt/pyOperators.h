@@ -80,15 +80,15 @@ WABI_NAMESPACE_BEGIN
 // to be used to actually declare the wrapping with def() on the class
 #define VTOPERATOR_WRAPDECLARE_BASE(op, method, rettype) \
   .def(self op self) \
-      .def(self op Type()) \
-      .def(Type() op self) \
-      .def(#method, method##tuple<rettype>) \
-      .def(#method, method##list<rettype>)
+    .def(self op Type()) \
+    .def(Type() op self) \
+    .def(#method, method##tuple<rettype>) \
+    .def(#method, method##list<rettype>)
 
 #define VTOPERATOR_WRAPDECLARE(op, lmethod, rmethod) \
   VTOPERATOR_WRAPDECLARE_BASE(op, lmethod, Type) \
-      .def(#rmethod, rmethod##tuple<Type>) \
-      .def(#rmethod, rmethod##list<Type>)
+    .def(#rmethod, rmethod##tuple<Type>) \
+    .def(#rmethod, rmethod##list<Type>)
 
 // to be used for wrapping conditional functions that return bool arrays
 // (i.e. Equal, etc)
@@ -113,9 +113,9 @@ WABI_NAMESPACE_BEGIN
 // pytype OP array
 #define VTOPERATOR_WRAP_PYTYPE_BOOL(func, pytype, op) \
   VTOPERATOR_WRAP_PYTYPE_BOOL_BASE( \
-      func, VtArray<T> const &vec, pytype const &obj, (vec[i] op(T) extract<T>(obj[i]))) \
+    func, VtArray<T> const &vec, pytype const &obj, (vec[i] op(T) extract<T>(obj[i]))) \
   VTOPERATOR_WRAP_PYTYPE_BOOL_BASE( \
-      func, pytype const &obj, VtArray<T> const &vec, ((T)extract<T>(obj[i]) op vec[i]))
+    func, pytype const &obj, VtArray<T> const &vec, ((T)extract<T>(obj[i]) op vec[i]))
 
 #define VTOPERATOR_WRAP_BOOL(func, op) \
   VTOPERATOR_WRAP_PYTYPE_BOOL(func, list, op) \

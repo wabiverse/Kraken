@@ -50,11 +50,9 @@
 // into warnings.
 //
 // This works around GCC bug 47679.
-#  define ARCH_PRAGMA_MAYBE_UNINITIALIZED \
-    _Pragma("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
+#  define ARCH_PRAGMA_MAYBE_UNINITIALIZED _Pragma("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
 
-#  define ARCH_PRAGMA_MACRO_REDEFINITION \
-    _Pragma("GCC diagnostic ignored \"-Wbuiltin-macro-redefined\"")
+#  define ARCH_PRAGMA_MACRO_REDEFINITION _Pragma("GCC diagnostic ignored \"-Wbuiltin-macro-redefined\"")
 
 #  define ARCH_PRAGMA_WRITE_STRINGS _Pragma("GCC diagnostic ignored \"-Wwrite-strings\"")
 
@@ -66,11 +64,9 @@
 
 #  define ARCH_PRAGMA_POP _Pragma("clang diagnostic pop")
 
-#  define ARCH_PRAGMA_MACRO_REDEFINITION \
-    _Pragma("clang diagnostic ignored \"-Wbuiltin-macro-redefined\"")
+#  define ARCH_PRAGMA_MACRO_REDEFINITION _Pragma("clang diagnostic ignored \"-Wbuiltin-macro-redefined\"")
 
-#  define ARCH_PRAGMA_UNDEFINED_VAR_TEMPLATE \
-    _Pragma("clang diagnostic ignored \"-Wundefined-var-template\"")
+#  define ARCH_PRAGMA_UNDEFINED_VAR_TEMPLATE _Pragma("clang diagnostic ignored \"-Wundefined-var-template\"")
 
 #  define ARCH_PRAGMA_WRITE_STRINGS _Pragma("clang diagnostic ignored \"-Wwrite-strings\"")
 
@@ -79,8 +75,7 @@
 #  define ARCH_PRAGMA_INSTANTIATION_AFTER_SPECIALIZATION \
     _Pragma("clang diagnostic ignored \"-Winstantiation-after-specialization\"")
 
-#  define ARCH_PRAGMA_INSTANCE_METHOD_NOT_FOUND \
-    _Pragma("clang diagnostic ignored \"-Wobjc-method-access\"")
+#  define ARCH_PRAGMA_INSTANCE_METHOD_NOT_FOUND _Pragma("clang diagnostic ignored \"-Wobjc-method-access\"")
 
 #elif defined(ARCH_COMPILER_MSVC)
 

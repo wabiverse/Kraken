@@ -78,8 +78,7 @@ static bool _IsClose(const GfHalf &a, const GfHalf &b)
   return GfIsClose(a, b, _halfEpsilon);
 }
 
-template<typename MatrixType,
-         typename std::enable_if<GfIsGfMatrix<MatrixType>::value>::type * = nullptr>
+template<typename MatrixType, typename std::enable_if<GfIsGfMatrix<MatrixType>::value>::type * = nullptr>
 static bool _IsClose(const MatrixType &a, const MatrixType &b)
 {
   // XXX: is there a better way to tell if two matrices are within epsilon of
@@ -94,8 +93,7 @@ static bool _IsClose(const MatrixType &a, const MatrixType &b)
   return true;
 }
 
-template<typename VectorType,
-         typename std::enable_if<GfIsGfVec<VectorType>::value>::type * = nullptr>
+template<typename VectorType, typename std::enable_if<GfIsGfVec<VectorType>::value>::type * = nullptr>
 static bool _IsClose(const VectorType &a, const VectorType &b)
 {
   for (size_t i = 0; i < VectorType::dimension; ++i) {
@@ -191,18 +189,16 @@ bool _IsClose(const VtValue &a, const VtValue &b)
   return a == b;
 }
 
-UsdUtilsSparseAttrValueWriter::UsdUtilsSparseAttrValueWriter(
-    const UsdAttribute &attr,
-    const VtValue &defaultValue /* =VtValue() */)
-    : _attr(attr)
+UsdUtilsSparseAttrValueWriter::UsdUtilsSparseAttrValueWriter(const UsdAttribute &attr,
+                                                             const VtValue &defaultValue /* =VtValue() */)
+  : _attr(attr)
 {
   VtValue copyOfDefValue = defaultValue;
   _InitializeSparseAuthoring(&copyOfDefValue);
 }
 
-UsdUtilsSparseAttrValueWriter::UsdUtilsSparseAttrValueWriter(const UsdAttribute &attr,
-                                                             VtValue *defaultValue)
-    : _attr(attr)
+UsdUtilsSparseAttrValueWriter::UsdUtilsSparseAttrValueWriter(const UsdAttribute &attr, VtValue *defaultValue)
+  : _attr(attr)
 {
   _InitializeSparseAuthoring(defaultValue);
 }
@@ -237,21 +233,21 @@ bool UsdUtilsSparseAttrValueWriter::SetTimeSample(const VtValue &value, const Us
   if (time.IsDefault()) {
     if (!_prevTime.IsDefault()) {
       TF_CODING_ERROR(
-          "UsdUtilsSparseAttrValueWriter::SetTimeSample was "
-          "called with time=Default on attr <%s> with existing "
-          "time-samples.",
-          _attr.GetPath().GetText());
+        "UsdUtilsSparseAttrValueWriter::SetTimeSample was "
+        "called with time=Default on attr <%s> with existing "
+        "time-samples.",
+        _attr.GetPath().GetText());
       return false;
     }
   }
 
   if (_prevTime > time) {
     TF_CODING_ERROR(
-        "Time-samples should be set in sequentially "
-        "increasing order of time. Current time ( %s ) is "
-        "earlier than previous time ( %s )",
-        TfStringify(time).c_str(),
-        TfStringify(_prevTime).c_str());
+      "Time-samples should be set in sequentially "
+      "increasing order of time. Current time ( %s ) is "
+      "earlier than previous time ( %s )",
+      TfStringify(time).c_str(),
+      TfStringify(_prevTime).c_str());
   }
 
   bool success = true;
@@ -284,21 +280,21 @@ bool UsdUtilsSparseAttrValueWriter::SetTimeSample(VtValue *value, const UsdTimeC
   if (time.IsDefault()) {
     if (!_prevTime.IsDefault()) {
       TF_CODING_ERROR(
-          "UsdUtilsSparseAttrValueWriter::SetTimeSample was "
-          "called with time=Default on attr <%s> with existing "
-          "time-samples.",
-          _attr.GetPath().GetText());
+        "UsdUtilsSparseAttrValueWriter::SetTimeSample was "
+        "called with time=Default on attr <%s> with existing "
+        "time-samples.",
+        _attr.GetPath().GetText());
       return false;
     }
   }
 
   if (_prevTime > time) {
     TF_CODING_ERROR(
-        "Time-samples should be set in sequentially "
-        "increasing order of time. Current time ( %s ) is "
-        "earlier than previous time ( %s )",
-        TfStringify(time).c_str(),
-        TfStringify(_prevTime).c_str());
+      "Time-samples should be set in sequentially "
+      "increasing order of time. Current time ( %s ) is "
+      "earlier than previous time ( %s )",
+      TfStringify(time).c_str(),
+      TfStringify(_prevTime).c_str());
   }
 
   bool success = true;
@@ -341,9 +337,7 @@ bool UsdUtilsSparseValueWriter::SetAttribute(const UsdAttribute &attr,
 }
 
 template<typename T>
-bool UsdUtilsSparseValueWriter::_SetAttributeImpl(const UsdAttribute &attr,
-                                                  T &value,
-                                                  const UsdTimeCode time)
+bool UsdUtilsSparseValueWriter::_SetAttributeImpl(const UsdAttribute &attr, T &value, const UsdTimeCode time)
 {
   auto it = _attrValueWriterMap.find(attr);
   if (it == _attrValueWriterMap.end()) {
@@ -352,8 +346,7 @@ bool UsdUtilsSparseValueWriter::_SetAttributeImpl(const UsdAttribute &attr,
       return true;
     }
     else {
-      auto iterAndDidInsert             = _attrValueWriterMap.emplace(attr,
-                                                          UsdUtilsSparseAttrValueWriter(attr));
+      auto iterAndDidInsert = _attrValueWriterMap.emplace(attr, UsdUtilsSparseAttrValueWriter(attr));
       UsdUtilsSparseAttrValueWriter &vw = iterAndDidInsert.first->second;
       return vw.SetTimeSample(value, time);
     }
@@ -363,15 +356,12 @@ bool UsdUtilsSparseValueWriter::_SetAttributeImpl(const UsdAttribute &attr,
   }
 }
 
-std::vector<UsdUtilsSparseAttrValueWriter> UsdUtilsSparseValueWriter::GetSparseAttrValueWriters()
-    const
+std::vector<UsdUtilsSparseAttrValueWriter> UsdUtilsSparseValueWriter::GetSparseAttrValueWriters() const
 {
   std::vector<UsdUtilsSparseAttrValueWriter> sparseValueWriterVec;
   sparseValueWriterVec.reserve(_attrValueWriterMap.size());
-  std::transform(_attrValueWriterMap.begin(),
-                 _attrValueWriterMap.end(),
-                 back_inserter(sparseValueWriterVec),
-                 TfGet<1>());
+  std::transform(
+    _attrValueWriterMap.begin(), _attrValueWriterMap.end(), back_inserter(sparseValueWriterVec), TfGet<1>());
   return sparseValueWriterVec;
 }
 

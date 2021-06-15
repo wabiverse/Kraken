@@ -48,19 +48,19 @@ WABI_NAMESPACE_BEGIN
 #define HD_CAMERA_TOKENS \
   /* frustum */ \
   (projection)(horizontalAperture)( \
-      verticalAperture)(horizontalApertureOffset)(verticalApertureOffset)(focalLength)(clippingRange)(clipPlanes) \
+    verticalAperture)(horizontalApertureOffset)(verticalApertureOffset)(focalLength)(clippingRange)(clipPlanes) \
 \
-      /* depth of field */ \
-      (fStop)(focusDistance) \
+    /* depth of field */ \
+    (fStop)(focusDistance) \
 \
-      /* shutter/lighting */ \
-      (shutterOpen)(shutterClose)(exposure) \
+    /* shutter/lighting */ \
+    (shutterOpen)(shutterClose)(exposure) \
 \
-      /* how to match window with different aspect */ \
-      (windowPolicy) \
+    /* how to match window with different aspect */ \
+    (windowPolicy) \
 \
-      /* OpenGL-style matrices, deprecated */ \
-      (worldToViewMatrix)(projectionMatrix)
+    /* OpenGL-style matrices, deprecated */ \
+    (worldToViewMatrix)(projectionMatrix)
 
 TF_DECLARE_PUBLIC_TOKENS(HdCameraTokens, HD_API, HD_CAMERA_TOKENS);
 
@@ -82,15 +82,14 @@ class HdCamera : public HdSprim {
 
   // change tracking for HdCamera
   enum DirtyBits : HdDirtyBits {
-    Clean             = 0,
-    DirtyTransform    = 1 << 0,
-    DirtyViewMatrix   = DirtyTransform,  // deprecated
-    DirtyProjMatrix   = 1 << 1,          // deprecated
+    Clean = 0,
+    DirtyTransform = 1 << 0,
+    DirtyViewMatrix = DirtyTransform,  // deprecated
+    DirtyProjMatrix = 1 << 1,          // deprecated
     DirtyWindowPolicy = 1 << 2,
-    DirtyClipPlanes   = 1 << 3,
-    DirtyParams       = 1 << 4,
-    AllDirty          = (DirtyTransform | DirtyProjMatrix | DirtyWindowPolicy | DirtyClipPlanes |
-                DirtyParams)
+    DirtyClipPlanes = 1 << 3,
+    DirtyParams = 1 << 4,
+    AllDirty = (DirtyTransform | DirtyProjMatrix | DirtyWindowPolicy | DirtyClipPlanes | DirtyParams)
   };
 
   enum Projection { Perspective = 0, Orthographic };
@@ -101,9 +100,7 @@ class HdCamera : public HdSprim {
 
   /// Synchronizes state from the delegate to this object.
   HD_API
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   /// Returns the minimal set of dirty bits to place in the
   /// change tracker for use in the first sync of this prim.

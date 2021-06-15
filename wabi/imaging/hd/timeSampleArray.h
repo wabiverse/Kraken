@@ -68,8 +68,7 @@ VtValue HdResampleNeighbors(float alpha, const VtValue &v0, const VtValue &v1);
 /// using a linear reconstruction filter evaluated at the given
 /// parametric position u.  The function is considered constant
 /// outside the supplied sample range.
-template<typename T>
-T HdResampleRawTimeSamples(float u, size_t numSamples, const float *us, const T *vs)
+template<typename T> T HdResampleRawTimeSamples(float u, size_t numSamples, const float *us, const T *vs)
 {
   if (numSamples == 0) {
     TF_CODING_ERROR("HdResampleRawTimeSamples: Zero samples provided");
@@ -98,9 +97,9 @@ T HdResampleRawTimeSamples(float u, size_t numSamples, const float *us, const T 
     // Neighboring samples have identical parameter.
     // Arbitrarily choose a sample.
     TF_WARN(
-        "HdResampleRawTimeSamples: overlapping samples at %f; "
-        "using first sample",
-        us[i]);
+      "HdResampleRawTimeSamples: overlapping samples at %f; "
+      "using first sample",
+      us[i]);
     return vs[i - 1];
   }
   else {
@@ -148,9 +147,9 @@ std::pair<T, VtIntArray> HdResampleRawTimeSamples(float u,
     // Neighboring samples have identical parameter.
     // Arbitrarily choose a sample.
     TF_WARN(
-        "HdResampleRawTimeSamples: overlapping samples at %f; "
-        "using first sample",
-        us[i]);
+      "HdResampleRawTimeSamples: overlapping samples at %f; "
+      "using first sample",
+      us[i]);
     return std::pair<T, VtIntArray>(vs[i - 1], is[i - 1]);
   }
   else {
@@ -176,16 +175,16 @@ template<typename TYPE, unsigned int CAPACITY> struct HdTimeSampleArray {
 
   HdTimeSampleArray(const HdTimeSampleArray &rhs)
   {
-    times  = rhs.times;
+    times = rhs.times;
     values = rhs.values;
-    count  = rhs.count;
+    count = rhs.count;
   }
 
   HdTimeSampleArray &operator=(const HdTimeSampleArray &rhs)
   {
-    times  = rhs.times;
+    times = rhs.times;
     values = rhs.values;
-    count  = rhs.count;
+    count = rhs.count;
     return *this;
   }
 
@@ -239,18 +238,17 @@ struct HdIndexedTimeSampleArray : public HdTimeSampleArray<TYPE, CAPACITY> {
     indices.resize(CAPACITY);
   }
 
-  HdIndexedTimeSampleArray(const HdIndexedTimeSampleArray &rhs)
-      : HdTimeSampleArray<TYPE, CAPACITY>(rhs)
+  HdIndexedTimeSampleArray(const HdIndexedTimeSampleArray &rhs) : HdTimeSampleArray<TYPE, CAPACITY>(rhs)
   {
     indices = rhs.indices;
   }
 
   HdIndexedTimeSampleArray &operator=(const HdIndexedTimeSampleArray &rhs)
   {
-    this->times  = rhs.times;
+    this->times = rhs.times;
     this->values = rhs.values;
-    this->count  = rhs.count;
-    indices      = rhs.indices;
+    this->count = rhs.count;
+    indices = rhs.indices;
     return *this;
   }
 
@@ -265,8 +263,7 @@ struct HdIndexedTimeSampleArray : public HdTimeSampleArray<TYPE, CAPACITY> {
   /// on this HdIndexedTimeSampleArray.
   std::pair<TYPE, VtIntArray> ResampleIndexed(float u) const
   {
-    return HdResampleRawTimeSamples(
-        u, this->count, this->times.data(), this->values.data(), indices.data());
+    return HdResampleRawTimeSamples(u, this->count, this->times.data(), this->values.data(), indices.data());
   }
 
   /// Unbox an HdIndexedTimeSampleArray holding boxed VtValue<VtArray<T>>
@@ -280,7 +277,7 @@ struct HdIndexedTimeSampleArray : public HdTimeSampleArray<TYPE, CAPACITY> {
   {
     Resize(box.count);
     this->times = box.times;
-    indices     = box.indices;
+    indices = box.indices;
     for (size_t i = 0; i < box.count; ++i) {
       if (box.values[i].GetArraySize() > 0) {
         this->values[i] = box.values[i].template Get<TYPE>();

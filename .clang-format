@@ -34,8 +34,8 @@ AllowShortBlocksOnASingleLine: false
 BinPackArguments: false
 BinPackParameters: false
 
-# Line width (don't exceed 100).
-ColumnLimit: 99
+# Line width (don't exceed 110).
+ColumnLimit: 109
 
 # Setup preferred inheritance list to break before the colon and after the
 # commas
@@ -141,7 +141,7 @@ PenaltyReturnTypeOnItsOwnLine: 10000
 #   int a =
 #       foo(long, list, of, many, params);
 #
-PenaltyBreakAssignment: 100
+PenaltyBreakAssignment: 110
 
 AllowShortFunctionsOnASingleLine: None
 

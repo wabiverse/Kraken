@@ -37,21 +37,20 @@
 WABI_NAMESPACE_BEGIN
 
 HdPh_TextureObjectRegistry::HdPh_TextureObjectRegistry(HdPhResourceRegistry *registry)
-    : _totalTextureMemory(0),
-      _resourceRegistry(registry)
+  : _totalTextureMemory(0),
+    _resourceRegistry(registry)
 {}
 
 HdPh_TextureObjectRegistry::~HdPh_TextureObjectRegistry() = default;
 
 bool static _IsDynamic(const HdPhTextureIdentifier &textureId)
 {
-  return dynamic_cast<const HdPhDynamicUvSubtextureIdentifier *>(
-      textureId.GetSubtextureIdentifier());
+  return dynamic_cast<const HdPhDynamicUvSubtextureIdentifier *>(textureId.GetSubtextureIdentifier());
 }
 
 HdPhTextureObjectSharedPtr HdPh_TextureObjectRegistry::_MakeTextureObject(
-    const HdPhTextureIdentifier &textureId,
-    const HdTextureType textureType)
+  const HdPhTextureIdentifier &textureId,
+  const HdTextureType textureType)
 {
   switch (textureType) {
     case HdTextureType::Uv:
@@ -74,13 +73,12 @@ HdPhTextureObjectSharedPtr HdPh_TextureObjectRegistry::_MakeTextureObject(
 }
 
 HdPhTextureObjectSharedPtr HdPh_TextureObjectRegistry::AllocateTextureObject(
-    const HdPhTextureIdentifier &textureId,
-    const HdTextureType textureType)
+  const HdPhTextureIdentifier &textureId,
+  const HdTextureType textureType)
 {
   // Check with instance registry and allocate texture and sampler object
   // if first object.
-  HdInstance<HdPhTextureObjectSharedPtr> inst = _textureObjectRegistry.GetInstance(
-      TfHash()(textureId));
+  HdInstance<HdPhTextureObjectSharedPtr> inst = _textureObjectRegistry.GetInstance(TfHash()(textureId));
 
   if (inst.IsFirstInstance()) {
     HdPhTextureObjectSharedPtr const texture = _MakeTextureObject(textureId, textureType);
@@ -167,9 +165,8 @@ std::set<HdPhTextureObjectSharedPtr> HdPh_TextureObjectRegistry::Commit()
       TF_PY_ALLOW_THREADS_IN_SCOPE();
 
       // Parallel load texture files
-      WorkParallelForEach(result.begin(),
-                          result.end(),
-                          [](const HdPhTextureObjectSharedPtr &texture) { texture->_Load(); });
+      WorkParallelForEach(
+        result.begin(), result.end(), [](const HdPhTextureObjectSharedPtr &texture) { texture->_Load(); });
     }
     else {
       for (const HdPhTextureObjectSharedPtr &texture : result) {
@@ -222,9 +219,8 @@ static bool _GarbageCollect(HdPhTextureObjectPtrVector *const vec)
   return last == 0;
 }
 
-static void _GarbageCollect(
-    std::unordered_map<TfToken, HdPhTextureObjectPtrVector, TfToken::HashFunctor>
-        *const filePathToTextureObjects)
+static void _GarbageCollect(std::unordered_map<TfToken, HdPhTextureObjectPtrVector, TfToken::HashFunctor>
+                              *const filePathToTextureObjects)
 {
   for (auto it = filePathToTextureObjects->begin(); it != filePathToTextureObjects->end();) {
 

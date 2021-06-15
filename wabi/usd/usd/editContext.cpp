@@ -28,13 +28,13 @@
 WABI_NAMESPACE_BEGIN
 
 UsdEditContext::UsdEditContext(const UsdStagePtr &stage)
-    : _stage(stage),
-      _originalEditTarget(stage->GetEditTarget())
+  : _stage(stage),
+    _originalEditTarget(stage->GetEditTarget())
 {}
 
 UsdEditContext::UsdEditContext(const UsdStagePtr &stage, const UsdEditTarget &editTarget)
-    : _stage(stage),
-      _originalEditTarget(stage->GetEditTarget())
+  : _stage(stage),
+    _originalEditTarget(stage->GetEditTarget())
 {
   // Do not check validity of EditTarget: stage will do that and
   // issue an error if invalid.  We DO NOT want people authoring
@@ -43,8 +43,8 @@ UsdEditContext::UsdEditContext(const UsdStagePtr &stage, const UsdEditTarget &ed
 }
 
 UsdEditContext::UsdEditContext(const std::pair<UsdStagePtr, UsdEditTarget> &stageTarget)
-    : _stage(stageTarget.first),
-      _originalEditTarget(stageTarget.first->GetEditTarget())
+  : _stage(stageTarget.first),
+    _originalEditTarget(stageTarget.first->GetEditTarget())
 {
   // See comment above
   _stage->SetEditTarget(stageTarget.second);

@@ -8,10 +8,10 @@ class ZepCommand {
  public:
   ZepCommand(ZepBuffer &currentMode,
              const GlyphIterator &cursorBefore = GlyphIterator(),
-             const GlyphIterator &cursorAfter  = GlyphIterator())
-      : m_buffer(currentMode),
-        m_cursorBefore(cursorBefore),
-        m_cursorAfter(cursorAfter)
+             const GlyphIterator &cursorAfter = GlyphIterator())
+    : m_buffer(currentMode),
+      m_cursorBefore(cursorBefore),
+      m_cursorAfter(cursorAfter)
   {}
 
   virtual ~ZepCommand()
@@ -57,7 +57,7 @@ class ZepCommand_DeleteRange : public ZepCommand {
   ZepCommand_DeleteRange(ZepBuffer &buffer,
                          const GlyphIterator &startIndex,
                          const GlyphIterator &endIndex,
-                         const GlyphIterator &cursor      = GlyphIterator(),
+                         const GlyphIterator &cursor = GlyphIterator(),
                          const GlyphIterator &cursorAfter = GlyphIterator());
   virtual ~ZepCommand_DeleteRange(){};
 
@@ -75,7 +75,7 @@ class ZepCommand_ReplaceRange : public ZepCommand {
                           const GlyphIterator &startIndex,
                           const GlyphIterator &endIndex,
                           const std::string &ch,
-                          const GlyphIterator &cursor      = GlyphIterator(),
+                          const GlyphIterator &cursor = GlyphIterator(),
                           const GlyphIterator &cursorAfter = GlyphIterator());
   virtual ~ZepCommand_ReplaceRange(){};
 
@@ -95,7 +95,7 @@ class ZepCommand_Insert : public ZepCommand {
   ZepCommand_Insert(ZepBuffer &buffer,
                     const GlyphIterator &startIndex,
                     const std::string &str,
-                    const GlyphIterator &cursor      = GlyphIterator(),
+                    const GlyphIterator &cursor = GlyphIterator(),
                     const GlyphIterator &cursorAfter = GlyphIterator());
   virtual ~ZepCommand_Insert(){};
 

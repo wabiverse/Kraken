@@ -94,8 +94,7 @@ UsdAttribute UsdLuxLight::GetIntensityAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsIntensity);
 }
 
-UsdAttribute UsdLuxLight::CreateIntensityAttr(VtValue const &defaultValue,
-                                              bool writeSparsely) const
+UsdAttribute UsdLuxLight::CreateIntensityAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsIntensity,
                                     SdfValueTypeNames->Float,
@@ -155,8 +154,7 @@ UsdAttribute UsdLuxLight::GetNormalizeAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsNormalize);
 }
 
-UsdAttribute UsdLuxLight::CreateNormalizeAttr(VtValue const &defaultValue,
-                                              bool writeSparsely) const
+UsdAttribute UsdLuxLight::CreateNormalizeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsNormalize,
                                     SdfValueTypeNames->Bool,
@@ -202,8 +200,7 @@ UsdAttribute UsdLuxLight::GetColorTemperatureAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsColorTemperature);
 }
 
-UsdAttribute UsdLuxLight::CreateColorTemperatureAttr(VtValue const &defaultValue,
-                                                     bool writeSparsely) const
+UsdAttribute UsdLuxLight::CreateColorTemperatureAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsColorTemperature,
                                     SdfValueTypeNames->Float,
@@ -225,8 +222,7 @@ UsdRelationship UsdLuxLight::CreateFiltersRel() const
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -240,19 +236,19 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdLuxLight::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdLuxTokens->collectionLightLinkIncludeRoot,
-      UsdLuxTokens->collectionShadowLinkIncludeRoot,
-      UsdLuxTokens->inputsIntensity,
-      UsdLuxTokens->inputsExposure,
-      UsdLuxTokens->inputsDiffuse,
-      UsdLuxTokens->inputsSpecular,
-      UsdLuxTokens->inputsNormalize,
-      UsdLuxTokens->inputsColor,
-      UsdLuxTokens->inputsEnableColorTemperature,
-      UsdLuxTokens->inputsColorTemperature,
+    UsdLuxTokens->collectionLightLinkIncludeRoot,
+    UsdLuxTokens->collectionShadowLinkIncludeRoot,
+    UsdLuxTokens->inputsIntensity,
+    UsdLuxTokens->inputsExposure,
+    UsdLuxTokens->inputsDiffuse,
+    UsdLuxTokens->inputsSpecular,
+    UsdLuxTokens->inputsNormalize,
+    UsdLuxTokens->inputsColor,
+    UsdLuxTokens->inputsEnableColorTemperature,
+    UsdLuxTokens->inputsColorTemperature,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdGeomXformable::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomXformable::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -283,8 +279,7 @@ class UsdLuxLight_ConnectableAPIBehavior : public UsdShadeConnectableAPIBehavior
                                const UsdAttribute &source,
                                std::string *reason) override
   {
-    return _CanConnectInputToSource(
-        input, source, reason, ConnectableNodeTypes::DerivedContainerNodes);
+    return _CanConnectInputToSource(input, source, reason, ConnectableNodeTypes::DerivedContainerNodes);
   }
 
   bool IsContainer() const
@@ -304,8 +299,7 @@ TF_REGISTRY_FUNCTION(UsdShadeConnectableAPI)
   UsdShadeRegisterConnectableAPIBehavior<UsdLuxLight, UsdLuxLight_ConnectableAPIBehavior>();
 }
 
-UsdLuxLight::UsdLuxLight(const UsdShadeConnectableAPI &connectable)
-    : UsdLuxLight(connectable.GetPrim())
+UsdLuxLight::UsdLuxLight(const UsdShadeConnectableAPI &connectable) : UsdLuxLight(connectable.GetPrim())
 {}
 
 UsdShadeConnectableAPI UsdLuxLight::ConnectableAPI() const

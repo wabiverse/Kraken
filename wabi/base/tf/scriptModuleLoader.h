@@ -124,8 +124,7 @@ class TfScriptModuleLoader : public TfWeakBase {
   void _GetOrderedDependenciesRecursive(TfToken const &lib,
                                         TfToken::HashSet *seenLibs,
                                         std::vector<TfToken> *result) const;
-  void _GetOrderedDependencies(std::vector<TfToken> const &input,
-                               std::vector<TfToken> *result) const;
+  void _GetOrderedDependencies(std::vector<TfToken> const &input, std::vector<TfToken> *result) const;
   void _TopologicalSort(std::vector<TfToken> *result) const;
 
   bool _HasTransitiveSuccessor(TfToken const &predecessor, TfToken const &successor) const;

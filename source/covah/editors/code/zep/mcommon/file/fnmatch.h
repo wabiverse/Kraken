@@ -132,12 +132,10 @@ inline int fnmatch(const char *pattern, const char *string, int flags)
       default:
         if (c == *string)
           ;
-        else if ((flags & FNM_CASEFOLD) &&
-                 (tolower((unsigned char)c) == tolower((unsigned char)*string)))
+        else if ((flags & FNM_CASEFOLD) && (tolower((unsigned char)c) == tolower((unsigned char)*string)))
           ;
         else if ((flags & FNM_PREFIX_DIRS) && *string == EOS &&
-                 ((c == '/' && string != stringstart) ||
-                  (string == stringstart + 1 && *stringstart == '/')))
+                 ((c == '/' && string != stringstart) || (string == stringstart + 1 && *stringstart == '/')))
           return (0);
         else
           return (FNM_NOMATCH);

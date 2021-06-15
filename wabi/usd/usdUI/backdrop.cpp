@@ -112,8 +112,7 @@ UsdAttribute UsdUIBackdrop::GetDescriptionAttr() const
   return GetPrim().GetAttribute(UsdUITokens->uiDescription);
 }
 
-UsdAttribute UsdUIBackdrop::CreateDescriptionAttr(VtValue const &defaultValue,
-                                                  bool writeSparsely) const
+UsdAttribute UsdUIBackdrop::CreateDescriptionAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdUITokens->uiDescription,
                                     SdfValueTypeNames->Token,
@@ -124,8 +123,7 @@ UsdAttribute UsdUIBackdrop::CreateDescriptionAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -139,10 +137,10 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdUIBackdrop::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdUITokens->uiDescription,
+    UsdUITokens->uiDescription,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdTyped::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

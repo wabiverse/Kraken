@@ -37,8 +37,7 @@ WABI_NAMESPACE_BEGIN
 
 static TfStaticData<TfTypeInfoMap<Tf_PyObjectFinderBase const *>> _finders;
 
-void Tf_RegisterPythonObjectFinderInternal(std::type_info const &type,
-                                           Tf_PyObjectFinderBase const *finder)
+void Tf_RegisterPythonObjectFinderInternal(std::type_info const &type, Tf_PyObjectFinderBase const *finder)
 {
   _finders->Set(type, finder);
 }

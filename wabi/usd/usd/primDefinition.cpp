@@ -64,9 +64,8 @@ TfTokenVector UsdPrimDefinition::_ListMetadataFields(const TfToken &propName) co
     // Get the list of fields from the schematics for the property (or prim)
     // path and remove the fields that we don't allow fallbacks for.
     TfTokenVector fields = _GetSchematics()->ListFields(*path);
-    fields.erase(
-        std::remove_if(fields.begin(), fields.end(), &UsdSchemaRegistry::IsDisallowedField),
-        fields.end());
+    fields.erase(std::remove_if(fields.begin(), fields.end(), &UsdSchemaRegistry::IsDisallowedField),
+                 fields.end());
     return fields;
   }
   return TfTokenVector();
@@ -150,14 +149,13 @@ bool UsdPrimDefinition::FlattenTo(const SdfLayerHandle &layer,
   for (const TfToken &propName : GetPropertyNames()) {
     SdfPropertySpecHandle propSpec = GetSchemaPropertySpec(propName);
     if (TF_VERIFY(propSpec)) {
-      if (!SdfCopySpec(
-              propSpec->GetLayer(), propSpec->GetPath(), layer, path.AppendProperty(propName))) {
+      if (!SdfCopySpec(propSpec->GetLayer(), propSpec->GetPath(), layer, path.AppendProperty(propName))) {
         TF_WARN(
-            "Failed to copy prim defintion property '%s' to prim "
-            "spec at path '%s' in layer '%s'.",
-            propName.GetText(),
-            path.GetText(),
-            layer->GetIdentifier().c_str());
+          "Failed to copy prim defintion property '%s' to prim "
+          "spec at path '%s' in layer '%s'.",
+          propName.GetText(),
+          path.GetText(),
+          layer->GetIdentifier().c_str());
       }
     }
   }
@@ -174,8 +172,7 @@ bool UsdPrimDefinition::FlattenTo(const SdfLayerHandle &layer,
   // the apiSchemas field copied from prim metadata will only contain the
   // built-in API schemas of the underlying typed schemas but not any
   // additional API schemas that may have been applied to this definition.
-  layer->SetField(
-      path, UsdTokens->apiSchemas, VtValue(SdfTokenListOp::CreateExplicit(_appliedAPISchemas)));
+  layer->SetField(path, UsdTokens->apiSchemas, VtValue(SdfTokenListOp::CreateExplicit(_appliedAPISchemas)));
 
   // Also explicitly set the documentation string. This is necessary when
   // flattening an API schema prim definition as GetMetadata doesn't return
@@ -193,9 +190,9 @@ UsdPrim UsdPrimDefinition::FlattenTo(const UsdPrim &parent,
   const SdfPath primPath = parent.GetPath().AppendChild(name);
 
   // Map the target prim to the edit target.
-  const UsdEditTarget &editTarget   = parent.GetStage()->GetEditTarget();
+  const UsdEditTarget &editTarget = parent.GetStage()->GetEditTarget();
   const SdfLayerHandle &targetLayer = editTarget.GetLayer();
-  const SdfPath &targetPath         = editTarget.MapToSpecPath(primPath);
+  const SdfPath &targetPath = editTarget.MapToSpecPath(primPath);
   if (targetPath.IsEmpty()) {
     return UsdPrim();
   }

@@ -98,15 +98,14 @@ template<typename T> object getitem_ellipsis(VtArray<T> const &self, object idx)
 template<typename T> object getitem_index(VtArray<T> const &self, int64_t idx)
 {
   static const bool throwError = true;
-  idx                          = TfPyNormalizeIndex(idx, self.size(), throwError);
+  idx = TfPyNormalizeIndex(idx, self.size(), throwError);
   return object(self[idx]);
 }
 
 template<typename T> object getitem_slice(VtArray<T> const &self, slice idx)
 {
   try {
-    slice::range<typename VtArray<T>::const_iterator> range = idx.get_indices(self.begin(),
-                                                                              self.end());
+    slice::range<typename VtArray<T>::const_iterator> range = idx.get_indices(self.begin(), self.end());
     const size_t setSize = 1 + (range.stop - range.start) / range.step;
     VtArray<T> result(setSize);
     size_t i = 0;
@@ -122,19 +121,14 @@ template<typename T> object getitem_slice(VtArray<T> const &self, slice idx)
 }
 
 template<typename T, typename S>
-void setArraySlice(VtArray<T> &self,
-                   S value,
-                   slice::range<T *> &range,
-                   size_t setSize,
-                   bool tile = false)
+void setArraySlice(VtArray<T> &self, S value, slice::range<T *> &range, size_t setSize, bool tile = false)
 {
   // Check size.
   const size_t length = len(value);
   if (length == 0)
     TfPyThrowValueError("No values with which to set array slice.");
   if (!tile && length < setSize) {
-    string msg = TfStringPrintf(
-        "Not enough values to set slice.  Expected %zu, got %zu.", setSize, length);
+    string msg = TfStringPrintf("Not enough values to set slice.  Expected %zu, got %zu.", setSize, length);
     TfPyThrowValueError(msg);
   }
 
@@ -165,14 +159,13 @@ void setArraySlice(VtArray<T> &self,
   }
 }
 
-template<typename T>
-void setArraySlice(VtArray<T> &self, slice idx, object value, bool tile = false)
+template<typename T> void setArraySlice(VtArray<T> &self, slice idx, object value, bool tile = false)
 {
   // Get the range.
   slice::range<T *> range;
   try {
     T *data = self.data();
-    range   = idx.get_indices(data, data + self.size());
+    range = idx.get_indices(data, data + self.size());
   }
   catch (std::invalid_argument &) {
     // Do nothing
@@ -189,12 +182,12 @@ void setArraySlice(VtArray<T> &self, slice idx, object value, bool tile = false)
   // real VtArray there.
   if (extract<VtArray<T> &>(value).check()) {
     const VtArray<T> val = extract<VtArray<T>>(value);
-    const size_t length  = val.size();
+    const size_t length = val.size();
     if (length == 0)
       TfPyThrowValueError("No values with which to set array slice.");
     if (!tile && length < setSize) {
       string msg = TfStringPrintf(
-          "Not enough values to set slice.  Expected %zu, got %zu.", setSize, length);
+        "Not enough values to set slice.  Expected %zu, got %zu.", setSize, length);
       TfPyThrowValueError(msg);
     }
 
@@ -305,18 +298,17 @@ static bool _IsFinite(GfHalf const &value)
 BOOST_PP_SEQ_FOR_EACH(MAKE_STREAM_FUNC, ~, VT_FLOATING_POINT_BUILTIN_VALUE_TYPES)
 #undef MAKE_STREAM_FUNC
 
-static unsigned int Vt_ComputeEffectiveRankAndLastDimSize(Vt_ShapeData const *sd,
-                                                          size_t *lastDimSize)
+static unsigned int Vt_ComputeEffectiveRankAndLastDimSize(Vt_ShapeData const *sd, size_t *lastDimSize)
 {
   unsigned int rank = sd->GetRank();
   if (rank == 1)
     return rank;
 
   size_t divisor = std::accumulate(
-      sd->otherDims, sd->otherDims + rank - 1, 1, [](size_t x, size_t y) { return x * y; });
+    sd->otherDims, sd->otherDims + rank - 1, 1, [](size_t x, size_t y) { return x * y; });
 
   size_t remainder = divisor ? sd->totalSize % divisor : 0;
-  *lastDimSize     = divisor ? sd->totalSize / divisor : 0;
+  *lastDimSize = divisor ? sd->totalSize / divisor : 0;
 
   if (remainder)
     rank = 1;
@@ -351,8 +343,8 @@ template<typename T> string __repr__(VtArray<T> const &self)
   // the repr into eval(), it'll raise a SyntaxError that clearly points to
   // the beginning of the __repr__.
   Vt_ShapeData const *shapeData = self._GetShapeData();
-  size_t lastDimSize            = 0;
-  unsigned int rank             = Vt_ComputeEffectiveRankAndLastDimSize(shapeData, &lastDimSize);
+  size_t lastDimSize = 0;
+  unsigned int rank = Vt_ComputeEffectiveRankAndLastDimSize(shapeData, &lastDimSize);
   if (rank > 1) {
     std::string shapeStr = "(";
     for (size_t i = 0; i != rank - 1; ++i) {
@@ -421,9 +413,9 @@ template<typename T> void VtWrapArray()
   typedef T This;
   typedef typename This::ElementType Type;
 
-  string name    = GetVtArrayName<This>();
+  string name = GetVtArrayName<This>();
   string typeStr = ArchGetDemangled(typeid(Type));
-  string docStr  = TfStringPrintf("An array of type %s.", typeStr.c_str());
+  string docStr = TfStringPrintf("An array of type %s.", typeStr.c_str());
 
   class_<This>(name.c_str(), docStr.c_str(), no_init)
         .setattr("_isVtArray", true)
@@ -501,9 +493,8 @@ template<typename T> void VtWrapArray()
   VTOPERATOR_WRAPDECLARE_BOOL(NotEqual)
 
   // Wrap conversions from python sequences.
-  TfPyContainerConversions::from_python_sequence<
-      This,
-      TfPyContainerConversions::variable_capacity_all_items_convertible_policy>();
+  TfPyContainerConversions::
+    from_python_sequence<This, TfPyContainerConversions::variable_capacity_all_items_convertible_policy>();
 
   // Wrap implicit conversions from VtArray to TfSpan.
   implicitly_convertible<This, TfSpan<Type>>();
@@ -575,7 +566,7 @@ template<class T> VtValue Vt_CastToArray(VtValue const &v)
   }
   else if (v.IsHolding<std::vector<VtValue>>()) {
     std::vector<VtValue> const &vec = v.UncheckedGet<std::vector<VtValue>>();
-    ret                             = Vt_ConvertFromRange<T>(vec.begin(), vec.end());
+    ret = Vt_ConvertFromRange<T>(vec.begin(), vec.end());
   }
   return ret;
 }

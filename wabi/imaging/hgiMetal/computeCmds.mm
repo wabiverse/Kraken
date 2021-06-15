@@ -42,12 +42,12 @@
 WABI_NAMESPACE_BEGIN
 
 HgiMetalComputeCmds::HgiMetalComputeCmds(HgiMetal *hgi)
-    : HgiComputeCmds(),
-      _hgi(hgi),
-      _pipelineState(nullptr),
-      _commandBuffer(nil),
-      _encoder(nil),
-      _secondaryCommandBuffer(false)
+  : HgiComputeCmds(),
+    _hgi(hgi),
+    _pipelineState(nullptr),
+    _commandBuffer(nil),
+    _encoder(nil),
+    _secondaryCommandBuffer(false)
 {
   _CreateEncoder();
 }
@@ -62,7 +62,7 @@ void HgiMetalComputeCmds::_CreateEncoder()
   if (!_encoder) {
     _commandBuffer = _hgi->GetPrimaryCommandBuffer();
     if (_commandBuffer == nil) {
-      _commandBuffer          = _hgi->GetSecondaryCommandBuffer();
+      _commandBuffer = _hgi->GetSecondaryCommandBuffer();
       _secondaryCommandBuffer = true;
     }
     _encoder = [_commandBuffer computeCommandEncoder];
@@ -95,17 +95,16 @@ void HgiMetalComputeCmds::SetConstantValues(HgiComputePipelineHandle pipeline,
 
 void HgiMetalComputeCmds::Dispatch(int dimX, int dimY)
 {
-  uint32_t maxTotalThreads = [_pipelineState->GetMetalPipelineState()
-      maxTotalThreadsPerThreadgroup];
-  uint32_t exeWidth        = [_pipelineState->GetMetalPipelineState() threadExecutionWidth];
+  uint32_t maxTotalThreads = [_pipelineState->GetMetalPipelineState() maxTotalThreadsPerThreadgroup];
+  uint32_t exeWidth = [_pipelineState->GetMetalPipelineState() threadExecutionWidth];
 
   uint32_t thread_width, thread_height;
   if (dimY == 1) {
-    thread_width  = (maxTotalThreads / exeWidth) * exeWidth;
+    thread_width = (maxTotalThreads / exeWidth) * exeWidth;
     thread_height = 1;
   }
   else {
-    thread_width  = exeWidth;
+    thread_width = exeWidth;
     thread_height = maxTotalThreads / exeWidth;
   }
 
@@ -136,7 +135,7 @@ bool HgiMetalComputeCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
   bool submittedWork = false;
   if (_encoder) {
     [_encoder endEncoding];
-    _encoder      = nil;
+    _encoder = nil;
     submittedWork = true;
 
     HgiMetal::CommitCommandBufferWaitType waitType;

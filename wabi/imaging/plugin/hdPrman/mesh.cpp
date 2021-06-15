@@ -59,12 +59,12 @@ HdDirtyBits HdPrman_Mesh::GetInitialDirtyBitsMask() const
   // The initial dirty bits control what data is available on the first
   // run through _PopulateRtMesh(), so it should list every data item
   // that _PopluateRtMesh requests.
-  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyPoints |
-             HdChangeTracker::DirtyTopology | HdChangeTracker::DirtyTransform |
-             HdChangeTracker::DirtyVisibility | HdChangeTracker::DirtyCullStyle |
-             HdChangeTracker::DirtyDoubleSided | HdChangeTracker::DirtySubdivTags |
-             HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyNormals |
-             HdChangeTracker::DirtyMaterialId | HdChangeTracker::DirtyInstancer;
+  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyTopology |
+             HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyVisibility |
+             HdChangeTracker::DirtyCullStyle | HdChangeTracker::DirtyDoubleSided |
+             HdChangeTracker::DirtySubdivTags | HdChangeTracker::DirtyPrimvar |
+             HdChangeTracker::DirtyNormals | HdChangeTracker::DirtyMaterialId |
+             HdChangeTracker::DirtyInstancer;
 
   return (HdDirtyBits)mask;
 }
@@ -77,9 +77,9 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
 {
   // Pull topology.
   const HdMeshTopology topology = GetMeshTopology(sceneDelegate);
-  const size_t npoints          = topology.GetNumPoints();
-  const VtIntArray verts        = topology.GetFaceVertexIndices();
-  const VtIntArray nverts       = topology.GetFaceVertexCounts();
+  const size_t npoints = topology.GetNumPoints();
+  const VtIntArray verts = topology.GetFaceVertexIndices();
+  const VtIntArray nverts = topology.GetFaceVertexCounts();
 
   // If the geometry has been partitioned into subsets, add an
   // additional subset representing anything left over.
@@ -99,8 +99,8 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
     if (numUnusedFaces) {
       geomSubsets->push_back(HdGeomSubset());
       HdGeomSubset &unusedSubset = geomSubsets->back();
-      unusedSubset.type          = HdGeomSubset::TypeFaceSet;
-      unusedSubset.id            = id;
+      unusedSubset.type = HdGeomSubset::TypeFaceSet;
+      unusedSubset.id = id;
       // Use an empty material ID as a placeholder to indicate
       // that we wish to re-use the mesh-level material binding.
       unusedSubset.materialId = SdfPath();
@@ -133,16 +133,15 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
   primvars.SetTimeSamples(points.count, &points.times[0]);
   for (size_t i = 0; i < points.count; ++i) {
     if (points.values[i].size() == npoints) {
-      primvars.SetPointDetail(
-          RixStr.k_P, (RtPoint3 *)points.values[i].cdata(), RtDetailType::k_vertex, i);
+      primvars.SetPointDetail(RixStr.k_P, (RtPoint3 *)points.values[i].cdata(), RtDetailType::k_vertex, i);
     }
     else {
       TF_WARN(
-          "<%s> primvar 'points' size (%zu) did not match "
-          "expected (%zu)",
-          id.GetText(),
-          points.values[i].size(),
-          npoints);
+        "<%s> primvar 'points' size (%zu) did not match "
+        "expected (%zu)",
+        id.GetText(),
+        points.values[i].size(),
+        npoints);
     }
   }
 
@@ -207,8 +206,8 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
     PxOsdSubdivTags osdTags = GetSubdivTags(sceneDelegate);
 
     // Creases
-    VtIntArray creaseLengths   = osdTags.GetCreaseLengths();
-    VtIntArray creaseIndices   = osdTags.GetCreaseIndices();
+    VtIntArray creaseLengths = osdTags.GetCreaseLengths();
+    VtIntArray creaseIndices = osdTags.GetCreaseIndices();
     VtFloatArray creaseWeights = osdTags.GetCreaseWeights();
     if (!creaseIndices.empty()) {
       for (int creaseLength : creaseLengths) {
@@ -222,7 +221,7 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
     }
 
     // Corners
-    VtIntArray cornerIndices   = osdTags.GetCornerIndices();
+    VtIntArray cornerIndices = osdTags.GetCornerIndices();
     VtFloatArray cornerWeights = osdTags.GetCornerWeights();
     if (cornerIndices.size()) {
       tagNames.push_back(RixStr.k_corner);
@@ -276,8 +275,7 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
   std::iota(elementId.begin(), elementId.end(), 0);
   primvars.SetIntegerDetail(RixStr.k_faceindex, elementId.data(), RtDetailType::k_uniform);
 
-  HdPrman_ConvertPrimvars(
-      sceneDelegate, id, primvars, nverts.size(), npoints, npoints, verts.size());
+  HdPrman_ConvertPrimvars(sceneDelegate, id, primvars, nverts.size(), npoints, npoints, verts.size());
 
   return primvars;
 }

@@ -182,7 +182,7 @@ class UsdGeomMotionAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
   UsdAttribute CreateVelocityScaleAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely          = false) const;
+                                       bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //

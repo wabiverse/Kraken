@@ -56,37 +56,35 @@ void wrapNotice()
   TfPyNoticeWrapper<SdfNotice::Base, TfNotice>::Wrap();
 
   TfPyNoticeWrapper<SdfNotice::LayersDidChange, SdfNotice::Base>::Wrap()
-      .def("GetLayers",
-           &SdfNotice::LayersDidChange::GetLayers,
-           return_value_policy<TfPySequenceToList>())
-      .def("GetSerialNumber", &SdfNotice::LayersDidChange::GetSerialNumber);
+    .def("GetLayers", &SdfNotice::LayersDidChange::GetLayers, return_value_policy<TfPySequenceToList>())
+    .def("GetSerialNumber", &SdfNotice::LayersDidChange::GetSerialNumber);
 
   TfPyNoticeWrapper<SdfNotice::LayersDidChangeSentPerLayer, SdfNotice::Base>::Wrap()
-      .def("GetLayers",
-           &SdfNotice::LayersDidChangeSentPerLayer::GetLayers,
-           return_value_policy<TfPySequenceToList>())
-      .def("GetSerialNumber", &SdfNotice::LayersDidChangeSentPerLayer::GetSerialNumber);
+    .def("GetLayers",
+         &SdfNotice::LayersDidChangeSentPerLayer::GetLayers,
+         return_value_policy<TfPySequenceToList>())
+    .def("GetSerialNumber", &SdfNotice::LayersDidChangeSentPerLayer::GetSerialNumber);
 
   TfPyNoticeWrapper<SdfNotice::LayerDidReplaceContent, SdfNotice::Base>::Wrap();
 
   TfPyNoticeWrapper<SdfNotice::LayerDidReloadContent, SdfNotice::LayerDidReplaceContent>::Wrap();
 
   TfPyNoticeWrapper<SdfNotice::LayerInfoDidChange, SdfNotice::Base>::Wrap().def(
-      "key", &SdfNotice::LayerInfoDidChange::key, return_value_policy<return_by_value>());
+    "key", &SdfNotice::LayerInfoDidChange::key, return_value_policy<return_by_value>());
 
   TfPyNoticeWrapper<SdfNotice::LayerIdentifierDidChange, SdfNotice::Base>::Wrap()
-      .add_property("oldIdentifier",
-                    make_function(&SdfNotice::LayerIdentifierDidChange::GetOldIdentifier,
-                                  return_value_policy<return_by_value>()))
-      .add_property("newIdentifier",
-                    make_function(&SdfNotice::LayerIdentifierDidChange::GetNewIdentifier,
-                                  return_value_policy<return_by_value>()));
+    .add_property("oldIdentifier",
+                  make_function(&SdfNotice::LayerIdentifierDidChange::GetOldIdentifier,
+                                return_value_policy<return_by_value>()))
+    .add_property("newIdentifier",
+                  make_function(&SdfNotice::LayerIdentifierDidChange::GetNewIdentifier,
+                                return_value_policy<return_by_value>()));
 
   TfPyNoticeWrapper<SdfNotice::LayerDirtinessChanged, SdfNotice::Base>::Wrap();
 
   TfPyNoticeWrapper<SdfNotice::LayerMutenessChanged, SdfNotice::Base>::Wrap()
-      .add_property("layerPath",
-                    make_function(&SdfNotice::LayerMutenessChanged::GetLayerPath,
-                                  return_value_policy<return_by_value>()))
-      .add_property("wasMuted", &SdfNotice::LayerMutenessChanged::WasMuted);
+    .add_property(
+      "layerPath",
+      make_function(&SdfNotice::LayerMutenessChanged::GetLayerPath, return_value_policy<return_by_value>()))
+    .add_property("wasMuted", &SdfNotice::LayerMutenessChanged::WasMuted);
 }

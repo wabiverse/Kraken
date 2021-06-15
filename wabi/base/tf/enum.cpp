@@ -86,9 +86,9 @@ class Tf_EnumRegistry : boost::noncopyable {
 
     _typeNameToType.erase(ArchGetDemangled(val.GetType()));
 
-    vector<string> &v       = _typeNameToNameVector[val.GetType().name()];
+    vector<string> &v = _typeNameToNameVector[val.GetType().name()];
     vector<string> original = v;
-    string name             = _enumToName[val];
+    string name = _enumToName[val];
 
     v.clear();
     for (size_t i = 0; i < original.size(); i++)
@@ -124,7 +124,7 @@ void TfEnum::_AddName(TfEnum val, const string &valName, const string &displayNa
    * In case valName looks like "stuff::VALUE", strip off the leading
    * prefix.
    */
-  size_t i         = valName.rfind(':');
+  size_t i = valName.rfind(':');
   string shortName = (i == string::npos) ? valName : valName.substr(i + 1);
 
   if (shortName.empty())
@@ -135,9 +135,9 @@ void TfEnum::_AddName(TfEnum val, const string &valName, const string &displayNa
 
   string fullName = typeName + "::" + shortName;
 
-  r._enumToName[val]          = shortName;
-  r._enumToFullName[val]      = fullName;
-  r._enumToDisplayName[val]   = displayName.empty() ? shortName : displayName;
+  r._enumToName[val] = shortName;
+  r._enumToFullName[val] = fullName;
+  r._enumToDisplayName[val] = displayName.empty() ? shortName : displayName;
   r._fullNameToEnum[fullName] = val;
   r._typeNameToNameVector[val.GetType().name()].push_back(shortName);
   r._typeNameToType[typeName] = &val.GetType();
@@ -206,7 +206,7 @@ const type_info *TfEnum::GetTypeFromName(const string &typeName)
 
 TfEnum TfEnum::GetValueFromName(const type_info &ti, const string &name, bool *foundIt)
 {
-  bool found   = false;
+  bool found = false;
   TfEnum value = GetValueFromFullName(ArchGetDemangled(ti) + "::" + name, &found);
 
   // Make sure that the found enum is the correct type.
@@ -242,10 +242,10 @@ TfEnum TfEnum::GetValueFromFullName(const string &fullname, bool *foundIt)
 void TfEnum::_FatalGetValueError(std::type_info const &typeInfo) const
 {
   TF_FATAL_ERROR(
-      "Attempted to get a '%s' from a TfEnum holding "
-      "a '%s'.",
-      ArchGetDemangled(typeInfo).c_str(),
-      _typeInfo->name());
+    "Attempted to get a '%s' from a TfEnum holding "
+    "a '%s'.",
+    ArchGetDemangled(typeInfo).c_str(),
+    _typeInfo->name());
 }
 
 bool TfEnum::IsKnownEnumType(const std::string &typeName)

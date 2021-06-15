@@ -54,7 +54,7 @@ static dict _ConvertDict(const JsObject &dictionary)
   dict result;
   TF_FOR_ALL(i, dictionary)
   {
-    const string &key  = i->first;
+    const string &key = i->first;
     const JsValue &val = i->second;
 
     result[key] = JsConvertToContainerType<object, dict>(val);
@@ -80,31 +80,30 @@ void wrapPlugin()
   typedef PlugPluginPtr ThisPtr;
 
   class_<This, ThisPtr, boost::noncopyable>("Plugin", no_init)
-      .def(TfPyWeakPtr())
-      .def("Load", &This::Load)
+    .def(TfPyWeakPtr())
+    .def("Load", &This::Load)
 
-      .add_property("isLoaded", &This::IsLoaded)
-      .add_property("isPythonModule", &This::IsPythonModule)
-      .add_property("isResource", &This::IsResource)
+    .add_property("isLoaded", &This::IsLoaded)
+    .add_property("isPythonModule", &This::IsPythonModule)
+    .add_property("isResource", &This::IsResource)
 
-      .add_property("metadata", _GetMetadata)
+    .add_property("metadata", _GetMetadata)
 
-      .add_property("name", make_function(&This::GetName, return_value_policy<return_by_value>()))
-      .add_property("path", make_function(&This::GetPath, return_value_policy<return_by_value>()))
-      .add_property("resourcePath",
-                    make_function(&This::GetResourcePath, return_value_policy<return_by_value>()))
+    .add_property("name", make_function(&This::GetName, return_value_policy<return_by_value>()))
+    .add_property("path", make_function(&This::GetPath, return_value_policy<return_by_value>()))
+    .add_property("resourcePath",
+                  make_function(&This::GetResourcePath, return_value_policy<return_by_value>()))
 
-      .def("GetMetadataForType", _GetMetadataForType)
-      .def("DeclaresType", &This::DeclaresType, (arg("type"), arg("includeSubclasses") = false))
+    .def("GetMetadataForType", _GetMetadataForType)
+    .def("DeclaresType", &This::DeclaresType, (arg("type"), arg("includeSubclasses") = false))
 
-      .def("MakeResourcePath", &This::MakeResourcePath)
-      .def("FindPluginResource", &This::FindPluginResource, (arg("path"), arg("verify") = true));
+    .def("MakeResourcePath", &This::MakeResourcePath)
+    .def("FindPluginResource", &This::FindPluginResource, (arg("path"), arg("verify") = true));
 
   // The call to JsConvertToContainerType in _ConvertDict creates
   // vectors of boost::python::objects for array values, so register
   // a converter that turns that vector into a Python list.
-  boost::python::to_python_converter<std::vector<object>,
-                                     TfPySequenceToPython<std::vector<object>>>();
+  boost::python::to_python_converter<std::vector<object>, TfPySequenceToPython<std::vector<object>>>();
 }
 
 TF_REFPTR_CONST_VOLATILE_GET(PlugPlugin)

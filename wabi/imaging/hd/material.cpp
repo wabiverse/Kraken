@@ -43,7 +43,7 @@ void HdMaterialNetwork2ConvertFromHdMaterialNetworkMap(const HdMaterialNetworkMa
   HD_TRACE_FUNCTION();
 
   for (auto const &iter : hdNetworkMap.map) {
-    const TfToken &terminalName        = iter.first;
+    const TfToken &terminalName = iter.first;
     const HdMaterialNetwork &hdNetwork = iter.second;
 
     // Check if there are nodes associated with the volume terminal
@@ -60,8 +60,8 @@ void HdMaterialNetwork2ConvertFromHdMaterialNetworkMap(const HdMaterialNetworkMa
     }
     for (const HdMaterialNode &node : hdNetwork.nodes) {
       HdMaterialNode2 &materialNode2 = result->nodes[node.path];
-      materialNode2.nodeTypeId       = node.identifier;
-      materialNode2.parameters       = node.parameters;
+      materialNode2.nodeTypeId = node.identifier;
+      materialNode2.parameters = node.parameters;
     }
     // Assume that the last entry is the terminal
     result->terminals[terminalName].upstreamNode = hdNetwork.nodes.back().path;
@@ -104,8 +104,8 @@ std::ostream &operator<<(std::ostream &out, const HdMaterialNetwork &pv)
 
 bool operator==(const HdMaterialRelationship &lhs, const HdMaterialRelationship &rhs)
 {
-  return lhs.outputId == rhs.outputId && lhs.outputName == rhs.outputName &&
-         lhs.inputId == rhs.inputId && lhs.inputName == rhs.inputName;
+  return lhs.outputId == rhs.outputId && lhs.outputName == rhs.outputName && lhs.inputId == rhs.inputId &&
+         lhs.inputName == rhs.inputName;
 }
 
 size_t hash_value(const HdMaterialRelationship &rel)
@@ -119,8 +119,7 @@ size_t hash_value(const HdMaterialRelationship &rel)
 
 bool operator==(const HdMaterialNode &lhs, const HdMaterialNode &rhs)
 {
-  return lhs.path == rhs.path && lhs.identifier == rhs.identifier &&
-         lhs.parameters == rhs.parameters;
+  return lhs.path == rhs.path && lhs.identifier == rhs.identifier && lhs.parameters == rhs.parameters;
 }
 
 size_t hash_value(const HdMaterialNode &node)
@@ -133,8 +132,7 @@ size_t hash_value(const HdMaterialNode &node)
 
 bool operator==(const HdMaterialNetwork &lhs, const HdMaterialNetwork &rhs)
 {
-  return lhs.relationships == rhs.relationships && lhs.nodes == rhs.nodes &&
-         lhs.primvars == rhs.primvars;
+  return lhs.relationships == rhs.relationships && lhs.nodes == rhs.nodes && lhs.primvars == rhs.primvars;
 }
 
 bool operator!=(const HdMaterialNetwork &lhs, const HdMaterialNetwork &rhs)

@@ -24,22 +24,20 @@ bool RprUsdMaterial::AttachTo(rpr::Shape *mesh, bool displacementEnabled) const
 {
   bool fail = RPR_ERROR_CHECK(mesh->SetMaterial(m_surfaceNode), "Failed to set shape material");
 
-  fail |= RPR_ERROR_CHECK(mesh->SetVolumeMaterial(m_volumeNode),
-                          "Failed to set shape volume material");
+  fail |= RPR_ERROR_CHECK(mesh->SetVolumeMaterial(m_volumeNode), "Failed to set shape volume material");
 
   if (displacementEnabled && m_displacementNode) {
     size_t dummy;
     int subdFactor;
-    if (RPR_ERROR_CHECK(
-            mesh->GetInfo(RPR_SHAPE_SUBDIVISION_FACTOR, sizeof(subdFactor), &subdFactor, &dummy),
-            "Failed to query mesh subdivision factor")) {
+    if (RPR_ERROR_CHECK(mesh->GetInfo(RPR_SHAPE_SUBDIVISION_FACTOR, sizeof(subdFactor), &subdFactor, &dummy),
+                        "Failed to query mesh subdivision factor")) {
       subdFactor = 0;
     }
 
     if (subdFactor == 0) {
       TF_WARN(
-          "Displacement material requires subdivision to be enabled. The subdivision will be "
-          "enabled with refine level of 1");
+        "Displacement material requires subdivision to be enabled. The subdivision will be "
+        "enabled with refine level of 1");
       if (!RPR_ERROR_CHECK(mesh->SetSubdivisionFactor(1), "Failed to set mesh subdividion")) {
         subdFactor = 1;
       }
@@ -53,9 +51,8 @@ bool RprUsdMaterial::AttachTo(rpr::Shape *mesh, bool displacementEnabled) const
         displacementScale = m_displacementScale.UncheckedGet<GfVec2f>();
       }
 
-      fail |= RPR_ERROR_CHECK(
-          mesh->SetDisplacementScale(displacementScale[0], displacementScale[1]),
-          "Failed to set shape displacement scale");
+      fail |= RPR_ERROR_CHECK(mesh->SetDisplacementScale(displacementScale[0], displacementScale[1]),
+                              "Failed to set shape displacement scale");
     }
   }
   else {
@@ -63,8 +60,7 @@ bool RprUsdMaterial::AttachTo(rpr::Shape *mesh, bool displacementEnabled) const
                             "Failed to unset shape displacement material");
   }
 
-  fail |= RPR_ERROR_CHECK(mesh->SetShadowCatcher(m_isShadowCatcher),
-                          "Failed to set shape shadow catcher");
+  fail |= RPR_ERROR_CHECK(mesh->SetShadowCatcher(m_isShadowCatcher), "Failed to set shape shadow catcher");
   fail |= RPR_ERROR_CHECK(mesh->SetReflectionCatcher(m_isReflectionCatcher),
                           "Failed to set shape reflection catcher");
 
@@ -80,8 +76,7 @@ void RprUsdMaterial::DetachFrom(rpr::Shape *mesh)
 {
   RPR_ERROR_CHECK(mesh->SetMaterial(nullptr), "Failed to unset shape material");
   RPR_ERROR_CHECK(mesh->SetVolumeMaterial(nullptr), "Failed to unset shape volume material");
-  RPR_ERROR_CHECK(mesh->SetDisplacementMaterial(nullptr),
-                  "Failed to unset shape displacement material");
+  RPR_ERROR_CHECK(mesh->SetDisplacementMaterial(nullptr), "Failed to unset shape displacement material");
   RPR_ERROR_CHECK(mesh->SetShadowCatcher(false), "Failed to unset shape shadow catcher");
   RPR_ERROR_CHECK(mesh->SetReflectionCatcher(false), "Failed to unset shape reflection catcher");
 }

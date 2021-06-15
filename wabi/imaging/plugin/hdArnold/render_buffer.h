@@ -139,10 +139,10 @@ class HdArnoldRenderBuffer : public HdRenderBuffer {
   struct BufferDefinition {
     HdAovSettingsMap settings;               ///< Filter and AOV settings for the Render Buffer.
     HdArnoldRenderBuffer *buffer = nullptr;  ///< HdArnoldRenderBuffer pointer.
-    AtNode *driver               = nullptr;  ///< Arnold driver.
-    AtNode *filter               = nullptr;  ///< Arnold filter.
-    AtNode *writer               = nullptr;  ///< Arnold AOV write node for primvar AOVs.
-    AtNode *reader               = nullptr;  ///< Arnold user data reader for primvar AOVs.
+    AtNode *driver = nullptr;                ///< Arnold driver.
+    AtNode *filter = nullptr;                ///< Arnold filter.
+    AtNode *writer = nullptr;                ///< Arnold AOV write node for primvar AOVs.
+    AtNode *reader = nullptr;                ///< Arnold user data reader for primvar AOVs.
 
     /// Default constructor.
     BufferDefinition() = default;
@@ -152,8 +152,8 @@ class HdArnoldRenderBuffer : public HdRenderBuffer {
     /// @param _buffer Pointer to the HdArnoldRenderBuffer.
     /// @param _settings Hash map storing the render settings.
     BufferDefinition(HdArnoldRenderBuffer *_buffer, const HdAovSettingsMap &_settings)
-        : settings(_settings),
-          buffer(_buffer)
+      : settings(_settings),
+        buffer(_buffer)
     {}
   };
 
@@ -162,16 +162,16 @@ class HdArnoldRenderBuffer : public HdRenderBuffer {
   HDARNOLD_API
   void _Deallocate() override;
 
-  std::vector<uint8_t> _buffer;                         ///< Storing render data.
-  std::mutex _mutex;                                    ///< Mutex for the parallel writes.
-  unsigned int _width  = 0;                             ///< Buffer width.
-  unsigned int _height = 0;                             ///< Buffer height.
-  HdFormat _format     = HdFormat::HdFormatUNorm8Vec4;  ///< Internal format of the buffer.
-  bool _converged      = false;   ///< Store if the render buffer has converged.
-  std::atomic<bool> _hasUpdates;  ///< If the render buffer has any updates.
+  std::vector<uint8_t> _buffer;                     ///< Storing render data.
+  std::mutex _mutex;                                ///< Mutex for the parallel writes.
+  unsigned int _width = 0;                          ///< Buffer width.
+  unsigned int _height = 0;                         ///< Buffer height.
+  HdFormat _format = HdFormat::HdFormatUNorm8Vec4;  ///< Internal format of the buffer.
+  bool _converged = false;                          ///< Store if the render buffer has converged.
+  std::atomic<bool> _hasUpdates;                    ///< If the render buffer has any updates.
 };
 
 using HdArnoldRenderBufferStorage =
-    std::unordered_map<TfToken, HdArnoldRenderBuffer::BufferDefinition, TfToken::HashFunctor>;
+  std::unordered_map<TfToken, HdArnoldRenderBuffer::BufferDefinition, TfToken::HashFunctor>;
 
 WABI_NAMESPACE_END

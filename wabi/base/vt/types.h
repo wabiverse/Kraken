@@ -54,9 +54,8 @@ VT_TYPE_IS_CHEAP_TO_COPY(TfToken);
 #define VT_FLOATING_POINT_BUILTIN_VALUE_TYPES ((double, Double))((float, Float))((GfHalf, Half))
 
 #define VT_INTEGRAL_BUILTIN_VALUE_TYPES \
-  ((bool, Bool))((char, Char))( \
-      (unsigned char, UChar))((short, Short))((unsigned short, UShort))((int, Int))(( \
-      unsigned int, UInt))((int64_t, Int64))((uint64_t, UInt64))
+  ((bool, Bool))((char, Char))((unsigned char, UChar))((short, Short))((unsigned short, UShort))(( \
+    int, Int))((unsigned int, UInt))((int64_t, Int64))((uint64_t, UInt64))
 
 #define VT_VEC_INT_VALUE_TYPES ((GfVec4i, Vec4i))((GfVec3i, Vec3i))((GfVec2i, Vec2i))
 
@@ -72,11 +71,9 @@ VT_TYPE_IS_CHEAP_TO_COPY(TfToken);
   VT_VEC_FLOAT_VALUE_TYPES \
   VT_VEC_DOUBLE_VALUE_TYPES
 
-#define VT_MATRIX_FLOAT_VALUE_TYPES \
-  ((GfMatrix4f, Matrix4f))((GfMatrix3f, Matrix3f))((GfMatrix2f, Matrix2f))
+#define VT_MATRIX_FLOAT_VALUE_TYPES ((GfMatrix4f, Matrix4f))((GfMatrix3f, Matrix3f))((GfMatrix2f, Matrix2f))
 
-#define VT_MATRIX_DOUBLE_VALUE_TYPES \
-  ((GfMatrix4d, Matrix4d))((GfMatrix3d, Matrix3d))((GfMatrix2d, Matrix2d))
+#define VT_MATRIX_DOUBLE_VALUE_TYPES ((GfMatrix4d, Matrix4d))((GfMatrix3d, Matrix3d))((GfMatrix2d, Matrix2d))
 
 #define VT_MATRIX_VALUE_TYPES \
   VT_MATRIX_FLOAT_VALUE_TYPES \
@@ -84,7 +81,7 @@ VT_TYPE_IS_CHEAP_TO_COPY(TfToken);
 
 #define VT_GFRANGE_VALUE_TYPES \
   ((GfRange3f, Range3f))((GfRange3d, Range3d))( \
-      (GfRange2f, Range2f))((GfRange2d, Range2d))((GfRange1f, Range1f))((GfRange1d, Range1d))
+    (GfRange2f, Range2f))((GfRange2d, Range2d))((GfRange1f, Range1f))((GfRange1d, Range1d))
 
 #define VT_RANGE_VALUE_TYPES \
   VT_GFRANGE_VALUE_TYPES((GfInterval, Interval)) \
@@ -102,8 +99,7 @@ VT_TYPE_IS_CHEAP_TO_COPY(TfToken);
 #define VT_TYPE_NAME(elem) BOOST_PP_TUPLE_ELEM(2, 1, elem)
 
 // Composite groups of types.
-#define VT_BUILTIN_NUMERIC_VALUE_TYPES \
-  VT_INTEGRAL_BUILTIN_VALUE_TYPES VT_FLOATING_POINT_BUILTIN_VALUE_TYPES
+#define VT_BUILTIN_NUMERIC_VALUE_TYPES VT_INTEGRAL_BUILTIN_VALUE_TYPES VT_FLOATING_POINT_BUILTIN_VALUE_TYPES
 
 #define VT_BUILTIN_VALUE_TYPES VT_BUILTIN_NUMERIC_VALUE_TYPES VT_STRING_VALUE_TYPES
 
@@ -128,12 +124,10 @@ BOOST_PP_SEQ_FOR_EACH(VT_ARRAY_TYPEDEF, ~, VT_SCALAR_VALUE_TYPES)
 // The following preprocessor code generates the boost pp sequence for
 // all array value types (VT_ARRAY_VALUE_TYPES)
 #define VT_ARRAY_TYPE_TUPLE(r, unused, elem) \
-  ((BOOST_PP_CAT(Vt, BOOST_PP_CAT(VT_TYPE_NAME(elem), Array)), \
-    BOOST_PP_CAT(VT_TYPE_NAME(elem), Array)))
+  ((BOOST_PP_CAT(Vt, BOOST_PP_CAT(VT_TYPE_NAME(elem), Array)), BOOST_PP_CAT(VT_TYPE_NAME(elem), Array)))
 #define VT_ARRAY_VALUE_TYPES BOOST_PP_SEQ_FOR_EACH(VT_ARRAY_TYPE_TUPLE, ~, VT_SCALAR_VALUE_TYPES)
 
-#define VT_CLASS_VALUE_TYPES \
-  VT_ARRAY_VALUE_TYPES VT_SCALAR_CLASS_VALUE_TYPES VT_NONARRAY_VALUE_TYPES
+#define VT_CLASS_VALUE_TYPES VT_ARRAY_VALUE_TYPES VT_SCALAR_CLASS_VALUE_TYPES VT_NONARRAY_VALUE_TYPES
 
 // Free functions to represent "zero" for various base types.  See
 // specializations in Types.cpp

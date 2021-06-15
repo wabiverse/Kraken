@@ -181,8 +181,7 @@ UsdRelationship UsdRenderSettingsBase::CreateCameraRel() const
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -196,14 +195,14 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRenderSettingsBase::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRenderTokens->resolution,
-      UsdRenderTokens->pixelAspectRatio,
-      UsdRenderTokens->aspectRatioConformPolicy,
-      UsdRenderTokens->dataWindowNDC,
-      UsdRenderTokens->instantaneousShutter,
+    UsdRenderTokens->resolution,
+    UsdRenderTokens->pixelAspectRatio,
+    UsdRenderTokens->aspectRatioConformPolicy,
+    UsdRenderTokens->dataWindowNDC,
+    UsdRenderTokens->instantaneousShutter,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdTyped::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

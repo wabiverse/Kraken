@@ -93,17 +93,14 @@ template<class Notice> struct Tf_PyNoticeObjectFinder : public Tf_PyObjectFinder
 template<typename NoticeType, typename BaseType>
 struct TfPyNoticeWrapper : public NoticeType, public TfPyNoticeWrapperBase {
  private:
-  static_assert(std::is_base_of<TfNotice, NoticeType>::value ||
-                    std::is_same<TfNotice, NoticeType>::value,
+  static_assert(std::is_base_of<TfNotice, NoticeType>::value || std::is_same<TfNotice, NoticeType>::value,
                 "Notice type must be derived from or equal to TfNotice.");
 
-  static_assert(std::is_base_of<TfNotice, BaseType>::value ||
-                    std::is_same<TfNotice, BaseType>::value,
+  static_assert(std::is_base_of<TfNotice, BaseType>::value || std::is_same<TfNotice, BaseType>::value,
                 "BaseType type must be derived from or equal to TfNotice.");
 
   static_assert(std::is_base_of<BaseType, NoticeType>::value ||
-                    (std::is_same<NoticeType, TfNotice>::value &&
-                     std::is_same<BaseType, TfNotice>::value),
+                  (std::is_same<NoticeType, TfNotice>::value && std::is_same<BaseType, TfNotice>::value),
                 "BaseType type must be a base of notice, unless both "
                 "BaseType and Notice type are equal to TfNotice.");
 

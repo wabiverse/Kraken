@@ -41,9 +41,9 @@ SdfLayerTreeHandle SdfLayerTree::New(const SdfLayerHandle &layer,
 SdfLayerTree::SdfLayerTree(const SdfLayerHandle &layer,
                            const SdfLayerTreeHandleVector &childTrees,
                            const SdfLayerOffset &cumulativeOffset)
-    : _layer(layer),
-      _offset(cumulativeOffset),
-      _childTrees(childTrees)
+  : _layer(layer),
+    _offset(cumulativeOffset),
+    _childTrees(childTrees)
 {
   // Do nothing
 }

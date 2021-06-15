@@ -76,39 +76,37 @@ void wrapPayload()
   typedef SdfPayload This;
 
   class_<This>("Payload")
-      .def(init<const string &, const SdfPath &, const SdfLayerOffset &>(
-          (arg("assetPath")   = string(),
-           arg("primPath")    = SdfPath(),
-           arg("layerOffset") = SdfLayerOffset())))
-      .def(init<const This &>())
+    .def(init<const string &, const SdfPath &, const SdfLayerOffset &>(
+      (arg("assetPath") = string(), arg("primPath") = SdfPath(), arg("layerOffset") = SdfLayerOffset())))
+    .def(init<const This &>())
 
-      .add_property("assetPath",
-                    make_function(&This::GetAssetPath, return_value_policy<return_by_value>()),
-                    &This::SetAssetPath)
+    .add_property("assetPath",
+                  make_function(&This::GetAssetPath, return_value_policy<return_by_value>()),
+                  &This::SetAssetPath)
 
-      .add_property("primPath",
-                    make_function(&This::GetPrimPath, return_value_policy<return_by_value>()),
-                    &This::SetPrimPath)
+    .add_property("primPath",
+                  make_function(&This::GetPrimPath, return_value_policy<return_by_value>()),
+                  &This::SetPrimPath)
 
-      .add_property("layerOffset",
-                    make_function(&This::GetLayerOffset, return_value_policy<return_by_value>()),
-                    &This::SetLayerOffset)
+    .add_property("layerOffset",
+                  make_function(&This::GetLayerOffset, return_value_policy<return_by_value>()),
+                  &This::SetLayerOffset)
 
-      .def(self == self)
-      .def(self != self)
-      .def(self < self)
-      .def(self > self)
-      .def(self <= self)
-      .def(self >= self)
+    .def(self == self)
+    .def(self != self)
+    .def(self < self)
+    .def(self > self)
+    .def(self <= self)
+    .def(self >= self)
 
-      .def("__repr__", _Repr)
+    .def("__repr__", _Repr)
 
-      ;
+    ;
 
   VtValueFromPython<SdfPayload>();
 
   // Register conversion for python list <-> vector<SdfPayload>
   to_python_converter<SdfPayloadVector, TfPySequenceToPython<SdfPayloadVector>>();
-  TfPyContainerConversions::
-      from_python_sequence<SdfPayloadVector, TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<SdfPayloadVector,
+                                                 TfPyContainerConversions::variable_capacity_policy>();
 }

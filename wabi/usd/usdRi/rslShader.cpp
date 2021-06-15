@@ -112,8 +112,7 @@ UsdAttribute UsdRiRslShader::GetSloPathAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->infoSloPath);
 }
 
-UsdAttribute UsdRiRslShader::CreateSloPathAttr(VtValue const &defaultValue,
-                                               bool writeSparsely) const
+UsdAttribute UsdRiRslShader::CreateSloPathAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->infoSloPath,
                                     SdfValueTypeNames->Asset,
@@ -124,8 +123,7 @@ UsdAttribute UsdRiRslShader::CreateSloPathAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -139,10 +137,10 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRiRslShader::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRiTokens->infoSloPath,
+    UsdRiTokens->infoSloPath,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdShadeShader::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdShadeShader::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

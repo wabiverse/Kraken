@@ -295,8 +295,8 @@ class GfRange1d {
     }
     else {
       double tmp = _min;
-      _min       = _max * m;
-      _max       = tmp * m;
+      _min = _max * m;
+      _max = tmp * m;
     }
     return *this;
   }

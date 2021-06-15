@@ -105,8 +105,7 @@ UsdAttribute UsdGeomBasisCurves::GetTypeAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->type);
 }
 
-UsdAttribute UsdGeomBasisCurves::CreateTypeAttr(VtValue const &defaultValue,
-                                                bool writeSparsely) const
+UsdAttribute UsdGeomBasisCurves::CreateTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->type,
                                     SdfValueTypeNames->Token,
@@ -121,8 +120,7 @@ UsdAttribute UsdGeomBasisCurves::GetBasisAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->basis);
 }
 
-UsdAttribute UsdGeomBasisCurves::CreateBasisAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdGeomBasisCurves::CreateBasisAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->basis,
                                     SdfValueTypeNames->Token,
@@ -137,8 +135,7 @@ UsdAttribute UsdGeomBasisCurves::GetWrapAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->wrap);
 }
 
-UsdAttribute UsdGeomBasisCurves::CreateWrapAttr(VtValue const &defaultValue,
-                                                bool writeSparsely) const
+UsdAttribute UsdGeomBasisCurves::CreateWrapAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->wrap,
                                     SdfValueTypeNames->Token,
@@ -149,8 +146,7 @@ UsdAttribute UsdGeomBasisCurves::CreateWrapAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -164,12 +160,12 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdGeomBasisCurves::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdGeomTokens->type,
-      UsdGeomTokens->basis,
-      UsdGeomTokens->wrap,
+    UsdGeomTokens->type,
+    UsdGeomTokens->basis,
+    UsdGeomTokens->wrap,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdGeomCurves::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomCurves::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -279,9 +275,9 @@ static size_t _ComputeVertexDataSize(const VtIntArray &curveVertexCounts)
   }
 
 TfToken UsdGeomBasisCurves::ComputeInterpolationForSize(
-    size_t n,
-    const UsdTimeCode &timeCode,
-    UsdGeomBasisCurves::ComputeInterpolationInfo *info) const
+  size_t n,
+  const UsdTimeCode &timeCode,
+  UsdGeomBasisCurves::ComputeInterpolationInfo *info) const
 {
   if (info) {
     info->clear();

@@ -74,11 +74,7 @@ bool GfVec3h::operator==(GfVec3i const &other) const
   return _data[0] == other[0] && _data[1] == other[1] && _data[2] == other[2];
 }
 
-bool GfVec3h::OrthogonalizeBasis(GfVec3h *tx,
-                                 GfVec3h *ty,
-                                 GfVec3h *tz,
-                                 const bool normalize,
-                                 double eps)
+bool GfVec3h::OrthogonalizeBasis(GfVec3h *tx, GfVec3h *ty, GfVec3h *tz, const bool normalize, double eps)
 {
   return GfOrthogonalizeBasis(tx, ty, tz, normalize, eps);
 }
@@ -203,7 +199,7 @@ void GfBuildOrthonormalFrame(GfVec3h const &v0, GfVec3h *v1, GfVec3h *v2, GfHalf
   }
   else {
     GfVec3h unitDir = v0 / len;
-    *v1             = GfVec3h::XAxis() ^ unitDir;
+    *v1 = GfVec3h::XAxis() ^ unitDir;
 
     if (GfSqr(*v1) < GfSqr(1e-4))
       *v1 = GfVec3h::YAxis() ^ unitDir;
@@ -250,8 +246,7 @@ GfVec3h GfSlerp(double alpha, const GfVec3h &v0, const GfVec3h &v1)
   // interpolate
   double oneOverSinAngle = 1.0 / sinAngle;
 
-  return v0 * (sin((1.0 - alpha) * angle) * oneOverSinAngle) +
-         v1 * (sin(alpha * angle) * oneOverSinAngle);
+  return v0 * (sin((1.0 - alpha) * angle) * oneOverSinAngle) + v1 * (sin(alpha * angle) * oneOverSinAngle);
 }
 
 WABI_NAMESPACE_END

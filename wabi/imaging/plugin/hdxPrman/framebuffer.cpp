@@ -104,24 +104,23 @@ static PtDspyError HydraDspyImageData(PtDspyImageHandle handle,
     buf->Clear();
   }
 
-  float *data_f32   = (float *)data;
+  float *data_f32 = (float *)data;
   int32_t *data_i32 = (int32_t *)data;
   for (int y = ymin; y < ymax_plusone; y++) {
     // Flip y-axis
-    int offset      = (buf->h - 1 - y) * buf->w + xmin;
+    int offset = (buf->h - 1 - y) * buf->w + xmin;
     int pixelOffset = 0;
     for (int x = xmin; x < xmax_plusone; x++) {
-      int dataIdx       = 0;
+      int dataIdx = 0;
       int32_t primIdVal = 0;
       for (HdxPrmanFramebuffer::HdPrmanAovIt it = buf->aovs.begin(); it != buf->aovs.end(); ++it) {
         int cc = HdGetComponentCount(it->format);
         if (it->format == HdFormatInt32) {
-          int32_t *aovData = reinterpret_cast<int32_t *>(
-              &it->pixels[offset * cc + pixelOffset * cc]);
+          int32_t *aovData = reinterpret_cast<int32_t *>(&it->pixels[offset * cc + pixelOffset * cc]);
 
           if (it->name == HdAovTokens->primId) {
             aovData[0] = (data_i32[dataIdx++] - 1);
-            primIdVal  = aovData[0];
+            primIdVal = aovData[0];
           }
           else if ((it->name == HdAovTokens->instanceId || it->name == HdAovTokens->elementId) &&
                    // Note, this will always fail if primId
@@ -147,12 +146,12 @@ static PtDspyError HydraDspyImageData(PtDspyImageHandle handle,
           else if (cc == 4) {
             // Premultiply color with alpha
             // to blend pixels with background.
-            float alphaInv       = 1 - data_f32[3];
+            float alphaInv = 1 - data_f32[3];
             GfVec4f const &clear = it->clearValue.Get<GfVec4f>();
-            aovData[0]           = data_f32[dataIdx++] + (alphaInv)*clear[0];  // R
-            aovData[1]           = data_f32[dataIdx++] + (alphaInv)*clear[1];  // G
-            aovData[2]           = data_f32[dataIdx++] + (alphaInv)*clear[2];  // B
-            aovData[3]           = data_f32[dataIdx++];                        // A
+            aovData[0] = data_f32[dataIdx++] + (alphaInv)*clear[0];  // R
+            aovData[1] = data_f32[dataIdx++] + (alphaInv)*clear[1];  // G
+            aovData[2] = data_f32[dataIdx++] + (alphaInv)*clear[2];  // B
+            aovData[3] = data_f32[dataIdx++];                        // A
           }
           else {
             aovData[0] = data_f32[dataIdx++];
@@ -191,8 +190,8 @@ static PtDspyError HydraDspyImageQuery(PtDspyImageHandle handle,
       PtDspySizeInfo sizeInfo;
       if (size_t(datalen) > sizeof(sizeInfo))
         datalen = sizeof(sizeInfo);
-      sizeInfo.width       = 0;
-      sizeInfo.height      = 0;
+      sizeInfo.width = 0;
+      sizeInfo.height = 0;
       sizeInfo.aspectRatio = 1.0f;
       memcpy(data, &sizeInfo, datalen);
       return PkDspyErrorNone;
@@ -244,7 +243,7 @@ HdxPrmanFramebuffer::HdxPrmanFramebuffer() : w(0), h(0)
     std::lock_guard<std::mutex> lock(registry.mutex);
     std::pair<_BufferRegistry::IDMap::iterator, bool> entry;
     do {
-      id    = registry.nextID++;
+      id = registry.nextID++;
       entry = registry.buffers.insert(std::make_pair(id, this));
     } while (!entry.second);
   }
@@ -277,8 +276,8 @@ HdxPrmanFramebuffer *HdxPrmanFramebuffer::GetByID(int32_t id)
 void HdxPrmanFramebuffer::AddAov(TfToken aovName, HdFormat format, VtValue clearValue)
 {
   HdPrmanAov aov;
-  aov.name       = aovName;
-  aov.format     = format;
+  aov.name = aovName;
+  aov.format = format;
   aov.clearValue = clearValue;
   aovs.push_back(aov);
 }
@@ -312,7 +311,7 @@ void HdxPrmanFramebuffer::Clear()
     }
     else {
       float *data = reinterpret_cast<float *>(it->pixels.data());
-      int cc      = HdGetComponentCount(it->format);
+      int cc = HdGetComponentCount(it->format);
       if (cc == 1) {
         float clear = it->clearValue.Get<float>();
         for (int i = 0; i < size; i++) {
@@ -346,13 +345,13 @@ void HdxPrmanFramebuffer::Register(RixContext *ctx)
   s_dspy = (RixDspy *)ctx->GetRixInterface(k_RixDspy);
   assert(s_dspy);
   PtDspyDriverFunctionTable dt;
-  dt.Version       = k_PtDriverCurrentVersion;
-  dt.pOpen         = HydraDspyImageOpen;
-  dt.pWrite        = HydraDspyImageData;
-  dt.pClose        = HydraDspyImageClose;
-  dt.pQuery        = HydraDspyImageQuery;
+  dt.Version = k_PtDriverCurrentVersion;
+  dt.pOpen = HydraDspyImageOpen;
+  dt.pWrite = HydraDspyImageData;
+  dt.pClose = HydraDspyImageClose;
+  dt.pQuery = HydraDspyImageQuery;
   dt.pActiveRegion = nullptr;
-  dt.pMetadata     = nullptr;
+  dt.pMetadata = nullptr;
   if (s_dspy->RegisterDriverTable("hydra", &dt)) {
     TF_CODING_ERROR("HdxPrmanFramebuffer: Failed to register\n");
   }

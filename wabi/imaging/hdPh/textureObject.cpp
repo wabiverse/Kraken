@@ -50,9 +50,9 @@ WABI_NAMESPACE_BEGIN
 
 HdPhTextureObject::HdPhTextureObject(const HdPhTextureIdentifier &textureId,
                                      HdPh_TextureObjectRegistry *const textureObjectRegistry)
-    : _textureObjectRegistry(textureObjectRegistry),
-      _textureId(textureId),
-      _targetMemory(0)
+  : _textureObjectRegistry(textureObjectRegistry),
+    _textureId(textureId),
+    _targetMemory(0)
 {}
 
 void HdPhTextureObject::SetTargetMemory(const size_t targetMemory)
@@ -117,7 +117,7 @@ HdPhTextureObject::~HdPhTextureObject() = default;
 
 std::string HdPhTextureObject::_GetDebugName(const HdPhTextureIdentifier &textureId) const
 {
-  const std::string &filePath                 = textureId.GetFilePath().GetString();
+  const std::string &filePath = textureId.GetFilePath().GetString();
   const HdPhSubtextureIdentifier *const subId = textureId.GetSubtextureIdentifier();
 
   if (!subId) {
@@ -125,35 +125,31 @@ std::string HdPhTextureObject::_GetDebugName(const HdPhTextureIdentifier &textur
   }
 
   if (const HdPhOpenVDBAssetSubtextureIdentifier *const vdbSubId =
-          dynamic_cast<const HdPhOpenVDBAssetSubtextureIdentifier *>(subId)) {
+        dynamic_cast<const HdPhOpenVDBAssetSubtextureIdentifier *>(subId)) {
     return filePath + " - " + vdbSubId->GetFieldName().GetString();
   }
 
   if (const HdPhField3DAssetSubtextureIdentifier *const f3dSubId =
-          dynamic_cast<const HdPhField3DAssetSubtextureIdentifier *>(subId)) {
+        dynamic_cast<const HdPhField3DAssetSubtextureIdentifier *>(subId)) {
     return filePath + " - " + f3dSubId->GetFieldName().GetString() + " " +
-           std::to_string(f3dSubId->GetFieldIndex()) + " " +
-           f3dSubId->GetFieldPurpose().GetString();
+           std::to_string(f3dSubId->GetFieldIndex()) + " " + f3dSubId->GetFieldPurpose().GetString();
   }
 
   if (const HdPhAssetUvSubtextureIdentifier *const assetUvSubId =
-          dynamic_cast<const HdPhAssetUvSubtextureIdentifier *>(subId)) {
-    return filePath +
-           " - flipVertically=" + std::to_string(int(assetUvSubId->GetFlipVertically())) +
+        dynamic_cast<const HdPhAssetUvSubtextureIdentifier *>(subId)) {
+    return filePath + " - flipVertically=" + std::to_string(int(assetUvSubId->GetFlipVertically())) +
            " - premultiplyAlpha=" + std::to_string(int(assetUvSubId->GetPremultiplyAlpha())) +
            " - sourceColorSpace=" + assetUvSubId->GetSourceColorSpace().GetString();
   }
 
   if (const HdPhPtexSubtextureIdentifier *const ptexSubId =
-          dynamic_cast<const HdPhPtexSubtextureIdentifier *>(subId)) {
-    return filePath +
-           " - premultiplyAlpha=" + std::to_string(int(ptexSubId->GetPremultiplyAlpha()));
+        dynamic_cast<const HdPhPtexSubtextureIdentifier *>(subId)) {
+    return filePath + " - premultiplyAlpha=" + std::to_string(int(ptexSubId->GetPremultiplyAlpha()));
   }
 
   if (const HdPhUdimSubtextureIdentifier *const udimSubId =
-          dynamic_cast<const HdPhUdimSubtextureIdentifier *>(subId)) {
-    return filePath +
-           +" - premultiplyAlpha=" + std::to_string(int(udimSubId->GetPremultiplyAlpha())) +
+        dynamic_cast<const HdPhUdimSubtextureIdentifier *>(subId)) {
+    return filePath + +" - premultiplyAlpha=" + std::to_string(int(udimSubId->GetPremultiplyAlpha())) +
            " - sourceColorSpace=" + udimSubId->GetSourceColorSpace().GetString();
   }
 
@@ -168,19 +164,19 @@ bool HdPhTextureObject::_GetPremultiplyAlpha(const HdPhSubtextureIdentifier *con
   switch (GetTextureType()) {
     case HdTextureType::Uv:
       if (const HdPhAssetUvSubtextureIdentifier *const uvSubId =
-              dynamic_cast<const HdPhAssetUvSubtextureIdentifier *>(subId)) {
+            dynamic_cast<const HdPhAssetUvSubtextureIdentifier *>(subId)) {
         return uvSubId->GetPremultiplyAlpha();
       }
       return false;
     case HdTextureType::Ptex:
       if (const HdPhPtexSubtextureIdentifier *const ptexSubId =
-              dynamic_cast<const HdPhPtexSubtextureIdentifier *>(subId)) {
+            dynamic_cast<const HdPhPtexSubtextureIdentifier *>(subId)) {
         return ptexSubId->GetPremultiplyAlpha();
       }
       return false;
     case HdTextureType::Udim:
       if (const HdPhUdimSubtextureIdentifier *const udimSubId =
-              dynamic_cast<const HdPhUdimSubtextureIdentifier *>(subId)) {
+            dynamic_cast<const HdPhUdimSubtextureIdentifier *>(subId)) {
         return udimSubId->GetPremultiplyAlpha();
       }
       return false;
@@ -192,19 +188,19 @@ bool HdPhTextureObject::_GetPremultiplyAlpha(const HdPhSubtextureIdentifier *con
 // Read from the HdPhSubtextureIdentifier its source color space
 //
 HioImage::SourceColorSpace HdPhTextureObject::_GetSourceColorSpace(
-    const HdPhSubtextureIdentifier *const subId) const
+  const HdPhSubtextureIdentifier *const subId) const
 {
   TfToken sourceColorSpace;
   switch (GetTextureType()) {
     case HdTextureType::Uv:
       if (const HdPhAssetUvSubtextureIdentifier *const uvSubId =
-              dynamic_cast<const HdPhAssetUvSubtextureIdentifier *>(subId)) {
+            dynamic_cast<const HdPhAssetUvSubtextureIdentifier *>(subId)) {
         sourceColorSpace = uvSubId->GetSourceColorSpace();
       }
       break;
     case HdTextureType::Udim:
       if (const HdPhUdimSubtextureIdentifier *const udimSubId =
-              dynamic_cast<const HdPhUdimSubtextureIdentifier *>(subId)) {
+            dynamic_cast<const HdPhUdimSubtextureIdentifier *>(subId)) {
         sourceColorSpace = udimSubId->GetSourceColorSpace();
       }
       break;
@@ -226,8 +222,8 @@ HioImage::SourceColorSpace HdPhTextureObject::_GetSourceColorSpace(
 
 HdPhUvTextureObject::HdPhUvTextureObject(const HdPhTextureIdentifier &textureId,
                                          HdPh_TextureObjectRegistry *textureObjectRegistry)
-    : HdPhTextureObject(textureId, textureObjectRegistry),
-      _wrapParameters{HdWrapNoOpinion, HdWrapNoOpinion}
+  : HdPhTextureObject(textureId, textureObjectRegistry),
+    _wrapParameters{HdWrapNoOpinion, HdWrapNoOpinion}
 {}
 
 HdTextureType HdPhUvTextureObject::GetTextureType() const
@@ -300,8 +296,7 @@ void HdPhUvTextureObject::_DestroyTexture()
 // This is to support the legacy HwUvTexture_1 shader node which has the
 // vertical orientation opposite to UsdUvTexture.
 //
-static HioImage::ImageOriginLocation _GetImageOriginLocation(
-    const HdPhSubtextureIdentifier *const subId)
+static HioImage::ImageOriginLocation _GetImageOriginLocation(const HdPhSubtextureIdentifier *const subId)
 {
   using SubId = const HdPhAssetUvSubtextureIdentifier;
 
@@ -313,10 +308,9 @@ static HioImage::ImageOriginLocation _GetImageOriginLocation(
   return HioImage::OriginLowerLeft;
 }
 
-HdPhAssetUvTextureObject::HdPhAssetUvTextureObject(
-    const HdPhTextureIdentifier &textureId,
-    HdPh_TextureObjectRegistry *const textureObjectRegistry)
-    : HdPhUvTextureObject(textureId, textureObjectRegistry)
+HdPhAssetUvTextureObject::HdPhAssetUvTextureObject(const HdPhTextureIdentifier &textureId,
+                                                   HdPh_TextureObjectRegistry *const textureObjectRegistry)
+  : HdPhUvTextureObject(textureId, textureObjectRegistry)
 {}
 
 HdPhAssetUvTextureObject::~HdPhAssetUvTextureObject() = default;
@@ -326,11 +320,11 @@ void HdPhAssetUvTextureObject::_Load()
   TRACE_FUNCTION();
 
   std::unique_ptr<HdPhAssetUvTextureCpuData> cpuData = std::make_unique<HdPhAssetUvTextureCpuData>(
-      GetTextureIdentifier().GetFilePath(),
-      GetTargetMemory(),
-      _GetPremultiplyAlpha(GetTextureIdentifier().GetSubtextureIdentifier()),
-      _GetImageOriginLocation(GetTextureIdentifier().GetSubtextureIdentifier()),
-      HdPhTextureObject::_GetSourceColorSpace(GetTextureIdentifier().GetSubtextureIdentifier()));
+    GetTextureIdentifier().GetFilePath(),
+    GetTargetMemory(),
+    _GetPremultiplyAlpha(GetTextureIdentifier().GetSubtextureIdentifier()),
+    _GetImageOriginLocation(GetTextureIdentifier().GetSubtextureIdentifier()),
+    HdPhTextureObject::_GetSourceColorSpace(GetTextureIdentifier().GetSubtextureIdentifier()));
   _SetWrapParameters(cpuData->GetWrapInfo());
   _SetCpuData(std::move(cpuData));
 }
@@ -371,44 +365,43 @@ static GfMatrix4d _ComputeSamplingTransform(const GfRange3d &range)
   const GfVec3d scale(1.0 / size[0], 1.0 / size[1], 1.0 / size[2]);
 
   return
-      // First map range so that min becomes (0,0,0)
-      GfMatrix4d(1.0).SetTranslateOnly(-range.GetMin()) *
-      // Then scale to unit box
-      GfMatrix4d(1.0).SetScale(scale);
+    // First map range so that min becomes (0,0,0)
+    GfMatrix4d(1.0).SetTranslateOnly(-range.GetMin()) *
+    // Then scale to unit box
+    GfMatrix4d(1.0).SetScale(scale);
 }
 
 // Compute transform mapping bounding box to unit box [0,1]^3
 static GfMatrix4d _ComputeSamplingTransform(const GfBBox3d &bbox)
 {
   return
-      // First map so that bounding box goes to its GfRange3d
-      bbox.GetInverseMatrix() *
-      // Then scale to unit box [0,1]^3
-      _ComputeSamplingTransform(bbox.GetRange());
+    // First map so that bounding box goes to its GfRange3d
+    bbox.GetInverseMatrix() *
+    // Then scale to unit box [0,1]^3
+    _ComputeSamplingTransform(bbox.GetRange());
 }
 
 static HioFieldTextureDataSharedPtr _ComputeFieldTexData(const HdPhTextureIdentifier &textureId,
                                                          const size_t targetMemory)
 {
-  const std::string &filePath                 = textureId.GetFilePath().GetString();
+  const std::string &filePath = textureId.GetFilePath().GetString();
   const HdPhSubtextureIdentifier *const subId = textureId.GetSubtextureIdentifier();
 
   if (const HdPhOpenVDBAssetSubtextureIdentifier *const vdbSubId =
-          dynamic_cast<const HdPhOpenVDBAssetSubtextureIdentifier *>(subId)) {
+        dynamic_cast<const HdPhOpenVDBAssetSubtextureIdentifier *>(subId)) {
     if (vdbSubId->GetFieldIndex() != 0) {
       TF_WARN(
-          "Support of field index when reading OpenVDB file not yet "
-          "implemented (file: %s, field name: %s, field index: %d",
-          filePath.c_str(),
-          vdbSubId->GetFieldName().GetText(),
-          vdbSubId->GetFieldIndex());
+        "Support of field index when reading OpenVDB file not yet "
+        "implemented (file: %s, field name: %s, field index: %d",
+        filePath.c_str(),
+        vdbSubId->GetFieldName().GetText(),
+        vdbSubId->GetFieldIndex());
     }
-    return HioFieldTextureData::New(
-        filePath, vdbSubId->GetFieldName(), 0, std::string(), targetMemory);
+    return HioFieldTextureData::New(filePath, vdbSubId->GetFieldName(), 0, std::string(), targetMemory);
   }
 
   if (const HdPhField3DAssetSubtextureIdentifier *const f3dSubId =
-          dynamic_cast<const HdPhField3DAssetSubtextureIdentifier *>(subId)) {
+        dynamic_cast<const HdPhField3DAssetSubtextureIdentifier *>(subId)) {
     return HioFieldTextureData::New(filePath,
                                     f3dSubId->GetFieldName(),
                                     f3dSubId->GetFieldIndex(),
@@ -421,10 +414,9 @@ static HioFieldTextureDataSharedPtr _ComputeFieldTexData(const HdPhTextureIdenti
   return nullptr;
 }
 
-HdPhFieldTextureObject::HdPhFieldTextureObject(
-    const HdPhTextureIdentifier &textureId,
-    HdPh_TextureObjectRegistry *const textureObjectRegistry)
-    : HdPhTextureObject(textureId, textureObjectRegistry)
+HdPhFieldTextureObject::HdPhFieldTextureObject(const HdPhTextureIdentifier &textureId,
+                                               HdPh_TextureObjectRegistry *const textureObjectRegistry)
+  : HdPhTextureObject(textureId, textureObjectRegistry)
 {}
 
 HdPhFieldTextureObject::~HdPhFieldTextureObject()
@@ -448,19 +440,18 @@ void HdPhFieldTextureObject::_Load()
 
   texData->Read();
 
-  _cpuData = std::make_unique<HdPh_FieldTextureCpuData>(texData,
-                                                        _GetDebugName(GetTextureIdentifier()));
+  _cpuData = std::make_unique<HdPh_FieldTextureCpuData>(texData, _GetDebugName(GetTextureIdentifier()));
 
   if (_cpuData->IsValid()) {
     if (_cpuData->GetTextureDesc().type != HgiTextureType3D) {
       TF_CODING_ERROR("Wrong texture type for field");
     }
 
-    _bbox              = texData->GetBoundingBox();
+    _bbox = texData->GetBoundingBox();
     _samplingTransform = _ComputeSamplingTransform(_bbox);
   }
   else {
-    _bbox              = GfBBox3d();
+    _bbox = GfBBox3d();
     _samplingTransform = GfMatrix4d(1.0);
   }
 }

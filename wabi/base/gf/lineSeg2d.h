@@ -137,8 +137,8 @@ bool GfFindClosestPoints(const GfLine2d &line,
                          const GfLineSeg2d &seg,
                          GfVec2d *p1 = nullptr,
                          GfVec2d *p2 = nullptr,
-                         double *t1  = nullptr,
-                         double *t2  = nullptr);
+                         double *t1 = nullptr,
+                         double *t2 = nullptr);
 
 /// Computes the closets points on two line segments, \p seg1 and \p seg2.
 ///
@@ -153,8 +153,8 @@ bool GfFindClosestPoints(const GfLineSeg2d &seg1,
                          const GfLineSeg2d &seg2,
                          GfVec2d *p1 = nullptr,
                          GfVec2d *p2 = nullptr,
-                         double *t1  = nullptr,
-                         double *t2  = nullptr);
+                         double *t1 = nullptr,
+                         double *t2 = nullptr);
 
 WABI_NAMESPACE_END
 

@@ -264,8 +264,7 @@ ARCH_API const char *ArchGetTmpDir();
 /// choosing the name and opening the file.  This call should be avoided in
 /// favor of \c ArchMakeTmpFile().
 ARCH_API
-std::string ArchMakeTmpFileName(const std::string &prefix,
-                                const std::string &suffix = std::string());
+std::string ArchMakeTmpFileName(const std::string &prefix, const std::string &suffix = std::string());
 
 /// Create a temporary file, in a system-determined temporary directory.
 ///
@@ -288,9 +287,7 @@ int ArchMakeTmpFile(const std::string &prefix, std::string *pathname = 0);
 ///
 /// The call is threadsafe.
 ARCH_API
-int ArchMakeTmpFile(const std::string &tmpdir,
-                    const std::string &prefix,
-                    std::string *pathname = 0);
+int ArchMakeTmpFile(const std::string &tmpdir, const std::string &prefix, std::string *pathname = 0);
 
 /// Create a temporary sub-direcrory, in a given temporary directory.
 ///
@@ -324,7 +321,7 @@ struct Arch_Unmapper {
 /// const *, ...> and std::unique_ptr<char *, ...> respectively.  The functions
 /// ArchMapFileReadOnly() and ArchMapFileReadWrite() return them and provide
 /// access to memory-mapped file contents.
-using ArchConstFileMapping   = std::unique_ptr<char const, Arch_Unmapper>;
+using ArchConstFileMapping = std::unique_ptr<char const, Arch_Unmapper>;
 using ArchMutableFileMapping = std::unique_ptr<char, Arch_Unmapper>;
 
 /// Return the length of an ArchConstFileMapping.
@@ -361,8 +358,7 @@ ArchMutableFileMapping ArchMapFileReadWrite(FILE *file, std::string *errMsg = nu
 
 /// \overload
 ARCH_API
-ArchMutableFileMapping ArchMapFileReadWrite(std::string const &path,
-                                            std::string *errMsg = nullptr);
+ArchMutableFileMapping ArchMapFileReadWrite(std::string const &path, std::string *errMsg = nullptr);
 
 enum ArchMemAdvice {
   ArchMemAdviceNormal,        // Treat range with default behavior.

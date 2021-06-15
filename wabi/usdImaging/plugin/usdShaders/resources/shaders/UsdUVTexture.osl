@@ -4,7 +4,7 @@
  * Portions of this file are derived from original work by Pixar
  * distributed with Universal Scene Description, a project of the
  * Academy Software Foundation (ASWF). https://www.aswf.io/
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "Apache License")
  * with the following modification; you may not use this file except in
  * compliance with the Apache License and the following modification:
@@ -16,9 +16,9 @@
  *    of the License and to reproduce the content of the NOTICE file.
  *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Apache License with the above modification is
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
@@ -39,113 +39,91 @@
 // used to inform property type translation.
 //
 
-shader UsdUVTexture
-[[
-    string category="generator"
-]]
-(
-    // Details : Image source
-    string file = ""
-    [[
-        string widget = "assetIdInput"
-    ]],
+shader UsdUVTexture[[string category = "generator"]](
+  // Details : Image source
+  string file = ""[[string widget = "assetIdInput"]],
 
-    // Details : Texture coordinates
-    float st[2] = {0.0, 0.0},
+  // Details : Texture coordinates
+  float st[2] = {0.0, 0.0},
 
-    // Details : [options] useMetadata, black, clamp, repeat, mirror.
-    string wrapS = "useMetadata"
-    [[
-        string options = "useMetadata|black|clamp|repeat|mirror"
-    ]],
-    string wrapT = "useMetadata"
-    [[
-        string options = "useMetadata|black|clamp|repeat|mirror"
-    ]],
+  // Details : [options] useMetadata, black, clamp, repeat, mirror.
+  string wrapS = "useMetadata"[[string options = "useMetadata|black|clamp|repeat|mirror"]],
+  string wrapT = "useMetadata"[[string options = "useMetadata|black|clamp|repeat|mirror"]],
 
-    // Details : Fallback value used when no texture is connected.
-    float fallback[4] = {0.0, 0.0, 0.0, 1.0},
+  // Details : Fallback value used when no texture is connected.
+  float fallback[4] = {0.0, 0.0, 0.0, 1.0},
 
-    // Details : Scale to be applied to all components of the texture.
-    //            value * scale + bias
-    float scale[4] = {1.0, 1.0, 1.0, 1.0},
+  // Details : Scale to be applied to all components of the texture.
+  //            value * scale + bias
+  float scale[4] = {1.0, 1.0, 1.0, 1.0},
 
-    // Details : Bias to be applied to all components of the texture.
-    //            value * scale + bias
-    float bias[4] = {0.0, 0.0, 0.0, 0.0},
+  // Details : Bias to be applied to all components of the texture.
+  //            value * scale + bias
+  float bias[4] = {0.0, 0.0, 0.0, 0.0},
 
-    // Details : [options] r, g, b, a, rgb, rgba
-    output color rgb = color(0.0, 0.0 ,0.0)
-        [[
-           string widget = "null",
-           string role = "none"
-        ]],
-    output float r = 0.0
-        [[ string widget = "null" ]],
-    output float g = 0.0
-        [[ string widget = "null" ]],
-    output float b = 0.0
-        [[ string widget = "null" ]],
-    output float a = 0.0
-        [[ string widget = "null" ]],
-)
+  // Details : [options] r, g, b, a, rgb, rgba
+  output color rgb = color(0.0, 0.0, 0.0)[[ string widget = "null", string role = "none" ]],
+  output float r = 0.0 [[string widget = "null"]],
+  output float g = 0.0 [[string widget = "null"]],
+  output float b = 0.0 [[string widget = "null"]],
+  output float a = 0.0 [[string widget = "null"]], )
 {
-    // Create a 'color' type version of each float[4] input.  We will use the
-    // 'color' type versions to perform computations.
-    color fallbackColor = color(fallback[0], fallback[1], fallback[2]);
-    float fallbackAlpha = fallback[3];
-    color scaleColor = color(scale[0], scale[1], scale[2]);
-    float scaleAlpha = scale[3];
-    color biasColor = color(bias[0], bias[1], bias[2]);
-    float biasAlpha = bias[3];
+  // Create a 'color' type version of each float[4] input.  We will use the
+  // 'color' type versions to perform computations.
+  color fallbackColor = color(fallback[0], fallback[1], fallback[2]);
+  float fallbackAlpha = fallback[3];
+  color scaleColor = color(scale[0], scale[1], scale[2]);
+  float scaleAlpha = scale[3];
+  color biasColor = color(bias[0], bias[1], bias[2]);
+  float biasAlpha = bias[3];
 
-    // Wrap mode conversion
-    string swrap = wrapS;
-    string twrap = wrapT;
+  // Wrap mode conversion
+  string swrap = wrapS;
+  string twrap = wrapT;
 
-    if (swrap == "repeat") {
-        swrap = "periodic";
-    }
+  if (swrap == "repeat") {
+    swrap = "periodic";
+  }
 
-    if (twrap == "repeat") {
-        twrap = "periodic";
-    }
+  if (twrap == "repeat") {
+    twrap = "periodic";
+  }
 
-    if (swrap == "useMetadata") {
-        swrap = "default";
-    }
+  if (swrap == "useMetadata") {
+    swrap = "default";
+  }
 
-    if (twrap == "useMetadata") {
-        twrap = "default";
-    }
+  if (twrap == "useMetadata") {
+    twrap = "default";
+  }
 
-    // Read the texture
+  // Read the texture
 
-    color resultColor = texture(
-            file,
-            st[0], st[1],
-            "swrap", swrap,
-            "twrap", twrap,
-            "missingcolor", fallbackColor);
+  color resultColor = texture(
+    file, st[0], st[1], "swrap", swrap, "twrap", twrap, "missingcolor", fallbackColor);
 
-    float resultAlpha = texture(
-            file,
-            st[0], st[1],
-            "swrap", swrap,
-            "twrap", twrap,
-            "firstchannel", 3,
-            "missingcolor", color(fallbackAlpha),
-            "fill", fallbackAlpha);
+  float resultAlpha = texture(file,
+                              st[0],
+                              st[1],
+                              "swrap",
+                              swrap,
+                              "twrap",
+                              twrap,
+                              "firstchannel",
+                              3,
+                              "missingcolor",
+                              color(fallbackAlpha),
+                              "fill",
+                              fallbackAlpha);
 
+  // Apply scale and bias
+  resultColor = resultColor * scaleColor + biasColor;
+  resultAlpha = resultAlpha * scaleAlpha + biasAlpha;
 
-    // Apply scale and bias
-    resultColor = resultColor * scaleColor + biasColor;
-    resultAlpha = resultAlpha * scaleAlpha + biasAlpha;
-
-    // Output the colors
-    rgb = resultColor;
-    r   = resultColor[0];
-    g   = resultColor[1];
-    b   = resultColor[2];
-    a   = resultAlpha;
+  // Output the colors
+  rgb = resultColor;
+  r = resultColor[0];
+  g = resultColor[1];
+  b = resultColor[2];
+  a = resultAlpha;
 }

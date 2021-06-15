@@ -156,9 +156,7 @@ class SdfAbstractData : public TfRefBase, public TfWeakBase {
   /// Returns whether a value exists for the given \a path and \a fieldName.
   /// Optionally returns the value if it exists.
   SDF_API
-  virtual bool Has(const SdfPath &path,
-                   const TfToken &fieldName,
-                   SdfAbstractDataValue *value) const = 0;
+  virtual bool Has(const SdfPath &path, const TfToken &fieldName, SdfAbstractDataValue *value) const = 0;
 
   /// Return whether a value exists for the given \a path and \a fieldName.
   /// Optionally returns the value if it exists.
@@ -288,9 +286,7 @@ class SdfAbstractData : public TfRefBase, public TfWeakBase {
   // element at \p keyPath, remove that element from the dictionary.  If this
   // leaves the dictionary empty, Erase() the entire field.
   SDF_API
-  virtual void EraseDictValueByKey(const SdfPath &path,
-                                   const TfToken &fieldName,
-                                   const TfToken &keyPath);
+  virtual void EraseDictValueByKey(const SdfPath &path, const TfToken &fieldName, const TfToken &keyPath);
 
   // If \p path, \p fieldName, and \p keyPath identify a (sub) dictionary,
   // return a vector of the keys in that dictionary, otherwise return an empty
@@ -331,9 +327,7 @@ class SdfAbstractData : public TfRefBase, public TfWeakBase {
                                                double *tUpper) const = 0;
 
   SDF_API
-  virtual bool QueryTimeSample(const SdfPath &path,
-                               double time,
-                               VtValue *optionalValue = NULL) const = 0;
+  virtual bool QueryTimeSample(const SdfPath &path, double time, VtValue *optionalValue = NULL) const = 0;
   SDF_API
   virtual bool QueryTimeSample(const SdfPath &path,
                                double time,
@@ -358,9 +352,7 @@ class SdfAbstractData : public TfRefBase, public TfWeakBase {
 };
 
 template<class T>
-inline T SdfAbstractData::GetAs(const SdfPath &path,
-                                const TfToken &field,
-                                const T &defaultVal) const
+inline T SdfAbstractData::GetAs(const SdfPath &path, const TfToken &field, const T &defaultVal) const
 {
   VtValue val = Get(path, field);
   if (val.IsHolding<T>()) {
@@ -401,10 +393,10 @@ class SdfAbstractDataValue {
 
  protected:
   SdfAbstractDataValue(void *value_, const std::type_info &valueType_)
-      : value(value_),
-        valueType(valueType_),
-        isValueBlock(false),
-        typeMismatch(false)
+    : value(value_),
+      valueType(valueType_),
+      isValueBlock(false),
+      typeMismatch(false)
   {}
 };
 
@@ -472,8 +464,8 @@ class SdfAbstractDataConstValue {
 
  protected:
   SdfAbstractDataConstValue(const void *value_, const std::type_info &valueType_)
-      : value(value_),
-        valueType(valueType_)
+    : value(value_),
+      valueType(valueType_)
   {}
 };
 
@@ -516,13 +508,12 @@ template<class T> class SdfAbstractDataConstTypedValue : public SdfAbstractDataC
 // Specialization of SdAbstractDataConstTypedValue that converts character
 // arrays to std::string.
 template<int N>
-class SdfAbstractDataConstTypedValue<char[N]>
-    : public SdfAbstractDataConstTypedValue<std::string> {
+class SdfAbstractDataConstTypedValue<char[N]> : public SdfAbstractDataConstTypedValue<std::string> {
  public:
   typedef char CharArray[N];
   SdfAbstractDataConstTypedValue(const CharArray *value)
-      : SdfAbstractDataConstTypedValue<std::string>(&_str),
-        _str(*value)
+    : SdfAbstractDataConstTypedValue<std::string>(&_str),
+      _str(*value)
   {}
 
  private:

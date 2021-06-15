@@ -61,14 +61,14 @@ output_iterator replace_invalid(octet_iterator start,
 {
   while (start != end) {
     octet_iterator sequence_start = start;
-    internal::utf_error err_code  = utf8::internal::validate_next(start, end);
+    internal::utf_error err_code = utf8::internal::validate_next(start, end);
     switch (err_code) {
       case internal::UTF8_OK:
         for (octet_iterator it = sequence_start; it != start; ++it)
           *out++ = *it;
         break;
       case internal::NOT_ENOUGH_ROOM:
-        out   = utf8::unchecked::append(replacement, out);
+        out = utf8::unchecked::append(replacement, out);
         start = end;
         break;
       case internal::INVALID_LEAD:
@@ -90,9 +90,7 @@ output_iterator replace_invalid(octet_iterator start,
 }
 
 template<typename octet_iterator, typename output_iterator>
-inline output_iterator replace_invalid(octet_iterator start,
-                                       octet_iterator end,
-                                       output_iterator out)
+inline output_iterator replace_invalid(octet_iterator start, octet_iterator end, output_iterator out)
 {
   static const uint32_t replacement_marker = utf8::internal::mask16(0xfffd);
   return utf8::unchecked::replace_invalid(start, end, out, replacement_marker);
@@ -101,8 +99,8 @@ inline output_iterator replace_invalid(octet_iterator start,
 template<typename octet_iterator> uint32_t next(octet_iterator &it)
 {
   uint32_t cp = utf8::internal::mask8(*it);
-  typename std::iterator_traits<octet_iterator>::difference_type length =
-      utf8::internal::sequence_length(it);
+  typename std::iterator_traits<octet_iterator>::difference_type length = utf8::internal::sequence_length(
+    it);
   switch (length) {
     case 1:
       break;
@@ -142,8 +140,7 @@ template<typename octet_iterator> uint32_t prior(octet_iterator &it)
   return utf8::unchecked::next(temp);
 }
 
-template<typename octet_iterator, typename distance_type>
-void advance(octet_iterator &it, distance_type n)
+template<typename octet_iterator, typename distance_type> void advance(octet_iterator &it, distance_type n)
 {
   const distance_type zero(0);
   if (n < zero) {
@@ -176,7 +173,7 @@ octet_iterator utf16to8(u16bit_iterator start, u16bit_iterator end, octet_iterat
     // Take care of surrogate pairs first
     if (utf8::internal::is_lead_surrogate(cp)) {
       uint32_t trail_surrogate = utf8::internal::mask16(*start++);
-      cp                       = (cp << 10) + trail_surrogate + internal::SURROGATE_OFFSET;
+      cp = (cp << 10) + trail_surrogate + internal::SURROGATE_OFFSET;
     }
     result = utf8::unchecked::append(cp, result);
   }

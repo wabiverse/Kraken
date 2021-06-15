@@ -62,10 +62,10 @@ UsdGeomCamera UsdAppUtilsGetCameraAtPath(const UsdStagePtr &stage, const SdfPath
       // warning.
       usdCameraPath = cameraPath.MakeAbsolutePath(SdfPath::AbsoluteRootPath());
       TF_WARN(
-          "Camera path \"%s\" is not absolute. Using absolute path "
-          "instead: \"%s\"",
-          cameraPath.GetText(),
-          usdCameraPath.GetText());
+        "Camera path \"%s\" is not absolute. Using absolute path "
+        "instead: \"%s\"",
+        cameraPath.GetText(),
+        usdCameraPath.GetText());
     }
     else {
       // Search for the camera by name.

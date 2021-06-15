@@ -42,13 +42,13 @@ void wrapDiagnostic()
   def("RegisterDefaultDebugOutputMessageCallback", &GlfRegisterDefaultDebugOutputMessageCallback);
 
   class_<GlfGLQueryObject, boost::noncopyable>("GLQueryObject")
-      .def("Begin", &GlfGLQueryObject::Begin)
-      .def("BeginPrimitivesGenerated", &GlfGLQueryObject::BeginPrimitivesGenerated)
-      .def("BeginTimeElapsed", &GlfGLQueryObject::BeginTimeElapsed)
-      .def("BeginSamplesPassed", &GlfGLQueryObject::BeginSamplesPassed)
-      .def("End", &GlfGLQueryObject::End)
-      .def("GetResult", &GlfGLQueryObject::GetResult)
-      .def("GetResultNoWait", &GlfGLQueryObject::GetResultNoWait)
+    .def("Begin", &GlfGLQueryObject::Begin)
+    .def("BeginPrimitivesGenerated", &GlfGLQueryObject::BeginPrimitivesGenerated)
+    .def("BeginTimeElapsed", &GlfGLQueryObject::BeginTimeElapsed)
+    .def("BeginSamplesPassed", &GlfGLQueryObject::BeginSamplesPassed)
+    .def("End", &GlfGLQueryObject::End)
+    .def("GetResult", &GlfGLQueryObject::GetResult)
+    .def("GetResultNoWait", &GlfGLQueryObject::GetResultNoWait)
 
-      ;
+    ;
 }

@@ -65,7 +65,7 @@ std::pair<string, string> _ExpandPackagePath(const std::pair<string, string> &pa
       break;
     }
 
-    result.first  = ArJoinPackageRelativePath(result.first, result.second);
+    result.first = ArJoinPackageRelativePath(result.first, result.second);
     result.second = packagedFormat->GetPackageRootLayerPath(result.first);
   }
   return result;
@@ -118,9 +118,8 @@ string SdfComputeAssetPathRelativeToLayer(const SdfLayerHandle &anchor, const st
     // XXX: The use of repository path or real path is the same as in
     // SdfLayer::ComputeAbsolutePath. This logic might want to move
     // somewhere common.
-    const string anchorPackagePath = anchor->GetRepositoryPath().empty() ?
-                                         anchor->GetRealPath() :
-                                         anchor->GetRepositoryPath();
+    const string anchorPackagePath = anchor->GetRepositoryPath().empty() ? anchor->GetRealPath() :
+                                                                           anchor->GetRepositoryPath();
 
     // Split the anchoring layer's identifier, since we anchor the asset
     // path against the innermost packaged path. If the anchor layer
@@ -128,7 +127,7 @@ string SdfComputeAssetPathRelativeToLayer(const SdfLayerHandle &anchor, const st
     // nested in another package layer.
     std::pair<string, string> packagePath;
     if (anchor->GetFileFormat()->IsPackage()) {
-      packagePath.first  = anchorPackagePath;
+      packagePath.first = anchorPackagePath;
       packagePath.second = anchor->GetFileFormat()->GetPackageRootLayerPath(anchor->GetRealPath());
 
       packagePath = _ExpandPackagePath(packagePath);
@@ -138,7 +137,7 @@ string SdfComputeAssetPathRelativeToLayer(const SdfLayerHandle &anchor, const st
     }
 
     const string normAssetPath = TfNormPath(assetPath);
-    packagePath.second         = _AnchorRelativePath(packagePath.second, normAssetPath);
+    packagePath.second = _AnchorRelativePath(packagePath.second, normAssetPath);
 
     string finalLayerPath = ArJoinPackageRelativePath(packagePath);
 
@@ -161,7 +160,7 @@ string SdfComputeAssetPathRelativeToLayer(const SdfLayerHandle &anchor, const st
     SdfFileFormatConstPtr packageFormat = SdfFileFormat::FindByExtension(packagePath.first);
     if (packageFormat && packageFormat->IsPackage()) {
       packagePath.second = packageFormat->GetPackageRootLayerPath(packagePath.first);
-      packagePath        = _ExpandPackagePath(packagePath);
+      packagePath = _ExpandPackagePath(packagePath);
 
       packagePath.second = _AnchorRelativePath(packagePath.second, normAssetPath);
     }

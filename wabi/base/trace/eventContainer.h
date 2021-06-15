@@ -139,10 +139,10 @@ class TraceEventContainer {
   class const_iterator {
    public:
     using iterator_category = std::bidirectional_iterator_tag;
-    using value_type        = const TraceEvent;
-    using difference_type   = int64_t;
-    using pointer           = const TraceEvent *;
-    using reference         = const TraceEvent &;
+    using value_type = const TraceEvent;
+    using difference_type = int64_t;
+    using pointer = const TraceEvent *;
+    using reference = const TraceEvent &;
 
     reference operator*()
     {
@@ -198,7 +198,7 @@ class TraceEventContainer {
     {
       ++_event;
       if (_event == _node->end() && _node->GetNextNode()) {
-        _node  = _node->GetNextNode();
+        _node = _node->GetNextNode();
         _event = _node->begin();
       }
     }
@@ -206,7 +206,7 @@ class TraceEventContainer {
     void Reverse()
     {
       if (_event == _node->begin()) {
-        _node  = _node->GetPrevNode();
+        _node = _node->GetPrevNode();
         _event = _node->end();
       }
       --_event;

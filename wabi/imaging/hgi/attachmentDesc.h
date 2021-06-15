@@ -66,18 +66,18 @@ WABI_NAMESPACE_BEGIN
 ///
 struct HgiAttachmentDesc {
   HgiAttachmentDesc()
-      : format(HgiFormatInvalid),
-        usage(0),
-        loadOp(HgiAttachmentLoadOpLoad),
-        storeOp(HgiAttachmentStoreOpStore),
-        clearValue(0),
-        blendEnabled(false),
-        srcColorBlendFactor(HgiBlendFactorZero),
-        dstColorBlendFactor(HgiBlendFactorZero),
-        colorBlendOp(HgiBlendOpAdd),
-        srcAlphaBlendFactor(HgiBlendFactorZero),
-        dstAlphaBlendFactor(HgiBlendFactorZero),
-        alphaBlendOp(HgiBlendOpAdd)
+    : format(HgiFormatInvalid),
+      usage(0),
+      loadOp(HgiAttachmentLoadOpLoad),
+      storeOp(HgiAttachmentStoreOpStore),
+      clearValue(0),
+      blendEnabled(false),
+      srcColorBlendFactor(HgiBlendFactorZero),
+      dstColorBlendFactor(HgiBlendFactorZero),
+      colorBlendOp(HgiBlendOpAdd),
+      srcAlphaBlendFactor(HgiBlendFactorZero),
+      dstAlphaBlendFactor(HgiBlendFactorZero),
+      alphaBlendOp(HgiBlendOpAdd)
   {}
 
   HgiFormat format;

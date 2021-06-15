@@ -85,23 +85,22 @@ void wrapAssetPath()
   typedef SdfAssetPath This;
 
   class_<This>("AssetPath", init<>())
-      .def(init<const std::string &>())
-      .def(init<const std::string &, const std::string &>())
+    .def(init<const std::string &>())
+    .def(init<const std::string &, const std::string &>())
 
-      .def("__repr__", _Repr)
-      .def(TfPyBoolBuiltinFuncName, _Nonzero)
-      .def("__hash__", _Hash)
+    .def("__repr__", _Repr)
+    .def(TfPyBoolBuiltinFuncName, _Nonzero)
+    .def("__hash__", _Hash)
 
-      .def(self == self)
-      .def(self != self)
-      //        .def( str(self) )
-      .def("__str__", _Str)
+    .def(self == self)
+    .def(self != self)
+    //        .def( str(self) )
+    .def("__str__", _Str)
 
-      .add_property("path",
-                    make_function(&This::GetAssetPath, return_value_policy<return_by_value>()))
+    .add_property("path", make_function(&This::GetAssetPath, return_value_policy<return_by_value>()))
 
-      .add_property("resolvedPath",
-                    make_function(&This::GetResolvedPath, return_value_policy<return_by_value>()));
+    .add_property("resolvedPath",
+                  make_function(&This::GetResolvedPath, return_value_policy<return_by_value>()));
 
   implicitly_convertible<std::string, This>();
 

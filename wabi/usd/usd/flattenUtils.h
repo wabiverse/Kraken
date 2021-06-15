@@ -73,7 +73,7 @@ SdfLayerRefPtr UsdFlattenLayerStack(const PcpLayerStackRefPtr &layerStack,
 ///
 /// \sa UsdFlattenLayerStackResolveAssetPath
 using UsdFlattenResolveAssetPathFn =
-    std::function<std::string(const SdfLayerHandle &sourceLayer, const std::string &assetPath)>;
+  std::function<std::string(const SdfLayerHandle &sourceLayer, const std::string &assetPath)>;
 
 /// Flatten the \p layerStack into a single layer with
 /// the given optional \p tag and using the \p resolveAssetPathFn to resolve

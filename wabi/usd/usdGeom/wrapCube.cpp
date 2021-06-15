@@ -49,8 +49,7 @@ WRAP_CUSTOM;
 
 static UsdAttribute _CreateSizeAttr(UsdGeomCube &self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateSizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double),
-                             writeSparsely);
+  return self.CreateSizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double), writeSparsely);
 }
 
 static UsdAttribute _CreateExtentAttr(UsdGeomCube &self, object defaultVal, bool writeSparsely)
@@ -74,39 +73,34 @@ void wrapUsdGeomCube()
   class_<This, bases<UsdGeomGprim>> cls("Cube");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Define", &This::Define, (arg("stage"), arg("path")))
-      .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("GetSizeAttr", &This::GetSizeAttr)
-      .def("CreateSizeAttr",
-           &_CreateSizeAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetSizeAttr", &This::GetSizeAttr)
+    .def("CreateSizeAttr", &_CreateSizeAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("GetExtentAttr", &This::GetExtentAttr)
-      .def("CreateExtentAttr",
-           &_CreateExtentAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetExtentAttr", &This::GetExtentAttr)
+    .def(
+      "CreateExtentAttr", &_CreateExtentAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }

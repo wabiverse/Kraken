@@ -59,7 +59,7 @@ class Context {
   Context(std::string const &modelPath);
 
  protected:
-  rif_context m_context            = nullptr;
+  rif_context m_context = nullptr;
   rif_command_queue m_commandQueue = nullptr;
 
  private:

@@ -48,15 +48,15 @@ TF_REGISTRY_FUNCTION(TfType)
 // As destruction of the class is not on the performance path,
 // the body of the deleter is provided here, so a vtable is created
 // in this compilation unit.
-HdRenderParam::~HdRenderParam()       = default;
+HdRenderParam::~HdRenderParam() = default;
 HdRenderDelegate::~HdRenderDelegate() = default;
 
 HdRenderDelegate::HdRenderDelegate() : _settingsMap(), _settingsVersion(1)
 {}
 
 HdRenderDelegate::HdRenderDelegate(HdRenderSettingsMap const &settingsMap)
-    : _settingsMap(),
-      _settingsVersion(1)
+  : _settingsMap(),
+    _settingsVersion(1)
 {
   _settingsMap = settingsMap;
   if (TfDebug::IsEnabled(HD_RENDER_SETTINGS)) {
@@ -164,8 +164,7 @@ VtDictionary HdRenderDelegate::GetRenderStats() const
   return VtDictionary();
 }
 
-void HdRenderDelegate::_PopulateDefaultSettings(
-    HdRenderSettingDescriptorList const &defaultSettings)
+void HdRenderDelegate::_PopulateDefaultSettings(HdRenderSettingDescriptorList const &defaultSettings)
 {
   for (size_t i = 0; i < defaultSettings.size(); ++i) {
     if (_settingsMap.count(defaultSettings[i].key) == 0) {

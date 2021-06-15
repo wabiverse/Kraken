@@ -59,9 +59,9 @@ class HgiMetalResourceBindings final : public HgiResourceBindings {
   void BindResources(id<MTLComputeCommandEncoder> computeEncoder);
 
  private:
-  HgiMetalResourceBindings()        = delete;
+  HgiMetalResourceBindings() = delete;
   HgiMetalResourceBindings &operator=(const HgiMetalResourceBindings &) = delete;
-  HgiMetalResourceBindings(const HgiMetalResourceBindings &)            = delete;
+  HgiMetalResourceBindings(const HgiMetalResourceBindings &) = delete;
 };
 
 WABI_NAMESPACE_END

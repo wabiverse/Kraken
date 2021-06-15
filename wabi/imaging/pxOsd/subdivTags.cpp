@@ -50,31 +50,25 @@ PxOsdSubdivTags::ID PxOsdSubdivTags::ComputeHash() const
 
   hash = ArchHash64((const char *)&_trianglesSubdivision, sizeof(_trianglesSubdivision), hash);
 
-  hash = ArchHash64(
-      (const char *)_cornerIndices.cdata(), _cornerIndices.size() * sizeof(int), hash);
+  hash = ArchHash64((const char *)_cornerIndices.cdata(), _cornerIndices.size() * sizeof(int), hash);
 
-  hash = ArchHash64(
-      (const char *)_cornerWeights.cdata(), _cornerWeights.size() * sizeof(float), hash);
+  hash = ArchHash64((const char *)_cornerWeights.cdata(), _cornerWeights.size() * sizeof(float), hash);
 
-  hash = ArchHash64(
-      (const char *)_creaseIndices.cdata(), _creaseIndices.size() * sizeof(int), hash);
+  hash = ArchHash64((const char *)_creaseIndices.cdata(), _creaseIndices.size() * sizeof(int), hash);
 
-  hash = ArchHash64(
-      (const char *)_creaseLengths.cdata(), _creaseLengths.size() * sizeof(int), hash);
+  hash = ArchHash64((const char *)_creaseLengths.cdata(), _creaseLengths.size() * sizeof(int), hash);
 
-  hash = ArchHash64(
-      (const char *)_creaseWeights.cdata(), _creaseWeights.size() * sizeof(float), hash);
+  hash = ArchHash64((const char *)_creaseWeights.cdata(), _creaseWeights.size() * sizeof(float), hash);
 
   return hash;
 }
 
 std::ostream &operator<<(std::ostream &out, PxOsdSubdivTags const &st)
 {
-  out << "(" << st.GetVertexInterpolationRule() << ", " << st.GetFaceVaryingInterpolationRule()
-      << ", " << st.GetCreaseMethod() << ", " << st.GetTriangleSubdivision() << ", ("
-      << st.GetCreaseIndices() << "), (" << st.GetCreaseLengths() << "), ("
-      << st.GetCreaseWeights() << "), (" << st.GetCornerIndices() << "), ("
-      << st.GetCornerWeights() << "))";
+  out << "(" << st.GetVertexInterpolationRule() << ", " << st.GetFaceVaryingInterpolationRule() << ", "
+      << st.GetCreaseMethod() << ", " << st.GetTriangleSubdivision() << ", (" << st.GetCreaseIndices()
+      << "), (" << st.GetCreaseLengths() << "), (" << st.GetCreaseWeights() << "), ("
+      << st.GetCornerIndices() << "), (" << st.GetCornerWeights() << "))";
   return out;
 }
 

@@ -221,8 +221,7 @@ template<class StaticInit> StaticInit Arch_PerLibInit<StaticInit>::init;
 
 #define _ARCH_CAT_NOEXPAND(a, b) a##b
 #define _ARCH_CAT(a, b) _ARCH_CAT_NOEXPAND(a, b)
-#define _ARCH_ENSURE_PER_LIB_INIT(T, prefix) \
-  static Arch_PerLibInit<T> _ARCH_CAT(prefix, __COUNTER__)
+#define _ARCH_ENSURE_PER_LIB_INIT(T, prefix) static Arch_PerLibInit<T> _ARCH_CAT(prefix, __COUNTER__)
 
 #if defined(doxygen)
 
@@ -242,16 +241,16 @@ struct Arch_ConstructorEntry {
 #  define ARCH_CONSTRUCTOR(_name, _priority, ...) \
     static void _name(__VA_ARGS__); \
     static const Arch_ConstructorEntry _ARCH_CAT_NOEXPAND(arch_ctor_, _name) \
-        __attribute__((used, section("__DATA,wabictor"))) = { \
-            reinterpret_cast<Arch_ConstructorEntry::Type>(&_name), 0u, _priority}; \
+      __attribute__((used, section("__DATA,wabictor"))) = { \
+        reinterpret_cast<Arch_ConstructorEntry::Type>(&_name), 0u, _priority}; \
     static void _name(__VA_ARGS__)
 
 // Emit a Arch_ConstructorEntry in the __Data,wabidtor section.
 #  define ARCH_DESTRUCTOR(_name, _priority, ...) \
     static void _name(__VA_ARGS__); \
     static const Arch_ConstructorEntry _ARCH_CAT_NOEXPAND(arch_dtor_, _name) \
-        __attribute__((used, section("__DATA,wabidtor"))) = { \
-            reinterpret_cast<Arch_ConstructorEntry::Type>(&_name), 0u, _priority}; \
+      __attribute__((used, section("__DATA,wabidtor"))) = { \
+        reinterpret_cast<Arch_ConstructorEntry::Type>(&_name), 0u, _priority}; \
     static void _name(__VA_ARGS__)
 
 #elif defined(ARCH_COMPILER_GCC) || defined(ARCH_COMPILER_CLANG)
@@ -259,12 +258,10 @@ struct Arch_ConstructorEntry {
 // The used attribute is required to prevent these apparently unused functions
 // from being removed by the linker.
 #  define ARCH_CONSTRUCTOR(_name, _priority, ...) \
-    __attribute__((used, \
-                   section(".wabictor"), \
-                   constructor((_priority) + 100))) static void _name(__VA_ARGS__)
+    __attribute__((used, section(".wabictor"), constructor((_priority) + 100))) static void _name( \
+      __VA_ARGS__)
 #  define ARCH_DESTRUCTOR(_name, _priority, ...) \
-    __attribute__((used, section(".wabidtor"), destructor((_priority) + 100))) static void _name( \
-        __VA_ARGS__)
+    __attribute__((used, section(".wabidtor"), destructor((_priority) + 100))) static void _name(__VA_ARGS__)
 
 #elif defined(ARCH_OS_WINDOWS)
 
@@ -298,10 +295,8 @@ struct Arch_ConstructorInit {
     static void _name(__VA_ARGS__); \
     namespace { \
     __declspec(allocate(".wabictor")) extern const Arch_ConstructorEntry \
-        _ARCH_CAT_NOEXPAND(arch_ctor_, \
-                           _name) = {reinterpret_cast<Arch_ConstructorEntry::Type>(&_name), \
-                                     0u, \
-                                     _priority}; \
+      _ARCH_CAT_NOEXPAND(arch_ctor_, \
+                         _name) = {reinterpret_cast<Arch_ConstructorEntry::Type>(&_name), 0u, _priority}; \
     } \
     _ARCH_ENSURE_PER_LIB_INIT(Arch_ConstructorInit, _archCtorInit); \
     static void _name(__VA_ARGS__)
@@ -311,10 +306,8 @@ struct Arch_ConstructorInit {
     static void _name(__VA_ARGS__); \
     namespace { \
     __declspec(allocate(".wabidtor")) extern const Arch_ConstructorEntry \
-        _ARCH_CAT_NOEXPAND(arch_dtor_, \
-                           _name) = {reinterpret_cast<Arch_ConstructorEntry::Type>(&_name), \
-                                     0u, \
-                                     _priority}; \
+      _ARCH_CAT_NOEXPAND(arch_dtor_, \
+                         _name) = {reinterpret_cast<Arch_ConstructorEntry::Type>(&_name), 0u, _priority}; \
     } \
     _ARCH_ENSURE_PER_LIB_INIT(Arch_ConstructorInit, _archCtorInit); \
     static void _name(__VA_ARGS__)

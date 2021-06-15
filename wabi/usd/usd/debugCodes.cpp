@@ -31,14 +31,12 @@ WABI_NAMESPACE_BEGIN
 
 TF_REGISTRY_FUNCTION(TfDebug)
 {
-  TF_DEBUG_ENVIRONMENT_SYMBOL(USD_AUTO_APPLY_API_SCHEMAS,
-                              "USD API schema auto application details");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(USD_AUTO_APPLY_API_SCHEMAS, "USD API schema auto application details");
   TF_DEBUG_ENVIRONMENT_SYMBOL(USD_CHANGES, "USD change processing");
   TF_DEBUG_ENVIRONMENT_SYMBOL(USD_CLIPS, "USD clip details");
   TF_DEBUG_ENVIRONMENT_SYMBOL(USD_COMPOSITION, "USD composition details");
   TF_DEBUG_ENVIRONMENT_SYMBOL(USD_DATA_BD, "USD BD file format traces");
-  TF_DEBUG_ENVIRONMENT_SYMBOL(USD_DATA_BD_TRY,
-                              "USD BD call traces. Prints names, errors and results.");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(USD_DATA_BD_TRY, "USD BD call traces. Prints names, errors and results.");
   TF_DEBUG_ENVIRONMENT_SYMBOL(USD_INSTANCING, "USD instancing diagnostics");
   TF_DEBUG_ENVIRONMENT_SYMBOL(USD_PATH_RESOLUTION, "USD path resolution diagnostics");
   TF_DEBUG_ENVIRONMENT_SYMBOL(USD_PAYLOADS, "USD payload load/unload messages");
@@ -49,8 +47,7 @@ TF_REGISTRY_FUNCTION(TfDebug)
   TF_DEBUG_ENVIRONMENT_SYMBOL(USD_STAGE_OPEN, "USD stage opening details");
   TF_DEBUG_ENVIRONMENT_SYMBOL(USD_STAGE_INSTANTIATION_TIME, "USD stage instantiation timing");
   TF_DEBUG_ENVIRONMENT_SYMBOL(USD_VALIDATE_VARIABILITY, "USD attribute variability validation");
-  TF_DEBUG_ENVIRONMENT_SYMBOL(USD_VALUE_RESOLUTION,
-                              "USD trace of layers inspected as values are resolved");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(USD_VALUE_RESOLUTION, "USD trace of layers inspected as values are resolved");
 }
 
 WABI_NAMESPACE_END

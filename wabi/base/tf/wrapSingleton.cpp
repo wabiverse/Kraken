@@ -75,7 +75,7 @@ static object _DummyInit(tuple const &, dict const &)
 void wrapSingleton()
 {
   class_<Tf_PySingleton>("Singleton", no_init)
-      .def("__new__", _GetSingletonInstance)
-      .staticmethod("__new__")
-      .def("__init__", raw_function(_DummyInit));
+    .def("__new__", _GetSingletonInstance)
+    .staticmethod("__new__")
+    .def("__init__", raw_function(_DummyInit));
 }

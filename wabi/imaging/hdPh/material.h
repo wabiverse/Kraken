@@ -50,9 +50,7 @@ class HdPhMaterial final : public HdMaterial {
 
   /// Synchronizes state from the delegate to this object.
   HDPH_API
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   HDPH_API
   void Finalize(HdRenderParam *renderParam) override;

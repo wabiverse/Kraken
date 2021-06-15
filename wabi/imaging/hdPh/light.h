@@ -50,9 +50,7 @@ class HdPhLight final : public HdLight {
 
   /// Synchronizes state from the delegate to this object.
   HDPH_API
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   /// Finalizes object resources. This function might not delete resources,
   /// but it should deal with resource ownership so that the sprim is

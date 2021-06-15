@@ -81,10 +81,10 @@ class SdfReference : boost::totally_ordered<SdfReference> {
   /// characters, issue an error and set this reference's asset path to the
   /// empty asset path.
   ///
-  SDF_API SdfReference(const std::string &assetPath      = std::string(),
-                       const SdfPath &primPath           = SdfPath(),
+  SDF_API SdfReference(const std::string &assetPath = std::string(),
+                       const SdfPath &primPath = SdfPath(),
                        const SdfLayerOffset &layerOffset = SdfLayerOffset(),
-                       const VtDictionary &customData    = VtDictionary());
+                       const VtDictionary &customData = VtDictionary());
 
   /// Returns the asset path to the root layer of the referenced layer
   /// stack.  This will be empty in the case of an internal reference.

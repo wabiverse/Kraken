@@ -60,12 +60,12 @@ class SdfNotice {
   class BaseLayersDidChange {
    public:
     BaseLayersDidChange(const SdfLayerChangeListVec &changeVec, size_t serialNumber)
-        : _vec(&changeVec),
-          _serialNumber(serialNumber)
+      : _vec(&changeVec),
+        _serialNumber(serialNumber)
     {}
 
     using const_iterator = SdfLayerChangeListVec::const_iterator;
-    using iterator       = const_iterator;
+    using iterator = const_iterator;
 
     /// A list of layers changed.
     SDF_API
@@ -96,9 +96,8 @@ class SdfNotice {
 
     const_iterator find(SdfLayerHandle const &layer) const
     {
-      return std::find_if(begin(), end(), [&layer](SdfLayerChangeListVec::value_type const &p) {
-        return p.first == layer;
-      });
+      return std::find_if(
+        begin(), end(), [&layer](SdfLayerChangeListVec::value_type const &p) { return p.first == layer; });
     }
 
     bool count(SdfLayerHandle const &layer) const
@@ -129,7 +128,7 @@ class SdfNotice {
   class LayersDidChangeSentPerLayer : public Base, public BaseLayersDidChange {
    public:
     LayersDidChangeSentPerLayer(const SdfLayerChangeListVec &changeVec, size_t serialNumber)
-        : BaseLayersDidChange(changeVec, serialNumber)
+      : BaseLayersDidChange(changeVec, serialNumber)
     {}
     SDF_API virtual ~LayersDidChangeSentPerLayer();
   };
@@ -141,7 +140,7 @@ class SdfNotice {
   class LayersDidChange : public Base, public BaseLayersDidChange {
    public:
     LayersDidChange(const SdfLayerChangeListVec &changeVec, size_t serialNumber)
-        : BaseLayersDidChange(changeVec, serialNumber)
+      : BaseLayersDidChange(changeVec, serialNumber)
     {}
     SDF_API virtual ~LayersDidChange();
   };
@@ -238,8 +237,8 @@ class SdfNotice {
   class LayerMutenessChanged : public Base {
    public:
     LayerMutenessChanged(const std::string &layerPath, bool wasMuted)
-        : _layerPath(layerPath),
-          _wasMuted(wasMuted)
+      : _layerPath(layerPath),
+        _wasMuted(wasMuted)
     {}
 
     SDF_API ~LayerMutenessChanged();

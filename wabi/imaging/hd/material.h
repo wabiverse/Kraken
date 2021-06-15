@@ -40,9 +40,9 @@ class HdMaterial : public HdSprim {
   enum DirtyBits : HdDirtyBits {
     Clean = 0,
     // XXX: Got to skip varying and force sync bits for now
-    DirtyParams   = 1 << 2,
+    DirtyParams = 1 << 2,
     DirtyResource = 1 << 3,
-    AllDirty      = (DirtyParams | DirtyResource)
+    AllDirty = (DirtyParams | DirtyResource)
   };
 
   HD_API
@@ -54,7 +54,7 @@ class HdMaterial : public HdSprim {
 
  private:
   // Class can not be default constructed or copied.
-  HdMaterial()                   = delete;
+  HdMaterial() = delete;
   HdMaterial(const HdMaterial &) = delete;
   HdMaterial &operator=(const HdMaterial &) = delete;
 };

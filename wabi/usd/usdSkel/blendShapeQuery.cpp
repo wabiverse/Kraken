@@ -72,7 +72,7 @@ UsdSkelBlendShapeQuery::UsdSkelBlendShapeQuery(const UsdSkelBindingAPI &binding)
 
     _BlendShape &blendShape = _blendShapes[i];
     ;
-    blendShape.shape         = targetShape;
+    blendShape.shape = targetShape;
     blendShape.firstSubShape = _subShapes.size();
 
     if (!targetShape.GetPrim().IsActive()) {
@@ -111,7 +111,7 @@ UsdSkelBlendShapeQuery::UsdSkelBlendShapeQuery(const UsdSkelBindingAPI &binding)
 
     // Sort all subshapes of this shape according to weight.
     _SubShape *start = _subShapes.data() + blendShape.firstSubShape;
-    _SubShape *end   = start + blendShape.numSubShapes;
+    _SubShape *end = start + blendShape.numSubShapes;
     std::sort(start, end, _SubShapeCompareByWeight());
   }
   _prim = binding.GetPrim();
@@ -119,8 +119,7 @@ UsdSkelBlendShapeQuery::UsdSkelBlendShapeQuery(const UsdSkelBindingAPI &binding)
 
 UsdSkelBlendShape UsdSkelBlendShapeQuery::GetBlendShape(size_t blendShapeIndex) const
 {
-  return blendShapeIndex < _blendShapes.size() ? _blendShapes[blendShapeIndex].shape :
-                                                 UsdSkelBlendShape();
+  return blendShapeIndex < _blendShapes.size() ? _blendShapes[blendShapeIndex].shape : UsdSkelBlendShape();
 }
 
 UsdSkelInbetweenShape UsdSkelBlendShapeQuery::GetInbetween(size_t subShapeIndex) const
@@ -170,7 +169,7 @@ std::vector<VtIntArray> UsdSkelBlendShapeQuery::ComputeBlendShapePointIndices() 
             auto dst = TfMakeSpan(indices[i]);
             for (size_t i = 0; i < dst.size(); ++i) {
               const unsigned index = uindices[i];
-              dst[i]               = index >= 0 ? static_cast<int>(index) : 0;
+              dst[i] = index >= 0 ? static_cast<int>(index) : 0;
             }
           }
         }
@@ -255,9 +254,7 @@ bool UsdSkelBlendShapeQuery::ComputeSubShapeWeights(const TfSpan<const float> &w
   }
 
   if (static_cast<size_t>(weights.size()) != _blendShapes.size()) {
-    TF_WARN("Size of weights [%td] != number of blend shapes [%zu]",
-            weights.size(),
-            _blendShapes.size());
+    TF_WARN("Size of weights [%td] != number of blend shapes [%zu]", weights.size(), _blendShapes.size());
     return false;
   }
 
@@ -287,7 +284,7 @@ bool UsdSkelBlendShapeQuery::ComputeSubShapeWeights(const TfSpan<const float> &w
     const float w = weights[i];
 
     const _SubShape *start = &_subShapes[blendShape.firstSubShape];
-    const _SubShape *end   = start + blendShape.numSubShapes;
+    const _SubShape *end = start + blendShape.numSubShapes;
 
     // Find the two nearest bounding subShapes.
     const _SubShape *it = std::upper_bound(start, end, w, _SubShapeCompareByWeight());
@@ -350,7 +347,7 @@ bool UsdSkelBlendShapeQuery::ComputeFlattenedSubShapeWeights(const TfSpan<const 
   VtUIntArray sparseSubShapeIndices;
 
   if (ComputeSubShapeWeights(
-          weights, &sparseSubShapeWeights, &sparseBlendShapeIndices, &sparseSubShapeIndices)) {
+        weights, &sparseSubShapeWeights, &sparseBlendShapeIndices, &sparseSubShapeIndices)) {
     subShapeWeights->assign(_subShapes.size(), 0.0f);
     auto dst = TfMakeSpan(*subShapeWeights);
     for (size_t i = 0; i < sparseSubShapeWeights.size(); ++i) {
@@ -361,13 +358,12 @@ bool UsdSkelBlendShapeQuery::ComputeFlattenedSubShapeWeights(const TfSpan<const 
   return false;
 }
 
-bool UsdSkelBlendShapeQuery::ComputeDeformedPoints(
-    const TfSpan<const float> subShapeWeights,
-    const TfSpan<const unsigned> blendShapeIndices,
-    const TfSpan<const unsigned> subShapeIndices,
-    const std::vector<VtIntArray> &blendShapePointIndices,
-    const std::vector<VtVec3fArray> &subShapePointOffsets,
-    TfSpan<GfVec3f> points) const
+bool UsdSkelBlendShapeQuery::ComputeDeformedPoints(const TfSpan<const float> subShapeWeights,
+                                                   const TfSpan<const unsigned> blendShapeIndices,
+                                                   const TfSpan<const unsigned> subShapeIndices,
+                                                   const std::vector<VtIntArray> &blendShapePointIndices,
+                                                   const std::vector<VtVec3fArray> &subShapePointOffsets,
+                                                   TfSpan<GfVec3f> points) const
 {
   if (blendShapeIndices.size() != subShapeWeights.size()) {
     TF_WARN("blendShapeIndices size [%td] != subShapeWeights size [%td]",
@@ -398,34 +394,33 @@ bool UsdSkelBlendShapeQuery::ComputeDeformedPoints(
       }
       else {
         TF_WARN(
-            "%td'th subShapeIndices entry [%d] >= "
-            "subShapePointOffsets size [%zu].",
-            i,
-            subShapeIndex,
-            subShapePointOffsets.size());
+          "%td'th subShapeIndices entry [%d] >= "
+          "subShapePointOffsets size [%zu].",
+          i,
+          subShapeIndex,
+          subShapePointOffsets.size());
         return false;
       }
     }
     else {
       TF_WARN(
-          "%td'th blendShapeIndices entry [%d] >= "
-          "blendShapePointIndices size [%zu]",
-          i,
-          blendShapeIndex,
-          blendShapePointIndices.size());
+        "%td'th blendShapeIndices entry [%d] >= "
+        "blendShapePointIndices size [%zu]",
+        i,
+        blendShapeIndex,
+        blendShapePointIndices.size());
       return false;
     }
   }
   return true;
 }
 
-bool UsdSkelBlendShapeQuery::ComputeDeformedNormals(
-    const TfSpan<const float> subShapeWeights,
-    const TfSpan<const unsigned> blendShapeIndices,
-    const TfSpan<const unsigned> subShapeIndices,
-    const std::vector<VtIntArray> &blendShapePointIndices,
-    const std::vector<VtVec3fArray> &subShapeNormalOffsets,
-    TfSpan<GfVec3f> normals) const
+bool UsdSkelBlendShapeQuery::ComputeDeformedNormals(const TfSpan<const float> subShapeWeights,
+                                                    const TfSpan<const unsigned> blendShapeIndices,
+                                                    const TfSpan<const unsigned> subShapeIndices,
+                                                    const std::vector<VtIntArray> &blendShapePointIndices,
+                                                    const std::vector<VtVec3fArray> &subShapeNormalOffsets,
+                                                    TfSpan<GfVec3f> normals) const
 {
   // Apply offsets just like positional offsets first,
   // then post-normalize the normals.
@@ -457,7 +452,7 @@ unsigned _ComputeRangesFromCounts(const TfSpan<const unsigned> &counts, TfSpan<G
   unsigned start = 0;
   for (size_t i = 0; i < counts.size(); ++i) {
     const unsigned count = counts[i];
-    ranges[i]            = GfVec2i(start, start + count);
+    ranges[i] = GfVec2i(start, start + count);
     start += count;
   }
   return start;
@@ -471,17 +466,17 @@ size_t _ComputeApproximateNumPointsForShapes(const std::vector<VtIntArray> &indi
 {
   // Get the max index across all of the shapes.
   int maxIndex = WorkParallelReduceN(
-      0,
-      indicesPerBlendShape.size(),
-      [&indicesPerBlendShape](size_t start, size_t end, int init) {
-        for (size_t i = start; i < end; ++i) {
-          for (int index : indicesPerBlendShape[i]) {
-            init = std::max(init, index);
-          }
+    0,
+    indicesPerBlendShape.size(),
+    [&indicesPerBlendShape](size_t start, size_t end, int init) {
+      for (size_t i = start; i < end; ++i) {
+        for (int index : indicesPerBlendShape[i]) {
+          init = std::max(init, index);
         }
-        return init;
-      },
-      [](int lhs, int rhs) { return std::max(lhs, rhs); });
+      }
+      return init;
+    },
+    [](int lhs, int rhs) { return std::max(lhs, rhs); });
 
   // Also take the sizes of sub-shapes into account, for non-indexed shapes.
   for (const auto &offsets : offsetsPerSubShape) {
@@ -492,8 +487,7 @@ size_t _ComputeApproximateNumPointsForShapes(const std::vector<VtIntArray> &indi
 
 }  // namespace
 
-bool UsdSkelBlendShapeQuery::ComputePackedShapeTable(VtVec4fArray *offsets,
-                                                     VtVec2iArray *ranges) const
+bool UsdSkelBlendShapeQuery::ComputePackedShapeTable(VtVec4fArray *offsets, VtVec2iArray *ranges) const
 {
   if (!offsets) {
     TF_CODING_ERROR("'offsets' is null");
@@ -508,8 +502,7 @@ bool UsdSkelBlendShapeQuery::ComputePackedShapeTable(VtVec4fArray *offsets,
 
   const std::vector<VtVec3fArray> offsetsPerSubShape = ComputeSubShapePointOffsets();
 
-  const size_t numPoints = _ComputeApproximateNumPointsForShapes(indicesPerBlendShape,
-                                                                 offsetsPerSubShape);
+  const size_t numPoints = _ComputeApproximateNumPointsForShapes(indicesPerBlendShape, offsetsPerSubShape);
 
   if (numPoints == 0) {
     ranges->clear();
@@ -600,8 +593,7 @@ bool UsdSkelBlendShapeQuery::ComputePackedShapeTable(VtVec4fArray *offsets,
       // Must take indices into account.
       for (size_t j = 0; j < indices.size(); ++j) {
         const int pointIndex = indices[j];
-        TF_DEV_AXIOM(pointIndex >= 0 &&
-                     static_cast<size_t>(pointIndex) < nextOffsetIndexPerPoint.size());
+        TF_DEV_AXIOM(pointIndex >= 0 && static_cast<size_t>(pointIndex) < nextOffsetIndexPerPoint.size());
 
         const GfVec3f &offset = offsets[j];
 

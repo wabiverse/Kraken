@@ -184,8 +184,7 @@ class UsdRiMaterialAPI : public UsdAPISchemaBase {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateSurfaceAttr(VtValue const &defaultValue = VtValue(),
-                                 bool writeSparsely          = false) const;
+  UsdAttribute CreateSurfaceAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -208,7 +207,7 @@ class UsdRiMaterialAPI : public UsdAPISchemaBase {
   /// the default for \p writeSparsely is \c false.
   USDRI_API
   UsdAttribute CreateDisplacementAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely          = false) const;
+                                      bool writeSparsely = false) const;
 
  public:
   // --------------------------------------------------------------------- //
@@ -230,8 +229,7 @@ class UsdRiMaterialAPI : public UsdAPISchemaBase {
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateVolumeAttr(VtValue const &defaultValue = VtValue(),
-                                bool writeSparsely          = false) const;
+  UsdAttribute CreateVolumeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   // ===================================================================== //
@@ -246,8 +244,7 @@ class UsdRiMaterialAPI : public UsdAPISchemaBase {
   // --(BEGIN CUSTOM CODE)--
 
   /// A constructor for creating a MaterialAPI object from a material prim.
-  explicit UsdRiMaterialAPI(const UsdShadeMaterial &material)
-      : UsdRiMaterialAPI(material.GetPrim())
+  explicit UsdRiMaterialAPI(const UsdShadeMaterial &material) : UsdRiMaterialAPI(material.GetPrim())
   {}
 
   // --------------------------------------------------------------------- //
@@ -325,13 +322,12 @@ class UsdRiMaterialAPI : public UsdAPISchemaBase {
   /// shaders within the material or on node-graphs under it.
   USDRI_API
   UsdShadeNodeGraph::InterfaceInputConsumersMap ComputeInterfaceInputConsumersMap(
-      bool computeTransitiveConsumers = false) const;
+    bool computeTransitiveConsumers = false) const;
 
   /// @}
 
  private:
-  UsdShadeShader _GetSourceShaderObject(const UsdShadeOutput &output,
-                                        bool ignoreBaseMaterial) const;
+  UsdShadeShader _GetSourceShaderObject(const UsdShadeOutput &output, bool ignoreBaseMaterial) const;
 
   // Helper method to get the deprecated 'bxdf' output.
   UsdShadeOutput _GetBxdfOutput(const UsdPrim &materialPrim) const;

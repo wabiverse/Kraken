@@ -65,8 +65,7 @@ UsdRiPxrBarnLightFilter UsdRiPxrBarnLightFilter::Get(const UsdStagePtr &stage, c
 }
 
 /* static */
-UsdRiPxrBarnLightFilter UsdRiPxrBarnLightFilter::Define(const UsdStagePtr &stage,
-                                                        const SdfPath &path)
+UsdRiPxrBarnLightFilter UsdRiPxrBarnLightFilter::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("wabiBarnLightFilter");
   if (!stage) {
@@ -129,8 +128,7 @@ UsdAttribute UsdRiPxrBarnLightFilter::GetWidthAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->width);
 }
 
-UsdAttribute UsdRiPxrBarnLightFilter::CreateWidthAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdRiPxrBarnLightFilter::CreateWidthAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->width,
                                     SdfValueTypeNames->Float,
@@ -145,8 +143,7 @@ UsdAttribute UsdRiPxrBarnLightFilter::GetHeightAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->height);
 }
 
-UsdAttribute UsdRiPxrBarnLightFilter::CreateHeightAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdRiPxrBarnLightFilter::CreateHeightAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->height,
                                     SdfValueTypeNames->Float,
@@ -161,8 +158,7 @@ UsdAttribute UsdRiPxrBarnLightFilter::GetRadiusAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->radius);
 }
 
-UsdAttribute UsdRiPxrBarnLightFilter::CreateRadiusAttr(VtValue const &defaultValue,
-                                                       bool writeSparsely) const
+UsdAttribute UsdRiPxrBarnLightFilter::CreateRadiusAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->radius,
                                     SdfValueTypeNames->Float,
@@ -241,9 +237,8 @@ UsdAttribute UsdRiPxrBarnLightFilter::GetAnalyticUseLightDirectionAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->analyticUseLightDirection);
 }
 
-UsdAttribute UsdRiPxrBarnLightFilter::CreateAnalyticUseLightDirectionAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrBarnLightFilter::CreateAnalyticUseLightDirectionAttr(VtValue const &defaultValue,
+                                                                          bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticUseLightDirection,
                                     SdfValueTypeNames->Bool,
@@ -258,9 +253,8 @@ UsdAttribute UsdRiPxrBarnLightFilter::GetAnalyticDensityNearDistanceAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->analyticDensityNearDistance);
 }
 
-UsdAttribute UsdRiPxrBarnLightFilter::CreateAnalyticDensityNearDistanceAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrBarnLightFilter::CreateAnalyticDensityNearDistanceAttr(VtValue const &defaultValue,
+                                                                            bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticDensityNearDistance,
                                     SdfValueTypeNames->Float,
@@ -275,9 +269,8 @@ UsdAttribute UsdRiPxrBarnLightFilter::GetAnalyticDensityFarDistanceAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->analyticDensityFarDistance);
 }
 
-UsdAttribute UsdRiPxrBarnLightFilter::CreateAnalyticDensityFarDistanceAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrBarnLightFilter::CreateAnalyticDensityFarDistanceAttr(VtValue const &defaultValue,
+                                                                           bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticDensityFarDistance,
                                     SdfValueTypeNames->Float,
@@ -292,9 +285,8 @@ UsdAttribute UsdRiPxrBarnLightFilter::GetAnalyticDensityNearValueAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->analyticDensityNearValue);
 }
 
-UsdAttribute UsdRiPxrBarnLightFilter::CreateAnalyticDensityNearValueAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrBarnLightFilter::CreateAnalyticDensityNearValueAttr(VtValue const &defaultValue,
+                                                                         bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticDensityNearValue,
                                     SdfValueTypeNames->Float,
@@ -309,9 +301,8 @@ UsdAttribute UsdRiPxrBarnLightFilter::GetAnalyticDensityFarValueAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->analyticDensityFarValue);
 }
 
-UsdAttribute UsdRiPxrBarnLightFilter::CreateAnalyticDensityFarValueAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrBarnLightFilter::CreateAnalyticDensityFarValueAttr(VtValue const &defaultValue,
+                                                                        bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticDensityFarValue,
                                     SdfValueTypeNames->Float,
@@ -326,9 +317,8 @@ UsdAttribute UsdRiPxrBarnLightFilter::GetAnalyticDensityExponentAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->analyticDensityExponent);
 }
 
-UsdAttribute UsdRiPxrBarnLightFilter::CreateAnalyticDensityExponentAttr(
-    VtValue const &defaultValue,
-    bool writeSparsely) const
+UsdAttribute UsdRiPxrBarnLightFilter::CreateAnalyticDensityExponentAttr(VtValue const &defaultValue,
+                                                                        bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->analyticDensityExponent,
                                     SdfValueTypeNames->Float,
@@ -531,8 +521,7 @@ UsdAttribute UsdRiPxrBarnLightFilter::CreateEdgeScaleRightAttr(VtValue const &de
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -546,35 +535,35 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRiPxrBarnLightFilter::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRiTokens->barnMode,
-      UsdRiTokens->width,
-      UsdRiTokens->height,
-      UsdRiTokens->radius,
-      UsdRiTokens->analyticDirectional,
-      UsdRiTokens->analyticShearX,
-      UsdRiTokens->analyticShearY,
-      UsdRiTokens->analyticApex,
-      UsdRiTokens->analyticUseLightDirection,
-      UsdRiTokens->analyticDensityNearDistance,
-      UsdRiTokens->analyticDensityFarDistance,
-      UsdRiTokens->analyticDensityNearValue,
-      UsdRiTokens->analyticDensityFarValue,
-      UsdRiTokens->analyticDensityExponent,
-      UsdRiTokens->edgeThickness,
-      UsdRiTokens->preBarnEffect,
-      UsdRiTokens->scaleWidth,
-      UsdRiTokens->scaleHeight,
-      UsdRiTokens->refineTop,
-      UsdRiTokens->refineBottom,
-      UsdRiTokens->refineLeft,
-      UsdRiTokens->refineRight,
-      UsdRiTokens->edgeScaleTop,
-      UsdRiTokens->edgeScaleBottom,
-      UsdRiTokens->edgeScaleLeft,
-      UsdRiTokens->edgeScaleRight,
+    UsdRiTokens->barnMode,
+    UsdRiTokens->width,
+    UsdRiTokens->height,
+    UsdRiTokens->radius,
+    UsdRiTokens->analyticDirectional,
+    UsdRiTokens->analyticShearX,
+    UsdRiTokens->analyticShearY,
+    UsdRiTokens->analyticApex,
+    UsdRiTokens->analyticUseLightDirection,
+    UsdRiTokens->analyticDensityNearDistance,
+    UsdRiTokens->analyticDensityFarDistance,
+    UsdRiTokens->analyticDensityNearValue,
+    UsdRiTokens->analyticDensityFarValue,
+    UsdRiTokens->analyticDensityExponent,
+    UsdRiTokens->edgeThickness,
+    UsdRiTokens->preBarnEffect,
+    UsdRiTokens->scaleWidth,
+    UsdRiTokens->scaleHeight,
+    UsdRiTokens->refineTop,
+    UsdRiTokens->refineBottom,
+    UsdRiTokens->refineLeft,
+    UsdRiTokens->refineRight,
+    UsdRiTokens->edgeScaleTop,
+    UsdRiTokens->edgeScaleBottom,
+    UsdRiTokens->edgeScaleLeft,
+    UsdRiTokens->edgeScaleRight,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdLuxLightFilter::GetSchemaAttributeNames(true), localNames);
+    UsdLuxLightFilter::GetSchemaAttributeNames(true), localNames);
 
   if (includeInherited)
     return allNames;

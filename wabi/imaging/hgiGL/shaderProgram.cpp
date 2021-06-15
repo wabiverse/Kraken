@@ -39,11 +39,11 @@
 WABI_NAMESPACE_BEGIN
 
 HgiGLShaderProgram::HgiGLShaderProgram(HgiShaderProgramDesc const &desc)
-    : HgiShaderProgram(desc),
-      _programId(0),
-      _programByteSize(0),
-      _uniformBuffer(0),
-      _uboByteSize(0)
+  : HgiShaderProgram(desc),
+    _programId(0),
+    _programByteSize(0),
+    _uniformBuffer(0),
+    _uboByteSize(0)
 {
   _programId = glCreateProgram();
 
@@ -53,7 +53,7 @@ HgiGLShaderProgram::HgiGLShaderProgram(HgiShaderProgramDesc const &desc)
 
   for (HgiShaderFunctionHandle const &shd : desc.shaderFunctions) {
     HgiGLShaderFunction *glShader = static_cast<HgiGLShaderFunction *>(shd.Get());
-    uint32_t id                   = glShader->GetShaderId();
+    uint32_t id = glShader->GetShaderId();
     TF_VERIFY(id > 0, "Invalid shader provided to program");
     glAttachShader(_programId, id);
   }

@@ -61,9 +61,9 @@ class HgiGLSampler final : public HgiSampler {
   HgiGLSampler(HgiSamplerDesc const &desc);
 
  private:
-  HgiGLSampler()        = delete;
+  HgiGLSampler() = delete;
   HgiGLSampler &operator=(const HgiGLSampler &) = delete;
-  HgiGLSampler(const HgiGLSampler &)            = delete;
+  HgiGLSampler(const HgiGLSampler &) = delete;
 
  private:
   uint32_t _samplerId;

@@ -112,8 +112,7 @@ UsdAttribute UsdLuxDiskLight::GetRadiusAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsRadius);
 }
 
-UsdAttribute UsdLuxDiskLight::CreateRadiusAttr(VtValue const &defaultValue,
-                                               bool writeSparsely) const
+UsdAttribute UsdLuxDiskLight::CreateRadiusAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsRadius,
                                     SdfValueTypeNames->Float,
@@ -124,8 +123,7 @@ UsdAttribute UsdLuxDiskLight::CreateRadiusAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -139,10 +137,10 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdLuxDiskLight::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdLuxTokens->inputsRadius,
+    UsdLuxTokens->inputsRadius,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdLuxLight::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdLuxLight::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

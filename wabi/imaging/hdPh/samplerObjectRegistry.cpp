@@ -33,18 +33,18 @@
 WABI_NAMESPACE_BEGIN
 
 HdPh_SamplerObjectRegistry::HdPh_SamplerObjectRegistry(HdPhResourceRegistry *registry)
-    : _garbageCollectionNeeded(false),
-      _resourceRegistry(registry)
+  : _garbageCollectionNeeded(false),
+    _resourceRegistry(registry)
 {}
 
 HdPh_SamplerObjectRegistry::~HdPh_SamplerObjectRegistry() = default;
 
 template<HdTextureType textureType>
 static HdPhSamplerObjectSharedPtr _MakeTypedSamplerObject(
-    HdPhTextureObjectSharedPtr const &texture,
-    HdSamplerParameters const &samplerParameters,
-    const bool createBindlessHandle,
-    HdPh_SamplerObjectRegistry *const samplerObjectRegistry)
+  HdPhTextureObjectSharedPtr const &texture,
+  HdSamplerParameters const &samplerParameters,
+  const bool createBindlessHandle,
+  HdPh_SamplerObjectRegistry *const samplerObjectRegistry)
 {
   // e.g. HdPhUvTextureObject
   using TextureObject = HdPhTypedTextureObject<textureType>;
@@ -58,28 +58,27 @@ static HdPhSamplerObjectSharedPtr _MakeTypedSamplerObject(
   }
 
   return std::make_shared<SamplerObject>(
-      *typedTexture, samplerParameters, createBindlessHandle, samplerObjectRegistry);
+    *typedTexture, samplerParameters, createBindlessHandle, samplerObjectRegistry);
 }
 
-static HdPhSamplerObjectSharedPtr _MakeSamplerObject(
-    HdPhTextureObjectSharedPtr const &texture,
-    HdSamplerParameters const &samplerParameters,
-    const bool createBindlessHandle,
-    HdPh_SamplerObjectRegistry *const samplerObjectRegistry)
+static HdPhSamplerObjectSharedPtr _MakeSamplerObject(HdPhTextureObjectSharedPtr const &texture,
+                                                     HdSamplerParameters const &samplerParameters,
+                                                     const bool createBindlessHandle,
+                                                     HdPh_SamplerObjectRegistry *const samplerObjectRegistry)
 {
   switch (texture->GetTextureType()) {
     case HdTextureType::Uv:
       return _MakeTypedSamplerObject<HdTextureType::Uv>(
-          texture, samplerParameters, createBindlessHandle, samplerObjectRegistry);
+        texture, samplerParameters, createBindlessHandle, samplerObjectRegistry);
     case HdTextureType::Field:
       return _MakeTypedSamplerObject<HdTextureType::Field>(
-          texture, samplerParameters, createBindlessHandle, samplerObjectRegistry);
+        texture, samplerParameters, createBindlessHandle, samplerObjectRegistry);
     case HdTextureType::Ptex:
       return _MakeTypedSamplerObject<HdTextureType::Ptex>(
-          texture, samplerParameters, createBindlessHandle, samplerObjectRegistry);
+        texture, samplerParameters, createBindlessHandle, samplerObjectRegistry);
     case HdTextureType::Udim:
       return _MakeTypedSamplerObject<HdTextureType::Udim>(
-          texture, samplerParameters, createBindlessHandle, samplerObjectRegistry);
+        texture, samplerParameters, createBindlessHandle, samplerObjectRegistry);
   }
 
   TF_CODING_ERROR("Unsupported texture type");
@@ -87,14 +86,14 @@ static HdPhSamplerObjectSharedPtr _MakeSamplerObject(
 }
 
 HdPhSamplerObjectSharedPtr HdPh_SamplerObjectRegistry::AllocateSampler(
-    HdPhTextureObjectSharedPtr const &texture,
-    HdSamplerParameters const &samplerParameters,
-    bool const createBindlessHandle)
+  HdPhTextureObjectSharedPtr const &texture,
+  HdSamplerParameters const &samplerParameters,
+  bool const createBindlessHandle)
 {
   TRACE_FUNCTION();
 
   HdPhSamplerObjectSharedPtr const result = _MakeSamplerObject(
-      texture, samplerParameters, createBindlessHandle, this);
+    texture, samplerParameters, createBindlessHandle, this);
 
   if (result) {
     // Record sampler object

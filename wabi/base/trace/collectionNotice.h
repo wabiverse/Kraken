@@ -49,8 +49,7 @@ WABI_NAMESPACE_BEGIN
 class TraceCollectionAvailable : public TfNotice {
  public:
   /// Constructor.
-  TraceCollectionAvailable(const std::shared_ptr<TraceCollection> &collection)
-      : _collection(collection)
+  TraceCollectionAvailable(const std::shared_ptr<TraceCollection> &collection) : _collection(collection)
   {}
 
   /// Destructor.

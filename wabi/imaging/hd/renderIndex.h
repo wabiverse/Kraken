@@ -66,9 +66,9 @@ using HdDirtyListSharedPtr = std::shared_ptr<class HdDirtyList>;
 using HdTaskSharedPtr = std::shared_ptr<class HdTask>;
 
 using HdResourceRegistrySharedPtr = std::shared_ptr<class HdResourceRegistry>;
-using HdTaskSharedPtrVector       = std::vector<HdTaskSharedPtr>;
-using HdTaskContext               = std::unordered_map<TfToken, VtValue, TfToken::HashFunctor>;
-using HdDriverVector              = std::vector<HdDriver *>;
+using HdTaskSharedPtrVector = std::vector<HdTaskSharedPtr>;
+using HdTaskContext = std::unordered_map<TfToken, VtValue, TfToken::HashFunctor>;
+using HdDriverVector = std::vector<HdDriver *>;
 
 /// \class HdRenderIndex
 ///
@@ -157,8 +157,7 @@ class HdRenderIndex final {
   /// call chain ties it to SyncAll, i.e.
   /// HdRenderIndex::SyncAll > .... > HdRenderPass::Sync > HdRenderIndex::Sync
   HD_API
-  void EnqueuePrimsToSync(HdDirtyListSharedPtr const &dirtyList,
-                          HdRprimCollection const &collection);
+  void EnqueuePrimsToSync(HdDirtyListSharedPtr const &dirtyList, HdRprimCollection const &collection);
 
   /// Syncs input tasks, B & S prims, (external) computations and processes
   /// all pending dirty lists (which syncs the R prims). At the end of this
@@ -177,8 +176,7 @@ class HdRenderIndex final {
   /// The is typically called during render pass execution, which is the
   /// final phase in the Hydra's execution. See HdRenderPass::Execute
   HD_API
-  HdDrawItemPtrVector GetDrawItems(HdRprimCollection const &collection,
-                                   TfTokenVector const &renderTags);
+  HdDrawItemPtrVector GetDrawItems(HdRprimCollection const &collection, TfTokenVector const &renderTags);
 
   // ---------------------------------------------------------------------- //
   /// \name Change Tracker
@@ -386,9 +384,7 @@ class HdRenderIndex final {
   // _TrackDelegateTask is called by the inlined InsertTask<T>, so it needs
   // to be marked HD_API.
   HD_API
-  void _TrackDelegateTask(HdSceneDelegate *delegate,
-                          SdfPath const &taskId,
-                          HdTaskSharedPtr const &task);
+  void _TrackDelegateTask(HdSceneDelegate *delegate, SdfPath const &taskId, HdTaskSharedPtr const &task);
 
   template<typename T> static inline const TfToken &_GetTypeId();
 

@@ -75,10 +75,10 @@ template<class _View> class SdfPyWrapChildrenView {
   template<class E> class _Iterator {
    public:
     _Iterator(const boost::python::object &object)
-        : _object(object),
-          _owner(boost::python::extract<const View &>(object)),
-          _cur(_owner.begin()),
-          _end(_owner.end())
+      : _object(object),
+        _owner(boost::python::extract<const View &>(object)),
+        _cur(_owner.begin()),
+        _end(_owner.end())
     {
       // Do nothing
     }
@@ -116,43 +116,43 @@ template<class _View> class SdfPyWrapChildrenView {
     //       However, we're emulating TfPyKeyedVector, which iterates
     //       over values as a vector would.
     scope thisScope = class_<View>(name.c_str(), no_init)
-                          .def("__repr__", &This::_GetRepr)
-                          .def("__len__", &View::size)
-                          .def("__getitem__", &This::_GetItemByKey)
-                          .def("__getitem__", &This::_GetItemByIndex)
-                          .def("get", &This::_PyGet)
-                          .def("__contains__", &This::_HasKey)
-                          .def("__contains__", &This::_HasValue)
-                          .def("__iter__", &This::_GetValueIterator)
+                        .def("__repr__", &This::_GetRepr)
+                        .def("__len__", &View::size)
+                        .def("__getitem__", &This::_GetItemByKey)
+                        .def("__getitem__", &This::_GetItemByIndex)
+                        .def("get", &This::_PyGet)
+                        .def("__contains__", &This::_HasKey)
+                        .def("__contains__", &This::_HasValue)
+                        .def("__iter__", &This::_GetValueIterator)
 #if PY_MAJOR_VERSION < 3
-                          .def("has_key", &This::_HasKey)
-                          .def("itervalues", &This::_GetValueIterator)
-                          .def("iterkeys", &This::_GetKeyIterator)
-                          .def("iteritems", &This::_GetItemIterator)
-                          .def("items", &This::_GetItems)
-                          .def("keys", &This::_GetKeys)
-                          .def("values", &This::_GetValues)
+                        .def("has_key", &This::_HasKey)
+                        .def("itervalues", &This::_GetValueIterator)
+                        .def("iterkeys", &This::_GetKeyIterator)
+                        .def("iteritems", &This::_GetItemIterator)
+                        .def("items", &This::_GetItems)
+                        .def("keys", &This::_GetKeys)
+                        .def("values", &This::_GetValues)
 #else
-                          .def("items", &This::_GetItemIterator)
-                          .def("keys", &This::_GetKeyIterator)
-                          .def("values", &This::_GetValueIterator)
+                        .def("items", &This::_GetItemIterator)
+                        .def("keys", &This::_GetKeyIterator)
+                        .def("values", &This::_GetValueIterator)
 #endif
-                          .def("index", &This::_FindIndexByKey)
-                          .def("index", &This::_FindIndexByValue)
-                          .def(self == self)
-                          .def(self != self);
+                        .def("index", &This::_FindIndexByKey)
+                        .def("index", &This::_FindIndexByValue)
+                        .def(self == self)
+                        .def(self != self);
 
     class_<_Iterator<_ExtractItem>>((name + "_Iterator").c_str(), no_init)
-        .def("__iter__", &This::template _Iterator<_ExtractItem>::GetCopy)
-        .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractItem>::GetNext);
+      .def("__iter__", &This::template _Iterator<_ExtractItem>::GetCopy)
+      .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractItem>::GetNext);
 
     class_<_Iterator<_ExtractKey>>((name + "_KeyIterator").c_str(), no_init)
-        .def("__iter__", &This::template _Iterator<_ExtractKey>::GetCopy)
-        .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractKey>::GetNext);
+      .def("__iter__", &This::template _Iterator<_ExtractKey>::GetCopy)
+      .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractKey>::GetNext);
 
     class_<_Iterator<_ExtractValue>>((name + "_ValueIterator").c_str(), no_init)
-        .def("__iter__", &This::template _Iterator<_ExtractValue>::GetCopy)
-        .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractValue>::GetNext);
+      .def("__iter__", &This::template _Iterator<_ExtractValue>::GetCopy)
+      .def(TfPyIteratorNextMethodName, &This::template _Iterator<_ExtractValue>::GetNext);
   }
 
   static std::string _GetName()

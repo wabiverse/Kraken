@@ -140,10 +140,9 @@ static double _SafeDiv(const double a, const double b)
   return a;
 }
 
-static CameraUtilConformWindowPolicy _ResolveConformWindowPolicy(
-    const GfVec2d &size,
-    CameraUtilConformWindowPolicy policy,
-    double targetAspect)
+static CameraUtilConformWindowPolicy _ResolveConformWindowPolicy(const GfVec2d &size,
+                                                                 CameraUtilConformWindowPolicy policy,
+                                                                 double targetAspect)
 {
   if ((policy == CameraUtilMatchVertically) || (policy == CameraUtilMatchHorizontally)) {
     return policy;
@@ -171,7 +170,7 @@ GfVec2d CameraUtilConformedWindow(const GfVec2d &window,
   }
 
   const CameraUtilConformWindowPolicy resolvedPolicy = _ResolveConformWindowPolicy(
-      window, policy, targetAspect);
+    window, policy, targetAspect);
 
   if (resolvedPolicy == CameraUtilMatchHorizontally) {
     return GfVec2d(window[0], _SafeDiv(window[0], targetAspect));
@@ -189,11 +188,11 @@ GfRange2d CameraUtilConformedWindow(const GfRange2d &window,
     return window;
   }
 
-  const GfVec2d &size  = window.GetSize();
+  const GfVec2d &size = window.GetSize();
   const GfVec2d center = (window.GetMin() + window.GetMax()) / 2.0;
 
   const CameraUtilConformWindowPolicy resolvedPolicy = _ResolveConformWindowPolicy(
-      size, policy, targetAspect);
+    size, policy, targetAspect);
 
   if (resolvedPolicy == CameraUtilMatchHorizontally) {
     const double height = _SafeDiv(size[0], targetAspect);
@@ -221,8 +220,7 @@ GfVec4d CameraUtilConformedWindow(const GfVec4d &window,
 
   const GfRange2d conformed = CameraUtilConformedWindow(original, policy, targetAspect);
 
-  return GfVec4d(
-      conformed.GetMin()[0], conformed.GetMax()[0], conformed.GetMin()[1], conformed.GetMax()[1]);
+  return GfVec4d(conformed.GetMin()[0], conformed.GetMax()[0], conformed.GetMin()[1], conformed.GetMax()[1]);
 }
 
 static double _Sign(const double x)
@@ -259,7 +257,7 @@ GfMatrix4d CameraUtilConformedWindow(const GfMatrix4d &projectionMatrix,
   // This tells us whether we need to adjust the parameters affecting the
   // vertical or horizontal aspects of the projectionMatrix.
   const CameraUtilConformWindowPolicy resolvedPolicy = _ResolveConformWindowPolicy(
-      window, policy, targetAspect);
+    window, policy, targetAspect);
 
   if (resolvedPolicy == CameraUtilMatchHorizontally) {
     // Adjust vertical size
@@ -289,9 +287,7 @@ GfMatrix4d CameraUtilConformedWindow(const GfMatrix4d &projectionMatrix,
   return result;
 }
 
-void CameraUtilConformWindow(GfCamera *camera,
-                             CameraUtilConformWindowPolicy policy,
-                             double targetAspect)
+void CameraUtilConformWindow(GfCamera *camera, CameraUtilConformWindowPolicy policy, double targetAspect)
 {
   if (_DoesNotRequireAdjustment(policy)) {
     return;
@@ -304,16 +300,13 @@ void CameraUtilConformWindow(GfCamera *camera,
   camera->SetVerticalAperture(conformed[1]);
 }
 
-void CameraUtilConformWindow(GfFrustum *frustum,
-                             CameraUtilConformWindowPolicy policy,
-                             double targetAspect)
+void CameraUtilConformWindow(GfFrustum *frustum, CameraUtilConformWindowPolicy policy, double targetAspect)
 {
   if (_DoesNotRequireAdjustment(policy)) {
     return;
   }
 
-  GfRange2d screenWindowFitted = CameraUtilConformedWindow(
-      frustum->GetWindow(), policy, targetAspect);
+  GfRange2d screenWindowFitted = CameraUtilConformedWindow(frustum->GetWindow(), policy, targetAspect);
   frustum->SetWindow(screenWindowFitted);
 }
 

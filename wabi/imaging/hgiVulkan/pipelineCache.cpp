@@ -28,8 +28,8 @@
 WABI_NAMESPACE_BEGIN
 
 HgiVulkanPipelineCache::HgiVulkanPipelineCache(HgiVulkanDevice *device)
-    : _device(device),
-      _vkPipelineCache(nullptr)
+  : _device(device),
+    _vkPipelineCache(nullptr)
 {
   // xxx we need to add a pipeline cache to avoid app having to keep compiling
   // shader micro-code for every pipeline combination. We except that the

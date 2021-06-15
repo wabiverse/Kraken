@@ -24,13 +24,12 @@
 WABI_NAMESPACE_USING
 
 HdCyclesRenderPassState::HdCyclesRenderPassState(const HdCyclesRenderDelegate *renderDelegate)
-    : m_renderDelegate{renderDelegate}
+  : m_renderDelegate{renderDelegate}
 {}
 
 void HdCyclesRenderPassState::Prepare(const HdResourceRegistrySharedPtr &resourceRegistry)
 {
-  HdCyclesResourceRegistry *registry = dynamic_cast<HdCyclesResourceRegistry *>(
-      resourceRegistry.get());
+  HdCyclesResourceRegistry *registry = dynamic_cast<HdCyclesResourceRegistry *>(resourceRegistry.get());
   if (!registry) {
     return;
   }

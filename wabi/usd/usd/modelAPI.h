@@ -232,8 +232,7 @@ class UsdModelAPI : public UsdAPISchemaBase {
    * return different answers. (As a corallary, this is also true for for
    * prim.IsGroup()) */
   USD_API
-  bool IsKind(const TfToken &baseKind,
-              KindValidation validation = KindValidationModelHierarchy) const;
+  bool IsKind(const TfToken &baseKind, KindValidation validation = KindValidationModelHierarchy) const;
 
   /**
    * Return true if this prim represents a model, based on its kind

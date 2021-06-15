@@ -62,15 +62,13 @@ SdfPath UsdImagingCapsuleAdapter::Populate(UsdPrim const &prim,
                                            UsdImagingInstancerContext const *instancerContext)
 
 {
-  return _AddRprim(
-      HdPrimTypeTokens->mesh, prim, index, GetMaterialUsdPath(prim), instancerContext);
+  return _AddRprim(HdPrimTypeTokens->mesh, prim, index, GetMaterialUsdPath(prim), instancerContext);
 }
 
-void UsdImagingCapsuleAdapter::TrackVariability(
-    UsdPrim const &prim,
-    SdfPath const &cachePath,
-    HdDirtyBits *timeVaryingBits,
-    UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingCapsuleAdapter::TrackVariability(UsdPrim const &prim,
+                                                SdfPath const &cachePath,
+                                                HdDirtyBits *timeVaryingBits,
+                                                UsdImagingInstancerContext const *instancerContext) const
 {
   BaseAdapter::TrackVariability(prim, cachePath, timeVaryingBits, instancerContext);
 
@@ -127,7 +125,7 @@ VtValue UsdImagingCapsuleAdapter::GetMeshPoints(UsdPrim const &prim, UsdTimeCode
   UsdGeomCapsule capsule(prim);
   double height = 1.0;
   double radius = 0.5;
-  TfToken axis  = UsdGeomTokens->z;
+  TfToken axis = UsdGeomTokens->z;
   TF_VERIFY(capsule.GetHeightAttr().Get(&height, time));
   TF_VERIFY(capsule.GetRadiusAttr().Get(&radius, time));
   TF_VERIFY(capsule.GetAxisAttr().Get(&axis, time));

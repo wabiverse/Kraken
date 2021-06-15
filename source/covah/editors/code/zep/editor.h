@@ -102,9 +102,9 @@ class ZepMessage {
   {}
 
   ZepMessage(Msg id, const NVec2f &p, ZepMouseButton b = ZepMouseButton::Unknown)
-      : messageId(id),
-        pos(p),
-        button(b)
+    : messageId(id),
+      pos(p),
+      button(b)
   {}
 
   ZepMessage(Msg id, IZepComponent *pComp) : messageId(id), pComponent(pComp)
@@ -114,7 +114,7 @@ class ZepMessage {
   std::string str;       // Generic string for simple messages
   bool handled = false;  // If the message was handled
   NVec2f pos;
-  ZepMouseButton button     = ZepMouseButton::Unknown;
+  ZepMouseButton button = ZepMouseButton::Unknown;
   IZepComponent *pComponent = nullptr;
 };
 
@@ -154,8 +154,8 @@ struct Register {
   bool lineWise = false;
 };
 
-using tRegisters     = std::map<std::string, Register>;
-using tBuffers       = std::deque<std::shared_ptr<ZepBuffer>>;
+using tRegisters = std::map<std::string, Register>;
+using tBuffers = std::deque<std::shared_ptr<ZepBuffer>>;
 using tSyntaxFactory = std::function<std::shared_ptr<ZepSyntax>(ZepBuffer *)>;
 
 struct SyntaxProvider {
@@ -163,9 +163,9 @@ struct SyntaxProvider {
   tSyntaxFactory factory = nullptr;
 };
 
-const float bottomBorder    = 2.0f;
-const float textBorder      = 2.0f;
-const float tabSpacing      = 1.0f;
+const float bottomBorder = 2.0f;
+const float textBorder = 2.0f;
+const float tabSpacing = 1.0f;
 const float leftBorderChars = 3;
 
 #define DPI_VEC2(value) (value * GetEditor().GetDisplay().GetPixelScale())
@@ -176,27 +176,27 @@ const float leftBorderChars = 3;
 inline float FontHeightPixelsFromPointSize(float pointSize, float pixelScaleY)
 {
   const auto fontDotsPerInch = 72.0f;
-  auto inches                = pointSize / fontDotsPerInch;
+  auto inches = pointSize / fontDotsPerInch;
   return inches * (pixelScaleY * 96.0f);
 }
 
 enum class EditorStyle { Normal = 0, Minimal };
 
 struct EditorConfig {
-  uint32_t showScrollBar        = 1;
-  EditorStyle style             = EditorStyle::Normal;
-  NVec2f lineMargins            = NVec2f(1.0f);
-  NVec2f widgetMargins          = NVec2f(1.0f);
-  NVec2f inlineWidgetMargins    = NVec2f(2.0f);
-  float underlineHeight         = 3.0f;
-  bool showLineNumbers          = true;
-  bool shortTabNames            = true;
-  bool showIndicatorRegion      = true;
-  bool autoHideCommandRegion    = true;
-  bool cursorLineSolid          = false;
+  uint32_t showScrollBar = 1;
+  EditorStyle style = EditorStyle::Normal;
+  NVec2f lineMargins = NVec2f(1.0f);
+  NVec2f widgetMargins = NVec2f(1.0f);
+  NVec2f inlineWidgetMargins = NVec2f(2.0f);
+  float underlineHeight = 3.0f;
+  bool showLineNumbers = true;
+  bool shortTabNames = true;
+  bool showIndicatorRegion = true;
+  bool autoHideCommandRegion = true;
+  bool cursorLineSolid = false;
   bool showNormalModeKeyStrokes = false;
-  float backgroundFadeTime      = 60.0f;
-  float backgroundFadeWait      = 60.0f;
+  float backgroundFadeTime = 60.0f;
+  float backgroundFadeWait = 60.0f;
 };
 
 class ZepExCommand : public ZepComponent {
@@ -206,7 +206,7 @@ class ZepExCommand : public ZepComponent {
   virtual ~ZepExCommand()
   {}
   virtual void Run(const std::vector<std::string> &args = {}) = 0;
-  virtual const char *ExCommandName() const                   = 0;
+  virtual const char *ExCommandName() const = 0;
   virtual StringId ExCommandId() const
   {
     return StringId(ExCommandName());
@@ -229,7 +229,7 @@ class ZepEditor {
   // Root path is the path to search for a config file
   ZepEditor(ZepDisplay *pDisplay,
             const ZepPath &root,
-            uint32_t flags              = 0,
+            uint32_t flags = 0,
             IZepFileSystem *pFileSystem = nullptr);
   ~ZepEditor();
 
@@ -411,7 +411,7 @@ class ZepEditor {
   uint32_t m_flags = 0;
 
   mutable std::atomic_bool m_bPendingRefresh = true;
-  mutable bool m_lastCursorBlink             = false;
+  mutable bool m_lastCursorBlink = false;
 
   std::vector<std::string> m_commandLines;  // Command information, shown under the buffer
 
@@ -423,7 +423,7 @@ class ZepEditor {
 
   float m_tabOffsetX = 0.0f;
 
-  NVec2f m_mousePos   = NVec2f(0.0f);
+  NVec2f m_mousePos = NVec2f(0.0f);
   NVec2f m_pixelScale = NVec2f(1.0f);
 
   // Config

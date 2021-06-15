@@ -51,15 +51,13 @@ static void _GlTextureStorageND(const HgiTextureType textureType,
       glTextureStorage2D(texture, levels, internalformat, dimensions[0], dimensions[1]);
       break;
     case HgiTextureType3D:
-      glTextureStorage3D(
-          texture, levels, internalformat, dimensions[0], dimensions[1], dimensions[2]);
+      glTextureStorage3D(texture, levels, internalformat, dimensions[0], dimensions[1], dimensions[2]);
       break;
     case HgiTextureType1DArray:
       glTextureStorage2D(texture, levels, internalformat, dimensions[0], layerCount);
       break;
     case HgiTextureType2DArray:
-      glTextureStorage3D(
-          texture, levels, internalformat, dimensions[0], dimensions[1], layerCount);
+      glTextureStorage3D(texture, levels, internalformat, dimensions[0], dimensions[1], layerCount);
       break;
     default:
       TF_CODING_ERROR("Unsupported HgiTextureType enum value");
@@ -82,15 +80,8 @@ static void _GlTextureSubImageND(const HgiTextureType textureType,
       glTextureSubImage1D(texture, level, offsets[0], dimensions[0], format, type, pixels);
       break;
     case HgiTextureType2D:
-      glTextureSubImage2D(texture,
-                          level,
-                          offsets[0],
-                          offsets[1],
-                          dimensions[0],
-                          dimensions[1],
-                          format,
-                          type,
-                          pixels);
+      glTextureSubImage2D(
+        texture, level, offsets[0], offsets[1], dimensions[0], dimensions[1], format, type, pixels);
       break;
     case HgiTextureType3D:
       glTextureSubImage3D(texture,
@@ -107,7 +98,7 @@ static void _GlTextureSubImageND(const HgiTextureType textureType,
       break;
     case HgiTextureType1DArray:
       glTextureSubImage2D(
-          texture, level, offsets[0], offsets[1], dimensions[0], layerCount, format, type, pixels);
+        texture, level, offsets[0], offsets[1], dimensions[0], layerCount, format, type, pixels);
       break;
     case HgiTextureType2DArray:
       glTextureSubImage3D(texture,
@@ -139,15 +130,8 @@ static void _GlCompressedTextureSubImageND(const HgiTextureType textureType,
 {
   switch (textureType) {
     case HgiTextureType2D:
-      glCompressedTextureSubImage2D(texture,
-                                    level,
-                                    offsets[0],
-                                    offsets[1],
-                                    dimensions[0],
-                                    dimensions[1],
-                                    format,
-                                    imageSize,
-                                    pixels);
+      glCompressedTextureSubImage2D(
+        texture, level, offsets[0], offsets[1], dimensions[0], dimensions[1], format, imageSize, pixels);
       break;
     case HgiTextureType3D:
       glCompressedTextureSubImage3D(texture,
@@ -174,24 +158,23 @@ static bool _IsValidCompression(HgiTextureDesc const &desc)
     case HgiTextureType2D:
       if (desc.dimensions[0] % 4 != 0 || desc.dimensions[1] % 4 != 0) {
         TF_CODING_ERROR(
-            "Compressed texture with width or height "
-            "not a multiple of 4");
+          "Compressed texture with width or height "
+          "not a multiple of 4");
         return false;
       }
       return true;
     case HgiTextureType3D:
-      if (desc.dimensions[0] % 4 != 0 || desc.dimensions[1] % 4 != 0 ||
-          desc.dimensions[2] % 4 != 0) {
+      if (desc.dimensions[0] % 4 != 0 || desc.dimensions[1] % 4 != 0 || desc.dimensions[2] % 4 != 0) {
         TF_CODING_ERROR(
-            "Compressed texture with width, height or depth"
-            "not a multiple of 4");
+          "Compressed texture with width, height or depth"
+          "not a multiple of 4");
         return false;
       }
       return true;
     default:
       TF_CODING_ERROR(
-          "Compression not supported for given texture "
-          "type");
+        "Compression not supported for given texture "
+        "type");
       return false;
   }
 }
@@ -199,19 +182,19 @@ static bool _IsValidCompression(HgiTextureDesc const &desc)
 HgiGLTexture::HgiGLTexture(HgiTextureDesc const &desc) : HgiTexture(desc), _textureId(0)
 {
   GLenum glInternalFormat = 0;
-  GLenum glFormat         = 0;
-  GLenum glPixelType      = 0;
+  GLenum glFormat = 0;
+  GLenum glPixelType = 0;
   const bool isCompressed = HgiIsCompressed(desc.format);
 
   if (desc.usage & HgiTextureUsageBitsDepthTarget) {
     TF_VERIFY(desc.format == HgiFormatFloat32 || desc.format == HgiFormatFloat32UInt8);
 
     if (desc.format == HgiFormatFloat32UInt8) {
-      glFormat         = GL_DEPTH_STENCIL;
+      glFormat = GL_DEPTH_STENCIL;
       glInternalFormat = GL_DEPTH32F_STENCIL8;
     }
     else {
-      glFormat         = GL_DEPTH_COMPONENT;
+      glFormat = GL_DEPTH_COMPONENT;
       glInternalFormat = GL_DEPTH_COMPONENT32F;
     }
     glPixelType = GL_FLOAT;
@@ -244,7 +227,7 @@ HgiGLTexture::HgiGLTexture(HgiTextureDesc const &desc) : HgiTexture(desc), _text
     glTextureParameteri(_textureId, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     const uint16_t mips = desc.mipLevels;
-    GLint minFilter     = mips > 1 ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
+    GLint minFilter = mips > 1 ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
     glTextureParameteri(_textureId, GL_TEXTURE_MIN_FILTER, minFilter);
     glTextureParameteri(_textureId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -254,15 +237,14 @@ HgiGLTexture::HgiGLTexture(HgiTextureDesc const &desc) : HgiTexture(desc), _text
     glTextureParameteri(_textureId, GL_TEXTURE_BASE_LEVEL, /*low-mip*/ 0);
     glTextureParameteri(_textureId, GL_TEXTURE_MAX_LEVEL, /*hi-mip*/ mips - 1);
 
-    _GlTextureStorageND(
-        desc.type, _textureId, mips, glInternalFormat, desc.dimensions, desc.layerCount);
+    _GlTextureStorageND(desc.type, _textureId, mips, glInternalFormat, desc.dimensions, desc.layerCount);
 
     // Upload texel data
     if (desc.initialData && desc.pixelsByteSize > 0) {
       // Upload each (available) mip
       const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(
-          desc.format, desc.dimensions, desc.layerCount, desc.pixelsByteSize);
-      const size_t mipLevels        = std::min(mipInfos.size(), size_t(desc.mipLevels));
+        desc.format, desc.dimensions, desc.layerCount, desc.pixelsByteSize);
+      const size_t mipLevels = std::min(mipInfos.size(), size_t(desc.mipLevels));
       const char *const initialData = reinterpret_cast<const char *>(desc.initialData);
 
       for (size_t mip = 0; mip < mipLevels; mip++) {
@@ -294,19 +276,14 @@ HgiGLTexture::HgiGLTexture(HgiTextureDesc const &desc) : HgiTexture(desc), _text
   }
   else {
     // Note: Setting sampler state values on multi-sample texture is invalid
-    glTextureStorage2DMultisample(_textureId,
-                                  desc.sampleCount,
-                                  glInternalFormat,
-                                  desc.dimensions[0],
-                                  desc.dimensions[1],
-                                  GL_TRUE);
+    glTextureStorage2DMultisample(
+      _textureId, desc.sampleCount, glInternalFormat, desc.dimensions[0], desc.dimensions[1], GL_TRUE);
   }
 
-  const GLint swizzleMask[] = {
-      GLint(HgiGLConversions::GetComponentSwizzle(desc.componentMapping.r)),
-      GLint(HgiGLConversions::GetComponentSwizzle(desc.componentMapping.g)),
-      GLint(HgiGLConversions::GetComponentSwizzle(desc.componentMapping.b)),
-      GLint(HgiGLConversions::GetComponentSwizzle(desc.componentMapping.a))};
+  const GLint swizzleMask[] = {GLint(HgiGLConversions::GetComponentSwizzle(desc.componentMapping.r)),
+                               GLint(HgiGLConversions::GetComponentSwizzle(desc.componentMapping.g)),
+                               GLint(HgiGLConversions::GetComponentSwizzle(desc.componentMapping.b)),
+                               GLint(HgiGLConversions::GetComponentSwizzle(desc.componentMapping.a))};
 
   glTextureParameteriv(_textureId, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
 
@@ -314,17 +291,17 @@ HgiGLTexture::HgiGLTexture(HgiTextureDesc const &desc) : HgiTexture(desc), _text
 }
 
 HgiGLTexture::HgiGLTexture(HgiTextureViewDesc const &desc)
-    : HgiTexture(desc.sourceTexture->GetDescriptor()),
-      _textureId(0)
+  : HgiTexture(desc.sourceTexture->GetDescriptor()),
+    _textureId(0)
 {
   // Update the texture descriptor to reflect the view desc
-  _descriptor.debugName  = desc.debugName;
-  _descriptor.format     = desc.format;
+  _descriptor.debugName = desc.debugName;
+  _descriptor.format = desc.format;
   _descriptor.layerCount = desc.layerCount;
-  _descriptor.mipLevels  = desc.mipLevels;
+  _descriptor.mipLevels = desc.mipLevels;
 
   HgiGLTexture *srcTexture = static_cast<HgiGLTexture *>(desc.sourceTexture.Get());
-  GLenum glInternalFormat  = 0;
+  GLenum glInternalFormat = 0;
 
   if (srcTexture->GetDescriptor().usage & HgiTextureUsageBitsDepthTarget) {
     TF_VERIFY(desc.format == HgiFormatFloat32 || desc.format == HgiFormatFloat32UInt8);
@@ -337,7 +314,7 @@ HgiGLTexture::HgiGLTexture(HgiTextureViewDesc const &desc)
     }
   }
   else {
-    GLenum glFormat    = 0;
+    GLenum glFormat = 0;
     GLenum glPixelType = 0;
     HgiGLConversions::GetFormat(desc.format, &glFormat, &glPixelType, &glInternalFormat);
   }
@@ -366,7 +343,7 @@ HgiGLTexture::HgiGLTexture(HgiTextureViewDesc const &desc)
   glTextureParameteri(_textureId, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
   const uint16_t mips = desc.mipLevels;
-  GLint minFilter     = mips > 1 ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
+  GLint minFilter = mips > 1 ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
   glTextureParameteri(_textureId, GL_TEXTURE_MIN_FILTER, minFilter);
   glTextureParameteri(_textureId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 

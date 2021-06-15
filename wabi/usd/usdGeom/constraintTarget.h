@@ -166,7 +166,7 @@ class UsdGeomConstraintTarget {
   /// already be in model-space.
   ///
   USDGEOM_API
-  GfMatrix4d ComputeInWorldSpace(UsdTimeCode time           = UsdTimeCode::Default(),
+  GfMatrix4d ComputeInWorldSpace(UsdTimeCode time = UsdTimeCode::Default(),
                                  UsdGeomXformCache *xfCache = NULL) const;
 
  private:

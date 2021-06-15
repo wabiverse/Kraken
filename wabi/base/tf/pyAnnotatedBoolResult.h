@@ -40,14 +40,11 @@
 WABI_NAMESPACE_BEGIN
 
 template<class Annotation>
-struct TfPyAnnotatedBoolResult
-    : boost::equality_comparable<TfPyAnnotatedBoolResult<Annotation>, bool> {
+struct TfPyAnnotatedBoolResult : boost::equality_comparable<TfPyAnnotatedBoolResult<Annotation>, bool> {
   TfPyAnnotatedBoolResult()
   {}
 
-  TfPyAnnotatedBoolResult(bool val, Annotation const &annotation)
-      : _val(val),
-        _annotation(annotation)
+  TfPyAnnotatedBoolResult(bool val, Annotation const &annotation) : _val(val), _annotation(annotation)
   {}
 
   bool GetValue() const
@@ -78,29 +75,29 @@ struct TfPyAnnotatedBoolResult
     using namespace boost::python;
     TfPyLock lock;
     return class_<Derived>(name, no_init)
-        .def(TfPyBoolBuiltinFuncName, &Derived::GetValue)
-        .def("__repr__", &Derived::GetRepr)
-        .def(self == bool())
-        .def(self != bool())
-        .def(bool() == self)
-        .def(bool() != self)
-        // Use a helper function.  We'd like to def_readonly the
-        // _annotation member but there are two problems with that.
-        // First, we can't control the return_value_policy and if the
-        // Annotation type has a custom to-Python converter then the
-        // def_readonly return_value_policy of return_internal_reference
-        // won't work since the object needs conversion.  Second, if we
-        // try to use GetAnnotation() with add_property then we'll get
-        // a failure at runtime because Python has a Derived but
-        // GetAnnotation takes a TfPyAnnotatedBoolResult<Annotation>
-        // and boost python doesn't know the former is-a latter because
-        // TfPyAnnotatedBoolResult<Annotation> is not wrapped.
-        //
-        // So we provide a templated static method that takes a Derived
-        // and returns Annotation by value.  We can add_property that
-        // with no problem.
-        .add_property(annotationName, &This::_GetAnnotation<Derived>)
-        .def("__getitem__", &This::_GetItem<Derived>);
+      .def(TfPyBoolBuiltinFuncName, &Derived::GetValue)
+      .def("__repr__", &Derived::GetRepr)
+      .def(self == bool())
+      .def(self != bool())
+      .def(bool() == self)
+      .def(bool() != self)
+      // Use a helper function.  We'd like to def_readonly the
+      // _annotation member but there are two problems with that.
+      // First, we can't control the return_value_policy and if the
+      // Annotation type has a custom to-Python converter then the
+      // def_readonly return_value_policy of return_internal_reference
+      // won't work since the object needs conversion.  Second, if we
+      // try to use GetAnnotation() with add_property then we'll get
+      // a failure at runtime because Python has a Derived but
+      // GetAnnotation takes a TfPyAnnotatedBoolResult<Annotation>
+      // and boost python doesn't know the former is-a latter because
+      // TfPyAnnotatedBoolResult<Annotation> is not wrapped.
+      //
+      // So we provide a templated static method that takes a Derived
+      // and returns Annotation by value.  We can add_property that
+      // with no problem.
+      .add_property(annotationName, &This::_GetAnnotation<Derived>)
+      .def("__getitem__", &This::_GetItem<Derived>);
   }
 
   using AnnotationType = Annotation;

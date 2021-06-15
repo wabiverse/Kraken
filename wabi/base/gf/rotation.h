@@ -99,7 +99,7 @@ class GfRotation {
   /// Sets the rotation to be \p angle degrees about \p axis.
   GfRotation &SetAxisAngle(const GfVec3d &axis, double angle)
   {
-    _axis  = axis;
+    _axis = axis;
     _angle = angle;
     if (!GfIsClose(_axis * _axis, 1.0, 1e-10))
       _axis.Normalize();
@@ -201,8 +201,8 @@ class GfRotation {
                                 double *thetaTw,
                                 double *thetaFB,
                                 double *thetaLR,
-                                double *thetaSw       = NULL,
-                                bool useHint          = false,
+                                double *thetaSw = NULL,
+                                bool useHint = false,
                                 const double *swShift = NULL);
 
   // This function projects the vectors \p v1 and \p v2 onto the plane

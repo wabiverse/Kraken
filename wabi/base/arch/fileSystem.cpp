@@ -219,7 +219,7 @@ string _NormPath(string const &inPath)
   // Allow zero, one, or two leading slashes, per POSIX.  Three or more get
   // collapsed to one.
   const size_t numLeadingSlashes = distance(inPath.begin(), t.first);
-  size_t writeIdx                = numLeadingSlashes >= 3 ? 1 : numLeadingSlashes;
+  size_t writeIdx = numLeadingSlashes >= 3 ? 1 : numLeadingSlashes;
 
   // Save a reverse iterator at where we start the output, we'll use this when
   // scanning backward to handle DotDot tokens.
@@ -252,16 +252,14 @@ string _NormPath(string const &inPath)
       case DotDot: {
         // Here we are very likely to be modifying the string, so we use
         // non-const iterators and mutate.
-        string::reverse_iterator rstart(path.begin() + firstWriteIdx),
-            rwrite(path.begin() + writeIdx);
+        string::reverse_iterator rstart(path.begin() + firstWriteIdx), rwrite(path.begin() + writeIdx);
         // Find the last token of the output by finding the next token in
         // reverse.
         RToken backToken = _NextToken(rwrite, rstart);
         // If there are no more Elems to consume with DotDots and this is a
         // relative path, or this token is already a DotDot, then copy it to
         // the output.
-        if ((rstart == path.rend() && backToken.first == rstart) ||
-            _GetTokenType(backToken) == DotDot) {
+        if ((rstart == path.rend() && backToken.first == rstart) || _GetTokenType(backToken) == DotDot) {
           path[writeIdx++] = '.';
           path[writeIdx++] = '.';
           if (writeIdx != path.size())
@@ -454,8 +452,7 @@ string ArchGetFileName(FILE *file)
 #if defined(ARCH_OS_LINUX)
   string result;
   char buf[PATH_MAX];
-  ssize_t r = readlink(
-      ArchStringPrintf("/proc/self/fd/%d", fileno(file)).c_str(), buf, sizeof(buf));
+  ssize_t r = readlink(ArchStringPrintf("/proc/self/fd/%d", fileno(file)).c_str(), buf, sizeof(buf));
   if (r != -1) {
     result.assign(buf, buf + r);
   }
@@ -469,19 +466,12 @@ string ArchGetFileName(FILE *file)
   return result;
 #elif defined(ARCH_OS_WINDOWS)
   static constexpr DWORD bufSize = sizeof(FILE_NAME_INFO) + sizeof(WCHAR) * 4096;
-  HANDLE hfile                   = _FileToWinHANDLE(file);
-  auto fileNameInfo              = reinterpret_cast<PFILE_NAME_INFO>(malloc(bufSize));
+  HANDLE hfile = _FileToWinHANDLE(file);
+  auto fileNameInfo = reinterpret_cast<PFILE_NAME_INFO>(malloc(bufSize));
   string result;
-  if (GetFileInformationByHandleEx(
-          hfile, FileNameInfo, static_cast<void *>(fileNameInfo), bufSize)) {
-    size_t outSize = WideCharToMultiByte(CP_UTF8,
-                                         0,
-                                         fileNameInfo->FileName,
-                                         fileNameInfo->FileNameLength / sizeof(WCHAR),
-                                         NULL,
-                                         0,
-                                         NULL,
-                                         NULL);
+  if (GetFileInformationByHandleEx(hfile, FileNameInfo, static_cast<void *>(fileNameInfo), bufSize)) {
+    size_t outSize = WideCharToMultiByte(
+      CP_UTF8, 0, fileNameInfo->FileName, fileNameInfo->FileNameLength / sizeof(WCHAR), NULL, 0, NULL, NULL);
     result.resize(outSize);
     WideCharToMultiByte(CP_UTF8,
                         0,
@@ -514,8 +504,7 @@ string ArchMakeTmpFileName(const string &prefix, const string &suffix)
   if (n == 1)
     return ArchStringPrintf("%s/%s.%d%s", tmpDir.c_str(), prefix.c_str(), pid, suffix.c_str());
   else
-    return ArchStringPrintf(
-        "%s/%s.%d.%d%s", tmpDir.c_str(), prefix.c_str(), pid, n, suffix.c_str());
+    return ArchStringPrintf("%s/%s.%d.%d%s", tmpDir.c_str(), prefix.c_str(), pid, n, suffix.c_str());
 }
 
 int ArchMakeTmpFile(const std::string &prefix, std::string *pathname)
@@ -534,15 +523,15 @@ std::string MakeUnique(const std::string &sTemplate,
 
   // Copy template to a writable buffer.
   const auto length = sTemplate.size();
-  char *cTemplate   = reinterpret_cast<char *>(alloca(length + 1));
+  char *cTemplate = reinterpret_cast<char *>(alloca(length + 1));
   strcpy(cTemplate, sTemplate.c_str());
 
   // Fill template with random characters from table.
-  const char *table             = "abcdefghijklmnopqrstuvwxyz123456";
+  const char *table = "abcdefghijklmnopqrstuvwxyz123456";
   std::string::size_type offset = length - 6;
-  int retry                     = 0;
+  int retry = 0;
   do {
-    unsigned int x        = (static_cast<unsigned int>(rand()) << 15) + rand();
+    unsigned int x = (static_cast<unsigned int>(rand()) << 15) + rand();
     cTemplate[offset + 0] = table[(x >> 25) & 31];
     cTemplate[offset + 1] = table[(x >> 20) & 31];
     cTemplate[offset + 2] = table[(x >> 15) & 31];
@@ -570,10 +559,9 @@ int ArchMakeTmpFile(const std::string &tmpdir, const std::string &prefix, std::s
   std::string sTemplate = ArchStringPrintf("%s/%s.XXXXXX", tmpdir.c_str(), prefix.c_str());
 
 #if defined(ARCH_OS_WINDOWS)
-  int fd         = -1;
+  int fd = -1;
   auto cTemplate = MakeUnique(sTemplate, [&fd](const char *name) {
-    _sopen_s(
-        &fd, name, _O_CREAT | _O_EXCL | _O_RDWR | _O_BINARY, _SH_DENYNO, _S_IREAD | _S_IWRITE);
+    _sopen_s(&fd, name, _O_CREAT | _O_EXCL | _O_RDWR | _O_BINARY, _SH_DENYNO, _S_IREAD | _S_IWRITE);
     return fd != -1;
   });
 #else
@@ -609,8 +597,7 @@ std::string ArchMakeTmpSubdir(const std::string &tmpdir, const std::string &pref
   std::string sTemplate = ArchStringPrintf("%s/%s.XXXXXX", tmpdir.c_str(), prefix.c_str());
 
 #if defined(ARCH_OS_WINDOWS)
-  retstr = MakeUnique(sTemplate,
-                      [](const char *name) { return CreateDirectory(name, NULL) != FALSE; });
+  retstr = MakeUnique(sTemplate, [](const char *name) { return CreateDirectory(name, NULL) != FALSE; });
 #else
   // Copy template to a writable buffer.
   char *cTemplate = reinterpret_cast<char *>(alloca(sTemplate.size() + 1));
@@ -648,7 +635,7 @@ void Arch_InitTmpDir()
 
   // Strip the trailing slash
   tmpPath[sizeOfPath - 1] = 0;
-  _TmpDir                 = _strdup(tmpPath);
+  _TmpDir = _strdup(tmpPath);
 #else
   const std::string tmpdir = ArchGetEnv("TMPDIR");
   if (!tmpdir.empty()) {
@@ -691,7 +678,7 @@ void Arch_Unmapper::operator()(char *mapStart) const
 
 template<class Mapping> static inline Mapping Arch_MapFileImpl(FILE *file, std::string *errMsg)
 {
-  using PtrType          = typename Mapping::pointer;
+  using PtrType = typename Mapping::pointer;
   constexpr bool isConst = std::is_const<typename Mapping::element_type>::value;
 
   auto length = ArchGetFileLength(file);
@@ -700,9 +687,9 @@ template<class Mapping> static inline Mapping Arch_MapFileImpl(FILE *file, std::
 
 #if defined(ARCH_OS_WINDOWS)
   uint64_t unsignedLength = length;
-  DWORD maxSizeHigh       = static_cast<DWORD>(unsignedLength >> 32);
-  DWORD maxSizeLow        = static_cast<DWORD>(unsignedLength);
-  HANDLE hFileMap         = CreateFileMapping(_FileToWinHANDLE(file),
+  DWORD maxSizeHigh = static_cast<DWORD>(unsignedLength >> 32);
+  DWORD maxSizeLow = static_cast<DWORD>(unsignedLength);
+  HANDLE hFileMap = CreateFileMapping(_FileToWinHANDLE(file),
                                       NULL,
                                       PAGE_READONLY /* allow read-only or copy-on-write */,
                                       maxSizeHigh,
@@ -719,8 +706,7 @@ template<class Mapping> static inline Mapping Arch_MapFileImpl(FILE *file, std::
   CloseHandle(hFileMap);
   return Mapping(ptr, Arch_Unmapper(length));
 #else  // Assume POSIX
-  auto m = mmap(
-      nullptr, length, isConst ? PROT_READ : PROT_READ | PROT_WRITE, MAP_PRIVATE, fileno(file), 0);
+  auto m = mmap(nullptr, length, isConst ? PROT_READ : PROT_READ | PROT_WRITE, MAP_PRIVATE, fileno(file), 0);
   Mapping ret(m == MAP_FAILED ? nullptr : static_cast<PtrType>(m), Arch_Unmapper(length));
   if (!ret && errMsg) {
     int err = errno;
@@ -729,8 +715,8 @@ template<class Mapping> static inline Mapping Arch_MapFileImpl(FILE *file, std::
     }
     else if (err == EMFILE || err == ENOMEM) {
       *errMsg =
-          "system limit on mapped regions exceeded, "
-          "or out of memory";
+        "system limit on mapped regions exceeded, "
+        "or out of memory";
     }
     else {
       *errMsg = ArchStrerror();
@@ -765,8 +751,7 @@ using _UniqueFILE = std::unique_ptr<FILE, _Fcloser>;
 
 }  // end anonymous namespace
 
-template<class Mapping>
-static inline Mapping Arch_MapFileImpl(std::string const &path, std::string *errMsg)
+template<class Mapping> static inline Mapping Arch_MapFileImpl(std::string const &path, std::string *errMsg)
 {
   _UniqueFILE f(ArchOpenFile(path.c_str(), "rb"));
   if (!f) {
@@ -807,7 +792,7 @@ void ArchMemAdvise(void const *addr, size_t len, ArchMemAdvice adv)
                      /* ArchMemAdviceRandomAccess = */ POSIX_MADV_RANDOM};
 
   int rval = posix_madvise(
-      reinterpret_cast<void *>(alignedAddrInt), len + (addrInt - alignedAddrInt), adviceMap[adv]);
+    reinterpret_cast<void *>(alignedAddrInt), len + (addrInt - alignedAddrInt), adviceMap[adv]);
   if (rval != 0) {
     fprintf(stderr,
             "failed call to posix_madvise(%zd, %zd)"
@@ -829,7 +814,7 @@ bool ArchQueryMappedMemoryResidency(void const *addr, size_t len, unsigned char 
 #elif defined(ARCH_OS_DARWIN)
   // On darwin the addr param is 'caddr_t' and the vec param is 'char *'.
   int ret = mincore(
-      reinterpret_cast<caddr_t>(const_cast<void *>(addr)), len, reinterpret_cast<char *>(pageMap));
+    reinterpret_cast<caddr_t>(const_cast<void *>(addr)), len, reinterpret_cast<char *>(pageMap));
   return ret == 0;
 #endif
   // XXX: Not implemented for other platforms yet.
@@ -847,9 +832,9 @@ int64_t ArchPRead(FILE *file, void *buffer, size_t count, int64_t offset)
   OVERLAPPED overlapped;
   memset(&overlapped, 0, sizeof(overlapped));
 
-  uint64_t uoffset      = offset;
+  uint64_t uoffset = offset;
   overlapped.OffsetHigh = static_cast<DWORD>(uoffset >> 32);
-  overlapped.Offset     = static_cast<DWORD>(uoffset);
+  overlapped.Offset = static_cast<DWORD>(uoffset);
 
   DWORD numRead = 0;
   if (ReadFile(hFile, buffer, static_cast<DWORD>(count), &numRead, &overlapped)) {
@@ -900,9 +885,9 @@ int64_t ArchPWrite(FILE *file, void const *bytes, size_t count, int64_t offset)
   OVERLAPPED overlapped;
   memset(&overlapped, 0, sizeof(overlapped));
 
-  uint64_t uoffset      = offset;
+  uint64_t uoffset = offset;
   overlapped.OffsetHigh = static_cast<DWORD>(uoffset >> 32);
-  overlapped.Offset     = static_cast<DWORD>(uoffset);
+  overlapped.Offset = static_cast<DWORD>(uoffset);
 
   DWORD numWritten = 0;
   if (WriteFile(hFile, bytes, static_cast<DWORD>(count), &numWritten, &overlapped)) {
@@ -1007,8 +992,8 @@ int ArchFileAccess(const char *path, int mode)
     return (GetFileAttributes(path) != INVALID_FILE_ATTRIBUTES) ? 0 : Arch_FileAccessError();
   }
 
-  const SECURITY_INFORMATION securityInfo = OWNER_SECURITY_INFORMATION |
-                                            GROUP_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION;
+  const SECURITY_INFORMATION securityInfo = OWNER_SECURITY_INFORMATION | GROUP_SECURITY_INFORMATION |
+                                            DACL_SECURITY_INFORMATION;
 
   // Get the SECURITY_DESCRIPTOR size.
   DWORD length = 0;
@@ -1039,15 +1024,15 @@ int ArchFileAccess(const char *path, int mode)
   HANDLE duplicateToken;
   if (DuplicateToken(token, SecurityImpersonation, &duplicateToken)) {
     PRIVILEGE_SET privileges = {0};
-    DWORD grantedAccess      = 0;
-    DWORD privilegesLength   = sizeof(privileges);
-    BOOL accessStatus        = FALSE;
+    DWORD grantedAccess = 0;
+    DWORD privilegesLength = sizeof(privileges);
+    BOOL accessStatus = FALSE;
 
     GENERIC_MAPPING mapping;
-    mapping.GenericRead    = FILE_GENERIC_READ;
-    mapping.GenericWrite   = FILE_GENERIC_WRITE;
+    mapping.GenericRead = FILE_GENERIC_READ;
+    mapping.GenericWrite = FILE_GENERIC_WRITE;
     mapping.GenericExecute = FILE_GENERIC_EXECUTE;
-    mapping.GenericAll     = FILE_ALL_ACCESS;
+    mapping.GenericAll = FILE_ALL_ACCESS;
 
     DWORD accessMask = ArchModeToAccess(mode);
     MapGenericMask(&accessMask, &mapping);
@@ -1122,7 +1107,7 @@ std::string ArchReadLink(const char *path)
   REPARSE_DATA_BUFFER *reparse = (REPARSE_DATA_BUFFER *)buffer.get();
 
   if (!DeviceIoControl(
-          handle, FSCTL_GET_REPARSE_POINT, NULL, 0, reparse, MAX_REPARSE_DATA_SIZE, NULL, NULL)) {
+        handle, FSCTL_GET_REPARSE_POINT, NULL, 0, reparse, MAX_REPARSE_DATA_SIZE, NULL, NULL)) {
     CloseHandle(handle);
     return std::string();
   }
@@ -1134,7 +1119,7 @@ std::string ArchReadLink(const char *path)
       std::unique_ptr<WCHAR[]> reparsePath(new WCHAR[length + 1]);
       wcsncpy(reparsePath.get(),
               &reparse->SymbolicLinkReparseBuffer
-                   .PathBuffer[reparse->SymbolicLinkReparseBuffer.PrintNameOffset / sizeof(WCHAR)],
+                 .PathBuffer[reparse->SymbolicLinkReparseBuffer.PrintNameOffset / sizeof(WCHAR)],
               length);
 
       reparsePath.get()[length] = 0;
@@ -1145,9 +1130,8 @@ std::string ArchReadLink(const char *path)
 
       // Symlinks can be absolute, or relative to the parent directory.
       // Deal with the relative case here by prepending the parent path.
-      if ((reparse->SymbolicLinkReparseBuffer.Flags & SYMLINK_FLAG_RELATIVE) ==
-          SYMLINK_FLAG_RELATIVE) {
-        string fullpath     = ArchAbsPath(path);
+      if ((reparse->SymbolicLinkReparseBuffer.Flags & SYMLINK_FLAG_RELATIVE) == SYMLINK_FLAG_RELATIVE) {
+        string fullpath = ArchAbsPath(path);
         string::size_type i = fullpath.find_last_of("/\\");
         if (i != string::npos) {
           // Grab the parent directory path, including the trailing
@@ -1164,7 +1148,7 @@ std::string ArchReadLink(const char *path)
       std::unique_ptr<WCHAR[]> reparsePath(new WCHAR[length + 1]);
       wcsncpy(reparsePath.get(),
               &reparse->MountPointReparseBuffer
-                   .PathBuffer[reparse->MountPointReparseBuffer.PrintNameOffset / sizeof(WCHAR)],
+                 .PathBuffer[reparse->MountPointReparseBuffer.PrintNameOffset / sizeof(WCHAR)],
               length);
 
       reparsePath.get()[length] = 0;
@@ -1243,7 +1227,7 @@ void ArchFileAdvise(FILE *file, int64_t offset, size_t count, ArchFileAdvice adv
                      /* ArchFileAdviceWillNeed     = */ POSIX_FADV_WILLNEED,
                      /* ArchFileAdviceDontNeed     = */ POSIX_FADV_DONTNEED,
                      /* ArchFileAdviceRandomAccess = */ POSIX_FADV_RANDOM};
-  int rval        = posix_fadvise(fileno(file), offset, static_cast<off_t>(count), adviceMap[adv]);
+  int rval = posix_fadvise(fileno(file), offset, static_cast<off_t>(count), adviceMap[adv]);
   if (rval != 0) {
     fprintf(stderr,
             "failed call to posix_fadvise(%d, %zd, %zd)"

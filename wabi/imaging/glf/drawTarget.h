@@ -208,7 +208,7 @@ class GlfDrawTarget : public TfRefBase, public TfWeakBase {
   GLF_API
   bool WriteToFile(std::string const &name,
                    std::string const &filename,
-                   GfMatrix4d const &viewMatrix       = GfMatrix4d(1),
+                   GfMatrix4d const &viewMatrix = GfMatrix4d(1),
                    GfMatrix4d const &projectionMatrix = GfMatrix4d(1));
 
   /// Resize the DrawTarget.

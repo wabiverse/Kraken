@@ -90,8 +90,7 @@ class PcpDynamicFileFormatContext {
   /// Returns whether the given \p field is allowed to be used to generate
   /// file format arguments. It can also return whether the value type of
   /// the field is a dictionary if needed.
-  bool _IsAllowedFieldForArguments(const TfToken &field,
-                                   bool *fieldValueIsDictionary = nullptr) const;
+  bool _IsAllowedFieldForArguments(const TfToken &field, bool *fieldValueIsDictionary = nullptr) const;
 
  private:
   PcpNodeRef _parentNode;

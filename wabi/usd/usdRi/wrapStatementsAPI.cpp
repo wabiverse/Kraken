@@ -69,29 +69,27 @@ void wrapUsdRiStatementsAPI()
   class_<This, bases<UsdAPISchemaBase>> cls("StatementsAPI");
 
   cls.def(init<UsdPrim>(arg("prim")))
-      .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-      .def(TfTypePythonClass())
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-      .def("Get", &This::Get, (arg("stage"), arg("path")))
-      .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-      .def("Apply", &This::Apply, (arg("prim")))
-      .staticmethod("Apply")
+    .def("Apply", &This::Apply, (arg("prim")))
+    .staticmethod("Apply")
 
-      .def("GetSchemaAttributeNames",
-           &This::GetSchemaAttributeNames,
-           arg("includeInherited") = true,
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-      .def("_GetStaticTfType",
-           (TfType const &(*)())TfType::Find<This>,
-           return_value_policy<return_by_value>())
-      .staticmethod("_GetStaticTfType")
+    .def("_GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("_GetStaticTfType")
 
-      .def(!self)
+    .def(!self)
 
-      .def("__repr__", ::_Repr);
+    .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
@@ -134,49 +132,39 @@ static SdfPathVector _GetModelScopedCoordinateSystems(const UsdRiStatementsAPI &
 WRAP_CUSTOM
 {
   _class
-      .def("CreateRiAttribute",
-           (UsdAttribute(UsdRiStatementsAPI::*)(
-               const TfToken &, const TfType &, const std::string &)) &
-               UsdRiStatementsAPI::CreateRiAttribute,
-           (arg("name"), arg("tfType"), arg("nameSpace") = "user"))
-      .def("CreateRiAttribute",
-           (UsdAttribute(UsdRiStatementsAPI::*)(
-               const TfToken &, const std::string &, const std::string &)) &
-               UsdRiStatementsAPI::CreateRiAttribute,
-           (arg("name"), arg("riType"), arg("nameSpace") = "user"))
-      .def("GetRiAttribute",
-           &UsdRiStatementsAPI::GetRiAttribute,
-           (arg("name"), arg("nameSpace") = "user"))
-      .def("GetRiAttributes",
-           &UsdRiStatementsAPI::GetRiAttributes,
-           (arg("nameSpace") = ""),
-           return_value_policy<TfPySequenceToList>())
-      .def("GetRiAttributeName", UsdRiStatementsAPI::GetRiAttributeName, (arg("prop")))
-      .staticmethod("GetRiAttributeName")
-      .def("GetRiAttributeNameSpace", &UsdRiStatementsAPI::GetRiAttributeNameSpace, (arg("prop")))
-      .staticmethod("GetRiAttributeNameSpace")
-      .def("IsRiAttribute", &UsdRiStatementsAPI::IsRiAttribute, (arg("prop")))
-      .staticmethod("IsRiAttribute")
-      .def("MakeRiAttributePropertyName",
-           &UsdRiStatementsAPI::MakeRiAttributePropertyName,
-           (arg("attrName")))
-      .staticmethod("MakeRiAttributePropertyName")
-      .def("SetCoordinateSystem", &UsdRiStatementsAPI::SetCoordinateSystem, (arg("coordSysName")))
-      .def("GetCoordinateSystem", &UsdRiStatementsAPI::GetCoordinateSystem)
-      .def("HasCoordinateSystem", &UsdRiStatementsAPI::HasCoordinateSystem)
+    .def("CreateRiAttribute",
+         (UsdAttribute(UsdRiStatementsAPI::*)(const TfToken &, const TfType &, const std::string &)) &
+           UsdRiStatementsAPI::CreateRiAttribute,
+         (arg("name"), arg("tfType"), arg("nameSpace") = "user"))
+    .def("CreateRiAttribute",
+         (UsdAttribute(UsdRiStatementsAPI::*)(const TfToken &, const std::string &, const std::string &)) &
+           UsdRiStatementsAPI::CreateRiAttribute,
+         (arg("name"), arg("riType"), arg("nameSpace") = "user"))
+    .def("GetRiAttribute", &UsdRiStatementsAPI::GetRiAttribute, (arg("name"), arg("nameSpace") = "user"))
+    .def("GetRiAttributes",
+         &UsdRiStatementsAPI::GetRiAttributes,
+         (arg("nameSpace") = ""),
+         return_value_policy<TfPySequenceToList>())
+    .def("GetRiAttributeName", UsdRiStatementsAPI::GetRiAttributeName, (arg("prop")))
+    .staticmethod("GetRiAttributeName")
+    .def("GetRiAttributeNameSpace", &UsdRiStatementsAPI::GetRiAttributeNameSpace, (arg("prop")))
+    .staticmethod("GetRiAttributeNameSpace")
+    .def("IsRiAttribute", &UsdRiStatementsAPI::IsRiAttribute, (arg("prop")))
+    .staticmethod("IsRiAttribute")
+    .def("MakeRiAttributePropertyName", &UsdRiStatementsAPI::MakeRiAttributePropertyName, (arg("attrName")))
+    .staticmethod("MakeRiAttributePropertyName")
+    .def("SetCoordinateSystem", &UsdRiStatementsAPI::SetCoordinateSystem, (arg("coordSysName")))
+    .def("GetCoordinateSystem", &UsdRiStatementsAPI::GetCoordinateSystem)
+    .def("HasCoordinateSystem", &UsdRiStatementsAPI::HasCoordinateSystem)
 
-      .def("SetScopedCoordinateSystem",
-           &UsdRiStatementsAPI::SetScopedCoordinateSystem,
-           (arg("coordSysName")))
-      .def("GetScopedCoordinateSystem", &UsdRiStatementsAPI::GetScopedCoordinateSystem)
-      .def("HasScopedCoordinateSystem", &UsdRiStatementsAPI::HasScopedCoordinateSystem)
+    .def("SetScopedCoordinateSystem", &UsdRiStatementsAPI::SetScopedCoordinateSystem, (arg("coordSysName")))
+    .def("GetScopedCoordinateSystem", &UsdRiStatementsAPI::GetScopedCoordinateSystem)
+    .def("HasScopedCoordinateSystem", &UsdRiStatementsAPI::HasScopedCoordinateSystem)
 
-      .def("GetModelCoordinateSystems",
-           _GetModelCoordinateSystems,
-           return_value_policy<TfPySequenceToList>())
-      .def("GetModelScopedCoordinateSystems",
-           _GetModelScopedCoordinateSystems,
-           return_value_policy<TfPySequenceToList>());
+    .def("GetModelCoordinateSystems", _GetModelCoordinateSystems, return_value_policy<TfPySequenceToList>())
+    .def("GetModelScopedCoordinateSystems",
+         _GetModelScopedCoordinateSystems,
+         return_value_policy<TfPySequenceToList>());
 }
 
 }  // anonymous namespace

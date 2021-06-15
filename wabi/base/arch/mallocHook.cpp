@@ -59,9 +59,7 @@ using std::string;
  */
 extern void *(*__MALLOC_HOOK_VOLATILE __libc_malloc)(size_t __size, const void *);
 extern void *(*__MALLOC_HOOK_VOLATILE __libc_realloc)(void *__ptr, size_t __size, const void *);
-extern void *(*__MALLOC_HOOK_VOLATILE __libc_memalign)(size_t __alignment,
-                                                       size_t __size,
-                                                       const void *);
+extern void *(*__MALLOC_HOOK_VOLATILE __libc_memalign)(size_t __alignment, size_t __size, const void *);
 extern void (*__MALLOC_HOOK_VOLATILE __libc_free)(void *__ptr, const void *);
 
 WABI_NAMESPACE_BEGIN
@@ -170,8 +168,7 @@ bool ArchIsStlAllocatorOff()
 
 bool ArchMallocHook::IsInitialized()
 {
-  return _underlyingMallocFunc || _underlyingReallocFunc || _underlyingMemalignFunc ||
-         _underlyingFreeFunc;
+  return _underlyingMallocFunc || _underlyingReallocFunc || _underlyingMemalignFunc || _underlyingFreeFunc;
 }
 
 #if defined(ARCH_OS_LINUX)
@@ -203,34 +200,33 @@ static Arch_MallocFunctionNames _GetUnderlyingMallocFunctionNames()
 {
   Arch_MallocFunctionNames names;
   if (ArchIsPxmallocActive()) {
-    names.mallocFn   = "__pxmalloc_malloc";
-    names.reallocFn  = "__pxmalloc_realloc";
+    names.mallocFn = "__pxmalloc_malloc";
+    names.reallocFn = "__pxmalloc_realloc";
     names.memalignFn = "__pxmalloc_memalign";
-    names.freeFn     = "__pxmalloc_free";
+    names.freeFn = "__pxmalloc_free";
   }
   else if (ArchIsPtmallocActive()) {
-    names.mallocFn   = "__ptmalloc3_malloc";
-    names.reallocFn  = "__ptmalloc3_realloc";
+    names.mallocFn = "__ptmalloc3_malloc";
+    names.reallocFn = "__ptmalloc3_realloc";
     names.memalignFn = "__ptmalloc3_memalign";
-    names.freeFn     = "__ptmalloc3_free";
+    names.freeFn = "__ptmalloc3_free";
   }
   else if (ArchIsJemallocActive()) {
-    names.mallocFn   = "__jemalloc_malloc";
-    names.reallocFn  = "__jemalloc_realloc";
+    names.mallocFn = "__jemalloc_malloc";
+    names.reallocFn = "__jemalloc_realloc";
     names.memalignFn = "__jemalloc_memalign";
-    names.freeFn     = "__jemalloc_free";
+    names.freeFn = "__jemalloc_free";
   }
 
   return names;
 }
 #endif
 
-bool ArchMallocHook::Initialize(
-    ARCH_UNUSED_ARG void *(*mallocWrapper)(size_t, const void *),
-    ARCH_UNUSED_ARG void *(*reallocWrapper)(void *, size_t, const void *),
-    ARCH_UNUSED_ARG void *(*memalignWrapper)(size_t, size_t, const void *),
-    ARCH_UNUSED_ARG void (*freeWrapper)(void *, const void *),
-    string *errMsg)
+bool ArchMallocHook::Initialize(ARCH_UNUSED_ARG void *(*mallocWrapper)(size_t, const void *),
+                                ARCH_UNUSED_ARG void *(*reallocWrapper)(void *, size_t, const void *),
+                                ARCH_UNUSED_ARG void *(*memalignWrapper)(size_t, size_t, const void *),
+                                ARCH_UNUSED_ARG void (*freeWrapper)(void *, const void *),
+                                string *errMsg)
 {
 #if !defined(ARCH_OS_LINUX)
   *errMsg = "ArchMallocHook functionality not implemented for non-linux systems";
@@ -266,9 +262,9 @@ bool ArchMallocHook::Initialize(
       (__libc_memalign && __libc_memalign != reinterpret_cast<void *>(memalign)) ||
       (__libc_free && __libc_free != reinterpret_cast<void *>(free))) {
     *errMsg =
-        "One or more malloc/realloc/free hook variables are already set.\n"
-        "This probably means another entity in the program is trying to\n"
-        "do its own profiling, pre-empting yours.";
+      "One or more malloc/realloc/free hook variables are already set.\n"
+      "This probably means another entity in the program is trying to\n"
+      "do its own profiling, pre-empting yours.";
     return false;
   }
 

@@ -105,8 +105,7 @@ UsdAttribute UsdShadeMaterial::GetSurfaceAttr() const
   return GetPrim().GetAttribute(UsdShadeTokens->outputsSurface);
 }
 
-UsdAttribute UsdShadeMaterial::CreateSurfaceAttr(VtValue const &defaultValue,
-                                                 bool writeSparsely) const
+UsdAttribute UsdShadeMaterial::CreateSurfaceAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdShadeTokens->outputsSurface,
                                     SdfValueTypeNames->Token,
@@ -121,8 +120,7 @@ UsdAttribute UsdShadeMaterial::GetDisplacementAttr() const
   return GetPrim().GetAttribute(UsdShadeTokens->outputsDisplacement);
 }
 
-UsdAttribute UsdShadeMaterial::CreateDisplacementAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute UsdShadeMaterial::CreateDisplacementAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdShadeTokens->outputsDisplacement,
                                     SdfValueTypeNames->Token,
@@ -137,8 +135,7 @@ UsdAttribute UsdShadeMaterial::GetVolumeAttr() const
   return GetPrim().GetAttribute(UsdShadeTokens->outputsVolume);
 }
 
-UsdAttribute UsdShadeMaterial::CreateVolumeAttr(VtValue const &defaultValue,
-                                                bool writeSparsely) const
+UsdAttribute UsdShadeMaterial::CreateVolumeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdShadeTokens->outputsVolume,
                                     SdfValueTypeNames->Token,
@@ -149,8 +146,7 @@ UsdAttribute UsdShadeMaterial::CreateVolumeAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -164,12 +160,12 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdShadeMaterial::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdShadeTokens->outputsSurface,
-      UsdShadeTokens->outputsDisplacement,
-      UsdShadeTokens->outputsVolume,
+    UsdShadeTokens->outputsSurface,
+    UsdShadeTokens->outputsDisplacement,
+    UsdShadeTokens->outputsVolume,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdShadeNodeGraph::GetSchemaAttributeNames(true), localNames);
+    UsdShadeNodeGraph::GetSchemaAttributeNames(true), localNames);
 
   if (includeInherited)
     return allNames;
@@ -215,15 +211,15 @@ WABI_NAMESPACE_BEGIN
 TF_DEFINE_PRIVATE_TOKENS(_tokens, (material));
 
 std::pair<UsdStagePtr, UsdEditTarget> UsdShadeMaterial::GetEditContextForVariant(
-    const TfToken &materialVariation,
-    const SdfLayerHandle &layer) const
+  const TfToken &materialVariation,
+  const SdfLayerHandle &layer) const
 {
   // First make sure localLayer belongs to the prim's stage
-  UsdPrim prim          = GetPrim();
+  UsdPrim prim = GetPrim();
   UsdStageWeakPtr stage = prim.GetStage();
 
   UsdVariantSet materialVariant = prim.GetVariantSet(UsdShadeTokens->materialVariant);
-  UsdEditTarget target          = stage->GetEditTarget();
+  UsdEditTarget target = stage->GetEditTarget();
   if (materialVariant.AddVariant(materialVariation) &&
       materialVariant.SetVariantSelection(materialVariation)) {
     target = materialVariant.GetVariantEditTarget(layer);
@@ -263,7 +259,7 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
   }
   TfToken masterSetName = masterVariantSetName.IsEmpty() ? UsdShadeTokens->materialVariant :
                                                            masterVariantSetName;
-  UsdStagePtr stage     = masterPrim.GetStage();
+  UsdStagePtr stage = masterPrim.GetStage();
   std::vector<std::string> allMaterialVariants;
 
   // Error Checking!
@@ -274,28 +270,27 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
   TF_FOR_ALL(material, materials)
   {
     if (!*material) {
-      TF_CODING_ERROR("Unable to process invalid material: %s",
-                      material->GetDescription().c_str());
+      TF_CODING_ERROR("Unable to process invalid material: %s", material->GetDescription().c_str());
       return false;
     }
     if (stage != material->GetStage()) {
       TF_CODING_ERROR(
-          "All material prims to be controlled by masterPrim "
-          "%s must originate on the same UsdStage as "
-          "masterPrim.  Prim %s does not.",
-          masterPrim.GetPath().GetText(),
-          material->GetPrimPath().GetText());
+        "All material prims to be controlled by masterPrim "
+        "%s must originate on the same UsdStage as "
+        "masterPrim.  Prim %s does not.",
+        masterPrim.GetPath().GetText(),
+        material->GetPrimPath().GetText());
       return false;
     }
 
     std::vector<std::string> materialVariants =
-        material->GetVariantSet(UsdShadeTokens->materialVariant).GetVariantNames();
+      material->GetVariantSet(UsdShadeTokens->materialVariant).GetVariantNames();
     if (materialVariants.size() == 0) {
       TF_CODING_ERROR(
-          "All Material prims to be switched by master "
-          "materialVariant must actually possess a "
-          "non-empty materialVariant themselves.  %s does not.",
-          material->GetPrimPath().GetText());
+        "All Material prims to be switched by master "
+        "materialVariant must actually possess a "
+        "non-empty materialVariant themselves.  %s does not.",
+        material->GetPrimPath().GetText());
       return false;
     }
 
@@ -304,10 +299,10 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
     }
     else if (allMaterialVariants != materialVariants) {
       TF_CODING_ERROR(
-          "All Material prims to be switched by master "
-          "materialVariant must possess the SAME material variants. "
-          "%s has a different set of variants.",
-          material->GetPrimPath().GetText());
+        "All Material prims to be switched by master "
+        "materialVariant must possess the SAME material variants. "
+        "%s has a different set of variants.",
+        material->GetPrimPath().GetText());
       return false;
     }
   }
@@ -317,10 +312,10 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
   {
     if (!masterSet.AddVariant(*varName)) {
       TF_RUNTIME_ERROR(
-          "Unable to create Material variant %s on prim %s. "
-          "Aborting master materialVariant creation.",
-          varName->c_str(),
-          masterPrim.GetPath().GetText());
+        "Unable to create Material variant %s on prim %s. "
+        "Aborting master materialVariant creation.",
+        varName->c_str(),
+        masterPrim.GetPath().GetText());
       return false;
     }
     masterSet.SetVariantSelection(*varName);
@@ -334,12 +329,12 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
           // Somehow, switching the variant caused this prim
           // to expire.
           TF_RUNTIME_ERROR(
-              "Switching master variant %s to %s "
-              "caused one or more material prims to "
-              "expire.  First such: %s.",
-              masterSetName.GetText(),
-              varName->c_str(),
-              material->GetDescription().c_str());
+            "Switching master variant %s to %s "
+            "caused one or more material prims to "
+            "expire.  First such: %s.",
+            masterSetName.GetText(),
+            varName->c_str(),
+            material->GetDescription().c_str());
           return false;
         }
 
@@ -355,9 +350,9 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
           }
           else {
             TF_RUNTIME_ERROR(
-                "Unable to create over for Material prim "
-                "%s, so cannot set its materialVariant",
-                derivedPath.GetText());
+              "Unable to create over for Material prim "
+              "%s, so cannot set its materialVariant",
+              derivedPath.GetText());
             return false;
           }
         }
@@ -389,8 +384,7 @@ UsdShadeMaterial UsdShadeMaterial::GetBaseMaterial() const
 SdfPath UsdShadeMaterial::GetBaseMaterialPath() const
 {
   SdfPath parentMaterialPath = FindBaseMaterialPathInPrimIndex(
-      GetPrim().GetPrimIndex(),
-      [this](const SdfPath &p) { return bool(_GetMaterialAtPath(GetPrim(), p)); });
+    GetPrim().GetPrimIndex(), [this](const SdfPath &p) { return bool(_GetMaterialAtPath(GetPrim(), p)); });
 
   if (parentMaterialPath != SdfPath::EmptyPath()) {
     UsdPrim p = GetPrim().GetStage()->GetPrimAtPath(parentMaterialPath);
@@ -404,9 +398,8 @@ SdfPath UsdShadeMaterial::GetBaseMaterialPath() const
 }
 
 /* static */
-SdfPath UsdShadeMaterial::FindBaseMaterialPathInPrimIndex(
-    const PcpPrimIndex &primIndex,
-    const PathPredicate &pathIsMaterialPredicate)
+SdfPath UsdShadeMaterial::FindBaseMaterialPathInPrimIndex(const PcpPrimIndex &primIndex,
+                                                          const PathPredicate &pathIsMaterialPredicate)
 {
   for (const PcpNodeRef &node : primIndex.GetNodeRange()) {
     if (PcpIsSpecializeArc(node.GetArcType())) {
@@ -476,8 +469,8 @@ static TfToken _GetOutputName(const TfToken &baseName, const TfToken &renderCont
 }
 
 UsdShadeAttributeVector UsdShadeMaterial::_ComputeNamedOutputSources(
-    const TfToken &baseName,
-    const TfTokenVector &contextVector) const
+  const TfToken &baseName,
+  const TfTokenVector &contextVector) const
 {
   TRACE_FUNCTION();
   bool universalRenderContextComputed = false;
@@ -486,10 +479,9 @@ UsdShadeAttributeVector UsdShadeMaterial::_ComputeNamedOutputSources(
     universalRenderContextComputed |= (renderContext == UsdShadeTokens->universalRenderContext);
 
     const TfToken outputName = _GetOutputName(baseName, renderContext);
-    UsdShadeOutput output    = GetOutput(outputName);
+    UsdShadeOutput output = GetOutput(outputName);
     if (output) {
-      if (renderContext == UsdShadeTokens->universalRenderContext &&
-          !output.GetAttr().IsAuthored()) {
+      if (renderContext == UsdShadeTokens->universalRenderContext && !output.GetAttr().IsAuthored()) {
         return {};
       }
 
@@ -499,17 +491,17 @@ UsdShadeAttributeVector UsdShadeMaterial::_ComputeNamedOutputSources(
       // constant values, which can't be used by a renderer as a terminal
       // node of the network. This also makes this call quite a bit cheaper.
       UsdShadeAttributeVector valueAttrs = UsdShadeUtils::GetValueProducingAttributes(
-          output, /*shaderOutputsOnly*/ true);
+        output, /*shaderOutputsOnly*/ true);
 
       // XXX To remove this limitation we need to change the APIs for the
       //     Compute*Source calls to forward multiple result attributes
       if (valueAttrs.size() > 1) {
         TF_WARN(
-            "Multiple connected sources for output %s:%s on material"
-            " %s. Only the first will be consider as a terminal.",
-            renderContext.GetText(),
-            baseName.GetText(),
-            GetPath().GetText());
+          "Multiple connected sources for output %s:%s on material"
+          " %s. Only the first will be consider as a terminal.",
+          renderContext.GetText(),
+          baseName.GetText(),
+          GetPath().GetText());
       }
       // If we didn't find any connected attributes continue checking the
       // renderContexts, then as a fallback we will check the universal
@@ -521,9 +513,8 @@ UsdShadeAttributeVector UsdShadeMaterial::_ComputeNamedOutputSources(
   }
 
   if (!universalRenderContextComputed) {
-    const TfToken universalOutputName = _GetOutputName(baseName,
-                                                       UsdShadeTokens->universalRenderContext);
-    UsdShadeOutput universalOutput    = GetOutput(universalOutputName);
+    const TfToken universalOutputName = _GetOutputName(baseName, UsdShadeTokens->universalRenderContext);
+    UsdShadeOutput universalOutput = GetOutput(universalOutputName);
     if (TF_VERIFY(universalOutput)) {
       return UsdShadeUtils::GetValueProducingAttributes(universalOutput,
                                                         /*shaderOutputsOnly*/ true);
@@ -559,13 +550,12 @@ UsdShadeShader UsdShadeMaterial::_ComputeNamedOutputShader(const TfToken &baseNa
   return UsdShadeShader(valueAttrs[0].GetPrim());
 }
 
-std::vector<UsdShadeOutput> UsdShadeMaterial::_GetOutputsForTerminalName(
-    const TfToken &terminalName) const
+std::vector<UsdShadeOutput> UsdShadeMaterial::_GetOutputsForTerminalName(const TfToken &terminalName) const
 {
   std::vector<UsdShadeOutput> outputs;
 
   UsdShadeOutput universalOutput = GetOutput(
-      _GetOutputName(terminalName, UsdShadeTokens->universalRenderContext));
+    _GetOutputName(terminalName, UsdShadeTokens->universalRenderContext));
   if (universalOutput) {
     outputs.push_back(std::move(universalOutput));
   }
@@ -574,8 +564,7 @@ std::vector<UsdShadeOutput> UsdShadeMaterial::_GetOutputsForTerminalName(
     // For an output to be considered specific to a renderContext, its base
     // name should be of the form "<renderContext>:...", so there must be
     // at least two components to the base name.
-    const std::vector<std::string> baseNameComponents = SdfPath::TokenizeIdentifier(
-        output.GetBaseName());
+    const std::vector<std::string> baseNameComponents = SdfPath::TokenizeIdentifier(output.GetBaseName());
     if (baseNameComponents.size() < 2u) {
       continue;
     }
@@ -590,8 +579,7 @@ std::vector<UsdShadeOutput> UsdShadeMaterial::_GetOutputsForTerminalName(
 
 UsdShadeOutput UsdShadeMaterial::CreateSurfaceOutput(const TfToken &renderContext) const
 {
-  return CreateOutput(_GetOutputName(UsdShadeTokens->surface, renderContext),
-                      SdfValueTypeNames->Token);
+  return CreateOutput(_GetOutputName(UsdShadeTokens->surface, renderContext), SdfValueTypeNames->Token);
 }
 
 UsdShadeOutput UsdShadeMaterial::GetSurfaceOutput(const TfToken &renderContext) const
@@ -609,8 +597,7 @@ UsdShadeShader UsdShadeMaterial::ComputeSurfaceSource(const TfToken &renderConte
                                                       UsdShadeAttributeType *sourceType) const
 {
   TRACE_FUNCTION();
-  return _ComputeNamedOutputShader(
-      UsdShadeTokens->surface, {renderContext}, sourceName, sourceType);
+  return _ComputeNamedOutputShader(UsdShadeTokens->surface, {renderContext}, sourceName, sourceType);
 }
 
 UsdShadeShader UsdShadeMaterial::ComputeSurfaceSource(const TfTokenVector &contextVector,
@@ -623,8 +610,7 @@ UsdShadeShader UsdShadeMaterial::ComputeSurfaceSource(const TfTokenVector &conte
 
 UsdShadeOutput UsdShadeMaterial::CreateDisplacementOutput(const TfToken &renderContext) const
 {
-  return CreateOutput(_GetOutputName(UsdShadeTokens->displacement, renderContext),
-                      SdfValueTypeNames->Token);
+  return CreateOutput(_GetOutputName(UsdShadeTokens->displacement, renderContext), SdfValueTypeNames->Token);
 }
 
 UsdShadeOutput UsdShadeMaterial::GetDisplacementOutput(const TfToken &renderContext) const
@@ -642,8 +628,7 @@ UsdShadeShader UsdShadeMaterial::ComputeDisplacementSource(const TfToken &render
                                                            UsdShadeAttributeType *sourceType) const
 {
   TRACE_FUNCTION();
-  return _ComputeNamedOutputShader(
-      UsdShadeTokens->displacement, {renderContext}, sourceName, sourceType);
+  return _ComputeNamedOutputShader(UsdShadeTokens->displacement, {renderContext}, sourceName, sourceType);
 }
 
 UsdShadeShader UsdShadeMaterial::ComputeDisplacementSource(const TfTokenVector &contextVector,
@@ -651,14 +636,12 @@ UsdShadeShader UsdShadeMaterial::ComputeDisplacementSource(const TfTokenVector &
                                                            UsdShadeAttributeType *sourceType) const
 {
   TRACE_FUNCTION();
-  return _ComputeNamedOutputShader(
-      UsdShadeTokens->displacement, contextVector, sourceName, sourceType);
+  return _ComputeNamedOutputShader(UsdShadeTokens->displacement, contextVector, sourceName, sourceType);
 }
 
 UsdShadeOutput UsdShadeMaterial::CreateVolumeOutput(const TfToken &renderContext) const
 {
-  return CreateOutput(_GetOutputName(UsdShadeTokens->volume, renderContext),
-                      SdfValueTypeNames->Token);
+  return CreateOutput(_GetOutputName(UsdShadeTokens->volume, renderContext), SdfValueTypeNames->Token);
 }
 
 UsdShadeOutput UsdShadeMaterial::GetVolumeOutput(const TfToken &renderContext) const
@@ -676,8 +659,7 @@ UsdShadeShader UsdShadeMaterial::ComputeVolumeSource(const TfToken &renderContex
                                                      UsdShadeAttributeType *sourceType) const
 {
   TRACE_FUNCTION();
-  return _ComputeNamedOutputShader(
-      UsdShadeTokens->volume, {renderContext}, sourceName, sourceType);
+  return _ComputeNamedOutputShader(UsdShadeTokens->volume, {renderContext}, sourceName, sourceType);
 }
 
 UsdShadeShader UsdShadeMaterial::ComputeVolumeSource(const TfTokenVector &contextVector,
@@ -693,16 +675,14 @@ class UsdShadeMaterial_ConnectableAPIBehavior : public UsdShadeNodeGraph::Connec
                                const UsdAttribute &source,
                                std::string *reason) override
   {
-    return _CanConnectInputToSource(
-        input, source, reason, ConnectableNodeTypes::DerivedContainerNodes);
+    return _CanConnectInputToSource(input, source, reason, ConnectableNodeTypes::DerivedContainerNodes);
   }
 
   bool CanConnectOutputToSource(const UsdShadeOutput &output,
                                 const UsdAttribute &source,
                                 std::string *reason)
   {
-    return _CanConnectOutputToSource(
-        output, source, reason, ConnectableAPIBehavior::DerivedContainerNodes);
+    return _CanConnectOutputToSource(output, source, reason, ConnectableAPIBehavior::DerivedContainerNodes);
   }
 
   bool IsContainer() const
@@ -714,8 +694,7 @@ class UsdShadeMaterial_ConnectableAPIBehavior : public UsdShadeNodeGraph::Connec
 
 TF_REGISTRY_FUNCTION(UsdShadeConnectableAPI)
 {
-  UsdShadeRegisterConnectableAPIBehavior<UsdShadeMaterial,
-                                         UsdShadeMaterial_ConnectableAPIBehavior>();
+  UsdShadeRegisterConnectableAPIBehavior<UsdShadeMaterial, UsdShadeMaterial_ConnectableAPIBehavior>();
 }
 
 WABI_NAMESPACE_END

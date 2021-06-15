@@ -87,15 +87,14 @@ explicit {{MAT}}(const GfQuat{{SCL[0]}} & rot);
 
 { % endblock customConstructors % }
 
-{ % block customFunctions % }
-/// Makes the matrix orthonormal in place. This is an iterative method that
-/// is much more stable than the previous cross/cross method.  If the
-/// iterative method does not converge, a warning is issued.
-///
-/// Returns true if the iteration converged, false otherwise.  Leaves any
-/// translation part of the matrix unchanged.  If \a issueWarning is true,
-/// this method will issue a warning if the iteration does not converge,
-/// otherwise it will be silent.
+{ % block customFunctions % }  /// Makes the matrix orthonormal in place. This is an iterative method that
+                               /// is much more stable than the previous cross/cross method.  If the
+                               /// iterative method does not converge, a warning is issued.
+                               ///
+                               /// Returns true if the iteration converged, false otherwise.  Leaves any
+                               /// translation part of the matrix unchanged.  If \a issueWarning is true,
+                               /// this method will issue a warning if the iteration does not converge,
+                               /// otherwise it will be silent.
 GF_API bool
 Orthonormalize(bool issueWarning = true);
 
@@ -129,14 +128,13 @@ bool IsLeftHanded() const
 }
 { % endblock customFunctions % }
 
-    { % block customXformFunctions % }
-    /// Sets matrix to specify a uniform scaling by \e scaleFactor.
-    GF_API{{MAT}} &
-    SetScale({
-      {
-        SCL
-      }
-    } scaleFactor);
+  { % block customXformFunctions % }  /// Sets matrix to specify a uniform scaling by \e scaleFactor.
+  GF_API{{MAT}} &
+  SetScale({
+    {
+      SCL
+    }
+  } scaleFactor);
 
 /// \name 3D Transformation Utilities
 /// @{
@@ -190,12 +188,12 @@ private:
 /// Set the matrix to the rotation given by a quaternion,
 /// defined by the real component \p r and imaginary components \p i.
 void _SetRotateFromQuat(
+  {
     {
-      {
-        SCL
-      }
-    } r,
-    const GfVec3{{SCL[0]}} & i);
+      SCL
+    }
+  } r,
+  const GfVec3{{SCL[0]}} & i);
 
 {
   % endblock customXformFunctions %

@@ -93,8 +93,7 @@ TfToken UsdGeomConstraintTarget::GetConstraintAttrName(const std::string &constr
   return TfToken(_tokens->constraintTargets.GetString() + ":" + constraintName);
 }
 
-GfMatrix4d UsdGeomConstraintTarget::ComputeInWorldSpace(UsdTimeCode time,
-                                                        UsdGeomXformCache *xfCache) const
+GfMatrix4d UsdGeomConstraintTarget::ComputeInWorldSpace(UsdTimeCode time, UsdGeomXformCache *xfCache) const
 {
   if (!IsDefined()) {
     TF_CODING_ERROR("Invalid constraint target.");

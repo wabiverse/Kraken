@@ -66,53 +66,53 @@ bool FsHelpersExamineFiles(NdrNodeDiscoveryResultVec *foundNodes,
 
     // Does the extension match one of the known-good extensions?
     NdrStringVec::const_iterator extIter = std::find(
-        allowedExtensions.begin(), allowedExtensions.end(), extension);
+      allowedExtensions.begin(), allowedExtensions.end(), extension);
 
     if (extIter != allowedExtensions.end()) {
       // Found a node file w/ allowed extension
-      std::string uri               = TfStringCatPaths(dirPath, fileName);
-      std::string identifier        = TfStringGetBeforeSuffix(fileName, '.');
+      std::string uri = TfStringCatPaths(dirPath, fileName);
+      std::string identifier = TfStringGetBeforeSuffix(fileName, '.');
       std::string identifierAndType = identifier + "-" + extension;
 
       // Don't allow duplicates. A "duplicate" is considered to be a node
       // with the same name AND discovery type.
       if (!foundNodesWithTypes->insert(identifierAndType).second) {
         TF_DEBUG(NDR_DISCOVERY)
-            .Msg(
-                "Found a duplicate node with identifier [%s] "
-                "and type [%s] at URI [%s]; ignoring.\n",
-                identifier.c_str(),
-                extension.c_str(),
-                uri.c_str());
+          .Msg(
+            "Found a duplicate node with identifier [%s] "
+            "and type [%s] at URI [%s]; ignoring.\n",
+            identifier.c_str(),
+            extension.c_str(),
+            uri.c_str());
         continue;
       }
 
       const auto discoveryType = TfToken(extension);
       foundNodes->emplace_back(
-          // Identifier
-          NdrIdentifier(identifier),
+        // Identifier
+        NdrIdentifier(identifier),
 
-          // Version.  Use a default version for the benefit of
-          // naive clients.
-          NdrVersion().GetAsDefault(),
+        // Version.  Use a default version for the benefit of
+        // naive clients.
+        NdrVersion().GetAsDefault(),
 
-          // Name
-          identifier,
+        // Name
+        identifier,
 
-          // Family
-          TfToken(),
+        // Family
+        TfToken(),
 
-          // Discovery type
-          discoveryType,
+        // Discovery type
+        discoveryType,
 
-          // Source type
-          context ? context->GetSourceType(discoveryType) : TfToken(),
+        // Source type
+        context ? context->GetSourceType(discoveryType) : TfToken(),
 
-          // URI
-          uri,
+        // URI
+        uri,
 
-          // Resolved URI
-          ArGetResolver().Resolve(uri));
+        // Resolved URI
+        ArGetResolver().Resolve(uri));
     }
   }
 

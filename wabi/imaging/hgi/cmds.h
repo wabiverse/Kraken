@@ -74,7 +74,7 @@ class HgiCmds {
 
  private:
   HgiCmds &operator=(const HgiCmds &) = delete;
-  HgiCmds(const HgiCmds &)            = delete;
+  HgiCmds(const HgiCmds &) = delete;
 
   bool _submitted;
 };

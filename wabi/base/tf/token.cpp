@@ -164,11 +164,10 @@ struct Tf_TokenRegistry {
 
       if (!_sets[setNum].erase(*rep)) {
         repFoundInSet = false;
-        repString     = rep->_str;
+        repString = rep->_str;
       }
     }
-    TF_VERIFY(
-        repFoundInSet, "failed to find token '%s' in table for destruction", repString.c_str());
+    TF_VERIFY(repFoundInSet, "failed to find token '%s' in table for destruction", repString.c_str());
   }
 
   void _DumpStats() const
@@ -214,7 +213,7 @@ struct Tf_TokenRegistry {
   static inline uint64_t _ComputeCompareCode(char const *p)
   {
     uint64_t compCode = 0;
-    int nchars        = sizeof(compCode);
+    int nchars = sizeof(compCode);
     while (nchars--) {
       compCode |= static_cast<uint64_t>(*p) << (8 * nchars);
       if (*p) {
@@ -240,7 +239,7 @@ struct Tf_TokenRegistry {
     // Insert or lookup an existing.
     _RepSet::iterator iter = _sets[setNum].find(_LookupRep(_CStr(s)));
     if (iter != _sets[setNum].end()) {
-      _RepPtr rep    = &(*iter);
+      _RepPtr rep = &(*iter);
       bool isCounted = rep->_isCounted;
       if (isCounted) {
         if (makeImmortal)
@@ -253,9 +252,9 @@ struct Tf_TokenRegistry {
     else {
       // No entry present, add a new entry.
       TfAutoMallocTag noname("TfToken");
-      _RepPtr rep       = &(*_sets[setNum].insert(TfToken::_Rep(s)).first);
-      rep->_isCounted   = !makeImmortal;
-      rep->_setNum      = setNum;
+      _RepPtr rep = &(*_sets[setNum].insert(TfToken::_Rep(s)).first);
+      rep->_isCounted = !makeImmortal;
+      rep->_setNum = setNum;
       rep->_compareCode = _ComputeCompareCode(rep->_cstr);
       if (!makeImmortal)
         rep->_refCount = 1;
@@ -300,19 +299,19 @@ string const &TfToken::_GetEmptyString()
 }
 
 TfToken::TfToken(const string &s)
-    : _rep(Tf_TokenRegistry::_GetInstance()._GetPtrStr(s, /*makeImmortal*/ false))
+  : _rep(Tf_TokenRegistry::_GetInstance()._GetPtrStr(s, /*makeImmortal*/ false))
 {}
 
 TfToken::TfToken(const char *s)
-    : _rep(Tf_TokenRegistry::_GetInstance()._GetPtrChar(s, /*makeImmortal*/ false))
+  : _rep(Tf_TokenRegistry::_GetInstance()._GetPtrChar(s, /*makeImmortal*/ false))
 {}
 
 TfToken::TfToken(const string &s, _ImmortalTag)
-    : _rep(Tf_TokenRegistry::_GetInstance()._GetPtrStr(s, /*makeImmortal*/ true))
+  : _rep(Tf_TokenRegistry::_GetInstance()._GetPtrStr(s, /*makeImmortal*/ true))
 {}
 
 TfToken::TfToken(const char *s, _ImmortalTag)
-    : _rep(Tf_TokenRegistry::_GetInstance()._GetPtrChar(s, /*makeImmortal*/ true))
+  : _rep(Tf_TokenRegistry::_GetInstance()._GetPtrChar(s, /*makeImmortal*/ true))
 {}
 
 TfToken TfToken::Find(const string &s)

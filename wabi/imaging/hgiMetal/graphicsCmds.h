@@ -118,9 +118,9 @@ class HgiMetalGraphicsCmds final : public HgiGraphicsCmds {
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
-  HgiMetalGraphicsCmds()        = delete;
+  HgiMetalGraphicsCmds() = delete;
   HgiMetalGraphicsCmds &operator=(const HgiMetalGraphicsCmds &) = delete;
-  HgiMetalGraphicsCmds(const HgiMetalGraphicsCmds &)            = delete;
+  HgiMetalGraphicsCmds(const HgiMetalGraphicsCmds &) = delete;
 
   void _CreateEncoder();
 

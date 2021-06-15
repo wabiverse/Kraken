@@ -211,7 +211,7 @@ class PcpPrimIndex {
   PCP_API
   void DumpToDotGraph(const std::string &filename,
                       bool includeInheritOriginInfo = true,
-                      bool includeMaps              = false) const;
+                      bool includeMaps = false) const;
 
   /// @}
 
@@ -321,9 +321,7 @@ class PcpPrimIndexOutputs {
   ///
   /// Returns the node in this object's prim index corresponding to the root
   /// node of \p childOutputs' prim index.
-  PcpNodeRef Append(PcpPrimIndexOutputs &&childOutputs,
-                    const PcpArc &arcToParent,
-                    PcpErrorBasePtr *error);
+  PcpNodeRef Append(PcpPrimIndexOutputs &&childOutputs, const PcpArc &arcToParent, PcpErrorBasePtr *error);
 };
 
 /// Free function version for generic code and ADL.
@@ -339,13 +337,13 @@ inline void swap(PcpPrimIndexOutputs &l, PcpPrimIndexOutputs &r)
 class PcpPrimIndexInputs {
  public:
   PcpPrimIndexInputs()
-      : cache(nullptr),
-        variantFallbacks(nullptr),
-        includedPayloads(nullptr),
-        includedPayloadsMutex(nullptr),
-        parentIndex(nullptr),
-        cull(true),
-        usd(false)
+    : cache(nullptr),
+      variantFallbacks(nullptr),
+      includedPayloads(nullptr),
+      includedPayloadsMutex(nullptr),
+      parentIndex(nullptr),
+      cull(true),
+      usd(false)
   {}
 
   /// Returns true if prim index computations using this parameters object

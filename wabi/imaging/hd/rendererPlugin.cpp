@@ -56,8 +56,7 @@ HdRenderDelegate *HdRendererPlugin::CreateRenderDelegate(HdRenderSettingsMap con
 // in this compilation unit.
 HdRendererPlugin::~HdRendererPlugin() = default;
 
-HdPluginRenderDelegateUniqueHandle HdRendererPlugin::CreateDelegate(
-    HdRenderSettingsMap const &settingsMap)
+HdPluginRenderDelegateUniqueHandle HdRendererPlugin::CreateDelegate(HdRenderSettingsMap const &settingsMap)
 {
   if (!IsSupported()) {
     return nullptr;
@@ -65,8 +64,7 @@ HdPluginRenderDelegateUniqueHandle HdRendererPlugin::CreateDelegate(
 
   HdRendererPluginRegistry::GetInstance().AddPluginReference(this);
 
-  return HdPluginRenderDelegateUniqueHandle(HdRendererPluginHandle(this),
-                                            CreateRenderDelegate(settingsMap));
+  return HdPluginRenderDelegateUniqueHandle(HdRendererPluginHandle(this), CreateRenderDelegate(settingsMap));
 }
 
 TfToken HdRendererPlugin::GetPluginId() const

@@ -82,9 +82,7 @@ class HdCyclesMaterial final : public HdMaterial {
    * @param renderParam State
    * @param dirtyBits Which bits of scene data has changed
    */
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   /**
    * @brief Inform the scene graph which state needs to be downloaded in
@@ -100,9 +98,9 @@ class HdCyclesMaterial final : public HdMaterial {
    */
   void Reload()
 #if WABI_VERSION_MAJOR > 19
-      override
+    override
 #endif
-      ;
+    ;
 
   /**
    * @return Return true if this material is valid

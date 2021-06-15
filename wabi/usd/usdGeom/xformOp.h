@@ -45,8 +45,8 @@ WABI_NAMESPACE_BEGIN
 /// \hideinitializer
 #define USDGEOM_XFORM_OP_TYPES \
   (translate)(scale)( \
-      rotateX)(rotateY)(rotateZ)(rotateXYZ)(rotateXZY)(rotateYXZ)(rotateYZX)(rotateZXY)(rotateZYX)(orient)(transform)(( \
-      resetXformStack, "!resetXformStack!"))
+    rotateX)(rotateY)(rotateZ)(rotateXYZ)(rotateXZY)(rotateYXZ)(rotateYZX)(rotateZXY)(rotateZYX)(orient)(transform)(( \
+    resetXformStack, "!resetXformStack!"))
 
 /// \anchor UsdGeomXformOpTypes
 /// Provides TfToken's for use in conjunction with UsdGeomXformable::Add
@@ -195,9 +195,7 @@ class UsdGeomXformOp {
   /// the opType, the (optional) suffix and whether it is an inverse
   /// operation.
   USDGEOM_API
-  static TfToken GetOpName(const Type opType,
-                           const TfToken &opSuffix = TfToken(),
-                           bool inverse            = false);
+  static TfToken GetOpName(const Type opType, const TfToken &opSuffix = TfToken(), bool inverse = false);
 
   // -------------------------------------------------------
   /// \name Data Encoding Queries
@@ -260,11 +258,11 @@ class UsdGeomXformOp {
     if (v.IsEmpty()) {
       TfType thisType = GetTypeName().GetType();
       TF_CODING_ERROR(
-          "Unable to convert xformOp %s's value from %s to "
-          "requested type %s.",
-          GetAttr().GetPath().GetText(),
-          thisType.GetTypeName().c_str(),
-          TfType::GetCanonicalTypeName(typeid(*value)).c_str());
+        "Unable to convert xformOp %s's value from %s to "
+        "requested type %s.",
+        GetAttr().GetPath().GetText(),
+        thisType.GetTypeName().c_str(),
+        TfType::GetCanonicalTypeName(typeid(*value)).c_str());
       return false;
     }
     *value = v.UncheckedGet<T>();
@@ -281,9 +279,7 @@ class UsdGeomXformOp {
   /// \ref UsdGeomXformOp::Type or if \p opVal cannot be converted
   /// to a suitable input to \p opType
   USDGEOM_API
-  static GfMatrix4d GetOpTransform(Type const opType,
-                                   VtValue const &opVal,
-                                   bool isInverseOp = false);
+  static GfMatrix4d GetOpTransform(Type const opType, VtValue const &opVal, bool isInverseOp = false);
 
   /// Return the 4x4 matrix that applies the transformation encoded
   /// in this op at \p time.
@@ -408,9 +404,9 @@ class UsdGeomXformOp {
     // if this is an inverse op.
     if (_isInverseOp) {
       TF_CODING_ERROR(
-          "Cannot set a value on the inverse xformOp '%s'. "
-          "Please set value on the paired non-inverse xformOp instead.",
-          GetOpName().GetText());
+        "Cannot set a value on the inverse xformOp '%s'. "
+        "Please set value on the paired non-inverse xformOp instead.",
+        GetOpName().GetText());
       return false;
     }
 
@@ -465,9 +461,7 @@ class UsdGeomXformOp {
   // The attribute that's returned will be invalid if the
   // corresponding xformOp attribute doesn't exist on the prim.
   //
-  static UsdAttribute _GetXformOpAttr(UsdPrim const &prim,
-                                      const TfToken &opName,
-                                      bool *isInverseOp);
+  static UsdAttribute _GetXformOpAttr(UsdPrim const &prim, const TfToken &opName, bool *isInverseOp);
 
   // Private method for creating and using an attribute query interally for
   // this xformOp.
@@ -496,7 +490,7 @@ class UsdGeomXformOp {
                  Type const opType,
                  Precision const precision,
                  TfToken const &opSuffix = TfToken(),
-                 bool inverse            = false);
+                 bool inverse = false);
 
   // UsdAttributeQuery already contains a copy of the associated UsdAttribute.
   // To minimize the memory usage, we only store one or the other.
@@ -570,8 +564,8 @@ class UsdGeomXformOp {
   struct _GetTimeSamplesInInterval : public boost::static_visitor<bool> {
 
     _GetTimeSamplesInInterval(const GfInterval &interval_, std::vector<double> *times_)
-        : interval(interval_),
-          times(times_)
+      : interval(interval_),
+        times(times_)
     {}
 
     bool operator()(const UsdAttribute &attr) const

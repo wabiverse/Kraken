@@ -112,8 +112,7 @@ UsdAttribute UsdRiRisIntegrator::GetFilePathAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->filePath);
 }
 
-UsdAttribute UsdRiRisIntegrator::CreateFilePathAttr(VtValue const &defaultValue,
-                                                    bool writeSparsely) const
+UsdAttribute UsdRiRisIntegrator::CreateFilePathAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->filePath,
                                     SdfValueTypeNames->Asset,
@@ -128,8 +127,7 @@ UsdAttribute UsdRiRisIntegrator::GetArgsPathAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->argsPath);
 }
 
-UsdAttribute UsdRiRisIntegrator::CreateArgsPathAttr(VtValue const &defaultValue,
-                                                    bool writeSparsely) const
+UsdAttribute UsdRiRisIntegrator::CreateArgsPathAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->argsPath,
                                     SdfValueTypeNames->Asset,
@@ -140,8 +138,7 @@ UsdAttribute UsdRiRisIntegrator::CreateArgsPathAttr(VtValue const &defaultValue,
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                       const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -155,11 +152,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
 const TfTokenVector &UsdRiRisIntegrator::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-      UsdRiTokens->filePath,
-      UsdRiTokens->argsPath,
+    UsdRiTokens->filePath,
+    UsdRiTokens->argsPath,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-      UsdTyped::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

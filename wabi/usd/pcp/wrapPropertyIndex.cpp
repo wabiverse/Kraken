@@ -57,9 +57,8 @@ void wrapPropertyIndex()
   typedef PcpPropertyIndex This;
 
   class_<This>("PropertyIndex", "", no_init)
-      .add_property("propertyStack", _WrapPropertyStack)
-      .add_property("localPropertyStack", _WrapLocalPropertyStack)
-      .add_property(
-          "localErrors",
-          make_function(&This::GetLocalErrors, return_value_policy<TfPySequenceToList>()));
+    .add_property("propertyStack", _WrapPropertyStack)
+    .add_property("localPropertyStack", _WrapLocalPropertyStack)
+    .add_property("localErrors",
+                  make_function(&This::GetLocalErrors, return_value_policy<TfPySequenceToList>()));
 }

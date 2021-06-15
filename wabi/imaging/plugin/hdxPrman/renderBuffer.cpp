@@ -27,13 +27,13 @@
 WABI_NAMESPACE_BEGIN
 
 HdxPrmanRenderBuffer::HdxPrmanRenderBuffer(SdfPath const &id)
-    : HdRenderBuffer(id),
-      _width(0),
-      _height(0),
-      _format(HdFormatInvalid),
-      _buffer(),
-      _mappers(0),
-      _converged(false)
+  : HdRenderBuffer(id),
+    _width(0),
+    _height(0),
+    _format(HdFormatInvalid),
+    _buffer(),
+    _mappers(0),
+    _converged(false)
 {}
 
 HdxPrmanRenderBuffer::~HdxPrmanRenderBuffer()
@@ -45,7 +45,7 @@ void HdxPrmanRenderBuffer::_Deallocate()
   // recovery path...
   TF_VERIFY(!IsMapped());
 
-  _width  = 0;
+  _width = 0;
   _height = 0;
   _format = HdFormatInvalid;
   _buffer.resize(0);
@@ -66,16 +66,16 @@ bool HdxPrmanRenderBuffer::Allocate(GfVec3i const &dimensions, HdFormat format, 
 
   if (dimensions[2] != 1) {
     TF_WARN(
-        "Render buffer allocated with dims <%d, %d, %d> and"
-        " format %s; depth must be 1!",
-        dimensions[0],
-        dimensions[1],
-        dimensions[2],
-        TfEnum::GetName(format).c_str());
+      "Render buffer allocated with dims <%d, %d, %d> and"
+      " format %s; depth must be 1!",
+      dimensions[0],
+      dimensions[1],
+      dimensions[2],
+      TfEnum::GetName(format).c_str());
     return false;
   }
 
-  _width  = dimensions[0];
+  _width = dimensions[0];
   _height = dimensions[1];
   _format = format;
   _buffer.resize(_GetBufferSize(GfVec2i(_width, _height), format));
@@ -88,8 +88,8 @@ static void _ConvertPixel(HdFormat dstFormat, uint8_t *dst, HdFormat srcFormat, 
 {
   HdFormat srcComponentFormat = HdGetComponentFormat(srcFormat);
   HdFormat dstComponentFormat = HdGetComponentFormat(dstFormat);
-  size_t srcComponentCount    = HdGetComponentCount(srcFormat);
-  size_t dstComponentCount    = HdGetComponentCount(dstFormat);
+  size_t srcComponentCount = HdGetComponentCount(srcFormat);
+  size_t dstComponentCount = HdGetComponentCount(dstFormat);
 
   for (size_t c = 0; c < dstComponentCount; ++c) {
     T readValue = 0;
@@ -157,13 +157,10 @@ void HdxPrmanRenderBuffer::Blit(HdFormat format, int width, int height, uint8_t 
   else if (_format == format) {
     size_t pixelSize = HdDataSizeOfFormat(_format);
 
-    if (static_cast<unsigned int>(width) == _width &&
-        static_cast<unsigned int>(height) == _height) {
+    if (static_cast<unsigned int>(width) == _width && static_cast<unsigned int>(height) == _height) {
       // Awesome! Blit line by line.
       for (unsigned int j = 0; j < _height; ++j) {
-        memcpy(&_buffer[(j * _width) * pixelSize],
-               &data[(j * width) * pixelSize],
-               _width * pixelSize);
+        memcpy(&_buffer[(j * _width) * pixelSize], &data[(j * width) * pixelSize], _width * pixelSize);
       }
     }
     else {
@@ -174,9 +171,7 @@ void HdxPrmanRenderBuffer::Blit(HdFormat format, int width, int height, uint8_t 
         for (unsigned int i = 0; i < _width; ++i) {
           unsigned int ii = scalei * i;
           unsigned int jj = scalej * j;
-          memcpy(&_buffer[(j * _width + i) * pixelSize],
-                 &data[(jj * width + ii) * pixelSize],
-                 pixelSize);
+          memcpy(&_buffer[(j * _width + i) * pixelSize], &data[(jj * width + ii) * pixelSize], pixelSize);
         }
       }
     }

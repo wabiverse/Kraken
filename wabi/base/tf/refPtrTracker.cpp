@@ -110,7 +110,7 @@ void TfRefPtrTracker::_AddTrace(const void *owner, const TfRefBase *obj, TraceTy
     // existing owner.
     Trace &trace = _traces[owner];
     ArchGetStackFrames(_maxDepth, _NumInternalStackLevels, &trace.trace);
-    trace.obj  = obj;
+    trace.obj = obj;
     trace.type = type;
   }
 
@@ -170,8 +170,7 @@ void TfRefPtrTracker::ReportAllTraces(std::ostream &stream) const
   TF_FOR_ALL(i, _traces)
   {
     const Trace &trace = i->second;
-    stream << "  Owner: " << i->first << " " << _type[trace.type] << " " << trace.obj << ":"
-           << std::endl;
+    stream << "  Owner: " << i->first << " " << _type[trace.type] << " " << trace.obj << ":" << std::endl;
     stream << "==============================================================" << std::endl;
     ArchPrintStackFrames(stream, trace.trace);
     stream << std::endl;

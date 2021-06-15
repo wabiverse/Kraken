@@ -41,10 +41,10 @@ WABI_NAMESPACE_BEGIN
 // -------------------------------------------------------------------------- //
 
 HdxRenderTask::HdxRenderTask(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdxTask(id),
-      _pass(),
-      _renderTags(),
-      _setupTask()
+  : HdxTask(id),
+    _pass(),
+    _renderTags(),
+    _setupTask()
 {}
 
 HdxRenderTask::~HdxRenderTask() = default;
@@ -79,9 +79,9 @@ void HdxRenderTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirty
     }
     else {
       if (!_pass) {
-        HdRenderIndex &index             = delegate->GetRenderIndex();
+        HdRenderIndex &index = delegate->GetRenderIndex();
         HdRenderDelegate *renderDelegate = index.GetRenderDelegate();
-        _pass                            = renderDelegate->CreateRenderPass(&index, collection);
+        _pass = renderDelegate->CreateRenderPass(&index, collection);
       }
       else {
         _pass->SetRprimCollection(collection);
@@ -149,8 +149,7 @@ void HdxRenderTask::Execute(HdTaskContext *ctx)
   if (!TF_VERIFY(renderPassState))
     return;
 
-  if (HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(
-          renderPassState.get())) {
+  if (HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(renderPassState.get())) {
 
     // Bail out early for Phoenix tasks that have no rendering work to submit
     // and don't need to clear AOVs.
@@ -201,8 +200,7 @@ bool HdxRenderTask::_HasDrawItems() const
   }
 }
 
-void HdxRenderTask::_SetHdPhRenderPassState(HdTaskContext *ctx,
-                                            HdPhRenderPassState *renderPassState)
+void HdxRenderTask::_SetHdPhRenderPassState(HdTaskContext *ctx, HdPhRenderPassState *renderPassState)
 {
   // Can't use GetTaskContextData because the lightingShader
   // is optional.

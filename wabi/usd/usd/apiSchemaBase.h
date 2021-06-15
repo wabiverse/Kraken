@@ -209,16 +209,16 @@ class UsdAPISchemaBase : public UsdSchemaBase {
    * Construct a multiple-apply UsdAPISchemaBase on
    * UsdPrim @p prim with the specified @p instanceName. */
   explicit UsdAPISchemaBase(const UsdPrim &prim, const TfToken &instanceName)
-      : UsdSchemaBase(prim),
-        _instanceName(instanceName)
+    : UsdSchemaBase(prim),
+      _instanceName(instanceName)
   {}
 
   /**
    * Construct a multiple-apply UsdAPISchemaBase on the prim
    * held by @p schemaObj with the given @p instanceName. */
   explicit UsdAPISchemaBase(const UsdSchemaBase &schemaObj, const TfToken &instanceName)
-      : UsdSchemaBase(schemaObj),
-        _instanceName(instanceName)
+    : UsdSchemaBase(schemaObj),
+      _instanceName(instanceName)
   {}
 
   /**

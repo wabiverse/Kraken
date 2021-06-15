@@ -38,7 +38,7 @@ class HdPhPtexMipmapTextureLoader final {
   HDPH_API
   HdPhPtexMipmapTextureLoader(PtexTexture *ptex,
                               int maxNumPages,
-                              int maxLevels       = -1,
+                              int maxLevels = -1,
                               size_t targetMemory = 0,
                               bool seamlessMipmap = true);
 
@@ -162,7 +162,7 @@ class HdPhPtexMipmapTextureLoader final {
                      int dstLength,
                      int bpp,
                      float srcStart = 0.0f,
-                     float srcEnd   = 1.0f);
+                     float srcEnd = 1.0f);
 
   std::vector<Block> _blocks;
   std::vector<Page *> _pages;

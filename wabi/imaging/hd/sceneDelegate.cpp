@@ -33,8 +33,8 @@
 WABI_NAMESPACE_BEGIN
 
 HdSceneDelegate::HdSceneDelegate(HdRenderIndex *parentIndex, SdfPath const &delegateID)
-    : _index(parentIndex),
-      _delegateID(delegateID)
+  : _index(parentIndex),
+    _delegateID(delegateID)
 {
   if (!_delegateID.IsAbsolutePath()) {
     TF_CODING_ERROR("Scene Delegate Id must be an absolute path: %s", delegateID.GetText());
@@ -110,7 +110,7 @@ size_t HdSceneDelegate::SampleTransform(SdfPath const &id,
                                         GfMatrix4d *sampleValues)
 {
   if (maxSampleCount > 0) {
-    sampleTimes[0]  = 0.0;
+    sampleTimes[0] = 0.0;
     sampleValues[0] = GetTransform(id);
     return 1;
   }
@@ -154,9 +154,7 @@ VtValue HdSceneDelegate::Get(SdfPath const &id, TfToken const &key)
 }
 
 /*virtual*/
-VtValue HdSceneDelegate::GetIndexedPrimvar(SdfPath const &id,
-                                           TfToken const &key,
-                                           VtIntArray *outIndices)
+VtValue HdSceneDelegate::GetIndexedPrimvar(SdfPath const &id, TfToken const &key, VtIntArray *outIndices)
 {
   // We return an empty value here rather than returning the result of
   // Get(id, key) since that would leave callers of this method with an
@@ -173,7 +171,7 @@ size_t HdSceneDelegate::SamplePrimvar(SdfPath const &id,
                                       VtValue *sampleValues)
 {
   if (maxSampleCount > 0) {
-    sampleTimes[0]  = 0.0;
+    sampleTimes[0] = 0.0;
     sampleValues[0] = Get(id, key);
     return 1;
   }
@@ -189,7 +187,7 @@ size_t HdSceneDelegate::SampleIndexedPrimvar(SdfPath const &id,
                                              VtIntArray *sampleIndices)
 {
   if (maxSampleCount > 0) {
-    sampleTimes[0]  = 0.0;
+    sampleTimes[0] = 0.0;
     sampleValues[0] = GetIndexedPrimvar(id, key, &sampleIndices[0]);
     return 1;
   }
@@ -223,8 +221,7 @@ HdIdVectorSharedPtr HdSceneDelegate::GetCoordSysBindings(SdfPath const &id)
 // -----------------------------------------------------------------------//
 
 /*virtual*/
-VtIntArray HdSceneDelegate::GetInstanceIndices(SdfPath const &instancerId,
-                                               SdfPath const &prototypeId)
+VtIntArray HdSceneDelegate::GetInstanceIndices(SdfPath const &instancerId, SdfPath const &prototypeId)
 {
   return VtIntArray();
 }
@@ -254,7 +251,7 @@ size_t HdSceneDelegate::SampleInstancerTransform(SdfPath const &instancerId,
                                                  GfMatrix4d *sampleValues)
 {
   if (maxSampleCount > 0) {
-    sampleTimes[0]  = 0.0;
+    sampleTimes[0] = 0.0;
     sampleValues[0] = GetInstancerTransform(instancerId);
     return 1;
   }
@@ -330,8 +327,7 @@ HdVolumeFieldDescriptorVector HdSceneDelegate::GetVolumeFieldDescriptors(SdfPath
 // -----------------------------------------------------------------------//
 
 /*virtual*/
-void HdSceneDelegate::InvokeExtComputation(SdfPath const &computationId,
-                                           HdExtComputationContext *context)
+void HdSceneDelegate::InvokeExtComputation(SdfPath const &computationId, HdExtComputationContext *context)
 {}
 
 /*virtual*/
@@ -342,14 +338,14 @@ TfTokenVector HdSceneDelegate::GetExtComputationSceneInputNames(SdfPath const &c
 
 /*virtual*/
 HdExtComputationInputDescriptorVector HdSceneDelegate::GetExtComputationInputDescriptors(
-    SdfPath const &computationid)
+  SdfPath const &computationid)
 {
   return HdExtComputationInputDescriptorVector();
 }
 
 /*virtual*/
 HdExtComputationOutputDescriptorVector HdSceneDelegate::GetExtComputationOutputDescriptors(
-    SdfPath const &computationid)
+  SdfPath const &computationid)
 {
   return HdExtComputationOutputDescriptorVector();
 }
@@ -367,8 +363,8 @@ HdPrimvarDescriptorVector HdSceneDelegate::GetPrimvarDescriptors(SdfPath const &
 
 /*virtual*/
 HdExtComputationPrimvarDescriptorVector HdSceneDelegate::GetExtComputationPrimvarDescriptors(
-    SdfPath const &rprimId,
-    HdInterpolation interpolationMode)
+  SdfPath const &rprimId,
+  HdInterpolation interpolationMode)
 {
   return HdExtComputationPrimvarDescriptorVector();
 }
@@ -387,7 +383,7 @@ size_t HdSceneDelegate::SampleExtComputationInput(SdfPath const &computationId,
                                                   VtValue *sampleValues)
 {
   if (maxSampleCount > 0) {
-    sampleTimes[0]  = 0.0;
+    sampleTimes[0] = 0.0;
     sampleValues[0] = GetExtComputationInput(computationId, input);
     return 1;
   }

@@ -115,8 +115,7 @@ typedef std::set<double> UsdAbc_TimeSamples;
 
 #define XXX_UNSUPPORTED(M) TF_RUNTIME_ERROR("Alembic file " #M "() not supported")
 
-UsdAbc_AlembicData::UsdAbc_AlembicData(SdfFileFormat::FileFormatArguments args)
-    : _arguments(std::move(args))
+UsdAbc_AlembicData::UsdAbc_AlembicData(SdfFileFormat::FileFormatArguments args) : _arguments(std::move(args))
 {}
 
 UsdAbc_AlembicData::~UsdAbc_AlembicData()
@@ -157,7 +156,7 @@ bool UsdAbc_AlembicData::Open(const std::string &filePath)
   }
 
   TF_RUNTIME_ERROR(
-      "Failed to open Alembic archive \"%s\": %s", filePath.c_str(), _reader->GetErrors().c_str());
+    "Failed to open Alembic archive \"%s\": %s", filePath.c_str(), _reader->GetErrors().c_str());
   Close();
   return false;
 }
@@ -293,9 +292,7 @@ std::set<double> UsdAbc_AlembicData::ListTimeSamplesForPath(const SdfPath &path)
   return _reader ? _reader->ListTimeSamplesForPath(path).GetTimes() : std::set<double>();
 }
 
-bool UsdAbc_AlembicData::GetBracketingTimeSamples(double time,
-                                                  double *tLower,
-                                                  double *tUpper) const
+bool UsdAbc_AlembicData::GetBracketingTimeSamples(double time, double *tLower, double *tUpper) const
 {
   const std::set<double> &samples = _reader->ListAllTimeSamples();
   return UsdAbc_AlembicDataReader::TimeSamples::Bracket(samples, time, tLower, tUpper);
@@ -314,9 +311,7 @@ bool UsdAbc_AlembicData::GetBracketingTimeSamplesForPath(const SdfPath &path,
   return _reader && _reader->ListTimeSamplesForPath(path).Bracket(time, tLower, tUpper);
 }
 
-bool UsdAbc_AlembicData::QueryTimeSample(const SdfPath &path,
-                                         double time,
-                                         SdfAbstractDataValue *value) const
+bool UsdAbc_AlembicData::QueryTimeSample(const SdfPath &path, double time, SdfAbstractDataValue *value) const
 {
   UsdAbc_AlembicDataReader::Index index;
   return _reader && _reader->ListTimeSamplesForPath(path).FindIndex(time, &index) &&

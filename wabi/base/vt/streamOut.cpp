@@ -38,9 +38,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-std::ostream &Vt_StreamOutGeneric(std::type_info const &type,
-                                  void const *addr,
-                                  std::ostream &stream)
+std::ostream &Vt_StreamOutGeneric(std::type_info const &type, void const *addr, std::ostream &stream)
 {
   return stream << TfStringPrintf("<'%s' @ %p>", ArchGetDemangled(type).c_str(), addr);
 }
@@ -109,10 +107,7 @@ void _StreamArrayRecursive(std::ostream &out,
 VtStreamOutIterator::~VtStreamOutIterator()
 {}
 
-void VtStreamOutArray(VtStreamOutIterator *i,
-                      size_t size,
-                      const Vt_ShapeData *shapeData,
-                      std::ostream &out)
+void VtStreamOutArray(VtStreamOutIterator *i, size_t size, const Vt_ShapeData *shapeData, std::ostream &out)
 {
   // Compute last dim size, and if size is not evenly divisible, output as
   // rank-1.
@@ -122,13 +117,13 @@ void VtStreamOutArray(VtStreamOutIterator *i,
                                    [](size_t x, size_t y) { return x * y; });
 
   size_t lastDimSize = divisor ? shapeData->totalSize / divisor : 0;
-  size_t remainder   = divisor ? shapeData->totalSize % divisor : 0;
+  size_t remainder = divisor ? shapeData->totalSize % divisor : 0;
 
   // If there's a remainder, make a rank-1 shapeData.
   Vt_ShapeData rank1;
   if (remainder) {
     rank1.totalSize = shapeData->totalSize;
-    shapeData       = &rank1;
+    shapeData = &rank1;
   }
 
   size_t index = 0;

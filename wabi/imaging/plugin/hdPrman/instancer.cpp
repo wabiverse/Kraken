@@ -39,16 +39,13 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPrmanInstancer::HdPrmanInstancer(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdInstancer(delegate, id)
+HdPrmanInstancer::HdPrmanInstancer(HdSceneDelegate *delegate, SdfPath const &id) : HdInstancer(delegate, id)
 {}
 
 HdPrmanInstancer::~HdPrmanInstancer()
 {}
 
-void HdPrmanInstancer::Sync(HdSceneDelegate *delegate,
-                            HdRenderParam *renderParam,
-                            HdDirtyBits *dirtyBits)
+void HdPrmanInstancer::Sync(HdSceneDelegate *delegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
   _UpdateInstancer(delegate, dirtyBits);
 
@@ -65,21 +62,19 @@ void HdPrmanInstancer::_SyncPrimvars(HdSceneDelegate *delegate, HdDirtyBits dirt
   SdfPath const &id = GetId();
 
   // Get the list of primvar names and then cache each one.
-  for (HdPrimvarDescriptor const &primvar :
-       delegate->GetPrimvarDescriptors(id, HdInterpolationInstance)) {
+  for (HdPrimvarDescriptor const &primvar : delegate->GetPrimvarDescriptors(id, HdInterpolationInstance)) {
     // Skip primvars that have special handling elsewhere.
     // The transform primvars are all handled in
     // SampleInstanceTransform.
-    if (primvar.name == HdInstancerTokens->instanceTransform ||
-        primvar.name == HdInstancerTokens->rotate || primvar.name == HdInstancerTokens->scale ||
-        primvar.name == HdInstancerTokens->translate) {
+    if (primvar.name == HdInstancerTokens->instanceTransform || primvar.name == HdInstancerTokens->rotate ||
+        primvar.name == HdInstancerTokens->scale || primvar.name == HdInstancerTokens->translate) {
       continue;
     }
     if (HdChangeTracker::IsPrimvarDirty(dirtyBits, id, primvar.name)) {
       VtValue value = delegate->Get(id, primvar.name);
       if (!value.IsEmpty()) {
         _PrimvarValue &entry = _primvarMap[primvar.name];
-        entry.desc           = primvar;
+        entry.desc = primvar;
         std::swap(entry.value, value);
       }
     }
@@ -89,8 +84,7 @@ void HdPrmanInstancer::_SyncPrimvars(HdSceneDelegate *delegate, HdDirtyBits dirt
 // Helper to accumulate sample times from the largest set of
 // samples seen, up to maxNumSamples.
 template<typename T1, typename T2, unsigned int C>
-static void _AccumulateSampleTimes(HdTimeSampleArray<T1, C> const &in,
-                                   HdTimeSampleArray<T2, C> *out)
+static void _AccumulateSampleTimes(HdTimeSampleArray<T1, C> const &in, HdTimeSampleArray<T2, C> *out)
 {
   if (in.count > out->count) {
     out->Resize(in.count);
@@ -99,14 +93,14 @@ static void _AccumulateSampleTimes(HdTimeSampleArray<T1, C> const &in,
 }
 
 void HdPrmanInstancer::SampleInstanceTransforms(
-    SdfPath const &prototypeId,
-    VtIntArray const &instanceIndices,
-    HdTimeSampleArray<VtMatrix4dArray, HDPRMAN_MAX_TIME_SAMPLES> *sa)
+  SdfPath const &prototypeId,
+  VtIntArray const &instanceIndices,
+  HdTimeSampleArray<VtMatrix4dArray, HDPRMAN_MAX_TIME_SAMPLES> *sa)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  HdSceneDelegate *delegate  = GetDelegate();
+  HdSceneDelegate *delegate = GetDelegate();
   const SdfPath &instancerId = GetId();
 
   // Sample the inputs
@@ -174,7 +168,7 @@ void HdPrmanInstancer::SampleInstanceTransforms(
     VtMatrix4dArray &ma = sa->values[i];
     ma.resize(instanceIndices.size());
     for (size_t j = 0; j < instanceIndices.size(); ++j) {
-      ma[j]                = xf;
+      ma[j] = xf;
       size_t instanceIndex = instanceIndices[j];
       if (trans.size() > instanceIndex) {
         GfMatrix4d t(1);
@@ -231,7 +225,7 @@ void HdPrmanInstancer::SampleInstanceTransforms(
     const float t = sa->times[i];
     // Resample transforms at the same time.
     VtMatrix4dArray curParentXf = parentXf.Resample(t);
-    VtMatrix4dArray curChildXf  = childXf.Resample(t);
+    VtMatrix4dArray curChildXf = childXf.Resample(t);
     // Multiply out each combination.
     VtMatrix4dArray &result = sa->values[i];
     result.resize(curParentXf.size() * curChildXf.size());
@@ -258,10 +252,10 @@ void HdPrmanInstancer::GetInstancePrimvars(SdfPath const &prototypeId,
     VtValue const &val = entry.second.value;
     if (instanceIndex >= val.GetArraySize()) {
       TF_WARN(
-          "HdPrman: Instance-rate primvar has array size %zu; "
-          "cannot provide a value for instance index %zu\n",
-          val.GetArraySize(),
-          instanceIndex);
+        "HdPrman: Instance-rate primvar has array size %zu; "
+        "cannot provide a value for instance index %zu\n",
+        val.GetArraySize(),
+        instanceIndex);
       continue;
     }
 
@@ -270,7 +264,7 @@ void HdPrmanInstancer::GetInstancePrimvars(SdfPath const &prototypeId,
     // All other primvars are in the "user:" namespace, so if they don't
     // have that prefix we need to add it.
     RtUString name;
-    static const char *userPrefix   = "user:";
+    static const char *userPrefix = "user:";
     static const char *riAttrPrefix = "ri:attributes:";
     if (!strncmp(entry.first.GetText(), userPrefix, strlen(userPrefix))) {
       name = RtUString(entry.first.GetText());
@@ -282,7 +276,7 @@ void HdPrmanInstancer::GetInstancePrimvars(SdfPath const &prototypeId,
     }
     else {
       std::string mangled = TfStringPrintf("user:%s", entry.first.GetText());
-      name                = RtUString(mangled.c_str());
+      name = RtUString(mangled.c_str());
     }
 
     if (val.IsHolding<VtArray<float>>()) {

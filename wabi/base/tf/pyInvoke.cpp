@@ -62,8 +62,8 @@ bool Tf_PyInvokeImpl(const std::string &moduleName,
                      const boost::python::dict &kwArgs,
                      boost::python::object *resultObjOut)
 {
-  static const char *const listVarName   = "_Tf_invokeList_";
-  static const char *const dictVarName   = "_Tf_invokeDict_";
+  static const char *const listVarName = "_Tf_invokeList_";
+  static const char *const dictVarName = "_Tf_invokeDict_";
   static const char *const resultVarName = "_Tf_invokeResult_";
 
   // Build globals dict, containing builtins and args.
@@ -71,20 +71,20 @@ bool Tf_PyInvokeImpl(const std::string &moduleName,
   boost::python::dict globals;
   boost::python::handle<> modHandle(PyImport_ImportModule(TfPyBuiltinModuleName));
   globals["__builtins__"] = boost::python::object(modHandle);
-  globals[listVarName]    = posArgs;
-  globals[dictVarName]    = kwArgs;
+  globals[listVarName] = posArgs;
+  globals[dictVarName] = kwArgs;
 
   // Build python code for interpreter.
   // Import, look up callable, perform call, store result.
   const std::string pyStr = TfStringPrintf(
-      "import %s\n"
-      "%s = %s.%s(*%s, **%s)\n",
-      moduleName.c_str(),
-      resultVarName,
-      moduleName.c_str(),
-      callableExpr.c_str(),
-      listVarName,
-      dictVarName);
+    "import %s\n"
+    "%s = %s.%s(*%s, **%s)\n",
+    moduleName.c_str(),
+    resultVarName,
+    moduleName.c_str(),
+    callableExpr.c_str(),
+    listVarName,
+    dictVarName);
 
   TfErrorMark errorMark;
 

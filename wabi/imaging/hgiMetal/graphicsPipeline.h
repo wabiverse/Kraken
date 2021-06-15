@@ -60,9 +60,9 @@ class HgiMetalGraphicsPipeline final : public HgiGraphicsPipeline {
   void BindPipeline(id<MTLRenderCommandEncoder> renderEncoder);
 
  private:
-  HgiMetalGraphicsPipeline()        = delete;
+  HgiMetalGraphicsPipeline() = delete;
   HgiMetalGraphicsPipeline &operator=(const HgiMetalGraphicsPipeline &) = delete;
-  HgiMetalGraphicsPipeline(const HgiMetalGraphicsPipeline &)            = delete;
+  HgiMetalGraphicsPipeline(const HgiMetalGraphicsPipeline &) = delete;
 
   void _CreateVertexDescriptor();
   void _CreateDepthStencilState(id<MTLDevice> device);

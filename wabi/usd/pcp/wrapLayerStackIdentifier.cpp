@@ -53,27 +53,24 @@ void wrapLayerStackIdentifier()
   typedef PcpLayerStackIdentifier This;
 
   class_<This>("LayerStackIdentifier")
-      .def(init<>())
-      .def(init<const SdfLayerHandle &, const SdfLayerHandle &, const ArResolverContext &>(
-          (args("rootLayer"),
-           args("sessionLayer")        = SdfLayerHandle(),
-           args("pathResolverContext") = ArResolverContext())))
+    .def(init<>())
+    .def(init<const SdfLayerHandle &, const SdfLayerHandle &, const ArResolverContext &>(
+      (args("rootLayer"),
+       args("sessionLayer") = SdfLayerHandle(),
+       args("pathResolverContext") = ArResolverContext())))
 
-      .add_property("sessionLayer",
-                    make_getter(&This::sessionLayer, return_value_policy<return_by_value>()))
-      .add_property("rootLayer",
-                    make_getter(&This::rootLayer, return_value_policy<return_by_value>()))
-      .add_property(
-          "pathResolverContext",
-          make_getter(&This::pathResolverContext, return_value_policy<return_by_value>()))
+    .add_property("sessionLayer", make_getter(&This::sessionLayer, return_value_policy<return_by_value>()))
+    .add_property("rootLayer", make_getter(&This::rootLayer, return_value_policy<return_by_value>()))
+    .add_property("pathResolverContext",
+                  make_getter(&This::pathResolverContext, return_value_policy<return_by_value>()))
 
-      .def("__repr__", &_Repr)
-      .def("__hash__", &This::GetHash)
-      .def(!self)
-      .def(self == self)
-      .def(self != self)
-      .def(self < self)
-      .def(self <= self)
-      .def(self > self)
-      .def(self >= self);
+    .def("__repr__", &_Repr)
+    .def("__hash__", &This::GetHash)
+    .def(!self)
+    .def(self == self)
+    .def(self != self)
+    .def(self < self)
+    .def(self <= self)
+    .def(self > self)
+    .def(self >= self);
 }

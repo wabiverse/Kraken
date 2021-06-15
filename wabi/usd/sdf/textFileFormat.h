@@ -56,14 +56,12 @@ class SdfTextFileFormat : public SdfFileFormat {
   virtual bool CanRead(const std::string &file) const override;
 
   SDF_API
-  virtual bool Read(SdfLayer *layer,
-                    const std::string &resolvedPath,
-                    bool metadataOnly) const override;
+  virtual bool Read(SdfLayer *layer, const std::string &resolvedPath, bool metadataOnly) const override;
 
   SDF_API
   virtual bool WriteToFile(const SdfLayer &layer,
                            const std::string &filePath,
-                           const std::string &comment      = std::string(),
+                           const std::string &comment = std::string(),
                            const FileFormatArguments &args = FileFormatArguments()) const override;
 
   SDF_API
@@ -75,9 +73,7 @@ class SdfTextFileFormat : public SdfFileFormat {
                              const std::string &comment = std::string()) const override;
 
   SDF_API
-  virtual bool WriteToStream(const SdfSpecHandle &spec,
-                             std::ostream &out,
-                             size_t indent) const override;
+  virtual bool WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const override;
 
  protected:
   SDF_FILE_FORMAT_FACTORY_ACCESS;
@@ -98,7 +94,7 @@ class SdfTextFileFormat : public SdfFileFormat {
   SDF_API
   explicit SdfTextFileFormat(const TfToken &formatId,
                              const TfToken &versionString = TfToken(),
-                             const TfToken &target        = TfToken());
+                             const TfToken &target = TfToken());
 
  private:
   // Override to return false.  Reloading anonymous text layers clears their

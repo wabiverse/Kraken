@@ -46,8 +46,8 @@ class Usd_PyPrimRange {
   {}
 
   Usd_PyPrimRange(UsdPrim root, Usd_PrimFlagsPredicate predicate)
-      : _rng(root, predicate),
-        _startPrim(!_rng.empty() ? *_rng.begin() : UsdPrim())
+    : _rng(root, predicate),
+      _startPrim(!_rng.empty() ? *_rng.begin() : UsdPrim())
   {}
 
   static Usd_PyPrimRange PreAndPostVisit(UsdPrim root)
@@ -106,8 +106,7 @@ class Usd_PyPrimRange {
     // to-python
     to_python_converter<UsdPrimRange, Usd_PyPrimRange>();
     // from-python
-    converter::registry::push_back(
-        &_convertible, &_construct, boost::python::type_id<UsdPrimRange>());
+    converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<UsdPrimRange>());
   }
 
   // to-python conversion of UsdPrimRange.
@@ -125,8 +124,8 @@ class Usd_PyPrimRange {
   friend class Usd_PyPrimRangeIterator;
 
   explicit Usd_PyPrimRange(const UsdPrimRange &range)
-      : _rng(range),
-        _startPrim(!_rng.empty() ? *_rng.begin() : UsdPrim())
+    : _rng(range),
+      _startPrim(!_rng.empty() ? *_rng.begin() : UsdPrim())
   {}
 
   static void *_convertible(PyObject *obj_ptr)
@@ -137,8 +136,7 @@ class Usd_PyPrimRange {
 
   static void _construct(PyObject *obj_ptr, converter::rvalue_from_python_stage1_data *data)
   {
-    void *storage =
-        ((converter::rvalue_from_python_storage<Usd_PyPrimRange> *)data)->storage.bytes;
+    void *storage = ((converter::rvalue_from_python_storage<Usd_PyPrimRange> *)data)->storage.bytes;
     Usd_PyPrimRange pyIter = extract<Usd_PyPrimRange>(obj_ptr);
     new (storage) UsdPrimRange(pyIter._rng);
     data->convertible = storage;
@@ -151,9 +149,9 @@ class Usd_PyPrimRange {
 class Usd_PyPrimRangeIterator {
  public:
   explicit Usd_PyPrimRangeIterator(Usd_PyPrimRange const *range)
-      : range(range),
-        iter(range->_rng.begin()),
-        curPrim(iter != range->_rng.end() ? *iter : UsdPrim())
+    : range(range),
+      iter(range->_rng.begin()),
+      curPrim(iter != range->_rng.end() ? *iter : UsdPrim())
   {}
 
   bool IsPostVisit() const
@@ -179,9 +177,8 @@ class Usd_PyPrimRangeIterator {
     // exception.
     _RaiseIfAtEnd();
     if (!curPrim) {
-      PyErr_SetString(
-          PyExc_RuntimeError,
-          TfStringPrintf("Iterator points to %s", curPrim.GetDescription().c_str()).c_str());
+      PyErr_SetString(PyExc_RuntimeError,
+                      TfStringPrintf("Iterator points to %s", curPrim.GetDescription().c_str()).c_str());
       throw_error_already_set();
     }
     if (didFirst) {
@@ -189,7 +186,7 @@ class Usd_PyPrimRangeIterator {
       _RaiseIfAtEnd();
     }
     didFirst = true;
-    curPrim  = *iter;
+    curPrim = *iter;
     TF_VERIFY(curPrim);
     return curPrim;
   }
@@ -212,9 +209,8 @@ Usd_PyPrimRangeIterator Usd_PyPrimRange::__iter__() const
 {
   if (!_rng.empty() && !_startPrim) {
     PyErr_SetString(
-        PyExc_RuntimeError,
-        TfStringPrintf("Invalid range starting with %s", _startPrim.GetDescription().c_str())
-            .c_str());
+      PyExc_RuntimeError,
+      TfStringPrintf("Invalid range starting with %s", _startPrim.GetDescription().c_str()).c_str());
   }
   return Usd_PyPrimRangeIterator(this);
 }
@@ -230,63 +226,57 @@ void wrapUsdPrimRange()
 {
   {
     scope s =
-        class_<Usd_PyPrimRange>("PrimRange", no_init)
-            .def(init<UsdPrim>(arg("root")))
-            .def(init<UsdPrim, Usd_PrimFlagsPredicate>((arg("root"), arg("predicate"))))
+      class_<Usd_PyPrimRange>("PrimRange", no_init)
+        .def(init<UsdPrim>(arg("root")))
+        .def(init<UsdPrim, Usd_PrimFlagsPredicate>((arg("root"), arg("predicate"))))
 
-            .def("PreAndPostVisit",
-                 (Usd_PyPrimRange(*)(UsdPrim)) & Usd_PyPrimRange::PreAndPostVisit,
-                 arg("root"))
-            .def("PreAndPostVisit",
-                 (Usd_PyPrimRange(*)(UsdPrim, Usd_PrimFlagsPredicate)) &
-                     Usd_PyPrimRange::PreAndPostVisit,
-                 (arg("root"), arg("predicate")))
-            .staticmethod("PreAndPostVisit")
+        .def(
+          "PreAndPostVisit", (Usd_PyPrimRange(*)(UsdPrim)) & Usd_PyPrimRange::PreAndPostVisit, arg("root"))
+        .def("PreAndPostVisit",
+             (Usd_PyPrimRange(*)(UsdPrim, Usd_PrimFlagsPredicate)) & Usd_PyPrimRange::PreAndPostVisit,
+             (arg("root"), arg("predicate")))
+        .staticmethod("PreAndPostVisit")
 
-            .def("AllPrims", &Usd_PyPrimRange::AllPrims, arg("root"))
-            .staticmethod("AllPrims")
+        .def("AllPrims", &Usd_PyPrimRange::AllPrims, arg("root"))
+        .staticmethod("AllPrims")
 
-            .def("AllPrimsPreAndPostVisit", &Usd_PyPrimRange::AllPrimsPreAndPostVisit, arg("root"))
-            .staticmethod("AllPrimsPreAndPostVisit")
+        .def("AllPrimsPreAndPostVisit", &Usd_PyPrimRange::AllPrimsPreAndPostVisit, arg("root"))
+        .staticmethod("AllPrimsPreAndPostVisit")
 
-            .def("Stage",
-                 (Usd_PyPrimRange(*)(const UsdStagePtr &)) & Usd_PyPrimRange::Stage,
-                 arg("stage"))
-            .def("Stage",
-                 (Usd_PyPrimRange(*)(const UsdStagePtr &, const Usd_PrimFlagsPredicate &)) &
-                     Usd_PyPrimRange::Stage,
-                 (arg("stage"), arg("predicate")))
-            .staticmethod("Stage")
+        .def("Stage", (Usd_PyPrimRange(*)(const UsdStagePtr &)) & Usd_PyPrimRange::Stage, arg("stage"))
+        .def("Stage",
+             (Usd_PyPrimRange(*)(const UsdStagePtr &, const Usd_PrimFlagsPredicate &)) &
+               Usd_PyPrimRange::Stage,
+             (arg("stage"), arg("predicate")))
+        .staticmethod("Stage")
 
-            .def("IsValid", &Usd_PyPrimRange::IsValid, "true if the iterator is not yet exhausted")
+        .def("IsValid", &Usd_PyPrimRange::IsValid, "true if the iterator is not yet exhausted")
 
-            .def(!self)
-            .def(self == self)
-            .def(self != self)
+        .def(!self)
+        .def(self == self)
+        .def(self != self)
 
-            // with_custodian_and_ward_postcall<0, 1> makes it so that the
-            // returned iterator will prevent the source range (this) from
-            // expiring until the iterator expires itself.  We need that since
-            // the iterator stores a pointer to its range.
-            .def("__iter__", &Usd_PyPrimRange::__iter__, with_custodian_and_ward_postcall<0, 1>());
+        // with_custodian_and_ward_postcall<0, 1> makes it so that the
+        // returned iterator will prevent the source range (this) from
+        // expiring until the iterator expires itself.  We need that since
+        // the iterator stores a pointer to its range.
+        .def("__iter__", &Usd_PyPrimRange::__iter__, with_custodian_and_ward_postcall<0, 1>());
 
     class_<Usd_PyPrimRangeIterator>("_Iterator", no_init)
-        // This is a lambda that does nothing cast to a function pointer.
-        // All we want is to return 'self'.
-        .def("__iter__",
-             static_cast<void (*)(Usd_PyPrimRangeIterator)>([](Usd_PyPrimRangeIterator) {}),
-             return_self<>())
-        .def(TfPyIteratorNextMethodName, &Usd_PyPrimRangeIterator::next)
-        .def("IsPostVisit", &Usd_PyPrimRangeIterator::IsPostVisit)
-        .def("PruneChildren", &Usd_PyPrimRangeIterator::PruneChildren)
-        .def("IsValid",
-             &Usd_PyPrimRangeIterator::IsValid,
-             "true if the iterator is not yet exhausted")
-        .def("GetCurrentPrim",
-             &Usd_PyPrimRangeIterator::GetCurrentPrim,
-             "Since an iterator cannot be dereferenced in python, "
-             "GetCurrentPrim()\n performs the same function: yielding "
-             "the currently visited prim.");
+      // This is a lambda that does nothing cast to a function pointer.
+      // All we want is to return 'self'.
+      .def("__iter__",
+           static_cast<void (*)(Usd_PyPrimRangeIterator)>([](Usd_PyPrimRangeIterator) {}),
+           return_self<>())
+      .def(TfPyIteratorNextMethodName, &Usd_PyPrimRangeIterator::next)
+      .def("IsPostVisit", &Usd_PyPrimRangeIterator::IsPostVisit)
+      .def("PruneChildren", &Usd_PyPrimRangeIterator::PruneChildren)
+      .def("IsValid", &Usd_PyPrimRangeIterator::IsValid, "true if the iterator is not yet exhausted")
+      .def("GetCurrentPrim",
+           &Usd_PyPrimRangeIterator::GetCurrentPrim,
+           "Since an iterator cannot be dereferenced in python, "
+           "GetCurrentPrim()\n performs the same function: yielding "
+           "the currently visited prim.");
   }
 
   Usd_PyPrimRange::RegisterConversions();

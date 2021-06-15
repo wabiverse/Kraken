@@ -73,8 +73,7 @@ class HdResourceRegistry;
 #define HD_PERF_COUNTER_DECR(name) HdPerfLog::GetInstance().DecrementCounter(name);
 #define HD_PERF_COUNTER_SET(name, value) HdPerfLog::GetInstance().SetCounter(name, value);
 #define HD_PERF_COUNTER_ADD(name, value) HdPerfLog::GetInstance().AddCounter(name, value);
-#define HD_PERF_COUNTER_SUBTRACT(name, value) \
-  HdPerfLog::GetInstance().SubtractCounter(name, value);
+#define HD_PERF_COUNTER_SUBTRACT(name, value) HdPerfLog::GetInstance().SubtractCounter(name, value);
 
 //----------------------------------------------------------------------------//
 // PERFORMANCE LOG                                                            //
@@ -223,7 +222,7 @@ class HdPerfLog {
 
     void Reset()
     {
-      _hits   = 0;
+      _hits = 0;
       _misses = 0;
     }
 

@@ -78,8 +78,8 @@ SdfSpecType SdfSpec::GetSpecType() const
     return SdfSpecTypeUnknown;
   }
   SdfLayerHandle const &layer = idPtr->GetLayer();
-  SdfPath const &path         = idPtr->GetPath();
-  SdfLayer const *layerPtr    = get_pointer(layer);
+  SdfPath const &path = idPtr->GetPath();
+  SdfLayer const *layerPtr = get_pointer(layer);
   return layerPtr ? layerPtr->GetSpecType(path) : SdfSpecTypeUnknown;
 }
 
@@ -210,7 +210,7 @@ static bool _CanEditInfoOnSpec(const TfToken &key,
 
   if (!schema.IsValidFieldForSpec(fieldDef->GetName(), specType)) {
     TF_CODING_ERROR(
-        "Field '%s' is not valid for spec type %s", key.GetText(), TfStringify(specType).c_str());
+      "Field '%s' is not valid for spec type %s", key.GetText(), TfStringify(specType).c_str());
     return false;
   }
 
@@ -222,7 +222,7 @@ void SdfSpec::SetInfo(const TfToken &key, const VtValue &value)
   // Perform some validation on the field being modified to ensure we don't
   // author any invalid scene description. Note this function will issue
   // coding errors as needed.
-  const SdfSchemaBase &schema                = GetSchema();
+  const SdfSchemaBase &schema = GetSchema();
   const SdfSchema::FieldDefinition *fieldDef = schema.GetFieldDefinition(key);
   if (!_CanEditInfoOnSpec(key, GetSpecType(), schema, fieldDef, "set")) {
     return;
@@ -230,18 +230,18 @@ void SdfSpec::SetInfo(const TfToken &key, const VtValue &value)
 
   // Attempt to cast the given value to the type specified for the field
   // in the schema.
-  const VtValue fallback  = fieldDef->GetFallbackValue();
+  const VtValue fallback = fieldDef->GetFallbackValue();
   const VtValue castValue = (fallback.IsEmpty() ? value : VtValue::CastToTypeOf(value, fallback));
   if (castValue.IsEmpty()) {
     TF_CODING_ERROR(
-        "Cannot set field '%s' of type '%s' to provided value "
-        "'%s' because the value is an incompatible type '%s', "
-        "on spec <%s>",
-        key.GetText(),
-        fallback.GetTypeName().c_str(),
-        TfStringify(value).c_str(),
-        value.GetTypeName().c_str(),
-        GetPath().GetString().c_str());
+      "Cannot set field '%s' of type '%s' to provided value "
+      "'%s' because the value is an incompatible type '%s', "
+      "on spec <%s>",
+      key.GetText(),
+      fallback.GetTypeName().c_str(),
+      TfStringify(value).c_str(),
+      value.GetTypeName().c_str(),
+      GetPath().GetString().c_str());
     return;
   }
 
@@ -299,7 +299,7 @@ void SdfSpec::ClearInfo(const TfToken &key)
 {
   // Perform some validation to ensure we allow the clearing of this field
   // via the Info API. Note this function will issue coding errors as needed.
-  const SdfSchemaBase &schema                = GetSchema();
+  const SdfSchemaBase &schema = GetSchema();
   const SdfSchema::FieldDefinition *fieldDef = schema.GetFieldDefinition(key);
   if (!_CanEditInfoOnSpec(key, GetSpecType(), schema, fieldDef, "clear")) {
     return;
@@ -323,18 +323,17 @@ const VtValue &SdfSpec::GetFallbackForInfo(const TfToken &key) const
 {
   static VtValue empty;
 
-  const SdfSchemaBase &schema           = GetSchema();
+  const SdfSchemaBase &schema = GetSchema();
   const SdfSchema::FieldDefinition *def = schema.GetFieldDefinition(key);
   if (!def) {
     TF_CODING_ERROR("Unknown field '%s'", key.GetText());
     return empty;
   }
 
-  const SdfSpecType objType                = GetSpecType();
+  const SdfSpecType objType = GetSpecType();
   const SdfSchema::SpecDefinition *specDef = schema.GetSpecDefinition(objType);
   if (!specDef || !specDef->IsMetadataField(key)) {
-    TF_CODING_ERROR(
-        "Non-metadata key '%s' for type %s", key.GetText(), TfStringify(objType).c_str());
+    TF_CODING_ERROR("Non-metadata key '%s' for type %s", key.GetText(), TfStringify(objType).c_str());
     return empty;
   }
 
