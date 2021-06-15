@@ -28,6 +28,7 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
+
 #include "wabi/usd/usdUI/tokens.h"
 
 WABI_NAMESPACE_BEGIN
@@ -36,8 +37,6 @@ UsdUITokensType::UsdUITokensType()
   : closed("closed", TfToken::Immortal),
     minimized("minimized", TfToken::Immortal),
     open("open", TfToken::Immortal),
-    uiTitle("ui:title", TfToken::Immortal),
-    uiWindowCoords("ui:windowCoords", TfToken::Immortal),
     uiDescription("ui:description", TfToken::Immortal),
     uiDisplayGroup("ui:displayGroup", TfToken::Immortal),
     uiDisplayName("ui:displayName", TfToken::Immortal),
@@ -47,11 +46,11 @@ UsdUITokensType::UsdUITokensType()
     uiNodegraphNodePos("ui:nodegraph:node:pos", TfToken::Immortal),
     uiNodegraphNodeSize("ui:nodegraph:node:size", TfToken::Immortal),
     uiNodegraphNodeStackingOrder("ui:nodegraph:node:stackingOrder", TfToken::Immortal),
+    uiTitle("ui:title", TfToken::Immortal),
+    uiWindowCoords("ui:windowCoords", TfToken::Immortal),
     allTokens({closed,
                minimized,
                open,
-               uiTitle,
-               uiWindowCoords,
                uiDescription,
                uiDisplayGroup,
                uiDisplayName,
@@ -60,7 +59,9 @@ UsdUITokensType::UsdUITokensType()
                uiNodegraphNodeIcon,
                uiNodegraphNodePos,
                uiNodegraphNodeSize,
-               uiNodegraphNodeStackingOrder})
+               uiNodegraphNodeStackingOrder,
+               uiTitle,
+               uiWindowCoords})
 {}
 
 TfStaticData<UsdUITokensType> UsdUITokens;

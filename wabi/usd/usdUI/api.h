@@ -28,6 +28,7 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
+
 #ifndef USDUI_API_H
 #define USDUI_API_H
 

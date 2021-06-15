@@ -28,25 +28,26 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#include "wabi/usd/usdUI/window.h"
+
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/usdUI/window.h"
 
 WABI_NAMESPACE_BEGIN
 
-/** Register the schema with the TfType system. */
+/**
+ * Register the schema with the TfType system. */
 TF_REGISTRY_FUNCTION(TfType)
 {
   TfType::Define<UsdUIWindow, TfType::Bases<UsdTyped>>();
-
   /**
-   * Register the usd prim typename as an alias under UsdSchemaBase. This
-   * enables one to call
+   * Register the usd prim typename as an alias under UsdSchemaBase.
+   * This enables one to call:
    * TfType::Find<UsdSchemaBase>().FindDerivedByName("Window")
-   * to find TfType<UsdUIWindow>, which is how IsA queries are
+   * To find TfType<UsdUIWindow>, which is how IsA queries are
    * answered. */
   TfType::AddAlias<UsdSchemaBase, UsdUIWindow>("Window");
 }
@@ -75,11 +76,16 @@ UsdUIWindow UsdUIWindow::Define(const UsdStagePtr &stage, const SdfPath &path)
   }
   return UsdUIWindow(stage->DefinePrim(path, usdPrimTypeName));
 }
-
 /* virtual */
 UsdSchemaKind UsdUIWindow::_GetSchemaKind() const
 {
   return UsdUIWindow::schemaKind;
+}
+
+/* virtual */
+UsdSchemaKind UsdUIWindow::_GetSchemaType() const
+{
+  return UsdUIWindow::schemaType;
 }
 
 /* static */
@@ -148,8 +154,8 @@ const TfTokenVector &UsdUIWindow::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
     UsdUITokens->uiTitle,
+    UsdUITokens->uiWindowCoords,
   };
-
   static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
                                                              localNames);
 
@@ -161,13 +167,16 @@ const TfTokenVector &UsdUIWindow::GetSchemaAttributeNames(bool includeInherited)
 
 WABI_NAMESPACE_END
 
-/**
- * =====================================================================
- *  Feel free to add custom code below this line. It will be preserved
- *  by the code generator.
- *
- *  Just remember to wrap code in the appropriate delimiters:
- *  'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
- * =====================================================================
- * --(BEGIN CUSTOM CODE)--
- */
+/* clang-format off */
+
+  /**
+   * ======================================================================
+   *   Feel free to add custom code below this line. It will be preserved
+   *   by the code generator.
+   *
+   *   Just remember to wrap code in the appropriate delimiters:
+   *     - 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
+   * ======================================================================
+   * --(BEGIN CUSTOM CODE)-- */
+
+/* clang-format on */

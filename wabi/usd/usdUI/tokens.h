@@ -28,17 +28,20 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
+
 #ifndef USDUI_TOKENS_H
 #define USDUI_TOKENS_H
 
-/// \file usdUI/tokens.h
+/**
+ * @file usdUI/tokens.h */
 
-// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-//
-// This is an automatically generated file (by usdGenSchema.py).
-// Do not hand-edit!
-//
-// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+/**
+ * XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+ *
+ *  This is an automatically generated file.
+ *  Do not hand-edit!
+ *
+ * XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 
 #include "wabi/base/tf/staticData.h"
 #include "wabi/base/tf/token.h"
@@ -48,90 +51,128 @@
 
 WABI_NAMESPACE_BEGIN
 
-/// \class UsdUITokensType
-///
-/// \link UsdUITokens \endlink provides static, efficient
-/// \link TfToken TfTokens\endlink for use in all public USD API.
-///
-/// These tokens are auto-generated from the module's schema, representing
-/// property names, for when you need to fetch an attribute or relationship
-/// directly by name, e.g. UsdPrim::GetAttribute(), in the most efficient
-/// manner, and allow the compiler to verify that you spelled the name
-/// correctly.
-///
-/// UsdUITokens also contains all of the \em allowedTokens values
-/// declared for schema builtin attributes of 'token' scene description type.
-/// Use UsdUITokens like so:
-///
-/// \code
-///     gprim.GetMyTokenValuedAttr().Set(UsdUITokens->closed);
-/// \endcode
+/**
+ * @class UsdUITokensType
+ *
+ * @link UsdUITokens @endlink provides static, efficient
+ * @link TfToken TfTokens\endlink for use in all public USD API.
+ *
+ * These tokens are auto-generated from the module's schema, representing
+ * property names, for when you need to fetch an attribute or relationship
+ * directly by name, e.g. UsdPrim::GetAttribute(), in the most efficient
+ * manner, and allow the compiler to verify that you spelled the name
+ * correctly.
+ *
+ * UsdUITokens also contains all of the @em allowedTokens values
+ * declared for schema builtin attributes of 'token' scene description type.
+ *
+ * Use UsdUITokens like so:
+ *
+ * @code
+ *   gprim.GetMyTokenValuedAttr().Set(UsdUITokens->closed);
+ * @endcode
+ */
 struct UsdUITokensType {
-  USDUI_API UsdUITokensType();
-  /// \brief "closed"
-  ///
-  /// Possible value for UsdUINodeGraphNodeAPI::GetExpansionStateAttr()
+
+  USDUI_API
+  UsdUITokensType();
+
+  /**
+   * @brief "closed"
+   *
+   * Possible value for UsdUINodeGraphNodeAPI::GetExpansionStateAttr() */
   const TfToken closed;
-  /// \brief "minimized"
-  ///
-  /// Possible value for UsdUINodeGraphNodeAPI::GetExpansionStateAttr()
+
+  /**
+   * @brief "minimized"
+   *
+   * Possible value for UsdUINodeGraphNodeAPI::GetExpansionStateAttr() */
   const TfToken minimized;
-  /// \brief "open"
-  ///
-  /// Possible value for UsdUINodeGraphNodeAPI::GetExpansionStateAttr()
+
+  /**
+   * @brief "open"
+   *
+   * Possible value for UsdUINodeGraphNodeAPI::GetExpansionStateAttr() */
   const TfToken open;
-  /// \brief "ui:title"
-  ///
-  /// UsdUIWindow
-  const TfToken uiTitle;
-  /// \brief "ui:windowCoords"
-  ///
-  /// UsdUIWindow
-  const TfToken uiWindowCoords;
-  /// \brief "ui:description"
-  ///
-  /// UsdUIBackdrop
+
+  /**
+   * @brief "ui:description"
+   *
+   * UsdUIBackdrop */
   const TfToken uiDescription;
-  /// \brief "ui:displayGroup"
-  ///
-  /// UsdUISceneGraphPrimAPI
+
+  /**
+   * @brief "ui:displayGroup"
+   *
+   * UsdUISceneGraphPrimAPI */
   const TfToken uiDisplayGroup;
-  /// \brief "ui:displayName"
-  ///
-  /// UsdUISceneGraphPrimAPI
+
+  /**
+   * @brief "ui:displayName"
+   *
+   * UsdUISceneGraphPrimAPI */
   const TfToken uiDisplayName;
-  /// \brief "ui:nodegraph:node:displayColor"
-  ///
-  /// UsdUINodeGraphNodeAPI
+
+  /**
+   * @brief "ui:nodegraph:node:displayColor"
+   *
+   * UsdUINodeGraphNodeAPI */
   const TfToken uiNodegraphNodeDisplayColor;
-  /// \brief "ui:nodegraph:node:expansionState"
-  ///
-  /// UsdUINodeGraphNodeAPI
+
+  /**
+   * @brief "ui:nodegraph:node:expansionState"
+   *
+   * UsdUINodeGraphNodeAPI */
   const TfToken uiNodegraphNodeExpansionState;
-  /// \brief "ui:nodegraph:node:icon"
-  ///
-  /// UsdUINodeGraphNodeAPI
+
+  /**
+   * @brief "ui:nodegraph:node:icon"
+   *
+   * UsdUINodeGraphNodeAPI */
   const TfToken uiNodegraphNodeIcon;
-  /// \brief "ui:nodegraph:node:pos"
-  ///
-  /// UsdUINodeGraphNodeAPI
+
+  /**
+   * @brief "ui:nodegraph:node:pos"
+   *
+   * UsdUINodeGraphNodeAPI */
   const TfToken uiNodegraphNodePos;
-  /// \brief "ui:nodegraph:node:size"
-  ///
-  /// UsdUINodeGraphNodeAPI
+
+  /**
+   * @brief "ui:nodegraph:node:size"
+   *
+   * UsdUINodeGraphNodeAPI */
   const TfToken uiNodegraphNodeSize;
-  /// \brief "ui:nodegraph:node:stackingOrder"
-  ///
-  /// UsdUINodeGraphNodeAPI
+
+  /**
+   * @brief "ui:nodegraph:node:stackingOrder"
+   *
+   * UsdUINodeGraphNodeAPI */
   const TfToken uiNodegraphNodeStackingOrder;
-  /// A vector of all of the tokens listed above.
+
+  /**
+   * @brief "ui:title"
+   *
+   * UsdUIWindow */
+  const TfToken uiTitle;
+
+  /**
+   * @brief "ui:windowCoords"
+   *
+   * UsdUIWindow */
+  const TfToken uiWindowCoords;
+
+  /**
+   * A vector of all of the tokens listed above. */
   const std::vector<TfToken> allTokens;
 };
 
-/// \var UsdUITokens
-///
-/// A global variable with static, efficient \link TfToken TfTokens\endlink
-/// for use in all public USD API.  \sa UsdUITokensType
+/**
+ * @var UsdUITokens
+ *
+ * A global variable with static, efficient @link TfToken
+ * TfTokens\endlink for use in all public USD API.
+ *
+ * @sa UsdUITokensType */
 extern USDUI_API TfStaticData<UsdUITokensType> UsdUITokens;
 
 WABI_NAMESPACE_END

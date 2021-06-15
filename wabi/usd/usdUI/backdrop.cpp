@@ -28,25 +28,27 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#include "wabi/usd/usdUI/backdrop.h"
+
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/usdUI/backdrop.h"
 
 WABI_NAMESPACE_BEGIN
 
-// Register the schema with the TfType system.
+/**
+ * Register the schema with the TfType system. */
 TF_REGISTRY_FUNCTION(TfType)
 {
   TfType::Define<UsdUIBackdrop, TfType::Bases<UsdTyped>>();
-
-  // Register the usd prim typename as an alias under UsdSchemaBase. This
-  // enables one to call
-  // TfType::Find<UsdSchemaBase>().FindDerivedByName("Backdrop")
-  // to find TfType<UsdUIBackdrop>, which is how IsA queries are
-  // answered.
+  /**
+   * Register the usd prim typename as an alias under UsdSchemaBase.
+   * This enables one to call:
+   * TfType::Find<UsdSchemaBase>().FindDerivedByName("Backdrop")
+   * To find TfType<UsdUIBackdrop>, which is how IsA queries are
+   * answered. */
   TfType::AddAlias<UsdSchemaBase, UsdUIBackdrop>("Backdrop");
 }
 
@@ -74,7 +76,6 @@ UsdUIBackdrop UsdUIBackdrop::Define(const UsdStagePtr &stage, const SdfPath &pat
   }
   return UsdUIBackdrop(stage->DefinePrim(path, usdPrimTypeName));
 }
-
 /* virtual */
 UsdSchemaKind UsdUIBackdrop::_GetSchemaKind() const
 {
@@ -150,11 +151,16 @@ const TfTokenVector &UsdUIBackdrop::GetSchemaAttributeNames(bool includeInherite
 
 WABI_NAMESPACE_END
 
-// ===================================================================== //
-// Feel free to add custom code below this line. It will be preserved by
-// the code generator.
-//
-// Just remember to wrap code in the appropriate delimiters:
-// 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
-// ===================================================================== //
-// --(BEGIN CUSTOM CODE)--
+/* clang-format off */
+
+  /**
+   * ======================================================================
+   *   Feel free to add custom code below this line. It will be preserved
+   *   by the code generator.
+   *
+   *   Just remember to wrap code in the appropriate delimiters:
+   *     - 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
+   * ======================================================================
+   * --(BEGIN CUSTOM CODE)-- */
+
+/* clang-format on */

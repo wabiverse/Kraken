@@ -28,7 +28,7 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-// GENERATED FILE.  DO NOT EDIT.
+
 #include "wabi/usd/usdUI/tokens.h"
 #include <boost/python/class.hpp>
 
@@ -36,10 +36,12 @@ WABI_NAMESPACE_USING
 
 namespace {
 
-// Helper to return a static token as a string.  We wrap tokens as Python
-// strings and for some reason simply wrapping the token using def_readonly
-// bypasses to-Python conversion, leading to the error that there's no
-// Python type for the C++ TfToken type.  So we wrap this functor instead.
+/**
+ * Helper to return a static token as a string. We wrap tokens
+ * as Python strings and for some reason simply wrapping the
+ * token using def_readonly bypasses  to-Python   conversion,
+ * leading to the error that there's no Python type for the
+ * C++ TfToken type.  So we wrap this functor instead. */
 class _WrapStaticToken {
  public:
   _WrapStaticToken(const TfToken *token) : _token(token)
@@ -71,8 +73,6 @@ void wrapUsdUITokens()
   _AddToken(cls, "closed", UsdUITokens->closed);
   _AddToken(cls, "minimized", UsdUITokens->minimized);
   _AddToken(cls, "open", UsdUITokens->open);
-  _AddToken(cls, "uiTitle", UsdUITokens->uiTitle);
-  _AddToken(cls, "uiWindowCoords", UsdUITokens->uiWindowCoords);
   _AddToken(cls, "uiDescription", UsdUITokens->uiDescription);
   _AddToken(cls, "uiDisplayGroup", UsdUITokens->uiDisplayGroup);
   _AddToken(cls, "uiDisplayName", UsdUITokens->uiDisplayName);
@@ -82,4 +82,8 @@ void wrapUsdUITokens()
   _AddToken(cls, "uiNodegraphNodePos", UsdUITokens->uiNodegraphNodePos);
   _AddToken(cls, "uiNodegraphNodeSize", UsdUITokens->uiNodegraphNodeSize);
   _AddToken(cls, "uiNodegraphNodeStackingOrder", UsdUITokens->uiNodegraphNodeStackingOrder);
+  _AddToken(cls, "uiTitle", UsdUITokens->uiTitle);
+  _AddToken(cls, "uiWindowCoords", UsdUITokens->uiWindowCoords);
 }
+
+/* clang-format on */

@@ -28,23 +28,30 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#include "wabi/usd/usdUI/sceneGraphPrimAPI.h"
+
 #include "wabi/usd/usd/schemaRegistry.h"
-#include "wabi/usd/usd/tokens.h"
 #include "wabi/usd/usd/typed.h"
 
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/usd/tokens.h"
+#include "wabi/usd/usdUI/sceneGraphPrimAPI.h"
 
 WABI_NAMESPACE_BEGIN
 
-// Register the schema with the TfType system.
+/**
+ * Register the schema with the TfType system. */
 TF_REGISTRY_FUNCTION(TfType)
 {
   TfType::Define<UsdUISceneGraphPrimAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (SceneGraphPrimAPI));
+/* clang-format off */
+TF_DEFINE_PRIVATE_TOKENS(
+  _schemaTokens,
+  (SceneGraphPrimAPI)
+);
+/* clang-format on */
 
 /* virtual */
 UsdUISceneGraphPrimAPI::~UsdUISceneGraphPrimAPI()
@@ -162,11 +169,16 @@ const TfTokenVector &UsdUISceneGraphPrimAPI::GetSchemaAttributeNames(bool includ
 
 WABI_NAMESPACE_END
 
-// ===================================================================== //
-// Feel free to add custom code below this line. It will be preserved by
-// the code generator.
-//
-// Just remember to wrap code in the appropriate delimiters:
-// 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
-// ===================================================================== //
-// --(BEGIN CUSTOM CODE)--
+/* clang-format off */
+
+  /**
+   * ======================================================================
+   *   Feel free to add custom code below this line. It will be preserved
+   *   by the code generator.
+   *
+   *   Just remember to wrap code in the appropriate delimiters:
+   *     - 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
+   * ======================================================================
+   * --(BEGIN CUSTOM CODE)-- */
+
+/* clang-format on */

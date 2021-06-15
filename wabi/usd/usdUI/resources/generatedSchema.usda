@@ -16,8 +16,8 @@ class "NodeGraphNodeAPI" (
     )
     uniform token ui:nodegraph:node:expansionState (
         allowedTokens = ["open", "closed", "minimized"]
-        doc = """ 
-        The current expansionState of the node in the ui. 
+        doc = """
+        The current expansionState of the node in the ui.
         'open' = fully expanded
         'closed' = fully collapsed
         'minimized' = should take the least space possible
@@ -25,7 +25,7 @@ class "NodeGraphNodeAPI" (
     )
     uniform asset ui:nodegraph:node:icon (
         doc = """
-        This points to an image that should be displayed on the node.  It is 
+        This points to an image that should be displayed on the node.  It is
         intended to be useful for summary visual classification of nodes, rather
         than a thumbnail preview of the computed result of the node in some
         computational system.
@@ -35,12 +35,12 @@ class "NodeGraphNodeAPI" (
         doc = """
         Declared relative position to the parent in a node graph.
         X is the horizontal position.
-        Y is the vertical position. Higher numbers correspond to lower positions 
+        Y is the vertical position. Higher numbers correspond to lower positions
         (coordinates are Qt style, not cartesian).
 
         These positions are not explicitly meant in pixel space, but rather
         assume that the size of a node is approximately 1.0x1.0. Where size-x is
-        the node width and size-y height of the node. Depending on 
+        the node width and size-y height of the node. Depending on
         graph UI implementation, the size of a node may vary in each direction.
 
         Example: If a node's width is 300 and it is position is at 1000, we
@@ -53,19 +53,19 @@ class "NodeGraphNodeAPI" (
         X is the width.
         Y is the height.
 
-        This value is optional, because node size is often determined 
+        This value is optional, because node size is often determined
         based on the number of in- and outputs of a node.
         """
     )
     uniform int ui:nodegraph:node:stackingOrder (
         doc = """
-        This optional value is a useful hint when an application cares about 
+        This optional value is a useful hint when an application cares about
         the visibility of a node and whether each node overlaps another.
-        
-        Nodes with lower stacking order values are meant to be drawn below 
+
+        Nodes with lower stacking order values are meant to be drawn below
         higher ones. Negative values are meant as background. Positive values
         are meant as foreground.
-        Undefined values should be treated as 0. 
+        Undefined values should be treated as 0.
 
         There are no set limits in these values.
         """
@@ -80,7 +80,7 @@ class "SceneGraphPrimAPI" (
 {
     uniform token ui:displayGroup (
         doc = """When publishing a nodegraph or a material, it can be useful to
-        provide an optional display group, for organizational purposes and 
+        provide an optional display group, for organizational purposes and
         readability. This is because often the usd shading hierarchy is rather
         flat while we want to display it in organized groups.
         """
@@ -93,17 +93,20 @@ class "SceneGraphPrimAPI" (
 }
 
 class Window "Window" (
-    doc = """Provides a window for the purpose of displaying an application's GUI.
+    doc = """
+    Provides a window for the purpose of displaying an application's GUI.
     """
 )
 {
     uniform token ui:title (
-        doc = """The window title that is displayed on the top of the window. This
+        doc = """
+        The window title that is displayed on the top of the window. This
         window title gives context for what this window is used for.
         """
     )
     uniform float4 ui:windowCoords (
-        doc = """The window coordinates as positioned on screen, storing both
+        doc = """
+        The window coordinates as positioned on screen, storing both
         location as well as window size.
         """
     )
@@ -113,21 +116,21 @@ class Backdrop "Backdrop" (
     doc = """Provides a 'group-box' for the purpose of node graph organization.
 
     Unlike containers, backdrops do not store the Shader nodes inside of them.
-    Backdrops are an organizational tool that allows Shader nodes to be visually 
-    grouped together in a node-graph UI, but there is no direct relationship 
-    between a Shader node and a Backdrop. 
+    Backdrops are an organizational tool that allows Shader nodes to be visually
+    grouped together in a node-graph UI, but there is no direct relationship
+    between a Shader node and a Backdrop.
 
-    The guideline for a node-graph UI is that a Shader node is considered part 
-    of a Backdrop when the Backdrop is the smallest Backdrop a Shader node's 
+    The guideline for a node-graph UI is that a Shader node is considered part
+    of a Backdrop when the Backdrop is the smallest Backdrop a Shader node's
     bounding-box fits inside.
 
-    Backdrop objects are contained inside a NodeGraph, similar to how Shader 
+    Backdrop objects are contained inside a NodeGraph, similar to how Shader
     objects are contained inside a NodeGraph.
 
     Backdrops have no shading inputs or outputs that influence the rendered
     results of a NodeGraph. Therefore they can be safely ignored during import.
 
-    Like Shaders and NodeGraphs, Backdrops subscribe to the NodeGraphNodeAPI to 
+    Like Shaders and NodeGraphs, Backdrops subscribe to the NodeGraphNodeAPI to
     specify position and size.
     """
 )
