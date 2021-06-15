@@ -22,35 +22,22 @@
  * Bare Metal.
  */
 
-// ANCHOR: Platform Backend for SDL2
-// This needs to be used along with a Renderer (e.g. DirectX11, OpenGL3, Vulkan..)
-// (Info: SDL2 is a cross-platform general purpose library for handling windows, inputs, graphics
-// context creation, etc.)
-
-// Implemented features:
-//  [X] Platform: Mouse cursor shape and visibility. Disable with 'io.ConfigFlags |=
-//  ANCHORConfigFlags_NoMouseCursorChange'. [X] Platform: Clipboard support. [X] Platform: Keyboard
-//  arrays indexed using SDL_SCANCODE_* codes, e.g. ANCHOR::IsKeyPressed(SDL_SCANCODE_SPACE). [X]
-//  Platform: Gamepad support. Enabled with 'io.ConfigFlags |= ANCHORConfigFlags_NavEnableGamepad'.
-// Missing features:
-//  [ ] Platform: SDL2 handling of IME under Windows appears to be broken and it explicitly disable
-//  the regular Windows IME. You can restore Windows IME by compiling SDL with
-//  SDL_DISABLE_WINDOWS_IME.
-
-// You can use unmodified anchor_impl_* files in your project. See examples/ folder for examples of
-// using this. Prefer including the entire anchor/ repository into your project (either as a copy
-// or as a submodule), and only build the backends you need. If you are new to ANCHOR, read
-// documentation from the docs/ folder + read the top of anchor.cpp. Read online:
-// https://github.com/ocornut/anchor/tree/master/docs
-
 #pragma once
 
-#include "ANCHOR_api.h"  // ANCHOR_IMPL_API
+#include "ANCHOR_api.h"
+#include "ANCHOR_display_manager.h"
 #include "ANCHOR_system.h"
 #include "ANCHOR_window.h"
 
-struct ANCHOR_ImplVulkanH_Window;
+#include <SDL.h>
+
+/** Vulkan Surface Forward -> */
+struct ANCHOR_VulkanGPU_Surface;
+
+/** SDL Forwards -> */
+struct SDL_Cursor;
 struct SDL_Window;
+
 typedef union SDL_Event SDL_Event;
 
 class ANCHOR_SystemSDL : public ANCHOR_System {
@@ -58,29 +45,19 @@ class ANCHOR_SystemSDL : public ANCHOR_System {
   ANCHOR_SystemSDL();
   ~ANCHOR_SystemSDL();
 
-  ANCHOR_IMPL_API
   static bool ANCHOR_ImplSDL2_InitForOpenGL(SDL_Window *window, void *sdl_gl_context);
-
-  ANCHOR_IMPL_API
   static bool ANCHOR_ImplSDL2_InitForVulkan(SDL_Window *window);
-
-  ANCHOR_IMPL_API
   static bool ANCHOR_ImplSDL2_InitForD3D(SDL_Window *window);
-
-  ANCHOR_IMPL_API
   static bool ANCHOR_ImplSDL2_InitForMetal(SDL_Window *window);
-
-  ANCHOR_IMPL_API
   static void ANCHOR_ImplSDL2_Shutdown();
-
-  ANCHOR_IMPL_API
   static void ANCHOR_ImplSDL2_NewFrame(SDL_Window *window);
-
-  ANCHOR_IMPL_API
   static bool ANCHOR_ImplSDL2_ProcessEvent(const SDL_Event *event);
 
  private:
+  eAnchorStatus init();
+
   ANCHOR_ISystemWindow *createWindow(const char *title,
+                                     const char *icon,
                                      AnchorS32 left,
                                      AnchorS32 top,
                                      AnchorU32 width,
@@ -88,22 +65,44 @@ class ANCHOR_SystemSDL : public ANCHOR_System {
                                      eAnchorWindowState state,
                                      eAnchorDrawingContextType type,
                                      int vkSettings,
-                                     const bool exclusive                     = false,
-                                     const bool is_dialog                     = false,
+                                     const bool exclusive = false,
+                                     const bool is_dialog = false,
                                      const ANCHOR_ISystemWindow *parentWindow = NULL);
+};
+
+class ANCHOR_DisplayManagerSDL : public ANCHOR_DisplayManager {
+ public:
+  ANCHOR_DisplayManagerSDL(ANCHOR_SystemSDL *system);
+
+  eAnchorStatus getNumDisplays(AnchorU8 &numDisplays) const;
+
+  eAnchorStatus getNumDisplaySettings(AnchorU8 display, AnchorS32 &numSettings) const;
+
+  eAnchorStatus getDisplaySetting(AnchorU8 display,
+                                  AnchorS32 index,
+                                  ANCHOR_DisplaySetting &setting) const;
+
+  eAnchorStatus getCurrentDisplaySetting(AnchorU8 display, ANCHOR_DisplaySetting &setting) const;
+
+  eAnchorStatus getCurrentDisplayModeSDL(SDL_DisplayMode &mode) const;
+
+  eAnchorStatus setCurrentDisplaySetting(AnchorU8 display, const ANCHOR_DisplaySetting &setting);
+
+ private:
+  ANCHOR_SystemSDL *m_system;
+  SDL_DisplayMode m_mode;
 };
 
 class ANCHOR_WindowSDL : public ANCHOR_SystemWindow {
  private:
   ANCHOR_SystemSDL *m_system;
-  SDL_Window *m_sdl_win;
   bool m_valid_setup;
   bool m_invalid_window;
 
   SDL_Window *m_sdl_win;
   SDL_Cursor *m_sdl_custom_cursor;
 
-  ANCHOR_ImplVulkanH_Window *m_vulkan_context;
+  ANCHOR_VulkanGPU_Surface *m_vulkan_context;
 
  public:
   ANCHOR_WindowSDL(ANCHOR_SystemSDL *system,
@@ -114,9 +113,9 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow {
                    AnchorU32 width,
                    AnchorU32 height,
                    eAnchorWindowState state,
-                   eAnchorDrawingContextType type           = 0,
-                   const bool stereoVisual                  = false,
-                   const bool exclusive                     = false,
+                   eAnchorDrawingContextType type = ANCHOR_DrawingContextTypeNone,
+                   const bool stereoVisual = false,
+                   const bool exclusive = false,
                    const ANCHOR_ISystemWindow *parentWindow = NULL);
 
   ~ANCHOR_WindowSDL();
@@ -133,6 +132,21 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow {
    * @return Indication of success. */
   ANCHOR_Context *newDrawingContext(eAnchorDrawingContextType type);
 
+  /**
+   * Swaps front and back buffers of a window.
+   * @return A boolean success indicator. */
+  eAnchorStatus swapBuffers();
+
   void setTitle(const char *title);
   void setIcon(const char *icon);
+
+  eAnchorStatus beginFullScreen() const
+  {
+    return ANCHOR_ERROR;
+  }
+
+  eAnchorStatus endFullScreen() const
+  {
+    return ANCHOR_ERROR;
+  }
 };

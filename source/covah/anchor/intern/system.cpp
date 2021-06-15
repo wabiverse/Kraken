@@ -32,21 +32,15 @@
 
 WABI_NAMESPACE_USING
 
-ANCHOR_SystemHandle ANCHOR_CreateSystem(int backend)
+ANCHOR_SystemHandle ANCHOR_CreateSystem()
 {
-  switch (backend) {
-    case (ANCHOR_SDL | ANCHOR_VULKAN): {
-      VkResult vk_err;
-      return (ANCHOR_SystemHandle)ANCHOR_init_vulkan(vk_err);
-    }
+  ANCHOR_ISystem::createSystem();
+  ANCHOR_ISystem *system = ANCHOR_ISystem::getSystem();
 
-    default:
-      TF_CODING_ERROR("Specified a backend which is not implemented.");
-      exit(ANCHOR_ERROR);
-  }
+  return (ANCHOR_SystemHandle)system;
 }
 
-void ANCHOR_DestroySystem(ANCHOR_SystemHandle *system)
-{
-  ANCHOR_clean_vulkan(system);
-}
+// void ANCHOR_DestroySystem(ANCHOR_SystemHandle *system)
+// {
+//   ANCHOR_clean_vulkan(system);
+// }

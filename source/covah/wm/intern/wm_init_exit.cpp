@@ -23,6 +23,7 @@
  */
 
 #include "WM_init_exit.h" /* Own include. */
+#include "WM_window.h"
 
 #include "ANCHOR_api.h"
 
@@ -30,6 +31,7 @@
 
 #include "CLI_icons.h"
 
+#include "CKE_context.h"
 #include "CKE_main.h"
 
 #include "ED_debug_codes.h"
@@ -79,4 +81,9 @@ static void ShowMainMenuBar()
     ShowFileMenu();
     ANCHOR::EndMainMenuBar();
   }
+}
+
+void WM_init(cContext *C, int argc, const char **argv)
+{
+  WM_anchor_init(C);
 }

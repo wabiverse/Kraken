@@ -46,6 +46,7 @@
 /* UNIVERSE */
 #include "UNI_context.h"
 #include "UNI_diagnostics.h"
+#include "UNI_window.h"
 
 /* PIXAR */
 #include <wabi/base/arch/hints.h>
@@ -138,22 +139,22 @@ void CKE_covah_globals_init()
 
   G.main = CKE_main_new();
 
-  G.main->exe_path              = covah_exe_path_init();
-  G.main->temp_dir              = covah_system_tempdir_path();
-  G.main->datafiles_path        = covah_datafiles_path_init();
-  G.main->icons_path            = covah_icon_path_init();
-  G.main->styles_path           = covah_styles_path_init();
-  G.main->stage_id              = covah_startup_file_init();
+  G.main->exe_path = covah_exe_path_init();
+  G.main->temp_dir = covah_system_tempdir_path();
+  G.main->datafiles_path = covah_datafiles_path_init();
+  G.main->icons_path = covah_icon_path_init();
+  G.main->styles_path = covah_styles_path_init();
+  G.main->stage_id = covah_startup_file_init();
   G.main->covah_version_decimal = covah_get_version_decimal();
 }
 
 static bool run_diagnostics = false;
 
-static std::string load_stage    = "";
+static std::string load_stage = "";
 static std::string convert_stage = "";
-static std::string convert_to    = "";
+static std::string convert_to = "";
 
-static void covah_setup_args(int argc, char *argv[])
+static void covah_setup_args(int argc, const char **argv)
 {
   CKE_ARGS::options_description options("Options");
   /* clang-format off */
@@ -182,7 +183,7 @@ static void covah_setup_args(int argc, char *argv[])
 
   CKE_ARGS::variables_map arg_vars;
   try {
-    CKE_ARGS::store(CKE_ARGS::parse_command_line(argc, argv, options), arg_vars);
+    CKE_ARGS::store(CKE_ARGS::parse_command_line(argc, (const char **)argv, options), arg_vars);
     CKE_ARGS::notify(arg_vars);
 
     if (arg_vars.count("help")) {
@@ -207,7 +208,7 @@ static void CKE_CONVERT_STAGE_TO(std::string path, std::string extension)
   stage->Export(path.substr(0, pos) + "." + extension);
 }
 
-static ckeStatusCode covah_parse_args(int argc, char *argv[])
+static ckeStatusCode covah_parse_args(int argc, const char **argv)
 {
   if (load_stage.length() > 2) {
     G.main->stage_id = load_stage;
@@ -224,14 +225,14 @@ static ckeStatusCode covah_parse_args(int argc, char *argv[])
   return COVAH_SUCCESS;
 }
 
-void CKE_covah_main_init(int argc, char *argv[], cContext *C)
+void CKE_covah_main_init(struct cContext *C, int argc, const char **argv)
 {
   /* Init plugins. */
   CKE_covah_plugins_init();
 
   /* Init & parse args. */
-  covah_setup_args(argc, argv);
-  covah_parse_args(argc, argv);
+  covah_setup_args(argc, (const char **)argv);
+  covah_parse_args(argc, (const char **)argv);
 
   /* Determine stage to load (from user or factory default). */
   if (!std::filesystem::exists(G.main->stage_id) ||
@@ -271,8 +272,14 @@ void CKE_covah_main_init(int argc, char *argv[], cContext *C)
     UNI_open_stage(G.main->stage_id.string());
   }
 
+  Scene *cscene = new Scene();
+  cscene->stage = UNI.stage;
+
+  wmWindowManager *wm = new wmWindowManager();
+
   CTX_data_main_set(C, G.main);
-  CKE_main_runtime(ANCHOR_SDL | ANCHOR_VULKAN);
+  CTX_wm_manager_set(C, wm);
+  CTX_data_scene_set(C, cscene);
 }
 
 bool CKE_has_kill_signal(ckeStatusCode signal)

@@ -27,13 +27,13 @@
 #include "UNI_window.h"
 
 #include "ANCHOR_api.h"
+#include "ANCHOR_event_consumer.h"
+#include "ANCHOR_system.h"
 
 #include "CKE_context.h"
 
-typedef std::pair<ANCHOR_SystemHandle *, ANCHOR_SurfaceHandle *> AnchorSysGPU;
-
 /* handle to anchor system. */
-static AnchorSysGPU anchor_backend;
+static ANCHOR_SystemHandle anchor_system;
 
 /**
  * This is called by anchor, and this is where
@@ -52,9 +52,9 @@ void WM_anchor_init(cContext *C)
     consumer = ANCHOR_CreateEventConsumer(anchor_event_proc, C);
   }
 
-  if (!anchor_backend.first) {
+  if (!anchor_system) {
     /** The only raw ANCHOR_xxx calls */
-    anchor_backend = ANCHOR_CreateSystem(ANCHOR_SDL | ANCHOR_VULKAN);
+    anchor_system = ANCHOR_CreateSystem();
   }
 
   if (C != NULL) {
@@ -64,9 +64,9 @@ void WM_anchor_init(cContext *C)
   }
 }
 
-void WM_window_process_events(cContext *C)
+void WM_window_process_events(const cContext *C)
 {
-  bool has_event = ANCHOR::ProcessEvents(anchor_backend.first, anchor_backend.second);
+  bool has_event = ANCHOR::ProcessEvents(anchor_system, false);
 
   if (has_event) {
     // ANCHOR::DispatchEvents();
@@ -75,9 +75,5 @@ void WM_window_process_events(cContext *C)
 
 void WM_window_swap_buffers(wmWindow *win)
 {
-  /**
-   * TODO: Once we implement GPU Library. */
-  TF_UNUSED(win);
-
-  ANCHOR::SwapChain(anchor_backend.second);
+  ANCHOR::SwapChain(win->anchorwin);
 }

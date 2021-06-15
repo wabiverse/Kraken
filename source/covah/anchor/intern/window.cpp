@@ -31,13 +31,13 @@ ANCHOR_SystemWindow::ANCHOR_SystemWindow(AnchorU32 width,
                                          eAnchorWindowState state,
                                          const bool wantStereoVisual,
                                          const bool /*exclusive*/)
-    : m_drawingContextType(ANCHOR_DrawingContextTypeNone),
-      m_cursorVisible(true),
-      m_cursorGrab(ANCHOR_GrabDisable),
-      m_cursorShape(ANCHOR_StandardCursorDefault),
-      m_wantStereoVisual(wantStereoVisual)
+  : m_drawingContextType(ANCHOR_DrawingContextTypeNone),
+    m_cursorVisible(true),
+    m_cursorGrab(ANCHOR_GrabDisable),
+    m_cursorShape(ANCHOR_StandardCursorDefault),
+    m_wantStereoVisual(wantStereoVisual)
 {
-  m_isUnsavedChanges       = false;
+  m_isUnsavedChanges = false;
   m_canAcceptDragOperation = false;
 
   m_progressBarVisible = false;
@@ -49,31 +49,60 @@ ANCHOR_SystemWindow::ANCHOR_SystemWindow(AnchorU32 width,
 
   m_fullScreen = state == ANCHOR_WindowStateFullScreen;
   if (m_fullScreen) {
-    m_fullScreenWidth  = width;
+    m_fullScreenWidth = width;
     m_fullScreenHeight = height;
   }
 }
 
-eAnchorStatus ANCHOR_SystemWindow::setDrawingContextType(GHOST_TDrawingContextType type)
+ANCHOR_SystemWindow::~ANCHOR_SystemWindow()
+{
+  delete m_context;
+  ANCHOR::SetCurrentContext(NULL);
+}
+
+void *ANCHOR_SystemWindow::getOSWindow() const
+{
+  return NULL;
+}
+
+eAnchorStatus ANCHOR_SystemWindow::setDrawingContextType(eAnchorDrawingContextType type)
 {
   if (type != m_drawingContextType) {
+    delete m_context;
     ANCHOR::SetCurrentContext(NULL);
 
     if (type != ANCHOR_DrawingContextTypeNone)
-      ANCHOR::CreateContext();
-    m_context = newDrawingContext(type);
+      m_context = newDrawingContext(type);
 
     if (m_context != NULL) {
       m_drawingContextType = type;
     }
     else {
-      m_context            = new GHOST_ContextNone(m_wantStereoVisual);
-      m_drawingContextType = GHOST_kDrawingContextTypeNone;
+      m_context = ANCHOR::CreateContext();
+      m_drawingContextType = ANCHOR_DrawingContextTypeNone;
     }
 
-    return (type == m_drawingContextType) ? GHOST_kSuccess : GHOST_kFailure;
+    return (type == m_drawingContextType) ? ANCHOR_SUCCESS : ANCHOR_ERROR;
   }
   else {
-    return GHOST_kSuccess;
+    return ANCHOR_SUCCESS;
   }
+}
+
+eAnchorStatus ANCHOR_SystemWindow::swapBuffers()
+{
+  ANCHOR::SwapChain(this);
+  return ANCHOR_SUCCESS;
+}
+
+eAnchorStatus ANCHOR_SystemWindow::setModifiedState(bool isUnsavedChanges)
+{
+  m_isUnsavedChanges = isUnsavedChanges;
+
+  return ANCHOR_SUCCESS;
+}
+
+bool ANCHOR_SystemWindow::getModifiedState()
+{
+  return m_isUnsavedChanges;
 }

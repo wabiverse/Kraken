@@ -41,7 +41,7 @@
 
 #if defined(__GNUC__)
 #  pragma GCC diagnostic ignored \
-      "-Wpragmas"  // warning: unknown option after '#pragma GCC diagnostic' kind
+    "-Wpragmas"  // warning: unknown option after '#pragma GCC diagnostic' kind
 #  pragma GCC diagnostic ignored "-Wunused-function"  // warning: 'xxxx' defined but not used
 #endif
 
@@ -67,7 +67,7 @@ static void AnchorFreeTypeDefaultFreeFunc(void *ptr, void *user_data)
 static void *(*GAnchorFreeTypeAllocFunc)(size_t size,
                                          void *user_data) = AnchorFreeTypeDefaultAllocFunc;
 static void (*GAnchorFreeTypeFreeFunc)(void *ptr, void *user_data) = AnchorFreeTypeDefaultFreeFunc;
-static void *GAnchorFreeTypeAllocatorUserData                      = NULL;
+static void *GAnchorFreeTypeAllocatorUserData = NULL;
 
 //-------------------------------------------------------------------------
 // Code
@@ -169,11 +169,8 @@ bool FreeTypeFont::InitFont(FT_Library ft_library,
                             const AnchorFontConfig &cfg,
                             unsigned int extra_font_builder_flags)
 {
-  FT_Error error = FT_New_Memory_Face(ft_library,
-                                      (uint8_t *)cfg.FontData,
-                                      (uint32_t)cfg.FontDataSize,
-                                      (uint32_t)cfg.FontNo,
-                                      &Face);
+  FT_Error error = FT_New_Memory_Face(
+    ft_library, (uint8_t *)cfg.FontData, (uint32_t)cfg.FontDataSize, (uint32_t)cfg.FontNo, &Face);
   if (error != 0)
     return false;
   error = FT_Select_Charmap(Face, FT_ENCODING_UNICODE);
@@ -229,9 +226,9 @@ void FreeTypeFont::SetPixelHeight(int pixel_height)
   // sum of font's ascender and descender. Seems strange to me. NB: FT_Set_Pixel_Sizes() doesn't
   // seem to get us the same result.
   FT_Size_RequestRec req;
-  req.type   = (UserFlags & AnchorFreeTypeBuilderFlags_Bitmap) ? FT_SIZE_REQUEST_TYPE_NOMINAL :
-                                                                 FT_SIZE_REQUEST_TYPE_REAL_DIM;
-  req.width  = 0;
+  req.type = (UserFlags & AnchorFreeTypeBuilderFlags_Bitmap) ? FT_SIZE_REQUEST_TYPE_NOMINAL :
+                                                               FT_SIZE_REQUEST_TYPE_REAL_DIM;
+  req.width = 0;
   req.height = (uint32_t)pixel_height * 64;
   req.horiResolution = 0;
   req.vertResolution = 0;
@@ -239,12 +236,12 @@ void FreeTypeFont::SetPixelHeight(int pixel_height)
 
   // Update font info
   FT_Size_Metrics metrics = Face->size->metrics;
-  Info.PixelHeight        = (uint32_t)pixel_height;
-  Info.Ascender           = (float)FT_CEIL(metrics.ascender);
-  Info.Descender          = (float)FT_CEIL(metrics.descender);
-  Info.LineSpacing        = (float)FT_CEIL(metrics.height);
-  Info.LineGap            = (float)FT_CEIL(metrics.height - metrics.ascender + metrics.descender);
-  Info.MaxAdvanceWidth    = (float)FT_CEIL(metrics.max_advance);
+  Info.PixelHeight = (uint32_t)pixel_height;
+  Info.Ascender = (float)FT_CEIL(metrics.ascender);
+  Info.Descender = (float)FT_CEIL(metrics.descender);
+  Info.LineSpacing = (float)FT_CEIL(metrics.height);
+  Info.LineGap = (float)FT_CEIL(metrics.height - metrics.ascender + metrics.descender);
+  Info.MaxAdvanceWidth = (float)FT_CEIL(metrics.max_advance);
 }
 
 const FT_Glyph_Metrics *FreeTypeFont::LoadGlyph(uint32_t codepoint)
@@ -278,16 +275,16 @@ const FT_Glyph_Metrics *FreeTypeFont::LoadGlyph(uint32_t codepoint)
 const FT_Bitmap *FreeTypeFont::RenderGlyphAndGetInfo(GlyphInfo *out_glyph_info)
 {
   FT_GlyphSlot slot = Face->glyph;
-  FT_Error error    = FT_Render_Glyph(slot, RenderMode);
+  FT_Error error = FT_Render_Glyph(slot, RenderMode);
   if (error != 0)
     return NULL;
 
-  FT_Bitmap *ft_bitmap      = &Face->glyph->bitmap;
-  out_glyph_info->Width     = (int)ft_bitmap->width;
-  out_glyph_info->Height    = (int)ft_bitmap->rows;
-  out_glyph_info->OffsetX   = Face->glyph->bitmap_left;
-  out_glyph_info->OffsetY   = -Face->glyph->bitmap_top;
-  out_glyph_info->AdvanceX  = (float)FT_CEIL(slot->advance.x);
+  FT_Bitmap *ft_bitmap = &Face->glyph->bitmap;
+  out_glyph_info->Width = (int)ft_bitmap->width;
+  out_glyph_info->Height = (int)ft_bitmap->rows;
+  out_glyph_info->OffsetX = Face->glyph->bitmap_left;
+  out_glyph_info->OffsetY = -Face->glyph->bitmap_top;
+  out_glyph_info->AdvanceX = (float)FT_CEIL(slot->advance.x);
   out_glyph_info->IsColored = (ft_bitmap->pixel_mode == FT_PIXEL_MODE_BGRA);
 
   return ft_bitmap;
@@ -299,9 +296,9 @@ void FreeTypeFont::BlitGlyph(const FT_Bitmap *ft_bitmap,
                              unsigned char *multiply_table)
 {
   ANCHOR_ASSERT(ft_bitmap != NULL);
-  const uint32_t w         = ft_bitmap->width;
-  const uint32_t h         = ft_bitmap->rows;
-  const uint8_t *src       = ft_bitmap->buffer;
+  const uint32_t w = ft_bitmap->width;
+  const uint32_t h = ft_bitmap->rows;
+  const uint8_t *src = ft_bitmap->buffer;
   const uint32_t src_pitch = ft_bitmap->pitch;
 
   switch (ft_bitmap->pixel_mode) {
@@ -325,7 +322,7 @@ void FreeTypeFont::BlitGlyph(const FT_Bitmap *ft_bitmap,
       uint8_t color0 = multiply_table ? multiply_table[0] : 0;
       uint8_t color1 = multiply_table ? multiply_table[255] : 255;
       for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch) {
-        uint8_t bits            = 0;
+        uint8_t bits = 0;
         const uint8_t *bits_ptr = src;
         for (uint32_t x = 0; x < w; x++, bits <<= 1) {
           if ((x & 7) == 0)
@@ -427,10 +424,10 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
   AnchorFontAtlasBuildInit(atlas);
 
   // Clear atlas
-  atlas->TexID    = (AnchorTextureID)NULL;
+  atlas->TexID = (AnchorTextureID)NULL;
   atlas->TexWidth = atlas->TexHeight = 0;
-  atlas->TexUvScale                  = GfVec2f(0.0f, 0.0f);
-  atlas->TexUvWhitePixel             = GfVec2f(0.0f, 0.0f);
+  atlas->TexUvScale = GfVec2f(0.0f, 0.0f);
+  atlas->TexUvWhitePixel = GfVec2f(0.0f, 0.0f);
   atlas->ClearTexData();
 
   // Temporary storage for building
@@ -445,8 +442,8 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
   // 1. Initialize font loading structure, check font data validity
   for (int src_i = 0; src_i < atlas->ConfigData.Size; src_i++) {
     AnchorFontBuildSrcDataFT &src_tmp = src_tmp_array[src_i];
-    AnchorFontConfig &cfg             = atlas->ConfigData[src_i];
-    FreeTypeFont &font_face           = src_tmp.Font;
+    AnchorFontConfig &cfg = atlas->ConfigData[src_i];
+    FreeTypeFont &font_face = src_tmp.Font;
     ANCHOR_ASSERT(cfg.DstFont &&
                   (!cfg.DstFont->IsLoaded() || cfg.DstFont->ContainerAtlas == atlas));
 
@@ -493,8 +490,8 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
                                                    // make this an option (e.g. MergeOverwrite)
           continue;
         uint32_t glyph_index = FT_Get_Char_Index(
-            src_tmp.Font.Face, codepoint);  // It is actually in the font? (FIXME-OPT: We are not
-                                            // storing the glyph_index..)
+          src_tmp.Font.Face, codepoint);  // It is actually in the font? (FIXME-OPT: We are not
+                                          // storing the glyph_index..)
         if (glyph_index == 0)
           continue;
 
@@ -515,7 +512,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
 
     ANCHOR_ASSERT(sizeof(src_tmp.GlyphsSet.Storage.Data[0]) == sizeof(AnchorU32));
     const AnchorU32 *it_begin = src_tmp.GlyphsSet.Storage.begin();
-    const AnchorU32 *it_end   = src_tmp.GlyphsSet.Storage.end();
+    const AnchorU32 *it_end = src_tmp.GlyphsSet.Storage.end();
     for (const AnchorU32 *it = it_begin; it < it_end; it++)
       if (AnchorU32 entries_32 = *it)
         for (AnchorU32 bit_n = 0; bit_n < 32; bit_n++)
@@ -546,17 +543,17 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
   // Oblique transform) We allocate in chunks of 256 KB to not waste too much extra memory ahead.
   // Hopefully users of FreeType won't find the temporary allocations.
   const int BITMAP_BUFFERS_CHUNK_SIZE = 256 * 1024;
-  int buf_bitmap_current_used_bytes   = 0;
+  int buf_bitmap_current_used_bytes = 0;
   AnchorVector<unsigned char *> buf_bitmap_buffers;
   buf_bitmap_buffers.push_back((unsigned char *)IM_ALLOC(BITMAP_BUFFERS_CHUNK_SIZE));
 
   // 4. Gather glyphs sizes so we can pack them in our virtual canvas.
   // 8. Render/rasterize font characters into the texture
-  int total_surface   = 0;
+  int total_surface = 0;
   int buf_rects_out_n = 0;
   for (int src_i = 0; src_i < src_tmp_array.Size; src_i++) {
     AnchorFontBuildSrcDataFT &src_tmp = src_tmp_array[src_i];
-    AnchorFontConfig &cfg             = atlas->ConfigData[src_i];
+    AnchorFontConfig &cfg = atlas->ConfigData[src_i];
     if (src_tmp.GlyphsCount == 0)
       continue;
 
@@ -609,7 +606,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
   // increasing width can decrease height. User can override TexDesiredWidth and TexGlyphPadding if
   // they wish, otherwise we use a simple heuristic to select the width based on expected surface.
   const int surface_sqrt = (int)ImSqrt((float)total_surface) + 1;
-  atlas->TexHeight       = 0;
+  atlas->TexHeight = 0;
   if (atlas->TexDesiredWidth > 0)
     atlas->TexWidth = atlas->TexDesiredWidth;
   else
@@ -621,13 +618,13 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
   // 5. Start packing
   // Pack our extra data rectangles first, so it will be on the upper-left corner of our texture
   // (UV will have small values).
-  const int TEX_HEIGHT_MAX                  = 1024 * 32;
+  const int TEX_HEIGHT_MAX = 1024 * 32;
   const int num_nodes_for_packing_algorithm = atlas->TexWidth - atlas->TexGlyphPadding;
   AnchorVector<stbrp_node> pack_nodes;
   pack_nodes.resize(num_nodes_for_packing_algorithm);
   stbrp_context pack_context;
   stbrp_init_target(
-      &pack_context, atlas->TexWidth, TEX_HEIGHT_MAX, pack_nodes.Data, pack_nodes.Size);
+    &pack_context, atlas->TexWidth, TEX_HEIGHT_MAX, pack_nodes.Data, pack_nodes.Size);
   AnchorFontAtlasBuildPackCustomRects(atlas, &pack_context);
 
   // 6. Pack each source font. No rendering yet, we are working with rectangles in an infinitely
@@ -649,9 +646,9 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
   }
 
   // 7. Allocate texture
-  atlas->TexHeight  = (atlas->Flags & AnchorFontAtlasFlags_NoPowerOfTwoHeight) ?
-                          (atlas->TexHeight + 1) :
-                          ImUpperPowerOfTwo(atlas->TexHeight);
+  atlas->TexHeight = (atlas->Flags & AnchorFontAtlasFlags_NoPowerOfTwoHeight) ?
+                       (atlas->TexHeight + 1) :
+                       ImUpperPowerOfTwo(atlas->TexHeight);
   atlas->TexUvScale = GfVec2f(1.0f / atlas->TexWidth, 1.0f / atlas->TexHeight);
   if (src_load_color) {
     atlas->TexPixelsRGBA32 = (unsigned int *)IM_ALLOC(atlas->TexWidth * atlas->TexHeight * 4);
@@ -674,9 +671,9 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
     // - We can have multiple input fonts writing into a same destination font.
     // - dst_font->ConfigData is != from cfg which is our source configuration.
     AnchorFontConfig &cfg = atlas->ConfigData[src_i];
-    AnchorFont *dst_font  = cfg.DstFont;
+    AnchorFont *dst_font = cfg.DstFont;
 
-    const float ascent  = src_tmp.Font.Info.Ascender;
+    const float ascent = src_tmp.Font.Info.Ascender;
     const float descent = src_tmp.Font.Info.Descender;
     AnchorFontAtlasBuildSetupFont(atlas, dst_font, &cfg, ascent, descent);
     const float font_off_x = cfg.GlyphOffset[0];
@@ -685,7 +682,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
     const int padding = atlas->TexGlyphPadding;
     for (int glyph_i = 0; glyph_i < src_tmp.GlyphsCount; glyph_i++) {
       AnchorFontBuildSrcGlyphFT &src_glyph = src_tmp.GlyphsList[glyph_i];
-      stbrp_rect &pack_rect                = src_tmp.Rects[glyph_i];
+      stbrp_rect &pack_rect = src_tmp.Rects[glyph_i];
       ANCHOR_ASSERT(pack_rect.was_packed);
       if (pack_rect.w == 0 && pack_rect.h == 0)
         continue;
@@ -725,7 +722,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
       float u1 = (tx + info.Width) / (float)atlas->TexWidth;
       float v1 = (ty + info.Height) / (float)atlas->TexHeight;
       dst_font->AddGlyph(
-          &cfg, (AnchorWChar)src_glyph.Codepoint, x0, y0, x1, y1, u0, v0, u1, v1, info.AdvanceX);
+        &cfg, (AnchorWChar)src_glyph.Codepoint, x0, y0, x1, y1, u0, v0, u1, v1, info.AdvanceX);
 
       AnchorFontGlyph *dst_glyph = &dst_font->Glyphs.back();
       ANCHOR_ASSERT(dst_glyph->Codepoint == src_glyph.Codepoint);
@@ -784,10 +781,10 @@ static bool AnchorFontAtlasBuildWithFreeType(AnchorFontAtlas *atlas)
 {
   // FreeType memory management: https://www.freetype.org/freetype2/docs/design/design-4.html
   FT_MemoryRec_ memory_rec = {};
-  memory_rec.user          = NULL;
-  memory_rec.alloc         = &FreeType_Alloc;
-  memory_rec.free          = &FreeType_Free;
-  memory_rec.realloc       = &FreeType_Realloc;
+  memory_rec.user = NULL;
+  memory_rec.alloc = &FreeType_Alloc;
+  memory_rec.free = &FreeType_Free;
+  memory_rec.realloc = &FreeType_Realloc;
 
   // https://www.freetype.org/freetype2/docs/reference/ft2-module_management.html#FT_New_Library
   FT_Library ft_library;
@@ -816,7 +813,7 @@ void AnchorFreeType::SetAllocatorFunctions(void *(*alloc_func)(size_t sz, void *
                                            void (*free_func)(void *ptr, void *user_data),
                                            void *user_data)
 {
-  GAnchorFreeTypeAllocFunc         = alloc_func;
-  GAnchorFreeTypeFreeFunc          = free_func;
+  GAnchorFreeTypeAllocFunc = alloc_func;
+  GAnchorFreeTypeFreeFunc = free_func;
   GAnchorFreeTypeAllocatorUserData = user_data;
 }

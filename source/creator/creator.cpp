@@ -29,9 +29,13 @@
 #include "CKE_context.h"
 #include "CKE_main.h"
 
+#include "WM_api.h"
+#include "WM_init_exit.h"
+#include "WM_window.h"
+
 #include "environment.h"
 
-int main(int argc, char *argv[])
+int main(int argc, const char **argv)
 {
   cContext *C;
 
@@ -45,6 +49,9 @@ int main(int argc, char *argv[])
   C = CTX_create();
 
   CKE_covah_globals_init();
-  CKE_covah_main_init(argc, argv, C);
-  return 0;
+  CKE_covah_main_init(C, argc, (const char **)argv);
+
+  WM_init(C, argc, (const char **)argv);
+  WM_main(C);
+  return COVAH_SUCCESS;
 }

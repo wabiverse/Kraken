@@ -43,3 +43,6 @@
 #  endif
 #  define COVAH_WM_LOCAL ARCH_HIDDEN
 #endif
+
+COVAH_WM_API
+void WM_main(struct cContext *C);

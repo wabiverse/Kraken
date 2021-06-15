@@ -25,6 +25,7 @@
 #pragma once
 
 #include "ANCHOR_api.h"
+#include "ANCHOR_display_manager.h"
 
 class ANCHOR_ISystem {
  public:
@@ -59,6 +60,84 @@ class ANCHOR_ISystem {
    * force use of static dispose member. */
   virtual ~ANCHOR_ISystem()
   {}
+
+ public:
+  /**
+   * Create a new window.
+   * The new window is added to the list of windows managed.
+   * Never explicitly delete the window, use disposeWindow() instead.
+   * @param title: The name of the window
+   * (displayed in the title bar of the window if the OS supports it).
+   * @param left: The coordinate of the left edge of the window.
+   * @param top: The coordinate of the top edge of the window.
+   * @param width: The width the window.
+   * @param height: The height the window.
+   * @param state: The state of the window when opened.
+   * @param type: The type of drawing context installed in this window.
+   * @param glSettings: Misc OpenGL settings.
+   * @param exclusive: Use to show the window on top and ignore others (used full-screen).
+   * @param is_dialog: Stay on top of parent window, no icon in taskbar, can't be minimized.
+   * @param parentWindow: Parent (embedder) window
+   * @return The new window (or 0 if creation failed). */
+  virtual ANCHOR_ISystemWindow *createWindow(const char *title,
+                                             AnchorS32 left,
+                                             AnchorS32 top,
+                                             AnchorU32 width,
+                                             AnchorU32 height,
+                                             eAnchorWindowState state,
+                                             eAnchorDrawingContextType type,
+                                             int vkSettings,
+                                             const bool exclusive = false,
+                                             const bool is_dialog = false,
+                                             const ANCHOR_ISystemWindow *parentWindow = NULL) = 0;
+
+  /**
+   * Begins full screen mode.
+   * @param setting: The new setting of the display.
+   * @param window: Window displayed in full screen.
+   * This window is invalid after full screen has been ended.
+   * @return Indication of success. */
+  virtual eAnchorStatus beginFullScreen(const ANCHOR_DisplaySetting &setting,
+                                        ANCHOR_ISystemWindow **window,
+                                        const bool stereoVisual,
+                                        const bool alphaBackground = 0) = 0;
+
+  /**
+   * Ends full screen mode.
+   * @return Indication of success. */
+  virtual eAnchorStatus endFullScreen(void) = 0;
+
+  /**
+   * Retrieves events from the system and stores them in the queue.
+   * @param waitForEvent: Flag to wait for an event (or return immediately).
+   * @return Indication of the presence of events. */
+  virtual bool processEvents(bool waitForEvent) = 0;
+
+  /**
+   * Retrieves events from the queue and send them to the event consumers. */
+  virtual void dispatchEvents() = 0;
+
+  /**
+   * Adds the given event consumer to our list.
+   * @param consumer: The event consumer to add.
+   * @return Indication of success. */
+  virtual eAnchorStatus addEventConsumer(ANCHOR_IEventConsumer *consumer) = 0;
+
+  /**
+   * Removes the given event consumer to our list.
+   * @param consumer: The event consumer to remove.
+   * @return Indication of success. */
+  virtual eAnchorStatus removeEventConsumer(ANCHOR_IEventConsumer *consumer) = 0;
+
+ protected:
+  /**
+   * Initialize the system.
+   * @return Indication of success. */
+  virtual eAnchorStatus init() = 0;
+
+  /**
+   * The one and only system */
+  static ANCHOR_ISystem *m_system;
 };
 
 class ANCHOR_System : public ANCHOR_ISystem {
@@ -82,11 +161,29 @@ class ANCHOR_System : public ANCHOR_ISystem {
    * @param event: The event to push on the stack. */
   eAnchorStatus pushEvent(ANCHOR_IEvent *event);
 
+  /**
+   * @return A pointer to our window manager. */
+  inline ANCHOR_WindowManager *getWindowManager() const;
+
  protected:
+  /**
+   * Initialize the system.
+   * @return Indication of success. */
+  virtual eAnchorStatus init();
+
+  /**
+   * The display manager (platform dependent). */
+  ANCHOR_DisplayManager *m_displayManager;
+
   /**
    * The window manager. */
   ANCHOR_WindowManager *m_windowManager;
 };
 
+inline ANCHOR_WindowManager *ANCHOR_System::getWindowManager() const
+{
+  return m_windowManager;
+}
+
 ANCHOR_API
-ANCHOR_SystemHandle ANCHOR_CreateSystem(int backend);
+ANCHOR_SystemHandle ANCHOR_CreateSystem();

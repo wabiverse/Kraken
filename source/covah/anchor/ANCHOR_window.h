@@ -39,6 +39,11 @@ class ANCHOR_ISystemWindow {
   virtual bool getValid() const = 0;
 
   /**
+   * Returns the associated OS object/handle
+   * @return The associated OS object/handle */
+  virtual void *getOSWindow() const = 0;
+
+  /**
    * Tries to install a rendering context in this window.
    * @param type: The type of rendering context installed.
    * @return Indication as to whether installation has succeeded. */
@@ -55,6 +60,26 @@ class ANCHOR_ISystemWindow {
    * @param icon: The icon path to display in
    * the title bar. */
   virtual void setIcon(const char *icon) = 0;
+
+  /**
+   * Sets the window "modified" status, indicating unsaved changes
+   * @param isUnsavedChanges: Unsaved changes or not.
+   * @return Indication of success. */
+  virtual eAnchorStatus setModifiedState(bool isUnsavedChanges) = 0;
+
+  /**
+   * Gets the window "modified" status, indicating unsaved changes
+   * @return True if there are unsaved changes */
+  virtual bool getModifiedState() = 0;
+
+  /**
+   * Swaps front and back buffers of a window.
+   * @return A boolean success indicator. */
+  virtual eAnchorStatus swapBuffers() = 0;
+
+  /** */
+  virtual eAnchorStatus beginFullScreen() const = 0;
+  virtual eAnchorStatus endFullScreen() const = 0;
 };
 
 class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow {
@@ -73,7 +98,7 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow {
                       AnchorU32 height,
                       eAnchorWindowState state,
                       const bool wantStereoVisual = false,
-                      const bool exclusive        = false);
+                      const bool exclusive = false);
 
   virtual ~ANCHOR_SystemWindow();
 
@@ -86,12 +111,33 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow {
   }
 
   /**
+   * Returns the associated OS object/handle
+   * @return The associated OS object/handle */
+  virtual void *getOSWindow() const;
+
+  /**
+   * Swaps front and back buffers of a window.
+   * @return A boolean success indicator. */
+  virtual eAnchorStatus swapBuffers();
+
+  /**
    * Tries to install a rendering context in this window.
    * Child classes do not need to overload this method,
    * They should overload #newDrawingContext instead.
    * @param type: The type of rendering context installed.
    * @return Indication as to whether installation has succeeded. */
   eAnchorStatus setDrawingContextType(eAnchorDrawingContextType type);
+
+  /**
+   * Sets the window "modified" status, indicating unsaved changes
+   * @param isUnsavedChanges: Unsaved changes or not.
+   * @return Indication of success. */
+  virtual eAnchorStatus setModifiedState(bool isUnsavedChanges);
+
+  /**
+   * Gets the window "modified" status, indicating unsaved changes
+   * @return True if there are unsaved changes */
+  virtual bool getModifiedState();
 
  protected:
   /**
@@ -101,6 +147,9 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow {
   virtual ANCHOR_Context *newDrawingContext(eAnchorDrawingContextType type) = 0;
 
  protected:
+  /** The active gpu context. */
+  ANCHOR_Context *m_context;
+
   /** The drawing context installed in this window. */
   eAnchorDrawingContextType m_drawingContextType;
 

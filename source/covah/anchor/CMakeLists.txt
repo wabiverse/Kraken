@@ -2,46 +2,58 @@ set(INC
   .
   ./backend
   ./intern
-  ./misc/freetype
   ../../../.
   ../covakernel
   ../covalib
 )
 
+set(SRC_PLATFORM_BACKENDS
+  # Platform Specific Backends.
+  intern/backend_sdl.cpp
+  intern/backend_vulkan.cpp
+
+  # Platform Specific Backends.
+  backend/ANCHOR_BACKEND_sdl.h
+  backend/ANCHOR_BACKEND_vulkan.h
+)
+
 set(SRC
-  backend/ANCHOR_impl_sdl.cpp
-  backend/ANCHOR_impl_vulkan.cpp
+  # All Systems ->
+  intern/system_interfaces.cpp
 
-  misc/freetype/ANCHOR_freetype.cpp
-
+  # Platform Agnostic Implementation.
   intern/api.cpp
   intern/debug_codes.cpp
   intern/demo.cpp
+  intern/display_manager.cpp
   intern/draw.cpp
   intern/event_consumer.cpp
   intern/event_manager.cpp
+  intern/freetype
   intern/system.cpp
   intern/tables.cpp
-  intern/vulkan.cpp
   intern/widgets.cpp
+  intern/window_manager.cpp
+  intern/window.cpp
 
-  backend/ANCHOR_impl_sdl.h
-  backend/ANCHOR_impl_vulkan.h
+  # Platform Specific Backends.
+  ${SRC_PLATFORM_BACKENDS}
 
-  misc/freetype/ANCHOR_freetype.h
-
+  # Platform Agnostic API
   ANCHOR_api.h
   ANCHOR_debug_codes.h
+  ANCHOR_display_manager.h
   ANCHOR_event_consumer.h
   ANCHOR_event_manager.h
   ANCHOR_event.h
+  ANCHOR_freetype.h
   ANCHOR_internal.h
   ANCHOR_rectpack.h
-  ANCHOR_surface.h
   ANCHOR_system.h
   ANCHOR_textedit.h
   ANCHOR_truetype.h
-  ANCHOR_vulkan.h
+  ANCHOR_window_manager.h
+  ANCHOR_window.h
 )
 
 set(INC_SYS

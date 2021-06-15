@@ -26,6 +26,8 @@
 
 #include "ANCHOR_api.h"
 
+class ANCHOR_IEventConsumer;
+
 class ANCHOR_EventManager {
  public:
   /**

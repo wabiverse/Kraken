@@ -79,10 +79,12 @@
 //  unavailable/missing (instead of -1,-1). 2016-10-15: Misc: Added a void* user_data parameter to
 //  Clipboard function handlers.
 
-#include "ANCHOR_impl_sdl.h"
+#include "ANCHOR_BACKEND_sdl.h"
+#include "ANCHOR_BACKEND_vulkan.h"
+
 #include "ANCHOR_api.h"
 #include "ANCHOR_debug_codes.h"
-#include "ANCHOR_impl_vulkan.h"
+#include "ANCHOR_window_manager.h"
 
 // SDL
 #include <SDL.h>
@@ -126,7 +128,7 @@ static VkDebugReportCallbackEXT g_DebugReport    = VK_NULL_HANDLE;
 static VkPipelineCache          g_PipelineCache  = VK_NULL_HANDLE;
 static VkDescriptorPool         g_DescriptorPool = VK_NULL_HANDLE;
 
-static ANCHOR_ImplVulkanH_Window g_MainWindowData;
+static ANCHOR_VulkanGPU_Surface g_MainWindowData;
 static uint32_t                  g_MinImageCount    = 2;
 static bool                      g_SwapChainRebuild = false;
 
@@ -194,9 +196,9 @@ bool ANCHOR_SystemSDL::ANCHOR_ImplSDL2_ProcessEvent(const SDL_Event *event)
       int key = event->key.keysym.scancode;
       ANCHOR_ASSERT(key >= 0 && key < ANCHOR_ARRAYSIZE(io.KeysDown));
       io.KeysDown[key] = (event->type == SDL_KEYDOWN);
-      io.KeyShift      = ((SDL_GetModState() & KMOD_SHIFT) != 0);
-      io.KeyCtrl       = ((SDL_GetModState() & KMOD_CTRL) != 0);
-      io.KeyAlt        = ((SDL_GetModState() & KMOD_ALT) != 0);
+      io.KeyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
+      io.KeyCtrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
+      io.KeyAlt = ((SDL_GetModState() & KMOD_ALT) != 0);
 #ifdef _WIN32
       io.KeySuper = false;
 #else
@@ -215,58 +217,58 @@ static bool ANCHOR_ImplSDL2_Init(SDL_Window *window)
   // Setup backend capabilities flags
   ANCHOR_IO &io = ANCHOR::GetIO();
   io.BackendFlags |=
-      ANCHORBackendFlags_HasMouseCursors;  // We can honor GetMouseCursor() values (optional)
+    ANCHORBackendFlags_HasMouseCursors;  // We can honor GetMouseCursor() values (optional)
   io.BackendFlags |= ANCHORBackendFlags_HasSetMousePos;  // We can honor io.WantSetMousePos
                                                          // requests (optional, rarely used)
-  io.BackendPlatformName = "anchor_impl_sdl";
+  io.BackendPlatformName = "ANCHOR_BACKEND_sdl";
 
   // Keyboard mapping. ANCHOR will use those indices to peek into the io.KeysDown[] array.
-  io.KeyMap[ANCHOR_Key_Tab]         = SDL_SCANCODE_TAB;
-  io.KeyMap[ANCHOR_Key_LeftArrow]   = SDL_SCANCODE_LEFT;
-  io.KeyMap[ANCHOR_Key_RightArrow]  = SDL_SCANCODE_RIGHT;
-  io.KeyMap[ANCHOR_Key_UpArrow]     = SDL_SCANCODE_UP;
-  io.KeyMap[ANCHOR_Key_DownArrow]   = SDL_SCANCODE_DOWN;
-  io.KeyMap[ANCHOR_Key_PageUp]      = SDL_SCANCODE_PAGEUP;
-  io.KeyMap[ANCHOR_Key_PageDown]    = SDL_SCANCODE_PAGEDOWN;
-  io.KeyMap[ANCHOR_Key_Home]        = SDL_SCANCODE_HOME;
-  io.KeyMap[ANCHOR_Key_End]         = SDL_SCANCODE_END;
-  io.KeyMap[ANCHOR_Key_Insert]      = SDL_SCANCODE_INSERT;
-  io.KeyMap[ANCHOR_Key_Delete]      = SDL_SCANCODE_DELETE;
-  io.KeyMap[ANCHOR_Key_Backspace]   = SDL_SCANCODE_BACKSPACE;
-  io.KeyMap[ANCHOR_Key_Space]       = SDL_SCANCODE_SPACE;
-  io.KeyMap[ANCHOR_Key_Enter]       = SDL_SCANCODE_RETURN;
-  io.KeyMap[ANCHOR_Key_Escape]      = SDL_SCANCODE_ESCAPE;
+  io.KeyMap[ANCHOR_Key_Tab] = SDL_SCANCODE_TAB;
+  io.KeyMap[ANCHOR_Key_LeftArrow] = SDL_SCANCODE_LEFT;
+  io.KeyMap[ANCHOR_Key_RightArrow] = SDL_SCANCODE_RIGHT;
+  io.KeyMap[ANCHOR_Key_UpArrow] = SDL_SCANCODE_UP;
+  io.KeyMap[ANCHOR_Key_DownArrow] = SDL_SCANCODE_DOWN;
+  io.KeyMap[ANCHOR_Key_PageUp] = SDL_SCANCODE_PAGEUP;
+  io.KeyMap[ANCHOR_Key_PageDown] = SDL_SCANCODE_PAGEDOWN;
+  io.KeyMap[ANCHOR_Key_Home] = SDL_SCANCODE_HOME;
+  io.KeyMap[ANCHOR_Key_End] = SDL_SCANCODE_END;
+  io.KeyMap[ANCHOR_Key_Insert] = SDL_SCANCODE_INSERT;
+  io.KeyMap[ANCHOR_Key_Delete] = SDL_SCANCODE_DELETE;
+  io.KeyMap[ANCHOR_Key_Backspace] = SDL_SCANCODE_BACKSPACE;
+  io.KeyMap[ANCHOR_Key_Space] = SDL_SCANCODE_SPACE;
+  io.KeyMap[ANCHOR_Key_Enter] = SDL_SCANCODE_RETURN;
+  io.KeyMap[ANCHOR_Key_Escape] = SDL_SCANCODE_ESCAPE;
   io.KeyMap[ANCHOR_Key_KeyPadEnter] = SDL_SCANCODE_KP_ENTER;
-  io.KeyMap[ANCHOR_Key_A]           = SDL_SCANCODE_A;
-  io.KeyMap[ANCHOR_Key_C]           = SDL_SCANCODE_C;
-  io.KeyMap[ANCHOR_Key_V]           = SDL_SCANCODE_V;
-  io.KeyMap[ANCHOR_Key_X]           = SDL_SCANCODE_X;
-  io.KeyMap[ANCHOR_Key_Y]           = SDL_SCANCODE_Y;
-  io.KeyMap[ANCHOR_Key_Z]           = SDL_SCANCODE_Z;
+  io.KeyMap[ANCHOR_Key_A] = SDL_SCANCODE_A;
+  io.KeyMap[ANCHOR_Key_C] = SDL_SCANCODE_C;
+  io.KeyMap[ANCHOR_Key_V] = SDL_SCANCODE_V;
+  io.KeyMap[ANCHOR_Key_X] = SDL_SCANCODE_X;
+  io.KeyMap[ANCHOR_Key_Y] = SDL_SCANCODE_Y;
+  io.KeyMap[ANCHOR_Key_Z] = SDL_SCANCODE_Z;
 
   io.SetClipboardTextFn = ANCHOR_ImplSDL2_SetClipboardText;
   io.GetClipboardTextFn = ANCHOR_ImplSDL2_GetClipboardText;
-  io.ClipboardUserData  = NULL;
+  io.ClipboardUserData = NULL;
 
   // Load mouse cursors
-  g_MouseCursors[ANCHOR_MouseCursor_Arrow]     = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+  g_MouseCursors[ANCHOR_MouseCursor_Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
   g_MouseCursors[ANCHOR_MouseCursor_TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
   g_MouseCursors[ANCHOR_MouseCursor_ResizeAll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
-  g_MouseCursors[ANCHOR_MouseCursor_ResizeNS]  = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
-  g_MouseCursors[ANCHOR_MouseCursor_ResizeEW]  = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
+  g_MouseCursors[ANCHOR_MouseCursor_ResizeNS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
+  g_MouseCursors[ANCHOR_MouseCursor_ResizeEW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
   g_MouseCursors[ANCHOR_MouseCursor_ResizeNESW] = SDL_CreateSystemCursor(
-      SDL_SYSTEM_CURSOR_SIZENESW);
+    SDL_SYSTEM_CURSOR_SIZENESW);
   g_MouseCursors[ANCHOR_MouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(
-      SDL_SYSTEM_CURSOR_SIZENWSE);
-  g_MouseCursors[ANCHOR_MouseCursor_Hand]       = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+    SDL_SYSTEM_CURSOR_SIZENWSE);
+  g_MouseCursors[ANCHOR_MouseCursor_Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
   g_MouseCursors[ANCHOR_MouseCursor_NotAllowed] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
 
   // Check and store if we are on a SDL backend that supports global mouse position
   // ("wayland" and "rpi" don't support it, but we chose to use a white-list instead of a
   // black-list)
-  const char *sdl_backend              = SDL_GetCurrentVideoDriver();
+  const char *sdl_backend = SDL_GetCurrentVideoDriver();
   const char *global_mouse_whitelist[] = {"windows", "cocoa", "x11", "DIVE", "VMAN"};
-  g_MouseCanUseGlobalState             = false;
+  g_MouseCanUseGlobalState = false;
   for (int n = 0; n < ANCHOR_ARRAYSIZE(global_mouse_whitelist); n++)
     if (strncmp(sdl_backend, global_mouse_whitelist[n], strlen(global_mouse_whitelist[n])) == 0)
       g_MouseCanUseGlobalState = true;
@@ -325,6 +327,146 @@ void ANCHOR_SystemSDL::ANCHOR_ImplSDL2_Shutdown()
   memset(g_MouseCursors, 0, sizeof(g_MouseCursors));
 }
 
+ANCHOR_DisplayManagerSDL::ANCHOR_DisplayManagerSDL(ANCHOR_SystemSDL *system)
+  : ANCHOR_DisplayManager(),
+    m_system(system)
+{
+  memset(&m_mode, 0, sizeof(m_mode));
+}
+
+eAnchorStatus ANCHOR_DisplayManagerSDL::getNumDisplays(AnchorU8 &numDisplays) const
+{
+  numDisplays = SDL_GetNumVideoDisplays();
+  return ANCHOR_SUCCESS;
+}
+
+eAnchorStatus ANCHOR_DisplayManagerSDL::getNumDisplaySettings(AnchorU8 display,
+                                                              AnchorS32 &numSettings) const
+{
+  ANCHOR_ASSERT(display < 1);
+
+  numSettings = SDL_GetNumDisplayModes(display - 1);
+
+  return ANCHOR_SUCCESS;
+}
+
+static void anchor_mode_from_sdl(ANCHOR_DisplaySetting &setting, SDL_DisplayMode *mode)
+{
+  setting.xPixels = mode->w;
+  setting.yPixels = mode->h;
+  setting.bpp = SDL_BYTESPERPIXEL(mode->format) * 8;
+  /* Just guess the frequency :( */
+  setting.frequency = mode->refresh_rate ? mode->refresh_rate : 60;
+}
+
+static void anchor_mode_to_sdl(const ANCHOR_DisplaySetting &setting, SDL_DisplayMode *mode)
+{
+  mode->w = setting.xPixels;
+  mode->h = setting.yPixels;
+  // setting.bpp = SDL_BYTESPERPIXEL(mode->format) * 8; ???
+  mode->refresh_rate = setting.frequency;
+}
+
+eAnchorStatus ANCHOR_DisplayManagerSDL::getDisplaySetting(AnchorU8 display,
+                                                          AnchorS32 index,
+                                                          ANCHOR_DisplaySetting &setting) const
+{
+  ANCHOR_ASSERT(display < 1);
+
+  SDL_DisplayMode mode;
+  SDL_GetDisplayMode(display, index, &mode);
+
+  anchor_mode_from_sdl(setting, &mode);
+
+  return ANCHOR_SUCCESS;
+}
+
+eAnchorStatus ANCHOR_DisplayManagerSDL::getCurrentDisplaySetting(
+  AnchorU8 display,
+  ANCHOR_DisplaySetting &setting) const
+{
+  SDL_DisplayMode mode;
+  SDL_GetCurrentDisplayMode(display, &mode);
+
+  anchor_mode_from_sdl(setting, &mode);
+
+  return ANCHOR_SUCCESS;
+}
+
+eAnchorStatus ANCHOR_DisplayManagerSDL::getCurrentDisplayModeSDL(SDL_DisplayMode &mode) const
+{
+  mode = m_mode;
+  return ANCHOR_SUCCESS;
+}
+
+eAnchorStatus ANCHOR_DisplayManagerSDL::setCurrentDisplaySetting(
+  AnchorU8 display,
+  const ANCHOR_DisplaySetting &setting)
+{
+  /*
+   * Mode switching code ported from Quake 2 version 3.21 and bzflag version
+   * 2.4.0:
+   * ftp://ftp.idsoftware.com/idstuff/source/q2source-3.21.zip
+   * See linux/gl_glx.c:GLimp_SetMode
+   * http://wiki.bzflag.org/BZFlag_Source
+   * See src/platform/SDLDisplay.cxx:SDLDisplay and createWindow */
+  SDL_DisplayMode mode;
+  const int num_modes = SDL_GetNumDisplayModes(display);
+  int best_fit, best_dist, dist, x, y;
+
+  best_dist = 9999999;
+  best_fit = -1;
+
+  if (num_modes == 0) {
+    /* Any mode is OK. */
+    anchor_mode_to_sdl(setting, &mode);
+  }
+  else {
+    for (int i = 0; i < num_modes; i++) {
+
+      SDL_GetDisplayMode(display, i, &mode);
+
+      if (setting.xPixels > mode.w || setting.yPixels > mode.h) {
+        continue;
+      }
+
+      x = setting.xPixels - mode.w;
+      y = setting.yPixels - mode.h;
+      dist = (x * x) + (y * y);
+      if (dist < best_dist) {
+        best_dist = dist;
+        best_fit = i;
+      }
+    }
+
+    if (best_fit == -1)
+      return ANCHOR_ERROR;
+
+    SDL_GetDisplayMode(display, best_fit, &mode);
+  }
+
+  m_mode = mode;
+
+  /* evil, SDL2 needs a window to adjust display modes */
+  ANCHOR_WindowSDL *win = (ANCHOR_WindowSDL *)m_system->getWindowManager()->getActiveWindow();
+
+  if (win) {
+    SDL_Window *sdl_win = win->getSDLWindow();
+
+    SDL_SetWindowDisplayMode(sdl_win, &mode);
+    SDL_ShowWindow(sdl_win);
+    SDL_SetWindowFullscreen(sdl_win, SDL_TRUE);
+
+    return ANCHOR_SUCCESS;
+  }
+  else {
+    TF_CODING_ERROR("No windows available, can't fullscreen.\n");
+
+    /* do not fail, we will try again later when the window is created - wander */
+    return ANCHOR_SUCCESS;
+  }
+}
+
 static void ANCHOR_ImplSDL2_UpdateMousePosAndButtons()
 {
   ANCHOR_IO &io = ANCHOR::GetIO();
@@ -339,16 +481,16 @@ static void ANCHOR_ImplSDL2_UpdateMousePosAndButtons()
   int mx, my;
   Uint32 mouse_buttons = SDL_GetMouseState(&mx, &my);
   io.MouseDown[0] =
-      g_MousePressed[0] ||
-      (mouse_buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) !=
-          0;  // If a mouse press event came, always pass it as "mouse held this frame", so we
-              // don't miss click-release events that are shorter than 1 frame.
-  io.MouseDown[1]   = g_MousePressed[1] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0;
-  io.MouseDown[2]   = g_MousePressed[2] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_MIDDLE)) != 0;
+    g_MousePressed[0] ||
+    (mouse_buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) !=
+      0;  // If a mouse press event came, always pass it as "mouse held this frame", so we
+          // don't miss click-release events that are shorter than 1 frame.
+  io.MouseDown[1] = g_MousePressed[1] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0;
+  io.MouseDown[2] = g_MousePressed[2] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_MIDDLE)) != 0;
   g_MousePressed[0] = g_MousePressed[1] = g_MousePressed[2] = false;
 
 #if SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE && !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && \
-    !(defined(__APPLE__) && TARGET_OS_IOS)
+  !(defined(__APPLE__) && TARGET_OS_IOS)
   SDL_Window *focused_window = SDL_GetKeyboardFocus();
   if (g_Window == focused_window) {
     if (g_MouseCanUseGlobalState) {
@@ -413,8 +555,8 @@ static void ANCHOR_ImplSDL2_UpdateGamepads()
 #define MAP_BUTTON(NAV_NO, BUTTON_NO) \
   { \
     io.NavInputs[NAV_NO] = (SDL_GameControllerGetButton(game_controller, BUTTON_NO) != 0) ? \
-                               1.0f : \
-                               0.0f; \
+                             1.0f : \
+                             0.0f; \
   }
 #define MAP_ANALOG(NAV_NO, AXIS_NO, V0, V1) \
   { \
@@ -468,10 +610,10 @@ void ANCHOR_SystemSDL::ANCHOR_ImplSDL2_NewFrame(SDL_Window *window)
 
   // Setup time step (we don't use SDL_GetTicks() because it is using millisecond resolution)
   static Uint64 frequency = SDL_GetPerformanceFrequency();
-  Uint64 current_time     = SDL_GetPerformanceCounter();
-  io.DeltaTime            = g_Time > 0 ? (float)((double)(current_time - g_Time) / frequency) :
-                                         (float)(1.0f / 60.0f);
-  g_Time                  = current_time;
+  Uint64 current_time = SDL_GetPerformanceCounter();
+  io.DeltaTime = g_Time > 0 ? (float)((double)(current_time - g_Time) / frequency) :
+                              (float)(1.0f / 60.0f);
+  g_Time = current_time;
 
   ANCHOR_ImplSDL2_UpdateMousePosAndButtons();
   ANCHOR_ImplSDL2_UpdateMouseCursor();
@@ -492,11 +634,11 @@ ANCHOR_WindowSDL::ANCHOR_WindowSDL(ANCHOR_SystemSDL *system,
                                    const bool stereoVisual,
                                    const bool exclusive,
                                    const ANCHOR_ISystemWindow *parentWindow)
-    : ANCHOR_SystemWindow(width, height, state, stereoVisual, exclusive),
-      m_system(system),
-      m_valid_setup(false),
-      m_invalid_window(false),
-      m_sdl_custom_cursor(NULL)
+  : ANCHOR_SystemWindow(width, height, state, stereoVisual, exclusive),
+    m_system(system),
+    m_valid_setup(false),
+    m_invalid_window(false),
+    m_sdl_custom_cursor(NULL)
 {
   /* creating the window _must_ come after setting attributes */
   m_sdl_win = SDL_CreateWindow(title,
@@ -505,7 +647,7 @@ ANCHOR_WindowSDL::ANCHOR_WindowSDL(ANCHOR_SystemSDL *system,
                                width,
                                height,
                                SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN |
-                                   SDL_WINDOW_ALLOW_HIGHDPI);
+                                 SDL_WINDOW_ALLOW_HIGHDPI);
 
   /* now set up the rendering context. */
   if (setDrawingContextType(type) == ANCHOR_SUCCESS) {
@@ -539,14 +681,14 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
    * Create Vulkan Instance. */
   {
     VkInstanceCreateInfo create_info = {};
-    create_info.sType                = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 
     /**
      * OpenGL Interop :: Memory */
     const char **ext_gl_mem = (const char **)malloc(sizeof(const char *) * (extensions_count + 1));
     memcpy(ext_gl_mem, extensions, extensions_count * sizeof(const char *));
     ext_gl_mem[extensions_count] = VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME;
-    extensions                   = ext_gl_mem;
+    extensions = ext_gl_mem;
     extensions_count += 1;
 
     /**
@@ -554,7 +696,7 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
     const char **ext_gl_sem = (const char **)malloc(sizeof(const char *) * (extensions_count + 1));
     memcpy(ext_gl_sem, extensions, extensions_count * sizeof(const char *));
     ext_gl_sem[extensions_count] = VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME;
-    extensions                   = ext_gl_sem;
+    extensions = ext_gl_sem;
     extensions_count += 1;
 
     /**
@@ -563,17 +705,17 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
                                                       (extensions_count + 1));
     memcpy(ext_dprops_2, extensions, extensions_count * sizeof(const char *));
     ext_dprops_2[extensions_count] = VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME;
-    extensions                     = ext_dprops_2;
+    extensions = ext_dprops_2;
     extensions_count += 1;
 
-    create_info.enabledExtensionCount   = extensions_count;
+    create_info.enabledExtensionCount = extensions_count;
     create_info.ppEnabledExtensionNames = extensions;
 
     if (HgiVulkanIsDebugEnabled()) {
       /**
        * Enable validation layers. */
-      const char *layers[]            = {"VK_LAYER_KHRONOS_validation"};
-      create_info.enabledLayerCount   = 1;
+      const char *layers[] = {"VK_LAYER_KHRONOS_validation"};
+      create_info.enabledLayerCount = 1;
       create_info.ppEnabledLayerNames = layers;
 
       /**
@@ -582,13 +724,13 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
       const char **extensions_ext = (const char **)malloc(sizeof(const char *) *
                                                           (extensions_count + 1));
       memcpy(extensions_ext, extensions, extensions_count * sizeof(const char *));
-      extensions_ext[extensions_count]    = "VK_EXT_debug_utils";
-      create_info.enabledExtensionCount   = extensions_count + 1;
+      extensions_ext[extensions_count] = "VK_EXT_debug_utils";
+      create_info.enabledExtensionCount = extensions_count + 1;
       create_info.ppEnabledExtensionNames = extensions_ext;
 
       /**
        * Create Vulkan Instance with debug features. */
-      err          = vkCreateInstance(&create_info, g_Allocator, &g_Instance);
+      err = vkCreateInstance(&create_info, g_Allocator, &g_Instance);
       g_PixarHydra = new HgiVulkan(g_PixarVkInstance = new HgiVulkanInstance(g_Instance));
       check_vk_result(err);
       free(extensions_ext);
@@ -597,7 +739,7 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
 
       /**
        * Create Vulkan Instance without any debug features. */
-      err          = vkCreateInstance(&create_info, g_Allocator, &g_Instance);
+      err = vkCreateInstance(&create_info, g_Allocator, &g_Instance);
       g_PixarHydra = new HgiVulkan(g_PixarVkInstance = new HgiVulkanInstance(g_Instance));
       check_vk_result(err);
     }
@@ -648,7 +790,7 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
     uint32_t count;
     vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &count, NULL);
     VkQueueFamilyProperties *queues = (VkQueueFamilyProperties *)malloc(
-        sizeof(VkQueueFamilyProperties) * count);
+      sizeof(VkQueueFamilyProperties) * count);
     vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &count, queues);
     for (uint32_t i = 0; i < count; i++)
       if (queues[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
@@ -662,20 +804,20 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
   /**
    * Create Logical Device (with 1 queue). */
   {
-    int device_extension_count            = 1;
-    const char *device_extensions[]       = {"VK_KHR_swapchain"};
-    const float queue_priority[]          = {1.0f};
+    int device_extension_count = 1;
+    const char *device_extensions[] = {"VK_KHR_swapchain"};
+    const float queue_priority[] = {1.0f};
     VkDeviceQueueCreateInfo queue_info[1] = {};
-    queue_info[0].sType                   = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    queue_info[0].queueFamilyIndex        = g_QueueFamily;
-    queue_info[0].queueCount              = 1;
-    queue_info[0].pQueuePriorities        = queue_priority;
-    VkDeviceCreateInfo create_info        = {};
-    create_info.sType                     = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    create_info.queueCreateInfoCount      = sizeof(queue_info) / sizeof(queue_info[0]);
-    create_info.pQueueCreateInfos         = queue_info;
-    create_info.enabledExtensionCount     = device_extension_count;
-    create_info.ppEnabledExtensionNames   = device_extensions;
+    queue_info[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queue_info[0].queueFamilyIndex = g_QueueFamily;
+    queue_info[0].queueCount = 1;
+    queue_info[0].pQueuePriorities = queue_priority;
+    VkDeviceCreateInfo create_info = {};
+    create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    create_info.queueCreateInfoCount = sizeof(queue_info) / sizeof(queue_info[0]);
+    create_info.pQueueCreateInfos = queue_info;
+    create_info.enabledExtensionCount = device_extension_count;
+    create_info.ppEnabledExtensionNames = device_extensions;
     err = vkCreateDevice(g_PhysicalDevice, &create_info, g_Allocator, &g_Device);
     check_vk_result(err);
     vkGetDeviceQueue(g_Device, g_QueueFamily, 0, &g_Queue);
@@ -700,11 +842,11 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
     };
     /* clang-format on */
     VkDescriptorPoolCreateInfo pool_info = {};
-    pool_info.sType                      = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    pool_info.flags                      = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-    pool_info.maxSets                    = 1000 * ANCHOR_ARRAYSIZE(pool_sizes);
-    pool_info.poolSizeCount              = (uint32_t)ANCHOR_ARRAYSIZE(pool_sizes);
-    pool_info.pPoolSizes                 = pool_sizes;
+    pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+    pool_info.maxSets = 1000 * ANCHOR_ARRAYSIZE(pool_sizes);
+    pool_info.poolSizeCount = (uint32_t)ANCHOR_ARRAYSIZE(pool_sizes);
+    pool_info.pPoolSizes = pool_sizes;
     err = vkCreateDescriptorPool(g_Device, &pool_info, g_Allocator, &g_DescriptorPool);
     check_vk_result(err);
   }
@@ -730,7 +872,7 @@ static void SetFont()
   /* San Francisco Font (Default). */
   const static std::string sf_ttf("../datafiles/fonts/SFProText-Medium.ttf");
   const static char *sf_path = TfStringCatPaths(exe_path, sf_ttf).c_str();
-  io.FontDefault             = io.Fonts->AddFontFromFileTTF(sf_path, 14.0f);
+  io.FontDefault = io.Fonts->AddFontFromFileTTF(sf_path, 14.0f);
 }
 
 /**
@@ -757,7 +899,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_report(VkDebugReportFlagsEXT flags,
 
 /**
  * Main Application Window. --------------------------------- */
-static void SetupVulkanWindow(ANCHOR_ImplVulkanH_Window *wd,
+static void SetupVulkanWindow(ANCHOR_VulkanGPU_Surface *wd,
                               VkSurfaceKHR surface,
                               int width,
                               int height)
@@ -786,11 +928,11 @@ static void SetupVulkanWindow(ANCHOR_ImplVulkanH_Window *wd,
   const VkColorSpaceKHR requestSurfaceColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
 
   wd->SurfaceFormat = ANCHOR_ImplVulkanH_SelectSurfaceFormat(
-      g_PhysicalDevice,
-      wd->Surface,
-      requestSurfaceImageFormat,
-      (size_t)ANCHOR_ARRAYSIZE(requestSurfaceImageFormat),
-      requestSurfaceColorSpace);
+    g_PhysicalDevice,
+    wd->Surface,
+    requestSurfaceImageFormat,
+    (size_t)ANCHOR_ARRAYSIZE(requestSurfaceImageFormat),
+    requestSurfaceColorSpace);
 
   /**
    * Render at maximum possible FPS. */
@@ -810,7 +952,7 @@ static void SetupVulkanWindow(ANCHOR_ImplVulkanH_Window *wd,
     /* clang-format on */
 
     wd->PresentMode = ANCHOR_ImplVulkanH_SelectPresentMode(
-        g_PhysicalDevice, wd->Surface, &present_modes[0], ANCHOR_ARRAYSIZE(present_modes));
+      g_PhysicalDevice, wd->Surface, &present_modes[0], ANCHOR_ARRAYSIZE(present_modes));
   }
   else { /** Throttled FPS ~75FPS */
 
@@ -824,7 +966,7 @@ static void SetupVulkanWindow(ANCHOR_ImplVulkanH_Window *wd,
     /* clang-format on */
 
     wd->PresentMode = ANCHOR_ImplVulkanH_SelectPresentMode(
-        g_PhysicalDevice, wd->Surface, &present_modes[0], ANCHOR_ARRAYSIZE(present_modes));
+      g_PhysicalDevice, wd->Surface, &present_modes[0], ANCHOR_ARRAYSIZE(present_modes));
   }
 
   TF_DEBUG(ANCHOR_SDL_VULKAN).Msg("[Anchor] Selected PresentMode = %d\n", wd->PresentMode);
@@ -864,17 +1006,17 @@ static void CleanupVulkan()
 static void CleanupVulkanWindow()
 {
   ANCHOR_ImplVulkanH_DestroyWindow(
-      g_PixarVkInstance->GetVulkanInstance(), g_Device, &g_MainWindowData, g_Allocator);
+    g_PixarVkInstance->GetVulkanInstance(), g_Device, &g_MainWindowData, g_Allocator);
 }
 
-static void FrameRender(ANCHOR_ImplVulkanH_Window *wd, ImDrawData *draw_data)
+static void FrameRender(ANCHOR_VulkanGPU_Surface *wd, ImDrawData *draw_data)
 {
   VkResult err;
 
   VkSemaphore image_acquired_semaphore =
-      wd->FrameSemaphores[wd->SemaphoreIndex].ImageAcquiredSemaphore;
+    wd->FrameSemaphores[wd->SemaphoreIndex].ImageAcquiredSemaphore;
   VkSemaphore render_complete_semaphore =
-      wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
+    wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
   err = vkAcquireNextImageKHR(g_Device,
                               wd->Swapchain,
                               UINT64_MAX,
@@ -887,7 +1029,7 @@ static void FrameRender(ANCHOR_ImplVulkanH_Window *wd, ImDrawData *draw_data)
   }
   check_vk_result(err);
 
-  ANCHOR_ImplVulkanH_Frame *fd = &wd->Frames[wd->FrameIndex];
+  ANCHOR_VulkanGPU_Frame *fd = &wd->Frames[wd->FrameIndex];
   {
     err = vkWaitForFences(g_Device,
                           1,
@@ -903,20 +1045,20 @@ static void FrameRender(ANCHOR_ImplVulkanH_Window *wd, ImDrawData *draw_data)
     err = vkResetCommandPool(g_Device, fd->CommandPool, 0);
     check_vk_result(err);
     VkCommandBufferBeginInfo info = {};
-    info.sType                    = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     err = vkBeginCommandBuffer(fd->CommandBuffer, &info);
     check_vk_result(err);
   }
   {
-    VkRenderPassBeginInfo info    = {};
-    info.sType                    = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    info.renderPass               = wd->RenderPass;
-    info.framebuffer              = fd->Framebuffer;
-    info.renderArea.extent.width  = wd->Width;
+    VkRenderPassBeginInfo info = {};
+    info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    info.renderPass = wd->RenderPass;
+    info.framebuffer = fd->Framebuffer;
+    info.renderArea.extent.width = wd->Width;
     info.renderArea.extent.height = wd->Height;
-    info.clearValueCount          = 1;
-    info.pClearValues             = &wd->ClearValue;
+    info.clearValueCount = 1;
+    info.pClearValues = &wd->ClearValue;
     vkCmdBeginRenderPass(fd->CommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
   }
 
@@ -929,15 +1071,15 @@ static void FrameRender(ANCHOR_ImplVulkanH_Window *wd, ImDrawData *draw_data)
   vkCmdEndRenderPass(fd->CommandBuffer);
   {
     VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    VkSubmitInfo info               = {};
-    info.sType                      = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    info.waitSemaphoreCount         = 1;
-    info.pWaitSemaphores            = &image_acquired_semaphore;
-    info.pWaitDstStageMask          = &wait_stage;
-    info.commandBufferCount         = 1;
-    info.pCommandBuffers            = &fd->CommandBuffer;
-    info.signalSemaphoreCount       = 1;
-    info.pSignalSemaphores          = &render_complete_semaphore;
+    VkSubmitInfo info = {};
+    info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    info.waitSemaphoreCount = 1;
+    info.pWaitSemaphores = &image_acquired_semaphore;
+    info.pWaitDstStageMask = &wait_stage;
+    info.commandBufferCount = 1;
+    info.pCommandBuffers = &fd->CommandBuffer;
+    info.signalSemaphoreCount = 1;
+    info.pSignalSemaphores = &render_complete_semaphore;
 
     err = vkEndCommandBuffer(fd->CommandBuffer);
     check_vk_result(err);
@@ -946,20 +1088,20 @@ static void FrameRender(ANCHOR_ImplVulkanH_Window *wd, ImDrawData *draw_data)
   }
 }
 
-static void FramePresent(ANCHOR_ImplVulkanH_Window *wd)
+static void FramePresent(ANCHOR_VulkanGPU_Surface *wd)
 {
   if (g_SwapChainRebuild)
     return;
   VkSemaphore render_complete_semaphore =
-      wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
-  VkPresentInfoKHR info   = {};
-  info.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
+  VkPresentInfoKHR info = {};
+  info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
   info.waitSemaphoreCount = 1;
-  info.pWaitSemaphores    = &render_complete_semaphore;
-  info.swapchainCount     = 1;
-  info.pSwapchains        = &wd->Swapchain;
-  info.pImageIndices      = &wd->FrameIndex;
-  VkResult err            = vkQueuePresentKHR(g_Queue, &info);
+  info.pWaitSemaphores = &render_complete_semaphore;
+  info.swapchainCount = 1;
+  info.pSwapchains = &wd->Swapchain;
+  info.pImageIndices = &wd->FrameIndex;
+  VkResult err = vkQueuePresentKHR(g_Queue, &info);
   if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR) {
     g_SwapChainRebuild = true;
     return;
@@ -1021,29 +1163,29 @@ ANCHOR_Context *ANCHOR_WindowSDL::newDrawingContext(eAnchorDrawingContextType ty
      * Setup Platform/Renderer backends. */
     ANCHOR_SystemSDL::ANCHOR_ImplSDL2_InitForVulkan(m_sdl_win);
     ANCHOR_ImplVulkan_InitInfo init_info = {};
-    init_info.Instance                   = g_PixarVkInstance->GetVulkanInstance();
-    init_info.PhysicalDevice             = g_PhysicalDevice;
-    init_info.Device                     = g_Device;
-    init_info.QueueFamily                = g_QueueFamily;
-    init_info.Queue                      = g_Queue;
-    init_info.PipelineCache              = g_PipelineCache;
-    init_info.DescriptorPool             = g_DescriptorPool;
-    init_info.Allocator                  = g_Allocator;
-    init_info.MinImageCount              = g_MinImageCount;
-    init_info.ImageCount                 = m_vulkan_context->ImageCount;
-    init_info.CheckVkResultFn            = check_vk_result;
+    init_info.Instance = g_PixarVkInstance->GetVulkanInstance();
+    init_info.PhysicalDevice = g_PhysicalDevice;
+    init_info.Device = g_Device;
+    init_info.QueueFamily = g_QueueFamily;
+    init_info.Queue = g_Queue;
+    init_info.PipelineCache = g_PipelineCache;
+    init_info.DescriptorPool = g_DescriptorPool;
+    init_info.Allocator = g_Allocator;
+    init_info.MinImageCount = g_MinImageCount;
+    init_info.ImageCount = m_vulkan_context->ImageCount;
+    init_info.CheckVkResultFn = check_vk_result;
     ANCHOR_ImplVulkan_Init(&init_info, m_vulkan_context->RenderPass);
 
     /**
      * Create Pixar Hydra Graphics Interface. */
     HdDriver driver;
     HgiUniquePtr hgi = HgiUniquePtr(g_PixarHydra);
-    driver.name      = HgiTokens->renderDriver;
-    driver.driver    = VtValue(hgi.get());
+    driver.name = HgiTokens->renderDriver;
+    driver.driver = VtValue(hgi.get());
 
     /**
      * Setup Pixar Driver & Engine. */
-    ANCHOR::GetPixarDriver().name   = driver.name;
+    ANCHOR::GetPixarDriver().name = driver.name;
     ANCHOR::GetPixarDriver().driver = driver.driver;
 
     SetFont();
@@ -1054,25 +1196,25 @@ ANCHOR_Context *ANCHOR_WindowSDL::newDrawingContext(eAnchorDrawingContextType ty
       /**
        * Use any command queue. */
       VkCommandPool command_pool =
-          m_vulkan_context->Frames[m_vulkan_context->FrameIndex].CommandPool;
+        m_vulkan_context->Frames[m_vulkan_context->FrameIndex].CommandPool;
       VkCommandBuffer command_buffer =
-          m_vulkan_context->Frames[m_vulkan_context->FrameIndex].CommandBuffer;
+        m_vulkan_context->Frames[m_vulkan_context->FrameIndex].CommandBuffer;
 
       VkResult err = vkResetCommandPool(g_Device, command_pool, 0);
       check_vk_result(err);
       VkCommandBufferBeginInfo begin_info = {};
-      begin_info.sType                    = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+      begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
       begin_info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
       err = vkBeginCommandBuffer(command_buffer, &begin_info);
       check_vk_result(err);
 
       ANCHOR_ImplVulkan_CreateFontsTexture(command_buffer);
 
-      VkSubmitInfo end_info       = {};
-      end_info.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+      VkSubmitInfo end_info = {};
+      end_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
       end_info.commandBufferCount = 1;
-      end_info.pCommandBuffers    = &command_buffer;
-      err                         = vkEndCommandBuffer(command_buffer);
+      end_info.pCommandBuffers = &command_buffer;
+      err = vkEndCommandBuffer(command_buffer);
       check_vk_result(err);
       err = vkQueueSubmit(g_Queue, 1, &end_info, VK_NULL_HANDLE);
       check_vk_result(err);
@@ -1109,22 +1251,23 @@ ANCHOR_SystemSDL::ANCHOR_SystemSDL() : ANCHOR_System()
 }
 
 ANCHOR_ISystemWindow *ANCHOR_SystemSDL::createWindow(
-    const char *title,
-    AnchorS32 left,
-    AnchorS32 top,
-    AnchorU32 width,
-    AnchorU32 height,
-    eAnchorWindowState state,
-    eAnchorDrawingContextType type = ANCHOR_DrawingContextTypeNone,
-    int vkSettings,
-    const bool exclusive,
-    const bool /* is_dialog */,
-    const ANCHOR_ISystemWindow *parentWindow)
+  const char *title,
+  const char *icon,
+  AnchorS32 left,
+  AnchorS32 top,
+  AnchorU32 width,
+  AnchorU32 height,
+  eAnchorWindowState state,
+  eAnchorDrawingContextType type = ANCHOR_DrawingContextTypeNone,
+  int vkSettings = 0,
+  const bool exclusive,
+  const bool /* is_dialog */,
+  const ANCHOR_ISystemWindow *parentWindow)
 {
   ANCHOR_WindowSDL *window = NULL;
 
   window = new ANCHOR_WindowSDL(
-      this, title, left, top, width, height, state, type, vkSettings, exclusive, parentWindow);
+    this, title, icon, left, top, width, height, state, type, vkSettings, exclusive, parentWindow);
 
   if (window) {
     if (ANCHOR_WindowStateFullScreen == state) {
@@ -1137,14 +1280,30 @@ ANCHOR_ISystemWindow *ANCHOR_SystemSDL::createWindow(
     }
 
     if (window->getValid()) {
-      m_windowManager->addWindow(window);
-      pushEvent(new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowSize, window));
+      // m_windowManager->addWindow(window);
+      // pushEvent(new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowSize, window));
     }
     else {
       delete window;
       window = NULL;
     }
   }
+  return window;
+}
+
+eAnchorStatus ANCHOR_SystemSDL::init()
+{
+  eAnchorStatus success = ANCHOR_System::init();
+
+  if (success) {
+    m_displayManager = new ANCHOR_DisplayManagerSDL(this);
+
+    if (m_displayManager) {
+      return ANCHOR_SUCCESS;
+    }
+  }
+
+  return ANCHOR_ERROR;
 }
 
 /**
@@ -1152,18 +1311,18 @@ ANCHOR_ISystemWindow *ANCHOR_SystemSDL::createWindow(
  * At the end -- we simply do a swapchain and present the newly
  * cached data @ approx 4000 FPS. */
 
-eAnchorStatus ANCHOR_run_vulkan(ANCHOR_SystemHandle *window, ANCHOR_SurfaceHandle *wd)
+eAnchorStatus ANCHOR_run_vulkan(ANCHOR_SystemSDL *system, ANCHOR_WindowSDL *wd)
 {
   eAnchorStatus status = ANCHOR_RUN;
 
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
-    ANCHOR_ImplSDL2_ProcessEvent(&event);
+    ANCHOR_SystemSDL::ANCHOR_ImplSDL2_ProcessEvent(&event);
     status = ANCHOR_EVENT;
     if (event.type == SDL_QUIT)
       return ANCHOR_SUCCESS;
     if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
-        event.window.windowID == SDL_GetWindowID(window))
+        event.window.windowID == SDL_GetWindowID(wd->getSDLWindow()))
       return ANCHOR_SUCCESS;
   }
 
@@ -1171,7 +1330,7 @@ eAnchorStatus ANCHOR_run_vulkan(ANCHOR_SystemHandle *window, ANCHOR_SurfaceHandl
    * Resize swap chain? */
   if (g_SwapChainRebuild) {
     int width, height;
-    SDL_GetWindowSize(window, &width, &height);
+    SDL_GetWindowSize(wd->getSDLWindow(), &width, &height);
     if (width > 0 && height > 0) {
       ANCHOR_ImplVulkan_SetMinImageCount(g_MinImageCount);
       ANCHOR_ImplVulkanH_CreateOrResizeWindow(g_PixarVkInstance->GetVulkanInstance(),
@@ -1184,14 +1343,14 @@ eAnchorStatus ANCHOR_run_vulkan(ANCHOR_SystemHandle *window, ANCHOR_SurfaceHandl
                                               height,
                                               g_MinImageCount);
       g_MainWindowData.FrameIndex = 0;
-      g_SwapChainRebuild          = false;
+      g_SwapChainRebuild = false;
     }
   }
 
   /**
    * Start the ANCHOR frame. */
   ANCHOR_ImplVulkan_NewFrame();
-  ANCHOR_ImplSDL2_NewFrame(window);
+  ANCHOR_SystemSDL::ANCHOR_ImplSDL2_NewFrame(wd->getSDLWindow());
   ANCHOR::NewFrame();
 
   /**
@@ -1200,34 +1359,35 @@ eAnchorStatus ANCHOR_run_vulkan(ANCHOR_SystemHandle *window, ANCHOR_SurfaceHandl
   return status;
 }
 
-void ANCHOR_render_vulkan(ANCHOR_SurfaceHandle *wd)
+eAnchorStatus ANCHOR_WindowSDL::swapBuffers()
 {
   ANCHOR::Render();
-  ImDrawData *draw_data   = ANCHOR::GetDrawData();
+  ImDrawData *draw_data = ANCHOR::GetDrawData();
   const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f ||
                              draw_data->DisplaySize[1] <= 0.0f);
   if (!is_minimized) {
-    wd->ClearValue.color.float32[0] = g_HDPARAMS_Apollo.clearColor[0];
-    wd->ClearValue.color.float32[1] = g_HDPARAMS_Apollo.clearColor[1];
-    wd->ClearValue.color.float32[2] = g_HDPARAMS_Apollo.clearColor[2];
-    wd->ClearValue.color.float32[3] = g_HDPARAMS_Apollo.clearColor[3];
-    FrameRender(wd, draw_data);
-    FramePresent(wd);
+    m_vulkan_context->ClearValue.color.float32[0] = g_HDPARAMS_Apollo.clearColor[0];
+    m_vulkan_context->ClearValue.color.float32[1] = g_HDPARAMS_Apollo.clearColor[1];
+    m_vulkan_context->ClearValue.color.float32[2] = g_HDPARAMS_Apollo.clearColor[2];
+    m_vulkan_context->ClearValue.color.float32[3] = g_HDPARAMS_Apollo.clearColor[3];
+    FrameRender(m_vulkan_context, draw_data);
+    FramePresent(m_vulkan_context);
   }
+  return ANCHOR_SUCCESS;
 }
 
-void ANCHOR_clean_vulkan(ANCHOR_SystemHandle *window /**Todo::VkResult &err*/)
+void ANCHOR_clean_vulkan(ANCHOR_WindowSDL *window /**Todo::VkResult &err*/)
 {
   // err = vkDeviceWaitIdle(g_Device);
   // check_vk_result(err);
   vkDeviceWaitIdle(g_Device);
   ANCHOR_ImplVulkan_Shutdown();
-  ANCHOR_ImplSDL2_Shutdown();
+  ANCHOR_SystemSDL::ANCHOR_ImplSDL2_Shutdown();
   ANCHOR::DestroyContext();
 
   CleanupVulkanWindow();
   CleanupVulkan();
 
-  SDL_DestroyWindow(window);
+  SDL_DestroyWindow(window->getSDLWindow());
   SDL_Quit();
 }

@@ -107,6 +107,9 @@ struct SceneRender {
 };
 
 struct Scene {
+  /** Pixar Stage reference pointer. */
+  wabi::UsdStageRefPtr stage;
+
   /** Unit of measurement this scene adheres to. */
   UnitSettings unit;
 
