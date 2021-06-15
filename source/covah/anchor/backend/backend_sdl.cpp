@@ -649,6 +649,15 @@ ANCHOR_WindowSDL::ANCHOR_WindowSDL(ANCHOR_SystemSDL *system,
   setIcon(icon);
 }
 
+ANCHOR_WindowSDL::~ANCHOR_WindowSDL()
+{
+  if (m_sdl_custom_cursor) {
+    SDL_FreeCursor(m_sdl_custom_cursor);
+  }
+
+  SDL_DestroyWindow(m_sdl_win);
+}
+
 static void check_vk_result(VkResult err)
 {
   if (err == 0)
@@ -1219,6 +1228,11 @@ ANCHOR_SystemSDL::ANCHOR_SystemSDL() : ANCHOR_System()
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0) {
     TF_CODING_ERROR("Error: %s\n", SDL_GetError());
   }
+}
+
+ANCHOR_SystemSDL::~ANCHOR_SystemSDL()
+{
+  SDL_Quit();
 }
 
 ANCHOR_ISystemWindow *ANCHOR_SystemSDL::createWindow(
