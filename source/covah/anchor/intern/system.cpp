@@ -25,9 +25,6 @@
 #include "ANCHOR_api.h"
 #include "ANCHOR_system.h"
 
-/* todo: more backends */
-#include "ANCHOR_vulkan.h"
-
 #include <wabi/base/tf/error.h>
 
 WABI_NAMESPACE_USING

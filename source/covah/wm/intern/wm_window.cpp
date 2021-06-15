@@ -75,5 +75,5 @@ void WM_window_process_events(const cContext *C)
 
 void WM_window_swap_buffers(wmWindow *win)
 {
-  ANCHOR::SwapChain(win->anchorwin);
+  ANCHOR::SwapChain((ANCHOR_SystemWindowHandle)win->anchorwin);
 }

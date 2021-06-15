@@ -356,7 +356,6 @@ CODE
 #include "ANCHOR_event_consumer.h"
 #include "ANCHOR_event_manager.h"
 #include "ANCHOR_system.h"
-#include "ANCHOR_vulkan.h"
 #include "ANCHOR_window.h"
 
 #ifndef ANCHOR_DISABLE

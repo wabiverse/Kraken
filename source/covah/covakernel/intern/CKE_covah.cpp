@@ -38,7 +38,6 @@
 /* ANCHOR */
 #include "ANCHOR_api.h"
 #include "ANCHOR_debug_codes.h"
-#include "ANCHOR_vulkan.h"
 
 /* WINDOW MANAGER */
 #include "WM_init_exit.h"
