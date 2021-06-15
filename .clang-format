@@ -57,10 +57,10 @@ BreakConstructorInitializers: BeforeColon
 # Indent the : after a constructor. For example:
 #
 #   explicit foo_class ()
-#       : member1_(5)
+#     : member1_(5)
 #   {}
 #
-ConstructorInitializerIndentWidth: 4
+ConstructorInitializerIndentWidth: 2
 
 # Make access modifier slightly more visible.
 AccessModifierOffset: -1
@@ -68,7 +68,7 @@ AccessModifierOffset: -1
 # This will unfortunately use spaces in some cases where it's not desired (like
 # function calls) but the overall result is better since it will allow
 # alignment to work properly with different tab width settings.
-ContinuationIndentWidth: 4
+ContinuationIndentWidth: 2
 
 # This tries to match Blender's style as much as possible. One
 BreakBeforeBraces: Custom
@@ -167,7 +167,7 @@ AlwaysBreakBeforeMultilineStrings: true
 AlignAfterOpenBracket: true
 
 # Setup consecutive alignment 
-AlignConsecutiveAssignments: true
+#AlignConsecutiveAssignments: true
 AlignConsecutiveBitFields: true
 
 # We don't want literal strings to break,
