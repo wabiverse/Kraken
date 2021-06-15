@@ -84,6 +84,7 @@
 
 #include "ANCHOR_api.h"
 #include "ANCHOR_debug_codes.h"
+#include "ANCHOR_event.h"
 #include "ANCHOR_window_manager.h"
 
 // SDL
@@ -1335,7 +1336,7 @@ static SDL_Window *SDL_GetWindowFromID_fallback(Uint32 id)
   return sdl_win;
 }
 
-#define GXMAP(k, x, y) \
+#define AXMAP(k, x, y) \
   case x: \
     k = y; \
     break
@@ -1360,53 +1361,53 @@ static eAnchorKey convertSDLKey(SDL_Scancode key)
     switch (key) {
       /* TODO SDL_SCANCODE_NONUSBACKSLASH */
 
-      GXMAP(type, SDL_SCANCODE_BACKSPACE, ANCHOR_KeyBackSpace);
-      GXMAP(type, SDL_SCANCODE_TAB, ANCHOR_KeyTab);
-      GXMAP(type, SDL_SCANCODE_RETURN, ANCHOR_KeyEnter);
-      GXMAP(type, SDL_SCANCODE_ESCAPE, ANCHOR_KeyEsc);
-      GXMAP(type, SDL_SCANCODE_SPACE, ANCHOR_KeySpace);
+      AXMAP(type, SDL_SCANCODE_BACKSPACE, ANCHOR_KeyBackSpace);
+      AXMAP(type, SDL_SCANCODE_TAB, ANCHOR_KeyTab);
+      AXMAP(type, SDL_SCANCODE_RETURN, ANCHOR_KeyEnter);
+      AXMAP(type, SDL_SCANCODE_ESCAPE, ANCHOR_KeyEsc);
+      AXMAP(type, SDL_SCANCODE_SPACE, ANCHOR_KeySpace);
 
-      GXMAP(type, SDL_SCANCODE_SEMICOLON, ANCHOR_KeySemicolon);
-      GXMAP(type, SDL_SCANCODE_PERIOD, ANCHOR_KeyPeriod);
-      GXMAP(type, SDL_SCANCODE_COMMA, ANCHOR_KeyComma);
-      GXMAP(type, SDL_SCANCODE_APOSTROPHE, ANCHOR_KeyQuote);
-      GXMAP(type, SDL_SCANCODE_GRAVE, ANCHOR_KeyAccentGrave);
-      GXMAP(type, SDL_SCANCODE_MINUS, ANCHOR_KeyMinus);
-      GXMAP(type, SDL_SCANCODE_EQUALS, ANCHOR_KeyEqual);
+      AXMAP(type, SDL_SCANCODE_SEMICOLON, ANCHOR_KeySemicolon);
+      AXMAP(type, SDL_SCANCODE_PERIOD, ANCHOR_KeyPeriod);
+      AXMAP(type, SDL_SCANCODE_COMMA, ANCHOR_KeyComma);
+      AXMAP(type, SDL_SCANCODE_APOSTROPHE, ANCHOR_KeyQuote);
+      AXMAP(type, SDL_SCANCODE_GRAVE, ANCHOR_KeyAccentGrave);
+      AXMAP(type, SDL_SCANCODE_MINUS, ANCHOR_KeyMinus);
+      AXMAP(type, SDL_SCANCODE_EQUALS, ANCHOR_KeyEqual);
 
-      GXMAP(type, SDL_SCANCODE_SLASH, ANCHOR_KeySlash);
-      GXMAP(type, SDL_SCANCODE_BACKSLASH, ANCHOR_KeyBackslash);
-      GXMAP(type, SDL_SCANCODE_KP_EQUALS, ANCHOR_KeyEqual);
-      GXMAP(type, SDL_SCANCODE_LEFTBRACKET, ANCHOR_KeyLeftBracket);
-      GXMAP(type, SDL_SCANCODE_RIGHTBRACKET, ANCHOR_KeyRightBracket);
-      GXMAP(type, SDL_SCANCODE_PAUSE, ANCHOR_KeyPause);
+      AXMAP(type, SDL_SCANCODE_SLASH, ANCHOR_KeySlash);
+      AXMAP(type, SDL_SCANCODE_BACKSLASH, ANCHOR_KeyBackslash);
+      AXMAP(type, SDL_SCANCODE_KP_EQUALS, ANCHOR_KeyEqual);
+      AXMAP(type, SDL_SCANCODE_LEFTBRACKET, ANCHOR_KeyLeftBracket);
+      AXMAP(type, SDL_SCANCODE_RIGHTBRACKET, ANCHOR_KeyRightBracket);
+      AXMAP(type, SDL_SCANCODE_PAUSE, ANCHOR_KeyPause);
 
-      GXMAP(type, SDL_SCANCODE_LSHIFT, ANCHOR_KeyLeftShift);
-      GXMAP(type, SDL_SCANCODE_RSHIFT, ANCHOR_KeyRightShift);
-      GXMAP(type, SDL_SCANCODE_LCTRL, ANCHOR_KeyLeftControl);
-      GXMAP(type, SDL_SCANCODE_RCTRL, ANCHOR_KeyRightControl);
-      GXMAP(type, SDL_SCANCODE_LALT, ANCHOR_KeyLeftAlt);
-      GXMAP(type, SDL_SCANCODE_RALT, ANCHOR_KeyRightAlt);
-      GXMAP(type, SDL_SCANCODE_LGUI, ANCHOR_KeyOS);
-      GXMAP(type, SDL_SCANCODE_RGUI, ANCHOR_KeyOS);
-      GXMAP(type, SDL_SCANCODE_APPLICATION, ANCHOR_KeyApp);
+      AXMAP(type, SDL_SCANCODE_LSHIFT, ANCHOR_KeyLeftShift);
+      AXMAP(type, SDL_SCANCODE_RSHIFT, ANCHOR_KeyRightShift);
+      AXMAP(type, SDL_SCANCODE_LCTRL, ANCHOR_KeyLeftControl);
+      AXMAP(type, SDL_SCANCODE_RCTRL, ANCHOR_KeyRightControl);
+      AXMAP(type, SDL_SCANCODE_LALT, ANCHOR_KeyLeftAlt);
+      AXMAP(type, SDL_SCANCODE_RALT, ANCHOR_KeyRightAlt);
+      AXMAP(type, SDL_SCANCODE_LGUI, ANCHOR_KeyOS);
+      AXMAP(type, SDL_SCANCODE_RGUI, ANCHOR_KeyOS);
+      AXMAP(type, SDL_SCANCODE_APPLICATION, ANCHOR_KeyApp);
 
-      GXMAP(type, SDL_SCANCODE_INSERT, ANCHOR_KeyInsert);
-      GXMAP(type, SDL_SCANCODE_DELETE, ANCHOR_KeyDelete);
-      GXMAP(type, SDL_SCANCODE_HOME, ANCHOR_KeyHome);
-      GXMAP(type, SDL_SCANCODE_END, ANCHOR_KeyEnd);
-      GXMAP(type, SDL_SCANCODE_PAGEUP, ANCHOR_KeyUpPage);
-      GXMAP(type, SDL_SCANCODE_PAGEDOWN, ANCHOR_KeyDownPage);
+      AXMAP(type, SDL_SCANCODE_INSERT, ANCHOR_KeyInsert);
+      AXMAP(type, SDL_SCANCODE_DELETE, ANCHOR_KeyDelete);
+      AXMAP(type, SDL_SCANCODE_HOME, ANCHOR_KeyHome);
+      AXMAP(type, SDL_SCANCODE_END, ANCHOR_KeyEnd);
+      AXMAP(type, SDL_SCANCODE_PAGEUP, ANCHOR_KeyUpPage);
+      AXMAP(type, SDL_SCANCODE_PAGEDOWN, ANCHOR_KeyDownPage);
 
-      GXMAP(type, SDL_SCANCODE_LEFT, ANCHOR_KeyLeftArrow);
-      GXMAP(type, SDL_SCANCODE_RIGHT, ANCHOR_KeyRightArrow);
-      GXMAP(type, SDL_SCANCODE_UP, ANCHOR_KeyUpArrow);
-      GXMAP(type, SDL_SCANCODE_DOWN, ANCHOR_KeyDownArrow);
+      AXMAP(type, SDL_SCANCODE_LEFT, ANCHOR_KeyLeftArrow);
+      AXMAP(type, SDL_SCANCODE_RIGHT, ANCHOR_KeyRightArrow);
+      AXMAP(type, SDL_SCANCODE_UP, ANCHOR_KeyUpArrow);
+      AXMAP(type, SDL_SCANCODE_DOWN, ANCHOR_KeyDownArrow);
 
-      GXMAP(type, SDL_SCANCODE_CAPSLOCK, ANCHOR_KeyCapsLock);
-      GXMAP(type, SDL_SCANCODE_SCROLLLOCK, ANCHOR_KeyScrollLock);
-      GXMAP(type, SDL_SCANCODE_NUMLOCKCLEAR, ANCHOR_KeyNumLock);
-      GXMAP(type, SDL_SCANCODE_PRINTSCREEN, ANCHOR_KeyPrintScreen);
+      AXMAP(type, SDL_SCANCODE_CAPSLOCK, ANCHOR_KeyCapsLock);
+      AXMAP(type, SDL_SCANCODE_SCROLLLOCK, ANCHOR_KeyScrollLock);
+      AXMAP(type, SDL_SCANCODE_NUMLOCKCLEAR, ANCHOR_KeyNumLock);
+      AXMAP(type, SDL_SCANCODE_PRINTSCREEN, ANCHOR_KeyPrintScreen);
 
       /**
        * Keypad Events ---------------- */
@@ -1416,34 +1417,34 @@ static eAnchorKey convertSDLKey(SDL_Scancode key)
        * that aren't supported by ANCHOR, such as:
        * - #SDL_SCANCODE_KP_PERCENT
        * - #SDL_SCANCODE_KP_XOR. */
-      GXMAP(type, SDL_SCANCODE_KP_0, ANCHOR_KeyNumpad0);
-      GXMAP(type, SDL_SCANCODE_KP_1, ANCHOR_KeyNumpad1);
-      GXMAP(type, SDL_SCANCODE_KP_2, ANCHOR_KeyNumpad2);
-      GXMAP(type, SDL_SCANCODE_KP_3, ANCHOR_KeyNumpad3);
-      GXMAP(type, SDL_SCANCODE_KP_4, ANCHOR_KeyNumpad4);
-      GXMAP(type, SDL_SCANCODE_KP_5, ANCHOR_KeyNumpad5);
-      GXMAP(type, SDL_SCANCODE_KP_6, ANCHOR_KeyNumpad6);
-      GXMAP(type, SDL_SCANCODE_KP_7, ANCHOR_KeyNumpad7);
-      GXMAP(type, SDL_SCANCODE_KP_8, ANCHOR_KeyNumpad8);
-      GXMAP(type, SDL_SCANCODE_KP_9, ANCHOR_KeyNumpad9);
-      GXMAP(type, SDL_SCANCODE_KP_PERIOD, ANCHOR_KeyNumpadPeriod);
+      AXMAP(type, SDL_SCANCODE_KP_0, ANCHOR_KeyNumpad0);
+      AXMAP(type, SDL_SCANCODE_KP_1, ANCHOR_KeyNumpad1);
+      AXMAP(type, SDL_SCANCODE_KP_2, ANCHOR_KeyNumpad2);
+      AXMAP(type, SDL_SCANCODE_KP_3, ANCHOR_KeyNumpad3);
+      AXMAP(type, SDL_SCANCODE_KP_4, ANCHOR_KeyNumpad4);
+      AXMAP(type, SDL_SCANCODE_KP_5, ANCHOR_KeyNumpad5);
+      AXMAP(type, SDL_SCANCODE_KP_6, ANCHOR_KeyNumpad6);
+      AXMAP(type, SDL_SCANCODE_KP_7, ANCHOR_KeyNumpad7);
+      AXMAP(type, SDL_SCANCODE_KP_8, ANCHOR_KeyNumpad8);
+      AXMAP(type, SDL_SCANCODE_KP_9, ANCHOR_KeyNumpad9);
+      AXMAP(type, SDL_SCANCODE_KP_PERIOD, ANCHOR_KeyNumpadPeriod);
 
-      GXMAP(type, SDL_SCANCODE_KP_ENTER, ANCHOR_KeyNumpadEnter);
-      GXMAP(type, SDL_SCANCODE_KP_PLUS, ANCHOR_KeyNumpadPlus);
-      GXMAP(type, SDL_SCANCODE_KP_MINUS, ANCHOR_KeyNumpadMinus);
-      GXMAP(type, SDL_SCANCODE_KP_MULTIPLY, ANCHOR_KeyNumpadAsterisk);
-      GXMAP(type, SDL_SCANCODE_KP_DIVIDE, ANCHOR_KeyNumpadSlash);
+      AXMAP(type, SDL_SCANCODE_KP_ENTER, ANCHOR_KeyNumpadEnter);
+      AXMAP(type, SDL_SCANCODE_KP_PLUS, ANCHOR_KeyNumpadPlus);
+      AXMAP(type, SDL_SCANCODE_KP_MINUS, ANCHOR_KeyNumpadMinus);
+      AXMAP(type, SDL_SCANCODE_KP_MULTIPLY, ANCHOR_KeyNumpadAsterisk);
+      AXMAP(type, SDL_SCANCODE_KP_DIVIDE, ANCHOR_KeyNumpadSlash);
 
       /**
        * Media keys in some keyboards and laptops with XFree86/Xorg */
-      GXMAP(type, SDL_SCANCODE_AUDIOPLAY, ANCHOR_KeyMediaPlay);
-      GXMAP(type, SDL_SCANCODE_AUDIOSTOP, ANCHOR_KeyMediaStop);
-      GXMAP(type, SDL_SCANCODE_AUDIOPREV, ANCHOR_KeyMediaFirst);
-      // GXMAP(type,XF86XK_AudioRewind,       ANCHOR_KeyMediaFirst);
-      GXMAP(type, SDL_SCANCODE_AUDIONEXT, ANCHOR_KeyMediaLast);
+      AXMAP(type, SDL_SCANCODE_AUDIOPLAY, ANCHOR_KeyMediaPlay);
+      AXMAP(type, SDL_SCANCODE_AUDIOSTOP, ANCHOR_KeyMediaStop);
+      AXMAP(type, SDL_SCANCODE_AUDIOPREV, ANCHOR_KeyMediaFirst);
+      // AXMAP(type,XF86XK_AudioRewind,       ANCHOR_KeyMediaFirst);
+      AXMAP(type, SDL_SCANCODE_AUDIONEXT, ANCHOR_KeyMediaLast);
 
       default:
-        printf("Unknown\n");
+        TF_CODING_ERROR("Unknown\n");
         type = ANCHOR_KeyUnknown;
         break;
     }
@@ -1451,7 +1452,7 @@ static eAnchorKey convertSDLKey(SDL_Scancode key)
 
   return type;
 }
-#undef GXMAP
+#undef AXMAP
 
 void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
 {
@@ -1464,22 +1465,22 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
 
       switch (sdl_sub_evt.event) {
         case SDL_WINDOWEVENT_EXPOSED:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowUpdate, window);
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowUpdate, window);
           break;
         case SDL_WINDOWEVENT_RESIZED:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowSize, window);
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowSize, window);
           break;
         case SDL_WINDOWEVENT_MOVED:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowMove, window);
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowMove, window);
           break;
         case SDL_WINDOWEVENT_FOCUS_GAINED:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowActivate, window);
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowActivate, window);
           break;
         case SDL_WINDOWEVENT_FOCUS_LOST:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowDeactivate, window);
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowDeactivate, window);
           break;
         case SDL_WINDOWEVENT_CLOSE:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowClose, window);
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowClose, window);
           break;
       }
 
@@ -1488,7 +1489,7 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
 
     case SDL_QUIT: {
       ANCHOR_ISystemWindow *window = m_windowManager->getActiveWindow();
-      a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventQuitRequest, window);
+      a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeQuitRequest, window);
       break;
     }
 
@@ -1505,36 +1506,36 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
       AnchorS32 y_root = sdl_sub_evt.y + y_win;
       {
         a_event = new ANCHOR_EventCursor(
-          ANCHOR::GetTime(), ANCHOR_EventCursorMove, window, x_root, y_root, ANCHOR_TABLET_DATA_NONE);
+          ANCHOR::GetTime(), ANCHOR_EventTypeCursorMove, window, x_root, y_root, ANCHOR_TABLET_DATA_NONE);
       }
       break;
     }
     case SDL_MOUSEBUTTONUP:
     case SDL_MOUSEBUTTONDOWN: {
       SDL_MouseButtonEvent &sdl_sub_evt = sdl_event->button;
-      eAnchorButtonMask gbmask = ANCHOR_ButtonMaskLeft;
-      eAnchorEventType type = (sdl_sub_evt.state == SDL_PRESSED) ? ANCHOR_EventButtonDown :
-                                                                   ANCHOR_EventButtonUp;
+      eAnchorButtonMask abmask = ANCHOR_ButtonMaskLeft;
+      eAnchorEventType type = (sdl_sub_evt.state == SDL_PRESSED) ? ANCHOR_EventTypeButtonDown :
+                                                                   ANCHOR_EventTypeButtonUp;
 
       ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
       assert(window != NULL);
 
       /* process rest of normal mouse buttons */
       if (sdl_sub_evt.button == SDL_BUTTON_LEFT)
-        gbmask = ANCHOR_ButtonMaskLeft;
+        abmask = ANCHOR_ButtonMaskLeft;
       else if (sdl_sub_evt.button == SDL_BUTTON_MIDDLE)
-        gbmask = ANCHOR_ButtonMaskMiddle;
+        abmask = ANCHOR_ButtonMaskMiddle;
       else if (sdl_sub_evt.button == SDL_BUTTON_RIGHT)
-        gbmask = ANCHOR_ButtonMaskRight;
+        abmask = ANCHOR_ButtonMaskRight;
       /* these buttons are untested! */
       else if (sdl_sub_evt.button == SDL_BUTTON_X1)
-        gbmask = ANCHOR_ButtonMaskButton4;
+        abmask = ANCHOR_ButtonMaskButton4;
       else if (sdl_sub_evt.button == SDL_BUTTON_X2)
-        gbmask = ANCHOR_ButtonMaskButton5;
+        abmask = ANCHOR_ButtonMaskButton5;
       else
         break;
 
-      a_event = new ANCHOR_EventButton(ANCHOR::GetTime(), type, window, gbmask, ANCHOR_TABLET_DATA_NONE);
+      a_event = new ANCHOR_EventButton(ANCHOR::GetTime(), type, window, abmask, ANCHOR_TABLET_DATA_NONE);
       break;
     }
     case SDL_MOUSEWHEEL: {
@@ -1548,7 +1549,8 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
     case SDL_KEYUP: {
       SDL_KeyboardEvent &sdl_sub_evt = sdl_event->key;
       SDL_Keycode sym = sdl_sub_evt.keysym.sym;
-      eAnchorEventType type = (sdl_sub_evt.state == SDL_PRESSED) ? ANCHOR_EventKeyDown : ANCHOR_EventKeyUp;
+      eAnchorEventType type = (sdl_sub_evt.state == SDL_PRESSED) ? ANCHOR_EventTypeKeyDown :
+                                                                   ANCHOR_EventTypeKeyUp;
 
       ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
       assert(window != NULL);

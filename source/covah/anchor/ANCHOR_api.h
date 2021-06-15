@@ -234,6 +234,7 @@ class ANCHOR_SystemWindow;  /** <- Anchor System Windows.  */
  * Anchor System :: Event Types */
 class ANCHOR_EventButton;
 class ANCHOR_EventCursor;
+class ANCHOR_EventKey;
 class ANCHOR_EventWheel;
 
 /**
@@ -272,40 +273,40 @@ enum eAnchorButtonMask {
  * Event Types ----------- */
 
 enum eAnchorEventType {
-  ANCHOR_EventUnknown = 0,
+  ANCHOR_EventTypeUnknown = 0,
 
-  ANCHOR_EventCursorMove,  /// Mouse move event
-  ANCHOR_EventButtonDown,  /// Mouse button event
-  ANCHOR_EventButtonUp,    /// Mouse button event
-  ANCHOR_EventWheel,       /// Mouse wheel event
-  ANCHOR_EventTrackpad,    /// Trackpad event
+  ANCHOR_EventTypeCursorMove,  /// Mouse move event
+  ANCHOR_EventTypeButtonDown,  /// Mouse button event
+  ANCHOR_EventTypeButtonUp,    /// Mouse button event
+  ANCHOR_EventTypeWheel,       /// Mouse wheel event
+  ANCHOR_EventTypeTrackpad,    /// Trackpad event
 
-  ANCHOR_EventKeyDown,
-  ANCHOR_EventKeyUp,
+  ANCHOR_EventTypeKeyDown,
+  ANCHOR_EventTypeKeyUp,
 
-  ANCHOR_EventQuitRequest,
+  ANCHOR_EventTypeQuitRequest,
 
-  ANCHOR_EventWindowClose,
-  ANCHOR_EventWindowActivate,
-  ANCHOR_EventWindowDeactivate,
-  ANCHOR_EventWindowUpdate,
-  ANCHOR_EventWindowSize,
-  ANCHOR_EventWindowMove,
-  ANCHOR_EventWindowDPIHintChanged,
+  ANCHOR_EventTypeWindowClose,
+  ANCHOR_EventTypeWindowActivate,
+  ANCHOR_EventTypeWindowDeactivate,
+  ANCHOR_EventTypeWindowUpdate,
+  ANCHOR_EventTypeWindowSize,
+  ANCHOR_EventTypeWindowMove,
+  ANCHOR_EventTypeWindowDPIHintChanged,
 
-  ANCHOR_EventDraggingEntered,
-  ANCHOR_EventDraggingUpdated,
-  ANCHOR_EventDraggingExited,
-  ANCHOR_EventDraggingDropDone,
+  ANCHOR_EventTypeDraggingEntered,
+  ANCHOR_EventTypeDraggingUpdated,
+  ANCHOR_EventTypeDraggingExited,
+  ANCHOR_EventTypeDraggingDropDone,
 
-  ANCHOR_EventOpenMainFile,            // Needed for Cocoa to open double-clicked .blend file at startup
-  ANCHOR_EventNativeResolutionChange,  // Needed for Cocoa when window moves to other display
+  ANCHOR_EventTypeOpenMainFile,            // Needed for Cocoa to open double-clicked .blend file at startup
+  ANCHOR_EventTypeNativeResolutionChange,  // Needed for Cocoa when window moves to other display
 
-  ANCHOR_EventTimer,
+  ANCHOR_EventTypeTimer,
 
-  ANCHOR_EventImeCompositionStart,
-  ANCHOR_EventImeComposition,
-  ANCHOR_EventImeCompositionEnd,
+  ANCHOR_EventTypeImeCompositionStart,
+  ANCHOR_EventTypeImeComposition,
+  ANCHOR_EventTypeImeCompositionEnd,
 
   ANCHOR_NumEventTypes
 };
@@ -337,20 +338,6 @@ enum eAnchorWindowState {
   ANCHOR_WindowStateMinimized,
   ANCHOR_WindowStateFullScreen,
   ANCHOR_WindowStateEmbedded,
-};
-
-enum eAnchorGrabCursorMode {
-  /** Grab not set. */
-  ANCHOR_GrabDisable = 0,
-  /** No cursor adjustments. */
-  ANCHOR_GrabNormal,
-  /** Wrap the mouse location to prevent limiting screen bounds. */
-  ANCHOR_GrabWrap,
-  /**
-   * Hide the mouse while grabbing and restore the original location on release
-   * (used for number buttons and some other draggable UI elements).
-   */
-  ANCHOR_GrabHide,
 };
 
 enum eAnchorStandardCursor {
@@ -413,18 +400,28 @@ enum eAnchorTabletAPI {
   ANCHOR_TabletWintab,
 };
 
-struct ANCHOR_TabletData {
-  eAnchorTabletMode Active; /* 0=None, 1=Stylus, 2=Eraser */
-  float Pressure;           /* range 0.0 (not touching) to 1.0 (full pressure) */
-  float Xtilt;              /* range 0.0 (upright) to 1.0 (tilted fully against the tablet surface) */
-  float Ytilt;              /* as above */
+enum eAnchorGrabCursorMode {
+  /**
+   * Grab not set. */
+  ANCHOR_GrabDisable = 0,
+  /**
+   * No cursor adjustments. */
+  ANCHOR_GrabNormal,
+  /**
+   * Wrap the mouse location to prevent limiting screen bounds. */
+  ANCHOR_GrabWrap,
+  /**
+   * Hide the mouse while grabbing and restore the original location on release
+   * (used for number buttons and some other draggable UI elements). */
+  ANCHOR_GrabHide,
 };
 
-static const ANCHOR_TabletData ANCHOR_TABLET_DATA_NONE = {
-  ANCHOR_TabletModeNone, /* No cursor in range */
-  1.0f,                  /* Pressure */
-  0.0f,                  /* Xtilt */
-  0.0f,
+enum eAnchorAxisFlag {
+  /**
+   * Axis that cursor grab will wrap. */
+  ANCHOR_GrabAxisNone = 0,
+  ANCHOR_AxisX = (1 << 0),
+  ANCHOR_GrabAxisY = (1 << 1),
 };
 
 enum eAnchorKey {
@@ -577,6 +574,93 @@ enum eAnchorKey {
   ANCHOR_KeyMediaLast
 };
 
+struct ANCHOR_TabletData {
+  /**
+   * Whether the Tablet is
+   * actually producing data,
+   * if so - the kind of data:
+   *   - 0 -> None
+   *     1 -> Stylus
+   *     2 -> Eraser */
+  eAnchorTabletMode Active;
+  /**
+   * range 0.0 (not touching)
+   * to 1.0 (full pressure). */
+  float Pressure;
+  /**
+   * range 0.0 (upright) to 1.0
+   * (tilted fully against the
+   * tablet surface) on the X
+   * axis. */
+  float Xtilt;
+  /**
+   * range 0.0 (upright) to 1.0
+   * (tilted fully against the
+   * tablet surface) on the Y
+   * axis. */
+  float Ytilt;
+};
+
+static const ANCHOR_TabletData ANCHOR_TABLET_DATA_NONE = {
+  ANCHOR_TabletModeNone, /* No cursor in range */
+  1.0f,                  /* Pressure */
+  0.0f,                  /* Xtilt */
+  0.0f,
+};
+
+struct ANCHOR_EventCursorData {
+  /**
+   * The x-coordinate of the cursor position. */
+  AnchorS32 x;
+  /**
+   * The y-coordinate of the cursor position. */
+  AnchorS32 y;
+  /**
+   * Associated tablet data. */
+  ANCHOR_TabletData tablet;
+};
+
+struct ANCHOR_EventButtonData {
+  /**
+   * The mask of the mouse button. */
+  eAnchorButtonMask button;
+  /**
+   * Associated tablet data. */
+  ANCHOR_TabletData tablet;
+};
+
+struct ANCHOR_EventWheelData {
+  /**
+   * Displacement of a mouse wheel. */
+  AnchorS32 z;
+};
+
+struct ANCHOR_EventKeyData {
+  /**
+   * The key code. */
+  eAnchorKey key;
+
+  /* ascii / utf8: both should always be set when possible,
+   * - ascii may be '\0' however if the user presses a non ascii key
+   * - unicode may not be set if the system has no unicode support
+   *
+   * These values are intended to be used as follows.
+   * For text input use unicode when available, fallback to ascii.
+   * For areas where unicode is not needed, number input for example, always
+   * use ascii, unicode is ignored - campbell. */
+
+  /**
+   * The ascii code for the key event ('\0' if none). */
+  char ascii;
+  /**
+   * The unicode character. if the length is 6, not NULL terminated if all 6 are set */
+  char utf8_buf[6];
+
+  /**
+   * Generated by auto-repeat. */
+  char is_repeat;
+};
+
 // Forward declarations
 struct ImDrawChannel;         // Temporary storage to output draw commands out of order, used by
                               // ImDrawListSplitter and ImDrawList::ChannelsSplit()
@@ -676,7 +760,7 @@ typedef void *AnchorTextureID;
  * in the case of covah  --  ANCHOR_UserPtr is
  * assigned to the #cContext data structure. */
 typedef void *ANCHOR_UserPtr;
-typedef void *ANCHOR_EventPtr;
+typedef void *ANCHOR_EventDataPtr;
 
 /**
  * The Anchor backend measures time with
