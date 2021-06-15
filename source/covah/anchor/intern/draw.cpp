@@ -59,7 +59,7 @@ Index of this file:
 
 #  include "ANCHOR_internal.h"
 #  ifdef ANCHOR_ENABLE_FREETYPE
-#    include "misc/freetype/ANCHOR_freetype.h"
+#    include "ANCHOR_freetype.h"
 #  endif
 
 #  include <stdio.h>  // vsnprintf, sscanf, printf
