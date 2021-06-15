@@ -135,6 +135,33 @@ class "SceneGraphPrimAPI"(
     )
 }
 
+class Workspace "Workspace" (
+    inherits = </Typed>
+    doc = """
+    A workspace acts like a predefined window layout. The purpose of a
+    workspace is to have a layout created around your needs, whether that
+    purpose might be modeling, animating, scripting, or any other purpose
+    you might find helpful for any specific task.
+
+    It is often useful to have many different kinds of workspaces so you
+    can quickly switch between layouts based on your needs and contextual
+    task at hand.
+    """
+)
+{
+    uniform token ui:workspaceName (
+        doc = """
+        The workspace name that is displayed in a application's GUI.
+        Usually laid out within a quickly accessible tab selection
+        grouped with other existing workspaces, to quickly switch 
+        around.
+        """
+        customData = {
+            string apiName = "workspaceName"
+        }
+    )
+}
+
 class Window "Window" (
     inherits = </Typed>
     doc = """

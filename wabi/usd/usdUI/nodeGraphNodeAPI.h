@@ -29,6 +29,8 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
+/* clang-format off */
+
 #ifndef USDUI_GENERATED_NODEGRAPHNODEAPI_H
 #define USDUI_GENERATED_NODEGRAPHNODEAPI_H
 
@@ -37,12 +39,12 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/vt/value.h"
-#include "wabi/usd/usd/apiSchemaBase.h"
+#include "wabi/usd/usdUI/api.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/usd/usdUI/api.h"
+#include "wabi/usd/usd/apiSchemaBase.h"
 #include "wabi/usd/usdUI/tokens.h"
+#include "wabi/base/vt/value.h"
 
 #include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec3d.h"
@@ -57,13 +59,13 @@ class SdfAssetPath;
 
 /**
  * --------------------------------------------------------------------------
- * NODEGRAPHNODEAPI
+ * NODEGRAPHNODEAPI                                                          
  * --------------------------------------------------------------------------
- *
+ * 
  * @class UsdUINodeGraphNodeAPI
- *
+ * 
  * This api helps storing information about nodes in node graphs.
- *
+ * 
  * For any described attribute @em Fallback @em Value or @em Allowed
  * @em Values below that are text/tokens, the actual token is published
  * and defined in @ref UsdUITokens. So to set an attribute
@@ -90,21 +92,23 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
    * UsdUINodeGraphNodeAPI::Get(prim.GetStage(), prim.GetPath()) for a @em
    * valid @p prim, but will not immediately throw an error for an invalid
    * @p prim. */
-  explicit UsdUINodeGraphNodeAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdUINodeGraphNodeAPI(const UsdPrim &prim = UsdPrim())
+      : UsdAPISchemaBase(prim)
   {}
 
   /**
    * Construct a UsdUINodeGraphNodeAPI on the prim held by @p schemaObj .
    * Should be preferred over UsdUINodeGraphNodeAPI(schemaObj.GetPrim()),
    * as it preserves SchemaBase state. */
-  explicit UsdUINodeGraphNodeAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdUINodeGraphNodeAPI(const UsdSchemaBase &schemaObj)
+      : UsdAPISchemaBase(schemaObj)
   {}
 
   /**
    * Destructor. */
   USDUI_API
   virtual ~UsdUINodeGraphNodeAPI();
-
+ 
   /**
    * Return a vector of names of all pre-declared attributes for this schema
    * class and all its ancestor classes.  Does not include attributes that
@@ -116,7 +120,7 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
    * Return a UsdUINodeGraphNodeAPI holding the prim adhering to this
    * schema at @p path on @p stage. If no prim exists at @p path on @p
    * stage, or if the prim at that path does not adhere to this schema
-
+ 
    * return an invalid schema object.  This is shorthand for the following:
    *
    * @code
@@ -124,6 +128,7 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
    * @endcode */
   USDUI_API
   static UsdUINodeGraphNodeAPI Get(const UsdStagePtr &stage, const SdfPath &path);
+
 
   /**
    * Applies this <b>single-apply</b> API schema to the given @p prim.
@@ -141,7 +146,6 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
    * @sa UsdPrim::RemoveAPI() */
   USDUI_API
   static UsdUINodeGraphNodeAPI Apply(const UsdPrim &prim);
-
  protected:
   /**
    * Returns the kind of schema this class belongs to.
@@ -175,20 +179,20 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
    * ---------------------------------------------------------------------
    * POS
    * ---------------------------------------------------------------------
-   *
+   * 
    * Declared relative position to the parent in a node graph.
    * X is the horizontal position.
    * Y is the vertical position. Higher numbers correspond to lower positions
    * (coordinates are Qt style, not cartesian).
-   *
+   * 
    * These positions are not explicitly meant in pixel space, but rather
    * assume that the size of a node is approximately 1.0x1.0. Where size-x is
    * the node width and size-y height of the node. Depending on
    * graph UI implementation, the size of a node may vary in each direction.
-   *
+   * 
    * Example: If a node's width is 300 and it is position is at 1000, we
    * store for x-position: 1000 * (1.0/300)
-   *
+   * 
    *
    *
    * | ||
@@ -220,17 +224,17 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
    * ---------------------------------------------------------------------
    * STACKINGORDER
    * ---------------------------------------------------------------------
-   *
+   * 
    * This optional value is a useful hint when an application cares about
    * the visibility of a node and whether each node overlaps another.
-   *
+   * 
    * Nodes with lower stacking order values are meant to be drawn below
    * higher ones. Negative values are meant as background. Positive values
    * are meant as foreground.
    * Undefined values should be treated as 0.
-   *
+   * 
    * There are no set limits in these values.
-   *
+   * 
    *
    *
    * | ||
@@ -255,17 +259,16 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
    * writeSparsely is @c true, the default for @p writeSparsely
    * is @c false. */
   USDUI_API
-  UsdAttribute CreateStackingOrderAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely = false) const;
+  UsdAttribute CreateStackingOrderAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   /**
    * ---------------------------------------------------------------------
    * DISPLAYCOLOR
    * ---------------------------------------------------------------------
-   *
+   * 
    * This hint defines what tint the node should have in the node graph.
-   *
+   * 
    *
    *
    * | ||
@@ -290,20 +293,19 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
    * writeSparsely is @c true, the default for @p writeSparsely
    * is @c false. */
   USDUI_API
-  UsdAttribute CreateDisplayColorAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely = false) const;
+  UsdAttribute CreateDisplayColorAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   /**
    * ---------------------------------------------------------------------
    * ICON
    * ---------------------------------------------------------------------
-   *
+   * 
    * This points to an image that should be displayed on the node.  It is
    * intended to be useful for summary visual classification of nodes, rather
    * than a thumbnail preview of the computed result of the node in some
    * computational system.
-   *
+   * 
    *
    *
    * | ||
@@ -335,12 +337,12 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
    * ---------------------------------------------------------------------
    * EXPANSIONSTATE
    * ---------------------------------------------------------------------
-   *
+   * 
    * The current expansionState of the node in the ui.
    * 'open' = fully expanded
    * 'closed' = fully collapsed
    * 'minimized' = should take the least space possible
-   *
+   * 
    *
    *
    * | ||
@@ -367,22 +369,21 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase {
    * writeSparsely is @c true, the default for @p writeSparsely
    * is @c false. */
   USDUI_API
-  UsdAttribute CreateExpansionStateAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely = false) const;
+  UsdAttribute CreateExpansionStateAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   /**
    * ---------------------------------------------------------------------
    * SIZE
    * ---------------------------------------------------------------------
-   *
+   * 
    * Optional size hint for a node in a node graph.
    * X is the width.
    * Y is the height.
-   *
+   * 
    * This value is optional, because node size is often determined
    * based on the number of in- and outputs of a node.
-   *
+   * 
    *
    *
    * | ||

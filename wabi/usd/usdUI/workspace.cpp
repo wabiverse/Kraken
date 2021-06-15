@@ -34,7 +34,7 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/usdUI/window.h"
+#include "wabi/usd/usdUI/workspace.h"
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
 
@@ -44,98 +44,82 @@ WABI_NAMESPACE_BEGIN
  * Register the schema with the TfType system. */
 TF_REGISTRY_FUNCTION(TfType)
 {
-  TfType::Define<UsdUIWindow, TfType::Bases<UsdTyped>>();
+  TfType::Define<UsdUIWorkspace, TfType::Bases<UsdTyped>>();
   /**
    * Register the usd prim typename as an alias under UsdSchemaBase.
    * This enables one to call:
-   * TfType::Find<UsdSchemaBase>().FindDerivedByName("Window")
-   * To find TfType<UsdUIWindow>, which is how IsA queries are
+   * TfType::Find<UsdSchemaBase>().FindDerivedByName("Workspace")
+   * To find TfType<UsdUIWorkspace>, which is how IsA queries are
    * answered. */
-  TfType::AddAlias<UsdSchemaBase, UsdUIWindow>("Window");
+  TfType::AddAlias<UsdSchemaBase, UsdUIWorkspace>("Workspace");
 }
 
 /* virtual */
-UsdUIWindow::~UsdUIWindow()
+UsdUIWorkspace::~UsdUIWorkspace()
 {}
 
 /* static */
-UsdUIWindow UsdUIWindow::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdUIWorkspace UsdUIWorkspace::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
   if (!stage) {
     TF_CODING_ERROR("Invalid stage");
-    return UsdUIWindow();
+    return UsdUIWorkspace();
   }
-  return UsdUIWindow(stage->GetPrimAtPath(path));
+  return UsdUIWorkspace(stage->GetPrimAtPath(path));
 }
 
 /* static */
-UsdUIWindow UsdUIWindow::Define(const UsdStagePtr &stage, const SdfPath &path)
+UsdUIWorkspace UsdUIWorkspace::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
-  static TfToken usdPrimTypeName("Window");
+  static TfToken usdPrimTypeName("Workspace");
   if (!stage) {
     TF_CODING_ERROR("Invalid stage");
-    return UsdUIWindow();
+    return UsdUIWorkspace();
   }
-  return UsdUIWindow(stage->DefinePrim(path, usdPrimTypeName));
+  return UsdUIWorkspace(stage->DefinePrim(path, usdPrimTypeName));
 }
 /* virtual */
-UsdSchemaKind UsdUIWindow::_GetSchemaKind() const
+UsdSchemaKind UsdUIWorkspace::_GetSchemaKind() const
 {
-  return UsdUIWindow::schemaKind;
+  return UsdUIWorkspace::schemaKind;
 }
 
 /* virtual */
-UsdSchemaKind UsdUIWindow::_GetSchemaType() const
+UsdSchemaKind UsdUIWorkspace::_GetSchemaType() const
 {
-  return UsdUIWindow::schemaType;
+  return UsdUIWorkspace::schemaType;
 }
 
 /* static */
-const TfType &UsdUIWindow::_GetStaticTfType()
+const TfType &UsdUIWorkspace::_GetStaticTfType()
 {
-  static TfType tfType = TfType::Find<UsdUIWindow>();
+  static TfType tfType = TfType::Find<UsdUIWorkspace>();
   return tfType;
 }
 
 /* static */
-bool UsdUIWindow::_IsTypedSchema()
+bool UsdUIWorkspace::_IsTypedSchema()
 {
   static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdUIWindow::_GetTfType() const
+const TfType &UsdUIWorkspace::_GetTfType() const
 {
   return _GetStaticTfType();
 }
 
-UsdAttribute UsdUIWindow::GetTitleAttr() const
+UsdAttribute UsdUIWorkspace::GetWorkspaceNameAttr() const
 {
-  return GetPrim().GetAttribute(UsdUITokens->uiTitle);
+  return GetPrim().GetAttribute(UsdUITokens->uiWorkspaceName);
 }
 
-UsdAttribute UsdUIWindow::CreateTitleAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdUIWorkspace::CreateWorkspaceNameAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(
-    UsdUITokens->uiTitle,
+    UsdUITokens->uiWorkspaceName,
     SdfValueTypeNames->Token,
-    /* custom = */ false,
-    SdfVariabilityUniform,
-    defaultValue,
-    writeSparsely);
-}
-
-UsdAttribute UsdUIWindow::GetWindowCoordsAttr() const
-{
-  return GetPrim().GetAttribute(UsdUITokens->uiWindowCoords);
-}
-
-UsdAttribute UsdUIWindow::CreateWindowCoordsAttr(VtValue const &defaultValue, bool writeSparsely) const
-{
-  return UsdSchemaBase::_CreateAttr(
-    UsdUITokens->uiWindowCoords,
-    SdfValueTypeNames->Float4,
     /* custom = */ false,
     SdfVariabilityUniform,
     defaultValue,
@@ -155,11 +139,10 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector& left
 }  /* anonymous */
 
 /*static*/
-const TfTokenVector& UsdUIWindow::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector& UsdUIWorkspace::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-    UsdUITokens->uiTitle,
-    UsdUITokens->uiWindowCoords,
+    UsdUITokens->uiWorkspaceName,
   };
   static TfTokenVector allNames =
     _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true), localNames);
@@ -183,5 +166,3 @@ WABI_NAMESPACE_END
    *     - 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
    * ======================================================================
    * --(BEGIN CUSTOM CODE)-- */
-
-/* clang-format on */

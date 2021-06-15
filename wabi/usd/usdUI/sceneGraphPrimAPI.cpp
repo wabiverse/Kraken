@@ -29,16 +29,18 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
+/* clang-format off */
+
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
+#include "wabi/usd/usdUI/sceneGraphPrimAPI.h"
+#include "wabi/usd/usd/tokens.h"
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/usd/usd/tokens.h"
-#include "wabi/usd/usdUI/sceneGraphPrimAPI.h"
 
 WABI_NAMESPACE_BEGIN
-
+ 
 /**
  * Register the schema with the TfType system. */
 TF_REGISTRY_FUNCTION(TfType)
@@ -51,7 +53,6 @@ TF_DEFINE_PRIVATE_TOKENS(
   _schemaTokens,
   (SceneGraphPrimAPI)
 );
-/* clang-format on */
 
 /* virtual */
 UsdUISceneGraphPrimAPI::~UsdUISceneGraphPrimAPI()
@@ -80,7 +81,8 @@ UsdSchemaKind UsdUISceneGraphPrimAPI::_GetSchemaType() const
 }
 
 /* static */
-UsdUISceneGraphPrimAPI UsdUISceneGraphPrimAPI::Apply(const UsdPrim &prim)
+UsdUISceneGraphPrimAPI
+UsdUISceneGraphPrimAPI::Apply(const UsdPrim &prim)
 {
   if (prim.ApplyAPI<UsdUISceneGraphPrimAPI>()) {
     return UsdUISceneGraphPrimAPI(prim);
@@ -113,15 +115,15 @@ UsdAttribute UsdUISceneGraphPrimAPI::GetDisplayNameAttr() const
   return GetPrim().GetAttribute(UsdUITokens->uiDisplayName);
 }
 
-UsdAttribute UsdUISceneGraphPrimAPI::CreateDisplayNameAttr(VtValue const &defaultValue,
-                                                           bool writeSparsely) const
+UsdAttribute UsdUISceneGraphPrimAPI::CreateDisplayNameAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-  return UsdSchemaBase::_CreateAttr(UsdUITokens->uiDisplayName,
-                                    SdfValueTypeNames->Token,
-                                    /* custom = */ false,
-                                    SdfVariabilityUniform,
-                                    defaultValue,
-                                    writeSparsely);
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiDisplayName,
+    SdfValueTypeNames->Token,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
 }
 
 UsdAttribute UsdUISceneGraphPrimAPI::GetDisplayGroupAttr() const
@@ -129,19 +131,20 @@ UsdAttribute UsdUISceneGraphPrimAPI::GetDisplayGroupAttr() const
   return GetPrim().GetAttribute(UsdUITokens->uiDisplayGroup);
 }
 
-UsdAttribute UsdUISceneGraphPrimAPI::CreateDisplayGroupAttr(VtValue const &defaultValue,
-                                                            bool writeSparsely) const
+UsdAttribute UsdUISceneGraphPrimAPI::CreateDisplayGroupAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-  return UsdSchemaBase::_CreateAttr(UsdUITokens->uiDisplayGroup,
-                                    SdfValueTypeNames->Token,
-                                    /* custom = */ false,
-                                    SdfVariabilityUniform,
-                                    defaultValue,
-                                    writeSparsely);
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiDisplayGroup,
+    SdfValueTypeNames->Token,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector& left,
+                           const TfTokenVector& right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -149,17 +152,17 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
   result.insert(result.end(), right.begin(), right.end());
   return result;
 }
-}  // namespace
+}  /* anonymous */
 
 /*static*/
-const TfTokenVector &UsdUISceneGraphPrimAPI::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector& UsdUISceneGraphPrimAPI::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
     UsdUITokens->uiDisplayName,
     UsdUITokens->uiDisplayGroup,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames =
+    _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true), localNames);
 
   if (includeInherited)
     return allNames;

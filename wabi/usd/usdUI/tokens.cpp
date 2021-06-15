@@ -29,6 +29,8 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
+/* clang-format off */
+
 #include "wabi/usd/usdUI/tokens.h"
 
 WABI_NAMESPACE_BEGIN
@@ -48,20 +50,23 @@ UsdUITokensType::UsdUITokensType()
     uiNodegraphNodeStackingOrder("ui:nodegraph:node:stackingOrder", TfToken::Immortal),
     uiTitle("ui:title", TfToken::Immortal),
     uiWindowCoords("ui:windowCoords", TfToken::Immortal),
-    allTokens({closed,
-               minimized,
-               open,
-               uiDescription,
-               uiDisplayGroup,
-               uiDisplayName,
-               uiNodegraphNodeDisplayColor,
-               uiNodegraphNodeExpansionState,
-               uiNodegraphNodeIcon,
-               uiNodegraphNodePos,
-               uiNodegraphNodeSize,
-               uiNodegraphNodeStackingOrder,
-               uiTitle,
-               uiWindowCoords})
+    uiWorkspaceName("ui:workspaceName", TfToken::Immortal),
+    allTokens({
+      closed,
+      minimized,
+      open,
+      uiDescription,
+      uiDisplayGroup,
+      uiDisplayName,
+      uiNodegraphNodeDisplayColor,
+      uiNodegraphNodeExpansionState,
+      uiNodegraphNodeIcon,
+      uiNodegraphNodePos,
+      uiNodegraphNodeSize,
+      uiNodegraphNodeStackingOrder,
+      uiTitle,
+      uiWindowCoords,
+      uiWorkspaceName})
 {}
 
 TfStaticData<UsdUITokensType> UsdUITokens;

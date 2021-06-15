@@ -29,15 +29,17 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
+/* clang-format off */
+
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
+#include "wabi/usd/usdUI/backdrop.h"
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/usd/usdUI/backdrop.h"
 
 WABI_NAMESPACE_BEGIN
-
+ 
 /**
  * Register the schema with the TfType system. */
 TF_REGISTRY_FUNCTION(TfType)
@@ -115,16 +117,18 @@ UsdAttribute UsdUIBackdrop::GetDescriptionAttr() const
 
 UsdAttribute UsdUIBackdrop::CreateDescriptionAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-  return UsdSchemaBase::_CreateAttr(UsdUITokens->uiDescription,
-                                    SdfValueTypeNames->Token,
-                                    /* custom = */ false,
-                                    SdfVariabilityUniform,
-                                    defaultValue,
-                                    writeSparsely);
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiDescription,
+    SdfValueTypeNames->Token,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
 }
 
 namespace {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
+static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector& left,
+                           const TfTokenVector& right)
 {
   TfTokenVector result;
   result.reserve(left.size() + right.size());
@@ -132,16 +136,16 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left
   result.insert(result.end(), right.begin(), right.end());
   return result;
 }
-}  // namespace
+}  /* anonymous */
 
 /*static*/
-const TfTokenVector &UsdUIBackdrop::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector& UsdUIBackdrop::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
     UsdUITokens->uiDescription,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames =
+    _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true), localNames);
 
   if (includeInherited)
     return allNames;

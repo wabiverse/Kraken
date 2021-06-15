@@ -29,6 +29,8 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
+/* clang-format off */
+
 #include "wabi/usd/usdUI/tokens.h"
 #include <boost/python/class.hpp>
 
@@ -58,32 +60,32 @@ class _WrapStaticToken {
 
 template<typename T> void _AddToken(T &cls, const char *name, const TfToken &token)
 {
-  cls.add_static_property(
-    name,
-    boost::python::make_function(_WrapStaticToken(&token),
-                                 boost::python::return_value_policy<boost::python::return_by_value>(),
-                                 boost::mpl::vector1<std::string>()));
+  cls.add_static_property(name,
+    boost::python::make_function(
+      _WrapStaticToken(&token),
+      boost::python::return_value_policy<boost::python::return_by_value>(),
+      boost::mpl::vector1<std::string>()));
 }
 
-}  // namespace
+}  /* anonymous */
 
 void wrapUsdUITokens()
 {
-  boost::python::class_<UsdUITokensType, boost::noncopyable> cls("Tokens", boost::python::no_init);
-  _AddToken(cls, "closed", UsdUITokens->closed);
-  _AddToken(cls, "minimized", UsdUITokens->minimized);
-  _AddToken(cls, "open", UsdUITokens->open);
-  _AddToken(cls, "uiDescription", UsdUITokens->uiDescription);
-  _AddToken(cls, "uiDisplayGroup", UsdUITokens->uiDisplayGroup);
-  _AddToken(cls, "uiDisplayName", UsdUITokens->uiDisplayName);
-  _AddToken(cls, "uiNodegraphNodeDisplayColor", UsdUITokens->uiNodegraphNodeDisplayColor);
-  _AddToken(cls, "uiNodegraphNodeExpansionState", UsdUITokens->uiNodegraphNodeExpansionState);
-  _AddToken(cls, "uiNodegraphNodeIcon", UsdUITokens->uiNodegraphNodeIcon);
-  _AddToken(cls, "uiNodegraphNodePos", UsdUITokens->uiNodegraphNodePos);
-  _AddToken(cls, "uiNodegraphNodeSize", UsdUITokens->uiNodegraphNodeSize);
-  _AddToken(cls, "uiNodegraphNodeStackingOrder", UsdUITokens->uiNodegraphNodeStackingOrder);
-  _AddToken(cls, "uiTitle", UsdUITokens->uiTitle);
-  _AddToken(cls, "uiWindowCoords", UsdUITokens->uiWindowCoords);
+  boost::python::class_ < UsdUITokensType, boost::noncopyable >
+    cls("Tokens", boost::python::no_init);
+      _AddToken(cls, "closed", UsdUITokens->closed);
+      _AddToken(cls, "minimized", UsdUITokens->minimized);
+      _AddToken(cls, "open", UsdUITokens->open);
+      _AddToken(cls, "uiDescription", UsdUITokens->uiDescription);
+      _AddToken(cls, "uiDisplayGroup", UsdUITokens->uiDisplayGroup);
+      _AddToken(cls, "uiDisplayName", UsdUITokens->uiDisplayName);
+      _AddToken(cls, "uiNodegraphNodeDisplayColor", UsdUITokens->uiNodegraphNodeDisplayColor);
+      _AddToken(cls, "uiNodegraphNodeExpansionState", UsdUITokens->uiNodegraphNodeExpansionState);
+      _AddToken(cls, "uiNodegraphNodeIcon", UsdUITokens->uiNodegraphNodeIcon);
+      _AddToken(cls, "uiNodegraphNodePos", UsdUITokens->uiNodegraphNodePos);
+      _AddToken(cls, "uiNodegraphNodeSize", UsdUITokens->uiNodegraphNodeSize);
+      _AddToken(cls, "uiNodegraphNodeStackingOrder", UsdUITokens->uiNodegraphNodeStackingOrder);
+      _AddToken(cls, "uiTitle", UsdUITokens->uiTitle);
+      _AddToken(cls, "uiWindowCoords", UsdUITokens->uiWindowCoords);
+      _AddToken(cls, "uiWorkspaceName", UsdUITokens->uiWorkspaceName);
 }
-
-/* clang-format on */

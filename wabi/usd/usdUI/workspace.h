@@ -31,11 +31,11 @@
 
 /* clang-format off */
 
-#ifndef USDUI_GENERATED_WINDOW_H
-#define USDUI_GENERATED_WINDOW_H
+#ifndef USDUI_GENERATED_WORKSPACE_H
+#define USDUI_GENERATED_WORKSPACE_H
 
 /**
- * @file usdUI/window.h */
+ * @file usdUI/workspace.h */
 
 #include "wabi/wabi.h"
 
@@ -59,12 +59,19 @@ class SdfAssetPath;
 
 /**
  * --------------------------------------------------------------------------
- * WINDOW                                                                    
+ * WORKSPACE                                                                 
  * --------------------------------------------------------------------------
  * 
- * @class UsdUIWindow
+ * @class UsdUIWorkspace
  * 
- * Provides a window for the purpose of displaying an application's GUI.
+ * A workspace acts like a predefined window layout. The purpose of a
+ * workspace is to have a layout created around your needs, whether that
+ * purpose might be modeling, animating, scripting, or any other purpose
+ * you might find helpful for any specific task.
+ * 
+ * It is often useful to have many different kinds of workspaces so you
+ * can quickly switch between layouts based on your needs and contextual
+ * task at hand.
  * 
  * For any described attribute @em Fallback @em Value or @em Allowed
  * @em Values below that are text/tokens, the actual token is published
@@ -73,7 +80,7 @@ class SdfAssetPath;
  * as the value.
  */
 
-class UsdUIWindow : public UsdTyped {
+class UsdUIWorkspace : public UsdTyped {
  public:
   /**
    * Compile time constant representing what kind of schema this class is.
@@ -88,26 +95,26 @@ class UsdUIWindow : public UsdTyped {
   static const UsdSchemaKind schemaType = UsdSchemaKind::ConcreteTyped;
 
   /**
-   * Construct a UsdUIWindow on UsdPrim @p prim . Equivalent to
-   * UsdUIWindow::Get(prim.GetStage(), prim.GetPath()) for a @em
+   * Construct a UsdUIWorkspace on UsdPrim @p prim . Equivalent to
+   * UsdUIWorkspace::Get(prim.GetStage(), prim.GetPath()) for a @em
    * valid @p prim, but will not immediately throw an error for an invalid
    * @p prim. */
-  explicit UsdUIWindow(const UsdPrim &prim = UsdPrim())
+  explicit UsdUIWorkspace(const UsdPrim &prim = UsdPrim())
       : UsdTyped(prim)
   {}
 
   /**
-   * Construct a UsdUIWindow on the prim held by @p schemaObj .
-   * Should be preferred over UsdUIWindow(schemaObj.GetPrim()),
+   * Construct a UsdUIWorkspace on the prim held by @p schemaObj .
+   * Should be preferred over UsdUIWorkspace(schemaObj.GetPrim()),
    * as it preserves SchemaBase state. */
-  explicit UsdUIWindow(const UsdSchemaBase &schemaObj)
+  explicit UsdUIWorkspace(const UsdSchemaBase &schemaObj)
       : UsdTyped(schemaObj)
   {}
 
   /**
    * Destructor. */
   USDUI_API
-  virtual ~UsdUIWindow();
+  virtual ~UsdUIWorkspace();
  
   /**
    * Return a vector of names of all pre-declared attributes for this schema
@@ -117,17 +124,17 @@ class UsdUIWindow : public UsdTyped {
   static const TfTokenVector &GetSchemaAttributeNames(bool includeInherited = true);
 
   /**
-   * Return a UsdUIWindow holding the prim adhering to this
+   * Return a UsdUIWorkspace holding the prim adhering to this
    * schema at @p path on @p stage. If no prim exists at @p path on @p
    * stage, or if the prim at that path does not adhere to this schema
  
    * return an invalid schema object.  This is shorthand for the following:
    *
    * @code
-   * UsdUIWindow(stage->GetPrimAtPath(path));
+   * UsdUIWorkspace(stage->GetPrimAtPath(path));
    * @endcode */
   USDUI_API
-  static UsdUIWindow Get(const UsdStagePtr &stage, const SdfPath &path);
+  static UsdUIWorkspace Get(const UsdStagePtr &stage, const SdfPath &path);
 
   /**
    * Attempt to ensure a @a UsdPrim adhering to this schema at @p
@@ -153,7 +160,7 @@ class UsdUIWindow : public UsdTyped {
    * specify this schema class, in case a stronger typeName opinion overrides
    * the opinion at the current EditTarget. */
   USDUI_API
-  static UsdUIWindow
+  static UsdUIWorkspace
   Define(const UsdStagePtr &stage, const SdfPath &path);
  protected:
   /**
@@ -186,18 +193,20 @@ class UsdUIWindow : public UsdTyped {
  public:
   /**
    * ---------------------------------------------------------------------
-   * TITLE
+   * WORKSPACENAME
    * ---------------------------------------------------------------------
    * 
-   * The window title that is displayed on the top of the window. This
-   * window title gives context for what this window is used for.
+   * The workspace name that is displayed in a application's GUI.
+   * Usually laid out within a quickly accessible tab selection
+   * grouped with other existing workspaces, to quickly switch 
+   * around.
    * 
    *
    *
    * | ||
    * | -- | -- |
    *
-   * | Declaration | `uniform token ui:title` |
+   * | Declaration | `uniform token ui:workspaceName` |
    *
    * | C++ Type | TfToken |
    *
@@ -206,52 +215,17 @@ class UsdUIWindow : public UsdTyped {
    * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
    */
   USDUI_API
-  UsdAttribute GetTitleAttr() const;
+  UsdAttribute GetWorkspaceNameAttr() const;
 
   /**
-   * See GetTitleAttr(), and also @ref
+   * See GetWorkspaceNameAttr(), and also @ref
    * Usd_Create_Or_Get_Property for when to use Get vs Create.
    * If specified, author @p defaultValue as the attribute's
    * default, sparsely (when it makes sense to do so) if @p
    * writeSparsely is @c true, the default for @p writeSparsely
    * is @c false. */
   USDUI_API
-  UsdAttribute CreateTitleAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
-
- public:
-  /**
-   * ---------------------------------------------------------------------
-   * WINDOWCOORDS
-   * ---------------------------------------------------------------------
-   * 
-   * The window coordinates as positioned on screen, storing both
-   * location as well as window size.
-   * 
-   *
-   *
-   * | ||
-   * | -- | -- |
-   *
-   * | Declaration | `uniform float4 ui:windowCoords` |
-   *
-   * | C++ Type | GfVec4f |
-   *
-   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float4 |
-   *
-   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
-   */
-  USDUI_API
-  UsdAttribute GetWindowCoordsAttr() const;
-
-  /**
-   * See GetWindowCoordsAttr(), and also @ref
-   * Usd_Create_Or_Get_Property for when to use Get vs Create.
-   * If specified, author @p defaultValue as the attribute's
-   * default, sparsely (when it makes sense to do so) if @p
-   * writeSparsely is @c true, the default for @p writeSparsely
-   * is @c false. */
-  USDUI_API
-  UsdAttribute CreateWindowCoordsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateWorkspaceNameAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   /**

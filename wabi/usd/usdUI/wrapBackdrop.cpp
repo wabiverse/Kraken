@@ -29,6 +29,8 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
+/* clang-format off */
+
 #include "wabi/usd/usd/schemaBase.h"
 #include "wabi/usd/usdUI/backdrop.h"
 
@@ -55,18 +57,20 @@ namespace {
  * fwds ->. */
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateDescriptionAttr(UsdUIBackdrop &self, object defaultVal, bool writeSparsely)
+
+static UsdAttribute _CreateDescriptionAttr(UsdUIBackdrop & self, object defaultVal, bool writeSparsely)
 {
   return self.CreateDescriptionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
-static std::string _Repr(const UsdUIBackdrop &self)
+static std::string _Repr(const UsdUIBackdrop & self)
 {
   std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdUI.Backdrop(%s)", primRepr.c_str());
+  return TfStringPrintf("UsdUI.Backdrop(%s)",
+                        primRepr.c_str());
 }
 
-}  // namespace
+}  /* anonymous */
 
 /* clang-format off */
 void wrapUsdUIBackdrop()

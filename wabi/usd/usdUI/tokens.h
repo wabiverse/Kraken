@@ -29,6 +29,8 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
+/* clang-format off */
+
 #ifndef USDUI_TOKENS_H
 #define USDUI_TOKENS_H
 
@@ -43,11 +45,11 @@
  *
  * XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 
-#include "wabi/base/tf/staticData.h"
-#include "wabi/base/tf/token.h"
-#include "wabi/usd/usdUI/api.h"
-#include "wabi/wabi.h"
-#include <vector>
+#  include "wabi/wabi.h"
+#  include "wabi/usd/usdUI/api.h"
+#  include "wabi/base/tf/staticData.h"
+#  include "wabi/base/tf/token.h"
+#  include <vector>
 
 WABI_NAMESPACE_BEGIN
 
@@ -162,6 +164,12 @@ struct UsdUITokensType {
   const TfToken uiWindowCoords;
 
   /**
+   * @brief "ui:workspaceName"
+   *
+   * UsdUIWorkspace */
+  const TfToken uiWorkspaceName;
+
+  /**
    * A vector of all of the tokens listed above. */
   const std::vector<TfToken> allTokens;
 };
@@ -171,7 +179,7 @@ struct UsdUITokensType {
  *
  * A global variable with static, efficient @link TfToken
  * TfTokens\endlink for use in all public USD API.
- *
+ * 
  * @sa UsdUITokensType */
 extern USDUI_API TfStaticData<UsdUITokensType> UsdUITokens;
 

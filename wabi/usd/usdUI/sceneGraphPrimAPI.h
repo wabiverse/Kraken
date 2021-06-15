@@ -29,6 +29,8 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
+/* clang-format off */
+
 #ifndef USDUI_GENERATED_SCENEGRAPHPRIMAPI_H
 #define USDUI_GENERATED_SCENEGRAPHPRIMAPI_H
 
@@ -37,12 +39,12 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/vt/value.h"
-#include "wabi/usd/usd/apiSchemaBase.h"
+#include "wabi/usd/usdUI/api.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/usd/usdUI/api.h"
+#include "wabi/usd/usd/apiSchemaBase.h"
 #include "wabi/usd/usdUI/tokens.h"
+#include "wabi/base/vt/value.h"
 
 #include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec3d.h"
@@ -57,13 +59,13 @@ class SdfAssetPath;
 
 /**
  * --------------------------------------------------------------------------
- * SCENEGRAPHPRIMAPI
+ * SCENEGRAPHPRIMAPI                                                         
  * --------------------------------------------------------------------------
- *
+ * 
  * @class UsdUISceneGraphPrimAPI
- *
+ * 
  * Utility schema for display properties of a prim
- *
+ * 
  * For any described attribute @em Fallback @em Value or @em Allowed
  * @em Values below that are text/tokens, the actual token is published
  * and defined in @ref UsdUITokens. So to set an attribute
@@ -90,21 +92,23 @@ class UsdUISceneGraphPrimAPI : public UsdAPISchemaBase {
    * UsdUISceneGraphPrimAPI::Get(prim.GetStage(), prim.GetPath()) for a @em
    * valid @p prim, but will not immediately throw an error for an invalid
    * @p prim. */
-  explicit UsdUISceneGraphPrimAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdUISceneGraphPrimAPI(const UsdPrim &prim = UsdPrim())
+      : UsdAPISchemaBase(prim)
   {}
 
   /**
    * Construct a UsdUISceneGraphPrimAPI on the prim held by @p schemaObj .
    * Should be preferred over UsdUISceneGraphPrimAPI(schemaObj.GetPrim()),
    * as it preserves SchemaBase state. */
-  explicit UsdUISceneGraphPrimAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdUISceneGraphPrimAPI(const UsdSchemaBase &schemaObj)
+      : UsdAPISchemaBase(schemaObj)
   {}
 
   /**
    * Destructor. */
   USDUI_API
   virtual ~UsdUISceneGraphPrimAPI();
-
+ 
   /**
    * Return a vector of names of all pre-declared attributes for this schema
    * class and all its ancestor classes.  Does not include attributes that
@@ -116,7 +120,7 @@ class UsdUISceneGraphPrimAPI : public UsdAPISchemaBase {
    * Return a UsdUISceneGraphPrimAPI holding the prim adhering to this
    * schema at @p path on @p stage. If no prim exists at @p path on @p
    * stage, or if the prim at that path does not adhere to this schema
-
+ 
    * return an invalid schema object.  This is shorthand for the following:
    *
    * @code
@@ -124,6 +128,7 @@ class UsdUISceneGraphPrimAPI : public UsdAPISchemaBase {
    * @endcode */
   USDUI_API
   static UsdUISceneGraphPrimAPI Get(const UsdStagePtr &stage, const SdfPath &path);
+
 
   /**
    * Applies this <b>single-apply</b> API schema to the given @p prim.
@@ -141,7 +146,6 @@ class UsdUISceneGraphPrimAPI : public UsdAPISchemaBase {
    * @sa UsdPrim::RemoveAPI() */
   USDUI_API
   static UsdUISceneGraphPrimAPI Apply(const UsdPrim &prim);
-
  protected:
   /**
    * Returns the kind of schema this class belongs to.
@@ -177,7 +181,7 @@ class UsdUISceneGraphPrimAPI : public UsdAPISchemaBase {
    * ---------------------------------------------------------------------
    * When publishing a nodegraph or a material, it can be useful to
    * provide an optional display name, for readability.
-   *
+   * 
    *
    *
    * | ||
@@ -202,8 +206,7 @@ class UsdUISceneGraphPrimAPI : public UsdAPISchemaBase {
    * writeSparsely is @c true, the default for @p writeSparsely
    * is @c false. */
   USDUI_API
-  UsdAttribute CreateDisplayNameAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely = false) const;
+  UsdAttribute CreateDisplayNameAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   /**
@@ -214,7 +217,7 @@ class UsdUISceneGraphPrimAPI : public UsdAPISchemaBase {
    * provide an optional display group, for organizational purposes and
    * readability. This is because often the usd shading hierarchy is rather
    * flat while we want to display it in organized groups.
-   *
+   * 
    *
    *
    * | ||
@@ -239,8 +242,7 @@ class UsdUISceneGraphPrimAPI : public UsdAPISchemaBase {
    * writeSparsely is @c true, the default for @p writeSparsely
    * is @c false. */
   USDUI_API
-  UsdAttribute CreateDisplayGroupAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely = false) const;
+  UsdAttribute CreateDisplayGroupAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   /**

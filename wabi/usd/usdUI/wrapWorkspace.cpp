@@ -32,7 +32,7 @@
 /* clang-format off */
 
 #include "wabi/usd/usd/schemaBase.h"
-#include "wabi/usd/usdUI/nodeGraphNodeAPI.h"
+#include "wabi/usd/usdUI/workspace.h"
 
 #include "wabi/usd/sdf/primSpec.h"
 
@@ -58,51 +58,26 @@ namespace {
 WRAP_CUSTOM;
 
 
-static UsdAttribute _CreatePosAttr(UsdUINodeGraphNodeAPI & self, object defaultVal, bool writeSparsely)
+static UsdAttribute _CreateWorkspaceNameAttr(UsdUIWorkspace & self, object defaultVal, bool writeSparsely)
 {
-  return self.CreatePosAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2), writeSparsely);
+  return self.CreateWorkspaceNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
-static UsdAttribute _CreateStackingOrderAttr(UsdUINodeGraphNodeAPI & self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateStackingOrderAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
-}
-
-static UsdAttribute _CreateDisplayColorAttr(UsdUINodeGraphNodeAPI & self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateDisplayColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f), writeSparsely);
-}
-
-static UsdAttribute _CreateIconAttr(UsdUINodeGraphNodeAPI & self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateIconAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
-}
-
-static UsdAttribute _CreateExpansionStateAttr(UsdUINodeGraphNodeAPI & self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateExpansionStateAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
-
-static UsdAttribute _CreateSizeAttr(UsdUINodeGraphNodeAPI & self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateSizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2), writeSparsely);
-}
-
-static std::string _Repr(const UsdUINodeGraphNodeAPI & self)
+static std::string _Repr(const UsdUIWorkspace & self)
 {
   std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdUI.NodeGraphNodeAPI(%s)",
+  return TfStringPrintf("UsdUI.Workspace(%s)",
                         primRepr.c_str());
 }
 
 }  /* anonymous */
 
 /* clang-format off */
-void wrapUsdUINodeGraphNodeAPI()
+void wrapUsdUIWorkspace()
 {
-  typedef UsdUINodeGraphNodeAPI This;
+  typedef UsdUIWorkspace This;
 
-  class_<This, bases<UsdAPISchemaBase>> cls("NodeGraphNodeAPI");
+  class_<This, bases<UsdTyped>> cls("Workspace");
 
   cls
     .def(init<UsdPrim>
@@ -113,8 +88,8 @@ void wrapUsdUINodeGraphNodeAPI()
     .def("Get", &This::Get,
         (arg("stage"), arg("path")))
     .staticmethod("Get")
-    .def("Apply", &This::Apply, (arg("prim")))
-    .staticmethod("Apply")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
     .def("GetSchemaAttributeNames", &This::GetSchemaAttributeNames,
         arg("includeInherited") = true,
         return_value_policy<TfPySequenceToList>())
@@ -124,23 +99,8 @@ void wrapUsdUINodeGraphNodeAPI()
         return_value_policy<return_by_value>())
     .staticmethod("_GetStaticTfType")
     .def(!self)
-    .def("GetPosAttr", &This::GetPosAttr)
-    .def("CreatePosAttr", &_CreatePosAttr,
-        (arg("defaultValue") = object(), arg("writeSparsely") = false))
-    .def("GetStackingOrderAttr", &This::GetStackingOrderAttr)
-    .def("CreateStackingOrderAttr", &_CreateStackingOrderAttr,
-        (arg("defaultValue") = object(), arg("writeSparsely") = false))
-    .def("GetDisplayColorAttr", &This::GetDisplayColorAttr)
-    .def("CreateDisplayColorAttr", &_CreateDisplayColorAttr,
-        (arg("defaultValue") = object(), arg("writeSparsely") = false))
-    .def("GetIconAttr", &This::GetIconAttr)
-    .def("CreateIconAttr", &_CreateIconAttr,
-        (arg("defaultValue") = object(), arg("writeSparsely") = false))
-    .def("GetExpansionStateAttr", &This::GetExpansionStateAttr)
-    .def("CreateExpansionStateAttr", &_CreateExpansionStateAttr,
-        (arg("defaultValue") = object(), arg("writeSparsely") = false))
-    .def("GetSizeAttr", &This::GetSizeAttr)
-    .def("CreateSizeAttr", &_CreateSizeAttr,
+    .def("GetWorkspaceNameAttr", &This::GetWorkspaceNameAttr)
+    .def("CreateWorkspaceNameAttr", &_CreateWorkspaceNameAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
     .def("__repr__", ::_Repr)
   ;
@@ -166,11 +126,10 @@ void wrapUsdUINodeGraphNodeAPI()
    * ======================================================================
    * --(BEGIN CUSTOM CODE)-- */
 
-/* clang-format on */
 
 namespace {
 
-WRAP_CUSTOM
-{}
+WRAP_CUSTOM {
+}
 
-}  // namespace
+}

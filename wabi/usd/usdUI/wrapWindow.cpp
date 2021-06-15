@@ -29,6 +29,8 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
+/* clang-format off */
+
 #include "wabi/usd/usd/schemaBase.h"
 #include "wabi/usd/usdUI/window.h"
 
@@ -55,24 +57,25 @@ namespace {
  * fwds ->. */
 WRAP_CUSTOM;
 
-static UsdAttribute _CreateTitleAttr(UsdUIWindow &self, object defaultVal, bool writeSparsely)
+
+static UsdAttribute _CreateTitleAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
 {
   return self.CreateTitleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
-static UsdAttribute _CreateWindowCoordsAttr(UsdUIWindow &self, object defaultVal, bool writeSparsely)
+static UsdAttribute _CreateWindowCoordsAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateWindowCoordsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float4),
-                                     writeSparsely);
+  return self.CreateWindowCoordsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float4), writeSparsely);
 }
 
-static std::string _Repr(const UsdUIWindow &self)
+static std::string _Repr(const UsdUIWindow & self)
 {
   std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdUI.Window(%s)", primRepr.c_str());
+  return TfStringPrintf("UsdUI.Window(%s)",
+                        primRepr.c_str());
 }
 
-}  // namespace
+}  /* anonymous */
 
 /* clang-format off */
 void wrapUsdUIWindow()
