@@ -10,6 +10,7 @@ wabi_library(usdUI
 
     PUBLIC_CLASSES
         window
+        workspace
         backdrop
         nodeGraphNodeAPI
         sceneGraphPrimAPI
@@ -24,6 +25,7 @@ wabi_library(usdUI
     PYMODULE_CPPFILES
         module.cpp
         wrapWindow.cpp
+        wrapWorkspace.cpp
         wrapBackdrop.cpp
         wrapNodeGraphNodeAPI.cpp
         wrapSceneGraphPrimAPI.cpp
