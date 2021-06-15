@@ -26,6 +26,7 @@
 
 #include "ANCHOR_api.h"
 #include "ANCHOR_display_manager.h"
+#include "ANCHOR_event.h"
 #include "ANCHOR_system.h"
 #include "ANCHOR_window.h"
 
@@ -49,6 +50,10 @@ class ANCHOR_SystemSDL : public ANCHOR_System {
   ~ANCHOR_SystemSDL();
 
   bool processEvents(bool waitForEvent);
+
+  eAnchorStatus getModifierKeys(ANCHOR_ModifierKeys &keys) const;
+
+  eAnchorStatus getButtons(ANCHOR_Buttons &buttons) const;
 
   static bool ANCHOR_ImplSDL2_InitForOpenGL(SDL_Window *window, void *sdl_gl_context);
   static bool ANCHOR_ImplSDL2_InitForVulkan(SDL_Window *window);

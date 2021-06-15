@@ -22,6 +22,8 @@
  * Bare Metal.
  */
 
+#include "ANCHOR_event.h"
+#include "ANCHOR_event_consumer.h"
 #include "ANCHOR_event_manager.h"
 
 #include <algorithm>
@@ -39,6 +41,64 @@ ANCHOR_EventManager::~ANCHOR_EventManager()
     delete consumer;
     iter = m_consumers.erase(iter);
   }
+}
+
+AnchorU32 ANCHOR_EventManager::getNumEvents()
+{
+  return (AnchorU32)m_events.size();
+}
+
+AnchorU32 ANCHOR_EventManager::getNumEvents(eAnchorEventType type)
+{
+  AnchorU32 numEvents = 0;
+  EventStack::iterator p;
+  for (p = m_events.begin(); p != m_events.end(); ++p) {
+    if ((*p)->getType() == type) {
+      numEvents++;
+    }
+  }
+  return numEvents;
+}
+
+eAnchorStatus ANCHOR_EventManager::pushEvent(ANCHOR_IEvent *event)
+{
+  eAnchorStatus success;
+  ANCHOR_ASSERT(event);
+  if (m_events.size() < m_events.max_size()) {
+    m_events.push_front(event);
+    success = ANCHOR_SUCCESS;
+  }
+  else {
+    success = ANCHOR_ERROR;
+  }
+  return success;
+}
+
+void ANCHOR_EventManager::dispatchEvent(ANCHOR_IEvent *event)
+{
+  ConsumerVector::iterator iter;
+
+  for (iter = m_consumers.begin(); iter != m_consumers.end(); ++iter) {
+    (*iter)->processEvent(event);
+  }
+}
+
+void ANCHOR_EventManager::dispatchEvent()
+{
+  ANCHOR_IEvent *event = m_events.back();
+  m_events.pop_back();
+  m_handled_events.push_back(event);
+
+  dispatchEvent(event);
+}
+
+void ANCHOR_EventManager::dispatchEvents()
+{
+  while (!m_events.empty()) {
+    dispatchEvent();
+  }
+
+  destroyEvents();
 }
 
 eAnchorStatus ANCHOR_EventManager::addConsumer(ANCHOR_IEventConsumer *consumer)

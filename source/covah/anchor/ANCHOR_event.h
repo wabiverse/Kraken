@@ -41,7 +41,7 @@ class ANCHOR_IEvent {
   /**
    * Returns the time this event was generated.
    * @return The event generation time. */
-  virtual ANCHOR_Time getTime() = 0;
+  virtual AnchorU64 getTime() = 0;
 
   /**
    * Returns the window this event was generated on,

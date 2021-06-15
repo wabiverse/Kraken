@@ -83,8 +83,10 @@
 #include "ANCHOR_BACKEND_vulkan.h"
 
 #include "ANCHOR_api.h"
+#include "ANCHOR_buttons.h"
 #include "ANCHOR_debug_codes.h"
 #include "ANCHOR_event.h"
+#include "ANCHOR_modifier_keys.h"
 #include "ANCHOR_window_manager.h"
 
 // SDL
@@ -1216,7 +1218,6 @@ ANCHOR_SystemSDL::ANCHOR_SystemSDL() : ANCHOR_System()
    * Setup SDL. */
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0) {
     TF_CODING_ERROR("Error: %s\n", SDL_GetError());
-    exit(ANCHOR_ERROR);
   }
 }
 
@@ -1334,6 +1335,31 @@ static SDL_Window *SDL_GetWindowFromID_fallback(Uint32 id)
     sdl_win = SDL_GL_GetCurrentWindow();
   }
   return sdl_win;
+}
+
+eAnchorStatus ANCHOR_SystemSDL::getModifierKeys(ANCHOR_ModifierKeys &keys) const
+{
+  SDL_Keymod mod = SDL_GetModState();
+
+  keys.set(ANCHOR_ModifierKeyLeftShift, (mod & KMOD_LSHIFT) != 0);
+  keys.set(ANCHOR_ModifierKeyRightShift, (mod & KMOD_RSHIFT) != 0);
+  keys.set(ANCHOR_ModifierKeyLeftControl, (mod & KMOD_LCTRL) != 0);
+  keys.set(ANCHOR_ModifierKeyRightControl, (mod & KMOD_RCTRL) != 0);
+  keys.set(ANCHOR_ModifierKeyLeftAlt, (mod & KMOD_LALT) != 0);
+  keys.set(ANCHOR_ModifierKeyRightAlt, (mod & KMOD_RALT) != 0);
+  keys.set(ANCHOR_ModifierKeyOS, (mod & (KMOD_LGUI | KMOD_RGUI)) != 0);
+
+  return ANCHOR_ERROR;
+}
+
+eAnchorStatus ANCHOR_SystemSDL::getButtons(ANCHOR_Buttons &buttons) const
+{
+  Uint8 state = SDL_GetMouseState(NULL, NULL);
+  buttons.set(ANCHOR_ButtonMaskLeft, (state & SDL_BUTTON_LMASK) != 0);
+  buttons.set(ANCHOR_ButtonMaskMiddle, (state & SDL_BUTTON_MMASK) != 0);
+  buttons.set(ANCHOR_ButtonMaskRight, (state & SDL_BUTTON_RMASK) != 0);
+
+  return ANCHOR_SUCCESS;
 }
 
 #define AXMAP(k, x, y) \

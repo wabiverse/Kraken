@@ -26,6 +26,8 @@
 
 #include "ANCHOR_api.h"
 #include "ANCHOR_display_manager.h"
+#include "ANCHOR_event_manager.h"
+#include "ANCHOR_window_manager.h"
 
 class ANCHOR_ISystem {
  public:
@@ -80,6 +82,7 @@ class ANCHOR_ISystem {
    * @param parentWindow: Parent (embedder) window
    * @return The new window (or 0 if creation failed). */
   virtual ANCHOR_ISystemWindow *createWindow(const char *title,
+                                             const char *icon,
                                              AnchorS32 left,
                                              AnchorS32 top,
                                              AnchorU32 width,
@@ -108,6 +111,11 @@ class ANCHOR_ISystem {
   virtual eAnchorStatus endFullScreen(void) = 0;
 
   /**
+   * Returns current full screen mode status.
+   * @return The current status. */
+  virtual bool getFullScreen(void) = 0;
+
+  /**
    * Retrieves events from the system and stores them in the queue.
    * @param waitForEvent: Flag to wait for an event (or return immediately).
    * @return Indication of the presence of events. */
@@ -129,11 +137,35 @@ class ANCHOR_ISystem {
    * @return Indication of success. */
   virtual eAnchorStatus removeEventConsumer(ANCHOR_IEventConsumer *consumer) = 0;
 
+  /**
+   * Returns the state of a modifier key (outside the message queue).
+   * @param mask: The modifier key state to retrieve.
+   * @param isDown: The state of a modifier key (true == pressed).
+   * @return Indication of success. */
+  virtual eAnchorStatus getModifierKeyState(eAnchorModifierKeyMask mask, bool &isDown) const = 0;
+
+  /**
+   * Returns the state of a mouse button (outside the message queue).
+   * @param mask: The button state to retrieve.
+   * @param isDown: Button state.
+   * @return Indication of success. */
+  virtual eAnchorStatus getButtonState(eAnchorButtonMask mask, bool &isDown) const = 0;
+
+  /**
+   * Set which tablet API to use. Only affects Windows, other platforms have a single API.
+   * @param api: Enum indicating which API to use. */
+  virtual void setTabletAPI(eAnchorTabletAPI api) = 0;
+
  protected:
   /**
    * Initialize the system.
    * @return Indication of success. */
   virtual eAnchorStatus init() = 0;
+
+  /**
+   * Shut the system down.
+   * @return Indication of success. */
+  virtual eAnchorStatus exit() = 0;
 
   /**
    * The one and only system */
@@ -171,6 +203,11 @@ class ANCHOR_System : public ANCHOR_ISystem {
   eAnchorStatus endFullScreen(void);
 
   /**
+   * Returns current full screen mode status.
+   * @return The current status. */
+  bool getFullScreen(void);
+
+  /**
    * Dispatches all the events on the stack.
    * The event stack will be empty afterwards. */
   void dispatchEvents();
@@ -188,6 +225,27 @@ class ANCHOR_System : public ANCHOR_ISystem {
   eAnchorStatus removeEventConsumer(ANCHOR_IEventConsumer *consumer);
 
   /**
+   * Returns the state of a modifier key (outside the message queue).
+   * @param mask: The modifier key state to retrieve.
+   * @param isDown: The state of a modifier key (true == pressed).
+   * @return Indication of success. */
+  eAnchorStatus getModifierKeyState(eAnchorModifierKeyMask mask, bool &isDown) const;
+
+  /**
+   * Returns the state of a mouse button (outside the message queue).
+   * @param mask: The button state to retrieve.
+   * @param isDown: Button state.
+   * @return Indication of success. */
+  eAnchorStatus getButtonState(eAnchorButtonMask mask, bool &isDown) const;
+
+  /**
+   * Set which tablet API to use. Only affects Windows,
+   * other platforms have a single API.
+   * @param api: Enum indicating which API to use. */
+  void setTabletAPI(eAnchorTabletAPI api);
+  eAnchorTabletAPI getTabletAPI(void);
+
+  /**
    * Pushes an event on the stack.
    * To dispatch it, call dispatchEvent()
    * or dispatchEvents().
@@ -196,8 +254,24 @@ class ANCHOR_System : public ANCHOR_ISystem {
   eAnchorStatus pushEvent(ANCHOR_IEvent *event);
 
   /**
+   * @return A pointer to our event manager. */
+  inline ANCHOR_EventManager *getEventManager() const;
+
+  /**
    * @return A pointer to our window manager. */
   inline ANCHOR_WindowManager *getWindowManager() const;
+
+  /**
+   * Returns the state of all modifier keys.
+   * \param keys: The state of all modifier keys (true == pressed).
+   * \return Indication of success. */
+  virtual eAnchorStatus getModifierKeys(ANCHOR_ModifierKeys &keys) const = 0;
+
+  /**
+   * Returns the state of the mouse buttons (outside the message queue).
+   * \param buttons: The state of the buttons.
+   * \return Indication of success. */
+  virtual eAnchorStatus getButtons(ANCHOR_Buttons &buttons) const = 0;
 
  protected:
   /**
@@ -206,13 +280,44 @@ class ANCHOR_System : public ANCHOR_ISystem {
   virtual eAnchorStatus init();
 
   /**
+   * Shut the system down.
+   * @return Indication of success. */
+  virtual eAnchorStatus exit();
+
+  /**
+   * Creates a fullscreen window.
+   * @param window: The window created.
+   * @return Indication of success. */
+  eAnchorStatus createFullScreenWindow(ANCHOR_SystemWindow **window,
+                                       const ANCHOR_DisplaySetting &settings,
+                                       const bool stereoVisual,
+                                       const bool alphaBackground = 0);
+
+  /**
    * The display manager (platform dependent). */
   ANCHOR_DisplayManager *m_displayManager;
 
   /**
    * The window manager. */
   ANCHOR_WindowManager *m_windowManager;
+
+  /**
+   * The event manager. */
+  ANCHOR_EventManager *m_eventManager;
+
+  /**
+   * Settings of the display before the display went fullscreen. */
+  ANCHOR_DisplaySetting m_preFullScreenSetting;
+
+  /**
+   * Which tablet API to use. */
+  eAnchorTabletAPI m_tabletAPI;
 };
+
+inline ANCHOR_EventManager *ANCHOR_System::getEventManager() const
+{
+  return m_eventManager;
+}
 
 inline ANCHOR_WindowManager *ANCHOR_System::getWindowManager() const
 {

@@ -213,6 +213,17 @@ enum eAnchorButtonMask {
   ANCHOR_ButtonNumMasks
 };
 
+enum eAnchorModifierKeyMask {
+  ANCHOR_ModifierKeyLeftShift = 0,
+  ANCHOR_ModifierKeyRightShift,
+  ANCHOR_ModifierKeyLeftAlt,
+  ANCHOR_ModifierKeyRightAlt,
+  ANCHOR_ModifierKeyLeftControl,
+  ANCHOR_ModifierKeyRightControl,
+  ANCHOR_ModifierKeyOS,
+  ANCHOR_ModifierKeyNumMasks
+};
+
 /**
  * Event Types ----------- */
 
@@ -584,10 +595,12 @@ struct AnchorFontConfig;      // Configuration data when adding a font or mergin
 struct AnchorFontGlyph;       // A single font glyph (code point + coordinates within in AnchorFontAtlas
                               // + offset)
 struct AnchorFontGlyphRangesBuilder;  // Helper to build glyph ranges from text/string data
-struct AnchorColor;     // Helper functions to create a color that can be converted to either u32 or
-                        // float4 (*OBSOLETE* please avoid using)
-struct ANCHOR_Context;  // ANCHOR context (opaque structure, unless including ANCHOR_internal.h)
-struct ANCHOR_IO;       // Main configuration and I/O between your application and ANCHOR
+struct AnchorColor;          // Helper functions to create a color that can be converted to either u32 or
+                             // float4 (*OBSOLETE* please avoid using)
+struct ANCHOR_Buttons;       // Stores the state of the mouse buttons. Buttons can be set using button masks.
+struct ANCHOR_ModifierKeys;  // Stores the state of modifier keys. Discriminates left and right modifiers.
+struct ANCHOR_Context;       // ANCHOR context (opaque structure, unless including ANCHOR_internal.h)
+struct ANCHOR_IO;            // Main configuration and I/O between your application and ANCHOR
 struct ANCHORInputTextCallbackData;  // Shared state of InputText() when using custom
                                      // ANCHORInputTextCallback (rare/advanced use)
 struct ANCHORListClipper;            // Helper to manually clip large list of items
@@ -661,11 +674,6 @@ typedef void *AnchorTextureID;
  * assigned to the #cContext data structure. */
 typedef void *ANCHOR_UserPtr;
 typedef void *ANCHOR_EventDataPtr;
-
-/**
- * The Anchor backend measures time with
- * 64-bit unsigned integer precision. */
-typedef AnchorU64 ANCHOR_Time;
 
 /**
  * A unique ID used by widgets, hashed from a stack of string. */

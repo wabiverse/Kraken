@@ -7,22 +7,13 @@ set(INC
   ../covalib
 )
 
-set(SRC_PLATFORM_BACKENDS
-  # Platform Specific Backends.
-  intern/backend_sdl.cpp
-  intern/backend_vulkan.cpp
-
-  # Platform Specific Backends.
-  backend/ANCHOR_BACKEND_sdl.h
-  backend/ANCHOR_BACKEND_vulkan.h
-)
-
 set(SRC
   # All Systems ->
   intern/system_interfaces.cpp
 
   # Platform Agnostic Implementation.
   intern/api.cpp
+  intern/buttons.cpp
   intern/debug_codes.cpp
   intern/demo.cpp
   intern/display_manager.cpp
@@ -30,6 +21,7 @@ set(SRC
   intern/event_consumer.cpp
   intern/event_manager.cpp
   intern/freetype
+  intern/modifier_keys.cpp
   intern/system.cpp
   intern/tables.cpp
   intern/widgets.cpp
@@ -37,10 +29,16 @@ set(SRC
   intern/window.cpp
 
   # Platform Specific Backends.
-  ${SRC_PLATFORM_BACKENDS}
+  backend/backend_sdl.cpp
+  backend/backend_vulkan.cpp
+
+  # Platform Specific Backends.
+  backend/ANCHOR_BACKEND_sdl.h
+  backend/ANCHOR_BACKEND_vulkan.h
 
   # Platform Agnostic API
   ANCHOR_api.h
+  ANCHOR_buttons.h
   ANCHOR_debug_codes.h
   ANCHOR_display_manager.h
   ANCHOR_event_consumer.h
@@ -48,6 +46,7 @@ set(SRC
   ANCHOR_event.h
   ANCHOR_freetype.h
   ANCHOR_internal.h
+  ANCHOR_modifier_keys.h
   ANCHOR_rectpack.h
   ANCHOR_system.h
   ANCHOR_textedit.h
