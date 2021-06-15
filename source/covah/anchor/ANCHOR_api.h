@@ -189,64 +189,8 @@ AnchorFontAtlasFlags, AnchorFontAtlas, AnchorFont)
  * [SECTION] Forward declarations and basic types
  * ----------------------------------------------------------------------------- */
 
-/** Cross-platform compatible handles to backends. */
-#  define ANCHOR_DECLARE_HANDLE(name) \
-    typedef struct name##__ { \
-      int unused; \
-    } * name
-
 /**
- * Anchor System :: Handles
- *
- * - These are the handles which a client
- *   application is safe to hold reference
- *   pointers to -- as the client application
- *   maintains the lifetime of their own unique
- *   Anchor handles. */
-ANCHOR_DECLARE_HANDLE(ANCHOR_EventHandle);
-ANCHOR_DECLARE_HANDLE(ANCHOR_EventConsumerHandle);
-ANCHOR_DECLARE_HANDLE(ANCHOR_SystemHandle);
-ANCHOR_DECLARE_HANDLE(ANCHOR_SystemWindowHandle);
-
-/**
- * Anchor System :: Interfaces
- *
- * - Provides the main abstract API
- *   schema for the platform agnostic
- *   Anchor backend system.                                           */
-class ANCHOR_IEvent;         /** <- Anchor Events Interface.          */
-class ANCHOR_IEventConsumer; /** <- Anchor Event Consumers Interface. */
-class ANCHOR_ISystem;        /** <- Anchor System Backends Interface. */
-class ANCHOR_ISystemWindow;  /** <- Anchor System Windows Interface.  */
-
-/**
- * Anchor System :: Platform Agnostic Implementation
- *
- * - Provides the concrete classes which
- *   are to be inherited by the various
- *   platform specific backends.                           */
-class ANCHOR_Event;         /** <- Anchor Events.          */
-class ANCHOR_EventConsumer; /** <- Anchor Event Consumers. */
-class ANCHOR_System;        /** <- Anchor System Backends. */
-class ANCHOR_SystemWindow;  /** <- Anchor System Windows.  */
-
-/**
- * Anchor System :: Event Types */
-class ANCHOR_EventButton;
-class ANCHOR_EventCursor;
-class ANCHOR_EventKey;
-class ANCHOR_EventWheel;
-
-/**
- * Anchor System :: Managers
- *
- * - Provides the concrete classes which
- *   define the event, display, as well
- *   as  the  window  management system.
- *   All, which power Anchor's backend.                        */
-class ANCHOR_DisplayManager; /** <- Anchor Display Management. */
-class ANCHOR_EventManager;   /** <- Anchor Event Management.   */
-class ANCHOR_WindowManager;  /** <- Anchor Window Management.  */
+ * ----- ANCHOR ENUMS ----- */
 
 enum eAnchorStatus {
   ANCHOR_ERROR = -1,
@@ -299,7 +243,7 @@ enum eAnchorEventType {
   ANCHOR_EventTypeDraggingExited,
   ANCHOR_EventTypeDraggingDropDone,
 
-  ANCHOR_EventTypeOpenMainFile,            // Needed for Cocoa to open double-clicked .blend file at startup
+  ANCHOR_EventTypeOpenMainFile,            // Needed for Cocoa to open double-clicked .usd(*) file at startup
   ANCHOR_EventTypeNativeResolutionChange,  // Needed for Cocoa when window moves to other display
 
   ANCHOR_EventTypeTimer,
@@ -574,6 +518,227 @@ enum eAnchorKey {
   ANCHOR_KeyMediaLast
 };
 
+/**
+ * ----- ANCHOR CLASSES ----- */
+
+/**
+ * Anchor System :: Interfaces
+ *
+ * - Provides the main abstract API
+ *   schema for the platform agnostic
+ *   Anchor backend system.                                           */
+class ANCHOR_IEvent;         /** <- Anchor Events Interface.          */
+class ANCHOR_IEventConsumer; /** <- Anchor Event Consumers Interface. */
+class ANCHOR_ISystem;        /** <- Anchor System Backends Interface. */
+class ANCHOR_ISystemWindow;  /** <- Anchor System Windows Interface.  */
+
+/**
+ * Anchor System :: Platform Agnostic Implementation
+ *
+ * - Provides the concrete classes which
+ *   are to be inherited by the various
+ *   platform specific backends.                           */
+class ANCHOR_Event;         /** <- Anchor Events.          */
+class ANCHOR_EventConsumer; /** <- Anchor Event Consumers. */
+class ANCHOR_System;        /** <- Anchor System Backends. */
+class ANCHOR_SystemWindow;  /** <- Anchor System Windows.  */
+
+/**
+ * Anchor System :: Event Types */
+class ANCHOR_EventButton;
+class ANCHOR_EventCursor;
+class ANCHOR_EventKey;
+class ANCHOR_EventWheel;
+
+/**
+ * Anchor System :: Managers
+ *
+ * - Provides the concrete classes which
+ *   define the event, display, as well
+ *   as  the  window  management system.
+ *   All, which power Anchor's backend.                        */
+class ANCHOR_DisplayManager; /** <- Anchor Display Management. */
+class ANCHOR_EventManager;   /** <- Anchor Event Management.   */
+class ANCHOR_WindowManager;  /** <- Anchor Window Management.  */
+
+// Forward declarations
+struct ImDrawChannel;         // Temporary storage to output draw commands out of order, used by
+                              // ImDrawListSplitter and ImDrawList::ChannelsSplit()
+struct ImDrawCmd;             // A single draw command within a parent ImDrawList (generally maps to 1 GPU
+                              // draw call, unless it is a callback)
+struct ImDrawData;            // All draw command lists required to render the frame + pos/size coordinates
+                              // to use for the projection matrix.
+struct ImDrawList;            // A single draw command list (generally one per window, conceptually you may
+                              // see this as a dynamic "mesh" builder)
+struct ImDrawListSharedData;  // Data shared among multiple draw lists (typically owned by parent
+                              // ANCHOR context, but you may create one yourself)
+struct ImDrawListSplitter;    // Helper to split a draw list into different layers which can be drawn
+                              // into out of order, then flattened back.
+struct ImDrawVert;            // A single vertex (pos + uv + col = 20 bytes by default. Override layout with
+                              // ANCHOR_OVERRIDE_DRAWVERT_STRUCT_LAYOUT)
+struct AnchorFont;            // Runtime data for a single font within a parent AnchorFontAtlas
+struct AnchorFontAtlas;       // Runtime data for multiple fonts, bake multiple fonts into a single
+                              // texture, TTF/OTF font loader
+struct AnchorFontBuilderIO;   // Opaque interface to a font builder (stb_truetype or FreeType).
+struct AnchorFontConfig;      // Configuration data when adding a font or merging fonts
+struct AnchorFontGlyph;       // A single font glyph (code point + coordinates within in AnchorFontAtlas
+                              // + offset)
+struct AnchorFontGlyphRangesBuilder;  // Helper to build glyph ranges from text/string data
+struct AnchorColor;     // Helper functions to create a color that can be converted to either u32 or
+                        // float4 (*OBSOLETE* please avoid using)
+struct ANCHOR_Context;  // ANCHOR context (opaque structure, unless including ANCHOR_internal.h)
+struct ANCHOR_IO;       // Main configuration and I/O between your application and ANCHOR
+struct ANCHORInputTextCallbackData;  // Shared state of InputText() when using custom
+                                     // ANCHORInputTextCallback (rare/advanced use)
+struct ANCHORListClipper;            // Helper to manually clip large list of items
+struct ANCHOROnceUponAFrame;         // Helper for running a block of code not more than once a frame,
+                                     // used by ANCHOR_ONCE_UPON_A_FRAME macro
+struct ANCHORPayload;                // User data payload for drag and drop operations
+struct ANCHOR_SizeCallbackData;      // Callback data when using SetNextWindowSizeConstraints()
+                                     // (rare/advanced use)
+struct ANCHORStorage;                // Helper for key->value storage
+struct ANCHOR_Style;                 // Runtime data for styling/colors
+struct ANCHOR_TableSortSpecs;        // Sorting specifications for a table (often handling sort specs for
+                                     // a single column, occasionally more)
+struct ANCHOR_TableColumnSortSpecs;  // Sorting specification for one column of a table
+struct ANCHORTextBuffer;             // Helper to hold and append into a text buffer (~string builder)
+struct ANCHORTextFilter;             // Helper to parse and apply text filters (e.g. "aaaaa[,bbbbb][,ccccc]")
+struct ANCHORViewport;               // A Platform Window (always only one in 'master' branch), in the future
+                                     // may represent Platform Monitor
+
+/**
+ * ----- ANCHOR TYPES ----- */
+
+typedef int ANCHOR_Col;               /// Enum: A color identifier for styling
+typedef int ANCHOR_Cond;              /// Enum: A condition for many Set*() functions
+typedef int ANCHOR_DataType;          /// Enum: A primary data type
+typedef int ANCHOR_Dir;               /// Enum: A cardinal direction
+typedef int ANCHOR_Key;               /// Enum: A key identifier (ANCHOR-side enum)
+typedef int ANCHOR_NavInput;          /// Enum: An input identifier for navigation
+typedef int ANCHOR_MouseButton;       /// Enum: A mouse button
+typedef int ANCHOR_MouseCursor;       /// Enum: A mouse cursor identifier
+typedef int ANCHOR_SortDirection;     /// Enum: A sorting direction (ascending or descending)
+typedef int ANCHOR_StyleVar;          /// Enum: A variable identifier for styling
+typedef int ANCHOR_TableBgTarget;     /// Enum: A color target for TableSetBgColor()
+typedef int ImDrawFlags;              /// Flags: For ImDrawList functions
+typedef int ImDrawListFlags;          /// Flags: For ImDrawList instance
+typedef int AnchorFontAtlasFlags;     /// Flags: For AnchorFontAtlas build
+typedef int ANCHORBackendFlags;       /// Flags: For io.BackendFlags
+typedef int ANCHOR_ButtonFlags;       /// Flags: For InvisibleButton()
+typedef int ANCHOR_ColorEditFlags;    /// Flags: For ColorEdit4(), ColorPicker4() etc.
+typedef int ANCHORConfigFlags;        /// Flags: For io.ConfigFlags
+typedef int ANCHORComboFlags;         /// Flags: For BeginCombo()
+typedef int ANCHORDragDropFlags;      /// Flags: For BeginDragDropSource(), AcceptDragDropPayload()
+typedef int ANCHORFocusedFlags;       /// Flags: For IsWindowFocused()
+typedef int ANCHORHoveredFlags;       /// Flags: For IsItemHovered(), IsWindowHovered() etc.
+typedef int ANCHORInputTextFlags;     /// Flags: For InputText(), InputTextMultiline()
+typedef int ANCHOR_KeyModFlags;       /// Flags: For io.KeyMods (Ctrl/Shift/Alt/Super)
+typedef int ANCHORPopupFlags;         /// Flags: For OpenPopup(), IsPopupOpen()
+typedef int ANCHORSelectableFlags;    /// Flags: For Selectable()
+typedef int ANCHOR_SliderFlags;       /// Flags: For DragFloat(), DragInt(), SliderFloat()
+typedef int ANCHOR_TabBarFlags;       /// Flags: For BeginTabBar()
+typedef int ANCHOR_TabItemFlags;      /// Flags: For BeginTabItem()
+typedef int ANCHOR_TableFlags;        /// Flags: For BeginTable()
+typedef int ANCHOR_TableColumnFlags;  /// Flags: For TableSetupColumn()
+typedef int ANCHOR_TableRowFlags;     /// Flags: For TableNextRow()
+typedef int ANCHOR_TreeNodeFlags;     /// Flags: for TreeNode(), TreeNodeEx(), CollapsingHeader()
+typedef int ANCHORViewportFlags;      /// Flags: for ANCHORViewport
+typedef int ANCHOR_WindowFlags;       /// Flags: for Begin(), BeginChild()
+
+/**
+ * AnchorTextureID
+ * [configurable type: #define AnchorTextureID xxx'] */
+#  ifndef AnchorTextureID
+/**
+ * User data for rendering backend to identify a texture.
+ * This is whatever you want it to be!*/
+typedef void *AnchorTextureID;
+#  endif
+
+/**
+ * For event handling with client applications,
+ * in the case of covah  --  ANCHOR_UserPtr is
+ * assigned to the #cContext data structure. */
+typedef void *ANCHOR_UserPtr;
+typedef void *ANCHOR_EventDataPtr;
+
+/**
+ * The Anchor backend measures time with
+ * 64-bit unsigned integer precision. */
+typedef AnchorU64 ANCHOR_Time;
+
+/**
+ * A unique ID used by widgets, hashed from a stack of string. */
+typedef unsigned int ANCHOR_ID;
+/**
+ * Callback function for ANCHOR::InputText() */
+typedef int (*ANCHORInputTextCallback)(ANCHORInputTextCallbackData *data);
+/**
+ * Callback function for ANCHOR::SetNextWindowSizeConstraints() */
+typedef void (*ANCHORSizeCallback)(ANCHOR_SizeCallbackData *data);
+/**
+ * Function signature for ANCHOR::SetAllocatorFunctions() */
+typedef void *(*ANCHORMemAllocFunc)(size_t sz, void *user_data);
+/**
+ * Function signature for ANCHOR::SetAllocatorFunctions() */
+typedef void (*ANCHORMemFreeFunc)(void *ptr, void *user_data);
+
+// Character types
+// (we generally use UTF-8 encoded string in the API. This is storage specifically for a decoded
+// character used for keyboard input and display)
+typedef unsigned short AnchorWChar16;  // A single decoded U16 character/code point. We encode them
+                                       // as multi bytes UTF-8 when used in strings.
+typedef unsigned int AnchorWChar32;    // A single decoded U32 character/code point. We encode them
+                                       // as multi bytes UTF-8 when used in strings.
+#  ifdef ANCHOR_USE_WCHAR32            // AnchorWChar [configurable type: override in ANCHOR_config.h with
+                                       // '#define ANCHOR_USE_WCHAR32' to support Unicode planes 1-16]
+typedef AnchorWChar32 AnchorWChar;
+#  else
+typedef AnchorWChar16 AnchorWChar;
+#  endif
+
+// Basic scalar data types
+typedef signed char AnchorS8;      // 8-bit signed integer
+typedef unsigned char AnchorU8;    // 8-bit unsigned integer
+typedef signed short AnchorS16;    // 16-bit signed integer
+typedef unsigned short AnchorU16;  // 16-bit unsigned integer
+typedef signed int AnchorS32;      // 32-bit signed integer == int
+typedef unsigned int AnchorU32;    // 32-bit unsigned integer (often used to store packed colors)
+#  if defined(_MSC_VER) && !defined(__clang__)
+typedef signed __int64 AnchorS64;    // 64-bit signed integer (pre and post C++11 with MSVC)
+typedef unsigned __int64 AnchorU64;  // 64-bit unsigned integer (pre and post C++11 with MSVC)
+#  elif (defined(__clang__) || defined(__GNUC__)) && (__cplusplus < 201100)
+#    include <stdint.h>
+typedef int64_t AnchorS64;   // 64-bit signed integer (pre C++11)
+typedef uint64_t AnchorU64;  // 64-bit unsigned integer (pre C++11)
+#  else
+typedef signed long long AnchorS64;    // 64-bit signed integer (post C++11)
+typedef unsigned long long AnchorU64;  // 64-bit unsigned integer (post C++11)
+#  endif
+
+/**
+ * ----- ANCHOR STRUCTS ----- */
+
+/**
+ * Platform agnostic handles to backends. */
+#  define ANCHOR_DECLARE_HANDLE(name) \
+    typedef struct name##__ { \
+      int unused; \
+    } * name
+
+/**
+ * Anchor System :: Handles
+ *
+ * - These are the handles which a client
+ *   application is safe to hold reference
+ *   pointers to -- as the client application
+ *   maintains the lifetime of their own unique
+ *   Anchor handles. */
+ANCHOR_DECLARE_HANDLE(ANCHOR_EventHandle);
+ANCHOR_DECLARE_HANDLE(ANCHOR_EventConsumerHandle);
+ANCHOR_DECLARE_HANDLE(ANCHOR_SystemHandle);
+ANCHOR_DECLARE_HANDLE(ANCHOR_SystemWindowHandle);
+
 struct ANCHOR_TabletData {
   /**
    * Whether the Tablet is
@@ -661,162 +826,7 @@ struct ANCHOR_EventKeyData {
   char is_repeat;
 };
 
-// Forward declarations
-struct ImDrawChannel;         // Temporary storage to output draw commands out of order, used by
-                              // ImDrawListSplitter and ImDrawList::ChannelsSplit()
-struct ImDrawCmd;             // A single draw command within a parent ImDrawList (generally maps to 1 GPU
-                              // draw call, unless it is a callback)
-struct ImDrawData;            // All draw command lists required to render the frame + pos/size coordinates
-                              // to use for the projection matrix.
-struct ImDrawList;            // A single draw command list (generally one per window, conceptually you may
-                              // see this as a dynamic "mesh" builder)
-struct ImDrawListSharedData;  // Data shared among multiple draw lists (typically owned by parent
-                              // ANCHOR context, but you may create one yourself)
-struct ImDrawListSplitter;    // Helper to split a draw list into different layers which can be drawn
-                              // into out of order, then flattened back.
-struct ImDrawVert;            // A single vertex (pos + uv + col = 20 bytes by default. Override layout with
-                              // ANCHOR_OVERRIDE_DRAWVERT_STRUCT_LAYOUT)
-struct AnchorFont;            // Runtime data for a single font within a parent AnchorFontAtlas
-struct AnchorFontAtlas;       // Runtime data for multiple fonts, bake multiple fonts into a single
-                              // texture, TTF/OTF font loader
-struct AnchorFontBuilderIO;   // Opaque interface to a font builder (stb_truetype or FreeType).
-struct AnchorFontConfig;      // Configuration data when adding a font or merging fonts
-struct AnchorFontGlyph;       // A single font glyph (code point + coordinates within in AnchorFontAtlas
-                              // + offset)
-struct AnchorFontGlyphRangesBuilder;  // Helper to build glyph ranges from text/string data
-struct AnchorColor;     // Helper functions to create a color that can be converted to either u32 or
-                        // float4 (*OBSOLETE* please avoid using)
-struct ANCHOR_Context;  // ANCHOR context (opaque structure, unless including ANCHOR_internal.h)
-struct ANCHOR_IO;       // Main configuration and I/O between your application and ANCHOR
-struct ANCHORInputTextCallbackData;  // Shared state of InputText() when using custom
-                                     // ANCHORInputTextCallback (rare/advanced use)
-struct ANCHORListClipper;            // Helper to manually clip large list of items
-struct ANCHOROnceUponAFrame;         // Helper for running a block of code not more than once a frame,
-                                     // used by ANCHOR_ONCE_UPON_A_FRAME macro
-struct ANCHORPayload;                // User data payload for drag and drop operations
-struct ANCHOR_SizeCallbackData;      // Callback data when using SetNextWindowSizeConstraints()
-                                     // (rare/advanced use)
-struct ANCHORStorage;                // Helper for key->value storage
-struct ANCHOR_Style;                 // Runtime data for styling/colors
-struct ANCHOR_TableSortSpecs;        // Sorting specifications for a table (often handling sort specs for
-                                     // a single column, occasionally more)
-struct ANCHOR_TableColumnSortSpecs;  // Sorting specification for one column of a table
-struct ANCHORTextBuffer;             // Helper to hold and append into a text buffer (~string builder)
-struct ANCHORTextFilter;             // Helper to parse and apply text filters (e.g. "aaaaa[,bbbbb][,ccccc]")
-struct ANCHORViewport;               // A Platform Window (always only one in 'master' branch), in the future
-                                     // may represent Platform Monitor
-
-typedef int ANCHOR_Col;               /// Enum: A color identifier for styling
-typedef int ANCHOR_Cond;              /// Enum: A condition for many Set*() functions
-typedef int ANCHOR_DataType;          /// Enum: A primary data type
-typedef int ANCHOR_Dir;               /// Enum: A cardinal direction
-typedef int ANCHOR_Key;               /// Enum: A key identifier (ANCHOR-side enum)
-typedef int ANCHOR_NavInput;          /// Enum: An input identifier for navigation
-typedef int ANCHOR_MouseButton;       /// Enum: A mouse button
-typedef int ANCHOR_MouseCursor;       /// Enum: A mouse cursor identifier
-typedef int ANCHOR_SortDirection;     /// Enum: A sorting direction (ascending or descending)
-typedef int ANCHOR_StyleVar;          /// Enum: A variable identifier for styling
-typedef int ANCHOR_TableBgTarget;     /// Enum: A color target for TableSetBgColor()
-typedef int ImDrawFlags;              /// Flags: For ImDrawList functions
-typedef int ImDrawListFlags;          /// Flags: For ImDrawList instance
-typedef int AnchorFontAtlasFlags;     /// Flags: For AnchorFontAtlas build
-typedef int ANCHORBackendFlags;       /// Flags: For io.BackendFlags
-typedef int ANCHOR_ButtonFlags;       /// Flags: For InvisibleButton()
-typedef int ANCHOR_ColorEditFlags;    /// Flags: For ColorEdit4(), ColorPicker4() etc.
-typedef int ANCHORConfigFlags;        /// Flags: For io.ConfigFlags
-typedef int ANCHORComboFlags;         /// Flags: For BeginCombo()
-typedef int ANCHORDragDropFlags;      /// Flags: For BeginDragDropSource(), AcceptDragDropPayload()
-typedef int ANCHORFocusedFlags;       /// Flags: For IsWindowFocused()
-typedef int ANCHORHoveredFlags;       /// Flags: For IsItemHovered(), IsWindowHovered() etc.
-typedef int ANCHORInputTextFlags;     /// Flags: For InputText(), InputTextMultiline()
-typedef int ANCHOR_KeyModFlags;       /// Flags: For io.KeyMods (Ctrl/Shift/Alt/Super)
-typedef int ANCHORPopupFlags;         /// Flags: For OpenPopup(), IsPopupOpen()
-typedef int ANCHORSelectableFlags;    /// Flags: For Selectable()
-typedef int ANCHOR_SliderFlags;       /// Flags: For DragFloat(), DragInt(), SliderFloat()
-typedef int ANCHOR_TabBarFlags;       /// Flags: For BeginTabBar()
-typedef int ANCHOR_TabItemFlags;      /// Flags: For BeginTabItem()
-typedef int ANCHOR_TableFlags;        /// Flags: For BeginTable()
-typedef int ANCHOR_TableColumnFlags;  /// Flags: For TableSetupColumn()
-typedef int ANCHOR_TableRowFlags;     /// Flags: For TableNextRow()
-typedef int ANCHOR_TreeNodeFlags;     /// Flags: for TreeNode(), TreeNodeEx(), CollapsingHeader()
-typedef int ANCHORViewportFlags;      /// Flags: for ANCHORViewport
-typedef int ANCHOR_WindowFlags;       /// Flags: for Begin(), BeginChild()
-
-/**
- * Other types ----------- */
-
-/**
- * AnchorTextureID
- * [configurable type: #define AnchorTextureID xxx'] */
-#  ifndef AnchorTextureID
-/**
- * User data for rendering backend to identify a texture.
- * This is whatever you want it to be!*/
-typedef void *AnchorTextureID;
-#  endif
-
-/**
- * For event handling with client applications,
- * in the case of covah  --  ANCHOR_UserPtr is
- * assigned to the #cContext data structure. */
-typedef void *ANCHOR_UserPtr;
-typedef void *ANCHOR_EventDataPtr;
-
-/**
- * The Anchor backend measures time with
- * 64-bit unsigned integer precision. */
-typedef AnchorU64 ANCHOR_Time;
-
-/**
- * A unique ID used by widgets, hashed from a stack of string. */
-typedef unsigned int ANCHOR_ID;
-/**
- * Callback function for ANCHOR::InputText() */
-typedef int (*ANCHORInputTextCallback)(ANCHORInputTextCallbackData *data);
-/**
- * Callback function for ANCHOR::SetNextWindowSizeConstraints() */
-typedef void (*ANCHORSizeCallback)(ANCHOR_SizeCallbackData *data);
-/**
- * Function signature for ANCHOR::SetAllocatorFunctions() */
-typedef void *(*ANCHORMemAllocFunc)(size_t sz, void *user_data);
-/**
- * Function signature for ANCHOR::SetAllocatorFunctions() */
-typedef void (*ANCHORMemFreeFunc)(void *ptr, void *user_data);
-
-// Character types
-// (we generally use UTF-8 encoded string in the API. This is storage specifically for a decoded
-// character used for keyboard input and display)
-typedef unsigned short AnchorWChar16;  // A single decoded U16 character/code point. We encode them
-                                       // as multi bytes UTF-8 when used in strings.
-typedef unsigned int AnchorWChar32;    // A single decoded U32 character/code point. We encode them
-                                       // as multi bytes UTF-8 when used in strings.
-#  ifdef ANCHOR_USE_WCHAR32            // AnchorWChar [configurable type: override in ANCHOR_config.h with
-                                       // '#define ANCHOR_USE_WCHAR32' to support Unicode planes 1-16]
-typedef AnchorWChar32 AnchorWChar;
-#  else
-typedef AnchorWChar16 AnchorWChar;
-#  endif
-
-// Basic scalar data types
-typedef signed char AnchorS8;      // 8-bit signed integer
-typedef unsigned char AnchorU8;    // 8-bit unsigned integer
-typedef signed short AnchorS16;    // 16-bit signed integer
-typedef unsigned short AnchorU16;  // 16-bit unsigned integer
-typedef signed int AnchorS32;      // 32-bit signed integer == int
-typedef unsigned int AnchorU32;    // 32-bit unsigned integer (often used to store packed colors)
-#  if defined(_MSC_VER) && !defined(__clang__)
-typedef signed __int64 AnchorS64;    // 64-bit signed integer (pre and post C++11 with MSVC)
-typedef unsigned __int64 AnchorU64;  // 64-bit unsigned integer (pre and post C++11 with MSVC)
-#  elif (defined(__clang__) || defined(__GNUC__)) && (__cplusplus < 201100)
-#    include <stdint.h>
-typedef int64_t AnchorS64;   // 64-bit signed integer (pre C++11)
-typedef uint64_t AnchorU64;  // 64-bit unsigned integer (pre C++11)
-#  else
-typedef signed long long AnchorS64;    // 64-bit signed integer (post C++11)
-typedef unsigned long long AnchorU64;  // 64-bit unsigned integer (post C++11)
-#  endif
-
-typedef struct {
+struct ANCHOR_DisplaySetting {
   /** Number of pixels on a line. */
   AnchorU32 xPixels;
   /** Number of lines. */
@@ -825,7 +835,7 @@ typedef struct {
   AnchorU32 bpp;
   /** Refresh rate (in Hertz). */
   AnchorU32 frequency;
-} ANCHOR_DisplaySetting;
+};
 
 namespace ANCHOR {
 /**

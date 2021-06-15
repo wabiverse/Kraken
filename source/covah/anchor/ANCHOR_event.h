@@ -222,11 +222,10 @@ class ANCHOR_EventKey : public ANCHOR_Event {
 
   /**
    * Constructor.
-   * \param msec: The time this event was generated.
-   * \param type: The type of key event.
-   * \param key: The key code of the key.
-   * \param ascii: The ascii code for the key event.
-   */
+   * @param msec: The time this event was generated.
+   * @param type: The type of key event.
+   * @param key: The key code of the key.
+   * @param ascii: The ascii code for the key event. */
   ANCHOR_EventKey(AnchorU64 msec,
                   eAnchorEventType type,
                   ANCHOR_ISystemWindow *window,
