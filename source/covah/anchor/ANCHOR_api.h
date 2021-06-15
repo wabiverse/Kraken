@@ -231,6 +231,12 @@ class ANCHOR_System;        /** <- Anchor System Backends. */
 class ANCHOR_SystemWindow;  /** <- Anchor System Windows.  */
 
 /**
+ * Anchor System :: Event Types */
+class ANCHOR_EventButton;
+class ANCHOR_EventCursor;
+class ANCHOR_EventWheel;
+
+/**
  * Anchor System :: Managers
  *
  * - Provides the concrete classes which
@@ -241,7 +247,68 @@ class ANCHOR_DisplayManager; /** <- Anchor Display Management. */
 class ANCHOR_EventManager;   /** <- Anchor Event Management.   */
 class ANCHOR_WindowManager;  /** <- Anchor Window Management.  */
 
-enum eAnchorStatus { ANCHOR_ERROR = -1, ANCHOR_SUCCESS, ANCHOR_RUN, ANCHOR_EVENT };
+enum eAnchorStatus {
+  ANCHOR_ERROR = -1,
+  ANCHOR_SUCCESS,
+  ANCHOR_RUN,
+  ANCHOR_EVENT,
+};
+
+enum eAnchorButtonMask {
+  ANCHOR_ButtonMaskNone,
+  ANCHOR_ButtonMaskLeft,
+  ANCHOR_ButtonMaskMiddle,
+  ANCHOR_ButtonMaskRight,
+  ANCHOR_ButtonMaskButton4,
+  ANCHOR_ButtonMaskButton5,
+  /**
+   * Trackballs and programmable buttons */
+  ANCHOR_ButtonMaskButton6,
+  ANCHOR_ButtonMaskButton7,
+  ANCHOR_ButtonNumMasks
+};
+
+/**
+ * Event Types ----------- */
+
+enum eAnchorEventType {
+  ANCHOR_EventUnknown = 0,
+
+  ANCHOR_EventCursorMove,  /// Mouse move event
+  ANCHOR_EventButtonDown,  /// Mouse button event
+  ANCHOR_EventButtonUp,    /// Mouse button event
+  ANCHOR_EventWheel,       /// Mouse wheel event
+  ANCHOR_EventTrackpad,    /// Trackpad event
+
+  ANCHOR_EventKeyDown,
+  ANCHOR_EventKeyUp,
+
+  ANCHOR_EventQuitRequest,
+
+  ANCHOR_EventWindowClose,
+  ANCHOR_EventWindowActivate,
+  ANCHOR_EventWindowDeactivate,
+  ANCHOR_EventWindowUpdate,
+  ANCHOR_EventWindowSize,
+  ANCHOR_EventWindowMove,
+  ANCHOR_EventWindowDPIHintChanged,
+
+  ANCHOR_EventDraggingEntered,
+  ANCHOR_EventDraggingUpdated,
+  ANCHOR_EventDraggingExited,
+  ANCHOR_EventDraggingDropDone,
+
+  ANCHOR_EventOpenMainFile,            // Needed for Cocoa to open double-clicked .blend file at startup
+  ANCHOR_EventNativeResolutionChange,  // Needed for Cocoa when window moves to other display
+
+  ANCHOR_EventTimer,
+
+  ANCHOR_EventImeCompositionStart,
+  ANCHOR_EventImeComposition,
+  ANCHOR_EventImeCompositionEnd,
+
+  ANCHOR_NumEventTypes
+};
 
 enum eAnchorDrawingContextType {
   ANCHOR_DrawingContextTypeNone = 0,
@@ -331,6 +398,185 @@ enum eAnchorStandardCursor {
   ANCHOR_StandardCursorNumCursors
 };
 
+/**
+ * Introducing :: Tablet Support */
+
+enum eAnchorTabletMode {
+  ANCHOR_TabletModeNone = 0,
+  ANCHOR_TabletModeStylus,
+  ANCHOR_TabletModeEraser,
+};
+
+enum eAnchorTabletAPI {
+  ANCHOR_TabletAutomatic = 0,
+  ANCHOR_TabletNative,
+  ANCHOR_TabletWintab,
+};
+
+struct ANCHOR_TabletData {
+  eAnchorTabletMode Active; /* 0=None, 1=Stylus, 2=Eraser */
+  float Pressure;           /* range 0.0 (not touching) to 1.0 (full pressure) */
+  float Xtilt;              /* range 0.0 (upright) to 1.0 (tilted fully against the tablet surface) */
+  float Ytilt;              /* as above */
+};
+
+static const ANCHOR_TabletData ANCHOR_TABLET_DATA_NONE = {
+  ANCHOR_TabletModeNone, /* No cursor in range */
+  1.0f,                  /* Pressure */
+  0.0f,                  /* Xtilt */
+  0.0f,
+};
+
+enum eAnchorKey {
+  ANCHOR_KeyUnknown = -1,
+  ANCHOR_KeyBackSpace,
+  ANCHOR_KeyTab,
+  ANCHOR_KeyLinefeed,
+  ANCHOR_KeyClear,
+  ANCHOR_KeyEnter = 0x0D,
+
+  ANCHOR_KeyEsc = 0x1B,
+  ANCHOR_KeySpace = ' ',
+  ANCHOR_KeyQuote = 0x27,
+  ANCHOR_KeyComma = ',',
+  ANCHOR_KeyMinus = '-',
+  ANCHOR_KeyPlus = '+',
+  ANCHOR_KeyPeriod = '.',
+  ANCHOR_KeySlash = '/',
+
+  /**
+   * Number keys */
+  ANCHOR_Key0 = '0',
+  ANCHOR_Key1,
+  ANCHOR_Key2,
+  ANCHOR_Key3,
+  ANCHOR_Key4,
+  ANCHOR_Key5,
+  ANCHOR_Key6,
+  ANCHOR_Key7,
+  ANCHOR_Key8,
+  ANCHOR_Key9,
+
+  ANCHOR_KeySemicolon = ';',
+  ANCHOR_KeyEqual = '=',
+
+  /**
+   * Character keys */
+  ANCHOR_KeyA = 'A',
+  ANCHOR_KeyB,
+  ANCHOR_KeyC,
+  ANCHOR_KeyD,
+  ANCHOR_KeyE,
+  ANCHOR_KeyF,
+  ANCHOR_KeyG,
+  ANCHOR_KeyH,
+  ANCHOR_KeyI,
+  ANCHOR_KeyJ,
+  ANCHOR_KeyK,
+  ANCHOR_KeyL,
+  ANCHOR_KeyM,
+  ANCHOR_KeyN,
+  ANCHOR_KeyO,
+  ANCHOR_KeyP,
+  ANCHOR_KeyQ,
+  ANCHOR_KeyR,
+  ANCHOR_KeyS,
+  ANCHOR_KeyT,
+  ANCHOR_KeyU,
+  ANCHOR_KeyV,
+  ANCHOR_KeyW,
+  ANCHOR_KeyX,
+  ANCHOR_KeyY,
+  ANCHOR_KeyZ,
+
+  ANCHOR_KeyLeftBracket = '[',
+  ANCHOR_KeyRightBracket = ']',
+  ANCHOR_KeyBackslash = 0x5C,
+  ANCHOR_KeyAccentGrave = '`',
+
+  ANCHOR_KeyLeftShift = 0x100,
+  ANCHOR_KeyRightShift,
+  ANCHOR_KeyLeftControl,
+  ANCHOR_KeyRightControl,
+  ANCHOR_KeyLeftAlt,
+  ANCHOR_KeyRightAlt,
+  ANCHOR_KeyOS,      // Command key on Apple, Windows key(s) on Windows
+  ANCHOR_KeyGrLess,  // German PC only!
+  ANCHOR_KeyApp,     /* Also known as menu key. */
+
+  ANCHOR_KeyCapsLock,
+  ANCHOR_KeyNumLock,
+  ANCHOR_KeyScrollLock,
+
+  ANCHOR_KeyLeftArrow,
+  ANCHOR_KeyRightArrow,
+  ANCHOR_KeyUpArrow,
+  ANCHOR_KeyDownArrow,
+
+  ANCHOR_KeyPrintScreen,
+  ANCHOR_KeyPause,
+
+  ANCHOR_KeyInsert,
+  ANCHOR_KeyDelete,
+  ANCHOR_KeyHome,
+  ANCHOR_KeyEnd,
+  ANCHOR_KeyUpPage,
+  ANCHOR_KeyDownPage,
+
+  /**
+   * Numpad keys */
+  ANCHOR_KeyNumpad0,
+  ANCHOR_KeyNumpad1,
+  ANCHOR_KeyNumpad2,
+  ANCHOR_KeyNumpad3,
+  ANCHOR_KeyNumpad4,
+  ANCHOR_KeyNumpad5,
+  ANCHOR_KeyNumpad6,
+  ANCHOR_KeyNumpad7,
+  ANCHOR_KeyNumpad8,
+  ANCHOR_KeyNumpad9,
+  ANCHOR_KeyNumpadPeriod,
+  ANCHOR_KeyNumpadEnter,
+  ANCHOR_KeyNumpadPlus,
+  ANCHOR_KeyNumpadMinus,
+  ANCHOR_KeyNumpadAsterisk,
+  ANCHOR_KeyNumpadSlash,
+
+  /**
+   * Function keys */
+  ANCHOR_KeyF1,
+  ANCHOR_KeyF2,
+  ANCHOR_KeyF3,
+  ANCHOR_KeyF4,
+  ANCHOR_KeyF5,
+  ANCHOR_KeyF6,
+  ANCHOR_KeyF7,
+  ANCHOR_KeyF8,
+  ANCHOR_KeyF9,
+  ANCHOR_KeyF10,
+  ANCHOR_KeyF11,
+  ANCHOR_KeyF12,
+  ANCHOR_KeyF13,
+  ANCHOR_KeyF14,
+  ANCHOR_KeyF15,
+  ANCHOR_KeyF16,
+  ANCHOR_KeyF17,
+  ANCHOR_KeyF18,
+  ANCHOR_KeyF19,
+  ANCHOR_KeyF20,
+  ANCHOR_KeyF21,
+  ANCHOR_KeyF22,
+  ANCHOR_KeyF23,
+  ANCHOR_KeyF24,
+
+  /**
+   * Multimedia keypad buttons */
+  ANCHOR_KeyMediaPlay,
+  ANCHOR_KeyMediaStop,
+  ANCHOR_KeyMediaFirst,
+  ANCHOR_KeyMediaLast
+};
+
 // Forward declarations
 struct ImDrawChannel;         // Temporary storage to output draw commands out of order, used by
                               // ImDrawListSplitter and ImDrawList::ChannelsSplit()
@@ -375,48 +621,6 @@ struct ANCHORTextBuffer;             // Helper to hold and append into a text bu
 struct ANCHORTextFilter;             // Helper to parse and apply text filters (e.g. "aaaaa[,bbbbb][,ccccc]")
 struct ANCHORViewport;               // A Platform Window (always only one in 'master' branch), in the future
                                      // may represent Platform Monitor
-
-/**
- * Event Types ----------- */
-
-enum ANCHOR_EventType {
-  ANCHOR_EventUnknown = 0,
-
-  ANCHOR_EventCursorMove,  /// Mouse move event
-  ANCHOR_EventButtonDown,  /// Mouse button event
-  ANCHOR_EventButtonUp,    /// Mouse button event
-  ANCHOR_EventWheel,       /// Mouse wheel event
-  ANCHOR_EventTrackpad,    /// Trackpad event
-
-  ANCHOR_EventKeyDown,
-  ANCHOR_EventKeyUp,
-
-  ANCHOR_EventQuitRequest,
-
-  ANCHOR_EventWindowClose,
-  ANCHOR_EventWindowActivate,
-  ANCHOR_EventWindowDeactivate,
-  ANCHOR_EventWindowUpdate,
-  ANCHOR_EventWindowSize,
-  ANCHOR_EventWindowMove,
-  ANCHOR_EventWindowDPIHintChanged,
-
-  ANCHOR_EventDraggingEntered,
-  ANCHOR_EventDraggingUpdated,
-  ANCHOR_EventDraggingExited,
-  ANCHOR_EventDraggingDropDone,
-
-  ANCHOR_EventOpenMainFile,            // Needed for Cocoa to open double-clicked .blend file at startup
-  ANCHOR_EventNativeResolutionChange,  // Needed for Cocoa when window moves to other display
-
-  ANCHOR_EventTimer,
-
-  ANCHOR_EventImeCompositionStart,
-  ANCHOR_EventImeComposition,
-  ANCHOR_EventImeCompositionEnd,
-
-  ANCHOR_NumEventTypes
-};
 
 typedef int ANCHOR_Col;               /// Enum: A color identifier for styling
 typedef int ANCHOR_Cond;              /// Enum: A condition for many Set*() functions
@@ -595,6 +799,8 @@ bool ProcessEvents(ANCHOR_SystemHandle systemhandle, bool waitForEvent);
  * a monitor's refresh rate. Any bit
  * slower than that and a user will
  * experience graphics 'lag'.
+ *
+ * @param windowhandle: Handle to the window
  * @return Indication of success. */
 ANCHOR_API
 eAnchorStatus SwapChain(ANCHOR_SystemWindowHandle windowhandle);

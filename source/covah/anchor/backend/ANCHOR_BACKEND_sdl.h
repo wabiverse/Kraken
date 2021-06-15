@@ -40,10 +40,15 @@ struct SDL_Window;
 
 typedef union SDL_Event SDL_Event;
 
+/** SDL Window Forward -> */
+class ANCHOR_WindowSDL;
+
 class ANCHOR_SystemSDL : public ANCHOR_System {
  public:
   ANCHOR_SystemSDL();
   ~ANCHOR_SystemSDL();
+
+  bool processEvents(bool waitForEvent);
 
   static bool ANCHOR_ImplSDL2_InitForOpenGL(SDL_Window *window, void *sdl_gl_context);
   static bool ANCHOR_ImplSDL2_InitForVulkan(SDL_Window *window);
@@ -68,6 +73,16 @@ class ANCHOR_SystemSDL : public ANCHOR_System {
                                      const bool exclusive = false,
                                      const bool is_dialog = false,
                                      const ANCHOR_ISystemWindow *parentWindow = NULL);
+
+  ANCHOR_WindowSDL *findAnchorWindow(SDL_Window *sdl_win);
+
+  bool generateWindowExposeEvents();
+
+  void processEvent(SDL_Event *sdl_event);
+
+  /** The vector of windows that need to be updated. */
+  // TODO std::vector<ANCHOR_WindowSDL *> m_dirty_windows;
+  ANCHOR_WindowSDL *m_sdl_window;
 };
 
 class ANCHOR_DisplayManagerSDL : public ANCHOR_DisplayManager {
@@ -117,6 +132,8 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow {
                    const ANCHOR_ISystemWindow *parentWindow = NULL);
 
   ~ANCHOR_WindowSDL();
+
+  void frameUpdate();
 
   /* SDL specific */
   SDL_Window *getSDLWindow()

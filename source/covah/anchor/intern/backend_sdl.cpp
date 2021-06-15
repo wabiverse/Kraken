@@ -1275,31 +1275,459 @@ eAnchorStatus ANCHOR_SystemSDL::init()
   return ANCHOR_ERROR;
 }
 
-/**
- * Todo GPU Resources below will pass through Covah callstack.
- * At the end -- we simply do a swapchain and present the newly
- * cached data @ approx 4000 FPS. */
-
-eAnchorStatus ANCHOR_run_vulkan(ANCHOR_SystemSDL *system, ANCHOR_WindowSDL *wd)
+bool ANCHOR_SystemSDL::generateWindowExposeEvents()
 {
-  eAnchorStatus status = ANCHOR_RUN;
+  // TODO
+  // std::vector<ANCHOR_WindowSDL *>::iterator w_start = m_dirty_windows.begin();
+  // std::vector<ANCHOR_WindowSDL *>::const_iterator w_end = m_dirty_windows.end();
+  // bool anyProcessed = false;
 
-  SDL_Event event;
-  while (SDL_PollEvent(&event)) {
-    ANCHOR_SystemSDL::ANCHOR_ImplSDL2_ProcessEvent(&event);
-    status = ANCHOR_EVENT;
-    if (event.type == SDL_QUIT)
-      return ANCHOR_SUCCESS;
-    if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
-        event.window.windowID == SDL_GetWindowID(wd->getSDLWindow()))
-      return ANCHOR_SUCCESS;
+  // for (; w_start != w_end; ++w_start) {
+  //   ANCHOR_Event *a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowUpdate, *w_start);
+
+  //   (*w_start)->validate();
+
+  //   if (a_event) {
+  //     pushEvent(a_event);
+  //     anyProcessed = true;
+  //   }
+  // }
+
+  // m_dirty_windows.clear();
+  // return anyProcessed;
+  return false;
+}
+
+ANCHOR_WindowSDL *ANCHOR_SystemSDL::findAnchorWindow(SDL_Window *sdl_win)
+{
+  if (sdl_win == NULL)
+    return NULL;
+
+  // It is not entirely safe to do this as the backptr may point
+  // to a window that has recently been removed.
+  // We should always check the window manager's list of windows
+  // and only process events on these windows.
+
+  const std::vector<ANCHOR_ISystemWindow *> &win_vec = m_windowManager->getWindows();
+
+  std::vector<ANCHOR_ISystemWindow *>::const_iterator win_it = win_vec.begin();
+  std::vector<ANCHOR_ISystemWindow *>::const_iterator win_end = win_vec.end();
+
+  for (; win_it != win_end; ++win_it) {
+    ANCHOR_WindowSDL *window = static_cast<ANCHOR_WindowSDL *>(*win_it);
+    if (window->getSDLWindow() == sdl_win) {
+      return window;
+    }
+  }
+  return NULL;
+}
+
+/**
+ * Events don't always have valid windows,
+ * but ANCHOR needs a window _always_.
+ * fallback to the Vulkan window. */
+static SDL_Window *SDL_GetWindowFromID_fallback(Uint32 id)
+{
+  SDL_Window *sdl_win = SDL_GetWindowFromID(id);
+  if (sdl_win == NULL) {
+    sdl_win = SDL_GL_GetCurrentWindow();
+  }
+  return sdl_win;
+}
+
+#define GXMAP(k, x, y) \
+  case x: \
+    k = y; \
+    break
+
+static eAnchorKey convertSDLKey(SDL_Scancode key)
+{
+  eAnchorKey type;
+
+  if ((key >= SDL_SCANCODE_A) && (key <= SDL_SCANCODE_Z)) {
+    type = eAnchorKey(key - SDL_SCANCODE_A + int(ANCHOR_KeyA));
+  }
+  else if ((key >= SDL_SCANCODE_1) && (key <= SDL_SCANCODE_0)) {
+    type = (key == SDL_SCANCODE_0) ? ANCHOR_Key0 : eAnchorKey(key - SDL_SCANCODE_1 + int(ANCHOR_Key1));
+  }
+  else if ((key >= SDL_SCANCODE_F1) && (key <= SDL_SCANCODE_F12)) {
+    type = eAnchorKey(key - SDL_SCANCODE_F1 + int(ANCHOR_KeyF1));
+  }
+  else if ((key >= SDL_SCANCODE_F13) && (key <= SDL_SCANCODE_F24)) {
+    type = eAnchorKey(key - SDL_SCANCODE_F13 + int(ANCHOR_KeyF13));
+  }
+  else {
+    switch (key) {
+      /* TODO SDL_SCANCODE_NONUSBACKSLASH */
+
+      GXMAP(type, SDL_SCANCODE_BACKSPACE, ANCHOR_KeyBackSpace);
+      GXMAP(type, SDL_SCANCODE_TAB, ANCHOR_KeyTab);
+      GXMAP(type, SDL_SCANCODE_RETURN, ANCHOR_KeyEnter);
+      GXMAP(type, SDL_SCANCODE_ESCAPE, ANCHOR_KeyEsc);
+      GXMAP(type, SDL_SCANCODE_SPACE, ANCHOR_KeySpace);
+
+      GXMAP(type, SDL_SCANCODE_SEMICOLON, ANCHOR_KeySemicolon);
+      GXMAP(type, SDL_SCANCODE_PERIOD, ANCHOR_KeyPeriod);
+      GXMAP(type, SDL_SCANCODE_COMMA, ANCHOR_KeyComma);
+      GXMAP(type, SDL_SCANCODE_APOSTROPHE, ANCHOR_KeyQuote);
+      GXMAP(type, SDL_SCANCODE_GRAVE, ANCHOR_KeyAccentGrave);
+      GXMAP(type, SDL_SCANCODE_MINUS, ANCHOR_KeyMinus);
+      GXMAP(type, SDL_SCANCODE_EQUALS, ANCHOR_KeyEqual);
+
+      GXMAP(type, SDL_SCANCODE_SLASH, ANCHOR_KeySlash);
+      GXMAP(type, SDL_SCANCODE_BACKSLASH, ANCHOR_KeyBackslash);
+      GXMAP(type, SDL_SCANCODE_KP_EQUALS, ANCHOR_KeyEqual);
+      GXMAP(type, SDL_SCANCODE_LEFTBRACKET, ANCHOR_KeyLeftBracket);
+      GXMAP(type, SDL_SCANCODE_RIGHTBRACKET, ANCHOR_KeyRightBracket);
+      GXMAP(type, SDL_SCANCODE_PAUSE, ANCHOR_KeyPause);
+
+      GXMAP(type, SDL_SCANCODE_LSHIFT, ANCHOR_KeyLeftShift);
+      GXMAP(type, SDL_SCANCODE_RSHIFT, ANCHOR_KeyRightShift);
+      GXMAP(type, SDL_SCANCODE_LCTRL, ANCHOR_KeyLeftControl);
+      GXMAP(type, SDL_SCANCODE_RCTRL, ANCHOR_KeyRightControl);
+      GXMAP(type, SDL_SCANCODE_LALT, ANCHOR_KeyLeftAlt);
+      GXMAP(type, SDL_SCANCODE_RALT, ANCHOR_KeyRightAlt);
+      GXMAP(type, SDL_SCANCODE_LGUI, ANCHOR_KeyOS);
+      GXMAP(type, SDL_SCANCODE_RGUI, ANCHOR_KeyOS);
+      GXMAP(type, SDL_SCANCODE_APPLICATION, ANCHOR_KeyApp);
+
+      GXMAP(type, SDL_SCANCODE_INSERT, ANCHOR_KeyInsert);
+      GXMAP(type, SDL_SCANCODE_DELETE, ANCHOR_KeyDelete);
+      GXMAP(type, SDL_SCANCODE_HOME, ANCHOR_KeyHome);
+      GXMAP(type, SDL_SCANCODE_END, ANCHOR_KeyEnd);
+      GXMAP(type, SDL_SCANCODE_PAGEUP, ANCHOR_KeyUpPage);
+      GXMAP(type, SDL_SCANCODE_PAGEDOWN, ANCHOR_KeyDownPage);
+
+      GXMAP(type, SDL_SCANCODE_LEFT, ANCHOR_KeyLeftArrow);
+      GXMAP(type, SDL_SCANCODE_RIGHT, ANCHOR_KeyRightArrow);
+      GXMAP(type, SDL_SCANCODE_UP, ANCHOR_KeyUpArrow);
+      GXMAP(type, SDL_SCANCODE_DOWN, ANCHOR_KeyDownArrow);
+
+      GXMAP(type, SDL_SCANCODE_CAPSLOCK, ANCHOR_KeyCapsLock);
+      GXMAP(type, SDL_SCANCODE_SCROLLLOCK, ANCHOR_KeyScrollLock);
+      GXMAP(type, SDL_SCANCODE_NUMLOCKCLEAR, ANCHOR_KeyNumLock);
+      GXMAP(type, SDL_SCANCODE_PRINTSCREEN, ANCHOR_KeyPrintScreen);
+
+      /**
+       * Keypad Events ---------------- */
+
+      /**
+       * NOTE: SDL defines a bunch of key-pad identifiers
+       * that aren't supported by ANCHOR, such as:
+       * - #SDL_SCANCODE_KP_PERCENT
+       * - #SDL_SCANCODE_KP_XOR. */
+      GXMAP(type, SDL_SCANCODE_KP_0, ANCHOR_KeyNumpad0);
+      GXMAP(type, SDL_SCANCODE_KP_1, ANCHOR_KeyNumpad1);
+      GXMAP(type, SDL_SCANCODE_KP_2, ANCHOR_KeyNumpad2);
+      GXMAP(type, SDL_SCANCODE_KP_3, ANCHOR_KeyNumpad3);
+      GXMAP(type, SDL_SCANCODE_KP_4, ANCHOR_KeyNumpad4);
+      GXMAP(type, SDL_SCANCODE_KP_5, ANCHOR_KeyNumpad5);
+      GXMAP(type, SDL_SCANCODE_KP_6, ANCHOR_KeyNumpad6);
+      GXMAP(type, SDL_SCANCODE_KP_7, ANCHOR_KeyNumpad7);
+      GXMAP(type, SDL_SCANCODE_KP_8, ANCHOR_KeyNumpad8);
+      GXMAP(type, SDL_SCANCODE_KP_9, ANCHOR_KeyNumpad9);
+      GXMAP(type, SDL_SCANCODE_KP_PERIOD, ANCHOR_KeyNumpadPeriod);
+
+      GXMAP(type, SDL_SCANCODE_KP_ENTER, ANCHOR_KeyNumpadEnter);
+      GXMAP(type, SDL_SCANCODE_KP_PLUS, ANCHOR_KeyNumpadPlus);
+      GXMAP(type, SDL_SCANCODE_KP_MINUS, ANCHOR_KeyNumpadMinus);
+      GXMAP(type, SDL_SCANCODE_KP_MULTIPLY, ANCHOR_KeyNumpadAsterisk);
+      GXMAP(type, SDL_SCANCODE_KP_DIVIDE, ANCHOR_KeyNumpadSlash);
+
+      /**
+       * Media keys in some keyboards and laptops with XFree86/Xorg */
+      GXMAP(type, SDL_SCANCODE_AUDIOPLAY, ANCHOR_KeyMediaPlay);
+      GXMAP(type, SDL_SCANCODE_AUDIOSTOP, ANCHOR_KeyMediaStop);
+      GXMAP(type, SDL_SCANCODE_AUDIOPREV, ANCHOR_KeyMediaFirst);
+      // GXMAP(type,XF86XK_AudioRewind,       ANCHOR_KeyMediaFirst);
+      GXMAP(type, SDL_SCANCODE_AUDIONEXT, ANCHOR_KeyMediaLast);
+
+      default:
+        printf("Unknown\n");
+        type = ANCHOR_KeyUnknown;
+        break;
+    }
   }
 
+  return type;
+}
+#undef GXMAP
+
+void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
+{
+  ANCHOR_Event *a_event = NULL;
+
+  switch (sdl_event->type) {
+    case SDL_WINDOWEVENT: {
+      SDL_WindowEvent &sdl_sub_evt = sdl_event->window;
+      ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
+
+      switch (sdl_sub_evt.event) {
+        case SDL_WINDOWEVENT_EXPOSED:
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowUpdate, window);
+          break;
+        case SDL_WINDOWEVENT_RESIZED:
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowSize, window);
+          break;
+        case SDL_WINDOWEVENT_MOVED:
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowMove, window);
+          break;
+        case SDL_WINDOWEVENT_FOCUS_GAINED:
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowActivate, window);
+          break;
+        case SDL_WINDOWEVENT_FOCUS_LOST:
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowDeactivate, window);
+          break;
+        case SDL_WINDOWEVENT_CLOSE:
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowClose, window);
+          break;
+      }
+
+      break;
+    }
+
+    case SDL_QUIT: {
+      ANCHOR_ISystemWindow *window = m_windowManager->getActiveWindow();
+      a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventQuitRequest, window);
+      break;
+    }
+
+    case SDL_MOUSEMOTION: {
+      SDL_MouseMotionEvent &sdl_sub_evt = sdl_event->motion;
+      SDL_Window *sdl_win = SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID);
+      ANCHOR_WindowSDL *window = findAnchorWindow(sdl_win);
+      assert(window != NULL);
+
+      int x_win, y_win;
+      SDL_GetWindowPosition(sdl_win, &x_win, &y_win);
+
+      AnchorS32 x_root = sdl_sub_evt.x + x_win;
+      AnchorS32 y_root = sdl_sub_evt.y + y_win;
+      {
+        a_event = new ANCHOR_EventCursor(
+          ANCHOR::GetTime(), ANCHOR_EventCursorMove, window, x_root, y_root, ANCHOR_TABLET_DATA_NONE);
+      }
+      break;
+    }
+    case SDL_MOUSEBUTTONUP:
+    case SDL_MOUSEBUTTONDOWN: {
+      SDL_MouseButtonEvent &sdl_sub_evt = sdl_event->button;
+      eAnchorButtonMask gbmask = ANCHOR_ButtonMaskLeft;
+      eAnchorEventType type = (sdl_sub_evt.state == SDL_PRESSED) ? ANCHOR_EventButtonDown :
+                                                                   ANCHOR_EventButtonUp;
+
+      ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
+      assert(window != NULL);
+
+      /* process rest of normal mouse buttons */
+      if (sdl_sub_evt.button == SDL_BUTTON_LEFT)
+        gbmask = ANCHOR_ButtonMaskLeft;
+      else if (sdl_sub_evt.button == SDL_BUTTON_MIDDLE)
+        gbmask = ANCHOR_ButtonMaskMiddle;
+      else if (sdl_sub_evt.button == SDL_BUTTON_RIGHT)
+        gbmask = ANCHOR_ButtonMaskRight;
+      /* these buttons are untested! */
+      else if (sdl_sub_evt.button == SDL_BUTTON_X1)
+        gbmask = ANCHOR_ButtonMaskButton4;
+      else if (sdl_sub_evt.button == SDL_BUTTON_X2)
+        gbmask = ANCHOR_ButtonMaskButton5;
+      else
+        break;
+
+      a_event = new ANCHOR_EventButton(ANCHOR::GetTime(), type, window, gbmask, ANCHOR_TABLET_DATA_NONE);
+      break;
+    }
+    case SDL_MOUSEWHEEL: {
+      SDL_MouseWheelEvent &sdl_sub_evt = sdl_event->wheel;
+      ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
+      assert(window != NULL);
+      a_event = new ANCHOR_EventWheel(ANCHOR::GetTime(), window, sdl_sub_evt.y);
+      break;
+    }
+    case SDL_KEYDOWN:
+    case SDL_KEYUP: {
+      SDL_KeyboardEvent &sdl_sub_evt = sdl_event->key;
+      SDL_Keycode sym = sdl_sub_evt.keysym.sym;
+      eAnchorEventType type = (sdl_sub_evt.state == SDL_PRESSED) ? ANCHOR_EventKeyDown : ANCHOR_EventKeyUp;
+
+      ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
+      assert(window != NULL);
+
+      eAnchorKey akey = convertSDLKey(sdl_sub_evt.keysym.scancode);
+      /**
+       * note, the sdl_sub_evt.keysym.sym is truncated,
+       * for unicode support anchor has to be modified */
+      if (sym > 127) {
+        switch (sym) {
+          case SDLK_KP_DIVIDE:
+            sym = '/';
+            break;
+          case SDLK_KP_MULTIPLY:
+            sym = '*';
+            break;
+          case SDLK_KP_MINUS:
+            sym = '-';
+            break;
+          case SDLK_KP_PLUS:
+            sym = '+';
+            break;
+          case SDLK_KP_1:
+            sym = '1';
+            break;
+          case SDLK_KP_2:
+            sym = '2';
+            break;
+          case SDLK_KP_3:
+            sym = '3';
+            break;
+          case SDLK_KP_4:
+            sym = '4';
+            break;
+          case SDLK_KP_5:
+            sym = '5';
+            break;
+          case SDLK_KP_6:
+            sym = '6';
+            break;
+          case SDLK_KP_7:
+            sym = '7';
+            break;
+          case SDLK_KP_8:
+            sym = '8';
+            break;
+          case SDLK_KP_9:
+            sym = '9';
+            break;
+          case SDLK_KP_0:
+            sym = '0';
+            break;
+          case SDLK_KP_PERIOD:
+            sym = '.';
+            break;
+          default:
+            sym = 0;
+            break;
+        }
+      }
+      else {
+        if (sdl_sub_evt.keysym.mod & (KMOD_LSHIFT | KMOD_RSHIFT)) {
+          /* lame US keyboard assumptions */
+          if (sym >= 'a' && sym <= ('a' + 32)) {
+            sym -= 32;
+          }
+          else {
+            switch (sym) {
+              case '`':
+                sym = '~';
+                break;
+              case '1':
+                sym = '!';
+                break;
+              case '2':
+                sym = '@';
+                break;
+              case '3':
+                sym = '#';
+                break;
+              case '4':
+                sym = '$';
+                break;
+              case '5':
+                sym = '%';
+                break;
+              case '6':
+                sym = '^';
+                break;
+              case '7':
+                sym = '&';
+                break;
+              case '8':
+                sym = '*';
+                break;
+              case '9':
+                sym = '(';
+                break;
+              case '0':
+                sym = ')';
+                break;
+              case '-':
+                sym = '_';
+                break;
+              case '=':
+                sym = '+';
+                break;
+              case '[':
+                sym = '{';
+                break;
+              case ']':
+                sym = '}';
+                break;
+              case '\\':
+                sym = '|';
+                break;
+              case ';':
+                sym = ':';
+                break;
+              case '\'':
+                sym = '"';
+                break;
+              case ',':
+                sym = '<';
+                break;
+              case '.':
+                sym = '>';
+                break;
+              case '/':
+                sym = '?';
+                break;
+              default:
+                break;
+            }
+          }
+        }
+      }
+
+      a_event = new ANCHOR_EventKey(ANCHOR::GetTime(), type, window, akey, sym, NULL, false);
+      break;
+    }
+  }
+
+  if (a_event) {
+    pushEvent(a_event);
+  }
+}
+
+bool ANCHOR_SystemSDL::processEvents(bool waitForEvent)
+{
+  bool anyProcessed = false;
+
+  do {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+      ANCHOR_ImplSDL2_ProcessEvent(&event);
+      if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
+          event.window.windowID == SDL_GetWindowID(m_sdl_window->getSDLWindow()))
+        processEvent(&event);
+      anyProcessed = true;
+    }
+
+    // if (generateWindowExposeEvents()) {
+    //   anyProcessed = true;
+    // }
+  } while (waitForEvent && !anyProcessed);
+
+  m_sdl_window->frameUpdate();
+
+  return anyProcessed;
+}
+
+void ANCHOR_WindowSDL::frameUpdate()
+{
   /**
    * Resize swap chain? */
   if (g_SwapChainRebuild) {
     int width, height;
-    SDL_GetWindowSize(wd->getSDLWindow(), &width, &height);
+    SDL_GetWindowSize(getSDLWindow(), &width, &height);
     if (width > 0 && height > 0) {
       ANCHOR_ImplVulkan_SetMinImageCount(g_MinImageCount);
       ANCHOR_ImplVulkanH_CreateOrResizeWindow(g_PixarVkInstance->GetVulkanInstance(),
@@ -1319,14 +1747,17 @@ eAnchorStatus ANCHOR_run_vulkan(ANCHOR_SystemSDL *system, ANCHOR_WindowSDL *wd)
   /**
    * Start the ANCHOR frame. */
   ANCHOR_ImplVulkan_NewFrame();
-  ANCHOR_SystemSDL::ANCHOR_ImplSDL2_NewFrame(wd->getSDLWindow());
+  ANCHOR_SystemSDL::ANCHOR_ImplSDL2_NewFrame(getSDLWindow());
   ANCHOR::NewFrame();
-
-  /**
-   * *** The Covah Runtime --> To Infinity. *** */
-
-  return status;
 }
+
+/**
+ * Vulkan :: Swap that Chain!
+ *
+ * On Vulkan this preforms exceptionally well,
+ * through testing this runs @ approx 4000 FPS
+ * on an old NVIDIA GTX 1080Ti (other GPU was
+ * not even enabled in Vulkan Device selection). */
 
 eAnchorStatus ANCHOR_WindowSDL::swapBuffers()
 {

@@ -36,7 +36,7 @@ class ANCHOR_IEvent {
   /**
    * Returns the event type.
    * @return The event type. */
-  virtual ANCHOR_EventType getType() = 0;
+  virtual eAnchorEventType getType() = 0;
 
   /**
    * Returns the time this event was generated.

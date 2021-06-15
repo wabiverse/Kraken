@@ -3447,7 +3447,7 @@ void ANCHOR::SetCurrentContext(ANCHOR_Context *ctx)
   G_CTX = ctx;
 }
 
-bool ANCHOR::ProcessEvents(ANCHOR_SystemHandle systemhandle)
+bool ANCHOR::ProcessEvents(ANCHOR_SystemHandle systemhandle, bool waitForEvent)
 {
   ANCHOR_ISystem *system = (ANCHOR_ISystem *)systemhandle;
 
