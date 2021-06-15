@@ -343,9 +343,7 @@ bool TfReadDir(const string &dirPath,
   }
 #else
   DIR *dir;
-  struct dirent entry;
-  struct dirent *result;
-  int rc;
+  struct dirent *entry;
 
   if ((dir = opendir(dirPath.c_str())) == NULL) {
     if (errMsg) {
@@ -354,9 +352,9 @@ bool TfReadDir(const string &dirPath,
     return false;
   }
 
-  for (rc = readdir_r(dir, &entry, &result); result && rc == 0; rc = readdir_r(dir, &entry, &result)) {
+  while ((entry = readdir(dir)) != NULL) {
 
-    if (strcmp(entry.d_name, ".") == 0 || strcmp(entry.d_name, "..") == 0)
+    if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
       continue;
 
     bool entryIsDir = false;
@@ -364,18 +362,18 @@ bool TfReadDir(const string &dirPath,
 #  if defined(_DIRENT_HAVE_D_TYPE)
     // If we are on a BSD-like system, and the underlying filesystem has
     // support for it, we can use dirent.d_type to avoid lstat.
-    if (entry.d_type == DT_DIR) {
+    if (entry->d_type == DT_DIR) {
       entryIsDir = true;
     }
-    else if (entry.d_type == DT_LNK) {
+    else if (entry->d_type == DT_LNK) {
       entryIsLnk = true;
     }
-    else if (entry.d_type == DT_UNKNOWN) {
+    else if (entry->d_type == DT_UNKNOWN) {
 #  endif
       // If d_type is not available, or the filesystem has no support
       // for d_type, fall back to lstat.
       ArchStatType st;
-      if (fstatat(dirfd(dir), entry.d_name, &st, AT_SYMLINK_NOFOLLOW) != 0)
+      if (fstatat(dirfd(dir), entry->d_name, &st, AT_SYMLINK_NOFOLLOW) != 0)
         continue;
 
       if (S_ISDIR(st.st_mode)) {
@@ -390,14 +388,14 @@ bool TfReadDir(const string &dirPath,
 
     if (entryIsDir) {
       if (dirnames)
-        dirnames->push_back(entry.d_name);
+        dirnames->push_back(entry->d_name);
     }
     else if (entryIsLnk) {
       if (symlinknames)
-        symlinknames->push_back(entry.d_name);
+        symlinknames->push_back(entry->d_name);
     }
     else if (filenames) {
-      filenames->push_back(entry.d_name);
+      filenames->push_back(entry->d_name);
     }
   }
 
