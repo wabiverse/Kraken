@@ -36,12 +36,18 @@ struct wmWindow : public wabi::UsdUIWindow {
   /** Anchor system backend pointer. */
   void *anchorwin;
 
-  wabi::UsdProperty winCoords;
+  wabi::UsdProperty title;
+  wabi::UsdProperty icon;
+  wabi::UsdProperty pos;
+  wabi::UsdProperty size;
+  wabi::UsdProperty type;
   wabi::UsdProperty workspace;
   wabi::UsdProperty screen;
+  wabi::UsdProperty alignment;
+  wabi::UsdProperty areas;
 
   /** Active scene for this window. */
-  Scene *scene;
+  wabi::TfToken scene;
 
   /** Active session layer display name. */
   char view_layer_name[64];

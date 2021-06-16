@@ -106,7 +106,7 @@ const wabi::SdfPath &UNI_stage_root(void);
  * - Covah Scene defaults. */
 
 COVAH_UNIVERSE_API
-void UNI_author_gui(void);
+void UNI_on_ctx(struct cContext *C);
 
 COVAH_UNIVERSE_API
 void UNI_author_default_scene(void);

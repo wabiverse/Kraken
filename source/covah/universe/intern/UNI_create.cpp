@@ -25,7 +25,9 @@
 #include "UNI_api.h"
 #include "UNI_context.h"
 #include "UNI_scene.h"
+#include "UNI_window.h"
 
+#include "CKE_context.h"
 #include "CKE_main.h"
 
 #include "CLI_icons.h"
@@ -87,8 +89,15 @@ const SdfPath &UNI_stage_root()
   return UNI.stage->GetPseudoRoot().GetPath();
 }
 
-void UNI_author_gui()
+void UNI_on_ctx(cContext *C)
 {
+  /* ----- */
+
+  /** Store Properties for C. */
+  Scene *cscene = new Scene();
+  wmWindow *win = new wmWindow();
+  wmWindowManager *wm = new wmWindowManager();
+
   /* ----- */
 
   /** Default Stage Paths. */
@@ -102,25 +111,31 @@ void UNI_author_gui()
 
   /** Default Window. */
   UsdUIWindow window = UsdUIWindow::Define(UNI.stage, window_path);
-  window.CreateTitleAttr(VtValue(TfToken("Covah")));
-  window.CreateIconAttr(VtValue(SdfAssetPath(CLI_icon(ICON_COVAH))));
-  window.CreatePosAttr(VtValue(GfVec2f(0, 0)));
-  window.CreateSizeAttr(VtValue(GfVec2f(1920, 1080)));
-  window.CreateTypeAttr(VtValue(TfToken(UsdUITokens->normal)));
-  window.CreateUiWindowWorkspaceRel().AddTarget(workspace_path);
+  win->title = window.CreateTitleAttr(VtValue(TfToken("Covah")));
+  win->icon = window.CreateIconAttr(VtValue(SdfAssetPath(CLI_icon(ICON_COVAH))));
+  win->pos = window.CreatePosAttr(VtValue(GfVec2f(0, 0)));
+  win->size = window.CreateSizeAttr(VtValue(GfVec2f(1920, 1080)));
+  win->type = window.CreateTypeAttr(VtValue(TfToken(UsdUITokens->normal)));
+
+  /** Set the Window's Active Workspace. */
+  UsdRelationship wspace_rel = window.CreateUiWindowWorkspaceRel();
+  wspace_rel.AddTarget(workspace_path);
 
   /* ----- */
 
   /** Default 'Layout' WorkSpace. */
   UsdUIWorkspace workspace = UsdUIWorkspace::Define(UNI.stage, workspace_path);
   workspace.CreateNameAttr(VtValue(TfToken("Layout")));
-  workspace.CreateScreenRel().AddTarget(screen_path);
+
+  /** Set the Workspace's Active Screen. */
+  UsdRelationship screen_rel = workspace.CreateScreenRel();
+  screen_rel.AddTarget(screen_path);
 
   /* ----- */
 
   /** Default Screen. */
   UsdUIScreen screen = UsdUIScreen::Define(UNI.stage, screen_path);
-  screen.CreateAlignmentAttr(VtValue(UsdUITokens->verticalSplit));
+  UsdAttribute align = screen.CreateAlignmentAttr(VtValue(UsdUITokens->verticalSplit));
 
   /* ----- */
 
@@ -148,6 +163,21 @@ void UNI_author_gui()
   screen_areas.AddTarget(outliner_path);
 
   /* ----- */
+
+  /** Setup C */
+
+  cscene->stage = UNI.stage;
+  CTX_data_scene_set(C, cscene);
+
+  win->alignment = align;
+  win->workspace = wspace_rel;
+  win->screen = screen_rel;
+  win->areas = screen_areas;
+  CTX_wm_window_set(C, win);
+
+  /** Hash the stage path to this window. */
+  wm->windows.insert(std::make_pair(TfToken(UNI.system.paths.stage_path), win));
+  CTX_wm_manager_set(C, wm);
 }
 
 void UNI_author_default_scene()

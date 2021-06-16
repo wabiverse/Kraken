@@ -261,7 +261,7 @@ void CKE_covah_main_init(struct cContext *C, int argc, const char **argv)
     /**
      * Create default Pixar stage. */
     UNI_create_stage(TfStringCatPaths(G.main->temp_dir, "startup.usda"));
-    UNI_author_gui();
+    UNI_on_ctx(C);
     UNI_author_default_scene();
     UNI_save_stage();
   }
@@ -271,14 +271,7 @@ void CKE_covah_main_init(struct cContext *C, int argc, const char **argv)
     UNI_open_stage(G.main->stage_id.string());
   }
 
-  Scene *cscene = new Scene();
-  cscene->stage = UNI.stage;
-
-  wmWindowManager *wm = new wmWindowManager();
-
   CTX_data_main_set(C, G.main);
-  CTX_wm_manager_set(C, wm);
-  CTX_data_scene_set(C, cscene);
 }
 
 bool CKE_has_kill_signal(ckeStatusCode signal)

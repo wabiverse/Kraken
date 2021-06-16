@@ -113,14 +113,6 @@ void CTX_wm_manager_set(cContext *C, wmWindowManager *wm)
 void CTX_wm_window_set(cContext *C, wmWindow *win)
 {
   C->wm.window = win;
-  if (win) {
-    C->data.scene = win->scene;
-  }
-
-  // C->wm.workspace = (win) ? BKE_workspace_active_get(win->workspace_hook) : NULL;
-  // C->wm.screen = (win) ? BKE_workspace_active_screen_get(win->workspace_hook) : NULL;
-  // C->wm.area = NULL;
-  // C->wm.region = NULL;
 }
 
 void CTX_data_scene_set(cContext *C, Scene *cscene)
