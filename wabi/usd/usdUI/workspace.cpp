@@ -112,13 +112,13 @@ const TfType &UsdUIWorkspace::_GetTfType() const
 
 UsdAttribute UsdUIWorkspace::GetWorkspaceNameAttr() const
 {
-  return GetPrim().GetAttribute(UsdUITokens->uiWorkspaceName);
+  return GetPrim().GetAttribute(UsdUITokens->uiScreenAreaWorkspace);
 }
 
 UsdAttribute UsdUIWorkspace::CreateWorkspaceNameAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(
-    UsdUITokens->uiWorkspaceName,
+    UsdUITokens->uiScreenAreaWorkspace,
     SdfValueTypeNames->Token,
     /* custom = */ false,
     SdfVariabilityUniform,
@@ -142,7 +142,7 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector& left
 const TfTokenVector& UsdUIWorkspace::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-    UsdUITokens->uiWorkspaceName,
+    UsdUITokens->uiScreenAreaWorkspace,
   };
   static TfTokenVector allNames =
     _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true), localNames);

@@ -58,14 +58,29 @@ namespace {
 WRAP_CUSTOM;
 
 
-static UsdAttribute _CreateTitleAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+static UsdAttribute _CreateWindowTitleAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateTitleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  return self.CreateWindowTitleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
-static UsdAttribute _CreateWindowCoordsAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+static UsdAttribute _CreateWindowIconAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateWindowCoordsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float4), writeSparsely);
+  return self.CreateWindowIconAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
+}
+
+static UsdAttribute _CreateWindowTypeAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateWindowTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+}
+
+static UsdAttribute _CreateWindowPosAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateWindowPosAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2), writeSparsely);
+}
+
+static UsdAttribute _CreateWindowSizeAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateWindowSizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2), writeSparsely);
 }
 
 static std::string _Repr(const UsdUIWindow & self)
@@ -104,11 +119,20 @@ void wrapUsdUIWindow()
         return_value_policy<return_by_value>())
     .staticmethod("_GetStaticTfType")
     .def(!self)
-    .def("GetTitleAttr", &This::GetTitleAttr)
-    .def("CreateTitleAttr", &_CreateTitleAttr,
+    .def("GetWindowTitleAttr", &This::GetWindowTitleAttr)
+    .def("CreateWindowTitleAttr", &_CreateWindowTitleAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
-    .def("GetWindowCoordsAttr", &This::GetWindowCoordsAttr)
-    .def("CreateWindowCoordsAttr", &_CreateWindowCoordsAttr,
+    .def("GetWindowIconAttr", &This::GetWindowIconAttr)
+    .def("CreateWindowIconAttr", &_CreateWindowIconAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetWindowTypeAttr", &This::GetWindowTypeAttr)
+    .def("CreateWindowTypeAttr", &_CreateWindowTypeAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetWindowPosAttr", &This::GetWindowPosAttr)
+    .def("CreateWindowPosAttr", &_CreateWindowPosAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetWindowSizeAttr", &This::GetWindowSizeAttr)
+    .def("CreateWindowSizeAttr", &_CreateWindowSizeAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
     .def("__repr__", ::_Repr)
   ;
@@ -133,8 +157,6 @@ void wrapUsdUIWindow()
    *   'namespace {', '}'.
    * ======================================================================
    * --(BEGIN CUSTOM CODE)-- */
-
-/* clang-format on */
 
 namespace {
 

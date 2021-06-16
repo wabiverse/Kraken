@@ -32,7 +32,7 @@
 /* clang-format off */
 
 #include "wabi/usd/usd/schemaBase.h"
-#include "wabi/usd/usdUI/workspace.h"
+#include "wabi/usd/usdUI/screenAPI.h"
 
 #include "wabi/usd/sdf/primSpec.h"
 
@@ -58,26 +58,61 @@ namespace {
 WRAP_CUSTOM;
 
 
-static UsdAttribute _CreateWorkspaceNameAttr(UsdUIWorkspace & self, object defaultVal, bool writeSparsely)
+static UsdAttribute _CreatePosAttr(UsdUIScreenAPI & self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateWorkspaceNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  return self.CreatePosAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2), writeSparsely);
 }
 
-static std::string _Repr(const UsdUIWorkspace & self)
+static UsdAttribute _CreateSizeAttr(UsdUIScreenAPI & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateSizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2), writeSparsely);
+}
+
+static UsdAttribute _CreateIconAttr(UsdUIScreenAPI & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateIconAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
+}
+
+static UsdAttribute _CreateTypeAttr(UsdUIScreenAPI & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+}
+
+static UsdAttribute _CreateNameAttr(UsdUIScreenAPI & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+}
+
+static UsdAttribute _CreateShowMenusAttr(UsdUIScreenAPI & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateShowMenusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
+}
+
+static UsdAttribute _CreatePurposeAttr(UsdUIScreenAPI & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreatePurposeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+}
+
+static UsdAttribute _CreateLayoutAttr(UsdUIScreenAPI & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateLayoutAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+}
+
+static std::string _Repr(const UsdUIScreenAPI & self)
 {
   std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdUI.Workspace(%s)",
+  return TfStringPrintf("UsdUI.ScreenAPI(%s)",
                         primRepr.c_str());
 }
 
 }  /* anonymous */
 
 /* clang-format off */
-void wrapUsdUIWorkspace()
+void wrapUsdUIScreenAPI()
 {
-  typedef UsdUIWorkspace This;
+  typedef UsdUIScreenAPI This;
 
-  class_<This, bases<UsdTyped>> cls("Workspace");
+  class_<This, bases<UsdAPISchemaBase>> cls("ScreenAPI");
 
   cls
     .def(init<UsdPrim>
@@ -88,8 +123,8 @@ void wrapUsdUIWorkspace()
     .def("Get", &This::Get,
         (arg("stage"), arg("path")))
     .staticmethod("Get")
-    .def("Define", &This::Define, (arg("stage"), arg("path")))
-    .staticmethod("Define")
+    .def("Apply", &This::Apply, (arg("prim")))
+    .staticmethod("Apply")
     .def("GetSchemaAttributeNames", &This::GetSchemaAttributeNames,
         arg("includeInherited") = true,
         return_value_policy<TfPySequenceToList>())
@@ -99,9 +134,34 @@ void wrapUsdUIWorkspace()
         return_value_policy<return_by_value>())
     .staticmethod("_GetStaticTfType")
     .def(!self)
-    .def("GetWorkspaceNameAttr", &This::GetWorkspaceNameAttr)
-    .def("CreateWorkspaceNameAttr", &_CreateWorkspaceNameAttr,
+    .def("GetPosAttr", &This::GetPosAttr)
+    .def("CreatePosAttr", &_CreatePosAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetSizeAttr", &This::GetSizeAttr)
+    .def("CreateSizeAttr", &_CreateSizeAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetIconAttr", &This::GetIconAttr)
+    .def("CreateIconAttr", &_CreateIconAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetTypeAttr", &This::GetTypeAttr)
+    .def("CreateTypeAttr", &_CreateTypeAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetNameAttr", &This::GetNameAttr)
+    .def("CreateNameAttr", &_CreateNameAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetShowMenusAttr", &This::GetShowMenusAttr)
+    .def("CreateShowMenusAttr", &_CreateShowMenusAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetPurposeAttr", &This::GetPurposeAttr)
+    .def("CreatePurposeAttr", &_CreatePurposeAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetLayoutAttr", &This::GetLayoutAttr)
+    .def("CreateLayoutAttr", &_CreateLayoutAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetUiScreenAreaRegionRel", &This::GetUiScreenAreaRegionRel)
+    .def("CreateUiScreenAreaRegionRel", &This::CreateUiScreenAreaRegionRel)
+    .def("GetWorkspaceRel", &This::GetWorkspaceRel)
+    .def("CreateWorkspaceRel", &This::CreateWorkspaceRel)
     .def("__repr__", ::_Repr)
   ;
 

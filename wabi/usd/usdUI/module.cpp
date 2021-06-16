@@ -35,9 +35,11 @@ WABI_NAMESPACE_USING
 
 TF_WRAP_MODULE
 {
-  TF_WRAP(UsdUIWindow);
   TF_WRAP(UsdUIBackdrop);
   TF_WRAP(UsdUINodeGraphNodeAPI);
   TF_WRAP(UsdUISceneGraphPrimAPI);
+  TF_WRAP(UsdUIScreenAPI);
+  TF_WRAP(UsdUIWindow);
+  TF_WRAP(UsdUIWorkspace);
   TF_WRAP(UsdUITokens);
 }

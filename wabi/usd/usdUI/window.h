@@ -186,7 +186,7 @@ class UsdUIWindow : public UsdTyped {
  public:
   /**
    * ---------------------------------------------------------------------
-   * TITLE
+   * WINDOWTITLE
    * ---------------------------------------------------------------------
    * 
    * The window title that is displayed on the top of the window. This
@@ -197,7 +197,7 @@ class UsdUIWindow : public UsdTyped {
    * | ||
    * | -- | -- |
    *
-   * | Declaration | `uniform token ui:title` |
+   * | Declaration | `uniform token ui:windowTitle` |
    *
    * | C++ Type | TfToken |
    *
@@ -206,52 +206,160 @@ class UsdUIWindow : public UsdTyped {
    * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
    */
   USDUI_API
-  UsdAttribute GetTitleAttr() const;
+  UsdAttribute GetWindowTitleAttr() const;
 
   /**
-   * See GetTitleAttr(), and also @ref
+   * See GetWindowTitleAttr(), and also @ref
    * Usd_Create_Or_Get_Property for when to use Get vs Create.
    * If specified, author @p defaultValue as the attribute's
    * default, sparsely (when it makes sense to do so) if @p
    * writeSparsely is @c true, the default for @p writeSparsely
    * is @c false. */
   USDUI_API
-  UsdAttribute CreateTitleAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateWindowTitleAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   /**
    * ---------------------------------------------------------------------
-   * WINDOWCOORDS
+   * WINDOWICON
    * ---------------------------------------------------------------------
    * 
-   * The window coordinates as positioned on screen, storing both
-   * location as well as window size.
+   * This points to an image that should be displayed on the window's,
+   * top most region where the title is.
    * 
    *
    *
    * | ||
    * | -- | -- |
    *
-   * | Declaration | `uniform float4 ui:windowCoords` |
+   * | Declaration | `uniform asset ui:windowIcon` |
    *
-   * | C++ Type | GfVec4f |
+   * | C++ Type | SdfAssetPath |
    *
-   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float4 |
+   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Asset |
    *
    * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
    */
   USDUI_API
-  UsdAttribute GetWindowCoordsAttr() const;
+  UsdAttribute GetWindowIconAttr() const;
 
   /**
-   * See GetWindowCoordsAttr(), and also @ref
+   * See GetWindowIconAttr(), and also @ref
    * Usd_Create_Or_Get_Property for when to use Get vs Create.
    * If specified, author @p defaultValue as the attribute's
    * default, sparsely (when it makes sense to do so) if @p
    * writeSparsely is @c true, the default for @p writeSparsely
    * is @c false. */
   USDUI_API
-  UsdAttribute CreateWindowCoordsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateWindowIconAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+
+ public:
+  /**
+   * ---------------------------------------------------------------------
+   * WINDOWTYPE
+   * ---------------------------------------------------------------------
+   * 
+   * The window type will determine whether it is apart of the main
+   * central window instance, or whether it is a detached, seperate
+   * window instance, or if it is a temporary dialog box.
+   * 
+   *
+   *
+   * | ||
+   * | -- | -- |
+   *
+   * | Declaration | `uniform token ui:windowType = "attached"` |
+   *
+   * | C++ Type | TfToken |
+   *
+   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Token |
+   *
+   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
+   *
+   * | @ref UsdUITokens "Allowed Values" | attached, detached, dialog |
+   */
+  USDUI_API
+  UsdAttribute GetWindowTypeAttr() const;
+
+  /**
+   * See GetWindowTypeAttr(), and also @ref
+   * Usd_Create_Or_Get_Property for when to use Get vs Create.
+   * If specified, author @p defaultValue as the attribute's
+   * default, sparsely (when it makes sense to do so) if @p
+   * writeSparsely is @c true, the default for @p writeSparsely
+   * is @c false. */
+  USDUI_API
+  UsdAttribute CreateWindowTypeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+
+ public:
+  /**
+   * ---------------------------------------------------------------------
+   * WINDOWPOS
+   * ---------------------------------------------------------------------
+   * 
+   * Position for a window in a monitor. X is the monitor's relative
+   * vertical location of the window. Y is the monitor's relative
+   * horizontal location of the window.
+   * 
+   *
+   *
+   * | ||
+   * | -- | -- |
+   *
+   * | Declaration | `uniform float2 ui:windowPos` |
+   *
+   * | C++ Type | GfVec2f |
+   *
+   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float2 |
+   *
+   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
+   */
+  USDUI_API
+  UsdAttribute GetWindowPosAttr() const;
+
+  /**
+   * See GetWindowPosAttr(), and also @ref
+   * Usd_Create_Or_Get_Property for when to use Get vs Create.
+   * If specified, author @p defaultValue as the attribute's
+   * default, sparsely (when it makes sense to do so) if @p
+   * writeSparsely is @c true, the default for @p writeSparsely
+   * is @c false. */
+  USDUI_API
+  UsdAttribute CreateWindowPosAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+
+ public:
+  /**
+   * ---------------------------------------------------------------------
+   * WINDOWSIZE
+   * ---------------------------------------------------------------------
+   * 
+   * Size for a window in a monitor. X is the width. Y is the height.
+   * 
+   *
+   *
+   * | ||
+   * | -- | -- |
+   *
+   * | Declaration | `uniform float2 ui:windowSize` |
+   *
+   * | C++ Type | GfVec2f |
+   *
+   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float2 |
+   *
+   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
+   */
+  USDUI_API
+  UsdAttribute GetWindowSizeAttr() const;
+
+  /**
+   * See GetWindowSizeAttr(), and also @ref
+   * Usd_Create_Or_Get_Property for when to use Get vs Create.
+   * If specified, author @p defaultValue as the attribute's
+   * default, sparsely (when it makes sense to do so) if @p
+   * writeSparsely is @c true, the default for @p writeSparsely
+   * is @c false. */
+  USDUI_API
+  UsdAttribute CreateWindowSizeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   /**

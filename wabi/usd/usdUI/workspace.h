@@ -206,7 +206,7 @@ class UsdUIWorkspace : public UsdTyped {
    * | ||
    * | -- | -- |
    *
-   * | Declaration | `uniform token ui:workspaceName` |
+   * | Declaration | `uniform token ui:screen:area:workspace` |
    *
    * | C++ Type | TfToken |
    *

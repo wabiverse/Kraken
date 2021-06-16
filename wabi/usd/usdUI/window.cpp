@@ -110,15 +110,15 @@ const TfType &UsdUIWindow::_GetTfType() const
   return _GetStaticTfType();
 }
 
-UsdAttribute UsdUIWindow::GetTitleAttr() const
+UsdAttribute UsdUIWindow::GetWindowTitleAttr() const
 {
-  return GetPrim().GetAttribute(UsdUITokens->uiTitle);
+  return GetPrim().GetAttribute(UsdUITokens->uiWindowTitle);
 }
 
-UsdAttribute UsdUIWindow::CreateTitleAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdUIWindow::CreateWindowTitleAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(
-    UsdUITokens->uiTitle,
+    UsdUITokens->uiWindowTitle,
     SdfValueTypeNames->Token,
     /* custom = */ false,
     SdfVariabilityUniform,
@@ -126,16 +126,64 @@ UsdAttribute UsdUIWindow::CreateTitleAttr(VtValue const &defaultValue, bool writ
     writeSparsely);
 }
 
-UsdAttribute UsdUIWindow::GetWindowCoordsAttr() const
+UsdAttribute UsdUIWindow::GetWindowIconAttr() const
 {
-  return GetPrim().GetAttribute(UsdUITokens->uiWindowCoords);
+  return GetPrim().GetAttribute(UsdUITokens->uiWindowIcon);
 }
 
-UsdAttribute UsdUIWindow::CreateWindowCoordsAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdUIWindow::CreateWindowIconAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(
-    UsdUITokens->uiWindowCoords,
-    SdfValueTypeNames->Float4,
+    UsdUITokens->uiWindowIcon,
+    SdfValueTypeNames->Asset,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
+}
+
+UsdAttribute UsdUIWindow::GetWindowTypeAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiWindowType);
+}
+
+UsdAttribute UsdUIWindow::CreateWindowTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiWindowType,
+    SdfValueTypeNames->Token,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
+}
+
+UsdAttribute UsdUIWindow::GetWindowPosAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiWindowPos);
+}
+
+UsdAttribute UsdUIWindow::CreateWindowPosAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiWindowPos,
+    SdfValueTypeNames->Float2,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
+}
+
+UsdAttribute UsdUIWindow::GetWindowSizeAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiWindowSize);
+}
+
+UsdAttribute UsdUIWindow::CreateWindowSizeAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiWindowSize,
+    SdfValueTypeNames->Float2,
     /* custom = */ false,
     SdfVariabilityUniform,
     defaultValue,
@@ -158,8 +206,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector& left
 const TfTokenVector& UsdUIWindow::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-    UsdUITokens->uiTitle,
-    UsdUITokens->uiWindowCoords,
+    UsdUITokens->uiWindowTitle,
+    UsdUITokens->uiWindowIcon,
+    UsdUITokens->uiWindowType,
+    UsdUITokens->uiWindowPos,
+    UsdUITokens->uiWindowSize,
   };
   static TfTokenVector allNames =
     _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true), localNames);

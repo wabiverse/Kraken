@@ -14,6 +14,7 @@ wabi_library(usdUI
         backdrop
         nodeGraphNodeAPI
         sceneGraphPrimAPI
+        screenAPI
         tokens
 
     PUBLIC_HEADERS
@@ -24,12 +25,13 @@ wabi_library(usdUI
 
     PYMODULE_CPPFILES
         module.cpp
-        wrapWindow.cpp
-        wrapWorkspace.cpp
         wrapBackdrop.cpp
         wrapNodeGraphNodeAPI.cpp
         wrapSceneGraphPrimAPI.cpp
+        wrapScreenAPI.cpp
         wrapTokens.cpp
+        wrapWindow.cpp
+        wrapWorkspace.cpp
 
     PYMODULE_FILES
         python/__init__.py
