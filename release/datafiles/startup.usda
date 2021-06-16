@@ -1,115 +1,63 @@
 #usda 1.0
 (
-    doc = "Covah v1.0"
+    doc = "Covah v1.50"
 )
 
-def "Objects" (
-    prepend apiSchemas = ["GeomModelAPI", "MotionAPI"]
-)
+def "Covah"
 {
-    def Cube "DefaultCube"
+    def "Windows"
     {
-        uniform bool doubleSided = 0
-        float3[] extent = [(-1, -1, -1), (1, 1, 1)]
-        uniform token orientation = "rightHanded"
-        color3f[] primvars:displayColor
-        float[] primvars:displayOpacity
-        custom string primvars:name
-        uniform token purpose = "default"
-        double size = 2
-        token visibility = "inherited"
-        custom float3 xformOp:rotateXYZ
-        custom float3 xformOp:scale
-        custom double3 xformOp:translate
-        uniform token[] xformOpOrder
+        def Window "MainWindow"
+        {
+            uniform asset ui:window:icon = @/usr/local/share/covah/1.50/datafiles/icons/covah-desktop.png@
+            uniform float2 ui:window:pos = (0, 0)
+            uniform float2 ui:window:size = (1920, 1080)
+            uniform token ui:window:title = "Covah"
+            uniform token ui:window:type = "normal"
+            prepend rel ui:window:workspace = </Covah/Windows/MainWindow/WorkSpaces/Layout>
+
+            def "WorkSpaces"
+            {
+                def Workspace "Layout"
+                {
+                    uniform token ui:workspace:name = "Layout"
+                    prepend rel ui:workspace:screen = </Covah/Windows/MainWindow/WorkSpaces/Layout/Screen>
+
+                    def Screen "Screen"
+                    {
+                        uniform token ui:screen:alignment = "verticalSplit"
+                        prepend rel ui:screen:areas = [
+                            </Covah/Windows/MainWindow/WorkSpaces/Layout/Screen/View3D>,
+                            </Covah/Windows/MainWindow/WorkSpaces/Layout/Screen/Outliner>,
+                        ]
+
+                        def Area "View3D"
+                        {
+                            uniform asset ui:area:icon = @/usr/local/share/covah/1.50/datafiles/icons/hydra.png@
+                            uniform token ui:area:name = "View3D"
+                            uniform float2 ui:area:pos = (0, 0)
+                            uniform float2 ui:area:size = (1800, 1080)
+                        }
+
+                        def Area "Outliner"
+                        {
+                            uniform asset ui:area:icon = @/usr/local/share/covah/1.50/datafiles/icons/luxo.png@
+                            uniform token ui:area:name = "Outliner"
+                            uniform float2 ui:area:pos = (1800, 0)
+                            uniform float2 ui:area:size = (120, 1080)
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
-def "Lights" (
-    prepend apiSchemas = ["ListAPI", "ShapingAPI", "ShadowAPI"]
-)
+def Cube "Cube"
 {
-    def DomeLight "DomeLight"
-    {
-        uniform token collection:lightLink:expansionRule = "expandPrims"
-        uniform bool collection:lightLink:includeRoot = 1
-        uniform token collection:shadowLink:expansionRule = "expandPrims"
-        uniform bool collection:shadowLink:includeRoot = 1
-        color3f inputs:color = (1, 1, 1)
-        float inputs:colorTemperature = 6500
-        float inputs:diffuse = 1
-        bool inputs:enableColorTemperature = 0
-        float inputs:exposure = 0
-        float inputs:intensity = 1
-        bool inputs:normalize = 0
-        float inputs:specular = 1
-        asset inputs:texture:file
-        token inputs:texture:format = "automatic"
-        uniform token purpose = "default"
-        token visibility = "inherited"
-        uniform token[] xformOpOrder
-    }
-}
-
-def "Cameras" (
-    prepend apiSchemas = ["GeomModelAPI", "MotionAPI"]
-)
-{
-    def Camera "PerspCamera"
-    {
-        float4[] clippingPlanes = []
-        float2 clippingRange = (1, 1000000)
-        float exposure = 0
-        float focalLength = 50
-        float focusDistance = 0
-        float fStop = 0
-        float horizontalAperture = 20.955
-        float horizontalApertureOffset = 0
-        token projection = "perspective"
-        uniform token purpose = "default"
-        double shutter:close = 0
-        double shutter:open = 0
-        uniform token stereoRole = "mono"
-        float verticalAperture = 15.2908
-        float verticalApertureOffset = 0
-        token visibility = "inherited"
-        uniform token[] xformOpOrder
-    }
-}
-
-def "Materials" (
-    prepend apiSchemas = ["NodeDefAPI", "MaterialBindingAPI"]
-)
-{
-}
-
-def "Skeletons" (
-    prepend apiSchemas = ["SkelBindingAPI"]
-)
-{
-}
-
-def "Volumes"
-{
-}
-
-def "Media"
-{
-}
-
-def "Render" (
-    prepend apiSchemas = ["RenderSettingsAPI"]
-)
-{
-    def RenderSettings "Render"
-    {
-        uniform token aspectRatioConformPolicy = "expandAperture"
-        uniform float4 dataWindowNDC = (0, 0, 1, 1)
-        uniform token[] includedPurposes = ["default", "render"]
-        uniform bool instantaneousShutter = 0
-        uniform token[] materialBindingPurposes = ["full", ""]
-        uniform float pixelAspectRatio = 1
-        uniform int2 resolution = (2048, 1080)
-    }
+    float3 xformOp:rotateXYZ = (0, 0, 0)
+    float3 xformOp:scale = (1, 1, 1)
+    double3 xformOp:translate = (0, 0, 0)
+    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
 }
 
