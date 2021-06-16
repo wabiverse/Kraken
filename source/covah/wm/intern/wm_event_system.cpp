@@ -22,15 +22,18 @@
  * Making GUI Fly.
  */
 
-#include "ANCHOR_api.h"
+#include "WM_event_system.h"
 
-#include "UNI_context.h"
+#include "UNI_window.h"
 
-#include "CKE_main.h"
+#include "CKE_context.h"
 
 #include <wabi/base/tf/stringUtils.h>
 
 WABI_NAMESPACE_USING
+
+void WM_event_do_refresh_wm(cContext *C)
+{}
 
 static int wm_handler_fileselect()
 {}

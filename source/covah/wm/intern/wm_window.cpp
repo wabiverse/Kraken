@@ -32,6 +32,8 @@
 
 #include "CKE_context.h"
 
+#include "CLI_time.h"
+
 /* handle to anchor system. */
 static ANCHOR_SystemHandle anchor_system;
 
@@ -60,7 +62,7 @@ void WM_anchor_init(cContext *C)
   if (C != NULL) {
     /**
      * ANCHOR:: access from here on out. */
-    ANCHOR::AddEventConsumer(consumer);
+    ANCHOR::AddEventConsumer(anchor_system, consumer);
   }
 }
 
@@ -69,7 +71,12 @@ void WM_window_process_events(const cContext *C)
   bool has_event = ANCHOR::ProcessEvents(anchor_system, false);
 
   if (has_event) {
-    // ANCHOR::DispatchEvents();
+    ANCHOR::DispatchEvents(anchor_system);
+  }
+
+  if ((has_event == false)) {
+    printf("Quick sleep: No Events on Stack\n");
+    PIL_sleep_ms(5);
   }
 }
 

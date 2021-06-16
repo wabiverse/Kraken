@@ -27,6 +27,7 @@
 #include <wabi/base/tf/hashmap.h>
 
 #include <wabi/usd/sdf/path.h>
+#include <wabi/usd/usd/property.h>
 #include <wabi/usd/usdUI/window.h>
 
 struct Scene;
@@ -34,6 +35,10 @@ struct Scene;
 struct wmWindow : public wabi::UsdUIWindow {
   /** Anchor system backend pointer. */
   void *anchorwin;
+
+  wabi::UsdProperty winCoords;
+  wabi::UsdProperty workspace;
+  wabi::UsdProperty screen;
 
   /** Active scene for this window. */
   Scene *scene;

@@ -529,6 +529,15 @@ enum eAnchorKey {
   ANCHOR_KeyMediaLast
 };
 
+enum eAnchorUserSpecialDirTypes {
+  ANCHOR_UserSpecialDirDesktop,
+  ANCHOR_UserSpecialDirDocuments,
+  ANCHOR_UserSpecialDirDownloads,
+  ANCHOR_UserSpecialDirMusic,
+  ANCHOR_UserSpecialDirPictures,
+  ANCHOR_UserSpecialDirVideos,
+};
+
 /**
  * ----- ANCHOR CLASSES ----- */
 
@@ -891,6 +900,15 @@ ANCHOR_API
 bool ProcessEvents(ANCHOR_SystemHandle systemhandle, bool waitForEvent);
 
 /**
+ * Dispatch Events
+ *
+ * Retrieves events from the queue and
+ * sends them to the  event consumers.
+ * @param systemhandle: The handle to the system. */
+ANCHOR_API
+void DispatchEvents(ANCHOR_SystemHandle systemhandle);
+
+/**
  * Preforms a swap on the swapchain.
  *
  * This is what one may refer to as
@@ -902,7 +920,7 @@ bool ProcessEvents(ANCHOR_SystemHandle systemhandle, bool waitForEvent);
  * slower than that and a user will
  * experience graphics 'lag'.
  *
- * @param windowhandle: Handle to the window
+ * @param windowhandle: Handle to the window.
  * @return Indication of success. */
 ANCHOR_API
 eAnchorStatus SwapChain(ANCHOR_SystemWindowHandle windowhandle);
@@ -915,10 +933,11 @@ eAnchorStatus SwapChain(ANCHOR_SystemWindowHandle windowhandle);
  * usually in the form of a callback
  * function.
  *
- * @param consumer: The event consumer to add.
+ * @param systemhandle: Handle to the system.
+ * @param consumerhandle: The event consumer to add.
  * @return Indication of success. */
 ANCHOR_API
-eAnchorStatus AddEventConsumer(ANCHOR_EventConsumerHandle consumer);
+eAnchorStatus AddEventConsumer(ANCHOR_SystemHandle systemhandle, ANCHOR_EventConsumerHandle consumerhandle);
 
 /**
  * Access the Pixar Hydra Driver.

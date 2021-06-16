@@ -22,29 +22,23 @@
  * Making GUI Fly.
  */
 
-#include "CKE_context.h"
+#pragma once
 
-#include "WM_draw.h"
-#include "WM_window.h"
+#include "WM_api.h"
 
-void WM_main(cContext *C)
-{
-  while (1) {
+#include <wabi/usd/usd/prim.h>
 
-    /**
-     * Process events from anchor, handle window events. */
-    WM_window_process_events(C);
+struct wmOperatorType {
+  /** Text for UI, undo. */
+  const char *name;
+  /** Unique identifier. */
+  const char *idname;
+  /** Use for tool-tips and Python docs. */
+  const char *description;
 
-    /**
-     * Per window, all events to the window, screen, area and region handlers. */
-    // wm_event_do_handlers(C);
+  int (*exec)(struct cContext *, wabi::UsdAttribute *) ATTR_WARN_UNUSED_RESULT;
 
-    /**
-     *  Events have left notes about changes, we handle and cache it. */
-    // wm_event_do_notifiers(C);
+  bool (*poll)(struct cContext *) ATTR_WARN_UNUSED_RESULT;
+};
 
-    /**
-     *  Execute cached changes and draw. */
-    WM_draw_update(C);
-  }
-}
+void WM_operatortypes_register(void);

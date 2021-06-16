@@ -86,7 +86,9 @@ void TfScriptModuleLoader::RegisterLibrary(TfToken const &name,
 
   // Add this library as a successor to all predecessors.
   TF_FOR_ALL(pred, predecessors)
-  _AddSuccessor(*pred, name);
+  {
+    _AddSuccessor(*pred, name);
+  }
 }
 
 vector<string> TfScriptModuleLoader::GetModuleNames() const

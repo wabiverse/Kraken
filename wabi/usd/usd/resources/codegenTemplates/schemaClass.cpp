@@ -179,7 +179,7 @@ UsdSchemaKind {{ cls.cppClassName }}::_GetSchemaType() const
 {{cls.cppClassName}}
 {% if not cls.isMultipleApply %}
 {{ cls.cppClassName }}::Apply(const UsdPrim &prim)
-{ % else % }
+{% else %}
 {{ cls.cppClassName }}::Apply(const UsdPrim &prim, const TfToken &name)
 {% endif %}
 {
@@ -283,7 +283,7 @@ UsdAttribute {{ cls.cppClassName }}::Create{{ Proper(attr.apiName) }}Attr(VtValu
 {% endif %}
 {% endfor %}
 {% for relName in cls.relOrder %}
-{ % set rel = cls.rels[relName]%}
+{% set rel = cls.rels[relName]%}
 {# Only emit Create / Get API and doxygen if apiName is not empty string. #}
 {% if rel.apiName != '' %}
 {% if rel.apiGet != "custom" %}
@@ -307,7 +307,7 @@ UsdRelationship {{ cls.cppClassName }}::Create{{ Proper(rel.apiName) }}Rel() con
     {{ tokensPrefix }}Tokens->{{ rel.name }}),
 {% else %}
   return GetPrim().CreateRelationship(
-    {{tokensPrefix}}Tokens->{{ rel.name }},
+    {{ tokensPrefix }}Tokens->{{ rel.name }},
 {% endif %}
     /* custom = */ {{ "true" if rel.custom else "false" }});
 }

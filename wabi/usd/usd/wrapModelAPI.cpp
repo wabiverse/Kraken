@@ -76,6 +76,7 @@ void wrapUsdModelAPI()
     .def(init<UsdSchemaBase const &>
         (arg("schemaObj")))
     .def(TfTypePythonClass())
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
     .staticmethod("Get")
     .def("GetSchemaAttributeNames", &This::GetSchemaAttributeNames,
         arg("includeInherited") = true,

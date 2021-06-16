@@ -131,15 +131,21 @@ void Tf_NoticeRegistry::_BeginSend(const TfNotice &notice,
                                    const std::vector<TfNotice::WeakProbePtr> &probes)
 {
   TF_FOR_ALL(i, probes)
-  if (*i)
-    (*i)->BeginSend(notice, sender, senderType);
+  {
+    if (*i) {
+      (*i)->BeginSend(notice, sender, senderType);
+    }
+  }
 }
 
 void Tf_NoticeRegistry::_EndSend(const std::vector<TfNotice::WeakProbePtr> &probes)
 {
   TF_FOR_ALL(i, probes)
-  if (*i)
-    (*i)->EndSend();
+  {
+    if (*i) {
+      (*i)->EndSend();
+    }
+  }
 }
 
 void Tf_NoticeRegistry::_BeginDelivery(const TfNotice &notice,
@@ -150,15 +156,21 @@ void Tf_NoticeRegistry::_BeginDelivery(const TfNotice &notice,
                                        const std::vector<TfNotice::WeakProbePtr> &probes)
 {
   TF_FOR_ALL(i, probes)
-  if (*i)
-    (*i)->BeginDelivery(notice, sender, senderType, listener, listenerType);
+  {
+    if (*i) {
+      (*i)->BeginDelivery(notice, sender, senderType, listener, listenerType);
+    }
+  }
 }
 
 void Tf_NoticeRegistry::_EndDelivery(const std::vector<TfNotice::WeakProbePtr> &probes)
 {
   TF_FOR_ALL(i, probes)
-  if (*i)
-    (*i)->EndDelivery();
+  {
+    if (*i) {
+      (*i)->EndDelivery();
+    }
+  }
 }
 
 TfNotice::Key Tf_NoticeRegistry::_Register(TfNotice::_DelivererBase *deliverer)

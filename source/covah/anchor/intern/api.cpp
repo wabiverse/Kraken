@@ -3454,22 +3454,25 @@ bool ANCHOR::ProcessEvents(ANCHOR_SystemHandle systemhandle, bool waitForEvent)
   return system->processEvents(waitForEvent);
 }
 
+void ANCHOR::DispatchEvents(ANCHOR_SystemHandle systemhandle)
+{
+  ANCHOR_ISystem *system = (ANCHOR_ISystem *)systemhandle;
+
+  system->dispatchEvents();
+}
+
 eAnchorStatus ANCHOR::SwapChain(ANCHOR_SystemWindowHandle windowhandle)
 {
   ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
   window->swapBuffers();
 }
 
-eAnchorStatus ANCHOR::AddEventConsumer(ANCHOR_EventConsumerHandle consumer)
+eAnchorStatus ANCHOR::AddEventConsumer(ANCHOR_SystemHandle systemhandle,
+                                       ANCHOR_EventConsumerHandle consumerhandle)
 {
-  eAnchorStatus success;
-  if (G_CTX->EventManager) {
-    success = G_CTX->EventManager->addConsumer((ANCHOR_CallbackEventConsumer *)consumer);
-  }
-  else {
-    success = ANCHOR_ERROR;
-  }
-  return success;
+  ANCHOR_ISystem *system = (ANCHOR_ISystem *)systemhandle;
+
+  return system->addEventConsumer((ANCHOR_CallbackEventConsumer *)consumerhandle);
 }
 
 void ANCHOR::SetAllocatorFunctions(ANCHORMemAllocFunc alloc_func,
@@ -4304,9 +4307,6 @@ void ANCHOR::Initialize(ANCHOR_Context *context)
 {
   ANCHOR_Context &g = *context;
   ANCHOR_ASSERT(!g.Initialized && !g.SettingsLoaded);
-
-  /** Create the Event Manager. */
-  g.EventManager = IM_NEW(ANCHOR_EventManager)();
 
   // Add .ini handle for ANCHOR_Window type
   {

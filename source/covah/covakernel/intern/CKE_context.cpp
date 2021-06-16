@@ -26,7 +26,10 @@
 #include "CKE_main.h"
 #include "CKE_version.h"
 
+#include "UNI_window.h"
+
 #include <wabi/base/tf/mallocTag.h>
+#include <wabi/usd/usd/attribute.h>
 
 WABI_NAMESPACE_USING
 
@@ -39,6 +42,8 @@ struct cContext {
   /* windowmanager context */
   struct {
     struct wmWindowManager *manager;
+    struct wmWindow *window;
+
     const char *operator_poll_msg;
   } wm;
 
@@ -82,6 +87,11 @@ wmWindowManager *CTX_wm_manager(const cContext *C)
   return C->wm.manager;
 }
 
+wmWindow *CTX_wm_window(const cContext *C)
+{
+  return C->wm.window;
+}
+
 Scene *CTX_data_scene(const cContext *C)
 {
   return C->data.scene;
@@ -98,6 +108,19 @@ void CTX_data_main_set(cContext *C, Main *cmain)
 void CTX_wm_manager_set(cContext *C, wmWindowManager *wm)
 {
   C->wm.manager = wm;
+}
+
+void CTX_wm_window_set(cContext *C, wmWindow *win)
+{
+  C->wm.window = win;
+  if (win) {
+    C->data.scene = win->scene;
+  }
+
+  // C->wm.workspace = (win) ? BKE_workspace_active_get(win->workspace_hook) : NULL;
+  // C->wm.screen = (win) ? BKE_workspace_active_screen_get(win->workspace_hook) : NULL;
+  // C->wm.area = NULL;
+  // C->wm.region = NULL;
 }
 
 void CTX_data_scene_set(cContext *C, Scene *cscene)

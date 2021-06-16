@@ -1746,19 +1746,10 @@ bool ANCHOR_SystemSDL::processEvents(bool waitForEvent)
   do {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
-      ANCHOR_ImplSDL2_ProcessEvent(&event);
-      if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
-          event.window.windowID == SDL_GetWindowID(m_sdl_window->getSDLWindow()))
-        processEvent(&event);
+      processEvent(&event);
       anyProcessed = true;
     }
-
-    // if (generateWindowExposeEvents()) {
-    //   anyProcessed = true;
-    // }
   } while (waitForEvent && !anyProcessed);
-
-  m_sdl_window->frameUpdate();
 
   return anyProcessed;
 }

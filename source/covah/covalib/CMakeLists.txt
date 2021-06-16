@@ -7,11 +7,13 @@ set(INC
 set(SRC
   intern/CLI_string_utils.cpp
   intern/CLI_icons.cpp
+  intern/CLI_time.cpp
 
   CLI_api.h
   CLI_compiler_attrs.h
   CLI_icons.h
   CLI_string_utils.h
+  CLI_time.h
   CLI_utildefines.h
 )
 

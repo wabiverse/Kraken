@@ -23,9 +23,11 @@
  */
 
 #include "WM_init_exit.h" /* Own include. */
+#include "WM_cursors.h"
 #include "WM_window.h"
 
 #include "ANCHOR_api.h"
+#include "ANCHOR_system_paths.h"
 
 #include "UNI_context.h"
 
@@ -86,4 +88,7 @@ static void ShowMainMenuBar()
 void WM_init(cContext *C, int argc, const char **argv)
 {
   WM_anchor_init(C);
+  WM_init_cursor_data();
+
+  ANCHOR_CreateSystemPaths();
 }

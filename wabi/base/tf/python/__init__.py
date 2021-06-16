@@ -32,11 +32,32 @@
 Tf -- Tools Foundation
 """
 
-from sys import platform
+import platform, sys, os, ctypes
+if sys.version_info >= (3, 8) and platform.system() == "Windows":
+    import contextlib
 
-if platform == "linux" or platform == "linux2":
-    import os
-    import ctypes
+    @contextlib.contextmanager
+    def WindowsImportWrapper():
+        import os
+        dirs = []
+        import_paths = os.getenv('PXR_USD_WINDOWS_DLL_PATH')
+        if import_paths is None:
+            import_paths = os.getenv('PATH', '')
+        for path in import_paths.split(os.pathsep):
+            # Calling add_dll_directory raises an exception if paths don't
+            # exist, or if you pass in dot
+            if os.path.exists(path) and path != '.':
+                dirs.append(os.add_dll_directory(path))
+        # This block guarantees we clear the dll directories if an exception
+        # is raised in the with block.
+        try:
+            yield
+        finally:
+            for dll_dir in dirs:
+                dll_dir.close()
+        del os
+    del contextlib
+else:
     # Fix libai.so from crashing python, Linux problem only, Autodesk has a support ticket
     # for this. In the meantime. This will work. If you move the python installation be sure
     # to also update this path.
@@ -44,12 +65,20 @@ if platform == "linux" or platform == "linux2":
     # Relative path to covah installation, where libai.so is installed to covah/X.XX/bin
     aiSO = os.path.abspath(os.path.join(currentFile, "../../../../../../bin/libai.so"))
     ctypes.CDLL(aiSO, mode=os.RTLD_GLOBAL)
+    class WindowsImportWrapper(object):
+        def __enter__(self):
+            pass
+        def __exit__(self, exc_type, ex_val, exc_tb):
+            pass
+del platform, sys, os, ctypes
+
 
 def PreparePythonModule(moduleName=None):
     """Prepare an extension module at import time.  This will import the
     Python module associated with the caller's module (e.g. '_tf' for 'wabi.Tf')
     or the module with the specified moduleName and copy its contents into
     the caller's local namespace.
+
     Generally, this should only be called by the __init__.py script for a module
     upon loading a boost python module (generally '_libName.so')."""
     import importlib
@@ -65,7 +94,10 @@ def PreparePythonModule(moduleName=None):
             moduleName = f_locals["__name__"].split(".")[-1]
             moduleName = "_" + moduleName[0].lower() + moduleName[1:]
 
-        module = importlib.import_module("." + moduleName, f_locals["__name__"])
+        with WindowsImportWrapper():
+            module = importlib.import_module(
+                    "." + moduleName, f_locals["__name__"])
+
         PrepareModule(module, f_locals)
         try:
             del f_locals[moduleName]
@@ -112,18 +144,25 @@ def PrepareModule(module, result):
 
 def GetCodeLocation(framesUp):
     """Returns a tuple (moduleName, functionName, fileName, lineNo).
+
     To trace the current location of python execution, use GetCodeLocation().
     By default, the information is returned at the current stack-frame; thus
+
         info = GetCodeLocation()
+
     will return information about the line that GetCodeLocation() was called 
     from. One can write:
+
         def genericDebugFacility():
             info = GetCodeLocation(1)
             # print out data
+
+
         def someCode():
             ...
             if bad:
                 genericDebugFacility()
+
     and genericDebugFacility() will get information associated with its caller, 
     i.e. the function someCode()."""
     import sys
@@ -145,6 +184,7 @@ __SetErrorExceptionClass(ErrorException)
 
 def Warn(msg, template=""):
     """Issue a warning via the TfDiagnostic system.
+
     At this time, template is ignored.
     """
     codeInfo = GetCodeLocation(framesUp=1)
@@ -152,6 +192,7 @@ def Warn(msg, template=""):
     
 def Status(msg, verbose=True):
     """Issues a status update to the Tf diagnostic system.
+
     If verbose is True (the default) then information about where in the code
     the status update was issued from is included.
     """

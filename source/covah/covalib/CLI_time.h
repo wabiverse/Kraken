@@ -18,33 +18,13 @@
 
 /**
  * @file
- * Window Manager.
- * Making GUI Fly.
+ * COVAH Library.
+ * Gadget Vault.
  */
 
-#include "CKE_context.h"
+#pragma once
 
-#include "WM_draw.h"
-#include "WM_window.h"
+#include "CLI_api.h"
 
-void WM_main(cContext *C)
-{
-  while (1) {
-
-    /**
-     * Process events from anchor, handle window events. */
-    WM_window_process_events(C);
-
-    /**
-     * Per window, all events to the window, screen, area and region handlers. */
-    // wm_event_do_handlers(C);
-
-    /**
-     *  Events have left notes about changes, we handle and cache it. */
-    // wm_event_do_notifiers(C);
-
-    /**
-     *  Execute cached changes and draw. */
-    WM_draw_update(C);
-  }
-}
+COVAH_LIB_API
+void PIL_sleep_ms(int ms);

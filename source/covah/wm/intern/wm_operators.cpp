@@ -22,29 +22,35 @@
  * Making GUI Fly.
  */
 
+#include "WM_operators.h"
+
 #include "CKE_context.h"
 
-#include "WM_draw.h"
-#include "WM_window.h"
-
-void WM_main(cContext *C)
+int wm_window_close_exec(cContext *C, wabi::UsdAttribute *UNUSED(op))
 {
-  while (1) {
-
-    /**
-     * Process events from anchor, handle window events. */
-    WM_window_process_events(C);
-
-    /**
-     * Per window, all events to the window, screen, area and region handlers. */
-    // wm_event_do_handlers(C);
-
-    /**
-     *  Events have left notes about changes, we handle and cache it. */
-    // wm_event_do_notifiers(C);
-
-    /**
-     *  Execute cached changes and draw. */
-    WM_draw_update(C);
-  }
+  // wmWindowManager *wm = CTX_wm_manager(C);
+  // wmWindow *win = CTX_wm_window(C);
+  // wm_window_close(C, wm, win);
+  // return OPERATOR_FINISHED;
+  return 0;
 }
+
+static void WM_OT_window_close(wmOperatorType *ot)
+{
+  ot->name = "Close Window";
+  ot->idname = "WM_OT_window_close";
+  ot->description = "Close the current window";
+
+  // ot->exec = wm_window_close_exec;
+  // ot->poll = WM_operator_winactive;
+}
+
+void WM_operatortype_append(void (*opfunc)(wmOperatorType *))
+{
+  // wmOperatorType *ot = wm_operatortype_append__begin();
+  // opfunc(ot);
+  // wm_operatortype_append__end(ot);
+}
+
+void WM_operatortypes_register(void)
+{}
