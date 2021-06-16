@@ -9,13 +9,14 @@ wabi_library(usdUI
         usd
 
     PUBLIC_CLASSES
-        window
-        workspace
+        area
         backdrop
         nodeGraphNodeAPI
         sceneGraphPrimAPI
-        screenAPI
+        screen
         tokens
+        window
+        workspace
 
     PUBLIC_HEADERS
         api.h
@@ -25,10 +26,11 @@ wabi_library(usdUI
 
     PYMODULE_CPPFILES
         module.cpp
+        wrapArea.cpp
         wrapBackdrop.cpp
         wrapNodeGraphNodeAPI.cpp
         wrapSceneGraphPrimAPI.cpp
-        wrapScreenAPI.cpp
+        wrapScreen.cpp
         wrapTokens.cpp
         wrapWindow.cpp
         wrapWorkspace.cpp

@@ -34,7 +34,7 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/usdUI/workspace.h"
+#include "wabi/usd/usdUI/screen.h"
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
 
@@ -44,81 +44,81 @@ WABI_NAMESPACE_BEGIN
  * Register the schema with the TfType system. */
 TF_REGISTRY_FUNCTION(TfType)
 {
-  TfType::Define<UsdUIWorkspace, TfType::Bases<UsdTyped>>();
+  TfType::Define<UsdUIScreen, TfType::Bases<UsdTyped>>();
   /**
    * Register the usd prim typename as an alias under UsdSchemaBase.
    * This enables one to call:
-   * TfType::Find<UsdSchemaBase>().FindDerivedByName("Workspace")
-   * To find TfType<UsdUIWorkspace>, which is how IsA queries are
+   * TfType::Find<UsdSchemaBase>().FindDerivedByName("Screen")
+   * To find TfType<UsdUIScreen>, which is how IsA queries are
    * answered. */
-  TfType::AddAlias<UsdSchemaBase, UsdUIWorkspace>("Workspace");
+  TfType::AddAlias<UsdSchemaBase, UsdUIScreen>("Screen");
 }
 
 /* virtual */
-UsdUIWorkspace::~UsdUIWorkspace()
+UsdUIScreen::~UsdUIScreen()
 {}
 
 /* static */
-UsdUIWorkspace UsdUIWorkspace::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdUIScreen UsdUIScreen::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
   if (!stage) {
     TF_CODING_ERROR("Invalid stage");
-    return UsdUIWorkspace();
+    return UsdUIScreen();
   }
-  return UsdUIWorkspace(stage->GetPrimAtPath(path));
+  return UsdUIScreen(stage->GetPrimAtPath(path));
 }
 
 /* static */
-UsdUIWorkspace UsdUIWorkspace::Define(const UsdStagePtr &stage, const SdfPath &path)
+UsdUIScreen UsdUIScreen::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
-  static TfToken usdPrimTypeName("Workspace");
+  static TfToken usdPrimTypeName("Screen");
   if (!stage) {
     TF_CODING_ERROR("Invalid stage");
-    return UsdUIWorkspace();
+    return UsdUIScreen();
   }
-  return UsdUIWorkspace(stage->DefinePrim(path, usdPrimTypeName));
+  return UsdUIScreen(stage->DefinePrim(path, usdPrimTypeName));
 }
 /* virtual */
-UsdSchemaKind UsdUIWorkspace::_GetSchemaKind() const
+UsdSchemaKind UsdUIScreen::_GetSchemaKind() const
 {
-  return UsdUIWorkspace::schemaKind;
+  return UsdUIScreen::schemaKind;
 }
 
 /* virtual */
-UsdSchemaKind UsdUIWorkspace::_GetSchemaType() const
+UsdSchemaKind UsdUIScreen::_GetSchemaType() const
 {
-  return UsdUIWorkspace::schemaType;
+  return UsdUIScreen::schemaType;
 }
 
 /* static */
-const TfType &UsdUIWorkspace::_GetStaticTfType()
+const TfType &UsdUIScreen::_GetStaticTfType()
 {
-  static TfType tfType = TfType::Find<UsdUIWorkspace>();
+  static TfType tfType = TfType::Find<UsdUIScreen>();
   return tfType;
 }
 
 /* static */
-bool UsdUIWorkspace::_IsTypedSchema()
+bool UsdUIScreen::_IsTypedSchema()
 {
   static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdUIWorkspace::_GetTfType() const
+const TfType &UsdUIScreen::_GetTfType() const
 {
   return _GetStaticTfType();
 }
 
-UsdAttribute UsdUIWorkspace::GetNameAttr() const
+UsdAttribute UsdUIScreen::GetAlignmentAttr() const
 {
-  return GetPrim().GetAttribute(UsdUITokens->uiWorkspaceName);
+  return GetPrim().GetAttribute(UsdUITokens->uiScreenAlignment);
 }
 
-UsdAttribute UsdUIWorkspace::CreateNameAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdUIScreen::CreateAlignmentAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(
-    UsdUITokens->uiWorkspaceName,
+    UsdUITokens->uiScreenAlignment,
     SdfValueTypeNames->Token,
     /* custom = */ false,
     SdfVariabilityUniform,
@@ -126,16 +126,16 @@ UsdAttribute UsdUIWorkspace::CreateNameAttr(VtValue const &defaultValue, bool wr
     writeSparsely);
 }
 
-UsdRelationship UsdUIWorkspace::GetScreenRel() const
+UsdRelationship UsdUIScreen::GetAreasRel() const
 {
   return GetPrim().GetRelationship(
-    UsdUITokens->uiWorkspaceScreen);
+    UsdUITokens->uiScreenAreas);
 }
 
-UsdRelationship UsdUIWorkspace::CreateScreenRel() const
+UsdRelationship UsdUIScreen::CreateAreasRel() const
 {
   return GetPrim().CreateRelationship(
-    UsdUITokens->uiWorkspaceScreen,
+    UsdUITokens->uiScreenAreas,
     /* custom = */ false);
 }
 
@@ -152,10 +152,11 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector& left
 }  /* anonymous */
 
 /*static*/
-const TfTokenVector& UsdUIWorkspace::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector& UsdUIScreen::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-    UsdUITokens->uiWorkspaceName,
+    UsdUITokens->uiScreenCollectionAreasIncludeRoot,
+    UsdUITokens->uiScreenAlignment,
   };
   static TfTokenVector allNames =
     _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true), localNames);

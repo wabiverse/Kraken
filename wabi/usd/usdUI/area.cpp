@@ -34,7 +34,7 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/usdUI/workspace.h"
+#include "wabi/usd/usdUI/area.h"
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
 
@@ -44,81 +44,81 @@ WABI_NAMESPACE_BEGIN
  * Register the schema with the TfType system. */
 TF_REGISTRY_FUNCTION(TfType)
 {
-  TfType::Define<UsdUIWorkspace, TfType::Bases<UsdTyped>>();
+  TfType::Define<UsdUIArea, TfType::Bases<UsdTyped>>();
   /**
    * Register the usd prim typename as an alias under UsdSchemaBase.
    * This enables one to call:
-   * TfType::Find<UsdSchemaBase>().FindDerivedByName("Workspace")
-   * To find TfType<UsdUIWorkspace>, which is how IsA queries are
+   * TfType::Find<UsdSchemaBase>().FindDerivedByName("Area")
+   * To find TfType<UsdUIArea>, which is how IsA queries are
    * answered. */
-  TfType::AddAlias<UsdSchemaBase, UsdUIWorkspace>("Workspace");
+  TfType::AddAlias<UsdSchemaBase, UsdUIArea>("Area");
 }
 
 /* virtual */
-UsdUIWorkspace::~UsdUIWorkspace()
+UsdUIArea::~UsdUIArea()
 {}
 
 /* static */
-UsdUIWorkspace UsdUIWorkspace::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdUIArea UsdUIArea::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
   if (!stage) {
     TF_CODING_ERROR("Invalid stage");
-    return UsdUIWorkspace();
+    return UsdUIArea();
   }
-  return UsdUIWorkspace(stage->GetPrimAtPath(path));
+  return UsdUIArea(stage->GetPrimAtPath(path));
 }
 
 /* static */
-UsdUIWorkspace UsdUIWorkspace::Define(const UsdStagePtr &stage, const SdfPath &path)
+UsdUIArea UsdUIArea::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
-  static TfToken usdPrimTypeName("Workspace");
+  static TfToken usdPrimTypeName("Area");
   if (!stage) {
     TF_CODING_ERROR("Invalid stage");
-    return UsdUIWorkspace();
+    return UsdUIArea();
   }
-  return UsdUIWorkspace(stage->DefinePrim(path, usdPrimTypeName));
+  return UsdUIArea(stage->DefinePrim(path, usdPrimTypeName));
 }
 /* virtual */
-UsdSchemaKind UsdUIWorkspace::_GetSchemaKind() const
+UsdSchemaKind UsdUIArea::_GetSchemaKind() const
 {
-  return UsdUIWorkspace::schemaKind;
+  return UsdUIArea::schemaKind;
 }
 
 /* virtual */
-UsdSchemaKind UsdUIWorkspace::_GetSchemaType() const
+UsdSchemaKind UsdUIArea::_GetSchemaType() const
 {
-  return UsdUIWorkspace::schemaType;
+  return UsdUIArea::schemaType;
 }
 
 /* static */
-const TfType &UsdUIWorkspace::_GetStaticTfType()
+const TfType &UsdUIArea::_GetStaticTfType()
 {
-  static TfType tfType = TfType::Find<UsdUIWorkspace>();
+  static TfType tfType = TfType::Find<UsdUIArea>();
   return tfType;
 }
 
 /* static */
-bool UsdUIWorkspace::_IsTypedSchema()
+bool UsdUIArea::_IsTypedSchema()
 {
   static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdUIWorkspace::_GetTfType() const
+const TfType &UsdUIArea::_GetTfType() const
 {
   return _GetStaticTfType();
 }
 
-UsdAttribute UsdUIWorkspace::GetNameAttr() const
+UsdAttribute UsdUIArea::GetNameAttr() const
 {
-  return GetPrim().GetAttribute(UsdUITokens->uiWorkspaceName);
+  return GetPrim().GetAttribute(UsdUITokens->uiAreaName);
 }
 
-UsdAttribute UsdUIWorkspace::CreateNameAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdUIArea::CreateNameAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(
-    UsdUITokens->uiWorkspaceName,
+    UsdUITokens->uiAreaName,
     SdfValueTypeNames->Token,
     /* custom = */ false,
     SdfVariabilityUniform,
@@ -126,17 +126,52 @@ UsdAttribute UsdUIWorkspace::CreateNameAttr(VtValue const &defaultValue, bool wr
     writeSparsely);
 }
 
-UsdRelationship UsdUIWorkspace::GetScreenRel() const
+UsdAttribute UsdUIArea::GetIconAttr() const
 {
-  return GetPrim().GetRelationship(
-    UsdUITokens->uiWorkspaceScreen);
+  return GetPrim().GetAttribute(UsdUITokens->uiAreaIcon);
 }
 
-UsdRelationship UsdUIWorkspace::CreateScreenRel() const
+UsdAttribute UsdUIArea::CreateIconAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-  return GetPrim().CreateRelationship(
-    UsdUITokens->uiWorkspaceScreen,
-    /* custom = */ false);
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiAreaIcon,
+    SdfValueTypeNames->Asset,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
+}
+
+UsdAttribute UsdUIArea::GetPosAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiAreaPos);
+}
+
+UsdAttribute UsdUIArea::CreatePosAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiAreaPos,
+    SdfValueTypeNames->Float2,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
+}
+
+UsdAttribute UsdUIArea::GetSizeAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiAreaSize);
+}
+
+UsdAttribute UsdUIArea::CreateSizeAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiAreaSize,
+    SdfValueTypeNames->Float2,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
 }
 
 namespace {
@@ -152,10 +187,13 @@ static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector& left
 }  /* anonymous */
 
 /*static*/
-const TfTokenVector& UsdUIWorkspace::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector& UsdUIArea::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-    UsdUITokens->uiWorkspaceName,
+    UsdUITokens->uiAreaName,
+    UsdUITokens->uiAreaIcon,
+    UsdUITokens->uiAreaPos,
+    UsdUITokens->uiAreaSize,
   };
   static TfTokenVector allNames =
     _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true), localNames);

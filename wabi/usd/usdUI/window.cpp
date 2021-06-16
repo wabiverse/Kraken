@@ -110,12 +110,12 @@ const TfType &UsdUIWindow::_GetTfType() const
   return _GetStaticTfType();
 }
 
-UsdAttribute UsdUIWindow::GetWindowTitleAttr() const
+UsdAttribute UsdUIWindow::GetTitleAttr() const
 {
   return GetPrim().GetAttribute(UsdUITokens->uiWindowTitle);
 }
 
-UsdAttribute UsdUIWindow::CreateWindowTitleAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdUIWindow::CreateTitleAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(
     UsdUITokens->uiWindowTitle,
@@ -126,12 +126,12 @@ UsdAttribute UsdUIWindow::CreateWindowTitleAttr(VtValue const &defaultValue, boo
     writeSparsely);
 }
 
-UsdAttribute UsdUIWindow::GetWindowIconAttr() const
+UsdAttribute UsdUIWindow::GetIconAttr() const
 {
   return GetPrim().GetAttribute(UsdUITokens->uiWindowIcon);
 }
 
-UsdAttribute UsdUIWindow::CreateWindowIconAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdUIWindow::CreateIconAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(
     UsdUITokens->uiWindowIcon,
@@ -142,12 +142,12 @@ UsdAttribute UsdUIWindow::CreateWindowIconAttr(VtValue const &defaultValue, bool
     writeSparsely);
 }
 
-UsdAttribute UsdUIWindow::GetWindowTypeAttr() const
+UsdAttribute UsdUIWindow::GetTypeAttr() const
 {
   return GetPrim().GetAttribute(UsdUITokens->uiWindowType);
 }
 
-UsdAttribute UsdUIWindow::CreateWindowTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdUIWindow::CreateTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(
     UsdUITokens->uiWindowType,
@@ -158,12 +158,12 @@ UsdAttribute UsdUIWindow::CreateWindowTypeAttr(VtValue const &defaultValue, bool
     writeSparsely);
 }
 
-UsdAttribute UsdUIWindow::GetWindowPosAttr() const
+UsdAttribute UsdUIWindow::GetPosAttr() const
 {
   return GetPrim().GetAttribute(UsdUITokens->uiWindowPos);
 }
 
-UsdAttribute UsdUIWindow::CreateWindowPosAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdUIWindow::CreatePosAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(
     UsdUITokens->uiWindowPos,
@@ -174,12 +174,12 @@ UsdAttribute UsdUIWindow::CreateWindowPosAttr(VtValue const &defaultValue, bool 
     writeSparsely);
 }
 
-UsdAttribute UsdUIWindow::GetWindowSizeAttr() const
+UsdAttribute UsdUIWindow::GetSizeAttr() const
 {
   return GetPrim().GetAttribute(UsdUITokens->uiWindowSize);
 }
 
-UsdAttribute UsdUIWindow::CreateWindowSizeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdUIWindow::CreateSizeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(
     UsdUITokens->uiWindowSize,
@@ -188,6 +188,19 @@ UsdAttribute UsdUIWindow::CreateWindowSizeAttr(VtValue const &defaultValue, bool
     SdfVariabilityUniform,
     defaultValue,
     writeSparsely);
+}
+
+UsdRelationship UsdUIWindow::GetUiWindowWorkspaceRel() const
+{
+  return GetPrim().GetRelationship(
+    UsdUITokens->uiWindowWorkspace);
+}
+
+UsdRelationship UsdUIWindow::CreateUiWindowWorkspaceRel() const
+{
+  return GetPrim().CreateRelationship(
+    UsdUITokens->uiWindowWorkspace,
+    /* custom = */ false);
 }
 
 namespace {

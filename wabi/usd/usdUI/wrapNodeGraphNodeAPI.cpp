@@ -166,6 +166,18 @@ void wrapUsdUINodeGraphNodeAPI()
    * ======================================================================
    * --(BEGIN CUSTOM CODE)-- */
 
+
+
+
+
+
+
+
+
+
+
+
+
 namespace {
 
 WRAP_CUSTOM

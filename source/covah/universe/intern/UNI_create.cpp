@@ -30,16 +30,21 @@
 
 #include "CLI_icons.h"
 
-#include <wabi/usd/usd/stage.h>
 #include <wabi/wabi.h>
+
+#include <wabi/base/vt/value.h>
+
+#include <wabi/usd/usdUI/area.h>
+#include <wabi/usd/usdUI/screen.h>
+#include <wabi/usd/usdUI/tokens.h>
+#include <wabi/usd/usdUI/window.h>
+#include <wabi/usd/usdUI/workspace.h>
 
 #include <wabi/usd/usdGeom/cube.h>
 #include <wabi/usd/usdGeom/gprim.h>
 
-#include <wabi/usd/usdUI/screenAPI.h>
-#include <wabi/usd/usdUI/tokens.h>
-#include <wabi/usd/usdUI/window.h>
-#include <wabi/usd/usdUI/workspace.h>
+#include <wabi/usd/usd/collectionAPI.h>
+#include <wabi/usd/usd/stage.h>
 
 WABI_NAMESPACE_USING
 
@@ -86,99 +91,63 @@ void UNI_author_gui()
 {
   /* ----- */
 
+  /** Default Stage Paths. */
+  SdfPath window_path = SdfPath("/Covah/Windows/MainWindow");
+  SdfPath workspace_path = window_path.AppendPath(SdfPath("WorkSpaces/Layout"));
+  SdfPath screen_path = workspace_path.AppendPath(SdfPath("Screen"));
+  SdfPath v3d_path = screen_path.AppendPath(SdfPath("View3D"));
+  SdfPath outliner_path = screen_path.AppendPath(SdfPath("Outliner"));
+
+  /* ----- */
+
   /** Default Window. */
-  SdfPath main_window_path = SdfPath("/Covah/Windows/MainWindow");
-  UsdUIWindow window = UsdUIWindow::Define(UNI.stage, main_window_path);
-  window.CreateWindowTitleAttr(VtValue(TfToken("Covah")));
-  window.CreateWindowIconAttr(VtValue(SdfAssetPath(CLI_icon(ICON_COVAH))));
-  window.CreateWindowPosAttr(VtValue(GfVec2f(0, 0)));
-  window.CreateWindowSizeAttr(VtValue(GfVec2f(1920, 1080)));
-  window.CreateWindowTypeAttr(VtValue(TfToken(UsdUITokens->attached)));
+  UsdUIWindow window = UsdUIWindow::Define(UNI.stage, window_path);
+  window.CreateTitleAttr(VtValue(TfToken("Covah")));
+  window.CreateIconAttr(VtValue(SdfAssetPath(CLI_icon(ICON_COVAH))));
+  window.CreatePosAttr(VtValue(GfVec2f(0, 0)));
+  window.CreateSizeAttr(VtValue(GfVec2f(1920, 1080)));
+  window.CreateTypeAttr(VtValue(TfToken(UsdUITokens->normal)));
+  window.CreateUiWindowWorkspaceRel().AddTarget(workspace_path);
 
   /* ----- */
 
-  /** Default Workspace :: Layout. */
-  SdfPath layout_workspace = SdfPath(main_window_path.AppendPath(SdfPath("Workspaces/Layout")));
-  UsdUIWorkspace layout = UsdUIWorkspace::Define(UNI.stage, layout_workspace);
-  layout.CreateWorkspaceNameAttr(VtValue(TfToken("Layout")));
-
-  /** Default Workspace :: Layout's Region. */
-  UsdUIScreenAPI layout_region = UsdUIScreenAPI::Apply(layout.GetPrim());
-  layout_region.CreatePurposeAttr(VtValue(UsdUITokens->region));
+  /** Default 'Layout' WorkSpace. */
+  UsdUIWorkspace workspace = UsdUIWorkspace::Define(UNI.stage, workspace_path);
+  workspace.CreateNameAttr(VtValue(TfToken("Layout")));
+  workspace.CreateScreenRel().AddTarget(screen_path);
 
   /* ----- */
 
-  /** View3D Region. */
-  SdfPath v3d_path = layout_workspace.AppendPath(SdfPath("View3D"));
-  SdfPath v3d_header_path = v3d_path.AppendPath(SdfPath("Header"));
-
-  /** Outliner Region. */
-  SdfPath outliner_path = layout_workspace.AppendPath(SdfPath("Outliner"));
-  SdfPath outliner_header_path = outliner_path.AppendPath(SdfPath("Header"));
+  /** Default Screen. */
+  UsdUIScreen screen = UsdUIScreen::Define(UNI.stage, screen_path);
+  screen.CreateAlignmentAttr(VtValue(UsdUITokens->verticalSplit));
 
   /* ----- */
 
-  /** Viewport Defaults */
-  UsdPrim view3d_prim = UNI.stage->DefinePrim(v3d_path);
-  UsdUIScreenAPI v3d = UsdUIScreenAPI::Apply(view3d_prim);
+  /** Default Viewport. */
+  UsdUIArea v3d = UsdUIArea::Define(UNI.stage, v3d_path);
   v3d.CreateNameAttr(VtValue(TfToken("View3D")));
+  v3d.CreateIconAttr(VtValue(SdfAssetPath(CLI_icon(ICON_HYDRA))));
   v3d.CreatePosAttr(VtValue(GfVec2f(0, 0)));
   v3d.CreateSizeAttr(VtValue(GfVec2f(1800, 1080)));
 
-  /** Viewport Header Bar. */
-  UsdPrim view3d_header_prim = UNI.stage->DefinePrim(v3d_header_path);
-  UsdUIScreenAPI v3d_header = UsdUIScreenAPI::Apply(view3d_header_prim);
-  /** Header -> TopBar */
-  v3d_header.CreateTypeAttr(VtValue(UsdUITokens->topBar));
-  v3d_header.CreateIconAttr(VtValue(SdfAssetPath(CLI_icon(ICON_HYDRA))));
-  v3d_header.CreateNameAttr(VtValue(TfToken("Hydra View3D")));
-
-  /** Set Type and Purpose. */
-  v3d.CreateTypeAttr(VtValue(UsdUITokens->view3D));
-  v3d.CreatePurposeAttr(VtValue(UsdUITokens->region));
-
-  /** Set Header Relationship. */
-  v3d.CreateLayoutAttr(VtValue(UsdUITokens->horizontalSplit));
-  v3d.CreateUiScreenAreaRegionRel().AddTarget(v3d_header_path);
-
   /* ----- */
 
-  /** Outliner Defaults. */
-  UsdPrim outliner_prim = UNI.stage->DefinePrim(outliner_path);
-  UsdUIScreenAPI outliner = UsdUIScreenAPI::Apply(outliner_prim);
+  /** Default Outliner. */
+  UsdUIArea outliner = UsdUIArea::Define(UNI.stage, outliner_path);
   outliner.CreateNameAttr(VtValue(TfToken("Outliner")));
+  outliner.CreateIconAttr(VtValue(SdfAssetPath(CLI_icon(ICON_LUXO))));
   outliner.CreatePosAttr(VtValue(GfVec2f(1800, 0)));
   outliner.CreateSizeAttr(VtValue(GfVec2f(120, 1080)));
 
-  /** Outliner Header Bar. */
-  UsdPrim outliner_header_prim = UNI.stage->DefinePrim(outliner_header_path);
-  UsdUIScreenAPI outliner_header = UsdUIScreenAPI::Apply(outliner_header_prim);
-  /** Header -> TopBar */
-  outliner_header.CreateTypeAttr(VtValue(UsdUITokens->topBar));
-  outliner_header.CreateIconAttr(VtValue(SdfAssetPath(CLI_icon(ICON_LUXO))));
-  outliner_header.CreateNameAttr(VtValue(TfToken("Stage Inspector")));
-
-  /** Set Type and Purpose. */
-  outliner.CreateTypeAttr(VtValue(UsdUITokens->outliner));
-  outliner.CreatePurposeAttr(VtValue(UsdUITokens->region));
-
-  /** Set Header Relationship. */
-  outliner.CreateLayoutAttr(VtValue(UsdUITokens->horizontalSplit));
-  outliner.CreateUiScreenAreaRegionRel().AddTarget(outliner_header_path);
-
   /* ----- */
 
-  /**
-   * And add these to our Layout Workspace. */
+  /** Add UI Areas to Screen's Collection of Areas. */
+  UsdRelationship screen_areas = screen.CreateAreasRel();
+  screen_areas.AddTarget(v3d_path);
+  screen_areas.AddTarget(outliner_path);
 
-  /** Add Viewport. */
-  v3d.CreateWorkspaceRel().AddTarget(layout_workspace);
-
-  /** Vertical Split Between View3D and Outliner. */
-  layout_region.CreateLayoutAttr(VtValue(UsdUITokens->verticalSplit));
-
-  /** Add Outliner. */
-  outliner.CreateWorkspaceRel().AddTarget(layout_workspace);
+  /* ----- */
 }
 
 void UNI_author_default_scene()

@@ -58,29 +58,29 @@ namespace {
 WRAP_CUSTOM;
 
 
-static UsdAttribute _CreateWindowTitleAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+static UsdAttribute _CreateTitleAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateWindowTitleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  return self.CreateTitleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
-static UsdAttribute _CreateWindowIconAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+static UsdAttribute _CreateIconAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateWindowIconAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
+  return self.CreateIconAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
 }
 
-static UsdAttribute _CreateWindowTypeAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+static UsdAttribute _CreateTypeAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateWindowTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  return self.CreateTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
-static UsdAttribute _CreateWindowPosAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+static UsdAttribute _CreatePosAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateWindowPosAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2), writeSparsely);
+  return self.CreatePosAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2), writeSparsely);
 }
 
-static UsdAttribute _CreateWindowSizeAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+static UsdAttribute _CreateSizeAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateWindowSizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2), writeSparsely);
+  return self.CreateSizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2), writeSparsely);
 }
 
 static std::string _Repr(const UsdUIWindow & self)
@@ -119,21 +119,23 @@ void wrapUsdUIWindow()
         return_value_policy<return_by_value>())
     .staticmethod("_GetStaticTfType")
     .def(!self)
-    .def("GetWindowTitleAttr", &This::GetWindowTitleAttr)
-    .def("CreateWindowTitleAttr", &_CreateWindowTitleAttr,
+    .def("GetTitleAttr", &This::GetTitleAttr)
+    .def("CreateTitleAttr", &_CreateTitleAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
-    .def("GetWindowIconAttr", &This::GetWindowIconAttr)
-    .def("CreateWindowIconAttr", &_CreateWindowIconAttr,
+    .def("GetIconAttr", &This::GetIconAttr)
+    .def("CreateIconAttr", &_CreateIconAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
-    .def("GetWindowTypeAttr", &This::GetWindowTypeAttr)
-    .def("CreateWindowTypeAttr", &_CreateWindowTypeAttr,
+    .def("GetTypeAttr", &This::GetTypeAttr)
+    .def("CreateTypeAttr", &_CreateTypeAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
-    .def("GetWindowPosAttr", &This::GetWindowPosAttr)
-    .def("CreateWindowPosAttr", &_CreateWindowPosAttr,
+    .def("GetPosAttr", &This::GetPosAttr)
+    .def("CreatePosAttr", &_CreatePosAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
-    .def("GetWindowSizeAttr", &This::GetWindowSizeAttr)
-    .def("CreateWindowSizeAttr", &_CreateWindowSizeAttr,
+    .def("GetSizeAttr", &This::GetSizeAttr)
+    .def("CreateSizeAttr", &_CreateSizeAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetUiWindowWorkspaceRel", &This::GetUiWindowWorkspaceRel)
+    .def("CreateUiWindowWorkspaceRel", &This::CreateUiWindowWorkspaceRel)
     .def("__repr__", ::_Repr)
   ;
 
@@ -157,6 +159,18 @@ void wrapUsdUIWindow()
    *   'namespace {', '}'.
    * ======================================================================
    * --(BEGIN CUSTOM CODE)-- */
+
+
+
+
+
+
+
+
+
+
+
+
 
 namespace {
 

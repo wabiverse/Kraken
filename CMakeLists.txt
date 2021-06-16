@@ -247,7 +247,7 @@ add_definitions(${_WABI_CXX_DEFINITIONS})
 set(CMAKE_CXX_FLAGS "${_WABI_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
 
 #-----------------------------------------------------------------------------
-# COVAHVERSE. The Universe - Descripted.
+# Covah Universe. The Universe - Descripted.
 
 include(Public)
 

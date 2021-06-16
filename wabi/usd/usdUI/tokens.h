@@ -71,7 +71,7 @@ WABI_NAMESPACE_BEGIN
  * Use UsdUITokens like so:
  *
  * @code
- *   gprim.GetMyTokenValuedAttr().Set(UsdUITokens->area);
+ *   gprim.GetMyTokenValuedAttr().Set(UsdUITokens->areas);
  * @endcode
  */
 struct UsdUITokensType {
@@ -80,21 +80,15 @@ struct UsdUITokensType {
   UsdUITokensType();
 
   /**
-   * @brief "area"
+   * @brief "areas"
    *
-   * Possible value for UsdUIScreenAPI::GetPurposeAttr(), Default value for UsdUIScreenAPI::GetPurposeAttr() */
-  const TfToken area;
-
-  /**
-   * @brief "attached"
-   *
-   * Possible value for UsdUIWindow::GetWindowTypeAttr(), Default value for UsdUIWindow::GetWindowTypeAttr() */
-  const TfToken attached;
+   *  This token represents the collection name to use with UsdCollectionAPI to represent groups of UI layout areas of a UsdUIScreen prim.  */
+  const TfToken areas;
 
   /**
    * @brief "bottom"
    *
-   * Possible value for UsdUIScreenAPI::GetLayoutAttr() */
+   * Possible value for UsdUIScreen::GetAlignmentAttr() */
   const TfToken bottom;
 
   /**
@@ -104,63 +98,27 @@ struct UsdUITokensType {
   const TfToken closed;
 
   /**
-   * @brief "Console"
-   *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken console;
-
-  /**
    * @brief "detached"
    *
-   * Possible value for UsdUIWindow::GetWindowTypeAttr() */
+   * Possible value for UsdUIWindow::GetTypeAttr() */
   const TfToken detached;
 
   /**
    * @brief "dialog"
    *
-   * Possible value for UsdUIWindow::GetWindowTypeAttr() */
+   * Possible value for UsdUIWindow::GetTypeAttr() */
   const TfToken dialog;
-
-  /**
-   * @brief "DopeSheetEditor"
-   *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken dopeSheetEditor;
-
-  /**
-   * @brief "Empty"
-   *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr(), Default value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken empty;
-
-  /**
-   * @brief "FileBrowser"
-   *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken fileBrowser;
 
   /**
    * @brief "horizontalSplit"
    *
-   * Possible value for UsdUIScreenAPI::GetLayoutAttr() */
+   * Possible value for UsdUIScreen::GetAlignmentAttr() */
   const TfToken horizontalSplit;
-
-  /**
-   * @brief "ImageEditor"
-   *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken imageEditor;
-
-  /**
-   * @brief "Info"
-   *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken info;
 
   /**
    * @brief "left"
    *
-   * Possible value for UsdUIScreenAPI::GetLayoutAttr() */
+   * Possible value for UsdUIScreen::GetAlignmentAttr() */
   const TfToken left;
 
   /**
@@ -170,22 +128,16 @@ struct UsdUITokensType {
   const TfToken minimized;
 
   /**
-   * @brief "MovieEditor"
-   *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken movieEditor;
-
-  /**
-   * @brief "NodeGraph"
-   *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken nodeGraph;
-
-  /**
    * @brief "none"
    *
-   * Possible value for UsdUIScreenAPI::GetLayoutAttr(), Default value for UsdUIScreenAPI::GetLayoutAttr() */
+   * Possible value for UsdUIScreen::GetAlignmentAttr(), Default value for UsdUIScreen::GetAlignmentAttr() */
   const TfToken none;
+
+  /**
+   * @brief "normal"
+   *
+   * Possible value for UsdUIWindow::GetTypeAttr(), Default value for UsdUIWindow::GetTypeAttr() */
+  const TfToken normal;
 
   /**
    * @brief "open"
@@ -194,70 +146,40 @@ struct UsdUITokensType {
   const TfToken open;
 
   /**
-   * @brief "Outliner"
-   *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken outliner;
-
-  /**
-   * @brief "Preferences"
-   *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken preferences;
-
-  /**
-   * @brief "Properties"
-   *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken properties;
-
-  /**
-   * @brief "region"
-   *
-   * Possible value for UsdUIScreenAPI::GetPurposeAttr() */
-  const TfToken region;
-
-  /**
    * @brief "right"
    *
-   * Possible value for UsdUIScreenAPI::GetLayoutAttr() */
+   * Possible value for UsdUIScreen::GetAlignmentAttr() */
   const TfToken right;
-
-  /**
-   * @brief "SequenceEditor"
-   *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken sequenceEditor;
-
-  /**
-   * @brief "Spreadsheet"
-   *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken spreadsheet;
-
-  /**
-   * @brief "StatusBar"
-   *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken statusBar;
-
-  /**
-   * @brief "TextEditor"
-   *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken textEditor;
 
   /**
    * @brief "top"
    *
-   * Possible value for UsdUIScreenAPI::GetLayoutAttr() */
+   * Possible value for UsdUIScreen::GetAlignmentAttr() */
   const TfToken top;
 
   /**
-   * @brief "TopBar"
+   * @brief "ui:area:icon"
    *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken topBar;
+   * UsdUIArea */
+  const TfToken uiAreaIcon;
+
+  /**
+   * @brief "ui:area:name"
+   *
+   * UsdUIArea */
+  const TfToken uiAreaName;
+
+  /**
+   * @brief "ui:area:pos"
+   *
+   * UsdUIArea */
+  const TfToken uiAreaPos;
+
+  /**
+   * @brief "ui:area:size"
+   *
+   * UsdUIArea */
+  const TfToken uiAreaSize;
 
   /**
    * @brief "ui:description"
@@ -314,106 +236,76 @@ struct UsdUITokensType {
   const TfToken uiNodegraphNodeStackingOrder;
 
   /**
-   * @brief "ui:screen:area:icon"
+   * @brief "ui:screen:alignment"
    *
-   * UsdUIScreenAPI */
-  const TfToken uiScreenAreaIcon;
+   * UsdUIScreen */
+  const TfToken uiScreenAlignment;
 
   /**
-   * @brief "ui:screen:area:layout"
+   * @brief "ui:screen:areas"
    *
-   * UsdUIScreenAPI */
-  const TfToken uiScreenAreaLayout;
+   * UsdUIScreen */
+  const TfToken uiScreenAreas;
 
   /**
-   * @brief "ui:screen:area:name"
+   * @brief "ui:screen:collection:areas:includeRoot"
    *
-   * UsdUIScreenAPI */
-  const TfToken uiScreenAreaName;
+   * UsdUIScreen */
+  const TfToken uiScreenCollectionAreasIncludeRoot;
 
   /**
-   * @brief "ui:screen:area:pos"
-   *
-   * UsdUIScreenAPI */
-  const TfToken uiScreenAreaPos;
-
-  /**
-   * @brief "ui:screen:area:purpose"
-   *
-   * UsdUIScreenAPI */
-  const TfToken uiScreenAreaPurpose;
-
-  /**
-   * @brief "ui:screen:area:region"
-   *
-   * UsdUIScreenAPI */
-  const TfToken uiScreenAreaRegion;
-
-  /**
-   * @brief "ui:screen:area:showMenus"
-   *
-   * UsdUIScreenAPI */
-  const TfToken uiScreenAreaShowMenus;
-
-  /**
-   * @brief "ui:screen:area:size"
-   *
-   * UsdUIScreenAPI */
-  const TfToken uiScreenAreaSize;
-
-  /**
-   * @brief "ui:screen:area:type"
-   *
-   * UsdUIScreenAPI */
-  const TfToken uiScreenAreaType;
-
-  /**
-   * @brief "ui:screen:area:workspace"
-   *
-   * UsdUIWorkspace, UsdUIScreenAPI */
-  const TfToken uiScreenAreaWorkspace;
-
-  /**
-   * @brief "ui:windowIcon"
+   * @brief "ui:window:icon"
    *
    * UsdUIWindow */
   const TfToken uiWindowIcon;
 
   /**
-   * @brief "ui:windowPos"
+   * @brief "ui:window:pos"
    *
    * UsdUIWindow */
   const TfToken uiWindowPos;
 
   /**
-   * @brief "ui:windowSize"
+   * @brief "ui:window:size"
    *
    * UsdUIWindow */
   const TfToken uiWindowSize;
 
   /**
-   * @brief "ui:windowTitle"
+   * @brief "ui:window:title"
    *
    * UsdUIWindow */
   const TfToken uiWindowTitle;
 
   /**
-   * @brief "ui:windowType"
+   * @brief "ui:window:type"
    *
    * UsdUIWindow */
   const TfToken uiWindowType;
 
   /**
-   * @brief "verticalSplit"
+   * @brief "ui:window:workspace"
    *
-   * Possible value for UsdUIScreenAPI::GetLayoutAttr() */
-  const TfToken verticalSplit;
+   * UsdUIWindow */
+  const TfToken uiWindowWorkspace;
 
   /**
-   * @brief "View3D"
+   * @brief "ui:workspace:name"
    *
-   * Possible value for UsdUIScreenAPI::GetTypeAttr() */
-  const TfToken view3D;
+   * UsdUIWorkspace */
+  const TfToken uiWorkspaceName;
+
+  /**
+   * @brief "ui:workspace:screen"
+   *
+   * UsdUIWorkspace */
+  const TfToken uiWorkspaceScreen;
+
+  /**
+   * @brief "verticalSplit"
+   *
+   * Possible value for UsdUIScreen::GetAlignmentAttr() */
+  const TfToken verticalSplit;
 
   /**
    * A vector of all of the tokens listed above. */

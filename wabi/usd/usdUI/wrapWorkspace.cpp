@@ -58,9 +58,9 @@ namespace {
 WRAP_CUSTOM;
 
 
-static UsdAttribute _CreateWorkspaceNameAttr(UsdUIWorkspace & self, object defaultVal, bool writeSparsely)
+static UsdAttribute _CreateNameAttr(UsdUIWorkspace & self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateWorkspaceNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  return self.CreateNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
 static std::string _Repr(const UsdUIWorkspace & self)
@@ -99,9 +99,11 @@ void wrapUsdUIWorkspace()
         return_value_policy<return_by_value>())
     .staticmethod("_GetStaticTfType")
     .def(!self)
-    .def("GetWorkspaceNameAttr", &This::GetWorkspaceNameAttr)
-    .def("CreateWorkspaceNameAttr", &_CreateWorkspaceNameAttr,
+    .def("GetNameAttr", &This::GetNameAttr)
+    .def("CreateNameAttr", &_CreateNameAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetScreenRel", &This::GetScreenRel)
+    .def("CreateScreenRel", &This::CreateScreenRel)
     .def("__repr__", ::_Repr)
   ;
 
@@ -125,6 +127,18 @@ void wrapUsdUIWorkspace()
    *   'namespace {', '}'.
    * ======================================================================
    * --(BEGIN CUSTOM CODE)-- */
+
+
+
+
+
+
+
+
+
+
+
+
 
 namespace {
 

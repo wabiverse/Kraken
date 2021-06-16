@@ -31,11 +31,11 @@
 
 /* clang-format off */
 
-#ifndef USDUI_GENERATED_WORKSPACE_H
-#define USDUI_GENERATED_WORKSPACE_H
+#ifndef USDUI_GENERATED_SCREEN_H
+#define USDUI_GENERATED_SCREEN_H
 
 /**
- * @file usdUI/workspace.h */
+ * @file usdUI/screen.h */
 
 #include "wabi/wabi.h"
 
@@ -44,6 +44,9 @@
 #include "wabi/usd/usd/stage.h"
 #include "wabi/usd/usd/typed.h"
 #include "wabi/usd/usdUI/tokens.h"
+
+#include "wabi/usd/usd/collectionAPI.h"
+#include "wabi/usd/usdUI/area.h" 
 #include "wabi/base/vt/value.h"
 
 #include "wabi/base/gf/matrix4d.h"
@@ -59,20 +62,13 @@ class SdfAssetPath;
 
 /**
  * --------------------------------------------------------------------------
- * WORKSPACE                                                                 
+ * SCREEN                                                                    
  * --------------------------------------------------------------------------
  * 
- * @class UsdUIWorkspace
+ * @class UsdUIScreen
  * 
- * A workspace acts like a predefined window layout. The
- * purpose of a workspace is to have a layout created around
- * your needs, whether that purpose might be modeling, animating,
- * scripting, or any other purpose you might find helpful for any
- * specific task.
- * 
- * It is often useful to have many different kinds of workspaces
- * so you can quickly switch between layouts based on your needs
- * and contextual task at hand.
+ * A Screen to support the management of
+ * GUI areas within a DCC Application Window.
  * 
  * For any described attribute @em Fallback @em Value or @em Allowed
  * @em Values below that are text/tokens, the actual token is published
@@ -81,7 +77,7 @@ class SdfAssetPath;
  * as the value.
  */
 
-class UsdUIWorkspace : public UsdTyped {
+class UsdUIScreen : public UsdTyped {
  public:
   /**
    * Compile time constant representing what kind of schema this class is.
@@ -96,26 +92,26 @@ class UsdUIWorkspace : public UsdTyped {
   static const UsdSchemaKind schemaType = UsdSchemaKind::ConcreteTyped;
 
   /**
-   * Construct a UsdUIWorkspace on UsdPrim @p prim . Equivalent to
-   * UsdUIWorkspace::Get(prim.GetStage(), prim.GetPath()) for a @em
+   * Construct a UsdUIScreen on UsdPrim @p prim . Equivalent to
+   * UsdUIScreen::Get(prim.GetStage(), prim.GetPath()) for a @em
    * valid @p prim, but will not immediately throw an error for an invalid
    * @p prim. */
-  explicit UsdUIWorkspace(const UsdPrim &prim = UsdPrim())
+  explicit UsdUIScreen(const UsdPrim &prim = UsdPrim())
       : UsdTyped(prim)
   {}
 
   /**
-   * Construct a UsdUIWorkspace on the prim held by @p schemaObj .
-   * Should be preferred over UsdUIWorkspace(schemaObj.GetPrim()),
+   * Construct a UsdUIScreen on the prim held by @p schemaObj .
+   * Should be preferred over UsdUIScreen(schemaObj.GetPrim()),
    * as it preserves SchemaBase state. */
-  explicit UsdUIWorkspace(const UsdSchemaBase &schemaObj)
+  explicit UsdUIScreen(const UsdSchemaBase &schemaObj)
       : UsdTyped(schemaObj)
   {}
 
   /**
    * Destructor. */
   USDUI_API
-  virtual ~UsdUIWorkspace();
+  virtual ~UsdUIScreen();
  
   /**
    * Return a vector of names of all pre-declared attributes for this schema
@@ -125,17 +121,17 @@ class UsdUIWorkspace : public UsdTyped {
   static const TfTokenVector &GetSchemaAttributeNames(bool includeInherited = true);
 
   /**
-   * Return a UsdUIWorkspace holding the prim adhering to this
+   * Return a UsdUIScreen holding the prim adhering to this
    * schema at @p path on @p stage. If no prim exists at @p path on @p
    * stage, or if the prim at that path does not adhere to this schema
  
    * return an invalid schema object.  This is shorthand for the following:
    *
    * @code
-   * UsdUIWorkspace(stage->GetPrimAtPath(path));
+   * UsdUIScreen(stage->GetPrimAtPath(path));
    * @endcode */
   USDUI_API
-  static UsdUIWorkspace Get(const UsdStagePtr &stage, const SdfPath &path);
+  static UsdUIScreen Get(const UsdStagePtr &stage, const SdfPath &path);
 
   /**
    * Attempt to ensure a @a UsdPrim adhering to this schema at @p
@@ -161,7 +157,7 @@ class UsdUIWorkspace : public UsdTyped {
    * specify this schema class, in case a stronger typeName opinion overrides
    * the opinion at the current EditTarget. */
   USDUI_API
-  static UsdUIWorkspace
+  static UsdUIScreen
   Define(const UsdStagePtr &stage, const SdfPath &path);
  protected:
   /**
@@ -194,58 +190,59 @@ class UsdUIWorkspace : public UsdTyped {
  public:
   /**
    * ---------------------------------------------------------------------
-   * NAME
+   * ALIGNMENT
    * ---------------------------------------------------------------------
    * 
-   * The workspace name that is displayed in a application's GUI.
-   * Usually laid out within a quickly accessible tab selection
-   * grouped with other existing workspaces, to quickly switch 
-   * around.
+   * This authored attribute applies an alignment to all
+   * Areas within this Screen's collection.
    * 
    *
    *
    * | ||
    * | -- | -- |
    *
-   * | Declaration | `uniform token ui:workspace:name` |
+   * | Declaration | `uniform token ui:screen:alignment = "none"` |
    *
    * | C++ Type | TfToken |
    *
    * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Token |
    *
    * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
+   *
+   * | @ref UsdUITokens "Allowed Values" | none, top, bottom, left, right, horizontalSplit, verticalSplit |
    */
   USDUI_API
-  UsdAttribute GetNameAttr() const;
+  UsdAttribute GetAlignmentAttr() const;
 
   /**
-   * See GetNameAttr(), and also @ref
+   * See GetAlignmentAttr(), and also @ref
    * Usd_Create_Or_Get_Property for when to use Get vs Create.
    * If specified, author @p defaultValue as the attribute's
    * default, sparsely (when it makes sense to do so) if @p
    * writeSparsely is @c true, the default for @p writeSparsely
    * is @c false. */
   USDUI_API
-  UsdAttribute CreateNameAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateAlignmentAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   /**
    * ---------------------------------------------------------------------
-   * SCREEN
+   * AREAS
    * ---------------------------------------------------------------------
    * 
-   * The Screen which houses the layout of this Workspace.
+   * Relationship to a collection of UsdUIAreas prims, in which
+   * this Screen controls.
    * 
    */
   USDUI_API
-  UsdRelationship GetScreenRel() const;
+  UsdRelationship GetAreasRel() const;
 
   /**
-   * See GetScreenRel(), and also
+   * See GetAreasRel(), and also
    * @ref Usd_Create_Or_Get_Property for when to use
    * Get vs Create. */
   USDUI_API
-  UsdRelationship CreateScreenRel() const;
+  UsdRelationship CreateAreasRel() const;
 
  public:
   /**

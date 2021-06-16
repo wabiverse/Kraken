@@ -134,6 +134,18 @@ void wrapUsdUISceneGraphPrimAPI()
    * ======================================================================
    * --(BEGIN CUSTOM CODE)-- */
 
+
+
+
+
+
+
+
+
+
+
+
+
 namespace {
 
 WRAP_CUSTOM
