@@ -60,6 +60,26 @@ class Window "Window" (
             string apiName = "type"
         }
     )
+    uniform token ui:window:state = "normal" (
+        allowedTokens = ["normal", "maximized", "minimized", "fullscreen", "embedded"]
+        doc = """
+        The current window state as it pertains to
+        normal, maximized, minimized, fullscreen, or
+        embedded.
+        """
+        customData = {
+            string apiName = "state"
+        }
+    )
+    uniform token ui:window:cursor = "default" (
+        allowedTokens = ["default", "textEdit", "wait", "stop", "edit", "copy", "hand", "cross", "paint", "dot", "knife", "vloop", "paintBrush", "eraser", "eyedropper", "swapArea", "xMove", "yMove", "hSplit", "vSplit", "zoomIn", "zoomOut"]
+        doc = """
+        The current window cursor type.
+        """
+        customData = {
+            string apiName = "cursor"
+        }
+    )    
     uniform float2 ui:window:pos (
         doc = """
         Position for a window in a monitor. X is the monitor's relative

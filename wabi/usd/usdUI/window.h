@@ -294,6 +294,80 @@ class UsdUIWindow : public UsdTyped {
  public:
   /**
    * ---------------------------------------------------------------------
+   * STATE
+   * ---------------------------------------------------------------------
+   * 
+   * The current window state as it pertains to
+   * normal, maximized, minimized, fullscreen, or
+   * embedded.
+   * 
+   *
+   *
+   * | ||
+   * | -- | -- |
+   *
+   * | Declaration | `uniform token ui:window:state = "normal"` |
+   *
+   * | C++ Type | TfToken |
+   *
+   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Token |
+   *
+   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
+   *
+   * | @ref UsdUITokens "Allowed Values" | normal, maximized, minimized, fullscreen, embedded |
+   */
+  USDUI_API
+  UsdAttribute GetStateAttr() const;
+
+  /**
+   * See GetStateAttr(), and also @ref
+   * Usd_Create_Or_Get_Property for when to use Get vs Create.
+   * If specified, author @p defaultValue as the attribute's
+   * default, sparsely (when it makes sense to do so) if @p
+   * writeSparsely is @c true, the default for @p writeSparsely
+   * is @c false. */
+  USDUI_API
+  UsdAttribute CreateStateAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+
+ public:
+  /**
+   * ---------------------------------------------------------------------
+   * CURSOR
+   * ---------------------------------------------------------------------
+   * 
+   * The current window cursor type.
+   * 
+   *
+   *
+   * | ||
+   * | -- | -- |
+   *
+   * | Declaration | `uniform token ui:window:cursor = "default"` |
+   *
+   * | C++ Type | TfToken |
+   *
+   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Token |
+   *
+   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
+   *
+   * | @ref UsdUITokens "Allowed Values" | default, textEdit, wait, stop, edit, copy, hand, cross, paint, dot, knife, vloop, paintBrush, eraser, eyedropper, swapArea, xMove, yMove, hSplit, vSplit, zoomIn, zoomOut |
+   */
+  USDUI_API
+  UsdAttribute GetCursorAttr() const;
+
+  /**
+   * See GetCursorAttr(), and also @ref
+   * Usd_Create_Or_Get_Property for when to use Get vs Create.
+   * If specified, author @p defaultValue as the attribute's
+   * default, sparsely (when it makes sense to do so) if @p
+   * writeSparsely is @c true, the default for @p writeSparsely
+   * is @c false. */
+  USDUI_API
+  UsdAttribute CreateCursorAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+
+ public:
+  /**
+   * ---------------------------------------------------------------------
    * POS
    * ---------------------------------------------------------------------
    * 

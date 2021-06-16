@@ -98,6 +98,24 @@ struct UsdUITokensType {
   const TfToken closed;
 
   /**
+   * @brief "copy"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken copy;
+
+  /**
+   * @brief "cross"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken cross;
+
+  /**
+   * @brief "default"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr(), Default value for UsdUIWindow::GetCursorAttr() */
+  const TfToken default_;
+
+  /**
    * @brief "detached"
    *
    * Possible value for UsdUIWindow::GetTypeAttr() */
@@ -110,10 +128,64 @@ struct UsdUITokensType {
   const TfToken dialog;
 
   /**
+   * @brief "dot"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken dot;
+
+  /**
+   * @brief "edit"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken edit;
+
+  /**
+   * @brief "embedded"
+   *
+   * Possible value for UsdUIWindow::GetStateAttr() */
+  const TfToken embedded;
+
+  /**
+   * @brief "eraser"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken eraser;
+
+  /**
+   * @brief "eyedropper"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken eyedropper;
+
+  /**
+   * @brief "fullscreen"
+   *
+   * Possible value for UsdUIWindow::GetStateAttr() */
+  const TfToken fullscreen;
+
+  /**
+   * @brief "hand"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken hand;
+
+  /**
    * @brief "horizontalSplit"
    *
    * Possible value for UsdUIScreen::GetAlignmentAttr() */
   const TfToken horizontalSplit;
+
+  /**
+   * @brief "hSplit"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken hSplit;
+
+  /**
+   * @brief "knife"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken knife;
 
   /**
    * @brief "left"
@@ -122,9 +194,15 @@ struct UsdUITokensType {
   const TfToken left;
 
   /**
+   * @brief "maximized"
+   *
+   * Possible value for UsdUIWindow::GetStateAttr() */
+  const TfToken maximized;
+
+  /**
    * @brief "minimized"
    *
-   * Possible value for UsdUINodeGraphNodeAPI::GetExpansionStateAttr() */
+   * Possible value for UsdUINodeGraphNodeAPI::GetExpansionStateAttr(), Possible value for UsdUIWindow::GetStateAttr() */
   const TfToken minimized;
 
   /**
@@ -136,7 +214,7 @@ struct UsdUITokensType {
   /**
    * @brief "normal"
    *
-   * Possible value for UsdUIWindow::GetTypeAttr(), Default value for UsdUIWindow::GetTypeAttr() */
+   * Possible value for UsdUIWindow::GetStateAttr(), Default value for UsdUIWindow::GetStateAttr(), Possible value for UsdUIWindow::GetTypeAttr(), Default value for UsdUIWindow::GetTypeAttr() */
   const TfToken normal;
 
   /**
@@ -146,10 +224,40 @@ struct UsdUITokensType {
   const TfToken open;
 
   /**
+   * @brief "paint"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken paint;
+
+  /**
+   * @brief "paintBrush"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken paintBrush;
+
+  /**
    * @brief "right"
    *
    * Possible value for UsdUIScreen::GetAlignmentAttr() */
   const TfToken right;
+
+  /**
+   * @brief "stop"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken stop;
+
+  /**
+   * @brief "swapArea"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken swapArea;
+
+  /**
+   * @brief "textEdit"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken textEdit;
 
   /**
    * @brief "top"
@@ -254,6 +362,12 @@ struct UsdUITokensType {
   const TfToken uiScreenCollectionAreasIncludeRoot;
 
   /**
+   * @brief "ui:window:cursor"
+   *
+   * UsdUIWindow */
+  const TfToken uiWindowCursor;
+
+  /**
    * @brief "ui:window:icon"
    *
    * UsdUIWindow */
@@ -270,6 +384,12 @@ struct UsdUITokensType {
    *
    * UsdUIWindow */
   const TfToken uiWindowSize;
+
+  /**
+   * @brief "ui:window:state"
+   *
+   * UsdUIWindow */
+  const TfToken uiWindowState;
 
   /**
    * @brief "ui:window:title"
@@ -306,6 +426,48 @@ struct UsdUITokensType {
    *
    * Possible value for UsdUIScreen::GetAlignmentAttr() */
   const TfToken verticalSplit;
+
+  /**
+   * @brief "vloop"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken vloop;
+
+  /**
+   * @brief "vSplit"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken vSplit;
+
+  /**
+   * @brief "wait"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken wait;
+
+  /**
+   * @brief "xMove"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken xMove;
+
+  /**
+   * @brief "yMove"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken yMove;
+
+  /**
+   * @brief "zoomIn"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken zoomIn;
+
+  /**
+   * @brief "zoomOut"
+   *
+   * Possible value for UsdUIWindow::GetCursorAttr() */
+  const TfToken zoomOut;
 
   /**
    * A vector of all of the tokens listed above. */

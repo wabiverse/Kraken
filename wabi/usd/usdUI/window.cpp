@@ -158,6 +158,38 @@ UsdAttribute UsdUIWindow::CreateTypeAttr(VtValue const &defaultValue, bool write
     writeSparsely);
 }
 
+UsdAttribute UsdUIWindow::GetStateAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiWindowState);
+}
+
+UsdAttribute UsdUIWindow::CreateStateAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiWindowState,
+    SdfValueTypeNames->Token,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
+}
+
+UsdAttribute UsdUIWindow::GetCursorAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiWindowCursor);
+}
+
+UsdAttribute UsdUIWindow::CreateCursorAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiWindowCursor,
+    SdfValueTypeNames->Token,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
+}
+
 UsdAttribute UsdUIWindow::GetPosAttr() const
 {
   return GetPrim().GetAttribute(UsdUITokens->uiWindowPos);
@@ -222,6 +254,8 @@ const TfTokenVector& UsdUIWindow::GetSchemaAttributeNames(bool includeInherited)
     UsdUITokens->uiWindowTitle,
     UsdUITokens->uiWindowIcon,
     UsdUITokens->uiWindowType,
+    UsdUITokens->uiWindowState,
+    UsdUITokens->uiWindowCursor,
     UsdUITokens->uiWindowPos,
     UsdUITokens->uiWindowSize,
   };

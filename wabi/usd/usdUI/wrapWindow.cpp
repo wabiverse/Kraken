@@ -73,6 +73,16 @@ static UsdAttribute _CreateTypeAttr(UsdUIWindow & self, object defaultVal, bool 
   return self.CreateTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
+static UsdAttribute _CreateStateAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateStateAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+}
+
+static UsdAttribute _CreateCursorAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateCursorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+}
+
 static UsdAttribute _CreatePosAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
 {
   return self.CreatePosAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2), writeSparsely);
@@ -128,6 +138,12 @@ void wrapUsdUIWindow()
     .def("GetTypeAttr", &This::GetTypeAttr)
     .def("CreateTypeAttr", &_CreateTypeAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetStateAttr", &This::GetStateAttr)
+    .def("CreateStateAttr", &_CreateStateAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetCursorAttr", &This::GetCursorAttr)
+    .def("CreateCursorAttr", &_CreateCursorAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
     .def("GetPosAttr", &This::GetPosAttr)
     .def("CreatePosAttr", &_CreatePosAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
@@ -159,6 +175,11 @@ void wrapUsdUIWindow()
    *   'namespace {', '}'.
    * ======================================================================
    * --(BEGIN CUSTOM CODE)-- */
+
+
+
+
+
 
 
 
