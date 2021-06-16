@@ -181,7 +181,7 @@ class Workspace "Workspace" (
     """
 )
 {
-    uniform token ui:workspace:name (
+    uniform token ui:screen:area:workspace (
         doc = """
         The workspace name that is displayed in a application's GUI.
         Usually laid out within a quickly accessible tab selection
