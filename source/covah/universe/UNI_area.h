@@ -25,29 +25,33 @@
  */
 
 #include "UNI_context.h"
-#include "UNI_object.h"
+#include "UNI_screen.h"
 
 #include "CKE_context.h"
 
-#include <wabi/usd/usdUI/workspace.h>
+#include <wabi/usd/usdUI/area.h>
 
 WABI_NAMESPACE_BEGIN
 
-struct CovahWorkspace : public UsdUIWorkspace, public CovahObject {
+struct CovahArea : public UsdUIArea, public CovahObject {
 
   SdfPath path;
 
   UsdAttribute name;
-  UsdRelationship screen_rel;
+  UsdAttribute icon;
+  UsdAttribute pos;
+  UsdAttribute size;
 
-  inline CovahWorkspace(cContext &C, const SdfPath &stagepath, const TfToken &title = TfToken("Workspace"));
+  inline CovahArea(cContext &C, cScreen &prim, SdfPath const &stagepath);
 };
 
-CovahWorkspace::CovahWorkspace(cContext &C, const SdfPath &stagepath, const TfToken &title)
-  : UsdUIWorkspace(COVAH_UNIVERSE_CREATE(C)),
-    path(stagepath),
-    name(CreateNameAttr(VtValue(title))),
-    screen_rel(CreateScreenRel())
+CovahArea::CovahArea(cContext &C, cScreen &prim, SdfPath const &stagepath)
+  : UsdUIArea(COVAH_UNIVERSE_CREATE_CHILD(C)),
+    path(GetPath()),
+    name(CreateNameAttr()),
+    icon(CreateIconAttr()),
+    pos(CreatePosAttr()),
+    size(CreateSizeAttr())
 {}
 
 WABI_NAMESPACE_END

@@ -25,54 +25,13 @@
 #pragma once
 
 #include "UNI_api.h"
+#include "UNI_object.h"
 #include "UNI_scene.h"
 #include "UNI_system.h"
 
-/**
- * Global Universe Struct
- * - Holds pointer to the
- *   active Pixar Stage.
- * - Easy Scene data
- *   access.
- * - SysPaths & SysInfo. */
+#include "CKE_context.h"
 
-struct Universe {
-  /** The active pixar stage. */
-  wabi::UsdStageRefPtr stage;
-
-  /** Quick access to scene data. */
-  Scene scene;
-
-  /** Covah syspaths and sysinfo. */
-  System system;
-};
-
-/**
- * Covah SysPaths and SysInfo
- * - Directories relative to
- *   the covah installation.
- * - Simple access and set
- *   once for access to:
- *    - exe path
- *    - os tempdirs
- *    - covah themes
- *    - icons
- *    - plugins
- *    - textures
- *    - project file
- *    - build hash
- *    - version info */
-
-COVAH_UNIVERSE_API
-void UNI_create(std::string exe_path,
-                std::string temp_dir,
-                std::string styles_path,
-                std::string icons_path,
-                std::string datafiles_path,
-                std::filesystem::path stage_id,
-                uint64_t build_commit_timestamp,
-                std::string build_hash,
-                std::string covah_version);
+WABI_NAMESPACE_BEGIN
 
 /**
  * Pixar Stage IO
@@ -82,23 +41,16 @@ void UNI_create(std::string exe_path,
  * - Saving Stages. */
 
 COVAH_UNIVERSE_API
-void UNI_create_stage(std::string project_file);
+void UNI_create_stage(cContext &C);
 
 COVAH_UNIVERSE_API
-void UNI_destroy(void);
+void UNI_destroy(cContext &C);
 
 COVAH_UNIVERSE_API
-void UNI_open_stage(std::string project_file);
+void UNI_open_stage(cContext &C);
 
 COVAH_UNIVERSE_API
-void UNI_save_stage(void);
-
-/**
- * Pixar Stage Access
- * - Obtain Pseudo Root. */
-
-COVAH_UNIVERSE_API
-const wabi::SdfPath &UNI_stage_root(void);
+void UNI_save_stage(cContext &C);
 
 /**
  * Pixar Stage Defaults
@@ -106,13 +58,12 @@ const wabi::SdfPath &UNI_stage_root(void);
  * - Covah Scene defaults. */
 
 COVAH_UNIVERSE_API
-void UNI_on_ctx(struct cContext *C);
+void UNI_set_defaults(cContext &C);
 
 COVAH_UNIVERSE_API
-void UNI_author_default_scene(void);
+void UNI_author_default_scene(cContext &C);
 
-/**
- * Global to Pixar Data */
+#define COVAH_UNIVERSE_CREATE_CHILD(x) Define(CTX_data_stage(x), prim->path.AppendPath(stagepath))
+#define COVAH_UNIVERSE_CREATE(x) Define(CTX_data_stage(x), stagepath)
 
-COVAH_UNIVERSE_API
-extern Universe UNI;
+WABI_NAMESPACE_END

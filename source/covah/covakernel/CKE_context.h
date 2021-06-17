@@ -32,6 +32,7 @@ WABI_NAMESPACE_BEGIN
 
 typedef UsdStageRefPtr Stage;
 
+struct CovahArea;
 struct CovahMain;
 struct CovahScene;
 struct CovahScreen;
@@ -40,6 +41,7 @@ struct CovahWindow;
 struct CovahWorkspace;
 struct CovahContext;
 
+TF_DECLARE_WEAK_AND_REF_PTRS(CovahArea);
 TF_DECLARE_WEAK_AND_REF_PTRS(CovahMain);
 TF_DECLARE_WEAK_AND_REF_PTRS(CovahScene);
 TF_DECLARE_WEAK_AND_REF_PTRS(CovahScreen);
@@ -55,6 +57,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(CovahContext);
  * following types: */
 
 /* clang-format off */
+typedef CovahAreaRefPtr          /* Use -> */ Area;
 typedef CovahMainRefPtr          /* Use -> */ Main;
 typedef CovahSceneRefPtr         /* Use -> */ Scene;
 typedef CovahScreenRefPtr        /* Use -> */ cScreen;
@@ -70,7 +73,7 @@ typedef CovahContextRefPtr       /* Use -> */ cContext;
  *  - Destruction. */
 
 cContext CTX_create(void);
-void CTX_free(cContext C);
+void CTX_free(cContext &C);
 
 /**
  * Covah Context Getters:
@@ -92,9 +95,9 @@ Stage CTX_data_stage(const cContext &C);
  *  - Scene data.
  *  - Stage data. */
 
-void CTX_data_main_set(cContext C, Main cmain);
-void CTX_wm_manager_set(cContext C, wmWindowManager wm);
-void CTX_wm_window_set(cContext C, wmWindow win);
-void CTX_data_scene_set(cContext C, Scene cscene);
+void CTX_data_main_set(cContext &C, Main cmain);
+void CTX_wm_manager_set(cContext &C, wmWindowManager wm);
+void CTX_wm_window_set(cContext &C, wmWindow win);
+void CTX_data_scene_set(cContext &C, Scene cscene);
 
 WABI_NAMESPACE_END

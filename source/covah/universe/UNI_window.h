@@ -52,11 +52,16 @@ struct CovahWindow : public UsdUIWindow, public CovahObject {
   UsdAttribute pixelsz;
   UsdAttribute cursor;
   UsdAttribute pos;
+  UsdAttribute alignment;
   UsdAttribute size;
   UsdAttribute type;
 
-  UsdUIWorkspace workspace;
-  UsdUIScreen screen;
+  UsdRelationship workspace_rel;
+
+  struct {
+    Workspace workspace;
+    cScreen screen;
+  } prims;
 
   /** Active scene for this window. */
   TfToken scene;
@@ -67,13 +72,13 @@ struct CovahWindow : public UsdUIWindow, public CovahObject {
   /** Anchor system backend pointer. */
   void *anchorwin;
 
-  inline CovahWindow(cContext C,
+  inline CovahWindow(cContext &C,
                      const SdfPath &stagepath = SdfPath(STRINGIFY(COVAH_WINDOW)),
                      const SdfPath &wspace = SdfPath(STRINGIFY(COVAH_WORKSPACES_LAYOUT)),
                      const SdfPath &screen = SdfPath(STRINGIFY(COVAH_SCREEN_LAYOUT)));
 };
 
-CovahWindow::CovahWindow(cContext C, const SdfPath &stagepath, const SdfPath &wspace, const SdfPath &screen)
+CovahWindow::CovahWindow(cContext &C, const SdfPath &stagepath, const SdfPath &wspace, const SdfPath &screen)
   : UsdUIWindow(COVAH_UNIVERSE_CREATE(C)),
     path(stagepath),
     title(CreateTitleAttr()),
@@ -87,10 +92,13 @@ CovahWindow::CovahWindow(cContext C, const SdfPath &stagepath, const SdfPath &ws
     pixelsz(CreatePixelszAttr()),
     cursor(CreateCursorAttr()),
     pos(CreatePosAttr()),
+    alignment(CreateAlignmentAttr()),
     size(CreateSizeAttr()),
     type(CreateTypeAttr()),
-    workspace(Workspace(C, wspace)),
-    screen(cScreen(C, screen))
+    workspace_rel(CreateUiWindowWorkspaceRel()),
+    prims({.workspace = TfCreateRefPtr(new CovahWorkspace(C, wspace)),
+           .screen = TfCreateRefPtr(new CovahScreen(C, screen))})
+
 {}
 
 struct CovahWindowManager : public CovahObject {

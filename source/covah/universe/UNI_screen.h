@@ -36,17 +36,17 @@ struct CovahScreen : public UsdUIScreen, public CovahObject {
 
   SdfPath path;
 
-  UsdAttribute alignment;
-  UsdRelationship areas;
+  UsdAttribute align;
+  UsdRelationship areas_rel;
 
-  inline CovahScreen(cContext C, const SdfPath &stagepath);
+  inline CovahScreen(cContext &C, const SdfPath &stagepath);
 };
 
-CovahScreen::CovahScreen(cContext C, const SdfPath &stagepath)
+CovahScreen::CovahScreen(cContext &C, const SdfPath &stagepath)
   : UsdUIScreen(COVAH_UNIVERSE_CREATE(C)),
     path(stagepath),
-    alignment(CreateAlignmentAttr()),
-    areas(CreateAreasRel())
+    align(CreateAlignmentAttr()),
+    areas_rel(CreateAreasRel())
 {}
 
 WABI_NAMESPACE_END

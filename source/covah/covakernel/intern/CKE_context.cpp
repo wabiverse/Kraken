@@ -68,11 +68,15 @@ cContext CTX_create(void)
 
 /**
  * Main CTX Deletion. */
-void CTX_free(cContext C)
+void CTX_free(cContext &C)
 {
   TfAutoMallocTag2 tag("cContext", "CTX_free");
 
+  /**
+   * CTX out - */
+
   C.~TfRefPtr();
+  C.Reset();
 }
 
 /**
@@ -106,22 +110,22 @@ Stage CTX_data_stage(const cContext &C)
 /**
  * Setters. */
 
-void CTX_data_main_set(cContext C, Main cmain)
+void CTX_data_main_set(cContext &C, Main cmain)
 {
   C->data.main = cmain;
 }
 
-void CTX_wm_manager_set(cContext C, wmWindowManager wm)
+void CTX_wm_manager_set(cContext &C, wmWindowManager wm)
 {
   C->wm.manager = wm;
 }
 
-void CTX_wm_window_set(cContext C, wmWindow win)
+void CTX_wm_window_set(cContext &C, wmWindow win)
 {
   C->wm.window = win;
 }
 
-void CTX_data_scene_set(cContext C, Scene cscene)
+void CTX_data_scene_set(cContext &C, Scene cscene)
 {
   C->data.scene = cscene;
   C->data.stage = cscene->stage;

@@ -23,9 +23,12 @@
  */
 
 #include "UNI_api.h"
+#include "UNI_area.h"
 #include "UNI_context.h"
 #include "UNI_scene.h"
+#include "UNI_screen.h"
 #include "UNI_window.h"
+#include "UNI_workspace.h"
 
 #include "CKE_context.h"
 #include "CKE_main.h"
@@ -48,133 +51,106 @@
 #include <wabi/usd/usd/collectionAPI.h>
 #include <wabi/usd/usd/stage.h>
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
-Universe UNI;
-
-void UNI_create_stage(std::string project_file)
+void UNI_create_stage(cContext &C)
 {
-  UNI.stage = UsdStage::CreateNew(project_file);
-  UNI.stage->GetRootLayer()->SetDocumentation(std::string("Covah v") + UNI.system.version.covah_version);
-  strcpy(UNI.system.paths.stage_path, project_file.c_str());
+  Main main = CTX_data_main(C);
+
+  main->stage_id = TfStringCatPaths(main->temp_dir, "startup.usda");
+
+  CTX_data_scene_set(C, TfCreateRefPtr(new CovahScene(main->stage_id)));
 }
 
-void UNI_destroy()
+void UNI_destroy(cContext &C)
 {
-  UNI.stage->~UsdStage();
+  Stage stage = CTX_data_stage(C);
+  stage->~UsdStage();
 }
 
-void UNI_open_stage(std::string project_file)
+void UNI_open_stage(cContext &C)
 {
-  UNI.stage = UsdStage::Open(project_file);
-  strcpy(UNI.system.paths.stage_path, project_file.c_str());
+  Main main = CTX_data_stage(C);
+  Stage stage = CTX_data_stage(C);
+
+  stage->Open(main->stage_id);
 }
 
-void UNI_save_stage()
+void UNI_save_stage(cContext &C)
 {
-  UNI.stage->GetRootLayer()->Save();
+  Stage stage = CTX_data_stage(C);
+  stage->GetRootLayer()->Save();
 }
 
-const SdfPath &UNI_stage_root()
-{
-  if (TF_VERIFY(UNI.stage)) {
-    static const SdfPath &path = UNI.stage->GetPseudoRoot().GetPath();
-    return path;
-  }
-
-  /**
-   * Create startup stage if user's stage is invalid. */
-  TF_CODING_ERROR("Attempted to access invalid UsdStage.");
-  UNI_create_stage(TfStringCatPaths(G.main->temp_dir, "startup.usda"));
-  return UNI.stage->GetPseudoRoot().GetPath();
-}
-
-void UNI_on_ctx(cContext *C)
+void UNI_set_defaults(cContext &C)
 {
   /* ----- */
 
-  /** Store Properties for C. */
-  Scene *cscene = new Scene();
-  wmWindow *win = new wmWindow();
-  wmWindowManager *wm = new wmWindowManager();
-
-  /* ----- */
-
-  /** Default Stage Paths. */
-  SdfPath window_path = SdfPath("/Covah/Windows/MainWindow");
-  SdfPath workspace_path = window_path.AppendPath(SdfPath("WorkSpaces/Layout"));
-  SdfPath screen_path = workspace_path.AppendPath(SdfPath("Screen"));
-  SdfPath v3d_path = screen_path.AppendPath(SdfPath("View3D"));
-  SdfPath outliner_path = screen_path.AppendPath(SdfPath("Outliner"));
+  Stage stage = CTX_data_stage(C);
+  wmWindow win = TfCreateRefPtr(new CovahWindow(C));
 
   /* ----- */
 
   /** Default Window. */
-  UsdUIWindow window = UsdUIWindow::Define(UNI.stage, window_path);
-  win->title = window.CreateTitleAttr(VtValue(TfToken("Covah")));
-  win->dpi = window.CreateDpiAttr(VtValue(float(1)));
-  win->dpifac = window.CreateDpifacAttr(VtValue(float(1)));
-  win->widgetunit = window.CreateWidgetunitAttr(VtValue(float(20)));
-  win->scale = window.CreateScaleAttr(VtValue(float(1)));
-  win->linewidth = window.CreateLinewidthAttr(VtValue(float(1)));
-  win->pixelsz = window.CreatePixelszAttr(VtValue(float(1)));
-  win->icon = window.CreateIconAttr(VtValue(SdfAssetPath(CLI_icon(ICON_COVAH))));
-  win->state = window.CreateStateAttr(VtValue(UsdUITokens->maximized));
-  win->cursor = window.CreateCursorAttr(VtValue(UsdUITokens->default_));
-  win->pos = window.CreatePosAttr(VtValue(GfVec2f(0, 0)));
-  win->size = window.CreateSizeAttr(VtValue(GfVec2f(1920, 1080)));
-  win->type = window.CreateTypeAttr(VtValue(TfToken(UsdUITokens->normal)));
-  window.CreateUiWindowWorkspaceRel().AddTarget(workspace_path);
+  win->title.Set(TfToken("Covah"));
+  win->dpi.Set(1.0f);
+  win->dpifac.Set(1.0f);
+  win->widgetunit.Set(20.0f);
+  win->scale.Set(1.0f);
+  win->linewidth.Set(1.0f);
+  win->pixelsz.Set(1.0f);
+  win->icon.Set(SdfAssetPath(CLI_icon(ICON_COVAH)));
+  win->state.Set(UsdUITokens->maximized);
+  win->cursor.Set(UsdUITokens->default_);
+  win->alignment.Set(UsdUITokens->alignAbsolute);
+  win->pos.Set(GfVec2f(0.0f, 0.0f));
+  win->size.Set(GfVec2f(1920, 1080));
+  win->type.Set(TfToken(UsdUITokens->normal));
+  win->workspace_rel.AddTarget(win->prims.workspace->path);
 
   /* ----- */
 
-  /** Default 'Layout' WorkSpace. */
-  UsdUIWorkspace workspace = UsdUIWorkspace::Define(UNI.stage, workspace_path);
-  win->workspace = workspace.CreateNameAttr(VtValue(TfToken("Layout")));
-  workspace.CreateScreenRel().AddTarget(screen_path);
-
   /** Default Viewport. */
-  UsdUIArea v3d = UsdUIArea::Define(UNI.stage, v3d_path);
-  v3d.CreateNameAttr(VtValue(TfToken("View3D")));
-  v3d.CreateIconAttr(VtValue(SdfAssetPath(CLI_icon(ICON_HYDRA))));
-  v3d.CreatePosAttr(VtValue(GfVec2f(0, 0)));
-  v3d.CreateSizeAttr(VtValue(GfVec2f(1800, 1080)));
+  Area v3d = TfCreateRefPtr(new CovahArea(C, win->prims.screen, SdfPath("View3D")));
+  v3d->name.Set(TfToken("View3D"));
+  v3d->icon.Set(SdfAssetPath(CLI_icon(ICON_HYDRA)));
+  v3d->pos.Set(GfVec2f(0, 0));
+  v3d->size.Set(GfVec2f(1800, 1080));
 
   /* ----- */
 
   /** Default Outliner. */
-  UsdUIArea outliner = UsdUIArea::Define(UNI.stage, outliner_path);
-  outliner.CreateNameAttr(VtValue(TfToken("Outliner")));
-  outliner.CreateIconAttr(VtValue(SdfAssetPath(CLI_icon(ICON_LUXO))));
-  outliner.CreatePosAttr(VtValue(GfVec2f(1800, 0)));
-  outliner.CreateSizeAttr(VtValue(GfVec2f(120, 1080)));
+  Area outliner = TfCreateRefPtr(new CovahArea(C, win->prims.screen, SdfPath("Outliner")));
+  v3d->name.Set(TfToken("Outliner"));
+  v3d->icon.Set(SdfAssetPath(CLI_icon(ICON_LUXO)));
+  v3d->pos.Set(GfVec2f(1800, 0));
+  v3d->size.Set(GfVec2f(120, 1080));
 
   /* ----- */
 
   /** Add UI Areas to Screen's Collection of Areas. */
-  UsdUIScreen screen = UsdUIScreen::Define(UNI.stage, screen_path);
-  win->align = screen.CreateAlignmentAttr(VtValue(UsdUITokens->verticalSplit));
-  win->screen = screen.CreateAreasRel();
-  win->screen.AddTarget(v3d_path);
-  win->screen.AddTarget(outliner_path);
+  win->prims.screen->align.Set(UsdUITokens->verticalSplit);
+  win->prims.screen->areas_rel.AddTarget(v3d->path);
+  win->prims.screen->areas_rel.AddTarget(outliner->path);
+
+  /** Add this screen to our default 'Layout' WorkSpace. */
+  win->prims.workspace->name.Set(TfToken("Layout"));
+  win->prims.workspace->screen_rel.AddTarget(win->prims.screen->path);
 
   /* ----- */
 
-  /** Setup C */
-
-  cscene->stage = UNI.stage;
-  CTX_data_scene_set(C, cscene);
-
   CTX_wm_window_set(C, win);
 
-  /** Hash the stage path to this window. */
-  wm->windows.insert(std::make_pair(TfToken(UNI.system.paths.stage_path), win));
+  wmWindowManager wm = TfCreateRefPtr(new CovahWindowManager);
+  wm->windows.insert(std::make_pair(win->path, win));
   CTX_wm_manager_set(C, wm);
 }
 
-void UNI_author_default_scene()
+void UNI_author_default_scene(cContext &C)
 {
-  UsdGeomCube cube = UsdGeomCube::Define(UNI.stage, SdfPath("/Cube"));
+  Stage stage = CTX_data_stage(C);
+
+  UsdGeomCube cube = UsdGeomCube::Define(stage, SdfPath("/Cube"));
 
   UsdGeomXformOp location = cube.AddTranslateOp();
   location.Set(VtValue(GfVec3d(0.0f, 0.0f, 0.0f)));
@@ -184,29 +160,4 @@ void UNI_author_default_scene()
   scale.Set(VtValue(GfVec3f(1.0f, 1.0f, 1.0f)));
 }
 
-void UNI_create(std::string exe_path,
-                std::string temp_dir,
-                std::string styles_path,
-                std::string icons_path,
-                std::string datafiles_path,
-                std::filesystem::path stage_id,
-                uint64_t build_commit_timestamp,
-                std::string build_hash,
-                std::string covah_version)
-{
-  /** Create the system paths. */
-  strcpy(UNI.system.paths.exe_path, exe_path.c_str());
-  strcpy(UNI.system.paths.temp_dir, temp_dir.c_str());
-  strcpy(UNI.system.paths.datafiles_path, datafiles_path.c_str());
-  strcpy(UNI.system.paths.styles_path, styles_path.c_str());
-  strcpy(UNI.system.paths.icons_path, icons_path.c_str());
-  strcpy(UNI.system.paths.stage_path, stage_id.string().c_str());
-
-  /** Create the system info. */
-  std::string pixar_version = std::string(std::to_string(WABI_VERSION_MINOR) + "." +
-                                          std::to_string(WABI_VERSION_PATCH));
-  UNI.system.version.build_commit_timestamp = build_commit_timestamp;
-  strcpy(UNI.system.version.build_hash, build_hash.c_str());
-  strcpy(UNI.system.version.covah_version, covah_version.c_str());
-  strcpy(UNI.system.version.pixar_version, pixar_version.c_str());
-}
+WABI_NAMESPACE_END
