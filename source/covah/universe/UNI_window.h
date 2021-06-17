@@ -25,22 +25,21 @@
  */
 
 #include "UNI_context.h"
+#include "UNI_screen.h"
+#include "UNI_workspace.h"
 
-#include <wabi/wabi.h>
-
-#include <wabi/base/tf/hashmap.h>
+#include "CKE_context.h"
 
 #include <wabi/usd/sdf/path.h>
-#include <wabi/usd/usd/attribute.h>
 #include <wabi/usd/usd/collectionAPI.h>
 #include <wabi/usd/usdUI/window.h>
 
 WABI_NAMESPACE_BEGIN
 
-struct wmWindow : public UsdUIWindow {
+struct CovahWindow : public UsdUIWindow, public CovahObject {
 
-  SdfPath winhash;
-  wmWindow *parent;
+  SdfPath path;
+  wmWindow parent;
 
   UsdAttribute title;
   UsdAttribute icon;
@@ -53,7 +52,6 @@ struct wmWindow : public UsdUIWindow {
   UsdAttribute pixelsz;
   UsdAttribute cursor;
   UsdAttribute pos;
-  UsdAttribute alignment;
   UsdAttribute size;
   UsdAttribute type;
 
@@ -69,27 +67,15 @@ struct wmWindow : public UsdUIWindow {
   /** Anchor system backend pointer. */
   void *anchorwin;
 
-  inline wmWindow(const SdfPath &path = SdfPath(STRINGIFY(COVAH_WINDOW)),
-                  const SdfPath &wspace = SdfPath(STRINGIFY(COVAH_WORKSPACES_LAYOUT)),
-                  const SdfPath &screen = SdfPath(STRINGIFY(COVAH_SCREEN_LAYOUT)));
-
- private:
-  SdfPath m_sdf_wspace;
-  SdfPath m_sdf_screen;
+  inline CovahWindow(cContext C,
+                     const SdfPath &stagepath = SdfPath(STRINGIFY(COVAH_WINDOW)),
+                     const SdfPath &wspace = SdfPath(STRINGIFY(COVAH_WORKSPACES_LAYOUT)),
+                     const SdfPath &screen = SdfPath(STRINGIFY(COVAH_SCREEN_LAYOUT)));
 };
 
-/**
- * Note: A workspace and a screen
- * must always exist on a Window,
- * and a screen must always exist
- * on a workspace. Therefore, the
- * paths get forced appends when
- * constructing a wmWindow. */
-wmWindow::wmWindow(const SdfPath &path, const SdfPath &wspace, const SdfPath &screen)
-  : UsdUIWindow(UNI.stage->DefinePrim(path)),
-    winhash(path),
-    m_sdf_wspace(winhash.AppendPath(wspace)),
-    m_sdf_screen(m_sdf_wspace.AppendPath(screen)),
+CovahWindow::CovahWindow(cContext C, const SdfPath &stagepath, const SdfPath &wspace, const SdfPath &screen)
+  : UsdUIWindow(COVAH_UNIVERSE_CREATE(C)),
+    path(stagepath),
     title(CreateTitleAttr()),
     icon(CreateIconAttr()),
     state(CreateStateAttr()),
@@ -101,16 +87,15 @@ wmWindow::wmWindow(const SdfPath &path, const SdfPath &wspace, const SdfPath &sc
     pixelsz(CreatePixelszAttr()),
     cursor(CreateCursorAttr()),
     pos(CreatePosAttr()),
-    alignment(CreateAlignmentAttr()),
     size(CreateSizeAttr()),
     type(CreateTypeAttr()),
-    workspace(UsdUIWorkspace::Define(UNI.stage, path.AppendPath(wspace))),
-    screen(UsdUIScreen::Define(UNI.stage, path.AppendPath(screen)))
+    workspace(Workspace(C, wspace)),
+    screen(cScreen(C, screen))
 {}
 
-struct wmWindowManager {
+struct CovahWindowManager : public CovahObject {
   /** All windows this manager controls. */
-  TfHashMap<SdfPath, wmWindow *, SdfPath::Hash> windows;
+  TfHashMap<SdfPath, wmWindow, SdfPath::Hash> windows;
 };
 
 WABI_NAMESPACE_END
