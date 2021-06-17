@@ -353,6 +353,7 @@ CODE
 #endif
 
 #include "ANCHOR_api.h"
+#include "ANCHOR_event.h"
 #include "ANCHOR_event_consumer.h"
 #include "ANCHOR_event_manager.h"
 #include "ANCHOR_system.h"
@@ -3461,10 +3462,39 @@ void ANCHOR::DispatchEvents(ANCHOR_SystemHandle systemhandle)
   system->dispatchEvents();
 }
 
+ANCHOR_SystemWindowHandle ANCHOR::CreateWindow(ANCHOR_SystemHandle systemhandle,
+                                               ANCHOR_SystemWindowHandle parent_windowhandle,
+                                               const char *title,
+                                               const char *icon,
+                                               AnchorS32 left,
+                                               AnchorS32 top,
+                                               AnchorU32 width,
+                                               AnchorU32 height,
+                                               eAnchorWindowState state,
+                                               bool is_dialog,
+                                               eAnchorDrawingContextType type,
+                                               int vkSettings)
+{
+  ANCHOR_ISystem *system = (ANCHOR_ISystem *)systemhandle;
+
+  return (ANCHOR_SystemWindowHandle)system->createWindow(title,
+                                                         icon,
+                                                         left,
+                                                         top,
+                                                         width,
+                                                         height,
+                                                         state,
+                                                         type,
+                                                         0,
+                                                         false,
+                                                         is_dialog,
+                                                         (ANCHOR_ISystemWindow *)parent_windowhandle);
+}
+
 eAnchorStatus ANCHOR::SwapChain(ANCHOR_SystemWindowHandle windowhandle)
 {
   ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
-  window->swapBuffers();
+  return window->swapBuffers();
 }
 
 eAnchorStatus ANCHOR::AddEventConsumer(ANCHOR_SystemHandle systemhandle,
@@ -3473,6 +3503,56 @@ eAnchorStatus ANCHOR::AddEventConsumer(ANCHOR_SystemHandle systemhandle,
   ANCHOR_ISystem *system = (ANCHOR_ISystem *)systemhandle;
 
   return system->addEventConsumer((ANCHOR_CallbackEventConsumer *)consumerhandle);
+}
+
+eAnchorEventType ANCHOR::GetEventType(ANCHOR_EventHandle eventhandle)
+{
+  ANCHOR_IEvent *event = (ANCHOR_IEvent *)eventhandle;
+
+  return event->getType();
+}
+
+ANCHOR_SystemWindowHandle ANCHOR::GetEventWindow(ANCHOR_EventHandle eventhandle)
+{
+  ANCHOR_IEvent *event = (ANCHOR_IEvent *)eventhandle;
+
+  return (ANCHOR_SystemWindowHandle)event->getWindow();
+}
+
+ANCHOR_UserPtr ANCHOR::GetEventData(ANCHOR_EventHandle eventhandle)
+{
+  ANCHOR_IEvent *event = (ANCHOR_IEvent *)eventhandle;
+
+  return event->getData();
+}
+
+int ANCHOR::ValidWindow(ANCHOR_SystemHandle systemhandle, ANCHOR_SystemWindowHandle windowhandle)
+{
+  ANCHOR_ISystem *system = (ANCHOR_ISystem *)systemhandle;
+  ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
+
+  return (int)system->validWindow(window);
+}
+
+ANCHOR_UserPtr ANCHOR::GetWindowUserData(ANCHOR_SystemWindowHandle windowhandle)
+{
+  ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
+
+  return window->getUserData();
+}
+
+AnchorU16 ANCHOR::GetDPIHint(ANCHOR_SystemWindowHandle windowhandle)
+{
+  ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
+  return window->getDPIHint();
+}
+
+float ANCHOR::GetNativePixelSize(ANCHOR_SystemWindowHandle windowhandle)
+{
+  ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
+  if (window)
+    return window->getNativePixelSize();
+  return 1.0f;
 }
 
 void ANCHOR::SetAllocatorFunctions(ANCHORMemAllocFunc alloc_func,

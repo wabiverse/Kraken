@@ -332,6 +332,218 @@ class UsdUIWindow : public UsdTyped {
  public:
   /**
    * ---------------------------------------------------------------------
+   * DPI
+   * ---------------------------------------------------------------------
+   * 
+   * The current window DPI value
+   * for better interface drawing.
+   * 
+   *
+   *
+   * | ||
+   * | -- | -- |
+   *
+   * | Declaration | `uniform float ui:window:dpi = 1` |
+   *
+   * | C++ Type | float |
+   *
+   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float |
+   *
+   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
+   */
+  USDUI_API
+  UsdAttribute GetDpiAttr() const;
+
+  /**
+   * See GetDpiAttr(), and also @ref
+   * Usd_Create_Or_Get_Property for when to use Get vs Create.
+   * If specified, author @p defaultValue as the attribute's
+   * default, sparsely (when it makes sense to do so) if @p
+   * writeSparsely is @c true, the default for @p writeSparsely
+   * is @c false. */
+  USDUI_API
+  UsdAttribute CreateDpiAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+
+ public:
+  /**
+   * ---------------------------------------------------------------------
+   * DPIFAC
+   * ---------------------------------------------------------------------
+   * 
+   * The user interface dpi multiplier
+   * to scale UI elements based on the
+   * DPI.
+   * 
+   *
+   *
+   * | ||
+   * | -- | -- |
+   *
+   * | Declaration | `uniform float ui:window:dpifac = 1` |
+   *
+   * | C++ Type | float |
+   *
+   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float |
+   *
+   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
+   */
+  USDUI_API
+  UsdAttribute GetDpifacAttr() const;
+
+  /**
+   * See GetDpifacAttr(), and also @ref
+   * Usd_Create_Or_Get_Property for when to use Get vs Create.
+   * If specified, author @p defaultValue as the attribute's
+   * default, sparsely (when it makes sense to do so) if @p
+   * writeSparsely is @c true, the default for @p writeSparsely
+   * is @c false. */
+  USDUI_API
+  UsdAttribute CreateDpifacAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+
+ public:
+  /**
+   * ---------------------------------------------------------------------
+   * SCALE
+   * ---------------------------------------------------------------------
+   * 
+   * The user interface scale, scaling
+   * all UI components to this value.
+   * 
+   *
+   *
+   * | ||
+   * | -- | -- |
+   *
+   * | Declaration | `uniform float ui:window:scale = 1` |
+   *
+   * | C++ Type | float |
+   *
+   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float |
+   *
+   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
+   */
+  USDUI_API
+  UsdAttribute GetScaleAttr() const;
+
+  /**
+   * See GetScaleAttr(), and also @ref
+   * Usd_Create_Or_Get_Property for when to use Get vs Create.
+   * If specified, author @p defaultValue as the attribute's
+   * default, sparsely (when it makes sense to do so) if @p
+   * writeSparsely is @c true, the default for @p writeSparsely
+   * is @c false. */
+  USDUI_API
+  UsdAttribute CreateScaleAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+
+ public:
+  /**
+   * ---------------------------------------------------------------------
+   * PIXELSZ
+   * ---------------------------------------------------------------------
+   * 
+   * The user interface pixel size,
+   * scaling the pixel size for all
+   * UI components in the window.
+   * 
+   *
+   *
+   * | ||
+   * | -- | -- |
+   *
+   * | Declaration | `uniform float ui:window:pixelsz = 1` |
+   *
+   * | C++ Type | float |
+   *
+   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float |
+   *
+   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
+   */
+  USDUI_API
+  UsdAttribute GetPixelszAttr() const;
+
+  /**
+   * See GetPixelszAttr(), and also @ref
+   * Usd_Create_Or_Get_Property for when to use Get vs Create.
+   * If specified, author @p defaultValue as the attribute's
+   * default, sparsely (when it makes sense to do so) if @p
+   * writeSparsely is @c true, the default for @p writeSparsely
+   * is @c false. */
+  USDUI_API
+  UsdAttribute CreatePixelszAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+
+ public:
+  /**
+   * ---------------------------------------------------------------------
+   * WIDGETUNIT
+   * ---------------------------------------------------------------------
+   * 
+   * Additional adjustments to optimize
+   * widget displays based on DPI settings.
+   * 
+   *
+   *
+   * | ||
+   * | -- | -- |
+   *
+   * | Declaration | `uniform float ui:window:widgetunit = 20` |
+   *
+   * | C++ Type | float |
+   *
+   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float |
+   *
+   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
+   */
+  USDUI_API
+  UsdAttribute GetWidgetunitAttr() const;
+
+  /**
+   * See GetWidgetunitAttr(), and also @ref
+   * Usd_Create_Or_Get_Property for when to use Get vs Create.
+   * If specified, author @p defaultValue as the attribute's
+   * default, sparsely (when it makes sense to do so) if @p
+   * writeSparsely is @c true, the default for @p writeSparsely
+   * is @c false. */
+  USDUI_API
+  UsdAttribute CreateWidgetunitAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+
+ public:
+  /**
+   * ---------------------------------------------------------------------
+   * LINEWIDTH
+   * ---------------------------------------------------------------------
+   * 
+   * The user interface line width,
+   * scaling the width of borders.
+   * 
+   *
+   *
+   * | ||
+   * | -- | -- |
+   *
+   * | Declaration | `uniform float ui:window:linewidth = 1` |
+   *
+   * | C++ Type | float |
+   *
+   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float |
+   *
+   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
+   */
+  USDUI_API
+  UsdAttribute GetLinewidthAttr() const;
+
+  /**
+   * See GetLinewidthAttr(), and also @ref
+   * Usd_Create_Or_Get_Property for when to use Get vs Create.
+   * If specified, author @p defaultValue as the attribute's
+   * default, sparsely (when it makes sense to do so) if @p
+   * writeSparsely is @c true, the default for @p writeSparsely
+   * is @c false. */
+  USDUI_API
+  UsdAttribute CreateLinewidthAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+
+ public:
+  /**
+   * ---------------------------------------------------------------------
    * CURSOR
    * ---------------------------------------------------------------------
    * 

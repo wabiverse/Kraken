@@ -174,6 +174,102 @@ UsdAttribute UsdUIWindow::CreateStateAttr(VtValue const &defaultValue, bool writ
     writeSparsely);
 }
 
+UsdAttribute UsdUIWindow::GetDpiAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiWindowDpi);
+}
+
+UsdAttribute UsdUIWindow::CreateDpiAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiWindowDpi,
+    SdfValueTypeNames->Float,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
+}
+
+UsdAttribute UsdUIWindow::GetDpifacAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiWindowDpifac);
+}
+
+UsdAttribute UsdUIWindow::CreateDpifacAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiWindowDpifac,
+    SdfValueTypeNames->Float,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
+}
+
+UsdAttribute UsdUIWindow::GetScaleAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiWindowScale);
+}
+
+UsdAttribute UsdUIWindow::CreateScaleAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiWindowScale,
+    SdfValueTypeNames->Float,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
+}
+
+UsdAttribute UsdUIWindow::GetPixelszAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiWindowPixelsz);
+}
+
+UsdAttribute UsdUIWindow::CreatePixelszAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiWindowPixelsz,
+    SdfValueTypeNames->Float,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
+}
+
+UsdAttribute UsdUIWindow::GetWidgetunitAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiWindowWidgetunit);
+}
+
+UsdAttribute UsdUIWindow::CreateWidgetunitAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiWindowWidgetunit,
+    SdfValueTypeNames->Float,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
+}
+
+UsdAttribute UsdUIWindow::GetLinewidthAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiWindowLinewidth);
+}
+
+UsdAttribute UsdUIWindow::CreateLinewidthAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiWindowLinewidth,
+    SdfValueTypeNames->Float,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
+}
+
 UsdAttribute UsdUIWindow::GetCursorAttr() const
 {
   return GetPrim().GetAttribute(UsdUITokens->uiWindowCursor);
@@ -255,6 +351,12 @@ const TfTokenVector& UsdUIWindow::GetSchemaAttributeNames(bool includeInherited)
     UsdUITokens->uiWindowIcon,
     UsdUITokens->uiWindowType,
     UsdUITokens->uiWindowState,
+    UsdUITokens->uiWindowDpi,
+    UsdUITokens->uiWindowDpifac,
+    UsdUITokens->uiWindowScale,
+    UsdUITokens->uiWindowPixelsz,
+    UsdUITokens->uiWindowWidgetunit,
+    UsdUITokens->uiWindowLinewidth,
     UsdUITokens->uiWindowCursor,
     UsdUITokens->uiWindowPos,
     UsdUITokens->uiWindowSize,

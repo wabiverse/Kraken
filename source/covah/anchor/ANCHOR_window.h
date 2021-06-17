@@ -68,6 +68,11 @@ class ANCHOR_ISystemWindow {
   virtual eAnchorStatus setModifiedState(bool isUnsavedChanges) = 0;
 
   /**
+   * Returns the window user data.
+   * @return The window user data. */
+  virtual ANCHOR_UserPtr getUserData() const = 0;
+
+  /**
    * Gets the window "modified" status, indicating unsaved changes
    * @return True if there are unsaved changes */
   virtual bool getModifiedState() = 0;
@@ -80,6 +85,13 @@ class ANCHOR_ISystemWindow {
   /** */
   virtual eAnchorStatus beginFullScreen() const = 0;
   virtual eAnchorStatus endFullScreen() const = 0;
+
+  virtual float getNativePixelSize(void) = 0;
+
+  /**
+   * Returns the recommended DPI for this window.
+   * @return The recommended DPI for this window. */
+  virtual AnchorU16 getDPIHint() = 0;
 };
 
 class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow {
@@ -129,6 +141,29 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow {
   eAnchorStatus setDrawingContextType(eAnchorDrawingContextType type);
 
   /**
+   * Returns the window user data.
+   * @return The window user data. */
+  inline ANCHOR_UserPtr getUserData() const
+  {
+    return m_userData;
+  }
+
+  /**
+   * Returns the recommended DPI for this window.
+   * @return The recommended DPI for this window. */
+  virtual inline AnchorU16 getDPIHint()
+  {
+    return 96;
+  }
+
+  float getNativePixelSize(void)
+  {
+    if (m_nativePixelSize > 0.0f)
+      return m_nativePixelSize;
+    return 1.0f;
+  }
+
+  /**
    * Sets the window "modified" status, indicating unsaved changes
    * @param isUnsavedChanges: Unsaved changes or not.
    * @return Indication of success. */
@@ -144,12 +179,9 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow {
    * Tries to install a rendering context in this window.
    * @param type: The type of rendering context installed.
    * @return Indication as to whether installation has succeeded. */
-  virtual ANCHOR_Context *newDrawingContext(eAnchorDrawingContextType type) = 0;
+  virtual void newDrawingContext(eAnchorDrawingContextType type) = 0;
 
  protected:
-  /** The active gpu context. */
-  ANCHOR_Context *m_context;
-
   /** The drawing context installed in this window. */
   eAnchorDrawingContextType m_drawingContextType;
 

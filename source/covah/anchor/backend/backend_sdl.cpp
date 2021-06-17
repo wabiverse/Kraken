@@ -1096,7 +1096,7 @@ static void FramePresent(ANCHOR_VulkanGPU_Surface *wd)
   wd->SemaphoreIndex = (wd->SemaphoreIndex + 1) % wd->ImageCount;
 }
 
-ANCHOR_Context *ANCHOR_WindowSDL::newDrawingContext(eAnchorDrawingContextType type)
+void ANCHOR_WindowSDL::newDrawingContext(eAnchorDrawingContextType type)
 {
   if (type == ANCHOR_DrawingContextTypeVulkan) {
 
@@ -1204,11 +1204,7 @@ ANCHOR_Context *ANCHOR_WindowSDL::newDrawingContext(eAnchorDrawingContextType ty
       check_vk_result(err);
       ANCHOR_ImplVulkan_DestroyFontUploadObjects();
     }
-
-    return ANCHOR::GetCurrentContext();
   }
-
-  return NULL;
 }
 
 void ANCHOR_WindowSDL::setTitle(const char *title)
@@ -1257,16 +1253,18 @@ ANCHOR_ISystemWindow *ANCHOR_SystemSDL::createWindow(
   if (window) {
     if (ANCHOR_WindowStateFullScreen == state) {
       SDL_Window *sdl_win = window->getSDLWindow();
-
       SDL_DisplayMode mode;
+
+      static_cast<ANCHOR_DisplayManagerSDL *>(m_displayManager)->getCurrentDisplayModeSDL(mode);
+
       SDL_SetWindowDisplayMode(sdl_win, &mode);
       SDL_ShowWindow(sdl_win);
       SDL_SetWindowFullscreen(sdl_win, SDL_TRUE);
     }
 
     if (window->getValid()) {
-      // m_windowManager->addWindow(window);
-      // pushEvent(new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowSize, window));
+      m_windowManager->addWindow(window);
+      pushEvent(new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowSize, window));
     }
     else {
       delete window;
@@ -1509,6 +1507,26 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
           break;
         case SDL_WINDOWEVENT_RESIZED:
           a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowSize, window);
+          /**
+           * Resize swap chain? */
+          if (g_SwapChainRebuild) {
+            int width, height;
+            SDL_GetWindowSize(window->getSDLWindow(), &width, &height);
+            if (width > 0 && height > 0) {
+              ANCHOR_ImplVulkan_SetMinImageCount(g_MinImageCount);
+              ANCHOR_ImplVulkanH_CreateOrResizeWindow(g_PixarVkInstance->GetVulkanInstance(),
+                                                      g_PhysicalDevice,
+                                                      g_Device,
+                                                      &g_MainWindowData,
+                                                      g_QueueFamily,
+                                                      g_Allocator,
+                                                      width,
+                                                      height,
+                                                      g_MinImageCount);
+              g_MainWindowData.FrameIndex = 0;
+              g_SwapChainRebuild = false;
+            }
+          }
           break;
         case SDL_WINDOWEVENT_MOVED:
           a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowMove, window);
@@ -1524,6 +1542,9 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
           break;
       }
 
+      ANCHOR_ImplVulkan_NewFrame();
+      ANCHOR_SystemSDL::ANCHOR_ImplSDL2_NewFrame(window->getSDLWindow());
+      ANCHOR::NewFrame();
       break;
     }
 
@@ -1754,36 +1775,6 @@ bool ANCHOR_SystemSDL::processEvents(bool waitForEvent)
   return anyProcessed;
 }
 
-void ANCHOR_WindowSDL::frameUpdate()
-{
-  /**
-   * Resize swap chain? */
-  if (g_SwapChainRebuild) {
-    int width, height;
-    SDL_GetWindowSize(getSDLWindow(), &width, &height);
-    if (width > 0 && height > 0) {
-      ANCHOR_ImplVulkan_SetMinImageCount(g_MinImageCount);
-      ANCHOR_ImplVulkanH_CreateOrResizeWindow(g_PixarVkInstance->GetVulkanInstance(),
-                                              g_PhysicalDevice,
-                                              g_Device,
-                                              &g_MainWindowData,
-                                              g_QueueFamily,
-                                              g_Allocator,
-                                              width,
-                                              height,
-                                              g_MinImageCount);
-      g_MainWindowData.FrameIndex = 0;
-      g_SwapChainRebuild = false;
-    }
-  }
-
-  /**
-   * Start the ANCHOR frame. */
-  ANCHOR_ImplVulkan_NewFrame();
-  ANCHOR_SystemSDL::ANCHOR_ImplSDL2_NewFrame(getSDLWindow());
-  ANCHOR::NewFrame();
-}
-
 /**
  * Vulkan :: Swap that Chain!
  *
@@ -1806,6 +1797,21 @@ eAnchorStatus ANCHOR_WindowSDL::swapBuffers()
     FramePresent(m_vulkan_context);
   }
   return ANCHOR_SUCCESS;
+}
+
+AnchorU16 ANCHOR_WindowSDL::getDPIHint()
+{
+  int displayIndex = SDL_GetWindowDisplayIndex(m_sdl_win);
+  if (displayIndex < 0) {
+    return 96;
+  }
+
+  float ddpi;
+  if (SDL_GetDisplayDPI(displayIndex, &ddpi, NULL, NULL) != 0) {
+    return 96;
+  }
+
+  return (int)ddpi;
 }
 
 void ANCHOR_clean_vulkan(ANCHOR_WindowSDL *window /**Todo::VkResult &err*/)

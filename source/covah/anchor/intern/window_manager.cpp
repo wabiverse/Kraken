@@ -90,7 +90,7 @@ bool ANCHOR_WindowManager::getWindowFound(const ANCHOR_ISystemWindow *window) co
 
 bool ANCHOR_WindowManager::getFullScreen(void) const
 {
-  return m_fullScreenWindow != NULL;
+  return (m_fullScreenWindow != NULL);
 }
 
 ANCHOR_ISystemWindow *ANCHOR_WindowManager::getFullScreenWindow(void) const

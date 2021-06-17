@@ -112,32 +112,26 @@ void UNI_on_ctx(cContext *C)
   /** Default Window. */
   UsdUIWindow window = UsdUIWindow::Define(UNI.stage, window_path);
   win->title = window.CreateTitleAttr(VtValue(TfToken("Covah")));
+  win->dpi = window.CreateDpiAttr(VtValue(float(1)));
+  win->dpifac = window.CreateDpifacAttr(VtValue(float(1)));
+  win->widgetunit = window.CreateWidgetunitAttr(VtValue(float(20)));
+  win->scale = window.CreateScaleAttr(VtValue(float(1)));
+  win->linewidth = window.CreateLinewidthAttr(VtValue(float(1)));
+  win->pixelsz = window.CreatePixelszAttr(VtValue(float(1)));
   win->icon = window.CreateIconAttr(VtValue(SdfAssetPath(CLI_icon(ICON_COVAH))));
+  win->state = window.CreateStateAttr(VtValue(UsdUITokens->maximized));
+  win->cursor = window.CreateCursorAttr(VtValue(UsdUITokens->default_));
   win->pos = window.CreatePosAttr(VtValue(GfVec2f(0, 0)));
   win->size = window.CreateSizeAttr(VtValue(GfVec2f(1920, 1080)));
   win->type = window.CreateTypeAttr(VtValue(TfToken(UsdUITokens->normal)));
-
-  /** Set the Window's Active Workspace. */
-  UsdRelationship wspace_rel = window.CreateUiWindowWorkspaceRel();
-  wspace_rel.AddTarget(workspace_path);
+  window.CreateUiWindowWorkspaceRel().AddTarget(workspace_path);
 
   /* ----- */
 
   /** Default 'Layout' WorkSpace. */
   UsdUIWorkspace workspace = UsdUIWorkspace::Define(UNI.stage, workspace_path);
-  workspace.CreateNameAttr(VtValue(TfToken("Layout")));
-
-  /** Set the Workspace's Active Screen. */
-  UsdRelationship screen_rel = workspace.CreateScreenRel();
-  screen_rel.AddTarget(screen_path);
-
-  /* ----- */
-
-  /** Default Screen. */
-  UsdUIScreen screen = UsdUIScreen::Define(UNI.stage, screen_path);
-  UsdAttribute align = screen.CreateAlignmentAttr(VtValue(UsdUITokens->verticalSplit));
-
-  /* ----- */
+  win->workspace = workspace.CreateNameAttr(VtValue(TfToken("Layout")));
+  workspace.CreateScreenRel().AddTarget(screen_path);
 
   /** Default Viewport. */
   UsdUIArea v3d = UsdUIArea::Define(UNI.stage, v3d_path);
@@ -158,9 +152,11 @@ void UNI_on_ctx(cContext *C)
   /* ----- */
 
   /** Add UI Areas to Screen's Collection of Areas. */
-  UsdRelationship screen_areas = screen.CreateAreasRel();
-  screen_areas.AddTarget(v3d_path);
-  screen_areas.AddTarget(outliner_path);
+  UsdUIScreen screen = UsdUIScreen::Define(UNI.stage, screen_path);
+  win->align = screen.CreateAlignmentAttr(VtValue(UsdUITokens->verticalSplit));
+  win->screen = screen.CreateAreasRel();
+  win->screen.AddTarget(v3d_path);
+  win->screen.AddTarget(outliner_path);
 
   /* ----- */
 
@@ -169,10 +165,6 @@ void UNI_on_ctx(cContext *C)
   cscene->stage = UNI.stage;
   CTX_data_scene_set(C, cscene);
 
-  win->alignment = align;
-  win->workspace = wspace_rel;
-  win->screen = screen_rel;
-  win->areas = screen_areas;
   CTX_wm_window_set(C, win);
 
   /** Hash the stage path to this window. */

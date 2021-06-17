@@ -15,10 +15,36 @@ class Window "Window" (
         The current window cursor type.
         """
     )
+    uniform float ui:window:dpi = 1 (
+        doc = """
+        The current window DPI value
+        for better interface drawing.
+        """
+    )
+    uniform float ui:window:dpifac = 1 (
+        doc = """
+        The user interface dpi multiplier
+        to scale UI elements based on the
+        DPI.
+        """
+    )
     uniform asset ui:window:icon (
         doc = """
         This points to an image that should be displayed on the window's,
         top most region where the title is.
+        """
+    )
+    uniform float ui:window:linewidth = 1 (
+        doc = """
+        The user interface line width,
+        scaling the width of borders.
+        """
+    )
+    uniform float ui:window:pixelsz = 1 (
+        doc = """
+        The user interface pixel size,
+        scaling the pixel size for all
+        UI components in the window.
         """
     )
     uniform float2 ui:window:pos (
@@ -26,6 +52,12 @@ class Window "Window" (
         Position for a window in a monitor. X is the monitor's relative
         vertical location of the window. Y is the monitor's relative
         horizontal location of the window.
+        """
+    )
+    uniform float ui:window:scale = 1 (
+        doc = """
+        The user interface scale, scaling
+        all UI components to this value.
         """
     )
     uniform float2 ui:window:size (
@@ -53,6 +85,12 @@ class Window "Window" (
         The window type will determine whether it is apart of the main
         central window instance, or whether it is a detached, seperate
         window instance, or if it is a temporary dialog box.
+        """
+    )
+    uniform float ui:window:widgetunit = 20 (
+        doc = """
+        Additional adjustments to optimize
+        widget displays based on DPI settings.
         """
     )
     rel ui:window:workspace (

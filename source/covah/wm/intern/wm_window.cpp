@@ -31,8 +31,15 @@
 #include "ANCHOR_system.h"
 
 #include "CKE_context.h"
+#include "CKE_main.h"
 
+#include "CLI_icons.h"
+#include "CLI_math_inline.h"
 #include "CLI_time.h"
+
+#include <wabi/base/gf/vec2f.h>
+
+WABI_NAMESPACE_USING
 
 /* handle to anchor system. */
 static ANCHOR_SystemHandle anchor_system;
@@ -41,8 +48,153 @@ static ANCHOR_SystemHandle anchor_system;
  * This is called by anchor, and this is where
  * we handle events for windows or send them to
  * the event system. */
-static int anchor_event_proc(ANCHOR_EventHandle event, ANCHOR_UserPtr C_context)
-{}
+static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
+{
+  cContext *C = (cContext *)C_void_ptr;
+  wmWindowManager *wm = CTX_wm_manager(C);
+  eAnchorEventType type = ANCHOR::GetEventType(evt);
+
+  if (type == ANCHOR_EventTypeQuitRequest) {
+    ANCHOR_SystemWindowHandle anchorwin = ANCHOR::GetEventWindow(evt);
+    wmWindow *win;
+    if (anchorwin && ANCHOR::ValidWindow(anchor_system, anchorwin)) {
+      win = (wmWindow *)ANCHOR::GetWindowUserData(anchorwin);
+    }
+  }
+  else {
+    ANCHOR_SystemWindowHandle anchorwin = ANCHOR::GetEventWindow(evt);
+    ANCHOR_EventDataPtr data = ANCHOR::GetEventData(evt);
+  }
+
+  return COVAH_SUCCESS;
+}
+
+static void wm_window_set_dpi(const wmWindow *win)
+{
+  float uscale;
+  win->scale.Get(&uscale);
+
+  float ulinewidth;
+  win->linewidth.Get(&ulinewidth);
+
+  float auto_dpi = ANCHOR::GetDPIHint((ANCHOR_SystemWindowHandle)win->anchorwin);
+
+  auto_dpi = max_ff(auto_dpi, 96.0f);
+  auto_dpi *= ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
+  int dpi = auto_dpi * uscale * (72.0 / 96.0f);
+
+  int pixelsize = max_ii(1, (int)(dpi / 64));
+  pixelsize = max_ii(1, pixelsize + ulinewidth);
+
+  float dpiadj = dpi / pixelsize;
+  float dpifac = (pixelsize * (float)(dpiadj)) / 72.0f;
+  float wunit = (pixelsize * (dpiadj / pixelsize) * 20 + 36) / 72;
+
+  /* ----- */
+
+  /**
+   * Set prefs on
+   * Pixar Stage. */
+
+  win->pixelsz.Set(pixelsize);
+  win->dpi.Set(dpiadj);
+  win->dpifac.Set(dpifac);
+  win->widgetunit.Set(wunit += 2 * ((int)pixelsize - (int)dpifac));
+
+  /* ----- */
+
+  /* update font drawing */
+  ANCHOR::GetIO().FontGlobalScale = pixelsize * dpiadj;
+}
+
+static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool is_dialog)
+{
+
+  /* ----- */
+
+  /**
+   * This comes direct
+   * from Pixar Stage. */
+
+  TfToken title;
+  win->title.Get(&title);
+
+  SdfAssetPath icon;
+  win->icon.Get(&icon);
+
+  GfVec2f pos;
+  win->pos.Get(&pos);
+
+  GfVec2f size;
+  win->size.Get(&size);
+
+  /* ----- */
+
+  ANCHOR_SystemWindowHandle anchorwin = ANCHOR::CreateWindow(anchor_system,
+                                                             NULL,
+                                                             title.GetText(),
+                                                             icon.GetAssetPath().c_str(),
+                                                             pos[0],
+                                                             pos[1],
+                                                             size[0],
+                                                             size[1],
+                                                             ANCHOR_WindowStateNormal,
+                                                             is_dialog,
+                                                             ANCHOR_DrawingContextTypeVulkan,
+                                                             0);
+  if (anchorwin) {
+    win->anchorwin = anchorwin;
+  }
+}
+
+static void wm_window_anchorwindow_ensure(wmWindowManager *wm, wmWindow *win, bool is_dialog)
+{
+  if (win->anchorwin == NULL) {
+
+    /* ----- */
+
+    /**
+     * This comes direct
+     * from Pixar Stage. */
+
+    GfVec2f pos;
+    win->pos.Get(&pos);
+
+    GfVec2f size;
+    win->size.Get(&size);
+
+    TfToken title;
+    win->title.Get(&title);
+
+    SdfAssetPath icon;
+    win->icon.Get(&icon);
+
+    TfToken cursor;
+    win->cursor.Get(&cursor);
+
+    /* ----- */
+
+    if ((size[0] == 0)) {
+      win->pos.Set(GfVec2f(0, 0));
+      win->size.Set(GfVec2f(1920, 1080));
+
+      if (cursor.IsEmpty()) {
+        win->cursor.Set(UsdUITokens->default_);
+      }
+
+      if (title.IsEmpty()) {
+        win->title.Set("Covah");
+      }
+
+      if (icon.GetAssetPath().empty()) {
+        win->icon.Set(CLI_icon(ICON_COVAH));
+      }
+
+      wm_window_anchorwindow_add(wm, win, is_dialog);
+      wm_window_set_dpi(win);
+    }
+  }
+}
 
 void WM_anchor_init(cContext *C)
 {
@@ -50,18 +202,14 @@ void WM_anchor_init(cContext *C)
   ANCHOR_EventConsumerHandle consumer;
 
   if (C != NULL) {
-    /** The only raw ANCHOR_xxx calls */
     consumer = ANCHOR_CreateEventConsumer(anchor_event_proc, C);
   }
 
   if (!anchor_system) {
-    /** The only raw ANCHOR_xxx calls */
     anchor_system = ANCHOR_CreateSystem();
   }
 
   if (C != NULL) {
-    /**
-     * ANCHOR:: access from here on out. */
     ANCHOR::AddEventConsumer(anchor_system, consumer);
   }
 }

@@ -368,16 +368,46 @@ struct UsdUITokensType {
   const TfToken uiWindowCursor;
 
   /**
+   * @brief "ui:window:dpi"
+   *
+   * UsdUIWindow */
+  const TfToken uiWindowDpi;
+
+  /**
+   * @brief "ui:window:dpifac"
+   *
+   * UsdUIWindow */
+  const TfToken uiWindowDpifac;
+
+  /**
    * @brief "ui:window:icon"
    *
    * UsdUIWindow */
   const TfToken uiWindowIcon;
 
   /**
+   * @brief "ui:window:linewidth"
+   *
+   * UsdUIWindow */
+  const TfToken uiWindowLinewidth;
+
+  /**
+   * @brief "ui:window:pixelsz"
+   *
+   * UsdUIWindow */
+  const TfToken uiWindowPixelsz;
+
+  /**
    * @brief "ui:window:pos"
    *
    * UsdUIWindow */
   const TfToken uiWindowPos;
+
+  /**
+   * @brief "ui:window:scale"
+   *
+   * UsdUIWindow */
+  const TfToken uiWindowScale;
 
   /**
    * @brief "ui:window:size"
@@ -402,6 +432,12 @@ struct UsdUITokensType {
    *
    * UsdUIWindow */
   const TfToken uiWindowType;
+
+  /**
+   * @brief "ui:window:widgetunit"
+   *
+   * UsdUIWindow */
+  const TfToken uiWindowWidgetunit;
 
   /**
    * @brief "ui:window:workspace"

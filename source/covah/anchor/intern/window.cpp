@@ -56,7 +56,6 @@ ANCHOR_SystemWindow::ANCHOR_SystemWindow(AnchorU32 width,
 
 ANCHOR_SystemWindow::~ANCHOR_SystemWindow()
 {
-  delete m_context;
   ANCHOR::SetCurrentContext(NULL);
 }
 
@@ -68,17 +67,16 @@ void *ANCHOR_SystemWindow::getOSWindow() const
 eAnchorStatus ANCHOR_SystemWindow::setDrawingContextType(eAnchorDrawingContextType type)
 {
   if (type != m_drawingContextType) {
-    delete m_context;
     ANCHOR::SetCurrentContext(NULL);
 
     if (type != ANCHOR_DrawingContextTypeNone)
-      m_context = newDrawingContext(type);
+      newDrawingContext(type);
 
-    if (m_context != NULL) {
+    if (ANCHOR::GetCurrentContext() != NULL) {
       m_drawingContextType = type;
     }
     else {
-      m_context = ANCHOR::CreateContext();
+      ANCHOR::CreateContext();
       m_drawingContextType = ANCHOR_DrawingContextTypeNone;
     }
 

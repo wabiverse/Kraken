@@ -78,6 +78,36 @@ static UsdAttribute _CreateStateAttr(UsdUIWindow & self, object defaultVal, bool
   return self.CreateStateAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
+static UsdAttribute _CreateDpiAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateDpiAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+}
+
+static UsdAttribute _CreateDpifacAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateDpifacAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+}
+
+static UsdAttribute _CreateScaleAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateScaleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+}
+
+static UsdAttribute _CreatePixelszAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreatePixelszAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+}
+
+static UsdAttribute _CreateWidgetunitAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateWidgetunitAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+}
+
+static UsdAttribute _CreateLinewidthAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateLinewidthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+}
+
 static UsdAttribute _CreateCursorAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
 {
   return self.CreateCursorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
@@ -141,6 +171,24 @@ void wrapUsdUIWindow()
     .def("GetStateAttr", &This::GetStateAttr)
     .def("CreateStateAttr", &_CreateStateAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetDpiAttr", &This::GetDpiAttr)
+    .def("CreateDpiAttr", &_CreateDpiAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetDpifacAttr", &This::GetDpifacAttr)
+    .def("CreateDpifacAttr", &_CreateDpifacAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetScaleAttr", &This::GetScaleAttr)
+    .def("CreateScaleAttr", &_CreateScaleAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetPixelszAttr", &This::GetPixelszAttr)
+    .def("CreatePixelszAttr", &_CreatePixelszAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetWidgetunitAttr", &This::GetWidgetunitAttr)
+    .def("CreateWidgetunitAttr", &_CreateWidgetunitAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetLinewidthAttr", &This::GetLinewidthAttr)
+    .def("CreateLinewidthAttr", &_CreateLinewidthAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
     .def("GetCursorAttr", &This::GetCursorAttr)
     .def("CreateCursorAttr", &_CreateCursorAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
@@ -175,6 +223,13 @@ void wrapUsdUIWindow()
    *   'namespace {', '}'.
    * ======================================================================
    * --(BEGIN CUSTOM CODE)-- */
+
+
+
+
+
+
+
 
 
 

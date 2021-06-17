@@ -121,12 +121,18 @@ void wrapUsdUITokens()
       _AddToken(cls, "uiScreenAreas", UsdUITokens->uiScreenAreas);
       _AddToken(cls, "uiScreenCollectionAreasIncludeRoot", UsdUITokens->uiScreenCollectionAreasIncludeRoot);
       _AddToken(cls, "uiWindowCursor", UsdUITokens->uiWindowCursor);
+      _AddToken(cls, "uiWindowDpi", UsdUITokens->uiWindowDpi);
+      _AddToken(cls, "uiWindowDpifac", UsdUITokens->uiWindowDpifac);
       _AddToken(cls, "uiWindowIcon", UsdUITokens->uiWindowIcon);
+      _AddToken(cls, "uiWindowLinewidth", UsdUITokens->uiWindowLinewidth);
+      _AddToken(cls, "uiWindowPixelsz", UsdUITokens->uiWindowPixelsz);
       _AddToken(cls, "uiWindowPos", UsdUITokens->uiWindowPos);
+      _AddToken(cls, "uiWindowScale", UsdUITokens->uiWindowScale);
       _AddToken(cls, "uiWindowSize", UsdUITokens->uiWindowSize);
       _AddToken(cls, "uiWindowState", UsdUITokens->uiWindowState);
       _AddToken(cls, "uiWindowTitle", UsdUITokens->uiWindowTitle);
       _AddToken(cls, "uiWindowType", UsdUITokens->uiWindowType);
+      _AddToken(cls, "uiWindowWidgetunit", UsdUITokens->uiWindowWidgetunit);
       _AddToken(cls, "uiWindowWorkspace", UsdUITokens->uiWindowWorkspace);
       _AddToken(cls, "uiWorkspaceName", UsdUITokens->uiWorkspaceName);
       _AddToken(cls, "uiWorkspaceScreen", UsdUITokens->uiWorkspaceScreen);

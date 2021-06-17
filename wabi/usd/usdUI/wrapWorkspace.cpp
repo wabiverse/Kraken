@@ -145,6 +145,13 @@ void wrapUsdUIWorkspace()
 
 
 
+
+
+
+
+
+
+
 namespace {
 
 WRAP_CUSTOM {

@@ -71,6 +71,62 @@ class Window "Window" (
             string apiName = "state"
         }
     )
+    uniform float ui:window:dpi = 1 (
+        doc = """
+        The current window DPI value
+        for better interface drawing.
+        """
+        customData = {
+            string apiName = "dpi"
+        }
+    )
+    uniform float ui:window:dpifac = 1 (
+        doc = """
+        The user interface dpi multiplier
+        to scale UI elements based on the
+        DPI.
+        """
+        customData = {
+            string apiName = "dpifac"
+        }          
+    )
+    uniform float ui:window:scale = 1 (
+        doc = """
+        The user interface scale, scaling
+        all UI components to this value.
+        """
+        customData = {
+            string apiName = "scale"
+        }        
+    )
+    uniform float ui:window:pixelsz = 1 (
+        doc = """
+        The user interface pixel size,
+        scaling the pixel size for all
+        UI components in the window.
+        """
+        customData = {
+            string apiName = "pixelsz"
+        }        
+    )
+    uniform float ui:window:widgetunit = 20 (
+        doc = """
+        Additional adjustments to optimize
+        widget displays based on DPI settings.
+        """
+        customData = {
+            string apiName = "widgetunit"
+        }        
+    )   
+    uniform float ui:window:linewidth = 1 (
+        doc = """
+        The user interface line width,
+        scaling the width of borders.
+        """
+        customData = {
+            string apiName = "linewidth"
+        }        
+    ) 
     uniform token ui:window:cursor = "default" (
         allowedTokens = ["default", "textEdit", "wait", "stop", "edit", "copy", "hand", "cross", "paint", "dot", "knife", "vloop", "paintBrush", "eraser", "eyedropper", "swapArea", "xMove", "yMove", "hSplit", "vSplit", "zoomIn", "zoomOut"]
         doc = """

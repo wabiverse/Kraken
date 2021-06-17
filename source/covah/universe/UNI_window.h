@@ -27,7 +27,8 @@
 #include <wabi/base/tf/hashmap.h>
 
 #include <wabi/usd/sdf/path.h>
-#include <wabi/usd/usd/property.h>
+#include <wabi/usd/usd/attribute.h>
+#include <wabi/usd/usd/collectionAPI.h>
 #include <wabi/usd/usdUI/window.h>
 
 struct Scene;
@@ -36,15 +37,23 @@ struct wmWindow : public wabi::UsdUIWindow {
   /** Anchor system backend pointer. */
   void *anchorwin;
 
-  wabi::UsdProperty title;
-  wabi::UsdProperty icon;
-  wabi::UsdProperty pos;
-  wabi::UsdProperty size;
-  wabi::UsdProperty type;
-  wabi::UsdProperty workspace;
-  wabi::UsdProperty screen;
-  wabi::UsdProperty alignment;
-  wabi::UsdProperty areas;
+  wabi::UsdAttribute title;
+  wabi::UsdAttribute icon;
+  wabi::UsdAttribute state;
+  wabi::UsdAttribute dpi;
+  wabi::UsdAttribute dpifac;
+  wabi::UsdAttribute widgetunit;
+  wabi::UsdAttribute scale;
+  wabi::UsdAttribute linewidth;
+  wabi::UsdAttribute pixelsz;
+  wabi::UsdAttribute cursor;
+  wabi::UsdAttribute pos;
+  wabi::UsdAttribute size;
+  wabi::UsdAttribute type;
+  wabi::UsdAttribute workspace;
+
+  wabi::UsdAttribute align;
+  wabi::UsdRelationship screen;
 
   /** Active scene for this window. */
   wabi::TfToken scene;

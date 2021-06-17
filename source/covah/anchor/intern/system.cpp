@@ -160,6 +160,11 @@ void ANCHOR_System::dispatchEvents()
   }
 }
 
+bool ANCHOR_System::validWindow(ANCHOR_ISystemWindow *window)
+{
+  return m_windowManager->getWindowFound(window);
+}
+
 eAnchorStatus ANCHOR_System::addEventConsumer(ANCHOR_IEventConsumer *consumer)
 {
   eAnchorStatus success;

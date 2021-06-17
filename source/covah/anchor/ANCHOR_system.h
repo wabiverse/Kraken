@@ -122,6 +122,12 @@ class ANCHOR_ISystem {
   virtual bool processEvents(bool waitForEvent) = 0;
 
   /**
+   * Returns whether a window is valid.
+   * @param window: Pointer to the window to be checked.
+   * @return Indication of validity. */
+  virtual bool validWindow(ANCHOR_ISystemWindow *window) = 0;
+
+  /**
    * Retrieves events from the queue and send them to the event consumers. */
   virtual void dispatchEvents() = 0;
 
@@ -206,6 +212,12 @@ class ANCHOR_System : public ANCHOR_ISystem {
    * Returns current full screen mode status.
    * @return The current status. */
   bool getFullScreen(void);
+
+  /**
+   * Returns whether a window is valid.
+   * @param window: Pointer to the window to be checked.
+   * @return Indication of validity. */
+  bool validWindow(ANCHOR_ISystemWindow *window);
 
   /**
    * Dispatches all the events on the stack.

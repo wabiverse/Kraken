@@ -138,8 +138,6 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow {
 
   ~ANCHOR_WindowSDL();
 
-  void frameUpdate();
-
   /* SDL specific */
   SDL_Window *getSDLWindow()
   {
@@ -150,7 +148,7 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow {
   /**
    * @param type: The type of rendering context create.
    * @return Indication of success. */
-  ANCHOR_Context *newDrawingContext(eAnchorDrawingContextType type);
+  void newDrawingContext(eAnchorDrawingContextType type);
 
   /**
    * Swaps front and back buffers of a window.
@@ -169,4 +167,6 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow {
   {
     return ANCHOR_ERROR;
   }
+
+  AnchorU16 getDPIHint();
 };

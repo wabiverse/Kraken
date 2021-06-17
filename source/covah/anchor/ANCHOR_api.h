@@ -538,6 +538,15 @@ enum eAnchorUserSpecialDirTypes {
   ANCHOR_UserSpecialDirVideos,
 };
 
+enum eAnchorTrackpadEventSubtypes {
+  ANCHOR_TrackpadEventUnknown = 0,
+  ANCHOR_TrackpadEventScroll,
+  ANCHOR_TrackpadEventRotate,
+  ANCHOR_TrackpadEventSwipe, /* Reserved, not used for now */
+  ANCHOR_TrackpadEventMagnify,
+  ANCHOR_TrackpadEventSmartMagnify
+};
+
 /**
  * ----- ANCHOR CLASSES ----- */
 
@@ -790,6 +799,21 @@ static const ANCHOR_TabletData ANCHOR_TABLET_DATA_NONE = {
   0.0f,
 };
 
+struct ANCHOR_EventTrackpadData {
+  /** The event subtype */
+  eAnchorTrackpadEventSubtypes subtype;
+  /** The x-location of the trackpad event */
+  AnchorS32 x;
+  /** The y-location of the trackpad event */
+  AnchorS32 y;
+  /** The x-delta or value of the trackpad event */
+  AnchorS32 deltaX;
+  /** The y-delta (currently only for scroll subtype) of the trackpad event */
+  AnchorS32 deltaY;
+  /** The delta is inverted from the device due to system preferences. */
+  char isDirectionInverted;
+};
+
 struct ANCHOR_EventCursorData {
   /**
    * The x-coordinate of the cursor position. */
@@ -907,6 +931,58 @@ bool ProcessEvents(ANCHOR_SystemHandle systemhandle, bool waitForEvent);
  * @param systemhandle: The handle to the system. */
 ANCHOR_API
 void DispatchEvents(ANCHOR_SystemHandle systemhandle);
+
+/**
+ * Event Type
+ *
+ * Retrieves the event type
+ * for a given event handle.
+ * @param eventhandle: The handle to the system. */
+ANCHOR_API
+eAnchorEventType GetEventType(ANCHOR_EventHandle eventhandle);
+
+/**
+ * Event Window
+ *
+ * Find an active window to
+ * display quiet dialog in.
+ * @param eventhandle: The handle to the system. */
+ANCHOR_API
+ANCHOR_SystemWindowHandle GetEventWindow(ANCHOR_EventHandle eventhandle);
+
+ANCHOR_API
+ANCHOR_UserPtr GetEventData(ANCHOR_EventHandle eventhandle);
+
+ANCHOR_API
+int ValidWindow(ANCHOR_SystemHandle systemhandle, ANCHOR_SystemWindowHandle windowhandle);
+
+ANCHOR_API
+ANCHOR_UserPtr GetWindowUserData(ANCHOR_SystemWindowHandle windowhandle);
+
+ANCHOR_API
+AnchorU16 GetDPIHint(ANCHOR_SystemWindowHandle windowhandle);
+
+ANCHOR_API
+float GetNativePixelSize(ANCHOR_SystemWindowHandle windowhandle);
+
+/**
+ * Initialize Anchor System Window.
+ *
+ * @param systemhandle: Handle to backend system.
+ * @return Indication of the presence of events. */
+ANCHOR_API
+ANCHOR_SystemWindowHandle CreateWindow(ANCHOR_SystemHandle systemhandle,
+                                       ANCHOR_SystemWindowHandle parent_windowhandle,
+                                       const char *title,
+                                       const char *icon,
+                                       AnchorS32 left,
+                                       AnchorS32 top,
+                                       AnchorU32 width,
+                                       AnchorU32 height,
+                                       eAnchorWindowState state,
+                                       bool is_dialog,
+                                       eAnchorDrawingContextType type,
+                                       int vkSettings);
 
 /**
  * Preforms a swap on the swapchain.
