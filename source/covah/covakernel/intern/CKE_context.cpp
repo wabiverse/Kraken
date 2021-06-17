@@ -26,96 +26,105 @@
 #include "CKE_main.h"
 #include "CKE_version.h"
 
+#include "UNI_object.h"
+#include "UNI_system.h"
 #include "UNI_window.h"
 
 #include <wabi/base/tf/mallocTag.h>
 #include <wabi/usd/usd/attribute.h>
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
-struct cContext {
+struct CovahContext : public CovahObject {
 
-  cContext() = default;
+  CovahContext() = default;
 
   int thread;
 
   /* windowmanager context */
   struct {
-    struct wmWindowManager *manager;
-    struct wmWindow *window;
-
-    const char *operator_poll_msg;
+    wmWindowManager manager;
+    wmWindow window;
   } wm;
 
   /* data context */
   struct {
-    struct Main *main;
-    struct Scene *scene;
+    Main main;
+    Scene scene;
+    Stage stage;
   } data;
 };
 
 /**
  * Main CTX Creation. */
-cContext *CTX_create(void)
+cContext CTX_create(void)
 {
   TfAutoMallocTag2 tag("cContext", "CTX_create");
 
-  cContext *C = new cContext();
+  cContext C = TfCreateRefPtr(new CovahContext());
 
   return C;
 }
 
 /**
  * Main CTX Deletion. */
-void CTX_free(cContext *C)
+void CTX_free(cContext C)
 {
   TfAutoMallocTag2 tag("cContext", "CTX_free");
 
-  delete C;
+  C.~TfRefPtr();
 }
 
 /**
  * Getters. */
 
-Main *CTX_data_main(const cContext *C)
+Main CTX_data_main(const cContext &C)
 {
   return C->data.main;
 }
 
-wmWindowManager *CTX_wm_manager(const cContext *C)
+wmWindowManager CTX_wm_manager(const cContext &C)
 {
   return C->wm.manager;
 }
 
-wmWindow *CTX_wm_window(const cContext *C)
+wmWindow CTX_wm_window(const cContext &C)
 {
   return C->wm.window;
 }
 
-Scene *CTX_data_scene(const cContext *C)
+Scene CTX_data_scene(const cContext &C)
 {
   return C->data.scene;
+}
+
+Stage CTX_data_stage(const cContext &C)
+{
+  return C->data.stage;
 }
 
 /**
  * Setters. */
 
-void CTX_data_main_set(cContext *C, Main *cmain)
+void CTX_data_main_set(cContext C, Main cmain)
 {
   C->data.main = cmain;
 }
 
-void CTX_wm_manager_set(cContext *C, wmWindowManager *wm)
+void CTX_wm_manager_set(cContext C, wmWindowManager wm)
 {
   C->wm.manager = wm;
 }
 
-void CTX_wm_window_set(cContext *C, wmWindow *win)
+void CTX_wm_window_set(cContext C, wmWindow win)
 {
   C->wm.window = win;
 }
 
-void CTX_data_scene_set(cContext *C, Scene *cscene)
+void CTX_data_scene_set(cContext C, Scene cscene)
 {
   C->data.scene = cscene;
+  C->data.stage = cscene->stage;
 }
+
+WABI_NAMESPACE_END

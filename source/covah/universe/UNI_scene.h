@@ -24,6 +24,7 @@
 #pragma once
 
 #include "UNI_api.h"
+#include "UNI_object.h"
 
 #include <wabi/base/gf/vec2f.h>
 #include <wabi/base/gf/vec4d.h>
@@ -31,106 +32,17 @@
 
 #include <wabi/base/tf/token.h>
 
+#include <wabi/usd/usd/stage.h>
 #include <wabi/usd/usdGeom/metrics.h>
 #include <wabi/usd/usdLux/domeLight.h>
 
-/** Scene display settings, as it pertains to the viewport display. */
-struct SceneDisplay {
-  /** Light direction for shadows/highlight. */
-  float light_direction[3];
-  float shadow_shift, shadow_focus;
-
-  /** Method of AA for viewport rendering and image rendering. */
-  int viewport_aa;
-  int render_aa;
-
-  /** Visual rendering setting. */
-  // View3DShading shading;
-};
+WABI_NAMESPACE_BEGIN
 
 /**
  * ---------------------------------------------------------------------
  *  ::::::::        :       :      :     :    :  :::::: UNI::SCENE
  * ---------------------------------------------------------------------
  */
-
-struct ScenePhoenix {
-  /** TODO: Stubbed. */
-};
-
-struct SceneArnold {
-  /** TODO: Stubbed. */
-};
-
-struct SceneRenderman {
-  /** TODO: Stubbed. */
-};
-
-struct SceneEtcher {
-  /** TODO: Stubbed. */
-};
-
-struct UnitSettings {
-  double meters_per_unit;
-  wabi::TfToken up_axis;
-  wabi::UsdGeomLinearUnits length_unit;
-};
-
-struct SceneRender {
-  typedef std::vector<wabi::GfVec4d> ClipPlanesVector;
-
-  wabi::UsdTimeCode current_frame;
-  float render_complexity;
-  int draw_mode;
-  bool show_guides;
-  bool show_proxy;
-  bool show_render;
-  bool force_refresh;
-  bool flip_front_facing;
-  int cull_style;
-  bool enable_id_render;
-  bool enable_lighting;
-  bool enable_sample_alpha_to_coverage;
-  bool apply_render_state;
-  bool gamma_correct_colors;
-  bool enable_highlight;
-  wabi::GfVec4f override_color;
-  wabi::GfVec4f wireframe_color;
-  float alpha_threshold;
-  ClipPlanesVector clip_planes;
-  bool enable_scene_materials;
-  bool enable_scene_lights;
-  bool enable_usd_draw_modes;
-  wabi::GfVec4f clear_color;
-  wabi::TfToken color_correction_mode;
-  int ocio_lut_3d_size;
-};
-
-struct Scene {
-  /** Pixar Stage reference pointer. */
-  wabi::UsdStageRefPtr stage;
-
-  /** Unit of measurement this scene adheres to. */
-  UnitSettings unit;
-
-  /** Active camera and world on active scene. */
-  // wabi::UsdGeomCamera *camera;
-  wabi::UsdLuxDomeLight *world;
-
-  /** Viewport scene display / OpenGL / Vulkan. */
-  SceneDisplay display;
-
-  SceneRender render;
-
-  /** Hydra Engine render settings. */
-  // wabi::EmberRenderSettings ember;
-
-  /** Render Engine settings. */
-  ScenePhoenix phoenix;
-  SceneArnold arnold;
-  SceneRenderman prman;
-  SceneEtcher etcher;
-};
 
 enum eSceneDrawMode {
   DRAW_POINTS,
@@ -187,3 +99,32 @@ enum eSceneRenderEngine {
 
   ENGINE_MAX,
 };
+
+enum eSceneLoadSet { SCENE_LOAD_ALL, SCENE_LOAD_NONE };
+
+struct CovahScene : public CovahObject {
+
+  /** This scenes active stage. */
+  UsdStageRefPtr stage;
+
+  /** Which way is up? */
+  TfToken upAxis;
+
+  /** Specifies the initial set of prims to load. */
+  eSceneLoadSet loadSet;
+
+  inline CovahScene(const std::string &identifier,
+                    const TfToken &stageUpAxis = UsdGeomTokens->z,
+                    eSceneLoadSet loadingSet = SCENE_LOAD_ALL);
+};
+
+CovahScene::CovahScene(const std::string &identifier, const TfToken &stageUpAxis, eSceneLoadSet loadingSet)
+  : stage(UsdStage::CreateNew(identifier, UsdStage::InitialLoadSet(loadingSet))),
+    upAxis(stageUpAxis),
+    loadSet(loadingSet)
+{
+  stage->GetSessionLayer();
+  stage->SetMetadata(UsdGeomTokens->upAxis, upAxis);
+}
+
+WABI_NAMESPACE_END
