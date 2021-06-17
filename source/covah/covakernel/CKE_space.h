@@ -30,6 +30,8 @@
 
 #include <wabi/base/gf/vec2i.h>
 
+WABI_NAMESPACE_BEGIN
+
 enum eSpaceWindowType {
   SPACE_WINDOW_DEFAULT = 0,
   SPACE_WINDOW_VIEW3D,
@@ -60,7 +62,7 @@ enum class eSpaceKeymapType {
 
 struct SpaceArea {
   /** Coordinates of region. */
-  wabi::GfVec2i win_coords;
+  GfVec2i win_coords;
   /** Size. */
   int width, height;
 
@@ -90,3 +92,5 @@ struct SpaceWindow {
 };
 
 typedef int wmWindowFlags;
+
+WABI_NAMESPACE_END

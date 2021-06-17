@@ -87,6 +87,7 @@ AnchorFontAtlasFlags, AnchorFontAtlas, AnchorFont)
 #  include <wabi/base/gf/vec2f.h>
 #  include <wabi/base/gf/vec2h.h>
 #  include <wabi/base/gf/vec4f.h>
+#  include <wabi/base/tf/refPtr.h>
 #  include <wabi/base/tf/tf.h>
 
 #  include <wabi/imaging/hd/driver.h>
@@ -951,7 +952,7 @@ ANCHOR_API
 ANCHOR_SystemWindowHandle GetEventWindow(ANCHOR_EventHandle eventhandle);
 
 ANCHOR_API
-ANCHOR_UserPtr GetEventData(ANCHOR_EventHandle eventhandle);
+ANCHOR_EventDataPtr GetEventData(ANCHOR_EventHandle eventhandle);
 
 ANCHOR_API
 int ValidWindow(ANCHOR_SystemHandle systemhandle, ANCHOR_SystemWindowHandle windowhandle);
@@ -964,6 +965,9 @@ AnchorU16 GetDPIHint(ANCHOR_SystemWindowHandle windowhandle);
 
 ANCHOR_API
 float GetNativePixelSize(ANCHOR_SystemWindowHandle windowhandle);
+
+ANCHOR_API
+void GetMainDisplayDimensions(ANCHOR_SystemHandle systemhandle, AnchorU32 *width, AnchorU32 *height);
 
 /**
  * Initialize Anchor System Window.

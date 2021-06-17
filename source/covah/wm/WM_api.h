@@ -26,6 +26,8 @@
 
 #include "CLI_utildefines.h"
 
+#include "CKE_context.h"
+
 #if defined(WABI_STATIC)
 #  define COVAH_WM_API
 #  define COVAH_WM_API_TEMPLATE_CLASS(...)
@@ -44,5 +46,9 @@
 #  define COVAH_WM_LOCAL ARCH_HIDDEN
 #endif
 
+WABI_NAMESPACE_BEGIN
+
 COVAH_WM_API
-void WM_main(struct cContext *C);
+void WM_main(cContext &C);
+
+WABI_NAMESPACE_END

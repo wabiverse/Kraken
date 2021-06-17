@@ -27,7 +27,7 @@
 #include <wabi/base/arch/systemInfo.h>
 #include <wabi/base/tf/stringUtils.h>
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
 /**
  * Refactor and hash these in so we're not creating 19 billion strings. */
@@ -168,3 +168,5 @@ std::string CLI_icon(int icon_id)
       return TfStringCatPaths(icons_path, "covah-desktop.png");
   }
 }
+
+WABI_NAMESPACE_END

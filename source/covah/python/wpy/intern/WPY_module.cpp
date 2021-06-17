@@ -25,7 +25,7 @@
 #include "UNI_context.h"
 #include "UNI_scene.h"
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
 #if 0
 PYBIND11_MODULE(wpy, m)
@@ -40,3 +40,5 @@ PYBIND11_MODULE(context, m)
   m.doc() = "Main 'context' instanced by a <filepath>, from which all data is derived";
 }
 #endif
+
+WABI_NAMESPACE_END

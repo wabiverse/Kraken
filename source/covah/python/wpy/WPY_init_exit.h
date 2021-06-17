@@ -26,6 +26,8 @@
 
 #include "WPY_api.h"
 
+WABI_NAMESPACE_BEGIN
+
 /*
  * ---------------------------------------------------------------------
  *  MAIN PYTHON INIT AND CLEANUP
@@ -37,3 +39,5 @@ void WPY_python_init(const std::string &sys_paths);
 
 COVAH_PYTHON_API
 void WPY_python_exit(void);
+
+WABI_NAMESPACE_END

@@ -26,11 +26,13 @@
 
 #include "WM_api.h"
 
+WABI_NAMESPACE_BEGIN
+
 COVAH_WM_API
 void WM_init_default_styles();
 
 COVAH_WM_API
-void WM_init(struct cContext *C, int argc, const char **argv);
+void WM_init(cContext &C, int argc, const char **argv);
 
 enum eWmModes { COVAH_NORMAL_MODE = 0, COVAH_DEBUG_MODE };
 
@@ -43,3 +45,5 @@ enum eWmKernelPaths {
 
   VERSION_DECIMAL
 };
+
+WABI_NAMESPACE_END

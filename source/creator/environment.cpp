@@ -40,9 +40,11 @@
  * Setup our environment according
  * to our installation. */
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
 void CREATOR_covah_env_init()
 {
   static std::string EXE_PATH = TfGetPathName(ArchGetExecutablePath());
 }
+
+WABI_NAMESPACE_END

@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CKE_api.h"
+#include "UNI_object.h"
 
 #include <wabi/usd/usd/common.h>
 
@@ -72,7 +73,7 @@ typedef CovahContextRefPtr       /* Use -> */ cContext;
  *  - Creation.
  *  - Destruction. */
 
-cContext CTX_create(void);
+cContext &CTX_create(void);
 void CTX_free(cContext &C);
 
 /**
@@ -99,5 +100,25 @@ void CTX_data_main_set(cContext &C, Main cmain);
 void CTX_wm_manager_set(cContext &C, wmWindowManager wm);
 void CTX_wm_window_set(cContext &C, wmWindow win);
 void CTX_data_scene_set(cContext &C, Scene cscene);
+
+struct CovahContext : public CovahObject {
+
+  CovahContext() = default;
+
+  int thread;
+
+  /* windowmanager context */
+  struct {
+    wmWindowManager manager;
+    wmWindow window;
+  } wm;
+
+  /* data context */
+  struct {
+    Main main;
+    Scene scene;
+    Stage stage;
+  } data;
+};
 
 WABI_NAMESPACE_END

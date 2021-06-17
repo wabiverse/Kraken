@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "UNI_path_defaults.h"
+
 #include "CLI_utildefines.h"
 
 #if defined(WABI_STATIC)

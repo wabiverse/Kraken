@@ -31,7 +31,9 @@
 
 #include <wabi/usdImaging/usdImagingGL/engine.h>
 
-typedef std::shared_ptr<class wabi::UsdImagingGLEngine> EnginePtr;
+WABI_NAMESPACE_BEGIN
+
+typedef std::shared_ptr<class UsdImagingGLEngine> EnginePtr;
 
 COVAH_UNIVERSE_API
 void UNI_enable_all_debug_codes(void);
@@ -41,3 +43,5 @@ void UNI_diagnostics_check(void);
 
 COVAH_UNIVERSE_API
 void UNI_diagnostics_hydra_test(void);
+
+WABI_NAMESPACE_END

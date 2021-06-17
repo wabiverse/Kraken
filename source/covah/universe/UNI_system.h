@@ -29,6 +29,8 @@
 #define MAX_SYSTEM_FILE_PATH 256
 #define MAX_SYSTEM_VERSION_INFO 64
 
+WABI_NAMESPACE_BEGIN
+
 struct SystemPaths {
   /** Executable Path, where covah.exe resides. */
   char exe_path[MAX_SYSTEM_FILE_PATH];
@@ -67,3 +69,5 @@ struct System {
   SystemPaths paths;
   SystemVersion version;
 };
+
+WABI_NAMESPACE_END

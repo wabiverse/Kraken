@@ -30,7 +30,7 @@
 #include <wabi/base/tf/stringUtils.h>
 #include <wabi/wabi.h>
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
 void CKE_covah_python_init()
 {
@@ -38,3 +38,5 @@ void CKE_covah_python_init()
 
   WPY_python_init(sys_paths);
 }
+
+WABI_NAMESPACE_END

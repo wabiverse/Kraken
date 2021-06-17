@@ -135,6 +135,17 @@ class Window "Window" (
         customData = {
             string apiName = "cursor"
         }
+    )
+    uniform token ui:window:alignment = "alignAbsolute" (
+        allowedTokens = ["alignAbsolute", "alignCenter", "alignParent"]
+        doc = """
+        Alignment for a window in a monitor. To control it's
+        position within the display, whether it be absolutley
+        positioned, centered, or centered to it's parent window.
+        """
+        customData = {
+            string apiName = "alignment"
+        }
     )    
     uniform float2 ui:window:pos (
         doc = """

@@ -24,4 +24,10 @@
 
 #pragma once
 
+#include <wabi/wabi.h>
+
+WABI_NAMESPACE_BEGIN
+
 void CREATOR_covah_env_init();
+
+WABI_NAMESPACE_END

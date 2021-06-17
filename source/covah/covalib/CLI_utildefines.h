@@ -34,7 +34,7 @@
 /* wabi */
 #include <wabi/wabi.h>
 
-/* wabi::base */
+/* base */
 #include <wabi/base/arch/export.h>
 
 /* covalib */

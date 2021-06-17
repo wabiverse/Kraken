@@ -24,6 +24,12 @@
 
 #pragma once
 
-struct cContext;
+#include <wabi/wabi.h>
 
-void WM_event_do_refresh_wm(cContext *C);
+#include "CKE_context.h"
+
+WABI_NAMESPACE_BEGIN
+
+void WM_event_do_refresh_wm(cContext &C);
+
+WABI_NAMESPACE_END

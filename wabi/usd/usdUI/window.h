@@ -580,6 +580,44 @@ class UsdUIWindow : public UsdTyped {
  public:
   /**
    * ---------------------------------------------------------------------
+   * ALIGNMENT
+   * ---------------------------------------------------------------------
+   * 
+   * Alignment for a window in a monitor. To control it's
+   * position within the display, whether it be absolutley
+   * positioned, centered, or centered to it's parent window.
+   * 
+   *
+   *
+   * | ||
+   * | -- | -- |
+   *
+   * | Declaration | `uniform token ui:window:alignment = "alignAbsolute"` |
+   *
+   * | C++ Type | TfToken |
+   *
+   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Token |
+   *
+   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
+   *
+   * | @ref UsdUITokens "Allowed Values" | alignAbsolute, alignCenter, alignParent |
+   */
+  USDUI_API
+  UsdAttribute GetAlignmentAttr() const;
+
+  /**
+   * See GetAlignmentAttr(), and also @ref
+   * Usd_Create_Or_Get_Property for when to use Get vs Create.
+   * If specified, author @p defaultValue as the attribute's
+   * default, sparsely (when it makes sense to do so) if @p
+   * writeSparsely is @c true, the default for @p writeSparsely
+   * is @c false. */
+  USDUI_API
+  UsdAttribute CreateAlignmentAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+
+ public:
+  /**
+   * ---------------------------------------------------------------------
    * POS
    * ---------------------------------------------------------------------
    * 

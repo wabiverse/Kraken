@@ -15,15 +15,18 @@ set(INC_SYS
 
 set(SRC
   intern/UNI_create.cpp
-  intern/UNI_universe.cpp
   intern/UNI_diagnostics.cpp
 
   UNI_api.h
   UNI_context.h
   UNI_diagnostics.h
+  UNI_object.h
+  UNI_path_defaults.h
   UNI_scene.h
+  UNI_screen.h
   UNI_system.h
-  UNI_universe.h
+  UNI_window.h
+  UNI_workspace.h
 )
 
 set(LIB

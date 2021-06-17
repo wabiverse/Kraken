@@ -3519,7 +3519,7 @@ ANCHOR_SystemWindowHandle ANCHOR::GetEventWindow(ANCHOR_EventHandle eventhandle)
   return (ANCHOR_SystemWindowHandle)event->getWindow();
 }
 
-ANCHOR_UserPtr ANCHOR::GetEventData(ANCHOR_EventHandle eventhandle)
+ANCHOR_EventDataPtr ANCHOR::GetEventData(ANCHOR_EventHandle eventhandle)
 {
   ANCHOR_IEvent *event = (ANCHOR_IEvent *)eventhandle;
 
@@ -3553,6 +3553,13 @@ float ANCHOR::GetNativePixelSize(ANCHOR_SystemWindowHandle windowhandle)
   if (window)
     return window->getNativePixelSize();
   return 1.0f;
+}
+
+void ANCHOR::GetMainDisplayDimensions(ANCHOR_SystemHandle systemhandle, AnchorU32 *width, AnchorU32 *height)
+{
+  ANCHOR_ISystem *system = (ANCHOR_ISystem *)systemhandle;
+
+  system->getMainDisplayDimensions(*width, *height);
 }
 
 void ANCHOR::SetAllocatorFunctions(ANCHORMemAllocFunc alloc_func,

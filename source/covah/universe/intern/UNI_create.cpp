@@ -70,7 +70,7 @@ void UNI_destroy(cContext &C)
 
 void UNI_open_stage(cContext &C)
 {
-  Main main = CTX_data_stage(C);
+  Main main = CTX_data_main(C);
   Stage stage = CTX_data_stage(C);
 
   stage->Open(main->stage_id);

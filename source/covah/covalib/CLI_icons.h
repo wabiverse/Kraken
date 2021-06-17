@@ -26,6 +26,8 @@
 
 #include "CLI_api.h"
 
+WABI_NAMESPACE_BEGIN
+
 enum {
   ICON_COVAH = 0,
   ICON_WINDOW_CLOSE,
@@ -94,3 +96,5 @@ enum {
 
 COVAH_LIB_API
 std::string CLI_icon(int icon_id);
+
+WABI_NAMESPACE_END

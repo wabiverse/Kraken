@@ -35,17 +35,21 @@
  *
  * !! IF YOU ADD A NEW PATH.  INCLUDE IT HERE. */
 
+/* clang-format off */
+
 /** Covah Root Namespace. */
-#define COVAH_ROOT / Covah
+#define COVAH_ROOT/Covah
 
 /** Covah :: MainWindow Root. */
-#define COVAH_WINDOW COVAH_ROOT / MainWindow
+#define COVAH_WINDOW COVAH_ROOT/MainWindow
 
 /** Covah :: MainWindow :: Workspaces Root. */
-#define COVAH_WORKSPACES COVAH_WINDOW / Workspaces
+#define COVAH_WORKSPACES COVAH_WINDOW/Workspaces
 
 /** Covah :: MainWindow :: Workspaces :: Layout Root. */
-#define COVAH_WORKSPACES_LAYOUT COVAH_WORKSPACES / Layout
+#define COVAH_WORKSPACES_LAYOUT COVAH_WORKSPACES/Layout
 
 /** Covah :: MainWindow :: Workspaces :: Layout :: Screen Root. */
-#define COVAH_SCREEN_LAYOUT COVAH_WORKSPACES_LAYOUT / Screen
+#define COVAH_SCREEN_LAYOUT COVAH_WORKSPACES_LAYOUT/Screen
+
+/* clang-format on */

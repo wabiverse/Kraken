@@ -34,7 +34,7 @@
 #include <wabi/base/plug/info.h>
 #include <wabi/base/plug/registry.h>
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
 void CKE_covah_plugins_init()
 {
@@ -44,3 +44,5 @@ void CKE_covah_plugins_init()
 
   printf("::: COVAHVERSE | INITIALIZED :::\n\n");
 }
+
+WABI_NAMESPACE_END

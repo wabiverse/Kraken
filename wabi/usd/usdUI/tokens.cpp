@@ -36,7 +36,10 @@
 WABI_NAMESPACE_BEGIN
 
 UsdUITokensType::UsdUITokensType()
-  : areas("areas", TfToken::Immortal),
+  : alignAbsolute("alignAbsolute", TfToken::Immortal),
+    alignCenter("alignCenter", TfToken::Immortal),
+    alignParent("alignParent", TfToken::Immortal),
+    areas("areas", TfToken::Immortal),
     bottom("bottom", TfToken::Immortal),
     closed("closed", TfToken::Immortal),
     copy("copy", TfToken::Immortal),
@@ -83,6 +86,7 @@ UsdUITokensType::UsdUITokensType()
     uiScreenAlignment("ui:screen:alignment", TfToken::Immortal),
     uiScreenAreas("ui:screen:areas", TfToken::Immortal),
     uiScreenCollectionAreasIncludeRoot("ui:screen:collection:areas:includeRoot", TfToken::Immortal),
+    uiWindowAlignment("ui:window:alignment", TfToken::Immortal),
     uiWindowCursor("ui:window:cursor", TfToken::Immortal),
     uiWindowDpi("ui:window:dpi", TfToken::Immortal),
     uiWindowDpifac("ui:window:dpifac", TfToken::Immortal),
@@ -108,6 +112,9 @@ UsdUITokensType::UsdUITokensType()
     zoomIn("zoomIn", TfToken::Immortal),
     zoomOut("zoomOut", TfToken::Immortal),
     allTokens({
+      alignAbsolute,
+      alignCenter,
+      alignParent,
       areas,
       bottom,
       closed,
@@ -155,6 +162,7 @@ UsdUITokensType::UsdUITokensType()
       uiScreenAlignment,
       uiScreenAreas,
       uiScreenCollectionAreasIncludeRoot,
+      uiWindowAlignment,
       uiWindowCursor,
       uiWindowDpi,
       uiWindowDpifac,

@@ -27,7 +27,9 @@
 #include "WM_draw.h"
 #include "WM_window.h"
 
-void WM_main(cContext *C)
+WABI_NAMESPACE_BEGIN
+
+void WM_main(cContext &C)
 {
   while (1) {
 
@@ -48,3 +50,5 @@ void WM_main(cContext *C)
     WM_draw_update(C);
   }
 }
+
+WABI_NAMESPACE_END

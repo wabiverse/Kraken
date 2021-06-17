@@ -71,13 +71,31 @@ WABI_NAMESPACE_BEGIN
  * Use UsdUITokens like so:
  *
  * @code
- *   gprim.GetMyTokenValuedAttr().Set(UsdUITokens->areas);
+ *   gprim.GetMyTokenValuedAttr().Set(UsdUITokens->alignAbsolute);
  * @endcode
  */
 struct UsdUITokensType {
 
   USDUI_API
   UsdUITokensType();
+
+  /**
+   * @brief "alignAbsolute"
+   *
+   * Possible value for UsdUIWindow::GetAlignmentAttr(), Default value for UsdUIWindow::GetAlignmentAttr() */
+  const TfToken alignAbsolute;
+
+  /**
+   * @brief "alignCenter"
+   *
+   * Possible value for UsdUIWindow::GetAlignmentAttr() */
+  const TfToken alignCenter;
+
+  /**
+   * @brief "alignParent"
+   *
+   * Possible value for UsdUIWindow::GetAlignmentAttr() */
+  const TfToken alignParent;
 
   /**
    * @brief "areas"
@@ -360,6 +378,12 @@ struct UsdUITokensType {
    *
    * UsdUIScreen */
   const TfToken uiScreenCollectionAreasIncludeRoot;
+
+  /**
+   * @brief "ui:window:alignment"
+   *
+   * UsdUIWindow */
+  const TfToken uiWindowAlignment;
 
   /**
    * @brief "ui:window:cursor"

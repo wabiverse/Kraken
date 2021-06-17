@@ -37,21 +37,21 @@
 
 int main(int argc, const char **argv)
 {
-  cContext *C;
+  wabi::cContext C;
 
 #ifdef _WIN32
   HWND hwnd = GetConsoleWindow();
   ShowWindow(hwnd, 0);
 #endif
 
-  CREATOR_covah_env_init();
+  wabi::CREATOR_covah_env_init();
 
-  C = CTX_create();
+  C = wabi::CTX_create();
 
-  CKE_covah_globals_init();
-  CKE_covah_main_init(C, argc, (const char **)argv);
+  wabi::CKE_covah_globals_init();
+  wabi::CKE_covah_main_init(C, argc, (const char **)argv);
 
-  WM_init(C, argc, (const char **)argv);
-  WM_main(C);
-  return COVAH_SUCCESS;
+  wabi::WM_init(C, argc, (const char **)argv);
+  wabi::WM_main(C);
+  return wabi::COVAH_SUCCESS;
 }

@@ -28,7 +28,7 @@
 
 #include "ANCHOR_api.h"
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
 void WM_init_default_styles()
 {
@@ -40,3 +40,5 @@ void WM_init_default_styles()
   style.WindowTitleAlign = GfVec2f(0.0f, 0.5f);
   style.WindowMenuButtonPosition = ANCHOR_Dir_Left;
 }
+
+WABI_NAMESPACE_END

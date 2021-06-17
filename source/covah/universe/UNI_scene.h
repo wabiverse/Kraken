@@ -26,6 +26,8 @@
 #include "UNI_api.h"
 #include "UNI_object.h"
 
+#include "CKE_version.h"
+
 #include <wabi/base/gf/vec2f.h>
 #include <wabi/base/gf/vec4d.h>
 #include <wabi/base/gf/vec4f.h>
@@ -125,6 +127,8 @@ CovahScene::CovahScene(const std::string &identifier, const TfToken &stageUpAxis
 {
   stage->GetSessionLayer();
   stage->SetMetadata(UsdGeomTokens->upAxis, upAxis);
+  stage->GetRootLayer()->SetDocumentation(
+    std::string("Covah v" + TfStringify(COVAH_VERSION_MAJOR) + "." + TfStringify(COVAH_VERSION_MINOR)));
 }
 
 WABI_NAMESPACE_END

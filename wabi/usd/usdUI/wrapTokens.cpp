@@ -73,6 +73,9 @@ void wrapUsdUITokens()
 {
   boost::python::class_ < UsdUITokensType, boost::noncopyable >
     cls("Tokens", boost::python::no_init);
+      _AddToken(cls, "alignAbsolute", UsdUITokens->alignAbsolute);
+      _AddToken(cls, "alignCenter", UsdUITokens->alignCenter);
+      _AddToken(cls, "alignParent", UsdUITokens->alignParent);
       _AddToken(cls, "areas", UsdUITokens->areas);
       _AddToken(cls, "bottom", UsdUITokens->bottom);
       _AddToken(cls, "closed", UsdUITokens->closed);
@@ -120,6 +123,7 @@ void wrapUsdUITokens()
       _AddToken(cls, "uiScreenAlignment", UsdUITokens->uiScreenAlignment);
       _AddToken(cls, "uiScreenAreas", UsdUITokens->uiScreenAreas);
       _AddToken(cls, "uiScreenCollectionAreasIncludeRoot", UsdUITokens->uiScreenCollectionAreasIncludeRoot);
+      _AddToken(cls, "uiWindowAlignment", UsdUITokens->uiWindowAlignment);
       _AddToken(cls, "uiWindowCursor", UsdUITokens->uiWindowCursor);
       _AddToken(cls, "uiWindowDpi", UsdUITokens->uiWindowDpi);
       _AddToken(cls, "uiWindowDpifac", UsdUITokens->uiWindowDpifac);

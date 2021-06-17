@@ -22,6 +22,8 @@
  * Bare Metal.
  */
 
+#include <wabi/wabi.h>
+
 #include "ANCHOR_debug_codes.h"
 #include "ANCHOR_display_manager.h"
 

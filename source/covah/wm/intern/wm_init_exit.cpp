@@ -40,7 +40,7 @@
 
 #include <wabi/base/tf/stringUtils.h>
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
 static void ShowFileMenu()
 {
@@ -85,10 +85,12 @@ static void ShowMainMenuBar()
   }
 }
 
-void WM_init(cContext *C, int argc, const char **argv)
+void WM_init(cContext &C, int argc, const char **argv)
 {
   WM_anchor_init(C);
   WM_init_cursor_data();
 
   ANCHOR_CreateSystemPaths();
 }
+
+WABI_NAMESPACE_END

@@ -31,7 +31,7 @@
 #include <mutex>
 
 using namespace Zep;
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
 void ED_code_run(bool *show)
 {
@@ -77,3 +77,5 @@ void ED_code_run(bool *show)
 
   ANCHOR::End();
 }
+
+WABI_NAMESPACE_END

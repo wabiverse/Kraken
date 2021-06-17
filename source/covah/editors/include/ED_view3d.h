@@ -77,6 +77,8 @@
 /** Figure out why this is the magical timecode multiplier value. */
 #define MAGIC_TIMECODE_MULTIPLIER 0.2
 
+WABI_NAMESPACE_BEGIN
+
 /** Use with #View3D.shading.mode */
 enum eView3DShadingMode { VIEW3D_MODE_WIREFRAME = 0, VIEW3D_MODE_SOLID, VIEW3D_MODE_SHADED };
 
@@ -85,7 +87,7 @@ struct View3DShading {
   eView3DShadingMode mode;
 
   /** Viewport background color. */
-  wabi::GfVec4f background_color;
+  GfVec4f background_color;
 
   /** HDR dome light texture settings. */
   char studiolight_texture[VIEW3D_MAXNAME];
@@ -95,7 +97,7 @@ struct View3DShading {
   float studiolight_blur;
 
   /** Selection outline color. */
-  wabi::GfVec4f object_outline_color;
+  GfVec4f object_outline_color;
 
   /** Alpha transparency for xray'd objects. */
   float xray_alpha;
@@ -130,7 +132,7 @@ struct View3DStatus {
   eView3DStatusFlag redraw_flag;
 
   /** Animation timecode. */
-  wabi::UsdTimeCode timecode;
+  UsdTimeCode timecode;
 };
 
 struct View3DOverlay {
@@ -173,7 +175,7 @@ struct View3DOverlay {
 
 struct View3D {
   /** Viewport camera settings. */
-  wabi::UsdGeomCamera camera;
+  UsdGeomCamera camera;
   float lens;
   float clip_start, clip_end;
 
@@ -200,11 +202,13 @@ struct View3D {
   View3DStatus status;
 
   /** Hydra Engine Params. */
-  wabi::UsdApolloRenderParams render_params;
+  UsdApolloRenderParams render_params;
 };
 
 VIEW3D_EDITOR_API
-void ED_view3d_init_engine(const wabi::SdfPath &root, bool &reset);
+void ED_view3d_init_engine(const SdfPath &root, bool &reset);
 
 VIEW3D_EDITOR_API
 void ED_view3d_run(bool *show = NULL);
+
+WABI_NAMESPACE_END

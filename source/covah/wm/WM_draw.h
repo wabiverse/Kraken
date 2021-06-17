@@ -24,4 +24,12 @@
 
 #pragma once
 
-void WM_draw_update(cContext *C);
+#include <wabi/wabi.h>
+
+#include "CKE_context.h"
+
+WABI_NAMESPACE_BEGIN
+
+void WM_draw_update(cContext &C);
+
+WABI_NAMESPACE_END

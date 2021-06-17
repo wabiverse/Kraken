@@ -32,7 +32,7 @@
 
 #include <wabi/base/arch/hints.h>
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
 void ED_view3d_run(bool *show)
 {
@@ -82,3 +82,5 @@ void ED_view3d_run(bool *show)
   ANCHOR::Text("I will be a viewport someday.");
   ANCHOR::End();
 }
+
+WABI_NAMESPACE_END

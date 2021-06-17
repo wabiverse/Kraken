@@ -65,6 +65,11 @@ class ANCHOR_ISystem {
 
  public:
   /**
+   * Returns the dimensions of the main display on this system.
+   * @return The dimension of the main display. */
+  virtual void getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const = 0;
+
+  /**
    * Create a new window.
    * The new window is added to the list of windows managed.
    * Never explicitly delete the window, use disposeWindow() instead.

@@ -26,6 +26,8 @@
 
 #include "ANCHOR_api.h"
 
+#include <wabi/base/tf/refPtr.h>
+
 class ANCHOR_IEvent {
  public:
   /**

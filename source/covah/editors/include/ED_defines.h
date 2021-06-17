@@ -36,15 +36,15 @@
 #include <utility>
 #include <vector>
 
-/* wabi::base */
+/* base */
 #include <wabi/base/gf/vec2i.h>
 #include <wabi/base/gf/vec4f.h>
 #include <wabi/base/tf/token.h>
 
-/* wabi::imaging */
+/* imaging */
 #include <wabi/imaging/hio/types.h>
 
-/* wabi::usd */
+/* usd */
 #include <wabi/usd/usd/prim.h>
 #include <wabi/usd/usd/timeCode.h>
 #include <wabi/usd/usdGeom/basisCurves.h>

@@ -26,7 +26,9 @@
 
 #include "CKE_context.h"
 
-int wm_window_close_exec(cContext *C, wabi::UsdAttribute *UNUSED(op))
+WABI_NAMESPACE_BEGIN
+
+int wm_window_close_exec(cContext &C, UsdAttribute *UNUSED(op))
 {
   // wmWindowManager *wm = CTX_wm_manager(C);
   // wmWindow *win = CTX_wm_window(C);
@@ -54,3 +56,5 @@ void WM_operatortype_append(void (*opfunc)(wmOperatorType *))
 
 void WM_operatortypes_register(void)
 {}
+
+WABI_NAMESPACE_END

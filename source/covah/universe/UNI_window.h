@@ -76,6 +76,8 @@ struct CovahWindow : public UsdUIWindow, public CovahObject {
                      const SdfPath &stagepath = SdfPath(STRINGIFY(COVAH_WINDOW)),
                      const SdfPath &wspace = SdfPath(STRINGIFY(COVAH_WORKSPACES_LAYOUT)),
                      const SdfPath &screen = SdfPath(STRINGIFY(COVAH_SCREEN_LAYOUT)));
+
+  inline CovahWindow(cContext &C, wmWindow &prim, const SdfPath &stagepath);
 };
 
 CovahWindow::CovahWindow(cContext &C, const SdfPath &stagepath, const SdfPath &wspace, const SdfPath &screen)
@@ -98,6 +100,28 @@ CovahWindow::CovahWindow(cContext &C, const SdfPath &stagepath, const SdfPath &w
     workspace_rel(CreateUiWindowWorkspaceRel()),
     prims({.workspace = TfCreateRefPtr(new CovahWorkspace(C, wspace)),
            .screen = TfCreateRefPtr(new CovahScreen(C, screen))})
+
+{}
+
+CovahWindow::CovahWindow(cContext &C, wmWindow &prim, const SdfPath &stagepath)
+  : UsdUIWindow(COVAH_UNIVERSE_CREATE_CHILD(C)),
+    path(GetPath()),
+    title(CreateTitleAttr()),
+    icon(CreateIconAttr()),
+    state(CreateStateAttr()),
+    dpi(CreateDpiAttr()),
+    dpifac(CreateDpifacAttr()),
+    widgetunit(CreateWidgetunitAttr()),
+    scale(CreateScaleAttr()),
+    linewidth(CreateLinewidthAttr()),
+    pixelsz(CreatePixelszAttr()),
+    cursor(CreateCursorAttr()),
+    pos(CreatePosAttr()),
+    alignment(CreateAlignmentAttr()),
+    size(CreateSizeAttr()),
+    type(CreateTypeAttr()),
+    workspace_rel(CreateUiWindowWorkspaceRel()),
+    prims({.workspace = prim->prims.workspace, .screen = prim->prims.screen})
 
 {}
 

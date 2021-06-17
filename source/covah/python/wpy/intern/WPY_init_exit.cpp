@@ -32,7 +32,7 @@
 #include <wabi/base/tf/pyInterpreter.h>
 #include <wabi/base/tf/stringUtils.h>
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
 void WPY_python_init(const std::string &sys_paths)
 {
@@ -50,3 +50,5 @@ void WPY_python_exit()
    * TODO: STUBBED
    */
 }
+
+WABI_NAMESPACE_END

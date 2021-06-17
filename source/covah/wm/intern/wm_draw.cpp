@@ -22,20 +22,24 @@
  * Making GUI Fly.
  */
 
-#include "CKE_context.h"
-
 #include "UNI_window.h"
+
+#include "CKE_context.h"
 
 #include "WM_draw.h"
 #include "WM_window.h"
 
-void WM_draw_update(cContext *C)
+WABI_NAMESPACE_BEGIN
+
+void WM_draw_update(cContext &C)
 {
-  Main *cmain = CTX_data_main(C);
-  wmWindowManager *wm = CTX_wm_manager(C);
+  Main cmain = CTX_data_main(C);
+  wmWindowManager wm = CTX_wm_manager(C);
 
   TF_FOR_ALL(win, wm->windows)
   {
     WM_window_swap_buffers(win->second);
   }
 }
+
+WABI_NAMESPACE_END

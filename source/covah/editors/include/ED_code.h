@@ -44,5 +44,9 @@
 #  define CODE_EDITOR_LOCAL ARCH_HIDDEN
 #endif
 
+WABI_NAMESPACE_BEGIN
+
 CODE_EDITOR_API
 void ED_code_run(bool *show = NULL);
+
+WABI_NAMESPACE_END

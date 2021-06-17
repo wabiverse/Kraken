@@ -30,9 +30,9 @@
 
 #include "CKE_main.h"
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
-void ED_view3d_init_engine(const wabi::SdfPath &root, bool &reset)
+void ED_view3d_init_engine(const SdfPath &root, bool &reset)
 {
   TF_UNUSED(root);
 
@@ -41,3 +41,5 @@ void ED_view3d_init_engine(const wabi::SdfPath &root, bool &reset)
     reset = false;
   }
 }
+
+WABI_NAMESPACE_END

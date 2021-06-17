@@ -28,9 +28,11 @@
 #include "CKE_api.h"
 #include "CKE_context.h"
 
-struct Main {
-  Main *next, *prev;
+#include "UNI_object.h"
 
+WABI_NAMESPACE_BEGIN
+
+struct CovahMain : public CovahObject {
   uint64_t build_commit_timestamp;
   std::string build_hash;
 
@@ -46,7 +48,7 @@ struct Main {
 };
 
 struct Global {
-  Main *main;
+  Main main;
 
   bool server;
   bool factory_startup;
@@ -60,13 +62,10 @@ enum ckeStatusCode { COVAH_SUCCESS = 0, COVAH_ERROR, COVAH_RUN };
 enum ckeErrorType { COVAH_ERROR_VERSION, COVAH_ERROR_IO, COVAH_ERROR_GL, COVAH_ERROR_HYDRA };
 
 COVAH_KERNEL_API
-Main *CKE_main_init(void);
+Main CKE_main_init(void);
 
 COVAH_KERNEL_API
-void CKE_main_free(void);
-
-COVAH_KERNEL_API
-void CKE_covah_main_init(struct cContext *C, int argc, const char **argv);
+void CKE_covah_main_init(cContext &C, int argc, const char **argv);
 
 COVAH_KERNEL_API
 void CKE_covah_globals_init();
@@ -86,5 +85,7 @@ ckeStatusCode CKE_main_runtime(int backend);
 /* Setup in CKE_covah. */
 COVAH_KERNEL_API
 extern Global G;
+
+WABI_NAMESPACE_END
 
 #endif /* COVAH_KERNEL_MAIN_H */

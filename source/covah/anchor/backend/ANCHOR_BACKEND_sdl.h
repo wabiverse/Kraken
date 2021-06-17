@@ -55,6 +55,8 @@ class ANCHOR_SystemSDL : public ANCHOR_System {
 
   eAnchorStatus getButtons(ANCHOR_Buttons &buttons) const;
 
+  void getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const;
+
   static bool ANCHOR_ImplSDL2_InitForOpenGL(SDL_Window *window, void *sdl_gl_context);
   static bool ANCHOR_ImplSDL2_InitForVulkan(SDL_Window *window);
   static bool ANCHOR_ImplSDL2_InitForD3D(SDL_Window *window);

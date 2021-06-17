@@ -27,6 +27,8 @@
 #include <wabi/base/tf/debug.h>
 #include <wabi/wabi.h>
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
 TF_DEBUG_CODES(ED_VIEW3D);
+
+WABI_NAMESPACE_END

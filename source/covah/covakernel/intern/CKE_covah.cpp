@@ -65,7 +65,7 @@
 /* NAMESPACES */
 namespace CKE_ARGS = boost::program_options;
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
 Global G;
 
@@ -124,9 +124,9 @@ static std::string covah_system_tempdir_path()
   return std::filesystem::temp_directory_path().string();
 }
 
-Main *CKE_main_new(void)
+Main CKE_main_new(void)
 {
-  Main *wmain = new Main();
+  Main wmain = TfCreateRefPtr(new CovahMain());
   return wmain;
 }
 
@@ -224,7 +224,7 @@ static ckeStatusCode covah_parse_args(int argc, const char **argv)
   return COVAH_SUCCESS;
 }
 
-void CKE_covah_main_init(struct cContext *C, int argc, const char **argv)
+void CKE_covah_main_init(cContext &C, int argc, const char **argv)
 {
   /* Init plugins. */
   CKE_covah_plugins_init();
@@ -239,19 +239,13 @@ void CKE_covah_main_init(struct cContext *C, int argc, const char **argv)
     G.factory_startup = true;
   }
 
+  CTX_data_main_set(C, G.main);
+
   /* Init & embed python. */
   CKE_covah_python_init();
 
-  /* Init covah system paths, accessible from UNI.system.paths.xxx . */
-  UNI_create(G.main->exe_path,
-             G.main->temp_dir,
-             G.main->styles_path,
-             G.main->icons_path,
-             G.main->datafiles_path,
-             G.main->stage_id,
-             G.main->build_commit_timestamp,
-             G.main->build_hash,
-             G.main->covah_version_decimal);
+  /** @em Always */
+  UNI_create_stage(C);
 
   if (run_diagnostics) {
     UNI_enable_all_debug_codes();
@@ -260,18 +254,15 @@ void CKE_covah_main_init(struct cContext *C, int argc, const char **argv)
   if (G.factory_startup) {
     /**
      * Create default Pixar stage. */
-    UNI_create_stage(TfStringCatPaths(G.main->temp_dir, "startup.usda"));
-    UNI_on_ctx(C);
-    UNI_author_default_scene();
-    UNI_save_stage();
+    UNI_set_defaults(C);
+    UNI_author_default_scene(C);
+    UNI_save_stage(C);
   }
   else {
     /**
      * Open user's stage. */
-    UNI_open_stage(G.main->stage_id.string());
+    UNI_open_stage(C);
   }
-
-  CTX_data_main_set(C, G.main);
 }
 
 bool CKE_has_kill_signal(ckeStatusCode signal)
@@ -285,46 +276,4 @@ bool CKE_has_kill_signal(ckeStatusCode signal)
   return ARCH_UNLIKELY(kill_signal != COVAH_RUN);
 }
 
-/**
- * Where it all begins.
- * - Vulkan (and other backends to come)
- *   run the state of the application,
- *   each frame passed through (roughly
- *   3800-4000 FPS) maintains the runtime
- *   and immediate graphics API for the
- *   life of the application. */
-
-// ckeStatusCode CKE_main_runtime(int backend)
-// {
-
-//   wmWindowManager *manager = new wmWindowManager();
-//   /** RUNTIMES ::: */
-//   switch (backend) {
-//     case (ANCHOR_SDL | ANCHOR_VULKAN): {
-//       VkResult vk_err;
-
-//       auto instance = ANCHOR_init_vulkan(vk_err);
-//       while (ARCH_LIKELY(status != ANCHOR_SUCCESS)) {
-//         status = ANCHOR_run_vulkan(instance.first, instance.second);
-//         WM_covah_runtime(manager);
-//         ANCHOR_render_vulkan(instance.second);
-//         if (ARCH_UNLIKELY(CKE_has_kill_signal())) {
-//           break;
-//         }
-//       }
-//       ANCHOR_clean_vulkan(instance.first, vk_err);
-//       break;
-//     }
-
-//     default:
-//       TF_CODING_ERROR("Specified a backend which is not implemented.");
-//       return COVAH_ERROR;
-//   }
-
-//   return COVAH_SUCCESS;
-// }
-
-void CKE_main_free()
-{
-  delete G.main;
-}
+WABI_NAMESPACE_END

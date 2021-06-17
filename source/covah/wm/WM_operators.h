@@ -28,6 +28,8 @@
 
 #include <wabi/usd/usd/prim.h>
 
+WABI_NAMESPACE_BEGIN
+
 struct wmOperatorType {
   /** Text for UI, undo. */
   const char *name;
@@ -36,9 +38,11 @@ struct wmOperatorType {
   /** Use for tool-tips and Python docs. */
   const char *description;
 
-  int (*exec)(struct cContext *, wabi::UsdAttribute *) ATTR_WARN_UNUSED_RESULT;
+  int (*exec)(cContext, UsdAttribute *) ATTR_WARN_UNUSED_RESULT;
 
-  bool (*poll)(struct cContext *) ATTR_WARN_UNUSED_RESULT;
+  bool (*poll)(cContext) ATTR_WARN_UNUSED_RESULT;
 };
 
 void WM_operatortypes_register(void);
+
+WABI_NAMESPACE_END

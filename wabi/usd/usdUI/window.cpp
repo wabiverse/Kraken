@@ -286,6 +286,22 @@ UsdAttribute UsdUIWindow::CreateCursorAttr(VtValue const &defaultValue, bool wri
     writeSparsely);
 }
 
+UsdAttribute UsdUIWindow::GetAlignmentAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiWindowAlignment);
+}
+
+UsdAttribute UsdUIWindow::CreateAlignmentAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiWindowAlignment,
+    SdfValueTypeNames->Token,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
+}
+
 UsdAttribute UsdUIWindow::GetPosAttr() const
 {
   return GetPrim().GetAttribute(UsdUITokens->uiWindowPos);
@@ -358,6 +374,7 @@ const TfTokenVector& UsdUIWindow::GetSchemaAttributeNames(bool includeInherited)
     UsdUITokens->uiWindowWidgetunit,
     UsdUITokens->uiWindowLinewidth,
     UsdUITokens->uiWindowCursor,
+    UsdUITokens->uiWindowAlignment,
     UsdUITokens->uiWindowPos,
     UsdUITokens->uiWindowSize,
   };

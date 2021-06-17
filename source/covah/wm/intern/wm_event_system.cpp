@@ -30,10 +30,12 @@
 
 #include <wabi/base/tf/stringUtils.h>
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
-void WM_event_do_refresh_wm(cContext *C)
+void WM_event_do_refresh_wm(cContext &C)
 {}
 
 static int wm_handler_fileselect()
 {}
+
+WABI_NAMESPACE_END

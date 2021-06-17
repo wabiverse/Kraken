@@ -24,6 +24,8 @@
 
 #include "WM_window.h"
 
+#include "UNI_context.h"
+#include "UNI_object.h"
 #include "UNI_window.h"
 
 #include "ANCHOR_api.h"
@@ -39,7 +41,7 @@
 
 #include <wabi/base/gf/vec2f.h>
 
-WABI_NAMESPACE_USING
+WABI_NAMESPACE_BEGIN
 
 /* handle to anchor system. */
 static ANCHOR_SystemHandle anchor_system;
@@ -50,15 +52,15 @@ static ANCHOR_SystemHandle anchor_system;
  * the event system. */
 static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
 {
-  cContext *C = (cContext *)C_void_ptr;
-  wmWindowManager *wm = CTX_wm_manager(C);
+  cContext C = TfCreateRefPtr((CovahContext *)C_void_ptr);
+  wmWindowManager wm = CTX_wm_manager(C);
   eAnchorEventType type = ANCHOR::GetEventType(evt);
 
   if (type == ANCHOR_EventTypeQuitRequest) {
     ANCHOR_SystemWindowHandle anchorwin = ANCHOR::GetEventWindow(evt);
-    wmWindow *win;
+    wmWindow win;
     if (anchorwin && ANCHOR::ValidWindow(anchor_system, anchorwin)) {
-      win = (wmWindow *)ANCHOR::GetWindowUserData(anchorwin);
+      win = TfCreateRefPtr((CovahWindow *)ANCHOR::GetWindowUserData(anchorwin));
     }
   }
   else {
@@ -69,7 +71,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
   return COVAH_SUCCESS;
 }
 
-static void wm_window_set_dpi(const wmWindow *win)
+static void wm_window_set_dpi(const wmWindow win)
 {
   float uscale;
   win->scale.Get(&uscale);
@@ -107,7 +109,7 @@ static void wm_window_set_dpi(const wmWindow *win)
   ANCHOR::GetIO().FontGlobalScale = pixelsize * dpiadj;
 }
 
-static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool is_dialog)
+static void wm_window_anchorwindow_add(wmWindowManager wm, wmWindow win, bool is_dialog)
 {
 
   /* ----- */
@@ -147,7 +149,7 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
   }
 }
 
-static void wm_window_anchorwindow_ensure(wmWindowManager *wm, wmWindow *win, bool is_dialog)
+static void wm_window_anchorwindow_ensure(wmWindowManager wm, wmWindow win, bool is_dialog)
 {
   if (win->anchorwin == NULL) {
 
@@ -196,13 +198,145 @@ static void wm_window_anchorwindow_ensure(wmWindowManager *wm, wmWindow *win, bo
   }
 }
 
-void WM_anchor_init(cContext *C)
+static void wm_get_screensize(int *r_width, int *r_height)
+{
+  unsigned int uiwidth;
+  unsigned int uiheight;
+
+  ANCHOR::GetMainDisplayDimensions(anchor_system, &uiwidth, &uiheight);
+  *r_width = uiwidth;
+  *r_height = uiheight;
+}
+
+/* keeps size within monitor bounds */
+static void wm_window_check_size(GfVec4i *rect)
+{
+  int width, height;
+  wm_get_screensize(&width, &height);
+
+  int xmin = rect->GetArray()[0];
+  int ymin = rect->GetArray()[1];
+  int xmax = rect->GetArray()[2];
+  int ymax = rect->GetArray()[3];
+
+  int sizex = (xmax - xmin);
+  int sizey = (ymax - ymin);
+
+  if (sizex > width) {
+    int centx = (xmin + xmax) / 2;
+    xmin = centx - (width / 2);
+    xmax = xmin + width;
+  }
+
+  if (sizey > height) {
+    int centy = (ymin + ymax) / 2;
+    ymin = centy - (height / 2);
+    ymax = ymin + height;
+  }
+
+  rect->Set(xmin, ymin, xmax, ymax);
+}
+
+/**
+ * @param space_type: SPACE_VIEW3D, SPACE_INFO, ... (eSpace_Type)
+ * @param dialog: whether this should be made as a dialog-style window
+ * @param temp: whether this is considered a short-lived window
+ * @param alignment: how this window is positioned relative to its parent
+ * @return the window or NULL in case of failure. */
+wmWindow WM_window_open(cContext &C,
+                        const char *title,
+                        const char *icon,
+                        int x,
+                        int y,
+                        int sizex,
+                        int sizey,
+                        int space_type,
+                        bool dialog,
+                        bool temp)
+{
+  Main cmain = CTX_data_main(C);
+  wmWindowManager wm = CTX_wm_manager(C);
+  wmWindow win_prev = CTX_wm_window(C);
+  Scene scene = CTX_data_scene(C);
+  GfVec4i rect;
+
+  GfVec2f pos;
+  win_prev->pos.Get(&pos);
+
+  GfVec2f size;
+  win_prev->pos.Get(&size);
+
+  TfToken alignment;
+  win_prev->pos.Get(&alignment);
+
+  const float native_pixel_size = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win_prev->anchorwin);
+  /* convert to native OS window coordinates */
+  rect[0] = pos[0] + (x / native_pixel_size);
+  rect[1] = pos[1] + (y / native_pixel_size);
+  sizex /= native_pixel_size;
+  sizey /= native_pixel_size;
+
+  if (alignment == UsdUITokens->alignCenter) {
+    /* Window centered around x,y location. */
+    rect[0] -= sizex / 2;
+    rect[1] -= sizey / 2;
+  }
+  else if (alignment == UsdUITokens->alignParent) {
+    /* Centered within parent. X,Y as offsets from there. */
+    rect[0] += (size[0] - sizex) / 2;
+    rect[1] += (size[1] - sizey) / 2;
+  }
+  else {
+    /* Positioned absolutely within parent bounds. */
+  }
+
+  rect[2] = rect[0] + sizex;
+  rect[3] = rect[1] + sizey;
+
+  /* changes rect to fit within desktop */
+  wm_window_check_size(&rect);
+
+  /* ----- */
+
+  /**
+   * Create Window. */
+  wmWindow win = TfCreateRefPtr(new CovahWindow(C, win_prev, SdfPath("Child")));
+  wm->windows.insert(std::make_pair(win->path, win));
+
+  /**
+   * Dialogs may have a child window as parent.
+   * Otherwise, a child must not be a parent too. */
+  win->parent = (!dialog && win_prev && win_prev->parent) ? win_prev->parent : win_prev;
+
+  /* ----- */
+
+  win->pos.Set(GfVec2f(rect[0], rect[1]));
+  win->size.Set(GfVec2f(rect[2] - rect[0], rect[3] - rect[1]));
+
+  if (!win->prims.workspace->GetPrim().IsValid()) {
+    win->prims.workspace = win_prev->prims.workspace;
+  }
+
+  if (!win->prims.screen->areas_rel.HasAuthoredTargets()) {
+    /* add new screen layout */
+  }
+
+  CTX_wm_window_set(C, win);
+  const bool new_window = (win->anchorwin == NULL);
+  if (new_window) {
+    wm_window_anchorwindow_ensure(wm, win, dialog);
+  }
+
+  return win;
+}
+
+void WM_anchor_init(cContext &C)
 {
   /* Event handle of anchor stack. */
   ANCHOR_EventConsumerHandle consumer;
 
   if (C != NULL) {
-    consumer = ANCHOR_CreateEventConsumer(anchor_event_proc, C);
+    consumer = ANCHOR_CreateEventConsumer(anchor_event_proc, &C);
   }
 
   if (!anchor_system) {
@@ -214,7 +348,7 @@ void WM_anchor_init(cContext *C)
   }
 }
 
-void WM_window_process_events(const cContext *C)
+void WM_window_process_events(const cContext C)
 {
   bool has_event = ANCHOR::ProcessEvents(anchor_system, false);
 
@@ -228,7 +362,9 @@ void WM_window_process_events(const cContext *C)
   }
 }
 
-void WM_window_swap_buffers(wmWindow *win)
+void WM_window_swap_buffers(wmWindow win)
 {
   ANCHOR::SwapChain((ANCHOR_SystemWindowHandle)win->anchorwin);
 }
+
+WABI_NAMESPACE_END

@@ -35,29 +35,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct CovahContext : public CovahObject {
-
-  CovahContext() = default;
-
-  int thread;
-
-  /* windowmanager context */
-  struct {
-    wmWindowManager manager;
-    wmWindow window;
-  } wm;
-
-  /* data context */
-  struct {
-    Main main;
-    Scene scene;
-    Stage stage;
-  } data;
-};
-
 /**
  * Main CTX Creation. */
-cContext CTX_create(void)
+cContext &CTX_create(void)
 {
   TfAutoMallocTag2 tag("cContext", "CTX_create");
 
