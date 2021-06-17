@@ -35,10 +35,6 @@
 #include <wabi/usd/usd/collectionAPI.h>
 #include <wabi/usd/usdUI/window.h>
 
-#define COVAH_DEFAULT_WINDOW_PATH "/Covah/Windows/MainWindow"
-#define COVAH_DEFAULT_WORKSPACE_PATH "Workspaces/Layout"
-#define COVAH_DEFAULT_SCREEN_PATH "Workspaces/Layout/Screen"
-
 WABI_NAMESPACE_BEGIN
 
 struct wmWindow : public UsdUIWindow {
@@ -73,9 +69,9 @@ struct wmWindow : public UsdUIWindow {
   /** Anchor system backend pointer. */
   void *anchorwin;
 
-  inline wmWindow(const SdfPath &path = SdfPath(COVAH_DEFAULT_WINDOW_PATH),
-                  const SdfPath &wspace = SdfPath(COVAH_DEFAULT_WORKSPACE_PATH),
-                  const SdfPath &screen = SdfPath(COVAH_DEFAULT_SCREEN_PATH));
+  inline wmWindow(const SdfPath &path = SdfPath(STRINGIFY(COVAH_WINDOW)),
+                  const SdfPath &wspace = SdfPath(STRINGIFY(COVAH_WORKSPACES_LAYOUT)),
+                  const SdfPath &screen = SdfPath(STRINGIFY(COVAH_SCREEN_LAYOUT)));
 
  private:
   SdfPath m_sdf_wspace;
@@ -85,12 +81,15 @@ struct wmWindow : public UsdUIWindow {
 /**
  * Note: A workspace and a screen
  * must always exist on a Window,
- * therefore, we force the appends
- * on a wmWindow */
-
+ * and a screen must always exist
+ * on a workspace. Therefore, the
+ * paths get forced appends when
+ * constructing a wmWindow. */
 wmWindow::wmWindow(const SdfPath &path, const SdfPath &wspace, const SdfPath &screen)
   : UsdUIWindow(UNI.stage->DefinePrim(path)),
     winhash(path),
+    m_sdf_wspace(winhash.AppendPath(wspace)),
+    m_sdf_screen(m_sdf_wspace.AppendPath(screen)),
     title(CreateTitleAttr()),
     icon(CreateIconAttr()),
     state(CreateStateAttr()),
