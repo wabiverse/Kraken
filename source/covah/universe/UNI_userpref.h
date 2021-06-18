@@ -16,44 +16,40 @@
  * Copyright 2021, Wabi.
  */
 
-/**
- * @file
- * Window Manager.
- * Making GUI Fly.
- */
-
 #pragma once
 
-#include "WM_api.h"
+/**
+ * @file
+ * Universe.
+ * Set the Stage.
+ */
 
-#include <wabi/usd/usd/prim.h>
+#include "UNI_context.h"
+#include "UNI_screen.h"
+#include "UNI_workspace.h"
+
+#include "CKE_context.h"
+
+#include <wabi/usd/sdf/path.h>
+#include <wabi/usd/usdUI/userPref.h>
 
 WABI_NAMESPACE_BEGIN
 
-enum
+struct CovahUserPrefs : public UsdUIUserPref, public CovahObject
 {
-  OPERATOR_RUNNING_MODAL = (1 << 0),
-  OPERATOR_CANCELLED = (1 << 1),
-  OPERATOR_FINISHED = (1 << 2),
-  OPERATOR_PASS_THROUGH = (1 << 3),
-  OPERATOR_HANDLED = (1 << 4),
-  OPERATOR_INTERFACE = (1 << 5),
+
+  SdfPath path;
+
+  UsdAttribute showsave;
+
+  inline CovahUserPrefs(const cContext &C,
+                        const SdfPath &stagepath = SdfPath(STRINGIFY(COVAH_USERPREFS)));
 };
 
-struct wmOperatorType
-{
-  /** Text for UI, undo. */
-  const char *name;
-  /** Unique identifier. */
-  const char *idname;
-  /** Use for tool-tips and Python docs. */
-  const char *description;
-
-  int (*exec)(const cContext &C, UsdAttribute *op) ATTR_WARN_UNUSED_RESULT;
-
-  bool (*poll)(const cContext &C) ATTR_WARN_UNUSED_RESULT;
-
-  int (*invoke)(const cContext &C, UsdAttribute *op, const struct wmEvent *) ATTR_WARN_UNUSED_RESULT;
-};
+CovahUserPrefs::CovahUserPrefs(const cContext &C, const SdfPath &stagepath)
+  : UsdUIUserPref(COVAH_UNIVERSE_CREATE(C)),
+    path(stagepath),
+    showsave(CreateShowSavePromptAttr())
+{}
 
 WABI_NAMESPACE_END

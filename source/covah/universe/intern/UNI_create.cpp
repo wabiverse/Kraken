@@ -27,6 +27,7 @@
 #include "UNI_context.h"
 #include "UNI_scene.h"
 #include "UNI_screen.h"
+#include "UNI_userpref.h"
 #include "UNI_window.h"
 #include "UNI_workspace.h"
 
@@ -110,9 +111,17 @@ void UNI_set_defaults(const cContext &C)
 
   /* ----- */
 
+  /** Default User Preferences. */
+  UserDef uprefs = TfCreateRefPtr(new CovahUserPrefs(C));
+  uprefs->showsave.Set(bool(true));
+  CTX_data_uprefs_set(C, uprefs);
+
+  /* ----- */
+
   /** Default Viewport. */
   Area v3d = TfCreateRefPtr(new CovahArea(C, win->prims.screen, SdfPath("View3D")));
   v3d->name.Set(TfToken("View3D"));
+  v3d->spacetype.Set(UsdUITokens->spaceView3D);
   v3d->icon.Set(SdfAssetPath(CLI_icon(ICON_HYDRA)));
   v3d->pos.Set(GfVec2f(0, 0));
   v3d->size.Set(GfVec2f(1800, 1080));
@@ -122,6 +131,7 @@ void UNI_set_defaults(const cContext &C)
   /** Default Outliner. */
   Area outliner = TfCreateRefPtr(new CovahArea(C, win->prims.screen, SdfPath("Outliner")));
   outliner->name.Set(TfToken("Outliner"));
+  outliner->spacetype.Set(UsdUITokens->spaceOutliner);
   outliner->icon.Set(SdfAssetPath(CLI_icon(ICON_LUXO)));
   outliner->pos.Set(GfVec2f(1800, 0));
   outliner->size.Set(GfVec2f(120, 1080));
@@ -139,11 +149,10 @@ void UNI_set_defaults(const cContext &C)
 
   /* ----- */
 
-  CTX_wm_window_set(C, win);
-
   wmWindowManager wm = TfCreateRefPtr(new CovahWindowManager);
   wm->windows.insert(std::make_pair(win->path, win));
   CTX_wm_manager_set(C, wm);
+  CTX_wm_window_set(C, win);
 }
 
 void UNI_author_default_scene(const cContext &C)

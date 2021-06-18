@@ -23,18 +23,46 @@
  */
 
 #include "WM_operators.h"
+#include "WM_window.h"
+
+#include "UNI_screen.h"
+#include "UNI_userpref.h"
+#include "UNI_window.h"
 
 #include "CKE_context.h"
 
 WABI_NAMESPACE_BEGIN
 
-int wm_window_close_exec(const cContext &C, UsdAttribute *UNUSED(op))
+bool WM_operator_winactive(const cContext &C)
 {
-  // wmWindowManager *wm = CTX_wm_manager(C);
-  // wmWindow *win = CTX_wm_window(C);
-  // wm_window_close(C, wm, win);
-  // return OPERATOR_FINISHED;
-  return 0;
+  if (CTX_wm_window(C) == NULL)
+  {
+    return 0;
+  }
+  return 1;
+}
+
+static bool wm_operator_winactive_normal(const cContext &C)
+{
+  wmWindow win = CTX_wm_window(C);
+
+  if (win == NULL)
+  {
+    return 0;
+  }
+
+  if (!(win->prims.screen))
+  {
+    return 0;
+  }
+
+  // TfToken alignment;
+  // win->prims.screen->align.Get(&alignment);
+  // if (!(alignment == UsdUITokens->none)) {
+  //   return 0;
+  // }
+
+  return 1;
 }
 
 static void WM_OT_window_close(wmOperatorType *ot)
@@ -43,18 +71,72 @@ static void WM_OT_window_close(wmOperatorType *ot)
   ot->idname = "WM_OT_window_close";
   ot->description = "Close the current window";
 
-  // ot->exec = wm_window_close_exec;
-  // ot->poll = WM_operator_winactive;
+  ot->exec = wm_window_close_exec;
+  ot->poll = WM_operator_winactive;
 }
 
-void WM_operatortype_append(void (*opfunc)(wmOperatorType *))
+static void WM_OT_window_new(wmOperatorType *ot)
 {
-  // wmOperatorType *ot = wm_operatortype_append__begin();
-  // opfunc(ot);
-  // wm_operatortype_append__end(ot);
+  ot->name = "New Window";
+  ot->idname = "WM_OT_window_new";
+  ot->description = "Create a new window";
+
+  ot->exec = wm_window_new_exec;
+  ot->poll = wm_operator_winactive_normal;
 }
 
-void WM_operatortypes_register(void)
-{}
+static void WM_OT_window_new_main(wmOperatorType *ot)
+{
+  ot->name = "New Main Window";
+  ot->idname = "WM_OT_window_new_main";
+  ot->description = "Create a new main window with its own workspace and scene selection";
+
+  ot->exec = wm_window_new_main_exec;
+  ot->poll = wm_operator_winactive_normal;
+}
+
+static void WM_OT_window_fullscreen_toggle(wmOperatorType *ot)
+{
+  ot->name = "Toggle Window Fullscreen";
+  ot->idname = "WM_OT_window_fullscreen_toggle";
+  ot->description = "Toggle the current window fullscreen";
+
+  ot->exec = wm_window_fullscreen_toggle_exec;
+  ot->poll = WM_operator_winactive;
+}
+
+static int wm_exit_covah_exec(const cContext &C, UsdAttribute *UNUSED(op))
+{
+  wm_exit_schedule_delayed(C);
+  return OPERATOR_FINISHED;
+}
+
+static int wm_exit_covah_invoke(const cContext &C, UsdAttribute *UNUSED(op), const wmEvent *UNUSED(event))
+{
+  UserDef uprefs = CTX_data_uprefs(C);
+
+  bool showsave;
+  uprefs->showsave.Get(&showsave);
+
+  if (showsave)
+  {
+    wm_quit_with_optional_confirmation_prompt(C, CTX_wm_window(C));
+  }
+  else
+  {
+    wm_exit_schedule_delayed(C);
+  }
+  return OPERATOR_FINISHED;
+}
+
+static void WM_OT_quit_covah(wmOperatorType *ot)
+{
+  ot->name = "Quit Covah";
+  ot->idname = "WM_OT_quit_covah";
+  ot->description = "Quit Covah";
+
+  ot->invoke = wm_exit_covah_invoke;
+  ot->exec = wm_exit_covah_exec;
+}
 
 WABI_NAMESPACE_END

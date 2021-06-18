@@ -30,6 +30,24 @@
 
 WABI_NAMESPACE_BEGIN
 
+typedef void (*wmGenericUserDataFreeFn)(void *data);
+
+struct wmGenericUserData
+{
+  void *data;
+  wmGenericUserDataFreeFn free_fn;
+  bool use_free;
+};
+
+typedef void (*wmGenericCallbackFn)(const cContext &C, void *user_data);
+
+struct wmGenericCallback
+{
+  wmGenericCallbackFn exec;
+  void *user_data;
+  wmGenericUserDataFreeFn free_user_data;
+};
+
 wmWindow WM_window_open(const cContext &C,
                         const char *title,
                         const char *icon,
@@ -37,7 +55,8 @@ wmWindow WM_window_open(const cContext &C,
                         int y,
                         int sizex,
                         int sizey,
-                        int space_type,
+                        TfToken space_type,
+                        TfToken alignment,
                         bool dialog,
                         bool temp);
 
@@ -45,5 +64,20 @@ void WM_anchor_init(cContext C);
 void WM_anchor_exit(void);
 void WM_window_process_events(const cContext &C);
 void WM_window_swap_buffers(wmWindow win);
+
+/** Poll Callback, Context Checks. */
+bool WM_operator_winactive(const cContext &C);
+
+/** Cleanup. */
+void wm_exit_schedule_delayed(const cContext &C);
+
+
+/** Window Operators */
+int wm_window_close_exec(const cContext &C, UsdAttribute *op);
+int wm_window_fullscreen_toggle_exec(const cContext &C, UsdAttribute *op);
+void wm_quit_with_optional_confirmation_prompt(const cContext &C, const wmWindow &win) ATTR_NONNULL();
+
+int wm_window_new_exec(const cContext &C, UsdAttribute *op);
+int wm_window_new_main_exec(const cContext &C, UsdAttribute *op);
 
 WABI_NAMESPACE_END

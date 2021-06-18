@@ -33,11 +33,13 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct CovahArea : public UsdUIArea, public CovahObject {
+struct CovahArea : public UsdUIArea, public CovahObject
+{
 
   SdfPath path;
 
   UsdAttribute name;
+  UsdAttribute spacetype;
   UsdAttribute icon;
   UsdAttribute pos;
   UsdAttribute size;
@@ -49,6 +51,7 @@ CovahArea::CovahArea(const cContext &C, cScreen &prim, SdfPath const &stagepath)
   : UsdUIArea(COVAH_UNIVERSE_CREATE_CHILD(C)),
     path(GetPath()),
     name(CreateNameAttr()),
+    spacetype(CreateSpacetypeAttr()),
     icon(CreateIconAttr()),
     pos(CreatePosAttr()),
     size(CreateSizeAttr())

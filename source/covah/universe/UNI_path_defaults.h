@@ -40,6 +40,9 @@
 /** Covah Root Namespace. */
 #define COVAH_ROOT/Covah
 
+/** Covah :: UserDef Root. */
+#define COVAH_USERPREFS COVAH_ROOT/UserDef
+
 /** Covah :: MainWindow Root. */
 #define COVAH_WINDOW COVAH_ROOT/MainWindow
 

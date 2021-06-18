@@ -23,10 +23,15 @@
  */
 
 #include "WM_window.h"
+#include "WM_inline_tools.h"
+#include "WM_operators.h"
 
+#include "UNI_area.h"
 #include "UNI_context.h"
 #include "UNI_object.h"
+#include "UNI_userpref.h"
 #include "UNI_window.h"
+#include "UNI_workspace.h"
 
 #include "ANCHOR_api.h"
 #include "ANCHOR_event_consumer.h"
@@ -37,11 +42,13 @@
 
 #include "CLI_icons.h"
 #include "CLI_math_inline.h"
+#include "CLI_string_utils.h"
 #include "CLI_time.h"
 
 #include <wabi/base/gf/vec2f.h>
 
 WABI_NAMESPACE_BEGIN
+
 
 /* handle to anchor system. */
 static ANCHOR_SystemHandle anchor_system;
@@ -56,20 +63,24 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
   wmWindowManager wm = CTX_wm_manager(C);
   eAnchorEventType type = ANCHOR::GetEventType(evt);
 
-  if (type == ANCHOR_EventTypeQuitRequest) {
+  if (type == ANCHOR_EventTypeQuitRequest)
+  {
     ANCHOR_SystemWindowHandle anchorwin = ANCHOR::GetEventWindow(evt);
     wmWindow win;
-    if (anchorwin && ANCHOR::ValidWindow(anchor_system, anchorwin)) {
+    if (anchorwin && ANCHOR::ValidWindow(anchor_system, anchorwin))
+    {
       win = TfCreateRefPtr((CovahWindow *)ANCHOR::GetWindowUserData(anchorwin));
     }
   }
-  else {
+  else
+  {
     ANCHOR_SystemWindowHandle anchorwin = ANCHOR::GetEventWindow(evt);
     ANCHOR_EventDataPtr data = ANCHOR::GetEventData(evt);
   }
 
   return COVAH_SUCCESS;
 }
+
 
 static void wm_window_set_dpi(const wmWindow win)
 {
@@ -109,6 +120,7 @@ static void wm_window_set_dpi(const wmWindow win)
   ANCHOR::GetIO().FontGlobalScale = pixelsize * dpiadj;
 }
 
+
 static void wm_window_anchorwindow_add(wmWindowManager wm, wmWindow win, bool is_dialog)
 {
 
@@ -144,14 +156,17 @@ static void wm_window_anchorwindow_add(wmWindowManager wm, wmWindow win, bool is
                                                              is_dialog,
                                                              ANCHOR_DrawingContextTypeVulkan,
                                                              0);
-  if (anchorwin) {
+  if (anchorwin)
+  {
     win->anchorwin = anchorwin;
   }
 }
 
+
 static void wm_window_anchorwindow_ensure(wmWindowManager wm, wmWindow win, bool is_dialog)
 {
-  if (win->anchorwin == NULL) {
+  if (win->anchorwin == NULL)
+  {
 
     /* ----- */
 
@@ -176,27 +191,32 @@ static void wm_window_anchorwindow_ensure(wmWindowManager wm, wmWindow win, bool
 
     /* ----- */
 
-    if ((size[0] == 0)) {
+    if ((size[0] == 0))
+    {
       win->pos.Set(GfVec2f(0, 0));
       win->size.Set(GfVec2f(1920, 1080));
 
-      if (cursor.IsEmpty()) {
+      if (cursor.IsEmpty())
+      {
         win->cursor.Set(UsdUITokens->default_);
       }
 
-      if (title.IsEmpty()) {
+      if (title.IsEmpty())
+      {
         win->title.Set("Covah");
       }
 
-      if (icon.GetAssetPath().empty()) {
+      if (icon.GetAssetPath().empty())
+      {
         win->icon.Set(CLI_icon(ICON_COVAH));
       }
-
-      wm_window_anchorwindow_add(wm, win, is_dialog);
-      wm_window_set_dpi(win);
     }
+
+    wm_window_anchorwindow_add(wm, win, is_dialog);
+    wm_window_set_dpi(win);
   }
 }
+
 
 static void wm_get_screensize(int *r_width, int *r_height)
 {
@@ -207,6 +227,7 @@ static void wm_get_screensize(int *r_width, int *r_height)
   *r_width = uiwidth;
   *r_height = uiheight;
 }
+
 
 /* keeps size within monitor bounds */
 static void wm_window_check_size(GfVec4i *rect)
@@ -222,13 +243,15 @@ static void wm_window_check_size(GfVec4i *rect)
   int sizex = (xmax - xmin);
   int sizey = (ymax - ymin);
 
-  if (sizex > width) {
+  if (sizex > width)
+  {
     int centx = (xmin + xmax) / 2;
     xmin = centx - (width / 2);
     xmax = xmin + width;
   }
 
-  if (sizey > height) {
+  if (sizey > height)
+  {
     int centy = (ymin + ymax) / 2;
     ymin = centy - (height / 2);
     ymax = ymin + height;
@@ -236,6 +259,7 @@ static void wm_window_check_size(GfVec4i *rect)
 
   rect->Set(xmin, ymin, xmax, ymax);
 }
+
 
 /**
  * @param space_type: SPACE_VIEW3D, SPACE_INFO, ... (eSpace_Type)
@@ -250,7 +274,8 @@ wmWindow WM_window_open(const cContext &C,
                         int y,
                         int sizex,
                         int sizey,
-                        int space_type,
+                        TfToken space_type,
+                        TfToken alignment,
                         bool dialog,
                         bool temp)
 {
@@ -266,9 +291,6 @@ wmWindow WM_window_open(const cContext &C,
   GfVec2f size;
   win_prev->pos.Get(&size);
 
-  TfToken alignment;
-  win_prev->pos.Get(&alignment);
-
   const float native_pixel_size = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win_prev->anchorwin);
   /* convert to native OS window coordinates */
   rect[0] = pos[0] + (x / native_pixel_size);
@@ -276,17 +298,20 @@ wmWindow WM_window_open(const cContext &C,
   sizex /= native_pixel_size;
   sizey /= native_pixel_size;
 
-  if (alignment == UsdUITokens->alignCenter) {
+  if (alignment == UsdUITokens->alignCenter)
+  {
     /* Window centered around x,y location. */
     rect[0] -= sizex / 2;
     rect[1] -= sizey / 2;
   }
-  else if (alignment == UsdUITokens->alignParent) {
+  else if (alignment == UsdUITokens->alignParent)
+  {
     /* Centered within parent. X,Y as offsets from there. */
     rect[0] += (size[0] - sizex) / 2;
     rect[1] += (size[1] - sizey) / 2;
   }
-  else {
+  else
+  {
     /* Positioned absolutely within parent bounds. */
   }
 
@@ -313,54 +338,358 @@ wmWindow WM_window_open(const cContext &C,
   win->pos.Set(GfVec2f(rect[0], rect[1]));
   win->size.Set(GfVec2f(rect[2] - rect[0], rect[3] - rect[1]));
 
-  if (!win->prims.workspace->GetPrim().IsValid()) {
+  if (!win->prims.workspace->GetPrim().IsValid())
+  {
     win->prims.workspace = win_prev->prims.workspace;
   }
 
-  if (!win->prims.screen->areas_rel.HasAuthoredTargets()) {
+  if (!win->prims.screen->areas_rel.HasAuthoredTargets())
+  {
     /* add new screen layout */
   }
 
   CTX_wm_window_set(C, win);
   const bool new_window = (win->anchorwin == NULL);
-  if (new_window) {
+  if (new_window)
+  {
     wm_window_anchorwindow_ensure(wm, win, dialog);
   }
 
   return win;
 }
 
+
+static void wm_close_file_dialog(const cContext &C, wmGenericCallback *post_action)
+{
+  /**
+   * TODO. */
+
+  post_action->free_user_data(post_action->user_data);
+
+  delete post_action;
+}
+
+
+void wm_exit_schedule_delayed(const cContext &C)
+{
+  wmWindow win = CTX_wm_window(C);
+
+  /**
+   * TODO. */
+
+  return;
+}
+
+
+static void wm_save_file_on_quit_dialog_callback(const cContext &C, void *UNUSED(user_data))
+{
+  wm_exit_schedule_delayed(C);
+}
+
+
+static void wm_confirm_quit(const cContext &C)
+{
+  wmGenericCallback *action = new wmGenericCallback;
+  action->exec = (wmGenericCallbackFn)wm_save_file_on_quit_dialog_callback;
+  wm_close_file_dialog(C, action);
+}
+
+
+static void wm_window_raise(const wmWindow &win)
+{
+  /* Restore window if minimized */
+  if (ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin) == ANCHOR_WindowStateMinimized)
+  {
+    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin, ANCHOR_WindowStateNormal);
+  }
+  ANCHOR::SetWindowOrder((ANCHOR_SystemWindowHandle)win->anchorwin, ANCHOR_kWindowOrderTop);
+}
+
+
+void wm_quit_with_optional_confirmation_prompt(const cContext &C, const wmWindow &win)
+{
+  wmWindow win_ctx = CTX_wm_window(C);
+
+  Stage stage = CTX_data_stage(C);
+  UserDef uprefs = CTX_data_uprefs(C);
+
+  /* The popup will be displayed in the context window which may not be set
+   * here (this function gets called outside of normal event handling loop). */
+  CTX_wm_window_set(C, win);
+
+  bool showsave;
+  uprefs->showsave.Get(&showsave);
+
+  if (showsave)
+  {
+    if (stage->GetSessionLayer()->IsDirty())
+    {
+      wm_window_raise(win);
+      wm_confirm_quit(C);
+    }
+    else
+    {
+      wm_exit_schedule_delayed(C);
+    }
+  }
+  else
+  {
+    wm_exit_schedule_delayed(C);
+  }
+
+  CTX_wm_window_set(C, win_ctx);
+}
+
+
+/* this is event from anchor, or exit-covah op */
+void wm_window_close(const cContext &C, const wmWindowManager &wm, const wmWindow &win)
+{
+  Stage stage = CTX_data_stage(C);
+
+  SdfPath other_hash;
+
+  /* First check if there is another main window remaining. */
+  TF_FOR_ALL (win_other, wm->windows)
+  {
+    if (win_other->second != win && win_other->second->parent == NULL)
+    {
+      other_hash = win_other->first;
+      break;
+    }
+  }
+
+  if (win->parent == NULL && other_hash.IsEmpty())
+  {
+    wm_quit_with_optional_confirmation_prompt(C, win);
+    return;
+  }
+
+  /* Close child windows */
+  TF_FOR_ALL (iter_win, wm->windows)
+  {
+    if (iter_win->second->parent == win)
+    {
+      wm_window_close(C, wm, iter_win->second);
+    }
+  }
+
+  /** Remove Window From HashMap */
+  wm->windows.erase(win->path);
+
+  /** Remove All Areas from Screens. */
+  if (win->prims.screen)
+  {
+    SdfPathVector areas;
+    win->prims.screen->areas_rel.GetTargets(&areas);
+    TF_FOR_ALL (area, areas)
+    {
+      UsdPrim areaprim = stage->GetPrimAtPath(area->GetPrimPath());
+      areaprim.Unload();
+    }
+
+    SdfPathVector screens;
+    win->prims.workspace->screen_rel.GetTargets(&screens);
+    TF_FOR_ALL (screen, screens)
+    {
+      UsdPrim screenprim = stage->GetPrimAtPath(screen->GetPrimPath());
+      screenprim.Unload();
+    }
+  }
+
+  /** Null out C. */
+  if (CTX_wm_window(C) == win)
+  {
+    CTX_wm_window_set(C, NULL);
+  }
+
+  win.~TfRefPtr();
+  delete &win;
+}
+
+
+wmWindow wm_window_copy(cContext C,
+                        wmWindowManager wm,
+                        wmWindow win_src,
+                        const bool duplicate_layout,
+                        const bool child)
+{
+  const bool is_dialog = ANCHOR::IsDialogWindow((ANCHOR_SystemWindowHandle)win_src->anchorwin);
+  wmWindow win_parent = (child) ? win_src : win_src->parent;
+
+  /* ----- */
+
+  /**
+   * Create Window. */
+  wmWindow win_dst = TfCreateRefPtr(new CovahWindow(C, win_parent, SdfPath("Child")));
+  wm->windows.insert(std::make_pair(win_dst->path, win_dst));
+
+  /**
+   * Dialogs may have a child window as parent.
+   * Otherwise, a child must not be a parent too. */
+  win_dst->parent = (!is_dialog && win_parent && win_parent->parent) ? win_parent->parent : win_parent;
+
+  /* ----- */
+
+  Workspace workspace = win_src->prims.workspace;
+
+  GfVec2f srcpos;
+  win_src->pos.Get(&srcpos);
+
+  GfVec2f srcsize;
+  win_src->size.Get(&srcsize);
+
+  win_dst->pos.Set(GfVec2f(srcpos[0] + 10, srcpos[1]));
+  win_dst->size.Set(GfVec2f(srcsize[2], srcsize[3]));
+
+  win_dst->scene = win_src->scene;
+  STRNCPY(win_dst->view_layer_name, win_src->view_layer_name);
+  win_dst->workspace_rel.AddTarget(workspace->path);
+
+  return win_dst;
+}
+
+
+wmWindow wm_window_copy_test(const cContext &C,
+                             const wmWindow &win_src,
+                             const bool duplicate_layout,
+                             const bool child)
+{
+  Main cmain = CTX_data_main(C);
+  wmWindowManager wm = CTX_wm_manager(C);
+
+  wmWindow win_dst = wm_window_copy(C, wm, win_src, duplicate_layout, child);
+
+  if (win_dst->anchorwin)
+  {
+    // WM_event_add_notifier_ex(wm, CTX_wm_window(C), NC_WINDOW | NA_ADDED, NULL);
+    return win_dst;
+  }
+  wm_window_close(C, wm, win_dst);
+  return NULL;
+}
+
+
+int wm_window_close_exec(const cContext &C, UsdAttribute *UNUSED(op))
+{
+  wmWindowManager wm = CTX_wm_manager(C);
+  wmWindow win = CTX_wm_window(C);
+  wm_window_close(C, wm, win);
+  return OPERATOR_FINISHED;
+}
+
+
+int wm_window_new_exec(const cContext &C, UsdAttribute *UNUSED(op))
+{
+  Stage stage = CTX_data_stage(C);
+  wmWindow win_src = CTX_wm_window(C);
+
+  GfVec2f size;
+  win_src->size.Get(&size);
+
+  TfToken align;
+  win_src->alignment.Get(&align);
+
+  SdfPathVector areas;
+  win_src->prims.screen->areas_rel.GetTargets(&areas);
+
+  SdfAssetPath icon;
+  win_src->icon.Get(&icon);
+
+  TfToken spacetype;
+  TF_FOR_ALL (sdf_area, areas)
+  {
+    auto area = CovahArea::Get(stage, sdf_area->GetPrimPath());
+    UsdAttribute type = area.GetSpacetypeAttr();
+
+    TfToken possibletype;
+    type.Get(&possibletype);
+
+    spacetype = wm_verify_spacetype(possibletype);
+  }
+
+  bool ok = (WM_window_open(C,
+                            IFACE_("Covah"),
+                            icon.GetAssetPath().c_str(),
+                            0,
+                            0,
+                            size[2] * 0.95f,
+                            size[3] * 0.9f,
+                            spacetype,
+                            align,
+                            false,
+                            false) != NULL);
+
+  return ok ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
+}
+
+
+int wm_window_new_main_exec(const cContext &C, UsdAttribute *UNUSED(op))
+{
+  wmWindow win_src = CTX_wm_window(C);
+
+  bool ok = (wm_window_copy_test(C, win_src, true, false) != NULL);
+
+  return ok ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
+}
+
+
+/* fullscreen operator callback */
+int wm_window_fullscreen_toggle_exec(const cContext &C, UsdAttribute *UNUSED(op))
+{
+  wmWindow window = CTX_wm_window(C);
+
+  eAnchorWindowState state = ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin);
+  if (state != ANCHOR_WindowStateFullScreen)
+  {
+    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin, ANCHOR_WindowStateFullScreen);
+  }
+  else
+  {
+    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin, ANCHOR_WindowStateNormal);
+  }
+
+  return OPERATOR_FINISHED;
+}
+
+
 void WM_anchor_init(cContext C)
 {
   /* Event handle of anchor stack. */
   ANCHOR_EventConsumerHandle consumer;
 
-  if (C != NULL) {
+  if (C != NULL)
+  {
     consumer = ANCHOR_CreateEventConsumer(anchor_event_proc, &C);
   }
 
-  if (!anchor_system) {
+  if (!anchor_system)
+  {
     anchor_system = ANCHOR_CreateSystem();
   }
 
-  if (C != NULL) {
+  if (C != NULL)
+  {
     ANCHOR::AddEventConsumer(anchor_system, consumer);
   }
 }
+
 
 void WM_window_process_events(const cContext &C)
 {
   bool has_event = ANCHOR::ProcessEvents(anchor_system, false);
 
-  if (has_event) {
+  if (has_event)
+  {
     ANCHOR::DispatchEvents(anchor_system);
   }
 
-  if ((has_event == false)) {
+  if ((has_event == false))
+  {
     printf("Quick sleep: No Events on Stack\n");
     PIL_sleep_ms(5);
   }
 }
+
 
 void WM_window_swap_buffers(wmWindow win)
 {

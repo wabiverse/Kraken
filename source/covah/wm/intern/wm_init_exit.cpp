@@ -24,6 +24,8 @@
 
 #include "WM_init_exit.h" /* Own include. */
 #include "WM_cursors.h"
+#include "WM_msgbus.h"
+#include "WM_operators.h"
 #include "WM_window.h"
 
 #include "ANCHOR_api.h"
@@ -44,8 +46,10 @@ WABI_NAMESPACE_BEGIN
 
 static void ShowFileMenu()
 {
-  if (ANCHOR::BeginMenu("File")) {
-    if (ANCHOR::BeginMenu("New")) {
+  if (ANCHOR::BeginMenu("File"))
+  {
+    if (ANCHOR::BeginMenu("New"))
+    {
       ANCHOR::MenuItem("General", "Ctrl+N");
       ANCHOR::MenuItem("2D Animation");
       ANCHOR::MenuItem("Sculpting");
@@ -53,24 +57,30 @@ static void ShowFileMenu()
       ANCHOR::MenuItem("Video Editing");
       ANCHOR::EndMenu();
     }
-    if (ANCHOR::MenuItem("Open...", "Ctrl+O")) {
+    if (ANCHOR::MenuItem("Open...", "Ctrl+O"))
+    {
     }
-    if (ANCHOR::BeginMenu("Open Recent")) {
+    if (ANCHOR::BeginMenu("Open Recent"))
+    {
       ANCHOR::MenuItem("Cigarettes");
       ANCHOR::MenuItem("Glasses");
       ANCHOR::MenuItem("Cardigans");
-      if (ANCHOR::BeginMenu("More...")) {
+      if (ANCHOR::BeginMenu("More..."))
+      {
         ANCHOR::MenuItem("Fedoras");
         ANCHOR::MenuItem("Cocktails");
         ANCHOR::EndMenu();
       }
       ANCHOR::EndMenu();
     }
-    if (ANCHOR::MenuItem("Save", "Ctrl+S")) {
+    if (ANCHOR::MenuItem("Save", "Ctrl+S"))
+    {
     }
-    if (ANCHOR::MenuItem("Save As...", "Shift+Ctrl+S")) {
+    if (ANCHOR::MenuItem("Save As...", "Shift+Ctrl+S"))
+    {
     }
-    if (ANCHOR::MenuItem("Quit", "Ctrl+Q")) {
+    if (ANCHOR::MenuItem("Quit", "Ctrl+Q"))
+    {
       // CKE_has_kill_signal(COVAH_SUCCESS);
     }
     ANCHOR::EndMenu();
@@ -79,7 +89,8 @@ static void ShowFileMenu()
 
 static void ShowMainMenuBar()
 {
-  if (ANCHOR::BeginMainMenuBar()) {
+  if (ANCHOR::BeginMainMenuBar())
+  {
     ShowFileMenu();
     ANCHOR::EndMainMenuBar();
   }
@@ -91,6 +102,8 @@ void WM_init(cContext C, int argc, const char **argv)
   WM_init_cursor_data();
 
   ANCHOR_CreateSystemPaths();
+
+  WM_msgbus_register();
 }
 
 WABI_NAMESPACE_END

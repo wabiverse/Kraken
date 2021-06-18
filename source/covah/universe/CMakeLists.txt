@@ -25,6 +25,7 @@ set(SRC
   UNI_scene.h
   UNI_screen.h
   UNI_system.h
+  UNI_userpref.h
   UNI_window.h
   UNI_workspace.h
 )

@@ -22,6 +22,7 @@ set(SRC
   intern/wm_draw.cpp
   intern/wm_event_system.cpp
   intern/wm_init_exit.cpp
+  intern/wm_msgbus.cpp
   intern/wm_operators.cpp
   intern/wm_styles.cpp
   intern/wm_window.cpp
@@ -32,6 +33,8 @@ set(SRC
   WM_draw.h
   WM_event_system.h
   WM_init_exit.h
+  WM_inline_tools.h
+  WM_msgbus.h
   WM_operators.h
   WM_window.h
 )
