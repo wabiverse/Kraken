@@ -37,8 +37,6 @@
 
 int main(int argc, const char **argv)
 {
-  wabi::cContext C;
-
 #ifdef _WIN32
   HWND hwnd = GetConsoleWindow();
   ShowWindow(hwnd, 0);
@@ -46,7 +44,7 @@ int main(int argc, const char **argv)
 
   wabi::CREATOR_covah_env_init();
 
-  C = wabi::CTX_create();
+  wabi::cContext C = wabi::CTX_create();
 
   wabi::CKE_covah_globals_init();
   wabi::CKE_covah_main_init(C, argc, (const char **)argv);

@@ -53,7 +53,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-void UNI_create_stage(cContext &C)
+void UNI_create_stage(const cContext &C)
 {
   Main main = CTX_data_main(C);
 
@@ -62,13 +62,13 @@ void UNI_create_stage(cContext &C)
   CTX_data_scene_set(C, TfCreateRefPtr(new CovahScene(main->stage_id)));
 }
 
-void UNI_destroy(cContext &C)
+void UNI_destroy(const cContext &C)
 {
   Stage stage = CTX_data_stage(C);
   stage->~UsdStage();
 }
 
-void UNI_open_stage(cContext &C)
+void UNI_open_stage(const cContext &C)
 {
   Main main = CTX_data_main(C);
   Stage stage = CTX_data_stage(C);
@@ -76,13 +76,13 @@ void UNI_open_stage(cContext &C)
   stage->Open(main->stage_id);
 }
 
-void UNI_save_stage(cContext &C)
+void UNI_save_stage(const cContext &C)
 {
   Stage stage = CTX_data_stage(C);
   stage->GetRootLayer()->Save();
 }
 
-void UNI_set_defaults(cContext &C)
+void UNI_set_defaults(const cContext &C)
 {
   /* ----- */
 
@@ -146,7 +146,7 @@ void UNI_set_defaults(cContext &C)
   CTX_wm_manager_set(C, wm);
 }
 
-void UNI_author_default_scene(cContext &C)
+void UNI_author_default_scene(const cContext &C)
 {
   Stage stage = CTX_data_stage(C);
 

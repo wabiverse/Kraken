@@ -40,10 +40,12 @@ struct CovahWorkspace : public UsdUIWorkspace, public CovahObject {
   UsdAttribute name;
   UsdRelationship screen_rel;
 
-  inline CovahWorkspace(cContext &C, const SdfPath &stagepath, const TfToken &title = TfToken("Workspace"));
+  inline CovahWorkspace(const cContext &C,
+                        const SdfPath &stagepath,
+                        const TfToken &title = TfToken("Workspace"));
 };
 
-CovahWorkspace::CovahWorkspace(cContext &C, const SdfPath &stagepath, const TfToken &title)
+CovahWorkspace::CovahWorkspace(const cContext &C, const SdfPath &stagepath, const TfToken &title)
   : UsdUIWorkspace(COVAH_UNIVERSE_CREATE(C)),
     path(stagepath),
     name(CreateNameAttr(VtValue(title))),

@@ -72,15 +72,18 @@ struct CovahWindow : public UsdUIWindow, public CovahObject {
   /** Anchor system backend pointer. */
   void *anchorwin;
 
-  inline CovahWindow(cContext &C,
+  inline CovahWindow(const cContext &C,
                      const SdfPath &stagepath = SdfPath(STRINGIFY(COVAH_WINDOW)),
                      const SdfPath &wspace = SdfPath(STRINGIFY(COVAH_WORKSPACES_LAYOUT)),
                      const SdfPath &screen = SdfPath(STRINGIFY(COVAH_SCREEN_LAYOUT)));
 
-  inline CovahWindow(cContext &C, wmWindow &prim, const SdfPath &stagepath);
+  inline CovahWindow(const cContext &C, wmWindow &prim, const SdfPath &stagepath);
 };
 
-CovahWindow::CovahWindow(cContext &C, const SdfPath &stagepath, const SdfPath &wspace, const SdfPath &screen)
+CovahWindow::CovahWindow(const cContext &C,
+                         const SdfPath &stagepath,
+                         const SdfPath &wspace,
+                         const SdfPath &screen)
   : UsdUIWindow(COVAH_UNIVERSE_CREATE(C)),
     path(stagepath),
     title(CreateTitleAttr()),
@@ -103,7 +106,7 @@ CovahWindow::CovahWindow(cContext &C, const SdfPath &stagepath, const SdfPath &w
 
 {}
 
-CovahWindow::CovahWindow(cContext &C, wmWindow &prim, const SdfPath &stagepath)
+CovahWindow::CovahWindow(const cContext &C, wmWindow &prim, const SdfPath &stagepath)
   : UsdUIWindow(COVAH_UNIVERSE_CREATE_CHILD(C)),
     path(GetPath()),
     title(CreateTitleAttr()),

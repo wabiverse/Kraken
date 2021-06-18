@@ -49,6 +49,6 @@
 WABI_NAMESPACE_BEGIN
 
 COVAH_WM_API
-void WM_main(cContext &C);
+void WM_main(const cContext &C);
 
 WABI_NAMESPACE_END

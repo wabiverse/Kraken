@@ -243,7 +243,7 @@ static void wm_window_check_size(GfVec4i *rect)
  * @param temp: whether this is considered a short-lived window
  * @param alignment: how this window is positioned relative to its parent
  * @return the window or NULL in case of failure. */
-wmWindow WM_window_open(cContext &C,
+wmWindow WM_window_open(const cContext &C,
                         const char *title,
                         const char *icon,
                         int x,
@@ -330,7 +330,7 @@ wmWindow WM_window_open(cContext &C,
   return win;
 }
 
-void WM_anchor_init(cContext &C)
+void WM_anchor_init(cContext C)
 {
   /* Event handle of anchor stack. */
   ANCHOR_EventConsumerHandle consumer;
@@ -348,7 +348,7 @@ void WM_anchor_init(cContext &C)
   }
 }
 
-void WM_window_process_events(const cContext C)
+void WM_window_process_events(const cContext &C)
 {
   bool has_event = ANCHOR::ProcessEvents(anchor_system, false);
 

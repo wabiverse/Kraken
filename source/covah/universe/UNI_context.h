@@ -41,16 +41,16 @@ WABI_NAMESPACE_BEGIN
  * - Saving Stages. */
 
 COVAH_UNIVERSE_API
-void UNI_create_stage(cContext &C);
+void UNI_create_stage(const cContext &C);
 
 COVAH_UNIVERSE_API
-void UNI_destroy(cContext &C);
+void UNI_destroy(const cContext &C);
 
 COVAH_UNIVERSE_API
-void UNI_open_stage(cContext &C);
+void UNI_open_stage(const cContext &C);
 
 COVAH_UNIVERSE_API
-void UNI_save_stage(cContext &C);
+void UNI_save_stage(const cContext &C);
 
 /**
  * Pixar Stage Defaults
@@ -58,10 +58,10 @@ void UNI_save_stage(cContext &C);
  * - Covah Scene defaults. */
 
 COVAH_UNIVERSE_API
-void UNI_set_defaults(cContext &C);
+void UNI_set_defaults(const cContext &C);
 
 COVAH_UNIVERSE_API
-void UNI_author_default_scene(cContext &C);
+void UNI_author_default_scene(const cContext &C);
 
 #define COVAH_UNIVERSE_CREATE_CHILD(x) Define(CTX_data_stage(x), prim->path.AppendPath(stagepath))
 #define COVAH_UNIVERSE_CREATE(x) Define(CTX_data_stage(x), stagepath)

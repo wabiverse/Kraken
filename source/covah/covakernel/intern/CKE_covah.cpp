@@ -224,7 +224,7 @@ static ckeStatusCode covah_parse_args(int argc, const char **argv)
   return COVAH_SUCCESS;
 }
 
-void CKE_covah_main_init(cContext &C, int argc, const char **argv)
+void CKE_covah_main_init(const cContext &C, int argc, const char **argv)
 {
   /* Init plugins. */
   CKE_covah_plugins_init();

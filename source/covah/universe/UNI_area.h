@@ -42,10 +42,10 @@ struct CovahArea : public UsdUIArea, public CovahObject {
   UsdAttribute pos;
   UsdAttribute size;
 
-  inline CovahArea(cContext &C, cScreen &prim, SdfPath const &stagepath);
+  inline CovahArea(const cContext &C, cScreen &prim, SdfPath const &stagepath);
 };
 
-CovahArea::CovahArea(cContext &C, cScreen &prim, SdfPath const &stagepath)
+CovahArea::CovahArea(const cContext &C, cScreen &prim, SdfPath const &stagepath)
   : UsdUIArea(COVAH_UNIVERSE_CREATE_CHILD(C)),
     path(GetPath()),
     name(CreateNameAttr()),

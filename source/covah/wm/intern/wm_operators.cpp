@@ -28,7 +28,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-int wm_window_close_exec(cContext &C, UsdAttribute *UNUSED(op))
+int wm_window_close_exec(const cContext &C, UsdAttribute *UNUSED(op))
 {
   // wmWindowManager *wm = CTX_wm_manager(C);
   // wmWindow *win = CTX_wm_window(C);

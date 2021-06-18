@@ -73,8 +73,8 @@ typedef CovahContextRefPtr       /* Use -> */ cContext;
  *  - Creation.
  *  - Destruction. */
 
-cContext &CTX_create(void);
-void CTX_free(cContext &C);
+cContext CTX_create(void);
+void CTX_free(const cContext &C);
 
 /**
  * Covah Context Getters:
@@ -96,10 +96,10 @@ Stage CTX_data_stage(const cContext &C);
  *  - Scene data.
  *  - Stage data. */
 
-void CTX_data_main_set(cContext &C, Main cmain);
-void CTX_wm_manager_set(cContext &C, wmWindowManager wm);
-void CTX_wm_window_set(cContext &C, wmWindow win);
-void CTX_data_scene_set(cContext &C, Scene cscene);
+void CTX_data_main_set(const cContext &C, const Main &cmain);
+void CTX_wm_manager_set(const cContext &C, const wmWindowManager &wm);
+void CTX_wm_window_set(const cContext &C, const wmWindow &win);
+void CTX_data_scene_set(const cContext &C, const Scene &cscene);
 
 struct CovahContext : public CovahObject {
 

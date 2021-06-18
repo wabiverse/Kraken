@@ -32,7 +32,7 @@ COVAH_WM_API
 void WM_init_default_styles();
 
 COVAH_WM_API
-void WM_init(cContext &C, int argc, const char **argv);
+void WM_init(cContext C, int argc, const char **argv);
 
 enum eWmModes { COVAH_NORMAL_MODE = 0, COVAH_DEBUG_MODE };
 

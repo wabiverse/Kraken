@@ -37,18 +37,16 @@ WABI_NAMESPACE_BEGIN
 
 /**
  * Main CTX Creation. */
-cContext &CTX_create(void)
+cContext CTX_create(void)
 {
   TfAutoMallocTag2 tag("cContext", "CTX_create");
 
-  cContext C = TfCreateRefPtr(new CovahContext());
-
-  return C;
+  return TfCreateRefPtr(new CovahContext());
 }
 
 /**
  * Main CTX Deletion. */
-void CTX_free(cContext &C)
+void CTX_free(const cContext &C)
 {
   TfAutoMallocTag2 tag("cContext", "CTX_free");
 
@@ -56,7 +54,6 @@ void CTX_free(cContext &C)
    * CTX out - */
 
   C.~TfRefPtr();
-  C.Reset();
 }
 
 /**
@@ -90,22 +87,22 @@ Stage CTX_data_stage(const cContext &C)
 /**
  * Setters. */
 
-void CTX_data_main_set(cContext &C, Main cmain)
+void CTX_data_main_set(const cContext &C, const Main &cmain)
 {
   C->data.main = cmain;
 }
 
-void CTX_wm_manager_set(cContext &C, wmWindowManager wm)
+void CTX_wm_manager_set(const cContext &C, const wmWindowManager &wm)
 {
   C->wm.manager = wm;
 }
 
-void CTX_wm_window_set(cContext &C, wmWindow win)
+void CTX_wm_window_set(const cContext &C, const wmWindow &win)
 {
   C->wm.window = win;
 }
 
-void CTX_data_scene_set(cContext &C, Scene cscene)
+void CTX_data_scene_set(const cContext &C, const Scene &cscene)
 {
   C->data.scene = cscene;
   C->data.stage = cscene->stage;

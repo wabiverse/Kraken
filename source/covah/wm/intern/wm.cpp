@@ -29,7 +29,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-void WM_main(cContext &C)
+void WM_main(const cContext &C)
 {
   while (1) {
 

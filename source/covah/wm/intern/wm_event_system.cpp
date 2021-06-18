@@ -32,7 +32,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-void WM_event_do_refresh_wm(cContext &C)
+void WM_event_do_refresh_wm(const cContext &C)
 {}
 
 static int wm_handler_fileselect()

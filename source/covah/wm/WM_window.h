@@ -30,7 +30,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-wmWindow WM_window_open(cContext &C,
+wmWindow WM_window_open(const cContext &C,
                         const char *title,
                         const char *icon,
                         int x,
@@ -41,9 +41,9 @@ wmWindow WM_window_open(cContext &C,
                         bool dialog,
                         bool temp);
 
-void WM_anchor_init(cContext &C);
+void WM_anchor_init(cContext C);
 void WM_anchor_exit(void);
-void WM_window_process_events(const cContext C);
+void WM_window_process_events(const cContext &C);
 void WM_window_swap_buffers(wmWindow win);
 
 WABI_NAMESPACE_END

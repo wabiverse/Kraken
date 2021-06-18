@@ -65,7 +65,7 @@ COVAH_KERNEL_API
 Main CKE_main_init(void);
 
 COVAH_KERNEL_API
-void CKE_covah_main_init(cContext &C, int argc, const char **argv);
+void CKE_covah_main_init(const cContext &C, int argc, const char **argv);
 
 COVAH_KERNEL_API
 void CKE_covah_globals_init();
