@@ -23,6 +23,7 @@
  */
 
 #include "WM_msgbus.h"
+#include "WM_debug_codes.h"
 #include "WM_operators.h"
 #include "WM_window.h"
 
@@ -48,85 +49,27 @@ WABI_NAMESPACE_BEGIN
 
 
 /**
- *  -----  The Base Notice. ----- */
+ *  -----  The MsgBus Callback. ----- */
 
 
-BaseNotice::BaseNotice(const std::string &what)
-  : TfNotice(),
-    m_what(what)
+MsgBusCallback::MsgBusCallback(int identity, TfNotice const &notice)
+  : m_counter(1),
+    m_ident(identity),
+    m_notice(notice)
 {}
 
 
-BaseNotice::~BaseNotice()
-{}
-
-
-const std::string &BaseNotice::GetWhat() const
+void MsgBusCallback::PushNotif(const TfNotice &notice,
+                               MsgBus const &sender)
 {
-  return m_what;
-}
-
-
-/* ------ */
-
-
-/**
- *  -----  The Msg Notice. ----- */
-
-
-MainNotice::MainNotice(const std::string &what)
-  : BaseNotice(what)
-{}
-
-
-/* ------ */
-
-
-/**
- *  -----  The Msg Listener. ----- */
-
-
-MainListener::MainListener()
-  : TfWeakBase()
-{
-  TfWeakPtr<MainListener> me(this);
-  TfNotice::Register(me, &MainListener::ProcessNotice);
-  _processMainKey = TfNotice::Register(me, &MainListener::ProcessMainNotice);
-}
-
-
-void MainListener::WM_msgbus_dump(std::ostream *log, std::vector<std::string> *li, std::mutex *mutex)
-{
-  std::lock_guard<std::mutex> lock(*mutex);
-  std::sort(li->begin(), li->end());
-  for (std::vector<std::string>::const_iterator n = li->begin(); n != li->end(); ++n)
-  {
-    *log << *n << std::endl;
-  }
-  li->clear();
-}
-
-
-void MainListener::Revoke()
-{
-  TfNotice::Revoke(_processMainKey);
-}
-
-
-void MainListener::ProcessNotice(const TfNotice &n)
-{
-  std::lock_guard<std::mutex> lock(_mainThreadLock);
-  mainThreadList.push_back(
-    "MainListener::ProcessNotice"
-    " got notice of type " +
-    TfType::Find(n).GetTypeName());
-}
-
-
-void MainListener::ProcessMainNotice(const MainNotice &n)
-{
-  std::lock_guard<std::mutex> lock(_mainThreadLock);
-  mainThreadList.push_back("MainListener::ProcessMainNotice got " + n.GetWhat());
+  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("!! Hello from MsgBus.\n");
+  m_flag = (sender->m_ident == m_ident) ? true : false;
+  m_name = (m_ident == IDENT_ROMEO) ? STRINGIFY_ARG(IDENT_ROMEO) :
+                                      STRINGIFY_ARG(IDENT_JULIET);
+  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("%s\n", m_flag ? "true" : "false");
+  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("ID: %s\n", CHARSTR(m_name));
+  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("Count: %s\n", CHARALL(m_counter));
+  ++m_counter;
 }
 
 
@@ -136,20 +79,56 @@ void MainListener::ProcessMainNotice(const MainNotice &n)
 
 void WM_msgbus_register(void)
 {
-  MainListener *listener = new MainListener();
-  {
-    MainNotice("Covah Notice.").Send();
-  }
-}
+  /* ------ */
 
 
-/**
- *  -----  Registration with TfRegistry. ----- */
+  /** 
+   * Sends a notification. */
+
+  TfNotice notice = TfNotice();
 
 
-TF_REGISTRY_FUNCTION(TfType)
-{
-  TfType::Define<MainNotice, TfType::Bases<TfNotice>>();
+  /**
+   *  -----  Romeo. ----- */
+
+  /** 
+   * A callback function instance. */
+  MsgBusCallback *callbackFunctionRomeo = new MsgBusCallback(IDENT_ROMEO, notice);
+
+  /** 
+   * A sender, invokes a callback function. */
+  MsgBus romeo(callbackFunctionRomeo);
+
+  /** 
+   * This sender is the only one allowed to
+   * call this callback, since it was registered
+   * to it via the TfNotice Register call. This
+   * sender will remain able to continue sending 
+   * push notifications until it's key is revoked. */
+  auto romeokey = TfNotice::Register(romeo, &MsgBusCallback::PushNotif, romeo);
+
+
+  /**
+   *  -----  Juliet. ----- */
+
+  /** 
+   * Now Create Juliet. */
+  MsgBusCallback *callbackFunctionJuliet = new MsgBusCallback(IDENT_JULIET, notice);
+  MsgBus juliet(callbackFunctionJuliet);
+  TfNotice::Register(juliet, &MsgBusCallback::PushNotif, juliet);
+
+
+  /** 
+   * Have Romeo Subscribe to Juliet. */
+  TfNotice::Register(romeo, &MsgBusCallback::PushNotif, juliet);
+
+
+  notice.Send(romeo);
+  notice.Send(juliet);
+
+
+  TfNotice::Revoke(romeokey);
+  notice.Send(romeo);
 }
 
 

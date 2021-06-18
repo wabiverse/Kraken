@@ -33,6 +33,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/program_options.hpp>
+
 WABI_NAMESPACE_BEGIN
 
 void UNI_pixutil_convert(const std::string &args);

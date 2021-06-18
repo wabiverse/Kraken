@@ -60,7 +60,10 @@ int main(int argc, const char **argv)
 
   /* Init & parse args. */
   CREATOR_setup_args(argc, (const char **)argv);
-  CREATOR_parse_args(argc, (const char **)argv);
+  if (CREATOR_parse_args(argc, (const char **)argv) != 0)
+  {
+    return 0;
+  }
 
   /* Determining Stage Configuration and Loadup. */
   CKE_covah_main_init(C, argc, (const char **)argv);

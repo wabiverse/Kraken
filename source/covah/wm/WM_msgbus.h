@@ -30,6 +30,7 @@
 
 #include <wabi/base/tf/notice.h>
 
+#include <tbb/atomic.h>
 
 /**
  *  -----  The Covah WindowManager. ----- */
@@ -42,59 +43,35 @@ WABI_NAMESPACE_BEGIN
 
 
 /**
- *  -----  The Base Notice. ----- */
+ *  -----  Forward Declarations. ----- */
 
 
-struct BaseNotice : public TfNotice
-{
-  BaseNotice(const std::string &what);
+TF_DECLARE_WEAK_AND_REF_PTRS(MsgBusCallback);
 
-  const std::string &GetWhat() const;
-
-  ~BaseNotice();
-
- protected:
-  const std::string m_what;
-};
+typedef MsgBusCallbackPtr MsgBus;
 
 
-/* ------ */
-
+#define IDENT_ROMEO 48484
+#define IDENT_JULIET 64121
 
 /**
- *  -----  The Msg Notice. ----- */
+ *  -----  The MsgBus Callback. ----- */
 
 
-struct MainNotice : public BaseNotice
+struct MsgBusCallback : public TfWeakBase
 {
-  MainNotice(const std::string &what);
-};
 
+  MsgBusCallback(int identity, TfNotice const &notice);
 
-/* ------ */
-
-
-/**
- *  -----  The Msg Listener. ----- */
-
-
-struct MainListener : public TfWeakBase
-{
-  MainListener();
-
-  void Revoke();
-  void ProcessNotice(const TfNotice &n);
-  void ProcessMainNotice(const MainNotice &n);
-
-  /** For Debugging. Diagnostics. */
-  static void WM_msgbus_dump(std::ostream *log,
-                             std::vector<std::string> *li,
-                             std::mutex *mutex);
+  void PushNotif(const TfNotice &notice,
+                 MsgBus const &sender);
 
  private:
-  TfNotice::Key _processMainKey;
-  std::vector<std::string> mainThreadList;
-  std::mutex _mainThreadLock;
+  int m_ident;
+  std::string m_name;
+  TfNotice m_notice;
+  tbb::atomic<int> m_counter;
+  bool m_flag = true;
 };
 
 

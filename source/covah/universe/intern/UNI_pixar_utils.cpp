@@ -31,23 +31,12 @@ WABI_NAMESPACE_BEGIN
 
 void UNI_pixutil_convert(const std::string &args)
 {
-  static std::vector<std::string> extra_args;
-  extra_args.push_back(args);
-
-  UsdStageRefPtr stage = UsdStage::Open(extra_args.at(0));
-
-  SdfLayer::FileFormatArguments extrafmt = SdfLayer::FileFormatArguments();
-  TF_FOR_ALL (arg, extra_args)
+  UsdStageRefPtr stage = UsdStage::Open("/home/furby/animation/pixar/kitchen.usd");
+  stage->Flatten();
+  if (stage->Export("/home/furby/animation/pixar/kitchen.usda", true))
   {
-    static int index = 0;
-    static std::string prev = extra_args.at(index);
-    if ((index += 1) < extra_args.size())
-    {
-      extrafmt.insert(std::make_pair(prev, extra_args.at(index)));
-    }
+    return;
   }
-
-  stage->Export(extra_args.at(0), true, extrafmt);
 }
 
 

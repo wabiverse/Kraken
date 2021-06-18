@@ -48,6 +48,9 @@
 #include <string>
 #include <vector>
 
+#include <wabi/base/tf/iterator.h>
+#include <wabi/usd/usd/stage.h>
+
 /* NAMESPACES */
 namespace CREATOR_ARGS = boost::program_options;
 
@@ -113,7 +116,8 @@ int CREATOR_parse_args(int argc, const char **argv)
   if (convert_stage.size() > 2)
   {
     wabi::UNI_pixutil_convert(convert_stage);
+    return 1;
   }
 
-  return 1;
+  return 0;
 }
